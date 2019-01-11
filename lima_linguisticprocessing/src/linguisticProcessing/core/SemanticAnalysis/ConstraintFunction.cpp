@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -43,7 +43,7 @@ using namespace Lima::LinguisticProcessing::ApplyRecognizer;
 
 namespace Lima
 {
-namespace LinguisticProcessing 
+namespace LinguisticProcessing
 {
 namespace SemanticAnalysis
 {
@@ -69,8 +69,8 @@ ConstraintFunction(language,complement)
 
 bool ClearSemanticRelation::operator()(AnalysisContent& analysis ) const
 {
-  SEMLOGINIT;
 #ifdef DEBUG_LP
+  SEMLOGINIT;
   LDEBUG << "ClearSemanticRelation::operator()";
 #endif
   SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
@@ -92,8 +92,8 @@ SaveSemanticRelation::SaveSemanticRelation(MediaId language,
 
 bool SaveSemanticRelation::operator()(AnalysisContent& analysis ) const
 {
-  SEMLOGINIT;
 #ifdef DEBUG_LP
+  SEMLOGINIT;
   LDEBUG << "SaveSemanticRelation::operator()";
 #endif
   SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
@@ -120,8 +120,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
            const LinguisticGraphVertex& vertex2,
            AnalysisContent& analysis ) const
 {
-  SEMLOGINIT;
 #ifdef DEBUG_LP
+  SEMLOGINIT;
   LDEBUG << "CreateSemanticRelation::operator()" << vertex1 << vertex2 << m_semanticRelationType;
 #endif
   LIMA_UNUSED(anagraph);
@@ -130,9 +130,9 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
   {
     semanticData=new SemanticRelationData();
     analysis.setData("SemanticRelationData",semanticData);
-    
+
   }
-  
+
   return semanticData->relation(vertex1,vertex2,m_semanticRelationType);
 
 }
