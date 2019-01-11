@@ -271,13 +271,12 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   }
   if (!atLeastOneSuccessfulLoad)
   {
-    std::cerr << "Configure Problem no configure file has been found in \"" << configString.toStdString() << "\"" << std::endl;
+    std::cerr << "Configure Problem: no log configuration file has been found in \"" << configString.toStdString() << "\"" << std::endl;
     return -1;
   }
   if (!atLeastOneDestinationSuccessfulLoad)
   {
-    std::cerr << "Configure Problem no configure file has been found in \"" << configString.toStdString() << "\"" << std::endl;
-    return -1;
+    QsLogging::Destinations::instance().setDefault();
   }
   return 0;
 }

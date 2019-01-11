@@ -58,6 +58,7 @@ public:
     return staticDestinations;
   }
 
+  bool setDefault();
   bool configure(const QString& fileName);
 
   const QMap< QString, std::shared_ptr<Destination> >& destinations() const;
