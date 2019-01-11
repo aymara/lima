@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -28,7 +28,7 @@
 
 namespace Lima
 {
-  
+
   /**
    * @brief Defines the MainFactory to create Object
    * @file
@@ -39,24 +39,24 @@ namespace Lima
   template<typename Factory>
   class MainFactory
   {
-    
+
   public:
-    
+
     /**
      * @brief const singleton accessor
      */
     static const MainFactory<Factory>& single();
-    
+
     /**
      * @brief singleton accessor
      */
     static MainFactory<Factory>& changeable();
-    
+
     /**
      * @brief destroy factory and all registered factories
      */
     static void cleanup();
-    
+
     /**
      * @brief create an Object using the appropriate registered factory.
      * @param unitConfiguration @b IN : object configuration parameters
@@ -69,7 +69,7 @@ namespace Lima
      * which delegate the creation of the object.
      */
     const std::shared_ptr<Factory> getFactory(const std::string& classId) const;
-    
+
     /**
      * @brief create an Object using the appropriate registered factory.
      * @param unitConfiguration @b IN : object configuration parameters
@@ -82,7 +82,7 @@ namespace Lima
      * which delegate the creation of the object.
      */
     std::shared_ptr<Factory> getFactory(const std::string& classId);
-    
+
     /**
      * @brief register a factory with an id
      * @param classId @b IN : classId for the factory
@@ -92,32 +92,32 @@ namespace Lima
     void registerFactory(
       const std::string& classId,
       Factory* fact);
-      
+
       /**
        * @brief show registered classId
        * @return list of registered classId
        */
       std::deque<std::string> getRegisteredFactories() const;
-      
+
       virtual ~MainFactory();
-      
+
   private:
-    
+
     MainFactory();
     static MainFactory<Factory>* s_instance;
-    
+
     typedef std::map<std::string,std::shared_ptr<Factory>> FactoryMap;
     typedef typename FactoryMap::const_iterator FactoryMapCItr;
     FactoryMap m_factories;
-    
+
   };
-  
+
   template<typename Factory>
   MainFactory<Factory>::MainFactory() : m_factories() {}
-  
+
   template<typename Factory>
   MainFactory<Factory>* MainFactory<Factory>::s_instance(0);
-  
+
   template<typename Factory>
   const MainFactory<Factory>& MainFactory<Factory>::single()
   {
@@ -127,7 +127,7 @@ namespace Lima
     }
     return *s_instance;
   }
-  
+
   template<typename Factory>
   MainFactory<Factory>& MainFactory<Factory>::changeable()
   {
@@ -137,21 +137,20 @@ namespace Lima
     }
     return *s_instance;
   }
-  
-  
+
+
   template<typename Factory>
   void MainFactory<Factory>::cleanup()
   {
     delete s_instance;
     s_instance=0;
   }
-  
+
   template<typename Factory>
   MainFactory<Factory>::~MainFactory()
   {
   }
-  
-  
+
   template<typename Factory>
   const std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId) const
   {
@@ -172,7 +171,7 @@ namespace Lima
     }
     return factItr->second;
   }
-  
+
   template<typename Factory>
   std::shared_ptr<Factory> MainFactory<Factory>::getFactory(const std::string& classId)
   {
@@ -193,7 +192,7 @@ namespace Lima
     }
     return factItr->second;
   }
-  
+
   template<typename Factory>
   void MainFactory<Factory>::registerFactory(
     const std::string& classId,
@@ -210,20 +209,20 @@ namespace Lima
       m_factories[classId]= std::shared_ptr<Factory>(fact);
     }
   }
-  
+
   template<typename Factory>
   std::deque<std::string> MainFactory<Factory>::getRegisteredFactories() const
   {
     std::deque<std::string> result;
     for (FactoryMapCItr factItr=m_factories.begin();
          factItr!=m_factories.end();
-    factItr++)
+         factItr++)
          {
            result.push_back(factItr->first);
          }
          return result;
   }
-  
+
 } // Lima
 
 #endif // WIN32 test
