@@ -84,6 +84,13 @@ void Destinations::configureFileChanged ( const QString & path )
   }
 }
 
+bool Destinations::setDefault()
+{
+  d->m_destinations.insert("DebugOutput",
+                            DestinationFactory::MakeDebugOutputDestination());
+  return true;
+}
+
 bool Destinations::configure(const QString& fileName)
 {
   QFile file(fileName);
@@ -139,11 +146,6 @@ bool Destinations::configure(const QString& fileName)
       }
     }
     line = in.readLine();
-  }
-  if (!res)
-  {
-    d->m_destinations.insert("DebugOutput",
-                              DestinationFactory::MakeDebugOutputDestination());
   }
   return res;
 }
