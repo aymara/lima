@@ -324,6 +324,7 @@ macro (IDIOMATICENTITIES _lang)
   add_dependencies(rules-idiom-${_lang}
     rules-${_lang}-execEnv
     compile-rules
+    rules-configEnv
   )
   # add the link between the current target and its execution environment dependencies
 
