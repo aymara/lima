@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -27,17 +27,17 @@ SET(lima-common-factory_LIB_SRCS
 
 add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
-target_link_libraries(lima-common-factory lima-common-tools)
+target_link_libraries(lima-common-factory lima-common-tools ${Boost_LIBRARIES})
 
 ADD_DLL_TO_PATH(lima-common-factory)
 
-set_target_properties(lima-common-factory PROPERTIES 
-  VERSION ${LIMA_COMMON_LIB_VERSION} 
+set_target_properties(lima-common-factory PROPERTIES
+  VERSION ${LIMA_COMMON_LIB_VERSION}
   SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 
   install(
-    TARGETS lima-common-factory 
-    DESTINATION ${LIB_INSTALL_DIR} 
+    TARGETS lima-common-factory
+    DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime
 )
 
