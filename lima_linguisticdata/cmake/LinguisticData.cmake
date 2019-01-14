@@ -293,7 +293,7 @@ macro (COMPILE_RULES _lang)
     add_custom_command(
       OUTPUT ${_current}.bin
       COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
-      DEPENDS ${_current}
+      DEPENDS ${_current} compile-rules
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endforeach()
 endmacro (COMPILE_RULES)
@@ -308,18 +308,21 @@ macro (IDIOMATICENTITIES _lang)
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
     set (COMPILE_RULES_DEBUG_MODE "--debug")
   endif ()
+
   add_custom_command(
     OUTPUT idiomaticExpressions-${_lang}.bin
-    COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules
+    COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules rules-${_lang}-execEnv rules-configEnv
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT compile-rules --configDir=${LIMA_CONF} --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
     VERBATIM
   )
 
   add_custom_target(
     rules-idiom-${_lang}
     ALL
-    DEPENDS idiomaticExpressions-${_lang}.bin )
+    DEPENDS idiomaticExpressions-${_lang}.bin
+  )
 
   add_dependencies(rules-idiom-${_lang}
     rules-${_lang}-execEnv

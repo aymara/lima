@@ -244,7 +244,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 }
 
 std::vector<std::string> getDynamicLibraryNames(
-  XMLConfigurationFileParser& parser, 
+  XMLConfigurationFileParser& parser,
   const std::string& pipeline);
 
 //****************************************************************************
@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task.get(), &Lima::LimaMainTaskRunner::finished, 
+  QObject::connect(task.get(), &Lima::LimaMainTaskRunner::finished,
                    [](int returnCode){ QCoreApplication::exit(returnCode); } );
 
   // This will run the task from the application event loop.
@@ -274,7 +274,6 @@ int main(int argc, char **argv)
 
   return a.exec();
 }
-
 
 int run(int argc, char** argv)
 {
@@ -312,7 +311,7 @@ int run(int argc, char** argv)
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
   {
     LOGINIT("Automaton::Compiler");
-    LERROR << "compile-rules: Call to loadPlugins(\"" 
+    LERROR << "compile-rules: Call to loadPlugins(\""
             << configPath << "\") failed.";
     return EXIT_FAILURE;
   }
@@ -325,14 +324,14 @@ int run(int argc, char** argv)
   {
     // initialize common
     LOGINIT("Automaton::Compiler");
-    LDEBUG << "main: MediaticData::changeable().init( " 
+    LDEBUG << "main: MediaticData::changeable().init( "
             << param.resourcesDir << ")...";
     MediaticData::changeable().init(
       resourcesPath.toUtf8().constData(),
       configPath.toUtf8().constData(),
       param.commonConfigFile,
       langs);
-    LDEBUG << "main: MediaticData::changeable().init( " 
+    LDEBUG << "main: MediaticData::changeable().init( "
             << param.resourcesDir << ") done!";
 
     /*
@@ -449,7 +448,7 @@ int run(int argc, char** argv)
       // read the rules file in text format
       //try
       {
-        // auto ctrl2 = new TimeUtilsController("read file and build recognizer", 
+        // auto ctrl2 = new TimeUtilsController("read file and build recognizer",
         //                                      true);
 	// Lima::TimeUtilsController("read file and build recognizer", true);
         //std::cerr << "\rBuilding recognizer…";
@@ -485,7 +484,7 @@ int run(int argc, char** argv)
           // reco.reorganizeRules(*dico);
         }
         // when character is searched out of text buffer
-        catch (std::exception& e) 
+        catch (std::exception& e)
         {
           std::cerr << "Error: " << e.what() << std::endl;
         }
@@ -498,7 +497,7 @@ int run(int argc, char** argv)
         {
           //std::cerr << "\rWriting recognizer…";
           AutomatonWriter writer;
-          LINFO << "writer.WritingRecognizer(language:" << language 
+          LINFO << "writer.WritingRecognizer(language:" << language
                 << "debug:" << param.debug << ")";
           writer.writeRecognizer(reco, param.outputFile, language, param.debug);
           //reco.writeToFile(param.outputFile);
@@ -545,7 +544,7 @@ int run(int argc, char** argv)
 void addLibs(GroupConfigurationStructure& group,
             std::vector<std::string>& libNames)
 {
-  try 
+  try
   {
     std::string libs = group.getAttribute("lib");
     std::string::size_type begin = 0;
@@ -569,10 +568,10 @@ std::vector<std::string> getDynamicLibraryNames(
   {
     auto& module = parser.getModuleConfiguration("Processors");
 
-    if (! pipeline.empty()) 
+    if (! pipeline.empty())
     {
       // search libs for given pipeline
-      try 
+      try
       {
         auto& group = module.getGroupNamed(pipeline);
         addLibs(group, libNames);
@@ -580,7 +579,7 @@ std::vector<std::string> getDynamicLibraryNames(
         const auto& processUnits = group.getListsValueAtKey("processUnitSequence");
         for (const auto& processUnit: processUnits)
         {
-          try 
+          try
           {
             auto& pu = module.getGroupNamed(processUnit);
             addLibs(pu, libNames);
@@ -590,9 +589,9 @@ std::vector<std::string> getDynamicLibraryNames(
         }
         return libNames;
       }
-      catch (NoSuchGroup) 
+      catch (NoSuchGroup)
       {
-        std::cerr << "Warning: config file for modex has no group '" << pipeline 
+        std::cerr << "Warning: config file for modex has no group '" << pipeline
                   << "' in 'Processors' : ignored" << std::endl;
       }
       catch (NoSuchList) {} // no processUnitSequence list : ignored
@@ -601,14 +600,14 @@ std::vector<std::string> getDynamicLibraryNames(
     // if no pipeline specified, go through all groups
     for (auto& mod: module)
     {
-      // ModuleConfigurationStructure is a 
+      // ModuleConfigurationStructure is a
       // map<string,GroupConfigurationStructure>
       addLibs(mod.second,libNames);
     }
   }
-  catch (NoSuchModule &) 
+  catch (NoSuchModule &)
   {
-    std::cerr << "Error: config file for modex has no module 'Processors'" 
+    std::cerr << "Error: config file for modex has no module 'Processors'"
               << std::endl;
   }
 
