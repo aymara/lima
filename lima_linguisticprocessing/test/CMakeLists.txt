@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 FIND_LIBRARY(SVMTOOL_LIBRARIES NAMES svmtool PATHS $ENV{MM_EXTERNALS}/lib)
 
 # SET(optionalLibs)
-# 
+#
 # IF(SVMTOOL++_FOUND)
 #   SET(optionalLibs ${optionalLibs} svmtool)
 # ENDIF(SVMTOOL++_FOUND)
-# 
+#
 ########### next target ###############
 
 SET(analyzeText_SRCS
@@ -41,9 +41,15 @@ SET(analyzeText_SRCS
 add_executable(analyzeText ${analyzeText_SRCS})
 MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-target_link_libraries(analyzeText lima-linguisticprocessing)
 
-install(TARGETS analyzeText 
+target_link_libraries(analyzeText
+  lima-lp-linguisticprocessing-core
+  lima-lp-bagofwords
+  lima-lp-eventanalyzer
+  lima-common
+  Boost::program_options)
+
+install(TARGETS analyzeText
   DESTINATION bin
   COMPONENT runtime)
 
@@ -57,7 +63,7 @@ target_link_libraries(limasimple-analyze lima-linguisticprocessing)
 
 install(TARGETS limasimple-analyze DESTINATION bin
   COMPONENT runtime)
-  
+
 ########### next target ###############
 if (${PYTHONLIBS_FOUND})
   SET(srl_SRCS
@@ -77,9 +83,9 @@ endif()
 # SET(threadedAnalyzeText_SRCS
 #    threadedAnalyzeText.cpp
 # )
-# 
+#
 # add_executable(threadedAnalyzeText ${threadedAnalyzeText_SRCS})
-# 
+#
 # target_link_libraries(threadedAnalyzeText
 #     lima-common
 #     lima-linguisticprocessing
@@ -87,7 +93,7 @@ endif()
 #   ${Qt5_LIBRARIES}
 #   ${Boost_LIBRARIES}
 # )
-# 
+#
 # install(TARGETS threadedAnalyzeText DESTINATION bin)
 
 
@@ -101,7 +107,7 @@ add_executable(analyzetextservercore ${analyzetextservercore_SRCS})
 
 target_link_libraries(analyzetextservercore lima-linguisticprocessing)
 
-install(TARGETS analyzetextservercore 
+install(TARGETS analyzetextservercore
   DESTINATION bin
   COMPONENT runtime)
 
