@@ -105,7 +105,8 @@ bool WordSenseAnnotation::disambiguate( const WordUnit& wu)
       }
       break;
     case S_WSI_MRD:
-      LERROR << "Wrong usage" ;
+      LERROR << "Wrong usage";
+      // fall through
     default:
       LWARN << "No Disambiguation processing. Bad configuration";
       return false;
@@ -139,7 +140,8 @@ bool WordSenseAnnotation::disambiguate( KnnSearcher* searcher,
     case B_MOST_FREQUENT:
     case B_JAWS_MOST_FREQUENT:
     case B_ROMANSEVAL_MOST_FREQUENT:
-      LERROR << "Wrong usage" ;
+      LERROR << "Wrong usage";
+      // fall through
     default:
       LWARN << "No Disambiguation processing. Bad configuration";
       return false;

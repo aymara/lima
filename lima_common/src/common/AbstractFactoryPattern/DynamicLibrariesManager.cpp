@@ -67,6 +67,8 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
     std::pair<bool&, const std::string&> data(alreadyLoaded, libName);
 
     dl_iterate_phdr([](dl_phdr_info *info, size_t size, void* data) -> int {
+        LIMA_UNUSED(size);
+
         if (data == NULL)
             throw LimaException("Callback passed to dl_iterate_phdr unexpectedly got NULL in \"data\" argument.");
 

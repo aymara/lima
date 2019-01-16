@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 }
 
 
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
