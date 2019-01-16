@@ -21,8 +21,8 @@ else()
   set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
-set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
-set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources")
 
 add_subdirectory(lima_conll_dependency_tag_mapping)
 

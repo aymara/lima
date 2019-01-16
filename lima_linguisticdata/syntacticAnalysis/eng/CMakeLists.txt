@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ ADD_SA_RULES_DEPENDS(eng
         compoundTenses-eng.bin
 )
 
-
 set(ENG_RULES_FILES
   rules-eng-homodeps-pass1.txt
   rules-eng-homodeps-pass2.txt
@@ -31,4 +30,5 @@ set(ENG_RULES_FILES
   simplification-rules-eng.txt
   simplification-quotes-rules-eng.txt
 )
+
 COMPILE_SA_RULES_WRAPPER (eng ${ENG_RULES_FILES})
