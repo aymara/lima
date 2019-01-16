@@ -21,8 +21,8 @@ else()
   set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
-set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing/core/SpecificEntities")
-set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing/core/SpecificEntities")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources")
 
 ############
 # Dictionary
@@ -41,7 +41,7 @@ macro (CODES _lang)
     DEPENDS code-${_lang}.xml ${ARGN} convertSymbolicCodes
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "PATH is $ENV{PATH}"
-    COMMENT "COMMAND convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
+    COMMENT "convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
     VERBATIM
   )
 
@@ -84,7 +84,7 @@ macro(CONVERT _lang)
     OUTPUT dicotabs.txt
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
-    COMMENT "COMMAND ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs formes-${_lang}.txt dicotabs.txt"
+    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
     VERBATIM
   )
   add_custom_target(
@@ -98,7 +98,7 @@ macro(CONVERT _lang)
     OUTPUT dicostd.txt
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
     DEPENDS dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt
-    COMMENT "${PROJECT_SOURCE_DIR}/scripts/convertstd dicotabs.txt dicostd.txt"
+    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt"
     VERBATIM
   )
   add_custom_target(
@@ -114,7 +114,7 @@ macro(CONVERT _lang)
       OUTPUT ${ADDED_LIST_FILE}.add
       COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
       DEPENDS dicostd.txt ${ADDED_LIST_FILE}
-      COMMENT perl "${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
+      COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
     )
     set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
   endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
@@ -292,8 +292,9 @@ macro (COMPILE_RULES _lang)
   foreach(_current ${ARGN})
     add_custom_command(
       OUTPUT ${_current}.bin
-      COMMAND compile-rules --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --configDir=${LIMA_CONF} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
+      COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
       DEPENDS ${_current} compile-rules
+      COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endforeach()
 endmacro (COMPILE_RULES)
@@ -311,10 +312,10 @@ macro (IDIOMATICENTITIES _lang)
 
   add_custom_command(
     OUTPUT idiomaticExpressions-${_lang}.bin
-    COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules rules-${_lang}-execEnv rules-configEnv
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT compile-rules --configDir=${LIMA_CONF} --resourcesDir=${CMAKE_BINARY_DIR}/execEnv/resources --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
+    COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules"
     VERBATIM
   )
 
@@ -519,8 +520,9 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
     add_custom_command(
       OUTPUT ${BINFILENAME}
-	  COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
+	  COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
       DEPENDS ${_current} ${DEPENDENCIES}
+      COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
     )
@@ -572,10 +574,12 @@ endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
 
 macro (ADD_SA_RULES_DEPENDS _lang)
   set(${_lang}_SA_DEPENDS_FILES)
+
   foreach(SA_DEPS_FILE ${ARGN})
     set (${_lang}_SA_DEPENDS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${SA_DEPS_FILE} ${${_lang}_SA_DEPENDS_FILES})
   endforeach(SA_DEPS_FILE ${ARGN})
-message("Execute ADD_SA_RULES_DEPENDS on ${${_lang}_SA_DEPENDS_FILES}")
+
+  message("Execute ADD_SA_RULES_DEPENDS on ${${_lang}_SA_DEPENDS_FILES}")
 
   add_custom_command(
     OUTPUT syntanaldepends
