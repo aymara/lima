@@ -54,17 +54,7 @@ endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 set(CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-  "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
-  "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-  "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-  "/usr/share/cmake/Modules" # for those available on the system
   )
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "${CMAKE_INSTALL_PREFIX}"
-    "$ENV{LIMA_EXTERNALS}"
-)
 
 SET(optionalLibs)
 
@@ -100,32 +90,8 @@ FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options sys
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-
-# find_package(LimaCommon REQUIRED PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-# include_directories(${LIMACOMMON_INCLUDE_DIR})
-# link_directories(${LIMACOMMON_LIBRARY_DIRS})
-# include(LimaMacros)
-#
-FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_common")
-ENDIF(LIMACOMMON_FOUND)
-
-
-FIND_PACKAGE(LIMALP PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories( AFTER ${LIMALP_INCLUDE_DIR})
-  link_directories( ${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
-ENDIF(LIMALP_FOUND)
-
 set(LIMA_PELF_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
 set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
-
 
 # Go to subdirectories
 add_subdirectory(easyprocessor)
@@ -137,14 +103,11 @@ else ()
   message("Environment variable PELF_ALIGNER and PELF_EVALUATOR should be set to build the benchmarking tool")
 endif()
 
-
 if (Qwt_FOUND)
 add_subdirectory(resourceTool)
 endif()
 add_subdirectory(evalPosTagging)
 add_subdirectory(commands)
-
-
 
 ########### install files ###############
 # install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)

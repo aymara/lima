@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2019 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -37,31 +37,13 @@ endif()
 
 enable_testing()
 
-
 include(Languages.cmake)
 include(cmake/LinguisticData.cmake)
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 # for add_component macro (require 2.8.5)
 include(CPackComponent)
 
-FIND_PACKAGE(LIMACOMMON PATHS $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories(${LIMACOMMON_INCLUDE_DIR})
-  link_directories(${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find limacommon")
-ENDIF(LIMACOMMON_FOUND)
-
-FIND_PACKAGE(LIMALP PATHS $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories(${LIMALP_INCLUDE_DIR})
-  link_directories(${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find limalp")
-ENDIF(LIMALP_FOUND)
-
 configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
-
 
 LIMA_GENERIC_CONFIGENV(eng)
 LIMA_GENERIC_CONFIGENV(fre)
@@ -76,8 +58,6 @@ add_subdirectory(SpecificEntities)
 add_subdirectory(syntacticAnalysis)
 add_subdirectory(SRLIntegration)
 
-
 ########### install files ###############
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
-
 

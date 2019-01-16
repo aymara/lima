@@ -48,17 +48,6 @@ message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-    "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
-    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
-    "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-    "/usr/share/cmake/Modules" # for those available on the system
-)
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "${CMAKE_INSTALL_PREFIX}"
-    "$ENV{LIMA_EXTERNALS}"
 )
 
 # include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
@@ -276,18 +265,10 @@ else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
 endif()
 
-find_package(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-if(LIMACOMMON_FOUND)
-  include_directories( ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-  set(LIMA_LP_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
-  set(LIMA_LP_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
-else ()
-  message(FATAL_ERROR "Could not find lima_common")
-endif ()
+set(LIMA_LP_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
+set(LIMA_LP_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
 configure_file(LIMALPConfig-src.cmake LIMALPConfig.cmake @ONLY)
-find_package(LIMALP PATHS ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)

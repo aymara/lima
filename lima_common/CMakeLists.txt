@@ -37,18 +37,6 @@ message("System name is ${CMAKE_SYSTEM_NAME}")
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-    "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
-    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
-    "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-    "/usr/share/cmake/Modules" # for those available on the system
-)
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "${CMAKE_PREFIX_PATH}"
-    "${CMAKE_INSTALL_PREFIX}"
-    "$ENV{LIMA_EXTERNALS}"
 )
 
 add_definitions(-D QT_NO_KEYWORDS)
@@ -97,21 +85,14 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 endif ()
 
 configure_file(LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
-find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR})
-if(LIMACOMMON_FOUND)
-  include_directories( ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-  set(LIMA_COMMON_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
-  set(LIMA_COMMON_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
-else ()
-  message(FATAL_ERROR "Could not find lima_common")
-endif ()
+
+set(LIMA_COMMON_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
+set(LIMA_COMMON_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
 add_subdirectory(conf)
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(tools)
-
 
 ########### install files ###############
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake
@@ -130,4 +111,4 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake
 # COMMENT "Generating API documentation with Doxygen" VERBATIM
 # )
 # endif(DOXYGEN_FOUND)
-#
+
