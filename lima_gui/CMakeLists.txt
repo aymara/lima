@@ -1,5 +1,5 @@
 #   Copyright 2017 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -29,20 +29,7 @@ message("System name is ${CMAKE_SYSTEM_NAME}")
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-    "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
-    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
-    "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-    "/usr/share/cmake/Modules" # for those available on the system
 )
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "${CMAKE_PREFIX_PATH}"
-    "${CMAKE_INSTALL_PREFIX}"
-    "$ENV{LIMA_EXTERNALS}"
-)
-
 
 add_definitions(-D QT_NO_KEYWORDS)
 # include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
@@ -63,7 +50,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
                 ${QtWidgets_location}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS 
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
     ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
     ${QtQml_location}
     ${QtQuick_location}
@@ -72,7 +59,6 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     ${QtWidgets_location}
 )
 endif ()
-
 
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -84,24 +70,6 @@ FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options sys
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
-
-FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_common")
-ENDIF(LIMACOMMON_FOUND)
-
-
-FIND_PACKAGE(LIMALP PATHS PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories( AFTER ${LIMALP_INCLUDE_DIR})
-  link_directories( ${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
-ENDIF(LIMALP_FOUND)
 
 add_subdirectory(src)
 add_subdirectory(test)
