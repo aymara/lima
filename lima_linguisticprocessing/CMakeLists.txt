@@ -48,6 +48,13 @@ message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
     "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
+    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
+    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
+)
+
+# find_path and find_library will search in these dirs too
+set(CMAKE_PREFIX_PATH
+    "$ENV{LIMA_EXTERNALS}"
 )
 
 # include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)

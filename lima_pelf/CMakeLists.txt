@@ -54,7 +54,13 @@ endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 set(CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
+  "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
   )
+
+# find_path and find_library will search in these dirs too
+set(CMAKE_PREFIX_PATH
+    "$ENV{LIMA_EXTERNALS}"
+)
 
 SET(optionalLibs)
 
