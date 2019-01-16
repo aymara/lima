@@ -435,6 +435,7 @@ int run(int argc,char** argv)
         }
         case BOWFILE_DOCUMENTST: {
             cerr << "ReadBoWFile: file contains a BoWDocumentST  -> not treated" << endl;
+            break;
         }
         case BOWFILE_DOCUMENT: {
             cerr << "ReadBoWFile: build BoWdocument from  " << *file<< endl;

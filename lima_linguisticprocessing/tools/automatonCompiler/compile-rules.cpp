@@ -446,7 +446,7 @@ int run(int argc, char** argv)
     else
     {
       // read the rules file in text format
-      //try
+      try
       {
         // auto ctrl2 = new TimeUtilsController("read file and build recognizer",
         //                                      true);
@@ -457,11 +457,11 @@ int run(int argc, char** argv)
         compiler.buildRecognizer(reco,language);
 	// delete ctrl2;
       }
-      /*catch (exception& e)
+      catch (std::exception& e)
       {
-        std::cerr << "recognizer construction failed:"<< e.what() << endl;
+        std::cerr << "recognizer construction failed:"<< e.what() << std::endl;
         exit(1);
-      }*/
+      }
 
       // if we want to use a dictionary to reorganize rules
       if (param.useDictionary)

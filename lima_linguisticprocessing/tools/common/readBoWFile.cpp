@@ -271,6 +271,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
         reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       writer.writeBoWDocumentsFooter();
+      break;
     }
     case STAT:
     {

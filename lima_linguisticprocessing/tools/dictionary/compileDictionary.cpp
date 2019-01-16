@@ -85,35 +85,36 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   for(uint64_t i(1); i<argc; i++)
   {
     std::string arg(argv[i]);
-    int pos = -1;
+    size_t pos = -1;
 
     if (arg == "-h" || arg == "--help")
       param->help=true;
-    if ( (pos = arg.find("--extractKeyList=")) != -1 )
+
+    if ( (pos = arg.find("--extractKeyList=")) != std::string::npos )
     {
       param->extractKeys = arg.substr(pos+17);
     }
-    else if ( (pos = arg.find("--fsaKey=")) != -1 )
+    else if ( (pos = arg.find("--fsaKey=")) != std::string::npos )
     {
       param->fsaKey = arg.substr(pos+9);
     }
-    else if ( (pos = arg.find("--charChart=")) != -1 )
+    else if ( (pos = arg.find("--charChart=")) != std::string::npos )
     {
       param->charChart = arg.substr(pos+12);
     }
-    else if ( (pos = arg.find("--propertyFile=")) != -1 )
+    else if ( (pos = arg.find("--propertyFile=")) != std::string::npos )
     {
       param->propertyFile = arg.substr(pos+15);
     }
-    else if ( (pos = arg.find("--symbolicCodes=")) != -1 )
+    else if ( (pos = arg.find("--symbolicCodes=")) != std::string::npos )
     {
       param->symbolicCodes = arg.substr(pos+16);
     }
-    else if ( (pos = arg.find("--output=")) != -1 )
+    else if ( (pos = arg.find("--output=")) != std::string::npos )
     {
       param->output = arg.substr(pos+9);
     }
-    else if ( (pos = arg.find("--reverse-keys")) != -1 )
+    else if ( (pos = arg.find("--reverse-keys")) != std::string::npos )
     {
       param->reverseKeys = true;
     }

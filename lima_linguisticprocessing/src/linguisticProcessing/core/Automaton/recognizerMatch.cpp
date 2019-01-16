@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -162,7 +162,7 @@ LimaString RecognizerMatch::getString() const {
         str += t->stringForm();
       }
 
-      if (t->length() != t->stringForm().size())
+      if (t->length() != static_cast<uint64_t>(t->stringForm().size()))
         prevTokenIsSynthetic = true;
 
       currentPosition=t->position()+t->length();
@@ -198,7 +198,7 @@ LimaString RecognizerMatch::getString() const {
 
         str += t->stringForm();
 
-        if (t->length() != t->stringForm().size())
+        if (t->length() != static_cast<uint64_t>(t->stringForm().size()))
           prevTokenIsSynthetic = true;
 
         currentPosition=t->position()+t->length();

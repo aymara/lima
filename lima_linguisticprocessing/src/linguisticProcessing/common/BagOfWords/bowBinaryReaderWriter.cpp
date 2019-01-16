@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -134,7 +134,7 @@ void BoWBinaryReader::readHeader(std::istream& file)
     // read entity types
     Common::MediaticData::MediaticData::changeable().
     readEntityTypes(file,m_d->m_entityGroupIdMapping,m_d->m_entityTypeMapping);
-   
+
 #ifdef DEBUG_LP
     BOWLOGINIT;
     LDEBUG << "BoWBinaryReader::readHeader type mapping is (shown if logger = TRACE)";
@@ -256,6 +256,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
 #ifdef DEBUG_LP
         LDEBUG << "DOCUMENT_PROPERTIES_BLOC";
 #endif
+        break;
     }
     case ST_BLOC:
     { // do nothing ?
@@ -375,7 +376,7 @@ void BoWBinaryReaderPrivate::readPredicate(std::istream& file,
   uint64_t roleNb = Misc::readCodedInt(file);
 #ifdef DEBUG_LP
   LDEBUG << "BoWBinaryReader::readPredicate Read "<< roleNb<< "roles associated to the predicate";
-#endif  
+#endif
   bowPred->setPredicateType(predType);
   for (uint64_t i = 0; i < roleNb; i++)
   {
@@ -477,7 +478,7 @@ class BoWBinaryWriterPrivate
                         const boost::shared_ptr< BoWToken > token) const;
   void writePredicate(std::ostream& file,
                         const boost::shared_ptr< BoWPredicate > predicate) const;
-                        
+
   QMap< uint64_t,uint64_t > m_shiftFrom;
 };
 
@@ -488,7 +489,7 @@ BoWBinaryWriterPrivate::BoWBinaryWriterPrivate(const QMap< uint64_t, uint64_t >&
   BOWLOGINIT;
   LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << shiftFrom.size();
   LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << m_shiftFrom.size();
-#endif 
+#endif
 }
 
 BoWBinaryWriterPrivate::~BoWBinaryWriterPrivate()
@@ -637,7 +638,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 #endif
     }
     else
-    { 
+    {
 #ifdef DEBUG_LP
       LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (shiftForBeginIt-1).value();
 #endif
@@ -651,7 +652,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
 #endif
     }
     else
-    { 
+    {
 #ifdef DEBUG_LP
       LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (shiftForEndIt-1).value();
 #endif
