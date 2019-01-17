@@ -44,18 +44,6 @@ message("System name is ${CMAKE_SYSTEM_NAME}")
 # include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 SET(optionalLibs)
-message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
-# Find*.cmake will be searched in the following dirs if not found in system dirs
-set(CMAKE_MODULE_PATH
-    "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
-)
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "$ENV{LIMA_EXTERNALS}"
-)
 
 # include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 addQt5Modules(Core Xml XmlPatterns Network Test)
@@ -282,7 +270,6 @@ add_subdirectory(test)
 add_subdirectory(tools)
 add_subdirectory(conf)
 add_subdirectory(data)
-add_subdirectory(cmake)
 
 
 ########### install files ###############

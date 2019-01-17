@@ -5,7 +5,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 include(${CMAKE_SOURCE_DIR}/SystemSpecificInformations.cmake)
 
-include(ExternalProject)
+message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
+# Find*.cmake will be searched in the following dirs if not found in system dirs
+set(CMAKE_MODULE_PATH
+    "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
+    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
+    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
+    "/usr/share/cmake/Modules" # for those available on the system
+    "/usr/local/share/cmake/Modules" # for those available on the system
+)
+
+# find_path and find_library will search in these dirs too
+set(CMAKE_PREFIX_PATH
+    "$ENV{LIMA_EXTERNALS}"
+)
+
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
@@ -88,6 +102,8 @@ macro (ADD_DLL_TO_PATH _lib)
     )
     add_dependencies(rules-configEnv ${_lib}_dll)
 endmacro()
+
+add_subdirectory(cmake)
 
 include_directories(
   ${CMAKE_BINARY_DIR}/lima_common
