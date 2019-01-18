@@ -38,7 +38,9 @@
 #include "common/tools/FileUtils.h"
 
 #ifdef DEBUG_LIMA_GUI
-#define QT_QML_DEBUG
+  #ifndef QT_QML_DEBUG
+    #define QT_QML_DEBUG
+  #endif
 #endif
 #include <QtQuick>
 #include <QApplication>

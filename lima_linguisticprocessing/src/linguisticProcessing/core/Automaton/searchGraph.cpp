@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2018 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue May 24 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2018 by CEA LIST
+ * copyright   Copyright (C) 2005-2019 by CEA LIST
  *
  ***********************************************************************/
 
@@ -104,6 +104,7 @@ getNextVertex(const LinguisticGraph* graph,
 
 #ifdef DEBUG_LP
 LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const BackwardSearch::Vertex2EdgePair& x, const LinguisticGraph* graph) {
+  LIMA_UNUSED(graph);
   os << x.first << ":(" /*<< *(x.second.first) << "-" << *(x.second.second)*/ << ") ";
   return os;
 }
@@ -137,10 +138,12 @@ LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const SearchGraph *
   }
 
   const BackwardSearch *pBackward = dynamic_cast<const BackwardSearch*>(x);
-  if (pBackward != NULL) {
+  if (pBackward != NULL)
     output(os, *pBackward, graph);
-    return os;
-  }
+  else
+    throw LimaException("Unexpected type of LinguisticGraph");
+
+  return os;
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -62,12 +62,12 @@ public:
   TvgTestCaseProcessor( const std::string workingDirectory, std::ostream &os )
     : TestCaseProcessor( workingDirectory ), m_os(os)  {}
 
-  virtual TestCaseError processTestCase(const TestCase& testCase);
+  virtual TestCaseError processTestCase(const TestCase& testCase) override;
 
 private:
   std::ostream & m_os;
 };
-  
+
 TestCaseError TvgTestCaseProcessor::processTestCase(const TestCase& testCase) {
   m_os << testCase;
   return TestCaseError();
@@ -104,7 +104,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   Param param = {
     std::string(getenv("LIMA_RESOURCES")==0?"/usr/share/apps/lima/resources":getenv("LIMA_RESOURCES")),
     std::string(getenv("LIMA_CONF")==0?"/usr/share/config/lima":getenv("LIMA_CONF")),
@@ -113,7 +113,7 @@ int run(int argc,char** argv)
     std::string("."),
     std::vector<std::string>()
   };
-  
+
   if (argc>1)
   {
     for (int i = 1 ; i < argc; i++)
@@ -163,7 +163,7 @@ int run(int argc,char** argv)
     for( std::vector<std::string>::const_iterator fit = param.files.begin() ;
       fit != param.files.end() ; fit++ ) {
       string sfile(param.workingDir);
-      sfile.append("/").append(*fit); 
+      sfile.append("/").append(*fit);
       cout << "parse " << sfile << endl;
 
     // cerr << "<?xml version='1.0' encoding='UTF-8'?>\n";
