@@ -25,8 +25,13 @@
 #include "DynamicLibrariesManager.h"
 #include "common/LimaCommon.h"
 
-#ifndef WIN32
 #include <boost/filesystem.hpp>
+
+#ifdef WIN32
+#include <windows.h>
+#include <tlhelp32.h>
+#include <tchar.h>
+#else
 #include <link.h>
 #endif
 
@@ -63,7 +68,38 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
 {
     bool alreadyLoaded = false;
 
-#ifndef WIN32
+#ifdef WIN32
+    HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
+    MODULEENTRY32 me32;
+
+    hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetCurrentProcessId());
+    if (hModuleSnap == INVALID_HANDLE_VALUE)
+        throw LimaException("CreateToolhelp32Snapshoot returned INVALID_HANDLE_VALUE.");
+
+    me32.dwSize = sizeof(MODULEENTRY32);
+
+    if (!Module32First(hModuleSnap, &me32))
+    {
+        CloseHandle(hModuleSnap);
+        throw LimaException("Module32First failed.");
+    }
+
+    do
+    {
+        std::cerr << me32.szModule << std::endl;
+        std::string s(me32.szModule);
+        if (s.size() == 0)
+            return false;
+
+        boost::filesystem::path p(me32.szModule);
+        std::string fn = p.filename().string();
+        if (fn.find(libName, 0) == 0) // [plugin-name]
+            return true;
+
+    } while (Module32Next(hModuleSnap, &me32));
+
+    CloseHandle(hModuleSnap);
+#else
     std::pair<bool&, const std::string&> data(alreadyLoaded, libName);
 
     dl_iterate_phdr([](dl_phdr_info *info, size_t size, void* data) -> int {
@@ -155,15 +191,15 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LINFO <<"DynamicLibrariesManager::loadLibrary() -- "
-            <<"Failed to open supplementary lib " << libhandle->errorString();
+      LDEBUG << "DynamicLibrariesManager::loadLibrary() -- "
+             << "Failed to open supplementary lib " << libhandle->errorString();
       libhandle.reset();
     }
   }
   // now try system default search path
   if (!libhandle)
   {
-    LINFO << "Trying " << libName.c_str();
+    LDEBUG << "Trying " << libName.c_str();
     libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
@@ -178,7 +214,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR <<"DynamicLibrariesManager::loadLibrary() -- "
+      LERROR << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open system lib " << libhandle->errorString();
       return false;
     }
