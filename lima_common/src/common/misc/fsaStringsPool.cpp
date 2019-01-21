@@ -45,8 +45,6 @@ class FsaStringsPoolPrivate
   FsaStringsPoolPrivate();
   virtual ~FsaStringsPoolPrivate();
 
-  FsaStringsPoolPrivate(const FsaStringsPool& /*unused p*/);
-
   void clear();
   void clear(const uint32_t pos);
 
@@ -58,17 +56,13 @@ class FsaStringsPoolPrivate
 };
 
 FsaStringsPoolPrivate::FsaStringsPoolPrivate():
-    m_mainKeys(0),
+    m_mainKeys(nullptr),
     m_mainKeySize(0),
     m_additionalPool(),
-    m_cache(0),
+    m_cache(nullptr),
     m_mutex()
 {}
 
-
-FsaStringsPoolPrivate::FsaStringsPoolPrivate(const FsaStringsPool& /*unused p*/)
-{
-}
 
 FsaStringsPoolPrivate::~FsaStringsPoolPrivate()
 {
@@ -80,20 +74,9 @@ FsaStringsPool::FsaStringsPool():
 {}
 
 
-FsaStringsPool::FsaStringsPool(const FsaStringsPool& /*unused p*/) :
-    m_d(new FsaStringsPoolPrivate())
-{
-}
-
 FsaStringsPool::~FsaStringsPool()
 {
   delete m_d;
-}
-
-
-FsaStringsPool& FsaStringsPool::operator=(const FsaStringsPool& /*unused p*/)
-{
-  return (*this);
 }
 
 void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)

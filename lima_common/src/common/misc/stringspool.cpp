@@ -149,9 +149,6 @@ StringsPool::StringsPool():
 {
 }
 
-StringsPool::StringsPool(const StringsPool& /*unused p*/) {}
-StringsPool& StringsPool::operator=(const StringsPool& /*unused p*/) {return *this;}
-
 StringsPool::~StringsPool()
 {
   delete m_d;
