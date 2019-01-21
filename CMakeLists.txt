@@ -114,9 +114,9 @@ include_directories(
 add_subdirectory(lima_common)
 
 include_directories(
-  {CMAKE_BINARY_DIR}/lima_linguisticprocessing
-  {CMAKE_BINARY_DIR}/lima_linguisticprocessing/src
-  {CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing
   lima_linguisticprocessing
   lima_linguisticprocessing/src
   lima_linguisticprocessing/src/linguisticProcessing
