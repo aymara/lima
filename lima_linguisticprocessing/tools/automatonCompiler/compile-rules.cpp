@@ -585,16 +585,16 @@ std::vector<std::string> getDynamicLibraryNames(
             addLibs(pu, libNames);
             // @todo: should be recursive
           }
-          catch (NoSuchGroup) {} // missing group for processUnit in pipeline: ignored
+          catch (NoSuchGroup &) {} // missing group for processUnit in pipeline: ignored
         }
         return libNames;
       }
-      catch (NoSuchGroup)
+      catch (NoSuchGroup &)
       {
         std::cerr << "Warning: config file for modex has no group '" << pipeline
                   << "' in 'Processors' : ignored" << std::endl;
       }
-      catch (NoSuchList) {} // no processUnitSequence list : ignored
+      catch (NoSuchList &) {} // no processUnitSequence list : ignored
     }
 
     // if no pipeline specified, go through all groups

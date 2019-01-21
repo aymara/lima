@@ -374,7 +374,10 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT Eigen::MatrixXi viterbiDecode(
   {
     viterbi(i+1)=bp(i,viterbi(i));
   }
+
   float viterbi_score=trellis.row(trellis.rows()-1).maxCoeff();
-//   std::cout<<"Viterbi score of the sentence: "<<viterbi_score<<std::endl;
+  LIMA_UNUSED(viterbi_score);
+  //std::cout<<"Viterbi score of the sentence: "<<viterbi_score<<std::endl;
+
   return viterbi.colwise().reverse();
 }

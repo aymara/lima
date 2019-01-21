@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -92,7 +92,7 @@ bool Condition::isFulfilled(const Text& text) const
       }
     }
   }
-  catch (BoundsErrorException)
+  catch (BoundsErrorException&)
   {
 #ifdef DEBUG_LP
     TOKENIZERLOGINIT;

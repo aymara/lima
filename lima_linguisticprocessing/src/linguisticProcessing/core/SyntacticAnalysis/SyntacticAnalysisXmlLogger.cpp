@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /** @brief       Debug logger for dependency graphs
   *
   * @file        SyntacticAnalysisXmlLogger.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2005 by CEA
   * @date
@@ -192,7 +192,7 @@ void SyntacticAnalysisXmlLogger::dumpLimaData(std::ostream& os,
       }
       boost::breadth_first_visit(*graph, begin, boost::visitor(vis));
   }
-  catch (DumpGraphVisitor::EndOfSearch)
+  catch (DumpGraphVisitor::EndOfSearch&)
   { //do nothing: normal ending
   }
   os << "</sentence>" << std::endl;
@@ -270,7 +270,7 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
             xmlStream << "<dep v=\"" << targV;
 //             xmlStream << "\" c=\"" << chainsMap[*depIt];
             std::string relName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relTypeMap[*depIt]);
-            if (relName.empty()) 
+            if (relName.empty())
             {
               relName="UNKNOWN";
             }
@@ -278,9 +278,9 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
         }
         xmlStream << "</dependents>" << std::endl;
     }
-    
+
     const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
-    
+
     MorphoSyntacticData* word = get(vertex_data, graph, v);
     word->outputXml(xmlStream,*m_propertyCodeManager,sp);
     xmlStream << "<ref>" << tokenId << "</ref>" << std::endl;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,17 +21,17 @@
 /**
   *
   * @file        WordSenseDisambiguator.cpp
-  * @author      Claire Mouton (Claire.Mouton@cea.fr) 
+  * @author      Claire Mouton (Claire.Mouton@cea.fr)
 
   *              Copyright (c) 2010 by CEA
   * @date        Created on Aug, 17 2010
   *
   */
- 
+
 #include "WordSenseDisambiguator.h"
 #include <boost/algorithm/string.hpp>
 //#include "boost/graph/adjacency_list.hpp"
- 
+
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/misc/stringspool.h"
 #include "common/time/traceUtils.h"
@@ -68,29 +68,29 @@ namespace LinguisticProcessing
 {
 namespace WordSenseDisambiguation
 {
-SimpleFactory<MediaProcessUnit,WordSenseDisambiguator> wordSenseDisambiguationFactory(WORDSENSEDISAMBIGUATIONPU_CLASSID);             
+SimpleFactory<MediaProcessUnit,WordSenseDisambiguator> wordSenseDisambiguationFactory(WORDSENSEDISAMBIGUATIONPU_CLASSID);
 
 
 void WordSenseDisambiguator::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
-{  
+{
   LOGINIT("WordSenseDisambiguator");
   m_language=manager->getInitializationParameters().media;
-  
-  try 
+
+  try
   {
       string mode = unitConfiguration.getParamsValueAtKey("mode");
       LDEBUG << "Reading mode : " << mode;
       if (mode.compare("b_most_frequent")==0)
       {
     m_mode = B_MOST_FREQUENT;
-      } 
+      }
       else if (mode.compare("b_Romanseval_most_frequent")==0)
       {
     m_mode = B_ROMANSEVAL_MOST_FREQUENT;
-      } 
+      }
       else if (mode.compare("b_Jaws_most_frequent")==0)
       {
     m_mode = B_JAWS_MOST_FREQUENT;
@@ -98,8 +98,8 @@ void WordSenseDisambiguator::init(
       else if (mode.compare("s_Wsi_mrd")==0)
       {
     m_mode = S_WSI_MRD;
-      } 
-      else if (mode.compare("s_Wsi_Dempster_Schaffer")==0)   
+      }
+      else if (mode.compare("s_Wsi_Dempster_Schaffer")==0)
       {
     m_mode = S_WSI_DS;
       }
@@ -115,13 +115,13 @@ void WordSenseDisambiguator::init(
     LERROR << "Mode is set to UNKNOWN by default.";
   }
   LDEBUG << "Mode is "<< m_mode << " - "  << mode();
-  try 
+  try
   {
       string mapping = unitConfiguration.getParamsValueAtKey("mapping");
       if (mapping.compare("m_Romanseval_senses"))
       {
     m_mappingMode = M_ROMANSEVAL_SENSES;
-      } 
+      }
       else if (mapping.compare("m_Jaws_senses"))
       {
     m_mappingMode = M_JAWS_SENSES;
@@ -130,16 +130,16 @@ void WordSenseDisambiguator::init(
       {
     m_mappingMode = M_UNKNOWN;
       }
-      try 
+      try
       {
   string mappingFile = unitConfiguration.getParamsValueAtKey("mappingFile");
-  loadMapping(mappingFile);  
+  loadMapping(mappingFile);
       }
       catch (Common::XMLConfigurationFiles::NoSuchParam& )
       {
-  LERROR << "No 'mappingFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;  
+  LERROR << "No 'mappingFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
   LERROR << "Mapping will not be performed.";
-      } 
+      }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -147,7 +147,7 @@ void WordSenseDisambiguator::init(
     m_mappingMode = M_UNKNOWN;
     LERROR << "Scope is set to UNKNOWN by default.";
   }
-  
+
   string dictionaryPath = "";
   try {
     dictionaryPath=unitConfiguration.getParamsValueAtKey("dictionaryFile");
@@ -156,12 +156,12 @@ void WordSenseDisambiguator::init(
   {
     LERROR << "No 'dictionaryFile' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     dictionaryPath = "words.ids";
-    LERROR << "DictionaryFile is set to 'words.ids' by default.";    
+    LERROR << "DictionaryFile is set to 'words.ids' by default.";
   }
   initDictionaries(dictionaryPath);
-  
-  
-  
+
+
+
   try {
     m_sensesPath=unitConfiguration.getParamsValueAtKey("sensesPath");
   }
@@ -169,30 +169,30 @@ void WordSenseDisambiguator::init(
   {
     LERROR << "No 'sensesPath' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_sensesPath = "clusterDir";
-    LERROR << "SensesPath is set to 'clusterDir' by default.";    
+    LERROR << "SensesPath is set to 'clusterDir' by default.";
   }
-  
+
   LDEBUG << "SensesPath config ok " ;
-  
-  
+
+
   if (mode()== S_WSI_MRD || mode()== S_WSI_DS) {
     try {
       deque<string> tmpDeque = unitConfiguration.getListsValueAtKey("NounContextList");
-      for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
+      for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++)
       {
         m_contextList["N"].insert(tmpDeque.begin(), tmpDeque.end());
       }
       tmpDeque.clear();
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
-    {  
-      LWARN << "No 'NounContextList' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;        
-      LWARN << "Default list for NounContext is set to : SUJ_V, COD_V, COMPDUNOM, COMPDUNOM.reverse, ADJPRENSUB.reverse, SUBADJPOST.rverse, window5" ; 
+    {
+      LWARN << "No 'NounContextList' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+      LWARN << "Default list for NounContext is set to : SUJ_V, COD_V, COMPDUNOM, COMPDUNOM.reverse, ADJPRENSUB.reverse, SUBADJPOST.rverse, window5" ;
     }
-  
-  
-    LDEBUG << "ContextLists config ok " ;  
-  
+
+
+    LDEBUG << "ContextLists config ok " ;
+
     try {
       m_knnDir=unitConfiguration.getParamsValueAtKey("knnDir");
     }
@@ -200,29 +200,29 @@ void WordSenseDisambiguator::init(
     {
       LERROR << "No 'knnDir' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     m_knnDir = "knnall";
-      LERROR << "KnnDir is set to 'knnall' by default.";    
+      LERROR << "KnnDir is set to 'knnall' by default.";
     }
-  
+
     LDEBUG << "KnnDir config ok " ;
-  
+
     try
     {
-      const map<string,string>& knnSearchConfig=unitConfiguration.getMapAtKey("knnsearchConfig");    
+      const map<string,string>& knnSearchConfig=unitConfiguration.getMapAtKey("knnsearchConfig");
       m_searcher = new KnnSearcher(knnSearchConfig);
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
-      LERROR << "No 'knnsearchConfig' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;   
+      LERROR << "No 'knnsearchConfig' defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     }
-  
-    LDEBUG << "KnnSearchConfig config ok " ; 
+
+    LDEBUG << "KnnSearchConfig config ok " ;
   } // end mode == S_WSI_XX
-  
+
   cerr << m_language << endl;
   const Common::PropertyCode::PropertyManager& macroManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO");
 
   m_macroAccessor=&macroManager.getPropertyAccessor();
-  
+
   m_L_NC = macroManager.getPropertyValue("NC");
   m_L_NP = macroManager.getPropertyValue("NP");
   m_L_V = macroManager.getPropertyValue("V");
@@ -231,22 +231,22 @@ void WordSenseDisambiguator::init(
 }
 
 
-void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath) 
+void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath)
 {
   LOGINIT("WordSenseDisambiguator");
   LINFO << "Loading dictionaries from " << dictionaryPath << ".";
-  
+
   ifstream is(dictionaryPath.c_str(), std::ifstream::binary);
   if ( !is.good() ) {
       LERROR << "File " << dictionaryPath << " not read" ;
       if ( is.eof() ) {
-  LERROR << "(reason is eof)" ; 
+  LERROR << "(reason is eof)" ;
       } else if ( is.fail() ) {
-  LERROR << "(reason is fail)" ; 
+  LERROR << "(reason is fail)" ;
       } else if ( is.bad() ) {
-  LERROR << "(reason is bad)" ; 
+  LERROR << "(reason is bad)" ;
       } else {
-  LERROR << "(reason unknown)" ; 
+  LERROR << "(reason unknown)" ;
       }
       LERROR << ". ";
       return;
@@ -257,49 +257,49 @@ void WordSenseDisambiguator::initDictionaries(const string& dictionaryPath)
     boost::split( strs, s, boost::is_any_of(" ") );
     stringstream ss;
     ss << strs.at(1);
-    uint64_t id;    
+    uint64_t id;
     ss>> id;
     m_lemma2Index[strs.at(0)] = id;
-    m_index2Lemma[id] = strs.at(0);    
+    m_index2Lemma[id] = strs.at(0);
   }
   is.close();
   LINFO << "Dictionaries loaded from " << dictionaryPath << ".";
-  
+
 }
 
 
 
-void WordSenseDisambiguator::loadMapping(const string& mappingPath) 
+void WordSenseDisambiguator::loadMapping(const string& mappingPath)
 {
   LOGINIT("WordSenseDisambiguator");
   ifstream is(mappingPath.c_str(), std::ifstream::binary);
   if ( !is.good() ) {
       LERROR << "File " << mappingPath << " not read" ;
       if ( is.eof() ) {
-  LERROR << "(reason is eof)" ; 
+  LERROR << "(reason is eof)" ;
       } else if ( is.fail() ) {
-  LERROR << "(reason is fail)" ; 
+  LERROR << "(reason is fail)" ;
       } else if ( is.bad() ) {
-  LERROR << "(reason is bad)" ; 
+  LERROR << "(reason is bad)" ;
       } else {
-  LERROR << "(reason unknown)" ; 
+  LERROR << "(reason unknown)" ;
       }
       LERROR << ". ";
-      return; 
+      return;
   }
   string s;
   while (getline(is, s)) {
-    
+
   }
   is.close();
   LINFO << "Mapping loaded from " << mappingPath << ".";
-  
+
 }
 
 /**
- * 
- * @param analysis 
- * @return 
+ *
+ * @param analysis
+ * @return
  */
 LimaStatusCode WordSenseDisambiguator::process(
   AnalysisContent& analysis) const
@@ -307,11 +307,11 @@ LimaStatusCode WordSenseDisambiguator::process(
   LOGINIT("WordSenseDisambiguator");
   TimeUtils::updateCurrentTime();
   LINFO << "start WordSenseDisambiguator";
-  
-  
-  
-    
-  // create syntacticData  
+
+
+
+
+  // create syntacticData
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
@@ -336,32 +336,32 @@ LimaStatusCode WordSenseDisambiguator::process(
     return MISSING_DATA;
   }
 
-  
+
   /** Access to or creation of an annotation graph */
   AnnotationData* annotationData=static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     annotationData=new AnnotationData();
-    /** Creates a node in the annotation graph for each node of the 
+    /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
     if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
     {
       static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
-    } 
+    }
     if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
     {
-      
+
       static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
     }
-   
+
     analysis.setData("AnnotationData",annotationData);
   }
 
 
   /** To be able to dump the content of an annotation, a function pointer with
     * a precise signature has to be givent to the annotation graph. See
-    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint 
+    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint
     * function */
   if (annotationData->dumpFunction("WordSense") == 0)
   {
@@ -373,12 +373,12 @@ LimaStatusCode WordSenseDisambiguator::process(
   LinguisticGraph* graph=anagraph->getGraph();
   set< LinguisticGraphVertex > alreadyProcessedVertices;
 
-  
-  
+
+
   map<string, WordUnit> referenceWords;
   vector<TargetWordWithContext> targetWords;
-  
-  
+
+
   //LinguisticGraphVertex beginSentence=sb->getStartVertex();
   // for each sentence
   // ??OME2 for (SegmentationData::const_iterator boundItr=sb->begin();
@@ -386,7 +386,7 @@ LimaStatusCode WordSenseDisambiguator::process(
   for (std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
        boundItr!=(sb->getSegments()).end();
        boundItr++)
-  {    
+  {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
     LINFO << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
@@ -397,19 +397,19 @@ LimaStatusCode WordSenseDisambiguator::process(
     vector<set<uint64_t> >lemmasBuffer;
     while (v!=endSentence)
     {
-  //LDEBUG << "Processing vertex : " << v ; 
+  //LDEBUG << "Processing vertex : " << v ;
       /*
       if (alreadyProcessedVertices.find(v) != alreadyProcessedVertices.end())
       {
   LinguisticGraphOutEdgeIt ite, ite_end;
   boost::tie(ite, ite_end)=boost::out_edges(v, *graph);
   v=target(*ite, *graph);
-        continue;           
+        continue;
       }*/
-      
+
       // if v is empty, continue
       MorphoSyntacticData* data = get(vertex_data,*graph,v);
-      if (data == 0 
+      if (data == 0
     || data->empty() )
       {
   LinguisticGraphOutEdgeIt ite, ite_end;
@@ -418,31 +418,31 @@ LimaStatusCode WordSenseDisambiguator::process(
   continue;
       }
       set<string> lemmas;
-      getLemmas(data, stringspool, lemmas);     
-      set<uint64_t> lemmasIds; 
-      for (set<string>::const_iterator itLemmas = lemmas.begin(); itLemmas != lemmas.end(); itLemmas++) 
-      { 
+      getLemmas(data, stringspool, lemmas);
+      set<uint64_t> lemmasIds;
+      for (set<string>::const_iterator itLemmas = lemmas.begin(); itLemmas != lemmas.end(); itLemmas++)
+      {
   // Store preview window contexts
   LDEBUG << "Storing preview window contexts... ";
-  if ( data->firstValue(*m_macroAccessor) == m_L_NC 
-    || data->firstValue(*m_macroAccessor) == m_L_NP 
-    || data->firstValue(*m_macroAccessor) == m_L_V 
-    || data->firstValue(*m_macroAccessor) == m_L_ADJ 
-    || data->firstValue(*m_macroAccessor) == m_L_ADV 
+  if ( data->firstValue(*m_macroAccessor) == m_L_NC
+    || data->firstValue(*m_macroAccessor) == m_L_NP
+    || data->firstValue(*m_macroAccessor) == m_L_V
+    || data->firstValue(*m_macroAccessor) == m_L_ADJ
+    || data->firstValue(*m_macroAccessor) == m_L_ADV
   )
   {
     //LDEBUG << "lemma : "<< *itLemmas ;
     lemmasIds.insert(lemma2Index(*itLemmas));
   }
-  
-  // Load matching Reference Words  
-  if(data->firstValue(*m_macroAccessor) != m_L_NC 
+
+  // Load matching Reference Words
+  if(data->firstValue(*m_macroAccessor) != m_L_NC
   && data->firstValue(*m_macroAccessor) != m_L_NP)
   {
-    // Don't process nouns  
+    // Don't process nouns
     continue;
-  }                
-  
+  }
+
   WordUnit wu(m_searcher, m_lemma2Index, m_index2Lemma, *itLemmas, mode(), m_sensesPath);
   /*
   LDEBUG << "test size : " << wu.wordSensesUnits().size();
@@ -450,89 +450,89 @@ LimaStatusCode WordSenseDisambiguator::process(
     LDEBUG << "test begint it : " << wu.wordSensesUnits().begin()->senseId();
     LDEBUG << "test begint it : " << (++wu.wordSensesUnits().begin())->senseId();
     }
-  for(set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin(); 
-           itSenses!= wu.wordSensesUnits().end(); 
+  for(set<WordSenseUnit>::iterator itSenses = wu.wordSensesUnits().begin();
+           itSenses!= wu.wordSensesUnits().end();
            itSenses++ ) {
-    
+
   LDEBUG << "Checking 4 Sense id "<< *itLemmas << " : " << itSenses->senseId()
-    << " : " << itSenses->senseTag() 
-    << " : " << itSenses->parentLemmaId(); 
+    << " : " << itSenses->senseTag()
+    << " : " << itSenses->parentLemmaId();
   }*/
-  
+
   referenceWords[*itLemmas] = wu;
-  
-  
-  LDEBUG << "Added wordunit : " << *itLemmas << " : " << wu ; 
-  
-    
-    
+
+
+  LDEBUG << "Added wordunit : " << *itLemmas << " : " << wu ;
+
+
+
       }
       lemmasBuffer.push_back(lemmasIds);
-      
-      // Load matching Target Words        
+
+      // Load matching Target Words
       //LDEBUG << "Loading matching target words... ";
       map<string, set<uint64_t> >context = map<string, set<uint64_t> >();
-      
+
       // Get syntactic contexts
-      //int nbContxts = getContext(syntacticData, v, graph, stringspool, context);      
+      //int nbContxts = getContext(syntacticData, v, graph, stringspool, context);
       //LDEBUG << "Nb contexts : " << nbContxts << " vs. " << context.size();
-      
+
       // Add prestored preview window context
-      addPreviewWindowContext(lemmasBuffer, context);   
-      
-      
+      addPreviewWindowContext(lemmasBuffer, context);
+
+
       // Store context into targetWords
        /* print debug */
        /*
       LINFO << "Storing current context into targetWords... ";
-      for (set<uint64_t>::iterator itLemmaId = lemmasIds.begin(); 
-        itLemmaId != lemmasIds.end(); 
+      for (set<uint64_t>::iterator itLemmaId = lemmasIds.begin();
+        itLemmaId != lemmasIds.end();
         itLemmaId++)
-      { 
+      {
   cerr << "Adding "<< *itLemmaId << endl;
   for (SemanticContext::iterator itCtxt = context.begin();
                itCtxt!= context.end();
                itCtxt++)
   {
-    LDEBUG << itCtxt->first << " : " ; 
+    LDEBUG << itCtxt->first << " : " ;
     for (set<uint64_t>::iterator itValues = itCtxt->second.begin();
             itValues!= itCtxt->second.end();
             itValues++)
     {
-      LDEBUG << *itValues ; 
+      LDEBUG << *itValues ;
     }
   }
       }
       */
       /* end print debug */
-      
-      targetWords.push_back(TargetWordWithContext(lemmas, v, context));      
-           
-      
-      // Add postview window contexts      
+
+      targetWords.push_back(TargetWordWithContext(lemmas, v, context));
+
+
+      // Add postview window contexts
       //LDEBUG << "Adding postview window contexts... ";
       addPostviewWindowContext(lemmasIds, targetWords);
-      
-            
-      // Prepare Next   
-      
+
+
+      // Prepare Next
+
       alreadyProcessedVertices.insert(v);
       LinguisticGraphOutEdgeIt ite, ite_end;
       boost::tie(ite, ite_end)=boost::out_edges(v, *graph);
       v=target(*ite, *graph);
-    } //end for each word in sentence 
-    
-    
+    } //end for each word in sentence
+
+
     // Disambiguate Target Words (separate step due to window contexts addition)
-    for (vector<TargetWordWithContext>::const_iterator  itTargets = targetWords.begin();   
+    for (vector<TargetWordWithContext>::const_iterator  itTargets = targetWords.begin();
                  itTargets != targetWords.end();
-                 itTargets++) 
+                 itTargets++)
     {
       for (set<string>::const_iterator itLemmas = itTargets->lemmas.begin();
                itLemmas!= itTargets->lemmas.end();
                itLemmas++)
       {
-  //* debug printing 
+  //* debug printing
   LDEBUG << "Context of " << *itLemmas << " : ";
   for (SemanticContext::const_iterator itContext = itTargets->context.begin();
                itContext != itTargets->context.end();
@@ -540,27 +540,27 @@ LimaStatusCode WordSenseDisambiguator::process(
   {
     LDEBUG << "Rel " << itContext->first << " : ";
     for (set<uint64_t>::iterator itContextValue = itContext->second.begin();
-               itContextValue != itContext->second.end(); 
+               itContextValue != itContext->second.end();
              itContextValue++)
-    {  
-      if(m_index2Lemma.find(*itContextValue)!=m_index2Lemma.end()) 
+    {
+      if(m_index2Lemma.find(*itContextValue)!=m_index2Lemma.end())
       {
         LDEBUG << "Contextual value : " << index2Lemma(*itContextValue) ;
       }
     }
-      
+
   }
-  //* end debug printing 
-      
+  //* end debug printing
+
   // Instanciate annotation
   WordSenseAnnotation wsa (mode(), mapping(), itTargets->vertex);
-  
+
   // Disambiguate
-  LDEBUG << *itLemmas ;      
-  if (referenceWords.find(*itLemmas) != referenceWords.end()) 
+  LDEBUG << *itLemmas ;
+  if (referenceWords.find(*itLemmas) != referenceWords.end())
   {
     LDEBUG << "Reference word found for " << *itLemmas << " and mode is " << mode();
-    bool disambOk=false;  
+    bool disambOk=false;
     switch (mode())
     {
       case B_MOST_FREQUENT:
@@ -571,14 +571,14 @@ LimaStatusCode WordSenseDisambiguator::process(
         break;
       case S_WSI_MRD:
         LDEBUG << "Disambiguation processing : WSI_MRD";
-        try   
+        try
         {
-    disambOk=wsa.disambiguate(m_searcher, referenceWords[*itLemmas], itTargets->context, 0.95, 'A');
+          disambOk=wsa.disambiguate(m_searcher, referenceWords[*itLemmas], itTargets->context, 0.95, 'A');
         }
-        catch (std::exception e)
+        catch (std::exception &e)
         {
-      LDEBUG << "LPException" ;
-      LDEBUG << e.what() ;
+          LDEBUG << "LPException";
+          LDEBUG << e.what();
         }
         break;
       default:
@@ -586,27 +586,27 @@ LimaStatusCode WordSenseDisambiguator::process(
         break;
     }
     if (disambOk)
-    { 
+    {
       LINFO << "write word sense annotations for "<< *itLemmas <<" on graph";
       wsa.writeAnnotation(annotationData);
     }
     else
     {
-      LWARN << *itLemmas << " was not disambiguated (still ambiguous).";  
+      LWARN << *itLemmas << " was not disambiguated (still ambiguous).";
     }
   }
   else
   {
-    LWARN << *itLemmas << " was not disambiguated (no referenceWord).";  
+    LWARN << *itLemmas << " was not disambiguated (no referenceWord).";
   }
       } // end ambiguous lemmas
-    } // end ambiguous words 
-    
-    // Release target words  
-    targetWords.clear(); 
+    } // end ambiguous words
+
+    // Release target words
+    targetWords.clear();
     beginSentence=endSentence;
   } // end for each sentence in Doc
-  
+
   // Release Reference Words
   referenceWords.clear();
 
@@ -615,41 +615,41 @@ LimaStatusCode WordSenseDisambiguator::process(
 }
 
 int WordSenseDisambiguator::addPostviewWindowContext(const set<uint64_t>& lemmasIds,
-                                                     vector<TargetWordWithContext>& targetWordsWithContext) const 
+                                                     vector<TargetWordWithContext>& targetWordsWithContext) const
 {
   int cntPostContext = 0;
   int maxPostContext = 20;
   if (lemmasIds.size()>0)
   {
-    for (vector<TargetWordWithContext>::reverse_iterator itStoredContext = targetWordsWithContext.rbegin()+1; 
-                itStoredContext != targetWordsWithContext.rend(); 
-                itStoredContext++) 
+    for (vector<TargetWordWithContext>::reverse_iterator itStoredContext = targetWordsWithContext.rbegin()+1;
+                itStoredContext != targetWordsWithContext.rend();
+                itStoredContext++)
     {
       if (cntPostContext >= maxPostContext)
       {
   break;
       }
-      if (cntPostContext < 5) 
-      {    
+      if (cntPostContext < 5)
+      {
   if (contextList("N").find("window5") != contextList("N").end())
   {
-    itStoredContext->context["window5"].insert(lemmasIds.begin(), lemmasIds.end());    
+    itStoredContext->context["window5"].insert(lemmasIds.begin(), lemmasIds.end());
   }
-  if (cntPostContext < 10) 
+  if (cntPostContext < 10)
   {
     if (contextList("N").find("window10") != contextList("N").end())
     {
-      itStoredContext->context["window10"].insert(lemmasIds.begin(), lemmasIds.end());     
+      itStoredContext->context["window10"].insert(lemmasIds.begin(), lemmasIds.end());
     }
-    if (cntPostContext < 20) 
+    if (cntPostContext < 20)
     {
       if (contextList("N").find("window20") != contextList("N").end())
       {
-        itStoredContext->context["window20"].insert(lemmasIds.begin(), lemmasIds.end());    
+        itStoredContext->context["window20"].insert(lemmasIds.begin(), lemmasIds.end());
       }
     }
   }
-      }   
+      }
       cntPostContext++;
     }
   }
@@ -657,14 +657,14 @@ int WordSenseDisambiguator::addPostviewWindowContext(const set<uint64_t>& lemmas
 }
 
 
-int WordSenseDisambiguator::addPreviewWindowContext(vector<set<uint64_t> >& previewWindow, map<string, set<uint64_t> >& context) const 
+int WordSenseDisambiguator::addPreviewWindowContext(vector<set<uint64_t> >& previewWindow, map<string, set<uint64_t> >& context) const
 {
   int cnt = 0;
   int max = 20;
   cerr << "previewWindow.size() " << previewWindow.size() << endl;
-  for (vector<set<uint64_t> >::reverse_iterator itWindow = previewWindow.rbegin()+1; 
-               itWindow != previewWindow.rend(); 
-               itWindow++) 
+  for (vector<set<uint64_t> >::reverse_iterator itWindow = previewWindow.rbegin()+1;
+               itWindow != previewWindow.rend();
+               itWindow++)
   {
     if (cnt>=max)
     {
@@ -674,38 +674,38 @@ int WordSenseDisambiguator::addPreviewWindowContext(vector<set<uint64_t> >& prev
     {
       if (contextList("N").find("window5") != contextList("N").end())
       {
-  context["window5"].insert(itWindow->begin(), itWindow->end());    
+  context["window5"].insert(itWindow->begin(), itWindow->end());
       }
       if (cnt < 10)
       {
   if (contextList("N").find("window10") != contextList("N").end())
   {
-    context["window10"].insert(itWindow->begin(), itWindow->end());    
+    context["window10"].insert(itWindow->begin(), itWindow->end());
   }
   if (cnt < 20)
   {
     if (contextList("N").find("window20") != contextList("N").end())
     {
-      context["window20"].insert(itWindow->begin(), itWindow->end());    
+      context["window20"].insert(itWindow->begin(), itWindow->end());
     }
   }
       }
     }
     cnt++;
-  }  
+  }
   return context.size();
 }
 
 int WordSenseDisambiguator::getContext(SyntacticData* syntacticData,
-                                       LinguisticGraphVertex& v, 
+                                       LinguisticGraphVertex& v,
                                        LinguisticGraph* graph,
                                        const FsaStringsPool& stringspool,
-                                       map<string, set<uint64_t> >& context) const 
-{ 
-  // get Dependency graph and relations  
+                                       map<string, set<uint64_t> >& context) const
+{
+  // get Dependency graph and relations
   EdgeDepRelTypePropertyMap map = get(edge_deprel_type, *(syntacticData-> dependencyGraph()));
   DependencyGraphVertex dv = syntacticData-> depVertexForTokenVertex(v);
-  
+
   // out edges
   DependencyGraphOutEdgeIt it_out, it_out_end;
   boost::tie(it_out, it_out_end) = out_edges(dv, *(syntacticData-> dependencyGraph()));
@@ -724,8 +724,8 @@ int WordSenseDisambiguator::getContext(SyntacticData* syntacticData,
       }
     }
   }
-  
-  // in edges  
+
+  // in edges
   DependencyGraphInEdgeIt it_in, it_in_end;
   boost::tie(it_in, it_in_end) = in_edges(dv, *(syntacticData-> dependencyGraph()));
   for (; it_in != it_in_end; it_in++)
@@ -742,15 +742,15 @@ int WordSenseDisambiguator::getContext(SyntacticData* syntacticData,
   context[relation].insert(lemma2Index(*itLemmas));
       }
     }
-  }  
+  }
   return context.size();
 }
 
 
 int WordSenseDisambiguator::getLemmas (MorphoSyntacticData* data,
                                        const FsaStringsPool& stringspool,
-                                       set<string>& lemmas) const 
-{    
+                                       set<string>& lemmas) const
+{
   std::set<StringsPoolIndex> forms=data->allLemma();
   for (std::set<StringsPoolIndex>::const_iterator formItr=forms.begin();
     formItr!=forms.end();

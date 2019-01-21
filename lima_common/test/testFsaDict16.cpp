@@ -388,7 +388,7 @@ template <typename dictType>
         assert( spelling == (*lemma) );
       }
     }
-    catch(std::logic_error e ) {
+    catch( std::logic_error &e ) {
       std::cerr << "testSpelling exception: " << e.what() << std::endl;
     }
     lemma++;
@@ -415,7 +415,7 @@ void DictTester<dictType>::testSuper(
                   << std::endl;
       }
     }
-    catch(std::logic_error e ) {
+    catch( std::logic_error &e ) {
       std::cerr << "testSuper: getSuperWords exception: " << e.what() << std::endl;
     }
   }
@@ -459,7 +459,7 @@ template <typename dictType>
         }
       }
     }
-    catch(std::logic_error e ) {
+    catch( std::logic_error &e ) {
       std::cerr << "testSub: getSubWords exception: " << e.what() << std::endl;
     }
     offsetIt++;
@@ -482,7 +482,7 @@ void DictTester<dictType>::write( void ) {
        m_dico.write(m_param.outputDico);
     }
   }
-  catch(LimaException e ) {
+  catch( LimaException &e ) {
     std::cout << "write: exception: " << e.what() << std::endl;
   }
 }
