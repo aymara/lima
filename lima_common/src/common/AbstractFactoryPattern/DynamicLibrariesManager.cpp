@@ -86,7 +86,7 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
 
     do
     {
-        std::cerr << me32.szModule << std::endl;
+        //std::cerr << me32.szModule << std::endl;
         std::string s(me32.szModule);
         if (s.size() == 0)
             return false;
@@ -94,7 +94,10 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
         boost::filesystem::path p(me32.szModule);
         std::string fn = p.filename().string();
         if (fn.find(libName, 0) == 0) // [plugin-name]
+        {
+            //std::cerr << "An attempt to load same lib twice detected" << std::endl;
             return true;
+        }
 
     } while (Module32Next(hModuleSnap, &me32));
 
