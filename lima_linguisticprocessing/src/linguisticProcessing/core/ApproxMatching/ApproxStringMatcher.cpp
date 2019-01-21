@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2017 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -128,7 +128,7 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
   }
   return true;
 }
-  
+
 ApproxStringMatcher::ApproxStringMatcher() :
     m_language(0),
     m_neCode(0),
@@ -151,7 +151,7 @@ void ApproxStringMatcher::init(
   Manager* manager)
 {
   MORPHOLOGINIT;
-  
+
   m_language = manager->getInitializationParameters().media;
   m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
 
@@ -201,7 +201,7 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'NPMicroCategory' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  
+
   // get index of names
   std::string nameindexId;
   try
@@ -215,7 +215,7 @@ void ApproxStringMatcher::init(
   }
   const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
   m_nameIndex=static_cast<const NameIndexResource*>(res);
-  
+
   /*
   // get dictionary of normalized forms
   string dico;
@@ -233,7 +233,7 @@ void ApproxStringMatcher::init(
   m_lexicon = lexicon->getAccessByString();
   */
 
-  // get max edit distance 
+  // get max edit distance
   try
   {
     std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxNumError");
@@ -257,7 +257,7 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
 
-  // get generalization pattern 
+  // get generalization pattern
   try
   {
     std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalizationRules");
@@ -340,7 +340,7 @@ LimaStatusCode ApproxStringMatcher::process(
   // Initalize list of suggestions, ordered by number of errors and position in text
   OrderedSolution solutions;
   // std::vector<Solution> result;
-  
+
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
   if( (indexName.length() == 0) || !(m_nameIndex->withIndex()) ) {
@@ -375,10 +375,11 @@ LimaStatusCode ApproxStringMatcher::process(
     bool outOfGraph=false;
 #ifdef DEBUG_LP
     std::deque<LinguisticGraphVertex>::const_iterator vIt2 = solution.vertices.begin();
-    if( vIt2 != solution.vertices.end() )
+    if( vIt2 != solution.vertices.end() ) {
       LDEBUG << *(vIt2++);
-    for( ; vIt2 != solution.vertices.end() ; vIt2++ )
-    {
+    }
+
+    for( ; vIt2 != solution.vertices.end() ; vIt2++ ) {
       LDEBUG << "," << *vIt2;
     }
 #endif
@@ -408,7 +409,7 @@ LimaStatusCode ApproxStringMatcher::process(
       // result.push_back(solution);
     }
   }
-  
+
 #ifdef DEBUG_LP
   LDEBUG << "ending process ApproxStringMatcher";
 #endif
@@ -416,12 +417,12 @@ LimaStatusCode ApproxStringMatcher::process(
 }
 
 void ApproxStringMatcher::createVertex(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     const Solution& solution,
-    AnnotationData* annotationData 
-) const 
+    AnnotationData* annotationData
+) const
 {
   MORPHOLOGINIT;
 #ifdef DEBUG_LP
@@ -429,7 +430,7 @@ void ApproxStringMatcher::createVertex(
 #endif
   // VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   // VertexDataPropertyMap dataMap = get(vertex_data, g);
-  
+
   // create new vertex in analysis graph
   LinguisticGraphVertex newVertex = add_vertex(g);
   // Find previous vertex
@@ -448,7 +449,7 @@ void ApproxStringMatcher::createVertex(
   // Find next vertex
   boost::tie (outEdge,outEdge_end)=out_edges(solution.vertices.back(),g);
   LinguisticGraphVertex nextVertex = target(*outEdge,g);
-  // remove edges 
+  // remove edges
   boost::remove_edge(previousVertex,solution.vertices.front(), g);
   boost::remove_edge(solution.vertices.back(),nextVertex, g);
   // replace edges
@@ -456,7 +457,7 @@ void ApproxStringMatcher::createVertex(
   LinguisticGraphEdge e;
   boost::tie(e, success) = add_edge(previousVertex, newVertex, g);
   boost::tie(e, success) = add_edge(newVertex, nextVertex, g);
- 
+
   // Create token for this vertex
   StringsPoolIndex form = (*m_sp)[solution.form];
   // Qu'est ce qu'on affecte comme chaîne et comme position à ce nouveau token ???
@@ -486,7 +487,7 @@ void ApproxStringMatcher::createVertex(
   newMorphoSyntacticData->push_back(elem);
   // dataMap[newVertex] = newMorphoSyntacticData;
   put(vertex_data,g,newVertex,newMorphoSyntacticData);
-  
+
   // Create vertex fot annotation graph
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
   // make access to this annotation vertex from newVertex
@@ -551,7 +552,7 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
 }
 
 void ApproxStringMatcher::matchApproxTokenAndFollowers(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
@@ -574,7 +575,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     {
       // Add enough space characters to adjust text to beginning of token
       if (currentToken->position() > text.length()) {
-        for( int i = currentToken->position() - text.length() ; i > 0 ; i-- ) 
+        for( int i = currentToken->position() - text.length() ; i > 0 ; i-- )
           text.append(BLANK_SEPARATOR);
       }
       assert( currentToken->length() == (uint64_t)(currentToken->stringForm().length()));
@@ -589,7 +590,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
     currentVertex =target(*outEdge,g);
   }
-  
+
   // search for names in text
   for( NameIndex::const_iterator wordIt = nameRange.first ; wordIt != nameRange.second ; wordIt++ ) {
   // get normalized form of name from lexicon
@@ -615,7 +616,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
           sIt != suggestions.end() ; sIt++ ) {
         Solution tempResult;
         computeVertexMatches( g, vStart, vEnd, *sIt, tempResult);
-        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition 
+        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition
         //tempResult.form = text.mid(sIt->startPosition, sIt->endPosition-sIt->startPosition);
         // tempResult.length = sIt->endPosition-sIt->startPosition;
         tempResult.length = tempResult.suggestion.endPosition-tempResult.suggestion.startPosition;
@@ -642,7 +643,7 @@ void ApproxStringMatcher::computeVertexMatches(
 {
   MORPHOLOGINIT;
   Token* currentToken=get(vertex_token,g,vStart);
-  
+
       tempResult.suggestion.nb_error = suggestion.nb_error;
       tempResult.vertices=std::deque<LinguisticGraphVertex>();
       bool pushVertex=false;
@@ -719,7 +720,7 @@ int ApproxStringMatcher::findApproxPattern(
     // cflags |= REG_LITERAL;
     // cflags |= REG_RIGHT_ASSOC;
     // cflags |= REG_UNGREEDY;
-    
+
     // Compile pattern
     /*
 #ifdef DEBUG_LP

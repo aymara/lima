@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -54,7 +54,7 @@ namespace RuleCompiler {
 // building the rule from a string
 /***********************************************************************/
 LimaString initRule(Rule& r,
-                     const LimaString& str, 
+                     const LimaString& str,
                      MediaId language,
                      const std::vector<Gazeteer>& gazeteers,
                      const std::vector<SubAutomaton>& subAutomatons,
@@ -76,27 +76,27 @@ LimaString initRule(Rule& r,
     // set the number of constraints
     r.setNumberOfConstraints(s.getNbConstraints());
     r.setHasLeftRightConstraint(s.hasLeftRightConstraint());
-    
+
     // add the actions to the rule
-    for (std::vector<Constraint>::const_iterator a=s.getActions().begin(); 
+    for (std::vector<Constraint>::const_iterator a=s.getActions().begin();
          a!=s.getActions().end(); a++) {
       r.addAction(*a);
     }
-    for (std::vector<std::pair<LimaString,Constraint> >::const_iterator a=s.getActionsWithOneArgument().begin(); 
+    for (std::vector<std::pair<LimaString,Constraint> >::const_iterator a=s.getActionsWithOneArgument().begin();
          a!=s.getActionsWithOneArgument().end(); a++) {
       r.addAction(a->second,a->first);
     }
-    
+
     //ruleString=s.getString();
   }
   catch (AutomatonCompilerException& exception) {
   LERROR << "Error on rule: " << str;
     throw;
   }
-  
+
   // delete ctrl6;
   //LDEBUG << "RuleCompiler:string=" << ruleString;
-  
+
 
   // Lima::TimeUtilsController* ctrl7  = new Lima::TimeUtilsController("setTrigger", true);
   r.setTrigger(createTransition(s.getTrigger(),language,"trigger",activeEntityGroups));
@@ -104,7 +104,7 @@ LimaString initRule(Rule& r,
 
   try {
   // Lima::TimeUtilsController* ctrl8  = new Lima::TimeUtilsController("setLeftAutomaton", true);
-    r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(), 
+    r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(),
                                                          language,gazeteers,
                                                          BACKWARDSEARCH,
                                                          activeEntityGroups,
@@ -132,7 +132,7 @@ LimaString initRule(Rule& r,
       << " on left part of rule: " << str;
     throw;
   }
-  
+
   LimaString& stringType=s.getType();
   try {
     if (stringType.indexOf(*STRING_NEGATIVE_TYPE_RULE)==0) {
@@ -153,7 +153,7 @@ LimaString initRule(Rule& r,
       setType(r,stringType,activeEntityGroups);
     }
   }
-  catch (UnknownTypeException) {
+  catch (UnknownTypeException&) {
     LERROR << "Error on rule [" << str << "]";
     throw;
   }
@@ -177,7 +177,7 @@ LimaString initRule(Rule& r,
 //**********************************************************************
 void setType(Rule& r,
              const LimaString& s,
-             const std::vector<LimaString>& activeEntityGroups) 
+             const std::vector<LimaString>& activeEntityGroups)
 {
   LimaString str;
   //std::string::size_type i(findSpecialCharacter(s,CHAR_POS_TR,0));

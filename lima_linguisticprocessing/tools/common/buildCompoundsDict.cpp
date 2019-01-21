@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -72,7 +72,7 @@ void addListOfSimpleWords( const std::string& listOfWords,
 
   if( !listOfWords.size() )
     return;
-  
+
   std::ifstream wList(listOfWords.c_str(), std::ios::in | std::ios::binary );
   if ( !wList.is_open() ) {
     std::cerr <<  "Cannot open list of words " << listOfWords << std::endl;
@@ -115,7 +115,7 @@ void addListOfCompoundsWords( const std::string& listOfWords,
 
   if( !listOfWords.size() )
     return;
-  
+
   std::ifstream wList(listOfWords.c_str(), std::ios::in | std::ios::binary );
   if ( !wList.is_open() ) {
     std::cerr <<  "Cannot open list of words " << listOfWords << std::endl;
@@ -132,7 +132,7 @@ void addListOfCompoundsWords( const std::string& listOfWords,
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cout <<  "end of list of words. counter=" << counter << std::endl 
+      std::cout <<  "end of list of words. counter=" << counter << std::endl
                 << std::flush;
       break;
     }
@@ -172,7 +172,7 @@ void testListOfWords( const std::string& listOfWords,
 
   if( !listOfWords.size() )
     return;
-  
+
   std::ifstream wList(listOfWords.c_str(), std::ios::in | std::ios::binary );
   if ( !wList.is_open() ) {
     std::cerr <<  "Cannot open list of words " << listOfWords << std::endl;
@@ -190,7 +190,7 @@ void testListOfWords( const std::string& listOfWords,
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cout <<  "end of list of words. counter=" << counter << std::endl 
+      std::cout <<  "end of list of words. counter=" << counter << std::endl
                 << std::flush;
       break;
     }
@@ -215,7 +215,7 @@ void testListOfWords( const std::string& listOfWords,
       std::vector<LimaString > compoundSpelling;
       dico.getSpelling(tId, compoundSpelling);
       if( doPrint ) {
-        std::vector<LimaString >::iterator compoundsIt = 
+        std::vector<LimaString >::iterator compoundsIt =
            compoundSpelling.begin();
         cout << line << "|" << tId << "|";
         if( compoundsIt != compoundSpelling.end() ) {
@@ -235,14 +235,14 @@ void testListOfWords( const std::string& listOfWords,
   }
 }
 
-void outputListOfWords0( 
+void outputListOfWords0(
   Lima::Common::FsaAccess::CompoundStringAccess<Lima::Common::FsaAccess::FsaAccessSpare16>&dico,
   int startIndex,
   bool /*doPrint*/ ) {
     for( int index = startIndex ; ; index++ ) {
       std::vector<LimaString > compoundSpelling;
       dico.getSpelling(index, compoundSpelling);
-        std::vector<LimaString >::iterator compoundsIt = 
+        std::vector<LimaString >::iterator compoundsIt =
            compoundSpelling.begin();
         if( compoundsIt != compoundSpelling.end() ) {
           string spelling = Lima::Common::Misc::limastring2utf8stdstring(*compoundsIt);
@@ -257,13 +257,13 @@ void outputListOfWords0(
      }
 }
 
-void outputListOfWords( 
+void outputListOfWords(
   Lima::Common::FsaAccess::CompoundStringAccess<Lima::Common::FsaAccess::FsaAccessSpare16>&dico,
   bool doPrint ) {
   try {
     outputListOfWords0( dico, 0, doPrint );
    }
-   catch(AccessByStringOutOfRange e ) {
+   catch( AccessByStringOutOfRange &e ) {
       cerr << "outputListOfWords catch AccessByStringOutOfRange" << endl;
       cerr << e.what() << endl;
       cerr << "<<<<<<<<<<<<<<< end of simple words >>>>>>>>>>>>>" << endl;
@@ -271,7 +271,7 @@ void outputListOfWords(
   try {
     outputListOfWords0( dico, MAX_SIMPLE_TID, doPrint );
    }
-   catch(AccessByStringOutOfRange e ) {
+   catch( AccessByStringOutOfRange &e ) {
       cerr << "outputListOfWords catch AccessByStringOutOfRange" << endl;
       cerr << e.what() << endl;
    }
@@ -308,7 +308,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   cerr << argv[0] << " begin..." << endl;
 
   setlocale(LC_ALL, "");
