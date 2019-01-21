@@ -119,7 +119,9 @@ SET(convertSymbolicCodes_SRCS
 add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 
 target_link_libraries(convertSymbolicCodes
-  lima-linguisticprocessing
+  lima-lp-propertycode
+  lima-common-factory
+  lima-common-tools
   ${optionalLibs}
 )
 
