@@ -244,7 +244,7 @@ endif ()
 if (TensorFlow_FOUND AND Eigen_FOUND)
   message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
 
-  include_directories(${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
+  include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     install(FILES ${TensorFlow_LIBRARIES}
       ${Eigen_LIBRARIES}
