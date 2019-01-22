@@ -26,7 +26,7 @@ $ sudo apt-get install python-nltk gawk cmake ninja-build qt5-default libqt5xmlp
 libqt5xmlpatterns5-dev qttools5-dev build-essential libboost-all-dev libenchant-dev \
 mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libasan0 qml-module-qt-labs-folderlistmodel \
 libqwt-qt5-dev qtscript5-dev qtxmlpatterns5-dev-tools \
-qml-module-qt-labs-settings qtdeclarative5-dev python3-dev libenchant-dev libtre-dev \
+qml-module-qt-labs-settings qtdeclarative5-dev python3-dev libenchant-dev libtre-dev
 ```
 
 qhttpserver can be downloaded and installed from
