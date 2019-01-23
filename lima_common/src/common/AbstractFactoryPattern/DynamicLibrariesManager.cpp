@@ -241,8 +241,8 @@ void DynamicLibrariesManager::addSearchPath(const std::string& searchPath)
   }
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "adding search path '"<<searchPath.c_str()<<"'";
-//   std::cout<< "adding search path '"<<searchPath.c_str()<<"'" << std::endl;
+  LINFO << "adding search path '" << searchPath.c_str() << "'";
+  std::cerr << "adding search path '" <<searchPath.c_str() << "'" << std::endl;
 #endif
   m_d->m_supplementarySearchPath.push_back(searchPath);
 }
