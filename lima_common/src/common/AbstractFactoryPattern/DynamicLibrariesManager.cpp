@@ -252,9 +252,17 @@ void DynamicLibrariesManager::addSearchPathes(QString searchPathes)
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
 #endif
+
+#ifdef WIN32
+  QStringList list = searchPathes.replace("\\","/")
+                                    .split(QRegularExpression("[;]"),
+                                          QString::SkipEmptyParts);
+#else
   QStringList list = searchPathes.replace("\\","/")
                                     .split(QRegularExpression("[:;]"),
                                           QString::SkipEmptyParts);
+#endif
+
   for(auto it = list.begin(); it!=list.end();++it)
   {
     QString searchPath = *it;
