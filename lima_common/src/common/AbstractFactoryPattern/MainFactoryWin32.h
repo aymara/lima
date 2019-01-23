@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -33,7 +33,7 @@ namespace Lima
 
 /**
   * @brief Defines the MainFactory to create Object
-  * @file 
+  * @file
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
   * The main factory accepts Factory registrations
   * @param Factory Type of factory to manage
@@ -53,7 +53,7 @@ public:
     * @brief singleton accessor
     */
   static MainFactory<Factory>& changeable();
-  
+
   /**
     * @brief destroy factory and all registered factories
     */
@@ -67,7 +67,7 @@ public:
     *        if no appropriate factory is available
     * @throw UndefinedMethod if corresponding create method is not defined
     *
-    * Use the 'class' parameter of unitConfiguration to select the factory to 
+    * Use the 'class' parameter of unitConfiguration to select the factory to
     * which delegate the creation of the object.
     */
     const std::shared_ptr<Factory> getFactory(const std::string& classId) const;
@@ -80,11 +80,11 @@ public:
     *        if no appropriate factory is available
     * @throw UndefinedMethod if corresponding create method is not defined
     *
-    * Use the 'class' parameter of unitConfiguration to select the factory to 
+    * Use the 'class' parameter of unitConfiguration to select the factory to
     * which delegate the creation of the object.
     */
     std::shared_ptr<Factory> getFactory(const std::string& classId);
-  
+
   /**
     * @brief register a factory with an id
     * @param classId @b IN : classId for the factory
@@ -108,7 +108,7 @@ private:
   // FIXME: Wordaround to return a shared pointer from a void* pointer : to keep main map
   // valid, do not delete shared pointer.
   inline static void deleter(Factory *) { }
-  
+
 private:
 
   MainFactory();
@@ -148,15 +148,15 @@ T *set_the_global(T *candidate)
       return (T*)(r->second);  // class already has global storage location
     }
   } catch (const std::__non_rtti_object& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Unable to instantiate a factory: non RTTI object exception catched." << std::endl;
-#endif
+//#endif
     return 0;
   } catch (const std::bad_typeid& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-#endif
+//#endif
     return 0;
   }
 }
@@ -174,15 +174,15 @@ const MainFactory<Factory>& MainFactory<Factory>::single()
   std::cerr << "MainFactory<Factory>::single for " << typeid(*s_instance).name() << " returns " << (void*)s_instance << std::endl;
 #endif
   } catch (const std::__non_rtti_object& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Got an invalid factory: non RTTI object exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-#endif
+//#endif
   } catch (const std::bad_typeid& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-#endif
+//#endif
   }
   return *s_instance;
 }
@@ -199,15 +199,15 @@ MainFactory<Factory>& MainFactory<Factory>::changeable()
     std::cerr << "MainFactory<Factory>::changeable for " << typeid(*s_instance).name() << " returns " << (void*)s_instance << std::endl;
 #endif
   } catch (const std::__non_rtti_object& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Got an invalid factory: non RTTI object exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-#endif
+//#endif
   } catch (const std::bad_typeid& ) {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
     std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-#endif
+//#endif
   }
   return *s_instance;
 }

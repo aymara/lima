@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                      *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -73,7 +73,7 @@ protected:
 template<typename Factory>
 RegistrableFactory<Factory>::RegistrableFactory(const std::string& id)
 {
-//   std::cerr << "RegistrableFactory<Factory>::RegistrableFactory("<< id << ")" << std::endl;
+  std::cerr << "RegistrableFactory<Factory>::RegistrableFactory(" << id << ")" << std::endl;
   MainFactory< RegistrableFactory<Factory> >::changeable().registerFactory(id,this);
 }
 
@@ -83,6 +83,8 @@ RegistrableFactory<Factory>::~RegistrableFactory() {}
 template<typename Factory>
 std::shared_ptr<Factory> RegistrableFactory<Factory>::getFactory(const std::string& id)
 {
+  std::cerr << "RegistrableFactory<Factory>::getFactory(" << id << ")" << std::endl;
+
   if (id.empty())
   {
     std::cerr << "Trying to access to factory with empty name!" << std::endl;
