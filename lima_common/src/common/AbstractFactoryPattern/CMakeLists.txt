@@ -20,10 +20,13 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DLIMA_FACTORY_EXPORTING )
 
 SET(lima-common-factory_LIB_SRCS
-  MainFactoriesMap.cpp
   AmosePluginsManager.cpp
   DynamicLibrariesManager.cpp
 )
+
+if(WIN32)
+  list(APPEND lima-common-factory_LIB_SRCS MainFactoriesMap.cpp)
+endif()
 
 add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
