@@ -113,61 +113,25 @@ private:
 
   MainFactory();
   static MainFactory<Factory>* s_instance; // use this! always points to the same object
-  static MainFactory<Factory> s_instance_one_per_dll; // only used in initialisation
-
 };
 
 template<typename Factory>
-MainFactory<Factory>::MainFactory() {}
-
-template<typename Factory>
-MainFactory<Factory> MainFactory<Factory>::s_instance_one_per_dll;
+MainFactory<Factory>::MainFactory()
+{
+//#ifdef DEBUG_FACTORIES
+  std::cerr << "MainFactory<" << typeid(Factory).name() << "> constructor called" << std::endl;
+//#endif
+}
 
 template<typename Factory>
 MainFactory<Factory>* MainFactory<Factory>::s_instance = 0;
-
-template <class T>
-T *set_the_global(T *candidate)
-{
-  try {
-#ifdef DEBUG_FACTORIES
-    std::cerr << "set_the_global: " << (void*)candidate << std::endl;
-    std::cerr << "set_the_global: " << typeid(*candidate).name() << std::endl;
-#endif
-    FactoryMap::iterator r = MainFactoriesMap::mainFactoriesMap().find(std::string(typeid(*candidate).name()));
-    if(r == MainFactoriesMap::mainFactoriesMap().end()) {
-      MainFactoriesMap::mainFactoriesMap().insert(std::make_pair(std::string(typeid(*candidate).name()),(void*)candidate));
-#ifdef DEBUG_FACTORIES
-      std::cerr << "set_the_global set to: " << (void*)candidate << std::endl;
-#endif
-      return candidate;  // new class: use it as global storage location
-    } else {
-#ifdef DEBUG_FACTORIES
-      std::cerr << "set_the_global got: " << r->second << std::endl;
-#endif
-      return (T*)(r->second);  // class already has global storage location
-    }
-  } catch (const std::__non_rtti_object& ) {
-//#ifdef DEBUG_FACTORIES
-    std::cerr << "Unable to instantiate a factory: non RTTI object exception catched." << std::endl;
-//#endif
-    return 0;
-  } catch (const std::bad_typeid& ) {
-//#ifdef DEBUG_FACTORIES
-    std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
-    std::cerr << "This will probably crash." << std::endl;
-//#endif
-    return 0;
-  }
-}
-
 
 template<typename Factory>
 const MainFactory<Factory>& MainFactory<Factory>::single()
 {
   if (s_instance==0)
   {
-    s_instance=set_the_global(&MainFactory<Factory>::s_instance_one_per_dll);
+    s_instance = new MainFactory<Factory>();
   }
   try {
 #ifdef DEBUG_FACTORIES
@@ -192,12 +156,13 @@ MainFactory<Factory>& MainFactory<Factory>::changeable()
 {
   if (s_instance==0)
   {
-    s_instance=set_the_global(&MainFactory<Factory>::s_instance_one_per_dll);
+    s_instance = new MainFactory<Factory>();
   }
   try {
-#ifdef DEBUG_FACTORIES
+//#ifdef DEBUG_FACTORIES
+    std::cerr << "MainFactory<" << typeid(Factory).name() << ">" << std::endl;
     std::cerr << "MainFactory<Factory>::changeable for " << typeid(*s_instance).name() << " returns " << (void*)s_instance << std::endl;
-#endif
+//#endif
   } catch (const std::__non_rtti_object& ) {
 //#ifdef DEBUG_FACTORIES
     std::cerr << "Got an invalid factory: non RTTI object exception catched." << std::endl;
@@ -286,8 +251,8 @@ void MainFactory<Factory>::registerFactory(
 #endif
   if (MainFactoriesMap::mainFactoriesMap().find(classId)!=MainFactoriesMap::mainFactoriesMap().end())
   {
-//      std::cerr << "Factory for classId '" << classId << "' already exists do not replace it." << std::endl;
-//     throw InvalidConfiguration();
+    std::cerr << "Factory for classId '" << classId << "' already exists do not replace it." << std::endl;
+    //throw InvalidConfiguration();
   }
   else
   {
