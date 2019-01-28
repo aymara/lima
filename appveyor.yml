@@ -7,12 +7,12 @@ branches:
 environment:
   LIMA_DIST: c:\d
   LIMA_EXTERNALS: c:/d
-  LIMA_CONF: 'c:\d\share\config\lima'
-  LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
+  LIMA_CONF: 'c:\b\execEnv\config'
+  LIMA_RESOURCES: 'c:\b\execEnv\resources'
   Qt5_INSTALL_DIR: 'C:\Qt\5.11.2\msvc2015_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
-  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
+  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
@@ -23,7 +23,7 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
-      PATH: "%PYTHON%;%PYTHON%\\libs;%PATH%"
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\lib;%PATH%"
 
 configuration: RelWithDebInfo
 
@@ -69,6 +69,7 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
+  - echo %PATH%
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
   - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
   - cmake --build . --config RelWithDebInfo
