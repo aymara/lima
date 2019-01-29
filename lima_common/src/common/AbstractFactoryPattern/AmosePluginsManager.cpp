@@ -47,7 +47,8 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
   if (configDirsList.isEmpty())
   {
     // Look for LIMA_CONF directory.
-    configDirsList = buildConfigurationDirectoriesList(QStringList() << "lima", QStringList());
+    configDirsList = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                       QStringList());
   }
   for(auto it = configDirsList.begin(); it != configDirsList.end(); ++it)
   {

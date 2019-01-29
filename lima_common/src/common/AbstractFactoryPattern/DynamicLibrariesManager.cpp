@@ -16,11 +16,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/************************************************************************
- * @file       DynamicLibrariesManager.cpp
+/**
  * @author     Romaric Besancon <romaric.besancon@cea.fr>
  * @date       Wed Feb  6 2008
- ***********************************************************************/
+ */
 
 #include "DynamicLibrariesManager.h"
 #include "common/LimaCommon.h"
@@ -242,7 +241,7 @@ void DynamicLibrariesManager::addSearchPath(const std::string& searchPath)
 #ifdef DEBUG_CD
   ABSTRACTFACTORYPATTERNLOGINIT;
   LINFO << "adding search path '" << searchPath.c_str() << "'";
-  std::cerr << "adding search path '" <<searchPath.c_str() << "'" << std::endl;
+//   std::cerr << "adding search path '" <<searchPath.c_str() << "'" << std::endl;
 #endif
   m_d->m_supplementarySearchPath.push_back(searchPath);
 }

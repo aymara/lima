@@ -45,10 +45,12 @@ namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
-  QStringList configDirs = Misc::buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList configDirs = Misc::buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                                   QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                            QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QCoreApplication app(argc, argv);

@@ -202,10 +202,12 @@ void LimaWorker::initialize(const std::string& language,
   m_pipeline=pipeline;
   string clientId("lima-coreclient");
 
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                             QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                            QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   // default values for lima configuration
