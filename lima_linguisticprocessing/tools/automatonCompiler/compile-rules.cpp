@@ -279,8 +279,8 @@ int run(int argc, char** argv)
 {
   readCommandLineArguments(argc,argv);
 
-  QStringList configDirs = buildConfigurationDirectoriesList(
-    QStringList() << "lima",QStringList());
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                             QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
   if (!param.configDir.empty())
   {
@@ -288,8 +288,8 @@ int run(int argc, char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(
-    QStringList() << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                            QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   if (!param.resourcesDir.empty())

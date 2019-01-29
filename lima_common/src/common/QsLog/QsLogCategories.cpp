@@ -178,7 +178,7 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   QStringList configDirsList;
   if (configString.isEmpty())
   {
-    configDirsList = buildConfigurationDirectoriesList(QStringList()<<"lima",QStringList());
+    configDirsList = buildConfigurationDirectoriesList(QStringList({"lima"}),QStringList());
   }
   else
   {

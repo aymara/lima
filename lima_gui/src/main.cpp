@@ -82,14 +82,12 @@ int main(int argc, char *argv[])
     configDir.mkpath(LIMA_USER_CONFIG);
   }
 
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
-                                                              << "lima",
-                                                              QStringList()
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                             QStringList()
                                                               << LIMA_USER_CONFIG);
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
-                                                              << "lima",
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                             QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
