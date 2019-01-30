@@ -118,9 +118,9 @@ private:
 template<typename Factory>
 MainFactory<Factory>::MainFactory()
 {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
   std::cerr << "MainFactory<" << typeid(Factory).name() << "> constructor called" << std::endl;
-//#endif
+#endif
 }
 
 template<typename Factory>
@@ -138,15 +138,15 @@ const MainFactory<Factory>& MainFactory<Factory>::single()
   std::cerr << "MainFactory<Factory>::single for " << typeid(*s_instance).name() << " returns " << (void*)s_instance << std::endl;
 #endif
   } catch (const std::__non_rtti_object& ) {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
     std::cerr << "Got an invalid factory: non RTTI object exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-//#endif
+#endif
   } catch (const std::bad_typeid& ) {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
     std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-//#endif
+#endif
   }
   return *s_instance;
 }
@@ -159,20 +159,20 @@ MainFactory<Factory>& MainFactory<Factory>::changeable()
     s_instance = new MainFactory<Factory>();
   }
   try {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
     std::cerr << "MainFactory<" << typeid(Factory).name() << ">" << std::endl;
     std::cerr << "MainFactory<Factory>::changeable for " << typeid(*s_instance).name() << " returns " << (void*)s_instance << std::endl;
-//#endif
+#endif
   } catch (const std::__non_rtti_object& ) {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
     std::cerr << "Got an invalid factory: non RTTI object exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-//#endif
+#endif
   } catch (const std::bad_typeid& ) {
-//#ifdef DEBUG_FACTORIES
+#ifdef DEBUG_FACTORIES
     std::cerr << "Got a null factory: bad_typeid exception catched." << std::endl;
     std::cerr << "This will probably crash." << std::endl;
-//#endif
+#endif
   }
   return *s_instance;
 }
