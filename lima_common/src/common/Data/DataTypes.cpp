@@ -136,8 +136,8 @@ Node::~Node() {delete m_d;}
 Node::Node(const Node& n) : m_d(new NodePrivate(*n.m_d)) {}
 Node &Node::operator=(const Node& n)
 {
-  if (n.m_d == m_d)
-    throw LimaException("Self-assignment");
+  if (this == &n)
+    return *this;
 
   if (m_d != 0) {
     delete m_d;
@@ -326,8 +326,8 @@ Structure::Structure ( const Structure& s )  : m_d(new StructurePrivate(*s.m_d))
 
 Structure& Structure::operator=( const Structure& s )
 {
-  if (s.m_d == m_d)
-    throw LimaException("Self-assignment");
+  if (this == &s)
+    return *this;
 
   if (m_d!=0) {
     delete m_d;
