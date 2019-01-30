@@ -80,7 +80,12 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
 else ()
 endif()
 
-set(Python_ADDITIONAL_VERSIONS 3.5 3.6 3.7)
+if (DEFINED ENV{PYTHON_VERSION})
+  set(Python_ADDITIONAL_VERSIONS $ENV{PYTHON_VERSION})
+else ()
+  set(Python_ADDITIONAL_VERSIONS 3.5 3.6 3.7)
+endif ()
+
 find_package(PythonLibs 3)
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
