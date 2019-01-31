@@ -24,7 +24,7 @@
 #ifndef LIMA_COMMON_ABSTRACTFACTORYPATTERN_MAINFACTORYLINUX_H
 #define LIMA_COMMON_ABSTRACTFACTORYPATTERN_MAINFACTORYLINUX_H
 
-#ifndef WIN32 // We are on Linux
+#include "MainFactoriesMap.h"
 
 namespace Lima
 {
@@ -93,20 +93,19 @@ namespace Lima
       const std::string& classId,
       Factory* fact);
 
-      /**
-       * @brief show registered classId
-       * @return list of registered classId
-       */
-      std::deque<std::string> getRegisteredFactories() const;
+    /**
+     * @brief show registered classId
+     * @return list of registered classId
+     */
+    std::deque<std::string> getRegisteredFactories() const;
 
-      virtual ~MainFactory();
+    virtual ~MainFactory();
 
   private:
 
     MainFactory();
-    static MainFactory<Factory>* s_instance;
 
-    typedef std::map<std::string,std::shared_ptr<Factory>> FactoryMap;
+    typedef std::map<std::string, std::shared_ptr<Factory>> FactoryMap;
     typedef typename FactoryMap::const_iterator FactoryMapCItr;
     FactoryMap m_factories;
 
@@ -116,34 +115,37 @@ namespace Lima
   MainFactory<Factory>::MainFactory() : m_factories() {}
 
   template<typename Factory>
-  MainFactory<Factory>* MainFactory<Factory>::s_instance(0);
-
-  template<typename Factory>
   const MainFactory<Factory>& MainFactory<Factory>::single()
   {
-    if (s_instance==0)
-    {
-      s_instance=new MainFactory<Factory>();
-    }
-    return *s_instance;
+    typename MainFactoryMap::const_iterator it = MainFactoriesMap::get().find(typeid(Factory).name());
+    if (MainFactoriesMap::get().end() == it)
+      MainFactoriesMap::get().insert(std::pair<std::string, void*>(typeid(Factory).name(), new MainFactory<Factory>()));
+
+    it = MainFactoriesMap::get().find(typeid(Factory).name());
+    if (MainFactoriesMap::get().end() == it)
+      throw LimaException("This can't happen.");
+
+    return *((const MainFactory<Factory>*)(it->second));
   }
 
   template<typename Factory>
   MainFactory<Factory>& MainFactory<Factory>::changeable()
   {
-    if (s_instance==0)
-    {
-      s_instance=new MainFactory<Factory>();
-    }
-    return *s_instance;
+    typename MainFactoryMap::iterator it = MainFactoriesMap::get().find(typeid(Factory).name());
+    if (MainFactoriesMap::get().end() == it)
+      MainFactoriesMap::get().insert(std::pair<std::string, void*>(typeid(Factory).name(), new MainFactory<Factory>()));
+
+    it = MainFactoriesMap::get().find(typeid(Factory).name());
+    if (MainFactoriesMap::get().end() == it)
+      throw LimaException("This can't happen.");
+
+    return *((MainFactory<Factory>*)(it->second));
   }
 
 
   template<typename Factory>
   void MainFactory<Factory>::cleanup()
   {
-    delete s_instance;
-    s_instance=0;
   }
 
   template<typename Factory>
@@ -224,7 +226,5 @@ namespace Lima
   }
 
 } // Lima
-
-#endif // WIN32 test
 
 #endif

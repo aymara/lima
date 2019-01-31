@@ -28,10 +28,6 @@
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 
-#ifdef WIN32
-#include "common/AbstractFactoryPattern/MainFactoriesMap.h"
-#endif
-
 #include <map>
 #include <deque>
 #include <string>
@@ -44,15 +40,6 @@
  * Linux but for a reason I don't understand, it don't... Thus the two versions.
  */
 
-
-#ifdef WIN32
-
-#include "MainFactoryWin32.h"
-
-#else // Linux
-
 #include "MainFactoryLinux.h"
-
-#endif // WIN32 test
 
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,22 +21,20 @@
 
 #include "common/AbstractFactoryPattern/AbstractFactoryPatternExport.h"
 
-#include<map>
-#include<string>
+#include <map>
+#include <string>
 
-// LIMA_FACTORY_EXPORT int initMainFactoriesMap();
-
-typedef std::map<std::string, void*> FactoryMap;
+typedef std::map<std::string, void*> MainFactoryMap;
 
 class LIMA_FACTORY_EXPORT MainFactoriesMap {
+
 public:
-  static FactoryMap& mainFactoriesMap();
+
+  static MainFactoryMap& get();
+
 private:
-  static FactoryMap* s_mainFactoriesMap;
-  static FactoryMap s_mainFactoriesMap_one_by_dll;
-  
-  MainFactoriesMap();
-  virtual ~MainFactoriesMap() {delete s_mainFactoriesMap;}
+
+  class MainFactoriesMapPrivate;
 };
 
 #endif
