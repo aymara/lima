@@ -37,7 +37,7 @@ MainFactoryMap& MainFactoriesMap::get()
   if (nullptr == MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap)
     MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = new MainFactoryMap;
 
-  std::cerr << "MainFactoriesMap::get returns " << (void*)MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap << std::endl;
+  //std::cerr << "MainFactoriesMap::get returns " << (void*)MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap << std::endl;
 
   return *MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap;
 }
