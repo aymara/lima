@@ -174,7 +174,8 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
                << ": must specify file and module name";
         continue;
       }
-      string fileName(""),moduleName("");
+      QString fileName;
+      std::string moduleName;
       try {
         RESOURCESLOGINIT;
 #ifdef DEBUG_LP
@@ -186,11 +187,11 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
           if  (QFileInfo::exists(confPath + "/" + string((*it),0,i).c_str()))
           {
 
-            fileName = (confPath + "/" + string((*it),0,i).c_str()).toUtf8().constData();
+            fileName = (confPath + "/" + string((*it),0,i).c_str());
             break;
           }
         }
-        if (fileName.empty())
+        if (fileName.isEmpty())
         {
           LERROR << "No resources" << *it << "found in" << Common::MediaticData::MediaticData::single().getConfigPath();
           continue;

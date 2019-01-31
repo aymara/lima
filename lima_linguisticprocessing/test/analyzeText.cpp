@@ -332,7 +332,7 @@ int run(int argc, char** argv)
     {
       // initialize linguistic processing
       Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-          (configDir + "/" + lpConfigFile.c_str()).toStdString());
+          (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,

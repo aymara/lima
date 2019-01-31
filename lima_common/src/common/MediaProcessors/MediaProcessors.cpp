@@ -278,13 +278,14 @@ void MediaProcessorsPrivate::includeProcessors(
         //       << ": must specify file and module name";
         continue;
       }
-      std::string fileName(""), moduleName("");
+      QString fileName;
+      std::string moduleName("");
       try 
       {
         //PROCESSORSLOGINIT;
         //LDEBUG << "i="<< i;
         fileName = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),
-                                      std::string((*it),0,i).c_str()).toUtf8().constData();
+                                      std::string((*it),0,i).c_str());
         //LDEBUG << "filename="<< fileName;
         moduleName = std::string((*it),i+1);
         //LDEBUG << "moduleName="<< moduleName;

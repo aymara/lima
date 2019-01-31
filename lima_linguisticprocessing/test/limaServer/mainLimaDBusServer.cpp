@@ -102,7 +102,7 @@ int main(int argc, char **argv)
   // port
   std::string fileName(configDir);
   fileName.append("/").append(limaServerConfigFile);
-  XMLConfigurationFileParser configLimaServer(fileName);
+  XMLConfigurationFileParser configLimaServer(fileName.c_str());
 
   // analyzer languages
   {
