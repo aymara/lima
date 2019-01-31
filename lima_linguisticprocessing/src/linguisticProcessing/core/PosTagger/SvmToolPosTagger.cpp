@@ -109,9 +109,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   Lima::TimeUtilsController timer("SvmToolPosTagger");
 
   // start postagging here !
+#ifdef DEBUG_LP
   PTLOGINIT;
   LINFO << "start SvmToolPosTager";
-
+#endif
   // Retrieve morphosyntactic graph
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* srcgraph=anagraph->getGraph();
@@ -198,7 +199,9 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       currentVx = endVx;
     }
   }
+#ifdef DEBUG_LP
   LDEBUG << "Tagging '" << oss.str() << "'";
+#endif
   std::istringstream iss(oss.str());
 
   std::stringstream resOss;
@@ -218,11 +221,14 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   
   while (anaVerticesIndex < anaVertices.size() && std::getline(resOss,resultLine))
   {
+#ifdef DEBUG_LP
     LDEBUG << "Result line: '" << resultLine << "'";
+#endif
     std::vector<std::string> elements;
     boost::split(elements,resultLine,boost::is_any_of(" "));
     if (elements.size() < 2)
     {
+      PTLOGINIT;
       LERROR << "Error in SVMTagger result line: did not get 2 elements in '"<< resultLine << "'";
       return UNKNOWN_ERROR;
     }
@@ -232,6 +238,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     boost::replace_all(token," ","_");
     if (token != elements[0])
     {
+      PTLOGINIT;
       LERROR << "Error in SVMTagger result alignement with analysis graph: got '"<< elements[0] << "' from SVMTagger and '" << Common::Misc::limastring2utf8stdstring(currentAnaToken->stringForm()) << "' from graph";
       return UNKNOWN_ERROR;
     }
@@ -253,6 +260,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
       if (posData->empty() || morphoData->empty())
       {
+        PTLOGINIT;
         LWARN << "No matching category found for tagger result " << elements[0] << " " << elements[1];
         if (!morphoData->empty())
         {
@@ -271,7 +279,9 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   }
   boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
   
+#ifdef DEBUG_LP
   LINFO << "SvmToolPosTagger postagging done.";
+#endif
 
   return SUCCESS_ID;
 }
@@ -284,34 +294,42 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
     StepDataVector& stepData,
     Common::AnnotationGraphs::AnnotationData* annotationData) const
 {
+#ifdef DEBUG_LP
   PTLOGINIT;
   LINFO << "reportPathsInGraph";
+#endif
 
-  std::map<TargetVertexId,LinguisticGraphVertex> vertexMapping;
+  std::map<TargetVertexId, LinguisticGraphVertex> vertexMapping;
   typedef std::map<TargetVertexId,LinguisticGraphVertex>::iterator VertexMappingItr;
 
-  std::queue<std::pair<LinguisticGraphVertex,PredData>,std::list< std::pair<LinguisticGraphVertex,PredData> > > toProcess;
+  std::queue<
+    std::pair<LinguisticGraphVertex,PredData>,
+    std::list< std::pair<LinguisticGraphVertex,PredData> > > toProcess;
   LinguisticGraphVertex endVertex=add_vertex(*resultgraph);
   //    LDEBUG << "add end vertex " << endVertex;
   {
 
     {
       StepData& endStep=stepData.back();
-      if (endStep.m_microCatsData.size()!=1) {
+      if (endStep.m_microCatsData.size()!=1) 
+      {
+        PTLOGINIT;
         LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
       }
 
       // put linguistic data to end vertex
-      LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,endStep.m_srcVertex);
-      LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,*srcgraph,endStep.m_srcVertex);
+      auto morphoData = get(vertex_data, *srcgraph, endStep.m_srcVertex);
+      auto srcToken = get(vertex_token, *srcgraph, endStep.m_srcVertex);
       if (morphoData!=0)
       {
-        LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData(*morphoData);
-        put(vertex_data,*resultgraph,endVertex,posData);
-        put(vertex_token,*resultgraph,endVertex,srcToken);
-      } else {
-        put(vertex_data,*resultgraph,endVertex,morphoData);
-        put(vertex_token,*resultgraph,endVertex,srcToken);
+        auto posData = new LinguisticAnalysisStructure::MorphoSyntacticData(*morphoData);
+        put(vertex_data, *resultgraph, endVertex, posData);
+        put(vertex_token, *resultgraph, endVertex, srcToken);
+      }
+      else
+      {
+        put(vertex_data, *resultgraph, endVertex, morphoData);
+        put(vertex_token, *resultgraph, endVertex, srcToken);
       }
     }
   }
@@ -322,11 +340,14 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
     LinguisticGraphVertex succVertex=toProcess.front().first;
     //        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro;
 
-    if (current.m_predIndex==0) {
-      // rien �cr�r, juste �connecter
+    if (current.m_predIndex==0)
+    {
+      // nothing to create, just connect
       add_edge(startVertex,succVertex,*resultgraph);
       //          LDEBUG << "just add link " << startVertex << " -> " << succVertex;
-    } else {
+    }
+    else
+    {
 
       StepData& currentStep=stepData[current.m_predIndex];
 
@@ -345,14 +366,20 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
         // if not exists create an register it
         LinguisticGraphVertex newVx=add_vertex(*resultgraph);
         //            LDEBUG << "create vertex " << newVx;
-        std::pair<
-        VertexMappingItr,
-        bool> insertStatus=vertexMapping.insert(make_pair(tvi,newVx));
-        tgtVxItr=insertStatus.first;
-        AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
-        annotationData->addMatching("PosGraph", newVx, "annot", agv);
-        annotationData->addMatching("AnalysisGraph", tvi.m_sourceVx, "PosGraph", newVx);
-        annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("PosGraph"), newVx);
+        auto insertStatus = vertexMapping.insert(make_pair(tvi,newVx));
+        tgtVxItr = insertStatus.first;
+        auto agv =  annotationData->createAnnotationVertex();
+        annotationData->addMatching("PosGraph",
+                                    newVx,
+                                    "annot",
+                                    agv);
+        annotationData->addMatching("AnalysisGraph",
+                                    tvi.m_sourceVx,
+                                    "PosGraph",
+                                    newVx);
+        annotationData->annotate(agv,
+                                 Common::Misc::utf8stdstring2limastring("PosGraph"),
+                                 newVx);
         /*std::set< LinguisticGraphVertex > annotMatches = annotationData->matches("AnalysisGraph",tvi.m_sourceVx,"PosGraph");
         for (std::set< LinguisticGraphVertex >::const_iterator annotIt(annotMatches.begin());
         annotIt != annotMatches.end(); annotIt++)
@@ -364,29 +391,44 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
 
         // set linguistic infos
         LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,currentStep.m_srcVertex);
-        LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,*srcgraph,currentStep.m_srcVertex);
-        if (morphoData!=0) {
-          LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData();
-          LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(m_microAccessor,current.m_predMicro);
+        LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,
+                                                         *srcgraph,
+                                                         currentStep.m_srcVertex);
+        if (morphoData!=0) 
+        {
+          LinguisticAnalysisStructure::MorphoSyntacticData* posData = 
+            new LinguisticAnalysisStructure::MorphoSyntacticData();
+          LinguisticAnalysisStructure::CheckDifferentPropertyPredicate
+            differentMicro(m_microAccessor,current.m_predMicro);
           std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
-          remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
+          remove_copy_if(morphoData->begin(),
+                         morphoData->end(),
+                         backInsertItr,
+                         differentMicro);
           put(vertex_data,*resultgraph,newVx,posData);
           put(vertex_token,*resultgraph,newVx,srcToken);
         }
 
         // add pred to process
-        std::vector<PredData>& pds=currentStep.m_microCatsData[current.m_predMicro];
+        auto& pds = currentStep.m_microCatsData[current.m_predMicro];
         PredDataVectorItr pdsItr=pds.begin();
-        std::vector<LinguisticCode>::const_iterator predPredMicroItr=current.m_predPredMicros.begin();
-        while (pdsItr!=pds.end() && predPredMicroItr!=current.m_predPredMicros.end())
+        auto predPredMicroItr = current.m_predPredMicros.cbegin();
+        while (pdsItr != pds.end()
+          && predPredMicroItr != current.m_predPredMicros.cend())
         {
-          if (*predPredMicroItr < pdsItr->m_predMicro) {
+          if (*predPredMicroItr < pdsItr->m_predMicro)
+          {
             predPredMicroItr++;
-          } else if (*predPredMicroItr > pdsItr->m_predMicro) {
+          }
+          else if (*predPredMicroItr > pdsItr->m_predMicro)
+          {
             pdsItr++;
-          } else {
-            //                LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex << " micro " << pdsItr->m_predMicro;
-            toProcess.push(make_pair(tgtVxItr->second,*pdsItr));
+          }
+          else
+          {
+//             LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex
+//                     << " micro " << pdsItr->m_predMicro;
+            toProcess.push(make_pair(tgtVxItr->second, *pdsItr));
             pdsItr++;
             predPredMicroItr++;
           }
@@ -403,7 +445,9 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
     toProcess.pop();
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "end reporting paths";
+#endif
   return endVertex;
 }
 
