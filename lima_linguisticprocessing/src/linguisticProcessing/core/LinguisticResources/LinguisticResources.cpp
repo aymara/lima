@@ -38,11 +38,8 @@ using namespace Lima::Common::XMLConfigurationFiles;
 
 namespace Lima
 {
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::AbstractResource > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::AbstractResource > > >::s_instance(0);
 
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::LinguisticResources > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::LinguisticResources > > >::s_instance(0);
-
-  namespace LinguisticProcessing
+namespace LinguisticProcessing
 {
 
 class LinguisticResourcesPrivate

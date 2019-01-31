@@ -22,11 +22,8 @@ add_definitions( -DLIMA_FACTORY_EXPORTING )
 SET(lima-common-factory_LIB_SRCS
   AmosePluginsManager.cpp
   DynamicLibrariesManager.cpp
+  MainFactoriesMap.cpp
 )
-
-if(WIN32)
-  list(APPEND lima-common-factory_LIB_SRCS MainFactoriesMap.cpp)
-endif()
 
 add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
@@ -51,7 +48,6 @@ install(FILES
     ObjectManager.h # needed by InitializableObjectManager.h
     MainFactory.h # needed by RegistrableFactory.h
     MainFactoryLinux.h
-    MainFactoryWin32.h
     InitializableObjectFactory.h # needed by template class SimpleFactory
     InitializableObjectManager.h # needed by InitializableObject.h
     AmosePluginsManager.h

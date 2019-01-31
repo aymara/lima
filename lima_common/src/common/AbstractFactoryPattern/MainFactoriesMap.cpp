@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,28 +20,24 @@
 
 #include <iostream>
 
-// static const int init =  initMainFactoriesMap();
-// 
-// LIMA_FACTORY_EXPORT int initMainFactoriesMap()
-// {
-//   MainFactoriesMap::mainFactoriesMap();
-//   return 0;
-// }
-
-FactoryMap* MainFactoriesMap::s_mainFactoriesMap = 0;
-FactoryMap MainFactoriesMap::s_mainFactoriesMap_one_by_dll;
-
-MainFactoriesMap::MainFactoriesMap()
+class MainFactoriesMap::MainFactoriesMapPrivate
 {
-  std::cerr << "MainFactoriesMap constructor" << std::endl;
-}
 
-FactoryMap& MainFactoriesMap::mainFactoriesMap()
+  friend class MainFactoriesMap;
+
+private:
+
+  static MainFactoryMap *s_mainFactoriesMap;
+};
+
+MainFactoryMap* MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = nullptr;
+
+MainFactoryMap& MainFactoriesMap::get()
 {
-  //std::cerr << "MainFactoriesMap accessor" << std::endl;
-  if (s_mainFactoriesMap == 0)
-  {
-    s_mainFactoriesMap = &s_mainFactoriesMap_one_by_dll;
-  }
-  return *s_mainFactoriesMap;
+  if (nullptr == MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap)
+    MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = new MainFactoryMap;
+
+  std::cerr << "MainFactoriesMap::get returns " << (void*)MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap << std::endl;
+
+  return *MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap;
 }

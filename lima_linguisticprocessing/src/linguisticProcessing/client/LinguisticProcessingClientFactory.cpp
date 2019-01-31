@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -27,10 +27,7 @@
 #include <iostream>
 namespace Lima
 {
-  template<> MainFactory< RegistrableFactory< AbstractProcessingClientFactoryFactory > >* MainFactory< RegistrableFactory< AbstractProcessingClientFactoryFactory > >::s_instance(0);
-  
-  template<> MainFactory< RegistrableFactory< LinguisticProcessing::AbstractLinguisticProcessingClientFactory > >* MainFactory< RegistrableFactory< LinguisticProcessing::AbstractLinguisticProcessingClientFactory > >::s_instance(0);
-  
+
 namespace LinguisticProcessing
 {
 
@@ -63,7 +60,7 @@ void LinguisticProcessingClientFactory::configureClientFactory(
 }
 
 std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::createClient(
-  const std::string& id) const 
+  const std::string& id) const
 {
   LPCLIENTFACTORYLOGINIT;
   LINFO << "Create client '" << id << "'";
@@ -78,7 +75,7 @@ std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::c
     LERROR << "No factory defined for client '" << id << "' !";
     throw LinguisticProcessingException();
   }
-  
+
   return factory->createClient();
 }
 
