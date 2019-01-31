@@ -310,7 +310,7 @@ void CoreLinguisticProcessingClientFactory::configure(
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
     MediaId langid=MediaticData::single().getMediaId(*langItr);
-    string file;
+    QString file;
     try
     {
       QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
@@ -322,7 +322,7 @@ void CoreLinguisticProcessingClientFactory::configure(
              *langItr).c_str());
         if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
         {
-          file= (confPath + "/" + mediaProcessingDefinitionFile).toUtf8().constData();
+          file = confPath + "/" + mediaProcessingDefinitionFile;
           break;
         }
       }
@@ -332,7 +332,7 @@ void CoreLinguisticProcessingClientFactory::configure(
       LERROR << "no language definition file for language " << *langItr;
       throw InvalidConfiguration("no language definition file for language ");
     }
-    if (file.empty())
+    if (file.isEmpty())
     {
       LERROR << "no language definition file for language " << *langItr;
       throw InvalidConfiguration("no language definition file for language ");

@@ -247,7 +247,8 @@ void LimaWorker::initialize(const std::string& language,
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+        configDir + "/" + lpConfigFile.c_str());
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,
@@ -260,10 +261,13 @@ void LimaWorker::initialize(const std::string& language,
 
   if(!clientFactoryConfigured)
   {
-    std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
+    std::cerr << "No LinguisticProcessingClientFactory were configured with"
+              << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and"
+              << lpConfigFile << std::endl;
   }
 
-  m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
+  m_client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
+    LinguisticProcessingClientFactory::single().createClient(clientId));
 
   Q_EMIT(finishedInit());
 }
@@ -274,7 +278,10 @@ void LimaWorker::analyze(const std::string& text)
   std::map<std::string,std::string> metaData;
   metaData["Lang"]=m_language;
   string pseudofilename=text.substr(0,10);
-  boost::regex_replace(pseudofilename,boost::regex("[.,-;:!?\",& <>\n\t ]"),"_",boost::format_all);
+  boost::regex_replace(pseudofilename,
+                       boost::regex("[.,-;:!?\",& <>\n\t ]"),
+                       "_",
+                       boost::format_all);
   metaData["FileName"]=pseudofilename;
 
   ostringstream oss;

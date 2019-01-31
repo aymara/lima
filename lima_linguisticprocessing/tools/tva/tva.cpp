@@ -175,7 +175,7 @@ int run(int argc,char** argv)
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile.c_str());
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,

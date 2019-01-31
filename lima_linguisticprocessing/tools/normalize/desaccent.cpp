@@ -155,7 +155,8 @@ int run(int argc,char** argv)
     langs);
 
   // initialize linguistic processing
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+    QString::fromUtf8(configDir.c_str()) + "/" + lpConfigFile.c_str());
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
       clientId,
       lpconfig,

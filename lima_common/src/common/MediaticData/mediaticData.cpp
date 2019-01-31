@@ -259,8 +259,7 @@ void MediaticData::init(
         LDEBUG << "MediaticData::init parse configuration file: " 
                 << (confPath + "/" + confFile);
         configurationFileFound = true;
-        XMLConfigurationFileParser configuration(
-          (confPath + "/" + confFile).toUtf8().constData());
+        XMLConfigurationFileParser configuration(confPath + "/" + confFile);
 
         LDEBUG << "MediaticData::init initialize global parameters";
         m_d->initReleaseStringsPool(configuration);
@@ -323,7 +322,7 @@ void MediaticData::initMedia(const std::string& media)
   //LINFO << "parse configuration file: " << configPath << "/" << configFile;
   XMLConfigurationFileParser configuration(
     findFileInPaths(m_d->m_configPath.c_str(),
-                    m_d->m_configFile.c_str()).toUtf8().constData());
+                    m_d->m_configFile.c_str()));
   MediaticData::MediaticData::changeable().initEntityTypes(configuration);
 
   std::deque< std::string > meds;
@@ -556,7 +555,7 @@ void MediaticData::initMediaData(MediaId med)
   LDEBUG << "MediaticData::initMediaData Parse MediaConfigurationFile "
           << (it->second);
 #endif
-  XMLConfigurationFileParser parser((it->second).toUtf8().constData());
+  XMLConfigurationFileParser parser(it->second);
 
 #ifdef DEBUG_CD
   LDEBUG << "MediaticData::initMediaData Class: "
@@ -794,7 +793,7 @@ void printEntities(
 void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 {
   MDATALOGINIT;
-  LINFO << "MediaticData::initEntityTypes";
+  LINFO << "MediaticData::initEntityTypes" << configParser.getConfigurationFileName();
   // look at all groups : ModuleConfigurationStructure is a map
   try
   {
@@ -829,8 +828,8 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           {
             if (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
-              auto fileName= (confPath + "/" + std::string(includeList[k],
-                                                      0,i).c_str()).toUtf8().constData();
+              auto fileName= confPath + "/" + std::string(includeList[k],
+                                                          0,i).c_str();
               XMLConfigurationFileParser lpconfig2(fileName);
               MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
               break;

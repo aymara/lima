@@ -49,28 +49,43 @@ class XMLConfigurationFileParserPrivate;
 class LIMA_XMLCONFIGURATIONFILES_EXPORT XMLConfigurationFileParser
 {
 public: 
-    XMLConfigurationFileParser(const std::string &configurationFileName);
-    XMLConfigurationFileParser(const XMLConfigurationFileParser& p);
-    ~XMLConfigurationFileParser();
+  XMLConfigurationFileParser(const QString &configurationFileName);
+//   /// @deprecated 
+//   XMLConfigurationFileParser(const std::string &configurationFileName);
+  XMLConfigurationFileParser(const XMLConfigurationFileParser& p);
+  ~XMLConfigurationFileParser();
+  XMLConfigurationFileParser() = delete;
+  XMLConfigurationFileParser& operator=(const XMLConfigurationFileParser& p) = delete;
 
-     ConfigurationStructure& getConfiguration(void);
-     /** @throw NoSuchModule*/
-     ModuleConfigurationStructure& getModuleConfiguration(const std::string& moduleName);
-     /** @throw NoSuchModule, @throw NoSuchGroup*/
-     GroupConfigurationStructure& getModuleGroupConfiguration(const std::string& moduleName,const std::string& groupName);
-     /** @throw NoSuchModule, @throw NoSuchGroup, @throw NoSuchParam */
-     std::string& getModuleGroupParamValue(const std::string& moduleName,const std::string& groupName,const std::string& key);
-     /** @throw NoSuchModule, @throw NoSuchGroup, @throw NoSuchList */
-     std::deque< std::string >& getModuleGroupListValues(const std::string& moduleName,const std::string& groupName,const std::string& key);
+    ConfigurationStructure& getConfiguration(void);
 
-     friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream& os, XMLConfigurationFileParser& parser);
+    /** @throw NoSuchModule*/
+    ModuleConfigurationStructure& getModuleConfiguration(
+      const std::string& moduleName);
 
-     const std::string& getConfigurationFileName() const;
+    /** @throw NoSuchModule, @throw NoSuchGroup*/
+    GroupConfigurationStructure& getModuleGroupConfiguration(
+      const std::string& moduleName,
+      const std::string& groupName);
+
+    /** @throw NoSuchModule, @throw NoSuchGroup, @throw NoSuchParam */
+    std::string& getModuleGroupParamValue(const std::string& moduleName,
+                                          const std::string& groupName,
+                                          const std::string& key);
+
+    /** @throw NoSuchModule, @throw NoSuchGroup, @throw NoSuchList */
+    std::deque< std::string >& getModuleGroupListValues(
+      const std::string& moduleName,
+      const std::string& groupName,
+      const std::string& key);
+
+    friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(
+      std::ostream& os, XMLConfigurationFileParser& parser);
+
+    const QString& getConfigurationFileName() const;
 
 private:
-  XMLConfigurationFileParser();
-  XMLConfigurationFileParser& operator=(const XMLConfigurationFileParser& p);// TODO ? a implémenter!!! En public...
-  XMLConfigurationFileParserPrivate* m_d;
+  std::unique_ptr<XMLConfigurationFileParserPrivate> m_d;
 };
 
 

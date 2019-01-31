@@ -372,7 +372,7 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
   auto configFilePath = Misc::findFileInPaths(configPath, lpConfigFile, ':');
 
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-    configFilePath.toStdString());
+    configFilePath);
 
   std::deque<std::string> languages = lpconfig.getModuleGroupListValues(
                                               clientId.toStdString(),
@@ -606,7 +606,9 @@ QObject* LimaGuiApplication::getQmlObject(const QString& name)
 //void LimaGuiApplication::generateAnalyzer(const LimaConfiguration& config) {
 void LimaGuiApplication::configure()
 {
-  std::string configdir = qgetenv("LIMA_CONF").constData();
+  // @TODO use findFileInPAths LIMA_CONF and LIMA_RESOURCES can join several
+  // paths
+  QString configdir = qgetenv("LIMA_CONF");
   std::string resources = qgetenv("LIMA_RESOURCES").constData();
 
   std::deque<std::string> languages = {"fre", "eng"};
@@ -614,13 +616,22 @@ void LimaGuiApplication::configure()
 
   std::string commonConfigFile = "lima-common.xml";
 
-  Lima::Common::MediaticData::MediaticData::changeable().init(resources, configdir, commonConfigFile, languages);
+  Lima::Common::MediaticData::MediaticData::changeable().init(
+    resources,
+    configdir.toUtf8().constData(),
+    commonConfigFile,
+    languages);
 
   std::string client = "lima-coreclient";
-  std::string lpConfigFile("lima-analysis.xml");
-  XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configdir + "/" + lpConfigFile);
+  QString lpConfigFile("lima-analysis.xml");
+  XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+    configdir + "/" + lpConfigFile);
 
-  LinguisticProcessingClientFactory::changeable().configureClientFactory(client, lpconfig, languages, pipelines);
+  LinguisticProcessingClientFactory::changeable().configureClientFactory(
+    client,
+    lpconfig,
+    languages,
+    pipelines);
 
 
 }
@@ -628,7 +639,7 @@ void LimaGuiApplication::configure()
 QString LimaGuiApplication::highlightNamedEntities(const QString& text)
 {
   // text is raw conll
-  std::map<std::string, std::vector<std::string> > entities = getNamedEntitiesFromConll(text.toStdString());
+//   auto entities = getNamedEntitiesFromConll(text.toStdString());
 //  std::string result = highlightNamedEntities()
   return QString();
 }
@@ -636,8 +647,9 @@ QString LimaGuiApplication::highlightNamedEntities(const QString& text)
 QStringList LimaGuiApplication::getNamedEntitiesList(const QString& text)
 {
   QStringList nEntities;
-  std::map<std::string, std::vector<std::string> > entities = getNamedEntitiesFromConll(text.toStdString());
-  for (auto& pair : entities) {
+  auto entities = getNamedEntitiesFromConll(text.toStdString());
+  for (auto& pair : entities)
+  {
     nEntities << QString(pair.first.c_str());
   }
 
