@@ -56,36 +56,35 @@ public:
   XMLConfigurationFileParserPrivate(const QString &configurationFileName);
   ~XMLConfigurationFileParserPrivate() = default;
   XMLConfigurationFileParserPrivate() = delete;
-  XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p) = delete;
+  XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p);
 
   ConfigurationStructure m_configuration;
   QXmlSimpleReader m_parser;
   QString m_configurationFileName;
 };
 
-// XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p)
-// {
-//     m_configuration = p.m_configuration;
-//     m_configurationFileName = p.m_configurationFileName;
-// //     m_parser = p.m_parser; // TODO sale: SAXParser::operator= n'est pas surchargé. Mais peut marcher...
-//     m_parser = new QXmlSimpleReader();
-//     XMLConfigurationFileHandler handler(m_configuration);
-//     m_parser.setContentHandler(&handler);
-//     m_parser.setErrorHandler(&handler);
-//     QFile file(m_configurationFileName);
-//     if (!file.open(QIODevice::ReadOnly))
-//     {
-//       XMLCFGLOGINIT;
-//       LERROR << "XMLConfigurationFileParser unable to open" << m_configurationFileName;
-//       throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
-//     }
-//     if (!m_parser.parse( QXmlInputSource(&file)))
-//     {
-//       XMLCFGLOGINIT;
-//       LERROR << "XMLConfigurationFileParser unable to parse" << m_configurationFileName << ":" << m_parser.errorHandler()->errorString();
-//       throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName.toUtf8().constData() + " : " + m_parser.errorHandler()->errorString().toUtf8().constData());
-//     }
-// }
+XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p)
+{
+    m_configuration = p.m_configuration;
+    m_configurationFileName = p.m_configurationFileName;
+//     m_parser = p.m_parser; // TODO sale: SAXParser::operator= n'est pas surchargé. Mais peut marcher...
+    XMLConfigurationFileHandler handler(m_configuration);
+    m_parser.setContentHandler(&handler);
+    m_parser.setErrorHandler(&handler);
+    QFile file(m_configurationFileName);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to open" << m_configurationFileName;
+      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.toUtf8().constData());
+    }
+    if (!m_parser.parse( QXmlInputSource(&file)))
+    {
+      XMLCFGLOGINIT;
+      LERROR << "XMLConfigurationFileParser unable to parse" << m_configurationFileName << ":" << m_parser.errorHandler()->errorString();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName.toUtf8().constData() + " : " + m_parser.errorHandler()->errorString().toUtf8().constData());
+    }
+}
 
 XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
   const QString &configurationFileName) :
@@ -131,10 +130,10 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
 // {
 // }
 
-// XMLConfigurationFileParser::XMLConfigurationFileParser(const XMLConfigurationFileParser& p) :
-//     m_d(new XMLConfigurationFileParserPrivate(*p.m_d))
-// {
-// }
+XMLConfigurationFileParser::XMLConfigurationFileParser(const XMLConfigurationFileParser& p) :
+    m_d(new XMLConfigurationFileParserPrivate(*p.m_d))
+{
+}
 
 // XMLConfigurationFileParser::XMLConfigurationFileParser(
 //   const std::string &configurationFileName) :
