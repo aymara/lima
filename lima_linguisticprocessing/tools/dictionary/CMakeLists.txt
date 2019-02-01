@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -25,7 +25,9 @@ SET(sortutf16_SRCS
 
 add_executable(sortutf16 ${sortutf16_SRCS})
 
-target_link_libraries(sortutf16 lima-linguisticprocessing)
+target_link_libraries(sortutf16
+  lima-common
+)
 
 install(TARGETS sortutf16 DESTINATION bin
   COMPONENT runtime)
@@ -40,7 +42,11 @@ SET(composedDict_SRCS
 
 add_executable(composedDict ${composedDict_SRCS})
 
-target_link_libraries(composedDict lima-linguisticprocessing)
+target_link_libraries(composedDict
+  lima-lp-analysisdict
+  lima-lp-linguisticresources
+  lima-common
+)
 
 install(TARGETS composedDict DESTINATION bin
   COMPONENT runtime)
@@ -56,7 +62,10 @@ SET(compile-dictionary_SRCS
 
 add_executable(compile-dictionary ${compile-dictionary_SRCS})
 
-target_link_libraries(compile-dictionary lima-linguisticprocessing)
+target_link_libraries(compile-dictionary
+  lima-lp-flattokenizer
+  lima-common
+)
 
 install(TARGETS compile-dictionary DESTINATION bin
   COMPONENT runtime)
@@ -70,7 +79,10 @@ SET(check-dictionary_SRCS
 
 add_executable(check-dictionary ${check-dictionary_SRCS})
 
-target_link_libraries(check-dictionary lima-linguisticprocessing)
+target_link_libraries(check-dictionary
+  lima-lp-analysisdict
+  lima-common
+)
 
 install(TARGETS check-dictionary DESTINATION bin
   COMPONENT runtime)
