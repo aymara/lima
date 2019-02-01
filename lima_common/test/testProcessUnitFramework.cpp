@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -43,14 +43,12 @@ SimpleFactory<DummyProcessUnit,DreamingProcessUnit> dreamingFactory("DreamingPro
 SimpleFactory<DummyProcessUnit,ZenProcessUnit> zenFactory("ZenProcessUnit");
 SimpleFactory<DummyProcessUnit,DummyProcessUnitPipeline> pipFactory("ProcessUnitPipeline");
 
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< DummyProcessUnit > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< DummyProcessUnit > > >::s_instance(0);
-
 
 //****************************************************************************
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   QCoreApplication a(argc, argv);
 
@@ -69,17 +67,16 @@ int main(int argc, char **argv)
 
 }
 
-
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
   LIMA_UNUSED(argc);
   LIMA_UNUSED(argv);
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   cout << "dummy program, just to instantiate templates from ProcessUnitFramework" << endl;
-  
+
   // build fake moduleconfigurationstructure
   Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf("carpet");
   {
@@ -96,7 +93,7 @@ int run(int argc,char** argv)
     modconf.addGroupNamed("myZen");
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myZen");
     groupConf.addAttribute("class","ZenProcessUnit");
-  }  
+  }
   {
     modconf.addGroupNamed("myPipeline");
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myPipeline");
@@ -106,10 +103,10 @@ int run(int argc,char** argv)
     groupConf.addItemInListNamed("otherDreamer","processUnitSequence");
     groupConf.addItemInListNamed("myZen","processUnitSequence");
     groupConf.addItemInListNamed("myDreamer","processUnitSequence");
-  }  
-    
+  }
+
   DummyProcessUnit::Manager manager(modconf);
-  
+
   DummyProcessUnit* pip=manager.getObject("myPipeline");
   if (pip==0) {
     cerr << "FAILED : Getting myPipeline failed !!" << endl;

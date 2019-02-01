@@ -39,7 +39,6 @@
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
-// #include "common/AbstractFactoryPattern/MainFactory.h"
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
