@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -38,15 +38,14 @@ using namespace Lima;
 SimpleFactory<DummyInitializableObject,VeryDummyInitializableObject> veryDummyFactory("VeryDummyInitializableObject");
 SimpleFactory<DummyInitializableObject,NotSoDummyInitializableObject> notSoDummyFactory("NotSoDummyInitializableObject");
 
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< DummyInitializableObject > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< DummyInitializableObject > > >::s_instance(0);
-
 //****************************************************************************
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
-int run(int aargc,char** aargv);
 
-int main(int argc, char **argv)
+int run(int aargc, char** aargv);
+
+int main(int argc, char** argv)
 {
   QCoreApplication a(argc, argv);
 
@@ -65,17 +64,16 @@ int main(int argc, char **argv)
 
 }
 
-
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
   LIMA_UNUSED(argc);
   LIMA_UNUSED(argv);
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   cout << "dummy program, just to instantiate templates from AbstractFactoryPattern" << endl;
-  
+
   // build fake moduleconfigurationstructure
   Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf("tata");
   {
@@ -92,20 +90,20 @@ int run(int argc,char** argv)
     modconf.addGroupNamed("myNotSoDummy");
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myNotSoDummy");
     groupConf.addAttribute("class","NotSoDummyInitializableObject");
-  }  
-    
+  }
+
   //
   DummyInitializableObject::Manager manager(modconf);
-  
+
   DummyInitializableObject* mvd=manager.getObject("myVeryDummy");
   if (mvd==0) {
     cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << endl;
     return -1;
-  } 
+  }
   VeryDummyInitializableObject* vdvd=dynamic_cast<VeryDummyInitializableObject*>(mvd);
   if (vdvd==0) {
     cerr << "FAILED : myVeryDummy is not an objet of class VeryDummyInitializableObject !!" << endl;
-    return -1;    
+    return -1;
   }
   DummyInitializableObject* ovd=manager.getObject("otherVeryDummy");
   if (ovd==0) {
@@ -116,12 +114,12 @@ int run(int argc,char** argv)
   if (mvd!=mvd2) {
     cerr << "FAILED : Getting myVeryDummy has been re-initialized !!" << endl;
     return -1;
-  } 
+  }
   DummyInitializableObject* nsd=manager.getObject("myNotSoDummy");
   if (nsd==0) {
     cerr << "FAILED : Getting myMyNotSoDummy failed !!" << endl;
     return -1;
-  } 
+  }
   cout << "test is OK. Have a good day, and don't forget to smile ;-)" << endl;
   return 0;
 }
