@@ -47,7 +47,6 @@ install(FILES
     AbstractFactoryPatternExport.h
     ObjectManager.h # needed by InitializableObjectManager.h
     MainFactory.h # needed by RegistrableFactory.h
-    MainFactoryLinux.h
     InitializableObjectFactory.h # needed by template class SimpleFactory
     InitializableObjectManager.h # needed by InitializableObject.h
     AmosePluginsManager.h

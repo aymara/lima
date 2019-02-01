@@ -16,28 +16,47 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-#include "MainFactoriesMap.h"
-
 #include <iostream>
 
-class MainFactoriesMap::MainFactoriesMapPrivate
+#include "common/LimaCommon.h"
+#include "MainFactoriesMap.h"
+
+namespace Lima
 {
 
-  friend class MainFactoriesMap;
+  class MainFactoriesMap::MainFactoriesMapPrivate
+  {
 
-private:
+    friend class MainFactoriesMap;
 
-  static MainFactoryMap *s_mainFactoriesMap;
-};
+    ~MainFactoriesMapPrivate()
+    {
+      if (nullptr != s_mainFactoriesMap)
+      {
+        delete s_mainFactoriesMap;
+        s_mainFactoriesMap = nullptr;
+        shuttingDown = true;
+      }
+    }
 
-MainFactoryMap* MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = nullptr;
+  private:
 
-MainFactoryMap& MainFactoriesMap::get()
-{
-  if (nullptr == MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap)
-    MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = new MainFactoryMap;
+    static bool shuttingDown;
+    static MainFactoryMap *s_mainFactoriesMap;
+  };
 
-  //std::cerr << "MainFactoriesMap::get returns " << (void*)MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap << std::endl;
+  MainFactoryMap* MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = nullptr;
+  bool MainFactoriesMap::MainFactoriesMapPrivate::shuttingDown = false;
 
-  return *MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap;
+  MainFactoryMap& MainFactoriesMap::get()
+  {
+    if (MainFactoriesMap::MainFactoriesMapPrivate::shuttingDown)
+      throw LimaException("Access to s_mainFactoriesMap while shutting down");
+
+    if (nullptr == MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap)
+      MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap = new MainFactoryMap;
+
+    return *MainFactoriesMap::MainFactoriesMapPrivate::s_mainFactoriesMap;
+  }
+
 }

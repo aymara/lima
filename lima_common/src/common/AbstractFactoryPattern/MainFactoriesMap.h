@@ -24,17 +24,23 @@
 #include <map>
 #include <string>
 
-typedef std::map<std::string, void*> MainFactoryMap;
+namespace Lima
+{
 
-class LIMA_FACTORY_EXPORT MainFactoriesMap {
+  typedef std::map<std::string, void*> MainFactoryMap;
 
-public:
+  class LIMA_FACTORY_EXPORT MainFactoriesMap
+  {
 
-  static MainFactoryMap& get();
+  public:
 
-private:
+    static MainFactoryMap& get();
 
-  class MainFactoriesMapPrivate;
-};
+  private:
+
+    class MainFactoriesMapPrivate;
+  };
+
+}
 
 #endif
