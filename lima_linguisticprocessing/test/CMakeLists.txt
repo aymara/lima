@@ -47,7 +47,8 @@ target_link_libraries(analyzeText
   lima-lp-bagofwords
   lima-lp-eventanalyzer
   lima-common
-  Boost::program_options)
+  Boost::program_options
+)
 
 install(TARGETS analyzeText
   DESTINATION bin
@@ -59,7 +60,10 @@ install(TARGETS analyzeText
 add_executable(limasimple-analyze limasimple-analyze.cpp)
 MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-target_link_libraries(limasimple-analyze lima-linguisticprocessing)
+
+target_link_libraries(limasimple-analyze
+  lima-linguisticprocessing
+)
 
 install(TARGETS limasimple-analyze DESTINATION bin
   COMPONENT runtime)

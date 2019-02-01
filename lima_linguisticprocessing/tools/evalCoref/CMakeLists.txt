@@ -45,7 +45,10 @@ SET(evalCoref_SRCS
 
 add_executable(evalCoref ${evalCoref_SRCS})
 
-target_link_libraries(evalCoref lima-linguisticprocessing)
+target_link_libraries(evalCoref
+  lima-common
+  Boost::regex
+)
 
 install(TARGETS evalCoref DESTINATION bin
   COMPONENT runtime)
