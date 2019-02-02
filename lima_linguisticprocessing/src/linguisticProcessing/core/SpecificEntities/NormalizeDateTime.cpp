@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,8 @@
  * @file       NormalizeDateTime.cpp
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Jun 13 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2006-2019 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "NormalizeDateTime.h"
@@ -38,8 +38,8 @@
 
 #include <limits>
 #ifdef WIN32
-#undef min  
-#undef max 
+#undef min
+#undef max
 #endif
 
 using namespace Lima::Common::MediaticData;
@@ -56,12 +56,12 @@ using namespace std;
 namespace Lima {
 namespace LinguisticProcessing {
 namespace SpecificEntities {
-  
+
 #define DATESTRING_FEATURE_NAME "date_string" // date as a string
 #define DATE_FEATURE_NAME "date" // date as a QDate
-#define DATE_BEGIN_FEATURE_NAME "date_begin" 
-#define DATE_END_FEATURE_NAME "date_end" 
-#define DATE_SPAN_FEATURE_NAME "date_span" 
+#define DATE_BEGIN_FEATURE_NAME "date_begin"
+#define DATE_END_FEATURE_NAME "date_end"
+#define DATE_SPAN_FEATURE_NAME "date_span"
 #define DAY_FEATURE_NAME "day"
 #define MONTH_FEATURE_NAME "month"
 #define YEAR_FEATURE_NAME "year"
@@ -96,7 +96,7 @@ m_locRefName("document")
 
 ReferenceData::~ReferenceData() {}
 
-void ReferenceData::parseComplement(const LimaString& complement) 
+void ReferenceData::parseComplement(const LimaString& complement)
 {
   if (! complement.isEmpty()) {
     //uint64_t i(0),prev(0); portage 32 64
@@ -109,7 +109,7 @@ void ReferenceData::parseComplement(const LimaString& complement)
   }
 }
 
-void ReferenceData::parseReference(const LimaString& str) 
+void ReferenceData::parseReference(const LimaString& str)
 {
   static const LimaString datePrefix=Common::Misc::utf8stdstring2limastring("date_");
   static const LimaString locPrefix=Common::Misc::utf8stdstring2limastring("loc_");
@@ -148,7 +148,7 @@ getReferenceDate(const AnalysisContent& analysis,
     //try backoff on document date
     SELOGINIT;
     LWARN << "no reference date '"<< m_dateRefName << "'";
-    
+
     date=metadata->getDate("document");
     if (!date.isValid()) {
       SELOGINIT;
@@ -296,41 +296,41 @@ unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) c
 }
 
 bool NormalizeDate::operator()(RecognizerMatch& m,
-                               AnalysisContent& analysis) const 
+                               AnalysisContent& analysis) const
 {
 #ifdef DEBUG_LP
   SELOGINIT;
   LDEBUG << "NormalizeDate::operator()"<<m;
 #endif
 
-  // assume all information for normalization is in recognized 
+  // assume all information for normalization is in recognized
   // expression: do not use external information
 
   unsigned short day(0);
-  if (m.features().find(NUMDAY_FEATURE_NAME) != m.features().end()) 
+  if (m.features().find(NUMDAY_FEATURE_NAME) != m.features().end())
   {
     LimaString numdayString = (*m.features().find(NUMDAY_FEATURE_NAME)).getValueLimaString();
     day = getDayFromString(numdayString);
   }
   unsigned short day_end(0);
-  if (m.features().find("numdayend") != m.features().end()) 
+  if (m.features().find("numdayend") != m.features().end())
   {
     LimaString numdayString = (*m.features().find("numdayend")).getValueLimaString();
     day_end = getDayFromString(numdayString);
   }
   unsigned short month(0);
-  if (m.features().find(NUMMONTH_FEATURE_NAME) != m.features().end()) 
+  if (m.features().find(NUMMONTH_FEATURE_NAME) != m.features().end())
   {
     bool ok = true;
     month = (*m.features().find(NUMMONTH_FEATURE_NAME)).getValueLimaString().toUShort(&ok);
   }
-  else if (m.features().find(MONTH_FEATURE_NAME) != m.features().end() 
-            && m_resources) 
+  else if (m.features().find(MONTH_FEATURE_NAME) != m.features().end()
+            && m_resources)
   {
     month = m_resources->getMonthNumber((*m.features().find(MONTH_FEATURE_NAME)).getValueLimaString());
   }
   unsigned short month_end(0);
-  if (m.features().find("nummonthend") != m.features().end()) 
+  if (m.features().find("nummonthend") != m.features().end())
   {
     bool ok = true;
     month_end = (*m.features().find("nummonthend")).getValueLimaString().toUShort(&ok);
@@ -342,133 +342,134 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   if (m.features().find(NUMYEAR_FEATURE_NAME) != m.features().end()) {
     year = (*m.features().find(NUMYEAR_FEATURE_NAME)).getValueLimaString().toUShort();
   }
-  
+
 /////////////////////////////////////////////////////////////////////////////
-  for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++) 
+  for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++)
   {
-    if (! (*i).isKept()) 
+    if (! (*i).isKept())
     {
       continue;
     }
     Token* t = m.getToken(i);
     MorphoSyntacticData* data = m.getData(i);
+    LIMA_UNUSED(data);
     const TStatus& status=t->status();
 #ifdef DEBUG_LP
     LDEBUG << "Token"<<t->stringForm()<<"status is:" << status.toString();
 #endif
-    if (status.getStatus()==T_NUMERIC) 
+    if (status.getStatus()==T_NUMERIC)
     {
 //     else {
-      if (status.getNumeric()==T_FRACTION) 
+      if (status.getNumeric()==T_FRACTION)
       {
         uint64_t pos(t->stringForm().indexOf(LimaChar('/')));
         uint64_t val1=t->stringForm().leftRef(pos).toUInt();
         uint64_t val2=t->stringForm().midRef(pos+1).toUInt();
-        if (val1 > 31) 
+        if (val1 > 31)
         {
           //assume year
-          if (year == 0) 
+          if (year == 0)
           {
             year=val1;
             m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
           }
           //assume next is month
-          if (month == 0 && val2 <= 12) 
+          if (month == 0 && val2 <= 12)
           {
             month=val2;
             m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
           }
-          else 
+          else
           { // should not happen => it may not be a date
           }
         }
         // otherwhise, suppose day before month, but test it
-        else if (val2 > 12) 
+        else if (val2 > 12)
         {
-          if (day == 0) 
+          if (day == 0)
           {
             day=val2;
             m.features().setFeature(NUMDAY_FEATURE_NAME, day);
           }
-          if (month == 0) 
+          if (month == 0)
           {
             month=val1;
             m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
           }
         }
-        else 
+        else
         {
-          if (day == 0) 
+          if (day == 0)
           {
             day=val1;
             m.features().setFeature(NUMDAY_FEATURE_NAME, day);
           }
-          if (month == 0) 
+          if (month == 0)
           {
             month=val2;
             m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
           }
         }
       }
-      else if (isInteger(t)) 
+      else if (isInteger(t))
       {
         uint64_t value=LimaStringToInt(t->stringForm());
-        if (value < 31) 
+        if (value < 31)
         {
-          if (day==0) 
+          if (day==0)
           { // suppose day before month
             day = value;
             m.features().setFeature(NUMDAY_FEATURE_NAME, day);
           }
-          else if (m_isInterval && day_end==0) 
+          else if (m_isInterval && day_end==0)
           {
             day_end=value;
           }
-          else if (month==0) 
+          else if (month==0)
           {
-            if (value > 12) 
+            if (value > 12)
             { // swap : month cant be > 12
               month = day;
               m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
-              if (day == 0) 
+              if (day == 0)
               {
                 day = value;
                 m.features().setFeature(NUMDAY_FEATURE_NAME, day);
               }
             }
-            else 
+            else
             { // assume month
-              if (month == 0) 
+              if (month == 0)
               {
                 month = value;
                 m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
               }
             }
           }
-          else 
+          else
           { // month and day are assigned -> assume year
-            if (year == 0) 
+            if (year == 0)
             {
               year = value;
               m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
             }
           }
         }
-        else 
+        else
         {
-          if (value > 1000 && value < 3000) 
+          if (value > 1000 && value < 3000)
           {
-            if (year == 0) 
+            if (year == 0)
             {
               year = value;
               m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
             }
           }
-          else if (month!=0) 
+          else if (month!=0)
           {
             // can be a year on two digits -> year assumed if
             // day and month are already assigned
-            if (year == 0) 
+            if (year == 0)
             {
               year = value;
               m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
@@ -477,40 +478,40 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
         }
       }
     }
-    else 
+    else
     {
 //     if (testMicroCategory(m_microsForMonth,m_microAccessor,data)) {
-      if (isInteger(t)) 
+      if (isInteger(t))
       {
-        if (month == 0) 
+        if (month == 0)
         {
           month=LimaStringToInt(t->stringForm());
           m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
         }
       }
-      else if (m_resources) 
+      else if (m_resources)
       {
         LimaString monthString = m.features().find("month")==m.features().end() ? t->stringForm() : (*m.features().find("month")).getValueLimaString();
         unsigned short monthNum=m_resources->getMonthNumber(monthString);
-        if (monthNum==NormalizeDateTimeResources::no_month) 
+        if (monthNum==NormalizeDateTimeResources::no_month)
         {
           // failed to recognize month => no normalization
           SELOGINIT;
           LWARN << "NormalizeDate: '" << monthString << "' not recognized as month";
           m.features().addFeature(DATESTRING_FEATURE_NAME,m.getString());
         }
-        else 
+        else
         {
-          if (month!=0 && m_isInterval) 
+          if (month!=0 && m_isInterval)
           {
-            if (month_end == 0) 
+            if (month_end == 0)
             {
               month_end=monthNum;
             }
           }
-          else 
+          else
           {
-            if (month == 0) 
+            if (month == 0)
             {
               month=monthNum;
               m.features().setFeature(NUMMONTH_FEATURE_NAME, month);
@@ -528,44 +529,44 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   LDEBUG << "NormalizeDate operator(): year=" << year;
 #endif
   //ad hoc correction of year on two digits
-  if (year!=0 && year<99) 
+  if (year!=0 && year<99)
   {
-    if (year < 10) 
+    if (year < 10)
     {
       year+=2000;
       m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
     }
-    else 
+    else
     {
       year+=1900;
       m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
     }
   }
-  
+
   QDate newCurrentDate;
   try { // catch date conversion exceptions
-    if (day==0 && month==0 && year==0) 
+    if (day==0 && month==0 && year==0)
     {
       //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
       SELOGINIT;
-      LWARN << "NormalizeDate: no day, month or year identified in " 
+      LWARN << "NormalizeDate: no day, month or year identified in "
              << Common::Misc::limastring2utf8stdstring(m.getString());
       m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     }
-    else 
+    else
     {
       // at least one is no null in day / month / year
-      if (day==0) 
+      if (day==0)
       {
         // 0 / _ / _
-        if (month==0) 
+        if (month==0)
         {
           // 0 / _ / Y
           // only year : do not set interval of dates from first to last day of year
           // set only year : cast to int in features
           m.features().setFeature(NUMYEAR_FEATURE_NAME,static_cast<int>(year));
         }
-        else 
+        else
         {
           // 0 / M / ?
           // set interval
@@ -574,7 +575,7 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
           LDEBUG << "NormalizeDate operator(): day=0 and month != 0 => date_begin=" << firstDayOfMonth;
 #endif
           m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
-          if (month_end==0) 
+          if (month_end==0)
           {
             QDate date_end = firstDayOfMonth.addMonths(1).addDays(-1);
 #ifdef DEBUG_LP
@@ -588,22 +589,22 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
           }
         }
       }
-      else 
+      else
       {
         // D / _ / _
-        if (month==0) 
+        if (month==0)
         {
           // D / 0 / _
-          if (year==0) 
+          if (year==0)
           {
             // D / 0 / 0
             //day only => take month and year from reference
             QDate referenceDate;
-            if (! m_referenceData.getReferenceDate(analysis,referenceDate)) 
+            if (! m_referenceData.getReferenceDate(analysis,referenceDate))
             {
               m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
             }
-            else 
+            else
             {
               int refYear=referenceDate.year();
               int refMonth=referenceDate.month();
@@ -611,54 +612,54 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
               m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
             }
           }
-          else 
+          else
           {
             // D / 0 / Y
             // day and year => should not happen: failed to normalize: set only string
             SELOGINIT;
-            LWARN << "NormalizeDate: only day and year in " 
+            LWARN << "NormalizeDate: only day and year in "
                    << Common::Misc::limastring2utf8stdstring(m.getString())
                   ;
             m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
           }
         }
-        else 
+        else
         {
           // D / M / _
-          if (year==0) 
+          if (year==0)
           {
             // D / M / 0
             // get year from reference
             QDate referenceDate;
-            if (! m_referenceData.getReferenceDate(analysis,referenceDate)) 
+            if (! m_referenceData.getReferenceDate(analysis,referenceDate))
             {
               m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
             }
-            else 
+            else
             {
               int refYear=referenceDate.year();
               newCurrentDate=QDate(refYear,month,day);
-              if (day_end==0) 
+              if (day_end==0)
               {
                 m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
               }
-              else 
+              else
               {
                 m.features().setFeature(DATE_BEGIN_FEATURE_NAME,QDate(refYear,month,day));
                 m.features().setFeature(DATE_END_FEATURE_NAME,QDate(refYear,month,day_end));
               }
             }
           }
-          else 
+          else
           {
             // D / M / Y
             // complete !!
-            if (day_end==0) 
+            if (day_end==0)
             {
               newCurrentDate=QDate(year,month,day);
               m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
             }
-            else 
+            else
             {
               m.features().setFeature(DATE_BEGIN_FEATURE_NAME,QDate(year,month,day));
               m.features().setFeature(DATE_END_FEATURE_NAME,QDate(year,month,day_end));
@@ -670,13 +671,13 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   }
   catch (std::exception& e) {
     SELOGINIT;
-    LWARN << "Error trying to normalize date " 
+    LWARN << "Error trying to normalize date "
           << Common::Misc::limastring2utf8stdstring(m.getString())
           << ":" << e.what()
          ;
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
   }
-  
+
   QString dateSpan = "XXXX";
   if( year != 0 )
     dateSpan = QString::number(year);
@@ -684,14 +685,14 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   LDEBUG << "NormalizeDate operator(): year: dateSpan=" << dateSpan;
 #endif
   dateSpan.append("-");
-  if( month == 0 ) 
+  if( month == 0 )
   {
     dateSpan.append("XX-XX");
 #ifdef DEBUG_LP
     LDEBUG << "NormalizeDate operator(): year + xx-xx dateSpan=" << dateSpan;
 #endif
   }
-  else 
+  else
   {
     // dateSpan.append(QString::number(month));
     QString monthString = QString(QLatin1String("%1")).arg(month, 2, 10, QLatin1Char('0'));
@@ -700,14 +701,14 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
     LDEBUG << "NormalizeDate operator(): year + month dateSpan=" << dateSpan;
 #endif
     dateSpan.append("-");
-    if( day == 0 ) 
+    if( day == 0 )
     {
       dateSpan.append("XX");
 #ifdef DEBUG_LP
       LDEBUG << "NormalizeDate operator(): year + month + xx dateSpan=" << dateSpan;
 #endif
     }
-    else 
+    else
     {
       // QString QString::arg(int integerVar, int fieldWidth = 0, int base = 10, const QChar & fillChar = QLatin1Char( ' ' )) const
       QString dayString = QString(QLatin1String("%1")).arg(day, 2, 10, QLatin1Char('0'));
@@ -717,7 +718,7 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
 #endif
     }
   }
-    
+
   m.features().setFeature(DATE_SPAN_FEATURE_NAME,dateSpan);
   if (!newCurrentDate.isNull())
   {
@@ -734,11 +735,11 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
 #ifdef DEBUG_LP
       LDEBUG << "NormalizeDate::operator() set value feature to" << beginFeature.toString("dd/MM/yyyy");
 #endif
-      m.features().setFeature("value", 
+      m.features().setFeature("value",
                               beginFeature.toString("dd/MM/yyyy"));
     }
   }
-  if (newCurrentDate.isValid()) 
+  if (newCurrentDate.isValid())
   {
     updateCurrentDate(analysis,newCurrentDate);
   }
@@ -751,7 +752,7 @@ NormalizeRelativeDate(MediaId language,
                       const LimaString& complement):
 NormalizeDate(language,complement),
 m_getNext(false), // default is previous date
-m_diff(0) 
+m_diff(0)
 {
   static const LimaString nextString=Common::Misc::utf8stdstring2limastring("next_");
   if (complement.indexOf(nextString)!=-1) {
@@ -774,7 +775,7 @@ m_diff(0)
 
 bool NormalizeRelativeDate::
 operator()(RecognizerMatch& m,
-           AnalysisContent& analysis) const 
+           AnalysisContent& analysis) const
 {
   // use a reference to normalize the relative date
 
@@ -796,7 +797,7 @@ operator()(RecognizerMatch& m,
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
     return true;
   }
-  
+
 // "datemod"
 // "century"
   unsigned short day(0);
@@ -826,7 +827,7 @@ operator()(RecognizerMatch& m,
     }
   }
 
-  unsigned short dayOfMonth(0); 
+  unsigned short dayOfMonth(0);
   if (m.features().find(NUMDAY_FEATURE_NAME) != m.features().end()) {
     bool ok = true;
     dayOfMonth = (*m.features().find(NUMDAY_FEATURE_NAME)).getValueLimaString().toUShort(&ok);
@@ -835,7 +836,7 @@ operator()(RecognizerMatch& m,
     }
   }
   if (dayOfMonth>31) { dayOfMonth=0; }
-  
+
   unsigned short month(0);
   if (m.features().find("month") != m.features().end()) {
     bool ok = true;
@@ -910,7 +911,7 @@ m_language(language),
 m_resources(0),
 m_referenceData()
 {
-  // default reference date and location are the one indicated for 
+  // default reference date and location are the one indicated for
   // the document, if set...
 
   // parse complement to find reference location and reference date,
@@ -941,7 +942,7 @@ getTimeDuration(const RecognizerMatch& m) const
   LDEBUG << "NormalizeTime::getTimeDuration...";
 #endif
   QTime timeDuration;
-  
+
   unsigned short hou(0),min(0),sec(0);
   if (m.features().find("hour") != m.features().end()) {
     try {
@@ -978,7 +979,7 @@ getTimeDuration(const RecognizerMatch& m) const
     string::size_type i=timeString.find(':');
     if (i!=string::npos) {
       try {
-        // has at least one ":" sep -> guess it has form hh:mm or hh:mm:ss, 
+        // has at least one ":" sep -> guess it has form hh:mm or hh:mm:ss,
         // try use direct construction from string
         timeDuration=QTime::fromString(QString::fromUtf8(timeString.c_str()));
       }
@@ -1021,7 +1022,7 @@ NormalizeTime(language,complement)
 
 bool NormalizeLocalTime::
 operator()(RecognizerMatch& m,
-           AnalysisContent& analysis) const 
+           AnalysisContent& analysis) const
 {
   // normalize hour to UTC => needs to know the location
   // use 'DocumentLocation' if exists
@@ -1031,18 +1032,18 @@ operator()(RecognizerMatch& m,
   QDate referenceDate;
   std::string referenceLocation;
   bool hasReferenceLocation(true);
-  
+
   if (! getReferenceData().getReferenceDate(analysis,referenceDate)) {
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
-  }                                                               
+  }
 
   if (! getReferenceData().getReferenceLocation(analysis,referenceLocation)) {
     SELOGINIT;
     LWARN << "no reference location '"<< getReferenceData().getLocRefName()
            << "' found";
     hasReferenceLocation=false;
-  }                                                               
+  }
 
   // parse recognized expression to get duration
   QTime timeDuration=getTimeDuration(m);
@@ -1053,13 +1054,13 @@ operator()(RecognizerMatch& m,
 
   try {
     QTime local(QDateTime(referenceDate,timeDuration).time());
-   
+
     m.features().setFeature(LOCALTIME_FEATURE_NAME,local);
 
     if (! hasReferenceLocation) {
       return true;
     }
-    
+
     if (hasResources() && getResources()->hasTimezoneDatabase()) {
       QTime utc=getUTCTime(referenceDate,timeDuration/*,
                                        referenceLocation,
@@ -1078,7 +1079,7 @@ operator()(RecognizerMatch& m,
   catch (std::exception& e) {
     SELOGINIT;
     LWARN << "exception caught in time normalization of '"
-          << Common::Misc::limastring2utf8stdstring(m.getString()) 
+          << Common::Misc::limastring2utf8stdstring(m.getString())
           << "': " << e.what();
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
@@ -1095,7 +1096,7 @@ NormalizeTime(language,complement)
 
 bool NormalizeUTCTime::
 operator()(RecognizerMatch& m,
-           AnalysisContent& analysis) const 
+           AnalysisContent& analysis) const
 {
   // do not use a reference location, time is supposed to be UTC already
 #ifdef DEBUG_LP
@@ -1112,7 +1113,7 @@ operator()(RecognizerMatch& m,
 #endif
     return true;
   }
-  
+
   QTime timeDuration=getTimeDuration(m);
   if (!timeDuration.isValid()) {
     SELOGINIT;
@@ -1122,7 +1123,7 @@ operator()(RecognizerMatch& m,
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
     return true;
   }
-    
+
   try {
     QTime utcTime(QDateTime(referenceDate,timeDuration).toUTC().time());
     m.features().setFeature(UTCTIME_FEATURE_NAME,utcTime);
@@ -1134,7 +1135,7 @@ operator()(RecognizerMatch& m,
           << "': " << e.what();
     m.features().setFeature(TIMESTRING_FEATURE_NAME,m.getString());
   }
-  
+
   return true;
 }
 

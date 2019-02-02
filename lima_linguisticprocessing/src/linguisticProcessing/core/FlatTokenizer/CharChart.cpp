@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -57,7 +57,7 @@ namespace FlatTokenizer {
 
 SimpleFactory<AbstractResource,CharChart> flatTokenizerCharChartFactory(FLATTOKENIZERCHARCHART_CLASSID);
 
-CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(), 
+CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(),
     m_unicodeCategories(),
     m_unicodeCategories2LimaClasses()
 {
@@ -96,7 +96,7 @@ CharChart::CharChart() : AbstractResource(), m_classes(), m_chars(),
   << "Symbol_Currency"
   << "Symbol_Modifier"
   << "Symbol_Other";
-  
+
 // c_all, c_del, c_b, c_par, c_dot, c_comma, c_slash, c_hyphen, c_lowline, c_quote, c_fraction, c_percent, c_del1, c_plus, c_del2, c_Mm, c_degree, c_M, c_A, c_O, c_S, c_N, c_V, c_m, c_o, c_l_o, c_a, c_s, c_n, c_a_t, c_5, c_other, m_pattern, m_end_pattern, m_line, m_parag, unknwn
 //   m_unicodeCategories2LimaClasses.insert("Mark_NonSpacing","");
 //   m_unicodeCategories2LimaClasses.insert("Mark_SpacingCombining","");
@@ -150,7 +150,7 @@ CharChart::~CharChart()
 void CharChart::init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
-    
+
 {
   TOKENIZERLOGINIT;
   LDEBUG << "Creating a CharChart (loads file)";
@@ -229,7 +229,7 @@ LimaChar CharChart::maj(const LimaChar& c) const
 }
 
 // Gets the lower case corresponding of the specified
-// character. 
+// character.
 LimaChar CharChart::min (const LimaChar& c) const
 {
   return c.toLower();
@@ -250,7 +250,7 @@ LimaChar CharChart::unmark (const LimaChar& c) const {
       throw InvalidCharException();
   if (m_chars[c.unicode()]->longUnmark() != 0)
       return LimaChar();
-  if (m_chars[c.unicode()]->min() != 0 
+  if (m_chars[c.unicode()]->min() != 0
       && m_chars[c.unicode()]->min()->unmark() != 0)
     return (*(m_chars[c.unicode()]->min()->unmark()))();
   if (m_chars[c.unicode()]->unmark() != 0)
@@ -307,7 +307,7 @@ LimaString CharChart::unmark(const LimaString& str) const
         desaccented.push_back(chr);
         if (m_chars[str.at(i).unicode()]->hasLongUnmark())
           desaccented.push_back(m_chars[str.at(i).unicode()]->longUnmark()->code());
-        
+
       }
       else
       {
@@ -319,7 +319,7 @@ LimaString CharChart::unmark(const LimaString& str) const
       }
     }
     // silently discard invalid character
-    catch (InvalidCharException) {}
+    catch (InvalidCharException&) {}
   }
   return desaccented;
 }
@@ -351,7 +351,7 @@ LimaString CharChart::unmarkWithMapping(const LimaString& str,std::vector<unsign
       }
     }
     // discard invalid character
-    catch (InvalidCharException) {}
+    catch (InvalidCharException&) {}
   }
   return desaccented;
 }
@@ -406,17 +406,17 @@ bool CharChart::loadFromFile(const std::string& fileName)
   }
   std::string str;
   Common::Misc::readStream(file, str);
-  
+
   std::string::const_iterator iter = str.begin();
   std::string::const_iterator end = str.end();
-  
+
 //   typedef std::string::const_iterator iterator_type;
 //   typedef LinguisticProcessing::FlatTokenizer::charchart_parser<iterator_type> charchart_parser;
 
   charchart charchart;
   /// @ERROR DOES NOT COMPILE UNDER WINDOWS
   charchart_parser<std::string::const_iterator> parser; // Our grammar
-  
+
   bool r = phrase_parse(iter, end, parser, skipper, charchart);
   if (r)
   {

@@ -52,7 +52,7 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
-SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=false
 TF_SOURCES_PATH=""
 
@@ -156,16 +156,19 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja"
   make_test=""
   make_install="ninja install"
+  make_package="ninja package"
   generator="Ninja"
 elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="MSYS Makefiles"
 elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
@@ -205,23 +208,14 @@ else
   fi
 
   echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
-  echo "Copying TensorFlow binaries from /usr/lib/ to $LIMA_DIST/lib"
-
-  mkdir -p $LIMA_DIST/lib
-  if [ -f /usr/lib/libtensorflow-for-lima.so ]; then
-    cp /usr/lib/libtensorflow-for-lima.so $LIMA_DIST/lib/
-  elif [ -f /usr/lib/libtensorflow_cc.so ] && [ -f /usr/lib/libtensorflow_framework.so ]; then
-    cp /usr/lib/libtensorflow_cc.so $LIMA_DIST/lib/
-    cp /usr/lib/libtensorflow_framework.so $LIMA_DIST/lib/
-  fi
 fi
 
 echo "Launching cmake from $PWD"
 cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
-echo "Running command:"
+echo "Running make command:"
 echo "$make_cmd"
-eval $make_cmd
+eval $make_cmd && eval $make_test && eval $make_install && $make_package
 result=$?
 
 #exit $result

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "EnhancedAnalysisDictionaryEntry.h"
@@ -47,22 +47,27 @@ EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry(
   unsigned char* startEntryData,
   unsigned char* endEntryData,
   const DictionaryData* dicoData,
-    bool isMainKeys,
-    Lima::Common::AbstractAccessByString* access,
-    Lima::FsaStringsPool* sp) :
-    AbstractDictionaryEntry(formId,isFinal,isEmpty,hasLingInfos,hasConcatenated,hasAccentedForm),
+  bool isMainKeys,
+  Lima::Common::AbstractAccessByString* access,
+  Lima::FsaStringsPool* sp) :
+    AbstractDictionaryEntry(formId,isFinal,isEmpty,hasLingInfos,
+                            hasConcatenated,hasAccentedForm),
     m_startEntryData(startEntryData),
     m_endEntryData(endEntryData),
     m_dicoData(dicoData),
     m_notMainKeysHandler(0),
     m_stringsPool(sp)
 {
+  ANALYSISDICTLOGINIT;
+  LDEBUG << "EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry"
+          << m_stringsPool;
   if (!isMainKeys) {
     m_notMainKeysHandler=new NotMainKeysDictionaryEntryHandler(access,sp);
   }
 }
 
-EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry(const EnhancedAnalysisDictionaryEntry& eade) :
+EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry(
+    const EnhancedAnalysisDictionaryEntry& eade) :
   AbstractDictionaryEntry(eade),
   m_startEntryData(eade.m_startEntryData),
   m_endEntryData(eade.m_endEntryData),
@@ -82,21 +87,24 @@ EnhancedAnalysisDictionaryEntry::~EnhancedAnalysisDictionaryEntry()
   }
 }
 
-void EnhancedAnalysisDictionaryEntry::parseLingInfos(AbstractDictionaryEntryHandler* targetHandler) const
+void EnhancedAnalysisDictionaryEntry::parseLingInfos(
+    AbstractDictionaryEntryHandler* targetHandler) const
 {
-  AbstractDictionaryEntryHandler* handler = targetHandler;
-  if (m_notMainKeysHandler) {
+  auto handler = targetHandler;
+  if (m_notMainKeysHandler)
+  {
     m_notMainKeysHandler->setDelegate(targetHandler);
     handler = m_notMainKeysHandler;
   }
   handler->startEntry(m_entryId);
-  parseLingInfos(m_startEntryData,m_endEntryData,m_dicoData,handler);
+  parseLingInfos(m_startEntryData, m_endEntryData, m_dicoData, handler);
   handler->endEntry();
 }
 
-void EnhancedAnalysisDictionaryEntry::parseConcatenated(AbstractDictionaryEntryHandler* targetHandler) const
+void EnhancedAnalysisDictionaryEntry::parseConcatenated(
+    AbstractDictionaryEntryHandler* targetHandler) const
 {
-  AbstractDictionaryEntryHandler* handler = targetHandler;
+  auto handler = targetHandler;
   if (m_notMainKeysHandler) {
     m_notMainKeysHandler->setDelegate(targetHandler);
     handler = m_notMainKeysHandler;
@@ -106,13 +114,14 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(AbstractDictionaryEntryH
   handler->endEntry();
 }
 
-void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntryHandler* targetHandler) const
+void EnhancedAnalysisDictionaryEntry::parseAccentedForms(
+    AbstractDictionaryEntryHandler* targetHandler) const
 {
 #ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "EnhancedAnalysisDictionaryEntry::parseAccentedForms";
 #endif
-  AbstractDictionaryEntryHandler* handler = targetHandler;
+  auto handler = targetHandler;
   if (m_notMainKeysHandler) {
     m_notMainKeysHandler->setDelegate(targetHandler);
     handler = m_notMainKeysHandler;
@@ -121,19 +130,19 @@ void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntry
   unsigned char* p=m_startEntryData;
   assert(p != m_endEntryData);
   // skip ling infos
-  StringsPoolIndex read=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+  auto read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
   p+=read;
   if (p != m_endEntryData)
   {
     // parse accented data
-    read=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+    read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     unsigned char* end=p+read;
     while (p!=end)
     {
-      read=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+      read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
       if (read == 0)
       {
-        read=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+        read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
         handler->deleteAccentedForm(read);
       }
       else
@@ -166,16 +175,22 @@ void EnhancedAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntry
   handler->endEntry();
 }
 
-void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,unsigned char* endEntry,const DictionaryData* dicoData,AbstractDictionaryEntryHandler* handler)
+void EnhancedAnalysisDictionaryEntry::parseLingInfos(
+    unsigned char* startEntry,
+    unsigned char* endEntry,
+    const DictionaryData* dicoData,
+    AbstractDictionaryEntryHandler* handler)
 {
+  LIMA_UNUSED(endEntry);
 
 // "Le lotus croit dans le feu, et demeure invulnerable" ???
 
 #ifdef DEBUG_LP
  ANALYSISDICTLOGINIT;
- LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
+ LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , "
+        << (uint64_t)endEntry;
 #endif
-  
+
   unsigned char* p=startEntry;
   assert(p != endEntry);
   uint64_t read=DictionaryData::readCodedInt(p);
@@ -192,23 +207,23 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
     LDEBUG << "read linginfo p = " << (uint64_t)p;
 #endif
     bool toDelete=false;
-    StringsPoolIndex lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+    auto lemma = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
 
-    if (lemma==static_cast<StringsPoolIndex>(0))
+    if (lemma == static_cast<StringsPoolIndex>(0))
     {
 #ifdef DEBUG_LP
      LDEBUG << "read delete flag (p=" << (uint64_t)p << ")";
 #endif
       toDelete=true;
-      lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+      lemma = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     }
 #ifdef DEBUG_LP
    LDEBUG << "read lemma " << lemma << " (p=" << (uint64_t)p << ")";
 #endif
-    StringsPoolIndex norm=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
-    if (norm==static_cast<StringsPoolIndex>(0))
+    auto norm =  static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+    if (norm == static_cast<StringsPoolIndex>(0))
     {
-      norm=lemma;
+      norm = lemma;
     }
 #ifdef DEBUG_LP
    LDEBUG << "read norm " << norm << " (p=" << (uint64_t)p << ")" ;
@@ -225,23 +240,29 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(unsigned char* startEntry,u
     if (lingOffset!=0)
     {
       handler->foundLingInfos(lemma,norm);
-      unsigned char* props = dicoData->getLingPropertiesAddr(lingOffset);
+      auto props = dicoData->getLingPropertiesAddr(lingOffset);
       read = DictionaryData::readCodedInt(props);
-      unsigned char* propsEnd = props + read;
+      auto propsEnd = props + read;
       while (props!=propsEnd)
       {
-        handler->foundProperties(static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
+        handler->foundProperties(
+          static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
       }
       handler->endLingInfos();
     }
   }
 }
 
-void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntry,unsigned char* endEntry,const DictionaryData* dicoData,AbstractDictionaryEntryHandler* handler)
+void EnhancedAnalysisDictionaryEntry::parseConcatenated(
+    unsigned char* startEntry,
+    unsigned char* endEntry,
+    const DictionaryData* dicoData,
+    AbstractDictionaryEntryHandler* handler)
 {
 //  ANALYSISDICTLOGINIT;
-//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
-  
+//  LDEBUG << "parse concatenated " << (uint64_t)startEntry << " , "
+//          << (uint64_t)endEntry;
+
   unsigned char* p=startEntry;
   assert(p != endEntry);
   // skip linginfos
@@ -275,7 +296,7 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntr
 //          LDEBUG << "has " << nb << " components";
           while (nb-- > 0)
           {
-            StringsPoolIndex str=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(pp));
+            auto str = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(pp));
 //            LDEBUG << "read str=" << str;
             uint64_t pos=DictionaryData::readCodedInt(pp);
 //            LDEBUG << "read pos=" << pos;
@@ -306,7 +327,7 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntr
         handler->foundConcatenated();
         while (nbComponents-- > 0)
         {
-          StringsPoolIndex str=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+          auto str = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
 //          LDEBUG << "read string " << str;
           uint64_t pos=DictionaryData::readCodedInt(p);
 //          LDEBUG << "read pos=" << pos;
@@ -318,9 +339,9 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntr
           unsigned char* liend=p+lilength;
           while (p != liend)
           {
-            StringsPoolIndex lemma=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read lemma
+            auto lemma = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read lemma
 //            LDEBUG << "read lemma=" << lemma;
-            StringsPoolIndex norm=static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read norm
+            auto norm =static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read norm
 //            LDEBUG << "read norm=" << norm;
             if (norm==0)
             {
@@ -335,7 +356,8 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(unsigned char* startEntr
             unsigned char* propsEnd = props + read;
             while (props!=propsEnd)
             {
-              handler->foundProperties(static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
+              handler->foundProperties(
+                static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
             }
             handler->endLingInfos();
           }
@@ -358,11 +380,13 @@ void NotMainKeysDictionaryEntryHandler::foundLingInfos(StringsPoolIndex lemma,St
   m_delegate->foundLingInfos(splemma,spnorm);
 }
 
-void NotMainKeysDictionaryEntryHandler::deleteLingInfos(StringsPoolIndex lemma,StringsPoolIndex norm)
+void NotMainKeysDictionaryEntryHandler::deleteLingInfos(StringsPoolIndex lemma,
+                                                        StringsPoolIndex norm)
 {
-  StringsPoolIndex splemma=(*m_sp)[m_access->getSpelling(lemma)];
-  StringsPoolIndex spnorm=splemma;
-  if (norm != lemma) {
+  auto splemma=(*m_sp)[m_access->getSpelling(lemma)];
+  auto spnorm=splemma;
+  if (norm != lemma)
+  {
     spnorm=(*m_sp)[m_access->getSpelling(norm)];
   }
   m_delegate->deleteLingInfos(splemma,spnorm);

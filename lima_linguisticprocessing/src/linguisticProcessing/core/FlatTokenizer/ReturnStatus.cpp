@@ -53,7 +53,6 @@ ReturnStatus::~ReturnStatus()
 // status already exists, 0 is returned, its code otherwise.
 Lima::LimaChar ReturnStatus::addStatus(const LimaString& name) {
     _statusList.push_back(StatusEntry(name, _currentCode));
-    LimaChar c;
     return LimaChar(_currentCode.unicode()--);
 }
 

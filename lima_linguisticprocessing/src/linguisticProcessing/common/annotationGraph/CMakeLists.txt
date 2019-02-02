@@ -27,6 +27,8 @@ SET(lima-lp-annotationgraph_LIB_SRCS
 )
 
 add_library(lima-lp-annotationgraph SHARED ${lima-lp-annotationgraph_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-annotationgraph)
+
 
 target_link_libraries(lima-lp-annotationgraph lima-common-data lima-common-factory lima-common-misc lima-common-mediaticdata lima-common-processunitframework lima-lp-propertycode lima-lp-linguisticdata)
 

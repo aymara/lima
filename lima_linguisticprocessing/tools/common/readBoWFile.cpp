@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -119,9 +119,9 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     string s(argv[i]);
     if (s=="-h" || s=="--help")
       param.help=true;
-    else if (s.find("--xml")==0) 
+    else if (s.find("--xml")==0)
       param.outputFormat=XML;
-    else if (s.find("--nbdocs")==0) 
+    else if (s.find("--nbdocs")==0)
       param.outputFormat=STAT;
     else if (s.find("--output-format=")==0)
       param.outputFormat=readFormatType(string(s,16));
@@ -213,7 +213,7 @@ void readDocuments(ifstream& fileIn, BoWDocument* document )
 */
 
 //a local writer to get stats from the BoW
-class SBoWStatWriter  : public BoWXMLWriter 
+class SBoWStatWriter  : public BoWXMLWriter
 {
 public:
   SBoWStatWriter():BoWXMLWriter(std::cout), m_nbDocs(0) {}
@@ -240,7 +240,7 @@ public:
   friend ostream& operator<<(ostream& os, const SBoWStatWriter& writer) {
     return os << "NbDocs=" << writer.m_nbDocs;
   }
-  
+
 private:
   SBoWStatWriter(const SBoWStatWriter&);
   uint64_t m_nbDocs;
@@ -271,6 +271,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
         reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       writer.writeBoWDocumentsFooter();
+      break;
     }
     case STAT:
     {
@@ -318,23 +319,37 @@ int main(int argc, char **argv)
 
 int run(int argc,char** argv)
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "amose" << "lima",QStringList());
+  QStringList configDirs = buildConfigurationDirectoriesList(
+      QStringList({"amose", "lima"}), QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "amose" << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(
+      QStringList({"amose", "lima"}), QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
 
-  
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    cerr << "Can't load plugins." << endl;
+    exit(1);
+  }
+
   std::string commonConfigFile = "lima-common.xml";
   std::deque<std::string> langs;
-  if (argc<1) {    cerr << *USAGE; exit(1); }
+  if (argc<1)
+  {
+    cerr << *USAGE;
+    exit(1);
+  }
   readCommandLineArguments(argc,argv);
-  if (param.help) { cerr << *HELP; exit(1); }
+  if (param.help)
+  {
+    cerr << *HELP;
+    exit(1);
+  }
 
   BOWLOGINIT;
 
@@ -346,7 +361,7 @@ int run(int argc,char** argv)
     cerr << "cannot open input file [" << param.inputFile << "]" << endl;
     exit(1);
   }
-  
+
   // initialize common
   Lima::Common::MediaticData::MediaticData::changeable().init(
           resourcesPath.toUtf8().constData(),
@@ -448,7 +463,7 @@ int run(int argc,char** argv)
     delete document;
     break;
   }
-*/  
+*/
   default: {
     cerr << "format of file " << reader.getFileTypeString() << " not managed"
          << endl;

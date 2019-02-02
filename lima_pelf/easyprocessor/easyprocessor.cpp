@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     langs);
 
   // initialize linguistic processing
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(QString::fromUtf8(configDir.c_str()) + "/" + lpConfigFile.c_str());
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
     clientId,
     lpconfig,
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
   std::shared_ptr< AbstractProcessingClient > client = std::shared_ptr< AbstractProcessingClient >(LinguisticProcessingClientFactory::single().createClient(clientId));
   
   // read easy configfile
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser easyconfig(configDir + "/" + easyConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser easyconfig(QString::fromUtf8(configDir.c_str()) + "/" + easyConfigFile.c_str());
   std::map<std::string,std::string> groupeTypeMapping;
   std::map<std::string,std::string> relationTypeMapping;
   std::map<std::string,std::string> srcVxTag;

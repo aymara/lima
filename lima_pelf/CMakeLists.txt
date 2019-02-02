@@ -5,7 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 
-include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
+# include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 
 cmake_policy(SET CMP0017 NEW)
@@ -14,7 +14,7 @@ SET(optionalLibs)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   message("Linux flags")
-  
+
   # Flags needed for the plugins mechanism to work: our libs are dynamically loaded by
   # factories, thus their symbols must be known even if not used by the binary
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
@@ -49,20 +49,16 @@ else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   set(LIB_INSTALL_DIR "bin")
 endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
-    
+
 # Find*.cmake will be searched in the following dirs if not found in system dirs
 set(CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-  "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
   "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-  "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-  "/usr/share/cmake/Modules" # for those available on the system
   )
 
 # find_path and find_library will search in these dirs too
 set(CMAKE_PREFIX_PATH
-    "${CMAKE_INSTALL_PREFIX}"
     "$ENV{LIMA_EXTERNALS}"
 )
 
@@ -75,7 +71,7 @@ IF(SVMTOOL++_FOUND)
   link_directories($ENV{LIMA_EXTERNALS}/lib)
 ENDIF(SVMTOOL++_FOUND)
 
-include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
+# include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 addQt5Modules(Core Xml XmlPatterns Gui Widgets)
@@ -89,7 +85,7 @@ find_package(Qwt)
 if(Qwt_FOUND)
     include_directories(QWT_INCLUDE_DIR)
 else()
-message(FATAL "Could not find Qwt")
+    message(FATAL "Could not find Qwt")
 endif()
 
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -100,32 +96,8 @@ FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options sys
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-
-# find_package(LimaCommon REQUIRED PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules /usr/share/apps/lima/cmake/Modules)
-# include_directories(${LIMACOMMON_INCLUDE_DIR})
-# link_directories(${LIMACOMMON_LIBRARY_DIRS})
-# include(LimaMacros)
-# 
-FIND_PACKAGE(LIMACOMMON PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories( AFTER ${LIMACOMMON_INCLUDE_DIR})
-  link_directories( ${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_common")
-ENDIF(LIMACOMMON_FOUND)
-
-
-FIND_PACKAGE(LIMALP PATHS ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories( AFTER ${LIMALP_INCLUDE_DIR})
-  link_directories( ${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find lima_linguisticprocessing")
-ENDIF(LIMALP_FOUND)
-
 set(LIMA_PELF_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
 set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
-
 
 # Go to subdirectories
 add_subdirectory(easyprocessor)
@@ -137,41 +109,25 @@ else ()
   message("Environment variable PELF_ALIGNER and PELF_EVALUATOR should be set to build the benchmarking tool")
 endif()
 
-
 if (Qwt_FOUND)
 add_subdirectory(resourceTool)
 endif()
 add_subdirectory(evalPosTagging)
 add_subdirectory(commands)
 
-
-
 ########### install files ###############
 # install(FILES LimaPelfConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
 
-########### documentation ###############
-
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(doc
-${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
-
-########### packaging ###############
-INCLUDE(InstallRequiredSystemLibraries)
-
-set(CPACK_MONOLITHIC_INSTALL 1)
-SET(CPACK_PACKAGE_NAME "limapelf")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA performance evaluation framework")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
-SET(CPACK_STRIP_FILES "bin/testDict16;bin/testLexicon")
-SET(CPACK_SOURCE_STRIP_FILES "")
-set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
-INCLUDE(CPack)
+# ########### documentation ###############
+#
+# # add a target to generate API documentation with Doxygen
+# find_package(Doxygen)
+# if(DOXYGEN_FOUND)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+# add_custom_target(doc
+# ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+# WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# COMMENT "Generating API documentation with Doxygen" VERBATIM
+# )
+# endif(DOXYGEN_FOUND)
+#

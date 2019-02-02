@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -178,6 +178,9 @@ Node::~Node() {delete m_d;}
 Node::Node(const Node& n) : m_d(new NodePrivate(*n.m_d)) {}
 Node &Node::operator=(const Node& n)
 {
+  if (this == &n)
+    return *this;
+
   if (m_d != 0) {
     delete m_d;
   }
@@ -332,9 +335,7 @@ public:
   StructurePrivate(const StructurePrivate& sp);
   StructurePrivate ( STRUCT_ID structID );
   StructurePrivate& operator= ( const StructurePrivate& sp );
-  StructurePrivate(StructurePrivate&& sp);
-  StructurePrivate& operator= ( StructurePrivate&& sp );
-  
+
     //! @brief destructeur: delete des 'Nodes' de contenu
     ~StructurePrivate();
 
@@ -383,7 +384,7 @@ StructurePrivate::~StructurePrivate()
 
 ///////////////// Structure methods
 Structure::Structure() : m_d(new StructurePrivate()) {}
-  
+
 Structure::Structure ( STRUCT_ID structID )  : m_d(new StructurePrivate(structID))
 {
 }
@@ -409,6 +410,9 @@ Structure::Structure (Structure&& s )  : m_d(s.m_d)
 
 Structure& Structure::operator=( const Structure& s )
 {
+  if (this == &s)
+    return *this;
+
   if (m_d!=0) {
     delete m_d;
   }
@@ -499,9 +503,9 @@ std::ostream& operator<<(ostream& os, const Node& node)
 
 QDebug& operator<<(QDebug& os, const Node& node)
 {
-  os << "Node(structId:" << node.get_StructId() << ", nodeId:" << node.get_NodeId() 
-     << ", contentId:" << node.get_ContentId() << ", indexId:" << node.indexId() << ", descrId:" 
-     << node.descrId() << ", docName:" << node.get_DocName() << ", nodeStart:" << node.nodeStart() 
+  os << "Node(structId:" << node.get_StructId() << ", nodeId:" << node.get_NodeId()
+     << ", contentId:" << node.get_ContentId() << ", indexId:" << node.indexId() << ", descrId:"
+     << node.descrId() << ", docName:" << node.get_DocName() << ", nodeStart:" << node.nodeStart()
      << ", nodeEnd:" << node.nodeEnd() << ", nodeLength:" << node.nodeLength() << ")";
   return os;
 }
@@ -545,5 +549,5 @@ void Structure::setStructId(STRUCT_ID structId)
   m_d->m_structId=structId;
 }
 
-  
+
 } // Lima

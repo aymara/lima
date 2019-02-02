@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,8 +22,8 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Mon Jan  3 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2019 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "deaccentuatedTransition.h"
@@ -73,7 +73,7 @@ m_charchart(0)
     getResource(m_language,"charchart");
   m_charchart=static_cast<FlatTokenizer::CharChart*>(res);
 }
-  
+
 //***********************************************************************
 // destructor
 //***********************************************************************
@@ -109,7 +109,7 @@ DeaccentuatedTransition* DeaccentuatedTransition::create() const {
 TypeTransition DeaccentuatedTransition::type() const {
   return T_DEACCENTUATED;
 }
-  
+
 std::string DeaccentuatedTransition::printValue() const {
   ostringstream oss;
   oss << "deaccentT~" << Common::Misc::limastring2utf8stdstring(m_deaccentuatedForm);
@@ -117,15 +117,15 @@ std::string DeaccentuatedTransition::printValue() const {
 }
 
 bool DeaccentuatedTransition::operator== (const TransitionUnit& t) const {
-  if (type() == t.type() && 
-      m_deaccentuatedForm == 
+  if (type() == t.type() &&
+      m_deaccentuatedForm ==
       static_cast<const DeaccentuatedTransition&>(t).
       getDeaccentuatedForm()) {
     return compareProperties(t);
   }
   return false;
 }
-  
+
 bool DeaccentuatedTransition::
 compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
         const LinguisticGraphVertex& /*vertex*/,
@@ -135,7 +135,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
 {
   return (m_charchart->unmark(token->stringForm()) == m_deaccentuatedForm);
 }
-  
+
 } // end namespace
 } // end namespace
 } // end namespace

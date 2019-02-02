@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,11 +14,11 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-   
+
 # It is necessary to define Qt5_INSTALL_DIR in your environment.
-set(CMAKE_PREFIX_PATH  
+set(CMAKE_PREFIX_PATH
   "$ENV{Qt5_INSTALL_DIR}"
-  "${CMAKE_PREFIX_PATH}" 
+  "${CMAKE_PREFIX_PATH}"
 )
 
 # Add definitions and flags
@@ -33,17 +33,17 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-# This macro does the find_package with the required Qt5 modules listed as 
-# parameters. Note that the Qt5_INCLUDES variable is not necessary anymore as 
+# This macro does the find_package with the required Qt5 modules listed as
+# parameters. Note that the Qt5_INCLUDES variable is not necessary anymore as
 # the inclusion of variables Qt5::Component in the target_link_libraries call
-# now automatically add the necessary include path, compiler settings and 
+# now automatically add the necessary include path, compiler settings and
 # several other things. In the same way, the Qt5_LIBRARIES variable now is just
-# a string with the Qt5::Component elements. It can be use in 
+# a string with the Qt5::Component elements. It can be use in
 # target_link_libraries calls to simplify its writing.
-macro(addQt5Modules )
+macro(addQt5Modules)
   set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
-  if(NOT "${_MODULES}" STREQUAL "" )
+  if(NOT "${_MODULES}" STREQUAL "")
     # Use find_package to get includes and libraries directories
     find_package(Qt5 REQUIRED ${_MODULES})
     message("Found Qt5 ${Qt5Core_VERSION}")

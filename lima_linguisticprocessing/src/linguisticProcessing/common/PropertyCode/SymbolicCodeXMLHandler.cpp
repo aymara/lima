@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004 by CEA LIST                       *
+ *   Copyright (C) 2004 by CEA LIST                                        *
  *                                                                         *
  ***************************************************************************/
 
@@ -55,7 +55,7 @@ bool SymbolicCodeXMLHandler::endElement(const QString & namespaceURI, const QStr
 #endif
     if (m_outputMap.find(m_currentCode)!=m_outputMap.end()) {
       PROPERTYCODELOGINIT;
-      LWARN << m_currentCode << " already exists ! overwrite it";
+      LWARN << m_currentCode << " already exists! overwrite it";
     }
     m_outputMap[m_currentCode]=m_propCodeManager.encode(m_currentPropertyValues);
   }

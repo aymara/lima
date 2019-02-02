@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -47,17 +47,17 @@ namespace LinguisticProcessing
 {
 namespace WordSenseDisambiguation
 {
-  
+
 bool vectorCountCompare ( vectorCount i,vectorCount j )
 {
   if ( i.count == j.count)
     return i.index < j.index;
   return ( i.count < j.count );
 }
-  
+
 HashedDB::HashedDB()
 {
-  
+
 }
 
 HashedDB::~HashedDB()
@@ -76,7 +76,7 @@ HashedDB::HashedDB ( int _signatureLength, int _nSignatures )
 
 void HashedDB::append ( LSHSignature & s )
 {
-  signatures.push_back ( s );  
+  signatures.push_back ( s );
 }
 
 void HashedDB::removeLast (  )
@@ -97,7 +97,7 @@ HashedDB::HashedDB ( string dbFileName )
 {
   nbZero = new int[signatureLength];
   int totalSignatureLength=0;
-  ifstream is;  
+  ifstream is;
   is.open(dbFileName.c_str(), std::ifstream::binary);
   if (!is.is_open())
   {
@@ -108,9 +108,9 @@ HashedDB::HashedDB ( string dbFileName )
   is.read((char*)&nSignatures, sizeof(nSignatures));
   cerr << "Sig Length : " << totalSignatureLength << endl;
   cerr << "Nb signatures : " << nSignatures << endl;
-  
+
   signatureLength = totalSignatureLength;
-  
+
   for (int sigIndex = 0; sigIndex < nSignatures; sigIndex++) {
     LSHSignature * newLshSig = new LSHSignature(signatureLength);
     append(*newLshSig);
@@ -120,7 +120,7 @@ HashedDB::HashedDB ( string dbFileName )
   LSHSignature target1 = getSignature ( 0 );
   LSHSignature target2 = getSignature ( 2 );
   LSHSignature target3 = getSignature ( 3 );
-  cerr << "Test loadHAshed db : "; 
+  cerr << "Test loadHAshed db : ";
   target1.print(1,20);
   target2.print(2,20);
 target3.print(3,20);
@@ -128,23 +128,23 @@ target3.print(3,20);
 }
 
 vector< int > & HashedDB::fastKNNSearch1 ( vector<int>& permutations, int beam )
-{  
+{
   vector<int> sortBuffer ( nSignatures );
-  vector<int> *result = new vector<int> ( beam );  
+  vector<int> *result = new vector<int> ( beam );
   for ( int i = 0; i < nSignatures; i++ )
     sortBuffer[i] = i;
   if (signatureLength > 0)
     cerr << "before sort " << *sortBuffer.begin() << " " ;
-    getSignature(*(sortBuffer.begin()+1)).print(getSignature(*(sortBuffer.begin()+1)).bitCount(), 20 );
-    getSignature(60996).print(60996, 20);
-    nth_element ( sortBuffer.begin(), 
+  getSignature(*(sortBuffer.begin()+1)).print(getSignature(*(sortBuffer.begin()+1)).bitCount(), 20 );
+  getSignature(60996).print(60996, 20);
+  nth_element ( sortBuffer.begin(),
       sortBuffer.begin() + beam,
       sortBuffer.end(),
       (comparePermutedSignatures ( permutations, *this ) ) );
-  
-    cerr << "after sort " << *sortBuffer.begin() << " " ;
-    getSignature(*(sortBuffer.begin()+1)).print(getSignature(*(sortBuffer.begin()+1)).bitCount(), 20 );
-  
+
+  cerr << "after sort " << *sortBuffer.begin() << " " ;
+  getSignature(*(sortBuffer.begin()+1)).print(getSignature(*(sortBuffer.begin()+1)).bitCount(), 20 );
+
   copy ( sortBuffer.begin(), sortBuffer.begin() + beam, (*result).begin() );
   return *result;
 }
@@ -157,7 +157,7 @@ void HashedDB::xorX(LSHSignature & s)
     }
 }
 
-void HashedDB::printStats() 
+void HashedDB::printStats()
 {
   for (int sig = 0; sig < nSignatures; sig++)
     for (int s = 0; s < signatureLength; s++)

@@ -836,8 +836,8 @@
     left="XPATH#//data_structure/vertex/token[position=17][length=4]"
     operator="exists"
     right=""/>
-  </testcase>
-  <testcase id="eng.tok.49" type="bloquant">
+</testcase>
+<testcase id="eng.tok.49" type="bloquant">
     <call-parameters>
       <param key="text" value="The blue-ribbon campaign ended in disgrace. "/>
       <param key="language" value="eng"/>
@@ -851,7 +851,7 @@
       left="XPATH#//data_structure/vertex/token[position=5][length=11]/string"
       operator="="
       right="blue-ribbon"/>
-  </testcase>
+</testcase>
 <testcase id="eng.tok.50" type="bloquant">
   <call-parameters>
       <param key="text" value="The Airbus A380 is the largest airplane in the world."/>
@@ -866,5 +866,25 @@
     left="XPATH#//data_structure/vertex/token[position=12][length=4]/t_status/t_default"
     operator="="
     right="t_alphanumeric"/>
-  </testcase> 
- </testcases>
+</testcase>
+<testcase id="eng.tok.51" type="bloquant">
+  <call-parameters>
+      <param key="text" value="it 650,00,"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Split comma from number, don't loose comma.</expl>
+  <test id="eng.tok.51.1" trace=".tokenizer.xml"
+    comment="650,00 is a comma-number."
+    left="XPATH#//data_structure/vertex/token[position=4][length=6]/t_status/t_default"
+    operator="="
+    right="t_comma_number"/>
+  <test id="eng.tok.51.2" trace=".tokenizer.xml"
+    comment="Comma is on its place."
+    left="XPATH#//data_structure/vertex/token[position=10][length=1]/string"
+    operator="="
+    right=","/>
+</testcase>
+</testcases>

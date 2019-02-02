@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -33,7 +33,9 @@ file(COPY testcharchart.chars.tok DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(CharChartTest0 ${CharChartTest0_SRCS})
 
-target_link_libraries(CharChartTest0 lima-linguisticprocessing)
+target_link_libraries(CharChartTest0
+  lima-lp-flattokenizer
+)
 
 add_test(NAME CharChartTest0 COMMAND CharChartTest0 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -53,6 +55,8 @@ file(COPY testcharchart-ara.chars.tok DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(CharChartTestAra ${CharChartTestAra_SRCS})
 
-target_link_libraries(CharChartTestAra lima-linguisticprocessing)
+target_link_libraries(CharChartTestAra
+  lima-lp-flattokenizer
+)
 
 add_test(NAME CharChartTestAra COMMAND CharChartTestAra WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,10 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
- *   Copyright (C) 2007-2012 by CEA LIST                               
- *                                             
+ *   Copyright (C) 2007-2019 by CEA LIST
+ *
  * @file        evalCoref.cpp
- * @author      Claire Mouton (Claire.Mouton@cea.fr) 
+ * @author      Claire Mouton (Claire.Mouton@cea.fr)
 
  *              Copyright (c) 2007 by CEA
  * @date        Created on Jun, 6 2007
@@ -34,6 +34,7 @@
 #include <sstream>
 #include <fstream>
 #include <boost/regex.hpp>
+#include <boost/format.hpp>
 #include <math.h>
 
 #include <QtGlobal>
@@ -54,7 +55,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(std::string, USAGE, ( "usage: evalCoref [-p] [-r] [-d]
 " -p precision\n"
 " -r recall\n"
 " -d processDefinites\n"
-" -v verbose\n" ) ); 
+" -v verbose\n" ) );
 double prec = 0;
 double rec = 0;
 
@@ -95,21 +96,21 @@ int main(int argc,char* argv[])
   }
   if (docatch)
   {
-    try 
-    { 
+    try
+    {
       cerr << "Doing work in try block." << endl;
-      return dowork(argc, argv); 
+      return dowork(argc, argv);
     }
-    catch (const std::exception& e) 
+    catch (const std::exception& e)
     {
       cerr << "Catched an exception: " << e.what() << endl;
     }
-    catch (...) 
+    catch (...)
     {
       cerr << "Catched an unknown exception " << endl;
     }
   }
-  else 
+  else
     return dowork(argc,argv);
 }
 
@@ -126,7 +127,6 @@ int dowork(int argc,char* argv[])
   string recallRate("Recall Rate\n<br/>-------------\n<br/>\n<br/>");
   string errors("\n<br/>ERRORS\n<br/>-------------\n<br/>\n<br/>");
   string rates("\n<br/>RATES\n<br/>------------\n<br/>\n<br/>");
-  char* fmeasure = new char();
 
   vector<set<string> >* corefChains = new vector<set<string> >();
   NamedBoundsMap* corpusBMap = new NamedBoundsMap();
@@ -139,7 +139,7 @@ int dowork(int argc,char* argv[])
   string configDir=string(getenv("LIMA_CONF"));
   string corpusCsv("");
   string limaCsv("");
-  string outputFile(""); 
+  string outputFile("");
   if (argc>1)
   {
     for (int i = 1 ; i < argc; i++)
@@ -163,7 +163,7 @@ int dowork(int argc,char* argv[])
       {
         if (limaCsv=="")
           limaCsv=arg;
-        else 
+        else
         if (corpusCsv=="")
           corpusCsv=arg;
         else
@@ -208,15 +208,14 @@ int dowork(int argc,char* argv[])
     rates += recallRate;
   }
   std::cerr << "Outputs results" << std::endl;
-  sprintf(fmeasure,"%.2f", 2*(prec*rec)/(prec+rec));
-  string fmeas(fmeasure);
-  fmeas=("\n<br/>F-Measure = " + fmeas + "\n<br/>\n<br/>");
+  string fmeas = (boost::format("%.2f") % (2*(prec*rec)/(prec+rec))).str();
+  fmeas = ("\n<br/>F-Measure = " + fmeas + "\n<br/>\n<br/>");
   fout << start << errors << rates << fmeas << endl;
   string s;
   std::ifstream fcorp(corpusCsv.substr(0,corpusCsv.size()-4).c_str(), std::ifstream::binary);
-  while( getline(fcorp,s) ) 
+  while( getline(fcorp,s) )
   {
-    boost::regex e;  
+    boost::regex e;
     // Wolverhampton format
     e = regex("(<COREF ID=\")([[:alnum:]]+)(\"[^>]*REF=\")?([[:alnum:]]+)?(\"[^>]*>)([^<]*)(</COREF>)");
     s = regex_replace(s, e, "<a name=\"L$2\">$1$2$3$4$5<font color=red>$6</font><sub>$2</sub><sup>$4</sup>$7");
@@ -227,18 +226,18 @@ int dowork(int argc,char* argv[])
     e = regex("(<RS ID=\")([[:alnum:]]+[.][[:alnum:]]+)(\"[^>]*>)([^<]*)(</RS>)");
     s = regex_replace(s, e, "$1$2$3<font color=red>$4</font><sub>$2</sub>$5");
 
-    s += "<br><a href=\"#top\">top</a><br>";   
+    s += "<br><a href=\"#top\">top</a><br>";
     fout << s;
   }
   std::ifstream flima(limaCsv.substr(0,limaCsv.size()-4).c_str(), std::ifstream::binary);
-  while( getline(flima,s) ) 
+  while( getline(flima,s) )
   {
-    boost::regex e;  
+    boost::regex e;
 
     e = regex("(<COREF ID=\")([[:alnum:]]+)(\"[^>]*REF=\")?([[:alnum:]]+)?(\"[^>]*>)([^<]*)(</COREF>)");
     s = regex_replace(s, e, "<a name=\"L$2\">$1$2$3$4$5<font color=red>$6</font><sub>$2</sub><sup>$4</sup>$7");
     e = regex("(<COREF[^>]*CATEG=\"other\"[^>]*><font color=)red(>[^<]*</font>)");
-    s = regex_replace(s, e, "$1blue$2"); 
+    s = regex_replace(s, e, "$1blue$2");
     e = regex("([>[:alnum:]] [.] )");
     s = regex_replace(s, e, "$1 <br/><a href=\"#top\">top</a><br/>");
 
@@ -270,7 +269,7 @@ void init(string csvFile, CorefsMap* CMap, NamedBoundsMap* BMap, TextMap* TMap, 
   std::ifstream fin(csvFile.c_str(), std::ifstream::binary);
   string s;
   regex expression("([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);?$");
-  while( getline(fin,s) ) 
+  while( getline(fin,s) )
   {
     match_results<std::string::const_iterator> what;
     string::const_iterator start = s.begin();
@@ -280,7 +279,7 @@ void init(string csvFile, CorefsMap* CMap, NamedBoundsMap* BMap, TextMap* TMap, 
     string ref = string(what[2].first, what[2].second);
     string text = string(what[5].first, what[5].second);
     bool definites =  string(what[6].first, what[6].second)!="other"
-               && string(what[6].first,what[6].second)!="reflPron";   
+               && string(what[6].first,what[6].second)!="reflPron";
     float boundA = atoi(string(what[3].first, what[3].second).c_str());
     float boundB = atoi(string(what[4].first, what[4].second).c_str());
     BMap->insert(make_pair(id, make_pair(boundA, boundB)));
@@ -292,9 +291,9 @@ void init(string csvFile, CorefsMap* CMap, NamedBoundsMap* BMap, TextMap* TMap, 
 
 //   cerr << "map : "<< endl;
 //   for (CorefsMap::iterator it = CMap->begin(); it!=CMap->end();it++)
-//   { 
+//   {
 //     cerr << (*it).first << " - " << (*it).second << endl;
-//   }    
+//   }
 }
 
 // Handle reference corpus
@@ -304,7 +303,7 @@ void init(string csvFile, vector<set<string> >*corefChains, NamedBoundsMap* BMap
   std::ifstream fin(csvFile.c_str(), std::ifstream::binary);
   string line;
   regex expression("([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);?$");
-  match_results<std::string::const_iterator> what; 
+  match_results<std::string::const_iterator> what;
   while( getline(fin,line) )
   {
     string::const_iterator start = line.begin();
@@ -360,14 +359,14 @@ void init(string csvFile, vector<set<string> >*corefChains, NamedBoundsMap* BMap
     }
   }
 //   for (vector<set<string> >::iterator it1 = corefChains->begin(); it1!=corefChains->end();it1++)
-//   { 
+//   {
 //     cerr << "chaine : "<< endl;
 //     for (set<string>::iterator it2 = (*it1).begin(); it2!=(*it1).end(); it2++)
 //       cerr << *it2 << endl;
-//   }    
+//   }
 }
 
-void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap* mainBMap, TextMap* mainTMap, NamedBoundsMap* refBMap, TextMap* refTMap, DefinitesMap* DMap, bool inclusion, bool processDefinites, string& errors, string& rate) 
+void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap* mainBMap, TextMap* mainTMap, NamedBoundsMap* refBMap, TextMap* refTMap, DefinitesMap* DMap, bool inclusion, bool processDefinites, string& errors, string& rate)
 {
   stringstream sstream;
   float cpt = 0;
@@ -375,7 +374,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
   float cptStandardError = 0;
   float cptNotAnnotatedError = 0;
   float cptNotFoundError = 0;
-  
+
   for (CorefsMap::iterator mainCIt = CMap->begin();
           mainCIt != CMap->end();
           mainCIt++)
@@ -393,7 +392,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
     {
       // inclusion should be interval(COREF) € interval(COREF')\interval(COREF'' encapsulated)
       // done automatically from the structure of the csv file
-      // hence the relevance of the for_loop condition id2 == "" 
+      // hence the relevance of the for_loop condition id2 == ""
 
       // precision case
       if (inclusion)
@@ -403,7 +402,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
           pass = true;
           id2 = " ";
           ref2 = " ";
-          cpt--; 
+          cpt--;
           break;
         }
         // if id1 has an equivalent mark in 2
@@ -499,7 +498,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         if (refTMap->find(id2)!=refTMap->end())
           token_id2 = (*refTMap->find(id2)).second;
         else
-          token_id2 = "?"; 
+          token_id2 = "?";
         string token_ref2;
         if (refTMap->find(ref2)!=refTMap->end())
           token_ref2 = (*refTMap->find(ref2)).second;
@@ -531,7 +530,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         continue;
       }
       else if (!processDefinites && !pass && ref2=="" && id2!="")
-      { 
+      {
         string token_id1;
         if (mainTMap->find(id1)!=mainTMap->end())
           token_id1 = (*mainTMap->find(id1)).second;
@@ -568,7 +567,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         continue;
       }
       else if (ref2=="")
-      { 
+      {
         cerr << "error: at this point ref 2 should be or resolved or already caught " << cpt<< endl;
         continue;
       }
@@ -592,7 +591,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         if (refTMap->find(id2)!=refTMap->end())
           token_id2 = (*refTMap->find(id2)).second;
         else
-          token_id2 = "?"; 
+          token_id2 = "?";
         string token_ref2;
         if (refTMap->find(ref2)!=refTMap->end())
           token_ref2 = (*refTMap->find(ref2)).second;
@@ -634,7 +633,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         if (refTMap->find(id2)!=refTMap->end())
           token_id2 = (*refTMap->find(id2)).second;
         else
-          token_id2 = "?";          
+          token_id2 = "?";
         errors += "IdCorpus: <a href=\"#C"+ id1 + "\">" + id1 + "</a>" +" ("+token_id1+") RefCorpus: "+ "<a href=\"#C"+ ref1 + "\">" + ref1 + "</a>" +" ("+token_ref1+") IdLima: "+ "<a href=\"#L"+ id2 + "\">" + id2 + "</a>" +" ("+token_id2+") - No reference found in the lima output for this id -> definite ?\n<br/>\n<br/>";
         cptNotAnnotatedError++;
         continue;
@@ -655,7 +654,7 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
         if (refTMap->find(id2)!=refTMap->end())
           token_id2 = (*refTMap->find(id2)).second;
         else
-          token_id2 = "?";          
+          token_id2 = "?";
         errors += "IdCorpus: <a href=\"#C"+ id1 + "\">" + id1 + "</a>" +" ("+token_id1+") RefCorpus: "+ "<a href=\"#C"+ ref1 + "\">" + ref1 + "</a>" +" ("+token_ref1+") IdLima: "+ "<a href=\"#L"+ id2 + "\">" + id2 + "</a>" +" ("+token_id2+") - No reference found in the lima output for this id...!\n<br/>\n<br/>";
         cptNotAnnotatedError++;
         continue;
@@ -668,9 +667,9 @@ void process(vector<set<string> >* corefChains, CorefsMap* CMap, NamedBoundsMap*
       prec = 100.*cptTrue/cpt;
     else
       rec =  100.*cptTrue/cpt;
-    sstream 
-    << "-----------------------------------" 
-    << "\n<br/> Positive: " << round(100.*cptTrue/cpt) << " % (" << cptTrue 
+    sstream
+    << "-----------------------------------"
+    << "\n<br/> Positive: " << round(100.*cptTrue/cpt) << " % (" << cptTrue
     << ")\n<br/>-----------------------------------"
     << "\n<br/> Standard errors: " << round(100.*cptStandardError/cpt) << " % (" << cptStandardError
     << ")\n<br/> Not coreferent errors: " << round(100.*cptNotAnnotatedError/cpt) << " % (" << cptNotAnnotatedError

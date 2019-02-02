@@ -1,6 +1,6 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -23,42 +23,63 @@
 if ($main::h || $main::help) {
     print <<EOF;
 transcode symbolic codes to numeric
-usage transcode.pl code-xxx.xml symbolicCode-xxx.xml rules
+usage transcode.pl /path/to/convertSymbolicCodes code-xxx.xml symbolicCode-xxx.xml rules
 EOF
     exit;
 }
 
 use strict;
 
-die "need two files (see -help)" unless @ARGV>1;
+my @args;
+my @remaining_args;
+foreach my $arg (@ARGV) {
+    if ($arg =~ /^\-\-/) {
+        push @args, $arg;
+    } else {
+        push @remaining_args, $arg;
+    }
+}
+
+my $argline = join(" ", @args);
+
+die "need convertSymbolicCodes path and two files (see -help)" unless (@remaining_args > 2);
 
 my %conv;
-my $codeFile=shift @ARGV;
-my $rulesFile=pop @ARGV;
+my $convertSymbolicCodes = shift @remaining_args;
+my $codeFile = shift @remaining_args;
+my $rulesFile = pop @remaining_args;
 
-&getCodeConversion($codeFile,@ARGV);
+&getCodeConversion($codeFile, @remaining_args);
+
+my @conv_keys = keys %conv;
+if ($#conv_keys < 0) {
+    die "ERROR: transcodeIdiomatic.pl: can't load conv keys\n";
+}
 
 open(FIN,$rulesFile) || die "cannot open $rulesFile";
 while (<FIN>) {
     if (/(.*):(ABS_)?IDIOM\$([^:]*)(.*)/) {
+        if (! exists($conv{$3})) {
+            #print STDERR "transcodeIdiomatic.pl: can't find conv for \"$3\"\n";
+        }
         print "$1:$2IDIOM\$".$conv{$3}.$4."\n";
-    }
-    else {
+    } else {
         print;
     }
 }
 close(FIN);
 
 sub getCodeConversion {
-    my ($codeFile,@symbCodeFiles)=@_;
-    if (!open(FCONV,"convertSymbolicCodes --code=$codeFile ".
-	      join(" ",@symbCodeFiles)." |")) {
-	print STDERR "cannot get code conversion: $!\n";
-	exit(1);
-    }								    
-    while(<FCONV>) {
-	/(.*);(.*);/;
-	$conv{$1}=$2;
+    my ($codeFile, @symbCodeFiles) = @_;
+    if ( !open(FCONV,"$convertSymbolicCodes $argline --code=$codeFile " .  join(" ", @symbCodeFiles) . " |") ) {
+        print STDERR "cannot get code conversion: $!\n";
+        exit(1);
     }
+
+    while(<FCONV>) {
+        /(.*);(.*);/;
+        $conv{$1} = $2;
+    }
+
     close(FCONV);
 }

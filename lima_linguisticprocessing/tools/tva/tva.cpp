@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -156,8 +156,12 @@ int run(int argc,char** argv)
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-    
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    std::cerr << "Can't load plugins. Aborting." << std::endl;
+    return 1;
+  }
+
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
   // initialize common
@@ -166,14 +170,14 @@ int run(int argc,char** argv)
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
-  
+
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
   {
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig((configDir + "/" + lpConfigFile.c_str()).toStdString());
+      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile.c_str());
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,
@@ -188,7 +192,7 @@ int run(int argc,char** argv)
     std::cerr << "No LinguisticProcessingClientFactory were configured with" << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" << lpConfigFile << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   std::shared_ptr< AbstractLinguisticProcessingClient > client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
 
   // Set the handlers
@@ -201,7 +205,7 @@ int run(int argc,char** argv)
   handlers.insert(std::make_pair("bowTextHandler", bowTextHandler));
 
   AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, client.get(), handlers);
-    
+
   QXmlSimpleReader parser;
   TestCasesHandler tch(analysisTestCaseProcessor);
 

@@ -81,19 +81,20 @@ LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
     langs);
   
   // initialize linguistic processing
-  std::string clientId("lima-coreclient");
-  std::string lpConfigFile("lima-analysis.xml");
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(configDir + "/" + lpConfigFile);
+  QString clientId("lima-coreclient");
+  QString lpConfigFile("lima-analysis.xml");
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+    QString::fromUtf8(configDir.c_str()) + "/" + lpConfigFile);
 
   LDEBUG << "LimaDBusServer::LimaDBusServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
-    clientId,
+    clientId.toUtf8().constData(),
     lpconfig,
     langs,
     pipelines);
   
   LDEBUG << "LimaDBusServer::LimaDBusServer: createClient...";
-  m_analyzer=new AnalysisWrapper(std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId)),m_langs,p);
+  m_analyzer=new AnalysisWrapper(std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId.toUtf8().constData())),m_langs,p);
 
 }
 

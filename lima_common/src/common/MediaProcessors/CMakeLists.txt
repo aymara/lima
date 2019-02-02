@@ -31,6 +31,8 @@ SET(lima-common-mediaprocessors_LIB_SRCS
 
 add_library(lima-common-mediaprocessors SHARED ${lima-common-mediaprocessors_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-mediaprocessors)
+
 target_link_libraries(lima-common-mediaprocessors 
   lima-common-mediaticdata 
   lima-common-processunitframework

@@ -6,6 +6,8 @@ include(FindPackageHandleStandardArgs)
 include(Eigen_VERSION)
 unset(EIGEN_FOUND)
 
+message(STATUS "Eigen_DIR = ${Eigen_DIR} / Eigen_INSTALL_DIR = ${Eigen_INSTALL_DIR}")
+
 find_path(Eigen_INCLUDE_DIR
         NAMES
         ${Eigen_DIR}

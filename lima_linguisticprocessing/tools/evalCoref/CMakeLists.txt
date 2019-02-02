@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -24,14 +24,13 @@ SET(XmlParser_SRCS
 
 add_executable(XmlParser ${XmlParser_SRCS})
 
-target_link_libraries(XmlParser 
+target_link_libraries(XmlParser
   lima-common-misc
-  lima-common-tools 
-  lima-common-time 
-  lima-common-data 
+  lima-common-tools
+  lima-common-time
+  lima-common-data
+  Boost::regex
   ${optionalLibs}
-  ${Boost_LIBRARIES}  
-  ${Qt5_LIBRARIES} 
 )
 
 install(TARGETS XmlParser DESTINATION bin
@@ -46,7 +45,10 @@ SET(evalCoref_SRCS
 
 add_executable(evalCoref ${evalCoref_SRCS})
 
-target_link_libraries(evalCoref lima-linguisticprocessing)
+target_link_libraries(evalCoref
+  lima-common
+  Boost::regex
+)
 
 install(TARGETS evalCoref DESTINATION bin
   COMPONENT runtime)

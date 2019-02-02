@@ -18,7 +18,7 @@ use ../Location/annonceurVoie.lst
 # adresses
 # rue (neuve) de la Beauce
 # On ne garde pas l'entité Location
-@Street::$ADJ? (des|du|d'|de $DET?)? <Location>:ODO: 
+@Street::$ADJ? (des|du|d'|de $DET?)? <Location>:ODO:
 =>AddEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.1,"name")
 =>AppendEntityFeature(right.2,"name")

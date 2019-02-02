@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /**
   *
   * @file       fullXmlDumper.cpp
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             Copyright (C) 2004 by CEA LIST
   * @author     Besancon Romaric (besanconr@zoe.cea.fr)
@@ -27,7 +27,7 @@
   *
   * @brief      dump the full content of the analysis graph in XML format
   *
-  * @change_log: 
+  * @change_log:
   * 12/2007:   JGF: changed breadth_first_visit instead of breadth_first_search
   * 03/2007:    JGF: correct duplicate vertex error in ::outputVertex
   */
@@ -132,7 +132,7 @@ void FullXmlDumper::init(
     throw InvalidConfiguration();
   }
   m_annotXmlDumperPtr = new AnnotationGraphXmlDumper(m_language,m_handler);
-  
+
 }
 
 LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
@@ -154,7 +154,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     LERROR << "FullXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
-  
+
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
   if (graph==0) {
     graph=new AnalysisGraph(m_graph,m_language,true,true);
@@ -176,7 +176,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }*/
 
-  
+
   // Are sentences bounds right?
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
@@ -207,11 +207,11 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
   outputStream << "<lima_analysis_dump>" << std::endl;
 
-  
+
 
   // ??OME2 SegmentationData::iterator sbItr=sb->begin();
   std::vector<Segment>::iterator sbItr=(sb->getSegments()).begin();
-  
+
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   if (anagraph != 0)
   {
@@ -275,7 +275,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
                     true, alreadyDumpedTokens, fullTokens);
 
       sbItr++;
-      
+
   //    compoundsItr++;
     }
 
@@ -336,7 +336,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   LDEBUG << "begin = "<< begin;
   LDEBUG << "end = " << end ;
   LDEBUG << "anagraph fist vertex= " << anagraph->firstVertex() ;
-  LDEBUG << "anagraph last vertex= " << anagraph->lastVertex() ;  
+  LDEBUG << "anagraph last vertex= " << anagraph->lastVertex() ;
   LDEBUG << "graphId= " << graphId ;
   LDEBUG << "bySentence= " << bySentence ;
   // just in case we want to check alreadt dumped tokens' array
@@ -347,7 +347,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   LinguisticGraph* graph = const_cast< LinguisticGraph* >(anagraph->getGraph());
   // go through the graph, add BoWTokens that are not in complex terms
   LDEBUG << "after LinguisticGraph" ;
-  DumpGraphVisitor vis(*this, os, end, syntacticData, 
+  DumpGraphVisitor vis(*this, os, end, syntacticData,
       fullTokens, alreadyDumpedTokens,
       m_language, graphId);
   LDEBUG << "after DumpGraphVisitor" ;
@@ -378,7 +378,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
       LDEBUG << "breadth_first_visit arguments: ";
 //       boost::depth_first_search(*graph, boost::visitor(vis));
   }
-  catch (DumpGraphVisitor::EndOfSearch)
+  catch (DumpGraphVisitor::EndOfSearch&)
   { //do nothing: normal ending
   }
   if (bySentence)
@@ -433,7 +433,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
     xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
     return;
   }
-  
+
   xmlStream << "    <vertex id=\"_" << v << "\"";
 // debugging to take out JGF
 //   DUMPERLOGINIT;
@@ -479,7 +479,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
     }
   }
 
-  
+
   MorphoSyntacticData* data = get(vertex_data, graph, v);
   if (data == 0)
   {
@@ -497,10 +497,10 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
   else
   {
     xmlStream << "    <ref>" << tokenId << "</ref>" << std::endl;
-  }  
+  }
   alreadyDumpedTokens[tokenId] = true;
   xmlStream << "    </vertex>" << std::endl;
- } 
+ }
 }
 
 void FullXmlDumper::outputEdge(const LinguisticGraphEdge e,
@@ -555,7 +555,7 @@ void FullXmlDumper::DumpGraphVisitor::examine_edge(LinguisticGraphEdge e,
 void FullXmlDumper::DumpGraphVisitor::discover_vertex(LinguisticGraphVertex v,
                 const LinguisticGraph& graph)
 {
-    m_dumper.outputVertex(v, graph, m_syntacticData, 
+    m_dumper.outputVertex(v, graph, m_syntacticData,
                           m_os, m_fullTokens, m_alreadyDumpedFullTokens, m_graphId);
 }
 

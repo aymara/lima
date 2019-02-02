@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -21,14 +21,12 @@ else()
   set(LIMA_PATH_SEPARATOR "\;") # WANING: must be protected against cmake semicolon substitution
 endif()
 
-set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}$ENV{LIMA_CONF}")
-set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources${LIMA_PATH_SEPARATOR}$ENV{LIMA_RESOURCES}")
+set(LIMA_CONF "${CMAKE_BINARY_DIR}/execEnv/config${LIMA_PATH_SEPARATOR}${CMAKE_BINARY_DIR}/execEnv/lib")
+set(LIMA_RESOURCES "${CMAKE_BINARY_DIR}/execEnv/resources")
 
 add_subdirectory(lima_conll_dependency_tag_mapping)
 
 foreach(LANG ${LIMA_LANGUAGES})
-
-
 
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules)
 
@@ -47,17 +45,17 @@ foreach(LANG ${LIMA_LANGUAGES})
     )
 
     add_dependencies(
-      rules-VerbNet-${LANG}-main 
-      rules-${_lang}-execEnv rules-configEnv)
-    
+      rules-VerbNet-${LANG}-main
+      rules-${_lang}-execEnv
+      rules-configEnv)
+
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/VerbNet-${LANG}.bin 
-      COMPONENT ${LANG} 
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/VerbNet-${LANG}.bin
+      COMPONENT ${LANG}
       DESTINATION share/apps/lima/resources/SRLIntegration)
 
-
   endif ()
-  
+
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules)
 
     add_custom_command(
@@ -76,14 +74,14 @@ foreach(LANG ${LIMA_LANGUAGES})
 
     # add the link between the current target and its execution environment dependencies
     add_dependencies(
-      rules-FrameNet-${LANG}-main 
-      rules-${_lang}-execEnv rules-configEnv)
+      rules-FrameNet-${LANG}-main
+      rules-${_lang}-execEnv
+      rules-configEnv)
 
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/FrameNet-${LANG}.bin 
-      COMPONENT ${LANG} 
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/FrameNet-${LANG}.bin
+      COMPONENT ${LANG}
       DESTINATION share/apps/lima/resources/SRLIntegration)
-
 
   endif ()
 

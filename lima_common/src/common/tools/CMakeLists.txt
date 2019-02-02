@@ -1,5 +1,5 @@
-#   Copyright 2002-2015 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -35,10 +35,10 @@ endif()
 #     LimaFileSystemWatcher.h
 #     LimaFileSystemWatcher_p.h
 #     LimaMainTaskRunner.h)
-# 
+#
 # qt5_wrap_cpp (lima-common-tools_MOC_OUTFILES ${lima-common-tools_MOC_HEADERS})
 
-SET(lima-common-tools_LIB_SRCS 
+SET(lima-common-tools_LIB_SRCS
     ../QsLog/QsLog.cpp
     ../QsLog/QsDebugOutput.cpp
     ../QsLog/QsLogDest.cpp
@@ -55,10 +55,9 @@ SET(lima-common-tools_LIB_SRCS
 
 endif()
 add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
-target_link_libraries(lima-common-tools 
-  ${BOOST_LIBRARIES} 
-  ${Qt5_LIBRARIES}
-)
+ADD_DLL_TO_PATH(lima-common-tools)
+
+target_link_libraries(lima-common-tools Qt5::Core)
 
 if (LOG4CPP_FOUND)
   target_link_libraries(lima-common-tools  ${LOG4CPP_LIBRARIES})

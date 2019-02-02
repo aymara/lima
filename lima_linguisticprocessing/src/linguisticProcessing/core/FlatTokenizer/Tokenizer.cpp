@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -135,7 +135,7 @@ void Tokenizer::init(
     throw InvalidConfiguration();
   }
   // when input XML file is syntactically wrong
-  catch (XmlSyntaxException exc)
+  catch (XmlSyntaxException &exc)
   {
     std::ostringstream mess;
     mess << "XmlSyntaxException at line "<<exc._lineNumber<<" cause: ";

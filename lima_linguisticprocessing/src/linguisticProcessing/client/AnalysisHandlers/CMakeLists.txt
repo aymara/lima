@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -34,23 +34,24 @@ SET(lima-lp-analysishandlers_LIB_SRCS
    StructuredBoWToBoWDocument.cpp
 )
 
-add_library(lima-lp-analysishandlers SHARED 
-  ${lima-lp-analysishandlers_LIB_SRCS} 
+add_library(lima-lp-analysishandlers SHARED
+  ${lima-lp-analysishandlers_LIB_SRCS}
 )
+ADD_DLL_TO_PATH(lima-lp-analysishandlers)
+
 
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources
   lima-lp-lineartextrepresentation
   lima-lp-bagofwords
   lima-common
-  ${Qt5_LIBRARIES}
 )
 
-set_target_properties(lima-lp-analysishandlers PROPERTIES 
-                      VERSION ${LIMA_LP_LIB_VERSION} 
+set_target_properties(lima-lp-analysishandlers PROPERTIES
+                      VERSION ${LIMA_LP_LIB_VERSION}
                       SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysishandlers 
+install(TARGETS lima-lp-analysishandlers
         DESTINATION ${LIB_INSTALL_DIR}
         COMPONENT runtime)
 

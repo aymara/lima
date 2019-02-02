@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -126,17 +126,19 @@ int run(int argc,char** argv)
 
 int dowork(int argc,char* argv[])
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                             QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() << "lima",QStringList());
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                            QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+    throw InvalidConfiguration("loadPlugins method failed.");
 
   std::string resourcesPathParam;
   std::string configPathParam;
@@ -204,11 +206,12 @@ int dowork(int argc,char* argv[])
     resourcesPath = QString::fromUtf8(resourcesPathParam.c_str());
     resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
-  
+
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+    throw InvalidConfiguration("loadPlugins method failed.");
 
 #ifndef DEBUG_LP
   try
@@ -224,9 +227,9 @@ int dowork(int argc,char* argv[])
     // initialize linguistic processing
     std::deque<std::string> pipelines;
     pipelines.push_back(pipeline);
-	
-    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath, 
-                                                              lpConfigFile.c_str(), 
+
+    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath,
+                                                              lpConfigFile.c_str(),
                                                               LIMA_PATH_SEPARATOR);
 
     Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
@@ -237,15 +240,15 @@ int dowork(int argc,char* argv[])
         langs,
         pipelines);
 
-    std::shared_ptr <AbstractLinguisticProcessingClient > client=   
+    std::shared_ptr <AbstractLinguisticProcessingClient > client=
         std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
           LinguisticProcessingClientFactory::single().createClient(clientId));
-    
+
     // Set the handlers
     std::map<std::string, AbstractAnalysisHandler*> handlers;
     BowTextHandler bowTextHandler;
     handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
-    
+
     std::map<std::string, std::string> metaData;
     metaData["Lang"]=langs[0];
     MediaId lang=MediaticData::single().getMediaId(langs[0]);
@@ -281,8 +284,8 @@ int dowork(int argc,char* argv[])
         // Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);
         // delete timer;
-        
-        
+
+
         // analyze resulting bowText to extract normalization
         std::multimap<LimaString, std::string> norms=extractNormalization(contentText,
                                                                bowTextHandler.getBowText(),
@@ -321,7 +324,7 @@ std::multimap<LimaString, std::string> extractNormalization(const LimaString& so
                                                  const BoWText& bowText,
                                                  MediaId lang)
 {
-  const Common::PropertyCode::PropertyManager& macroManager = 
+  const Common::PropertyCode::PropertyManager& macroManager =
       static_cast<const Common::MediaticData::LanguageData&>(
         MediaticData::single().mediaData(lang))
                     .getPropertyCodeManager().getPropertyManager("MACRO");

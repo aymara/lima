@@ -48,6 +48,9 @@ public:
 
     virtual ~FsaStringsPool();
 
+    FsaStringsPool(const FsaStringsPool&) = delete;
+    FsaStringsPool& operator=(const FsaStringsPool&) = delete;
+
     StringsPoolIndex operator[](const LimaString& str);
     LimaString operator[](const StringsPoolIndex ind) const;
     
@@ -65,8 +68,6 @@ public:
     void endResourcesPool();
 
 private:
-    FsaStringsPool(const FsaStringsPool& /*unused p*/);
-    FsaStringsPool& operator=(const FsaStringsPool& /*unused p*/);
 
     FsaStringsPoolPrivate* m_d;
 };

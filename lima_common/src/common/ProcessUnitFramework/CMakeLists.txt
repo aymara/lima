@@ -27,6 +27,8 @@ SET(lima-common-processunitframework_LIB_SRCS
 
 add_library(lima-common-processunitframework SHARED ${lima-common-processunitframework_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-processunitframework)
+
 target_link_libraries(lima-common-processunitframework 
   lima-common-data 
 )

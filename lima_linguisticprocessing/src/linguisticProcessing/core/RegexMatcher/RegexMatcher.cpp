@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,9 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /** @brief      A process unit able to match regex against analysed text
- * 
+ *
  * @file        RegexMatcher.cpp
- * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+ * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
  *              Copyright (c) 2011 by CEA LIST
  * @date        Created on Nov, 1 2011
@@ -80,7 +80,7 @@ public:
   virtual ~RegexMatcherPrivate() {}
 
   bool checkGraphIsString(const LinguisticAnalysisStructure::AnalysisGraph* anagraph) const;
-  
+
   MediaId m_language;
   // map between a regex and the label it marks
   QMap< QString, QString > m_regexes;
@@ -120,7 +120,7 @@ void RegexMatcher::init(
     throw InvalidConfiguration();
   }
   // when input XML file is syntactically wrong
-  catch (XmlSyntaxException exc)
+  catch (XmlSyntaxException &exc)
   {
     std::ostringstream mess;
     mess << "XmlSyntaxException at line "<<exc._lineNumber<<" cause: ";
@@ -178,10 +178,10 @@ LimaStatusCode RegexMatcher::process(
     }
     analysis.setData("AnnotationData",annotationData);
   }
-  
+
   std::map< size_t, RegexMatch > matches;
   LinguisticGraph* graph = anagraph->getGraph();
-  
+
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
 
@@ -191,9 +191,9 @@ LimaStatusCode RegexMatcher::process(
   {
     QRegExp re(reit.key());
     QString& tstatus = reit.value();
-    
+
     int position = 0;
-    while ((position = re.indexIn(*originalText, position)) != -1)  
+    while ((position = re.indexIn(*originalText, position)) != -1)
     {
       QString matchedString = originalText->mid(position, re.matchedLength());
 #ifdef DEBUG_LP
@@ -247,7 +247,7 @@ LimaStatusCode RegexMatcher::process(
           tokenPosition = token->position();
         }
       }
-        
+
 #ifdef DEBUG_LP
         LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition << " ; current match position is: " << currentMatchPosition;
 #endif
@@ -270,7 +270,7 @@ LimaStatusCode RegexMatcher::process(
           nextTokenPosition = nextToken!=0?nextToken->position():0;
           break;
         }
-        
+
         while (next != anagraph->lastVertex() && nextTokenPosition < (currentMatchPosition + currentMatchLength))
         {
 #ifdef DEBUG_LP
@@ -358,7 +358,7 @@ LimaStatusCode RegexMatcher::process(
           break;
         }
       }
-      else // tokenPosition > currentMatchPosition 
+      else // tokenPosition > currentMatchPosition
       {
 #ifdef DEBUG_LP
         LDEBUG << "Skiping matches up to after next token position: " << tokenPosition << currentMatchPosition << currentMatchLength;
@@ -392,7 +392,7 @@ bool RegexMatcherPrivate::checkGraphIsString(const LinguisticAnalysisStructure::
 {
   // there is a first vertex, a last vertex and at least one token vertex
   if (boost::num_vertices(*anagraph->getGraph()) <= 2) return false;
-  
+
   LinguisticGraphVertex next = anagraph->firstVertex();
   LinguisticGraphVertex last = anagraph->lastVertex();
   while (next != last)
@@ -400,7 +400,7 @@ bool RegexMatcherPrivate::checkGraphIsString(const LinguisticAnalysisStructure::
     // each vertex must have exactly one next vertex
     if (boost::out_degree(next, *anagraph->getGraph()) != 1) return false;
     LinguisticGraphOutEdgeIt outItr,outItrEnd;
-    boost::tie(outItr,outItrEnd)=boost::out_edges(next,*anagraph->getGraph()); 
+    boost::tie(outItr,outItrEnd)=boost::out_edges(next,*anagraph->getGraph());
     next=target(*outItr,*anagraph->getGraph());
   }
   return true;

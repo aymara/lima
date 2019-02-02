@@ -126,7 +126,7 @@ if (WIN32)
       ${_qt_bin_dir}/Qt5QuickTemplates2.dll
       ${_qt_bin_dir}/Qt5QuickControls2.dll
     DESTINATION
-      ${CMAKE_INSTALL_PREFIX}/bin
+      bin
   )
 
 else()

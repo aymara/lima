@@ -7,6 +7,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
+ARG BRANCH
 ARG GITHUB_TOKEN
 ARG JOB_NUMBER 
 ARG LIMA_DISABLE_FSW_TESTING
@@ -39,7 +40,7 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
 RUN mkdir -p /src/
-RUN git clone -v https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+RUN git clone -v --branch=$BRANCH https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
@@ -60,12 +61,12 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 # Build
 # 
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON  ..
-RUN ninja
-RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.deb
+RUN ninja && ninja install && ninja package
+RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
 WORKDIR /usr/share/apps/lima/tests
-RUN tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log
-RUN tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log
+RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin

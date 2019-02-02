@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2018 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,9 +14,9 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst title.lst)
+set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst title.lst speech_verb.lst wd_firstname.lst)
 
-SPECIFICENTITIES(main eng Person 
-  PERSON-eng.rules 
-  PERSON_COMP-eng.rules 
+SPECIFICENTITIES(main eng Person
+  PERSON-eng.rules
+  PERSON_COMP-eng.rules
   EMBEDED-eng.rules)

@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 add_subdirectory(common)
 add_subdirectory(client)
 add_subdirectory(core)
@@ -22,10 +23,12 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_definitions( -DLIMA_LP_EXPORTING )
 
-add_library(lima-linguisticprocessing SHARED 
+add_library(lima-linguisticprocessing SHARED
   limaSimpleClient.cpp
   limaSimpleClientDelegate.cpp
 )
+ADD_DLL_TO_PATH(lima-linguisticprocessing)
+
 target_link_libraries(lima-linguisticprocessing
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -59,8 +62,6 @@ target_link_libraries(lima-linguisticprocessing
   lima-lp-analysishandlers
   lima-lp-client
   lima-common
-  ${Qt5_LIBRARIES}
-  ${Boost_LIBRARIES}
 )
 
 # if (TensorFlow_FOUND)
@@ -75,18 +76,18 @@ if(NOT ${SYSTEM_NAME} STREQUAL "Windows")
   )
 endif()
 
-set_target_properties(lima-linguisticprocessing PROPERTIES 
-  VERSION ${LIMA_LP_LIB_VERSION} 
+set_target_properties(lima-linguisticprocessing PROPERTIES
+  VERSION ${LIMA_LP_LIB_VERSION}
   SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-linguisticprocessing 
+install(TARGETS lima-linguisticprocessing
   DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 
 ########### install files ###############
-install(FILES 
-    LinguisticProcessingCommon.h 
+install(FILES
+    LinguisticProcessingCommon.h
     limaSimpleClient.h
   DESTINATION include/linguisticProcessing
   COMPONENT devel

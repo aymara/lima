@@ -132,7 +132,7 @@ int run(int argc,char** argv)
   string commonConfigFile=string("lima-common.xml");
   string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")?"/usr/share/config/lima":string(qgetenv("LIMA_CONF").constData());
 
-  XMLConfigurationFileParser parser(param.inputFile);
+  XMLConfigurationFileParser parser(param->inputFile.c_str());
   
   if (! param.param.empty()) {
       try {

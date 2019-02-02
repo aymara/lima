@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -49,17 +49,19 @@ void check(const PropertyCodeManager& propcodemanager,LinguisticCode p1, Linguis
 // GLOBAL variable -> the command line arguments
 typedef struct
 {
-  string codeFile; // file to parse
+  string codeFile;   // file to parse
   string language;
   string outputFile;
+  string configDir;  // this path overwrites environment variable
   bool decode;
   bool encode;
   bool check;
-  bool help;       // help mode
+  bool help;         // help mode
   string input;
   std::vector<std::string> args;
 } Param;
 Q_GLOBAL_STATIC_WITH_ARGS(Param, param, ({"",
+       "",
        "",
        "",
        false,
@@ -75,7 +77,8 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   {
     string arg(argv[i]);
     std::string::size_type pos;
-    if (arg=="-h" || arg=="--help")
+
+    if (arg == "-h" || arg == "--help")
       param->help=true;
     else if ( (pos = arg.find("--code=")) != std::string::npos )
     {
@@ -105,10 +108,14 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     {
       param->input = arg.substr(pos+8);
     }
-    else if (arg[0]=='-')
+    else if ( (pos = arg.find("--configDir=")) != std::string::npos )
+    {
+      param->configDir = arg.substr(pos+12);
+    }
+    else if (arg[0] == '-')
     {
       cerr << "unrecognized option " <<  arg << endl;
-      usage(argc,argv);
+      usage(argc, argv);
       exit(1);
     }
     else
@@ -124,7 +131,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include <QtCore/QTimer>
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -136,31 +143,38 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &Lima::LimaMainTaskRunner::finished, [](int returnCode){ QCoreApplication::exit(returnCode); } );
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
 }
 
 
-int run(int argc,char** argv)
+int run(int argc, char** argv)
 {
-  QsLogging::initQsLog();
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  
-  readCommandLineArguments(argc,argv);
+  readCommandLineArguments(argc, argv);
+
   if (param->help)
   {
-    usage(argc,argv);
+    usage(argc, argv);
     exit(0);
   }
 
-  std::string resourcesPath=(getenv("LIMA_RESOURCES")!=0)?string(getenv("LIMA_RESOURCES")):string("/usr/share/apps/lima/resources");
-  std::string configDir=(getenv("LIMA_CONF")!=0)?string(getenv("LIMA_CONF")):string("/usr/share/config/lima");
+  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0) ? string(getenv("LIMA_RESOURCES")) : string("/usr/share/apps/lima/resources");
+  std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
+  if (configPath.size() == 0)
+    configPath = string(getenv("LIMA_CONF"));
+  if (configPath.size() == 0)
+    configPath = string("/usr/share/config/lima");
+
+  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  {
+    LOGINIT("Common::Misc");
+    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
+    return EXIT_FAILURE;
+  }
 
   if (param->codeFile == "")
   {
@@ -172,6 +186,10 @@ int run(int argc,char** argv)
     param->codeFile=resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
   }
 
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+
+  // parse code file
   PropertyCodeManager propcodemanager;
   propcodemanager.readFromXmlFile(param->codeFile);
 

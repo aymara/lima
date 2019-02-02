@@ -54,6 +54,11 @@ function(mywindeployqt)
         list(APPEND _ARGS --qmldir ${_deploy_QMLDIR})
     endif()
 
+    install(DIRECTORY "${_qt_bin_dir}/../qml/Qt" DESTINATION bin)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin)
+    
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${_deploy_TARGET} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
@@ -65,6 +70,7 @@ function(mywindeployqt)
                 -core -test -qml -quick -gui -widgets
                 \"$<TARGET_FILE:${_deploy_TARGET}>\"
     )
+#                    -core -test -qml -quick -gui -widgets -quickcontrols2
 
     # install(CODE ...) doesn't support generator expressions, but
     # file(GENERATE ...) does - store the path in a file
@@ -86,7 +92,7 @@ function(mywindeployqt)
                     --compiler-runtime
                     --angle
                     --list mapping
-                    -core -test -qml -quick -gui -widgets -quickcontrols2
+                    -core -test -qml -quick -gui -widgets
                     \${_file}
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE

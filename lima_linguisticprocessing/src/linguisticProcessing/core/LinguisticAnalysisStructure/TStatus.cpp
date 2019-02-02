@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
   *                 Morphologic Analysis modules
   *
   * @file           TStatus.cpp
-  * @author         Jean-Yves Sages (NAUTITIA) 
+  * @author         Jean-Yves Sages (NAUTITIA)
 
   *                 Copyright 2002,2003 by CEA
   * @date           Created on Jul, 4 2002
@@ -246,7 +246,7 @@ bool TStatus::operator==(const TStatus& s) const {
 
 // Comparison operator
 bool TStatus::operator<(const TStatus& s) const {
-  // only need an order: 
+  // only need an order:
   return *this->m_d < *s.m_d;
 }
 
@@ -332,7 +332,7 @@ const Lima::LimaString& TStatus::defaultKey() const {
 //     return m_d->_defaultKey.empty() ? LimaString() : m_d->_defaultKey.back();
   if (m_d->_defaultKey.empty())
     throw std::runtime_error("default key vector cannot be empty");
-    return m_d->_defaultKey.back();
+  return m_d->_defaultKey.back();
 }
 
 void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
@@ -378,7 +378,7 @@ void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
 }
 
 
-std::string TStatus::toString() const 
+std::string TStatus::toString() const
 {
   std::string result;
   if (m_d->_status == T_ALPHA)
@@ -450,7 +450,7 @@ void TStatus::outputXML(std::ostream& xmlStream) const
     {
         xmlStream << "        <t_alpha>" << std::endl;
         xmlStream << "          <t_alpha_capital>";
-        switch (m_d->_capital) 
+        switch (m_d->_capital)
         {
           case T_CAPITAL : xmlStream << "t_capital"; break;
           case T_SMALL : xmlStream << "t_small"; break;
@@ -464,7 +464,7 @@ void TStatus::outputXML(std::ostream& xmlStream) const
         if (m_d->_roman != T_NULL_ROMAN)
         {
           xmlStream << "          <t_alpha_roman>";
-          switch (m_d->_roman) 
+          switch (m_d->_roman)
           {
             case T_CARDINAL_ROMAN : xmlStream << "t_cardinal_roman"; break;
             case T_ORDINAL_ROMAN : xmlStream << "t_ordinal_roman"; break;
@@ -483,10 +483,10 @@ void TStatus::outputXML(std::ostream& xmlStream) const
           xmlStream << "          <t_twitter/>" << std::endl;
         xmlStream << "        </t_alpha>" << std::endl;
     }
-    else if (m_d->_status == T_NUMERIC) 
+    else if (m_d->_status == T_NUMERIC)
     {
         xmlStream << "        <t_numeric>";
-        switch (m_d->_numeric) 
+        switch (m_d->_numeric)
         {
           case T_INTEGER : xmlStream << "t_integer"; break;
           case T_COMMA_NUMBER : xmlStream << "t_comma_number"; break;
@@ -497,10 +497,10 @@ void TStatus::outputXML(std::ostream& xmlStream) const
         }
         xmlStream << "</t_numeric>" << std::endl;
     }
-    else 
+    else
     {
         xmlStream << "        <t_other>";
-        switch (m_d->_status) 
+        switch (m_d->_status)
         {
           case T_ALPHANUMERIC : xmlStream << "t_alphanumeric"; break;
           case T_PATTERN : xmlStream << "t_pattern"; break;

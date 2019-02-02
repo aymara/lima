@@ -58,10 +58,24 @@ class LIMA_COMMONQSLOG_EXPORT Logger
 {
   friend class LoggerImpl;
 public:
-   static Logger& instance(const QString& zone="");
+   static Logger& instance(const QString& zone="")
+   {
+      static QMap<QString,Logger*> staticLog;
+      QMap<QString,Logger*>::iterator it = staticLog.find(zone);
+      if (it == staticLog.end())
+      {
+        Logger* logger = new Logger(zone);
+        for (auto destination: Destinations::instance().destinations())
+        {
+          logger->addDestination(destination);
+        }
+        return **staticLog.insert(zone, logger);
+      }
+      return **it;
+   }
 
    //! Adds a log message destination. Don't add null destinations.
-   void addDestination(Destination* destination);
+   void addDestination(std::shared_ptr<Destination> destination);
    //! Logging at a level < 'newLevel' will be ignored
    void setLoggingLevel(Level newLevel);
    //! The default level is INFO

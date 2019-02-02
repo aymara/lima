@@ -72,9 +72,10 @@ public:
     bool empty() const;
     uint64_t size() const;
 
+  StringsPool(const StringsPool& /*unused p*/) = delete;
+  StringsPool& operator=(const StringsPool& /*unused p*/)  = delete;
+
 private:
-  StringsPool(const StringsPool& /*unused p*/);
-  StringsPool& operator=(const StringsPool& /*unused p*/);
 
   StringsPoolPrivate* m_d;
 };

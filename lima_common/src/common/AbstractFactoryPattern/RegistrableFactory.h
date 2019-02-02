@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                      *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -32,21 +32,20 @@ namespace Lima
 {
 
 /**
-  * Defines a template for a factory that automatically register to a MainFactory. The registered
-  * factories can be retreived by the static method getFactory
-  * @brief defines a Factory that automatically register to a MainFactory singleton
+  * @brief Defines a Factory that automatically register to a MainFactory singleton
+  * 
+  * Defines a template for a factory that automatically register to a
+  * MainFactory. The registered factories can be retreived by the static method
+  * getFactory
   * @author Benoit Mathieu <mathieub@zoe.cea.fr>
-  * @param Factory is the kind of Factories to register
+  * @param Factory is the kind of Factory to register
   */
 template<typename Factory>
 class RegistrableFactory
 {
 public:
 
-  /**
-   * virtual destructor
-   */
-  virtual ~RegistrableFactory();
+  virtual ~RegistrableFactory() = default;
 
   /**
    * @brief get the factory corresponding to the given id
@@ -73,16 +72,15 @@ protected:
 template<typename Factory>
 RegistrableFactory<Factory>::RegistrableFactory(const std::string& id)
 {
-//   std::cerr << "RegistrableFactory<Factory>::RegistrableFactory("<< id << ")" << std::endl;
-  MainFactory< RegistrableFactory<Factory> >::changeable().registerFactory(id,this);
+//   std::cerr << "RegistrableFactory<Factory>::RegistrableFactory(" << id << ")" << std::endl;
+  MainFactory< RegistrableFactory<Factory> >::changeable().registerFactory(id, this);
 }
-
-template<typename Factory>
-RegistrableFactory<Factory>::~RegistrableFactory() {}
 
 template<typename Factory>
 std::shared_ptr<Factory> RegistrableFactory<Factory>::getFactory(const std::string& id)
 {
+//   std::cerr << "RegistrableFactory<Factory>::getFactory(" << id << ")" << std::endl;
+// 
   if (id.empty())
   {
     std::cerr << "Trying to access to factory with empty name!" << std::endl;

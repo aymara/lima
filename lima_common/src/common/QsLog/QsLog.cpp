@@ -47,7 +47,7 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 namespace QsLogging
 {
-typedef QList<Destination*> DestinationList;
+typedef QList<std::shared_ptr<Destination>> DestinationList;
 
 static const char TraceString[] = "TRACE";
 static const char DebugString[] = "DEBUG";
@@ -123,20 +123,7 @@ Logger::~Logger()
    delete d;
 }
 
-Logger& Logger::instance(const QString& zone)
-{
-  static QMap<QString, ::std::shared_ptr<Logger>> staticLog;
-  auto it = staticLog.find(zone);
-  if (it == staticLog.end())
-  {
-    ::std::shared_ptr<Logger> logger(new Logger(zone));
-    logger->addDestination(new DebugOutputDestination());
-    return **staticLog.insert(zone, logger);
-  }
-  return **it;
-}
-
-void Logger::addDestination(Destination* destination)
+void Logger::addDestination(std::shared_ptr<Destination> destination)
 {
    assert(destination);
    d->destList.push_back(destination);

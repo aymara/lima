@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -26,16 +26,15 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### next target ###############
 
 SET(compile-rules_SRCS
-  compile-rules.cpp
-  )
+    compile-rules.cpp)
 
 add_executable(compile-rules ${compile-rules_SRCS})
 
-target_link_libraries(compile-rules lima-lp-automatoncompiler
-)
+target_link_libraries(compile-rules lima-lp-automatoncompiler)
 
-install(TARGETS compile-rules DESTINATION bin
-  COMPONENT runtime)
+install(TARGETS compile-rules
+        DESTINATION bin
+        COMPONENT runtime)
 
 
 ########### install files ###############

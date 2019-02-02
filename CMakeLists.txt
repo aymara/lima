@@ -3,8 +3,23 @@ cmake_minimum_required(VERSION 3.4.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
+include(${CMAKE_SOURCE_DIR}/SystemSpecificInformations.cmake)
 
-include(ExternalProject)
+message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
+# Find*.cmake will be searched in the following dirs if not found in system dirs
+set(CMAKE_MODULE_PATH
+    "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
+    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
+    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
+    "/usr/share/cmake/Modules" # for those available on the system
+    "/usr/local/share/cmake/Modules" # for those available on the system
+)
+
+# find_path and find_library will search in these dirs too
+set(CMAKE_PREFIX_PATH
+    "$ENV{LIMA_EXTERNALS}"
+)
+
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
@@ -51,99 +66,156 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
 
-macro (CompileLimaSubproject _project _dependsOn)
-
-  ## Add external project
-  ExternalProject_Add(
-    ${_project}
-    PREFIX "${_project}"
-    DOWNLOAD_COMMAND ""
-    PATCH_COMMAND ""
-    UPDATE_COMMAND ""
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_project}/
-    INSTALL_DIR $ENV{LIMA_DIST}
-    USES_TERMINAL_DOWNLOAD 1
-    USES_TERMINAL_UPDATE 1
-    USES_TERMINAL_CONFIGURE 1
-    USES_TERMINAL_BUILD 1
-    USES_TERMINAL_TEST 1
-    USES_TERMINAL_INSTALL 1
-    TEST_AFTER_INSTALL 1
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=$ENV{LIMA_DIST}
-        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        -DLIMA_VERSION_RELEASE:STRING="${LIMA_VERSION_RELEASE}"
-        -DBoost_DEBUG=ON
-        -DWITH_ASAN:BOOL=${WITH_ASAN}
-        -DWITH_ARCH:BOOL=${WITH_ARCH}
-        -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=${SHORTEN_POR_CORPUS_FOR_SVMLEARN}
-        -DCMAKE_IGNORE_PATH=${CMAKE_IGNORE_PATH}
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
-        -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
-        -DCMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=${CMAKE_CXX_FLAGS_RELWITHDEBINFO}
-        -DCPACK_SYSTEM_NAME:STRING=${CPACK_SYSTEM_NAME}
-        -DCPACK_PACKAGE_ARCHITECTURE=${CPACK_PACKAGE_ARCHITECTURE}
-        -DCPACK_PACKAGE_VENDOR=${CPACK_PACKAGE_VENDOR}
-        -DCPACK_PACKAGE_CONTACT=${CPACK_PACKAGE_CONTACT}
-        -DCPACK_PACKAGE_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR}
-        -DCPACK_PACKAGE_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR}
-        -DCPACK_PACKAGE_VERSION_PATCH=${CPACK_PACKAGE_VERSION_PATCH}
-        -DCPACK_PACKAGE_VERSION=${CPACK_PACKAGE_VERSION}
-        -DCPACK_PACKAGE_INSTALL_DIRECTORY=${CPACK_PACKAGE_INSTALL_DIRECTORY}
-        -DBOOST_ROOT:STRING=${BOOST_ROOT}
-        -DBOOST_LIBRARYDIR:STRING=${BOOST_LIBRARYDIR}
-        -DENVPATH:STRING=$ENV{PATH}
-        -DENVPERL5LIB:STRING=$ENV{PERL5LIB}
-        -DTF_SOURCES_PATH=${TF_SOURCES_PATH}
-  )
-
-  ## Add specified dependencies
-  if (NOT "x${_dependsOn}" STREQUAL "x")
-    add_dependencies(${_project} ${_dependsOn})
-  endif()
-
-  ## Add packaging step
-  ExternalProject_Add_Step(${_project} packaging
-    COMMAND cmake --build . --target package --config ${CMAKE_BUILD_TYPE}
-    COMMENT "Packaging ${_project}"
-    WORKING_DIRECTORY <BINARY_DIR>
-    DEPENDEES install
-    USES_TERMINAL 1
-  )
-
-  ## Force rebuilding of the main subproject every time building from super structure
-  ExternalProject_Add_Step(${_project} forcebuild
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BUILD_DIR}/${_project}-prefix/src/${_project}-stamp/${_project}-build
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
-    USES_TERMINAL 1
-  )
-
-endmacro ()
-
-CompileLimaSubproject(lima_common "")
-
-CompileLimaSubproject(lima_linguisticprocessing lima_common)
-
-# if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
-  CompileLimaSubproject(lima_linguisticdata lima_linguisticprocessing)
-# endif()
-
-CompileLimaSubproject(lima_pelf lima_linguisticprocessing)
-
-CompileLimaSubproject(lima_annoqt lima_common)
-
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
-addQt5Modules(Core)
+addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
+
+include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
+
+set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
+
+SPECIFICENTITIES_GENERIC_CONFIGENV()
+
+macro (ADD_DLL_TO_PATH _lib)
+    message("ADD_DLL_TO_PATH ${_lib}")
+    set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
+
+    if(WIN32)
+      set(ADD_DLL_TO_PATH_LIB_NAME ${_lib}.dll)
+    endif()
+    message("Will copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/")
+    add_custom_command(
+      OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
+      COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME}
+        ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      DEPENDS
+        ${_lib}
+      COMMENT "Copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}"
+      VERBATIM
+    )
+    add_custom_target(
+      ${_lib}_dll
+      ALL
+      DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+    )
+    add_dependencies(rules-configEnv ${_lib}_dll)
+endmacro()
+
+add_subdirectory(cmake)
+
+include_directories(
+  ${CMAKE_BINARY_DIR}/lima_common
+  ${CMAKE_BINARY_DIR}/lima_common/src
+  lima_common
+  lima_common/src
+)
+add_subdirectory(lima_common)
+
+include_directories(
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src
+  ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/src/linguisticProcessing
+  lima_linguisticprocessing
+  lima_linguisticprocessing/src
+  lima_linguisticprocessing/src/linguisticProcessing
+)
+add_subdirectory(lima_linguisticprocessing)
+
+# if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+  add_subdirectory(lima_linguisticdata)
+# endif()
+
+add_subdirectory(lima_pelf)
+
+# add_subdirectory(lima_annoqt)
+
 if (Qt5Core_FOUND)
   if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
-    CompileLimaSubproject(lima_gui lima_linguisticdata)
+    add_subdirectory(lima_gui)
   else()
     message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
   endif()
 endif()
 
-INCLUDE(CPack)
+
+
+########### documentation ###############
+
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+add_custom_target(doc
+${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+endif(DOXYGEN_FOUND)
+
+
+########### packaging ###############
+
+message("CPACK_INSTALL_CMAKE_PROJECTS=${CPACK_INSTALL_CMAKE_PROJECTS}")
+
+# Specify additional runtime libraries that may not be detected. After
+# inclusion any detected libraries will be appended to this.
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+  ${QtCore_location}
+  ${QtXml_location}
+  ${QtTest_location}
+  ${Boost_SYSTEM_LIBRARY_dll}
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
+
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
+set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+set(MAKE_INSTALL_UCRT_LIBRARIES TRUE)
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+endif()
+include(InstallRequiredSystemLibraries)
+
+set(CPACK_MONOLITHIC_INSTALL 1)
+set(CPACK_PACKAGE_NAME "lima")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Linguistic Analyzer")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
+
+# set of commands to define component based packaging
+# notify cpack of component all names
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
+SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
+
+
+SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+SET(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
+SET(CPACK_NSIS_MODIFY_PATH "ON")
+SET(CPACK_STRIP_FILES "")
+SET(CPACK_SOURCE_STRIP_FILES "")
+if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
+  set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
+endif()
+set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
+
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!define env_hklm 'HKLM \\\"SYSTEM\\\\CurrentControlSet\\\\Control\\\\Session Manager\\\\Environment\\\"'")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_DIST $INSTDIR")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_CONF $INSTDIR\\\\share\\\\config\\\\lima")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_RESOURCES $INSTDIR\\\\share\\\\apps\\\\lima\\\\resources")
+list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "SendMessage \\\${HWND_BROADCAST} \\\${WM_WININICHANGE} 0 \\\"STR:Environment\\\" /TIMEOUT=5000")
+string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_INSTALL_COMMANDS "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}")
+
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "DeleteRegValue \\\${env_hklm} LIMA_DIST")
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "DeleteRegValue \\\${env_hklm} LIMA_CONF")
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "DeleteRegValue \\\${env_hklm} LIMA_RESOURCES")
+list(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "SendMessage \\\${HWND_BROADCAST} \\\${WM_WININICHANGE} 0 \\\"STR:Environment\\\" /TIMEOUT=5000")
+string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}")
+
+include(CPack)
+

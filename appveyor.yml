@@ -7,12 +7,12 @@ branches:
 environment:
   LIMA_DIST: c:\d
   LIMA_EXTERNALS: c:/d
-  LIMA_CONF: 'c:\d\share\config\lima'
-  LIMA_RESOURCES: 'c:\d\share\apps\lima\resources'
+  LIMA_CONF: 'c:\b\execEnv\config'
+  LIMA_RESOURCES: 'c:\b\execEnv\resources'
   Qt5_INSTALL_DIR: 'C:\Qt\5.11.2\msvc2015_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
-  PATH: '%Qt5_INSTALL_DIR%\bin;c:\d\bin;c:\d\share\apps\lima\scripts;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
+  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
@@ -21,10 +21,11 @@ environment:
 
   matrix:
     - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
+      PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
 
-configuration: Release
+configuration: RelWithDebInfo
 
 os: Visual Studio 2015
 #os: Visual Studio 2013
@@ -68,33 +69,28 @@ build_script:
   - cd c:\b
   - echo %BOOST_ROOT%
   - echo %BOOST_LIBRARYDIR%
+  - echo %PATH%
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
-  - cmake --build . --config Release
+  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
+  - cmake --build . --config RelWithDebInfo
 
 after_build:
+  - cmake --build . --config RelWithDebInfo --target install
+  - cmake --build . --config RelWithDebInfo --target package
   - ps: ls c:/d/share/apps/lima/tests
   - ps: pushd c:/d/share/apps/lima/tests
+  - ps: $env:Path = "c:/d/bin;$env:Path"
   - ps: ( tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log ) -or $true
   - ps: cat tva-eng.log
   - ps: ( tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log ) -or $true
   - ps: cat tva-fre.log
   - ps: popd
-  - ps: pushd C:\b\lima_common\src\lima_common-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_linguisticprocessing\src\lima_linguisticprocessing-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_linguisticdata\src\lima_linguisticdata-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
-  - ps: popd
-  - ps: pushd C:\b\lima_gui\src\lima_gui-build
-  - copy lima*-*.exe %APPVEYOR_BUILD_FOLDER%
+  - ps: pushd C:\b
+  - copy lima*.exe %APPVEYOR_BUILD_FOLDER%
   - ps: popd
 
 
-artifacts: 
+artifacts:
   - path: lima*.exe
     name: packages
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -38,11 +38,8 @@ using namespace Lima::Common::XMLConfigurationFiles;
 
 namespace Lima
 {
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::AbstractResource > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::AbstractResource > > >::s_instance(0);
-  
-template<> MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::LinguisticResources > > >* MainFactory< RegistrableFactory< InitializableObjectFactory< LinguisticProcessing::LinguisticResources > > >::s_instance(0);
-  
-  namespace LinguisticProcessing
+
+namespace LinguisticProcessing
 {
 
 class LinguisticResourcesPrivate
@@ -52,9 +49,9 @@ friend class LinguisticResources;
 public:
   LinguisticResourcesPrivate();
   virtual ~LinguisticResourcesPrivate();
-  
+
   void clear();
-  
+
   std::map<MediaId,AbstractResource::Manager*> m_resourcesManagers;
 
   // private member functions
@@ -70,7 +67,7 @@ LinguisticResourcesPrivate::~LinguisticResourcesPrivate()
   clear();
 }
 
-void LinguisticResourcesPrivate::clear() 
+void LinguisticResourcesPrivate::clear()
 {
   for (std::map<MediaId,AbstractResource::Manager*>::iterator it=m_resourcesManagers.begin();
        it!=m_resourcesManagers.end();
@@ -158,7 +155,7 @@ void LinguisticResources::initLanguage(
 
 void LinguisticResourcesPrivate::
 includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
-                 Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule) 
+                 Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule)
 {
   RESOURCESLOGINIT;
 #ifdef DEBUG_LP
@@ -170,11 +167,12 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
            it_end=includeList.end(); it!=it_end; it++) {
       string::size_type i=(*it).find("/");
       if (i==string::npos) {
-        LERROR << "Cannot include resources " << *it 
+        LERROR << "Cannot include resources " << *it
                << ": must specify file and module name";
         continue;
       }
-      string fileName(""),moduleName("");
+      QString fileName;
+      std::string moduleName;
       try {
         RESOURCESLOGINIT;
 #ifdef DEBUG_LP
@@ -186,11 +184,11 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
           if  (QFileInfo::exists(confPath + "/" + string((*it),0,i).c_str()))
           {
 
-            fileName = (confPath + "/" + string((*it),0,i).c_str()).toUtf8().constData();
+            fileName = (confPath + "/" + string((*it),0,i).c_str());
             break;
           }
         }
-        if (fileName.empty())
+        if (fileName.isEmpty())
         {
           LERROR << "No resources" << *it << "found in" << Common::MediaticData::MediaticData::single().getConfigPath();
           continue;
@@ -202,7 +200,7 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
         module.addModule(newMod);
 #ifdef DEBUG_LP
         ostringstream oss;
-        for (auto it=module.cbegin(),it_end=module.cend(); it!=it_end; it++) 
+        for (auto it=module.cbegin(),it_end=module.cend(); it!=it_end; it++)
         {
           oss << (*it).first << ";";
         }
