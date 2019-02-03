@@ -217,7 +217,6 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
   }
   try
   {
-#endif
     while (! configDirsList.isEmpty() )
     {
       QString configDir = configDirsList.last();
@@ -301,7 +300,6 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
     std::cerr << "Exception during logging system configuration" << std::endl;
     return -1;
   }
-#endif
   if (!atLeastOneSuccessfulLoad)
   {
     std::cerr << "Configure Problem: no log configuration file has been found in \"" << configString.toStdString() << "\"" << std::endl;
