@@ -102,11 +102,6 @@ public:
    {
 
    }
-   ~LoggerImpl()
-   {
-     for (auto it=destList.constBegin(); it!=destList.constEnd();++it)
-       delete (*it);
-   }
    QMutex logMutex;
    Level level;
    DestinationList destList;
