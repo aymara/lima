@@ -75,24 +75,18 @@ namespace LinguisticProcessing
 
 namespace AnalysisDumpers
 {
-namespace 
+
+std::string str(const std::set<LinguisticGraphVertex>& alreadyStoredVertices)
 {
-struct _c
-{
-  ::std::string str(std::set<LinguisticGraphVertex> const& alreadyStoredVertices)
+  std::ostringstream oss;
+  for (auto asvit = alreadyStoredVertices.begin();
+        asvit != alreadyStoredVertices.end(); asvit++)
   {
-    std::ostringstream oss;
-    //std::set<uint32_t>::const_iterator asvit, asvit_end;
-    std::set<LinguisticGraphVertex>::const_iterator asvit, asvit_end;
-    asvit = alreadyStoredVertices.begin(); asvit_end = alreadyStoredVertices.end();
-    for (; asvit != asvit_end; asvit++)
-    {
-      oss << *asvit << ", ";
-    }
-    return oss.str();
+    oss << *asvit << ", ";
   }
-};
+  return oss.str();
 }
+
 
 SimpleFactory<MediaProcessUnit,BowDumper> bowDumperFactory(BOWDUMPER_CLASSID);
 
@@ -259,7 +253,7 @@ LimaStatusCode BowDumper::process(
   ::std::unique_ptr<DumperStream> dstream(initialize(analysis));
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process writing BoW text on" <<  dstream->out();
+  LDEBUG << "BowDumper::process writing BoW text on" <<  &dstream->out();
 #endif
   writer.writeBoWText(dstream->out(),bowText);
   return SUCCESS_ID;
@@ -503,7 +497,7 @@ Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& st
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
 #ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << _c.str(alreadyStoredVertices);
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << "; alreadyStoredVertices are: " << str(alreadyStoredVertices);
 #endif
             }
             if (stopAnalyze)
@@ -584,7 +578,7 @@ Lima::LimaStatusCode BowDumper::addVerticesToBoWText(Lima::StopAnalyze const& st
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
 #ifdef DEBUG_LP
-              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << _c.str(alreadyStoredVertices);
+              LDEBUG << "BowDumper::addVerticesToBoWText for " << v << ";alreadyStoredVertices are:" << str(alreadyStoredVertices);
 #endif
             }
             if (stopAnalyze)

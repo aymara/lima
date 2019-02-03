@@ -18,11 +18,6 @@ project(limalinguisticprocessing)
 cmake_minimum_required(VERSION 3.4.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-#cmake_policy
-if(POLICY CMP0020)
-cmake_policy(SET CMP0020 OLD)
-endif()
-
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
 file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
 
@@ -133,15 +128,6 @@ if (${PYTHONLIBS_FOUND})
         ${PYTHON_LIBRARIES})
   endif ()
 endif ()
-
-#add_definitions( -DBOOST_ALL_NO_LIB )
-add_definitions( -DBOOST_ALL_DYN_LINK )
-set( Boost_USE_STATIC_LIBS OFF )
-set( Boost_USE_STATIC_RUNTIME OFF )
-set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")

@@ -59,6 +59,7 @@ public:
   bool isLoaded(const std::string& libName);
   bool loadLibrary(const std::string& libName);
   void addSearchPath(const std::string& searchPath);
+  void addSearchPathes(QString searchPathes);
 
  private:
   DynamicLibrariesManager();

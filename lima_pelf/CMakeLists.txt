@@ -8,8 +8,6 @@ enable_testing()
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 
 
-cmake_policy(SET CMP0017 NEW)
-
 SET(optionalLibs)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
@@ -87,14 +85,6 @@ if(Qwt_FOUND)
 else()
     message(FATAL "Could not find Qwt")
 endif()
-
-add_definitions( -DBOOST_ALL_DYN_LINK )
-set( Boost_USE_STATIC_LIBS OFF )
-set( Boost_USE_STATIC_RUNTIME OFF )
-set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
 
 set(LIMA_PELF_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
 set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})

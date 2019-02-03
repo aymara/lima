@@ -104,7 +104,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(std::string, HELP,
 #define DEFAULT_COMMON_CONFIG "lima-common.xml"
 #define DEFAULT_LP_CONFIG "lima-analysis.xml"
 #define DEFAULT_ENCODING "utf8"
-#define DEFAULT_LOGCONFIGFILE "log4cpp.properties"
 //****************************************************************************
 // GLOBAL variable -> the command line arguments
 struct Param
@@ -126,23 +125,23 @@ struct Param
   bool debug;            // compile in debug mode (store rule ids for debug purposes)
   bool help;             // help mode
 }
-param={"",
-       "",
-       "",
-       "",
-       DEFAULT_LOGCONFIGFILE,
-       DEFAULT_COMMON_CONFIG,
-       DEFAULT_LP_CONFIG,
-       "",
-       "",
-       "",
-       DEFAULT_ENCODING,
-       false,
-       false,
-       false,
-       false,
-       false,
-       false};
+param={"", // inputRulesFile
+       "", // outputFile
+       "", // resourcesDir
+       "", // configDir
+       DEFAULT_COMMON_CONFIG, // commonConfigFile
+       DEFAULT_LP_CONFIG, // lpConfigFile
+       "", // modexConfigFile
+       "", // pipeline
+       "", // language
+       DEFAULT_ENCODING, // encoding
+       false, // decompile
+       false, // listTriggers
+       false, // useDictionary
+       false, // loadPossibleTypes
+       false, // debug
+       false}; // help
+
 
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
@@ -175,10 +174,6 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     else if (s.find("--configDir=",0)==0)
     {
       param.configDir = std::string(s,12);
-    }
-    else if (s.find("--log-config-file=",0)==0)
-    {
-      param.logConfigFile=string(s,15);
     }
     else if (s.find("--common-config-file=")==0)
     {

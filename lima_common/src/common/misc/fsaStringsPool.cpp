@@ -51,6 +51,7 @@ class FsaStringsPoolPrivate
   Common::AbstractAccessByString* m_mainKeys;
   StringsPoolIndex m_mainKeySize;
   StringsPool m_additionalPool;
+  std::vector<LimaString>* m_cache;
   QMutex m_mutex;
 };
 

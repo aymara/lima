@@ -335,6 +335,8 @@ public:
   StructurePrivate(const StructurePrivate& sp);
   StructurePrivate ( STRUCT_ID structID );
   StructurePrivate& operator= ( const StructurePrivate& sp );
+  StructurePrivate(StructurePrivate&& sp);
+  StructurePrivate& operator= ( StructurePrivate&& sp );
 
     //! @brief destructeur: delete des 'Nodes' de contenu
     ~StructurePrivate();

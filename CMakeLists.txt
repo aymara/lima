@@ -70,6 +70,18 @@ add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
 addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
 
+add_definitions( -DBOOST_ALL_NO_LIB )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+set( Boost_USE_STATIC_LIBS OFF )
+set( Boost_USE_MULTITHREADED ON )
+set( Boost_USE_STATIC_RUNTIME OFF )
+set( BOOST_LIB_DIAGNOSTIC )
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
+message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+
+
 include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
 
 set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
@@ -127,13 +139,13 @@ add_subdirectory(lima_linguisticprocessing)
   add_subdirectory(lima_linguisticdata)
 # endif()
 
-add_subdirectory(lima_pelf)
+#add_subdirectory(lima_pelf)
 
 # add_subdirectory(lima_annoqt)
 
 if (Qt5Core_FOUND)
   if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
-    add_subdirectory(lima_gui)
+#    add_subdirectory(lima_gui)
   else()
     message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
   endif()
