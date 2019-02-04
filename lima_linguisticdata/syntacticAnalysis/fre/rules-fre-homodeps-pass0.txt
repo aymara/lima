@@ -181,7 +181,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 #----------------------------------------------------------------------
 #+!GovernedBy(left.1,"COMPDUNOM")
 
-@PrepComp:(@NomCommun|@Inc) (@NomCommun|@Inc){1-n} (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:(@NomCommun|@Inc) (@NomCommun|@Inc){1-n} (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +GovernorOf(left.2,"SUBSUBJUX")
 +SecondUngovernedBy(right.5,left.1,"ANY")
@@ -197,7 +197,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 # +!GovernedBy(left.1,"COMPDUNOM")
 
 
-@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){1-n} (de (la)?)?) (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){1-n} (de (la)?)?) (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.5,left.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
@@ -213,7 +213,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 # contrainte +!GovernorOf(left.1,"SUBSUBJUX") supprimée
 # +!GovernedBy(left.1,"COMPDUNOM")
 
-@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum|@PrepCompDuNom|@NomPropre){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:(@NomCommun|@Inc|@PronIndef|@PronDem) (@AdverbePositifDansChaineNominale|@AdjPost|@DetNum|@PrepCompDuNom|@NomPropre){0-3} (@NomPropre)?:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +SecondUngovernedBy(right.5,left.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
 +CreateRelationBetween(right.5,left.1,"COMPDUNOM")
@@ -226,7 +226,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 # +!GovernorOf(right.4,"ANY")
 # +!GovernedBy(left.1,"COMPDUNOM")
 
-@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.5,left.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
@@ -236,7 +236,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 #+!GovernedBy(left.1,"COMPDUNOM")
-@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:@NomPropre:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.4,left.1,"ANY")
 +CreateRelationBetween(right.4,left.1,"COMPDUNOM")
@@ -244,7 +244,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 #+!GovernedBy(left.1,"COMPDUNOM")
-@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.5,left.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
@@ -254,7 +254,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # +!GovernedBy(left.1,"COMPDUNOM")
-@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:@NomCommun (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.4,left.1,"ANY")
 +CreateRelationBetween(right.4,left.1,"COMPDUNOM")
@@ -262,7 +262,7 @@ par:$V-VPP:(@NomPropre|@Prenom|@Determinant? @Substantif):SYNTACTIC_RELATION:
 =<ClearStoredRelations()
 
 # +!GovernedBy(left.1,"COMPDUNOM")
-@PrepComp:(@PronIndef|@PronDem) (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ):SYNTACTIC_RELATION:
+@PrepComp:(@PronIndef|@PronDem) (@PrepCompDuNom (@Substantif){0-n}){0-n}:((@DetIndef)? @Determinant)? (@AdverbePositifDansChaineNominale|@AdjPren|@Prefixe){0-n} ((@Prenom){0-n} (de (la)?)?)? (@Prefixe|$PONCTU-PONCT)? (@NomCommun|@NomPropre|@Inc|$ADJ-ADJ ^$NC):SYNTACTIC_RELATION:
 +!GovernorOf(left.1,"SUBSUBJUX")
 +SecondUngovernedBy(right.5,left.1,"ANY")
 +SecondUngovernedBy(trigger.1,right.5,"ANY")
