@@ -525,12 +525,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
             << ") on vertex " << position;
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-      if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
+      if (stopAtFirstSuccess||(recoData != nullptr && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
         delete match; // a copy has been made
         match=0;
 #ifdef DEBUG_LP
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled() && recoData != nullptr) {
           LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty (" 
             << (recoData->getNextVertices().empty()) 

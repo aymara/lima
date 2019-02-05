@@ -39,7 +39,7 @@ dict = {
   'RP' : 'ADP',
   'SENT' : 'PUNCT',
   'SYM' : 'SYM',
-  'TO' : 'PART',
+  'TO' : 'ADP,PART',
   'UH' : 'INTJ',
   'VB' : 'VERB-VerbForm=Inf',
   'VBD' : 'VERB-Mood=Ind|Tense=Past|VerbForm=Fin',
@@ -73,7 +73,7 @@ def main(argv):
             line = line.strip()
             m = p.match(line)
             if m and m.group(2) in dict:
-                value = dict[m.group(2)]
-                print('{}{}'.format(m.group(1),value))
+                for value in dict[m.group(2)].split(','):
+                  print('{}{}'.format(m.group(1),value))
 
 main(sys.argv[1:])

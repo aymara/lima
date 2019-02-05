@@ -29,5 +29,9 @@ case $lang in
     fre | spa | ger | por)
         cut -f1 $file | tr '\n' ' ' | \
             sed -e "s/ \([\.\,)]\)/\\1/g" -e "s/\(['(]\) /\\1/g" -e "s/\([a-zA-Z]\-\) /\\1/g";;
+    *)
+        (>&2 echo "error: unsupported language $lang")
+        exit 1
+        ;;
 esac
 

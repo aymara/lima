@@ -16,8 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTDUMPER_H
-#define LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTDUMPER_H
+#ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSCONLLDUMPER_H
+#define LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSCONLLDUMPER_H
 
 #include "SemanticAnalysisExport.h"
 #include "linguisticProcessing/core/LinguisticProcessors/AbstractTextualAnalysisDumper.h"

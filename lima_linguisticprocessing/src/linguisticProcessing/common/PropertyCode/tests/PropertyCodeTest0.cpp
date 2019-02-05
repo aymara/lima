@@ -35,30 +35,30 @@ using namespace Lima::Common::PropertyCode;
 
 void PropertyCodeTest0::initTestCase()
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
-      << "lima",QStringList());
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
-      << "lima",QStringList());
-  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-
-  std::string commonConfigFile=std::string("lima-common.xml");
-
-  std::deque<std::string> langs;
-  langs.push_back("eng.ud");
-
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-
-  // initialize common
-  Common::MediaticData::MediaticData::changeable().init(
-      resourcesPath.toUtf8().constData(),
-      configPath.toUtf8().constData(),
-      commonConfigFile,
-      langs);
+//   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
+//       << "lima",QStringList());
+//   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+// 
+//   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
+//       << "lima",QStringList());
+//   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+// 
+//   std::string commonConfigFile=std::string("lima-common.xml");
+// 
+//   std::deque<std::string> langs;
+//   langs.push_back("eng.ud");
+// 
+//   QsLogging::initQsLog(configPath);
+//   // Necessary to initialize factories
+//   Lima::AmosePluginsManager::single();
+//   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+// 
+//   // initialize common
+//   Common::MediaticData::MediaticData::changeable().init(
+//       resourcesPath.toUtf8().constData(),
+//       configPath.toUtf8().constData(),
+//       commonConfigFile,
+//       langs);
 }
 
 void PropertyCodeTest0::test_load()
@@ -70,9 +70,7 @@ void PropertyCodeTest0::test_load()
     std::runtime_error
   );
 
-  QString dataFile = findFileInPaths(
-    MediaticData::single().getResourcesPath().c_str(), 
-    "LinguisticProcessings/eng.ud/code-eng.ud.xml");
+  QString dataFile = QFINDTESTDATA("code-eng.ud.xml");
 
   pcm.readFromXmlFile(dataFile.toUtf8().constData());
   auto paMicro = pcm.getPropertyAccessor("MICRO");

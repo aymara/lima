@@ -108,6 +108,10 @@ while (! $done) {
     $nCase++;
     my ($refWord,$refTag)=split("\t",$lineRef);
     my ($testWord,$testTag)=split("\t",$lineTest);
+    # Remove features from reference and test tags
+#    $refTag =~ s/-.*//;
+#    $testTag =~ s/-.*//;
+
     printf("<CASE no=%06s><TOK tag=%s>%s<TOK tag=%s>%s\n",
            $nCase,$refTag,$refWord,$testTag,$testWord);
 }

@@ -18,10 +18,14 @@ if (BUILD_SVMTOOL_MODELS)
   add_subdirectory(SVMToolModel)
 endif()
 
+# Use the --features option of convert-ud-to-success-categ-retag.py to change
+# the list of UD features kept from the source UD corpus
 add_custom_command(
   OUTPUT succession_categs_retag.txt corpus_eng.ud_merge.txt
-  COMMAND grep -E "^[0-9]+" ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu | gawk -F "\\t" "BEGIN {OFS = FS} {$2 = substr($2,0,100); print $2\"\\t\"$4\"-\"$6}" | sed -e "s@-_$@@" > corpus_eng.ud_merge.txt
-  COMMAND cat corpus_eng.ud_merge.txt | gawk -F "\\t" "{print $2}" | sed -e "s@-.*@@" > succession_categs_retag.txt
+  COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-success-categ-retag.py ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu > corpus_eng.ud_merge.txt
+#   COMMAND grep -E "^[0-9]+" ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu | gawk -F "\\t" "BEGIN {OFS = FS} {$2 = substr($2,0,100); print $2\"\\t\"$4\"-\"$6}" | sed -e "s@-_$@@" > corpus_eng.ud_merge.txt
+#   COMMAND cat corpus_eng.ud_merge.txt | gawk -F "\\t" "{print $2}" | sed -e "s@-.*@@" > succession_categs_retag.txt
+  COMMAND cat corpus_eng.ud_merge.txt | gawk -F "\\t" "{print \$2}" > succession_categs_retag.txt
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/UD_English-EWT/en_ewt-ud-train.conllu
   COMMENT "produce eng categs succession"
   VERBATIM
@@ -33,7 +37,9 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt corpus_eng.ud_merge.txt
 )
 
-DISAMBMATRICES(eng.ud succession_categs_retag.txt 
+DISAMBMATRICES(
+  eng.ud 
+  succession_categs_retag.txt 
   ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt 
   ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl 
   X,SYM,UNK,PROPN,CONJ,NUM

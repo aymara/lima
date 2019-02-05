@@ -21,10 +21,12 @@
     </c>
     <c form="'d">
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -117,7 +119,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -131,7 +133,21 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
+      </i>
+    </c>
+  </concat>
+</entry>	
+<entry k="wana">
+  <concat>
+    <c form="want">
+      <i l="want">
+        <p v="VERB-VerbForm=Inf"/>
+      </i>
+    </c>
+    <c form="to">
+      <i l="to">
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -145,7 +161,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -159,7 +175,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -173,7 +189,7 @@
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -187,7 +203,7 @@
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -201,7 +217,7 @@
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -215,7 +231,7 @@
     </c>
     <c form="'ve">
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -224,12 +240,12 @@
   <concat>
     <c form="have">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -238,12 +254,12 @@
   <concat>
     <c form="has">
       <i l="have">
-        <p v="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
+        <p v="AUX-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -252,12 +268,12 @@
   <concat>
     <c form="had">
       <i l="had" n="have">
-        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -271,7 +287,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -285,7 +301,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -299,7 +315,7 @@
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -308,12 +324,12 @@
   <concat>
     <c form="ca">
       <i l="can">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -322,12 +338,12 @@
   <concat>
     <c form="can">
       <i l="can">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="not">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -336,12 +352,12 @@
   <concat>
     <c form="could">
       <i l="could">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -350,12 +366,12 @@
   <concat>
     <c form="might">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -364,12 +380,12 @@
   <concat>
     <c form="must">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -378,12 +394,12 @@
   <concat>
     <c form="need">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -392,12 +408,12 @@
   <concat>
     <c form="ought">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -406,12 +422,12 @@
   <concat>
     <c form="sha">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -420,12 +436,12 @@
   <concat>
     <c form="should">
       <i>
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -434,12 +450,12 @@
   <concat>
     <c form="wo">
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -448,12 +464,12 @@
   <concat>
     <c form="would">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
     <c form="n't">
       <i l="not">
-        <p v="ADV"/>
+        <p v="PART"/>
       </i>
     </c>
   </concat>
@@ -467,10 +483,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -484,10 +500,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -501,10 +517,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -518,10 +534,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -535,10 +551,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -552,10 +568,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -569,10 +585,10 @@
     </c>
     <c form="'ll">
       <i l="shall">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="will">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -600,7 +616,7 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -614,10 +630,12 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -631,10 +649,12 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -648,10 +668,12 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -665,7 +687,7 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -679,10 +701,12 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -696,10 +720,12 @@
     </c>
     <c form="'d">
       <i l="would">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-VerbForm=Fin"/>
       </i>
       <i l="have">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="AUX-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <p v="VERB-Tense=Past|VerbForm=Part"/>
+        <p v="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -714,7 +740,7 @@
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>
@@ -728,7 +754,7 @@
     </c>
     <c form="'s">
       <i l="be">
-        <p v="VERB-VerbForm=Inf"/>
+        <p v="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
       </i>
     </c>
   </concat>

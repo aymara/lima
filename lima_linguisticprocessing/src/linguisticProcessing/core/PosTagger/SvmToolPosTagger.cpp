@@ -206,17 +206,7 @@ void SvmToolPosTagger::init(
   LDEBUG << "Creating SVM Tagger with model: " << m_d->m_model;
   erCompRegExp();
   m_d->m_tagger = new tagger(m_d->m_model.c_str());
-// //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
-//   m_d->m_tagger->taggerPutStrategy(0);
-//   m_d->m_tagger->taggerPutFlow("RL");
-//   m_d->m_tagger->taggerPutKWeightFilter(0.455);
-//   m_d->m_tagger->taggerPutUWeightFilter(0.1535);
   m_d->m_tagger->taggerLoadModelsForTagging();
-
-// WinIndex and WinLength are loaded from model.WIN at run time
-//   m_d->m_tagger->taggerPutWinLength(5);
-//   m_d->m_tagger->taggerPutWinIndex(2);
-
 }
 
 LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
@@ -386,10 +376,6 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
     LDEBUG << "Result line: '" << resultLine << "'";
 #endif
-//     if (resultLine.empty())
-//     {
-//       continue;
-//     }
     std::vector<std::string> elements;
     boost::split(elements, resultLine, boost::is_any_of(" "));
     if (elements.size() < 2)

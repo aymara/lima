@@ -62,7 +62,7 @@ void GreedyPosTagger::init(
   PTLOGINIT;
   m_language=manager->getInitializationParameters().media;
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  m_microAccessor=(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
     string trigrams=unitConfiguration.getParamsValueAtKey("trigramMatrix");
@@ -219,7 +219,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
   MorphoSyntacticData* posdata=new MorphoSyntacticData(*data);
   put(vertex_data,*graph,vx,posdata);
   
-  set<LinguisticCode> micros=posdata->allValues(*m_microAccessor);
+  set<LinguisticCode> micros=posdata->allValues(m_microAccessor);
   LinguisticCode selectedMicro;
 
 
@@ -257,7 +257,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       else
       {
         
-        cat2=m_microAccessor->readValue(m2->begin()->properties);
+        cat2=m_microAccessor.readValue(m2->begin()->properties);
 
         LinguisticGraphInEdgeIt inItr2,inItr2End;
         boost::tie(inItr2,inItr2End)=in_edges(vx,*graph);
@@ -271,7 +271,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
           }
           else
           {
-            cat1=m_microAccessor->readValue(m1->begin()->properties);
+            cat1=m_microAccessor.readValue(m1->begin()->properties);
           }
           // search better trigram
           for (dwItr=micros.begin();dwItr!=micros.end();dwItr++)

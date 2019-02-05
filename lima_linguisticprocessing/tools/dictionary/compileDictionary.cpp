@@ -44,7 +44,6 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
-using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::PropertyCode;
@@ -205,25 +204,9 @@ int run(int argc, char** argv)
     LERROR << "please specify CharChart file with --charChart=<file> option";
     return EXIT_FAILURE;
   }
+  LINFO << "parse charChart file : " << param.charChart;
   CharChart charChart;
   charChart.loadFromFile(param->charChart);
-
-//   try
-//   {
-//     std::cerr << "parse charChart file : " << param->charChart << std::endl;
-//     std::cerr << "TODO: to implement at "<<__FILE__<<", line "<<__LINE__<<"!" <<std::endl;
-//     exit(2);
-//     charChart = 0;
-/*    ParseCharClass parseCharClass;
-    parseCharClass.parse(param->charChart);
-    charChart = ParseChar::parse(param->charChart, parseCharClass);*/
-//   }
-//   catch (exception& e)
-//   {
-//     std::cerr << "Caught exception while parsing file " << param->charChart << std::endl;
-//     std::cerr << e.what() << std::endl;
-//     exit(-1);
-//   }
 
   if (param->extractKeys != "")
   {
@@ -283,12 +266,6 @@ int run(int argc, char** argv)
     map<string,LinguisticCode> conversionMap;
     propcodemanager.convertSymbolicCodes(param->symbolicCodes,conversionMap);
     std::cerr << conversionMap.size() << " code read from symbolicCode file" << std::endl;
-/*    for (map<string,LinguisticCode>::const_iterator it=conversionMap.begin();
-         it!=conversionMap.end();
-         it++)
-    {
-      std::cerr << it->first << " -> " << it->second << std::endl;
-    }*/
 
     AbstractAccessByString* access = nullptr;
     if (param->fsaKey!="")
@@ -312,10 +289,6 @@ int run(int argc, char** argv)
                                param->reverseKeys);
 
     QXmlSimpleReader parser;
-//     parser->setValidationScheme(SAXParser::Val_Auto);
-//     parser->setDoNamespaces(false);
-//     parser->setDoSchema(false);
-//     parser->setValidationSchemaFullChecking(false);
     try
     {
       parser.setContentHandler(&handler);

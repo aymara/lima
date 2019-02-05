@@ -24,51 +24,27 @@
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
         <item value="regexmatcher"/>
-        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+<!--         <item value="fullTokenXmlLoggerTokenizer"/> -->
         <item value="simpleWord"/>
-        <!--item value="dotGraphWriter-forCorefEval"/-->
-        <!--item value="fullTokenXmlLoggerSimpleWord"/-->
+<!--         <item value="dotGraphWriter-forCorefEval"/> -->
+<!--         <item value="fullTokenXmlLoggerSimpleWord"/> -->
         <item value="idiomaticAlternatives"/>
-        <!--item value="fullTokenXmlLoggerIdiomatic"/-->
+<!--         <item value="fullTokenXmlLoggerIdiomatic"/> -->
         <item value="hyphenWordAlternatives"/>
-        <!--item value="fullTokenXmlLoggerHyphen"/-->
+<!--         <item value="fullTokenXmlLoggerHyphen"/> -->
         <item value="abbreviationSplitAlternatives"/>
-        <!--item value="fullTokenXmlLoggerAbbreviations"/-->
+<!--         <item value="fullTokenXmlLoggerAbbreviations"/> -->
         <item value="defaultProperties"/>
-        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+<!--         <item value="fullTokenXmlLoggerDefaultProperties"/> -->
         <item value="SpecificEntitiesModex"/>
-        <!--item value="specificEntitiesXmlLogger"/-->
-        <!--item value="dotGraphWriter-beforepos"/-->
+<!--         <item value="specificEntitiesXmlLogger"/> -->
+<!--         <item value="dotGraphWriter-beforepos"/> -->
 <!--         <item value="viterbiPostagger-freq"/> -->
 <!--         <item value="SvmToolPosTagger"/> -->
-        <item value="@PosTagger@"/>
-        <!--item value="DynamicSvmToolPosTagger"/-->
-        <!--item value="disambiguatedGraphXmlLogger"/-->
-        <!--item value="dotGraphWriter"/-->
+<!--         <item value="disambiguatedGraphXmlLogger"/> -->
+<!--         <item value="dotGraphWriter"/> -->
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerSimplify"/>
-        <item value="syntacticAnalyzerSimplifyQuotes"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <item value="syntacticAnalyzerDepsHetero"/>
-        <item value="syntacticAnalyzerFinalize"/>
-        <item value="syntacticAnalyzerDummy"/>
-        <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
-        <!--item value="annotDotGraphWriter"/-->
-        <!--item value="depTripletLogger"/-->
-        <!--item value="corefLogger" /-->
-        <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
-        <!--item value="VerbNetRecognition"/-->
-        <!--item value="VerbNetRecognition"/-->
-        <!--item value="kbsrl"/-->
-        <item value="conllDumper"/>
-        <!--item value="bowDumper"/-->
-        <!--item value="textDumper"/-->
-        <!--item value="fullXmlDumper"/-->
-        <!--item value="NullDumper"/-->
-        <!--item value="temporalXmlDumper"/-->
-        <!--item value="afterFusionXmlDumper"/-->
+        <item value="textDumper"/>
       </list>
     </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
@@ -396,16 +372,6 @@
       <param key="defaultCategory" value="SENT"/>
       <list name="stopCategories">
         <item value="SENT" />
-      </list>
-      <param key="allFeatures" value="false"/>
-      <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
-      used -->
-      <list name="features">
-        <item value="Mood" />
-        <item value="PronType" />
-        <item value="Tense" />
-        <item value="VerbForm" />
       </list>
     </group>
     <group name="viterbiPostagger-int" class="ViterbiPosTagger">

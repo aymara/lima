@@ -20,7 +20,7 @@
   - c_grave > GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_percent|c_fraction|m_line > DELIMITER (T_WORD_BRK)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_dot c_b c_m = START
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - [c_N|c_n] c_degree = ALPHA
@@ -48,7 +48,7 @@
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - unknwn = START
   - c_lowline > ALPHA
@@ -105,6 +105,7 @@
   - c_all / START
 }
 (DELIMITER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - c_grave = GRAVE (T_WORD_BRK)
   - c_b c_dot > DELIMITER
@@ -137,6 +138,7 @@
   - c_all = START
 }
 (SINGLE_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > SINGLE_UPPER (T_POSSESSIVE)
   - c_M > ALL_UPPER (T_CAPITAL)
@@ -155,6 +157,7 @@
   - c_all > START
 }
 (ALL_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > ALL_UPPER (T_POSSESSIVE)
   - c_M > ALL_UPPER
@@ -171,6 +174,7 @@
   - c_all > START
 }
 (ALL_LOWER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > ALL_LOWER (T_POSSESSIVE)
   - c_dot c_b c_m > ALL_LOWER
@@ -193,6 +197,7 @@
   - m_eof = END
 }
 (LOWER_1ST_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > LOWER_1ST_UPPER (T_POSSESSIVE)
   - c_m > LOWER_1ST_UPPER
@@ -215,6 +220,7 @@
   - c_all > START
 }
 (LOWER_UPPER) {
+  - c_dot c_dot c_dot = SUSP1 (T_SENTENCE_BRK)
   - m_eof = END
   - [c_s|c_S|c_z|c_Z] c_quote c_del > LOWER_UPPER (T_POSSESSIVE)
   - c_Mm > LOWER_UPPER
@@ -497,6 +503,12 @@
   - c_quote = START
   - c_dot c_b c_m = START
   - c_all = START
+}
+(SUSP1) {
+  - c_dot c_dot > SUSP2
+}
+(SUSP2) {
+  - c_dot > ALPHA
 }
 (END) {
 }

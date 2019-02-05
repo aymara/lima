@@ -54,7 +54,7 @@ shift $((OPTIND-1))
 # be able to source this script from elsewhere
 export LIMA_ROOT=$PWD/..
 
-LIMA_SOURCES=$PWD
+export LIMA_SOURCES=$PWD
 pushd $LIMA_SOURCES > /dev/null
 current_branch=`git rev-parse --abbrev-ref HEAD`
 popd > /dev/null
@@ -67,11 +67,11 @@ export NLTK_PTB_DP_FILE=$HOME/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 export LINGUISTIC_DATA_ROOT=$LIMA_SOURCES/lima_linguisticdata
 
 # Path to where the build will be done, where temporary binary files are written
-export LIMA_BUILD_DIR=$LIMA_ROOT/Builds
+export LIMA_BUILD_DIR=$LIMA_ROOT/Builds-ud
 install -d $LIMA_BUILD_DIR
 
 # Path where LIMA will be installed
-export LIMA_DIST=$LIMA_ROOT/Dist/$current_branch/$mode
+export LIMA_DIST=$LIMA_ROOT/Dist-ud/$current_branch/$mode
 install -d $LIMA_DIST
 
 # Path to where the LIMA configuration files are installed. Can be overriden at
@@ -86,7 +86,7 @@ export LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources
 export LIMA_EXTERNALS=$LIMA_ROOT/externals
 
 # Add the path to LIMA executables to the search path
-export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
+export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$LIMA_SOURCES/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin/:$PATH
 
 # Add the path to LIMA libraries to the libaries search path
 export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib:$LD_LIBRARY_PATH

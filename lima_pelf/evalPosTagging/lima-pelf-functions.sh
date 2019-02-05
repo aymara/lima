@@ -31,9 +31,9 @@ function readMethod() {
     return
   fi
   echo "lpFile is $lpFile" > /dev/stderr
-  dynsvmtool=`head -n 70 $lpFile | grep '"DynamicSvmToolPosTagger"/>'`
-  svmtool=`head -n 70 $lpFile | grep '"SvmToolPosTagger"/>'`
-  viterbi=`head -n 70 $lpFile | grep '"viterbiPostagger-freq"/>'`
+  dynsvmtool=`head -n 70 $lpFile | grep '"DynamicSvmToolPosTagger"/>$'`
+  svmtool=`head -n 70 $lpFile | grep '"SvmToolPosTagger"/>$'`
+  viterbi=`head -n 70 $lpFile | grep '"viterbiPostagger-freq"/>$'`
 
   if [ -n "$svmtool" ]; then
     echo "svmtool"

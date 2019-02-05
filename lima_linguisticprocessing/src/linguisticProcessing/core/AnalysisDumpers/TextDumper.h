@@ -44,11 +44,13 @@ namespace AnalysisDumpers
 
 #define TEXTDUMPER_CLASSID "TextDumper"
 
+class TextDumperPrivate;
 /**
 @author Benoit Mathieu
 */
 class LIMA_ANALYSISDUMPERS_EXPORT TextDumper : public AbstractTextualAnalysisDumper
 {
+  friend class TextDumperPrivate;
 public:
   TextDumper();
 
@@ -61,28 +63,8 @@ public:
   LimaStatusCode process(AnalysisContent& analysis) const override;
     
 private:
-  MediaId m_language;
-  std::string m_property;
-  const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
-  const Common::PropertyCode::PropertyManager* m_propertyManager;
-  const Common::PropertyCode::PropertyManager* m_timeManager; //Ajout
-  const Common::PropertyCode::PropertyAccessor* m_timeAccessor; //Ajout
+  TextDumperPrivate* m_d;
 
-  std::string m_graph;
-  std::string m_sep;
-  std::string m_sepPOS;
-  bool m_followGraph;
-  std::string m_verbTenseFlag; //Ajout
-
-  // private member functions
-  void outputVertex(std::ostream& out, 
-                    const LinguisticAnalysisStructure::Token* ft,
-                    const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
-                    const FsaStringsPool& sp,
-                    uint64_t offset=0) const;
-                    
-  void outputString(std::ostream& out,const std::string& str) const;
-                                      
 };
 
 struct lTokenPosition
