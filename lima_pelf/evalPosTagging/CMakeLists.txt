@@ -21,6 +21,7 @@ configure_file(tfcv.py tfcv.py @ONLY)
 ########### install files ###############
 install(FILES 
     aligner.pl
+    conllu_to_text.pl
     eval.pl
     launch_eval.sh
     build-dico.sh
@@ -50,5 +51,5 @@ install(FILES
     conf/config-minimale-eng.ud.SVMT
     conf/config-minimale-fre.SVMT
     conf/config-minimale-por.SVMT
-  PERMISSIONS OWNER_READ  OWNER_WRITE   GROUP_READ WORLD_READ
+  PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   DESTINATION share/config/lima)

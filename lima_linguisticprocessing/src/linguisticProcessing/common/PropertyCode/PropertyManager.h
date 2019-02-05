@@ -36,7 +36,7 @@ namespace Common
 namespace PropertyCode
 {
 
-
+class PropertyManagerPrivate;
 /**
  * Provide tools to manage a specific property. The PropertyManager provide the PropertyAccessor
  * for read/write operation. It also offers convertion function from symbolic values to numeric values.
@@ -45,6 +45,7 @@ namespace PropertyCode
  */
 class LIMA_PROPERTYCODE_EXPORT PropertyManager
 {
+  friend class PropertyManagerPrivate;
 public:
 
   /**
@@ -59,10 +60,10 @@ public:
                   const LinguisticCode& emptyNessMask,
                   const std::map<std::string,LinguisticCode> symbol2code);
 
-  /**
-   * @brief default destructor
-   */
-  virtual ~PropertyManager();
+  ~PropertyManager();
+
+  PropertyManager(const PropertyManager&);
+  PropertyManager& operator=(const PropertyManager&);
 
   /**
    * @brief give the corresponding PropertyAccessor
@@ -120,43 +121,8 @@ public:
   size_t getNbValues() const;
 
 private:
-
-  std::string m_name;
-  LinguisticCode m_mask;
-  LinguisticCode m_emptyNessMask;
-  std::map<LinguisticCode,std::string> m_code2symbol;
-  std::map<std::string,LinguisticCode> m_symbol2code;
-
-  PropertyAccessor m_accessor;
-
-  static std::string s_none;
-
+  PropertyManagerPrivate* m_d;
 };
-
-inline LinguisticCode PropertyManager::getMask() const
-{
-  return m_mask;
-}
-
-inline LinguisticCode PropertyManager::getEmptyNessMask() const
-{
-  return m_emptyNessMask;
-}
-
-inline const std::map<LinguisticCode,std::string>& PropertyManager::getCode2Symbol() const
-{
-  return m_code2symbol;
-}
-
-inline const std::map<std::string,LinguisticCode>& PropertyManager::getSymbol2Code() const
-{
-  return m_symbol2code;
-}
-
-inline size_t PropertyManager::getNbValues() const
-{
-  return m_symbol2code.size();
-}
 
 } // PropertyCode
 } // Common

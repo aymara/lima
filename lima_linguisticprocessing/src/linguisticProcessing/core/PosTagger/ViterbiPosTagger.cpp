@@ -39,7 +39,9 @@ namespace LinguisticProcessing
 namespace PosTagger
 {
 
-std::unique_ptr< ViterbiPosTaggerFactory > ViterbiPosTaggerFactory::s_instance=std::unique_ptr< ViterbiPosTaggerFactory >(new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID));
+std::unique_ptr< ViterbiPosTaggerFactory > ViterbiPosTaggerFactory::s_instance = 
+  std::unique_ptr< ViterbiPosTaggerFactory >(
+    new ViterbiPosTaggerFactory(VITERBIPOSTAGGER_CLASSID));
 
 
 ViterbiPosTaggerFactory::ViterbiPosTaggerFactory(const std::string& id) :
@@ -52,45 +54,48 @@ MediaProcessUnit* ViterbiPosTaggerFactory::create(
 {
 
   PTLOGINIT;
-  MediaId language=manager->getInitializationParameters().media;
-  const LanguageData& ldata = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language));
-  const Common::PropertyCode::PropertyManager& microManager=ldata.getPropertyCodeManager().getPropertyManager("MICRO");
+  MediaId language = manager->getInitializationParameters().media;
+  const auto& ldata = static_cast<const Common::MediaticData::LanguageData&>(
+    MediaticData::single().mediaData(language));
+  const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
 
   // setting default category
   LinguisticCode defaultCategory;
   try
   {
-    std::string id=unitConfiguration.getParamsValueAtKey("defaultCategory");
-    defaultCategory=microManager.getPropertyValue(id);
+    std::string id = unitConfiguration.getParamsValueAtKey("defaultCategory");
+    defaultCategory = microManager.getPropertyValue(id);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LWARN << "No default microcateg category ! use category PONCTU_FORTE";
-    defaultCategory=microManager.getPropertyValue("PONCTU_FORTE");
+    defaultCategory = microManager.getPropertyValue("PONCTU_FORTE");
   }
 
   std::string trigramsFile;
   std::string bigramsFile;
-  string resourcesPath=MediaticData::single().getResourcesPath();
+  string resourcesPath = MediaticData::single().getResourcesPath();
   try
   {
     trigramsFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("trigramFile").c_str()).toUtf8().constData();
-    bigramsFile=Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("bigramFile").c_str()).toUtf8().constData();
+    bigramsFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), unitConfiguration.getParamsValueAtKey("bigramFile").c_str()).toUtf8().constData();
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No param 'trigramFile' or 'bigramFile' in ViterbiPosTagger group for language " << (int)language;
+    LERROR << "No param 'trigramFile' or 'bigramFile' in ViterbiPosTagger group for language " 
+            << (int)language;
     throw InvalidConfiguration();
   }
 
   string costFunction;
   try
   {
-    costFunction=unitConfiguration.getParamsValueAtKey("costFunction");
+    costFunction = unitConfiguration.getParamsValueAtKey("costFunction");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "No param 'costFuntion' in ViterbiPosTagger group for language " << (int)language;
+    LERROR << "No param 'costFuntion' in ViterbiPosTagger group for language " 
+            << (int)language;
     throw InvalidConfiguration();
   }
 
@@ -105,26 +110,38 @@ MediaProcessUnit* ViterbiPosTaggerFactory::create(
     uint64_t unigramCost=3;
     try
     {
-      trigramCost=atoi(unitConfiguration.getParamsValueAtKey("trigramCost").data());
-      bigramCost=atoi(unitConfiguration.getParamsValueAtKey("bigramCost").data());
-      unigramCost=atoi(unitConfiguration.getParamsValueAtKey("unigramCost").data());
+      trigramCost = atoi(unitConfiguration.getParamsValueAtKey("trigramCost").data());
+      bigramCost = atoi(unitConfiguration.getParamsValueAtKey("bigramCost").data());
+      unigramCost = atoi(unitConfiguration.getParamsValueAtKey("unigramCost").data());
     }
     catch (Common::XMLConfigurationFiles::NoSuchParam& )
     {
       LWARN << "can't read all parameters for IntegerCost function ! use defaults";
     }
     
-    LINFO << "ViterbiPosTagger use ViterbiIntegerCost with trigramCost = " << trigramCost << "; bigramCost = " << bigramCost << "; unigramCost = " << unigramCost;
+    LINFO << "ViterbiPosTagger use ViterbiIntegerCost with trigramCost = " 
+          << trigramCost << "; bigramCost = " << bigramCost 
+          << "; unigramCost = " << unigramCost;
     
-    ViterbiCostFunction<uint64_t,SimpleIntegerCostFactory<uint64_t> > costFunction(language, &microManager, SimpleIntegerCostFactory<uint64_t>(trigramCost,bigramCost,unigramCost), trigramsFile, bigramsFile);
+    ViterbiCostFunction<uint64_t,SimpleIntegerCostFactory<uint64_t> > costFunction(
+      language, 
+      &microManager, 
+      SimpleIntegerCostFactory<uint64_t>(trigramCost, bigramCost, unigramCost), 
+      trigramsFile, 
+      bigramsFile);
     
     posTagger = new ViterbiPosTagger< uint64_t, ViterbiCostFunction< uint64_t, SimpleIntegerCostFactory<uint64_t> > >(costFunction);
     
   }
   else if (costFunction == "FrequencyCost")
   {
-    ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> costFunction(language,&microManager,FrequencyCostFactory(),trigramsFile,bigramsFile);
-    posTagger=new ViterbiPosTagger<FrequencyCost,ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> >(costFunction);
+    ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> costFunction(
+      language,
+      &microManager,
+      FrequencyCostFactory(),
+      trigramsFile,
+      bigramsFile);
+    posTagger = new ViterbiPosTagger<FrequencyCost,ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> >(costFunction);
   }
   else
   {

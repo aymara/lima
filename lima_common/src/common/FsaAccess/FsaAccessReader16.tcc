@@ -143,7 +143,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
   
 #ifdef DEBUG_CD
   FSAAHASHLOGINIT;
-  LDEBUG << "FsaAccessReader16::computeHash(" << from << ")" ;
+  LTRACE << "FsaAccessReader16::computeHash(" << from << ")" ;
 #endif
 
   auto vname_map = boost::get(boost::vertex_name,FsaAccess16<graphType>::m_graph);
@@ -169,7 +169,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
       // memorizing outd-1 first to compute the hash
       if( i+1 < outd ) {
 #ifdef DEBUG_CD
-        LDEBUG << "FsaAccessReader16::computeHash(" << from 
+        LTRACE << "FsaAccessReader16::computeHash(" << from 
                 << "): counts.push_back(" << total << ")" ;
 #endif
         counts.push_back(total);
@@ -185,11 +185,11 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
       assert( counts.size() == outd-1 );
       total = counts[outd-2];
 #ifdef DEBUG_CD
-      LDEBUG << "FsaAccessReader16::computeHash(" << from << "): outd="
+      LTRACE << "FsaAccessReader16::computeHash(" << from << "): outd="
              << outd << ", total=" << total << ")" ;
       std::ostringstream oss;
       copy(counts.begin(), counts.end(), std::ostream_iterator<int>(oss, ", "));
-      LDEBUG << "FsaAccessReader16::computeHash(" << from << "): counts=["
+      LTRACE << "FsaAccessReader16::computeHash(" << from << "): counts=["
       <<  oss.str().c_str() << "]" ;
 #endif
       ei += (outd - 1);
@@ -200,7 +200,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
 /*    
     for( uint32_t i = 0 ; i+1 < outd ; ei++ , i++, cIt++ ) {
 #ifdef DEBUG_CD
-      LDEBUG << "FsaAccessReader16::computeHash: before assert 1004, outd="
+      LTRACE << "FsaAccessReader16::computeHash: before assert 1004, outd="
              << outd << ", i=" << i << ")" ;
 #endif
       assert(ei != edge_end);
@@ -215,7 +215,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
   }
   if( (val & FINAL_16) == FINAL_16 ) {
 #ifdef DEBUG_CD
-    LDEBUG << "FsaAccessReader16::computeHash(" << from << "): FINAL node, increment " << total ;
+    LTRACE << "FsaAccessReader16::computeHash(" << from << "): FINAL node, increment " << total ;
 #endif
     total++;
   }
@@ -258,7 +258,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     char32_t letter = prefixIt->getNextLetter(wordOffset);
 
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessReader::getIndex: search letter in text of vertex " << currentVertex
+    LTRACE <<  "FsaAccessReader::getIndex: search letter in text of vertex " << currentVertex
              ;
 #endif
     VERTEX_PROPERTY_16 vprop = get(vname_map,currentVertex);
@@ -266,7 +266,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     if( (vprop&FINAL_16) == FINAL_16) {
       result++;
 #ifdef DEBUG_CD
-      LDEBUG <<  "FsaAccessReader::getIndex: result++ " << result;
+      LTRACE <<  "FsaAccessReader::getIndex: result++ " << result;
 #endif
     }
 
@@ -275,7 +275,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     int32_t highCharTextPos = vprop&TEXT_POS_16;
     int32_t edgeOffset;
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos;
+    LTRACE <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos;
 #endif
     if( wordOffset == 1 ) {
       edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos );
@@ -284,12 +284,12 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
       int32_t textOffset;
       textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length() );
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset;
+    LTRACE <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset;
 #endif
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
     }
 #ifdef DEBUG_CD
-    LDEBUG <<  "FsaAccessReader::getIndex: edgeOffset= "<< edgeOffset;
+    LTRACE <<  "FsaAccessReader::getIndex: edgeOffset= "<< edgeOffset;
 #endif
 
     if( edgeOffset >= 0 ) {
@@ -298,7 +298,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
       boost::tie(ei,edge_end) = boost::out_edges(currentVertex,FsaAccess16<graphType>::m_graph);
       if (ei==edge_end) {
 #ifdef DEBUG_CD
-        LDEBUG <<  "FsaAccessReader::getIndex: no output edges, edgeOffset="<< edgeOffset;
+        LTRACE <<  "FsaAccessReader::getIndex: no output edges, edgeOffset="<< edgeOffset;
 #endif
         return 0;
       }
@@ -308,26 +308,26 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
         result += counts[edgeOffset-1];
       }
 #ifdef DEBUG_CD
-      LDEBUG <<  "FsaAccessReader::getIndex: match " << edgeOffset;
+      LTRACE <<  "FsaAccessReader::getIndex: match " << edgeOffset;
       if( edgeOffset > 0 ) {
-        LDEBUG << " add " << counts[edgeOffset-1];
+        LTRACE << " add " << counts[edgeOffset-1];
       }
 #endif
     }
     else {
 #ifdef DEBUG_CD
-     LDEBUG <<  "FsaAccessReader::getIndex: mismatch " << letter;
+     LTRACE <<  "FsaAccessReader::getIndex: mismatch " << letter;
 #endif
       delete prefixIt;
       return 0;
     }
   }
 #ifdef DEBUG_CD
-  LDEBUG <<  "FsaAccessReader::getIndex: !prefixIt.hasNextLetter()";
+  LTRACE <<  "FsaAccessReader::getIndex: !prefixIt.hasNextLetter()";
 #endif
   delete prefixIt;
 #ifdef DEBUG_CD
-  LDEBUG <<  "FsaAccessReader::getIndex: get(vname_map,currentVertex) = "
+  LTRACE <<  "FsaAccessReader::getIndex: get(vname_map,currentVertex) = "
          << get(vname_map,currentVertex) ;
 #endif
   if( (get(vname_map,currentVertex)&FINAL_16) == FINAL_16)

@@ -11,7 +11,8 @@ cp $LIMA_SOURCES/SystemSpecificInformations.cmake .
 cp $LIMA_SOURCES/manageQt5.cmake .
 cp -R $LIMA_SOURCES/lima_linguisticdata .
 mkdir -p lima_linguisticdata/build/disambiguisationMatrices/${lang}
-cp 90pc.tfcv lima_linguisticdata/build/disambiguisationMatrices/${lang}/corpus_${lang}_merge.txt
+# cp 90pc.tfcv lima_linguisticdata/build/disambiguisationMatrices/${lang}/corpus_${lang}_merge.txt
+./lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py 90pc.tfcv > lima_linguisticdata/build/disambiguisationMatrices/${lang}/corpus_${lang}_merge.txt
 pushd lima_linguisticdata/
 mkdir -p dist
 cd build/

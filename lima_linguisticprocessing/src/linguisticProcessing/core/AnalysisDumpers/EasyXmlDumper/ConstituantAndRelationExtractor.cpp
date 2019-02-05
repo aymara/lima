@@ -121,10 +121,13 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     }
   }
 
-  Forme* forme = extractVertex(v, posGraph, true, fullTokens, alreadyDumpedTokens, language);
+  Forme* forme = extractVertex(v, posGraph, true, fullTokens, 
+                               alreadyDumpedTokens, language);
 
-  if(forme == 0)
+  if(forme == nullptr)
+  {
     return;
+  }
 
   LDEBUG << "ConstituantAndRelationExtractor:: insert form in index " << forme->id;
   m_formesIndex[forme->id] = forme;
@@ -133,32 +136,34 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
   m_formeIdsToVertex.insert(std::make_pair(forme->id,v));
 
   // Looking for compound tense in annotation data
-  std::set<AnnotationGraphVertex> vAnnot = annotationData.matches("PosGraph", v, "annot");
+  auto vAnnot = annotationData.matches("PosGraph", v, "annot");
   if (!vAnnot.empty())
   {
-    std::set<AnnotationGraphVertex>::const_iterator vAnnotIt, vAnnotIt_end;
-    vAnnotIt = vAnnot.begin();
-    vAnnotIt_end = vAnnot.end();
-    for (; vAnnotIt != vAnnotIt_end; vAnnotIt++)
+    for (auto vAnnotIt = vAnnot.cbegin(); vAnnotIt != vAnnot.cend(); vAnnotIt++)
     {
       // if corresponding AnnotationGraph vertex, link it
-      m_posAnnotMatching.insert(std::make_pair(forme->poslong.position,*vAnnotIt));
-      m_annotPosMatching.insert(std::make_pair(*vAnnotIt,forme->poslong.position));
-      if(annotationData.hasIntAnnotation(*vAnnotIt, Common::Misc::utf8stdstring2limastring("CpdTense")))
+      m_posAnnotMatching.insert(std::make_pair(forme->poslong.position,
+                                               *vAnnotIt));
+      m_annotPosMatching.insert(std::make_pair(*vAnnotIt,
+                                               forme->poslong.position));
+      if(annotationData.hasIntAnnotation(*vAnnotIt, 
+                                         QString::fromUtf8("CpdTense")))
       {
         bool foundCpdAux = false, foundCpdPp = false;
         AnnotationGraphVertex auxVertex, ppVertex;
         auxVertex = ppVertex = std::numeric_limits< AnnotationGraphVertex >::max();
         AnnotationGraphOutEdgeIt vAnnotOutIt, vAnnotOutIt_end;
-        boost::tie(vAnnotOutIt, vAnnotOutIt_end) = boost::out_edges(*vAnnotIt, annotationData.getGraph());
+        boost::tie(vAnnotOutIt, vAnnotOutIt_end) = 
+            boost::out_edges(*vAnnotIt, annotationData.getGraph());
         for (; vAnnotOutIt != vAnnotOutIt_end; vAnnotOutIt++)
         {
-          if (annotationData.hasIntAnnotation(*vAnnotOutIt,Common::Misc::utf8stdstring2limastring("Aux")))
+          if (annotationData.hasIntAnnotation(*vAnnotOutIt,
+                                              QString::fromUtf8("Aux")))
           {
             auxVertex = boost::target(*vAnnotOutIt, annotationData.getGraph());
             if(auxVertex != 0) foundCpdAux = true;
           }
-          else if(annotationData.hasIntAnnotation(*vAnnotOutIt,Common::Misc::utf8stdstring2limastring("PastPart")))
+          else if(annotationData.hasIntAnnotation(*vAnnotOutIt,QString::fromUtf8("PastPart")))
           {
             ppVertex = boost::target(*vAnnotOutIt, annotationData.getGraph());
             if(ppVertex != 0) foundCpdPp = true;          }
@@ -205,7 +210,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     for (; vAnnotIt != vAnnotIt_end; vAnnotIt++)
     {
 
-      LimaString idiomExprLimaString = Common::Misc::utf8stdstring2limastring("IdiomExpr");
+      LimaString idiomExprLimaString = QString::fromUtf8("IdiomExpr");
       if(annotationData.hasAnnotation(*vAnnotIt, idiomExprLimaString))
       {
         LDEBUG << "ConstituantAndRelationExtractor:: found idiomatic " << *vAnnotIt << ", " << forme->forme;
@@ -220,10 +225,11 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
           language);
       }
 
-      LimaString seLimaString = Common::Misc::utf8stdstring2limastring("SpecificEntity");
+      LimaString seLimaString = QString::fromUtf8("SpecificEntity");
       if(annotationData.hasAnnotation(*vAnnotIt, seLimaString))
       {
-        LDEBUG << "ConstituantAndRelationExtractor:: found specific entity " << *vAnnotIt << ", " << forme->forme;
+        LDEBUG << "ConstituantAndRelationExtractor:: found specific entity " 
+                << *vAnnotIt << ", " << forme->forme;
         splitCompoundAnalysisAnnotation<SpecificEntityAnnotation>(
           *vAnnotIt,
           *forme,
@@ -234,7 +240,6 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
           alreadyDumpedTokens,
           language);
       }
-
     }
   }
 
@@ -244,7 +249,8 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
   boost::tie(itDep, itDep_end) = out_edges(depv, *depGraph);
   for (; itDep != itDep_end; itDep++)
   {
-    Relation* relation = extractEdge(*itDep, posGraph, *depGraph, fullTokens, syntacticData, language);
+    Relation* relation = extractEdge(*itDep, posGraph, *depGraph, 
+                                     fullTokens, syntacticData, language);
     if(relation != 0)
     {
       forme->m_outRelations.push_back(relation);
@@ -259,14 +265,14 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
 // extract functions
 //***********************************************************************
 
-Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVertex& v,
-                                                      const LinguisticGraph& graph,
-                                                      bool checkFullTokens,
-                                                      std::map< LinguisticAnalysisStructure::Token*, uint64_t >& fullTokens,
-                                                      std::vector< bool >& alreadyDumpedTokens,
-                                                      MediaId language)
+Forme* ConstituantAndRelationExtractor::extractVertex(
+    const LinguisticGraphVertex& v,
+    const LinguisticGraph& graph,
+    bool checkFullTokens,
+    std::map< LinguisticAnalysisStructure::Token*, uint64_t >& fullTokens,
+    std::vector< bool >& alreadyDumpedTokens,
+    MediaId language)
 {
-
   FsaStringsPool& sp = Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
   Token* token = get(vertex_token, graph, v);
@@ -276,8 +282,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
   if(checkFullTokens){
     LDEBUG << "ConstituantAndRelationExtractor:: check token " << v  << "(" 
            << token->stringForm() << ")";
-    std::map< LinguisticAnalysisStructure::Token*, uint64_t >::const_iterator tokenIter;
-    tokenIter = fullTokens.find(token);
+    auto tokenIter = fullTokens.find(token);
     if(tokenIter != fullTokens.end())
     {
       uint64_t tokenId = tokenIter->second;
@@ -291,7 +296,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
          << token->stringForm() << ")";
   Forme* forme = new Forme();
   forme->id = v;
-  forme->forme = Common::Misc::limastring2utf8stdstring(token->stringForm());
+  forme->forme = token->stringForm().toUtf8().constData();
 
   MorphoSyntacticData* data = get(vertex_data, graph, v);
   if(data != 0)
@@ -303,12 +308,12 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     const PropertyAccessor microA = pcm.getPropertyAccessor("MICRO");
     const PropertyManager microPm = pcm.getPropertyManager("MICRO");
 
-    std::vector<LinguisticElement>::const_iterator itForms = (*data).begin();
+    auto itForms = (*data).cbegin();
     if(itForms != (*data).end())
     {
 
       LDEBUG << "ConstituantAndRelationExtractor:: found morphosyntactic data ";
-      forme->inflForme = Common::Misc::limastring2utf8stdstring(sp[itForms->inflectedForm]);
+      forme->inflForme = sp[itForms->inflectedForm].toUtf8().constData();
 
       forme->poslong.position = token->position();
       forme->poslong.longueur = token->length();
@@ -330,12 +335,13 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
 
 }
 
-Relation* ConstituantAndRelationExtractor::extractEdge(const LinguisticGraphEdge& e,
-                                                       const LinguisticGraph& /*posGraph*/,
-                                                       const DependencyGraph& depGraph,
-                                                       std::map< LinguisticAnalysisStructure::Token*, uint64_t >& /*fullTokens*/,
-                                                       const SyntacticData& syntacticData,
-                                                       MediaId language)
+Relation* ConstituantAndRelationExtractor::extractEdge(
+    const LinguisticGraphEdge& e,
+    const LinguisticGraph& /*posGraph*/,
+    const DependencyGraph& depGraph,
+    std::map< LinguisticAnalysisStructure::Token*, uint64_t >& /*fullTokens*/,
+    const SyntacticData& syntacticData,
+    MediaId language)
 {
 
   CEdgeDepRelTypePropertyMap relTypeMap = get(edge_deprel_type, depGraph);

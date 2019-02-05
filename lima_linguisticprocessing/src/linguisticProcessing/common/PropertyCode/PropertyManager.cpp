@@ -33,12 +33,38 @@ namespace Common
 namespace PropertyCode
 {
 
-std::string PropertyManager::s_none("NONE");
+class PropertyManagerPrivate
+{
+friend class PropertyManager;
 
-PropertyManager::PropertyManager(const std::string& name,
-                                 const LinguisticCode& mask,
-                                 const LinguisticCode& emptyNessMask,
-                                 const std::map<std::string,LinguisticCode> symbol2code) :
+  PropertyManagerPrivate(const std::string& name,
+                  const LinguisticCode& mask,
+                  const LinguisticCode& emptyNessMask,
+                  const std::map<std::string,LinguisticCode> symbol2code);
+
+  ~PropertyManagerPrivate();
+  PropertyManagerPrivate(const PropertyManagerPrivate& pmp);
+  PropertyManagerPrivate& operator=(const PropertyManagerPrivate& pmp);
+
+  std::string m_name;
+  LinguisticCode m_mask;
+  LinguisticCode m_emptyNessMask;
+  std::map<LinguisticCode,std::string> m_code2symbol;
+  std::map<std::string,LinguisticCode> m_symbol2code;
+
+  PropertyAccessor m_accessor;
+
+  static std::string s_none;
+
+};
+
+std::string PropertyManagerPrivate::s_none("NONE");
+
+PropertyManagerPrivate::PropertyManagerPrivate(
+  const std::string& name,
+  const LinguisticCode& mask,
+  const LinguisticCode& emptyNessMask,
+  const std::map<std::string,LinguisticCode> symbol2code) :
     m_name(name),
     m_mask(mask),
     m_emptyNessMask(emptyNessMask),
@@ -55,36 +81,113 @@ PropertyManager::PropertyManager(const std::string& name,
   }
 }
 
-PropertyManager::~PropertyManager() {}
+PropertyManagerPrivate::~PropertyManagerPrivate() 
+{
+}
+
+PropertyManagerPrivate::PropertyManagerPrivate(const PropertyManagerPrivate& pmp) :
+    m_name(pmp.m_name),
+    m_mask(pmp.m_mask),
+    m_emptyNessMask(pmp.m_emptyNessMask),
+    m_code2symbol(pmp.m_code2symbol),
+    m_symbol2code(pmp.m_symbol2code),
+    m_accessor(pmp.m_accessor)
+{
+}
+
+PropertyManagerPrivate& PropertyManagerPrivate::operator=(const PropertyManagerPrivate& pmp)
+{
+  m_name = pmp.m_name;
+  m_mask = pmp.m_mask;
+  m_emptyNessMask = pmp.m_emptyNessMask;
+  m_code2symbol = pmp.m_code2symbol;
+  m_symbol2code = pmp.m_symbol2code;
+  m_accessor = pmp.m_accessor;
+  return *this;
+}
+
+PropertyManager::PropertyManager(const std::string& name,
+                                 const LinguisticCode& mask,
+                                 const LinguisticCode& emptyNessMask,
+                                 const std::map<std::string,LinguisticCode> symbol2code) :
+    m_d(new PropertyManagerPrivate(name, mask, emptyNessMask, symbol2code))
+{
+}
+
+PropertyManager::~PropertyManager()
+{
+  delete m_d;
+}
+
+PropertyManager::PropertyManager(const PropertyManager& pm)
+{
+  *m_d = *pm.m_d;
+}
+
+PropertyManager& PropertyManager::operator=(const PropertyManager& pm)
+{
+  *m_d = *pm.m_d;
+  return *this;
+}
+
 
 const PropertyAccessor& PropertyManager::getPropertyAccessor() const
 {
-  return m_accessor;
+  return m_d->m_accessor;
 }
 
-LinguisticCode PropertyManager::getPropertyValue(const std::string& symbolicValue) const
+LinguisticCode PropertyManager::getPropertyValue(
+  const std::string& symbolicValue) const
 {
-  map<string,LinguisticCode>::const_iterator it=m_symbol2code.find(symbolicValue);
-  if (it == m_symbol2code.end())
+  auto it = m_d->m_symbol2code.find(symbolicValue);
+  if (it == m_d->m_symbol2code.end())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << symbolicValue << " for property " << m_name;
+    LWARN << "Ask for unknown value " << symbolicValue 
+          << " for property " << m_d->m_name;
     return static_cast<LinguisticCode>(0);
   }
   return it->second;
 }
 
-const std::string& PropertyManager::getPropertySymbolicValue(const LinguisticCode& value) const
+const std::string& PropertyManager::getPropertySymbolicValue(
+  const LinguisticCode& value) const
 {
-  LinguisticCode val=m_accessor.readValue(value);
-  map<LinguisticCode,string>::const_iterator it=m_code2symbol.find(val);
-  if (it == m_code2symbol.end())
+  LinguisticCode val = m_d->m_accessor.readValue(value);
+  auto it = m_d->m_code2symbol.find(val);
+  if (it == m_d->m_code2symbol.cend())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << val << " (extracted from " << value << ") for property " << m_name;
-    return s_none;
+    LWARN << "Ask for unknown value " << val << " (extracted from " << value 
+          << ") for property " << m_d->m_name;
+    return PropertyManagerPrivate::s_none;
   }
   return it->second;
+}
+
+LinguisticCode PropertyManager::getMask() const
+{
+  return m_d->m_mask;
+}
+
+LinguisticCode PropertyManager::getEmptyNessMask() const
+{
+  return m_d->m_emptyNessMask;
+}
+
+const std::map<LinguisticCode,std::string>& PropertyManager::getCode2Symbol() const
+{
+  return m_d->m_code2symbol;
+}
+
+const std::map<std::string,LinguisticCode>& PropertyManager::getSymbol2Code() const
+{
+  return m_d->m_symbol2code;
+}
+
+size_t PropertyManager::getNbValues() const
+{
+  return m_d->m_symbol2code.size();
 }
 
 } // PropertyCode

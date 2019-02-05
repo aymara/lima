@@ -34,6 +34,7 @@ namespace Common
 namespace PropertyCode
 {
 
+class PropertyAccessorPrivate;
 /**
  * Provide function to read write and check a property.
  * @brief Class that provide read/write methods for a property
@@ -41,6 +42,7 @@ namespace PropertyCode
  */
 class LIMA_PROPERTYCODE_EXPORT PropertyAccessor
 {
+  friend class PropertyAccessorPrivate;
 public:
 
   /**
@@ -53,6 +55,11 @@ public:
   PropertyAccessor(const std::string& name,
                    const LinguisticCode& mask,
                    const LinguisticCode& emptyNessMask);
+
+  ~PropertyAccessor();
+  
+  PropertyAccessor(const PropertyAccessor&);
+  PropertyAccessor& operator=(const PropertyAccessor&);
 
   /**
    * @brief Get the property name
@@ -97,33 +104,8 @@ public:
   bool empty(const LinguisticCode& l) const;
 
 private:
-
-  LinguisticCode m_mask;
-  LinguisticCode m_emptyNessMask;
-  std::string m_name;
-
+  PropertyAccessorPrivate* m_d;
 };
-
-inline LinguisticCode PropertyAccessor::readValue(const LinguisticCode& code) const
-{
-  return static_cast<LinguisticCode>(code & m_mask);
-}
-
-inline void PropertyAccessor::writeValue(
-  const LinguisticCode& value,
-  LinguisticCode& code) const
-{
-  code = static_cast<LinguisticCode>(( code & ( ~ m_mask )) | (value & m_mask));
-}
-
-inline bool PropertyAccessor::equal(const LinguisticCode& l1,
-                                    const LinguisticCode& l2) const {
-  return !(m_mask & (l1 ^ l2));
-}
-
-inline bool PropertyAccessor::empty(const LinguisticCode& l) const {
-  return !(l & m_emptyNessMask);
-}
 
 } // PropertyCode
 } // Common

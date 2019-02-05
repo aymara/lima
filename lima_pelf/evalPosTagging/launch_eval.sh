@@ -16,6 +16,7 @@ Usage: $program [OPTION] language1 language2 ...
 Evaluate LIMA PoS tagging on several languages.
 
   Options:
+  -f, --fragment <value>     Use only a fragment of the given size from the training corpus
   -n, --notrain              Skip the PoT tagger training step. It must have been done previously
   -h, --help                 Shows this help.
 
@@ -46,7 +47,7 @@ mkdir -p training-sets
 notrain=false
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"  -o nh --long "notrain,help"  -- "$@")
+PARSED_OPTIONS=$(getopt -n "$0"  -o "f:nh" --long "fragment:,notrain,help"  -- "$@")
 
 #Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -59,6 +60,7 @@ eval set -- "$PARSED_OPTIONS"
 
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
+fragment="infinity"
 while true;
 do
   case "$1" in
@@ -70,6 +72,10 @@ do
     -n|--notrain)
       notrain=true
       shift;;
+
+    -f|--fragment)
+      fragment=$2
+      shift 2;;
 
     -h|--help)
       usage
@@ -93,7 +99,7 @@ echo "lang is $lang"
             conf=config-minimale-eng.SVMT;;
         eng.ud) 
             addOption="-s . -n $nbParts"
-            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng.ud_merge.txt  ":") 
+            corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":") 
             corpus=$corpusFile  
             conf=config-minimale-eng.ud.SVMT;;
         fre)             
@@ -116,7 +122,7 @@ echo "lang is $lang"
         $EVAL_PATH/tfcv.py -l $lang $addOption $corpus $confFile $svm_light $svm_learn
     else
         rm -Rf results.$lang.$method
-        $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $confFile $svm_light $svm_learn
+        $EVAL_PATH/tfcv.py -c -t -l $lang -f $fragment $addOption $corpus $confFile $svm_light $svm_learn
     fi
 
     echo results.$lang.$method

@@ -427,8 +427,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
               << morphoData->size();
 #endif
         LinguisticCode code = (*morphoData->begin()).properties;
-        const QString macro = 
-            QString::fromUtf8(macroManager.getPropertySymbolicValue(code).c_str());
+//         const QString macro = 
+//             QString::fromUtf8(macroManager.getPropertySymbolicValue(code).c_str());
         const QString micro = 
             QString::fromUtf8(microManager.getPropertySymbolicValue(code).c_str());
 #ifdef DEBUG_LP
@@ -558,7 +558,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         dstream->out()  << tokenId 
                         << "\t" << inflectedToken 
                         << "\t" << lemmatizedToken 
-                        << "\t" << macro.toUtf8().constData()
+//                         << "\t" << macro.toUtf8().constData()
                         << "\t" << micro.toUtf8().constData() 
                         << "\t" << neType.toUtf8().constData()
                         << "\t" << features.toUtf8().constData()

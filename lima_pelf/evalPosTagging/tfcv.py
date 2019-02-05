@@ -18,7 +18,9 @@ from re import search
 import subprocess
 import os
 from os.path import realpath
+import math
 import multiprocessing
+
 
 # Variables definition
 SCRIPTS_PATH = "@SCRIPTS_PATH@"
@@ -59,7 +61,7 @@ def pushd(dirname):
     return PushdContext(dirname)
 
 
-def TenPcSample(path, sep):
+def TenPcSample(path, sep, strip_size):
     """
     Split a tagged corpus in "contiguous" 10% portions de 10% (no splitting in
     the middle of a sentence, based on the number of words and a sentence
@@ -71,6 +73,8 @@ def TenPcSample(path, sep):
     with open(path, 'r') as c:
         lines = 0
         lines = sum(1 for line in c)
+        if lines > strip_size:
+            lines = strip_size 
         partition_size = (lines/numfold)
     print('*** Sample of {} {}% ({}/{}) sep:"{}" ongoing ...'.format(
         path, str(100/numfold), str(partition_size), str(lines), sep))
@@ -81,6 +85,8 @@ def TenPcSample(path, sep):
                  encoding='utf-8', newline='\n')
         for line in corpus:
             cnt += 1
+            if cnt > strip_size:
+                break
             s.write(line)
             if(cnt > partition_size*num[0] and line.find(sep) != -1):
                 s.close()
@@ -88,17 +94,19 @@ def TenPcSample(path, sep):
                 if num:
                     s = open(results + "/%d/10pc.tfcv" % num[0], 'w',
                              encoding='utf-8', newline='\n')
+        s.close()
 
 
 def SVMFormat():
     for i in range(1, numfold+1):
-        os.system("sed -i -e's/ /_/g' -e's/\t/ /g' {}/{}/90pc.tfcv ".format(
-            results, i))
+        os.system('bash -c "python3 {0}/{1}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py {0}/{1}/90pc.tfcv | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/{1}/90pc.tfcv.svmt"'.format(
+          results, i))
 
 
 def NinetyPcSample():
     """
-    Build the complement of the 10% partitions produced by TenPcSample(path).
+    Build the complement of the 10% partitions produced by TenPcSample(path) by
+    just concatenating, for each 10% sample, the 9 other 10% samples.
     Organizes samples in numbered folders in results.<lang>.<tagger>
     """
     global lang
@@ -129,15 +137,15 @@ def Tagged2raw():
         with open('{}/{}/10pc.brut'.format(results, i), 'w',
                   encoding='utf-8', newline='\n') as outfile:
             processes.add(subprocess.Popen(
-                ['{}/reBuildRawCorpus.sh'.format(PELF_BIN_PATH), lang,
-                 '{}/{}/10pc.tfcv'.format(results, i)],
-                stdout=outfile))
+              ['{}/conllu_to_text.pl'.format(PELF_BIN_PATH), '{}/{}/10pc.tfcv'.format(results, i)],
+              stdout=outfile)
+              )
         if len(processes) >= max_processes:
             os.wait()
             for p in processes:
                 if p.poll() is not None and p.returncode is not 0:
-                    raise Exception('reBuildRawCorpus',
-                                    'reBuildRawCorpus did not return 0')
+                    raise Exception('conllu_to_text.pl',
+                                    'conllu_to_text.pl did not return 0')
             processes.difference_update([
                 p for p in processes if p.poll() is not None])
 
@@ -145,8 +153,8 @@ def Tagged2raw():
         os.wait()
         for p in processes:
             if p.poll() is not None and p.returncode is not 0:
-                raise Exception('reBuildRawCorpus',
-                                'reBuildRawCorpus did not return 0')
+                raise Exception('conllu_to_text.pl',
+                                'conllu_to_text.pl did not return 0')
         processes.difference_update([
             p for p in processes if p.poll() is not None])
 
@@ -165,14 +173,16 @@ def Disamb_matrices(scripts_path):
                 os.mkdir("matrices")
             except OSError:
                 pass
-            os.system("gawk -F'\t' '{ print $2 }' 90pc.tfcv >  succession_categs_retag.txt")
+            os.system(scripts_path+"/convert-ud-to-success-categ-retag.py 90pc.tfcv > corpus_eng.ud_merge.txt")
+
+            os.system("gawk -F'\t' '{ print $2 }' corpus_eng.ud_merge.txt >  succession_categs_retag.txt")
             os.system(scripts_path+"/disamb_matrices_extract.pl succession_categs_retag.txt")
             os.system("sort succession_categs_retag.txt|uniq -c|awk -F' ' '{print $2\"\t\"$1}' > matrices/unigramMatrix-%s.dat"
                       % lang)
             os.system(scripts_path+"/disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"
                       % lang)
             os.system("mv bigramsend.txt matrices/bigramMatrix-%s.dat" % lang)
-            os.system("gawk -F'\t' '{ print $1\"\t\"$2 }' 90pc.tfcv > priorcorpus.txt")
+            os.system("gawk -F'\t' '{ print $1\"\t\"$2 }' corpus_eng.ud_merge.txt > priorcorpus.txt")
             os.system(scripts_path+"/disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"
                       % lang)
 
@@ -233,8 +243,9 @@ def AnalyzeTextAll(matrix_path):
         processes.add(
             subprocess.Popen(
                 ['analyzeText', '-l', lang, '10pc.brut', '-o', 'text:.out'],
-                cwd=wd),
-            env=my_env)
+                cwd=wd,
+                env=my_env)
+            )
         if len(processes) >= max_processes:
             os.wait()
             for p in processes:
@@ -263,7 +274,7 @@ def TrainSVMT(conf, svmli, svmle):
         wd = '{}/{}/{}'.format(os.getcwd(), results, str(i))
         str_wd = wd.replace("/", "\/")
         str_svmli = svmli.replace("/", "\/")
-        print("\n---  Treat sample n° "+str(i)+"  --- ")
+        print("\n---  Treat sample n° {} {} {} {} --- ".format(i, conf, svmli,svmle))
         os.system("sed -e 's/%SAMPLE-PATH%/{}/g' -e 's/%SVM-DIR%/{}/g' {} > {}/config.svmt".format(
             str_wd, str_svmli, conf, wd))
         svmlestring = "{}/config.svmt".format(wd)
@@ -351,8 +362,9 @@ def FormaterPourAlignement(sep):
     for i in range(1, numfold+1):
         with pushd('{}/{}'.format(results, str(i))):
             print(os.getcwd())
-            os.system("gawk -F'|' '{print $2\"\t\"$3}' 10pc.brut.out|sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tL_NO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv")
-            os.system("sed 's/ /_/g' 10pc.tfcv > gold.tfcv")
+            os.system("gawk -F' ' '{print $3\"\t\"$5}' 10pc.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv")
+            os.system('bash -c "python3 lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py 10pc.tfcv | sed -e\'s/ /_/g\' > gold.tfcv"')
+            #os.system("sed 's/ /_/g' 10pc.tfcv > gold.tfcv")
 
 
 def Aligner():
@@ -405,7 +417,7 @@ def trained(lang, tagger):
     return exists('training-sets/training.%s.%s' % (lang, tagger))
 
 
-def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
+def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain, strip_size):
     global lang, results
     lang = lang_
     # Configuration LIMA
@@ -441,10 +453,10 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
         print(" ******* CORPUS USED: "+corpus+" *******  \n")
         print(" ******* SEPARATOR: "+sep+" *******  \n")
         makeTree()
-        TenPcSample(corpus, sep)
+        TenPcSample(corpus, sep, strip_size)
         NinetyPcSample()
-        BuildDictionary(lang)
         Tagged2raw()
+        BuildDictionary(lang)
         if (tagger == 'svmtool' or tagger == 'dynsvmtool'):
             SVMFormat()
             TrainSVMT(conf, svmli, svmle)
@@ -470,21 +482,32 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
 
 parser = OptionParser()
 parser.add_option("-c", "--clean", dest="clean", action="store_true",
-                  default=False, help="Nettoie l'arborescence results\\")
-parser.add_option("-t", "--forceTrain", dest="forceTrain", action="store_true",
-                  default=False, help="Force l'apprentissage")
-parser.add_option("-l", "--lang", dest="lang", action="store", default='eng',
-                  help="langue de l'analyse")
-parser.add_option("-s", "--sep", dest="sep", action="store",
-                  default='PONCTU_FORTE', help="séparateur de phrases")
+                  default=False, help="Clean up results tree")
+parser.add_option("-f", "--fragment-size", dest="fragment", action="store",
+                  default='infinity', help="Size of the learning corpus fragment to use (defaults to infinity, thus whole corpus)")
+parser.add_option("-l", "--lang", dest="lang", action="store",
+                  help="Analysis language")
 parser.add_option("-n", "--numfold", dest="numfold", action="store",
-                  default='10', help="nombre de partitions")
+                  default='10', help="Number of partitions")
+parser.add_option("-s", "--sep", dest="sep", action="store",
+                  default='PUNCT', help="Sentences separator")
+parser.add_option("-t", "--forceTrain", dest="forceTrain", action="store_true",
+                  default=False, help="Force to learn")
 
 (options, args) = parser.parse_args()
 print(args)
 
 numfold = int(options.numfold)
+strip_size = 0
+if options.fragment == 'infinity':
+    strip_size = math.inf
+else:
+    strip_size = int(options.fragment)
+
 print(' ******* NUMFOLD: {} *******  \n'.format(numfold))
 main(args[0], args[1], args[2], args[3],
-     options.sep, options.lang,
-     options.clean, options.forceTrain)
+     options.sep, 
+     options.lang,
+     options.clean, 
+     options.forceTrain, 
+     strip_size)

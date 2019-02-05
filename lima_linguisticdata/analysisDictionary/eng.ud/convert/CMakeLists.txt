@@ -18,9 +18,12 @@
 
 set(ENV{LC_ALL} "C")
 
-file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
+file(GLOB dicoFiles ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/eng.ud/UD_English-EWT/*-train.conllu)
+# file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/ud.dic)
+# file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic)
 # to add wordnet entries
 #file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../freeling/*.dic ${CMAKE_CURRENT_SOURCE_DIR}/../wordnet/*.dic)
+
 
 # generate symbolic code file from code file
 add_custom_command(
@@ -43,7 +46,9 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py ${dicoFiles} > freeling-ext-lima.txt.tmp
+#     COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
+#     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic >> freeling-ext-lima.txt.tmp
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
@@ -51,10 +56,12 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS  
-      ${dicoFiles} 
+      ${dicoFiles}
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
       ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
-      ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
+#       ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
+      ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
