@@ -31,6 +31,10 @@
         <entry key="fre" value="main"/>
         <entry key="por" value="main"/>
       </map>
+      <map name="deep">
+        <entry key="eng" value="deep"/>
+        <entry key="fre" value="deep"/>
+      </map>
       <!-- The limaserver pipeline is used from the http limaserver -->
       <map name="limaserver">
         <entry key="eng" value="limaserver"/>

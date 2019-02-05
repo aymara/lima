@@ -45,12 +45,14 @@ public:
         _expectedAddress(expectedAddress) {}
         virtual ~BadFileException() throw() {}
 };
+
 // when character is searched out of text buffer
 class BoundsErrorException : public std::out_of_range {
 public:
     BoundsErrorException(const std::string s = "Bound Error") :
     out_of_range(s) {}
 };
+
 // when attemp to use an empty entry from dictionary
 class EmptyEntryException : public std::domain_error {
 public:

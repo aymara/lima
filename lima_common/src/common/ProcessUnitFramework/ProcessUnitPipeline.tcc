@@ -123,8 +123,7 @@ void ProcessUnitPipeline<ProcessUnit>::debugPrintInactiveUnits() const
 {
   PROCESSUNITFRAMEWORKLOGINIT;
   LWARN << "DEPRECATED ProcessUnitPipeline<ProcessUnit>::debugPrintInactiveUnits. See ProcessUnitPipeline.h";
-  LDEBUG << "Inactive units are:";
-  
+
   std::set<std::string>::const_iterator it, it_end;
   it = m_inactiveUnitsIds.begin();
   it_end = m_inactiveUnitsIds.end();

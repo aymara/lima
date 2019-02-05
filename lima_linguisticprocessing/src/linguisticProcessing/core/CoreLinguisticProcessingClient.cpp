@@ -121,9 +121,11 @@ void CoreLinguisticProcessingClient::analyze(
   LINFO << "CoreLinguisticProcessingClient::analyze(" << (*metaDataPtr)["docid"] << "...)";
 
   // add date/time/location metadata in LinguisticMetaData
+#ifdef DEBUG_LP
   if (metaData.empty()) {
     LDEBUG << "CoreLinguisticProcessingClient::analyze: no metadata";
   }
+#endif
   for (map<string,string>::const_iterator it=metaData.begin(),
          it_end=metaData.end(); it!=it_end; it++) {
     if ((*it).first=="date") {
@@ -139,8 +141,10 @@ void CoreLinguisticProcessingClient::analyze(
         QDate docDate=QDate::fromString(date.c_str(),Qt::ISODate);
         metadataholder->setDate("document",docDate);
         
+#ifdef DEBUG_LP
         LDEBUG << "use '"<< date << "' as document date";
         LDEBUG << "use boost'"<< docDate.day() <<"/"<< docDate.month() <<"/"<< docDate.year() << "' as document date";
+#endif
       }
       catch (std::exception& e) {
         LERROR << "Error in date conversion (date '"<< (*it).second
@@ -149,13 +153,17 @@ void CoreLinguisticProcessingClient::analyze(
     }
     else if ((*it).first=="location") {
       metadataholder->setLocation("document",(*it).second);
+#ifdef DEBUG_LP
         LDEBUG << "use '"<< (*it).second<< "' as document location";
+#endif
     }
     else if ((*it).first=="time") {
       try {
         QTime docTime= QTime::fromString((*it).second.c_str(),"hh:mm:ss.z" );
         metadataholder->setTime("document",docTime);
+#ifdef DEBUG_LP
         LDEBUG << "use '"<< (*it).second<< "' as document time";
+#endif
       }
       catch (std::exception& e) {
         LERROR << "Error in ptime conversion (time '"<< (*it).second
@@ -163,7 +171,9 @@ void CoreLinguisticProcessingClient::analyze(
       }
     }
     else if ((*it).first=="docid") {
+#ifdef DEBUG_LP
       LDEBUG << "use '"<< (*it).second<< "' as document id";
+#endif
       metadataholder->setMetaData("DocId",(*it).second);
     }
   }
@@ -185,7 +195,9 @@ void CoreLinguisticProcessingClient::analyze(
   LINFO  << "analyze file is: '" << fileName << "'";
   LINFO  << "analyze pipeline is '" << pipelineId << "'";
   LINFO  << "analyze language is '" << lang << "'";
+#ifdef DEBUG_LP
   LDEBUG << "texte : " << text;
+#endif
   //LDEBUG << "texte : " << Common::Misc::limastring2utf8stdstring(texte);
 
   MediaId langId=MediaticData::single().getMediaId(lang);
@@ -206,19 +218,27 @@ void CoreLinguisticProcessingClient::analyze(
   analysis.setData("InactiveUnits", inactiveUnitsData);
   
   // add handler to analysis
+#ifdef DEBUG_LP
   LDEBUG << "add handler to analysis" ;
   for (auto hit = handlers.begin(); hit != handlers.end(); hit++)
   {
     LDEBUG << "    " << (*hit).first << (*hit).second;
   }
+#endif
   AnalysisHandlerContainer* h = new AnalysisHandlerContainer(const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers));
+#ifdef DEBUG_LP
   LDEBUG << "set data" ;
+#endif
   analysis.setData("AnalysisHandlerContainer", h);
 
   // process analysis
+#ifdef DEBUG_LP
   LDEBUG << "Process pipeline..." ;
+#endif
   LimaStatusCode status=pipeline->process(analysis);
+#ifdef DEBUG_LP
   LDEBUG << "pipeline process returned status " << (int)status ;
+#endif
   if (status!=SUCCESS_ID)
   {
     std::stringstream s_mess;
