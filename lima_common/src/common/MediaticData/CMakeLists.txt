@@ -28,6 +28,7 @@ SET(lima-common-mediaticdata_LIB_SRCS
 )
 
 add_library(lima-common-mediaticdata SHARED ${lima-common-mediaticdata_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-common-mediaticdata)
 
 target_link_libraries(lima-common-mediaticdata 
   lima-common-fsaaccess 

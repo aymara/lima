@@ -42,7 +42,7 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 namespace QsLogging
 {
-typedef QList<Destination*> DestinationList;
+typedef QList<std::shared_ptr<Destination>> DestinationList;
 
 static const char TraceString[] = "TRACE";
 static const char DebugString[] = "DEBUG";
@@ -102,7 +102,7 @@ Logger::~Logger()
    delete d;
 }
 
-void Logger::addDestination(Destination* destination)
+void Logger::addDestination(std::shared_ptr<Destination> destination)
 {
    assert(destination);
    d->destList.push_back(destination);
@@ -180,17 +180,15 @@ void Logger::Helper::writeToLog()
 
 Logger::Helper::~Helper()
 {
-   try
-   {
-      writeToLog();
-   }
-   catch(std::exception& e)
-   {
-      // you shouldn't throw exceptions from a sink
-      Q_UNUSED(e);
-      assert(!"exception in logger helper destructor");
-      throw;
-   }
+  // writeToLog can throw. Catch its exceptions to avoid throwing from 
+  //destructor
+  try
+  {
+    writeToLog();
+  }
+  catch(...)
+  {
+  }
 }
 
 //! sends the message to all the destinations

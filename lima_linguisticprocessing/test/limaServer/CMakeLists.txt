@@ -26,26 +26,20 @@ SET(limaserver_SRCS
    analysisthread.cpp
 )
 
-set (limaserver_MOC_HEADERS 
-    LimaServer.h
-    analysisthread.h )
-
-
-qt5_wrap_cpp (limaserver_MOC_OUTFILES ${limaserver_MOC_HEADERS})
-
 # qt5_add_resources(limaserver amoseserver.qrc)
 
 # add_executable(limaserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
-add_executable(limaserver ${limaserver_SRCS} ${limaserver_MOC_OUTFILES})
+add_executable(limaserver ${limaserver_SRCS})
 
 target_link_libraries(limaserver
     lima-common
     lima-linguisticprocessing
-    ${QHTTPSERVER_NAMES}
-    ${QT_LIBRARIES}
+    ${QHTTPSERVERCPP_LIBRARY}
+    ${Qt5_LIBRARIES}
     ${Boost_LIBRARIES})
 
-install(TARGETS limaserver DESTINATION bin
+install(TARGETS limaserver 
+  DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
@@ -59,7 +53,7 @@ install(TARGETS limaserver DESTINATION bin
 # target_link_libraries(testQHttpServer
 #     lima-common
 #     ${QHTTPSERVER_NAMES}
-#     ${QT_LIBRARIES}
+#     ${Qt5_LIBRARIES}
 #     ${Boost_LIBRARIES})
 
 # install(TARGETS testQHttpServer DESTINATION bin)
@@ -90,21 +84,19 @@ qt5_generate_dbus_interface(
 
 qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
                      LimaDBusServer.h LimaDBusServer)
-
-qt5_wrap_cpp (limadbusserver_MOC_OUTFILES ${limadbusserver_MOC_HEADERS})
-
 # qt5_add_resources(limadbusserver amoseserver.qrc)
 
 # add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
-add_executable(limadbusserver ${limadbusserver_SRCS} ${limadbusserver_MOC_OUTFILES})
+add_executable(limadbusserver ${limadbusserver_SRCS})
 
 target_link_libraries(limadbusserver
     lima-common
     lima-linguisticprocessing
     ${Boost_LIBRARIES}
-    ${QT_LIBRARIES}
-    ${QHTTPSERVER_NAMES})
+    ${Qt5_LIBRARIES}
+    ${QHTTPSERVERCPP_LIBRARY})
 
-install(TARGETS limadbusserver DESTINATION bin
+install(TARGETS limadbusserver 
+  DESTINATION bin
   COMPONENT runtime)
 endif()

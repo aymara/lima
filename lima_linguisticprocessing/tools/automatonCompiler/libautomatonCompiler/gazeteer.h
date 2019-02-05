@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -46,11 +46,11 @@ class RecognizerCompiler;
 class Gazeteer : public std::vector<LimaString>
 {
  public:
-  Gazeteer(); 
+  Gazeteer();
   Gazeteer(const Gazeteer&);
   ~Gazeteer();
   Gazeteer& operator = (const Gazeteer&);
-  
+
   friend std::ostream& operator << (std::ostream&, const Gazeteer&);
   friend QDebug& operator << (QDebug&, const Gazeteer&);
   bool operator==(const LimaString& alias) const { return m_alias==alias; }
@@ -61,26 +61,28 @@ class Gazeteer : public std::vector<LimaString>
   const AutomatonString& getAutomatonString() const { return m_automatonString; }
 
   void setAlias(const LimaString&);
-  void addWord(const LimaString&);
+  void addWord(const LimaString&, const vector<Gazeteer>& otherGazeteers);
   // TODO: unused operation, to be deleted?
   Gazeteer& add(const Gazeteer&);
   void buildAutomatonString(const std::vector<Gazeteer>& gazeteers,
                             const std::vector<SubAutomaton>& subAutomatons);
-  
+
   void readFromFile(const std::string& filename);
   void read(RecognizerCompiler& reco);
   LimaString readName(RecognizerCompiler& reco);
   void readValues(RecognizerCompiler& reco,
                   const LimaString& stringBegin=LimaString());
+  void readValues(RecognizerCompiler& reco,
+                  const vector<Gazeteer>& otherGazeteers,
+                  const LimaString& stringBegin=LimaString());
   bool hasMultiTermWord() const { return m_hasMultiTermWord; }
-  bool hasNoCategoryNorTstatus() const { return m_hasNoCategoryNorTstatus; }
-  void resetCategoryOrTstatusFlag() { m_hasNoCategoryNorTstatus = false; }
+  bool hasNotOnlyWords() const { return m_hasNotOnlyWords; }
   void setHasMultiTermWordFlag() { m_hasMultiTermWord = true; }
 
  private:
   LimaString m_alias;
   bool m_hasMultiTermWord;
-  bool m_hasNoCategoryNorTstatus;
+  bool m_hasNotOnlyWords;
   AutomatonString m_automatonString;
 };
 

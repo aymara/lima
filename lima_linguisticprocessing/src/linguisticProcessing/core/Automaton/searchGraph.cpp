@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,8 +22,8 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue May 24 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2019 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "searchGraph.h"
@@ -41,12 +41,12 @@ namespace Automaton {
 ForwardSearch::ForwardSearch():m_current() {}
 BackwardSearch::BackwardSearch():m_current() {}
 
-SearchGraph* 
-ForwardSearch::createNew() {
+SearchGraph*
+ForwardSearch::createNew() const {
   return new ForwardSearch();
 }
-SearchGraph* 
-BackwardSearch::createNew() {
+SearchGraph*
+BackwardSearch::createNew() const {
   return new BackwardSearch();
 }
 LinguisticGraphVertex ForwardSearch::
@@ -60,16 +60,16 @@ endOfGraph(const AnalysisGraph& graph) {
 
 void ForwardSearch::
 findNextVertices(const LinguisticGraph* graph,
-                 const LinguisticGraphVertex& current) 
+                 const LinguisticGraphVertex& current)
 {
   m_current.push_back(make_pair(current,out_edges(current,*graph)));
 }
 
 bool ForwardSearch::
 getNextVertex(const LinguisticGraph* graph,
-              LinguisticGraphVertex& next) 
+              LinguisticGraphVertex& next)
 {
-  if (m_current.back().second.first == 
+  if (m_current.back().second.first ==
       m_current.back().second.second) {
     return false;
   }
@@ -82,16 +82,16 @@ getNextVertex(const LinguisticGraph* graph,
 
 void BackwardSearch::
 findNextVertices(const LinguisticGraph* graph,
-                 const LinguisticGraphVertex& current) 
+                 const LinguisticGraphVertex& current)
 {
   m_current.push_back(make_pair(current,in_edges(current,*graph)));
 }
 
 bool BackwardSearch::
 getNextVertex(const LinguisticGraph* graph,
-              LinguisticGraphVertex& next) 
+              LinguisticGraphVertex& next)
 {
-  if (m_current.back().second.first == 
+  if (m_current.back().second.first ==
       m_current.back().second.second) {
     return false;
   }
@@ -102,6 +102,50 @@ getNextVertex(const LinguisticGraph* graph,
   }
 }
 
+#ifdef DEBUG_LP
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const BackwardSearch::Vertex2EdgePair& x, const LinguisticGraph* graph) {
+  LIMA_UNUSED(graph);
+  os << x.first << ":(" /*<< *(x.second.first) << "-" << *(x.second.second)*/ << ") ";
+  return os;
+}
+
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const BackwardSearch& x, const LinguisticGraph* graph) {
+  os << "bs{ ";
+  for (auto it = x.m_current.begin(); it != x.m_current.end(); it++)
+    output(os, *it, graph);;
+  os << " }";
+  return os;
+}
+
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const ForwardSearch::Vertex2EdgePair& x, const LinguisticGraph* graph) {
+  os << x.first << ":(" << target(*(x.second.first),*graph) << "-" << target(*(x.second.second),*graph) << ") ";
+  return os;
+}
+
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const ForwardSearch& x, const LinguisticGraph* graph) {
+  os << "fs{ ";
+  for (auto it = x.m_current.begin(); it != x.m_current.end(); it++)
+    output(os, *it, graph);
+  os << " }";
+  return os;
+}
+
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const SearchGraph *x, const LinguisticGraph* graph) {
+  const ForwardSearch *pForward = dynamic_cast<const ForwardSearch*>(x);
+  if (pForward != NULL) {
+    output(os, *pForward, graph);
+    return os;
+  }
+
+  const BackwardSearch *pBackward = dynamic_cast<const BackwardSearch*>(x);
+  if (pBackward != NULL)
+    output(os, *pBackward, graph);
+  else
+    throw LimaException("Unexpected type of LinguisticGraph");
+
+  return os;
+}
+#endif
 
 } // end namespace
 } // end namespace

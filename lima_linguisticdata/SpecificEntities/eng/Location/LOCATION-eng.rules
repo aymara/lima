@@ -30,7 +30,7 @@ Palm::Beach:LOCATION:Palm Beach
 
 Wall::Street:NOT_LOCATION:
 
-#Evangelical Lutheran Church in Canada Act 317. => todo problem 
+#Evangelical Lutheran Church in Canada Act 317. => todo problem
 Church:Evangelical Lutheran::NOT_LOCATION:
 
 #----------------------------------------------------------------------
@@ -57,8 +57,8 @@ use locationKey.lst,locationPre.lst,streetKey.lst,stateAbbrev.lst
 T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:LOCATION:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-# =>todo : Unable to catch the name (right 2) with the former regex. 
-# Very strange regex to cath 152nd ! 
+# =>todo : Unable to catch the name (right 2) with the former regex.
+# Very strange regex to cath 152nd !
 
 
 T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):LOCATION:
@@ -100,21 +100,21 @@ Interstate::T_Ni<99:LOCATION:
 I::(-) (T_Ni<99):LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#=> loc odo ?  - 24/02 - cela ne marche toujours pas.  
+#=> loc odo ?  - 24/02 - cela ne marche toujours pas.
 
 @StateAbbrev::-? T_Ni<999:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc odo ?
 
-@StateAbbrev:[,]:.?:LOCATION:
+@StateAbbrev:[,]:[.?]:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
 US::-? T_Ni<999:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#=> loc odo 
+#=> loc odo
 
 
 #----------------------------------
@@ -144,10 +144,9 @@ U.S.::-? T_Ni<999:LOCATION:
 #=> loc odo
 
 ## @locationKey:@locationPre? @Capitalized{1-2}::LOCATION:
-@streetKey:@locationPre? (@Capitalized{1-2})::LOCATION:
+@streetKey:@locationPre? @Capitalized @Capitalized{0-1}::LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-
 
 Park:@Capitalized{1-3}::LOCATION:
 =<ClearEntityFeatures()
@@ -171,7 +170,7 @@ Place:@Capitalized?:(@Capitalized|of the Vosges|of the Bastille)?:LOCATION:
 
 
 #The bedrooms overlook Sloane Square
-@locationKey:[@locationPre?] (@Capitalized{1-3})::LOCATION:
+@locationKey:[@locationPre?] @Capitalized @Capitalized{0-2}::LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #=> loc ????
@@ -244,7 +243,7 @@ district)
 #loc adm
 #bug
 
-[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+[@CityIndPlur]::[of] t_capital_1st{1-3} and t_capital_1st{1-3}:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
@@ -259,13 +258,13 @@ close\ to,
 [near]::@Capitalized{1-3} [@nearKey] [@Capitalized{1-3}]:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
-#same rule than the previous rule. 
+#same rule than the previous rule.
 [near]::[@Capitalized{1-3}] [@nearKey] @Capitalized{1-3}:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 # todo : error : unable to define two names with the same attribute !!
 
-near::@Capitalized{1-3}:LOCATION:
+[near]::@Capitalized{1-3}:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 #todo : error : unable to catch a name with 2/3 tokens
@@ -305,7 +304,7 @@ Ruth::[and] Ruff:LOCATION:
 
 T_Ni<999:\(:\) T_Ni<999 - T_Ni<9999:LOCATION:
 
-T_Ni<999::- T_Ni<999 - T_Ni<9999:LOCATION:
+T_Ni<999::- T_Ni<999 (- T_Ni<9999){1-3}:LOCATION:
 
 1::- T_Ni<999 - T_Ni<999 - T_Ni<9999:LOCATION:
 
@@ -356,3 +355,9 @@ had been
 Cap::(de|d\') @Capitalized:LOCATION:
 =<ClearEntityFeatures()
 =>NormalizeEntity()
+
+
+use airports.lst
+
+@Airports::[airport]:LOCATION:
+@Airports:::LOCATION:

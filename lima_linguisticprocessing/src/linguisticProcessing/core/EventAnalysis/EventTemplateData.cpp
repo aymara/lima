@@ -70,9 +70,9 @@ void EventTemplateData::clearCurrentTemplate()
 void EventTemplateData::setTypeInCurrentTemplate(const std::string& type)
 {
     LOGINIT("LP::EventAnalysis");
-        LDEBUG << "set Current Template Type " << type << LENDL;
+    LDEBUG << "set Current Template Type " << type;
     back().setType(type);
-    LDEBUG << "bak.getType " << back().getType() << LENDL; 
+    LDEBUG << "bak.getType " << back().getType(); 
 }
 
 //-------------------------------------------------------------------------------

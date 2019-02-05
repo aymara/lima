@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -51,7 +51,7 @@ AnalysisTestCaseProcessor::AnalysisTestCaseProcessor(
   TestCaseProcessor(workingDirectory),
   m_lpclient(client),
   m_handlers(handlers) {}
-    
+
 TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV::TestCase& testCase)
 {
   // write text in file
@@ -88,7 +88,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       }
     }  while (k!=std::string::npos);
   }
-  
+
   // For each pipeline process test
   MultiValCallParams::const_iterator pos = testCase.multiValCallParams.find("pipelines");
   if( pos != testCase.multiValCallParams.end() ) {
@@ -96,16 +96,16 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
     for (list<string>::const_iterator pipItr=pipeList.begin();
          pipItr!=pipeList.end();  pipItr++)
     {
-  
+
       string filenameWithPipeLine=filename+"."+*pipItr;
 
-      // Analyse text 
+      // Analyse text
       map<string,string> metaData;
       metaData["Lang"]=language;
       metaData["FileName"]=filenameWithPipeLine;
       metaData["DocumentName"]=testCase.id.toUtf8().constData();
       metaData.insert(userMetaData.begin(),userMetaData.end());
-      m_lpclient->analyze(contentText,metaData, *pipItr, m_handlers);
+      m_lpclient->analyze(contentText, metaData, *pipItr, m_handlers);
       BowTextHandler* bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);
       // dump results
       Common::BagOfWords::BoWText& text=bowHandler->getBowText();
@@ -116,7 +116,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       Common::BagOfWords::BoWXMLWriter writer(fout);
       writer.writeBoWText(&text, true, false);
       fout.close();
-  
+
       TestCaseError error = evalTestCase( testCase, *pipItr, filename, filenameWithPipeLine );
       if (error())
         return error;

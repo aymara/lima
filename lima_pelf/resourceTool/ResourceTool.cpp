@@ -839,9 +839,11 @@ void ResourceTool::logDebugMsg (QtMsgType type, const char* m)
     case QtDebugMsg:
         msgHtml = "<font style=\"color: blue;\">"+msg+"</font>";
         break;
+#if QT_VERSION >= 0x050500
     case QtInfoMsg:
         fprintf(stderr, "Info: %s\n", msg.toUtf8().constData());
         break;
+#endif
     case QtWarningMsg:
         msgHtml = "<font style=\"color: orange;\">"+msg+"</font>";
         break;

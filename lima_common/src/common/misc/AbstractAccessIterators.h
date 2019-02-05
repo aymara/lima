@@ -111,7 +111,7 @@ public:
 class ClonableApproxWordIterator : public AbstractApproxWordIterator 
 {
 public:
-  virtual ClonableSuperWordIterator* clone() const = 0;
+  virtual ClonableApproxWordIterator* clone() const = 0;
 };
 
 class LIMA_COMMONMISC_EXPORT AccessSubWordIterator : public AbstractSubWordIterator

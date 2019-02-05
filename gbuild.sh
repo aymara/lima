@@ -34,7 +34,9 @@ Options default values are in parentheses.
                     precompiled ones
   -v version        <(val)|rev> version number is set either to the value set by  
                     config files or to the short git sha1
-  -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.  
+  -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
+  -T                Use TensorFlow
+  -P tfsrcpath      <> Path to TensorFlow sources
 EOF
 exit 1
 }
@@ -50,9 +52,11 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
-SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
+USE_TF=false
+TF_SOURCES_PATH=""
 
-while getopts ":d:m:n:r:v:G:a:" o; do
+while getopts ":d:m:n:r:v:G:a:P:T" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -71,15 +75,15 @@ while getopts ":d:m:n:r:v:G:a:" o; do
             [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
             ;;
         G)
-          CMAKE_GENERATOR=${OPTARG}
-          echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
-          [[     "$CMAKE_GENERATOR" == "Unix"  ||
-                 "$CMAKE_GENERATOR" == "Ninja" ||
-                 "$CMAKE_GENERATOR" == "MSYS"  ||
-                 "$CMAKE_GENERATOR" == "NMake" ||
-                 "$CMAKE_GENERATOR" == "VS"
-          ]] || usage
-          ;;
+            CMAKE_GENERATOR=${OPTARG}
+            echo "CMAKE_GENERATOR=$CMAKE_GENERATOR"
+            [[     "$CMAKE_GENERATOR" == "Unix"  ||
+                   "$CMAKE_GENERATOR" == "Ninja" ||
+                   "$CMAKE_GENERATOR" == "MSYS"  ||
+                   "$CMAKE_GENERATOR" == "NMake" ||
+                   "$CMAKE_GENERATOR" == "VS"
+            ]] || usage
+            ;;
         r)
             resources=${OPTARG}
             [[ "$resources" == "precompiled" || "$resources" == "build" ]] || usage
@@ -87,6 +91,12 @@ while getopts ":d:m:n:r:v:G:a:" o; do
         v)
             version=$OPTARG
             [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
+            ;;
+        T)
+            USE_TF=true
+            ;;
+        P)
+            TF_SOURCES_PATH=$OPTARG
             ;;
         *)
             usage
@@ -146,16 +156,19 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja"
   make_test=""
   make_install="ninja install"
+  make_package="ninja package"
   generator="Ninja"
 elif [[ $CMAKE_GENERATOR == "MSYS" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
   make_install="make install"
+  make_package="make package"
   generator="MSYS Makefiles"
 elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
@@ -187,13 +200,22 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
+if [ "$USE_TF" = false ] ; then
+  TF_SOURCES_PATH=""
+else
+  if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
+    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
+  fi
+
+  echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
+fi
 
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
-echo "Running command:"
+echo "Running make command:"
 echo "$make_cmd"
-eval $make_cmd
+eval $make_cmd && eval $make_test && eval $make_install && $make_package
 result=$?
 
 #exit $result

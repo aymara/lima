@@ -149,7 +149,31 @@
           operator="="
           right="Bush"/>
   </testcase>
-  <!--testcase id="eng.se.pers.2" type="blocking">
+  <testcase id="eng.se.pers.comp.6" type="bloquant">
+    <call-parameters>
+      <param key="text" value="beat Abdul Samad Ismail (Malaysia)"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.comp.6.1" trace=".se.xml"
+          comment="entity type"
+          left="XPATH#//entities/entity[pos=6]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="eng.se.pers.comp.6.2" trace=".se.xml"
+          comment="first name"
+          left="XPATH#//entities/entity[pos=6]/components/firstname[@pos=6]"
+          operator="="
+          right="Abdul"/>
+    <test id="eng.se.pers.comp.6.3" trace=".se.xml"
+          comment="last name"
+          left="XPATH#//entities/entity[pos=6]/components/lastname[@pos=12]"
+          operator="="
+          right="Samad Ismail"/>
+  </testcase>
+  <!--testcase id="eng.se.pers.2" type="bloquant">
     <call-parameters>
       <param key="text" value="James Dulley is a residential energy conservation expert."/>
       <param key="language" value="eng"/>

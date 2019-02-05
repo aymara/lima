@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2017 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -128,7 +128,7 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
   }
   return true;
 }
-  
+
 ApproxStringMatcher::ApproxStringMatcher() :
     m_language(0),
     m_neCode(0),
@@ -151,7 +151,7 @@ void ApproxStringMatcher::init(
   Manager* manager)
 {
   MORPHOLOGINIT;
-  
+
   m_language = manager->getInitializationParameters().media;
   m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
 
@@ -201,7 +201,7 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'NPMicroCategory' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  
+
   // get index of names
   std::string nameindexId;
   try
@@ -215,7 +215,7 @@ void ApproxStringMatcher::init(
   }
   const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
   m_nameIndex=static_cast<const NameIndexResource*>(res);
-  
+
   /*
   // get dictionary of normalized forms
   string dico;
@@ -233,7 +233,7 @@ void ApproxStringMatcher::init(
   m_lexicon = lexicon->getAccessByString();
   */
 
-  // get max edit distance 
+  // get max edit distance
   try
   {
     std::string nbMaxErrorStr=unitConfiguration.getParamsValueAtKey("nbMaxNumError");
@@ -257,23 +257,32 @@ void ApproxStringMatcher::init(
     throw InvalidConfiguration();
   }
 
-  // get generalization pattern 
+  // get generalization pattern
   try
   {
-    std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalization");
-    for (std::map <std::string, std::string >::const_iterator it = regexes.begin(); it != regexes.end(); it++)
+    std::map <std::string, std::string >& regexes = unitConfiguration.getMapAtKey("generalizationRules");
+    std::deque <std::string >& regexesOrder = unitConfiguration.getListsValueAtKey("generalizationRulesOrder");
+    for (std::deque <std::string >::const_iterator it = regexesOrder.begin(); it != regexesOrder.end(); it++)
     {
-      QString patternQ = QString::fromUtf8 ((*it).first.c_str());
+      const std::string& key = *it;
+      QString patternQ = QString::fromUtf8 (key.c_str());
       std::basic_string<wchar_t> patternWS = NameIndexResource::LimaStr2wcharStr(patternQ);
-      QString substitutionQ = QString::fromUtf8 ((*it).second.c_str());
+      const std::string& value=regexes.at(key);
+      QString substitutionQ = QString::fromUtf8 (value.c_str());
       std::basic_string<wchar_t> substitutionWS = NameIndexResource::LimaStr2wcharStr(substitutionQ);
-      m_regexes.insert( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
+      m_regexes.push_back( std::pair<std::basic_string<wchar_t>,std::basic_string<wchar_t> >(patternWS,
                                     substitutionWS) );
     }
   }
   catch (NoSuchParam& )
   {
     LERROR << "no map 'generalization' in RegexReplacer group configuration fot language "
+    << (int) m_language;
+    throw InvalidConfiguration();
+  }
+  catch (std::out_of_range& )
+  {
+    LERROR << "no value for some key in 'generalizationRules' in RegexReplacer group configuration fot language "
     << (int) m_language;
     throw InvalidConfiguration();
   }
@@ -331,7 +340,7 @@ LimaStatusCode ApproxStringMatcher::process(
   // Initalize list of suggestions, ordered by number of errors and position in text
   OrderedSolution solutions;
   // std::vector<Solution> result;
-  
+
   // Initalize set of names to search for
   std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange;
   if( (indexName.length() == 0) || !(m_nameIndex->withIndex()) ) {
@@ -343,6 +352,15 @@ LimaStatusCode ApproxStringMatcher::process(
     // nameRange.first = m_nameIndex->lower_bound(indexName);
     // nameRange.second = m_nameIndex->upper_bound(indexName);
   }
+#ifdef DEBUG_LP
+  const std::basic_string<wchar_t> firstNameW = (*(nameRange.first)).second;
+  std::basic_string<wchar_t> lastNameW;
+  for( NameIndex::const_iterator it= nameRange.first ; it != nameRange.second ; it++ )
+    lastNameW = (*it).second;
+  const QString firstNameQ =  wcharStr2LimaStr(firstNameW);
+  const QString lastNameQ =  wcharStr2LimaStr(lastNameW);
+  LDEBUG << "ApproxStringMatcher::process: nameRange= from " << firstNameQ << " to " << lastNameQ;
+#endif
   LinguisticGraph & g = *(anagraph->getGraph());
   matchApproxTokenAndFollowers(g, anagraph->firstVertex(), anagraph->lastVertex(), nameRange, solutions);
 #ifdef DEBUG_LP
@@ -356,13 +374,12 @@ LimaStatusCode ApproxStringMatcher::process(
     const Solution solution= *sIt;
     bool outOfGraph=false;
 #ifdef DEBUG_LP
-    auto vIt2 = solution.vertices.cbegin();
-    if ( vIt2 != solution.vertices.cend() )
-    {
+    std::deque<LinguisticGraphVertex>::const_iterator vIt2 = solution.vertices.begin();
+    if( vIt2 != solution.vertices.end() ) {
       LDEBUG << *(vIt2++);
     }
-    for( ; vIt2 != solution.vertices.cend() ; vIt2++ )
-    {
+
+    for( ; vIt2 != solution.vertices.end() ; vIt2++ ) {
       LDEBUG << "," << *vIt2;
     }
 #endif
@@ -392,7 +409,7 @@ LimaStatusCode ApproxStringMatcher::process(
       // result.push_back(solution);
     }
   }
-  
+
 #ifdef DEBUG_LP
   LDEBUG << "ending process ApproxStringMatcher";
 #endif
@@ -400,12 +417,12 @@ LimaStatusCode ApproxStringMatcher::process(
 }
 
 void ApproxStringMatcher::createVertex(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     const Solution& solution,
-    AnnotationData* annotationData 
-) const 
+    AnnotationData* annotationData
+) const
 {
   MORPHOLOGINIT;
 #ifdef DEBUG_LP
@@ -413,7 +430,7 @@ void ApproxStringMatcher::createVertex(
 #endif
   // VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   // VertexDataPropertyMap dataMap = get(vertex_data, g);
-  
+
   // create new vertex in analysis graph
   LinguisticGraphVertex newVertex = add_vertex(g);
   // Find previous vertex
@@ -432,7 +449,7 @@ void ApproxStringMatcher::createVertex(
   // Find next vertex
   boost::tie (outEdge,outEdge_end)=out_edges(solution.vertices.back(),g);
   LinguisticGraphVertex nextVertex = target(*outEdge,g);
-  // remove edges 
+  // remove edges
   boost::remove_edge(previousVertex,solution.vertices.front(), g);
   boost::remove_edge(solution.vertices.back(),nextVertex, g);
   // replace edges
@@ -440,7 +457,7 @@ void ApproxStringMatcher::createVertex(
   LinguisticGraphEdge e;
   boost::tie(e, success) = add_edge(previousVertex, newVertex, g);
   boost::tie(e, success) = add_edge(newVertex, nextVertex, g);
- 
+
   // Create token for this vertex
   StringsPoolIndex form = (*m_sp)[solution.form];
   // Qu'est ce qu'on affecte comme chaîne et comme position à ce nouveau token ???
@@ -470,7 +487,7 @@ void ApproxStringMatcher::createVertex(
   newMorphoSyntacticData->push_back(elem);
   // dataMap[newVertex] = newMorphoSyntacticData;
   put(vertex_data,g,newVertex,newMorphoSyntacticData);
-  
+
   // Create vertex fot annotation graph
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
   // make access to this annotation vertex from newVertex
@@ -501,17 +518,24 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
     // convert normalizedForm into std::basic_string<wchar_t>
     // std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
     std::basic_string<wchar_t> wpattern = normalizedForm;
-    // escape 'regex special character':
+    // escape 'regex special character', to avoid to interpret a character in a name as regex special character:
     // '.', '^', '$', '|', '(', ')', '[', ']', '{', '}', '*', '+', '?', '\'
     wide_regex esc(L"[.^$|()\\[\\]{}*+?\\\\]");
     const std::basic_string<wchar_t> rep(L"\\\\&");
     wpattern = boost::regex_replace(wpattern, esc, rep, boost::match_default | boost::format_sed);
+#ifdef DEBUG_LP
+      QString pattern = wcharStr2LimaStr(wpattern);
+      QString name = wcharStr2LimaStr(normalizedForm);
+      LDEBUG << "ApproxStringMatcher::buildPattern: (escaping) name "
+             << Lima::Common::Misc::limastring2utf8stdstring(name) << " changed to "
+             << Lima::Common::Misc::limastring2utf8stdstring(pattern);
+#endif
     // apply user supplied regex (generalization)
     for(RegexMap::const_iterator regexIt = m_regexes.begin() ;
         regexIt != m_regexes.end() ; regexIt++ )
     {
       // get regex as wstring
-      std::pair< std::basic_string<wchar_t>, std::basic_string<wchar_t> > a_regex = *regexIt;
+      Regex a_regex = *regexIt;
       wide_regex matching_rule(a_regex.first);
       std::basic_string<wchar_t> substitution = a_regex.second;
       wpattern = boost::regex_replace(wpattern, matching_rule,
@@ -528,7 +552,7 @@ std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_st
 }
 
 void ApproxStringMatcher::matchApproxTokenAndFollowers(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
@@ -550,8 +574,8 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     if (currentToken!=0)
     {
       // Add enough space characters to adjust text to beginning of token
-      if (static_cast<int>(currentToken->position()) > text.length()) {
-        for( int i = static_cast<int>(currentToken->position()) - text.length() ; i > 0 ; i-- ) 
+      if (currentToken->position() > text.length()) {
+        for( int i = currentToken->position() - text.length() ; i > 0 ; i-- )
           text.append(BLANK_SEPARATOR);
       }
       assert( currentToken->length() == static_cast<uint64_t>(currentToken->stringForm().length()));
@@ -566,7 +590,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,g);
     currentVertex =target(*outEdge,g);
   }
-  
+
   // search for names in text
   for( NameIndex::const_iterator wordIt = nameRange.first ; wordIt != nameRange.second ; wordIt++ ) {
   // get normalized form of name from lexicon
@@ -592,7 +616,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
           sIt != suggestions.end() ; sIt++ ) {
         Solution tempResult;
         computeVertexMatches( g, vStart, vEnd, *sIt, tempResult);
-        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition 
+        // TODO: à revoir, peut être qu'il faut recalculer la chaîne à partir du match au moment du calcul de suggestion.startPosition et suggestion.endPosition
         //tempResult.form = text.mid(sIt->startPosition, sIt->endPosition-sIt->startPosition);
         // tempResult.length = sIt->endPosition-sIt->startPosition;
         tempResult.length = tempResult.suggestion.endPosition-tempResult.suggestion.startPosition;
@@ -619,7 +643,7 @@ void ApproxStringMatcher::computeVertexMatches(
 {
   MORPHOLOGINIT;
   Token* currentToken=get(vertex_token,g,vStart);
-  
+
       tempResult.suggestion.nb_error = suggestion.nb_error;
       tempResult.vertices=std::deque<LinguisticGraphVertex>();
       bool pushVertex=false;
@@ -680,13 +704,14 @@ void ApproxStringMatcher::computeVertexMatches(
 int ApproxStringMatcher::findApproxPattern(
     const std::basic_string<wchar_t>& pattern, LimaString text,
     std::vector<Suggestion>& suggestions, int nbMaxError) const {
-  MORPHOLOGINIT;
-#ifdef DEBUG_LP
+    int returnStatus=1;
+    MORPHOLOGINIT;
       QString patternQ = wcharStr2LimaStr(pattern);
+#ifdef DEBUG_LP
       LDEBUG << "ApproxStringMatcher::findApproxPattern("
              << Lima::Common::Misc::limastring2utf8stdstring(patternQ) << ","
              << Lima::Common::Misc::limastring2utf8stdstring(text) << "), nbErr=" << nbMaxError;
-      #endif
+#endif
 
     // pattern buffer structure (result of compilation)
     regex_t preg;
@@ -695,7 +720,7 @@ int ApproxStringMatcher::findApproxPattern(
     // cflags |= REG_LITERAL;
     // cflags |= REG_RIGHT_ASSOC;
     // cflags |= REG_UNGREEDY;
-    
+
     // Compile pattern
     /*
 #ifdef DEBUG_LP
@@ -707,6 +732,12 @@ int ApproxStringMatcher::findApproxPattern(
 #ifdef DEBUG_LP
     LDEBUG << "ApproxStringMatcher::findApproxPattern: agrepStatus=" << agrepStatus;
 #endif
+    if(agrepStatus!= 0) {
+      QString patternQ = wcharStr2LimaStr(pattern);
+      LWARN << "ApproxStringMatcher::findApproxPattern: error when compiling ="
+            << Lima::Common::Misc::limastring2utf8stdstring(patternQ);
+      return returnStatus;
+    }
 
     regaparams_t params = {
       1,    // int cost_ins;
@@ -739,7 +770,6 @@ int ApproxStringMatcher::findApproxPattern(
 #endif
     */
     int offset=0;
-    int returnStatus=1;
     int execStatus;
     do {
       execStatus = regawnexec(&preg, tarray+offset, tlength-offset, &amatch, params, eflags);

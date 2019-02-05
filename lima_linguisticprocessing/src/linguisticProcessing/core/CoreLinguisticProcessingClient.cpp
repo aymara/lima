@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
 #endif
 
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef WIN32
@@ -61,12 +61,18 @@ namespace Lima
 namespace LinguisticProcessing
 {
 std::unique_ptr<CoreLinguisticProcessingClientFactory> CoreLinguisticProcessingClientFactory::s_instance=std::unique_ptr<CoreLinguisticProcessingClientFactory>(new CoreLinguisticProcessingClientFactory());
-  
-  
-CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()
-{}
 
-CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient() {
+
+CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()
+{
+  //CORECLIENTLOGINIT;
+  //LERROR << "CoreLinguisticProcessingClient::CoreLinguisticProcessingClient()";
+}
+
+CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient()
+{
+  //CORECLIENTLOGINIT;
+  //LERROR << "CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient()";
 }
 
 void CoreLinguisticProcessingClient::analyze(
@@ -78,7 +84,7 @@ void CoreLinguisticProcessingClient::analyze(
 
 {
   LimaString limatexte=Common::Misc::utf8stdstring2limastring(texte);
-  
+
   analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits);
 }
 
@@ -92,7 +98,7 @@ void CoreLinguisticProcessingClient::analyze(
 {
   Lima::TimeUtilsController timer("CoreLinguisticProcessingClient::analyze");
   CORECLIENTLOGINIT;
-  
+
  //if (text.isEmpty())
  static const QRegExp whitespaceOnly("\\s*");
  if (whitespaceOnly.exactMatch(text))
@@ -100,25 +106,22 @@ void CoreLinguisticProcessingClient::analyze(
    LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
    return;
  }
-  
+
   // create analysis content
   AnalysisContent analysis;
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
   analysis.setData("LinguisticMetaData",metadataholder);
 
   metadataholder->setMetaData(metaData);
-  LimaStringText* lstexte=new LimaStringText(text);
+  LimaStringText* lstexte=new LimaStringText(text); // will be destroyed in AnalysisContent destructor
   analysis.setData("Text",lstexte);
-  
+
   LINFO << "CoreLinguisticProcessingClient::analyze(";
   for( std::map<std::string,std::string>::const_iterator attrIt = metaData.begin() ;
 	attrIt != metaData.end() ; attrIt++ ) {
 	LINFO << "attr:" << attrIt->first << "value:" << attrIt->second << ", " ;
   }
   LINFO;
-  
-  std::map<std::string,std::string>* metaDataPtr = const_cast<std::map<std::string,std::string>*>(&metaData);
-  LINFO << "CoreLinguisticProcessingClient::analyze(" << (*metaDataPtr)["docid"] << "...)";
 
   // add date/time/location metadata in LinguisticMetaData
 #ifdef DEBUG_LP
@@ -140,7 +143,7 @@ void CoreLinguisticProcessingClient::analyze(
         string date(str,0,i);
         QDate docDate=QDate::fromString(date.c_str(),Qt::ISODate);
         metadataholder->setDate("document",docDate);
-        
+
 #ifdef DEBUG_LP
         LDEBUG << "use '"<< date << "' as document date";
         LDEBUG << "use boost'"<< docDate.day() <<"/"<< docDate.month() <<"/"<< docDate.year() << "' as document date";
@@ -177,8 +180,20 @@ void CoreLinguisticProcessingClient::analyze(
       metadataholder->setMetaData("DocId",(*it).second);
     }
   }
- 
-  // try to retreive offset
+
+  std::string docId;
+  try
+  {
+    docId = metadataholder->getMetaData("DocId");
+  }
+  catch (LinguisticProcessingException& )
+  {
+    metadataholder->setMetaData("DocId", docId);
+  }
+  LINFO << "CoreLinguisticProcessingClient::analyze(" << docId << "...)";
+
+
+  // try to retrieve offset
   try
   {
     const std::string& offsetStr=metadataholder->getMetaData("StartOffset");
@@ -216,7 +231,7 @@ void CoreLinguisticProcessingClient::analyze(
     inactiveUnitsData->insert(*it);
   }
   analysis.setData("InactiveUnits", inactiveUnitsData);
-  
+
   // add handler to analysis
 #ifdef DEBUG_LP
   LDEBUG << "add handler to analysis" ;
@@ -251,12 +266,14 @@ void CoreLinguisticProcessingClient::analyze(
 CoreLinguisticProcessingClientFactory::CoreLinguisticProcessingClientFactory() :
   AbstractLinguisticProcessingClientFactory("lima-coreclient")
 {
-//   std::cerr << "CoreLinguisticProcessingClientFactory::CoreLinguisticProcessingClientFactory()" << std::endl;
-//   std::cerr << "    calling AbstractLinguisticProcessingClientFactory(\"lima-coreclient\")" << std::endl;
+  //std::cerr << "CoreLinguisticProcessingClientFactory::CoreLinguisticProcessingClientFactory()" << std::endl;
+  //std::cerr << "    calling AbstractLinguisticProcessingClientFactory(\"lima-coreclient\")" << std::endl;
 }
 
 CoreLinguisticProcessingClientFactory::~CoreLinguisticProcessingClientFactory()
-{}
+{
+  //std::cerr << "CoreLinguisticProcessingClientFactory::~CoreLinguisticProcessingClientFactory()" << std::endl;
+}
 
 void CoreLinguisticProcessingClientFactory::configure(
   Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
@@ -266,7 +283,7 @@ void CoreLinguisticProcessingClientFactory::configure(
   Lima::TimeUtilsController timer("LPCoreClientInit");
   LPCLIENTFACTORYLOGINIT;
   LINFO << "CoreLinguisticProcessingClientFactory::configure";
-  
+
   // initialize some entity types internally used in linguistic processing
   Common::MediaticData::MediaticData::changeable().initEntityTypes(configuration);
 
@@ -292,23 +309,29 @@ void CoreLinguisticProcessingClientFactory::configure(
        langItr++)
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
-    MediaId langid = MediaticData::single().getMediaId(*langItr);
-    QString mediaProcessingDefinitionFile;
+    MediaId langid=MediaticData::single().getMediaId(*langItr);
+    QString file;
     try
     {
-      mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
-            "lima-coreclient",
-            "mediaProcessingDefinitionFiles",
-            *langItr).c_str());
+      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+      Q_FOREACH(QString confPath, configPaths)
+      {
+        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
+             "lima-coreclient",
+             "mediaProcessingDefinitionFiles",
+             *langItr).c_str());
+        if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
+        {
+          file = confPath + "/" + mediaProcessingDefinitionFile;
+          break;
+        }
+      }
     }
     catch (NoSuchParam& e)
     {
       LERROR << "CoreLinguisticProcessingClientFactory::configure NoSuchParam" << e.what();
       throw InvalidConfiguration("no language definition file defined in configuration") ;
     }
-    QString file = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),
-                                                 mediaProcessingDefinitionFile);
-
     if (file.isEmpty())
     {
       LERROR << "Language definition file" << mediaProcessingDefinitionFile 
@@ -318,7 +341,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     XMLConfigurationFileParser langParser(file.toUtf8().constData());
 
-    //initialize SpecificEntities 
+    //initialize SpecificEntities
     Common::MediaticData::MediaticData::changeable().initEntityTypes(langParser);
 
     // initialize resources

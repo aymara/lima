@@ -17,7 +17,6 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 /***************************************************************************
- *   Copyright (C) 2007 by CEA LIST / LVIC   *
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
@@ -71,8 +70,8 @@ m_currentEntity(0)
   connect( m_textEdit->document(), SIGNAL(contentsChanged()),
            this, SLOT(documentWasModified()) );
 
-  connect( m_listWidget, SIGNAL(clicked(QModelIndex&)),
-          this, SLOT(slotTypesListItemclicked(QModelIndex&)) );
+  connect( m_listWidget, &QListWidget::itemClicked,
+          this, &Annoqt::slotTypesListItemclicked);
 }
 
 void Annoqt::closeEvent( QCloseEvent *event )
@@ -149,7 +148,7 @@ void Annoqt::about()
   QMessageBox::about( this, tr( "Annotation Tool" ),
                       tr( "The <b>Annotation Tool</b> allows to annotate texts with "
                           "specific entities.<br>Version %1<br>"
-                          "Copyright 2007-2009 CEA LIST/LVIC" ).arg(VERSION) );
+                          "Copyright 2007-2019 CEA LIST" ).arg(VERSION) );
 }
 
 void Annoqt::documentWasModified()
@@ -469,12 +468,13 @@ Annoqt::~Annoqt()
   m_entitiesMap.clear();
 }
 
-void Annoqt::slotTypesListItemclicked( const QModelIndex & index )
+void Annoqt::slotTypesListItemclicked(QListWidgetItem *item)
 {
   qDebug() << "Annoqt::slotTypesListItemclicked";
-  if ( index.isValid() )
+//   auto index = m_listWidget->indexFromItem(item);
+  if ( item )
   {
-    m_currentColor = m_colors[index.row()];
+    m_currentColor = m_colors[m_listWidget->row(item)];
     if (!m_lastSearchResult.isNull())
     {
       m_textEdit->undo();

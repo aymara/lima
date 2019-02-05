@@ -82,11 +82,14 @@ TensorflowSpecificEntitiesPrivate::~TensorflowSpecificEntitiesPrivate()
     //8. Free any resources used by the session
   m_status.reset(new Status());
   *m_status=m_session->Close();
+
   if (!m_status->ok()) {
     TFSELOGINIT;
     LERROR << m_status->ToString();
     throw LimaException();
   }
+
+  delete m_session;
 }
 
 TensorflowSpecificEntities::TensorflowSpecificEntities()
@@ -200,15 +203,15 @@ void TensorflowSpecificEntities::init(
   m_d->m_status.reset(new Status(NewSession(SessionOptions(), &m_d->m_session)));
   if (!m_d->m_status->ok()) {
     TFSELOGINIT;
-    LERROR <<m_d->m_status->ToString();
+    LERROR << m_d->m_status->ToString();
     throw LimaException();
   }
   
   // Read in the protobuf graph we have exported
-  *m_d->m_status = ReadBinaryProto(Env::Default(),m_d->m_graph, &m_d->m_graphDef);
+  *m_d->m_status = ReadBinaryProto(Env::Default(), m_d->m_graph, &m_d->m_graphDef);
   if (!m_d->m_status->ok()) {
     TFSELOGINIT;
-    LERROR<< m_d->m_status->ToString();
+    LERROR << m_d->m_status->ToString();
     throw LimaException();
   }
   
@@ -216,7 +219,7 @@ void TensorflowSpecificEntities::init(
   *m_d->m_status = m_d->m_session->Create(m_d->m_graphDef);
   if (!m_d->m_status->ok()) {
     TFSELOGINIT;
-    LERROR << m_d->m_status->ToString();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    LERROR << m_d->m_status->ToString();
     throw LimaException();
   }
 }

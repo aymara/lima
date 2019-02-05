@@ -54,6 +54,9 @@ install(FILES
   COMPONENT runtime)
 ELSE(TRE_FOUND)
 install(FILES
+    test-eng-ud.default.xml 
+    test-eng-ud.disambiguated.xml 
+    test-eng-ud.simpleword.xml 
     test-eng.abbrev.xml 
     test-eng.default.xml 
     test-eng.disambiguated.xml 
@@ -82,6 +85,5 @@ install(FILES
     #test-fre.se-beforepos.xml 
     test-fre.multilevel.xml 
   DESTINATION share/apps/lima/tests
-  COMPONENT runtime)
-ENDIF(TRE_FOUND)
-
+  COMPONENT runtime
+)

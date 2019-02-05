@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -27,11 +27,12 @@ SET(lima-lp-client_LIB_SRCS
 )
 
 add_library(lima-lp-client SHARED ${lima-lp-client_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-client)
+
 
 target_link_libraries(lima-lp-client
-  lima-common-factory 
-  lima-common-tools 
-  ${QT_LIBRARIES}
+  lima-common-factory
+  lima-common-tools
 )
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -43,7 +44,7 @@ install(TARGETS lima-lp-client DESTINATION ${LIB_INSTALL_DIR}
 ########### install files ###############
 install(FILES
     LinguisticProcessingClientExport.h
-    AbstractLinguisticProcessingClient.h 
+    AbstractLinguisticProcessingClient.h
     LinguisticProcessingException.h
     LinguisticProcessingClientFactory.h
   DESTINATION include/linguisticProcessing/client

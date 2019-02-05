@@ -109,7 +109,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   SEMANTICANALYSISLOGINIT;
   LDEBUG << "KnowledgeBasedSemanticRoleLabeler::init";
 #endif
-  
+
   MediaId language=manager->getInitializationParameters().media;
   try {
     string dumperName=unitConfiguration.getParamsValueAtKey("dumper");
@@ -204,11 +204,11 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   {
     // keep default
   }
-  
+
   // Initialize the python SRL system
   /*
    * Find the first python executable in the path and use it as the program name.
-   * 
+   *
    * This allows to find the modules set up in an activated virtualenv
    */
   QString str_program_name;
@@ -229,9 +229,9 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   Py_SetProgramName( (wchar_t*)str_program_name.unicode() );
 #endif
 
-  
+
   Py_Initialize();
-  
+
   PyObject* main_module = PyImport_ImportModule("__main__");
   PyObject* main_dict = PyModule_GetDict(main_module);
   PyObject* sys_module = PyImport_ImportModule("sys");
@@ -241,7 +241,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     Py_Exit(1);
   }
 
-  PyDict_SetItemString(main_dict, "sys", sys_module);  
+  PyDict_SetItemString(main_dict, "sys", sys_module);
 
   // Add the path to the knowledgesrl pachkage to putho path
   PyObject* pythonpath = PySys_GetObject("path");
@@ -252,7 +252,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Import the semanticrolelabeler module
   PyObject* semanticrolelabeler_module = PyImport_ImportModule("semanticrolelabeler");
   if (semanticrolelabeler_module == NULL)
@@ -262,10 +262,10 @@ void KnowledgeBasedSemanticRoleLabeler::init(
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Create the semantic role labeller instance
   m_d->m_instance = PyObject_CallMethod(
-    semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]", 
+    semanticrolelabeler_module, "SemanticRoleLabeler", "[sss]",
     QString(QLatin1String("--loglevel=%1")).arg(kbsrlLogLevel).toUtf8().constData(),
     QString(QLatin1String("--frame-lexicon=%1")).arg(mode).toUtf8().constData(),
     QString(QLatin1String("--language=%1")).arg(Lima::Common::MediaticData::MediaticData::single().getMediaId(language).c_str()).toUtf8().constData());
@@ -319,7 +319,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   SEMANTICANALYSISLOGINIT;
   LINFO << "start SRL process";
 #endif
-  
+
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == nullptr)
   {
@@ -337,7 +337,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
       temporary_file_not_open();
       return CANNOT_OPEN_FILE_ERROR;
     }
-    metadata->setMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData(), 
+    metadata->setMetaData(m_d->m_temporaryFileMetadata.toUtf8().constData(),
                           temporaryFile->fileName().toUtf8().constData());
   }
 
@@ -351,7 +351,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   }
 
   QString conllInput;
-  
+
   if (m_d->m_temporaryFileMetadata.isEmpty())
   {
     QString fileName = QString::fromUtf8(metadata->getMetaData("FileName").c_str());
@@ -393,9 +393,9 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   {
     failure_during_call_of_the_annotate_method_on(conllInput);
   }
-  
+
   // Display the SRL result
-  char* result = PyUnicode_AsUTF8(callResult);
+  const char* result = PyUnicode_AsUTF8(callResult);
   if (result == NULL)
   {
     SEMANTICANALYSISLOGINIT;
@@ -449,7 +449,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   returnCode=m_d->m_loader->process(analysis);
   if (returnCode != SUCCESS_ID)
   {
-    failed_to_load_data_from_temporary_file(temporaryFile); 
+    failed_to_load_data_from_temporary_file(temporaryFile);
     return returnCode;
   }
 

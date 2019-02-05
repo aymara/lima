@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue May 24 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
+ * copyright   Copyright (C) 2005-2018 by CEA LIST
  * Project     Automaton
  *
  * @brief classes to abstract the sense of search in the graph
@@ -58,11 +58,15 @@ public:
                                   const LinguisticGraphVertex& current) = 0;
     virtual bool getNextVertex(const LinguisticGraph* graph,
                                LinguisticGraphVertex& next) = 0;
-    virtual SearchGraph* createNew() = 0;
+    virtual SearchGraph* createNew() const = 0;
     virtual LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph) = 0;
     virtual void clear() = 0;
     virtual void reinit() = 0;
 };
+
+#ifdef DEBUG_LP
+LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const SearchGraph *x, const LinguisticGraph* graph);
+#endif
 
 class LIMA_AUTOMATON_EXPORT BackwardSearch :
             public SearchGraph
@@ -74,7 +78,7 @@ public:
                           const LinguisticGraphVertex& current) override;
     bool getNextVertex(const LinguisticGraph* graph,
                        LinguisticGraphVertex& next) override;
-    SearchGraph* createNew() override;
+    SearchGraph* createNew() const override;
     LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph) override;
     void clear()  override{
         m_current.pop_back();
@@ -82,9 +86,17 @@ public:
     void reinit()  override{
         m_current.clear();
     }
+
+    typedef std::pair<LinguisticGraphVertex,std::pair<LinguisticGraphInEdgeIt,LinguisticGraphInEdgeIt> > Vertex2EdgePair;
+
 private:
     // use a deque for a stack so that can be clear()ed
-    std::deque<std::pair<LinguisticGraphVertex,std::pair<LinguisticGraphInEdgeIt,LinguisticGraphInEdgeIt> > > m_current;
+    std::deque<Vertex2EdgePair> m_current;
+
+#ifdef DEBUG_LP
+    friend LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const BackwardSearch::Vertex2EdgePair& x, const LinguisticGraph* graph);
+    friend LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const BackwardSearch& x, const LinguisticGraph* graph);
+#endif
 };
 
 class LIMA_AUTOMATON_EXPORT ForwardSearch :
@@ -97,7 +109,7 @@ public:
                           const LinguisticGraphVertex& current) override;
     bool getNextVertex(const LinguisticGraph* graph,
                        LinguisticGraphVertex& next) override;
-    SearchGraph* createNew() override;
+    SearchGraph* createNew() const override;
     LinguisticGraphVertex endOfGraph(const LinguisticAnalysisStructure::AnalysisGraph& graph) override;
     void clear() override {
         m_current.pop_back();
@@ -105,9 +117,17 @@ public:
     void reinit() override {
         m_current.clear();
     }
+
+    typedef std::pair<LinguisticGraphVertex,std::pair<LinguisticGraphOutEdgeIt,LinguisticGraphOutEdgeIt> > Vertex2EdgePair;
+
 private:
     // use a deque for a stack so that can be clear()ed
-    std::deque<std::pair<LinguisticGraphVertex,std::pair<LinguisticGraphOutEdgeIt,LinguisticGraphOutEdgeIt> > > m_current;
+    std::deque<Vertex2EdgePair> m_current;
+
+#ifdef DEBUG_LP
+    friend LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const ForwardSearch::Vertex2EdgePair& x, const LinguisticGraph* graph);
+    friend LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const ForwardSearch& x, const LinguisticGraph* graph);
+#endif
 };
 
 } // end namespace

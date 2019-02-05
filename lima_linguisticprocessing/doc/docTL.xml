@@ -5,8 +5,8 @@
   <title>Le traitement linguistique (de LIMA) expliqué aux débutants</title>
   <section>
     <title>Introduction</title>
-    <para>LIMA signifie LIc2m Multilingual Analyzer. C&apos;est donc --- faut-il
-    l&apos;expliciter ? --- l&apos;analyseur linguistique multilingue du CEA-LIST LIC2M.
+    <para>LIMA signifie LIst Multilingual Analyzer. C&apos;est donc --- faut-il
+    l&apos;expliciter ? --- l&apos;analyseur linguistique multilingue du CEA LIST / LASTI.
     Attention, LIMA n&apos;est pas le moteur de recherche du laboratoire. Celui-ci,
     pour des raisons historiques porte actuellement le superbe nom de S2. Ce
     devrait un jour être modifié. Les modules logiciels qui composent LIMA

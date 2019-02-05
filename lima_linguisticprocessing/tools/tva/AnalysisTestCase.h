@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -47,13 +47,13 @@ public:
 
   AnalysisTestCaseProcessor( const std::string& workingDirectory,
   LinguisticProcessing::AbstractLinguisticProcessingClient* client, const std::map<std::string, AbstractAnalysisHandler*>& handlers);
-  
+
   ~AnalysisTestCaseProcessor() {}
 
   Lima::Common::TGV::TestCaseError processTestCase(const Lima::Common::TGV::TestCase& testCase) override;
 
 private:
-  
+
   LinguisticProcessing::AbstractLinguisticProcessingClient* m_lpclient;
   std::map<std::string, AbstractAnalysisHandler*> m_handlers;
 };

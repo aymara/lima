@@ -38,9 +38,8 @@
 //  Includes
 // ---------------------------------------------------------------------------
 #include <iostream>
+#include <memory>
 #include <string>
-
-using namespace std;
 
 namespace Lima {
 namespace Common {
@@ -48,17 +47,20 @@ namespace XMLConfigurationFiles {
 
 class XMLConfigurationFileParserPrivate
 {
-    friend class XMLConfigurationFileParser;
-    friend std::ostream& operator<<(std::ostream& os, XMLConfigurationFileParser& parser);
+public:
+  friend class std::unique_ptr<XMLConfigurationFileParserPrivate>;
+  friend class XMLConfigurationFileParser;
+  friend std::ostream& operator<<(std::ostream& os,
+                                  XMLConfigurationFileParser& parser);
 
-    XMLConfigurationFileParserPrivate() {};
-    XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p);
-    XMLConfigurationFileParserPrivate(const std::string &configurationFileName);
-    ~XMLConfigurationFileParserPrivate();
+  XMLConfigurationFileParserPrivate(const QString &configurationFileName);
+  ~XMLConfigurationFileParserPrivate() = default;
+  XMLConfigurationFileParserPrivate() = delete;
+  XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p);
 
-    ConfigurationStructure m_configuration;
-    QXmlSimpleReader* m_parser;
-    std::string m_configurationFileName;
+  ConfigurationStructure m_configuration;
+  QXmlSimpleReader m_parser;
+  QString m_configurationFileName;
 };
 
 XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p)
@@ -66,32 +68,32 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLCo
     m_configuration = p.m_configuration;
     m_configurationFileName = p.m_configurationFileName;
 //     m_parser = p.m_parser; // TODO sale: SAXParser::operator= n'est pas surchargé. Mais peut marcher...
-    m_parser = new QXmlSimpleReader();
     XMLConfigurationFileHandler handler(m_configuration);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
-    QFile file(m_configurationFileName.c_str());
+    m_parser.setContentHandler(&handler);
+    m_parser.setErrorHandler(&handler);
+    QFile file(m_configurationFileName);
     if (!file.open(QIODevice::ReadOnly))
     {
       XMLCFGLOGINIT;
-      LERROR << "XMLConfigurationFileParser unable to open" << QString::fromUtf8(m_configurationFileName.c_str());
-      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.c_str());
+      LERROR << "XMLConfigurationFileParser unable to open" << m_configurationFileName;
+      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.toUtf8().constData());
     }
-    if (!m_parser->parse( QXmlInputSource(&file)))
+    if (!m_parser.parse( QXmlInputSource(&file)))
     {
       XMLCFGLOGINIT;
-      LERROR << "XMLConfigurationFileParser unable to parse" << QString::fromUtf8(m_configurationFileName.c_str()) << ":" << m_parser->errorHandler()->errorString();
-      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
+      LERROR << "XMLConfigurationFileParser unable to parse" << m_configurationFileName << ":" << m_parser.errorHandler()->errorString();
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName.toUtf8().constData() + " : " + m_parser.errorHandler()->errorString().toUtf8().constData());
     }
 }
 
-XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const string &configurationFileName) :
-    m_parser(0), m_configurationFileName(configurationFileName)
+XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
+  const QString &configurationFileName) :
+    m_parser(),
+    m_configurationFileName(configurationFileName)
 {
     XMLCFGLOGINIT;
-    LINFO << "XMLConfigurationFileParser creating parser for: " << configurationFileName.c_str();
-
-    m_parser = new QXmlSimpleReader();
+    LINFO << "XMLConfigurationFileParser creating parser for: "
+          << configurationFileName;
 
     //
     //  Create the handler object and install it as the document and error
@@ -99,19 +101,22 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     //  that propogate out
     //
     XMLConfigurationFileHandler handler(m_configuration);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
-    QFile file(m_configurationFileName.c_str());
+    m_parser.setContentHandler(&handler);
+    m_parser.setErrorHandler(&handler);
+    QFile file(m_configurationFileName);
     if (!file.open(QFile::ReadOnly))
     {
       XMLCFGLOGINIT;
-      LERROR << "Error opening " << m_configurationFileName.c_str();
-      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName);
+      LERROR << "Error opening " << m_configurationFileName;
+      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ")
+          + m_configurationFileName.toUtf8().constData());
     }
-    if (!m_parser->parse( QXmlInputSource(&file)))
+    if (!m_parser.parse( QXmlInputSource(&file)))
     {
-      LERROR << "Error parsing " << m_configurationFileName.c_str();
-      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName + " : " + m_parser->errorHandler()->errorString().toUtf8().constData());
+      LERROR << "Error parsing " << m_configurationFileName;
+      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ")
+          + m_configurationFileName.toUtf8().constData() + " : "
+          + m_parser.errorHandler()->errorString().toUtf8().constData());
     }
     {
       LOGINIT("FilesReporting");
@@ -120,32 +125,32 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const strin
     
 }
 
-XMLConfigurationFileParserPrivate::~XMLConfigurationFileParserPrivate()
-{
-    //
-    //  Delete the parser itself.  Must be done prior to calling Terminate, below.
-    //
-    delete m_parser;
-}
-
-XMLConfigurationFileParser::XMLConfigurationFileParser() :
-    m_d(new XMLConfigurationFileParserPrivate())
-{
-}
+// XMLConfigurationFileParser::XMLConfigurationFileParser() :
+//     m_d(new XMLConfigurationFileParserPrivate())
+// {
+// }
 
 XMLConfigurationFileParser::XMLConfigurationFileParser(const XMLConfigurationFileParser& p) :
     m_d(new XMLConfigurationFileParserPrivate(*p.m_d))
 {
 }
 
-XMLConfigurationFileParser::XMLConfigurationFileParser(const string &configurationFileName) :
-    m_d(new XMLConfigurationFileParserPrivate(configurationFileName))
+// XMLConfigurationFileParser::XMLConfigurationFileParser(
+//   const std::string &configurationFileName) :
+//     m_d(std::make_unique<XMLConfigurationFileParserPrivate>(
+//       QString::fromUtf8(configurationFileName.c_str())))
+// {
+// }
+
+XMLConfigurationFileParser::XMLConfigurationFileParser(
+  const QString &configurationFileName) :
+    m_d(std::make_unique<XMLConfigurationFileParserPrivate>(
+      configurationFileName))
 {
 }
 
 XMLConfigurationFileParser::~XMLConfigurationFileParser()
 {
-  delete m_d;
 }
 
 ConfigurationStructure& XMLConfigurationFileParser::getConfiguration(void)
@@ -153,75 +158,88 @@ ConfigurationStructure& XMLConfigurationFileParser::getConfiguration(void)
     return m_d->m_configuration;
 }
 
-ModuleConfigurationStructure& XMLConfigurationFileParser::getModuleConfiguration(const string& moduleName)
+ModuleConfigurationStructure& XMLConfigurationFileParser::getModuleConfiguration(
+  const std::string& moduleName)
 {
+  auto it = m_d->m_configuration.find(moduleName);
 
-    ConfigurationStructure::iterator it = m_d->m_configuration.find(moduleName);
-
-    if (it == m_d->m_configuration.end())
-    {
-      XMLCFGLOGINIT;
-      LDEBUG << "XMLConfigurationFileParser::getModuleConfiguration no such module" << moduleName << "in" << m_d->m_configurationFileName.c_str();
-      throw NoSuchModule(m_d->m_configurationFileName+":["+moduleName+"]");
-    }
-    return (*it).second;
-}
-
-GroupConfigurationStructure& XMLConfigurationFileParser::getModuleGroupConfiguration(const string& moduleName,const string& groupName)
-{
-    return (getModuleConfiguration(moduleName).getGroupNamed(groupName));
-}
-
-string& XMLConfigurationFileParser::getModuleGroupParamValue(const string& moduleName,const string& groupName,const string& key)
-{
+  if (it == m_d->m_configuration.end())
+  {
     XMLCFGLOGINIT;
-    try
-    {
-        return (getModuleConfiguration(moduleName).getParamValueAtKeyOfGroupNamed(key, groupName));
-    }
-    catch(NoSuchModule& nsm)
-    {
-      std::cerr << nsm.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsm.what() << " " << m_d->m_configurationFileName.c_str();
-        //not LERROR because user may want the module to be optional -> no error
-        throw NoSuchModule(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
-    }
-    catch(NoSuchGroup& nsg)
-    {
-      std::cerr << nsg.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsg.what() << " " << m_d->m_configurationFileName.c_str();
-        throw NoSuchGroup(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
-    }
-    catch(NoSuchParam& nsp)
-    {
-      std::cerr << nsp.what() << " " << m_d->m_configurationFileName.c_str() << std::endl;
-      LWARN << nsp.what() << " " << m_d->m_configurationFileName.c_str();
-        throw NoSuchParam(m_d->m_configurationFileName+":["+moduleName+"]["+groupName+"]["+key+"]");
-    }
-    catch(...)
-    {
-        throw;
-    }
+    LDEBUG << "XMLConfigurationFileParser::getModuleConfiguration no such module"
+            << moduleName << "in" << m_d->m_configurationFileName;
+    throw NoSuchModule(std::string(m_d->m_configurationFileName.toUtf8().constData())+":["+moduleName+"]");
+  }
+  return (*it).second;
 }
 
-deque< string >& XMLConfigurationFileParser::getModuleGroupListValues(
-    const string& moduleName,
-    const string& groupName,
-    const string& key)
+GroupConfigurationStructure& XMLConfigurationFileParser::getModuleGroupConfiguration(
+    const std::string& moduleName,const std::string& groupName)
+{
+  return (getModuleConfiguration(moduleName).getGroupNamed(groupName));
+}
+
+std::string& XMLConfigurationFileParser::getModuleGroupParamValue(
+    const std::string& moduleName,
+    const std::string& groupName,
+    const std::string& key)
+{
+  XMLCFGLOGINIT;
+  try
+  {
+    return (getModuleConfiguration(moduleName).getParamValueAtKeyOfGroupNamed(key, groupName));
+  }
+  catch(NoSuchModule& nsm)
+  {
+    std::cerr << nsm.what() << " "
+              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    LWARN << nsm.what() << " " << m_d->m_configurationFileName;
+      //not LERROR because user may want the module to be optional -> no error
+      throw NoSuchModule(std::string(m_d->m_configurationFileName.toUtf8().constData())
+              +":["+moduleName
+              +"]["+groupName+"]["+key+"]");
+  }
+  catch(NoSuchGroup& nsg)
+  {
+    std::cerr << nsg.what() << " "
+              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    LWARN << nsg.what() << " " << m_d->m_configurationFileName;
+      throw NoSuchGroup(std::string(m_d->m_configurationFileName.toUtf8().constData())
+              +":["+moduleName+"]["
+              +groupName+"]["+key+"]");
+  }
+  catch(NoSuchParam& nsp)
+  {
+    std::cerr << nsp.what() << " "
+              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    LWARN << nsp.what() << " " << m_d->m_configurationFileName;
+      throw NoSuchParam(std::string(m_d->m_configurationFileName.toUtf8().constData())+":["
+              +moduleName+"]["+groupName+"]["+key+"]");
+  }
+  catch(...)
+  {
+      throw;
+  }
+}
+
+std::deque< std::string >& XMLConfigurationFileParser::getModuleGroupListValues(
+    const std::string& moduleName,
+    const std::string& groupName,
+    const std::string& key)
 {
   return (getModuleConfiguration(moduleName).getListValuesAtKeyOfGroupNamed(
             key, groupName));
 }
 
-const std::string& XMLConfigurationFileParser::getConfigurationFileName() const
+const QString& XMLConfigurationFileParser::getConfigurationFileName() const
 {
   return m_d->m_configurationFileName;
 }
 
 std::ostream& operator<<(std::ostream& os, XMLConfigurationFileParser& parser)
 {
-    return (os << parser.m_d->m_configurationFileName << ":" 
-                << parser.m_d->m_configuration);
+    return (os << parser.m_d->m_configurationFileName.toUtf8().constData()
+                << ":" << parser.m_d->m_configuration);
 }
 
 } // closing namespace XMLConfigurationFiles

@@ -44,6 +44,8 @@ SET(lima-lp-bagofwords_LIB_SRCS
 )
 
 add_library(lima-lp-bagofwords SHARED ${lima-lp-bagofwords_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-lp-bagofwords)
+
 
 target_link_libraries(lima-lp-bagofwords 
   lima-lp-linguisticdata

@@ -103,7 +103,8 @@
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="sentenceBoundariesFinderForSE"/>
-        <item value="tensorflowSpecificEntities"/>
+        @tensorflowSpecificEntities@
+<!--        <item value="tensorflowSpecificEntities"/>-->
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
         <item value="idiomaticAlternatives"/>

@@ -1,5 +1,9 @@
 *.dot
 
+# Compiled QML/JS files
+*.qmlc
+*.jsc
+
 # Compiled Object files
 *.slo
 *.lo
@@ -21,3 +25,10 @@ release/
 *.kate-swp
 *-build/
 CMakeLists.txt.user
+
+# QtCreator
+*.creator
+*.creator.user
+
+# vim
+*.sw?

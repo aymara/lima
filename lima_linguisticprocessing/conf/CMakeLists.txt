@@ -25,6 +25,11 @@ if(TRE_FOUND)
   configure_file(ApproxNames-modex.xml ApproxNames-modex.xml @ONLY)
 else(TRE_FOUND)
   configure_file(ApproxNames-modex.empty.xml ApproxNames-modex.xml @ONLY)
+endif(TRE_FOUND)
+
+set (tensorflowSpecificEntities "")
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  set (tensorflowSpecificEntities "         <item value=\"tensorflowSpecificEntities\"/>")
 endif()
 
 configure_file(lima-lp-eng.xml lima-lp-eng.xml @ONLY)

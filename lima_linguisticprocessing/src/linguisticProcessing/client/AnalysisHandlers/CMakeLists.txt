@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -20,21 +20,8 @@ add_definitions(-DLIMA_ANALYSISHANDLERS_EXPORTING)
 
 ########### next target ###############
 
-LIMALP_WRAP_HEADERS(analysishandlers
-  AbstractTextualAnalysisHandler.h
-  BowDocumentHandler.h
-  BowDocumentWriter.h
-  BowTextHandler.h
-  CompactFullDocumentHandler.h
-  LTRTextHandler.h
-  BowTextWriter.h
-  FakeHandler.h
-  SBowDocumentWriter.h
-  SimpleStreamHandler.h
-)
-
-
 SET(lima-lp-analysishandlers_LIB_SRCS
+   AbstractTextualAnalysisHandler.cpp
    BowDocumentHandler.cpp
    BowDocumentWriter.cpp
    BowTextHandler.cpp
@@ -47,10 +34,11 @@ SET(lima-lp-analysishandlers_LIB_SRCS
    StructuredBoWToBoWDocument.cpp
 )
 
-add_library(lima-lp-analysishandlers SHARED 
-  ${lima-lp-analysishandlers_LIB_SRCS} 
-  ${lima-lp-analysishandlers_MOC_OUTFILES}
+add_library(lima-lp-analysishandlers SHARED
+  ${lima-lp-analysishandlers_LIB_SRCS}
 )
+ADD_DLL_TO_PATH(lima-lp-analysishandlers)
+
 
 target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources
@@ -59,10 +47,13 @@ target_link_libraries(lima-lp-analysishandlers
   lima-common
 )
 
-set_target_properties(lima-lp-analysishandlers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
+set_target_properties(lima-lp-analysishandlers PROPERTIES
+                      VERSION ${LIMA_LP_LIB_VERSION}
+                      SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-install(TARGETS lima-lp-analysishandlers DESTINATION ${LIB_INSTALL_DIR}
-  COMPONENT runtime)
+install(TARGETS lima-lp-analysishandlers
+        DESTINATION ${LIB_INSTALL_DIR}
+        COMPONENT runtime)
 
 
 ########### install files ###############

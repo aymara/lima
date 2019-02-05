@@ -32,6 +32,8 @@ SET(lima-common-data_LIB_SRCS
 
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})
 
+ADD_DLL_TO_PATH(lima-common-data)
+
 target_link_libraries(lima-common-data 
   lima-common-tools
 )

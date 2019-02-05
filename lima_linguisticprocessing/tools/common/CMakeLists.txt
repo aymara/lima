@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -24,11 +24,9 @@ SET(testTgv_SRCS
 
 add_executable(testTgv ${testTgv_SRCS})
 
-target_link_libraries(testTgv 
+target_link_libraries(testTgv
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
-  ${optionalLibs} 
+  ${optionalLibs}
 )
 
 install(TARGETS testTgv DESTINATION bin)
@@ -41,10 +39,8 @@ SET(catBowFiles_SRCS
 
 add_executable(catBowFiles ${catBowFiles_SRCS})
 
-target_link_libraries(catBowFiles 
+target_link_libraries(catBowFiles
   lima-linguisticprocessing
-  ${QT_LIBRARIES} 
-  ${Boost_LIBRARIES} 
   ${optionalLibs})
 
 install(TARGETS catBowFiles DESTINATION bin
@@ -58,11 +54,9 @@ SET(readBowFile_SRCS
 
 add_executable(readBowFile ${readBowFile_SRCS})
 
-target_link_libraries(readBowFile 
+target_link_libraries(readBowFile
   lima-linguisticprocessing
-  ${optionalLibs} 
-  ${QT_LIBRARIES} 
-  ${Boost_LIBRARIES}
+  ${optionalLibs}
 )
 
 install(TARGETS readBowFile DESTINATION bin
@@ -76,10 +70,8 @@ SET(readLtrFile_SRCS
 
 add_executable(readLtrFile ${readLtrFile_SRCS})
 
-target_link_libraries(readLtrFile 
+target_link_libraries(readLtrFile
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -94,10 +86,8 @@ SET(getLexiconFromBoW_SRCS
 
 add_executable(getLexiconFromBoW ${getLexiconFromBoW_SRCS})
 
-target_link_libraries(getLexiconFromBoW 
+target_link_libraries(getLexiconFromBoW
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -112,10 +102,8 @@ SET(parseXMLPropertyFile_SRCS
 
 add_executable(parseXMLPropertyFile ${parseXMLPropertyFile_SRCS})
 
-target_link_libraries(parseXMLPropertyFile 
+target_link_libraries(parseXMLPropertyFile
   lima-linguisticprocessing
-  ${Boost_LIBRARIES}  
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -130,10 +118,10 @@ SET(convertSymbolicCodes_SRCS
 
 add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 
-target_link_libraries(convertSymbolicCodes 
-  lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+target_link_libraries(convertSymbolicCodes
+  lima-lp-propertycode
+  lima-common-factory
+  lima-common-tools
   ${optionalLibs}
 )
 
@@ -148,10 +136,8 @@ SET(readLinguisticData_SRCS
 
 add_executable(readLinguisticData ${readLinguisticData_SRCS})
 
-target_link_libraries(readLinguisticData 
+target_link_libraries(readLinguisticData
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -167,10 +153,8 @@ SET(testContentDict16_SRCS
 
 add_executable(testContentDict16 ${testContentDict16_SRCS})
 
-target_link_libraries(testContentDict16 
+target_link_libraries(testContentDict16
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -186,10 +170,8 @@ SET(convertXmlToSBoW_SRCS
 
 add_executable(convertXmlToSBoW ${convertXmlToSBoW_SRCS})
 
-target_link_libraries(convertXmlToSBoW 
+target_link_libraries(convertXmlToSBoW
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -204,10 +186,8 @@ SET(buildCompoundsDict_SRCS
 
 add_executable(buildCompoundsDict ${buildCompoundsDict_SRCS})
 
-target_link_libraries(buildCompoundsDict 
+target_link_libraries(buildCompoundsDict
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -222,10 +202,8 @@ SET(testReadLexicon_SRCS
 
 add_executable(testReadLexicon ${testReadLexicon_SRCS})
 
-target_link_libraries(testReadLexicon 
+target_link_libraries(testReadLexicon
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -240,10 +218,8 @@ SET(testPropManager_SRCS
 
 add_executable(testPropManager ${testPropManager_SRCS})
 
-target_link_libraries(testPropManager 
+target_link_libraries(testPropManager
   lima-linguisticprocessing
-  ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
   ${optionalLibs}
 )
 

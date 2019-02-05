@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,16 +19,16 @@
 /**
   *
   * @file       annotationGraphXmlDumper.cpp
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             Copyright (C) 2004 by CEA LIST
   * @date       Mon Nov  8 2004
   * @version    $Id$
-  * Project     
-  * 
+  * Project
+  *
   * @brief      dump the content of the annotation graph in XML format
-  * 
-  * 
+  *
+  *
   */
 
 #include "AnnotationGraphXmlDumper.h"
@@ -90,7 +90,7 @@ void AnnotationGraphXmlDumper::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "dumpFullTokens parameter not found, using default: " 
+    LWARN << "dumpFullTokens parameter not found, using default: "
         << (m_dumpFullTokens?"true":"false");
   }*/
   try
@@ -130,7 +130,7 @@ LimaStatusCode AnnotationGraphXmlDumper::dump(
     LERROR << "AnnotationGraphXmlDumper::process: handler " << m_handler << " has not been given to the core client";
     return MISSING_DATA;
   }
-  
+
   handler->startAnalysis();
   HandlerStreamBuf hsb(handler);
   std::ostream outputStream(&hsb);
@@ -139,9 +139,9 @@ LimaStatusCode AnnotationGraphXmlDumper::dump(
     outputStream << prologue << std::endl;
 //  outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
   outputStream << "<lima_annotation_graph_dump>" << std::endl;
-  
+
   dumpLimaData(outputStream, *(static_cast<AnnotationData*>(analysis.getData("AnnotationData"))));
-  
+
   outputStream << "</lima_annotation_graph_dump>" << std::endl;
   handler->endAnalysis();
 
@@ -156,18 +156,18 @@ void AnnotationGraphXmlDumper::dumpLimaData(std::ostream& os,
                              const AnnotationData& annotData) const
 {
   AnnotationGraph& graph = const_cast<AnnotationGraph&>(annotData.getGraph());
-  
+
   // go through the graph, add BoWTokens that are not in complex terms
   DumpGraphVisitor vis(*this, annotData, os, m_language);
 
   os << "<annot-graph>" << std::endl;
-  try 
+  try
   {
       AnnotationGraphVertexIt i, i_end;
       boost::tie(i, i_end) = vertices(graph);
       boost::depth_first_search(graph, boost::visitor(vis));
   }
-  catch (DumpGraphVisitor::EndOfSearch)
+  catch (DumpGraphVisitor::EndOfSearch&)
   { //do nothing: normal ending
   }
   os << "</annot-graph>" << std::endl;
@@ -181,15 +181,15 @@ void AnnotationGraphXmlDumper::dumpLimaData(std::ostream& os,
 void AnnotationGraphXmlDumper::outputVertex(const AnnotationGraphVertex v,
                                 const AnnotationGraph& graph,
                                 const AnnotationData& annotData,
-                                std::ostream& xmlStream) const 
+                                std::ostream& xmlStream) const
 {
-  xmlStream << "<vertex id=\"" << v << "\" >" << std::endl;  
+  xmlStream << "<vertex id=\"" << v << "\" >" << std::endl;
   outputVertexIAnnotations(v, graph, annotData, xmlStream);
   outputVertexSAnnotations(v, graph, annotData, xmlStream);
   outputVertexGAnnotations(v, graph, annotData, xmlStream);
-  xmlStream << "</vertex>" << std::endl;  
+  xmlStream << "</vertex>" << std::endl;
 }
-  
+
 void AnnotationGraphXmlDumper::outputVertexIAnnotations(const AnnotationGraphVertex v,
                   const AnnotationGraph& graph,
                   const AnnotationData& annotData,
@@ -203,7 +203,7 @@ void AnnotationGraphXmlDumper::outputVertexIAnnotations(const AnnotationGraphVer
     xmlStream << "<iannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;    
+      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
     xmlStream << "</iannots>" << std::endl;
   }
@@ -217,13 +217,13 @@ void AnnotationGraphXmlDumper::outputVertexSAnnotations(const AnnotationGraphVer
   const AGSannotProp& map = get(vertex_sannot, graph, v);
   AGSannotProp::const_iterator it, it_end;
   it = map.begin(); it_end = map.end();
-  
+
   if (it != it_end)
   {
     xmlStream << "<sannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;    
+      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
     xmlStream << "</sannots>" << std::endl;
   }
@@ -244,7 +244,7 @@ void AnnotationGraphXmlDumper::outputVertexGAnnotations(const AnnotationGraphVer
     {
       xmlStream << "<annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
       const_cast<AnnotationData&>(annotData).dumpFunction((*it).first)->dump(xmlStream, ((*it).second));
-      xmlStream << "\" />" << std::endl;    
+      xmlStream << "\" />" << std::endl;
     }
     xmlStream << "</annots>" << std::endl;
   }
@@ -255,14 +255,14 @@ void AnnotationGraphXmlDumper::outputEdge(const AnnotationGraphEdge e,
                               const AnnotationData& annotData,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "<edge src=\"" << source(e, graph) 
-          << "\" targ=\"" << target(e, graph) << "\">" << std::endl;  
+  xmlStream << "<edge src=\"" << source(e, graph)
+          << "\" targ=\"" << target(e, graph) << "\">" << std::endl;
   outputEdgeIAnnotations(e, graph, annotData, xmlStream);
   outputEdgeSAnnotations(e, graph, annotData, xmlStream);
   outputEdgeGAnnotations(e, graph, annotData, xmlStream);
-  xmlStream << "</edge>" << std::endl;  
+  xmlStream << "</edge>" << std::endl;
 }
-  
+
 void AnnotationGraphXmlDumper::outputEdgeIAnnotations(const AnnotationGraphEdge e,
                   const AnnotationGraph& graph,
                   const AnnotationData& annotData,
@@ -276,7 +276,7 @@ void AnnotationGraphXmlDumper::outputEdgeIAnnotations(const AnnotationGraphEdge 
     xmlStream << "<iannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;    
+      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
     xmlStream << "</iannots>" << std::endl;
   }
@@ -295,7 +295,7 @@ void AnnotationGraphXmlDumper::outputEdgeSAnnotations(const AnnotationGraphEdge 
     xmlStream << "<sannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;    
+      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
     xmlStream << "</sannots>" << std::endl;
   }
@@ -316,7 +316,7 @@ void AnnotationGraphXmlDumper::outputEdgeGAnnotations(const AnnotationGraphEdge 
     {
       xmlStream << "<annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
       const_cast<AnnotationData&>(annotData).dumpFunction((*it).first)->dump(xmlStream, ((*it).second));
-      xmlStream << "\" />" << std::endl;    
+      xmlStream << "\" />" << std::endl;
     }
     xmlStream << "</annots>" << std::endl;
   }
@@ -327,7 +327,7 @@ void AnnotationGraphXmlDumper::outputEdgeGAnnotations(const AnnotationGraphEdge 
 //***********************************************************************
 // examine_vertex to test if we are at end of search
 void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_vertex(AnnotationGraphVertex v,
-  const AnnotationGraph& g) 
+  const AnnotationGraph& g)
 {
   LIMA_UNUSED(g);
   DUMPERLOGINIT;
@@ -335,12 +335,12 @@ void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_vertex(AnnotationGraphV
 }
 
 void AnnotationGraphXmlDumper::DumpGraphVisitor::examine_edge(AnnotationGraphEdge e,
-               const AnnotationGraph& g) 
+               const AnnotationGraph& g)
 {
     DUMPERLOGINIT;
     LDEBUG << "DumpGraphVisitor: discover_edge " << e;
 
-    m_dumper.outputEdge(e, g, m_data, m_os);      
+    m_dumper.outputEdge(e, g, m_data, m_os);
 }
 
 void AnnotationGraphXmlDumper::DumpGraphVisitor::discover_vertex(AnnotationGraphVertex v,

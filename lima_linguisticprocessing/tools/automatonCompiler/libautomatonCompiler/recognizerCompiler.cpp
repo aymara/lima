@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -123,7 +123,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
   std::ifstream* tmpStream(0);
   std::string tmpFilename=m_filename;
   uint64_t tmpLineNumber=m_lineNumber;
-  
+
   if (! filename.empty()) {
     tmpStream=m_stream;
     m_stream=new ifstream(filename.c_str(), std::ifstream::binary);
@@ -158,7 +158,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
       // ignore it : deprecated
       continue;
     }
-    
+
     if (s.indexOf(*STRING_USING_LIBS)==0) {
       int
       begin=STRING_USING_ENTITYGROUPS->length(),
@@ -169,12 +169,12 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
 #ifdef DEBUG_LP
         LDEBUG << "RecognizerCompiler: use lib " << Common::Misc::limastring2utf8stdstring(str);
 #endif
-        
+
         begin=next+1;
       } while (next != -1);
       continue;
     }
-      
+
 
     if (s.indexOf(*STRING_USING_ENTITYGROUPS)==0) {
       int
@@ -194,8 +194,8 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
 
     if (s.indexOf(*STRING_DEFINE_ENTITYTYPES)==0) {
       //default action to be associated to all rules
-      LWARN << "this syntax (" 
-            << Common::Misc::limastring2utf8stdstring(*STRING_DEFINE_ENTITYTYPES) 
+      LWARN << "this syntax ("
+            << Common::Misc::limastring2utf8stdstring(*STRING_DEFINE_ENTITYTYPES)
             << ") is deprecated: should be 'using modex XXX,YYY'";
       continue;
     }
@@ -208,7 +208,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
         LimaString str = s.mid(begin,(next==-1)?next:next-begin);
         // initialize entities
-        
+
         QString filename = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),str);
         XMLConfigurationFiles::XMLConfigurationFileParser parser(filename.toUtf8().constData());
         MediaticData::MediaticData::changeable().initEntityTypes(parser);
@@ -226,7 +226,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     }
 
     if (s.indexOf(*STRING_UNSET_DEFAULTACTION)==0) {
-      //remove a default action in current default actions 
+      //remove a default action in current default actions
       LimaString action=
         CHAR_BEGIN_ACTION+
         s.mid(STRING_UNSET_DEFAULTACTION->size());
@@ -283,20 +283,22 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
     if (s[0] == CHAR_BEGIN_NAMEGAZ) {
       int offsetEqual(findSpecialCharacter(s,CHAR_EQUAL_GAZ,0));
   // test if it is a gazeteer definition
-      if (offsetEqual != -1 &&
-    (offsetEqual == s.size()-1 || 
-     (s[offsetEqual+1]!= CHAR_BEGIN_ACTION_IF_SUCCESS&&
-      s[offsetEqual+1]!= CHAR_BEGIN_ACTION_IF_FAILURE))) {
+      if (offsetEqual != -1
+          && (offsetEqual == s.size()-1 ||
+            (s[offsetEqual+1] != CHAR_BEGIN_ACTION_IF_SUCCESS &&
+             s[offsetEqual+1] != CHAR_BEGIN_ACTION_IF_FAILURE)
+            )
+         ) {
         Gazeteer g;
         LimaString alias = s.mid(1,offsetEqual-1);
         g.setAlias(alias);
         int offsetParOpen(findSpecialCharacter(s,CHAR_OPEN_GAZ,
                                                         offsetEqual));
         if (offsetParOpen != -1) {
-          g.readValues(*this,s.mid(offsetParOpen+1));
+          g.readValues(*this,gazeteers,s.mid(offsetParOpen+1));
         }
         else {
-          g.readValues(*this);
+          g.readValues(*this,gazeteers);
         }
         //std::cerr << g << endl;
         g.buildAutomatonString(gazeteers,subAutomatons);
@@ -314,7 +316,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
           }
         }
         if (! gazeteerExist) {
-        LINFO << "Adding gazeteer:" << g.alias() << "->" << g.size();
+          LINFO << "Adding gazeteer:" << g.alias() << "->" << g.size();
           gazeteers.push_back(g);
         }
       }
@@ -415,7 +417,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
 #ifdef DEBUG_LP
     LDEBUG << "rule[" << m_nbRule << "]=" << *r;
 #endif
-    
+
     m_nbRule++;
     delete trigger;
   }
@@ -502,7 +504,7 @@ readSubAutomaton(const LimaString& line,
 }
 
 //**********************************************************************
-// add a rule with a gazeteer trigger -> 
+// add a rule with a gazeteer trigger ->
 //   1) create a rule and multiply the reference to this rule in the index
 //      of recognizer (transition with 1 entry,rule)
 //   2) create a a gazeteerTransition and create only one entry in the index
@@ -572,11 +574,11 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
   LDEBUG << "Adding rule no " << m_nbRule << "(" << r->getRuleId() << ")"
         << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteer[0])<<")";
   int indexRule=reco.addRuleInStorage(r);
-  
-  if( (!gazeteer.hasNoCategoryNorTstatus()) && gazeteer.hasMultiTermWord() ) {
+
+  if( (!gazeteer.hasNotOnlyWords()) && gazeteer.hasMultiTermWord() ) {
     throwError("use of gazetteer with multi-term words and with category or t_status forbidden in trigger: ",m_currentLine);
   }
-  if( gazeteer.hasNoCategoryNorTstatus() )
+  if( gazeteer.hasNotOnlyWords() )
   {
     // const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
     // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */
@@ -683,7 +685,7 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
     Gazeteer g;
     g.read(reco);
     if (g.numberOfWords()!=0) {
-      LINFO << "Adding gazeteer:" 
+      LINFO << "Adding gazeteer:"
             << g.alias()
             << "->" << g.size();
       g.buildAutomatonString(gazeteers,subAutomatons);
@@ -769,27 +771,27 @@ expandSubAutomatonsInRule(LimaString& s,
 // checkRule(const Rule& rule,
 //           const TransitionUnit* trigger,
 //           MediaId language,
-//           std::ostringstream& message) const 
+//           std::ostringstream& message) const
 // {
-//   // check if rule may produce an element that might be trigger 
+//   // check if rule may produce an element that might be trigger
 //   // of same rule => should cause infinite loop
-// 
+//
 //   // happen only if both left and right contexts can be empty
 //   // and an action is attached to the rule
 //   if (rule.leftAutomaton().isFinalState(0) &&
-//       rule.rightAutomaton().isFinalState(0) && 
+//       rule.rightAutomaton().isFinalState(0) &&
 //       !rule.getActions().empty()) {
-// 
+//
 //     switch (trigger->type()) {
 //     case T_STAR: {
-//       message << "line " << m_lineNumber 
+//       message << "line " << m_lineNumber
 //               << ": rule may cause infinite loops (star trigger on a rule that may recognize only one token)";
 //       return false;
 //     }
 //     case T_WORD: {
 //       LimaString str;
 //       if (rule.getNormalizedForm().isEmpty()) {
-//         message << "line " << m_lineNumber 
+//         message << "line " << m_lineNumber
 //                 << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and has no normalized form)";
 //         return false;
 //       }
@@ -797,7 +799,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //         FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
 //         StringsPoolIndex index=sp[rule.getNormalizedForm()];
 //         if (index == static_cast<const WordTransition*>(trigger)->word()) {
-//           message << "line " << m_lineNumber 
+//           message << "line " << m_lineNumber
 //                   << ": rule may cause infinite loops (word trigger on a rule that may recognize only one token and whose normalized form is same as the trigger)";
 //           return false;
 //         }
@@ -808,7 +810,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //       LinguisticCode pos=rule.getLinguisticProperties();
 //       if (pos!=static_cast<LinguisticCode>(0)) {
 //         if (static_cast<const PosTransition*>(trigger)->comparePos(pos)) {
-//           message << "line " << m_lineNumber 
+//           message << "line " << m_lineNumber
 //                   << ": rule may cause infinite loops "
 //                   << "(pos trigger on a rule that may recognize only one token, whose result POS is same as trigger)";
 //           return false;
@@ -818,7 +820,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //       return true;
 //     }
 //     case T_LEMMA: {
-//       message << "line " << m_lineNumber 
+//       message << "line " << m_lineNumber
 //               << ": rule may cause infinite loops "
 //               << ": (lemma trigger on a rule that may recognize only one token, whose result may match the trigger)";
 //       return true;
@@ -830,14 +832,14 @@ expandSubAutomatonsInRule(LimaString& s,
 //       return true;
 //     }
 //     case T_TSTATUS: {
-//       message << "line " << m_lineNumber 
+//       message << "line " << m_lineNumber
 //               << ": rule may cause infinite loops "
 //               << ": tstatus trigger on a rule that may recognize only one token";
 //       return false;
 //     }
 //     case T_ENTITY: {
 //       if (static_cast<const EntityTransition*>(trigger)->entityType() == rule.getType()) {
-//         message << "line " << m_lineNumber 
+//         message << "line " << m_lineNumber
 //                 << ": rule may cause infinite loops "
 //                 << ": (entity trigger on a rule of same entity type that may recognize only one token)";
 //         return false;
@@ -846,7 +848,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //     }
 //     case T_ENTITY GROUP: {
 //       if (static_cast<const EntityTransition*>(trigger)->entityType().getGroupId() == rule.getType().getGroupId()) {
-//         message << "line " << m_lineNumber 
+//         message << "line " << m_lineNumber
 //                 << ": rule may cause infinite loops "
 //                 << ": (entity trigger on a rule of same entity group type that may recognize only one token)";
 //         return false;
@@ -891,10 +893,12 @@ nextFieldTypeDefinition(const LimaString& str, int& offset) {
 }
 
 void RecognizerCompiler::
-parseTypeDefinition(const LimaString& str, int& offset,
-                    string& typeName,
-                    string& openingTag,string& closingTag,
-                    vector<string>& attributes) {
+parseTypeDefinition(const LimaString& str,
+                    int& offset,
+                    std::string& typeName,
+                    std::string& openingTag,
+                    std::string& closingTag,
+                    vector<std::string>& attributes) {
 
   // first field is name
   typeName=nextFieldTypeDefinition(str,offset);
@@ -925,7 +929,7 @@ throwError(const std::string& error,
          << ", line " << m_lineNumber
          << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
+    LERROR << "in rule: " << ruleString;
   }
   throw AutomatonCompilerException(error);
 }
@@ -939,7 +943,7 @@ printWarning(const std::string& error,
         << ", line " << m_lineNumber
         << ": " << error;
   if (! ruleString.isEmpty()) {
-    LERROR << "in rule: " << Common::Misc::limastring2utf8stdstring(ruleString);
+    LERROR << "in rule: " << ruleString;
   }
 }
 

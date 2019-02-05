@@ -4,12 +4,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Find the QtWidgets library
 find_package(Qt5Test REQUIRED)
 
-set (Test_MOC_HEADERS Test.h)
-qt5_wrap_cpp (Test_MOC_OUTFILES ${Test_MOC_HEADERS})
-
 SET(Test_SRCS 
   Test.cpp
-  ${Test_MOC_OUTFILES}
 )
 
 add_executable(TestModuleNER ${Test_SRCS})
@@ -28,4 +24,4 @@ add_test(
   COMMAND TestModuleNER
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
-# install(TARGETS TestModuleNER RUNTIME DESTINATION bin)
+install(TARGETS TestModuleNER RUNTIME DESTINATION bin)

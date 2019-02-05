@@ -95,7 +95,6 @@ TestCaseError TestCaseProcessor::evalTestCase(
       return TestCaseError(testCase, TestCaseError::TestCaseFailed,"No output file to evaluate !", pipeName, *tuItr);
     }
 
-
     // OK, let's evaluate the expression...
     // Check unary operators before evaluate se right member
 

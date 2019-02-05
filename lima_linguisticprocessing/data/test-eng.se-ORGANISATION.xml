@@ -208,5 +208,18 @@
           operator="="
           right="Organization.ORGANIZATION"/>
   </testcase>
- 
+  <testcase id="eng.se.org.13" type="bloquant">
+    <call-parameters>
+      <param key="text" value="Bank of Mexico"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <test id="eng.se.pers.13.1" trace=".se.xml"
+          comment="Bank of Mexico"
+          left="XPATH#//entities/entity[pos=1][len=14]/type"
+          operator="="
+          right="Organization.ORGANIZATION"/>
+  </testcase>
 </testcases>

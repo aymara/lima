@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -54,7 +54,7 @@ Gazeteer::Gazeteer():
 std::vector<LimaString>(0),
 m_alias(),
 m_hasMultiTermWord(false),
-m_hasNoCategoryNorTstatus(true),
+m_hasNotOnlyWords(true),
 m_automatonString()
 {
 }
@@ -63,7 +63,7 @@ Gazeteer::Gazeteer(const Gazeteer& g):
 std::vector<LimaString>(g),
 m_alias(g.m_alias),
 m_hasMultiTermWord(g.m_hasMultiTermWord),
-m_hasNoCategoryNorTstatus(g.m_hasNoCategoryNorTstatus),
+m_hasNotOnlyWords(g.m_hasNotOnlyWords),
 m_automatonString(g.m_automatonString)
 {
 }
@@ -83,7 +83,7 @@ Gazeteer& Gazeteer::operator = (const Gazeteer& g) {
     m_alias = g.alias();
     m_automatonString=g.m_automatonString;
     m_hasMultiTermWord=g.m_hasMultiTermWord;
-    m_hasNoCategoryNorTstatus=g.m_hasNoCategoryNorTstatus;
+    m_hasNotOnlyWords=g.m_hasNotOnlyWords;
   }
   return (*this);
 }
@@ -97,21 +97,44 @@ Gazeteer& Gazeteer::add(const Gazeteer& g) {
 }
 /***********************************************************************/
 
+
 /***********************************************************************/
 // add a word in the inherited  std::vector<LimaString>
 // check if word is simple word (no category, no Tstatus)
 /***********************************************************************/
-void Gazeteer::addWord(const LimaString& s) {
+void Gazeteer::addWord(const LimaString& s, const vector<Gazeteer>& otherGazeteers) {
   if( (s.startsWith(*STRING_TSTATUS_TR))
    || (s.startsWith(*STRING_TSTATUS_TR_small))
-   || (s.contains(CHAR_POS_TR)) )
+   || (s.contains(CHAR_POS_TR))
+   || (s.startsWith(CHAR_BEGIN_ENTITY))
+  )
   {
-    resetCategoryOrTstatusFlag();
+    m_hasNotOnlyWords=false;
   }
   if( s.contains(CHAR_SEP_RE) )  {
     setHasMultiTermWordFlag();
   }
-  push_back(s);
+  if (s.startsWith(CHAR_BEGIN_NAMEGAZ)) {
+    // This is a reference to other gazeteer. Let's take copy all its' items.
+#ifdef DEBUG_LP
+    AUCLOGINIT;
+    LINFO << "reference to other gazeteer found:" << s;
+#endif
+
+    LimaString otherGazeteerName = s.right(s.size()-1);
+
+#ifdef DEBUG_LP
+    LINFO << "otherGazeteerName=" << otherGazeteerName;
+#endif
+
+    for (auto &other: otherGazeteers) {
+        if (other.alias() == otherGazeteerName) {
+            add(other);
+            break;
+        }
+    }
+  } else
+    push_back(s);
 }
 
 
@@ -134,7 +157,7 @@ void Gazeteer::buildAutomatonString(const std::vector<Gazeteer>& gazeteers,
 // return the regexp string of the automaton that recognize the gazeteer
 LimaString Gazeteer::stringAutomaton(const LimaString& constraint) const {
   if (empty()) {
-    return LimaString(); 
+    return LimaString();
   }
   LimaString output(Common::Misc::utf8stdstring2limastring("("));
   Gazeteer::const_iterator it=begin();
@@ -145,7 +168,7 @@ LimaString Gazeteer::stringAutomaton(const LimaString& constraint) const {
   output += LimaChar(')');
   return output;
 }
-  
+
 void Gazeteer::readFromFile(const std::string& filename) {
   RecognizerCompiler reco(filename);
   read(reco);
@@ -156,7 +179,7 @@ void Gazeteer::read(RecognizerCompiler& reco) {
   if (m_alias.isEmpty()) {
 #ifdef DEBUG_LP
     AUCLOGINIT;
-    LDEBUG << "No more gazeteer defined in file " 
+    LDEBUG << "No more gazeteer defined in file "
            << reco.getFilename();
 #endif
     return;
@@ -193,6 +216,13 @@ LimaString Gazeteer::readName(RecognizerCompiler& reco) {
 
 void Gazeteer::readValues(RecognizerCompiler& reco,
                           const LimaString& stringBegin) {
+    vector<Gazeteer> empty;
+    readValues(reco, empty, stringBegin);
+}
+
+void Gazeteer::readValues(RecognizerCompiler& reco,
+                          const vector<Gazeteer>& otherGazeteers,
+                          const LimaString& stringBegin) {
 #ifdef DEBUG_LP
   AUCLOGINIT;
 #endif
@@ -214,19 +244,19 @@ void Gazeteer::readValues(RecognizerCompiler& reco,
     }
     offset=findSpecialCharacter(s,CHAR_WORDSEP_GAZ,previousOffset);
     while (offset != -1) {
-      addWord(s.mid(previousOffset,offset-previousOffset));
+      addWord(s.mid(previousOffset,offset-previousOffset),otherGazeteers);
       previousOffset=offset+1;
       offset=findSpecialCharacter(s,CHAR_WORDSEP_GAZ,previousOffset);
     }
     int offsetParClose(findSpecialCharacter(s,CHAR_CLOSE_GAZ,0));
     if (offsetParClose != -1) {
       if (previousOffset < offsetParClose) { // possibly a last element
-        addWord(s.mid(previousOffset,offsetParClose-previousOffset));
+        addWord(s.mid(previousOffset,offsetParClose-previousOffset),otherGazeteers);
       }
       break;
     }
     else if (previousOffset < s.length()) {
-      addWord(s.mid(previousOffset));
+      addWord(s.mid(previousOffset),otherGazeteers);
     }
     reco.readline(s);
   } while (! reco.endOfFile());

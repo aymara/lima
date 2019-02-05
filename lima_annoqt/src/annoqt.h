@@ -17,7 +17,6 @@
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
 /***************************************************************************
- *   Copyright (C) 2007 by CEA LIST / LVIC *
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
@@ -35,6 +34,7 @@ class QAction;
 class QMenu;
 class AnnotationEditWidget;
 class QListWidget;
+class QListWidgetItem;
 
 class Annoqt:public QMainWindow
 {
@@ -49,8 +49,7 @@ public:
 
 public Q_SLOTS:
 
-  void slotTypesListItemclicked( const
-                             QModelIndex & index );
+  void slotTypesListItemclicked(QListWidgetItem *item);
 
   void removeEntity();
 

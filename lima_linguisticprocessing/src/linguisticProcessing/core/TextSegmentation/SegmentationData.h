@@ -17,16 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       SegmentationData.h
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue Jan 18 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- * Project     MM
- *
  * @brief      this class contains information about text segmentation
- *
- *
  ***********************************************************************/
 
 #ifndef SEGMENTATIONDATA_H

@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -24,7 +24,11 @@ SET(normalizeTerm_SRCS
 
 add_executable(normalizeTerm ${normalizeTerm_SRCS})
 
-target_link_libraries(normalizeTerm lima-linguisticprocessing)
+target_link_libraries(normalizeTerm
+  lima-lp-analysishandlers
+  lima-lp-client
+  lima-lp-bagofwords
+)
 
 install(TARGETS normalizeTerm DESTINATION bin
   COMPONENT runtime)
@@ -38,7 +42,12 @@ SET(desaccent_SRCS
 
 add_executable(desaccent ${desaccent_SRCS})
 
-target_link_libraries(desaccent lima-linguisticprocessing)
+target_link_libraries(desaccent
+  lima-lp-linguisticresources
+  lima-lp-flattokenizer
+  lima-lp-client
+  Boost::program_options
+)
 
 install(TARGETS desaccent DESTINATION bin
   COMPONENT runtime)

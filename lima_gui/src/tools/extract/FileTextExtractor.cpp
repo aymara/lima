@@ -20,7 +20,7 @@
  * \file    FileTextExtractor.cpp
  * \author  Jocelyn Vernay
  * \date    Wed, Sep 06 2017
- * 
+ *
  */
 
 #include "FileTextExtractor.h"
@@ -32,58 +32,61 @@
 #include <QFile>
 #include <QString>
 #include <QTextStream>
+#include <QMessageBox>
 
-namespace Lima 
+namespace Lima
 {
-namespace Gui 
+namespace Gui
 {
-namespace Tools 
+namespace Tools
 {
 
-std::string extractTextFromFile(const std::string &path, const std::string &extension) 
+template<class T> // T can be std::string or Qstring
+inline T concatenate(const std::vector<T> &v, const T &separator, const T &quotation_left, const T &quotation_right)
+{
+  T s;
+  for (auto i = v.begin(); i != v.end(); i++)
+  {
+    if (s.size() > 0)
+      s += quotation_right + separator + quotation_left;
+    s += *i;
+  }
+  return s;
+}
+
+bool extractTextFromFile(const std::string &path, QString &fileContent, const std::string &extension)
 {
   std::vector<std::string> textHandledTypes = {"txt", "md"};
-  std::vector<std::string> handledTypes = {"pdf", "docx"};
+  QString errorMessage;
 
   bool textHandled = (extension.size()==0 || (std::find(textHandledTypes.begin(), textHandledTypes.end(), extension) != textHandledTypes.end()));
-  bool handled = (std::find(handledTypes.begin(), handledTypes.end(), extension) != handledTypes.end());
-  if (textHandled) 
+
+  if (textHandled)
   {
-    QString tump;
     QFile file(QString(path.c_str()));
-    if (file.open(QFile::ReadOnly)) 
+    if (file.open(QFile::ReadOnly))
     {
       QTextStream qts(&file);
-      tump = qts.readAll();
+      fileContent = qts.readAll();
       file.close();
+      return true;
     }
-    else 
-    {
-      std::cout << "didn't open : " << path << std::endl;
-      std::cout << "Error opening file: " << std::strerror(errno) << std::endl;
-    }
-    return tump.toStdString();
-  }
-  else if(handled) 
-  {
-    // put your formats here
-    if (extension == "pdf") 
-    {
-      std::cout << extension << ": can't handle this file extension" 
-                << std::endl;
-    }
-    else if (extension == "docx") 
-    {
-      std::cout << extension << ": can't handle this file extension" 
-                << std::endl;
-    }
+    else
+      errorMessage = std::strerror(errno);
   }
   else
-  {
-    std::cout << extension << ": can't handle this file extension" 
-              << std::endl;
-  }
-  return "";
+    errorMessage = QString::asprintf("Can't handle \".%s\" files. Only text files (\".%s\") are supported",
+                                     extension.c_str(), concatenate<std::string>(textHandledTypes, ", ", "\".", "\"").c_str());
+
+  std::cout << "Error opening file \"" << path << "\": " << errorMessage.toStdString() << std::endl;
+
+  QMessageBox msgBox;
+  msgBox.setWindowTitle("Error");
+  msgBox.setInformativeText(QString::asprintf("Error opening file \"%s\".", path.c_str()));
+  msgBox.setText(errorMessage);
+  msgBox.exec();
+
+  return false;
 }
 
 } // Tools

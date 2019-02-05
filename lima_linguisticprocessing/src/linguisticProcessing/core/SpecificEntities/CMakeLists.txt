@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -18,12 +18,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### main target ###############
 
-LIMALP_WRAP_HEADERS(specificentities
-  NormalizeDateTimeResources.h
-  MicrosForNormalization.h
-  SpecificEntitiesMicros.h
-)
-
 SET(lima-lp-specificentities_LIB_SRCS
    SpecificEntitiesXmlLogger.cpp
    SpecificEntitiesConstraints.cpp
@@ -38,12 +32,12 @@ DECLARE_LIMA_PLUGIN(lima-lp-specificentities)
 
 target_compile_definitions(lima-lp-specificentities PRIVATE "-DLIMA_SPECIFICENTITIES_EXPORTING")
 
-target_link_libraries(lima-lp-specificentities 
-  lima-lp-linguisticprocessors 
-  lima-lp-linguisticresources 
-  lima-lp-annotationgraph 
-  lima-lp-automaton 
-  lima-lp-linguisticanalysisstructure 
+target_link_libraries(lima-lp-specificentities
+  lima-lp-linguisticprocessors
+  lima-lp-linguisticresources
+  lima-lp-annotationgraph
+  lima-lp-automaton
+  lima-lp-linguisticanalysisstructure
   lima-lp-syntacticanalysis
   lima-common
 )
@@ -63,10 +57,10 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-datetime)
 
 target_compile_definitions(lima-lp-se-datetime PRIVATE "-DLIMA_SPECIFICENTITIES_DATETIME_EXPORTING")
 
-target_link_libraries(lima-lp-se-datetime lima-linguisticprocessing)
+target_link_libraries(lima-lp-se-datetime lima-lp-specificentities lima-common)
 
-set_target_properties(lima-lp-se-datetime PROPERTIES 
-    VERSION ${LIMA_LP_LIB_VERSION} 
+set_target_properties(lima-lp-se-datetime PROPERTIES
+    VERSION ${LIMA_LP_LIB_VERSION}
     SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-se-datetime DESTINATION ${LIB_INSTALL_DIR}
@@ -80,7 +74,7 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-number)
 
 target_compile_definitions(lima-lp-se-number PRIVATE "-DLIMA_SPECIFICENTITIES_NUMBER_EXPORTING")
 
-target_link_libraries(lima-lp-se-number lima-linguisticprocessing)
+target_link_libraries(lima-lp-se-number lima-lp-specificentities lima-common)
 
 set_target_properties(lima-lp-se-number PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
@@ -96,23 +90,23 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-person)
 
 target_compile_definitions(lima-lp-se-person PRIVATE "-DLIMA_SPECIFICENTITIES_PERSON_EXPORTING")
 
-target_link_libraries(lima-lp-se-person lima-linguisticprocessing)
+target_link_libraries(lima-lp-se-person lima-lp-specificentities lima-common)
 set_target_properties(lima-lp-se-person PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
 ########### install files ###############
-install(FILES  
-    NormalizeDateTimeResources.h    
-    NormalizationUtils.h 
-    NormalizeNumber.h    
-    SpecificEntitiesXmlLogger.h 
-    NormalizeDateTime.h   
-    SpecificEntitiesConstraints.h 
-    SpecificEntitiesRecognizer.h 
-    NormalizePersonName.h 
-    NormalizePerson.h 
+install(FILES
+    NormalizeDateTimeResources.h
+    NormalizationUtils.h
+    NormalizeNumber.h
+    SpecificEntitiesXmlLogger.h
+    NormalizeDateTime.h
+    SpecificEntitiesConstraints.h
+    SpecificEntitiesRecognizer.h
+    NormalizePersonName.h
+    NormalizePerson.h
     SpecificEntitiesLoader.h
     SpecificEntitiesExport.h
   DESTINATION include/linguisticProcessing/core/SpecificEntities

@@ -39,7 +39,7 @@ add_executable(testDict16 ${testDict16_SRCS})
 target_link_libraries(testDict16
   lima-common
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 install(TARGETS testDict16 DESTINATION bin)
@@ -52,12 +52,12 @@ SET(testLexicon_SRCS
 
 add_executable(testLexicon ${testLexicon_SRCS})
 
-message("QT_LIBRARIES are ${QT_LIBRARIES}")
+message("Qt5_LIBRARIES are ${Qt5_LIBRARIES}")
 
 target_link_libraries(testLexicon
   lima-common
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
 )
 
 install(TARGETS testLexicon DESTINATION bin
@@ -75,7 +75,7 @@ add_executable(testAccessMethod ${testAccessMethod_SRCS})
 target_link_libraries(testAccessMethod 
   lima-common
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5_LIBRARIES}
   ${optionalLibs}
 )
 
@@ -93,7 +93,7 @@ add_executable(parseXMLFile ${parseXMLFile_SRCS})
 target_link_libraries(parseXMLFile 
   lima-common
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 
@@ -111,7 +111,7 @@ add_executable(testAbstractFactoryPattern ${testAbstractFactoryPattern_SRCS})
 target_link_libraries(testAbstractFactoryPattern 
   lima-common
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
   )
 
@@ -129,7 +129,7 @@ add_executable(testProcessUnitFramework ${testProcessUnitFramework_SRCS})
 target_link_libraries(testProcessUnitFramework 
   lima-common
   ${Boost_LIBRARIES} 
-  ${QT_LIBRARIES} 
+  ${Qt5_LIBRARIES} 
   ${optionalLibs}
 )
 

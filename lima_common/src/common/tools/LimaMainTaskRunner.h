@@ -57,7 +57,7 @@ class LIMA_COMMONTOOLS_EXPORT LimaMainTaskRunner : public QObject
 {
     Q_OBJECT
 public:
-    LimaMainTaskRunner(int aargc,char** aargv,int (*foo)(int, char**),  QObject *parent = 0);
+    LimaMainTaskRunner(int aargc, char** aargv, int (*foo)(int, char**),  QObject *parent = 0);
     virtual ~LimaMainTaskRunner() {}
 
 public Q_SLOTS:

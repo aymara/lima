@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -80,7 +80,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(LimaString, TSTATUS_ISPOSSESSIVE, (QLatin1String("p"))
 Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_TSTATUS_TR_small, (QLatin1String("t_")));
 
 //**********************************************************************
-// format of the transitions 
+// format of the transitions
 //**********************************************************************
 Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_NUM_NAME_TR, (QLatin1String("T_Ni"))); // for compatibility with TSTATUS notation
 Q_GLOBAL_STATIC_WITH_ARGS(LimaString, STRING_NUM_NAME_TR2, (QLatin1String("t_integer"))); // for compatibility with TSTATUS notation
@@ -95,7 +95,7 @@ TStatusTransition* createStructuredTStatusTransition(const LimaString& str,
                                                      const int begin);
 TStatusTransition* createDefaultTStatusTransition(const LimaString& str,
                                                   const int begin);
-                                                  
+
 //************************************************************************
 // creates a transition from a entry string, depending on the syntax
 // defined in the previous macros
@@ -132,7 +132,7 @@ TransitionUnit*
   const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
   // TODO bool negative = automatonString.isNegative()??, Est-ce qu'on autorise un trigger avec une négation?
   bool negative(false);
-  TransitionUnit* t = new GazeteerTransition(gazeteerAsVectorOfString, gazeteerName, keep); 
+  TransitionUnit* t = new GazeteerTransition(gazeteerAsVectorOfString, gazeteerName, keep);
   t->setNegative(negative);
   t->setHead(head);
   t->setId(id);
@@ -159,7 +159,7 @@ TransitionUnit* createTransition(const LimaString str,
                                  const bool neg,
                                  const std::vector<Constraint>& constraints,
                                  const std::vector<LimaString>& gazeteerAsVectorOfString
-                                 ) 
+                                 )
 {
   LIMA_UNUSED(gazeteerAsVectorOfString)
 #ifdef DEBUG_LP
@@ -176,7 +176,7 @@ TransitionUnit* createTransition(const LimaString str,
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(language);
 
 #ifdef DEBUG_LP
-  LDEBUG << "createTransition: creating transition from string [" 
+  LDEBUG << "createTransition: creating transition from string ["
          << Common::Misc::limastring2utf8stdstring(str)
          << "] with id" << id;
 #endif
@@ -305,7 +305,7 @@ TransitionUnit* createTransition(const LimaString str,
     // remove escape characters from the transition (don't need them anymore)
     removeEscapeCharacters(str);
     StringsPoolIndex strIndex=sp[str];
-    t = new LemmaTransition(strIndex,pos,macroAccessor,microAccessor); 
+    t = new LemmaTransition(strIndex,pos,macroAccessor,microAccessor);
   }
   // ----------------------------------------------------------------------
   // TStatus transition (status returned by the tokenizer)
@@ -337,7 +337,7 @@ TransitionUnit* createTransition(const LimaString str,
       Common::MediaticData::EntityGroupId groupId = resolveGroupName(entityName,activeEntityGroups);
       if( groupId == 0) {
         AUCLOGINIT;
-        LERROR << "createTransition: cannot resolve entity name " 
+        LERROR << "createTransition: cannot resolve entity name "
                << Common::Misc::limastring2utf8stdstring(s);
       }
       else {
@@ -359,7 +359,7 @@ TransitionUnit* createTransition(const LimaString str,
       // remove escape characters from the transition (don't need them anymore)
       removeEscapeCharacters(s);
       StringsPoolIndex sIndex=sp[s];
-      t = new WordTransition(sIndex); 
+      t = new WordTransition(sIndex);
     }
   }
   // set the general properties of the transition
@@ -386,7 +386,7 @@ resolveGroupName(const LimaString s,
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "resolveGroupName: try to resolve group name " 
+  LDEBUG << "resolveGroupName: try to resolve group name "
          << Common::Misc::limastring2utf8stdstring(s);
 #endif
   Common::MediaticData::EntityGroupId foundGroup;
@@ -412,7 +412,7 @@ resolveGroupName(const LimaString s,
   }
   catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "resolveGroupName: cannot resolve group for " 
+      LERROR << "resolveGroupName: cannot resolve group for "
              << Common::Misc::limastring2utf8stdstring(s);
   }
   return foundGroup;
@@ -426,10 +426,10 @@ resolveEntityName(const LimaString s,
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "resolveEntityName: try to resolve entity name " 
+  LDEBUG << "resolveEntityName: try to resolve entity name "
          << Common::Misc::limastring2utf8stdstring(s);
 #endif
-  
+
   // test if word is a known entity name => in this case, entity transition
   if (s.indexOf(Common::MediaticData::MediaticData::single().getEntityTypeNameSeparator())!=-1) {
 #ifdef DEBUG_LP
@@ -457,7 +457,7 @@ resolveEntityName(const LimaString s,
         if (!type.isNull()) {
           // there is ambiguity
           AUCLOGINIT;
-          LERROR << "resolveEntityName: cannot resolve entity group for entity " 
+          LERROR << "resolveEntityName: cannot resolve entity group for entity "
                  << Common::Misc::limastring2utf8stdstring(s)
                  << " (at least two groups contain this entity)";
         }
@@ -465,7 +465,7 @@ resolveEntityName(const LimaString s,
           type=findType;
         }
       }
-      catch (LimaException& e) { 
+      catch (LimaException& e) {
         // not in this group: do nothing (continue search)
 #ifdef DEBUG_LP
         LDEBUG << "resolveEntityName: entity " << Common::Misc::limastring2utf8stdstring(s)
@@ -475,7 +475,7 @@ resolveEntityName(const LimaString s,
     }
     if (type.isNull()) { // try to interpret s as group
       AUCLOGINIT;
-      LERROR << "resolveEntityName: cannot resolve entity group for entity " 
+      LERROR << "resolveEntityName: cannot resolve entity group for entity "
              << Common::Misc::limastring2utf8stdstring(s)
              << " (no active group contains this entity)";
     }
@@ -524,9 +524,9 @@ Tpos createTpos(const std::string& s, MediaId language) {
       hasMicro=true;
 //      if (macro.find("L_")!=0) { macro=string("L_")+ macro; }
       LinguisticCode microCode = microManager.getPropertyValue(micro);
-//       if (microCode == 0 &&  micro.find("L_")!=0) 
-//       { 
-//         micro=string("L_")+ micro; 
+//       if (microCode == 0 &&  micro.find("L_")!=0)
+//       {
+//         micro=string("L_")+ micro;
 //         microCode= microManager.getPropertyValue(micro);
 //       }
       p = microCode;
@@ -702,9 +702,9 @@ TStatusTransition* createDefaultTStatusTransition(const LimaString& s,
   AUCLOGINIT;
   LDEBUG << "Create TStatus transition: default status";
 #endif
-  
+
   TStatusTransition* t = new TStatusTransition();
-  
+
   t->setStatus(TStatus()); // initializes TStatus
   t->status().setDefaultKey(s);
   return t;

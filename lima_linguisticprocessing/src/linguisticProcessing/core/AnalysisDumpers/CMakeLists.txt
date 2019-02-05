@@ -23,10 +23,6 @@ include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/ling
 
 ########### next target ###############
 
-LIMALP_WRAP_HEADERS(analysisdumpers
-  StopList.h
-)
-
 SET(lima-lp-analysisdumpers_LIB_SRCS
    AnnotationGraphXmlDumper.cpp
    BowDumper.cpp

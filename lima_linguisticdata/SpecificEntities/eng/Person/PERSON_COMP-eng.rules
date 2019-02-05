@@ -85,6 +85,7 @@ Chirac:::PERSON:
 # recognition of person names
 #----------------------------------------------------------------------
 use firstname.lst
+use wd_firstname.lst
 use title.lst,function_title.lst
 use person.lst
 use person_ending.lst
@@ -93,9 +94,10 @@ use person_ending.lst
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
 @PersonNamePart=(t_capital_1st,t_capital,$NP)
 @particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
+@AnyFirstname=(@Firstname,@WikidataFirstname)
 
 # generic rule for name with firstname with stop condition
-@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding? [($DET|$PRON|$ADJ|$V)]:PERSON:
+@AnyFirstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding? [($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"firstname")
@@ -105,7 +107,7 @@ use person_ending.lst
 =<ClearEntityFeatures()
 
 # generic rule with firstname without stop condition
-@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding?:PERSON:
+@AnyFirstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding?:PERSON:
 =>SetEntityFeature(left,"title")
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"firstname")
@@ -117,7 +119,7 @@ use person_ending.lst
 
 # what is the role of <Location.LOCATION>???: ask to Romaric
 # John Doo Paris???
-@Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
+@AnyFirstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 =>SetEntityFeature(trigger,"firstname")
 =>AddEntityFeature(right.1,"lastname")
 =>NormalizeEntity()
@@ -174,14 +176,14 @@ t_abbrev:[(@Title|@FunctionTitle)?]:(@particule? @PersonNamePart){1-2}:PERSON:
 =<ClearEntityFeatures()
 
 # Dr Andrew  ???
-@Firstname:(@Title|@FunctionTitle):[($DET|$PRON|$ADJ|$V)]:PERSON:
+@AnyFirstname:(@Title|@FunctionTitle):[($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(trigger,"firstname")
 =>SetEntityFeature(left,"title")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 # Mr Andrew B Chang
-@Firstname:(@Title|@FunctionTitle)?:@Initial? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:
+@AnyFirstname:(@Title|@FunctionTitle)?:@Initial? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:
 =>SetEntityFeature(trigger,"firstname")
 =>SetEntityFeature(left,"title")
 =>AddEntityFeature(right.1,"firstname")
@@ -191,7 +193,7 @@ t_abbrev:[(@Title|@FunctionTitle)?]:(@particule? @PersonNamePart){1-2}:PERSON:
 =<ClearEntityFeatures()
 
 # Dr Andrew B
-@Firstname:(@Title|@FunctionTitle)?:@Initial? (@particule? @PersonNamePart){1-2}:PERSON:
+@AnyFirstname:(@Title|@FunctionTitle)?:@Initial? (@particule? @PersonNamePart){1-2}:PERSON:
 =>SetEntityFeature(trigger,"firstname")
 =>SetEntityFeature(left,"title")
 =>AddEntityFeature(right.1,"firstname")

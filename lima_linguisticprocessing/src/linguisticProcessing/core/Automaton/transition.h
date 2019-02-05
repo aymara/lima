@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2018 CEA LIST
 
     This file is part of LIMA.
 
@@ -23,13 +23,13 @@
  * @date       Fri Oct 04 2002
  * copyright   Copyright (C) 2002 by CEA LIST
  * Project     Automaton
- * 
+ *
  * @brief      transition composed of a transition Unit and the next state
  * in the automaton
- * 
+ *
  ***********************************************************************/
 
-#ifndef TRANSITION_H 
+#ifndef TRANSITION_H
 #define TRANSITION_H
 
 #include "AutomatonExport.h"
@@ -44,8 +44,8 @@ namespace Automaton {
 class LIMA_AUTOMATON_EXPORT Transition
 {
  public:
-  Transition(); 
-  Transition(TransitionUnit*, Tstate); 
+  Transition();
+  Transition(TransitionUnit*, Tstate);
   Transition(const Transition& transition);
   virtual ~Transition();
   Transition& operator = (const Transition& transition);
@@ -56,7 +56,8 @@ class LIMA_AUTOMATON_EXPORT Transition
   void setNextState(Tstate);
 
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator << (std::ostream& os, const Transition& t);
- 
+  friend LIMA_AUTOMATON_EXPORT QDebug& operator << (QDebug& os, const Transition& t);
+
  private:
   TransitionUnit* m_unit;
   Tstate m_nextState;

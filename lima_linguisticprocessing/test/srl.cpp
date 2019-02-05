@@ -41,7 +41,7 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
 
 /*
    * Find the first python executable in the path and use it as the program name.
-   * 
+   *
    * This allows to find the modules set up in an activated virtualenv
    */
   QString str_program_name;
@@ -60,9 +60,9 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
 #else
   Py_SetProgramName( (wchar_t*)str_program_name.unicode() );
 #endif
-  
+
   Py_Initialize();
-  
+
   PyObject* main_module = PyImport_ImportModule("__main__");
   PyObject* main_dict = PyModule_GetDict(main_module);
   PyObject* sys_module = PyImport_ImportModule("sys");
@@ -71,7 +71,7 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     std::cerr << "Failed to import the sys module" << std::endl;
     PyErr_Print();
   }
-  PyDict_SetItemString(main_dict, "sys", sys_module);  
+  PyDict_SetItemString(main_dict, "sys", sys_module);
 
   // Add the path to the knowledgesrl pachkage to putho path
   PyObject* pythonpath = PySys_GetObject("path");
@@ -81,7 +81,7 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Import the semanticrolelabeler module
   PyObject* semanticrolelabeler_module = PyImport_ImportModule("semanticrolelabeler");
   if (semanticrolelabeler_module == NULL)
@@ -90,7 +90,7 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Create the semantic role labeller instance
   PyObject* instance = PyObject_CallMethod(semanticrolelabeler_module, "SemanticRoleLabeler", "[s]", "--log=debug");
   if (instance == NULL)
@@ -99,7 +99,7 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Run the semantic role labeller
   PyObject* callResult = PyObject_CallMethod(instance, "annotate", "s", text.c_str());
   if (callResult == NULL)
@@ -108,9 +108,9 @@ std::string text = "1	The	the	DET	DT	_	_	2	NMOD	_	_\n"
     PyErr_Print();
     Py_Exit(1);
   }
-  
+
   // Display the SRL result
-  char* result = PyUnicode_AsUTF8(callResult);
+  const char* result = PyUnicode_AsUTF8(callResult);
   if (result == NULL)
   {
     std::cerr << "Cannot convert result item to string" << std::endl;

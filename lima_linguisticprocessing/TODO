@@ -1,1 +1,8 @@
 See open enhancement issues on Github: https://github.com/aymara/lima/issues?labels=enhancement&page=1&state=open
+
+corriger les erreurs sur les tests tva. 
+Regarder en particulier les pb induits par la règle de protection des caractères speciaux regex.
+Quand faut-il l'appliquer, sur les règles?, sur les expressions?
+Regarder le cas d'erreur de compilation:
+Insulin-Like Growth Factor 1 (Somatomedin C)  changed to  Insulin-Like Growth Factor 1 \(Somatomedin C\) 
+Difficile à reproduire sur testTRe!!

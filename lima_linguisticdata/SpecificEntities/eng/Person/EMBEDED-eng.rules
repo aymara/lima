@@ -16,7 +16,7 @@ use ../Location/streetKey.lst
 # adresses
 # Manchester Road
 # On ne garde pas l'entité Location
-<Location>::@streetKey:ODO: 
+<Location>::@streetKey:ODO:
 =>AppendEntityFeature(trigger,"name")
 =>AddEntityFeature(right.1,"kind")
 =>NormalizeEntity()

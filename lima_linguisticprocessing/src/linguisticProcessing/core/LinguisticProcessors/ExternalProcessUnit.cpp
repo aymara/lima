@@ -17,12 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       ExternalProcessUnit.cpp
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Mon Jan 17 2011
- * copyright   Copyright (C) 2011 by CEA LIST (LVIC)
- *
  ***********************************************************************/
 
 #include "ExternalProcessUnit.h"

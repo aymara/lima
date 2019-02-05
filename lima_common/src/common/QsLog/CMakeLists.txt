@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -23,43 +23,45 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
 
 # add_definitions( -DLIMA_COMMONQSLOG_EXPORTING )
-# 
+#
 # ########### next target ###############
-# 
+#
 # set (lima-common-qslog_MOC_HEADERS
 #     QsLogCategories.h
 # )
-# 
-# 
+#
+#
 # qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
-# 
-# 
+#
+#
 # SET(lima-common-qslog_LIB_SRCS
 #     QsLog.cpp
 #     QsDebugOutput.cpp
 #     QsLogDest.cpp
 #     QsLogCategories.cpp
 #    )
-# 
+#
 # add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
-# target_link_libraries(lima-common-qslog 
+# target_link_libraries(lima-common-qslog
 #   lima-common-qslog
-#   ${QT_LIBRARIES}
+#   ${Qt5_LIBRARIES}
 # )
+# ADD_DLL_TO_PATH(lima-common-qslog)
+#
 # set_target_properties(lima-common-qslog PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 # install(TARGETS lima-common-qslog DESTINATION ${LIB_INSTALL_DIR})
 
 ########### next target ###############
 
-#SET(qslogger_SRCS
-#   main.cpp
-#)
+SET(qslogger_SRCS
+  main.cpp
+)
 
-#add_executable(qslogger ${qslogger_SRCS})
+add_executable(qslogger ${qslogger_SRCS})
 
-#target_link_libraries(qslogger lima-common-qslog ${QT_LIBRARIES} )
+target_link_libraries(qslogger lima-common)
 
-#install(TARGETS qslogger DESTINATION bin)
+install(TARGETS qslogger DESTINATION bin)
 
 
 ########### install files ###############

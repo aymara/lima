@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -24,7 +24,10 @@ SET(BagOfWordsTest0_SRCS
 
 add_executable(BagOfWordsTest0 ${BagOfWordsTest0_SRCS})
 
-target_link_libraries(BagOfWordsTest0 lima-linguisticprocessing)
+target_link_libraries(BagOfWordsTest0
+  lima-lp-bagofwords
+  Qt5::Test
+)
 
 add_test(NAME BagOfWordsTest0 COMMAND BagOfWordsTest0)
 
@@ -36,7 +39,10 @@ SET(BagOfWordsTest1_SRCS
 
 add_executable(BagOfWordsTest1 ${BagOfWordsTest1_SRCS})
 
-target_link_libraries(BagOfWordsTest1 lima-linguisticprocessing)
+target_link_libraries(BagOfWordsTest1
+  lima-lp-bagofwords
+  Qt5::Test
+)
 
 add_test(NAME BagOfWordsTest1 COMMAND BagOfWordsTest1)
 
@@ -44,11 +50,12 @@ add_test(NAME BagOfWordsTest1 COMMAND BagOfWordsTest1)
 
 SET(BagOfWordsTest2_SRCS BagOfWordsTest2.cpp)
 
-set (BagOfWordsTest2_MOC_HEADERS BagOfWordsTest2.h)
-qt5_wrap_cpp (BagOfWordsTest2_MOC_OUTFILES ${BagOfWordsTest2_MOC_HEADERS})
+add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS})
 
-add_executable(BagOfWordsTest2 ${BagOfWordsTest2_SRCS} ${BagOfWordsTest2_MOC_OUTFILES})
-target_link_libraries(BagOfWordsTest2 lima-linguisticprocessing)
+target_link_libraries(BagOfWordsTest2
+  lima-lp-bagofwords
+  Qt5::Test
+)
 
 add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
 
@@ -56,11 +63,12 @@ add_test(NAME BagOfWordsTest2 COMMAND BagOfWordsTest2)
 
 SET(BagOfWordsTest3_SRCS BagOfWordsTest3.cpp)
 
-set (BagOfWordsTest3_MOC_HEADERS BagOfWordsTest3.h)
-qt5_wrap_cpp (BagOfWordsTest3_MOC_OUTFILES ${BagOfWordsTest3_MOC_HEADERS})
+add_executable(BagOfWordsTest3 ${BagOfWordsTest3_SRCS})
 
-add_executable(BagOfWordsTest3 ${BagOfWordsTest3_SRCS} ${BagOfWordsTest3_MOC_OUTFILES})
-target_link_libraries(BagOfWordsTest3 lima-linguisticprocessing)
+target_link_libraries(BagOfWordsTest3
+  lima-lp-bagofwords
+  Qt5::Test
+)
 
 add_test(NAME BagOfWordsTest3 COMMAND BagOfWordsTest3)
 

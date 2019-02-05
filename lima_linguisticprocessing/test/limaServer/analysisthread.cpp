@@ -159,7 +159,9 @@ void AnalysisThread::startAnalysis()
     exitStatus=1;
   }
 
-  QString language, pipeline, textQS;
+  QString language;
+  QString pipeline ;
+  QString textQS;
   std::string text_s;
   QPair<QString, QString> item;
   std::map<std::string,std::string> metaData;
@@ -184,17 +186,17 @@ void AnalysisThread::startAnalysis()
       {
         language = item.second;
         metaData["Lang"]=language.toUtf8().data();
-        LDEBUG << "AnalysisThread::startAnalysis: " << "language=" << language;
+        LDEBUG << "AnalysisThread::startAnalysis: language=" << language;
       }
       if (item.first == "pipeline")
       {
         pipeline = item.second;
-        LDEBUG << "AnalysisThread::startAnalysis: " << "pipeline=" << pipeline;
+        LDEBUG << "AnalysisThread::startAnalysis: pipeline=" << pipeline;
       }
       if (item.first == "meta")
       {
         QString metadataValues= item.second;
-        LDEBUG << "AnalysisThread::startAnalysis: " << "meta=" << metadataValues;
+        LDEBUG << "AnalysisThread::startAnalysis: meta=" << metadataValues;
         std::string metaString = metadataValues.toStdString();
         std::string::size_type k=0;
         do {
@@ -236,14 +238,20 @@ void AnalysisThread::startAnalysis()
       m_d->m_response_body=QByteArray("Empty language");
       exitStatus=1;
     }
-    if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
+    else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
     {
       m_d->m_response_code = 400;
-      QString errorMessage = QString(tr("Language %1 is no initialized")).arg(language);
+      QString errorMessage = QString(tr("Language '%1' is not initialized")).arg(language);
       m_d->m_response_body=errorMessage.toUtf8();
       exitStatus=1;
     }
-    if( textQS.isEmpty() )
+    else if( pipeline.isEmpty() )
+    {
+      m_d->m_response_code = 400;
+      m_d->m_response_body=QByteArray("Empty pipeline");
+      exitStatus=1;
+    }
+    else if( textQS.isEmpty() )
     {
       m_d->m_response_code = 400;
       m_d->m_response_body=QByteArray("Empty text");
@@ -258,8 +266,12 @@ void AnalysisThread::startAnalysis()
       std::map<std::string, AbstractAnalysisHandler*> handlers;
       LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
       handlers.insert(std::make_pair("se", seLogWriter));
+      LinguisticProcessing::SimpleStreamHandler* simpleStreamHandler = new LinguisticProcessing::SimpleStreamHandler();
+      handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler));
+
       std::ostringstream* oss = new std::ostringstream();
       seLogWriter->setOut(oss);
+      simpleStreamHandler->setOut(oss);
 
       LDEBUG << "Analyzing" << language << textQS.mid(0,20) << "...";
       // std::ostringstream ots;

@@ -75,7 +75,7 @@ LimaConfiguration::LimaConfiguration(const QFileInfo& fileInfo,
   m_name(fileInfo.fileName()),
   m_path(fileInfo.absoluteFilePath())
 {
-  XMLConfigurationFileParser parser(m_path.toStdString());
+  XMLConfigurationFileParser parser(m_path);
   m_configuration = parser.getConfiguration();
 }
 

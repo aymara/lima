@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2014 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -166,13 +166,10 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   catch (NoSuchParam& ) {} // keep default value
   m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
 
-  QString timeCode = static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getLimaToLanguageCodeMappingValue("TIME");
-  m_d->m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
-  m_d->m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
-  
-  try 
-  {
+  m_d->m_timeManager=&codeManager.getPropertyManager("TIME");
+  m_d->m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
+
+  try {
     std::string resourcePath = Common::MediaticData::MediaticData::single().getResourcesPath();
     QString mappingFile =  findFileInPaths(resourcePath.c_str(), unitConfiguration.getParamsValueAtKey("mappingFile").c_str());
     std::ifstream ifs(mappingFile.toUtf8().constData(), std::ifstream::binary);
@@ -213,7 +210,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   const auto& managers = propertyCodeManager.getPropertyManagers();
 
   LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0) 
+  if (metadata == 0)
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process no LinguisticMetaData ! abort";
@@ -221,14 +218,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   }
 
   AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  if (annotationData == 0) 
+  if (annotationData == 0)
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process no AnnotationData ! abort";
     return MISSING_DATA;
   }
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));//est de type PosGraph et non pas AnalysisGraph
-  if (tokenList==0) 
+  if (tokenList==0)
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process graph " << m_d->m_graph << " has not been produced: check pipeline";
@@ -236,7 +233,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   }
   LinguisticGraph* graph=tokenList->getGraph();
   SegmentationData* sd=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  if (sd==0) 
+  if (sd==0)
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process no SentenceBoundaries! abort";
@@ -263,7 +260,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     LERROR << "ConllDumper::process 0 sentence to process";
     return SUCCESS_ID;
   }
-  
+
   std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
 #ifdef DEBUG_LP
   LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
@@ -420,7 +417,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process PosGraph token" << v;
 #endif
-      if( morphoData != 0 && !morphoData->empty() && ft != 0 && notDone)
+      if( morphoData != 0 && ft != 0 && ((!morphoData->empty()) || ft->length() > 0) && notDone )
       {
 #ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process PosGraph nb different LinguisticCode" 
@@ -555,15 +552,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         // 11  PDEPREL   Dependency relation to the PHEAD, or an underscore if not available. The set of dependency relations depends on the particular language. Note that depending on the original treebank annotation, the dependency relation may be meaningfull or simply 'ROOT'.
 
         QString targetConllIdString = targetConllId > 0 ? QString(QLatin1String("%1")).arg(targetConllId) : "_";
-        dstream->out()  << tokenId 
-                        << "\t" << inflectedToken 
-                        << "\t" << lemmatizedToken 
-//                         << "\t" << macro.toUtf8().constData()
-                        << "\t" << micro.toUtf8().constData() 
+        dstream->out()  << tokenId
+                        << "\t" << inflectedToken
+                        << "\t" << lemmatizedToken
+                        << "\t" << macro.toUtf8().constData()
+                        << "\t" << micro.toUtf8().constData()
                         << "\t" << neType.toUtf8().constData()
-                        << "\t" << features.toUtf8().constData()
-                        << "\t" << targetConllIdString.toUtf8().constData() 
-                        << "\t" << conllRelName.toUtf8().constData() 
+                        << "\t" << "_"
+                        << "\t" << targetConllIdString.toUtf8().constData()
+                        << "\t" << conllRelName.toUtf8().constData()
                         << "\t" << "_"
                         << "\t" << "_";
         if (!predicates.isEmpty())

@@ -27,19 +27,19 @@
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-  QsLogging::Categories::instance().configure( QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":qgetenv("LIMA_CONF").constData())+ "/log4cpp.properties");
+  QsLogging::initQsLog();
   int ret = 0;
   {
     // init the logging mechanism
     QsLogging::Logger& logger = QsLogging::Logger::instance("Zone");
     logger.setLoggingLevel(QsLogging::TraceLevel);
-    const QString sLogPath(QDir(a.applicationDirPath()).filePath("log.txt"));
+    const QString sLogPath(QDir(".").filePath("log.txt"));
     QsLogging::DestinationPtr fileDestination(
         QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
     QsLogging::DestinationPtr debugDestination(
         QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-    logger.addDestination(debugDestination.get());
-    logger.addDestination(fileDestination.get());
+    logger.addDestination(debugDestination);
+    logger.addDestination(fileDestination);
     //logger.setLoggingLevel(QsLogging::InfoLevel);
 
     QLOG_INFO() << "Program started";
