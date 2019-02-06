@@ -35,9 +35,7 @@ environment:
       PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
 
 configuration:
-#  - Debug
   - Release
-#  - RelWithDebInfo
 
 os: Visual Studio 2015
 #os: Visual Studio 2013
