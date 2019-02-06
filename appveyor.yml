@@ -23,21 +23,28 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
-      BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
-      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
-      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "64"
       BOOST_ROOT: 'C:\Libraries\boost_1_64_0'
       BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_64_0\lib64-msvc-14.0'
       PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
 
+   - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      BOOST_ROOT: 'C:\Libraries\boost_1_65_0'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_65_0\lib64-msvc-14.0'
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
+
+   - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      BOOST_ROOT: 'C:\Libraries\boost_1_65_0'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_65_0\lib64-msvc-14.0'
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
+
 configuration:
-  - Debug
+#  - Debug
   - Release
-  - RelWithDebInfo
+#  - RelWithDebInfo
 
 os: Visual Studio 2015
 #os: Visual Studio 2013
