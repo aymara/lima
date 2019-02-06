@@ -10,8 +10,8 @@ environment:
   LIMA_CONF: 'c:\b\execEnv\config'
   LIMA_RESOURCES: 'c:\b\execEnv\resources'
   Qt5_INSTALL_DIR: 'C:\Qt\5.11.2\msvc2015_64'
-  BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
+#  BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
+#  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
   PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
@@ -23,9 +23,21 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
+      BOOST_ROOT: 'C:\Libraries\boost_1_63_0'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_63_0\lib64-msvc-14.0'
       PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
 
-configuration: RelWithDebInfo
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      BOOST_ROOT: 'C:\Libraries\boost_1_64_0'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_64_0\lib64-msvc-14.0'
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
+
+configuration:
+  - Debug
+  - Release
+  - RelWithDebInfo
 
 os: Visual Studio 2015
 #os: Visual Studio 2013
