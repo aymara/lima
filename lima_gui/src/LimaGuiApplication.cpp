@@ -289,7 +289,7 @@ void LimaGuiApplication::analyze(const QString& content)
   }
 
   std::set<std::string> inactiveUnits;
-  try 
+  try
   {
     LDEBUG << "LimaGuiApplication::analyze" << m_pipeline << content;
     m_analyzer->analyze(content, metaData, m_pipeline.toStdString(), handlers, inactiveUnits);
@@ -638,6 +638,7 @@ void LimaGuiApplication::configure()
 
 QString LimaGuiApplication::highlightNamedEntities(const QString& text)
 {
+  LIMA_UNUSED(text);
   // text is raw conll
 //   auto entities = getNamedEntitiesFromConll(text.toStdString());
 //  std::string result = highlightNamedEntities()
