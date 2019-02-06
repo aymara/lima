@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -24,19 +24,27 @@ SET(LimaStringTest0_SRCS
 
 add_executable(LimaStringTest0 ${LimaStringTest0_SRCS})
 
-target_link_libraries(LimaStringTest0 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(LimaStringTest0
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME LimaStringTest0 COMMAND LimaStringTest0)
 
 ########### next test ###############
 
 SET(LimaStringTest1_SRCS
-   LimaStringTest1.cpp
+  LimaStringTest1.cpp
 )
 
 add_executable(LimaStringTest1 ${LimaStringTest1_SRCS})
 
-target_link_libraries(LimaStringTest1 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(LimaStringTest1
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME LimaStringTest1 COMMAND LimaStringTest1)
 
@@ -48,7 +56,11 @@ SET(LimaStringTest2_SRCS
 
 add_executable(LimaStringTest2 ${LimaStringTest2_SRCS})
 
-target_link_libraries(LimaStringTest2 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(LimaStringTest2
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME LimaStringTest2 COMMAND LimaStringTest2)
 
@@ -61,7 +73,11 @@ SET(LimaStringTest3_SRCS
 
 add_executable(LimaStringTest3 ${LimaStringTest3_SRCS})
 
-target_link_libraries(LimaStringTest3 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(LimaStringTest3
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME LimaStringTest3 COMMAND LimaStringTest3)
 
@@ -74,7 +90,11 @@ SET(ReadWriteTools1_SRCS
 
 add_executable(ReadWriteTools1 ${ReadWriteTools1_SRCS})
 
-target_link_libraries(ReadWriteTools1 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(ReadWriteTools1
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME ReadWriteTools1 COMMAND ReadWriteTools1)
 
@@ -86,7 +106,11 @@ SET(ReadWriteTools2_SRCS
 
 add_executable(ReadWriteTools2 ${ReadWriteTools2_SRCS})
 
-target_link_libraries(ReadWriteTools2 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(ReadWriteTools2
+   lima-common-misc
+   Boost::unit_test_framework
+   Qt5::Core
+)
 
 add_test(NAME ReadWriteTools2 COMMAND ReadWriteTools2)
 
@@ -95,15 +119,18 @@ add_test(NAME ReadWriteTools2 COMMAND ReadWriteTools2)
 # qt5_wrap_cpp (FileUtilsTest0_MOC_OUTFILES ${FileUtilsTest0_MOC_HEADERS})
 
 
-SET(FileUtilsTest0_SRCS 
+SET(FileUtilsTest0_SRCS
   FileUtilsTest.cpp
 )
 
 add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFILES})
 
-target_link_libraries(FileUtilsTest0 lima-common ${Boost_LIBRARIES} ${Qt5_LIBRARIES})
+target_link_libraries(FileUtilsTest0
+   lima-common-misc
+   Qt5::Core
+   Qt5::Test
+)
 
 add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0 -v2 -nocrashhandler)
 set_tests_properties(FileUtilsTest0 PROPERTIES ENVIRONMENT LIMA_CONF=${CMAKE_SOURCE_DIR}/conf)
-
 
