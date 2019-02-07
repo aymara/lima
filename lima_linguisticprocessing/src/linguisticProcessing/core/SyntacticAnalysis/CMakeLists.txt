@@ -51,7 +51,6 @@ target_link_libraries(lima-lp-syntacticanalysis
     lima-lp-automaton
     lima-lp-linguisticprocessors
     lima-lp-postagger
-    lima-lp-textsegmentation
 )
 
 set_target_properties(lima-lp-syntacticanalysis PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

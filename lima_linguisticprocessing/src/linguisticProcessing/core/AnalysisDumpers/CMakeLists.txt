@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
