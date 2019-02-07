@@ -45,6 +45,7 @@ DECLARE_LIMA_PLUGIN(lima-lp-semanticanalysis)
 target_link_libraries(lima-lp-semanticanalysis
     lima-lp-linguisticprocessors
     lima-lp-linguisticanalysisstructure
+    lima-lp-textsegmentation
     lima-lp-syntacticanalysis
     lima-lp-automaton
     ${optionalLibs}

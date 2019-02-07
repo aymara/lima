@@ -73,41 +73,11 @@ if (WIN32)
   target_link_libraries(lima
     lima-common-mediaticdata
     lima-common-xmlconfigurationfiles
-    lima-common-data
-    lima-common-factory
-    lima-common-misc
-    lima-lp-annotationgraph
-    lima-lp-lineartextrepresentation
-    lima-lp-misc
-    lima-lp-tgv
-    lima-lp-linguisticdata
-    lima-lp-bagofwords
-    lima-lp-propertycode
-    lima-lp-regexmatcher
-    lima-lp-wordsensetagger
-    lima-lp-linguisticprocessing-core
-    lima-lp-analysisdict
-    lima-lp-eventanalyzer
-    lima-lp-corefsolver
-    lima-lp-specificentities
-    lima-lp-syntacticanalysis
-    lima-lp-morphologicanalysis
-    lima-lp-dictionary
-    lima-lp-easyxmldumper
-    lima-lp-analysisdumpers
-    lima-lp-textsegmentation
-    lima-lp-linguisticanalysisstructure
-    lima-lp-semanticanalysis
-    lima-lp-linguisticresources
-    lima-lp-entitytracker
-    lima-lp-flattokenizer
-    lima-lp-applyrecognizer
-    lima-lp-linguisticprocessors
-    lima-lp-postagger
-    lima-lp-automaton
-    lima-lp-analysishandlers
     lima-lp-client
-    #${Qt5_LIBRARIES}
+    lima-lp-analysishandlers
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
     Qt5::WinMain
   )
   include(DeployQt.cmake)
