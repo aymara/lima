@@ -33,6 +33,7 @@ ADD_DLL_TO_PATH(lima-lp-misc)
 target_link_libraries(lima-lp-misc
   lima-common-factory
   lima-common-xmlconfigurationfiles
+  lima-common-mediaprocessors
 )
 
 set_target_properties(lima-lp-misc PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

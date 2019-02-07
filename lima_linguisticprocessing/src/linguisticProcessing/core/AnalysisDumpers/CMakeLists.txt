@@ -51,6 +51,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-linguisticprocessors
   lima-lp-annotationgraph
   lima-lp-syntacticanalysis
+  lima-lp-semanticanalysis
   lima-lp-textsegmentation
 )
 
