@@ -26,6 +26,7 @@ add_executable(BagOfWordsTest0 ${BagOfWordsTest0_SRCS})
 
 target_link_libraries(BagOfWordsTest0
   lima-lp-bagofwords
+  Boost::unit_test_framework
   Qt5::Test
 )
 
@@ -41,6 +42,7 @@ add_executable(BagOfWordsTest1 ${BagOfWordsTest1_SRCS})
 
 target_link_libraries(BagOfWordsTest1
   lima-lp-bagofwords
+  Boost::unit_test_framework
   Qt5::Test
 )
 

@@ -61,7 +61,7 @@ target_link_libraries(lima-linguisticprocessing
   lima-lp-automaton
   lima-lp-analysishandlers
   lima-lp-client
-  lima-common
+  Boost::thread
 )
 
 # if (TensorFlow_FOUND)

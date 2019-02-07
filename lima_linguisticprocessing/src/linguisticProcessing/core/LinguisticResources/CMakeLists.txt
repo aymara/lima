@@ -32,17 +32,7 @@ ADD_DLL_TO_PATH(lima-lp-linguisticresources)
 
 
 target_link_libraries(lima-lp-linguisticresources
-  lima-common-mediaprocessors
   lima-common-mediaticdata
-  lima-common-processunitframework
-  lima-common-fsaaccess
-  lima-common-factory
-  lima-common-xmlconfigurationfiles
-  lima-common-misc
-  lima-common-time
-  lima-common-datahandler
-  lima-common-data
-  lima-common-tools
 )
 
 set_target_properties(lima-lp-linguisticresources PROPERTIES

@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -29,7 +29,9 @@ SET(lima-lp-entitytracker_LIB_SRCS CoreferenceEngine.cpp
 
 DECLARE_LIMA_PLUGIN(lima-lp-entitytracker)
 
-target_link_libraries(lima-lp-entitytracker lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph  lima-lp-linguisticanalysisstructure lima-lp-textsegmentation lima-lp-syntacticanalysis lima-lp-automaton
+target_link_libraries(lima-lp-entitytracker
+   lima-lp-linguisticprocessors
+   lima-lp-linguisticanalysisstructure
 )
 
 set_target_properties(lima-lp-entitytracker PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

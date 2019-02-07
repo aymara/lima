@@ -21,9 +21,9 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/test ${CM
 # endforeach()
 
 SET(limaserver_SRCS
-   LimaServer.cpp
-   main.cpp
-   analysisthread.cpp
+  LimaServer.cpp
+  main.cpp
+  analysisthread.cpp
 )
 
 # qt5_add_resources(limaserver amoseserver.qrc)
@@ -32,13 +32,14 @@ SET(limaserver_SRCS
 add_executable(limaserver ${limaserver_SRCS})
 
 target_link_libraries(limaserver
-    lima-common
-    lima-linguisticprocessing
-    ${QHTTPSERVERCPP_LIBRARY}
-    ${Qt5_LIBRARIES}
-    ${Boost_LIBRARIES})
+  lima-common
+  lima-linguisticprocessing
+  ${QHTTPSERVERCPP_LIBRARY}
+  ${Qt5_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
-install(TARGETS limaserver 
+install(TARGETS limaserver
   DESTINATION bin
   COMPONENT runtime)
 
@@ -63,40 +64,42 @@ if (NOT Qt5DBus_FOUND)
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
 
-SET(limadbusserver_SRCS
-  LimaDBusServer.cpp
-  mainLimaDBusServer.cpp
-  AnalysisWrapper.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
-)
+  SET(limadbusserver_SRCS
+    LimaDBusServer.cpp
+    mainLimaDBusServer.cpp
+    AnalysisWrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+  )
 
-set (limadbusserver_MOC_HEADERS
+  SET(limadbusserver_MOC_HEADERS
     LimaDBusServer.h
     AnalysisWrapper.h
-    )
+  )
 
-qt5_generate_dbus_interface(
+  qt5_generate_dbus_interface(
     LimaDBusServer.h
     fr.cea.limadbusserver.xml
     OPTIONS -a -M
-)
-# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
+  )
+  # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
-qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
-                     LimaDBusServer.h LimaDBusServer)
-# qt5_add_resources(limadbusserver amoseserver.qrc)
+  qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+                       LimaDBusServer.h LimaDBusServer)
+  # qt5_add_resources(limadbusserver amoseserver.qrc)
 
-# add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
-add_executable(limadbusserver ${limadbusserver_SRCS})
+  # add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
+  add_executable(limadbusserver ${limadbusserver_SRCS})
 
-target_link_libraries(limadbusserver
+  target_link_libraries(limadbusserver
     lima-common
     lima-linguisticprocessing
     ${Boost_LIBRARIES}
     ${Qt5_LIBRARIES}
-    ${QHTTPSERVERCPP_LIBRARY})
+    ${QHTTPSERVERCPP_LIBRARY}
+  )
 
-install(TARGETS limadbusserver 
-  DESTINATION bin
-  COMPONENT runtime)
+  install(TARGETS limadbusserver
+    DESTINATION bin
+    COMPONENT runtime)
+
 endif()

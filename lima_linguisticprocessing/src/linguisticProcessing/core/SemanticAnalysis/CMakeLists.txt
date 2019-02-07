@@ -43,25 +43,10 @@ DECLARE_LIMA_PLUGIN(lima-lp-semanticanalysis)
 
 
 target_link_libraries(lima-lp-semanticanalysis
-    lima-common-factory
-    lima-common-misc
-    lima-common-data
-    lima-common-fsaaccess
-    lima-common-mediaticdata
-    lima-common-time
-    lima-common-factory
-    lima-common-xmlconfigurationfiles
-    lima-common-processunitframework
-    lima-common-mediaprocessors
     lima-lp-linguisticprocessors
-    lima-lp-linguisticresources
-    lima-lp-annotationgraph
     lima-lp-linguisticanalysisstructure
-    lima-lp-textsegmentation
     lima-lp-syntacticanalysis
     lima-lp-automaton
-    lima-lp-applyrecognizer
-#     lima-lp-analysisdumpers
     ${optionalLibs}
 )
 

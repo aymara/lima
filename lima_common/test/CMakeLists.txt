@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -37,9 +37,8 @@ SET(testDict16_SRCS
 add_executable(testDict16 ${testDict16_SRCS})
 
 target_link_libraries(testDict16
-  lima-common
-  ${Boost_LIBRARIES}
-  ${Qt5_LIBRARIES}
+  lima-common-fsaaccess
+  lima-common-time
 )
 
 install(TARGETS testDict16 DESTINATION bin)
@@ -55,9 +54,7 @@ add_executable(testLexicon ${testLexicon_SRCS})
 message("Qt5_LIBRARIES are ${Qt5_LIBRARIES}")
 
 target_link_libraries(testLexicon
-  lima-common
-  ${Boost_LIBRARIES}
-  ${Qt5_LIBRARIES}
+  lima-common-fsaaccess
 )
 
 install(TARGETS testLexicon DESTINATION bin
@@ -72,10 +69,9 @@ SET(testAccessMethod_SRCS
 
 add_executable(testAccessMethod ${testAccessMethod_SRCS})
 
-target_link_libraries(testAccessMethod 
-  lima-common
-  ${Boost_LIBRARIES}
-  ${Qt5_LIBRARIES}
+target_link_libraries(testAccessMethod
+  lima-common-factory
+  lima-common-fsaaccess
   ${optionalLibs}
 )
 
@@ -90,10 +86,9 @@ SET(parseXMLFile_SRCS
 
 add_executable(parseXMLFile ${parseXMLFile_SRCS})
 
-target_link_libraries(parseXMLFile 
-  lima-common
-  ${Boost_LIBRARIES} 
-  ${Qt5_LIBRARIES} 
+target_link_libraries(parseXMLFile
+  lima-common-factory
+  lima-common-xmlconfigurationfiles
   ${optionalLibs}
 )
 
@@ -108,12 +103,11 @@ SET(testAbstractFactoryPattern_SRCS
 
 add_executable(testAbstractFactoryPattern ${testAbstractFactoryPattern_SRCS})
 
-target_link_libraries(testAbstractFactoryPattern 
-  lima-common
-  ${Boost_LIBRARIES} 
-  ${Qt5_LIBRARIES} 
+target_link_libraries(testAbstractFactoryPattern
+  lima-common-factory
+  lima-common-xmlconfigurationfiles
   ${optionalLibs}
-  )
+)
 
 install(TARGETS testAbstractFactoryPattern DESTINATION bin
     COMPONENT runtime)
@@ -126,10 +120,10 @@ SET(testProcessUnitFramework_SRCS
 
 add_executable(testProcessUnitFramework ${testProcessUnitFramework_SRCS})
 
-target_link_libraries(testProcessUnitFramework 
-  lima-common
-  ${Boost_LIBRARIES} 
-  ${Qt5_LIBRARIES} 
+target_link_libraries(testProcessUnitFramework
+  lima-common-factory
+  lima-common-processunitframework
+  lima-common-xmlconfigurationfiles
   ${optionalLibs}
 )
 

@@ -26,9 +26,8 @@ add_executable(AnnotationGraphTest0 ${AnnotationGraphTest0_SRCS})
 
 target_link_libraries(AnnotationGraphTest0
   lima-common-data
-  lima-common-tools
   lima-lp-annotationgraph
-  ${Boost_LIBRARIES}
+  Boost::unit_test_framework
 )
 
 add_test(NAME AnnotationGraphTest0 COMMAND AnnotationGraphTest0)

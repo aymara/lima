@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -22,13 +22,13 @@ add_definitions(-DLIMA_EVENTANALISYS_EXPORTING)
 ########### next target ###############
 
 SET(lima-lp-eventanalyzer_LIB_SRCS EventDataDumper.cpp
-  Entity.cpp 
-  Event.cpp 
-  Events.cpp 
-  EventAnalyzer.cpp 
-  EventDumper.cpp 
-  EventHandler.cpp 
-  EventParagraph.cpp 
+  Entity.cpp
+  Event.cpp
+  Events.cpp
+  EventAnalyzer.cpp
+  EventDumper.cpp
+  EventHandler.cpp
+  EventParagraph.cpp
   Paragraph.cpp
   EventXmlLogger.cpp
   EventSegmentation.cpp
@@ -49,23 +49,11 @@ SET(lima-lp-eventanalyzer_LIB_SRCS EventDataDumper.cpp
 DECLARE_LIMA_PLUGIN(lima-lp-eventanalyzer)
 
 target_link_libraries(lima-lp-eventanalyzer
-  lima-common-factory
-  lima-common-misc
-  lima-common-data
-  lima-common-fsaaccess
-  lima-common-mediaticdata
   lima-common-time
   lima-common-xmlconfigurationfiles
-  lima-common-processunitframework
-  lima-common-mediaprocessors
   lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
-  lima-lp-annotationgraph
-  lima-lp-linguisticanalysisstructure
   lima-lp-textsegmentation
-  lima-lp-syntacticanalysis
   lima-lp-automaton
-  lima-lp-analysishandlers
   lima-lp-applyrecognizer
 )
 

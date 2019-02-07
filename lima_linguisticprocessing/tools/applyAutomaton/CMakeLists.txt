@@ -22,7 +22,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/. ${CMAKE_SOURCE_DIR}/src ${CMAKE
 SET(apply-rules_SRCS
   lima-lp-applyrecognizer.cpp
   apply-rules.cpp
-  )
+)
 
 add_executable(apply-rules ${apply-rules_SRCS})
 
@@ -55,12 +55,10 @@ target_link_libraries(apply-rules
   lima-common-fsaaccess
   lima-common-processunitframework
   lima-common-xmlconfigurationfiles
-  lima-common-tools
   ${optionalLibs}
 )
 
 install(TARGETS apply-rules DESTINATION bin
   COMPONENT runtime)
-
 
 ########### install files ###############

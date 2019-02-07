@@ -14,19 +14,19 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 include_directories(${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
 
 SET(XmlParser_SRCS
-   preprocessCorpus.cpp
+  preprocessCorpus.cpp
 )
 
 add_executable(XmlParser ${XmlParser_SRCS})
 
 target_link_libraries(XmlParser
   lima-common-misc
-  lima-common-tools
   lima-common-time
   lima-common-data
   Boost::regex
@@ -36,22 +36,20 @@ target_link_libraries(XmlParser
 install(TARGETS XmlParser DESTINATION bin
   COMPONENT runtime)
 
-
 ########### next target ###############
 
 SET(evalCoref_SRCS
-   evalCoref.cpp
+  evalCoref.cpp
 )
 
 add_executable(evalCoref ${evalCoref_SRCS})
 
 target_link_libraries(evalCoref
-  lima-common
+  Qt5::Core
   Boost::regex
 )
 
 install(TARGETS evalCoref DESTINATION bin
   COMPONENT runtime)
-
 
 ########### install files ###############

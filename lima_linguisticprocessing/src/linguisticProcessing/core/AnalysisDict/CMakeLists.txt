@@ -41,7 +41,6 @@ add_library(lima-lp-analysisdict SHARED ${lima-lp-analysisdict_LIB_SRCS})
 target_link_libraries(lima-lp-analysisdict
   lima-lp-flattokenizer
   lima-lp-linguisticresources
-  lima-common
 )
 
 ADD_DLL_TO_PATH(lima-lp-analysisdict)

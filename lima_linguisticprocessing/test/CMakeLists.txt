@@ -19,7 +19,7 @@ include_directories($ENV{LIMA_EXTERNALS}}/include)
 add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
-add_subdirectory(limaServer)
+  add_subdirectory(limaServer)
 endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
@@ -46,7 +46,6 @@ target_link_libraries(analyzeText
   lima-lp-linguisticprocessing-core
   lima-lp-bagofwords
   lima-lp-eventanalyzer
-  lima-common
   Boost::program_options
 )
 
@@ -56,13 +55,13 @@ install(TARGETS analyzeText
 
  ########### next target ###############
 
-
 add_executable(limasimple-analyze limasimple-analyze.cpp)
 MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 
 target_link_libraries(limasimple-analyze
-  lima-linguisticprocessing
+  lima-linguisticprocessing # this is really necessary
+  Boost::program_options
 )
 
 install(TARGETS limasimple-analyze DESTINATION bin
@@ -77,7 +76,7 @@ if (${PYTHONLIBS_FOUND})
   add_executable(srl ${srl_SRCS})
   target_link_libraries(srl
       ${PYTHON_LIBRARIES}
-      ${Qt5_LIBRARIES}
+      lima-common-tools
   )
 
   install(TARGETS srl DESTINATION bin)
@@ -100,7 +99,6 @@ endif()
 #
 # install(TARGETS threadedAnalyzeText DESTINATION bin)
 
-
 ########### next target ###############
 
 SET(analyzetextservercore_SRCS
@@ -109,11 +107,12 @@ SET(analyzetextservercore_SRCS
 
 add_executable(analyzetextservercore ${analyzetextservercore_SRCS})
 
-target_link_libraries(analyzetextservercore lima-linguisticprocessing)
+target_link_libraries(analyzetextservercore
+  lima-linguisticprocessing
+)
 
 install(TARGETS analyzetextservercore
   DESTINATION bin
   COMPONENT runtime)
-
 
 ########### install files ###############

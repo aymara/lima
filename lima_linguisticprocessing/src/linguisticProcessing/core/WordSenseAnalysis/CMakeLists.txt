@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_WORDSENSEANALYSIS_EXPORTING)
 
 ########### next target ###############
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra  -Wall -Wno-return-type -g  ")  
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall -g  ")  
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra  -Wall -Wno-return-type -g  ")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall -g  ")
 
 
 SET(lima-lp-wordsensetagger_LIB_SRCS
@@ -37,15 +37,9 @@ SET(lima-lp-wordsensetagger_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-wordsensetagger)
 
 target_link_libraries(lima-lp-wordsensetagger
-  lima-common
   lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
   lima-lp-annotationgraph
-  lima-lp-linguisticanalysisstructure
-  lima-lp-textsegmentation
   lima-lp-syntacticanalysis
-  lima-lp-automaton
-  lima-lp-applyrecognizer
 )
 
 set_target_properties(lima-lp-wordsensetagger PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

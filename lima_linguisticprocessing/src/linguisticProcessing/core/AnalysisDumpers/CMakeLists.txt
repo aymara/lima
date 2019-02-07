@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -49,15 +49,9 @@ DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
 
 target_link_libraries(lima-lp-analysisdumpers
   lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
   lima-lp-annotationgraph
   lima-lp-syntacticanalysis
-  lima-lp-bagofwords
-  lima-lp-linguisticanalysisstructure
-  lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
-  lima-lp-semanticanalysis
-  lima-common
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

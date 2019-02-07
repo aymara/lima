@@ -25,7 +25,8 @@ SET(testTgv_SRCS
 add_executable(testTgv ${testTgv_SRCS})
 
 target_link_libraries(testTgv
-  lima-linguisticprocessing
+  lima-common-xmlconfigurationfiles
+  lima-lp-tgv
   ${optionalLibs}
 )
 
@@ -40,8 +41,9 @@ SET(catBowFiles_SRCS
 add_executable(catBowFiles ${catBowFiles_SRCS})
 
 target_link_libraries(catBowFiles
-  lima-linguisticprocessing
-  ${optionalLibs})
+  lima-lp-bagofwords
+  ${optionalLibs}
+)
 
 install(TARGETS catBowFiles DESTINATION bin
   COMPONENT runtime)
@@ -55,7 +57,7 @@ SET(readBowFile_SRCS
 add_executable(readBowFile ${readBowFile_SRCS})
 
 target_link_libraries(readBowFile
-  lima-linguisticprocessing
+  lima-lp-bagofwords
   ${optionalLibs}
 )
 
@@ -71,7 +73,8 @@ SET(readLtrFile_SRCS
 add_executable(readLtrFile ${readLtrFile_SRCS})
 
 target_link_libraries(readLtrFile
-  lima-linguisticprocessing
+  lima-lp-lineartextrepresentation
+  Boost::program_options
   ${optionalLibs}
 )
 
@@ -87,7 +90,7 @@ SET(getLexiconFromBoW_SRCS
 add_executable(getLexiconFromBoW ${getLexiconFromBoW_SRCS})
 
 target_link_libraries(getLexiconFromBoW
-  lima-linguisticprocessing
+  lima-lp-bagofwords
   ${optionalLibs}
 )
 
@@ -103,7 +106,7 @@ SET(parseXMLPropertyFile_SRCS
 add_executable(parseXMLPropertyFile ${parseXMLPropertyFile_SRCS})
 
 target_link_libraries(parseXMLPropertyFile
-  lima-linguisticprocessing
+  lima-lp-propertycode
   ${optionalLibs}
 )
 
@@ -119,9 +122,8 @@ SET(convertSymbolicCodes_SRCS
 add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 
 target_link_libraries(convertSymbolicCodes
-  lima-lp-propertycode
   lima-common-factory
-  lima-common-tools
+  lima-lp-propertycode
   ${optionalLibs}
 )
 
@@ -137,7 +139,8 @@ SET(readLinguisticData_SRCS
 add_executable(readLinguisticData ${readLinguisticData_SRCS})
 
 target_link_libraries(readLinguisticData
-  lima-linguisticprocessing
+  lima-common-factory
+  lima-common-mediaticdata
   ${optionalLibs}
 )
 
@@ -154,7 +157,8 @@ SET(testContentDict16_SRCS
 add_executable(testContentDict16 ${testContentDict16_SRCS})
 
 target_link_libraries(testContentDict16
-  lima-linguisticprocessing
+  lima-common-factory
+  lima-common-fsaaccess
   ${optionalLibs}
 )
 
@@ -171,7 +175,7 @@ SET(convertXmlToSBoW_SRCS
 add_executable(convertXmlToSBoW ${convertXmlToSBoW_SRCS})
 
 target_link_libraries(convertXmlToSBoW
-  lima-linguisticprocessing
+  lima-lp-bagofwords
   ${optionalLibs}
 )
 
@@ -187,7 +191,9 @@ SET(buildCompoundsDict_SRCS
 add_executable(buildCompoundsDict ${buildCompoundsDict_SRCS})
 
 target_link_libraries(buildCompoundsDict
-  lima-linguisticprocessing
+  lima-common-factory
+  lima-common-fsaaccess
+  Boost::program_options
   ${optionalLibs}
 )
 
@@ -203,7 +209,8 @@ SET(testReadLexicon_SRCS
 add_executable(testReadLexicon ${testReadLexicon_SRCS})
 
 target_link_libraries(testReadLexicon
-  lima-linguisticprocessing
+  lima-common-factory
+  lima-common-fsaaccess
   ${optionalLibs}
 )
 
@@ -219,7 +226,9 @@ SET(testPropManager_SRCS
 add_executable(testPropManager ${testPropManager_SRCS})
 
 target_link_libraries(testPropManager
-  lima-linguisticprocessing
+  lima-common-mediaticdata
+  lima-lp-propertycode
+  lima-lp-linguisticdata
   ${optionalLibs}
 )
 

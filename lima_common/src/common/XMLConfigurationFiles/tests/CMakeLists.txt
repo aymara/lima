@@ -12,15 +12,13 @@ SET(XMLConfigurationFilesTest0_SRCS
 
 add_executable(XMLConfigurationFilesTest0 ${XMLConfigurationFilesTest0_SRCS})
 
-target_link_libraries(XMLConfigurationFilesTest0 
-  lima-common
-  lima-common-xmlconfigurationfiles 
-  ${Boost_LIBRARIES} 
-  ${Qt5_LIBRARIES}
+target_link_libraries(XMLConfigurationFilesTest0
+  lima-common-xmlconfigurationfiles
+  Boost::unit_test_framework
 )
 
 add_test(
-  NAME XMLConfigurationFilesTest0 
+  NAME XMLConfigurationFilesTest0
   COMMAND XMLConfigurationFilesTest0
 )
 
