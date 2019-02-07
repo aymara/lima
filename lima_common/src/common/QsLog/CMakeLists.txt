@@ -59,7 +59,9 @@ SET(qslogger_SRCS
 
 add_executable(qslogger ${qslogger_SRCS})
 
-target_link_libraries(qslogger lima-common)
+target_link_libraries(qslogger
+  lima-common-tools
+)
 
 install(TARGETS qslogger DESTINATION bin)
 

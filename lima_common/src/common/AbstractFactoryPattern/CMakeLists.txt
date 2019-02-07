@@ -27,7 +27,11 @@ SET(lima-common-factory_LIB_SRCS
 
 add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
-target_link_libraries(lima-common-factory lima-common-tools ${Boost_LIBRARIES})
+target_link_libraries(lima-common-factory
+   lima-common-tools
+   Boost::system
+   Boost::filesystem
+)
 
 ADD_DLL_TO_PATH(lima-common-factory)
 

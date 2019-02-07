@@ -22,9 +22,7 @@ SET(EnhancedAnalysisDictionaryTest0_SRCS
 
 add_executable(EnhancedAnalysisDictionaryTest0 ${EnhancedAnalysisDictionaryTest0_SRCS})
 
-target_link_libraries(EnhancedAnalysisDictionaryTest0
-  lima-common
-)
+target_link_libraries(EnhancedAnalysisDictionaryTest0)
 
 add_test(NAME EnhancedAnalysisDictionaryTest0 COMMAND EnhancedAnalysisDictionaryTest0)
 
@@ -51,7 +49,7 @@ SET(EnhancedAnalysisDictionaryTest1_SRCS
 
 add_executable(EnhancedAnalysisDictionaryTest1 ${EnhancedAnalysisDictionaryTest1_SRCS})
 
-target_link_libraries(EnhancedAnalysisDictionaryTest1 lima-linguisticprocessing)
+target_link_libraries(EnhancedAnalysisDictionaryTest1)
 
 add_test(NAME EnhancedAnalysisDictionaryTest1 COMMAND EnhancedAnalysisDictionaryTest1)
 
@@ -75,7 +73,7 @@ SET(DictionaryDataTest1_SRCS
 
 add_executable(DictionaryDataTest1 ${DictionaryDataTest1_SRCS})
 
-target_link_libraries(DictionaryDataTest1 lima-linguisticprocessing)
+target_link_libraries(DictionaryDataTest1)
 
 add_test(NAME DictionaryDataTest1 COMMAND DictionaryDataTest1)
 

@@ -68,7 +68,7 @@ SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_M
 
 add_definitions(-D QT_NO_KEYWORDS)
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
-addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns Network)
+addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns)
 
 include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
 

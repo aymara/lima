@@ -1,4 +1,4 @@
-# Copyright 2002-2019 CEA LIST
+# Copyright 2002-2020 CEA LIST
 #
 # This file is part of LIMA.
 #
@@ -51,6 +51,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions(-DLIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORTING)
 
 ########### next target ###############
+
 SET(lima-lp-linguisticprocessing-core_LIB_SRCS
   CoreLinguisticProcessingClient.cpp
 )
@@ -58,15 +59,9 @@ SET(lima-lp-linguisticprocessing-core_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessing-core)
 
 target_link_libraries(lima-lp-linguisticprocessing-core
-  lima-common-factory
   lima-common-misc
-  lima-common-data
-  lima-common-mediaticdata
-  lima-common-processunitframework
-  lima-common-xmlconfigurationfiles
-  lima-common-mediaprocessors
+  lima-common-time
   lima-lp-linguisticprocessors
-  lima-lp-linguisticresources
   lima-lp-client
 )
 
@@ -84,4 +79,3 @@ install(FILES
   DESTINATION include/linguisticProcessing/core
   COMPONENT devel
 )
-

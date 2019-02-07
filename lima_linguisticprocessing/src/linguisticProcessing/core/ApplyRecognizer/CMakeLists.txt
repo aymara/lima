@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -28,7 +28,10 @@ SET(lima-lp-applyrecognizer_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-applyrecognizer)
 
-target_link_libraries(lima-lp-applyrecognizer lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-automaton lima-lp-textsegmentation lima-lp-linguisticanalysisstructure
+target_link_libraries(lima-lp-applyrecognizer
+   lima-lp-linguisticprocessors
+   lima-lp-annotationgraph
+   lima-lp-automaton
 )
 
 set_target_properties(lima-lp-applyrecognizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

@@ -44,7 +44,6 @@ target_link_libraries(lima-lp-analysishandlers
   lima-lp-linguisticresources
   lima-lp-lineartextrepresentation
   lima-lp-bagofwords
-  lima-common
 )
 
 set_target_properties(lima-lp-analysishandlers PROPERTIES

@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -33,8 +33,9 @@ SET(lima-lp-postagger_LIB_SRCS
    PerlSvmToolPosTagger.cpp
 )
 
-set(lima-lp-postagger_LIB_LINK
-   lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure  ${Boost_LIBRARIES}
+SET(lima-lp-postagger_LIB_LINK
+   lima-lp-linguisticprocessors
+   Boost::regex
 )
 
 if(SVMTOOL++_FOUND)
@@ -52,7 +53,9 @@ endif()
 
 DECLARE_LIMA_PLUGIN(lima-lp-postagger)
 
-target_link_libraries(lima-lp-postagger  ${lima-lp-postagger_LIB_LINK})
+target_link_libraries(lima-lp-postagger
+  ${lima-lp-postagger_LIB_LINK}
+)
 
 
 set_target_properties(lima-lp-postagger PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

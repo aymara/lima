@@ -39,7 +39,6 @@ target_link_libraries(lima-lp-specificentities
   lima-lp-automaton
   lima-lp-linguisticanalysisstructure
   lima-lp-syntacticanalysis
-  lima-common
 )
 
 set_target_properties(lima-lp-specificentities PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -57,7 +56,9 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-datetime)
 
 target_compile_definitions(lima-lp-se-datetime PRIVATE "-DLIMA_SPECIFICENTITIES_DATETIME_EXPORTING")
 
-target_link_libraries(lima-lp-se-datetime lima-lp-specificentities lima-common)
+target_link_libraries(lima-lp-se-datetime
+  lima-lp-specificentities
+)
 
 set_target_properties(lima-lp-se-datetime PROPERTIES
     VERSION ${LIMA_LP_LIB_VERSION}
@@ -74,7 +75,9 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-number)
 
 target_compile_definitions(lima-lp-se-number PRIVATE "-DLIMA_SPECIFICENTITIES_NUMBER_EXPORTING")
 
-target_link_libraries(lima-lp-se-number lima-lp-specificentities lima-common)
+target_link_libraries(lima-lp-se-number
+  lima-lp-specificentities
+)
 
 set_target_properties(lima-lp-se-number PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
@@ -90,7 +93,10 @@ DECLARE_LIMA_PLUGIN(lima-lp-se-person)
 
 target_compile_definitions(lima-lp-se-person PRIVATE "-DLIMA_SPECIFICENTITIES_PERSON_EXPORTING")
 
-target_link_libraries(lima-lp-se-person lima-lp-specificentities lima-common)
+target_link_libraries(lima-lp-se-person
+  lima-lp-specificentities
+)
+
 set_target_properties(lima-lp-se-person PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
 install(TARGETS lima-lp-se-person DESTINATION ${LIB_INSTALL_DIR}

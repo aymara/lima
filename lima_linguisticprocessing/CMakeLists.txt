@@ -41,12 +41,9 @@ enable_testing()
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 message("System name is ${CMAKE_SYSTEM_NAME}")
 
-# include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
-
 SET(optionalLibs)
 
-# include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Xml XmlPatterns Network Test)
+addQt5Modules(Core Xml XmlPatterns Test)
 
 # Search Qt5 optional components
 find_package(Qt5 COMPONENTS DBus)
@@ -54,16 +51,13 @@ if (Qt5DBus_FOUND)
   addQt5Modules(DBus)
 endif()
 
-get_target_property(QtNetwork_location Qt5::Network LOCATION)
 get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES ${QtNetwork_location}
-                ${QtXmlPatterns_location}
+  install(FILES ${QtXmlPatterns_location}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
     ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-    ${QtNetwork_location}
     ${QtXmlPatterns_location})
 endif ()
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")

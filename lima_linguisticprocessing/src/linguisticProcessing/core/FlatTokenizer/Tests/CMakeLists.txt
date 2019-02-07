@@ -20,7 +20,7 @@
 ########### next test ###############
 
 SET(CharChartTest0_SRCS
-   CharChartTest0.cpp
+  CharChartTest0.cpp
 )
 
 add_custom_target(
@@ -35,6 +35,7 @@ add_executable(CharChartTest0 ${CharChartTest0_SRCS})
 
 target_link_libraries(CharChartTest0
   lima-lp-flattokenizer
+  Boost::unit_test_framework
 )
 
 add_test(NAME CharChartTest0 COMMAND CharChartTest0 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -42,7 +43,7 @@ add_test(NAME CharChartTest0 COMMAND CharChartTest0 WORKING_DIRECTORY ${CMAKE_CU
 ########### next test ###############
 
 SET(CharChartTestAra_SRCS
-   CharChartTest-ara.cpp
+  CharChartTest-ara.cpp
 )
 
 add_custom_target(
@@ -57,6 +58,7 @@ add_executable(CharChartTestAra ${CharChartTestAra_SRCS})
 
 target_link_libraries(CharChartTestAra
   lima-lp-flattokenizer
+  Boost::unit_test_framework
 )
 
 add_test(NAME CharChartTestAra COMMAND CharChartTestAra WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

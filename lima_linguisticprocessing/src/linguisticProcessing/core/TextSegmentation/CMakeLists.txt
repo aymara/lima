@@ -41,7 +41,6 @@ target_link_libraries(lima-lp-textsegmentation
   lima-lp-linguisticresources
   lima-lp-annotationgraph
   lima-lp-linguisticanalysisstructure
-  lima-common
 )
 
 set_target_properties(lima-lp-textsegmentation PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

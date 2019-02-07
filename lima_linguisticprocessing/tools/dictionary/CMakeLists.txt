@@ -26,7 +26,8 @@ SET(sortutf16_SRCS
 add_executable(sortutf16 ${sortutf16_SRCS})
 
 target_link_libraries(sortutf16
-  lima-common
+  lima-common-factory
+  lima-common-misc
 )
 
 install(TARGETS sortutf16 DESTINATION bin
@@ -45,7 +46,6 @@ add_executable(composedDict ${composedDict_SRCS})
 target_link_libraries(composedDict
   lima-lp-analysisdict
   lima-lp-linguisticresources
-  lima-common
 )
 
 install(TARGETS composedDict DESTINATION bin
@@ -64,7 +64,6 @@ add_executable(compile-dictionary ${compile-dictionary_SRCS})
 
 target_link_libraries(compile-dictionary
   lima-lp-flattokenizer
-  lima-common
 )
 
 install(TARGETS compile-dictionary DESTINATION bin
@@ -81,7 +80,6 @@ add_executable(check-dictionary ${check-dictionary_SRCS})
 
 target_link_libraries(check-dictionary
   lima-lp-analysisdict
-  lima-common
 )
 
 install(TARGETS check-dictionary DESTINATION bin

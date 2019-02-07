@@ -32,7 +32,6 @@ ADD_DLL_TO_PATH(lima-lp-client)
 
 target_link_libraries(lima-lp-client
   lima-common-factory
-  lima-common-tools
 )
 
 set_target_properties(lima-lp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

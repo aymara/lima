@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -27,7 +27,9 @@ SET(lima-lp-corefsolver_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-corefsolver)
 
-target_link_libraries(lima-lp-corefsolver lima-common-factory lima-common-misc lima-common-data lima-common-fsaaccess lima-common-mediaticdata lima-common-time lima-common-factory lima-common-xmlconfigurationfiles lima-common-processunitframework lima-common-mediaprocessors lima-lp-linguisticprocessors lima-lp-linguisticresources lima-lp-annotationgraph lima-lp-linguisticanalysisstructure lima-lp-textsegmentation lima-lp-syntacticanalysis lima-lp-automaton
+target_link_libraries(lima-lp-corefsolver
+   lima-lp-linguisticanalysisstructure
+   lima-lp-syntacticanalysis
 )
 
 set_target_properties(lima-lp-corefsolver PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -37,10 +39,10 @@ install(TARGETS lima-lp-corefsolver DESTINATION ${LIB_INSTALL_DIR}
 
 
 ########### install files ###############
-install(FILES  
-    coreferentAnnotation.h 
-    CorefSolvingXmlLogger.h 
-    CorefSolvingNormalizedXmlLogger.h 
+install(FILES
+    coreferentAnnotation.h
+    CorefSolvingXmlLogger.h
+    CorefSolvingNormalizedXmlLogger.h
   DESTINATION include/linguisticProcessing/core/CorefSolving
   COMPONENT devel
 )

@@ -35,12 +35,12 @@ SET(lima-lp-linguisticprocessors_LIB_SRCS
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessors)
 
 target_link_libraries(lima-lp-linguisticprocessors
+  lima-common-mediaprocessors
   lima-lp-misc
   lima-lp-analysishandlers
   lima-lp-annotationgraph
   lima-lp-linguisticresources
   lima-lp-linguisticanalysisstructure
-  lima-common
 )
 
 set_target_properties(lima-lp-linguisticprocessors PROPERTIES

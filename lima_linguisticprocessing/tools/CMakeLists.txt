@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,7 +14,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-# add_subdirectory(applyAutomaton) # n'est pas compile dans S2!!!
+
+#add_subdirectory(applyAutomaton) # n'est pas compile dans S2!!!
 add_subdirectory(automatonCompiler)
 add_subdirectory(common) # executable de s2common
 add_subdirectory(dictionary)
@@ -24,6 +25,5 @@ add_subdirectory(normalize)
 add_subdirectory(tva)
 
 include_directories(${CMAKE_SOURCE_DIR}/src )
-
 
 ########### install files ###############
