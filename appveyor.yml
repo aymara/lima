@@ -65,7 +65,7 @@ build_script:
   - ps: $env:BOOST_LIBRARYDIR = "C:\\Libraries\\boost_$env:BOOST_VERSION\\lib64-msvc-14.0"
   - ps: $env:Qt5_INSTALL_DIR = "C:\\Qt\\$env:QT_VERSION\\msvc2015_64"
   - ps: $env:LIMA_EXECENV = "$env:LIMA_BUILD\\execEnv"
-  - ps: $env:Path = "$env:PYTHON;$env:PYTHON\\libs;$env:LIMA_EXECENV\\lib;$env:Qt5_INSTALL_DIR%\\bin;$env:BOOST_LIBRARYDIR;c:\\msys64\\usr\\bin;$env:Path"
+  - ps: $env:Path = "$env:PYTHON;$env:PYTHON\\libs;$env:LIMA_EXECENV\\lib;$env:Qt5_INSTALL_DIR\\bin;$env:BOOST_LIBRARYDIR;c:\\msys64\\usr\\bin;$env:Path"
   - ps: $env:LIMA_CONF = "$env:LIMA_EXECENV\\config"
   - ps: $env:LIMA_RESOURCES = "$env:LIMA_EXECENV\\resources"
   - mkdir c:\b
