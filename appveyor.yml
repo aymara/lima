@@ -23,16 +23,10 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
-      BOOST_ROOT: 'C:\Libraries\boost_1_65_1'
-      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_65_1\lib64-msvc-14.0'
-      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "64"
-      BOOST_ROOT: 'C:\Libraries\boost_1_66_0'
-      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_66_0\lib64-msvc-14.0'
-      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
+      BOOST_VERSION: "1_65_1"
+      BOOST_ROOT: 'C:\Libraries\boost_%BOOST_VERSION%'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_%BOOST_VERSION%\lib64-msvc-14.0'
+      #PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
 
 configuration:
   - Release
@@ -75,6 +69,7 @@ build_script:
   - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | grep -Po "[1-9]\d{3}\-[0-1]\d-[0-3]\d +[0-2]\d:[0-6]\d:[0-6]\d" | sed -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
   - echo %LIMA_VERSION_RELEASE%
   - ps: popd
+  - ps: $env:Path = "$env:PYTHON;$env:PYTHON\\libs;c:\\b\\execEnv\\lib;$env:Qt5_INSTALL_DIR%\\bin;$env:BOOST_LIBRARYDIR;c:\\msys64\\usr\\bin;$env:Path"
   - mkdir c:\b
   - cd c:\b
   - echo %BOOST_ROOT%
