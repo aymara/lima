@@ -33,7 +33,7 @@ foreach(LANG ${LIMA_LANGUAGES})
     add_custom_command(
       OUTPUT VerbNet-${LANG}.bin
       COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${LANG} -oVerbNet-${LANG}.bin --modex=VerbNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VerbNet-${LANG}.rules rules-${LANG}-execEnv rules-configEnv compile-rules
 #       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
     )
@@ -44,15 +44,17 @@ foreach(LANG ${LIMA_LANGUAGES})
       DEPENDS VerbNet-${LANG}.bin
     )
 
-    add_dependencies(
-      rules-VerbNet-${LANG}-main
-      rules-${_lang}-execEnv
-      rules-configEnv)
+    add_dependencies(rules-VerbNet-${LANG}-main
+      rules-${LANG}-execEnv
+      rules-configEnv
+      compile-rules
+    )
 
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/VerbNet-${LANG}.bin
       COMPONENT ${LANG}
-      DESTINATION share/apps/lima/resources/SRLIntegration)
+      DESTINATION share/apps/lima/resources/SRLIntegration
+    )
 
   endif ()
 
@@ -61,7 +63,7 @@ foreach(LANG ${LIMA_LANGUAGES})
     add_custom_command(
       OUTPUT FrameNet-${LANG}.bin
       COMMAND compile-rules --resourcesDir=${LIMA_RESOURCES} --configDir=${LIMA_CONF} --language=${LANG} -oFrameNet-${LANG}.bin --modex=FrameNet-modex.xml ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/FrameNet-${LANG}.rules rules-${LANG}-execEnv rules-configEnv compile-rules
 #       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
     )
@@ -73,15 +75,17 @@ foreach(LANG ${LIMA_LANGUAGES})
     )
 
     # add the link between the current target and its execution environment dependencies
-    add_dependencies(
-      rules-FrameNet-${LANG}-main
-      rules-${_lang}-execEnv
-      rules-configEnv)
+    add_dependencies(rules-FrameNet-${LANG}-main
+      rules-${LANG}-execEnv
+      rules-configEnv
+      compile-rules
+    )
 
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/FrameNet-${LANG}.bin
       COMPONENT ${LANG}
-      DESTINATION share/apps/lima/resources/SRLIntegration)
+      DESTINATION share/apps/lima/resources/SRLIntegration
+    )
 
   endif ()
 
