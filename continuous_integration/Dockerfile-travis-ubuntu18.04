@@ -25,6 +25,9 @@ ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
+ARG USE_TENSORFLOW
+
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
 
 # Setup
 RUN npm install -g json
