@@ -19,8 +19,7 @@ matrix:
       - os: linux
         env: DISTRIB=travis-ubuntu18.04
       - os: linux
-        env: DISTRIB=travis-ubuntu18.04
-        env: USE_TENSORFLOW=true
+        env: DISTRIB=travis-ubuntu18.04 USE_TENSORFLOW=true
       - os: linux
         env: DISTRIB=travis-ubuntu16.04
       - os: linux
