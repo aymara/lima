@@ -86,11 +86,16 @@ if (${PYTHONLIBS_FOUND})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(PYTHON_DLLS "")
     foreach(PYTHON_LIB ${PYTHON_LIBRARIES})
+      message("Python lib: ${PYTHON_LIB}")
       if (NOT EXISTS ${PYTHON_LIB})
         continue()
       endif()
-      get_filename_component(PYTHON_LIB_FILE_NAME, ${PYTHON_LIB}, NAME)
+#      string(REPLACE "/" "\\" PYTHON_LIB ${PYTHON_LIB})
+#      get_filename_component(PYTHON_LIB_FILE_NAME, ${PYTHON_LIB}, NAME)
+#      it looks like get_Filename_component doesn't work (cmake 3.13.3 - 3.13.4)
+      string(REGEX MATCH "[^/\\]+$" PYTHON_LIB_FILE_NAME ${PYTHON_LIB})
       string(LENGTH "${PYTHON_LIB_FILE_NAME}" PYTHON_LIB_FILE_NAME_LEN)
+#      message("SRC: ${PYTHON_LIB} FN: ${PYTHON_LIB_FILE_NAME} LEN: ${PYTHON_LIB_FILE_NAME_LEN}")
       if ("${PYTHON_LIB_FILE_NAME_LEN}" LESS 6)
         continue()
       endif()
@@ -111,21 +116,30 @@ if (${PYTHONLIBS_FOUND})
         message(FATAL_ERROR "Could not find Python ( ${PYTHON_DLL} / ${PYTHON_LIB} )")
       endif()
     endforeach()
+
     message("PYTHON_DLLS = ${PYTHON_DLLS} / PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
+
+    string(LENGTH "${PYTHON_DLLS}" PYTHON_DLLS_LEN)
+    if (${PYTHON_DLLS_LEN} LESS 1)
+      message(FATAL_ERROR "Could not find Python")
+    endif()
 
     install(FILES ${PYTHON_DLLS}
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT runtime)
+
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
         ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
         ${PYTHON_DLLS})
 
-    install(FILES ${PYTHON_LIBRARIES}
+    install(FILES ${PYTHON_LIB}
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT runtime)
+
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
         ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-        ${PYTHON_LIBRARIES})
+        ${PYTHON_LIB})
+
   endif ()
 endif ()
 
