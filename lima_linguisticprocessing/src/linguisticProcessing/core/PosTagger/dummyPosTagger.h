@@ -65,8 +65,8 @@ public:
 private:
 
   MediaId m_language;
-  Common::PropertyCode::PropertyAccessor m_macroAccessor;
-  Common::PropertyCode::PropertyAccessor m_microAccessor;
+  const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
 
 };
 

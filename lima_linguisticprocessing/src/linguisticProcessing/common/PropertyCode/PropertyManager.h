@@ -86,7 +86,7 @@ public:
    * @return uint64_t
    */
   LinguisticCode getEmptyNessMask() const;
-  
+
   /**
    * @brief Get the coded property value from the symbolic value
    * @param symbolicValue symbolic value
@@ -107,13 +107,13 @@ public:
    * @return code2symbol map
    */
   const std::map<LinguisticCode,std::string>& getCode2Symbol() const;
-  
+
   /**
    * @brief Get the Symbol -> Code mapping
    * @return symbol2code map
    */
   const std::map<std::string,LinguisticCode>& getSymbol2Code() const;
-  
+
   /**
    * @brief give the number of values for this property
    * @return the number of values

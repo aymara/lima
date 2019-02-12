@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ file (GLOB SYMBOLICCODESENG ${PROJECT_BINARY_DIR}/analysisDictionary/eng.ud/conv
 add_custom_command(
   OUTPUT idiomaticExpressions-eng.ud.rules
   COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.ud.txt > idioms-eng.ud.grace
-  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${PROJECT_SOURCE_DIR}/analysisDictionary/eng.ud/code/code-eng.ud.xml ${SYMBOLICCODESENG} idioms-eng.ud.grace > idiomaticExpressions-eng.ud.rules
+  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/tools/common/convertSymbolicCodes --configDir=${PROJECT_SOURCE_DIR}/../lima_common/conf/ ${PROJECT_SOURCE_DIR}/analysisDictionary/eng.ud/code/code-eng.ud.xml ${SYMBOLICCODESENG} idioms-eng.ud.grace > idiomaticExpressions-eng.ud.rules
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.ud.txt
     ${SYMBOLICCODESENG}

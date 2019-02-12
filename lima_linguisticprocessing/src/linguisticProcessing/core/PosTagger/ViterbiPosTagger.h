@@ -46,8 +46,6 @@
 
 #include <sstream>
 
-#include <QStringList>
-
 namespace Lima
 {
 
@@ -72,7 +70,7 @@ public:
       m_stopCategories(),
       m_microAccessor() {}
 
-  virtual ~ViterbiPosTagger();
+  virtual ~ViterbiPosTagger() {}
 
   /** @addtogroup ProcessUnitConfiguration
    * - <b>&lt;group name="..." class="ViterbiPosTagger"&gt;</b>
@@ -92,73 +90,77 @@ public:
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-  
+
 private:
 
   struct PredData
   {
+    PredData() :
+        m_cost(),
+        m_predMicro(),
+        m_predIndex(),
+    m_predPredMicros() {}
     Cost m_cost;
     LinguisticCode m_predMicro;
     uint64_t m_predIndex;
     std::vector<LinguisticCode> m_predPredMicros;
-
     // this is used to insert PredData in ordered containers
-    inline bool operator<(const PredData& pd) const 
-    { 
-      return m_predMicro<pd.m_predMicro; 
-    }
+    inline bool operator<(const PredData& pd) const { return m_predMicro<pd.m_predMicro; }
   };
+
+  typedef std::map< LinguisticCode, std::vector<PredData> > MicroCatDataMap;
+  typedef typename std::map< LinguisticCode, std::vector<PredData> >::iterator MicroCatDataMapItr;
+  typedef typename std::vector<PredData>::iterator PredDataVectorItr;
+  typedef typename std::vector<PredData>::const_iterator PredDataVectorCItr;
 
   struct StepData
   {
     LinguisticGraphVertex m_srcVertex; // associated vertex in the graph
     std::vector<uint64_t> m_predStepIndexes; // direct ancestors in the StepData vector
-    std::map< LinguisticCode, std::vector<PredData> > m_microCatsData; // the micro categories associated to the node
+    MicroCatDataMap m_microCatsData; // the micro categories associated to the node
   };
 
   typedef std::vector<StepData> StepDataVector;
+  typedef typename std::vector<StepData>::iterator StepDataVectorItr;
 
   struct TargetVertexId
   {
     LinguisticGraphVertex m_sourceVx;
     LinguisticCode m_categ;
     std::vector<LinguisticCode> m_preds;
-    
     bool operator<(const TargetVertexId& tvi) const
     {
-      if (m_sourceVx != tvi.m_sourceVx) return m_sourceVx < tvi.m_sourceVx;
-      if (m_categ != tvi.m_categ) return m_categ < tvi.m_categ;
-      return m_preds < tvi.m_preds;
+      if (m_sourceVx!=tvi.m_sourceVx) return m_sourceVx<tvi.m_sourceVx;
+      if (m_categ!=tvi.m_categ) return m_categ<tvi.m_categ;
+      return m_preds<tvi.m_preds;
     }
   };
 
   const CostFunction m_costFunction;
   LinguisticCode m_defaultCateg;
   std::list<LinguisticCode> m_stopCategories;
-  Common::PropertyCode::PropertyAccessor m_microAccessor;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   MediaId m_language;
-  bool m_allFeatures;
-  QStringList m_features;
 
-  /**
-    * The goal here is to perform a topological sort on our sentence
-    * lattice. We can't do a simple breadth first search because our
-    * lattice will have paths of different size. Canonical example:
-    *
-    *      --B--
-    *     /     \
-    *  --A       E--
-    *     \     /
-    *      C---D
-    *
-    * If we start with A, we want to make sure that E is only added after
-    * D *and* B have been added. This is the reason we're comparing
-    * the indegree of a node and the number of predIndex seen so far.
-    * With the example below, we would put "A B C D E" in stepData,
-    * along with their microdatas.
-    */
-  
-  void initializeStepDataFromGraph(
+	/**
+	 * The goal here is to perform a topological sort on our sentence
+	 * lattice. We can't do a simple breadth first search because our
+	 * lattice will have paths of different size. Canonical example:
+	 *
+	 *      --B--
+	 *     /     \
+	 *  --A       E--
+	 *     \     /
+	 *      C---D
+	 *
+	 * If we start with A, we want to make sure that E is only added after
+	 * D *and* B have been added. This is the reason we're comparing
+	 * the indegree of a node and the number of predIndex seen so far.
+	 * With the example below, we would put "A B C D E" in stepData,
+	 * along with their microdatas.
+	 */
+
+	void initializeStepDataFromGraph(
     const LinguisticGraph* srcgraph,
     LinguisticGraphVertex start,
     LinguisticCode startMicro,
@@ -168,15 +170,15 @@ private:
 
   void performViterbiOnStepData(StepDataVector& stepData) const;
 
-  /**
-    * Every node in our sentence lattice knows what previous node will
-    * provide the best score. Thus, we only need to start from the last
-    * node and follow the indications left by the cost computations.
-    * The only edge case is when we have twice the same cost: we add two
-    * previous nodes and will provide two paths. We still have a graph,
-    * even if in most cases it will only be a list.
-    */
-  LinguisticGraphVertex reportPathsInGraph(
+	/**
+	 * Every node in our sentence lattice knows what previous node will
+	 * provide the best score. Thus, we only need to start from the last
+	 * node and follow the indications left by the cost computations.
+	 * The only edge case is when we have twice the same cost: we add two
+	 * previous nodes and will provide two paths. We still have a graph,
+	 * even if in most cases it will only be a list.
+	 */
+	LinguisticGraphVertex reportPathsInGraph(
     LinguisticGraph* srcgraph,
     LinguisticGraph* resultgraph,
     LinguisticGraphVertex startVertex,
@@ -185,8 +187,7 @@ private:
 
 };
 
-class LIMA_POSTAGGER_EXPORT ViterbiPosTaggerFactory : 
-    public InitializableObjectFactory<MediaProcessUnit>
+class LIMA_POSTAGGER_EXPORT ViterbiPosTaggerFactory : public InitializableObjectFactory<MediaProcessUnit>
 {
 public:
 

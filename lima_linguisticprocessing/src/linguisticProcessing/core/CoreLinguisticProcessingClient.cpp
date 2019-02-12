@@ -311,12 +311,13 @@ void CoreLinguisticProcessingClientFactory::configure(
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
     MediaId langid=MediaticData::single().getMediaId(*langItr);
     QString file;
+    QString mediaProcessingDefinitionFile;
     try
     {
       QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
       Q_FOREACH(QString confPath, configPaths)
       {
-        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
+        mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
              *langItr).c_str());

@@ -82,12 +82,12 @@ public:
   std::string m_sep;
   std::string m_sepPOS;
   bool m_followGraph;
-  
+
   bool m_allFeatures;
   QStringList m_features;
 
   // private member functions
-  void outputVertex(std::ostream& out, 
+  void outputVertex(std::ostream& out,
                     const LinguisticAnalysisStructure::Token* ft,
                     const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
                     const FsaStringsPool& sp,
@@ -129,7 +129,7 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
 
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
-  
+
   m_d->m_language=manager->getInitializationParameters().media;
   try
   {
@@ -137,27 +137,27 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  if (m_d->m_graph=="AnalysisGraph") { 
+  if (m_d->m_graph=="AnalysisGraph") {
     // change default for followGraph
     m_d->m_followGraph=true;
   }
-  try { 
-    m_d->m_sep=unitConfiguration.getParamsValueAtKey("sep"); 
+  try {
+    m_d->m_sep=unitConfiguration.getParamsValueAtKey("sep");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    m_d->m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS"); 
+  try {
+    m_d->m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    m_d->m_property=unitConfiguration.getParamsValueAtKey("property"); 
+  try {
+    m_d->m_property=unitConfiguration.getParamsValueAtKey("property");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    std::string str=unitConfiguration.getParamsValueAtKey("followGraph"); 
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("followGraph");
     if (str=="1" || str=="true" || str=="yes") {
       m_d->m_followGraph=true;
     }
@@ -168,12 +168,12 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   catch (NoSuchParam& ) {} // keep default value
 
   const auto& codeManager = static_cast<const LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+    Lima::Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
   m_d->m_propertyAccessor=&codeManager.getPropertyAccessor(m_d->m_property);
   m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
 
   QString timeCode = static_cast<const LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getLimaToLanguageCodeMappingValue("TIME");
+    Lima::Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getLimaToLanguageCodeMappingValue("TIME");
   m_d->m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
   m_d->m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 
@@ -209,7 +209,7 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0) 
+  if (metadata == 0)
   {
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
@@ -220,7 +220,7 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
   std::map<Token*, std::vector<MorphoSyntacticData*>, lTokenPosition > categoriesMapping;
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));
-  if (tokenList==0) 
+  if (tokenList==0)
   {
     LERROR << "graph " << m_d->m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
@@ -228,12 +228,12 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
   LinguisticGraph* graph=tokenList->getGraph();
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_d->m_language);
 
-  if (m_d->m_followGraph) 
+  if (m_d->m_followGraph)
   {
     // instead of looking to all vertices, follow the graph (in
     // morphological graph, some vertices are not related to main graph:
     // idiomatic expressions parts and named entity parts)
-    
+
     std::queue<LinguisticGraphVertex> toVisit;
     std::set<LinguisticGraphVertex> visited;
     toVisit.push(tokenList->firstVertex());
@@ -245,9 +245,9 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
       if (v == tokenList->lastVertex()) {
         continue;
       }
-      
-      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); 
-           outItr!=outItrEnd; outItr++) 
+
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph);
+           outItr!=outItrEnd; outItr++)
       {
         LinguisticGraphVertex next=target(*outItr,*graph);
         if (visited.find(next)==visited.end())
@@ -256,15 +256,15 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
           toVisit.push(next);
         }
       }
-      
+
       Token* ft=get(vertex_token,*graph,v);
-      if( ft!=0) 
+      if( ft!=0)
       {
         categoriesMapping[ft].push_back(get(vertex_data,*graph,v));
       }
     }
   }
-  else 
+  else
   { // output all vertices
     LinguisticGraphVertexIt vxItr,vxItrEnd;
     boost::tie(vxItr,vxItrEnd) = vertices(*graph);
@@ -277,7 +277,7 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
       }
     }
   }
-  
+
   for (auto ftItr=categoriesMapping.cbegin();
        ftItr!=categoriesMapping.cend();
        ftItr++)
@@ -292,7 +292,7 @@ LimaStatusCode TextDumper::process(AnalysisContent& analysis) const
 }
 
 
-void TextDumperPrivate::outputVertex(std::ostream& out, 
+void TextDumperPrivate::outputVertex(std::ostream& out,
                               const Token* ft,
                               const vector<MorphoSyntacticData*>& data,
                               const FsaStringsPool& sp,
@@ -302,14 +302,14 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
   DUMPERLOGINIT;
 #endif
   const auto& mediaData = static_cast<const LanguageData&>(
-          MediaticData::MediaticData::single().mediaData(m_language));
+          Lima::Common::MediaticData::MediaticData::single().mediaData(m_language));
   const auto& propertyCodeManager = mediaData.getPropertyCodeManager();
   const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
   const auto& propertyManagers=propertyCodeManager.getPropertyManagers();
 
 
-  ltNormProperty sorter(m_propertyAccessor);
+  ltNormProperty sorter(*m_propertyAccessor);
 
 //    uint64_t nbmicros=ft->countMicros();
   std::ostringstream os;
@@ -317,7 +317,7 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
   os << position << m_sep;
   out << os.str();
   outputString(out, Common::Misc::limastring2utf8stdstring(ft->stringForm()));
-  for (auto dataItr = data.cbegin(), dataItr_end = data.cend(); 
+  for (auto dataItr = data.cbegin(), dataItr_end = data.cend();
        dataItr != dataItr_end; dataItr++)
   {
     MorphoSyntacticData* data=*dataItr;
@@ -329,12 +329,12 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
       curNorm=elemItr->normalizedForm;
       curMicro=m_propertyAccessor->readValue(elemItr->properties);
       curTense=m_timeAccessor->readValue(elemItr->properties); //ajout
-      if ((curNorm != norm) || (curMicro != micro)) 
+      if ((curNorm != norm) || (curMicro != micro))
       {
         norm=curNorm;
         micro=curMicro;
         tense=curTense; //ajout
-        
+
         std::ostringstream os2;
         os2 << m_sep;
         out << os2.str();
@@ -354,14 +354,14 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
         if (m_allFeatures ||!m_features.isEmpty())
         {
           QStringList features;
-          for (auto propItr = propertyManagers.cbegin(); 
+          for (auto propItr = propertyManagers.cbegin();
               propItr != propertyManagers.cend(); propItr++)
           {
             if (!propItr->second.getPropertyAccessor().empty(code))
             {
               QString property = QString::fromUtf8(propItr->first.c_str());
               QString value = QString::fromUtf8(propItr->second.getPropertySymbolicValue(code).c_str());
-              if (property != "MACRO" && property != "MICRO" 
+              if (property != "MACRO" && property != "MICRO"
                   && (m_allFeatures || m_features.contains(property)))
               {
                 features << QString("%1=%2").arg(property).arg(value);

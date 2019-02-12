@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, &LimaMainTaskRunner::finished, 
+  QObject::connect(task, &LimaMainTaskRunner::finished,
                    &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
@@ -188,8 +188,8 @@ int run(int argc,char** argv)
   }
   if(!clientFactoryConfigured)
   {
-    std::cerr << "No LinguisticProcessingClientFactory were configured with" 
-              << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and" 
+    std::cerr << "No LinguisticProcessingClientFactory were configured with"
+              << configDirs.join(LIMA_PATH_SEPARATOR).toStdString() << "and"
               << lpConfigFile << std::endl;
     return EXIT_FAILURE;
   }
@@ -205,10 +205,10 @@ int run(int argc,char** argv)
   BowTextHandler* bowTextHandler = new BowTextHandler();
   handlers.insert(std::make_pair("bowTextHandler", bowTextHandler));
 
-  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir, 
+  AnalysisTestCaseProcessor analysisTestCaseProcessor(workingDir,
                                                       client.get(),
                                                       handlers);
-    
+
   TestCasesHandler tch(analysisTestCaseProcessor);
 
   for (std::deque<std::string>::const_iterator it=files.begin();
@@ -227,24 +227,17 @@ int run(int argc,char** argv)
       QXmlStreamReader parser(&file);
       while (!parser.atEnd())
       {
-#ifdef DEBUG_LP
-        LDEBUG << "DocumentReader::readXMLDocument:"
-                << parser.characterOffset() << "; tokenType:"
-                << parser.tokenType() << "; tokenString:"
-                << parser.tokenString().toUtf8().constData()
-                << "; name:" << parser.name().toUtf8().constData();
-  #endif
         if (parser.isStartElement())
         {
-          tch.startElement ( parser.namespaceUri(), parser.name(), 
+          tch.startElement ( parser.namespaceUri(), parser.name(),
                              parser.qualifiedName(), parser.attributes(),
                              parser.lineNumber(), parser.columnNumber()
                            );
         }
         else if (parser.isEndElement())
         {
-          tch.endElement( parser.namespaceUri(), 
-                          parser.name(), 
+          tch.endElement( parser.namespaceUri(),
+                          parser.name(),
                           parser.qualifiedName());
         }
         else if (parser.isCharacters())
@@ -257,7 +250,7 @@ int run(int argc,char** argv)
       if (parser.hasError())
       {
         // do error handling
-        std::cerr << "DocumentReader: readXMLDocument: parse error:" 
+        std::cerr << "DocumentReader: readXMLDocument: parse error:"
                   << parser.errorString() << std::endl;
         throw std::runtime_error(parser.errorString().toStdString().data());
       }
@@ -265,59 +258,59 @@ int run(int argc,char** argv)
     }
     catch (Lima::LimaException& e)
     {
-      std::cerr << __FILE__ << ", line " << __LINE__ 
-                << ": caught LimaException : " 
+      std::cerr << __FILE__ << ", line " << __LINE__
+                << ": caught LimaException : "
                 << std::endl << e.what() << std::endl;
         return 1;
     }
     catch (std::logic_error& e)
     {
-      std::cerr << __FILE__ << ", line " << __LINE__ 
-                << ": caught logic_error : " 
+      std::cerr << __FILE__ << ", line " << __LINE__
+                << ": caught logic_error : "
                 << std::endl << e.what() << std::endl;
         return 1;
     }
     catch (std::runtime_error& e)
     {
-      std::cerr << __FILE__ << ", line " << __LINE__ 
-                << ": caught runtime_error : " 
+      std::cerr << __FILE__ << ", line " << __LINE__
+                << ": caught runtime_error : "
                 << std::endl << e.what() << std::endl;
         return 1;
     }
 
     TestCasesHandler::TestReport resTotal;
     std::cout << std::endl;
-    std::cout << "=========================================================" 
+    std::cout << "========================================================="
               << std::endl;
     std::cout << std::endl;
     std::cout << "  TestReport :   " << *it << " " << std::endl;
     std::cout << std::endl;
-    std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" 
+    std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal"
               << std::endl;
-    std::cout << "---------------------------------------------------------" 
+    std::cout << "---------------------------------------------------------"
               << std::endl;
-    for (auto resItr = tch.m_reportByType.cbegin(); 
+    for (auto resItr = tch.m_reportByType.cbegin();
          resItr != tch.m_reportByType.cend();
          resItr++)
     {
       std::string label(resItr->first);
       label.resize(15,' ');
-      std::cout << "\t" << label << "\t" << resItr->second.success << "\t" 
-                << resItr->second.conditional << "\t" 
-                << resItr->second.failed << "\t" 
-                << resItr->second.nbtests 
+      std::cout << "\t" << label << "\t" << resItr->second.success << "\t"
+                << resItr->second.conditional << "\t"
+                << resItr->second.failed << "\t"
+                << resItr->second.nbtests
                 << std::endl;
       resTotal.success+=resItr->second.success;
       resTotal.conditional+=resItr->second.conditional;
       resTotal.failed+=resItr->second.failed;
       resTotal.nbtests+=resItr->second.nbtests;
     }
-    std::cout << "---------------------------------------------------------" 
+    std::cout << "---------------------------------------------------------"
               << std::endl;
-    std::cout << "\ttotal          \t" << resTotal.success << "\t"  
-              << resTotal.conditional << "\t" << resTotal.failed << "\t" 
+    std::cout << "\ttotal          \t" << resTotal.success << "\t"
+              << resTotal.conditional << "\t" << resTotal.failed << "\t"
               << resTotal.nbtests << std::endl;
-    std::cout << "=========================================================" 
+    std::cout << "========================================================="
               << std::endl;
     std::cout << std::endl;
     tch.m_reportByType.clear();
@@ -332,22 +325,22 @@ int run(int argc,char** argv)
 void usage(int argc, char *argv[])
 {
   LIMA_UNUSED(argc);
-  std::cout << "usage: " << argv[0] << " [OPTIONS] [file1 [file2 [...]]] " 
+  std::cout << "usage: " << argv[0] << " [OPTIONS] [file1 [file2 [...]]] "
             << std::endl;
-  std::cout << "\t--working-dir=</path/to/the/working/dir> Optional. Default is ./" 
+  std::cout << "\t--working-dir=</path/to/the/working/dir> Optional. Default is ./"
             << std::endl;
-  std::cout << "\t--resources-dir=</path/to/the/resources> Optional. Default is $LIMA_RESOURCES" 
+  std::cout << "\t--resources-dir=</path/to/the/resources> Optional. Default is $LIMA_RESOURCES"
             << std::endl;
-  std::cout << "\t--config-dir=</path/to/the/configuration/directory> Optional. Default is $LIMA_CONF" 
+  std::cout << "\t--config-dir=</path/to/the/configuration/directory> Optional. Default is $LIMA_CONF"
             << std::endl;
-  std::cout << "\t--lp-config-file=<configuration/file/name>\tOptional. Default is lima-lp-tva.xml" 
+  std::cout << "\t--lp-config-file=<configuration/file/name>\tOptional. Default is lima-lp-tva.xml"
             << std::endl;
   std::cout << "\t--common-config-file=<configuration/file/name>\tOptional. Default is lima-common.xml" << std::endl;
-  std::cout << "\t--client=<clientId>\tOptional. Default is 'lima-coreclient'" 
+  std::cout << "\t--client=<clientId>\tOptional. Default is 'lima-coreclient'"
             << std::endl;
-  std::cout << "\t--pipeline=<pipelineId>\tOptional. Default is 'main'" 
+  std::cout << "\t--pipeline=<pipelineId>\tOptional. Default is 'main'"
             << std::endl;
-  std::cout << "\t--language=<lang>\tOptional. Default initialize all available languages in common config file" 
+  std::cout << "\t--language=<lang>\tOptional. Default initialize all available languages in common config file"
             << std::endl;
   std::cout << "\twhere files are files to analyze." << std::endl;
   std::cout << std::endl;

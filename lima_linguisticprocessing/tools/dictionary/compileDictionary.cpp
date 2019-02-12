@@ -43,6 +43,7 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
+using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::PropertyCode;
@@ -163,7 +164,9 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0) ? string(getenv("LIMA_RESOURCES")) : string("/usr/share/apps/lima/resources");
+  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0)
+      ? std::string(getenv("LIMA_RESOURCES"))
+      : std::string("/usr/share/apps/lima/resources");
   std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
   if (configPath.size() == 0)
     configPath = string(getenv("LIMA_CONF"));
@@ -198,7 +201,6 @@ int run(int argc, char** argv)
     cerr << "please specify CharChart file with --charChart=<file> option" << endl;
     exit(0);
   }
-  LINFO << "parse charChart file : " << param.charChart;
   CharChart charChart;
   charChart.loadFromFile(param->charChart);
 
@@ -262,9 +264,7 @@ int run(int argc, char** argv)
       throw;
     }
     fout.close();
-  } 
-  else 
-  {
+  } else {
     // compile dictionaries
 
     cerr << "parse property code file : " << param->propertyFile << endl;
@@ -289,7 +289,7 @@ int run(int argc, char** argv)
       fsaAccess->read(param->fsaKey);
       access=fsaAccess;
     } else {
-      std::cerr << "ERROR : no access Keys defined !" << std::endl;
+      cerr << "ERROR : no access Keys defined !" << endl;
       exit(-1);
     }
     cerr << access->getSize() << " keys loaded" << endl;
@@ -298,6 +298,10 @@ int run(int argc, char** argv)
     DictionaryCompiler handler(&charChart,access,conversionMap,param->reverseKeys);
 
     QXmlSimpleReader parser;
+//     parser->setValidationScheme(SAXParser::Val_Auto);
+//     parser->setDoNamespaces(false);
+//     parser->setDoSchema(false);
+//     parser->setValidationSchemaFullChecking(false);
     try
     {
       parser.setContentHandler(&handler);
@@ -316,7 +320,7 @@ int run(int argc, char** argv)
     }
     catch (const XMLException& toCatch)
     {
-      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
+      cerr << "An error occurred  Error: " << toCatch.what() << endl;
       throw;
     }
 

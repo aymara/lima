@@ -78,7 +78,7 @@ PropertyAccessor::~PropertyAccessor()
 
 PropertyAccessor::PropertyAccessor(const PropertyAccessor& pa)
 {
-  *m_d = *pa.m_d;
+  m_d = new PropertyAccessorPrivate(*pa.m_d);
 }
 
 PropertyAccessor& PropertyAccessor::operator=(const PropertyAccessor& pa)
@@ -105,13 +105,13 @@ void PropertyAccessor::writeValue(
     ( code & ( ~ m_d->m_mask )) | (value & m_d->m_mask));
 }
 
-bool PropertyAccessor::equal(const LinguisticCode& l1, 
-                             const LinguisticCode& l2) const 
+bool PropertyAccessor::equal(const LinguisticCode& l1,
+                             const LinguisticCode& l2) const
 {
   return !(m_d->m_mask & (l1 ^ l2));
 }
 
-bool PropertyAccessor::empty(const LinguisticCode& l) const 
+bool PropertyAccessor::empty(const LinguisticCode& l) const
 {
   return !(l & m_d->m_emptyNessMask);
 }

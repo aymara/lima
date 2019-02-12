@@ -87,3 +87,4 @@ install(FILES
   DESTINATION share/apps/lima/tests
   COMPONENT runtime
 )
+endif()

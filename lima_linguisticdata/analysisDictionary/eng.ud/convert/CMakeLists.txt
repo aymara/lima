@@ -29,8 +29,8 @@ file(GLOB dicoFiles ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/eng.ud/UD_Eng
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convertCodeToSymbolicCode.py ../code/coded.txt > ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
-  COMMAND convertSymbolicCodes  --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
-  COMMAND parseXMLPropertyFile --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+  COMMAND convertSymbolicCodes --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
+  COMMAND parseXMLPropertyFile --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
   DEPENDS ../code/code-eng.ud.xml ../code/coded.txt
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMENT "Generate convjys.txt and symbolicCode-eng.ud.xml"
@@ -55,10 +55,10 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  
+    DEPENDS
       ${dicoFiles}
 #       ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
 #       ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
       ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py
@@ -78,8 +78,8 @@ else()
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
-      ${dicoFiles} 
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+      ${dicoFiles}
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
       ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
     COMMENT "produce eng XML dico under Windows"

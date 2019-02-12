@@ -66,8 +66,8 @@ private:
   const TrigramMatrix*        m_trigramMatrix;
   const BigramMatrix*         m_bigramMatrix;
   LinguisticCode m_microCatPonctuForte;
-  Common::PropertyCode::PropertyAccessor m_macroAccessor;
-  Common::PropertyCode::PropertyAccessor m_microAccessor;
+  const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   MediaId m_language;
 
   void processVertex(LinguisticGraphVertex vx,LinguisticAnalysisStructure::AnalysisGraph* graph) const;
