@@ -82,12 +82,12 @@ AgreementConstraint(MediaId language,
     ConstraintFunction(language,complement),
     m_categoryForAgreementAccessor(0)
 {
-  QString genderCode = static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER");
-  QString numberCode = static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER");
-  QString personCode = static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
+  QString genderCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+    Lima::Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER");
+  QString numberCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+    Lima::Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER");
+  QString personCode = static_cast<const Lima::Common::MediaticData::LanguageData&>(
+    Lima::Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
   if (complement == Common::Misc::utf8stdstring2limastring(personCode.toUtf8().constData()))
   {
     m_categoryForAgreementAccessor=
@@ -149,14 +149,14 @@ operator()(const AnalysisGraph& anagraph,
 GenderAgreement::
 GenderAgreement(MediaId language,
                 const LimaString& /* unused complement*/ ):
-AgreementConstraint(language,static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER")) {}
+AgreementConstraint(language,static_cast<const Lima::Common::MediaticData::LanguageData&>(
+    Lima::Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("GENDER")) {}
 
 NumberAgreement::
 NumberAgreement(MediaId language,
                 const LimaString& /* unused complement */):
-AgreementConstraint(language,static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER")) {}
+AgreementConstraint(language,static_cast<const Lima::Common::MediaticData::LanguageData&>(
+    Lima::Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("NUMBER")) {}
 
 //**********************************************************************
 LinguisticPropertyIs::

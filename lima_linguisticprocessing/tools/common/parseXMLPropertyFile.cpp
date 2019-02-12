@@ -186,7 +186,10 @@ int run(int argc, char** argv)
       exit(1);
     }
 
-    param->codeFile = resourcesPath+"/LinguisticProcessings/"+param->language+"/code-"+param->language+".xml";
+    param->codeFile = Common::Misc::findFileInPaths(
+        QString::fromUtf8(resourcesPath.c_str()),
+        QString::fromUtf8("/LinguisticProcessings/")+param->language.c_str()+"/code-"+param->language.c_str()+".xml",
+        LIMA_PATH_SEPARATOR).toUtf8().toStdString();
   }
 
   // Necessary to initialize factories

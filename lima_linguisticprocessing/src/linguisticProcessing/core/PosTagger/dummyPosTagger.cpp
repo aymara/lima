@@ -106,13 +106,13 @@ LimaStatusCode DummyPosTagger::process(
             break;
           }
         }
-        CheckDifferentPropertyPredicate cdpp(m_microAccessor,micro);
+        CheckDifferentPropertyPredicate cdpp(*m_microAccessor,micro);
         posdata->erase(remove_if(posdata->begin(),posdata->end(),cdpp),posdata->end());
       }
       else
       {
         Token* tok= get(vertex_token,*graph,*it);
-        LWARN << "The MorphoSyntacticData " 
+        LWARN << "The MorphoSyntacticData "
           << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !";
       }
     }

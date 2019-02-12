@@ -46,11 +46,11 @@ using namespace Lima::LinguisticProcessing::AnalysisDict;
 
 void EnhancedAnalysisDictionaryTest0::initTestCase()
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
       << "lima",QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
       << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
@@ -99,30 +99,30 @@ void EnhancedAnalysisDictionaryTest0::test()
   XMLConfigurationFileParser langParser(lpConfFile.toUtf8().constData());
   std::cout << "configure resources for language fre" << std::endl;
   auto keyFileName = findFileInPaths(
-    MediaticData::MediaticData::single().getResourcesPath().c_str(), 
+    Lima::Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
     langParser.getModuleGroupParamValue("Resources",
                                         "globalFsaAccess",
                                         "keyFile").c_str());
   auto dataFileName = findFileInPaths(
-    MediaticData::MediaticData::single().getResourcesPath().c_str(), 
+    Lima::Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
     langParser.getModuleGroupParamValue("Resources",
                                         "mainDictionary",
                                         "dictionaryValuesFile").c_str());
   std::cout << "Load keys " << keyFileName.toUtf8().constData() << std::endl;
   FsaAccessSpare16* fsaAccess=new FsaAccessSpare16();
   fsaAccess->read(keyFileName.toUtf8().constData());
-  
+
   std::cout << "Register mainkeys" << std::endl;
-  MediaId langid = MediaticData::MediaticData::single().getMediaId("fre");
-  FsaStringsPool& sp = MediaticData::MediaticData::changeable().stringsPool(langid);
+  MediaId langid = Lima::Common::MediaticData::MediaticData::single().getMediaId("fre");
+  FsaStringsPool& sp = Lima::Common::MediaticData::MediaticData::changeable().stringsPool(langid);
   sp.registerMainKeys(fsaAccess);
-  
-  std::cout << "Build EnhancedAnalysisDictionary with data: " 
+
+  std::cout << "Build EnhancedAnalysisDictionary with data: "
             << dataFileName.toUtf8().constData() << std::endl;
   EnhancedAnalysisDictionary dictionary(&sp,
                                         fsaAccess,
                                         dataFileName.toUtf8().constData());
-  
+
   std::cout << "EnhancedAnalysisDictionary end" << std::endl;
   auto entry = dictionary.getEntry(QString::fromUtf8("le"));
 //   auto id = entry.getEntryId();

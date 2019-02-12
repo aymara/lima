@@ -235,13 +235,6 @@ int run(int argc,char** argv)
       QXmlStreamReader parser(&file);
       while (!parser.atEnd())
       {
-#ifdef DEBUG_LP
-        LDEBUG << "DocumentReader::readXMLDocument:"
-                << parser.characterOffset() << "; tokenType:"
-                << parser.tokenType() << "; tokenString:"
-                << parser.tokenString().toUtf8().constData()
-                << "; name:" << parser.name().toUtf8().constData();
-  #endif
         if (parser.isStartElement())
         {
           tch.startElement ( parser.namespaceUri(), parser.name(),

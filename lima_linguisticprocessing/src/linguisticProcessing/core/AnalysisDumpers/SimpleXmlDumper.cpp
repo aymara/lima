@@ -98,7 +98,7 @@ void SimpleXmlDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const auto& codeManager=static_cast<const LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(Lima::Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
 
@@ -116,7 +116,7 @@ void SimpleXmlDumper::init(
     if (str=="yes" || str=="1") {
       m_outputVerbTense=true;
       QString timeCode = static_cast<const LanguageData&>(
-        MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+        Lima::Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
       m_tenseManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
       m_tenseAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
     }
@@ -131,8 +131,6 @@ void SimpleXmlDumper::init(
  catch (NoSuchParam& ) {
      LDEBUG << "no encapsulatingTag option set. Keep default";
  } // keep default value
-
-
 }
 
 LimaStatusCode SimpleXmlDumper::

@@ -62,7 +62,7 @@ void GreedyPosTagger::init(
   PTLOGINIT;
   m_language=manager->getInitializationParameters().media;
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
     string trigrams=unitConfiguration.getParamsValueAtKey("trigramMatrix");
@@ -110,7 +110,7 @@ LimaStatusCode GreedyPosTagger::process(
   LINFO << "start greedy posTagging";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  
+
   AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
 
   // walk on the vertex but don't process a vertex if one
@@ -213,20 +213,20 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
     LERROR << "MorphoSyntacticData of vertex " << vx << " is NULL !";
     return;
   }
-  LDEBUG << "process vertex : " << vx << " : " 
+  LDEBUG << "process vertex : " << vx << " : "
     << Common::Misc::limastring2utf8stdstring(token->stringForm());
 
   MorphoSyntacticData* posdata=new MorphoSyntacticData(*data);
   put(vertex_data,*graph,vx,posdata);
-  
-  set<LinguisticCode> micros=posdata->allValues(m_microAccessor);
+
+  auto micros = posdata->allValues(*m_microAccessor);
   LinguisticCode selectedMicro;
 
 
   if (micros.size()==0)
   {
-    LWARN << "Token " 
-      << Common::Misc::limastring2utf8stdstring(token->stringForm()) 
+    LWARN << "Token "
+      << Common::Misc::limastring2utf8stdstring(token->stringForm())
       << " has no possible dicowords ! build a DicoWord with category 0";
     selectedMicro=0;
   }
@@ -256,8 +256,8 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       }
       else
       {
-        
-        cat2=m_microAccessor.readValue(m2->begin()->properties);
+
+        cat2=m_microAccessor->readValue(m2->begin()->properties);
 
         LinguisticGraphInEdgeIt inItr2,inItr2End;
         boost::tie(inItr2,inItr2End)=in_edges(vx,*graph);
@@ -271,7 +271,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
           }
           else
           {
-            cat1=m_microAccessor.readValue(m1->begin()->properties);
+            cat1=m_microAccessor->readValue(m1->begin()->properties);
           }
           // search better trigram
           for (dwItr=micros.begin();dwItr!=micros.end();dwItr++)
@@ -341,11 +341,11 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       }
     }
   }
-  
+
   // filter linguisticelement
-  CheckDifferentPropertyPredicate cdpp(m_microAccessor,selectedMicro);
+  CheckDifferentPropertyPredicate cdpp(*m_microAccessor,selectedMicro);
   posdata->erase(remove_if(posdata->begin(),posdata->end(),cdpp),posdata->end());
-  
+
 }
 
 } // PosTagger

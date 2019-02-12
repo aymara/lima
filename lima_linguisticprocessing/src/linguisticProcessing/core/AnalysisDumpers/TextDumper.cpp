@@ -175,12 +175,12 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   catch (NoSuchParam& ) {} // keep default value
 
   const auto& codeManager = static_cast<const LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+    Lima::Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
   m_d->m_propertyAccessor=&codeManager.getPropertyAccessor(m_d->m_property);
   m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
 
   QString timeCode = static_cast<const LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getLimaToLanguageCodeMappingValue("TIME");
+    Lima::Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getLimaToLanguageCodeMappingValue("TIME");
   m_d->m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
   m_d->m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 
@@ -306,14 +306,14 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
   DUMPERLOGINIT;
 #endif
   const auto& mediaData = static_cast<const LanguageData&>(
-          MediaticData::MediaticData::single().mediaData(m_language));
+          Lima::Common::MediaticData::MediaticData::single().mediaData(m_language));
   const auto& propertyCodeManager = mediaData.getPropertyCodeManager();
   const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
   const auto& propertyManagers=propertyCodeManager.getPropertyManagers();
 
 
-  ltNormProperty sorter(m_propertyAccessor);
+  ltNormProperty sorter(*m_propertyAccessor);
 
 //    uint64_t nbmicros=ft->countMicros();
   std::ostringstream os;

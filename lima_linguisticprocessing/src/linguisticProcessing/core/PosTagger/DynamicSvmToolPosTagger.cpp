@@ -305,7 +305,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     if (morphoData!=0)
     {
       LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData();
-      LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(m_microAccessor, code);
+      LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(*m_microAccessor, code);
       std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
       if (posData->empty() || morphoData->empty()) {

@@ -451,8 +451,6 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 }
 
   typedef std::vector<StepData> StepDataVector;
-
-
 } // PosTagger
 
 } // LinguisticProcessing

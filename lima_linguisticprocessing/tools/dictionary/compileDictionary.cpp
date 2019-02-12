@@ -44,6 +44,7 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
+using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::PropertyCode;
@@ -204,7 +205,6 @@ int run(int argc, char** argv)
     LERROR << "please specify CharChart file with --charChart=<file> option";
     return EXIT_FAILURE;
   }
-  LINFO << "parse charChart file : " << param.charChart;
   CharChart charChart;
   charChart.loadFromFile(param->charChart);
 
@@ -289,6 +289,10 @@ int run(int argc, char** argv)
                                param->reverseKeys);
 
     QXmlSimpleReader parser;
+//     parser->setValidationScheme(SAXParser::Val_Auto);
+//     parser->setDoNamespaces(false);
+//     parser->setDoSchema(false);
+//     parser->setValidationSchemaFullChecking(false);
     try
     {
       parser.setContentHandler(&handler);
@@ -309,7 +313,7 @@ int run(int argc, char** argv)
     }
     catch (const XMLException& toCatch)
     {
-      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
+      cerr << "An error occurred  Error: " << toCatch.what() << endl;
       throw;
     }
 

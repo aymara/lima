@@ -41,7 +41,7 @@ TestCaseError::TestCaseError(const TestCase& tc,
   std::ostringstream out;
   if (type == TestCaseFailed)
   {
-    out << "  test unit : " << tu.id << std::endl;
+    out << "  test unit : " << tu.id.toUtf8().constData() << std::endl;
     out << "  pipeline : " << pipeline << std::endl;
     out << "  reason : " << reason << std::endl;
     out << "  type : " << tc.type <<   ", id : " 

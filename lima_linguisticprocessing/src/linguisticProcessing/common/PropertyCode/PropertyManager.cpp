@@ -81,7 +81,7 @@ PropertyManagerPrivate::PropertyManagerPrivate(
   }
 }
 
-PropertyManagerPrivate::~PropertyManagerPrivate() 
+PropertyManagerPrivate::~PropertyManagerPrivate()
 {
 }
 
@@ -121,7 +121,7 @@ PropertyManager::~PropertyManager()
 
 PropertyManager::PropertyManager(const PropertyManager& pm)
 {
-  *m_d = *pm.m_d;
+  m_d = new PropertyManagerPrivate(*pm.m_d);
 }
 
 PropertyManager& PropertyManager::operator=(const PropertyManager& pm)
@@ -143,7 +143,7 @@ LinguisticCode PropertyManager::getPropertyValue(
   if (it == m_d->m_symbol2code.end())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << symbolicValue 
+    LWARN << "Ask for unknown value " << symbolicValue
           << " for property " << m_d->m_name;
     return static_cast<LinguisticCode>(0);
   }
@@ -158,7 +158,7 @@ const std::string& PropertyManager::getPropertySymbolicValue(
   if (it == m_d->m_code2symbol.cend())
   {
     PROPERTYCODELOGINIT;
-    LWARN << "Ask for unknown value " << val << " (extracted from " << value 
+    LWARN << "Ask for unknown value " << val << " (extracted from " << value
           << ") for property " << m_d->m_name;
     return PropertyManagerPrivate::s_none;
   }

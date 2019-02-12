@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& oss, const QStringList& qsl)
   oss << "{";
   Q_FOREACH(QString s, qsl)
   {
-    oss << s.toUtf8().data() << ",";
+    oss << s.toUtf8().constData() << ",";
   }
   oss << "}";
   return oss;

@@ -150,7 +150,7 @@ void EnhancedAnalysisDictionary::init(
   ANALYSISDICTLOGINIT;
   LDEBUG  << "EnhancedAnalysisDictionary::init";
   MediaId language = manager->getInitializationParameters().language;
-  m_d->m_sp = &MediaticData::MediaticData::changeable().stringsPool(language);
+  m_d->m_sp = &Lima::Common::MediaticData::MediaticData::changeable().stringsPool(language);
   try
   {
     string accessId = unitConfiguration.getParamsValueAtKey("accessKeys");
@@ -177,7 +177,7 @@ void EnhancedAnalysisDictionary::init(
   try
   {
     QString binaryFilePath = Misc::findFileInPaths(
-      MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      Lima::Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
       unitConfiguration.getParamsValueAtKey("dictionaryValuesFile").c_str());
     resourceFileWatcher().addPath(binaryFilePath);
     QWriteLocker locker(&m_d->m_lock);

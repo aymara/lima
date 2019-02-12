@@ -16,7 +16,7 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 # SPECIFICENTITIESEXECENV(eng)
 
-SPECIFICENTITIESCONFIGENV(eng.ud)
+# SPECIFICENTITIESCONFIGENV(eng.ud)
 
 add_subdirectory(resources)
 add_subdirectory(Numex)

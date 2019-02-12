@@ -97,15 +97,15 @@ void LTRTextBuilder::buildLTRTextFrom(
     // add a global sentence boundary (thay covers all the text)
     DUMPERLOGINIT;
     LDEBUG << "LTR: add sentence bound at token" << tokenCounter;
-    textRep->addSentenceBound(tokenCounter); 
+    textRep->addSentenceBound(tokenCounter);
   }
   else {
-    // ??OME2 SegmentationData::iterator sbIt = sb->begin();    
-    std::vector<Segment>::iterator sbIt = (sb->getSegments()).begin();    
+    // ??OME2 SegmentationData::iterator sbIt = sb->begin();
+    std::vector<Segment>::iterator sbIt = (sb->getSegments()).begin();
     uint64_t tokenCounter = 0;
-    // ??OME2 while (sbIt != sb->end()) {        
-    while (sbIt != (sb->getSegments()).end()) {        
-      LinguisticGraphVertex sentenceBegin = sbIt->getFirstVertex();    
+    // ??OME2 while (sbIt != sb->end()) {
+    while (sbIt != (sb->getSegments()).end()) {
+      LinguisticGraphVertex sentenceBegin = sbIt->getFirstVertex();
       LinguisticGraphVertex sentenceEnd = sbIt->getLastVertex();
         this->addTokensToLTRTextFrom(
             graph,
@@ -211,7 +211,7 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
     MorphoSyntacticData* data = get(vertex_data, graph, vertex);
     const FsaStringsPool& sp = (Common::MediaticData::MediaticData::single().stringsPool(m_language));
 
-    sort(data->begin(),data->end(),ltNormProperty(m_macroAccessor));
+    sort(data->begin(),data->end(),ltNormProperty(*m_macroAccessor));
 
     StringsPoolIndex norm(0),lastNorm(0);
     LinguisticCode macro(0),lastMacro(0);

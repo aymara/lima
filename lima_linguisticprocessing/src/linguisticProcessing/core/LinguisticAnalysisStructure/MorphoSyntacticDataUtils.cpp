@@ -64,7 +64,7 @@ CheckEqualPropertyPredicate::CheckEqualPropertyPredicate(const Common::PropertyC
 
 bool CheckEqualPropertyPredicate::operator()(const LinguisticElement& elem) const
 {
-  return m_property->equal(elem.properties,m_value);
+  return m_property.equal(elem.properties,m_value);
 }
 
 CheckDifferentPropertyPredicate::CheckDifferentPropertyPredicate(const Common::PropertyCode::PropertyAccessor& prop,LinguisticCode value) :
@@ -74,7 +74,7 @@ CheckDifferentPropertyPredicate::CheckDifferentPropertyPredicate(const Common::P
 
 bool CheckDifferentPropertyPredicate::operator()(const LinguisticElement& elem) const
 {
-  return !(m_property->equal(elem.properties,m_value));
+  return !(m_property.equal(elem.properties,m_value));
 }
 
 IncludePropertyPredicate::IncludePropertyPredicate(const Common::PropertyCode::PropertyAccessor& prop,const std::set<LinguisticCode>& values) :
@@ -84,7 +84,7 @@ IncludePropertyPredicate::IncludePropertyPredicate(const Common::PropertyCode::P
 
 bool IncludePropertyPredicate::operator()(const LinguisticElement& elem) const
 {
-  return (m_values.find(m_property->readValue(elem.properties)) != m_values.end());
+  return (m_values.find(m_property.readValue(elem.properties)) != m_values.end());
 }
 
 ExcludePropertyPredicate::ExcludePropertyPredicate(const Common::PropertyCode::PropertyAccessor& prop,const std::set<LinguisticCode>& values) :
@@ -100,7 +100,7 @@ ExcludePropertyPredicate::ExcludePropertyPredicate(const ExcludePropertyPredicat
 
 bool ExcludePropertyPredicate::operator()(const LinguisticElement& elem) const
 {
-  return (m_values.find(m_property->readValue(elem.properties)) == m_values.end());
+  return (m_values.find(m_property.readValue(elem.properties)) == m_values.end());
 }
 
 } // LinguisticAnalysisStructure 

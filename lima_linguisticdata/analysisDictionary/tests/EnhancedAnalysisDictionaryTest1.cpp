@@ -52,11 +52,11 @@ using namespace Lima::LinguisticProcessing::AnalysisDict;
 
 void EnhancedAnalysisDictionaryTest1::initTestCase()
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
       << "lima",QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
       << "lima",QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
@@ -79,7 +79,7 @@ void EnhancedAnalysisDictionaryTest1::initTestCase()
 
 void EnhancedAnalysisDictionaryTest1::testEng()
 {
-  testLanguage("eng", 
+  testLanguage("eng",
                "lima-lp-eng.xml",
                "door",
                QStringList() << "door",
@@ -90,7 +90,7 @@ void EnhancedAnalysisDictionaryTest1::testEng()
 
 void EnhancedAnalysisDictionaryTest1::testEngUD()
 {
-  testLanguage("eng.ud", 
+  testLanguage("eng.ud",
                "lima-lp-eng.ud.xml",
                "door",
                QStringList() << "door",
@@ -101,7 +101,7 @@ void EnhancedAnalysisDictionaryTest1::testEngUD()
 
 void EnhancedAnalysisDictionaryTest1::testFre()
 {
-  testLanguage("fre", 
+  testLanguage("fre",
               "lima-lp-fre.xml",
               "porte",
               QStringList() << "porte",
@@ -113,7 +113,7 @@ void EnhancedAnalysisDictionaryTest1::testFre()
 
 void EnhancedAnalysisDictionaryTest1::testPor()
 {
-  testLanguage("por", 
+  testLanguage("por",
                "lima-lp-por.xml",
                "porta",
                QStringList() << "porta",
@@ -134,7 +134,7 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
     const QString& micro
 )
 {
-  const MediaticData::MediaData& mediaData = MediaticData::MediaticData::single().mediaData(language.toUtf8().constData());
+  const Lima::Common::MediaticData::MediaData& mediaData = Lima::Common::MediaticData::MediaticData::single().mediaData(language.toUtf8().constData());
   MediaId mediaId = mediaData.getMedia();
 
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() << "lima",QStringList());
@@ -181,7 +181,7 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
 
   // test DictionaryEntry getEntry(const Lima::LimaString& word) const;
   // create DictionaryEntry from string or StringPool
-  
+
 /*
  * <entry k="porte">
   <i l="porte">
@@ -201,15 +201,15 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
   DictionaryEntry entry1 = ead->getEntry(entryKey);
   // check that id of entry is id of entryKey
   QVERIFY( id == entry1.getEntryId() );
-  
+
   QVERIFY( !entry1.isEmpty() );
   QVERIFY( !entry1.isFinal() );
   QVERIFY( entry1.hasLingInfos() );
-    
+
   // test DictionaryEntry getEntry(const StringsPoolIndex wordId) const;
   DictionaryEntry entry2 = ead->getEntry(id);
   QVERIFY( id == entry2.getEntryId() );
-  // test DictionaryEntry getEntry(const StringsPoolIndex wordId, 
+  // test DictionaryEntry getEntry(const StringsPoolIndex wordId,
   //                                const Lima::LimaString& word) const;
   DictionaryEntry entry3 = ead->getEntry(id,entryKey);
   QVERIFY( id == entry3.getEntryId() );
@@ -228,32 +228,32 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
   // std::set<StringsPoolIndex> allInflectedForms() const;
   std::set<StringsPoolIndex> forms = msd.allInflectedForms();
   QStringList sforms;
-  for(auto formsIt = forms.cbegin(); formsIt != forms.cend() ; formsIt++ ) 
+  for(auto formsIt = forms.cbegin(); formsIt != forms.cend() ; formsIt++ )
   {
     StringsPoolIndex formId = *formsIt;
     LimaString formLimaString = aas->getSpelling(formId);
     sforms << formLimaString;
   }
   QVERIFY(sforms == refForms);
-  
+
   // std::set<StringsPoolIndex> allLemma() const;
   std::set<StringsPoolIndex> lemmas = msd.allLemma();
   QStringList slemmas;
-  for(auto lemmasIt = lemmas.cbegin() ; 
-      lemmasIt != lemmas.cend() ; 
-      lemmasIt++ ) 
+  for(auto lemmasIt = lemmas.cbegin() ;
+      lemmasIt != lemmas.cend() ;
+      lemmasIt++ )
   {
     StringsPoolIndex lemmaId = *lemmasIt;
     LimaString lemmaLimaString = aas->getSpelling(lemmaId);
     slemmas << lemmaLimaString;
   }
   QVERIFY(slemmas == refLemmas);
-  
+
   // std::set<StringsPoolIndex> allNormalizedForms() const;
   std::set<StringsPoolIndex> normalized = msd.allNormalizedForms();
   QStringList snormalized;;
-  for(auto normalizedIt = normalized.cbegin() ; 
-      normalizedIt != normalized.cend() ; 
+  for(auto normalizedIt = normalized.cbegin() ;
+      normalizedIt != normalized.cend() ;
       normalizedIt++ )
   {
     StringsPoolIndex normalizedId = *normalizedIt;
@@ -261,15 +261,15 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
     snormalized << normalizedLimaString;
   }
   QVERIFY(snormalized == refNormalized);
-  
+
   // Test that one of the MorphoSyntacticData msd elements has its properties
-  // LinguisticCode encoding @ref micro as its Micro 
+  // LinguisticCode encoding @ref micro as its Micro
   auto& pcm = static_cast<const LanguageData&>(mediaData).getPropertyCodeManager();
   auto& pmMicro = pcm.getPropertyManager("MICRO");
   auto& pa = pmMicro.getPropertyAccessor();
-  
+
   LinguisticCode nounCode = pmMicro.getPropertyValue(micro.toUtf8().constData());
-  
+
   bool foundNoun = false;
   for (const auto& element: msd)
   {
