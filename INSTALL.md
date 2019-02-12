@@ -34,6 +34,15 @@ https://github.com/aymara/qhttpserver/releases
 
 svmtool++ can be downloaded and installed from https://github.com/aymara/svmtool-cpp/releases
 
+To compile SVMTool models, you also need svm_light:
+```bash
+$ mkdir svm_light && cd svm_light
+$ wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+$ tar xvzf svm_light.tar.gz
+$ make
+$ sudo cp svm_classify svm_learn /usr/bin
+```
+
 For TensorFlow, we use a specially compiled version. It can be installed with our ppa in Ubuntu versions starting from 18.04:
 
 ```bash
