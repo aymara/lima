@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
  * @brief      output of dependency graph with dot format
  *
  * @file       DotDependencyGraphWriter.cpp
- * @author     besancon (besanconr@zoe.cea.fr) 
+ * @author     besancon (besanconr@zoe.cea.fr)
 
  *             copyright   Copyright (C) 2004 by CEA LIST
  * @date       Thu Oct 21 2004
@@ -59,7 +59,7 @@ namespace LinguisticProcessing {
 
 namespace SyntacticAnalysis {
 
-SimpleFactory<MediaProcessUnit,DotDependencyGraphWriter> 
+SimpleFactory<MediaProcessUnit,DotDependencyGraphWriter>
 dotDependencyGraphWriterFactory(DOTDEPENDENCYGRAPHWRITER_CLASSID);
 
 DotDependencyGraphWriter::DotDependencyGraphWriter() :
@@ -77,24 +77,24 @@ void DotDependencyGraphWriter::init(
   DotGraphWriter::init(unitConfiguration,manager);
 
   m_onlyDepEdges=false;
-  try 
+  try
   {
     string onlyDepEdges=
       unitConfiguration.getParamsValueAtKey("writeOnlyDepEdges");
-    if (onlyDepEdges == "true" || 
-        onlyDepEdges == "yes") 
+    if (onlyDepEdges == "true" ||
+        onlyDepEdges == "yes")
     {
       m_onlyDepEdges=true;
     }
   }
   catch (NoSuchParam& ) // keep default value (false)
   {}
-  
-  try 
+
+  try
   {
     string outputMode =
         unitConfiguration.getParamsValueAtKey("outputMode");
-    if (outputMode == "SentenceBySentence") 
+    if (outputMode == "SentenceBySentence")
     {
       m_outputMode = SentenceBySentence;
     }
@@ -102,19 +102,19 @@ void DotDependencyGraphWriter::init(
   catch (NoSuchParam& ) // keep default value (FullGraph)
   {
   }
-  try 
+  try
   {
     m_graphDotOptions = unitConfiguration.getMapAtKey("graphDotOptions");
   }
   catch (NoSuchMap& ) {}
-  
-  try 
+
+  try
   {
     m_nodeDotOptions = unitConfiguration.getMapAtKey("nodeDotOptions");
   }
   catch (NoSuchMap& ) {}
-  
-  try 
+
+  try
   {
     m_edgeDotOptions = unitConfiguration.getMapAtKey("edgeDotOptions");
   }
@@ -133,7 +133,7 @@ void DotDependencyGraphWriter::init(
 LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) const
 {
   SALOGINIT;
-  
+
   AnalysisGraph* anagraph=dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   AnalysisGraph* posgraph=dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   AnnotationData* annotationData=dynamic_cast<AnnotationData*>(analysis.getData("AnnotationData"));
@@ -150,25 +150,25 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
 
     std::ofstream ofs(outputFileName.c_str(), std::ofstream::binary);
 
-    if (m_onlyDepEdges) 
+    if (m_onlyDepEdges)
     {
       // write only the dependency graph
       // (but uses the PosTaggingVertexWriter to write the vertices
       // of the morphological graph)
       PosTagger::
-        PosTaggingVertexWriter<LinguisticGraph, LinguisticGraphVertex> 
+        PosTaggingVertexWriter<LinguisticGraph, LinguisticGraphVertex>
         phoenixGraphVertexWriter(posgraph->getGraph(),
                                 m_language,
                                 m_vertexDisplay);
-      
+
       DependencyGraphVertexWriter<DependencyGraph,DependencyGraphVertex>
         vertexWriter(syntacticData->dependencyGraph(),
                     phoenixGraphVertexWriter);
-      
-      DependencyGraphEdgeWriter<DependencyGraph,DependencyGraphEdge> 
+
+      DependencyGraphEdgeWriter<DependencyGraph,DependencyGraphEdge>
         edgeWriter(syntacticData->dependencyGraph(),
                   m_language);
-        
+
       LimaGraphGraphvizGraphWriter graphWriter(
         m_graphDotOptions,
         m_nodeDotOptions,
@@ -179,26 +179,26 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
                     edgeWriter,
                     graphWriter);
     }
-    else 
+    else
     {
       // write the morphological graph
       // and add the edges from the dependency graph
       PosTagger::
-        PosTaggingVertexWriter<LinguisticGraph, LinguisticGraphVertex> 
+        PosTaggingVertexWriter<LinguisticGraph, LinguisticGraphVertex>
         vertexWriter(posgraph->getGraph(),
                     m_language,
                     m_vertexDisplay);
-      
-      PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge> 
+
+      PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>
         edgeWriter(posgraph->getGraph(),m_language,
                   syntacticData->dependencyGraph(),
                    syntacticData);
-      
+
       LimaGraphGraphvizGraphWriter graphWriter(
         m_graphDotOptions,
         m_nodeDotOptions,
         m_edgeDotOptions);
-      
+
       boost::write_graphviz(ofs,
                             *(syntacticData->dependencyGraph()),
                     vertexWriter,
@@ -244,7 +244,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
 
       std::ofstream ofs(outputFileName.str().c_str(), std::ofstream::binary);
 
-     
+
       ofs << "digraph sentence" << i << " {" << std::endl;
       ofs << "  graph [";
       for (std::map<std::string,std::string>::const_iterator graphDotOptionsIt = m_graphDotOptions.begin() ; graphDotOptionsIt != m_graphDotOptions.end(); graphDotOptionsIt++)
@@ -264,15 +264,15 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
         ofs << edgeDotOptionsIt->first << "=" << edgeDotOptionsIt->second << ",";
       }
       ofs << "]"<<std::endl;
-      
-      if (m_onlyDepEdges) 
+
+      if (m_onlyDepEdges)
       {
         // write only the dependency graph
         // (but uses the PosTaggingVertexWriter to write the vertices
         // of the morphological graph)
-        
+
       }
-      else 
+      else
       {
         write_graphviz(ofs,
                        i,
@@ -282,7 +282,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
                        posgraph,
                        syntacticData,
                        annotationData);
-      }      
+      }
       ofs << "}"<<std::endl;
     }
   }
@@ -313,10 +313,10 @@ void DotDependencyGraphWriter::write_graphviz(
   SALOGINIT;
   LDEBUG << "DotDependencyGraphWriter::write_graphviz  begin="<<begin<<" ; end=" << end;
 //   CEdgeDepRelTypePropertyMap typeMap = get(edge_deprel_type, *syntacticData->dependencyGraph());
-  
+
   const LinguisticGraph& lposgraph=*(posgraph->getGraph());
   const DependencyGraph* depGraph=syntacticData->dependencyGraph();
-  
+
   std::set<LinguisticGraphVertex> visited;
   std::queue<LinguisticGraphVertex> toVisit;
   toVisit.push(begin);
@@ -330,7 +330,7 @@ void DotDependencyGraphWriter::write_graphviz(
     os << v << " ";
     DependencyGraphVertexWriter<DependencyGraph,DependencyGraphVertex>(
         depGraph,PosTagger::PosTaggingVertexWriter<LinguisticGraph,LinguisticGraphVertex> (&lposgraph,m_language,m_vertexDisplay))(os,v);
-        
+
     for (boost::tie(outItr,outItrEnd)=out_edges(v,lposgraph);
          outItr!=outItrEnd;
          outItr++)
@@ -339,7 +339,7 @@ void DotDependencyGraphWriter::write_graphviz(
       if (visited.find(next)==visited.end())
       {
         visited.insert(next);
-        if (next != end)
+        if (v != end)
         {
           toVisit.push(next);
         }
@@ -348,11 +348,13 @@ void DotDependencyGraphWriter::write_graphviz(
           LDEBUG << "PosTaggingDepGraphEdgeWriter reached end";
         }
       }
-      
-      os << v << " -> " << next << " ";
-      LTRACE << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next;
-      PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(&lposgraph,m_language,depGraph,syntacticData)(os,*outItr);
-          
+
+      if (v != end)
+      {
+        os << v << " -> " << next << " ";
+        LTRACE << "PosTaggingDepGraphEdgeWriter for "<<v<<" -> " << next;
+        PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(&lposgraph,m_language,depGraph,syntacticData)(os,*outItr);
+      }
     }
   }
 }
