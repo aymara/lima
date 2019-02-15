@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -148,7 +148,7 @@ const State* Transition::run(Text& text) const
   // Transition is opened
 //   LDEBUG << "Setting token StatusType to " << m_status.getStatus();
 //   text.setStatus(m_status);
-  
+
   if (m_defaultKey.length() != 0)
   {
 #ifdef DEBUG_LP
@@ -191,7 +191,7 @@ void Transition::applySettings(Text& text) const
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
 #endif
-  for (auto it = m_settings.cbegin(), it_end = m_settings.end(); 
+  for (auto it = m_settings.cbegin(), it_end = m_settings.end();
        it != it_end; it++)
   {
 #ifdef DEBUG_LP
@@ -320,6 +320,7 @@ bool Transition::setSetting(const LimaString& s)
   else if (str == "T_PARAGRAPH_BRK")
   {
     m_settings.push_back(SET_T_PARAGRAPH_BRK);
+    m_settings.push_back(SET_T_SENTENCE_BRK);
   }
   else if (str == "T_HYPHEN_WORD")
   {
