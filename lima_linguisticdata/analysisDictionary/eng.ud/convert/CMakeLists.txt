@@ -14,7 +14,6 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-# CONVERT(eng ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt)
 
 set(ENV{LC_ALL} "C")
 
@@ -46,12 +45,11 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py --features=none ${dicoFiles} > freeling-ext-lima.txt.tmp
 #     COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
 #     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic >> freeling-ext-lima.txt.tmp
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
@@ -59,7 +57,6 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ${dicoFiles}
 #       ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
-      ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
 #       ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
       ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py
     COMMENT "produce eng XML dico under Linux"
@@ -73,14 +70,12 @@ else()
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
     COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt >> dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
-      ${CMAKE_CURRENT_SOURCE_DIR}/entrees_composees.txt
       ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
     COMMENT "produce eng XML dico under Windows"
   )

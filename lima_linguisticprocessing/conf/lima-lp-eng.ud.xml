@@ -32,11 +32,11 @@
         <!--item value="fullTokenXmlLoggerIdiomatic"/-->
         <item value="hyphenWordAlternatives"/>
         <!--item value="fullTokenXmlLoggerHyphen"/-->
-        <item value="abbreviationSplitAlternatives"/>
+<!--         <item value="abbreviationSplitAlternatives"/> -->
         <!--item value="fullTokenXmlLoggerAbbreviations"/-->
         <item value="defaultProperties"/>
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
-        <item value="SpecificEntitiesModex"/>
+<!--         <item value="SpecificEntitiesModex"/> -->
         <!--item value="specificEntitiesXmlLogger"/-->
         <!--item value="dotGraphWriter-beforepos"/-->
 <!--         <item value="viterbiPostagger-freq"/> -->
@@ -54,7 +54,7 @@
         <item value="syntacticAnalyzerFinalize"/>
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -63,12 +63,12 @@
         <!--item value="VerbNetRecognition"/-->
         <!--item value="kbsrl"/-->
         <item value="conllDumper"/>
-        <!--item value="bowDumper"/-->
-        <!--item value="textDumper"/-->
-        <!--item value="fullXmlDumper"/-->
-        <!--item value="NullDumper"/-->
-        <!--item value="temporalXmlDumper"/-->
-        <!--item value="afterFusionXmlDumper"/-->
+<!--         <item value="bowDumper"/> -->
+<!--         <item value="textDumper"/> -->
+<!--         <item value="fullXmlDumper"/> -->
+<!--         <item value="NullDumper"/> -->
+<!--         <item value="temporalXmlDumper"/> -->
+<!--         <item value="afterFusionXmlDumper"/> -->
       </list>
     </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
@@ -168,7 +168,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -180,7 +180,7 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
-    
+
      <group name="tag" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -214,7 +214,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -232,9 +232,9 @@
     </group>
 <!-- ******************************************
   Definition of process units
-*********************************************** -->    
+*********************************************** -->
     <group name="flattokenizer" class="FlatTokenizer">
-      <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
+      <param key="automatonFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.tok"/>
       <param key="charChart" value="flatcharchart"/>
     </group>
     <group name="regexmatcher" class="RegexMatcher">
@@ -265,7 +265,7 @@
       <param key="scope" value="SENT" />
       <param key="threshold" value="130" />
       <param key="Resolve Definites" value="SENT" />
-      <param key="Resolve non third person pronouns" value="SENT" />  
+      <param key="Resolve non third person pronouns" value="SENT" />
       <map name="MacroCategories">
         <entry key="PronMacroCategory" value="PRON"/>
         <entry key="VerbMacroCategory" value="SENT" />
@@ -276,7 +276,7 @@
       <list name="LexicalAnaphora">
             <item value="PRP$"/>
       </list>
-      <list name="UndefinitePronouns"> 
+      <list name="UndefinitePronouns">
       </list>
       <list name="PrepRelation">
         <item value="PREPSUB"/>
@@ -302,15 +302,15 @@
         <item value="SujInv" />
       </list>
       <list name="AttributeRelation">
-              <item value="ATB_S"/>  
+              <item value="ATB_S"/>
       </list>
       <list name="CODRelation">
         <item value="COD_V" />
         <item value="CodPrev" />
       </list>
       <list name="COIRelation">
-        <item value="CoiPrev" />  
-        <item value="CPL_V" />  
+        <item value="CoiPrev" />
+        <item value="CPL_V" />
       </list>
       <list name="AdjunctRelation">
         <item value="CPLV_V" />
@@ -399,7 +399,7 @@
       </list>
       <param key="allFeatures" value="false"/>
       <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
+            a list of  features to use or neither and then no feature will be
       used -->
       <list name="features">
         <item value="Mood" />
@@ -437,13 +437,13 @@
       <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
       <param key="allFeatures" value="false"/>
       <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
+            a list of  features to use or neither and then no feature will be
       used -->
       <list name="features">
-        <item value="Mood" />
+<!--        <item value="Mood" />
         <item value="PronType" />
         <item value="Tense" />
-        <item value="VerbForm" />
+        <item value="VerbForm" />-->
       </list>
     </group>
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
@@ -810,7 +810,7 @@
       <param key="handler" value="simpleStreamHandler"/>
       <param key="allFeatures" value="false"/>
       <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
+            a list of  features to use or neither and then no feature will be
             used.-->
       <list name="features">
         <item value="Mood" />
@@ -941,7 +941,7 @@
       <param key="mainKeys" value="globalFsaAccess"/>
     </group>
     <group name="flatcharchart" class="FlatTokenizerCharChart">
-      <param key="charFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.chars.tok"/>
+      <param key="charFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.chars.tok"/>
     </group>
     <group name="mainDictionary" class="EnhancedAnalysisDictionary">
       <param key="accessKeys" value="globalFsaAccess"/>

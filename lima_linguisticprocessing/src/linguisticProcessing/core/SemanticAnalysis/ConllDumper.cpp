@@ -87,8 +87,6 @@ class ConllDumperPrivate
   std::string m_property;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
   const Common::PropertyCode::PropertyManager* m_propertyManager;
-  const Common::PropertyCode::PropertyManager* m_timeManager; //Ajout
-  const Common::PropertyCode::PropertyAccessor* m_timeAccessor; //Ajout
 
   std::string m_graph;
   std::string m_sep;
@@ -165,9 +163,6 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   }
   catch (NoSuchParam& ) {} // keep default value
   m_d->m_propertyManager=&codeManager.getPropertyManager(m_d->m_property);
-
-  m_d->m_timeManager=&codeManager.getPropertyManager("TIME");
-  m_d->m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
 
   try {
     std::string resourcePath = Common::MediaticData::MediaticData::single().getResourcesPath();

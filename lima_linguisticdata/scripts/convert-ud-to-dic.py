@@ -24,45 +24,49 @@ import argparse
 import re
 import os
 
- #gawk -F "\\t" "BEGIN {OFS = FS} {$2 = substr($2,0,100); print $2\"\\t\"$4\"-\"$6}" | sed -e "s@-_$@@" > corpus_eng.ud_merge.txt
-
 def main(argv):
-    tokens_re = re.compile(r'^[0-9]+')
-    # parse command-line arguments
-    parser=argparse.ArgumentParser(
-        description='Convert UD corpus to success cate retag used to learn pos tagging models')
-    # optional arguments
-    parser.add_argument('corpus',
-                        type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
-                        nargs='+',
-                        help='input file: UD corpus file')
-    param=parser.parse_args()
-    #print('param.features: {}'.format(param.features), file=sys.stderr)
-    #features_to_keep = param.features.split(',') if param.features is not None else []
-    for corpus in param.corpus:
-        # tokens accumulates the adjacent tokens that must be grouped in the 
-        # output. This is only named entities parts (PROPN linked by a compound
-        # relation) currently
-        tokens = ''
-        for line in corpus:
-            #print('line: {}'.format(line), file=sys.stderr)
-            line = line.strip()
-            m = tokens_re.match(line)
-            if m:
-                # 22	i	i	PRON	PRP	Case=Nom|Number=Sing|Person=1|PronType=Prs	24	nsubj	24:nsubj	SpaceAfter=No
-                _,token,lemma,udtag,_,token_features,_,_,_,_ = line.split('\t')
-                #print('\ttoken: {}, udtag: {}, token_features: {}'.format(token, udtag, token_features), file=sys.stderr)
-                features = token_features.split('|')
-                features_kept = []
-                for feature in features:
-                    #print(feature, file=sys.stderr)
-                    if feature is not '_':
-                        features_kept.append(feature)
-                features_kept_string = ''
-                if features_kept:
-                    features_kept_string = '-{}'.format('|'.join(features_kept))
-                print('{}\t{}\t\t{}{}'.format(token, lemma, udtag, features_kept_string))
+  tokens_re = re.compile(r'^[0-9]+')
+  # parse command-line arguments
+  parser=argparse.ArgumentParser(
+      description='Convert UD corpus to success cate retag used to learn pos tagging models')
+  # optional arguments
+  parser.add_argument('--features',
+                      type=str,
+                      nargs='?',
+                      default='Mood,PronType,Tense,VerbForm',
+                      help='comma separated list of feature names')
+  parser.add_argument('corpus',
+                      type=argparse.FileType('r',
+                                              encoding='utf-8',
+                                              errors='ignore'),
+                      nargs='+',
+                      help='input file: UD corpus file')
+  param=parser.parse_args()
+  #print('param.features: {}'.format(param.features), file=sys.stderr)
+  for corpus in param.corpus:
+    # tokens accumulates the adjacent tokens that must be grouped in the
+    # output. This is only named entities parts (PROPN linked by a compound
+    # relation) currently
+    tokens = ''
+    for line in corpus:
+      #print('line: {}'.format(line), file=sys.stderr)
+      line = line.strip()
+      m = tokens_re.match(line)
+      if m:
+        # 22	i	i	PRON	PRP	Case=Nom|Number=Sing|Person=1|PronType=Prs	24	nsubj	24:nsubj	SpaceAfter=No
+        _,token,lemma,udtag,_,token_features,_,_,_,_ = line.split('\t')
+        #print('\ttoken: {}, udtag: {}, token_features: {}'.format(token, udtag, token_features), file=sys.stderr)
+        features = token_features.split('|')
+        features_kept = []
+        for feature in features:
+          #print(feature, file=sys.stderr)
+          if feature is not '_':
+            feature_name, feature_value = feature.split('=')
+            if param.features == 'all' or feature_name in param.features:
+              features_kept.append(feature)
+        features_kept_string = ''
+        if features_kept:
+          features_kept_string = '-{}'.format('|'.join(features_kept))
+        print('{}\t{}\t\t{}{}'.format(token, lemma, udtag, features_kept_string))
 
 main(sys.argv[1:])

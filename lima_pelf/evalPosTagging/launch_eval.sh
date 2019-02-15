@@ -52,6 +52,7 @@ PARSED_OPTIONS=$(getopt -n "$0"  -o "f:nh" --long "fragment:,notrain,help"  -- "
 #Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
 then
+  echo "Error parsing arguments"
   exit 1
 fi
 
@@ -86,27 +87,32 @@ do
       break;;
   esac
 done
-
+echo "Options parsed"
+if [ "$#" -lt 1 ]
+then
+  echo "No language to evaluate"
+  exit 1
+fi
 
 for lang in $*; do
 echo "lang is $lang"
     addOption=""
     case $lang in
-        eng) 
+        eng)
             addOption="-s . -n $nbParts"
-            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":") 
-            corpus=$corpusFile  
+            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":")
+            corpus=$corpusFile
             conf=config-minimale-eng.SVMT;;
-        eng.ud) 
+        eng.ud)
             addOption="-s . -n $nbParts"
-            corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":") 
-            corpus=$corpusFile  
+            corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":")
+            corpus=$corpusFile
             conf=config-minimale-eng.ud.SVMT;;
-        fre)             
+        fre)
             addOption="-n $nbParts"
-            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")  
+            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")
             conf=config-minimale-fre.SVMT ;;
-        por) 
+        por)
             addOption="-s PU+FORTE -n $nbParts"
             corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
             conf=config-minimale-por.SVMT ;;
@@ -116,7 +122,7 @@ echo "lang is $lang"
 
 
     confFile=$(findFileInPaths $LIMA_CONF $conf ":")
-    
+
     if [ $notrain = true ]
     then
         $EVAL_PATH/tfcv.py -l $lang $addOption $corpus $confFile $svm_light $svm_learn
@@ -126,15 +132,15 @@ echo "lang is $lang"
     fi
 
     echo results.$lang.$method
-    for f in results.$lang.$method/*/aligned; do 
+    for f in results.$lang.$method/*/aligned; do
         $EVAL_PATH/micro2macro.sh $lang $f > $f.macro;
     done
-    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"` 
-    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
+    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"`
+    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"`
 
     mkdir -p results.$lang.$method/data
     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
     $EVAL_PATH/problemesAlignement.sh $lang $method
     echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
-    $EVAL_PATH/detailed-res.sh $nbParts $lang 
+    $EVAL_PATH/detailed-res.sh $nbParts $lang
 done
