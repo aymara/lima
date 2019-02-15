@@ -900,7 +900,7 @@ C D"/>
     </call-parameters>
   <expl>Break sentences on paragraph break.</expl>
   <test id="eng.tok.52.1" trace=".tokenizer.xml"
-    comment="650,00 is a comma-number."
+    comment="sentence break status is expected on EOL token"
     left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"
     operator="="
     right="t_sentence_brk"/>
