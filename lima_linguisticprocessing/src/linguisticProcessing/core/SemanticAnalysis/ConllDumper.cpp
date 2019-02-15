@@ -24,6 +24,7 @@
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/misc/AbstractAccessByString.h"
+#include "common/misc/escaper.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -405,6 +406,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #endif
 
         std::string inflectedToken=ft->stringForm().toUtf8().constData();
+        if (inflectedToken.find_first_of("\r\n\t") != std::string::npos)
+          boost::find_format_all(inflectedToken, boost::token_finder(!boost::is_print()), character_escaper());
+
         std::string lemmatizedToken;
         if (morphoData != 0 && !morphoData->empty())
         {
