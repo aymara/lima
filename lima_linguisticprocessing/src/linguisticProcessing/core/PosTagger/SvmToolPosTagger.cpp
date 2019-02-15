@@ -376,6 +376,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
     LDEBUG << "Result line: '" << resultLine << "'";
 #endif
+//     if (resultLine.empty())
+//     {
+//       continue;
+//     }
     std::vector<std::string> elements;
     boost::split(elements, resultLine, boost::is_any_of(" "));
     if (elements.size() < 2)

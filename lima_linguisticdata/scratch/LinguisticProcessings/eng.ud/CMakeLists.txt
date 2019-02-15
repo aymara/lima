@@ -14,10 +14,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-add_subdirectory(eng)
-add_subdirectory(eng.ud)
-add_subdirectory(fre)
-add_subdirectory(por)
-add_subdirectory(StopLists)
-
 ########### install files ###############
+install(FILES
+  tokenizerAutomaton-eng.ud.chars.tok
+  tokenizerAutomaton-eng.ud.tok
+COMPONENT eng.ud DESTINATION share/apps/lima/resources/LinguisticProcessings/eng.ud)

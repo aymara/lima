@@ -52,6 +52,7 @@ PARSED_OPTIONS=$(getopt -n "$0"  -o "f:nh" --long "fragment:,notrain,help"  -- "
 #Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
 then
+  echo "Error parsing arguments"
   exit 1
 fi
 
@@ -86,7 +87,12 @@ do
       break;;
   esac
 done
-
+echo "Options parsed"
+if [ "$#" -lt 1 ]
+then
+  echo "No language to evaluate"
+  exit 1
+fi
 
 for lang in $*; do
 echo "lang is $lang"
@@ -97,12 +103,12 @@ echo "lang is $lang"
             corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":")
             corpus=$corpusFile
             conf=config-minimale-eng.SVMT;;
-        eng.ud) 
+        eng.ud)
             addOption="-s . -n $nbParts"
-            corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":") 
-            corpus=$corpusFile  
+            corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":")
+            corpus=$corpusFile
             conf=config-minimale-eng.ud.SVMT;;
-        fre)             
+        fre)
             addOption="-n $nbParts"
             corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")
             conf=config-minimale-fre.SVMT ;;

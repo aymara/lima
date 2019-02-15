@@ -23,7 +23,6 @@ import multiprocessing
 
 
 # Variables definition
-SCRIPTS_PATH = "@SCRIPTS_PATH@"
 MATRIX_PATH = path.join(environ.get('LIMA_RESOURCES', '/usr/local'),
                         'Disambiguation')
 print("MATRIX_PATH={}".format(MATRIX_PATH))
@@ -74,7 +73,7 @@ def TenPcSample(path, sep, strip_size):
         lines = 0
         lines = sum(1 for line in c)
         if lines > strip_size:
-            lines = strip_size 
+            lines = strip_size
         partition_size = (lines/numfold)
     print('*** Sample of {} {}% ({}/{}) sep:"{}" ongoing ...'.format(
         path, str(100/numfold), str(partition_size), str(lines), sep))
@@ -162,7 +161,7 @@ def Tagged2raw():
             p for p in processes if p.poll() is not None])
 
 
-def Disamb_matrices(scripts_path):
+def Disamb_matrices():
     """
     Computes the new disambiguation matrices for each 90% sample of the gold
     corpus.
@@ -176,18 +175,15 @@ def Disamb_matrices(scripts_path):
                 os.mkdir("matrices")
             except OSError:
                 pass
-            os.system(scripts_path+"/convert-ud-to-success-categ-retag.py 90pc.tfcv > corpus_eng.ud_merge.txt")
+            os.system("{}/convert-ud-to-success-categ-retag.py --features=none 90pc.tfcv > corpus_eng.ud_merge.txt".format(os.environ['LIMA_SOURCES']))
 
             os.system("gawk -F'\t' '{ print $2 }' corpus_eng.ud_merge.txt >  succession_categs_retag.txt")
-            os.system(scripts_path+"/disamb_matrices_extract.pl succession_categs_retag.txt")
-            os.system("sort succession_categs_retag.txt|uniq -c|awk -F' ' '{print $2\"\t\"$1}' > matrices/unigramMatrix-%s.dat"
-                      % lang)
-            os.system(scripts_path+"/disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-%s.dat"
-                      % lang)
-            os.system("mv bigramsend.txt matrices/bigramMatrix-%s.dat" % lang)
+            os.system("{}/disamb_matrices_extract.pl succession_categs_retag.txt".format(os.environ['LIMA_SOURCES']))
+            os.system("sort succession_categs_retag.txt|uniq -c|awk -F' ' '{print $2\"\t\"$1}' > matrices/unigramMatrix-{}.dat".format(lang))
+            os.system("{}/disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix-{}.dat".format(os.environ['LIMA_SOURCES']), lang)
+            os.system("mv bigramsend.txt matrices/bigramMatrix-{}.dat".format(lang))
             os.system("gawk -F'\t' '{ print $1\"\t\"$2 }' corpus_eng.ud_merge.txt > priorcorpus.txt")
-            os.system(scripts_path+"/disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-%s.dat U,ET,PREF,NPP,PONCT,CC,CS"
-                      % lang)
+            os.system("{}/disamb_matrices_prior.pl priorcorpus.txt matrices/priorUnigramMatrix-{}.dat U,ET,PREF,NPP,PONCT,CC,CS".format(os.environ['LIMA_SOURCES'], lang))
 
 
 def BuildDictionary(language):
@@ -277,6 +273,13 @@ def TrainSVMT(conf, svmli, svmle):
         str_wd = wd.replace("/", "\/")
         str_svmli = svmli.replace("/", "\/")
         print("\n---  Treat sample n° {} {} {} {} --- ".format(i, conf, svmli,svmle))
+        if 'PERL5LIB' in os.environ:
+            os.environ['PERL5LIB'] = '{}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:{}'.format(
+                os.environ['LIMA_SOURCES'], os.environ['PERL5LIB'])
+        else:
+            os.environ['PERL5LIB'] = '{}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib'.format(
+                os.environ['LIMA_SOURCES'])
+
         os.system("sed -e 's/%SAMPLE-PATH%/{}/g' -e 's/%SVM-DIR%/{}/g' {} > {}/config.svmt".format(
             str_wd, str_svmli, conf, wd))
         svmlestring = "{}/config.svmt".format(wd)
@@ -363,9 +366,9 @@ def FormaterPourAlignement(sep):
     """
     for i in range(1, numfold+1):
         with pushd('{}/{}'.format(results, str(i))):
-            print(os.getcwd())
+            print('    ==== FormaterPourAlignement {}: {}, {}'.format(sep,i,os.getcwd()))
             os.system("gawk -F' ' '{print $3\"\t\"$5}' 10pc.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv")
-            os.system('bash -c "python3 lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py 10pc.tfcv | sed -e\'s/ /_/g\' > gold.tfcv"')
+            os.system('bash -c "python3 {}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none 10pc.tfcv | sed -e\'s/ /_/g\' > gold.tfcv"'.format(os.environ['LIMA_SOURCES']))
             #os.system("sed 's/ /_/g' 10pc.tfcv > gold.tfcv")
 
     with pushd('{}'.format(results)):
@@ -471,8 +474,8 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain, strip_size):
             SVMFormat()
             TrainSVMT(conf, svmli, svmle)
         elif (tagger == 'viterbi'):
-            print("Disamb_matrices(SCRIPTS_PATH)")
-            Disamb_matrices(SCRIPTS_PATH)
+            print("Disamb_matrices()")
+            Disamb_matrices()
         # copy training data in another folder for later use
         try:
             copytree(results, "training-sets/training.%s.%s" % (lang, tagger))
@@ -516,8 +519,8 @@ else:
 
 print(' ******* NUMFOLD: {} *******  \n'.format(numfold))
 main(args[0], args[1], args[2], args[3],
-     options.sep, 
+     options.sep,
      options.lang,
-     options.clean, 
-     options.forceTrain, 
+     options.clean,
+     options.forceTrain,
      strip_size)
