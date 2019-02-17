@@ -1,7 +1,7 @@
 #!/usr/bin/perl -s
 #
 # Perl Program created by Romaric Besancon on Thu Mar 18 2010
-# Version : $Id$ 
+# Version : $Id$
 
 # Help mode
 if ($main::h || $main::help) {
@@ -18,8 +18,10 @@ die "need two args (see -help)" unless @ARGV>=2;
 my ($refFile,$testFile)=@ARGV;
 
 my $PELF_BIN_PATH = "$ENV{'LIMA_DIST'}/share/apps/lima/scripts/";
-system("$PELF_BIN_PATH/words.sh $refFile > $tmpfile.ref.words");
-system("$PELF_BIN_PATH/words.sh $testFile > $tmpfile.test.words");
+system("bash $PELF_BIN_PATH/words.sh $refFile > $tmpfile.ref.words") == 0
+  or die "Failed: bash $PELF_BIN_PATH/words.sh $refFile > $tmpfile.ref.words";
+system("bash $PELF_BIN_PATH/words.sh $testFile > $tmpfile.test.words") == 0
+  or die "Failed: bash $PELF_BIN_PATH/words.sh $testFile > $tmpfile.test.words";
 
 my (@IgnoredRefPos,@IgnoredTestPos);
 open(FDIFF,"diff $tmpfile.ref.words $tmpfile.test.words |");
@@ -27,14 +29,14 @@ my (@refWords,@testWords);
 my ($refPos,$op,$testPos);
 while(<FDIFF>) {
     chomp;
-    if (/^---$/) {      
+    if (/^---$/) {
     }
     elsif (/^> (.*)/) { # test
         push @testWords,$1;
     }
     elsif (/^< (.*)/) { # ref
         push @refWords,$1;
-        
+
     }
     elsif (m%(.*)([adc])(.*)%) {
         if (@testWords && @refWords) {

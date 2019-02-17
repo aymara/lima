@@ -104,9 +104,10 @@ echo "lang is $lang"
             corpus=$corpusFile
             conf=config-minimale-eng.SVMT;;
         eng.ud)
-            addOption="-s . -n $nbParts"
+            nbParts="1"
+            addOption="-s ."
             corpusFile=$(findFileInPaths $LIMA_SOURCES lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT/en_ewt-ud-train.conllu  ":")
-            corpus=$corpusFile
+            corpus=$(echo $corpusFile | sed -e 's/train.conllu//')
             conf=config-minimale-eng.ud.SVMT;;
         fre)
             addOption="-n $nbParts"

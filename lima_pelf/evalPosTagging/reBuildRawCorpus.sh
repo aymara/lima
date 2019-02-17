@@ -2,8 +2,12 @@
 
 # Usage : ./reBuildRawCorpus.sh tagged_corpus
 #
+set -o nounset
+set -o errexit
+set -o pipefail
 
-if (($#!=2)); then 
+
+if (($#!=2)); then
     echo usage: rebuildRawCorpus.sh lang file
 fi
 

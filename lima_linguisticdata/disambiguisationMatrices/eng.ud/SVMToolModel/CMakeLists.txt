@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -33,19 +33,19 @@ else ()
   message("svm_light is ${SVM_LIGHT_PROGRAM}.")
 
   get_filename_component(SVM_LIGHT ${SVM_LIGHT_PROGRAM} DIRECTORY)
-  
+
   configure_file(config-minimale.SVMT config-minimale.SVMT @ONLY)
 
   # Create a file allowing LIMA to find the resource dir
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lima "")
 
-  
+
   if (SHORTEN_POR_CORPUS_FOR_SVMLEARN)
     add_custom_command(
         OUTPUT lima.A0.UNK
         COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt | head -n 100000 > corpus_eng.ud.txt
         COMMAND PERL5LIB=$ENV{PERL5LIB} ${SVMT_LEARN} config-minimale.SVMT
-        DEPENDS 
+        DEPENDS
           config-minimale.SVMT
           ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt
         COMMENT "Compiles eng.ud SVMTool model"
@@ -63,7 +63,7 @@ else ()
       COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt > corpus_eng.ud.txt
       COMMAND echo "Before calling ${SVMT_LEARN}, PERL5LIB is $ENV{PERL5LIB}"
       COMMAND PERL5LIB=$ENV{PERL5LIB} ${SVMT_LEARN} config-minimale.SVMT
-      DEPENDS 
+      DEPENDS
         config-minimale.SVMT
         ${CMAKE_CURRENT_BINARY_DIR}/../corpus_eng.ud_merge.txt
       COMMENT "Compiles eng.ud SVMTool model"
@@ -78,31 +78,18 @@ else ()
 
   endif()
 
-  
+
     add_dependencies(svmtoolmodeleng.ud categs-eng.ud)
 
     install(
-    FILES 
-      ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0              
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0.UNK  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1     
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1.UNK  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2      
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2.UNK  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3      
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3.UNK  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4      
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4.UNK  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.AMBP  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.DICT  
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.EXP   
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG      
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
-      ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
-    COMPONENT eng.ud 
+    FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT
+    COMPONENT eng.ud
     DESTINATION share/apps/lima/resources/Disambiguation/SVMToolModel-eng.ud)
+
+    install(
+    CODE "file( GLOB _SVMToolModelFiles \"${CMAKE_CURRENT_BINARY_DIR}/lima*\" )"
+    CODE "file( INSTALL \${_SVMToolModelFiles} DESTINATION \"share/apps/lima/resources/Disambiguation/SVMToolModel-eng.ud\" )"
+    COMPONENT eng.ud)
 
 endif()

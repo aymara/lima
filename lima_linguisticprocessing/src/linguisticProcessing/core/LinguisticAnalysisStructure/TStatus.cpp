@@ -338,11 +338,11 @@ const Lima::LimaString& TStatus::defaultKey() const {
 void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-  LDEBUG << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey);
-  LDEBUG << "TStatus::setDefaultKey previous:" << ((m_d->_defaultKey.empty())?LimaString("EMPTY"):m_d->_defaultKey.back());
+  LTRACE << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey);
+  LTRACE << "TStatus::setDefaultKey previous:" << ((m_d->_defaultKey.empty())?LimaString("EMPTY"):m_d->_defaultKey.back());
   if (!m_d->_defaultKey.empty())
   {
-    LDEBUG << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back());
+    LTRACE << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back());
   }
 #endif
   // do not push several times the same value
@@ -354,7 +354,7 @@ void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
   else if (defaultKey == Common::Misc::utf8stdstring2limastring("t_not_roman"))
   {
 #ifdef DEBUG_LP
-    LDEBUG << "TStatus::setDefaultKey remove roman from all previous";
+    LTRACE << "TStatus::setDefaultKey remove roman from all previous";
 #endif
     std::vector <Lima::LimaString > newDefaultKey;
     for (std::vector <Lima::LimaString >::const_iterator it = m_d->_defaultKey.begin(); it != m_d->_defaultKey.end(); it++)
