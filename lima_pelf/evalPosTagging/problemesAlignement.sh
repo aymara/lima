@@ -4,7 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-if (($#==0)); then 
+if (($#==0)); then
     echo usage: problemesAlignement.sh langue method
 fi
 
@@ -13,9 +13,9 @@ method=$2
 
 temp_dir=`mktemp -d`
 
-FILES="results.$lang.$method/*/aligned.log"
+FILES="results.$lang.$method/aligned.log"
 
-for file in $FILES 
+for file in $FILES
 do
     cat $file >> $temp_dir/tmpAligned;
 done

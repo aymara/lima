@@ -57,12 +57,12 @@ def pushd(dirname):
 def SVMFormat(files, strip_size):
     print('SVMFormat({}, {})'.format(files, strip_size))
     for file in files.items():
-        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; python3 {3}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none {2} | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/1/{1}.svmt"'.format(
+        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; python3 {3}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none {2} | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/{1}.svmt"'.format(
           results, file[0], file[1], os.environ['LIMA_SOURCES'], strip_size)) > 0:
             raise RuntimeError('system call returned non zero value')
-    if strip_size == "inf":
-        print('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/1/train.svmt > {0}/1/train.svmt.s ; mv {0}/1/train.svmt.s {0}/1/train.svmt"'.format(results, strip_size))
-        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/1/train.svmt > {0}/1/train.svmt.s ; mv {0}/1/train.svmt.s {0}/1/train.svmt"'.format(results, strip_size)) > 0:
+    if strip_size != "inf":
+        print('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size))
+        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size)) > 0:
             raise RuntimeError('system call returned non zero value')
 
 def Tagged2raw(testFile):
@@ -72,8 +72,8 @@ def Tagged2raw(testFile):
     Organizes samples in numbered folders in results.<lang>.<tagger>
     """
 
-    print("*** Producing raw equivalent of test file {0}/1/test.svmt".format(results))
-    with open('{0}/1/test.svmt.brut'.format(results), 'w',
+    print("*** Producing raw equivalent of test file {0}/test.svmt".format(results))
+    with open('{0}/test.svmt.brut'.format(results), 'w',
               encoding='utf-8', newline='\n') as outfile:
         print('{}/conllu_to_text.pl {}'.format(PELF_BIN_PATH, testFile))
         subprocess.run(
@@ -88,7 +88,7 @@ def BuildDictionary(language):
     deducible from the PoS tagging learning corpus for the current sample.
     Add the path of the generated resource to LIMA resources search path
     """
-    wd = results + "/1"
+    wd = results + ""
     print('\n***  Build dictionary ***')
     print('running {}/build-dico.sh {}'.format(PELF_BIN_PATH, language))
     subprocess.run(
@@ -101,7 +101,7 @@ def trainSVMT(conf, svmli, svmle):
     """
     Produces models for each sample.
     """
-    wd = '{}/{}/1'.format(os.getcwd(), results)
+    wd = '{}/{}'.format(os.getcwd(), results)
     str_wd = wd.replace("/", "\/")
     str_svmli = svmli.replace("/", "\/")
     print("\n---  Train {} {} {} --- ".format(conf, svmli,svmle))
@@ -129,7 +129,7 @@ def analyzeTextAllSVMT(init_conf, conf_path):
     try:
         print("    ==== SVMTool analysis: {}, {}".format(
             init_conf, conf_path))
-        wd = '{}/{}/1'.format(os.getcwd(), results)
+        wd = '{}/{}'.format(os.getcwd(), results)
         local_conf_dir = '{}/conf'.format(wd)
         local_conf_path = '{}/lima-lp-{}.xml'.format(local_conf_dir, lang)
         os.makedirs(local_conf_dir, exist_ok=True)
@@ -166,7 +166,7 @@ def formatForAlignement(sep):
     directly understandable by the aligner.
     """
 
-    with pushd('{}/1'.format(results)):
+    with pushd('{}'.format(results)):
         print('    ==== formatForAlignement {}: {}'.format(sep,os.getcwd()))
         if os.system("gawk -F' ' '{print $3\"\t\"$5}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
@@ -178,7 +178,7 @@ def formatForAlignement(sep):
 
 
 def align():
-    with pushd('{}/1'.format(results)):
+    with pushd('{}'.format(results)):
         print("\n\n ALIGNEMENT" + " - " + os.getcwd())
         if os.system("%(path)s/aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log"
                   % {"path": PELF_BIN_PATH}) > 0:
@@ -208,7 +208,7 @@ def checkConfig(conf):
 def makeTree():
     try:
         os.mkdir(results)
-        os.mkdir(results + "/1")
+        os.mkdir(results + "")
     except OSError:
         # ignored
         pass

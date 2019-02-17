@@ -133,11 +133,11 @@ echo "lang is $lang"
     fi
 
     echo results.$lang.$method
-    for f in results.$lang.$method/*/aligned; do
+    for f in results.$lang.$method/aligned; do
         $EVAL_PATH/micro2macro.sh $lang $f > $f.macro;
     done
-    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"`
-    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"`
+    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/aligned 2>&1 | grep "^all.precision"`
+    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/aligned.macro 2>&1 | grep "^all.precision"`
 
     mkdir -p results.$lang.$method/data
     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
