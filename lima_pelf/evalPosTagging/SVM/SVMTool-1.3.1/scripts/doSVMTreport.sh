@@ -6,7 +6,7 @@
 # Usage: doSVMTreport.sh <MODEL> <INDIR/CORPUS> <OUTDIR/CORPUS>
 #
 # use this to prepare for gnuplot:
-#   grep -v '\*' REPORTS/100kargmaxlf.WSJTP.TEST | grep 'last' | gawk '{print $3 " " $5 " " $6 " " $7 " " $8}' > GRAPHS/100kargmax.last.txt ?????????????
+#   grep -v '\*' REPORTS00kargmaxlf.WSJTP.TEST | grep 'last' | gawk '{print $3 " " $5 " " $6 " " $7 " " $8}' > GRAPHS00kargmax.last.txt ?????????????
 
 if [ $# -eq 6 ]
   then
@@ -22,7 +22,7 @@ if [ $# -eq 6 ]
        while [ $ST -lt $LAST ]; do
           echo STRATEGY IS $ST
           if [ "$DIR" = "LR" ]
-          then   
+          then
              printf "  T = %d \t LR \t" $ST; $EVAL -1 $1 $2 $3".T$ST.LR"
           elif [ "$DIR" = "RL" ]
           then
@@ -38,11 +38,11 @@ if [ $# -eq 6 ]
              printf "  T = %d \t RL \t" $ST; $EVAL -1 $1 $2 $3".T$ST.RL"
              printf "  T = %d \t LRL\t" $ST; $EVAL -1 $1 $2 $3".T$ST.LRL"
              if [ $ST = 5 ] || [ $ST = 6 ]
-             then   
+             then
                 printf "  T = %d \t GLRL\t" $ST; $EVAL -1 $1 $2 $3".T$ST.GLRL"
              fi
           fi
-          let ST=$ST+1 
+          let ST=$ST+1
        done
        printf "* ========================================================================\n";
 

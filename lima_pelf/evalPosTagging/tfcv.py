@@ -54,80 +54,27 @@ def pushd(dirname):
     return PushdContext(dirname)
 
 
-def TenPcSample(path, sep, strip_size):
-    """
-    Split a tagged corpus in "contiguous" 10% portions de 10% (no splitting in
-    the middle of a sentence, based on the number of words and a sentence
-    separator (PONCTU_FORTE by default)).
-    Organizes samples in numbered folders inside results.<lang>.<tagger>
-    Instead of trying to have samples of about 10%, ensures that the number i
-    sample stops at about 10% i *. This avoids having a small last sample.
-    """
-    with open(path, 'r') as c:
-        lines = 0
-        lines = sum(1 for line in c)
-        if lines > strip_size:
-            lines = strip_size
-        partition_size = (lines/numfold)
-    print('*** Sample of {} {}% ({}/{}) sep:"{}" ongoing ...'.format(
-        path, str(100/numfold), str(partition_size), str(lines), sep))
-    num = range(1, numfold+1)
-    with open(path, 'r') as corpus:
-        cnt = 1
-        s = open(results + "/%d/10pc.tfcv" % num[0], 'w',
-                 encoding='utf-8', newline='\n')
-        for line in corpus:
-            cnt += 1
-            if cnt > strip_size:
-                break
-            s.write(line)
-            if(cnt > partition_size*num[0] and line.find(sep) != -1):
-                s.close()
-                num = num[1:]
-                if num:
-                    s = open(results + "/%d/10pc.tfcv" % num[0], 'w',
-                             encoding='utf-8', newline='\n')
-        s.close()
+def SVMFormat(files, strip_size):
+    print('SVMFormat({}, {})'.format(files, strip_size))
+    for file in files.items():
+        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; python3 {3}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none {2} | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/{1}.svmt"'.format(
+          results, file[0], file[1], os.environ['LIMA_SOURCES'], strip_size)) > 0:
+            raise RuntimeError('system call returned non zero value')
+    if strip_size != "inf":
+        print('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size))
+        if os.system('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size)) > 0:
+            raise RuntimeError('system call returned non zero value')
 
 
-def SVMFormat():
-    for i in range(1, numfold+1):
-        os.system("sed -i -e's/ /_/g' -e's/\t/ /g' {}/{}/90pc.tfcv ".format(
-            results, i))
-        os.system("sed -e's/ /_/g' -e's/\t/ /g' {}/{}/10pc.tfcv > 10pc.svmt".format(
-            results, i))
-        #os.system('bash -c "python3 {0}/{1}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py {0}/{1}/90pc.tfcv | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/{1}/90pc.tfcv.svmt"'.format(results, i))
-
-
-def NinetyPcSample():
-    """
-    Build the complement of the 10% partitions produced by TenPcSample(path) by
-    just concatenating, for each 10% sample, the 9 other 10% samples.
-    Organizes samples in numbered folders in results.<lang>.<tagger>
-    """
-    global lang
-    print('*** Sample {}% ongoing ...'.format(str(100-100/numfold)))
-    for i in range(1, numfold+1):
-        for j in range(1, numfold+1):
-            if j != i:
-                if path.isfile(results + "/%d/10pc.tfcv" % j):
-                    os.system("cat %(results)s/%(j)d/10pc.tfcv >> %(results)s/%(i)d/90pc.tfcv "
-                              % {"results": results, "j": j, "i": i})
-                else:
-                    sys.stderr.write("Error: no file %s/%d/10pc.tfcv\n"
-                                     % (results, j))
-                    exit(1)
-
-
-def Tagged2raw():
+def Tagged2raw(testFile):
     """
     Product raw equivalent () text ready to be analyzed) of all 10% samples
     produced by TenPcSample(path).
     Organizes samples in numbered folders in results.<lang>.<tagger>
     """
 
-    print("*** Producing raw equivalent of test file {0}/1/test.svmt".format(results))
-    with open('{0}/1/test.svmt.brut'.format(results), 'w',
+    print("*** Producing raw equivalent of test file {0}/test.svmt".format(results))
+    with open('{0}/test.svmt.brut'.format(results), 'w',
               encoding='utf-8', newline='\n') as outfile:
         print('{}/conllu_to_text.pl {}'.format(PELF_BIN_PATH, testFile))
         subprocess.run(
@@ -142,81 +89,20 @@ def BuildDictionary(language):
     deducible from the PoS tagging learning corpus for the current sample.
     Add the path of the generated resource to LIMA resources search path
     """
-    global numfold
-    processes = set()
-    max_processes = MAX_PROCESSES
-    for sample in range(1, numfold+1):
-        wd = results + "/" + str(sample)
-        print('\n***  Build dictionary for sample n° {} ***'.format(sample))
-        # with pushd('{}/{}'.format(results, sample)):
-        print('running {}/build-dico.sh {}'.format(PELF_BIN_PATH, language))
-        processes.add(
-            subprocess.Popen(
-                ['{}/build-dico.sh'.format(PELF_BIN_PATH), language],
-                cwd=wd))
-        if len(processes) >= max_processes:
-            os.wait()
-            for p in processes:
-                if p.poll() is not None and p.returncode is not 0:
-                    raise Exception('build-dico.sh',
-                                    'build-dico.sh did not return 0')
-            processes.difference_update([
-                p for p in processes if p.poll() is not None])
-
-    while processes:
-        os.wait()
-        for p in processes:
-            if p.poll() is not None and p.returncode is not 0:
-                raise Exception('build-dico.sh',
-                                'build-dico.sh did not return 0')
-        processes.difference_update([
-            p for p in processes if p.poll() is not None])
+    wd = results + ""
+    print('\n***  Build dictionary ***')
+    print('running {}/build-dico.sh {}'.format(PELF_BIN_PATH, language))
+    subprocess.run(
+        ['{}/build-dico.sh'.format(PELF_BIN_PATH), language],
+        cwd=wd,
+        check=True)
 
 
-def AnalyzeTextAll(matrix_path):
-    # TODO : merge with Disamb_matrices ?
-    """
-    Tag the test  corpus (10%) with the POS-tagger trained with
-    the matrices computed from the test complement (90%).
-    """
-    processes = set()
-    max_processes = MAX_PROCESSES
-    for i in range(1, numfold+1):
-        print('    ==== ANALYSING SAMPLE {}'.format(i))
-        wd = results + "/" + str(i)
-        my_env = os.environ.copy()
-        my_env["LIMA_RESOURCES"] = '{}:{}:{}'.format(
-            '{}/lima_linguisticdata/dist/share/apps/lima/resources'.format(wd),
-            '{}/matrices'.format(wd),
-            my_env["LIMA_RESOURCES"])
-        processes.add(
-            subprocess.Popen(
-                ['analyzeText', '-l', lang, '10pc.brut', '-o', 'text:.out'],
-                cwd=wd,
-                env=my_env))
-        if len(processes) >= max_processes:
-            os.wait()
-            for p in processes:
-                if p.poll() is not None and p.returncode is not 0:
-                    raise Exception('analyzeText',
-                                    'analyzeText did not return 0')
-            processes.difference_update([
-                p for p in processes if p.poll() is not None])
-
-    while processes:
-        os.wait()
-        for p in processes:
-            if p.poll() is not None and p.returncode is not 0:
-                raise Exception('analyzeText', 'analyzeText did not return 0')
-        processes.difference_update([
-            p for p in processes if p.poll() is not None])
-
-
-def TrainSVMT(conf, svmli, svmle):
+def trainSVMT(conf, svmli, svmle):
     """
     Produces models for each sample.
     """
-    wd = '{}/{}/1'.format(os.getcwd(), results)
+    wd = '{}/{}'.format(os.getcwd(), results)
     str_wd = wd.replace("/", "\/")
     str_svmli = svmli.replace("/", "\/")
     print("\n---  Train {} {} {} --- ".format(conf, svmli,svmle))
@@ -244,7 +130,7 @@ def analyzeTextAllSVMT(init_conf, conf_path):
     try:
         print("    ==== SVMTool analysis: {}, {}".format(
             init_conf, conf_path))
-        wd = '{}/{}/1'.format(os.getcwd(), results)
+        wd = '{}/{}'.format(os.getcwd(), results)
         local_conf_dir = '{}/conf'.format(wd)
         local_conf_path = '{}/lima-lp-{}.xml'.format(local_conf_dir, lang)
         os.makedirs(local_conf_dir, exist_ok=True)
@@ -281,7 +167,7 @@ def formatForAlignement(sep):
     directly understandable by the aligner.
     """
 
-    with pushd('{}/1'.format(results)):
+    with pushd('{}'.format(results)):
         print('    ==== formatForAlignement {}: {}'.format(sep,os.getcwd()))
         if os.system("gawk -F' ' '{print $3\"\t\"$5}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
@@ -301,7 +187,7 @@ def formatForAlignement(sep):
             #raise RuntimeError('system call returned non zero value')
 
 def align():
-    with pushd('{}/1'.format(results)):
+    with pushd('{}'.format(results)):
         print("\n\n ALIGNEMENT" + " - " + os.getcwd())
         if os.system("%(path)s/aligner.pl gold.tfcv test.tfcv > aligned 2> aligned.log"
                   % {"path": PELF_BIN_PATH}) > 0:
@@ -331,7 +217,7 @@ def checkConfig(conf):
 def makeTree():
     try:
         os.mkdir(results)
-        os.mkdir(results + "/1")
+        os.mkdir(results + "")
     except OSError:
         # ignored
         pass
