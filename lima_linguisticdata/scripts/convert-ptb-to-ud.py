@@ -63,8 +63,7 @@ def main(argv):
     # optional arguments
     parser.add_argument("dictfile",
                         type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
+                                               encoding='utf-8'),
                         nargs='+',
                         help="input file: freedict file")
     param=parser.parse_args()

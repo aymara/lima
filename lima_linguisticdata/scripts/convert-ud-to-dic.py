@@ -37,8 +37,7 @@ def main(argv):
                       help='comma separated list of feature names')
   parser.add_argument('corpus',
                       type=argparse.FileType('r',
-                                              encoding='utf-8',
-                                              errors='ignore'),
+                                              encoding='utf-8'),
                       nargs='+',
                       help='input file: UD corpus file')
   param=parser.parse_args()

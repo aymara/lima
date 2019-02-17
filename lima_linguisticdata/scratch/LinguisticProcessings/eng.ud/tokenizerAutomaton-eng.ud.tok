@@ -226,7 +226,7 @@
   - c_n c_quote c_l_t = NOT (T_ALPHA,T_SMALL)
   - m_eof = END
   - [c_l_s|c_S|c_z|c_Z] c_quote c_del > ALL_LOWER (T_POSSESSIVE)
-  - c_dot c_b c_m > ALL_LOWER
+#  - c_dot c_b c_m > ALL_LOWER
   - c_quote c_S|c_l_s c_del|m_line > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV,T_POSSESSIVE)
   - c_quote c_Mm > ALPHA (T_ALPHA,T_ALPHA_CONCAT_ABBREV)
   - c_m > ALL_LOWER
@@ -357,6 +357,12 @@
   - c_all > ALPHA (T_NOT_ROMAN)
 }
 (CARDINAL_ROMAN_FIRST_UPPER) {
+  - c_quote c_l_d = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_l = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_m = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_r = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_s = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_v = QUOTE (T_ALPHA,T_SMALL)
   - m_eof = END
   - c_l_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
   - c_n c_l_d > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)
@@ -382,6 +388,12 @@
   - c_all > ALPHA (T_NOT_ROMAN)
 }
 (CARDINAL_ROMAN_ALL_UPPER) {
+  - c_quote c_l_d = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_l = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_m = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_r = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_s = QUOTE (T_ALPHA,T_SMALL)
+  - c_quote c_l_v = QUOTE (T_ALPHA,T_SMALL)
   - m_eof = END
   - c_V > CARDINAL_ROMAN_ALL_UPPER (T_NUMERIC,T_CARDINAL_ROMAN)
   - c_l_s c_l_t > ORDINAL_ROMAN1 (T_NUMERIC,T_ORDINAL_ROMAN)

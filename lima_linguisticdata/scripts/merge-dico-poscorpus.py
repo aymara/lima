@@ -40,17 +40,17 @@ class DicEntries:
         if pos not in self.entries[form]:
             self.entries[form][pos]=set()
         self.entries[form][pos].add(entry)
-        
+
     def get(self,form,pos):
         return self.entries[form][pos]
-        
+
     def exists(self,form,pos):
         if form not in self.entries:
             return False
         if pos not in self.entries[form]:
             return False
         return True
-        
+
     def formExists(self,form):
         if form not in self.entries:
             return False
@@ -98,7 +98,7 @@ def loadDicoEntries(dicofile,language,codes):
 def loadCorpusEntries(corpus):
     # dic form => POS => set(MacMorpho line)
     corpus_entries = DicEntries()
-    
+
     for corpus_line in corpus:
         corpus_line = corpus_line.rstrip()
         if not corpus_line:
@@ -116,11 +116,11 @@ def mergeEntries(language,dicofile,
                  output_file,
                  corpusPriority=False):
     codes = {}
-    
+
     #if language == 'fre':
         ## Convert Lefff PoS format to Delaf format
         ## Vpifi2-p to V:fi2-p
-        
+
         ## codes contain a dico lefff code -> lima code
         #codes = loadLefff2LimaCodesDict(project_source_dir)
         #print(codes)
@@ -128,7 +128,7 @@ def mergeEntries(language,dicofile,
 
         dico_entries = loadDicoEntries(dicofile,language,codes)
         corpus_entries = loadCorpusEntries(corpus)
-        
+
         for form,posentries in dico_entries.entries.items():
             for (pos,entries) in posentries.items():
                 # dico forms with form+pos in corpus
@@ -137,7 +137,7 @@ def mergeEntries(language,dicofile,
                     f.write("\n")
                 else:
                     # if corpusPriority, do not keep dico forms that exist in a
-                    # corpus with a different POS 
+                    # corpus with a different POS
                     if corpusPriority and corpus_entries.formExists(form):
                         continue
                     f.write("\n".join(list(entries)))
@@ -180,13 +180,11 @@ def main(argv):
     parser.add_argument("language", help="language")
     parser.add_argument("dicofile",
                         type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
+                                               encoding='utf-8'),
                         help="input file: dictionary entries")
     parser.add_argument("corpus",
-                        type=argparse.FileType('r', 
-                                               encoding='utf-8', 
-                                               errors='ignore'),
+                        type=argparse.FileType('r',
+                                               encoding='utf-8'),
                         help="corpus file")
     parser.add_argument("output_file",
                         help="output file name")

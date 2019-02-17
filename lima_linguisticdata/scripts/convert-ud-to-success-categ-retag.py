@@ -38,16 +38,14 @@ def main(argv):
                         default='Mood,PronType,Tense,VerbForm',
                         help='comma separated list of feature names')
     parser.add_argument('corpus',
-                        type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
+                        type=argparse.FileType('r', encoding='utf-8'),
                         nargs='+',
                         help='input file: UD corpus file')
     param=parser.parse_args()
-    #print('param.features: {}'.format(param.features), file=sys.stderr)
+    print('param.features: {}'.format(param.features), file=sys.stderr)
     #features_to_keep = param.features.split(',') if param.features is not None else []
     for corpus in param.corpus:
-        # tokens accumulates the adjacent tokens that must be grouped in the 
+        # tokens accumulates the adjacent tokens that must be grouped in the
         # output. This is only named entities parts (PROPN linked by a compound
         # relation) currently
         tokens = ''
@@ -60,7 +58,7 @@ def main(argv):
                 tokid,token,_,udtag,_,token_features,targetid,reltype,_,_ = line.split('\t')
                 #print('\ttoken: {}, udtag: {}, token_features: {}'.format(token, udtag, token_features), file=sys.stderr)
                 if ( reltype == 'compound'
-                    and udtag == 'PROPN' 
+                    and udtag == 'PROPN'
                     and int(targetid) > int (tokid)):
                     # Named entities
                     # Current token is a named entity part, not final

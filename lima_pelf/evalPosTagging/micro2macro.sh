@@ -1,10 +1,14 @@
 #!/bin/bash
-# 
-# Shell script created by Romaric Besancon on Thu Mar 18 2010 
-# Version : $Id$ 
 #
+# Shell script created by Romaric Besancon on Thu Mar 18 2010
+# Version : $Id$
+#
+set -o nounset
+set -o errexit
+set -o pipefail
 
-if (($#!=2)); then 
+
+if (($#!=2)); then
     echo usage: micro2macro.sh lang file
 fi
 

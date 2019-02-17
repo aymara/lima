@@ -15,11 +15,10 @@ def main(argv):
     # optional arguments
     parser.add_argument("codesfile",
                         type=argparse.FileType('r',
-                                               encoding='utf-8',
-                                               errors='ignore'),
+                                               encoding='utf-8'),
                         help="input file: codes file")
     param=parser.parse_args()
-    
+
     print('<?xml version=\'1.0\' encoding=\'UTF-8\'?>')
     print('<codes>')
 
