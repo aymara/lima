@@ -17,6 +17,7 @@ ADV-PronType=Dem
 ADV-PronType=Int
 ADV-PronType=Rel
 ADV-Typo=Yes
+AUX
 AUX-Abbr=Yes|VerbForm=Fin
 AUX-Abbr=Yes|VerbForm=Inf
 AUX-Mood=Imp|VerbForm=Fin
@@ -45,6 +46,7 @@ NOUN-Degree=Pos
 NOUN-Number=Plur
 NOUN-Number=Sing
 NOUN-Number=Sing|Typo=Yes
+PROPN
 PROPN-Degree=Pos
 PROPN-Number=Plur
 PROPN-Number=Sing
@@ -93,6 +95,7 @@ DET-PronType=Int
 DET-PronType=Rel
 DET-PronType=Rel|Typo=Yes
 DET-Typo=Yes
+NUM
 NUM-Number=Sing
 NUM-NumType=Card
 PART
