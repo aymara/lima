@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ SET(lima-lp-postagger_LIB_SRCS
    greedyPosTagger.cpp
    ViterbiPosTagger.cpp
    DisambiguatedGraphXmlLogger.cpp
+   PerlSvmToolPosTagger.cpp
 )
 
 set(lima-lp-postagger_LIB_LINK
