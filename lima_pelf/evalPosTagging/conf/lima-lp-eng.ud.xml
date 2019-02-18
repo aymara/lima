@@ -40,6 +40,7 @@
 <!--         <item value="specificEntitiesXmlLogger"/> -->
 <!--         <item value="dotGraphWriter-beforepos"/> -->
 <!--         <item value="viterbiPostagger-freq"/> -->
+<!--         <item value="PerlSvmToolPosTagger"/> -->
 <!--         <item value="SvmToolPosTagger"/> -->
 <!--         <item value="disambiguatedGraphXmlLogger"/> -->
 <!--         <item value="dotGraphWriter"/> -->
@@ -144,7 +145,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -156,7 +157,7 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
-    
+
      <group name="tag" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -190,7 +191,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -208,7 +209,7 @@
     </group>
 <!-- ******************************************
   Definition of process units
-*********************************************** -->    
+*********************************************** -->
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -241,7 +242,7 @@
       <param key="scope" value="SENT" />
       <param key="threshold" value="130" />
       <param key="Resolve Definites" value="SENT" />
-      <param key="Resolve non third person pronouns" value="SENT" />  
+      <param key="Resolve non third person pronouns" value="SENT" />
       <map name="MacroCategories">
         <entry key="PronMacroCategory" value="PRON"/>
         <entry key="VerbMacroCategory" value="SENT" />
@@ -252,7 +253,7 @@
       <list name="LexicalAnaphora">
             <item value="PRP$"/>
       </list>
-      <list name="UndefinitePronouns"> 
+      <list name="UndefinitePronouns">
       </list>
       <list name="PrepRelation">
         <item value="PREPSUB"/>
@@ -278,15 +279,15 @@
         <item value="SujInv" />
       </list>
       <list name="AttributeRelation">
-              <item value="ATB_S"/>  
+              <item value="ATB_S"/>
       </list>
       <list name="CODRelation">
         <item value="COD_V" />
         <item value="CodPrev" />
       </list>
       <list name="COIRelation">
-        <item value="CoiPrev" />  
-        <item value="CPL_V" />  
+        <item value="CoiPrev" />
+        <item value="CPL_V" />
       </list>
       <list name="AdjunctRelation">
         <item value="CPLV_V" />
@@ -403,7 +404,21 @@
       <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
       <param key="allFeatures" value="false"/>
       <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
+            a list of  features to use or neither and then no feature will be
+      used -->
+      <list name="features">
+        <item value="Mood" />
+        <item value="PronType" />
+        <item value="Tense" />
+        <item value="VerbForm" />
+      </list>
+    </group>
+    <group name="PerlSvmToolPosTagger" class="PerlSvmToolPosTagger">
+      <param key="program" value=""/home/gael/Projets/Lima/lima-ud/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin/SVMTagger"/>
+      <param key="model" value="Disambiguation/SVMToolModel-eng.ud/lima"/>
+      <param key="allFeatures" value="false"/>
+      <!-- Either allFeatures is there and true or the features list contains
+            a list of  features to use or neither and then no feature will be
       used -->
       <list name="features">
         <item value="Mood" />
@@ -776,7 +791,7 @@
       <param key="handler" value="simpleStreamHandler"/>
       <param key="allFeatures" value="false"/>
       <!-- Either allFeatures is there and true or the features list contains
-            a list of  features to use or neither and then no feature will be 
+            a list of  features to use or neither and then no feature will be
             used.-->
       <list name="features">
         <item value="Mood" />
