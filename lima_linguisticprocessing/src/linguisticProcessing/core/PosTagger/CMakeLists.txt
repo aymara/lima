@@ -30,6 +30,7 @@ set(lima-lp-postagger_LIB_SRCS
    greedyPosTagger.cpp
    ViterbiPosTagger.cpp
    DisambiguatedGraphXmlLogger.cpp
+   PerlSvmToolPosTagger.cpp
 )
 
 SET(lima-lp-postagger_LIB_LINK
