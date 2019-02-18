@@ -203,7 +203,7 @@ def checkConfig(conf):
             line = f.readline()
             if line.strip() == '<item value="conllDumper"/>':
                 foundDumper = True
-            elif line.strip() == '<item value="SvmToolPosTagger"/>':
+            elif line.strip() == '<item value="SvmToolPosTagger"/>' or line.strip() == '<item value="PerlSvmToolPosTagger"/>' :
                 method = 'svmtool'
 
     if not foundDumper:
