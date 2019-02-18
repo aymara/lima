@@ -60,7 +60,7 @@ def SVMFormat(files, strip_size):
         if os.system('bash -c "set -o nounset -o errexit -o pipefail ; python3 {3}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none {2} | sed -e\'s/ /_/g\' -e\'s/\t/ /g\' > {0}/{1}.svmt"'.format(
           results, file[0], file[1], os.environ['LIMA_SOURCES'], strip_size)) > 0:
             raise RuntimeError('system call returned non zero value')
-    if strip_size != "inf":
+    if strip_size != math.inf:
         print('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size))
         if os.system('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size)) > 0:
             raise RuntimeError('system call returned non zero value')
