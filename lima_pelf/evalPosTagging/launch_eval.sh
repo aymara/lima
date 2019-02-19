@@ -86,16 +86,16 @@ for lang in $*; do
 echo "lang is $lang"
     addOption=""
     case $lang in
-        eng) 
+        eng)
             addOption="-s . -n $nbParts"
-            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":") 
-            corpus=$corpusFile  
+            corpusFile=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_eng_merge.txt  ":")
+            corpus=$corpusFile
             conf=config-minimale-eng.SVMT;;
-        fre)             
+        fre)
             addOption="-n $nbParts"
-            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")  
+            corpus=$(findFileInPaths $LIMA_RESOURCES Disambiguation/corpus_fre_merge.txt  ":")
             conf=config-minimale-fre.SVMT ;;
-        por) 
+        por)
             addOption="-s PU+FORTE -n $nbParts"
             corpus=$LINGUISTIC_DATA_ROOT/disambiguisationMatrices/por/corpus/macmorpho.conll.txt
             conf=config-minimale-por.SVMT ;;
@@ -105,25 +105,26 @@ echo "lang is $lang"
 
 
     confFile=$(findFileInPaths $LIMA_CONF $conf ":")
-    
+
     if [ $notrain = true ]
     then
         $EVAL_PATH/tfcv.py -l $lang $addOption $corpus $confFile $svm_light $svm_learn
     else
         rm -Rf results.$lang.$method
+        echo "$EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $confFile $svm_light $svm_learn"
         $EVAL_PATH/tfcv.py -c -t -l $lang $addOption $corpus $confFile $svm_light $svm_learn
     fi
 
     echo results.$lang.$method
-    for f in results.$lang.$method/*/aligned; do 
+    for f in results.$lang.$method/*/aligned; do
         $EVAL_PATH/micro2macro.sh $lang $f > $f.macro;
     done
-    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"` 
-    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"` 
+    echo "micro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned 2>&1 | grep "^all.precision"`
+    echo "macro: " `$EVAL_PATH/eval.pl results.$lang.$method/*/aligned.macro 2>&1 | grep "^all.precision"`
 
     mkdir -p results.$lang.$method/data
     echo "$EVAL_PATH/problemesAlignement.sh $lang $method"
     $EVAL_PATH/problemesAlignement.sh $lang $method
     echo "$EVAL_PATH/detailed-res.sh $nbParts $lang"
-    $EVAL_PATH/detailed-res.sh $nbParts $lang 
+    $EVAL_PATH/detailed-res.sh $nbParts $lang
 done

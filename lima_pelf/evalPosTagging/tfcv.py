@@ -94,6 +94,8 @@ def SVMFormat():
     for i in range(1, numfold+1):
         os.system("sed -i -e's/ /_/g' -e's/\t/ /g' {}/{}/90pc.tfcv ".format(
             results, i))
+        os.system("sed -e's/ /_/g' -e's/\t/ /g' {}/{}/10pc.tfcv > 10pc.svmt".format(
+            results, i))
 
 
 def NinetyPcSample():
@@ -442,7 +444,7 @@ def main(corpus, conf, svmli, svmle, sep, lang_, clean, forceTrain):
         makeTree()
         TenPcSample(corpus, sep)
         NinetyPcSample()
-        BuildDictionary(lang)
+        #BuildDictionary(lang)
         Tagged2raw()
         if (tagger == 'svmtool' or tagger == 'dynsvmtool'):
             SVMFormat()
