@@ -351,7 +351,7 @@ LimaStatusCode PerlSvmToolPosTagger::process(AnalysisContent& analysis) const
     LERROR << "Error opening temporary file";
     return CANNOT_OPEN_FILE_ERROR;
   }
-  input.setAutoRemove(false);
+
 #ifdef DEBUG_LP
   LDEBUG << "Input temporary file is" << input.fileName();
 #endif
@@ -367,7 +367,7 @@ LimaStatusCode PerlSvmToolPosTagger::process(AnalysisContent& analysis) const
     LERROR << "Error opening temporary file";
     return CANNOT_OPEN_FILE_ERROR;
   }
-  output.setAutoRemove(false);
+
 #ifdef DEBUG_LP
   LDEBUG << "Output temporary file is" << output.fileName();
 #endif
