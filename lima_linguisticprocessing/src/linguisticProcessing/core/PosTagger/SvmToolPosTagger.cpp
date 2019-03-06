@@ -194,7 +194,16 @@ void SvmToolPosTagger::init(
   LDEBUG << "Creating SVM Tagger with model: " << m_d->m_model;
   erCompRegExp();
   m_d->m_tagger = new tagger(m_d->m_model.c_str());
+// //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
+//   m_d->m_tagger->taggerPutStrategy(0);
+//   m_d->m_tagger->taggerPutFlow("RL");
+//   m_d->m_tagger->taggerPutKWeightFilter(0.455);
+//   m_d->m_tagger->taggerPutUWeightFilter(0.1535);
   m_d->m_tagger->taggerLoadModelsForTagging();
+
+// WinIndex and WinLength are loaded from model.WIN at run time
+//   m_d->m_tagger->taggerPutWinLength(5);
+//   m_d->m_tagger->taggerPutWinIndex(2);
 
 }
 
@@ -268,12 +277,11 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     if (currentVx != 0 && tokens[currentVx] != 0)
     {
       auto tok = tokens[currentVx];
-      auto morphoData = get(vertex_data,*srcgraph,currentVx);
-      auto stringForm = tok->stringForm().toUtf8().constData();
       std::string token = tok->stringForm().toUtf8().constData();
       boost::replace_all(token, " ", "_");
       std::ostringstream lineoss("");
       lineoss << token << " (";
+      auto morphoData = get(vertex_data,*srcgraph,currentVx);
       for (auto morphDataIt = morphoData->begin();
            morphDataIt != morphoData->end(); morphDataIt++)
       {
@@ -321,7 +329,8 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
         }
         lineoss << fullTag.toUtf8().constData();;
       }
-      lineoss << ")" << std::endl;
+      lineoss << ")";
+      lineoss << std::endl;
       oss << lineoss.str();
       anaVertices.push_back(currentVx);
     }
@@ -355,7 +364,6 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   std::string resultLine;
   std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
   LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
-  auto lineNum = 0;
   while (anaVerticesIndex < anaVertices.size()
           && std::getline(resOss,resultLine))
   {

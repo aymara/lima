@@ -168,7 +168,7 @@ def formatForAlignement(sep):
 
     with pushd('{}'.format(results)):
         print('    ==== formatForAlignement {}: {}'.format(sep,os.getcwd()))
-        if os.system("gawk -F' ' '{print $3\"\t\"$5}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
+        if os.system("gawk -F' ' '{print $2\"\t\"$4}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
         if os.system("gawk -F' ' '{print $1\"\t\"$2}' test.svmt | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > gold.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
@@ -192,13 +192,13 @@ def checkConfig(conf):
     with open(conf) as f:
         for i in range(80):
             line = f.readline()
-            if line.strip() == '<item value="textDumper"/>':
+            if line.strip() == '<item value="conllDumper"/>':
                 foundDumper = True
             elif line.strip() == '<item value="SvmToolPosTagger"/>' or line.strip() == '<item value="PerlSvmToolPosTagger"/>' :
                 method = 'svmtool'
 
     if not foundDumper:
-        sys.exit(" ******* TextDumper seems to not being activated! Stop... *******")
+        sys.exit(" ******* ConllDumper seems to not being activated! Stop... *******")
     elif method == 'none':
         raise Exception('No method found, was expecting Viterbi of SvmTool')
     else:

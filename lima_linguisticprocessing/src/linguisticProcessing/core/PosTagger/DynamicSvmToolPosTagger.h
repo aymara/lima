@@ -46,7 +46,7 @@
 #include <sstream>
 
 class tagger;
-class nodo;
+class node;
 
 namespace Lima
 {
@@ -75,7 +75,7 @@ public:
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-  
+
 private:
   /* Configuration */
   LinguisticCode m_defaultCateg; // default category, used before and after text.
@@ -111,7 +111,7 @@ private:
   /* Useful functions */
   std::vector<std::string> getMicros(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
   std::set<LinguisticGraphVertex> getPreviousTokens(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
-  std::vector<nodo*> buildContext(const LinguisticGraph*, LinguisticGraphVertex, LinguisticGraphVertex, LinguisticGraphVertex) const;
+  std::vector<node*> buildContext(const LinguisticGraph*, LinguisticGraphVertex, LinguisticGraphVertex, LinguisticGraphVertex) const;
   std::string getWord(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
   LinguisticGraphVertex nextToken(LinguisticGraphVertex token, const LinguisticGraph* srcGraph) const;
   std::set<LinguisticGraphVertex> nextTokens(LinguisticGraphVertex token, const LinguisticGraph* srcGraph) const;
