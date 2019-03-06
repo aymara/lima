@@ -206,6 +206,11 @@ void SvmToolPosTagger::init(
   LDEBUG << "Creating SVM Tagger with model: " << m_d->m_model;
   erCompRegExp();
   m_d->m_tagger = new tagger(m_d->m_model.c_str());
+// //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
+//   m_d->m_tagger->taggerPutStrategy(0);
+//   m_d->m_tagger->taggerPutFlow("RL");
+//   m_d->m_tagger->taggerPutKWeightFilter(0.455);
+//   m_d->m_tagger->taggerPutUWeightFilter(0.1535);
   m_d->m_tagger->taggerLoadModelsForTagging();
 }
 

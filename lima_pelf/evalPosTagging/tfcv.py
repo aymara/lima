@@ -169,7 +169,7 @@ def formatForAlignement(sep):
 
     with pushd('{}'.format(results)):
         print('    ==== formatForAlignement {}: {}'.format(sep,os.getcwd()))
-        if os.system("gawk -F' ' '{print $3\"\t\"$5}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
+        if os.system("gawk -F' ' '{print $2\"\t\"$4}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
         if os.system("gawk -F' ' '{print $1\"\t\"$2}' test.svmt | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > gold.tfcv") > 0:
             raise RuntimeError('system call returned non zero value')
