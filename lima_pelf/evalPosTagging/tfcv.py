@@ -355,6 +355,14 @@ def FormaterPourAlignement(sep):
             os.system("gawk -F'|' '{print $2\"\t\"$3}' 10pc.brut.out|sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tL_NO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv")
             os.system("sed 's/ /_/g' 10pc.tfcv > gold.tfcv")
 
+    with pushd('{}'.format(results)):
+        print('    ==== formatForAlignement {}: {}'.format(sep,os.getcwd()))
+        if os.system("gawk -F' ' '{print $2\"\t\"$4}' test.svmt.brut.out | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > test.tfcv") > 0:
+            raise RuntimeError('system call returned non zero value')
+        if os.system("gawk -F' ' '{print $1\"\t\"$2}' test.svmt | sed -e 's/\t.*#/\t/g' -e 's/ $//g' -e 's/\t$/\tNO_TAG/g' -e 's/^ //g' -e 's/ \t/\t/g'| tr \" \" \"_\" > gold.tfcv") > 0:
+            raise RuntimeError('system call returned non zero value')
+        #if os.system('bash -c "set -o nounset -o errexit -o pipefail ; python3 {}/lima_linguisticdata/scripts/convert-ud-to-success-categ-retag.py --features=none test.svmt | sed -e\'s/ /_/g\' > gold.tfcv"'.format(os.environ['LIMA_SOURCES'])) > 0:
+            #raise RuntimeError('system call returned non zero value')
 
 def Aligner():
     for i in range(1, numfold+1):
@@ -371,7 +379,7 @@ def checkConfig(conf):
     with open(conf) as f:
         for i in range(80):
             line = f.readline()
-            if line.strip() == '<item value="textDumper"/>':
+            if line.strip() == '<item value="conllDumper"/>':
                 foundDumper = True
             elif line.strip() == '<item value="viterbiPostagger-freq"/>':
                 method = 'viterbi'
@@ -381,7 +389,7 @@ def checkConfig(conf):
                 method = 'dynsvmtool'
 
     if not foundDumper:
-        sys.exit(" ******* TextDumper seems to not being activated! Stop... *******")
+        sys.exit(" ******* ConllDumper seems to not being activated! Stop... *******")
     elif method == 'none':
         raise Exception('No method found, was expecting Viterbi of SvmTool')
     else:

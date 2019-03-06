@@ -54,7 +54,7 @@ SvmToolPosTaggerFactory::SvmToolPosTaggerFactory(const std::string& id) :
 
 MediaProcessUnit* SvmToolPosTaggerFactory::create(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-  MediaProcessUnit::Manager* manager) const 
+  MediaProcessUnit::Manager* manager) const
 {
 //   PTLOGINIT;
   MediaProcessUnit* posTagger = new SvmToolPosTagger;
@@ -66,7 +66,7 @@ MediaProcessUnit* SvmToolPosTaggerFactory::create(
 void SvmToolPosTagger::init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
-      
+
 {
   /** @addtogroup ProcessUnitConfiguration
   * - <b>&lt;group name="..." class="SvmToolPosTagger"&gt;</b>
@@ -84,7 +84,7 @@ void SvmToolPosTagger::init(
   const Common::MediaticData::LanguageData& ldata = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language));
   const Common::PropertyCode::PropertyManager& microManager=ldata.getPropertyCodeManager().getPropertyManager("MICRO");
   m_microAccessor=&(microManager.getPropertyAccessor());
-  string resourcesPath=MediaticData::single().getResourcesPath();  
+  string resourcesPath=MediaticData::single().getResourcesPath();
   try
   {
     string modelName=unitConfiguration.getParamsValueAtKey("model");
@@ -99,9 +99,18 @@ void SvmToolPosTagger::init(
   }
   LDEBUG << "Creating SVM Tagger with model: " << m_model;
   erCompRegExp();
-  m_tagger = new tagger(m_model.c_str());
-  m_tagger->taggerLoadModelsForTagging();
-  
+  m_d->m_tagger = new tagger(m_d->m_model.c_str());
+// //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
+//   m_d->m_tagger->taggerPutStrategy(0);
+//   m_d->m_tagger->taggerPutFlow("RL");
+//   m_d->m_tagger->taggerPutKWeightFilter(0.455);
+//   m_d->m_tagger->taggerPutUWeightFilter(0.1535);
+  m_d->m_tagger->taggerLoadModelsForTagging();
+
+// WinIndex and WinLength are loaded from model.WIN at run time
+//   m_d->m_tagger->taggerPutWinLength(5);
+//   m_d->m_tagger->taggerPutWinIndex(2);
+
 }
 
 LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
@@ -148,15 +157,15 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     return SUCCESS_ID;
   }
   VertexTokenPropertyMap tokens = get(vertex_token, *srcgraph);
-  
+
   // Create postagging graph
   LinguisticGraph* resultgraph=posgraph->getGraph();
   remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
 
   const Common::PropertyCode::PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
-  
-  
+
+
   // TODO create a wrapper on the analysis graph to read tokens in a stream
   std::ostringstream oss("");
   LinguisticGraphVertex currentVx=anagraph->firstVertex();
@@ -165,15 +174,14 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   {
     if (currentVx != 0 && tokens[currentVx] != 0)
     {
-      LinguisticAnalysisStructure::Token* tok = tokens[currentVx];
-      LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,currentVx);
-      std::string stringForm = Common::Misc::limastring2utf8stdstring(tok->stringForm());
-      std::string token = Common::Misc::limastring2utf8stdstring(tok->stringForm());
-      boost::replace_all(token," ","_");
+      auto tok = tokens[currentVx];
+      std::string token = tok->stringForm().toUtf8().constData();
+      boost::replace_all(token, " ", "_");
       std::ostringstream lineoss("");
       lineoss << token << " (";
-      LinguisticAnalysisStructure::MorphoSyntacticData::const_iterator morphDataIt = morphoData->begin();
-      if (morphDataIt != morphoData->end())
+      auto morphoData = get(vertex_data,*srcgraph,currentVx);
+      for (auto morphDataIt = morphoData->begin();
+           morphDataIt != morphoData->end(); morphDataIt++)
       {
         std::string tag = microManager.getPropertySymbolicValue((*morphDataIt).properties);
         lineoss << tag;
@@ -184,7 +192,8 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
         std::string tag = microManager.getPropertySymbolicValue((*morphDataIt).properties);
         lineoss << "," << tag;
       }
-      lineoss << ")" << std::endl;
+      lineoss << ")";
+      lineoss << std::endl;
       oss << lineoss.str();
       anaVertices.push_back(currentVx);
     }
@@ -207,7 +216,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   std::stringstream resOss;
   // TODO create a wrapper with a ostream interface to put results into the pos graph
   // TODO have to take data from the analysis graph nodes too
-  
+
   // start processing postagging
   //m_tagger->taggerShowNoComments();
   m_tagger->taggerInit(iss, resOss);
@@ -218,8 +227,8 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   std::string resultLine;
   std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
   LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
-  
-  while (anaVerticesIndex < anaVertices.size() && std::getline(resOss,resultLine))
+  while (anaVerticesIndex < anaVertices.size()
+          && std::getline(resOss,resultLine))
   {
 #ifdef DEBUG_LP
     LDEBUG << "Result line: '" << resultLine << "'";
@@ -278,7 +287,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     anaVerticesIndex++;
   }
   boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
-  
+
 #ifdef DEBUG_LP
   LINFO << "SvmToolPosTagger postagging done.";
 #endif
@@ -311,7 +320,7 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
 
     {
       StepData& endStep=stepData.back();
-      if (endStep.m_microCatsData.size()!=1) 
+      if (endStep.m_microCatsData.size()!=1)
       {
         PTLOGINIT;
         LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
@@ -394,9 +403,9 @@ LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
         LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,
                                                          *srcgraph,
                                                          currentStep.m_srcVertex);
-        if (morphoData!=0) 
+        if (morphoData!=0)
         {
-          LinguisticAnalysisStructure::MorphoSyntacticData* posData = 
+          LinguisticAnalysisStructure::MorphoSyntacticData* posData =
             new LinguisticAnalysisStructure::MorphoSyntacticData();
           LinguisticAnalysisStructure::CheckDifferentPropertyPredicate
             differentMicro(m_microAccessor,current.m_predMicro);
