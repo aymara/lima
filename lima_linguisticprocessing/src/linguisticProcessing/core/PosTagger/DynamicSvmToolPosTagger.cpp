@@ -343,7 +343,7 @@ boost::tuple<std::string, uint64_t> DynamicSvmToolPosTagger::SVMTool(
       if(maxAncestor.find(prevVertex) != maxAncestor.end()) {
         prevPrevVertex = maxAncestor[prevVertex].prev;
       }
-      std::vector<node*> node_context = buildContext(srcGraph, prevPrevVertex, prevVertex, vertex);
+      auto node_context = buildContext(srcGraph, prevPrevVertex, prevVertex, vertex);
       std::vector<std::string> microsStr = getMicros(vertex, srcGraph);
 
       if (microsStr.empty()) {
@@ -402,7 +402,7 @@ std::set<LinguisticGraphVertex> DynamicSvmToolPosTagger::getPreviousTokens(Lingu
     return previous;
 }
 
-std::vector<node*> DynamicSvmToolPosTagger::buildContext(
+std::vector<nodo*> DynamicSvmToolPosTagger::buildContext(
     const LinguisticGraph *srcGraph,
     LinguisticGraphVertex prevPrevVertex,
     LinguisticGraphVertex prevVertex,
@@ -422,7 +422,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   std::string nextWord = getWord(nextToken(vertex, srcGraph), srcGraph);
   std::string nextNextWord = getWord(nextToken(nextToken(vertex, srcGraph), srcGraph), srcGraph);
 
-  std::vector<node*> context;
+  std::vector<nodo*> context;
   for(int i = 0; i < 5; i++) {
     context.push_back(NULL);
   }
@@ -432,7 +432,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   if(prevPrevWord == "") {
     context[0] = NULL;
   } else {
-    context[0] = new node;
+    context[0] = new nodo;
     context[0]->ord = ord_id++;
     context[0]->wrd = prevPrevWord;
     context[0]->realWrd = prevPrevWord;
@@ -441,7 +441,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   if(prevWord == "") {
     context[1] = NULL;
   } else {
-    context[1] = new node;
+    context[1] = new nodo;
     context[1]->ord = ord_id++;
     context[1]->wrd = prevWord;
     context[1]->realWrd = prevWord;
@@ -450,7 +450,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   if(word == "") {
     context[2] = NULL;
   } else {
-    context[2] = new node;
+    context[2] = new nodo;
     context[2]->ord = ord_id++;
     context[2]->wrd = word;
     context[2]->realWrd = word;
@@ -459,7 +459,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   if(nextWord == "") {
     context[3] = NULL;
   } else {
-    context[3] = new node;
+    context[3] = new nodo;
     context[3]->ord = ord_id++;
     context[3]->wrd = nextWord;
     context[3]->realWrd = nextWord;
@@ -468,7 +468,7 @@ std::vector<node*> DynamicSvmToolPosTagger::buildContext(
   if(nextNextWord == "") {
     context[4] = NULL;
   } else {
-    context[4] = new node;
+    context[4] = new nodo;
     context[4]->ord = ord_id++;
     context[4]->wrd = nextNextWord;
     context[4]->realWrd = nextNextWord;
