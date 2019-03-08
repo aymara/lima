@@ -89,7 +89,7 @@ else ()
 
     install(
     CODE "file( GLOB _SVMToolModelFiles \"${CMAKE_CURRENT_BINARY_DIR}/lima*\" )"
-    CODE "file( INSTALL \${_SVMToolModelFiles} DESTINATION \"share/apps/lima/resources/Disambiguation/SVMToolModel-eng.ud\" )"
+    CODE "file( INSTALL \${_SVMToolModelFiles} DESTINATION \"${CMAKE_INSTALL_PREFIX}/share/apps/lima/resources/Disambiguation/SVMToolModel-eng.ud\" )"
     COMPONENT eng.ud)
 
 endif()
