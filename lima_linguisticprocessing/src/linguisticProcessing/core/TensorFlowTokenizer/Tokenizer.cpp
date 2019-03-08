@@ -341,6 +341,10 @@ LimaStatusCode Tokenizer::process(AnalysisContent& analysis) const
         python_error();
       }
       auto tokenString = QString::fromUtf8(strExcType);
+      if (tokenString.isEmpty())
+      {
+        continue;
+      }
       Py_XDECREF(pyStr);
 
       auto offset = PyLong_AsLong(pyToken[1]);
