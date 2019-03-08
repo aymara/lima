@@ -1,4 +1,4 @@
-# Copyright 2002-2019 CEA LIST
+# Copyright 2002-2020 CEA LIST
 #
 # This file is part of LIMA.
 #
@@ -21,6 +21,7 @@ add_subdirectory(ApplyRecognizer)
 add_subdirectory(Automaton)
 add_subdirectory(CorefSolving)
 add_subdirectory(Dictionary)
+add_subdirectory(EntityTracking)
 add_subdirectory(EventAnalysis)
 add_subdirectory(FlatTokenizer)
 add_subdirectory(LinguisticAnalysisStructure)
@@ -28,10 +29,11 @@ add_subdirectory(LinguisticProcessors)
 add_subdirectory(LinguisticResources)
 add_subdirectory(MorphologicAnalysis)
 add_subdirectory(PosTagger)
+add_subdirectory(RegexMatcher)
 add_subdirectory(SemanticAnalysis)
 add_subdirectory(SpecificEntities)
 add_subdirectory(SyntacticAnalysis)
-add_subdirectory(EntityTracking)
+add_subdirectory(TensorFlowTokenizer)
 add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
 add_subdirectory(RegexMatcher)
