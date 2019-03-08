@@ -22,9 +22,9 @@
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="regexmatcher"/>
+        <item value="pytftokenizer"/>
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <item value="regexmatcher"/>
         <item value="simpleWord"/>
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
@@ -236,6 +236,9 @@
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.tok"/>
       <param key="charChart" value="flatcharchart"/>
+    </group>
+    <group name="pytftokenizer" class="TensorFlowTokenizer">
+      <param key="path" value="<path to the Python TensorFlow tokenizer>"/>
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
