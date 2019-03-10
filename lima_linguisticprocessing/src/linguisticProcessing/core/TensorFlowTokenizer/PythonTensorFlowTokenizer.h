@@ -21,7 +21,7 @@
 //
 // jys 24-JUL-2002
 //
-// Tokenizer is the main program of Tokenizer stuff.
+// PythonTensorFlowTokenizer is the main program of PythonTensorFlowTokenizer stuff.
 
 #ifndef LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
 #define LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
@@ -36,11 +36,11 @@ namespace LinguisticProcessing
 namespace TensorFlowTokenizer
 {
 
-#define TENSORFLOWTOKENIZER_CLASSID "TensorFlowTokenizer"
+#define PYTHONTENSORFLOWTOKENIZER_CLASSID "PyhtonTensorFlowTokenizer"
 
 class CharChart;
 
-class TokenizerPrivate;
+class PythonTokenizerPrivate;
 
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
   *
@@ -54,12 +54,12 @@ class TokenizerPrivate;
   * - Preconditions: the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
   * - Effects: the AnalysisContent will contain an AnalysisData of type AnalysisGraph named "AnalysisGraph" which is a linear graph (a string) containing one vertex for each detected token.
   */
-class LIMA_TENSORFLOWTOKENIZER_EXPORT Tokenizer : public MediaProcessUnit
+class LIMA_TENSORFLOWTOKENIZER_EXPORT PythonTensorFlowTokenizer : public MediaProcessUnit
 {
 
 public:
-  Tokenizer();
-  virtual ~Tokenizer();
+  PythonTensorFlowTokenizer();
+  virtual ~PythonTensorFlowTokenizer();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -70,7 +70,7 @@ public:
 
   private:
 
-    TokenizerPrivate* m_d;
+    PythonTokenizerPrivate* m_d;
 };
 
 } //namespace TensorFlowTokenizer
