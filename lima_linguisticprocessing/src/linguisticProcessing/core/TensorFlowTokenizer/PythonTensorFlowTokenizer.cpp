@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "Tokenizer.h"
+#include "PythonTensorFlowTokenizer.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
@@ -48,13 +48,13 @@ namespace LinguisticProcessing
 namespace TensorFlowTokenizer
 {
 
-static SimpleFactory<MediaProcessUnit,Tokenizer> tokenizerFactory(TENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
+static SimpleFactory<MediaProcessUnit,PythonTensorFlowTokenizer> pythontokenizerFactory(PYTHONTENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
-class TokenizerPrivate
+class PythonTokenizerPrivate
 {
 public:
-  TokenizerPrivate();
-  virtual ~TokenizerPrivate();
+  PythonTokenizerPrivate();
+  virtual ~PythonTokenizerPrivate();
 
   void computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings);
 
@@ -65,20 +65,20 @@ public:
 
 };
 
-TokenizerPrivate::TokenizerPrivate() :
+PythonTokenizerPrivate::PythonTokenizerPrivate() :
     m_stringsPool(nullptr),
     m_currentVx(0)
 {
 }
 
-TokenizerPrivate::~TokenizerPrivate()
+PythonTokenizerPrivate::~PythonTokenizerPrivate()
 {
 }
 
-Tokenizer::Tokenizer() : m_d(new TokenizerPrivate())
+PythonTensorFlowTokenizer::PythonTensorFlowTokenizer() : m_d(new PythonTokenizerPrivate())
 {}
 
-Tokenizer::~Tokenizer()
+PythonTensorFlowTokenizer::~PythonTensorFlowTokenizer()
 {
   Py_DECREF(m_d->m_instance);
 
@@ -114,19 +114,19 @@ auto failed_to_import_the_sys_module = []()
 auto cannot_instantiate_the_tokenizer_python_class = []()
 {
   TOKENIZERLOGINIT;
-  LERROR << "Cannot instantiate the Tokenizer python class";
+  LERROR << "Cannot instantiate the PythonTensorFlowTokenizer python class";
   PyErr_Print();
   Py_Exit(1);
 };
 
-void Tokenizer::init(
+void PythonTensorFlowTokenizer::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
 {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-  LDEBUG << "Tokenizer::init";
+  LDEBUG << "PythonTensorFlowTokenizer::init";
 #endif
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
@@ -197,7 +197,7 @@ void Tokenizer::init(
   if (tokenizer_module == NULL)
   {
     TOKENIZERLOGINIT;
-    LERROR << "Tokenizer::init"<< __FILE__ << __LINE__
+    LERROR << "PythonTensorFlowTokenizer::init"<< __FILE__ << __LINE__
             << ": Failed to import tokenizer module";
     PyErr_Print();
     Py_Exit(1);
@@ -207,7 +207,7 @@ void Tokenizer::init(
   auto pDict = PyModule_GetDict(tokenizer_module);
 
   // Build the name of a callable class
-  auto pClass = PyDict_GetItemString(pDict, "Tokenizer");
+  auto pClass = PyDict_GetItemString(pDict, "PythonTensorFlowTokenizer");
   // Create an instance of the class
   if (PyCallable_Check(pClass))
   {
@@ -289,7 +289,7 @@ std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
   return data;
 }
 
-LimaStatusCode Tokenizer::process(AnalysisContent& analysis) const
+LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
 {
   TimeUtilsController TensorFlowTokenizerProcessTime("TensorFlowTokenizer");
   TOKENIZERLOGINIT;
@@ -483,7 +483,7 @@ LimaStatusCode Tokenizer::process(AnalysisContent& analysis) const
 }
 
 // set default key in status according to other elements in status
-void TokenizerPrivate::computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings)
+void PythonTokenizerPrivate::computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings)
 {
   std::string defaultKey;
   switch (curSettings.getStatus()) {
