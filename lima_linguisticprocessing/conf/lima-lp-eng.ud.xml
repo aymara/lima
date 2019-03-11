@@ -246,7 +246,8 @@
       <!-- Path to the frozen TensorFlow tokenizer model -->
       <param key="model_path" value="path to the model for the Python TensorFlow tokenizer"/>
       <param key="window_size" value="20"/>
-</group>
+      <param key="batch_size" value="200"/>
+    </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
         <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>

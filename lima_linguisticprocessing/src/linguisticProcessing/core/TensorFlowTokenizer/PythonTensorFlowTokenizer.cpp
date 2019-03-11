@@ -196,7 +196,26 @@ void PythonTensorFlowTokenizer::init(
   catch (NoSuchParam& )
   {
     TOKENIZERLOGINIT;
-    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    LERROR << "no param 'window_size' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  int batchSize = -1; // The bach size used with the tensorflow-based tokenizer
+  try
+  {
+    bool success;
+    batchSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("batch_size").c_str()).toInt(&success);
+    if (!success)
+    {
+      TOKENIZERLOGINIT;
+      LERROR << "Param 'batch_size' in PythonTensorFlowTokenizer group configuration is not an integer";
+      throw InvalidConfiguration();
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'batch_size' in PythonTensorFlowTokenizer group configuration";
     throw InvalidConfiguration();
   }
 
@@ -286,8 +305,13 @@ void PythonTensorFlowTokenizer::init(
     {
       failed_to_allocate_memory();
     }
+    auto batch_size = PyLong_FromLong(batchSize);
+    if (batch_size == NULL)
+    {
+      failed_to_allocate_memory();
+    }
 
-    auto pArgs = PyTuple_New(4);
+    auto pArgs = PyTuple_New(5);
     if (pArgs == NULL)
     {
       failed_to_allocate_memory();
@@ -295,7 +319,8 @@ void PythonTensorFlowTokenizer::init(
     if (PyTuple_SetItem(pArgs, 0, corpus) != 0
         || PyTuple_SetItem(pArgs, 1, embeddings_path) != 0
         || PyTuple_SetItem(pArgs, 2, model_path) != 0
-        || PyTuple_SetItem(pArgs, 3, window_size) != 0)
+        || PyTuple_SetItem(pArgs, 3, window_size) != 0
+        || PyTuple_SetItem(pArgs, 4, batch_size) != 0)
     {
       python_error();
     }
@@ -314,6 +339,7 @@ void PythonTensorFlowTokenizer::init(
     Py_DECREF(embeddings_path);
     Py_DECREF(model_path);
     Py_DECREF(window_size);
+    Py_DECREF(batch_size);
   }
   else
   {
@@ -433,8 +459,8 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
   // Insert the tokens in the graph and create sentence limits
   for (const auto& sentence: sentencesTokens)
   {
-    LinguisticGraphVertex beginSentence = -1;
-    LinguisticGraphVertex endSentence = -1;
+    LinguisticGraphVertex beginSentence = std::numeric_limits< LinguisticGraphVertex >::max();
+    LinguisticGraphVertex endSentence = std::numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
     {
       const auto& str = token.first;
@@ -453,7 +479,8 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
 
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
-      if (beginSentence == -1) beginSentence = newVx;
+      if (beginSentence == std::numeric_limits< LinguisticGraphVertex >::max())
+        beginSentence = newVx;
       endSentence = newVx;
       put(vertex_token, *graph, newVx, tToken);
       put(vertex_data, *graph, newVx, new MorphoSyntacticData());
