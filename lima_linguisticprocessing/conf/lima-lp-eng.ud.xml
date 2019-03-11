@@ -45,6 +45,7 @@
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
+        <item value="sentenceBoundariesTransfer"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerSimplify"/>
         <item value="syntacticAnalyzerSimplifyQuotes"/>
@@ -465,6 +466,8 @@
         <item value="!"/>
         <item value="?"/>
       </list>
+    </group>
+    <group name="sentenceBoundariesTransfer" class="SentenceBoundariesTransfer">
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>

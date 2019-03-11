@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,14 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
-  *
-  * @file        SyntacticAnalyzer-chains.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
-
-  *              Copyright (c) 2003 by CEA
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
   * @date        Created on Aug, 31 2004
-  * @version     $Id$
-  *
   */
 
 #include "SyntacticAnalyzer-chains.h"
@@ -43,6 +37,7 @@
 using namespace std;
 //using namespace boost;
 using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima
@@ -64,54 +59,64 @@ SyntacticAnalyzerChains::SyntacticAnalyzerChains() :
 {}
 
 void SyntacticAnalyzerChains::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
 {
   SACLOGINIT;
-  m_language=manager->getInitializationParameters().media;
-  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
+  m_language = manager->getInitializationParameters().media;
+  m_macroAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(
+    Common::MediaticData::MediaticData::single().mediaData(m_language))
+      .getPropertyCodeManager()
+      .getPropertyAccessor("MACRO"));
   try
   {
-    std::string chainMatrixId=unitConfiguration.getParamsValueAtKey("chainMatrix");
-    m_chainMatrix=static_cast<SyntagmDefStruct*>(LinguisticResources::single().getResource(m_language,chainMatrixId));
+    auto chainMatrixId = unitConfiguration.getParamsValueAtKey("chainMatrix");
+    m_chainMatrix = static_cast<SyntagmDefStruct*>(LinguisticResources::single().getResource(m_language,
+                                                                                             chainMatrixId));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LERROR << "no parameter 'chainMatrix' in SyntacticAnalyzerChains group for language " << (int) m_language << " !";
+    LERROR << "no parameter 'chainMatrix' in SyntacticAnalyzerChains group for language "
+            << (int) m_language << " !";
     throw InvalidConfiguration();
   }
   try
   {
-    std::string maxChainsNbByVertexS=unitConfiguration.getParamsValueAtKey("maxChainsNbByVertex");
+    auto maxChainsNbByVertexS = unitConfiguration.getParamsValueAtKey("maxChainsNbByVertex");
     std::istringstream iss(maxChainsNbByVertexS);
     iss >> m_maxChainsNbByVertex;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "no parameter 'maxChainsNbByVertex' in SyntacticAnalyzerChains group for language " << (int) m_language << " ! Using default: "<<DEFAULT_MAXCHAINSNBBYVERTEX<<".";
+    LWARN << "no parameter 'maxChainsNbByVertex' in SyntacticAnalyzerChains group for language "
+          << (int) m_language << " ! Using default: "
+          << DEFAULT_MAXCHAINSNBBYVERTEX << ".";
     m_maxChainsNbByVertex = DEFAULT_MAXCHAINSNBBYVERTEX;
   }
   try
   {
-    std::string maxChainLengthS=unitConfiguration.getParamsValueAtKey("maxChainLength");
+    auto maxChainLengthS = unitConfiguration.getParamsValueAtKey("maxChainLength");
     std::istringstream iss(maxChainLengthS);
     iss >> m_maxChainLength;
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    LWARN << "no parameter 'maxChainLength' in SyntacticAnalyzerChains group for language " << (int) m_language << " ! Using default: "<<DEFAULT_MAXCHAINLENGTH<<".";
+    LWARN << "no parameter 'maxChainLength' in SyntacticAnalyzerChains group for language "
+          << (int) m_language << " ! Using default: "<<DEFAULT_MAXCHAINLENGTH<<".";
     m_maxChainLength = DEFAULT_MAXCHAINLENGTH;
   }
   try
   {
-    std::string id=unitConfiguration.getParamsValueAtKey("ponctuCategory");
-    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(id);
+    auto id = unitConfiguration.getParamsValueAtKey("ponctuCategory");
+    m_ponctuCategory = static_cast<const Common::MediaticData::LanguageData&>(
+      Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue(id);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LWARN << "No ponctu macrocategory defined ! use category PONCTU";
-    m_ponctuCategory=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue("PONCTU");
+    m_ponctuCategory = static_cast<const Common::MediaticData::LanguageData&>(
+      Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertyValue("PONCTU");
   }
 
 }
@@ -123,31 +128,33 @@ LimaStatusCode SyntacticAnalyzerChains::process(
   SACLOGINIT;
   LINFO << "start syntactic analysis - chains";
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  if (anagraph==0)
+  auto anagraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  if (anagraph == nullptr)
   {
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  if (sb==0)
+  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  if (sb == nullptr)
   {
     LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
-  if (sb->getGraphId() != "PosGraph") {
+  if (sb->getGraphId() != "PosGraph")
+  {
     LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
     LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
 
-  SyntacticData* syntacticData=dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  if (syntacticData==0)
+  SyntacticData* syntacticData = dynamic_cast<SyntacticData*>(
+    analysis.getData("SyntacticData"));
+  if (syntacticData == nullptr)
   {
-    syntacticData=new SyntacticData(anagraph,m_chainMatrix);
-    analysis.setData("SyntacticData",syntacticData);
+    syntacticData = new SyntacticData(anagraph, m_chainMatrix);
+    analysis.setData("SyntacticData", syntacticData);
   }
-  else if (syntacticData->matrices() == 0)
+  else if (syntacticData->matrices() == nullptr)
   {
     syntacticData->matrices(m_chainMatrix);
   }
@@ -157,22 +164,21 @@ LimaStatusCode SyntacticAnalyzerChains::process(
   std::list<LinguisticCode> ponctuMacroFilter;
   ponctuMacroFilter.push_back(m_ponctuCategory);
 
-//  bool l2r = true;
-  // ??OME2 for (SegmentationData::const_iterator boundItr=sb->begin();
-  //     boundItr!=sb->end();
-  for (std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
-       boundItr!=(sb->getSegments()).end();
-       boundItr++)
+  for (const auto& bound: sb->getSegments())
   {
-    LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
-    LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+    LinguisticGraphVertex beginSentence=bound.getFirstVertex();
+    LinguisticGraphVertex endSentence=bound.getLastVertex();
+//     LDEBUG << "analyze sentence from vertex " << beginSentence
+//            << " to vertex " << endSentence;
     LinguisticGraphVertex current, next;
     current = beginSentence; next = current;
     while (next != endSentence)
     {
 //       LDEBUG << "nextChainsBreak";
-      next = anagraph->nextMainPathVertex(current,*m_macroAccessor,ponctuMacroFilter,endSentence);
+      next = anagraph->nextMainPathVertex(current,
+                                          *m_macroAccessor,
+                                          ponctuMacroFilter,
+                                          endSentence);
 //       LDEBUG << "analyze chain from " << current << " to " << next;
 //       LDEBUG << "identify chains";
       identifyChains(syntacticData,current,next,chainId);
@@ -195,11 +201,13 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //   LDEBUG << "Searching chains from/to (morph): " << start << "/" << stop;
   if (start == stop)
     return;
-  VertexChainIdPropertyMap vertexChainIdMap = get( vertex_chain_id, *(data->graph()) );
+  VertexChainIdPropertyMap vertexChainIdMap = get(vertex_chain_id,
+                                                  *(data->graph()) );
   std::set< std::string > alreadyReported;
   LinguisticGraphVertex first = data->iterator()-> firstVertex();
   LinguisticGraphVertex last = data->iterator()-> lastVertex();
-  VertexDataPropertyMap dataMap = get(vertex_data, (*data->iterator()->getGraph() ) );
+  VertexDataPropertyMap dataMap = get(vertex_data,
+                                      (*data->iterator()->getGraph() ) );
 //   VertexTokenPropertyMap tokenMap =get(vertex_token, (*data->iterator()->getGraph() ) );
 
   std::vector< ChainStackTuple > pile;
@@ -223,12 +231,24 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
       LNOTICE << "Chain reached its max size or is too long.";
 #endif
 //       LDEBUG << "Trying to find a chain end in the too long stack";
-      LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
+      LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data,
+                                                              pile,
+                                                              currentType);
       if (lastChainVx != first) {
 //         LDEBUG << "Chain end is " << lastChainVx << ". Reporting the chain in the graph.";
-        std::string newChainString = stringChain(data,pile, currentType, alreadyFinished,startChainId,lastChainVx);
+        std::string newChainString = stringChain(data,
+                                                 pile,
+                                                 currentType,
+                                                 alreadyFinished,
+                                                 startChainId,
+                                                 lastChainVx);
         alreadyReported.insert(newChainString);
-        reportChainInGraph(data,pile, currentType, alreadyFinished,startChainId,lastChainVx);
+        reportChainInGraph(data,
+                           pile,
+                           currentType,
+                           alreadyFinished,
+                           startChainId,
+                           lastChainVx);
         LinguisticGraphOutEdgeIt it, it_end;
         boost::tie(it, it_end) = out_edges(lastChainVx, *(data->graph()));
 //         LDEBUG << "Initializing for the sons of " << lastChainVx;
@@ -242,7 +262,7 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
             nextVxs.push_back(nextVx);
           }
         }
-      } 
+      }
       else {
 //         LDEBUG << "NoChainEndInStack";
       }
@@ -272,7 +292,8 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
         while ((vertexChainIdMap[nextVx].size() >= m_maxChainsNbByVertex) )
         {
           SACLOGINIT;
-          LNOTICE << "Vertex ignored (" << nextVx << ") because there is too much chains on it.";
+          LNOTICE << "Vertex ignored (" << nextVx
+                  << ") because there is too much chains on it.";
 //           LDEBUG << "Ignoring next vertex " << nextVx << " because there is too much chains on it.";
           if (nextVxs.empty())
           {
@@ -292,7 +313,9 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
       {
 //         LDEBUG << "next vertex is a nominal chain beginning";
         canFinish = (data->matrices()-> canNominalChainEndBy(dataMap[nextVx]));
-        pile.push_back(boost::make_tuple(nextVx, canFinish, std::vector< LinguisticGraphVertex >()));
+        pile.push_back(boost::make_tuple(nextVx,
+                                         canFinish,
+                                         std::vector< LinguisticGraphVertex >()));
         currentType = NOMINAL;
       }
       else if ( (nextVx != first) && (nextVx != last) &&
@@ -300,7 +323,9 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
       {
 //         LDEBUG << "next vertex is a verbal chain beginning";
         canFinish = ( data->matrices()-> canVerbalChainEndBy(dataMap[nextVx]));
-        pile.push_back(boost::make_tuple(nextVx, canFinish, std::vector< LinguisticGraphVertex >()));
+        pile.push_back(boost::make_tuple(nextVx,
+                                         canFinish,
+                                         std::vector< LinguisticGraphVertex >()));
         currentType = VERBAL;
       }
       else
@@ -322,7 +347,8 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
           LinguisticGraphVertex nextNext = target(*it, *(data->graph()));
           if (nextNext != last)
           {
-            if ( ( alreadyFinished.find(nextNext) == alreadyFinished.end()) && (currentType != NO_CHAIN_TYPE) )
+            if ( ( alreadyFinished.find(nextNext) == alreadyFinished.end())
+                  && (currentType != NO_CHAIN_TYPE) )
             {
 //               LDEBUG << "Adding " << nextNext << " to sons of " << nextVx;
               sons.push_back(nextNext);
@@ -373,7 +399,8 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
                    currentType ) ) )
         {
 //           LDEBUG << father << " -> " << currentSon << " is in the matrix";
-          bool canFinish = ( data->matrices()->canChainEndBy(dataMap[currentSon], currentType));
+          bool canFinish = ( data->matrices()->canChainEndBy(dataMap[currentSon],
+                                                             currentType));
           // bloc ci-dessous a deplacer plus haut pour explorer
           // toutes les chaines. Pb: rend le parcours tres tres lourd.
           // ------------->
@@ -385,7 +412,9 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
           }
           // <-------------
 //           LDEBUG << "Pushing " << currentSon << "(" << canFinish << ")";
-          pile.push_back(boost::make_tuple(currentSon, canFinish, std::vector< LinguisticGraphVertex >()));
+          pile.push_back(boost::make_tuple(currentSon,
+                                           canFinish,
+                                           std::vector< LinguisticGraphVertex >()));
           if (currentSon != stop)
           {
             std::vector< LinguisticGraphVertex >& sons = pile.back().get<2>();
@@ -394,7 +423,8 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
             for (; it != it_end; it++)
             {
 //               LDEBUG << "Edge is " << *it;
-//               LDEBUG << "Adding " << target(*it, *(data->graph())) << " to sons of " << currentSon;
+//               LDEBUG << "Adding " << target(*it, *(data->graph()))
+//                      << " to sons of " << currentSon;
               sons.push_back(target(*it, *(data->graph())));
             }
           }
@@ -406,33 +436,47 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //               LDEBUG << "currentSon " << currentSon << " is a possible end. Reporting the chain in the graph.";
               std::string newChainString = stringChain(data, pile, currentType, alreadyFinished,startChainId,currentSon);
               alreadyReported.insert(newChainString);
-              reportChainInGraph(data, pile, currentType, alreadyFinished,startChainId, currentSon);
+              reportChainInGraph(data,
+                                 pile,
+                                 currentType,
+                                 alreadyFinished,
+                                 startChainId,
+                                 currentSon);
             }
             else
             {
 //               LDEBUG << "currentSon " << currentSon << " is not a possible end.";
 //               LDEBUG << "Trying to find a chain end in the stack";
-              LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
+              LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data,
+                                                                      pile,
+                                                                      currentType);
               if (lastChainVx!=first) {
 //                 LDEBUG << "Chain end is " << lastChainVx << ". Reporting the chain in the graph.";
-                std::string newChainString = stringChain(data, pile, currentType, alreadyFinished,startChainId,lastChainVx);
+                std::string newChainString = stringChain(data,
+                                                         pile,
+                                                         currentType,
+                                                         alreadyFinished,
+                                                         startChainId,
+                                                         lastChainVx);
                 alreadyReported.insert(newChainString);
                 reportChainInGraph(data, pile, currentType, alreadyFinished,startChainId,lastChainVx);
                 LinguisticGraphOutEdgeIt it, it_end;
-                boost::tie(it, it_end) = out_edges(lastChainVx, *(data->graph()));
+                boost::tie(it, it_end) = out_edges(lastChainVx,
+                                                   *(data->graph()));
 //                 LDEBUG << "Initializing for the sons of " << lastChainVx;
                 for (; it != it_end; it++)
                 {
 //                   LDEBUG << "Looking at an out edge of the chain's last vertex : " << *it;
-                  LinguisticGraphVertex nextVx = target(*it, *(data->graph()));
+                  LinguisticGraphVertex nextVx = target(*it,
+                                                        *(data->graph()));
                   if (alreadyFinished.find(nextVx) == alreadyFinished.end())
                   {
 //                     LDEBUG << "Adding " << nextVx << " to nextVxs";
                     nextVxs.push_back(nextVx);
                   }
                 }
-              } 
-//               else 
+              }
+//               else
 //               {
 //                 LDEBUG << "NoChainEndInStackException catched";
 //               }
@@ -442,18 +486,31 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
         else
         {
 //           LDEBUG << father << " -> " << currentSon << " NOT in the matrix";
-          LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
-          if (lastChainVx!=first) 
+          LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data,
+                                                                  pile,
+                                                                  currentType);
+          if (lastChainVx!=first)
           {
-            std::string newChainString = stringChain(data, pile, currentType, alreadyFinished,startChainId,lastChainVx);
+            std::string newChainString = stringChain(data,
+                                                     pile,
+                                                     currentType,
+                                                     alreadyFinished,
+                                                     startChainId,
+                                                     lastChainVx);
             if (alreadyReported.find(newChainString) == alreadyReported.end())
             {
 //               LDEBUG << "Reporting chain: " << newChainString;
               alreadyReported.insert(newChainString);
-              reportChainInGraph(data, pile, currentType, alreadyFinished,startChainId,lastChainVx);
+              reportChainInGraph(data,
+                                 pile,
+                                 currentType,
+                                 alreadyFinished,
+                                 startChainId,
+                                 lastChainVx);
               LinguisticGraphOutEdgeIt it, it_end;
               boost::tie(it, it_end) = out_edges(lastChainVx, *(data->graph()));
-//               LDEBUG << "Initializing for the sons of " << lastChainVx << " after unstacking";
+//               LDEBUG << "Initializing for the sons of "
+//                      << lastChainVx << " after unstacking";
               for (; it != it_end; it++)
               {
 //                 LDEBUG << "Looking at an out edge of the chain's last vertex : " << *it;
@@ -469,8 +526,8 @@ void SyntacticAnalyzerChains::identifyChains(SyntacticData* data,
 //             {
 //               LDEBUG << "This chain (" << newChainString << ") has already been found. Nothing to do.";
 //             }
-          } 
-          else 
+          }
+          else
           {
 //             LDEBUG << "No end of chain found in pile";
             if (alreadyFinished.find(currentSon) == alreadyFinished.end())
@@ -512,15 +569,16 @@ void SyntacticAnalyzerChains::reportChainInGraph(
     const std::vector< ChainStackTuple >& pile,
     Common::MediaticData::ChainsType type,
     std::set< LinguisticGraphVertex >& alreadyFinished,
-                                                  uint64_t& chainId,
-                                                  const LinguisticGraphVertex& stop) const
+    uint64_t& chainId,
+    const LinguisticGraphVertex& stop) const
 {
 //     SACLOGINIT;
 //     LDEBUG << "SyntacticAnalyzerChains::reportChainInGraph";
 
     ChainIdStruct property = ChainIdStruct(type, chainId);
 
-    VertexChainIdPropertyMap vertexChainIdMap = get( vertex_chain_id, *(data->graph()) );
+    VertexChainIdPropertyMap vertexChainIdMap = get(vertex_chain_id,
+                                                    *(data->graph()) );
 
     std::vector< ChainStackTuple >::const_iterator it, it_end;
     it = pile.begin(); it_end = pile.end();
@@ -530,7 +588,8 @@ void SyntacticAnalyzerChains::reportChainInGraph(
       if ((vertexChainIdMap[current].size() >= m_maxChainsNbByVertex) )
       {
         SACLOGINIT;
-        LNOTICE << "Too much chains on " << current << " ; cannot add a new one.";
+        LNOTICE << "Too much chains on " << current
+                << " ; cannot add a new one.";
         return;
       }
     }
@@ -546,33 +605,41 @@ void SyntacticAnalyzerChains::reportChainInGraph(
       if (it == it_beg)
       {
         if (it_beg == it_last)
-          property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::UNIGRAM);
+          property = ChainIdStruct(type,
+                                   chainId,
+                                   LinguisticAnalysisStructure::UNIGRAM);
         else
-          property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::BEGIN);
+          property = ChainIdStruct(type,
+                                   chainId,
+                                   LinguisticAnalysisStructure::BEGIN);
       }
       else if (it == it_last)
       {
-        property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::END);
+        property = ChainIdStruct(type,
+                                 chainId,
+                                 LinguisticAnalysisStructure::END);
       }
       else
       {
-        property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::PART);
+        property = ChainIdStruct(type,
+                                 chainId,
+                                 LinguisticAnalysisStructure::PART);
       }
       oss << current;
-      if (current != data->iterator()->firstVertex() && current != data->iterator()->lastVertex()
+      if (current != data->iterator()->firstVertex()
+          && current != data->iterator()->lastVertex()
           && (vertexChainIdMap[current].size() < m_maxChainsNbByVertex) )
       {
-//         LDEBUG << "executing: vertexChainIdMap[" << current << "].insert(" << property << ")";
+//         LDEBUG << "executing: vertexChainIdMap[" << current
+//                << "].insert(" << property << ")";
         vertexChainIdMap[current].insert(property);
 
         if (pile.size() > 1)
         {
-          std::vector< ChainStackTuple >::const_iterator it2, it2_end;
-          it2 = pile.begin(); it2_end = pile.end();
           bool ok = false;
-          for (; it2 != it2_end; it2++)
+          for (const auto& chainStackTuple: pile)
           {
-            LinguisticGraphVertex other = (*it2).get<0>();
+            LinguisticGraphVertex other = chainStackTuple.get<0>();
             if (other != current)
             {
               LinguisticGraphEdge e; bool found;
@@ -609,7 +676,8 @@ void SyntacticAnalyzerChains::reportChainInGraph(
         break;
       else
         oss << " ";
-      if (current != data->iterator()->firstVertex() && current != data->iterator()->lastVertex()
+      if (current != data->iterator()->firstVertex()
+          && current != data->iterator()->lastVertex()
           && (vertexChainIdMap[current].size() < m_maxChainsNbByVertex) )
         if (parentsFinished(data, current, alreadyFinished))
       {
@@ -617,7 +685,8 @@ void SyntacticAnalyzerChains::reportChainInGraph(
         alreadyFinished.insert(current);*/
       }
     }
-//     LDEBUG << "Chain " << chainId << " is : " << (type==NOMINAL?"nominal":"verbal") << " " << oss.str();
+//     LDEBUG << "Chain " << chainId << " is : "
+//            << (type==NOMINAL?"nominal":"verbal") << " " << oss.str();
     chainId++;
   }
 
@@ -665,17 +734,25 @@ std::string SyntacticAnalyzerChains::stringChain(
     if (it == it_beg)
     {
       if (it_beg == it_last)
-        property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::UNIGRAM);
+        property = ChainIdStruct(type,
+                                 chainId,
+                                 LinguisticAnalysisStructure::UNIGRAM);
       else
-        property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::BEGIN);
+        property = ChainIdStruct(type,
+                                 chainId,
+                                 LinguisticAnalysisStructure::BEGIN);
     }
     else if (it == it_last)
     {
-      property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::END);
+      property = ChainIdStruct(type,
+                               chainId,
+                               LinguisticAnalysisStructure::END);
     }
     else
     {
-      property = ChainIdStruct(type, chainId, LinguisticAnalysisStructure::PART);
+      property = ChainIdStruct(type,
+                               chainId,
+                               LinguisticAnalysisStructure::PART);
     }
     oss << (*it).get<0>();
     LinguisticGraphVertex current = (*it).get<0>();
@@ -683,17 +760,16 @@ std::string SyntacticAnalyzerChains::stringChain(
       break;
     else
       oss << " ";
-    if (current != data->iterator()->firstVertex() && current != data->iterator()->lastVertex())
+    if (current != data->iterator()->firstVertex()
+        && current != data->iterator()->lastVertex())
     {
       if (pile.size() > 1)
       {
-        std::vector< ChainStackTuple >::const_iterator it2, it2_end;
         // @todo replace by lookup only previous and next vertex in pile
-        it2 = pile.begin(); it2_end = pile.end();
         bool ok = false;
-        for (; it2 != it2_end; it2++)
+        for (const auto& chainStackTuple: pile)
         {
-          LinguisticGraphVertex other = (*it2).get<0>();
+          LinguisticGraphVertex other = chainStackTuple.get<0>();
           if (other != current)
           {
             LinguisticGraphEdge e; bool found;
@@ -727,7 +803,8 @@ std::string SyntacticAnalyzerChains::stringChain(
       alreadyFinished.insert(current);
     }
   }
-//  LDEBUG << "In stringChain, chain " << chainId << " is : " << (type==NOMINAL?"nominal":"verbal") << " " << oss.str();
+//  LDEBUG << "In stringChain, chain " << chainId << " is : "
+//          << (type==NOMINAL?"nominal":"verbal") << " " << oss.str();
   return oss.str();
 }
 

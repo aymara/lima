@@ -29,6 +29,7 @@ SET(lima-lp-textsegmentation_LIB_SRCS
    SentenceBoundariesFinder.cpp
    ParagraphBoundariesFinder.cpp
    SentenceBoundariesXmlLogger.cpp
+   SentenceBoundariesTransfer.cpp
 # TemporalSegmentationFeatures has to be moved to a new library just because otherwise it does not compile under Windows
 #   TemporalSegmentationFeatures.cpp
 )
