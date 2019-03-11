@@ -18,6 +18,7 @@
 */
 
 #include "CppTensorFlowTokenizer.h"
+#include "tokUtils.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
@@ -38,6 +39,9 @@ using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
+using namespace tensorflow;
+
+#define EIGEN_DONT_VECTORIZE
 
 namespace Lima
 {
@@ -60,6 +64,14 @@ public:
   FsaStringsPool* m_stringsPool;
   LinguisticGraphVertex m_currentVx;
 
+  std::map<QString,int> m_vocabWords;
+  std::map<QChar,int> m_vocabChars;
+  std::map<unsigned int,QString> m_vocabTags;
+  Session* m_session;
+  std::shared_ptr<Status> m_status;
+  GraphDef m_graphDef;
+  int m_batchSizeMax;
+  std::string m_graph;
 };
 
 CppTokenizerPrivate::CppTokenizerPrivate() :
@@ -124,6 +136,158 @@ void CppTensorFlowTokenizer::init(
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
 
+  QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
+  try
+  {
+    embeddingsPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("embeddings_path").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  QString modelPath; // The path to the LIMA python tensorflow-based tokenizer
+  try
+  {
+    modelPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model_path").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  int windowSize = -1; // The window size used with the tensorflow-based tokenizer
+  try
+  {
+    bool success;
+    windowSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("window_size").c_str()).toInt(&success);
+    if (!success)
+    {
+      TOKENIZERLOGINIT;
+      LERROR << "Param 'window_size' in PythonTensorFlowTokenizer group configuration is not an integer";
+      throw InvalidConfiguration();
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+    m_d->m_graph=
+    Common::Misc::findFileInPaths(
+      Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      unitConfiguration.getParamsValueAtKey("graphOutputFile").c_str()).toStdString();
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'graphOutputFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    throw InvalidConfiguration();
+  }
+
+  QString fileChars,fileWords,fileTags;
+  try
+  {
+    fileChars=Common::Misc::findFileInPaths(
+      Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      unitConfiguration.getParamsValueAtKey("charValuesFile").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'charValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+      fileWords=
+      Common::Misc::findFileInPaths(
+      Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      unitConfiguration.getParamsValueAtKey("wordValuesFile").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'wordValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+      fileTags=Common::Misc::findFileInPaths(
+      Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+      unitConfiguration.getParamsValueAtKey("tagValuesFile").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'tagValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    throw InvalidConfiguration();
+  }
+
+  //Minibatching (group of max 20 sentences of different size) is used in order to amortize the cost of loading the network weights from CPU/GPU memory across many inputs.
+    //and to take advantage from parallelism.
+//     std::string::size_type sz;
+  try
+  {
+    std::string::size_type sz;
+    m_d->m_batchSizeMax = std::stoi(unitConfiguration.getParamsValueAtKey("batchSizeMax"),&sz);
+  }
+  catch (NoSuchParam& )
+  {
+    LERROR << "no param 'batchSizeMax' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    throw InvalidConfiguration();
+  }
+
+  try
+  {
+    m_d->m_vocabWords= loadFileWords(fileWords);
+    if(m_d->m_vocabWords.empty()){
+      throw LimaException();
+    }
+    m_d->m_vocabChars= loadFileChars(fileChars);
+    if(m_d->m_vocabChars.empty()){
+      throw LimaException();
+    }
+    m_d->m_vocabTags = loadFileTags(fileTags);
+    if(m_d->m_vocabTags.empty()){
+      throw LimaException();
+    }
+  }
+  catch(const BadFileException& e){
+    TFSELOGINIT;
+    LERROR<<e.what();
+    throw LimaException();
+  }
+
+  // Initialize a tensorflow session
+  m_d->m_status.reset(new Status(NewSession(SessionOptions(), &m_d->m_session)));
+  if (!m_d->m_status->ok()) {
+    TFSELOGINIT;
+    LERROR << m_d->m_status->ToString();
+    throw LimaException();
+  }
+
+  // Read in the protobuf graph we have exported
+  *m_d->m_status = ReadBinaryProto(Env::Default(), m_d->m_graph, &m_d->m_graphDef);
+  if (!m_d->m_status->ok()) {
+    TFSELOGINIT;
+    LERROR << m_d->m_status->ToString();
+    throw LimaException();
+  }
+
+  // Add the graph to the session
+  *m_d->m_status = m_d->m_session->Create(m_d->m_graphDef);
+  if (!m_d->m_status->ok()) {
+    TFSELOGINIT;
+    LERROR << m_d->m_status->ToString();
+    throw LimaException();
+  }
 }
 
 

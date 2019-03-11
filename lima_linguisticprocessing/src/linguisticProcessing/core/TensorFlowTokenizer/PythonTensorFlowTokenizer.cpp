@@ -22,6 +22,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "common/misc/Exceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
@@ -62,10 +63,12 @@ public:
   PyObject* m_instance;
   FsaStringsPool* m_stringsPool;
   LinguisticGraphVertex m_currentVx;
+  QString m_data;
 
 };
 
 PythonTokenizerPrivate::PythonTokenizerPrivate() :
+    m_instance(nullptr),
     m_stringsPool(nullptr),
     m_currentVx(0)
 {
@@ -119,9 +122,10 @@ auto cannot_instantiate_the_tokenizer_python_class = []()
   Py_Exit(1);
 };
 
+
 void PythonTensorFlowTokenizer::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-  Manager* manager)
+    GroupConfigurationStructure& unitConfiguration,
+    Manager* manager)
 
 {
 #ifdef DEBUG_LP
@@ -130,6 +134,15 @@ void PythonTensorFlowTokenizer::init(
 #endif
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
+
+ try
+  {
+    m_d->m_data = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("data").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    m_d->m_data = QString::fromUtf8("SentenceBoundaries");
+  }
 
   QString path; // The path to the LIMA python tensorflow-based tokenizer
   try
@@ -143,13 +156,53 @@ void PythonTensorFlowTokenizer::init(
     throw InvalidConfiguration();
   }
 
+  QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
+  try
+  {
+    embeddingsPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("embeddings_path").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  QString modelPath; // The path to the LIMA python tensorflow-based tokenizer
+  try
+  {
+    modelPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model_path").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  int windowSize = -1; // The window size used with the tensorflow-based tokenizer
+  try
+  {
+    bool success;
+    windowSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("window_size").c_str()).toInt(&success);
+    if (!success)
+    {
+      TOKENIZERLOGINIT;
+      LERROR << "Param 'window_size' in PythonTensorFlowTokenizer group configuration is not an integer";
+      throw InvalidConfiguration();
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
 
   // Initialize the python SRL system
-  /*
-   * Find the first python executable in the path and use it as the program name.
-   *
-   * This allows to find the modules set up in an activated virtualenv
-   */
+  // Find the first python executable in the path and use it as the program name.
+  // This allows to find the modules set up in an activated virtualenv
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
   QStringList paths = pathEnv.split(QRegExp("[;:]"));
@@ -207,7 +260,7 @@ void PythonTensorFlowTokenizer::init(
   auto pDict = PyModule_GetDict(tokenizer_module);
 
   // Build the name of a callable class
-  auto pClass = PyDict_GetItemString(pDict, "PythonTensorFlowTokenizer");
+  auto pClass = PyDict_GetItemString(pDict, "Tokenizer");
   // Create an instance of the class
   if (PyCallable_Check(pClass))
   {
@@ -217,17 +270,17 @@ void PythonTensorFlowTokenizer::init(
     {
       failed_to_allocate_memory();
     }
-    auto embeddings_path = PyUnicode_FromString("/home/gael/Projets/Lima/TFUDPipe/log");
+    auto embeddings_path = PyUnicode_FromString(embeddingsPath.toUtf8().constData());
     if (embeddings_path == NULL)
     {
       failed_to_allocate_memory();
     }
-    auto model_path = PyUnicode_FromString("/home/gael/Projets/Lima/TFUDPipe/udmodel");
+    auto model_path = PyUnicode_FromString(modelPath.toUtf8().constData());
     if (model_path == NULL)
     {
       failed_to_allocate_memory();
     }
-    auto window_size = PyLong_FromLong(20);
+    auto window_size = PyLong_FromLong(windowSize);
     if (window_size == NULL)
     {
       failed_to_allocate_memory();
@@ -251,11 +304,22 @@ void PythonTensorFlowTokenizer::init(
     {
       cannot_instantiate_the_tokenizer_python_class();
     }
+#ifdef DEBUG_LP
+    TOKENIZERLOGINIT;
+    LDEBUG << "PythonTensorFlowTokenizer::init";
+#endif
 
     Py_DECREF(corpus);
     Py_DECREF(embeddings_path);
     Py_DECREF(model_path);
     Py_DECREF(window_size);
+  }
+  else
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "Was not able to retrieve the python class to instantiate.";
+    PyErr_Print();
+    Py_Exit(1);
   }
 }
 
@@ -289,6 +353,10 @@ std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
   return data;
 }
 
+/*
+ * @TODO Add sentence bounds to analysis graph
+ * @TODO Set tokenization status
+ */
 LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
 {
   TimeUtilsController TensorFlowTokenizerProcessTime("TensorFlowTokenizer");
@@ -362,9 +430,14 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
   Py_DECREF(pyText);
   Py_DECREF(pyTokenize);
 
+  SegmentationData* sb = new SegmentationData("AnalysisGraph");
+  analysis.setData(m_d->m_data.toUtf8().constData(), sb);
+
   // Insert the tokens in the graph and create sentence limits
   for (const auto& sentence: sentencesTokens)
   {
+    LinguisticGraphVertex beginSentence = -1;
+    LinguisticGraphVertex endSentence = -1;
     for (const auto& token: sentence)
     {
       const auto& str = token.first;
@@ -468,11 +541,18 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
 #endif
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
+      if (beginSentence == -1) beginSentence = newVx;
+      endSentence = newVx;
       put(vertex_token, *graph, newVx, tToken);
       put(vertex_data, *graph, newVx, new MorphoSyntacticData());
       add_edge(m_d->m_currentVx, newVx, *graph);
       m_d->m_currentVx = newVx;
     }
+#ifdef DEBUG_LP
+    LDEBUG << "adding sentence" << beginSentence << endSentence;
+#endif
+    sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
+
   }
 
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
