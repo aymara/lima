@@ -354,7 +354,6 @@ std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
 }
 
 /*
- * @TODO Add sentence bounds to analysis graph
  * @TODO Set tokenization status
  */
 LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
