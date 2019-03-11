@@ -45,7 +45,6 @@
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
-        <item value="sentenceBoundariesFinder"/>
         <item value="syntacticAnalyzerChains"/>
         <item value="syntacticAnalyzerSimplify"/>
         <item value="syntacticAnalyzerSimplifyQuotes"/>
@@ -237,9 +236,16 @@
       <param key="automatonFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.tok"/>
       <param key="charChart" value="flatcharchart"/>
     </group>
-    <group name="pytftokenizer" class="TensorFlowTokenizer">
-      <param key="path" value="<path to the Python TensorFlow tokenizer>"/>
+    <group name="cpptftokenizer" class="CppTensorFlowTokenizer">
     </group>
+    <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
+      <param key="path" value="path to the Python TensorFlow tokenizer"/>
+      <!-- Path to the learnt embeddings -->
+      <param key="embeddings_path" value="path to the embeddings for the Python TensorFlow tokenizer"/>
+      <!-- Path to the frozen TensorFlow tokenizer model -->
+      <param key="model_path" value="path to the model for the Python TensorFlow tokenizer"/>
+      <param key="window_size" value="20"/>
+</group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
         <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>

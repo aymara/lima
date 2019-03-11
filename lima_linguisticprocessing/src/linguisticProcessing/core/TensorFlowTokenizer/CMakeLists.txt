@@ -19,9 +19,16 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### next target ###############
 
 SET(lima-lp-tensorflowtokenizer_LIB_SRCS
-    CppTensorFlowTokenizer.cpp
     PythonTensorFlowTokenizer.cpp
 )
+
+if (TensorFlow_FOUND AND Eigen_FOUND)
+SET(lima-lp-tensorflowtokenizer_LIB_SRCS
+    ${lima-lp-tensorflowtokenizer_LIB_SRCS}
+    tokUtils.cpp
+    CppTensorFlowTokenizer.cpp
+)
+endif()
 
 DECLARE_LIMA_PLUGIN(lima-lp-tensorflowtokenizer)
 
@@ -33,9 +40,15 @@ target_link_libraries(lima-lp-tensorflowtokenizer
     lima-lp-linguisticresources
     lima-lp-annotationgraph
     lima-lp-linguisticanalysisstructure
+    lima-lp-textsegmentation
     lima-common
     ${PYTHON_LIBRARIES}
 )
+if (TensorFlow_FOUND AND Eigen_FOUND)
+  target_link_libraries(lima-lp-tensorflowtokenizer
+      ${TensorFlow_LIBRARIES}
+)
+endif()
 
 set_target_properties(lima-lp-tensorflowtokenizer PROPERTIES
   VERSION ${LIMA_LP_LIB_VERSION}

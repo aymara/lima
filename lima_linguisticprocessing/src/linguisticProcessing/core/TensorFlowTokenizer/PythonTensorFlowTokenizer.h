@@ -36,7 +36,7 @@ namespace LinguisticProcessing
 namespace TensorFlowTokenizer
 {
 
-#define PYTHONTENSORFLOWTOKENIZER_CLASSID "PyhtonTensorFlowTokenizer"
+#define PYTHONTENSORFLOWTOKENIZER_CLASSID "PythonTensorFlowTokenizer"
 
 class CharChart;
 
