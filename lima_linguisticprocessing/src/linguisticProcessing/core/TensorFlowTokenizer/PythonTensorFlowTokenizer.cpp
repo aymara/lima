@@ -34,6 +34,7 @@
 #include <Python.h>
 
 #include <QtCore/QTemporaryFile>
+#include <QtCore/QRegularExpression>
 
 #include <string>
 
@@ -57,7 +58,7 @@ public:
   PythonTokenizerPrivate();
   virtual ~PythonTokenizerPrivate();
 
-  void computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings);
+  void computeDefaultStatus(Token& token);
 
   MediaId m_language;
   PyObject* m_instance;
@@ -353,9 +354,6 @@ std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
   return data;
 }
 
-/*
- * @TODO Set tokenization status
- */
 LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
 {
   TimeUtilsController TensorFlowTokenizerProcessTime("TensorFlowTokenizer");
@@ -446,98 +444,13 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
       Token *tToken = new Token(form,str, token.second, token.first.size());
       if (tToken == 0) throw MemoryErrorException();
-      LinguisticAnalysisStructure::TStatus curSettings;
-      // @todo: set tokenization status
 
-//   _curSettings.setAlphaCapital(alphaCapital);
-//   switch (alphaCapital)
-//   {
-//     case T_CAPITAL:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_capital"));
-//       break;
-//     case T_SMALL:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_small"));
-//       break;
-//     case T_CAPITAL_1ST:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_capital_1st"));
-//       break;
-//     case T_ACRONYM:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_acronym"));
-//       break;
-//     case T_CAPITAL_SMALL:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_capital_small"));
-//       break;
-//     case T_ABBREV:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_abbrev"));
-//       break;
-//     default:
-//     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_small"));
-//   _curSettings.setAlphaRoman(alphaRoman);
-//   switch (alphaRoman)
-//   {
-//     case T_CARDINAL_ROMAN:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_cardinal_roman"));
-//       break;
-//     case T_ORDINAL_ROMAN:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_ordinal_roman"));
-//       break;
-//     case T_NOT_ROMAN:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_not_roman"));
-//   _curSettings.setAlphaPossessive(isAlphaPossessive);
-//  _curSettings.setAlphaConcatAbbrev(isConcatAbbreviation);
-//   if (isConcatAbbreviation> 0)
-//     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alpha_concat_abbrev"));
-//   _curSettings.setTwitter(isTwitter);
-//   if (isTwitter> 0)
-//     _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_twitter"));
-//   _curSettings.setNumeric(numeric);
-//   switch (numeric)
-//   {
-//     case T_INTEGER:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_integer"));
-//       break;
-//     case T_COMMA_NUMBER:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_comma_number"));
-//       break;
-//     case T_DOT_NUMBER:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_dot_number"));
-//       break;
-//     case T_FRACTION:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_fraction"));
-//       break;
-//     case T_ORDINAL_INTEGER:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_ordinal_integer"));
-//   _curSettings.setStatus(status);
-//   switch (status)
-//   {
-//     case T_ALPHA:
-//       if (previousStatus != T_ALPHA)
-//         _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alphanumeric"));
-//       break;
-//     case T_NUMERIC:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alphanumeric"));
-//       break;
-//     case T_ALPHANUMERIC:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_alphanumeric"));
-//       break;
-//     case T_PATTERN:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_pattern"));
-//       break;
-//     case T_WORD_BRK:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_word_brk"));
-//       break;
-//     case T_SENTENCE_BRK:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_sentence_brk"));
-//       break;
-//     case T_PARAGRAPH_BRK:
-//       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_paragraph_brk"));
-
-
-      tToken->setStatus(curSettings);
+      m_d->computeDefaultStatus(*tToken);
 #ifdef DEBUG_LP
-      //   LDEBUG << "      _curSettings is " << _curSettings.toString();
+      //   LDEBUG << "      curSettings is " << curSettings.toString();
       LDEBUG << "      status is " << tToken->status().toString();
 #endif
+
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
       if (beginSentence == -1) beginSentence = newVx;
@@ -551,7 +464,6 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
     LDEBUG << "adding sentence" << beginSentence << endSentence;
 #endif
     sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
-
   }
 
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
@@ -562,59 +474,177 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
 }
 
 // set default key in status according to other elements in status
-void PythonTokenizerPrivate::computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings)
+void PythonTokenizerPrivate::computeDefaultStatus(Token& token)
 {
-  std::string defaultKey;
-  switch (curSettings.getStatus()) {
-    case T_ALPHA : {
-      switch (curSettings.getAlphaCapital()) {
-        case T_CAPITAL       : defaultKey = "t_capital"      ; break;
-        case T_SMALL         : defaultKey = "t_small"        ; break;
-        case T_CAPITAL_1ST   : defaultKey = "t_capital_1st"  ; break;
-        case T_ACRONYM       : defaultKey = "t_acronym"      ; break;
-        case T_CAPITAL_SMALL : defaultKey = "t_capital_small"; break;
-        case T_ABBREV       : defaultKey = "t_abbrev"      ; break;
-        default : break;
-      }
-      switch (curSettings.getAlphaRoman()) { // Roman supersedes Cardinal
-        case T_CARDINAL_ROMAN : defaultKey = "t_cardinal_roman"; break;
-        case T_ORDINAL_ROMAN  : defaultKey = "t_ordinal_roman" ; break;
-        case T_NOT_ROMAN      : defaultKey = "t_not_roman"     ; break;
-        default : break;
-      }
-      if (curSettings.isAlphaHyphen()) {
-        //no change
-        //defaultKey = "t_alpha_hyphen";
-      }
-      if (curSettings.isAlphaPossessive()) {
-        defaultKey = "t_alpha_possessive";
-      }
-      break;
-    } // end T_ALPHA
-    case T_NUMERIC : {
-      switch (curSettings.getNumeric()) {
-        case T_INTEGER         : defaultKey = "t_integer"       ; break;
-        case T_COMMA_NUMBER    : defaultKey = "t_comma_number"  ; break;
-        case T_DOT_NUMBER      : defaultKey = "t_dot_number"    ; break;
-        case T_FRACTION        : defaultKey = "t_fraction"      ; break;
-        case T_ORDINAL_INTEGER : defaultKey = "t_ordinal_integer"; break;
-        default: break;
-      }
-      break;
-    }
-    case T_ALPHANUMERIC : defaultKey = "t_alphanumeric" ; break;
-    case T_PATTERN      : defaultKey = "t_pattern"      ; break;
-    case T_WORD_BRK     : defaultKey = "t_word_brk"     ; break;
-    case T_SENTENCE_BRK : defaultKey = "t_sentence_brk" ; break;
-    case T_PARAGRAPH_BRK: defaultKey = "t_paragraph_brk" ; break;
-    default: defaultKey = "t_fallback";
-  }
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-  LDEBUG << "Text::computeDefaultKey " << defaultKey;
+  LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus"
+          << token.stringForm();
 #endif
-  curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring(defaultKey));
+//   static QRegularExpression reCapital("^[[:upper:]]+$");
+//   static QRegularExpression reSmall("^[[:lower:]]+$");
+  static QRegularExpression reCapital1st("^[[:upper:]]\\w+$");
+  static QRegularExpression reAcronym("^([[:upper:]]\\.)+$");
+  static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$");
+  static QRegularExpression reAbbrev("^\\w+\\.$");
+  static QRegularExpression reTwitter("^[@#]\\w+$");
+
+//       t_cardinal_roman
+  static QRegularExpression reCardinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+//       t_ordinal_roman
+  static QRegularExpression reOrdinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})(st|nd|d|th|er|ème)$");
+//       t_integer
+  static QRegularExpression reInteger("^\\d+$");
+//       t_comma_number
+  static QRegularExpression reCommaNumber("^\\d+,\\d$");
+//       t_dot_number
+  static QRegularExpression reDotNumber("^\\d\\.\\d$");
+//       t_fraction
+  static QRegularExpression reFraction("^\\d([.,]\\d+)?/\\d([.,]\\d+)?$");
+//       t_ordinal_integer
+  static QRegularExpression reOrdinalInteger("^\\d+(st|nd|d|th|er|ème)$");
+//       t_alphanumeric
+  static QRegularExpression reAlphanumeric("^[\\d[:lower:][:upper:]]+$");
+  static QRegularExpression reSentenceBreak("^[;.!?]$");
+
+  LinguisticAnalysisStructure::TStatus curSettings;
+  if (token.stringForm().isUpper())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital"));
+  }
+  else if (token.stringForm().isLower())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_small";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_small"));
+  }
+  else if (reCapital1st.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_1st";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital_1st"));
+  }
+  else if (reAcronym.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_acronym";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_acronym"));
+  }
+  else if (reCapitalSmall.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_small";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital_small"));
+  }
+  else if (reAbbrev.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_abbrev";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_abbrev"));
+  }
+  else if (reTwitter.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_twitter";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_twitter"));
+  }
+  else if (reCardinalRoman.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_cardinal_roman";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_cardinal_roman"));
+  }
+  else if (reOrdinalRoman.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_roman";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_roman"));
+  }
+  else if (reInteger.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_integer";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_integer"));
+  }
+  else if (reCommaNumber.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_comma_number";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_comma_number"));
+  }
+  else if (reDotNumber.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_dot_number";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_dot_number"));
+  }
+  else if (reFraction.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_fraction";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_fraction"));
+  }
+  else if (reOrdinalInteger.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_integer"));
+  }
+  else if (reAlphanumeric.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_alphanumeric";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_alphanumeric"));
+  }
+  else if (reSentenceBreak.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_sentence_brk";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_sentence_brk"));
+  }
+
+
+  else // if (reSmall.match(token.stringForm()).hasMatch())
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_word_brk (default)";
+#endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_word_brk"));
+  }
+  // //       t_not_roman
+//   static QRegularExpression reNotRoman("^$");
+// //     t_alpha_concat_abbrev
+//   static QRegularExpression reAlphConcatAbbrev("^$");
+// //       t_pattern
+//   static QRegularExpression rePattern("^$");
+// //       t_word_brk
+//   static QRegularExpression reWordBreak("^$");
+// //       t_sentence_brk
+//   static QRegularExpression reSentenceBreak("^$");
+// //       t_paragraph_brk
+//   static QRegularExpression reParagraphBreak("^$");
+
+  token.setStatus(curSettings);
 }
+
 
 } //namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing
