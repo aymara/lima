@@ -23,6 +23,7 @@
     <group name="main" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="pytftokenizer"/>
+<!--         <item value="cpptftokenizer"/> -->
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="regexmatcher"/>
         <item value="simpleWord"/>
@@ -238,13 +239,21 @@
       <param key="charChart" value="flatcharchart"/>
     </group>
     <group name="cpptftokenizer" class="CppTensorFlowTokenizer">
+      <param key="corpus" value="en"/>
+      <param key="embeddings_path" value="/home/gael/Projets/Lima/TFUDPipe/log"/>
+      <param key="model_path" value="/home/gael/Projets/Lima/TFUDPipe/udmodel"/>
+      <param key="graphOutputFile" value="frozen_model.pb"/>
+      <param key="window_size" value="20"/>
+      <param key="batch_size" value="200"/>
     </group>
     <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
+      <param key="corpus" value="en"/>
       <param key="path" value="path to the Python TensorFlow tokenizer"/>
       <!-- Path to the learnt embeddings -->
       <param key="embeddings_path" value="path to the embeddings for the Python TensorFlow tokenizer"/>
       <!-- Path to the frozen TensorFlow tokenizer model -->
       <param key="model_path" value="path to the model for the Python TensorFlow tokenizer"/>
+      <param key="graphOutputFile" value="frozen_model.pb"/>
       <param key="window_size" value="20"/>
       <param key="batch_size" value="200"/>
     </group>
