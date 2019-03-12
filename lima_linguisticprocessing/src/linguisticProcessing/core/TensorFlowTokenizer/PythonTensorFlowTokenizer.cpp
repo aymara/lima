@@ -157,6 +157,18 @@ void PythonTensorFlowTokenizer::init(
     throw InvalidConfiguration();
   }
 
+  QString udCorpus; // The name/id of the Universal Dependencies corpus used for training
+  try
+  {
+    udCorpus = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("corpus").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'corpus' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
   QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
   try
   {
@@ -285,7 +297,7 @@ void PythonTensorFlowTokenizer::init(
   if (PyCallable_Check(pClass))
   {
     //     corpus, embeddings_path, model_path, window_size
-    auto corpus = PyUnicode_FromString("en");
+    auto corpus = PyUnicode_FromString(udCorpus.toUtf8().constData());
     if (corpus == NULL)
     {
       failed_to_allocate_memory();
