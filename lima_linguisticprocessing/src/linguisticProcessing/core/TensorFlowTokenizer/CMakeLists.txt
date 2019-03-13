@@ -18,17 +18,39 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
 
-SET(lima-lp-tensorflowtokenizer_LIB_SRCS
+SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
     PythonTensorFlowTokenizer.cpp
 )
 
+DECLARE_LIMA_PLUGIN(lima-lp-pythontensorflowtokenizer)
+
+target_compile_definitions(lima-lp-pythontensorflowtokenizer
+  PRIVATE "-DLIMA_TENSORFLOWTOKENIZER_EXPORTING")
+
+target_link_libraries(lima-lp-pythontensorflowtokenizer
+    lima-lp-linguisticdata
+    lima-lp-linguisticresources
+    lima-lp-annotationgraph
+    lima-lp-linguisticanalysisstructure
+    lima-lp-textsegmentation
+    lima-common
+    ${PYTHON_LIBRARIES}
+)
+
+set_target_properties(lima-lp-pythontensorflowtokenizer PROPERTIES
+  VERSION ${LIMA_LP_LIB_VERSION}
+  SOVERSION ${LIMA_LP_LIB_SOVERSION})
+
+install(TARGETS lima-lp-pythontensorflowtokenizer DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
+
+########### next target ###############
+
 if (TensorFlow_FOUND AND Eigen_FOUND)
 SET(lima-lp-tensorflowtokenizer_LIB_SRCS
-    ${lima-lp-tensorflowtokenizer_LIB_SRCS}
     tokUtils.cpp
     CppTensorFlowTokenizer.cpp
 )
-endif()
 
 DECLARE_LIMA_PLUGIN(lima-lp-tensorflowtokenizer)
 
@@ -42,13 +64,8 @@ target_link_libraries(lima-lp-tensorflowtokenizer
     lima-lp-linguisticanalysisstructure
     lima-lp-textsegmentation
     lima-common
-    ${PYTHON_LIBRARIES}
+    ${TensorFlow_LIBRARIES}
 )
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  target_link_libraries(lima-lp-tensorflowtokenizer
-      ${TensorFlow_LIBRARIES}
-)
-endif()
 
 set_target_properties(lima-lp-tensorflowtokenizer PROPERTIES
   VERSION ${LIMA_LP_LIB_VERSION}
@@ -56,8 +73,7 @@ set_target_properties(lima-lp-tensorflowtokenizer PROPERTIES
 
 install(TARGETS lima-lp-tensorflowtokenizer DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
-
-########### next target ###############
+endif()
 
 ########### install files ###############
 install(FILES
