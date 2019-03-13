@@ -32,6 +32,7 @@ Options default values are in parentheses.
   -n arch           <(generic)|native> target architecture mode
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
+  -s                Do not shorten PoS corpora to speed up compilation.
   -v version        <(val)|rev> version number is set either to the value set by  
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
@@ -56,7 +57,7 @@ SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=false
 TF_SOURCES_PATH=""
 
-while getopts ":d:m:n:r:v:G:a:P:T" o; do
+while getopts ":d:m:n:r:v:G:a:P:sT" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -91,6 +92,9 @@ while getopts ":d:m:n:r:v:G:a:P:T" o; do
         v)
             version=$OPTARG
             [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
+            ;;
+        s)
+            SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
             ;;
         T)
             USE_TF=true
@@ -137,13 +141,10 @@ echo "Parallel build on $j processors"
 # export VERBOSE=1
 if [[ $mode == "Release" ]]; then
   cmake_mode="Release"
-  SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
 elif [[ $mode == "RelWithDebInfo" ]]; then
   cmake_mode="RelWithDebInfo"
-  SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 else
   cmake_mode="Debug"
-  SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 fi
 
 if [[ $arch == "native" ]]; then
