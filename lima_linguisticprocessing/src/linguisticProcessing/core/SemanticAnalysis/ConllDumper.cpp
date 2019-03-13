@@ -181,11 +181,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   AnnotationData* annotationData = static_cast<AnnotationData*>(
     analysis.getData("AnnotationData"));
-  if (annotationData == 0)
+  if (annotationData == nullptr)
   {
     DUMPERLOGINIT;
-    LERROR << "ConllDumper::process no AnnotationData ! abort";
-    return MISSING_DATA;
+    LINFO << "ConllDumper::process no AnnotationData ! Will not contain NE nor predicates";
   }
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(
     m_d->m_graph.toUtf8().constData()));//est de type PosGraph et non pas AnalysisGraph
@@ -196,8 +195,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             << "has not been produced: check pipeline";
     return MISSING_DATA;
   }
-  LinguisticGraph* graph=tokenList->getGraph();
-  SegmentationData* sd=static_cast<SegmentationData*>(
+  LinguisticGraph* graph = tokenList->getGraph();
+  SegmentationData* sd = static_cast<SegmentationData*>(
     analysis.getData("SentenceBoundaries"));
   if (sd==0)
   {
@@ -206,13 +205,13 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(
+  SyntacticData* syntacticData = static_cast<SyntacticData*>(
     analysis.getData("SyntacticData"));
-  if (syntacticData==0)
+  if (syntacticData == 0)
   {
-    syntacticData=new SyntacticData(tokenList,0);
+    syntacticData = new SyntacticData(tokenList,0);
     syntacticData->setupDependencyGraph();
-    analysis.setData("SyntacticData",syntacticData);
+    analysis.setData("SyntacticData", syntacticData);
   }
   const DependencyGraph* depGraph = syntacticData-> dependencyGraph();
 
@@ -454,26 +453,29 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         // @TODO Should follow instructions here to output all MWE:
         // https://universaldependencies.org/format.html#words-tokens-and-empty-nodes
         QString neType = QString::fromUtf8("_") ;
-        std::set< AnnotationGraphVertex > anaVertices =
-            annotationData->matches("PosGraph", v, "AnalysisGraph");
-        // note: anaVertices size should be 0 or 1
-        for (const auto& anaVertex: anaVertices)
+        if (annotationData != nullptr)
         {
-          auto matches = annotationData->matches("AnalysisGraph",
-                                                 anaVertex,
-                                                 "annot");
-          for (const auto& vx: matches)
+          std::set< AnnotationGraphVertex > anaVertices =
+              annotationData->matches("PosGraph", v, "AnalysisGraph");
+          // note: anaVertices size should be 0 or 1
+          for (const auto& anaVertex: anaVertices)
           {
-            if (annotationData->hasAnnotation(
-              vx, QString::fromUtf8("SpecificEntity")))
+            auto matches = annotationData->matches("AnalysisGraph",
+                                                  anaVertex,
+                                                  "annot");
+            for (const auto& vx: matches)
             {
-              auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
-                pointerValue<SpecificEntityAnnotation>();
-              neType = MedData::single().getEntityName(se->getType());
-              break;
+              if (annotationData->hasAnnotation(
+                vx, QString::fromUtf8("SpecificEntity")))
+              {
+                auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
+                  pointerValue<SpecificEntityAnnotation>();
+                neType = MedData::single().getEntityName(se->getType());
+                break;
+              }
             }
+            if (neType != "_") break;
           }
-          if (neType != "_") break;
         }
         QString conllRelName = "_";
         int targetConllId = 0;
@@ -557,7 +559,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           miscField << (QString("NE=") + neType.toUtf8().constData());
         }
 //           LDEBUG << "ConllDumper::process output the predicate if any";
-        if (predicates.contains(v))
+        if (annotationData != nullptr && predicates.contains(v))
         {
           QString predicate = annotationData->stringAnnotation(predicates.value(v),
                                                               "Predicate");
@@ -671,7 +673,8 @@ ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
 
   AnnotationData* annotationData =
       static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-
+  if (annotationData == nullptr)
+    return result;
   AnalysisGraph* tokenList = static_cast<AnalysisGraph*>(
     analysis.getData(m_graph.toUtf8().constData()));
   if (tokenList==0)
