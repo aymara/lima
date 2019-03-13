@@ -422,9 +422,6 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   LINFO << "initializes the compound tenses definitions";
   std::string resourcesPath=MediaticData::single().getResourcesPath();
 
-  const PropertyManager& microManager=m_propCodeManager.getPropertyManager("MICRO");
-  const PropertyManager& tenseManager=m_propCodeManager.getPropertyManager("TIME");
-
   std::string compoundTensesDefinitionsFile;
   try
   {

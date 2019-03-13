@@ -49,16 +49,13 @@ string hexString(const uint64_t x) {
   return oss.str();
 }
 
-PropertyCodeManager::PropertyCodeManager()
-{}
-
 void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 {
   PROPERTYCODELOGINIT;
 #ifdef DEBUG_LP
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
 #endif
-  
+
 #ifdef DEBUG_LP
   LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
@@ -118,7 +115,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
     LDEBUG << "mask is " << hexString(mask);
 #endif
-    
+
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
     symbol2code["NONE"] = LinguisticCode(0);

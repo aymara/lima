@@ -123,11 +123,11 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   m_d->m_language=manager->getInitializationParameters().media;
   try
   {
-    m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph");
+    m_d->m_graph=unitConfiguration.getParamsValueAtKey("graph").c_str();
   }
   catch (NoSuchParam& ) {} // keep default value
-  const auto& codeManager = static_cast<const MediaticData::LanguageData&>(
-    MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+  const auto& codeManager = static_cast<const Common::MediaticData::LanguageData&>(
+    Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
   m_d->m_propertyAccessor = &codeManager.getPropertyAccessor("MICRO");
 
   try

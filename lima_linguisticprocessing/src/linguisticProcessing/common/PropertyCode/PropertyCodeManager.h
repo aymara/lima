@@ -47,9 +47,9 @@ public:
 
   /**
    * @brief Default Constructor
-   * @return 
+   * @return
    */
-  PropertyCodeManager();
+//   PropertyCodeManager();
 
   /**
    * This functions should be called once, just after creation. It computes
@@ -95,7 +95,7 @@ public:
    * @return coded LinguisticCode
    */
   LinguisticCode encode(const std::map<std::string,std::string>& propValues) const;
-  
+
   /**
    * Compute conversion of symbolic codes into linguisticCode and append them into
    * the given map. The given is an xml file :
@@ -144,7 +144,7 @@ inline const std::map<std::string,PropertyManager>& PropertyCodeManager::getProp
   return m_propertyManagers;
 }
 
-inline const PropertyAccessor& PropertyCodeManager::getPropertyAccessor(const std::string& propertyName) const 
+inline const PropertyAccessor& PropertyCodeManager::getPropertyAccessor(const std::string& propertyName) const
 {
   return getPropertyManager(propertyName).getPropertyAccessor();
 }

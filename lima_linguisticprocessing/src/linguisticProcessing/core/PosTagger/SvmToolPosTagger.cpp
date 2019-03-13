@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
 
 #include "SvmToolPosTagger.h"
 
@@ -37,7 +33,12 @@
 
 int verbose = FALSE;
 
+using namespace Lima::Common::AnnotationGraphs;
+using namespace Lima::Common::Misc;
 using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::PropertyCode;
+using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima
 {
@@ -63,20 +64,63 @@ MediaProcessUnit* SvmToolPosTaggerFactory::create(
   return posTagger;
 }
 
+  struct PredData
+  {
+    PredData() :
+        m_predMicro(),
+        m_predIndex(),
+    m_predPredMicros() {}
+    LinguisticCode m_predMicro;
+    uint64_t m_predIndex;
+    std::vector<LinguisticCode> m_predPredMicros;
+    inline bool operator<(const PredData& pd) const { return m_predMicro<pd.m_predMicro; }
+  };
+
+  typedef std::map< LinguisticCode, std::vector<PredData> > MicroCatDataMap;
+  typedef std::map< LinguisticCode, std::vector<PredData> >::iterator MicroCatDataMapItr;
+  typedef std::vector<PredData>::iterator PredDataVectorItr;
+  typedef std::vector<PredData>::const_iterator PredDataVectorCItr;
+
+  struct StepData
+  {
+    LinguisticGraphVertex m_srcVertex;
+    std::vector<uint64_t> m_predStepIndexes;
+    MicroCatDataMap m_microCatsData;
+  };
+
+  typedef std::vector<StepData> StepDataVector;
+  typedef std::vector<StepData>::iterator StepDataVectorItr;
+
+  struct TargetVertexId
+  {
+    LinguisticGraphVertex m_sourceVx;
+    LinguisticCode m_categ;
+    std::vector<LinguisticCode> m_preds;
+    bool operator<(const TargetVertexId& tvi) const
+    {
+      if (m_sourceVx!=tvi.m_sourceVx) return m_sourceVx<tvi.m_sourceVx;
+      if (m_categ!=tvi.m_categ) return m_categ<tvi.m_categ;
+      return m_preds<tvi.m_preds;
+    }
+  };
+
 class SvmToolPosTaggerPrivate
 {
   friend class SvmToolPosTagger;
 
-  SvmToolPosTaggerPrivate() {}
+  SvmToolPosTaggerPrivate() :  m_microAccessor(nullptr) {}
   ~SvmToolPosTaggerPrivate() {}
 
+  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  MediaId m_language;
+  tagger* m_tagger;
+  std::string m_model;
   bool m_allFeatures;
   QStringList m_features;
 };
 
 SvmToolPosTagger::SvmToolPosTagger() :
-  m_d(new SvmToolPosTaggerPrivate()),
-  m_microAccessor()
+  m_d(new SvmToolPosTaggerPrivate())
 {
 }
 
@@ -87,7 +131,7 @@ SvmToolPosTagger::~SvmToolPosTagger()
 
 
 void SvmToolPosTagger::init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+    GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
 
 {
@@ -103,17 +147,19 @@ void SvmToolPosTagger::init(
   */
 
   PTLOGINIT;
-  m_language=manager->getInitializationParameters().media;
-  const Common::MediaticData::LanguageData& ldata = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language));
-  const Common::PropertyCode::PropertyManager& microManager=ldata.getPropertyCodeManager().getPropertyManager("MICRO");
-  m_microAccessor=&(microManager.getPropertyAccessor());
-  string resourcesPath=MediaticData::single().getResourcesPath();
+  m_d->m_language = manager->getInitializationParameters().media;
+  const auto& ldata = static_cast<const LanguageData&>(
+      Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
+  const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
+  m_d->m_microAccessor = &(microManager.getPropertyAccessor());
+  auto resourcesPath = MediaticData::single().getResourcesPath();
   try
   {
-    string modelName=unitConfiguration.getParamsValueAtKey("model");
+    auto modelName = unitConfiguration.getParamsValueAtKey("model");
     // add .DICT to find the file, remove it to get the generic model name + path
-    m_model = Common::Misc::findFileInPaths(resourcesPath.c_str(), modelName.append(".DICT").c_str()).toUtf8().constData();
-    boost::replace_last(m_model,".DICT","");
+    m_d->m_model = findFileInPaths(resourcesPath.c_str(),
+                                   modelName.append(".DICT").c_str()).toUtf8().constData();
+    boost::replace_last(m_d->m_model,".DICT","");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -145,7 +191,7 @@ void SvmToolPosTagger::init(
       // main tag (micro category)
     }
   }
-  LDEBUG << "Creating SVM Tagger with model: " << m_model;
+  LDEBUG << "Creating SVM Tagger with model: " << m_d->m_model;
   erCompRegExp();
   m_d->m_tagger = new tagger(m_d->m_model.c_str());
 // //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
@@ -171,29 +217,35 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   LINFO << "start SvmToolPosTager";
 #endif
   // Retrieve morphosyntactic graph
-  LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  LinguisticGraph* srcgraph=anagraph->getGraph();
-  const LinguisticGraphVertex endVx=anagraph->lastVertex();
+  auto anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto srcgraph = anagraph->getGraph();
+  auto endVx = anagraph->lastVertex();
 
   /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
   /// set to false as the tokens are owned by the anagraph
   /// @note : tokens newly created later will be owned by their creator and have
   /// to be deleted by this one
-  LinguisticAnalysisStructure::AnalysisGraph* posgraph=new LinguisticAnalysisStructure::AnalysisGraph("PosGraph",m_language,false,true);
+  auto posgraph = new LinguisticAnalysisStructure::AnalysisGraph("PosGraph",
+                                                                 m_d->m_language,
+                                                                 false,
+                                                                 true);
   analysis.setData("PosGraph",posgraph);
 
   /** Creation of an annotation graph if necessary*/
-  Common::AnnotationGraphs::AnnotationData* annotationData =
-  static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  AnnotationData* annotationData =
+  static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new Common::AnnotationGraphs::AnnotationData();
+    annotationData = new AnnotationData();
     /** Creates a node in the annotation graph for each node of the
     * morphosyntactic graph. Each new node is annotated with the name mrphv and
     * associated to the morphosyntactic vertex number */
-    if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      static_cast<AnalysisGraph*>(
+        analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+          annotationData,
+          "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -210,10 +262,11 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   LinguisticGraph* resultgraph=posgraph->getGraph();
   remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
 
-  const auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& propertyCodeManager = static_cast<const LanguageData&>(
+    MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
   const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
-  const auto& propertyManagers=propertyCodeManager.getPropertyManagers();
+  const auto& propertyManagers = propertyCodeManager.getPropertyManagers();
 
   // TODO create a wrapper on the analysis graph to read tokens in a stream
   std::ostringstream oss("");
@@ -228,6 +281,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       boost::replace_all(token, " ", "_");
       std::ostringstream lineoss("");
       lineoss << token << " (";
+      auto morphoData = get(vertex_data,*srcgraph,currentVx);
       for (auto morphDataIt = morphoData->begin();
            morphDataIt != morphoData->end(); morphDataIt++)
       {
@@ -237,19 +291,21 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
         }
         QString fullTag;
         QTextStream tagStream(&fullTag);
-        std::string tag = microManager.getPropertySymbolicValue(
+        auto tag = microManager.getPropertySymbolicValue(
             (*morphDataIt).properties);
         tagStream << QString::fromUtf8(tag.c_str());
         if (m_d->m_allFeatures ||!m_d->m_features.isEmpty())
         {
           QStringList features;
           for (auto propItr = propertyManagers.cbegin();
-              propItr != propertyManagers.cend(); propItr++)
+               propItr != propertyManagers.cend(); propItr++)
           {
             if (!propItr->second.getPropertyAccessor().empty((*morphDataIt).properties))
             {
-              QString property = QString::fromUtf8(propItr->first.c_str());
-              QString value = QString::fromUtf8(propItr->second.getPropertySymbolicValue((*morphDataIt).properties).c_str());
+              auto property = QString::fromUtf8(propItr->first.c_str());
+              auto value = QString::fromUtf8(
+                  propItr->second.getPropertySymbolicValue(
+                      (*morphDataIt).properties).c_str());
               if (property != "MACRO" && property != "MICRO"
                   && (m_d->m_allFeatures || m_d->m_features.contains(property)))
               {
@@ -300,8 +356,8 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 
   // start processing postagging
   //m_tagger->taggerShowNoComments();
-  m_tagger->taggerInit(iss, resOss);
-  m_tagger->taggerRun();
+  m_d->m_tagger->taggerInit(iss, resOss);
+  m_d->m_tagger->taggerRun();
 
   // read results
   resOss.seekp(0, std::ios::beg);
@@ -314,44 +370,57 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
     LDEBUG << "Result line: '" << resultLine << "'";
 #endif
+//     if (resultLine.empty())
+//     {
+//       continue;
+//     }
     std::vector<std::string> elements;
-    boost::split(elements,resultLine,boost::is_any_of(" "));
+    boost::split(elements, resultLine, boost::is_any_of(" "));
     if (elements.size() < 2)
     {
       PTLOGINIT;
-      LERROR << "Error in SVMTagger result line: did not get 2 elements in '"<< resultLine << "'";
+      LERROR << "Error in SVMTagger result line: did not get 2 elements in '"
+              << resultLine << "'";
       return UNKNOWN_ERROR;
     }
-    LinguisticGraphVertex anaVertex = anaVertices[anaVerticesIndex];
-    LinguisticAnalysisStructure::Token* currentAnaToken = tokens[anaVertex];
-    std::string token = Common::Misc::limastring2utf8stdstring(currentAnaToken->stringForm());
-    boost::replace_all(token," ","_");
+    auto anaVertex = anaVertices[anaVerticesIndex];
+    auto currentAnaToken = tokens[anaVertex];
+    std::string token = currentAnaToken->stringForm().toUtf8().constData();
+    boost::replace_all(token, " ", "_");
     if (token != elements[0])
     {
       PTLOGINIT;
-      LERROR << "Error in SVMTagger result alignement with analysis graph: got '"<< elements[0] << "' from SVMTagger and '" << Common::Misc::limastring2utf8stdstring(currentAnaToken->stringForm()) << "' from graph";
+      LERROR << "Error in SVMTagger result alignement with analysis graph: got '"
+              << elements[0] << "' from SVMTagger and '"
+              << currentAnaToken->stringForm() << "' from graph";
       return UNKNOWN_ERROR;
     }
 
-    LinguisticGraphVertex newVx=boost::add_vertex(*resultgraph);
+    auto newVx = boost::add_vertex(*resultgraph);
     annotationData->addMatching("PosGraph", newVx, "annot", anaVertex);
     annotationData->addMatching("AnalysisGraph", anaVertex, "PosGraph", newVx);
-    AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
-    annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("PosGraph"), newVx);
+    auto agv =  annotationData->createAnnotationVertex();
+    annotationData->annotate(agv, QString::fromUtf8("PosGraph"), newVx);
 
     // set linguistic infos
-    LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,anaVertex);
-    LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,*srcgraph,anaVertex);
+    auto morphoData = get(vertex_data,*srcgraph,anaVertex);
+    auto srcToken = get(vertex_token,*srcgraph,anaVertex);
     if (morphoData!=0)
     {
-      LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData();
-      LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(m_microAccessor,microManager.getPropertyValue(elements[1]));
-      std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
-      remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
+      auto posData = new MorphoSyntacticData();
+      CheckDifferentPropertyPredicate differentMicro(
+          m_d->m_microAccessor,
+          microManager.getPropertyValue(elements[1]));
+      std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
+      remove_copy_if(morphoData->begin(),
+                     morphoData->end(),
+                     backInsertItr,
+                     differentMicro);
       if (posData->empty() || morphoData->empty())
       {
         PTLOGINIT;
-        LWARN << "No matching category found for tagger result " << elements[0] << " " << elements[1];
+        LWARN << "No matching category found for tagger result "
+              << elements[0] << " " << elements[1];
         if (!morphoData->empty())
         {
           LWARN << "Taking any one";
@@ -376,170 +445,8 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
+  typedef std::vector<StepData> StepDataVector;
 
-LinguisticGraphVertex SvmToolPosTagger::reportPathsInGraph(
-    LinguisticGraph* srcgraph,
-    LinguisticGraph* resultgraph,
-    LinguisticGraphVertex startVertex,
-    StepDataVector& stepData,
-    Common::AnnotationGraphs::AnnotationData* annotationData) const
-{
-#ifdef DEBUG_LP
-  PTLOGINIT;
-  LINFO << "reportPathsInGraph";
-#endif
-
-  std::map<TargetVertexId, LinguisticGraphVertex> vertexMapping;
-  typedef std::map<TargetVertexId,LinguisticGraphVertex>::iterator VertexMappingItr;
-
-  std::queue<
-    std::pair<LinguisticGraphVertex,PredData>,
-    std::list< std::pair<LinguisticGraphVertex,PredData> > > toProcess;
-  LinguisticGraphVertex endVertex=add_vertex(*resultgraph);
-  //    LDEBUG << "add end vertex " << endVertex;
-  {
-
-    {
-      StepData& endStep=stepData.back();
-      if (endStep.m_microCatsData.size()!=1)
-      {
-        PTLOGINIT;
-        LWARN << "Last vertex of POSTAGGING has more than 1 categories. This should never happen!";
-      }
-
-      // put linguistic data to end vertex
-      auto morphoData = get(vertex_data, *srcgraph, endStep.m_srcVertex);
-      auto srcToken = get(vertex_token, *srcgraph, endStep.m_srcVertex);
-      if (morphoData!=0)
-      {
-        auto posData = new LinguisticAnalysisStructure::MorphoSyntacticData(*morphoData);
-        put(vertex_data, *resultgraph, endVertex, posData);
-        put(vertex_token, *resultgraph, endVertex, srcToken);
-      }
-      else
-      {
-        put(vertex_data, *resultgraph, endVertex, morphoData);
-        put(vertex_token, *resultgraph, endVertex, srcToken);
-      }
-    }
-  }
-
-  while (!toProcess.empty())
-  {
-    PredData& current=toProcess.front().second;
-    LinguisticGraphVertex succVertex=toProcess.front().first;
-    //        LDEBUG << "process index " << current.m_predIndex << " and categ " << current.m_predMicro;
-
-    if (current.m_predIndex==0)
-    {
-      // nothing to create, just connect
-      add_edge(startVertex,succVertex,*resultgraph);
-      //          LDEBUG << "just add link " << startVertex << " -> " << succVertex;
-    }
-    else
-    {
-
-      StepData& currentStep=stepData[current.m_predIndex];
-
-      TargetVertexId tvi;
-      tvi.m_categ=current.m_predMicro;
-      tvi.m_sourceVx=currentStep.m_srcVertex;
-      tvi.m_preds=current.m_predPredMicros;
-
-      // check if vertex id already in graph
-      VertexMappingItr tgtVxItr=vertexMapping.find(tvi);
-      if (tgtVxItr==vertexMapping.end())
-      {
-        //            std::ostringstream os;
-        //            copy(tvi.m_preds.begin(),tvi.m_preds.end(),std::ostream_iterator<LinguisticCode>(os,","));
-        //            LDEBUG << "TargetVertexID source " << tvi.m_sourceVx << ", categ " << tvi.m_categ << " | pred categs " << os.str() << " is not graph. add it";
-        // if not exists create an register it
-        LinguisticGraphVertex newVx=add_vertex(*resultgraph);
-        //            LDEBUG << "create vertex " << newVx;
-        auto insertStatus = vertexMapping.insert(make_pair(tvi,newVx));
-        tgtVxItr = insertStatus.first;
-        auto agv =  annotationData->createAnnotationVertex();
-        annotationData->addMatching("PosGraph",
-                                    newVx,
-                                    "annot",
-                                    agv);
-        annotationData->addMatching("AnalysisGraph",
-                                    tvi.m_sourceVx,
-                                    "PosGraph",
-                                    newVx);
-        annotationData->annotate(agv,
-                                 Common::Misc::utf8stdstring2limastring("PosGraph"),
-                                 newVx);
-        /*std::set< LinguisticGraphVertex > annotMatches = annotationData->matches("AnalysisGraph",tvi.m_sourceVx,"PosGraph");
-        for (std::set< LinguisticGraphVertex >::const_iterator annotIt(annotMatches.begin());
-        annotIt != annotMatches.end(); annotIt++)
-        {
-          std::set< std::string > excepted;
-          excepted.insert("AnalysisGraph");
-          annotationData->cloneAnnotations(*annotIt, agv, excepted);
-        }*/
-
-        // set linguistic infos
-        LinguisticAnalysisStructure::MorphoSyntacticData* morphoData=get(vertex_data,*srcgraph,currentStep.m_srcVertex);
-        LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,
-                                                         *srcgraph,
-                                                         currentStep.m_srcVertex);
-        if (morphoData!=0)
-        {
-          LinguisticAnalysisStructure::MorphoSyntacticData* posData =
-            new LinguisticAnalysisStructure::MorphoSyntacticData();
-          LinguisticAnalysisStructure::CheckDifferentPropertyPredicate
-            differentMicro(m_microAccessor,current.m_predMicro);
-          std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
-          remove_copy_if(morphoData->begin(),
-                         morphoData->end(),
-                         backInsertItr,
-                         differentMicro);
-          put(vertex_data,*resultgraph,newVx,posData);
-          put(vertex_token,*resultgraph,newVx,srcToken);
-        }
-
-        // add pred to process
-        auto& pds = currentStep.m_microCatsData[current.m_predMicro];
-        PredDataVectorItr pdsItr=pds.begin();
-        auto predPredMicroItr = current.m_predPredMicros.cbegin();
-        while (pdsItr != pds.end()
-          && predPredMicroItr != current.m_predPredMicros.cend())
-        {
-          if (*predPredMicroItr < pdsItr->m_predMicro)
-          {
-            predPredMicroItr++;
-          }
-          else if (*predPredMicroItr > pdsItr->m_predMicro)
-          {
-            pdsItr++;
-          }
-          else
-          {
-//             LDEBUG << "add PredData to visit : index " << pdsItr->m_predIndex
-//                     << " micro " << pdsItr->m_predMicro;
-            toProcess.push(make_pair(tgtVxItr->second, *pdsItr));
-            pdsItr++;
-            predPredMicroItr++;
-          }
-        }
-
-      }
-
-      // link to pred
-      //          LDEBUG << "add link " << tgtVxItr->second << " -> " << succVertex;
-      add_edge(tgtVxItr->second,succVertex,*resultgraph);
-
-    }
-
-    toProcess.pop();
-  }
-
-#ifdef DEBUG_LP
-  LDEBUG << "end reporting paths";
-#endif
-  return endVertex;
-}
 
 } // PosTagger
 

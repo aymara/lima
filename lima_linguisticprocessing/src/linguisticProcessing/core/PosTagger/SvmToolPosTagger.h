@@ -74,61 +74,10 @@ public:
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-  
+
 private:
 
-  struct PredData
-  {
-    PredData() :
-        m_predMicro(),
-        m_predIndex(),
-    m_predPredMicros() {}
-    LinguisticCode m_predMicro;
-    uint64_t m_predIndex;
-    std::vector<LinguisticCode> m_predPredMicros;
-    inline bool operator<(const PredData& pd) const { return m_predMicro<pd.m_predMicro; }
-  };
-
-  typedef std::map< LinguisticCode, std::vector<PredData> > MicroCatDataMap;
-  typedef std::map< LinguisticCode, std::vector<PredData> >::iterator MicroCatDataMapItr;
-  typedef std::vector<PredData>::iterator PredDataVectorItr;
-  typedef std::vector<PredData>::const_iterator PredDataVectorCItr;
-
-  struct StepData
-  {
-    LinguisticGraphVertex m_srcVertex;
-    std::vector<uint64_t> m_predStepIndexes;
-    MicroCatDataMap m_microCatsData;
-  };
-
-  typedef std::vector<StepData> StepDataVector;
-  typedef std::vector<StepData>::iterator StepDataVectorItr;
-
-  struct TargetVertexId
-  {
-    LinguisticGraphVertex m_sourceVx;
-    LinguisticCode m_categ;
-    std::vector<LinguisticCode> m_preds;
-    bool operator<(const TargetVertexId& tvi) const
-    {
-      if (m_sourceVx!=tvi.m_sourceVx) return m_sourceVx<tvi.m_sourceVx;
-      if (m_categ!=tvi.m_categ) return m_categ<tvi.m_categ;
-      return m_preds<tvi.m_preds;
-    }
-  };
-
-  LinguisticGraphVertex reportPathsInGraph(
-    LinguisticGraph* srcgraph,
-    LinguisticGraph* resultgraph,
-    LinguisticGraphVertex startVertex,
-    StepDataVector& stepData,
-    Common::AnnotationGraphs::AnnotationData* annotationData) const;
-
   SvmToolPosTaggerPrivate* m_d;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
-  MediaId m_language;
-  tagger* m_tagger;
-  std::string m_model;
 };
 
 class SvmToolPosTaggerFactory : public InitializableObjectFactory<MediaProcessUnit>
