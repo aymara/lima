@@ -702,6 +702,7 @@
     </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
+      <param key="withColsHeader" value="true"/>
       <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
     </group>
     <group name="bowDumper" class="BowDumper">

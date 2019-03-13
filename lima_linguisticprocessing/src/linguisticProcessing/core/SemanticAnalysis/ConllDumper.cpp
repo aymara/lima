@@ -30,6 +30,7 @@
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
@@ -94,6 +95,7 @@ class ConllDumperPrivate
   std::string m_sep;
   std::string m_sepPOS;
   std::string m_verbTenseFlag; //Ajout
+  bool m_withColsHeader;
   QMap<QString, QString> m_conllLimaDepMapping;
 };
 
@@ -106,6 +108,7 @@ m_propertyManager(0),
 m_graph("PosGraph"),
 m_sep(" "),
 m_sepPOS("#"),
+m_withColsHeader(false),
 m_conllLimaDepMapping()
 {
 }
@@ -155,6 +158,12 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
   try
   {
     m_d->m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS");
+  }
+  catch (NoSuchParam& ) {} // keep default value
+
+  try
+  {
+    m_d->m_withColsHeader= QString( unitConfiguration.getParamsValueAtKey("withColsHeader").c_str() ).toLower() == "true";
   }
   catch (NoSuchParam& ) {} // keep default value
 
@@ -276,6 +285,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   int sentenceNb=0;
   LinguisticGraphVertex vEndDone = 0;
 
+  const LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+
   while (sbItr != sd->getSegments().end() ) //for each sentence
   {
     sentenceNb++;
@@ -294,7 +305,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     int tokenId = 0;
     LinguisticGraphVertex v = 0;
     while (v != sentenceEnd && !toVisit.empty())
-
     {
       v = toVisit.dequeue();
 #ifdef DEBUG_LP
@@ -381,6 +391,32 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     LDEBUG << "ConllDumper::process predicates for sentence between" << sentenceBegin << "and" << sentenceEnd << "are:" << predicates;
 #endif
     QList< LinguisticGraphVertex > keys = predicates.keys();
+
+    v=sentenceBegin;
+    bool firstTime=true;
+    uint64_t pStart = 0;
+    uint64_t pEnd = 0;
+    while (v!=sentenceEnd)
+    {
+      //as long as there are vertices in the sentence
+      Token* ft=get(vertex_token,*graph,v);
+      if( ft !=0 && v != sentenceBegin )
+      {
+        if(firstTime) {
+            pStart = ft->position()-1;
+            firstTime = false;
+        }
+        pEnd = ft->position()-1 + ft->length();
+      }
+      LinguisticGraphOutEdgeIt outIter,outIterEnd;
+      for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*graph); outIter!=outIterEnd; outIter++)
+      {
+        v = boost::target(*outIter,*graph);
+      }
+    }
+    QString curSentenceText = originalText->mid(pStart, pEnd-pStart+1 );
+    dstream->out()  << "# text = " << curSentenceText.replace("\r\n"," ").replace("\n"," ").toUtf8().constData() << std::endl;
+    if( m_d->m_withColsHeader ) dstream->out()  << "# cols = ID\tFORM\tLEMMA\tCPOSTAG\tPOSTAB\tNER\tFEATS\tHEAD\tDEPREL\tPHEAD\tPDEPREL"<< std::endl;
 
     toVisit.enqueue(sentenceBegin);
     tokenId=0;
