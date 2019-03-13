@@ -75,7 +75,7 @@ public:
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-  
+
 private:
   /* Configuration */
   LinguisticCode m_defaultCateg; // default category, used before and after text.

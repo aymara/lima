@@ -46,7 +46,9 @@ using namespace std;
 //using namespace boost;
 using namespace boost::tuples;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common::XMLConfigurationFiles;
 
 namespace Lima
@@ -81,7 +83,7 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
 
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
-  
+
   m_language=manager->getInitializationParameters().media;
   try
   {
@@ -89,36 +91,36 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  if (m_graph=="AnalysisGraph") { 
+  if (m_graph=="AnalysisGraph") {
     // change default for followGraph
     m_followGraph=true;
   }
   //Ajout
-  try { 
-    m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag"); 
+  try {
+    m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag");
   }
   catch (NoSuchParam& ) {
     m_verbTenseFlag=string("False");
   } // keep default value
   //---
 
-  try { 
-    m_sep=unitConfiguration.getParamsValueAtKey("sep"); 
+  try {
+    m_sep=unitConfiguration.getParamsValueAtKey("sep");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS"); 
+  try {
+    m_sepPOS=unitConfiguration.getParamsValueAtKey("sepPOS");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    m_property=unitConfiguration.getParamsValueAtKey("property"); 
+  try {
+    m_property=unitConfiguration.getParamsValueAtKey("property");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    std::string str=unitConfiguration.getParamsValueAtKey("followGraph"); 
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("followGraph");
     if (str=="1" || str=="true" || str=="yes") {
       m_followGraph=true;
     }
@@ -128,13 +130,14 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  const auto& codeManager=static_cast<const LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
-   /*ajout*/
-  m_timeManager=&codeManager.getPropertyManager("TIME");
-  m_timeAccessor=&codeManager.getPropertyAccessor("TIME");
-  /*fin ajout*/
+
+  QString timeCode = static_cast<const LanguageData&>(
+    Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
+  m_timeManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
+  m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
 }
 
 LimaStatusCode TextDumper::process(
@@ -163,7 +166,7 @@ LimaStatusCode TextDumper::process(
     // instead of looking to all vertices, follow the graph (in
     // morphological graph, some vertices are not related to main graph:
     // idiomatic expressions parts and named entity parts)
-    
+
     std::queue<LinguisticGraphVertex> toVisit;
     std::set<LinguisticGraphVertex> visited;
     toVisit.push(tokenList->firstVertex());
@@ -175,8 +178,8 @@ LimaStatusCode TextDumper::process(
       if (v == tokenList->lastVertex()) {
         continue;
       }
-      
-      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
+
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
       {
         LinguisticGraphVertex next=target(*outItr,*graph);
         if (visited.find(next)==visited.end())
@@ -185,7 +188,7 @@ LimaStatusCode TextDumper::process(
           toVisit.push(next);
         }
       }
-      
+
       Token* ft=get(vertex_token,*graph,v);
       if( ft!=0) {
         categoriesMapping[ft].push_back(get(vertex_data,*graph,v));
@@ -204,7 +207,7 @@ LimaStatusCode TextDumper::process(
           }
       }
   }
-  
+
   for (map<Token*,vector<MorphoSyntacticData*>,lTokenPosition >::const_iterator ftItr=categoriesMapping.begin();
        ftItr!=categoriesMapping.end();
        ftItr++)
@@ -216,7 +219,7 @@ LimaStatusCode TextDumper::process(
 }
 
 
-void TextDumper::outputVertex(std::ostream& out, 
+void TextDumper::outputVertex(std::ostream& out,
                               const Token* ft,
                               const vector<MorphoSyntacticData*>& data,
                               const FsaStringsPool& sp,
@@ -249,7 +252,7 @@ void TextDumper::outputVertex(std::ostream& out,
           norm=curNorm;
           micro=curMicro;
     tense=curTense; //ajout
-          
+
           std::ostringstream os2;
           os2 << m_sep;
           out << os2.str();
@@ -274,7 +277,7 @@ void TextDumper::outputVertex(std::ostream& out,
         }
       }
       else{os4 << m_sep << m_timeManager->getPropertySymbolicValue(curTense);}
-      out << os4.str();        
+      out << os4.str();
     }
     /*fin des modifications*/
         }

@@ -69,7 +69,7 @@ DynamicSvmToolPosTaggerFactory::DynamicSvmToolPosTaggerFactory(const std::string
 
 MediaProcessUnit* DynamicSvmToolPosTaggerFactory::create(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-  MediaProcessUnit::Manager* manager) const 
+  MediaProcessUnit::Manager* manager) const
 {
   MediaProcessUnit* posTagger = new DynamicSvmToolPosTagger;
   posTagger->init(unitConfiguration,manager);
@@ -81,7 +81,7 @@ MediaProcessUnit* DynamicSvmToolPosTaggerFactory::create(
 void DynamicSvmToolPosTagger::init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
-      
+
 {
   /** @addtogroup ProcessUnitConfiguration
   * - <b>&lt;group name="..." class="DynamicSvmToolPosTagger"&gt;</b>
@@ -102,7 +102,7 @@ void DynamicSvmToolPosTagger::init(
   const Common::MediaticData::LanguageData& ldata = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language));
   m_MicroManager=&(ldata.getPropertyCodeManager().getPropertyManager("MICRO"));
   m_microAccessor=&(m_MicroManager->getPropertyAccessor());
-  string resourcesPath=MediaticData::single().getResourcesPath();  
+  string resourcesPath=MediaticData::single().getResourcesPath();
 
 
   /* Retrieve the default category */
@@ -184,7 +184,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
   srcGraph = analysisGraph->getGraph();
 
   /* Let's start with the "forward" algorithm
-   * 
+   *
    * The goal here is to go through each node microtag to be able to tell
    * what is the best way to go throught this microtag. This will enable us
    * to simply go back from the end of the graph and choose the most
@@ -220,7 +220,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
     if(previousTokens.empty()) previousTokens.insert(posGraph->firstVertex());
     for (auto it = previousTokens.begin(); it != previousTokens.end(); ++it) {
       LinguisticGraphVertex prevVertex = *it;
-      
+
       std::string pos = "";
       double logCurWeight = log(1.0), w;
       if (vertex != 1) {
@@ -249,7 +249,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
         logMaxWeight = logCurWeight + logPrevPrice;
         maxLength = prevLength;
         LDEBUG << "  -> " << logMaxWeight << " (" << maxLength << ")";
-      } 
+      }
     }
 
     LDEBUG << getWord(vertex, srcGraph) << " -> " << maxAncestor[vertex].pos;
@@ -342,8 +342,8 @@ boost::tuple<std::string, uint64_t> DynamicSvmToolPosTagger::SVMTool(
       LinguisticGraphVertex prevPrevVertex = 0;
       if(maxAncestor.find(prevVertex) != maxAncestor.end()) {
         prevPrevVertex = maxAncestor[prevVertex].prev;
-      } 
-      std::vector<nodo*> node_context = buildContext(srcGraph, prevPrevVertex, prevVertex, vertex);
+      }
+      auto node_context = buildContext(srcGraph, prevPrevVertex, prevVertex, vertex);
       std::vector<std::string> microsStr = getMicros(vertex, srcGraph);
 
       if (microsStr.empty()) {
@@ -475,7 +475,7 @@ std::vector<nodo*> DynamicSvmToolPosTagger::buildContext(
   }
 
   return context;
-  
+
 }
 
 /* Returns a word given its vertex in our treillis */
@@ -494,7 +494,7 @@ LinguisticGraphVertex DynamicSvmToolPosTagger::nextToken(LinguisticGraphVertex t
   std::set<LinguisticGraphVertex> tokens = nextTokens(token, srcGraph);
   return tokens.empty() ? 1 : *(tokens.begin());
 }
-      
+
 /* Return every token following a given token */
 std::set<LinguisticGraphVertex> DynamicSvmToolPosTagger::nextTokens(LinguisticGraphVertex token, const LinguisticGraph* srcGraph) const {
   std::set<LinguisticGraphVertex> tokens;
