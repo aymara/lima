@@ -124,6 +124,15 @@ private:
   PropertyManagerPrivate* m_d;
 };
 
+#define GET_PROPERTY_MANAGER(language, property) \
+    static_cast<const Lima::Common::MediaticData::LanguageData&>(\
+      Lima::Common::MediaticData::MediaticData::single().mediaData( language ))\
+        .getPropertyCodeManager().getPropertyManager( property );
+
+#define GET_PROPERTY_ACCESSOR(language, property) \
+    static_cast<const Lima::Common::MediaticData::LanguageData&>(\
+      Lima::Common::MediaticData::MediaticData::single().mediaData( language ))\
+      .getPropertyCodeManager().getPropertyAccessor( property )
 } // PropertyCode
 } // Common
 } // Lima

@@ -229,7 +229,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return SUCCESS_ID;
   }
 
-  std::vector<Segment>::iterator sbItr=(sd->getSegments().begin());
+  auto sbItr = sd->getSegments().begin();
 #ifdef DEBUG_LP
   LDEBUG << "ConllDumper::process There are "<< nbSentences << " sentences";
 #endif
@@ -500,7 +500,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           LDEBUG << "ConllDumper::process conll target saved for "
                   << tokenId << " is " << targetConllId;
 #endif
-          QString relName = QString::fromUtf8(vertexDependencyInformations.find(v)->second.second.c_str());
+          QString relName = QString::fromUtf8(
+            vertexDependencyInformations.find(v)->second.second.c_str());
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process the lima dependency tag for "
                  << ft->stringForm()<< " is " << relName;
@@ -511,8 +512,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           }
           else
           {
-            conllRelName= relName;
-//             LERROR << "ConllDumper::process" << relName << "not found in mapping";
+            conllRelName= "nsubj";
+            DUMPERLOGINIT;
+            LERROR << "ConllDumper::process" << relName
+                    << "not found in mapping. Using 'nsubj'";
           }
         }
 
@@ -543,7 +546,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
         QString targetConllIdString = targetConllId > 0
                                         ? QString(QLatin1String("%1")).arg(targetConllId)
-                                        : "_";
+                                        : "0";
+//         QString head = "1";
+//         QString deprel = "nsubj";
+//         if (tokenId == 1)
+//         {
+//           head = "0";
+//           deprel = "root";
+//         }
         dstream->out()  << tokenId // ID
                         << "\t" << inflectedToken // FORM
                         << "\t" << lemmatizedToken // LEMMA
@@ -552,6 +562,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                         << "\t" << "_" // FEATS
                         << "\t" << targetConllIdString.toUtf8().constData() // HEAD
                         << "\t" << conllRelName.toUtf8().constData() // DEPREL
+//                         << "\t" << head.toUtf8().constData() // HEAD
+//                         << "\t" << deprel.toUtf8().constData() // DEPREL
                         << "\t" << "_"; // DEPS
         QStringList miscField;
         if (neType != "_")

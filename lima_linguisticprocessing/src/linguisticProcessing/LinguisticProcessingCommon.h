@@ -116,7 +116,6 @@
 #define DESAGGLOGINIT LOGINIT("LP::Desagglutination");
 #define HWLOGINIT LOGINIT("LP::HyperWordStemmer");
 #define ANALYSISDICTLOGINIT LOGINIT("LP::AnalysisDict");
-#define SENTBOUNDLOGINIT LOGINIT("LP::SentenceBounds");
 #define SEGMENTATIONLOGINIT LOGINIT("LP::Segmentation");
 #define GEOENTITIESTAGGERLOGINIT LOGINIT("LP::GeoEntities");
 #define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
