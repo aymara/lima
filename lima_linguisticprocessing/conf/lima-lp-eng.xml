@@ -54,7 +54,7 @@
         <item value="syntacticAnalyzerFinalize"/>
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -98,7 +98,8 @@
     </group>
     <group name="deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="flattokenizer"/>
+        <item value="cpptftokenizer"/>
+<!--         <item value="pytftokenizer"/> -->
         <item value="regexmatcher"/>
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
@@ -132,7 +133,7 @@
         <item value="syntacticAnalyzerFinalize"/>
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -258,7 +259,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -270,10 +271,10 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
-    
+
      <group name="tag" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
-	<item value="flattokenizer"/>
+        <item value="flattokenizer"/>
         <!--item value="regexmatcher"/-->
         <!--item value="tokenizer"/-->
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
@@ -289,7 +290,7 @@
         <item value="defaultProperties"/>
         <item value="fullTokenXmlLoggerDefaultProperties"/>
         <item value="specificEntitiesXmlLogger"/>
-	<item value="SpecificEntitiesCRFTag"/>
+        <item value="SpecificEntitiesCRFTag"/>
         <!--item value="dotGraphWriter-beforepos"/-->
         <item value="viterbiPostagger-freq"/>
         <!--item value="SvmToolPosTagger"/-->
@@ -304,7 +305,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -322,7 +323,24 @@
     </group>
 <!-- ******************************************
   Definition of process units
-*********************************************** -->    
+*********************************************** -->
+    <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
+      <param key="corpus" value="en"/>
+      <param key="path" value="path to tf tokenizer model"/>
+      <param key="embeddings_path" value="path to tf tokenizer embeddings"/>
+      <param key="model_path" value="path to tf tokenizer model"/>
+      <param key="graphOutputFile" value="name of the frozen model pb file"/>
+      <param key="window_size" value="20"/>
+      <param key="batch_size" value="200"/>
+    </group>
+    <group name="cpptftokenizer" class="CppTensorFlowTokenizer">
+      <param key="corpus" value="en"/>
+      <param key="embeddings_path" value="path to tf tokenizer embeddings"/>
+      <param key="model_path" value="path to tf tokenizer model"/>
+      <param key="graphOutputFile" value="name of the frozen model pb file"/>
+      <param key="window_size" value="20"/>
+      <param key="batch_size" value="200"/>
+    </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -362,7 +380,7 @@
       <param key="scope" value="SENT" />
       <param key="threshold" value="130" />
       <param key="Resolve Definites" value="SENT" />
-      <param key="Resolve non third person pronouns" value="SENT" />  
+      <param key="Resolve non third person pronouns" value="SENT" />
       <map name="MacroCategories">
         <entry key="PronMacroCategory" value="PRON"/>
         <entry key="VerbMacroCategory" value="SENT" />
@@ -373,7 +391,7 @@
       <list name="LexicalAnaphora">
             <item value="PRP$"/>
       </list>
-      <list name="UndefinitePronouns"> 
+      <list name="UndefinitePronouns">
       </list>
       <list name="PrepRelation">
         <item value="PREPSUB"/>
@@ -399,15 +417,15 @@
         <item value="SujInv" />
       </list>
       <list name="AttributeRelation">
-              <item value="ATB_S"/>  
+              <item value="ATB_S"/>
       </list>
       <list name="CODRelation">
         <item value="COD_V" />
         <item value="CodPrev" />
       </list>
       <list name="COIRelation">
-        <item value="CoiPrev" />  
-        <item value="CPL_V" />  
+        <item value="CoiPrev" />
+        <item value="CPL_V" />
       </list>
       <list name="AdjunctRelation">
         <item value="CPLV_V" />

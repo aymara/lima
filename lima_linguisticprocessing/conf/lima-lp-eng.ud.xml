@@ -22,8 +22,9 @@
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="pytftokenizer"/>
-<!--         <item value="cpptftokenizer"/> -->
+        <item value="cpptftokenizer"/>
+<!--         <item value="pytftokenizer"/> -->
+<!--         <item value="flattokenizer"/> -->
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="regexmatcher"/>
         <item value="simpleWord"/>
@@ -48,11 +49,11 @@
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesTransfer"/>
         <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerSimplify"/>
-        <item value="syntacticAnalyzerSimplifyQuotes"/>
+<!--         <item value="syntacticAnalyzerSimplify"/> -->
+<!--         <item value="syntacticAnalyzerSimplifyQuotes"/> -->
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
-        <item value="syntacticAnalyzerFinalize"/>
+<!--         <item value="syntacticAnalyzerFinalize"/> -->
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
         <!--item value="coreferencesSolving"/-->
