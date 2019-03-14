@@ -7,7 +7,7 @@ c_dot < c_del : Sentence delimitor, acronym, abbreviation, dot numbers ;
 c_comma < c_del : Word delimitor, decimal number ;
 c_slash < c_del : Word delimitor, fraction sign ;
 c_hyphen < c_del : Word delimitor, hyphen word ;
-c_lowline < c_all : Word delimitor, hyphen word ;
+c_lowline < c_all : Word delimitor, underscore ;
 c_quote < c_del : Word delimitor, possessive ;
 c_fraction < c_del : Fraction sign ;
 c_percent < c_del : Percent sign ;
