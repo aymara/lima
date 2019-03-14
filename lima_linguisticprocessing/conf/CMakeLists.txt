@@ -55,4 +55,12 @@ install(FILES
   lima-lp-tvx.xml
   lima-lp-tvx-fre.xml
   DESTINATION share/config/lima
-  COMPONENT runtime)
+  COMPONENT runtime
+)
+
+install(
+  FILES
+    limalp.log.properties
+  DESTINATION share/config/lima/log4cpp
+  COMPONENT runtime
+)
