@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -38,18 +38,27 @@ configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
 configure_file(lima-lp-por.xml lima-lp-por.xml @ONLY)
 
 
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml 
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.ud.xml 
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml 
-  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml 
-  lima-lp-tva.xml 
-  lima-lp-tva-eng.xml
-  lima-lp-tva-eng.ud.xml
-  lima-lp-tva-fre.xml 
-  lima-lp-tva-por.xml
-  lima-server.xml
-  lima-dbusserver.xml 
-  ${CMAKE_CURRENT_BINARY_DIR}/ApproxNames-modex.xml
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.ud.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml
+    lima-lp-tva.xml
+    lima-lp-tva-eng.xml
+    lima-lp-tva-eng.ud.xml
+    lima-lp-tva-fre.xml
+    lima-lp-tva-por.xml
+    lima-server.xml
+    lima-dbusserver.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/ApproxNames-modex.xml
   DESTINATION share/config/lima
-  COMPONENT runtime)
+  COMPONENT runtime
+)
+
+install(
+  FILES
+    limalp.log.properties
+  DESTINATION share/config/lima/log4cpp
+  COMPONENT runtime
+)
