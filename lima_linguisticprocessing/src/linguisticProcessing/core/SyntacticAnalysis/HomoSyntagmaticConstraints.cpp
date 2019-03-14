@@ -401,8 +401,8 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
 #ifdef DEBUG_LP
  SAPLOGINIT;
  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
-#endif
  << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
+#endif
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
 //  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no");
