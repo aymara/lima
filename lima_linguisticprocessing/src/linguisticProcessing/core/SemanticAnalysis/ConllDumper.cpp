@@ -271,6 +271,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   while (sbItr != sd->getSegments().end() ) //for each sentence
   {
     sentenceNb++;
+    // The cols list below is optionnal
+    if( sentenceNb==1 && m_d->m_withColsHeader ) dstream->out()  << "# global.columns = = ID\tFORM\tLEMMA\tUPOS\tXPOS\tFEATS\tHEAD\tDEPREL\tDEPS\tMISC"<< std::endl;
     dstream->out() << "# sent_id = " << sentenceNb << std::endl;
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
@@ -415,8 +417,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
     // The text below is mandatory for CONLL-U format
     dstream->out()  << "# text = " << curSentenceText.replace("\r\n"," ").replace("\n"," ").toUtf8().constData() << std::endl;
-    // The cols list below is optionnal
-    if( m_d->m_withColsHeader ) dstream->out()  << "# cols = ID\tFORM\tLEMMA\tUPOS\tXPOS\tFEATS\tHEAD\tDEPREL\tDEPS\tMISC"<< std::endl;
 
     toVisit.enqueue(sentenceBegin);
     tokenId=0;
