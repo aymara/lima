@@ -411,7 +411,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         v = boost::target(*outIter,*graph);
       }
     }
-    QString curSentenceText = originalText->mid(pStart, pEnd-pStart+1 );
+    QString curSentenceText = originalText->mid(pStart, pEnd-pStart+1);
 
     // The text below is mandatory for CONLL-U format
     dstream->out()  << "# text = " << curSentenceText.replace("\r\n"," ").replace("\n"," ").toUtf8().constData() << std::endl;
@@ -600,6 +600,27 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         {
           miscField << (QString("NE=") + neType.toUtf8().constData());
         }
+
+        miscField << (QString("Pos=") + QString::number(ft->position()) );
+        miscField << (QString("Len=") +  QString::number(ft->length()) );
+
+        {
+            bool SpaceAfter=true;
+            LinguisticGraphOutEdgeIt outIter,outIterEnd;
+            for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*graph); outIter!=outIterEnd; outIter++)
+            {
+                LinguisticGraphVertex next = boost::target(*outIter,*graph);
+                Token* nt=get(vertex_token,*graph,next);
+                if( nt!=0 && (nt->position() == ft->position()+ft->length()) ) {
+                    SpaceAfter=false;
+                    break;
+                }
+            }
+            if(!SpaceAfter){
+                miscField << QString("SpaceAfter=No");
+            }
+        }
+
 //           LDEBUG << "ConllDumper::process output the predicate if any";
         if (annotationData != nullptr && predicates.contains(v))
         {
