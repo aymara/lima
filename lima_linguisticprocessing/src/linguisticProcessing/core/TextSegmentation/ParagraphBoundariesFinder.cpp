@@ -85,7 +85,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  SENTBOUNDLOGINIT;
+  SEGMENTATIONLOGINIT;
   LINFO << "start finding paragraph founds";
   
   // find paragraphs in text (positions of double carriage returns),

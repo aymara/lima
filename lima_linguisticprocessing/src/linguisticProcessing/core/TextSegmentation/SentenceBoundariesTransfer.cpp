@@ -83,7 +83,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
 {
   Lima::TimeUtilsController timer("SentenceBoundariesTransfer");
 
-  SENTBOUNDLOGINIT;
+  SEGMENTATIONLOGINIT;
   LINFO << "start transfering sentence bounds from AnalysisGraph to PosGraph";
 
   auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
