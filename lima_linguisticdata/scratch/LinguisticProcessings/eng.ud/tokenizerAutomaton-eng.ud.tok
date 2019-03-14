@@ -27,7 +27,7 @@
   - c_grave > GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_percent|c_fraction|m_line > DELIMITER (T_WORD_BRK)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_dot c_b c_m = START
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
   - [c_N|c_n] c_degree = ALPHA
@@ -52,15 +52,14 @@
   - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
   - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
   - m_pattern > PATTERN (T_PATTERN)
-  - c_lowline > START
+  - c_lowline > DELIMITER
   - c_other / START
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
-  - c_dot c_dot c_dot = START (T_SENTENCE_BRK)
+  - c_dot c_dot c_dot = DELIMITER (T_SENTENCE_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - unknwn = START
-  - c_lowline > ALPHA
   - [c_N|c_n] c_degree = ALPHA
   - c_hyphen c_Mm|m_line = DELIMITER (T_HYPHEN_WORD)
   - c_quote c_S|c_l_s c_del|m_line > ALPHA
@@ -77,6 +76,32 @@
 (QUOTE) {
   - c_Mm c_b > QUOTE2
   - c_Mm > QUOTE
+  - c_n c_quote c_l_t = NOT (T_ALPHA,T_SMALL)
+  - [c_l_s|c_S|c_z|c_Z] c_quote c_del > ALPHA (T_POSSESSIVE)
+  - c_b = IGNORE (T_ALPHA)
+  - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_n c_quote c_l_t = NOT (T_ALPHA,T_SMALL)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern > PATTERN (T_PATTERN)
+  - c_lowline > DELIMITER
+  - c_other / START
+  - c_grave = GRAVE (T_WORD_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
+  - c_dot c_dot c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - unknwn = START
+  - [c_N|c_n] c_degree = ALPHA
+  - c_hyphen c_Mm|m_line = DELIMITER (T_HYPHEN_WORD)
+  - c_quote c_S|c_l_s c_del|m_line > ALPHA
+  - [c_l_o|c_N] c_quote c_M > ALPHA
+  - c_quote c_b c_del1 > ALPHA
+  - c_quote c_del1 > ALPHA
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_quote c_del = DELIMITER (T_WORD_BRK)
+  - c_quote = DELIMITER
+  - c_dot c_b c_m = DELIMITER
   - c_all = START
   - m_eof = END
 }
@@ -93,12 +118,35 @@
 }
 (NOT3) {
   - c_b = IGNORE (T_ALPHA)
-  - c_M = SINGLE_UPPER(T_ALPHA,T_CAPITAL_1ST)
-  - c_all > START
+  - c_V > CARDINAL_ROMAN (T_NUMERIC,T_CARDINAL_ROMAN)
+  - c_Mm > ALPHA (T_ALPHA)
+  - c_n c_quote c_l_t = NOT (T_ALPHA,T_SMALL)
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_hyphen|c_plus c_5 > INTEGER (T_NUMERIC,T_INTEGER)
+  - m_pattern > PATTERN (T_PATTERN)
+  - c_lowline > DELIMITER
+  - c_other / START
+  - c_grave = GRAVE (T_WORD_BRK)
+  - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
+  - c_del2|c_dot c_par c_par = START (T_PARAGRAPH_BRK)
+  - c_dot c_dot c_dot = DELIMITER (T_SENTENCE_BRK)
+  - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
+  - unknwn = START
+  - [c_N|c_n] c_degree = ALPHA
+  - c_hyphen c_Mm|m_line = DELIMITER (T_HYPHEN_WORD)
+  - c_quote c_S|c_l_s c_del|m_line > ALPHA
+  - [c_l_o|c_N] c_quote c_M > ALPHA
+  - c_quote c_b c_del1 > ALPHA
+  - c_quote c_del1 > ALPHA
+  - c_5 > ALPHANUMERIC (T_ALPHANUMERIC)
+  - c_quote c_del = DELIMITER (T_WORD_BRK)
+  - c_quote = DELIMITER
+  - c_dot c_b c_m = DELIMITER
+  - c_all = START
   - m_eof = END
 }
 (IGNORE) {
-  - m_eof / END
+  - m_pattern m_pattern / PATTERN (T_PATTERN)
   - c_par c_par / IGNORE (T_PARAGRAPH_BRK)
   - c_b / IGNORE
   - c_Mm c_dot c_Mm c_dot / ACRONYM_2 (T_ACRONYM)
@@ -113,8 +161,7 @@
   - c_m / ALL_LOWER (T_ALPHA,T_SMALL)
   - c_5 / INTEGER (T_NUMERIC,T_INTEGER)
   - c_hyphen|c_plus c_5 / INTEGER (T_NUMERIC,T_INTEGER)
-  - m_pattern m_pattern / PATTERN (T_PATTERN)
-  - c_lowline / START
+  - c_lowline / ALPHA
   - c_other / START
   - c_grave / GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line / DELIMITER (T_WORD_BRK)
@@ -123,7 +170,6 @@
   - c_dot c_dot c_dot / DELIMITER (T_SENTENCE_BRK)
   - c_dot c_5 > DOT_NUMBER (T_DOT_NUMBER)
   - c_del2|c_dot / DELIMITER (T_SENTENCE_BRK)
-  - c_lowline / ALPHA
   - [c_N|c_n] c_degree / ALPHA
   - c_hyphen c_Mm|m_line / DELIMITER (T_HYPHEN_WORD)
   - c_quote c_S|c_l_s c_del|m_line / ALPHA
@@ -135,6 +181,7 @@
   - c_quote / START
   - c_dot c_b c_m / START
   - c_all / START
+  - m_eof / END
 }
 (DELIMITER) {
   - m_eof = END
@@ -142,7 +189,7 @@
   - c_par = IGNORE (T_SENTENCE_BRK)
   - c_b c_dot > DELIMITER
   - [c_del1] c_dot = DELIMITER (T_WORD_BRK)
-  - c_dot c_b > DELIMITER
+  - c_dot|c_del2 > DELIMITER
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|c_dot|c_colon|m_line = DELIMITER (T_WORD_BRK)
   - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - c_b = IGNORE
@@ -151,10 +198,9 @@
   - c_m = ALL_LOWER (T_ALPHA,T_SMALL)
   - c_hyphen|c_plus c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - m_pattern m_pattern = PATTERN (T_PATTERN)
-  - c_lowline = START
+  - c_lowline > DELIMITER
   - c_other = START
   - unknwn = START
-  - c_lowline = ALPHA
   - [c_N|c_n] c_degree = ALPHA
   - c_hyphen c_Mm|m_line = DELIMITER (T_HYPHEN_WORD)
   - c_quote c_S|c_l_s c_del|m_line = ALPHA
@@ -522,12 +568,14 @@
   - m_pattern > PATTERN
   - c_b = IGNORE
   - c_M = SINGLE_UPPER (T_ALPHA,T_CAPITAL_1ST)
-  - c_all = START
+  - c_m = ALL_LOWER (T_ALPHA,T_SMALL)
+  - c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - m_end_pattern = START
   - c_grave = GRAVE (T_WORD_BRK)
   - c_del1|c_comma|c_slash|c_hyphen|c_quote|c_percent|c_fraction|m_line = DELIMITER (T_WORD_BRK)
   - c_del2|c_dot = DELIMITER (T_SENTENCE_BRK)
   - unknwn = PATTERN
+  - c_all = START
   - m_eof = END
 }
 (ALPHANUMERIC) {
@@ -556,10 +604,9 @@
   - c_m = ALL_LOWER (T_ALPHA,T_SMALL)
   - c_hyphen|c_plus c_5 = INTEGER (T_NUMERIC,T_INTEGER)
   - m_pattern m_pattern = PATTERN (T_PATTERN)
-  - c_lowline = START
+  - c_lowline = DELIMITER
   - c_other = START
   - unknwn = START
-  - c_lowline = ALPHA
   - [c_N|c_n] c_degree = ALPHA
   - c_hyphen c_Mm|m_line = DELIMITER (T_HYPHEN_WORD)
   - c_quote c_S|c_l_s c_del|m_line = ALPHA
