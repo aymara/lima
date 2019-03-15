@@ -90,13 +90,15 @@ class ConllDumperPrivate
   QString m_graph;
   QMap<QString, QString> m_conllLimaDepMapping;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
+  bool m_fakeDependencyGraph; //< set to true to generate a fake dependency graph compatible with conll eval tool
 };
 
 
 ConllDumperPrivate::ConllDumperPrivate():
   m_language(0),
   m_graph("PosGraph"),
-  m_conllLimaDepMapping()
+  m_conllLimaDepMapping(),
+  m_fakeDependencyGraph(false)
 {
 }
 
@@ -117,7 +119,6 @@ ConllDumper::~ConllDumper()
 void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
                       Manager* manager)
 {
-  DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
   m_d->m_language=manager->getInitializationParameters().media;
   try
@@ -137,6 +138,7 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     std::ifstream ifs(mappingFile.toUtf8().constData(), std::ifstream::binary);
     if (!ifs.good())
     {
+      DUMPERLOGINIT;
       LERROR << "ERROR: cannot open" << mappingFile;
       throw InvalidConfiguration();
     }
@@ -152,9 +154,22 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
 
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
+    DUMPERLOGINIT;
     LINFO << "no parameter 'mappingFile' in ConllDumper group" << " !";
 //     throw InvalidConfiguration();
   }
+
+
+  try
+  {
+    m_d->m_fakeDependencyGraph = unitConfiguration.getBooleanParameter(
+      "fakeDependencyGraph");
+  } catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    DUMPERLOGINIT;
+    LINFO << "no parameter 'fakeDependencyGraph' in ConllDumper group. Use default (false)" << " !";
+  }
+
 }
 
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
@@ -444,11 +459,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         LDEBUG << "ConllDumper::process features:" << features;
 #endif
 
-        std::string inflectedToken=ft->stringForm().toUtf8().constData();
-        std::string lemmatizedToken;
+        QString inflectedToken = ft->stringForm();
+        QString lemmatizedToken;
         if (morphoData != 0 && !morphoData->empty())
         {
-          lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().constData();
+          lemmatizedToken=sp[(*morphoData)[0].lemma];
+        }
+        if (lemmatizedToken.isEmpty())
+        {
+          lemmatizedToken = inflectedToken;
         }
         // @TODO Should follow instructions here to output all MWE:
         // https://universaldependencies.org/format.html#words-tokens-and-empty-nodes
@@ -547,23 +566,29 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         QString targetConllIdString = targetConllId > 0
                                         ? QString(QLatin1String("%1")).arg(targetConllId)
                                         : "0";
-//         QString head = "1";
-//         QString deprel = "nsubj";
-//         if (tokenId == 1)
-//         {
-//           head = "0";
-//           deprel = "root";
-//         }
+        QString head = targetConllIdString;
+        QString deprel = conllRelName;
+        if (m_d->m_fakeDependencyGraph)
+        {
+          if (tokenId == 1)
+          {
+            head = "0";
+            deprel = "root";
+          }
+          else
+          {
+            head = "1";
+            deprel = "nsubj";
+          }
+        }
         dstream->out()  << tokenId // ID
-                        << "\t" << inflectedToken // FORM
-                        << "\t" << lemmatizedToken // LEMMA
+                        << "\t" << inflectedToken.toUtf8().constData() // FORM
+                        << "\t" << lemmatizedToken.toUtf8().constData() // LEMMA
                         << "\t" << micro.toUtf8().constData() // UPOS
                         << "\t" << "_" // XPOS
                         << "\t" << "_" // FEATS
-                        << "\t" << targetConllIdString.toUtf8().constData() // HEAD
-                        << "\t" << conllRelName.toUtf8().constData() // DEPREL
-//                         << "\t" << head.toUtf8().constData() // HEAD
-//                         << "\t" << deprel.toUtf8().constData() // DEPREL
+                        << "\t" << head.toUtf8().constData() // HEAD
+                        << "\t" << deprel.toUtf8().constData() // DEPREL
                         << "\t" << "_"; // DEPS
         QStringList miscField;
         if (neType != "_")

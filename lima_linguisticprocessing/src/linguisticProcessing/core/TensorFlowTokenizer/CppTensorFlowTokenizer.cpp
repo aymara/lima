@@ -293,18 +293,18 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
     for (const auto& token: sentence)
     {
       const auto& str = token.first;
-// #ifdef DEBUG_LP
-//       LDEBUG << "      Adding token '" << str << "'";
-// #endif
+#ifdef DEBUG_LP
+      LDEBUG << "      Adding token '" << str << "'";
+#endif
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
       Token *tToken = new Token(form,str, token.second, token.first.size());
       if (tToken == 0) throw MemoryErrorException();
 
       m_d->computeDefaultStatus(*tToken);
-// #ifdef DEBUG_LP
-//       //   LDEBUG << "      curSettings is " << curSettings.toString();
-//       LDEBUG << "      status is " << tToken->status().toString();
-// #endif
+#ifdef DEBUG_LP
+      //   LDEBUG << "      curSettings is " << curSettings.toString();
+      LDEBUG << "      status is " << tToken->status().toString();
+#endif
 
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
@@ -316,9 +316,9 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
       add_edge(m_d->m_currentVx, newVx, *graph);
       m_d->m_currentVx = newVx;
     }
-// #ifdef DEBUG_LP
-//     LDEBUG << "adding sentence" << beginSentence << endSentence;
-// #endif
+#ifdef DEBUG_LP
+    LDEBUG << "adding sentence" << beginSentence << endSentence;
+#endif
     sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
     beginSentence = endSentence;
   }
@@ -449,10 +449,10 @@ void CppTokenizerPrivate::load_graph(const QString& frozen_graph_filename)
 std::pair< std::map<QString,int>, std::map<int,QString> >
 CppTokenizerPrivate::load_embeddings_dictionary()
 {
-// #ifdef DEBUG_LP
-//   TOKENIZERLOGINIT;
-//   LDEBUG << "CppTokenizerPrivate::load_embeddings_dictionary";
-// #endif
+#ifdef DEBUG_LP
+  TOKENIZERLOGINIT;
+  LDEBUG << "CppTokenizerPrivate::load_embeddings_dictionary";
+#endif
   std::map<QString,int> dictionary;
   std::map<int,QString> reverse_dictionary;
   QFile metadata(QString("%1/metadata.tsv").arg(m_embeddings_path));
@@ -464,9 +464,9 @@ CppTokenizerPrivate::load_embeddings_dictionary()
   }
   // dictionary - map of chars(strings) to their codes(integers)
   // reverse_dictionary - maps codes(integers) to chars(strings)
-// #ifdef DEBUG_LP
-//   LDEBUG << "CppTokenizerPrivate::load_embeddings_dictionary" << metadata.fileName();
-// #endif
+#ifdef DEBUG_LP
+  LDEBUG << "CppTokenizerPrivate::load_embeddings_dictionary" << metadata.fileName();
+#endif
 
   // skip first line (UNK - code 0)
   if (!metadata.atEnd())
@@ -487,10 +487,10 @@ CppTokenizerPrivate::load_embeddings_dictionary()
     }
     ++count;
   }
-// #ifdef DEBUG_LP
-//   LDEBUG << "Text::load_embeddings_dictionary"
-//           << dictionary << reverse_dictionary;
-// #endif
+#ifdef DEBUG_LP
+  LDEBUG << "Text::load_embeddings_dictionary"
+          << dictionary << reverse_dictionary;
+#endif
 
   return std::make_pair(dictionary, reverse_dictionary);
 }
@@ -566,7 +566,8 @@ std::vector<std::vector<int> > CppTokenizerPrivate::generate_batch(
 #endif
 
 #ifdef DEBUG_LP
-  LDEBUG << "CppTokenizerPrivate::generate_batch batch_data.size()/m_window_size:" << batch_data.size()/m_window_size;
+  LDEBUG << "CppTokenizerPrivate::generate_batch batch_data.size()/m_window_size:"
+          << batch_data.size() << m_window_size;
 #endif
   std::vector< std::vector<int> > batch;
 
@@ -588,10 +589,10 @@ std::vector<std::vector<int> > CppTokenizerPrivate::generate_batch(
 std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::tokenize(
     const QString& text)
 {
-// #ifdef DEBUG_LP
-//   TOKENIZERLOGINIT;
-//   LDEBUG << "CppTokenizerPrivate::tokenize" << text.left(100);
-// #endif
+#ifdef DEBUG_LP
+  TOKENIZERLOGINIT;
+  LDEBUG << "CppTokenizerPrivate::tokenize" << text.left(100);
+#endif
   std::vector< std::vector< std::pair<QString, int> > > sentences;
   std::vector< std::pair<QString, int> > current_sentence;
   QString current_token;
@@ -603,10 +604,11 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
   int offset = 0;
   while (offset < encoded.size())
   {
-// #ifdef DEBUG_LP
-//     LDEBUG << "CppTokenizerPrivate::tokenize offset: " << offset
-//             << "; length(encoded): " << encoded.size();
-// #endif
+#ifdef DEBUG_LP
+    LDEBUG << "CppTokenizerPrivate::tokenize offset: " << offset
+            << "; length(encoded): " << encoded.size()
+            << "; current_token:" << current_token << current_token_offset;
+#endif
     auto batch = generate_batch(encoded, offset);
 
     std::vector<std::pair<std::string, Tensor>> inputs(3);
@@ -625,9 +627,9 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
       LERROR << "CppTensorFlowTokenizer::tokenize error when building feed dict";
       throw LimaException("CppTensorFlowTokenizer::tokenize error when building feed dict");
     }
-// #ifdef DEBUG_LP
-//     LDEBUG << "CppTokenizerPrivate::tokenize batch: " << inputs[0].second.DebugString();
-// #endif
+#ifdef DEBUG_LP
+    LDEBUG << "CppTokenizerPrivate::tokenize batch: " << inputs[0].second.DebugString();
+#endif
 
 
     std::vector<Tensor> outputs(2);
@@ -646,41 +648,41 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
 
     // Print the results
     //"tensorflow/core/framework/tensor_shape.h"
-// #ifdef DEBUG_LP
-//     LDEBUG << "The results :" << endl
-//               << "  -logits            : "<<outputs[0].DebugString() << endl
-//               << "  -transition matrix : "<<outputs[1].DebugString();
-// #endif
+#ifdef DEBUG_LP
+    LDEBUG << "The results :" << endl
+              << "  -logits            : "<<outputs[0].DebugString() << endl
+              << "  -transition matrix : "<<outputs[1].DebugString();
+#endif
     //   Grab all the outputs and convert the nodes to a matrix representation (Eigen::TensorMap<Eigen::Tensor>)
     auto oPrediction = outputs[0].tensor<float, 2>(); //resulting a matrix (2D batch_size, nb classes)
 
     std::vector<int> prediction(batch.size());
     for(auto k=0;k<batch.size();++k)
     {
-// #ifdef DEBUG_LP
-//       LDEBUG << "CppTensorFlowTokenizer::tokenize k :" << k;
-// #endif
+#ifdef DEBUG_LP
+      LDEBUG << "CppTensorFlowTokenizer::tokenize k :" << k;
+#endif
       int maxId = 0;
       double max = 0;
       for(auto l=0;l<3;++l)
       {
-// #ifdef DEBUG_LP
-//         LDEBUG << "CppTensorFlowTokenizer::tokenize l :" << l
-//                 << "; prediction("<<k<<","<<l<<"):" << oPrediction(k,l);
-// #endif
+#ifdef DEBUG_LP
+        LDEBUG << "CppTensorFlowTokenizer::tokenize l :" << l
+                << "; prediction("<<k<<","<<l<<"):" << oPrediction(k,l);
+#endif
         if (oPrediction(k,l) > max)
         {
           max = oPrediction(k,l);
           prediction[k] = l;
         }
       }
-// #ifdef DEBUG_LP
-//       if ((k+offset) < text.size())
-//       {
-//         LDEBUG << "CppTensorFlowTokenizer::tokenize prediction[" << k
-//                 << "] =" << text[k+offset] << prediction[k];
-//       }
-// #endif
+#ifdef DEBUG_LP
+      if ((k+offset) < text.size())
+      {
+        LDEBUG << "CppTensorFlowTokenizer::tokenize prediction[" << k
+                << "] =" << text[k+offset] << prediction[k];
+      }
+#endif
     }
 
     //     (Different methods for vectors and matrices here:
@@ -699,17 +701,17 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
           if (current_token.isEmpty())
             current_token_offset = offset+i;
           current_token += text[offset+i];
-// #ifdef DEBUG_LP
-//           LDEBUG << "CppTensorFlowTokenizer::tokenize current token is now:"
-//                   << current_token << current_token_offset;
-// #endif
+#ifdef DEBUG_LP
+          LDEBUG << "CppTensorFlowTokenizer::tokenize current token is now:"
+                  << current_token << current_token_offset;
+#endif
         }
         else if (!current_token.isEmpty())
         {
-// #ifdef DEBUG_LP
-//           LDEBUG << "CppTensorFlowTokenizer::tokenize 1:"
-//                   << current_token << current_token_offset;
-// #endif
+#ifdef DEBUG_LP
+          LDEBUG << "CppTensorFlowTokenizer::tokenize 1:"
+                  << current_token << current_token_offset;
+#endif
           current_sentence.push_back(std::make_pair(current_token.trimmed(),
                                                     current_token_offset));
           current_token.clear();
@@ -718,10 +720,10 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
         else
         {
           current_token_offset += 1;
-// #ifdef DEBUG_LP
-//           LDEBUG << "CppTensorFlowTokenizer::tokenize 2:"
-//                   << current_token << current_token_offset;
-// #endif
+#ifdef DEBUG_LP
+          LDEBUG << "CppTensorFlowTokenizer::tokenize 2:"
+                  << current_token << current_token_offset;
+#endif
         }
       }
       else if (prediction[i] == 1)
@@ -729,10 +731,10 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
         if (!text[offset+i].isSpace())
         {
           current_token += text[offset+i];
-// #ifdef DEBUG_LP
-//         LDEBUG << "CppTensorFlowTokenizer::tokenize :"
-//                 << current_token << current_token_offset;
-// #endif
+#ifdef DEBUG_LP
+        LDEBUG << "CppTensorFlowTokenizer::tokenize 3:"
+                << current_token << current_token_offset;
+#endif
         }
         if (!current_token.isEmpty())
         {
@@ -745,10 +747,10 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
       else if (prediction[i] == 2)
       {
         current_token += text[offset+i];
-// #ifdef DEBUG_LP
-//         LDEBUG << "CppTensorFlowTokenizer::tokenize :"
-//                 << current_token << current_token_offset;
-// #endif
+#ifdef DEBUG_LP
+        LDEBUG << "CppTensorFlowTokenizer::tokenize 4:"
+                << current_token << current_token_offset;
+#endif
         current_sentence.push_back(std::make_pair(current_token.trimmed(),
                                                   current_token_offset));
         sentences.push_back(current_sentence);
@@ -759,14 +761,20 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
     }
     offset += prediction.size();
 
-    if (!current_sentence.empty())
-      sentences.push_back(current_sentence);
     if (offset >= text.size())
+    {
+      if (!current_sentence.empty())
+      {
+        sentences.push_back(current_sentence);
+        current_sentence.clear();
+        current_token.clear();
+      }
       break;
+    }
   }
-// #ifdef DEBUG_LP
-//   LDEBUG << "CppTensorFlowTokenizer::tokenize final sentences:" << sentences;
-// #endif
+#ifdef DEBUG_LP
+  LDEBUG << "CppTensorFlowTokenizer::tokenize final sentences:" << sentences;
+#endif
   return sentences;
 }
 
