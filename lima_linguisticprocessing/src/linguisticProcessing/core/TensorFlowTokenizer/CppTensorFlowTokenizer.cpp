@@ -777,8 +777,8 @@ void CppTokenizerPrivate::computeDefaultStatus(Token& token)
 //   LDEBUG << "CppTokenizerPrivate::computeDefaultStatus"
 //           << token.stringForm();
 // #endif
-//   static QRegularExpression reCapital("^[[:upper:]]+$");
-//   static QRegularExpression reSmall("^[[:lower:]]+$");
+  static QRegularExpression reCapital("^[[:upper:]]+$");
+  static QRegularExpression reSmall("^[[:lower:]]+$");
   static QRegularExpression reCapital1st("^[[:upper:]]\\w+$");
   static QRegularExpression reAcronym("^([[:upper:]]\\.)+$");
   static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$");
@@ -804,122 +804,122 @@ void CppTokenizerPrivate::computeDefaultStatus(Token& token)
   static QRegularExpression reSentenceBreak("^[;.!?]$");
 
   LinguisticAnalysisStructure::TStatus curSettings;
-  if (token.stringForm().isUpper())
+  if (reCapital.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_capital";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_capital"));
   }
-  else if (token.stringForm().isLower())
+  else if (reSmall.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_small";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_small";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_small"));
   }
   else if (reCapital1st.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_1st";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_capital_1st";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_capital_1st"));
   }
   else if (reAcronym.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_acronym";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_acronym";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_acronym"));
   }
   else if (reCapitalSmall.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_small";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_capital_small";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_capital_small"));
   }
   else if (reAbbrev.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_abbrev";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_abbrev";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_abbrev"));
   }
   else if (reTwitter.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_twitter";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_twitter";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_twitter"));
   }
   else if (reCardinalRoman.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_cardinal_roman";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_cardinal_roman";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_cardinal_roman"));
   }
   else if (reOrdinalRoman.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_roman";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_ordinal_roman";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_roman"));
   }
   else if (reInteger.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_integer";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_integer";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_integer"));
   }
   else if (reCommaNumber.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_comma_number";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_comma_number";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_comma_number"));
   }
   else if (reDotNumber.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_dot_number";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_dot_number";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_dot_number"));
   }
   else if (reFraction.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_fraction";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_fraction";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_fraction"));
   }
   else if (reOrdinalInteger.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_integer"));
   }
   else if (reAlphanumeric.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_alphanumeric";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_alphanumeric";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_alphanumeric"));
   }
   else if (reSentenceBreak.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_sentence_brk";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_sentence_brk";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_sentence_brk"));
   }
   else // if (reSmall.match(token.stringForm()).hasMatch())
   {
 // #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_word_brk (default)";
+//     LDEBUG << "CppTokenizerPrivate::computeDefaultStatus t_word_brk (default)";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_word_brk"));
   }
