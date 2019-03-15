@@ -282,10 +282,13 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
   analysis.setData(m_d->m_data.toUtf8().constData(), sb);
 
+  remove_edge(anagraph->firstVertex(),
+              anagraph->lastVertex(),
+              *graph);
+  LinguisticGraphVertex beginSentence = 0;
   // Insert the tokens in the graph and create sentence limits
   for (const auto& sentence: sentencesTokens)
   {
-    LinguisticGraphVertex beginSentence = std::numeric_limits< LinguisticGraphVertex >::max();
     LinguisticGraphVertex endSentence = std::numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
     {
@@ -305,8 +308,8 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
 
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
-      if (beginSentence == std::numeric_limits< LinguisticGraphVertex >::max())
-        beginSentence = newVx;
+//       if (beginSentence == std::numeric_limits< LinguisticGraphVertex >::max())
+//         beginSentence = newVx;
       endSentence = newVx;
       put(vertex_token, *graph, newVx, tToken);
       put(vertex_data, *graph, newVx, new MorphoSyntacticData());
@@ -317,12 +320,10 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
 //     LDEBUG << "adding sentence" << beginSentence << endSentence;
 // #endif
     sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
+    beginSentence = endSentence;
   }
 
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
-  remove_edge(anagraph->firstVertex(),
-              anagraph->lastVertex(),
-              *graph);
   return SUCCESS_ID;
 }
 
