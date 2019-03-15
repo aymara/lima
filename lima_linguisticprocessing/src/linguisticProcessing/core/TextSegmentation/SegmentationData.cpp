@@ -70,14 +70,16 @@ Segment::Segment(const std::string& type,
   for (; it != it_end; it++)
   {
     LinguisticGraphVertex v = target(*it, *graph);
+#ifdef DEBUG_LP
+      LDEBUG << "AAAAAAAAAAAAAAAA" << v;
+#endif
     if (v == 1)
     { // vertex following begin vertex is end of graph vertex => empty segment
 #ifdef DEBUG_LP
-      SEGMENTATIONLOGINIT;
       LDEBUG << "Warning: empty segment";
 #endif
       // keep default 0 values for (pos,len) to be informed that this is an empty segment
-      return;
+//       return;
     }
     Token* t = get(vertex_token,*graph,v);
     if (t != nullptr)
