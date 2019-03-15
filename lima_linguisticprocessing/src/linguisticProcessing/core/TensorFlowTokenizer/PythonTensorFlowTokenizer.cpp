@@ -520,8 +520,8 @@ void PythonTokenizerPrivate::computeDefaultStatus(Token& token)
   LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus"
           << token.stringForm();
 #endif
-//   static QRegularExpression reCapital("^[[:upper:]]+$");
-//   static QRegularExpression reSmall("^[[:lower:]]+$");
+  static QRegularExpression reCapital("^[[:upper:]]+$");
+  static QRegularExpression reSmall("^[[:lower:]]+$");
   static QRegularExpression reCapital1st("^[[:upper:]]\\w+$");
   static QRegularExpression reAcronym("^([[:upper:]]\\.)+$");
   static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$");
@@ -547,18 +547,18 @@ void PythonTokenizerPrivate::computeDefaultStatus(Token& token)
   static QRegularExpression reSentenceBreak("^[;.!?]$");
 
   LinguisticAnalysisStructure::TStatus curSettings;
-  if (token.stringForm().isUpper())
+  if (reCapital.match(token.stringForm()).hasMatch())
   {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital";
+// #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_capital"));
   }
-  else if (token.stringForm().isLower())
+  else if (reSmall.match(token.stringForm()).hasMatch())
   {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_small";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_small";
+// #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_small"));
   }
   else if (reCapital1st.match(token.stringForm()).hasMatch())
