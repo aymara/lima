@@ -70,9 +70,6 @@ Segment::Segment(const std::string& type,
   for (; it != it_end; it++)
   {
     LinguisticGraphVertex v = target(*it, *graph);
-#ifdef DEBUG_LP
-      LDEBUG << "AAAAAAAAAAAAAAAA" << v;
-#endif
     if (v == 1)
     { // vertex following begin vertex is end of graph vertex => empty segment
 #ifdef DEBUG_LP

@@ -827,6 +827,10 @@
     </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
+      <!-- The fakeDependencyGraph parameter allow to apply the CoNLL Shared
+           Task  2018 evaluation tool on LIMA output even if the LIMA parser
+           output is invalid. -->
+      <param key="fakeDependencyGraph" value="false"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
