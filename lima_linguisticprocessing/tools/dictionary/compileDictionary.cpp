@@ -30,9 +30,10 @@
 #include "common/LimaCommon.h"
 #include "common/Data/strwstrtools.h"
 #include "common/Data/LimaString.h"
-#include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/misc/AbstractAccessByString.h"
+#include "common/tools/FileUtils.h"
+#include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 // #include "linguisticProcessing/core/Tokenizer/ParseChar.h"
 // #include "linguisticProcessing/core/Tokenizer/ParseCharClass.h"
@@ -164,16 +165,12 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0)
-      ? std::string(getenv("LIMA_RESOURCES"))
-      : std::string("/usr/share/apps/lima/resources");
-  std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
-  if (configPath.size() == 0)
-    configPath = string(getenv("LIMA_CONF"));
-  if (configPath.size() == 0)
-    configPath = string("/usr/share/config/lima");
+  auto configDirs = buildConfigurationDirectoriesList(
+    QStringList({"lima"}),
+    QStringList(QString::fromUtf8(param->configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  if (QsLogging::initQsLog(configPath) != 0)
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";

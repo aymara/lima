@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -16,6 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst)
 
-SPECIFICENTITIES(main eng.ud Organization 
-  ORGANIZATION-eng-ud.rules 
+SPECIFICENTITIES(main eng.ud Organization
+  ORGANIZATION-eng-ud.rules
   ORGANIZATION_COMP-eng-ud.rules)

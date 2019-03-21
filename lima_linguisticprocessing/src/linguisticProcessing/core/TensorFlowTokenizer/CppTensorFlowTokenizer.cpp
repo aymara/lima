@@ -63,7 +63,6 @@ public:
   void computeDefaultStatus(LinguisticAnalysisStructure::TStatus& curSettings);
 
   void init(const QString& corpus,
-            const QString& embeddings_path,
             const QString& model_path,
             int window_size,
             int batch_size);
@@ -129,7 +128,6 @@ public:
   FsaStringsPool* m_stringsPool;
   LinguisticGraphVertex m_currentVx;
 
-  QString m_embeddings_path;
   QString m_model_path;
   long long m_window_size;
   long long m_max_batch_size;
@@ -197,18 +195,6 @@ void CppTensorFlowTokenizer::init(
     throw InvalidConfiguration();
   }
 
-  QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
-  try
-  {
-    embeddingsPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("embeddings_path").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
-  }
-
   QString modelPath; // The path to the LIMA python tensorflow-based tokenizer
   try
   {
@@ -259,7 +245,7 @@ void CppTensorFlowTokenizer::init(
     throw InvalidConfiguration();
   }
 
-  m_d->init(udCorpus, embeddingsPath, modelPath, windowSize, batchSize);
+  m_d->init(udCorpus, modelPath, windowSize, batchSize);
 }
 
 
@@ -384,18 +370,16 @@ void CppTokenizerPrivate::computeDefaultStatus(LinguisticAnalysisStructure::TSta
 
 
 void CppTokenizerPrivate::init(const QString& corpus,
-                               const QString& embeddings_path,
                                const QString& model_path,
                                int window_size,
                                int batch_size)
 {
 // #ifdef DEBUG_LP
 //   TOKENIZERLOGINIT;
-//   LDEBUG << "CppTokenizerPrivate::init" << corpus << embeddings_path
+//   LDEBUG << "CppTokenizerPrivate::init" << corpus
 //           << model_path << window_size << batch_size;
 // #endif
-  m_embeddings_path = QString("%1-%2").arg(embeddings_path).arg(corpus);
-  m_model_path = QString("%1-%2").arg(model_path).arg(corpus);
+  m_model_path = QString("%1/%2").arg(model_path).arg(corpus);
   m_window_size = window_size;
   m_max_batch_size = batch_size;
   // load char embeddings
@@ -455,7 +439,7 @@ CppTokenizerPrivate::load_embeddings_dictionary()
 #endif
   std::map<QString,int> dictionary;
   std::map<int,QString> reverse_dictionary;
-  QFile metadata(QString("%1/metadata.tsv").arg(m_embeddings_path));
+  QFile metadata(QString("%1/metadata.tsv").arg(m_model_path));
   if (!metadata.open(QFile::ReadOnly))
   {
     TOKENIZERLOGINIT;
