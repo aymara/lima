@@ -279,23 +279,12 @@ int run(int argc, char** argv)
   readCommandLineArguments(argc,argv);
 
   QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
-                                                             QStringList());
+    QStringList(QString::fromUtf8(param.configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-  if (!param.configDir.empty())
-  {
-    configPath = QString::fromUtf8(param.configDir.c_str());
-    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
-  }
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
-                                                            QStringList());
+    QStringList(QString::fromUtf8(param.resourcesDir.c_str()).split(LIMA_PATH_SEPARATOR)));
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-
-  if (!param.resourcesDir.empty())
-  {
-    resourcesPath = QString::fromUtf8(param.resourcesDir.c_str());
-    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
-  }
 
   if (QsLogging::initQsLog(configPath) != 0)
   {

@@ -164,14 +164,16 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0) ? string(getenv("LIMA_RESOURCES")) : string("/usr/share/apps/lima/resources");
-  std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
-  if (configPath.size() == 0)
-    configPath = string(getenv("LIMA_CONF"));
-  if (configPath.size() == 0)
-    configPath = string("/usr/share/config/lima");
+  auto configDirs = buildConfigurationDirectoriesList(
+    QStringList({"lima"}),
+    QStringList(QString::fromUtf8(param->configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                     QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  if (QsLogging::initQsLog(configPath) != 0)
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
@@ -187,7 +189,7 @@ int run(int argc, char** argv)
     }
 
     param->codeFile = Common::Misc::findFileInPaths(
-        QString::fromUtf8(resourcesPath.c_str()),
+        resourcesPath,
         QString::fromUtf8("/LinguisticProcessings/")+param->language.c_str()+"/code-"+param->language.c_str()+".xml",
         LIMA_PATH_SEPARATOR).toUtf8().toStdString();
   }

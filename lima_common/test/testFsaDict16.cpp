@@ -42,6 +42,7 @@
 #include "common/FsaAccess/FsaAccessBuilderRandom16.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/misc/AbstractAccessByString.h"
+#include "common/tools/FileUtils.h"
 
 #include <QtCore/QCoreApplication>
 
@@ -67,6 +68,7 @@
 using namespace std;
 using namespace Lima;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
 
 int logFileSize( const std::string& filename ) {
   struct stat sts;
@@ -668,13 +670,12 @@ int main(int argc, char *argv[])
   }
   cerr << endl;
 
-  std::string configPath = (param.configDir.size()>0) ? param.configDir : string("");
-  if (configPath.size() == 0)
-    configPath = string(getenv("LIMA_CONF"));
-  if (configPath.size() == 0)
-    configPath = string("/usr/share/config/lima");
+  auto configDirs = buildConfigurationDirectoriesList(
+    QStringList({"lima"}),
+    QStringList(QString::fromUtf8(param.configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  if (QsLogging::initQsLog(configPath) != 0)
   {
     FSAALOGINIT;
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -121,6 +121,21 @@ int run(int argc, char** argv)
     usage(argc, argv);
     exit(0);
   }
+  if (param->codeFile.empty())
+  {
+    LOGINIT("Common::Misc");
+    LERROR << "convertSymbolicCodes empty codeFile parameter";
+    return EXIT_FAILURE;
+  }
+
+  auto configDirs = buildConfigurationDirectoriesList(
+    QStringList({"lima"}),
+    QStringList(QString::fromUtf8(param->configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+
+  auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                     QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
