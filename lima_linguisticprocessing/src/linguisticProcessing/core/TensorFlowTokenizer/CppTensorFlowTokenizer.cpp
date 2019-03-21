@@ -398,8 +398,12 @@ void CppTokenizerPrivate::init(const QString& corpus,
     throw LimaException();
   }
 
+  QString frozenFile = Common::Misc::findFileInPaths(
+    Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+    QString("%1/frozen_model.pb").arg(m_model_path));
+
   // load frozen graph
-  load_graph(QString("%1/frozen_model.pb").arg(m_model_path));
+  load_graph(frozenFile);
 
   // Add the graph to the session
   status = m_session->Create(m_graph);
@@ -439,7 +443,11 @@ CppTokenizerPrivate::load_embeddings_dictionary()
 #endif
   std::map<QString,int> dictionary;
   std::map<int,QString> reverse_dictionary;
-  QFile metadata(QString("%1/metadata.tsv").arg(m_model_path));
+  QString metadataFile = Common::Misc::findFileInPaths(
+    Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+    QString("%1/metadata.tsv").arg(m_model_path));
+
+  QFile metadata(metadataFile);
   if (!metadata.open(QFile::ReadOnly))
   {
     TOKENIZERLOGINIT;
