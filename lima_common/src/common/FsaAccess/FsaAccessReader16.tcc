@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -52,7 +52,7 @@ namespace Common {
 namespace FsaAccess {
 
 template <typename graphType >
-FsaAccessReader16<graphType>::FsaAccessReader16(bool trie_direction_fwd) 
+FsaAccessReader16<graphType>::FsaAccessReader16(bool trie_direction_fwd)
 : FsaAccess16<graphType>(trie_direction_fwd), m_size(0) {
 }
 
@@ -69,7 +69,7 @@ void FsaAccessReader16<graphType>::read ( const std::string & filename )
     LERROR << mess.c_str();
     throw( AccessByStringNotInitialized( mess ) );
   }
-  
+
   FsaAccessReader16<graphType>::read(is);
   is.close();
 #ifdef DEBUG_CD
@@ -78,7 +78,7 @@ void FsaAccessReader16<graphType>::read ( const std::string & filename )
 }
 
 template <typename graphType>
-void FsaAccessReader16<graphType>::read ( std::istream& is ) 
+void FsaAccessReader16<graphType>::read ( std::istream& is )
 {
 #ifdef DEBUG_CD
   FSAAIOLOGINIT;
@@ -140,7 +140,7 @@ uint64_t  FsaAccessReader16<graphType>::buildHash() {
 template <typename graphType >
 int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<graphType>::vertex_descriptor from )
 {
-  
+
 #ifdef DEBUG_CD
   FSAAHASHLOGINIT;
   LTRACE << "FsaAccessReader16::computeHash(" << from << ")" ;
@@ -148,14 +148,14 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
 
   auto vname_map = boost::get(boost::vertex_name,FsaAccess16<graphType>::m_graph);
   auto vcount_map = boost::get(vertex_count,FsaAccess16<graphType>::m_graph);
-  
+
   // vocabulaire du sous_graphe
   int total(0);
   // tableau des coefficients
   auto& counts = get(vcount_map,from);
   // nombre de sous automates
   auto outd = boost::out_degree(from, FsaAccess16<graphType>::m_graph);
-    
+
   VERTEX_PROPERTY_16 val = get(vname_map, from);
   if( (val & SET_16) == 0 ) {
   //if( counts.size() == 0 ) {
@@ -169,7 +169,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
       // memorizing outd-1 first to compute the hash
       if( i+1 < outd ) {
 #ifdef DEBUG_CD
-        LTRACE << "FsaAccessReader16::computeHash(" << from 
+        LTRACE << "FsaAccessReader16::computeHash(" << from
                 << "): counts.push_back(" << total << ")" ;
 #endif
         counts.push_back(total);
@@ -178,7 +178,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
     put(vname_map, from, get(vname_map, from) | SET_16);
   }
   else {
-    // On totalise les tailles des sous-arbres 
+    // On totalise les tailles des sous-arbres
     typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
     boost::tie(ei,edge_end) = boost::out_edges(from,FsaAccess16<graphType>::m_graph);
     if( outd > 1 ) {
@@ -197,7 +197,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
     if( ei != edge_end ) {
       total = total + computeHash( target(*ei,FsaAccess16<graphType>::m_graph) );
     }
-/*    
+/*
     for( uint32_t i = 0 ; i+1 < outd ; ei++ , i++, cIt++ ) {
 #ifdef DEBUG_CD
       LTRACE << "FsaAccessReader16::computeHash: before assert 1004, outd="
@@ -250,7 +250,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     boost::get(vertex_text,FsaAccess16<graphType>::m_graph);
   typename dicoGraph_traits16<graphType>::vcount_map_type vcount_map =
     boost::get(vertex_count,FsaAccess16<graphType>::m_graph);
-  
+
   // Create an iterator to get letters one at a time
   PrefixIterator* prefixIt = FsaAccess16<graphType>::getPrefixIterator(word);
   int32_t wordOffset;
@@ -335,7 +335,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
   else
     return 0;
 }
-    
+
 template <typename graphType >
 Lima::LimaString FsaAccessReader16<graphType>::getExtent(
   const Lima::LimaString & prefix ) const
@@ -346,7 +346,7 @@ Lima::LimaString FsaAccessReader16<graphType>::getExtent(
 #endif
 
   auto prefixPos = getStartNode(prefix);
-  
+
   auto vtext_map = boost::get(vertex_text, FsaAccess16<graphType>::m_graph);
     // find the character letter in text property
   const Lima::LimaString& text = get(vtext_map,prefixPos);
@@ -381,8 +381,8 @@ template <typename graphType >
 fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(
    const FsaAccessReader16<graphType> & dico,
    const LimaString &word)
-  : m_dico(dico), m_graph(m_dico.m_graph), 
-    m_prefixIt(m_dico.getPrefixIterator(word,word.length() )), 
+  : m_dico(dico), m_graph(m_dico.m_graph),
+    m_prefixIt(m_dico.getPrefixIterator(word,word.length() )),
     m_curr( typename boost::graph_traits<graphType>::vertex_descriptor()),
     m_index(0) {
 }
@@ -397,7 +397,7 @@ fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(
   typename boost::graph_traits<graphType>::vertex_descriptor node,
   const uint64_t offset )
   : m_dico(dico), m_graph(m_dico.m_graph),
-    m_prefixIt(m_dico.getPrefixIterator(word,offset)), 
+    m_prefixIt(m_dico.getPrefixIterator(word,offset)),
     m_curr(node),
     m_index(0) {
 #ifdef DEBUG_CD
@@ -410,10 +410,10 @@ fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(
 }
 
 template <typename graphType >
-fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(const fsaReader_subword_iterator16<graphType> &orig) 
+fsaReader_subword_iterator16<graphType>::fsaReader_subword_iterator16(const fsaReader_subword_iterator16<graphType> &orig)
   : ClonableSubWordIterator(),
     m_dico(orig.m_dico), m_graph(m_dico.m_graph),
-    m_prefixIt(orig.m_prefixIt->clone(orig.m_prefixIt)), 
+    m_prefixIt(orig.m_prefixIt->clone(orig.m_prefixIt)),
     m_curr(orig.m_curr),
     m_index(orig.m_index) {
 #ifdef DEBUG_CD
@@ -565,7 +565,7 @@ std::pair< AccessSuperWordIterator, AccessSuperWordIterator >
 #endif
 
   typename boost::graph_traits<graphType>::vertex_descriptor prefixPos = getStartNode(word);
-  
+
   // There is no more exception thrown
   // when no key in the dico has word as substring, return start=end iterator
   typename boost::graph_traits<graphType>::vertex_descriptor first = FsaAccess16<graphType>::m_rootVertex;
@@ -617,8 +617,8 @@ fsaReader_superword_iterator16<graphType>::fsaReader_superword_iterator16(const 
   start_context.wordPos = 0;
   start_context.wordOffset = 0;
   m_context_stack.push_back(start_context);
-  
-  
+
+
   if(start_context.out_edge != start_context.out_edge_end)
   {
     operator ++(0);
@@ -806,7 +806,7 @@ void iterator_context<graphType>::print(std::ostream& os) const {
      << ", off=" << wordOffset << "}, out_edge=";
      if( out_edge!=out_edge_end )
         os << *out_edge;
-     else 
+     else
         os << "out_edge_end";
 }
 
@@ -919,7 +919,7 @@ fsaReader_superword_iterator16<graphType> &
   m_curr = typename boost::graph_traits<graphType>::vertex_descriptor();
   return *this;
 }
-  
+
 template <typename graphType >
 typename boost::graph_traits<graphType>::vertex_descriptor
 FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
@@ -938,12 +938,12 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
 
   // Create an iterator to get letters one at a time
   PrefixIterator* prefixIt = FsaAccess16<graphType>::getPrefixIterator(word);
-  
+
   // find the path in the automaton defined by the prefix
   int32_t wordOffset;
   for( ; prefixIt->hasNextLetter() ; prefixIt->next(wordOffset) ) {
     char32_t letter = prefixIt->getNextLetter(wordOffset);
-    
+
     // iterator to select the right path among the out_edges
     int32_t edgeOffset = 0;
     //typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
