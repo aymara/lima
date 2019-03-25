@@ -467,10 +467,10 @@ void FsaAccess16<graphType>::getPrefix(
   const Lima::LimaString& text = get(vtext_map,from);
   #ifdef DEBUG_CD
   LTRACE << "FsaAccess16::getPrefix: transitions text = "<<text<<", from out degree=" << boost::out_degree(from,m_graph);
-  if (text.size() != static_cast<int>(boost::out_degree(from,m_graph)))
-  {
-    assert(text.size() == static_cast<int>(boost::out_degree(from,m_graph)));
-  }
+//  if (text.size() != static_cast<int>(boost::out_degree(from,m_graph)))
+//  {
+//    assert(text.size() == static_cast<int>(boost::out_degree(from,m_graph)));
+//  }
   #endif
   
 
@@ -478,12 +478,13 @@ void FsaAccess16<graphType>::getPrefix(
 
   int32_t edgeOffset;
   if( prefixOffset == 1 ) {
-    edgeOffset = findEdge( currentChar, text, 0, highCharTextPos );
+    edgeOffset = findEdge( currentChar, text, 0, highCharTextPos, edgeOffset );
   }
   else {
-    int32_t textOffset;
-    textOffset = findEdge( currentChar, text, highCharTextPos, text.length() );
-    edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
+    edgeOffset = findEdge( currentChar, text, highCharTextPos, text.length(), edgeOffset );
+    if( edgeOffset >= 0 ) {
+        edgeOffset = highCharTextPos + (edgeOffset - highCharTextPos)/2;
+    }
   }
   if( edgeOffset >= 0 ) {
     prefixIt->next(prefixOffset);
@@ -505,13 +506,16 @@ void FsaAccess16<graphType>::getPrefix(
 template <typename graphType> int32_t FsaAccess16<graphType>::findEdge(
 const char32_t searchChar,
 const Lima::LimaString& textString,
-int32_t min, int range ) const {
+int32_t min, int max, int nb_unit_per_char ) const {
 
+  // if find a 2 units char, range is divided by 4 a each step
+  // else range is divided by 2 a each step
+  int range = max - min;
   #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "FsaAccess16::findEdge searchChar=" << LimaChar(searchChar) << " ("<<searchChar<<"), textString=" << textString << ", min=" << min << ", range=" << range;
+  LTRACE <<  "FsaAccess16::findEdge (0) searchChar=" << LimaChar(searchChar) << " ("<<searchChar<<"), textString=" << textString << ", min=" << min << ", max=" << max;
   #endif
-  if (textString.isEmpty())
+  if (range==0)
   {
     return -1;
   }
@@ -519,57 +523,62 @@ int32_t min, int range ) const {
   int textLength = textString.length();
   char32_t edgeLabel = 0;
   int32_t offset = min;
-  //  int midrange = range/2;
+  #ifdef DEBUG_CD
+  LTRACE <<  "FsaAccess16::findEdge (0) textLength=" <<textLength << ", nb_unit_per_char=" << nb_unit_per_char;
+  #endif
 
   while( range > 0 ) {
-    offset = min + range/2;
+    if( nb_unit_per_char == 1)
+        offset = min + range/2;
+    else
+        offset = min + 2*(range/4);
     int32_t offset0 = offset;
     #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccess16::findEdge: min = " << min << " range = " << range << " try " << offset;
+    LTRACE <<  "FsaAccess16::findEdge: (1) min = " << min << " range = " << range << " try " << offset;
     #endif
     U16_NEXT(text, offset, textLength, edgeLabel);
     #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccess16::findEdge: offset = " << offset << " textLength = " << textLength  << " edgeLabel = " << LimaChar(edgeLabel) << "("<<edgeLabel<<")";
-    LTRACE <<  "FsaAccess16::findEdge: min = " << min << "; range = " << range << "; offset0 = " << offset0;
+    LTRACE <<  "FsaAccess16::findEdge: (1) offset = " << offset << " textLength = " << textLength  << " edgeLabel = " << LimaChar(edgeLabel) << "("<<edgeLabel<<")";
+    LTRACE <<  "FsaAccess16::findEdge: (1) min = " << min << "; range = " << range << "; offset0 = " << offset0;
     #endif
     if( edgeLabel == searchChar ) {
       #ifdef DEBUG_CD
-      LTRACE <<  "FsaAccess16::findEdge: match " << (LimaChar)edgeLabel << " return " << offset0;
+      LTRACE <<  "FsaAccess16::findEdge: (1) match " << (LimaChar)edgeLabel << " return " << offset0;
       #endif
       return offset0;
     }
     else if( searchChar > edgeLabel ){
-      range = min + range - offset0 - 1;
-      min = offset0 + 1;
+      range = min + range - offset;
+      min = offset;
     }
     else {
       range = offset0 - min;
     }
   }
   #ifdef DEBUG_CD
-  LTRACE <<  "FsaAccess16::findEdge: min = " << min << " range = " << range << " try " << min;
+  LTRACE <<  "FsaAccess16::findEdge: (2) min = " << min << " range = " << range << " try " << min;
   #endif
-  if (min >= textString.length())
+  if (min >= max)
   {
     #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccess16::findEdge: unmatch " << (LimaChar)edgeLabel << " and " << (LimaChar)searchChar;
+    LTRACE <<  "FsaAccess16::findEdge: (2) unmatch " << (LimaChar)edgeLabel << " and " << (LimaChar)searchChar;
     #endif
     return -1;
   }
   int32_t offset0 = min;
   U16_NEXT(text, min, textLength, edgeLabel);
   #ifdef DEBUG_CD
-  LTRACE <<  "FsaAccess16::findEdge: min = " << min << " textLength = " << textLength  << " edgeLabel = " << LimaChar(edgeLabel) ;
+  LTRACE <<  "FsaAccess16::findEdge: (2) min = " << min << " textLength = " << textLength  << " edgeLabel = " << LimaChar(edgeLabel) ;
   #endif
   if( edgeLabel == searchChar ) {
     #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccess16::findEdge: match " << (LimaChar)edgeLabel << " return " << offset0;
+    LTRACE <<  "FsaAccess16::findEdge: (2) match " << (LimaChar)edgeLabel << " return " << offset0;
     #endif
     return offset0;
   }
   else {
     #ifdef DEBUG_CD
-    LTRACE <<  "FsaAccess16::findEdge: unmatch " << (LimaChar)edgeLabel << " and " << (LimaChar)searchChar;
+    LTRACE <<  "FsaAccess16::findEdge: (2) unmatch " << (LimaChar)edgeLabel << " and " << (LimaChar)searchChar;
     #endif
     return -1;
   }
@@ -578,18 +587,19 @@ int32_t min, int range ) const {
 template <typename graphType> int32_t FsaAccess16<graphType>::findOffsetToInsertBefore(
 const char32_t searchChar,
 const Lima::LimaString& textString,
-int32_t min, int range ) const {
+int32_t min, int max, int nb_unit_per_char ) const {
 
   #ifdef DEBUG_CD
   FSAALOGINIT;
-  LTRACE <<  "FsaAccess16::findOffsetToInsertBefore searchChar="<<LimaChar(searchChar)<<"; textString="<<textString<<"; min="<<min<<"; range=" << range;
+  LTRACE <<  "FsaAccess16::findOffsetToInsertBefore searchChar="<<LimaChar(searchChar)<<"; textString="<<textString<<"; min="<<min<<"; range=" << max << "; nb_unit_per_char=" << nb_unit_per_char;
   #endif
-  if (textString.isEmpty())
+  int range = max - min;
+  if (range == 0)
   {
     #ifdef DEBUG_CD
     LTRACE <<  "FsaAccess16::findOffsetToInsertBefore empty string. return 0";
     #endif
-    return 0;
+    return min;
   }
   
   const QChar* text = textString.constData();
@@ -598,7 +608,10 @@ int32_t min, int range ) const {
   int32_t offset = min;
 
   while( range > 1 ) {
-    offset = min + range/2;
+    if( nb_unit_per_char == 1)
+        offset = min + range/2;
+    else
+        offset = min + 2*(range/4);
     int32_t offset0 = offset;
     #ifdef DEBUG_CD
     LTRACE <<  "FsaAccess16::findOffsetToInsertBefore: min = " << min
@@ -606,15 +619,24 @@ int32_t min, int range ) const {
     #endif
     U16_NEXT(text, offset, textLength, edgeLabel);
     if( searchChar > edgeLabel ){
-      range = min + range - offset0;
-      min = offset0;
+      #ifdef DEBUG_CD
+      LTRACE <<  "FsaAccess16::findOffsetToInsertBefore: searchChar = " << searchChar << " > edgeLabel=" << edgeLabel;
+      #endif
+      range = min + range - offset;
+      min = offset;
     }
     else {
+      #ifdef DEBUG_CD
+      LTRACE <<  "FsaAccess16::findOffsetToInsertBefore: searchChar = " << searchChar << " <= edgeLabel=" << edgeLabel;
+      #endif
       range = offset0 - min;
     }
   }
+  if( min >= max ){
+    return max;
+  }
   #ifdef DEBUG_CD
-  LTRACE <<  "FsaAccess16::findOffsetToInsertBefore: min = " << min
+  LTRACE <<  "FsaAccess16::findOffsetToInsertBefore (end): min = " << min
   << " range = " << range << " try " << min;
   #endif
   int32_t offset0 = min;
@@ -622,9 +644,9 @@ int32_t min, int range ) const {
   if( searchChar > edgeLabel ) {
     #ifdef DEBUG_CD
     LTRACE <<  "FsaAccess16::findOffsetToInsertBefore: at "<<offset0<<", "<<LimaChar(searchChar)<<" > "<<LimaChar(edgeLabel)<<": return "
-    << offset0+1 ;
+    << offset0+nb_unit_per_char ;
     #endif
-    return offset0+1;
+    return offset0+nb_unit_per_char;
   }
   else {
     #ifdef DEBUG_CD
@@ -659,10 +681,7 @@ void FsaAccess16<graphType>::addSuffix(
   for( ; prefixIt->hasNextLetter() ; prefixIt->next(prefixOffset) ) {
 
     to = add_vertex(m_graph);
-#ifdef DEBUG_CD
-    char32_t letter = 
-#endif
-    prefixIt->getNextLetter(prefixOffset);
+    char32_t letter = prefixIt->getNextLetter(prefixOffset);
 #ifdef DEBUG_CD
     LTRACE << "FsaAccess16::addSuffix added vertex="<<to<<", letter=" << (LimaChar)letter << ", suffixPos="<<prefixIt->getExternalWordPos();
 #endif
@@ -683,13 +702,20 @@ void FsaAccess16<graphType>::addSuffix(
     VERTEX_PROPERTY_16 qualif = vval & QUALITY_16;
     VERTEX_PROPERTY_16 hicharOff = vval & TEXT_POS_16;
 
-  
-    int32_t posToInsertBefore = findOffsetToInsertBefore( LimaString(prefixIt->getCurrentContent()).left(prefixOffset)[0].unicode(),
-                              text, 0, text.size());
+    int32_t posToInsertBefore;
+    if( prefixOffset == 1 ) {
+        posToInsertBefore = findOffsetToInsertBefore( letter, text, 0, hicharOff, prefixOffset);
+    }
+    else {
+        posToInsertBefore = findOffsetToInsertBefore( letter, text, hicharOff, text.size(), prefixOffset);
+    }
     #ifdef DEBUG_CD
     LTRACE <<  "FsaAccess16::addSuffix: insert the left "<<prefixOffset<<" chars from " << LimaString(prefixIt->getCurrentContent()) << "(i.e. "<<LimaString(prefixIt->getCurrentContent()).left(prefixOffset)<<") to " << text << " at position" << posToInsertBefore;
     #endif
     text.insert(posToInsertBefore,LimaString(prefixIt->getCurrentContent()).left(prefixOffset));
+    #ifdef DEBUG_CD
+    LTRACE <<  "FsaAccess16::addSuffix: text after insertion = " <<  text;
+    #endif
 
     if( prefixOffset == 1) hicharOff++;
 

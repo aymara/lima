@@ -334,11 +334,11 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
 #endif
     int32_t highCharTextPos = get(vname_map,from)&TEXT_POS_16;
     if( wordOffset == 1 ) {
-      textOffset = findEdge( currentChar, text, 0, highCharTextPos );
+      textOffset = findEdge( currentChar, text, 0, highCharTextPos, wordOffset );
       edgeOffset = textOffset;
     }
     else {
-      textOffset = findEdge( currentChar, text, highCharTextPos, text.length() );
+      textOffset = findEdge( currentChar, text, highCharTextPos, text.length(), wordOffset );
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
     }
 
@@ -521,11 +521,11 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
   const Lima::LimaString& text = get(vtext_map,toOldPath);
   int32_t highCharTextPos = get(vname_map,toOldPath)&TEXT_POS_16;
   if( wordOffset == 1 ) {
-    edgeOffset = findEdge( currentChar, text, 0, highCharTextPos );
+    edgeOffset = findEdge( currentChar, text, 0, highCharTextPos, wordOffset );
   }
   else {
     int32_t textOffset;
-    textOffset = findEdge( currentChar, text, highCharTextPos, text.length() );
+    textOffset = findEdge( currentChar, text, highCharTextPos, text.length(), wordOffset );
     edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
   }
 
@@ -650,7 +650,7 @@ void FsaAccessBuilderRandom16::addEdge(
   int32_t textOffset0;
   if( wordOffset == 1 ) {
     if( highCharTextPos > 0 )
-      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos );
+      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos, wordOffset );
     else
       textOffset0 = 0;
 
@@ -757,7 +757,7 @@ void FsaAccessBuilderRandom16::addEdge(
            << LimaString(text.data())
            << ")";
 #endif
-    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
+    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length(), wordOffset );
     Q_ASSERT(false);
     // TODO:
   }
@@ -808,7 +808,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
   uint32_t textOffset0;
   if( wordOffset == 1 ) {
     if( highCharTextPos > 0 )
-      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos );
+      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos, wordOffset );
     else
       textOffset0 = 0;
 
@@ -882,7 +882,7 @@ void FsaAccessBuilderRandom16::replaceEdge(
 //           << currentChar << "," << text << ")";
            << currentChar << "," << ")";
 #endif
-    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
+    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length(), wordOffset );
     // TODO:
     Q_ASSERT(false);
   }
@@ -940,7 +940,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
   int32_t textOffset0;
   if( wordOffset == 1 ) {
     if( highCharTextPos > 0 ) {
-      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos );
+      textOffset0 = findOffsetToInsertBefore( currentChar, text, 0, highCharTextPos, wordOffset );
     }
     else
       textOffset0 = 0;
@@ -1033,7 +1033,7 @@ void FsaAccessBuilderRandom16::suppressEdge(
 //           << currentChar << "," << text << ")";
            << currentChar << "," << ")";
 #endif
-    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length() );
+    textOffset0 = findOffsetToInsertBefore( currentChar, text, highCharTextPos, text.length(), wordOffset );
     // TODO:
     Q_ASSERT(false);
   }
@@ -1094,11 +1094,11 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
 #endif
   int32_t highCharTextPos = get(vname_map,candidateState)&TEXT_POS_16;
   if( wordOffset == 1 ) {
-    textOffset = findEdge( currentChar, text, 0, highCharTextPos );
+    textOffset = findEdge( currentChar, text, 0, highCharTextPos, wordOffset );
     edgeOffset = textOffset;
   }
   else {
-    textOffset = findEdge( currentChar, text, highCharTextPos, text.length() );
+    textOffset = findEdge( currentChar, text, highCharTextPos, text.length(), wordOffset );
     edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
   }
 
@@ -1239,11 +1239,11 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
 #endif
     int32_t highCharTextPos = val&TEXT_POS_16;
     if( wordOffset == 1 ) {
-      textOffset = findEdge( currentChar, text, 0, highCharTextPos );
+      textOffset = findEdge( currentChar, text, 0, highCharTextPos, wordOffset );
       edgeOffset = textOffset;
     }
     else {
-      textOffset = findEdge( currentChar, text, highCharTextPos, text.length() );
+      textOffset = findEdge( currentChar, text, highCharTextPos, text.length(), wordOffset );
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
     }
     prefixIt->next(wordOffset);

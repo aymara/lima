@@ -158,6 +158,9 @@ void FsaAccessBuilder16::addWord( const LimaString & newWord ){
 
   PrefixIterator* prefixIt = getPrefixIterator(newWord);
   getPrefix( prefix_leaf, prefixIt );
+#ifdef DEBUG_CD
+  LWARN <<  "FsaAccessBuilder::addWord: prefix =  " << prefixIt->getCurrentPrefix();
+#endif
 
   if( !prefixIt->hasNextLetter() ) {
 #ifdef DEBUG_CD
