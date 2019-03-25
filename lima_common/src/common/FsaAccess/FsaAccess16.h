@@ -288,7 +288,7 @@ protected:
 
   int32_t findEdge( const char32_t searchChar,
     const LimaString& textString,
-    int32_t min, int range ) const;
+    int32_t min, int range, int nb_unit_for_char ) const;
 
   /**
     * find where to insert currentChar in the string text
@@ -297,7 +297,7 @@ protected:
     */
   int32_t findOffsetToInsertBefore( const char32_t searchChar,
     const LimaString& textString,
-    int32_t min, int range ) const;
+    int32_t min, int range, int nb_unit_per_char ) const;
 };
 
 } // namespace FsaAccess

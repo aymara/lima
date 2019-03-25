@@ -276,11 +276,11 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     LDEBUG <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos;
 #endif
     if( wordOffset == 1 ) {
-      edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos );
+      edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos, wordOffset );
     }
     else {
       int32_t textOffset;
-      textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length() );
+      textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length(), wordOffset );
 #ifdef DEBUG_CD
     LDEBUG <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset;
 #endif
@@ -505,11 +505,11 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
     int32_t highCharTextPos = vprop&TEXT_POS_16;
     int32_t edgeOffset;
     if( wordOffset == 1 ) {
-      edgeOffset = m_dico.findEdge( letter, text, 0, highCharTextPos );
+      edgeOffset = m_dico.findEdge( letter, text, 0, highCharTextPos, wordOffset);
     }
     else {
       int32_t textOffset;
-      textOffset = m_dico.findEdge( letter, text, highCharTextPos, text.length() );
+      textOffset = m_dico.findEdge( letter, text, highCharTextPos, text.length(), wordOffset );
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
     }
 
@@ -950,11 +950,11 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
     const Lima::LimaString& text = get(vtext_map,from);
     int32_t highCharTextPos = get(vname_map,from)&TEXT_POS_16;
     if( wordOffset == 1 ) {
-      edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos );
+      edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos, wordOffset );
     }
     else {
       int32_t textOffset;
-      textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length() );
+      textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length(), wordOffset );
       edgeOffset = highCharTextPos + (textOffset - highCharTextPos)/2;
    }
 
