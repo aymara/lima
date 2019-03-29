@@ -1,12 +1,12 @@
 # 
 [Desktop Entry]
 Type=Application
-Exec=lima_gui %u
+Exec=lima %u
 MimeType=application/x-your-mime-type;
 Icon=lima_gui
-X-DocPath=lima_gui/index.html
+X-DocPath=lima/index.html
 Terminal=false
-Name=lima_gui
+Name=lima
 GenericName=LIMA GUI
 Comment=A user interface for the LIMA multilingual analyzer
 Categories=Qt;
