@@ -84,13 +84,13 @@ LimaStatusCode SentenceBoundariesTransfer::process(
   Lima::TimeUtilsController timer("SentenceBoundariesTransfer");
 
   SEGMENTATIONLOGINIT;
-  LINFO << "start transfering sentence bounds from AnalysisGraph to PosGraph";
+  LINFO << "SentenceBoundariesTransfer::process start transfering sentence bounds from AnalysisGraph to PosGraph";
 
   auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb == nullptr)
   {
     DUMPERLOGINIT;
-    LERROR << "no SentenceBounds";
+    LERROR << "SentenceBoundariesTransfer::process no SentenceBounds";
     return MISSING_DATA;
   }
   if (sb->getGraphId() == "PosGraph")
@@ -104,14 +104,14 @@ LimaStatusCode SentenceBoundariesTransfer::process(
     analysis.getData("AnalysisGraph"));
   if (anagraph == nullptr)
   {
-    LERROR << "no graph 'AnalysisGraph' available !";
+    LERROR << "SentenceBoundariesTransfer::process no graph 'AnalysisGraph' available !";
     return MISSING_DATA;
   }
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(
     analysis.getData("PosGraph"));
   if (posgraph == nullptr)
   {
-    LERROR << "no graph 'PosGraph' available !";
+    LERROR << "SentenceBoundariesTransfer::process no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
   AnnotationData* annotationData = static_cast< AnnotationData* >(

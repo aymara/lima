@@ -533,8 +533,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           {
             conllRelName= "nsubj";
             DUMPERLOGINIT;
-            LERROR << "ConllDumper::process" << relName
-                    << "not found in mapping. Using 'nsubj'";
+            LWARN << "ConllDumper::process" << relName
+                    << "not found in LIMA to CoNLL dependencies mapping. Using 'nsubj'";
           }
         }
 
