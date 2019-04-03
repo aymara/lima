@@ -17,19 +17,11 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-// NAUTITIA
-//
-// jys 24-JUL-2002
-//
-// PythonTensorFlowTokenizer is the main program of PythonTensorFlowTokenizer stuff.
-
-#ifndef LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
-#define LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
+#ifndef LIMA_LINGUISTICPROCESSING_PythonUppsalaTensorFlowTokenizer_Tokenizer_H
+#define LIMA_LINGUISTICPROCESSING_PythonUppsalaTensorFlowTokenizer_Tokenizer_H
 
 #include "TensorFlowTokenizerExport.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
-
-#include <Python.h>
 
 namespace Lima
 {
@@ -38,13 +30,11 @@ namespace LinguisticProcessing
 namespace TensorFlowTokenizer
 {
 
-std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming);
-
-#define PYTHONTENSORFLOWTOKENIZER_CLASSID "PythonTensorFlowTokenizer"
+#define PYTHONUPPSALATENSORFLOWTOKENIZER_CLASSID "PythonUppsalaTensorFlowTokenizer"
 
 class CharChart;
 
-class PythonTokenizerPrivate;
+class PythonUppsalaTokenizerPrivate;
 
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
   *
@@ -58,12 +48,12 @@ class PythonTokenizerPrivate;
   * - Preconditions: the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
   * - Effects: the AnalysisContent will contain an AnalysisData of type AnalysisGraph named "AnalysisGraph" which is a linear graph (a string) containing one vertex for each detected token.
   */
-class LIMA_TENSORFLOWTOKENIZER_EXPORT PythonTensorFlowTokenizer : public MediaProcessUnit
+class LIMA_TENSORFLOWTOKENIZER_EXPORT PythonUppsalaTensorFlowTokenizer : public MediaProcessUnit
 {
 
 public:
-  PythonTensorFlowTokenizer();
-  virtual ~PythonTensorFlowTokenizer();
+  PythonUppsalaTensorFlowTokenizer();
+  virtual ~PythonUppsalaTensorFlowTokenizer();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -74,7 +64,7 @@ public:
 
   private:
 
-    PythonTokenizerPrivate* m_d;
+    PythonUppsalaTokenizerPrivate* m_d;
 };
 
 } //namespace TensorFlowTokenizer

@@ -19,6 +19,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### next target ###############
 
 SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
+    PythonUppsalaTensorFlowTokenizer.cpp
     PythonTensorFlowTokenizer.cpp
 )
 
