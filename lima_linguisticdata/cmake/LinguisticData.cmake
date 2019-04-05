@@ -219,25 +219,25 @@ macro(COMPILEXMLDIC _lang _dico _subdir)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND LC_ALL="C" sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${LIMA_CONF} --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${LIMA_CONF}  --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 endif ()
@@ -367,9 +367,13 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
+      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
+      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp
 
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/ApproxNames-modex.xml
@@ -417,6 +421,12 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
+     ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
+     ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
@@ -434,6 +444,8 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
+      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
     COMMENT "Create config environment common to all languages"
