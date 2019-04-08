@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2019 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -29,6 +29,6 @@ install(FILES
   COMPONENT runtime)
 
   install(FILES
-    limacommon.log.properties
+    log4cpp/limacommon.log.properties
   DESTINATION share/config/lima/log4cpp
   COMPONENT runtime)

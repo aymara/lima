@@ -202,6 +202,8 @@ endmacro(CONVERT _lang)
 
 # Compile XML dictionary
 macro(COMPILEXMLDIC _lang _dico _subdir)
+  message( "${C_BoldYellow}COMPILEXMLDIC(${_lang} ${_dico} ${_subdir})${C_Norm}" )
+
 #   string(REPLACE "/" "" _dicostr ${_dico})
   get_filename_component(_dicostr ${_dico} NAME_WE)
 #  set (CHARCHART "${CMAKE_INSTALL_PREFIX}/share/apps/lima/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
@@ -518,6 +520,44 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   )
 endmacro ()
 
+###############
+#
+# LIMA_PRETEST_CONFIGENV
+#
+#
+####################
+macro (LIMA_PRETEST_CONFIGENV _lang)
+  message( "${C_BoldYellow}LIMA_PRETEST_CONFIGENV(${_lang})${C_Norm}" )
+
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    DEPENDS
+      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
+      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
+      compilexmldic${_lang}dico
+      rules-${_lang}-execEnv
+    COMMENT "copy language specific LinguisticProcessing resources to execEnv"
+    VERBATIM
+  )
+  add_custom_target(
+    pretest-${_lang}-execEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+  )
+  add_dependencies(pretest-execEnv pretest-${_lang}-execEnv)
+endmacro()
+
 ####################
 # Specific Entities
 macro (SPECIFICENTITIES _subtarget _lang _group)
@@ -558,7 +598,6 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   )
 
 endmacro (SPECIFICENTITIES _lang _group)
-
 
 ####################
 # Syntactic analysis
