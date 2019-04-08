@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -17,18 +17,18 @@
 ########### next test ###############
 
 set(EnhancedAnalysisDictionaryTest0_SRCS
-   EnhancedAnalysisDictionaryTest0.cpp
+  EnhancedAnalysisDictionaryTest0.cpp
 )
 
-set (EnhancedAnalysisDictionaryTest0_MOC_HEADERS 
+set (EnhancedAnalysisDictionaryTest0_MOC_HEADERS
   EnhancedAnalysisDictionaryTest0.h
 )
 
-qt5_wrap_cpp (EnhancedAnalysisDictionaryTest0_MOC_OUTFILES 
+qt5_wrap_cpp (EnhancedAnalysisDictionaryTest0_MOC_OUTFILES
   ${EnhancedAnalysisDictionaryTest0_MOC_HEADERS}
 )
 
-add_executable(EnhancedAnalysisDictionaryTest0 
+add_executable(EnhancedAnalysisDictionaryTest0
   ${EnhancedAnalysisDictionaryTest0_SRCS}
   ${EnhancedAnalysisDictionaryTest0_MOC_OUTFILES}
 )
@@ -38,11 +38,11 @@ target_link_libraries(EnhancedAnalysisDictionaryTest0
   lima-common-fsaaccess
   lima-common-xmlconfigurationfiles
   lima-common-tools
-  lima-common-datahandler 
-  lima-common-mediaprocessors 
-  lima-common-time 
+  lima-common-datahandler
+  lima-common-mediaprocessors
+  lima-common-time
   lima-common-misc
-  lima-common-data 
+  lima-common-data
   lima-common-mediaticdata
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -75,43 +75,49 @@ target_link_libraries(EnhancedAnalysisDictionaryTest0
   lima-lp-automaton
   lima-lp-analysishandlers
   lima-lp-client
-  ${Boost_LIBRARIES} 
+  ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
 
-add_test(NAME EnhancedAnalysisDictionaryTest0 
-  COMMAND EnhancedAnalysisDictionaryTest0
+add_dependencies(EnhancedAnalysisDictionaryTest0 pretest-execEnv)
+
+add_test(NAME EnhancedAnalysisDictionaryTest0
+  COMMAND ${CMAKE_COMMAND} -E env
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/config
+    LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/resources
+    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
+    ./EnhancedAnalysisDictionaryTest0
 )
 
 ########### next test ###############
 
 set(EnhancedAnalysisDictionaryTest1_SRCS
-   EnhancedAnalysisDictionaryTest1.cpp
+  EnhancedAnalysisDictionaryTest1.cpp
 )
 
-set (EnhancedAnalysisDictionaryTest1_MOC_HEADERS 
+set (EnhancedAnalysisDictionaryTest1_MOC_HEADERS
   EnhancedAnalysisDictionaryTest1.h
 )
 
-qt5_wrap_cpp (EnhancedAnalysisDictionaryTest1_MOC_OUTFILES 
+qt5_wrap_cpp (EnhancedAnalysisDictionaryTest1_MOC_OUTFILES
   ${EnhancedAnalysisDictionaryTest1_MOC_HEADERS}
 )
 
-add_executable(EnhancedAnalysisDictionaryTest1 
+add_executable(EnhancedAnalysisDictionaryTest1
   ${EnhancedAnalysisDictionaryTest1_SRCS}
   ${EnhancedAnalysisDictionaryTest1_MOC_OUTFILES}
 )
 
-target_link_libraries(EnhancedAnalysisDictionaryTest1 
+target_link_libraries(EnhancedAnalysisDictionaryTest1
   lima-common-factory
   lima-common-fsaaccess
   lima-common-xmlconfigurationfiles
   lima-common-tools
-  lima-common-datahandler 
-  lima-common-mediaprocessors 
-  lima-common-time 
+  lima-common-datahandler
+  lima-common-mediaprocessors
+  lima-common-time
   lima-common-misc
-  lima-common-data 
+  lima-common-data
   lima-common-mediaticdata
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -144,18 +150,22 @@ target_link_libraries(EnhancedAnalysisDictionaryTest1
   lima-lp-automaton
   lima-lp-analysishandlers
   lima-lp-client
-  ${Boost_LIBRARIES} 
+  ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
 
-add_test(NAME EnhancedAnalysisDictionaryTest1 
-  COMMAND EnhancedAnalysisDictionaryTest1
+add_test(NAME EnhancedAnalysisDictionaryTest1
+  COMMAND ${CMAKE_COMMAND} -E env
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/config
+    LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/resources
+    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
+    ./EnhancedAnalysisDictionaryTest1
 )
 
 
 ########### next test ###############
 
-set (DictionaryDataTest1_MOC_HEADERS 
+set (DictionaryDataTest1_MOC_HEADERS
   DictionaryDataTest1.h
 )
 
@@ -165,23 +175,23 @@ qt5_wrap_cpp (DictionaryDataTest1_MOC_OUTFILES
 
 
 SET(DictionaryDataTest1_SRCS
-   DictionaryDataTest1.cpp
+  DictionaryDataTest1.cpp
 )
 
-add_executable(DictionaryDataTest1 
+add_executable(DictionaryDataTest1
   ${DictionaryDataTest1_SRCS}
   ${DictionaryDataTest1_MOC_OUTFILES}
 )
 
-target_link_libraries(DictionaryDataTest1 
+target_link_libraries(DictionaryDataTest1
   lima-common-factory
   lima-common-xmlconfigurationfiles
   lima-common-tools
-  lima-common-datahandler 
-  lima-common-mediaprocessors 
-  lima-common-time 
+  lima-common-datahandler
+  lima-common-mediaprocessors
+  lima-common-time
   lima-common-misc
-  lima-common-data 
+  lima-common-data
   lima-common-mediaticdata
   lima-lp-annotationgraph
   lima-lp-lineartextrepresentation
@@ -214,9 +224,15 @@ target_link_libraries(DictionaryDataTest1
   lima-lp-automaton
   lima-lp-analysishandlers
   lima-lp-client
-  ${Boost_LIBRARIES} 
+  ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
 )
 
-add_test(NAME DictionaryDataTest1 COMMAND DictionaryDataTest1)
+add_test(NAME DictionaryDataTest1
+  COMMAND ${CMAKE_COMMAND} -E env
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/config
+    LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/resources
+    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
+    ./DictionaryDataTest1
+)
 

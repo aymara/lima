@@ -60,7 +60,7 @@ install(FILES
 
 install(
   FILES
-    limalp.log.properties
+    log4cpp/limalp.log.properties
   DESTINATION share/config/lima/log4cpp
   COMPONENT runtime
 )
