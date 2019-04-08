@@ -21,7 +21,6 @@ add_custom_command(
   COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/tools/common/convertSymbolicCodes --configDir=${PROJECT_SOURCE_DIR}/../lima_common/conf/ ${PROJECT_SOURCE_DIR}/analysisDictionary/eng.ud/code/code-eng.ud.xml ${PROJECT_BINARY_DIR}/analysisDictionary/eng.ud/convert/symbolicCode*-eng.ud.xml idioms-eng.ud.grace > idiomaticExpressions-eng.ud.rules
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.ud.txt
-    ${PROJECT_BINARY_DIR}/analysisDictionary/eng.ud/convert/symbolicCode*-eng.ud.xml
     convertSymbolicCodes
     codeeng.ud
   COMMENT "create eng.ud idiomatic expressions rules"
