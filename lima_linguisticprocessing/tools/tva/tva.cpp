@@ -128,6 +128,8 @@ int run(int argc,char** argv)
           workingDir=arg.substr(pos+14);
         else if ( (pos = arg.find("--language=")) != std::string::npos )
           langs.push_back(arg.substr(pos+11));
+        else if ( (pos = arg.find("--pipeline=")) != std::string::npos )
+          pipelines.push_back(arg.substr(pos+11));
         else usage(argc, argv);
       }
       else
