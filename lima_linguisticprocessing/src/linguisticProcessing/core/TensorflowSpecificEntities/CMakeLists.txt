@@ -122,20 +122,39 @@ if(WIN32)
 
 else() # expect sh-like environment
 
-  execute_process(
-	  COMMAND
-	  bash
-	  "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-	  )
+  function(cat IN_FILE OUT_FILE)
+    message("cat ${IN_FILE} ${OUT_FILE}")
+    file(READ ${IN_FILE} CONTENTS)
+    file(WRITE ${OUT_FILE} "${CONTENTS}")
+  endfunction()
+  function(append IN_FILE OUT_FILE)
+    message("append ${IN_FILE} ${OUT_FILE}")
+    file(READ ${IN_FILE} CONTENTS)
+    file(APPEND ${OUT_FILE} "${CONTENTS}")
+  endfunction()
+
+  cat(
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa
+    ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
 
   foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
-    message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
-    execute_process(
-	    COMMAND
-	    bash
-	    "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-	    )
+    append(${FR_OUTPUTGRAPH_FILE} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
   endforeach()
+
+#   execute_process(
+#         COMMAND
+#         bash
+#         "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+#         )
+#
+#   foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
+#     message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
+#     execute_process(
+# 	    COMMAND
+# 	    bash
+# 	    "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+# 	    )
+#   endforeach()
 
 endif()
 
