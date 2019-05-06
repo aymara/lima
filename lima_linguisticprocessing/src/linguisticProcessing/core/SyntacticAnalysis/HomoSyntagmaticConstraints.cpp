@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,17 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
-  * @brief       this file contains the implementations of several constraint
-  *              functions for the detection of homosyntagmatic dependency
-  *              relations
-  *
-  * @file        HomoSyntagmaticConstraints.cpp
   * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
-
-  *              Copyright (c) 2003 by CEA
   * @date        Created on  Thu Nov, 13 2003
-  *
-  *
   */
 // clazy:exclude=rule-of-two-soft
 
@@ -767,29 +758,34 @@ bool CreateRelationReverseWithRelated::operator()(
 }
 
 //**********************************************************************
-// complement contains symbols for category and microcategory
-// (e.g.: NC;NC_GEN;)
+// complement contains symbols for auxiliary macro, micro and tense
+// (e.g.: V;V;PRES)
+// Time to set to result is given by the resource compoundTenses-<lang>.bin
 CreateCompoundTense::CreateCompoundTense(MediaId language,
     const LimaString& complement):
     ConstraintFunction(language,complement),
     m_macro(0),
     m_micro(0),
+    m_tense(0),
     m_tempCompType(0)
 {
 #ifdef DEBUG_LP
   SAPLOGINIT;
   LDEBUG << "CreateCompoundTense::CreateCompoundTense()" << language << complement;
 #endif
-  const std::string str=
-    limastring2utf8stdstring(complement);
-
   const PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager();
 
-  size_t firstSepPos = str.find_first_of(';');
-  m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(str.substr(0, firstSepPos));
+  auto complementList = complement.split(";");
+  if (complementList.size() != 3)
+  {
+    SAPLOGINIT;
+    LERROR << "CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements while it is:" << complement;
+    throw LimaException("CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements");
 
-  size_t secondSepPos = str.find_first_of(';', firstSepPos+1);
-  m_micro=codeManager.getPropertyManager("MICRO").getPropertyValue(str.substr(firstSepPos + 1, secondSepPos - firstSepPos - 1));
+  }
+  m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(complementList[0].toUtf8().constData());
+
+  m_micro=codeManager.getPropertyManager("MICRO").getPropertyValue(complementList[1].toUtf8().constData());
 
   m_tempCompType=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId("aux");
 #ifdef DEBUG_LP
@@ -811,13 +807,15 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   QString timeCode = static_cast<const Common::MediaticData::LanguageData&>(
     Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("TIME");
   m_timeAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+  m_tense=codeManager.getPropertyManager(timeCode.toUtf8().constData()).getPropertyValue(complementList[2].toUtf8().constData());
+
 
   QString syntaxCode = static_cast<const Common::MediaticData::LanguageData&>(
     Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("SYNTAX");
   m_syntaxAccessor=&codeManager.getPropertyAccessor(syntaxCode.toUtf8().constData());
   QString personCode = static_cast<const Common::MediaticData::LanguageData&>(
     Common::MediaticData::MediaticData::single().mediaData(language)).getLimaToLanguageCodeMappingValue("PERSON");
-  m_personAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+  m_personAccessor=&codeManager.getPropertyAccessor(personCode.toUtf8().constData());
 }
 
 bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
@@ -829,6 +827,15 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
   SAPLOGINIT;
   LDEBUG << "creating compound tense for " << auxVertex << " and " << pastPartVertex;
 #endif
+
+  if (m_macroAccessor->empty(m_macro) || m_microAccessor->empty(m_micro))
+  {
+#ifdef DEBUG_LP
+   LDEBUG << "CreateCompoundTense: false because macro="
+          << m_macro << " and micro=" << m_micro;
+#endif
+    return false;
+  }
 
   SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
@@ -863,21 +870,27 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     LERROR << "CreateCompoundTense::operator() morphosyntactic data is empty for past participle. Abort.";
     return false;
   }
-  LinguisticCode dataAuxMicro = dataAux->firstValue(*m_microAccessor);
+  auto dataAuxMicro = dataAux->firstValue(*m_microAccessor);
+  if (dataAuxMicro != m_micro)
+  {
+    SAPLOGINIT;
+    LWARN << "CreateCompoundTense: false because expected micro="
+          << m_micro << " and actual micro=" << dataAuxMicro;
+    return false;
+  }
 
-  LinguisticCode tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAux->firstValue(*m_timeAccessor));
+  auto dataAuxTime = dataAux->firstValue(*m_timeAccessor);
+  if (dataAuxTime != m_tense)
+  {
+    SAPLOGINIT;
+    LWARN << "CreateCompoundTense: false because expected tense="
+          << m_tense << " and actual tense=" << dataAuxTime;
+    return false;
+  }
+  auto tense = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).compoundTense(dataAuxMicro, dataAuxTime);
 #ifdef DEBUG_LP
   LDEBUG << "Tense = '" << tense << "' ";
 #endif
-
-  if (m_macroAccessor->empty(m_macro) || m_microAccessor->empty(m_micro))
-  {
-#ifdef DEBUG_LP
-   LDEBUG << "CreateCompoundTense: false because macro="
-   << m_macro << " and micro=" << m_micro;
-#endif
-    return false;
-  }
 
   // creer un full token
   // this version changes the head verb of the sentence to be the past participle verb

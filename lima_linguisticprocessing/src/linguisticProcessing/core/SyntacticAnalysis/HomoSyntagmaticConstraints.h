@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,15 +20,8 @@
   * @brief       this file contains the definitions of several constraint
   *              functions for the detection of homosyntagmatic dependency
   *              relations
-  *
-  * @file        HomoSyntagmaticConstraints.h
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
-
-  *              Copyright (c) 2003 by CEA
+  * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr>
   * @date        Created on  Thu Nov, 13 2003
-  * @version     $Id$
-  *
-  *
   */
 
 #ifndef LIMA_SYNTACTICANALYSIS_HOMOSYNTAGMATICCONSTRAINTS_H
@@ -244,10 +237,10 @@ protected:
  * @brief This constraint add in the relations buffer the relations of the given
  * type from the targets of relations out of v2 of the given types to v1.
  *
- * It allows to draw a relation (of type the last element in the complement 
- * list) from the target (v1) of the given relations (all except the last in the 
+ * It allows to draw a relation (of type the last element in the complement
+ * list) from the target (v1) of the given relations (all except the last in the
  * complement list) to the trigger.
- * 
+ *
  * The complement must be of the form:
  * "rel2|…|reln,rel1"
  * with rel1 the type of the relation to create and rel2, …, reln the types of
@@ -310,11 +303,11 @@ private:
 
 /**
  *@brief Copy all relations incoming to v1 to relations incoming to of v2. Targets and types are kept.
- * 
- * Used to recopy relations 
- *  - pointing to the first member of a coordination (target of COORD1) to the second member 
+ *
+ * Used to recopy relations
+ *  - pointing to the first member of a coordination (target of COORD1) to the second member
  *    (target of COORD2) or
- *  - pointing to the second member of a coordination (target of COORD2) to the first member 
+ *  - pointing to the second member of a coordination (target of COORD2) to the first member
  *    (target of COORD1)
  */
 class LIMA_SYNTACTICANALYSIS_EXPORT CopyIncomingRelationsTo : public Automaton::ConstraintFunction
@@ -352,8 +345,9 @@ public:
                   AnalysisContent& analysis) const override;
 
 private:
-  LinguisticCode m_macro;
-  LinguisticCode m_micro;
+  LinguisticCode m_macro; //< Macro category of the auxiliary
+  LinguisticCode m_micro; //< Micro category of the auxiliary
+  LinguisticCode m_tense; //< Tense of the auxiliary
   Common::MediaticData::SyntacticRelationId m_tempCompType;
   const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
