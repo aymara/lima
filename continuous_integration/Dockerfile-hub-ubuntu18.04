@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales bash coreutils apt-utils lsb-release git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm  libxext6 libxrender libxtst6 -qq
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales bash coreutils apt-utils lsb-release git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm  libxext6 libxrender1 libxtst6 -qq
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
