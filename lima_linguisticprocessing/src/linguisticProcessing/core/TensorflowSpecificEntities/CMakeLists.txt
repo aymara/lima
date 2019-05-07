@@ -88,20 +88,20 @@ install(FILES
   COMPONENT eng
   DESTINATION "share/apps/lima/resources/TensorFlowSpecificEntities/eng/IOB2/")
 
-set(FR_OUTPUTGRAPH_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbab
-  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbac
-  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbad
-  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbae
-  ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaf
-)
+
+  set(FR_OUTPUTGRAPH_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbab
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbac
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbad
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbae
+    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaf
+  )
 
 if(WIN32)
-
   execute_process(
-	  COMMAND
-	  ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb
-	  )
+      COMMAND
+      ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb
+  )
 
   string(REPLACE "/" "\\" TARGET_FN ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
 
@@ -109,52 +109,51 @@ if(WIN32)
     message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
     string(REPLACE "/" "\\" FN ${FR_OUTPUTGRAPH_FILE})
     execute_process(
-	    COMMAND
-	    cmd "/C" "copy /b ${TARGET_FN}+${FN} ${TARGET_FN}"
-	    )
-  endforeach()
+      COMMAND
+      cmd "/C" "copy /b ${TARGET_FN}+${FN} ${TARGET_FN}"
+    )
+    endforeach()
 
   execute_process(
-	  COMMAND
-	  cmd
-	  "copy /b ${FR_OUTPUTGRAPH_FILES_CONCAT} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-	  )
+    COMMAND
+    cmd
+    "copy /b ${FR_OUTPUTGRAPH_FILES_CONCAT} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+  )
 
 else() # expect sh-like environment
-
-  function(cat IN_FILE OUT_FILE)
-    message("cat ${IN_FILE} ${OUT_FILE}")
-    file(READ ${IN_FILE} CONTENTS)
-    file(WRITE ${OUT_FILE} "${CONTENTS}")
-  endfunction()
-  function(append IN_FILE OUT_FILE)
-    message("append ${IN_FILE} ${OUT_FILE}")
-    file(READ ${IN_FILE} CONTENTS)
-    file(APPEND ${OUT_FILE} "${CONTENTS}")
-  endfunction()
-
-  cat(
-    ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa
-    ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
-
-  foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
-    append(${FR_OUTPUTGRAPH_FILE} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
-  endforeach()
-
-#   execute_process(
-#         COMMAND
-#         bash
-#         "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-#         )
+#   function(cat IN_FILE OUT_FILE)
+#     message("cat ${IN_FILE} ${OUT_FILE}")
+#     file(READ ${IN_FILE} CONTENTS HEX)
+#     file(WRITE ${OUT_FILE} "${CONTENTS}")
+#   endfunction()
+#   function(append IN_FILE OUT_FILE)
+#     message("append ${IN_FILE} ${OUT_FILE}")
+#     file(READ ${IN_FILE} CONTENTS HEX)
+#     file(APPEND ${OUT_FILE} "${CONTENTS}")
+#   endfunction()
+#
+#   cat(
+#     ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa
+#     ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
 #
 #   foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
-#     message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
-#     execute_process(
-# 	    COMMAND
-# 	    bash
-# 	    "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-# 	    )
+#     append(${FR_OUTPUTGRAPH_FILE} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
 #   endforeach()
+
+  execute_process(
+        COMMAND
+        /bin/bash
+        "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+        )
+
+  foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
+    message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
+    execute_process(
+        COMMAND
+        /bin/bash
+        "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+    )
+  endforeach()
 
 endif()
 
