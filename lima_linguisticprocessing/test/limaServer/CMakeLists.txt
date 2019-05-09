@@ -26,9 +26,9 @@ SET(limaserver_SRCS
   analysisthread.cpp
 )
 
-# qt5_add_resources(limaserver amoseserver.qrc)
+# qt5_add_resources(limaserver limaserver.qrc)
 
-# add_executable(limaserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
+# add_executable(limaserver ${limaserver_SRCS} ${limaserver_QRCS} ${limaserver_MOC_OUTFILES})
 add_executable(limaserver ${limaserver_SRCS})
 
 target_link_libraries(limaserver
@@ -85,9 +85,9 @@ else ()
 
   qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
                        LimaDBusServer.h LimaDBusServer)
-  # qt5_add_resources(limadbusserver amoseserver.qrc)
+  # qt5_add_resources(limadbusserver limaserver.qrc)
 
-  # add_executable(limadbusserver ${amoseserver_SRCS} ${amoseserver_QRCS} ${amoseserver_MOC_OUTFILES})
+  # add_executable(limadbusserver ${limaserver_SRCS} ${limaserver_QRCS} ${limaserver_MOC_OUTFILES})
   add_executable(limadbusserver ${limadbusserver_SRCS})
 
   target_link_libraries(limadbusserver

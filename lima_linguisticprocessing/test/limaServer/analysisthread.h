@@ -50,8 +50,8 @@ class AnalysisThread : public QObject
 {
   Q_OBJECT
 public:
-    AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer, 
-                  QHttpRequest *req, QHttpResponse *resp, 
+    AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer,
+                  QHttpRequest *req, QHttpResponse *resp,
                   const std::set<std::string>& langs, QObject* parent = 0 );
     virtual ~AnalysisThread();
 
@@ -60,19 +60,17 @@ public:
     const QByteArray& response_body() const;
     int response_code() const;
     const std::map<QString,QString>& response_header() const;
-    
+
 Q_SIGNALS:
   void anlysisFinished();
   void ready();
-  
+
 public Q_SLOTS:
     void startAnalysis();
     // void slotStarted();
 
 private:
   AnalysisThreadPrivate* m_d;
-  std::string ConllToJson( const std::string & str );
-
 };
 
 #endif // ANALYSISTHREAD_H
