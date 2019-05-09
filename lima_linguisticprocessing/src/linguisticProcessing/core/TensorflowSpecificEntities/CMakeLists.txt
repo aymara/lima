@@ -143,7 +143,7 @@ else() # expect sh-like environment
   execute_process(
         COMMAND
         /bin/bash
-        "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+        "-c" "/bin/cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
         )
 
   foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
@@ -151,7 +151,7 @@ else() # expect sh-like environment
     execute_process(
         COMMAND
         /bin/bash
-        "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
+        "-c" "/bin/cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
     )
   endforeach()
 
