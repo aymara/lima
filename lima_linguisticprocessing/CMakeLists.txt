@@ -252,41 +252,6 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
-find_package(TensorFlow)
-find_package(Eigen)
-find_package(Protobuf)
-
-if (TensorFlow_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-else ()
-  message(STATUS "TensorFlow not found.")
-endif ()
-
-if (Eigen_FOUND)
-  message(STATUS "Found Eigen. ${Eigen_INCLUDE_DIRS} ${Eigen_LIBRARIES} ")
-else ()
-  message(STATUS "Eigen not found.")
-endif ()
-
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-
-  include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
-  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${TensorFlow_LIBRARIES}
-      ${Eigen_LIBRARIES}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${Eigen_LIBRARIES}
-      ${TensorFlow_LIBRARIES})
-  endif ()
-
-else()
-  message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
-endif()
-
 set(LIMA_LP_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
 set(LIMA_LP_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
