@@ -280,12 +280,34 @@ void AnalysisThread::startAnalysis()
     // std::ostringstream ots;
 
     std::set<std::string> inactiveUnits;
-    m_d->m_analyzer->analyze(textQS,
-                             metaData,
-                             pipeline.toUtf8().constData(),
-                             handlers,
-                             inactiveUnits);
-
+    try
+    {
+      m_d->m_analyzer->analyze(textQS,
+                              metaData,
+                              pipeline.toUtf8().constData(),
+                              handlers,
+                              inactiveUnits);
+    }
+    catch (const LinguisticProcessing::LinguisticProcessingException& e)
+    {
+      LIMASERVERLOGINIT;
+      LERROR << "AnalysisThread::startAnalysis catch LinguisticProcessingException:"
+              << e.what();
+      if (QString::fromUtf8(e.what()).startsWith("can't get pipeline"))
+      {
+        m_d->m_response_code = 400;
+        m_d->m_response_body=QByteArray(e.what());
+        exitStatus=1;
+      }
+      else
+      {
+        m_d->m_response_code = 400;
+        m_d->m_response_body=QByteArray("Server error");
+        exitStatus=1;
+      }
+      exit(exitStatus); // exit the eventLoop
+      return;
+    }
     QString resultString;
     if( m_d->m_mediaType.compare("text/xml") == 0)
     {
