@@ -24,14 +24,6 @@ endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-FIND_LIBRARY(SVMTOOL_LIBRARIES NAMES svmtool PATHS $ENV{MM_EXTERNALS}/lib)
-
-# SET(optionalLibs)
-#
-# IF(SVMTOOL++_FOUND)
-#   SET(optionalLibs ${optionalLibs} svmtool)
-# ENDIF(SVMTOOL++_FOUND)
-#
 ########### next target ###############
 
 SET(analyzeText_SRCS
@@ -114,5 +106,127 @@ target_link_libraries(analyzetextservercore
 install(TARGETS analyzetextservercore
   DESTINATION bin
   COMPONENT runtime)
+
+########### next target ###############
+# IF(MMIMAGE_FOUND)
+# ########### next target ###############
+
+SET(analyzeXml_SRCS
+   analyzeMultimediaXmlDocuments.cpp
+)
+
+add_executable(analyzeXml ${analyzeXml_SRCS})
+
+target_link_libraries(analyzeXml
+  lima-common-time
+  lima-common-factory
+  lima-common-tools
+  lima-xp-documentsreader
+  lima-common-fsaaccess
+  lima-lp-analysisdumpers
+  lima-lp-analysishandlers
+  lima-lp-applyrecognizer
+  lima-lp-automaton
+  lima-lp-bagofwords
+  lima-lp-annotationgraph
+  lima-common-data
+  lima-common-misc
+  lima-common-datahandler
+  lima-lp-easyxmldumper
+  lima-lp-linguisticdata
+  lima-lp-linguisticprocessors
+  lima-lp-linguisticresources
+  lima-lp-client
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysisdict
+  lima-lp-corefsolver
+  lima-lp-linguisticanalysisstructure
+  lima-lp-semanticanalysis
+  lima-lp-misc
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
+  lima-lp-morphologicanalysis
+  lima-lp-postagger
+  lima-common-processunitframework
+  lima-lp-propertycode
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-flattokenizer
+  lima-common-xmlconfigurationfiles
+  lima-xp-multimediadocumenthandler
+  lima-lp-textsegmentation
+  lima-xp-client
+  lima-xp-core
+  lima-common-datahandler
+  lima-common-fsaaccess
+  lima-lp-annotationgraph
+  lima-common-data
+  lima-common-misc
+  lima-common-tools
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
+  lima-common-processunitframework lima-lp-propertycode
+  lima-common-xmlconfigurationfiles lima-lp-regexmatcher
+  ${QT_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+
+
+install(TARGETS analyzeXml DESTINATION bin)
+
+
+########### next target ###############
+SET(readMultFile_SRCS
+   readMultFile.cpp
+)
+
+add_executable(readMultFile ${readMultFile_SRCS})
+
+target_link_libraries(readMultFile
+  lima-common-tools
+  lima-common-time
+  lima-common-factory
+  lima-common-tools
+  lima-xp-multimediadocumenthandler
+  lima-lp-linguisticprocessing-core
+  lima-lp-analysishandlers
+  lima-lp-bagofwords
+  lima-lp-propertycode
+  lima-lp-linguisticdata
+  lima-lp-misc
+  lima-lp-easyxmldumper
+  lima-lp-analysisdumpers
+  lima-lp-applyrecognizer
+  lima-lp-automaton
+  lima-lp-linguisticprocessors
+  lima-lp-linguisticresources
+  lima-lp-morphologicanalysis
+  lima-lp-postagger
+  lima-lp-eventanalyzer
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-common-datahandler
+  lima-common-fsaaccess
+  lima-common-data
+  lima-common-misc
+  lima-common-tools
+  lima-common-datahandler
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
+  lima-common-processunitframework
+  lima-common-xmlconfigurationfiles
+  lima-lp-client
+  lima-lp-linguisticanalysisstructure
+  lima-lp-analysisdict
+  lima-lp-corefsolver
+  lima-lp-annotationgraph
+  lima-lp-flattokenizer
+  ${QT_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+
+install(TARGETS readMultFile DESTINATION bin)
+
+add_subdirectory(convertMultXmlToMultBin)
 
 ########### install files ###############

@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Thu Sep  1 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
+ * Project     LIMA
  * 
  * @brief      element of an event template, defined by an entity occurrence
  * 

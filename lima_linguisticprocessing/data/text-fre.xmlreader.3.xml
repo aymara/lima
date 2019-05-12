@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Section type="Questions">
+  <Titre>Questions des praticiens</Titre>
+  <LigneQuestion id="Q1" idref="R1">Pourquoi le nourrisson se déshydrate-t-il aussi vite ?</LigneQuestion>
+  <LigneQuestion id="Q2" idref="R2">Quels diagnostics éliminer avant de parler de gastroentérite aiguë ?</LigneQuestion>
+  <LigneQuestion id="Q3" idref="R3">Comment reconnaître un choc, une déshydratation et évaluer sa gravité ?</LigneQuestion>
+  <LigneQuestion id="Q4" idref="R4">Comment identifier, notamment au téléphone, les facteurs de risque de déshydratation importante et les facteurs de risque de mortalité ?</LigneQuestion>
+  <LigneQuestion id="Q5" idref="R5">Comment traiter un choc par diarrhée aiguë ?</LigneQuestion>
+  <LigneQuestion id="Q6" idref="R6">Quand et pourquoi hospitaliser ?</LigneQuestion>
+  <LigneQuestion id="Q7" idref="R7">Existe-t-il des examens complémentaires utiles « à domicile » au cours d'une diarrhée aiguë ?</LigneQuestion>
+  <LigneQuestion id="Q8" idref="R8">Comment prescrire et expliquer la réhydratation par voie orale aux parents ?</LigneQuestion>
+  <LigneQuestion id="Q9" idref="R9">Comment alimenter le nourrisson au cours d'une diarrhée aiguë ?</LigneQuestion>
+  <LigneQuestion id="Q10" idref="R10">Quel(s) médicament(s) prescrire ?</LigneQuestion>
+  <LigneQuestion id="Q11" idref="R11">Comment expliquer aux parents la surveillance à mettre en place (en fonction de l'âge) ?</LigneQuestion>
+ </Section>

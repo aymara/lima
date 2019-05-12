@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Jan 21 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
+ * Project     LIMA
  * 
  * @brief      a logger for segmentation data
  * 

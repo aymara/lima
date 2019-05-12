@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Thu Sep 01 2011
  * copyright   Copyright (C) 2011 by CEA - LIST 
- * Project     MM
+ * Project     LIMA
  * 
  * @brief 
  * 

@@ -17,6 +17,6 @@
 #!/bin/bash
 install -d pack
 pushd pack
-cmake -DCMAKE_INSTALL_PREFIX=$AMOSE_DIST -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_INSTALL_PREFIX=$LIMA_DIST -DCMAKE_BUILD_TYPE=Release ..
 make -j2 && make package
 popd

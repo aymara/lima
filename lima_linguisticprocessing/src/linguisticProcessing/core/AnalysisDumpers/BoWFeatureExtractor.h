@@ -18,16 +18,10 @@
 */
 
 /************************************************************************
- *
- * @file       BoWFeatures.h
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Tue Feb  12 2013
- * copyright   Copyright (C) 2013 by CEA LIST
- * Project     MM
- * 
  * @brief      accessors for various features of a word, stored in a BoW format
  *             (same features as the WordFeatureExtractors)
- * 
  ***********************************************************************/
 
 #ifndef BOWFEATUREEXTRACTOR_H
@@ -43,7 +37,7 @@ namespace LinguisticProcessing {
 
 //----------------------------------------------------------------------
 // Abstract feature extractor class
-// 
+//
 // BoW feature extractors are needed for generic dumper because compounds are stored in
 // BoWTerm and we need compatible feature extractors on LinguisticVertex and on BoWTerm
 // to have a similar output for both
@@ -64,19 +58,19 @@ protected:
 
 //----------------------------------------------------------------------
 // Asbtract factory for abstract feature extractor
-class LIMA_ANALYSISDUMPERS_EXPORT AbstractBoWFeatureExtractorFactory : 
+class LIMA_ANALYSISDUMPERS_EXPORT AbstractBoWFeatureExtractorFactory :
   public RegistrableFactory<AbstractBoWFeatureExtractorFactory>
 {
 public:
-  AbstractBoWFeatureExtractorFactory(const std::string& factoryId); 
+  AbstractBoWFeatureExtractorFactory(const std::string& factoryId);
   virtual AbstractBoWFeatureExtractor* create(MediaId language, const std::string& complement="")=0;
 private:
 };
 
 //----------------------------------------------------------------------
 // template for factories for actual instances of feature extractors
-template<typename BoWFeatureExtractor> 
-class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureExtractorFactory : 
+template<typename BoWFeatureExtractor>
+class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureExtractorFactory :
   public AbstractBoWFeatureExtractorFactory
 {
 public:
@@ -97,7 +91,7 @@ public:
   BoWFeatures();
   BoWFeatures(MediaId language);
   ~BoWFeatures();
-  
+
   void setLanguage(MediaId language) { m_language=language; }
   void initialize(const std::deque<std::string>& featureNames);
 private:
@@ -153,7 +147,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT BoWFeatureProperty : public AbstractBoWFeature
 public:
   BoWFeatureProperty(MediaId language, const std::string& complement="");
   ~BoWFeatureProperty() {}
-  
+
   std::string getValue(const Common::BagOfWords::AbstractBoWElement* token) const override;
 
 private:

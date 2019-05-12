@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+byte_start:1,  byte_end: 1+38-1=38
+<Section type="Questions">
+byte_start:40, byte_end: 26+40-1=65  offset_start:0, offset_end: 26
+  <Titre>Questions des praticiens</Titre>
+byte_start:67, byte_end:41+67-1=107, offset_start: 28, offset_end: 28+41-1=68, offset(Question)=28+10-1=37
+  <LigneQuestion id="Q1" idref="R1">Pourquoi le nourrisson se déshydrate-t-il aussi vite ?</LigneQuestion>
+byte_start:109, byte_end:107+109-1=215, offset_start: 70, offset_end: 70+107-1-1=175, offset(nourrisson)=70+49-1=118
+  <LigneQuestion id="Q2" idref="R2">Quels diagnostics éliminer avant de parler de gastroentérite aiguë ?</LigneQuestion>
+byte_start:217, byte_end 217+123-1=339 , offset_start: 177 offset_end: 177+123-3-1=296
+  <LigneQuestion id="Q5" idref="R5">Comment traiter un choc par diarrhée aiguë ?</LigneQuestion>
+byte_start: 341,  byte_end: 98+341-1=438,  offset_start: 298, offset_end: 298+98-2-1=393, offset(diarrhée)=298+65-1=362
+ </Section>
+byte_start: 440, byte_end: 440+11-1=450

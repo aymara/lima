@@ -233,7 +233,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
       const AnnotationData* annotationData,
       std::set< LinguisticGraphVertex >& visited) const
 {
-  
+
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "BowGenerator::buildTermFor annot:" << vx << "; pointing on annot:"<<tgt;
@@ -489,7 +489,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoW
         t = *stack.rbegin();
         t++;
       }
-      if (!stack.empty()) 
+      if (!stack.empty())
       {
         stack.pop_back();
         stack.push_back(t);
@@ -525,7 +525,7 @@ boost::shared_ptr< BoWRelation > BowGenerator::createBoWRelationFor(
   LDEBUG << "BowGenerator::createBoWRelationFor" << vx << tgt;
 #endif
   boost::shared_ptr<BoWRelation> relation;
-  if (vx != tgt 
+  if (vx != tgt
       && annotationData->hasAnnotation(vx, tgt,
           Common::Misc::utf8stdstring2limastring("CompoundTokenAnnotation")) )
   {
@@ -589,7 +589,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   LDEBUG << "BowGenerator::createAbstractBoWElement for " << v;
 #endif
   std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > abstractBowEl;
-  // Create bow tokens for specific entities created on the before PoS tagging 
+  // Create bow tokens for specific entities created on the before PoS tagging
   // analysis graph
   //std::set< uint64_t > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph"); portage 32 64
   std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
@@ -598,7 +598,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 #endif
 
   bool createdSpecificEntity(false);
-  
+
   // note: anaVertices size should be 0 or 1
   for (auto anaVertex = anaVertices.begin(); anaVertex != anaVertices.end(); ++anaVertex)
   {
@@ -717,7 +717,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
     }
   }
 
-  // bow tokens have been created for specific entities on the before PoS 
+  // bow tokens have been created for specific entities on the before PoS
   // tagging graph. return them
   if (!abstractBowEl.empty())
   {
@@ -731,14 +731,14 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
 
   std::set<std::pair<StringsPoolIndex,LinguisticCode> > alreadyCreated;
   std::pair<StringsPoolIndex,LinguisticCode> predNormCode = std::make_pair(StringsPoolIndex(0),LinguisticCode(0));
-  
+
   if (createdSpecificEntity) {
     // a specific entity has been created on the analysis graph: do not output a token
-    // (RB: do that here so that the vertex on the posgraph can also be analyzed: should test is this is 
+    // (RB: do that here so that the vertex on the posgraph can also be analyzed: should test is this is
     // needed or if we only need to place the return just after the creation of the named entity)
     return abstractBowEl;
   }
-  
+
   if (data!=0)
   {
     for (auto it=data->begin(); it!=data->end(); it++)
@@ -746,7 +746,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
       std::pair<StringsPoolIndex,LinguisticCode> normCode=std::make_pair(it->normalizedForm,m_microAccessor->readValue(it->properties));
       if (normCode != predNormCode)
       {
-        if (alreadyCreated.find(normCode)==alreadyCreated.end()) 
+        if (alreadyCreated.find(normCode)==alreadyCreated.end())
         {
           if (keepAnyway || shouldBeKept(*it))
           {
@@ -815,19 +815,19 @@ bool BowGenerator::shouldBeKept(const LinguisticAnalysisStructure::LinguisticEle
    if (m_useStopList && m_stopList!=0 && (m_stopList->find(sp[elem.normalizedForm]) != m_stopList->end()))
    {
 #ifdef DEBUG_LP
-     LDEBUG << "BowGenerator::shouldBeKept token (" 
-       << sp[elem.lemma] << "|" 
-       << elem.properties << ") not kept : normalization " 
-       << sp[elem.normalizedForm] 
+     LDEBUG << "BowGenerator::shouldBeKept token ("
+       << sp[elem.lemma] << "|"
+       << elem.properties << ") not kept : normalization "
+       << sp[elem.normalizedForm]
        << " is in stoplist";
 #endif
      return false;
    }
 
 #ifdef DEBUG_LP
-   LDEBUG << "BowGenerator::shouldBeKept token (" 
-     << sp[elem.lemma] << "|" 
-     << elem.properties << "), normalization " 
+   LDEBUG << "BowGenerator::shouldBeKept token ("
+     << sp[elem.lemma] << "|"
+     << elem.properties << "), normalization "
      << sp[elem.normalizedForm] << " kept";
 #endif
 
@@ -1065,7 +1065,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
 #ifdef DEBUG_LP
   LDEBUG << "BowGenerator: specific entity type name is " << typeName;
 #endif
-  // get the macro-category to use for this named entity 
+  // get the macro-category to use for this named entity
   MorphoSyntacticData* data = get(vertex_data, posgraph, vertex);
   if (data->empty())
   {
@@ -1084,7 +1084,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
                                           offset+se->getPosition(),
                                           se->getLength()) );
   // add named entity parts
-  std::vector<BowGenerator::NamedEntityPart> neParts = createNEParts(v, annotationData, anagraph, posgraph,frompos);
+  auto neParts = createNEParts(v, annotationData, anagraph, posgraph, frompos);
   if (neParts.empty())
   {
     DUMPERLOGINIT;
@@ -1168,11 +1168,11 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
     LDEBUG << "BowGenerator::createPredicate Predicate has" << predicateIds.size() << "values:" << predicateIds;
   }
 #endif
-  
-  
+
+
   // FIXED replace the hardcoded VerbNet by a value from configuration
   // LimaString predicate=predicateIds.first();
-  // The fix should work only with FrameNet annotations. VerbNet does not assure to have the same 
+  // The fix should work only with FrameNet annotations. VerbNet does not assure to have the same
   // number of roles in each list as the number of predicates
   for (int i = 0 ; i < predicateIds.size(); i++)
   {
@@ -1438,7 +1438,7 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
-  const SpecificEntities::SpecificEntityAnnotation* namedEntity =
+  const auto namedEntity =
     annotationData->annotation(v,Common::Misc::utf8stdstring2limastring("SpecificEntity"))
       .pointerValue< SpecificEntityAnnotation >();
   std::vector<BowGenerator::NamedEntityPart> parts;
@@ -1520,18 +1520,17 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
   else if (useDefaultParts)
   {
     // get the parts of the named entity match
-    for (std::vector< LinguisticGraphVertex>::const_iterator m(namedEntity->m_vertices.begin());
-         m != namedEntity->m_vertices.end(); m++)
+    for (auto m = namedEntity->m_vertices.cbegin();
+         m != namedEntity->m_vertices.cend(); m++)
     {
-      const Token* token = get(vertex_token, graph, *m);
-      const MorphoSyntacticData* data = get(vertex_data, graph, *m);
+      const auto token = get(vertex_token, graph, *m);
+      const auto data = get(vertex_data, graph, *m);
 
-      if (data!=0 && !data->empty())
+      if (data != nullptr && !data->empty())
       {
-        const LinguisticElement& elem=*(data->begin());
+        const auto& elem = *(data->begin());
 
-        if (! m_keepAllNamedEntityParts &&
-              ! shouldBeKept(elem))
+        if (! m_keepAllNamedEntityParts && ! shouldBeKept(elem))
         {
 #ifdef DEBUG_LP
           LDEBUG << "BowGenerator: part of named entity not kept: " << token->stringForm();
@@ -1542,11 +1541,11 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
         uint64_t category(0);
         if (useCategory != (uint64_t)-1)
         {
-          category=useCategory;
+          category = useCategory;
         }
         else
         {
-          category=m_macroAccessor->readValue(elem.properties);
+          category = m_macroAccessor->readValue(elem.properties);
         }
         parts.push_back(NamedEntityPart(token->stringForm(),
                         sp[elem.normalizedForm],
@@ -1652,12 +1651,12 @@ boost::shared_ptr< BoWToken > BowGenerator::createCompoundTense(
     return boost::shared_ptr< BoWToken >();
   }
   // Build a BoWTerm with the preposition group as head and the aux as extension
-  
+
   boost::shared_ptr< BoWToken > complex(
-    new BoWToken( 
-                  head->getLemma(), 
-                  head->getCategory(), 
-                  extension->getPosition(), 
+    new BoWToken(
+                  head->getLemma(),
+                  head->getCategory(),
+                  extension->getPosition(),
                   (head->getPosition()+head->getLength()-extension->getPosition())));
   complex->setVertex(head->getVertex());
   complex->setInflectedForm(head->getInflectedForm());

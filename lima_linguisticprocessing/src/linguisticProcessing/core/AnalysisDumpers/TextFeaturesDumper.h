@@ -17,15 +17,9 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       TextFeaturesDumper.h
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Feb  7 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
- * 
  * @brief      a dumper that outputs tab-separated word features, one word per line
- * 
  ***********************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTFEATURESDUMPER_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDUMPERSTEXTFEATURESDUMPER_H
@@ -57,7 +51,7 @@ public:
             Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-    
+
 private:
   std::string m_graph; /*< name of the graph */
   std::string m_sep; /*< separator between features */
@@ -66,7 +60,7 @@ private:
   WordFeatures m_features; /* list of features */
 
   // private member functions
-  void outputVertex(std::ostream& out, 
+  void outputVertex(std::ostream& out,
                     const LinguisticAnalysisStructure::AnalysisGraph* graph,
                     LinguisticGraphVertex v,
                     AnalysisContent& analysis,

@@ -17,6 +17,7 @@
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_subdirectory(AnalysisHandlers)
+add_subdirectory(xmlreader)
 
 add_definitions(-DLIMA_LINGUISTICPROCESSIONGCLIENT_EXPORTING)
 

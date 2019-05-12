@@ -45,15 +45,19 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
+class TextPrivate;
 class LIMA_FLATTOKENIZER_EXPORT Text
 {
+friend class TextPrivate;
 
 public:
   Text(MediaId lang, const CharChart* charChart);
   virtual ~Text();
+  Text(const Text&) = delete;
+  Text& operator=(const Text&) = delete;
 
   void setText(const Lima::LimaString& text);
-  
+
   // Clear the entirely class and structure to accept new text
   void clear();
 
@@ -65,7 +69,7 @@ public:
   const CharClass* currentClass() const;
 
   // gives the current character
-  inline Lima::LimaChar currentChar() const;
+  Lima::LimaChar currentChar() const;
 
   //
   // returns the character class with signed offset i
@@ -94,36 +98,16 @@ public:
   void setStatus(const LinguisticAnalysisStructure::StatusType status);
   void setDefaultKey(const Lima::LimaString& defaultKey);
 
-  inline int position() const {return _curPtr;}
-  inline int size() const {return m_text.size();}
+  int position() const;
+  int size() const;
 
-  inline void setStatus(const LinguisticAnalysisStructure::TStatus& status) {_curSettings = status;}
+  void setStatus(const LinguisticAnalysisStructure::TStatus& status);
 
  void computeDefaultStatus();
 
 private:
-  Lima::LimaString m_text;
-  int _curPtr;
-  int _debPtr;
-  LinguisticAnalysisStructure::TStatus _curSettings;
-  LinguisticGraph* _tTokenGraph;
-  LinguisticGraphVertex _currentVx;
-  LinguisticGraphVertex _lastVx;
-  bool _isDone;
-  bool _thereIsUnknown;
-
-  FsaStringsPool* _stringsPool;
-  const CharChart* m_charChart;
+  TextPrivate* m_d;
 };
-
-inline Lima::LimaChar Text::currentChar() const
-{
-  if (_curPtr >= m_text.size())
-  {
-    return 0;
-  }
-  return m_text[_curPtr];
-}
 
 } //namespace FlatTokenizer
 } // namespace LinguisticProcessing

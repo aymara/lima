@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ install(TARGETS lima-common-datahandler DESTINATION ${LIB_INSTALL_DIR}
 install(FILES
     AbstractAnalysisHandler.h
     AbstractXmlAnalysisHandler.h
+    AbstractXmlDocumentHandler.h
     AbstractDocumentHandler.h
     AbstractProcessingClientHandler.h
     structureHandler.h

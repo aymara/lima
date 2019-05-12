@@ -188,7 +188,7 @@
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
        <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="PONCTU_FORTE" />  
+        <item value="PONCTU_FORTE" />
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">

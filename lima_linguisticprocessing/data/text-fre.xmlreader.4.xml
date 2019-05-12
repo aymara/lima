@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Section type="Questions">
+  <Titre>Questions des praticiens</Titre>
+  <LigneQuestion id="Q1" idref="R1">Pourquoi le nourrisson se déshydrate-t-il aussi vite ?</LigneQuestion>
+  <LigneQuestion id="Q2" idref="R2">Quels diagnostics éliminer avant de parler de gastroentérite aiguë ?</LigneQuestion>
+  <LigneQuestion id="Q5" idref="R5">Comment traiter un choc par diarrhée aiguë ?</LigneQuestion>
+ </Section>

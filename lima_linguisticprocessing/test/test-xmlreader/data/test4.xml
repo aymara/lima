@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DOC>
+<DOCNO>doc001</DOCNO>
+<TITLE>le titre avec des caractères accentués</TITLE>
+<PAS_LU>du texte pas lu (éàèï) &lt; après l'entité</PAS_LU>
+<TEXT>
+du texte à analyser.
+</TEXT>
+<TEXT>
+autre chose &lt; après l'entité
+</TEXT>
+</DOC>

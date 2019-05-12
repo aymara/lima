@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COLLECTION>
+  <DOC>
+    <SECTION>
+      <PARA>Commence par un paragraphe sans entités.</PARA>
+      <PARA>l'&#233;norme chat &gt; mon chien.&amp;</PARA>
+      <PARA>&#248; h&#233;site à agir &lt; rien.</PARA>
+      <PARA>Troisi&#232;me section avec &amp; esperlu&#232;te en code.</PARA>
+    </SECTION>
+  </DOC>
+</COLLECTION>

@@ -121,24 +121,6 @@ if(WIN32)
   )
 
 else() # expect sh-like environment
-#   function(cat IN_FILE OUT_FILE)
-#     message("cat ${IN_FILE} ${OUT_FILE}")
-#     file(READ ${IN_FILE} CONTENTS HEX)
-#     file(WRITE ${OUT_FILE} "${CONTENTS}")
-#   endfunction()
-#   function(append IN_FILE OUT_FILE)
-#     message("append ${IN_FILE} ${OUT_FILE}")
-#     file(READ ${IN_FILE} CONTENTS HEX)
-#     file(APPEND ${OUT_FILE} "${CONTENTS}")
-#   endfunction()
-#
-#   cat(
-#     ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa
-#     ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
-#
-#   foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
-#     append(${FR_OUTPUTGRAPH_FILE} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb)
-#   endforeach()
 
   execute_process(
         COMMAND
