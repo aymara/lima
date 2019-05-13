@@ -1,7 +1,7 @@
 #ifndef MULTIMEDIASTRUCTUREREADERCLASSES_H
 #define MULTIMEDIASTRUCTUREREADERCLASSES_H
 
-#include "multimediadocumenthandler_export.h"
+#include "AnalysisHandlersExport.h"
 
 #include "common/Handler/structureHandler.h"
 #include "common/Handler/contentHandler.h"
@@ -13,18 +13,18 @@
 
 namespace Lima {
 namespace Handler {
- 
 
-class MULTIMEDIADOCUMENTHANDLER_EXPORT MultimediaXMLStructureReader:
+
+class LIMA_ANALYSISHANDLERS_EXPORT MultimediaXMLStructureReader:
             public Lima::StructureHandler,
             public Lima::ContentHandler<Lima::Common::Misc::GenericDocumentProperties>,
             public Lima::ContentHandler< std::vector<float> >,
             public Lima::ContentHandler< Lima::Common::BagOfWords::BoWText >
 {
 public:
-  
+
   MultimediaXMLStructureReader();
- 
+
   virtual ~MultimediaXMLStructureReader();
 
   void processBoWText(const Lima::Common::BagOfWords::BoWText* text,int cId);
@@ -60,17 +60,17 @@ private:
 
 };
 
-class MULTIMEDIADOCUMENTHANDLER_EXPORT MultimediaBinaryStructureReader: public Lima::Common::BagOfWords::BoWBinaryReader
+class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryStructureReader: public Lima::Common::BagOfWords::BoWBinaryReader
 {
  public:
-  MultimediaBinaryStructureReader(); 
+  MultimediaBinaryStructureReader();
   virtual ~MultimediaBinaryStructureReader();
 
   void readMultimediaDocumentBlock(std::istream& file,
                      Lima::Common::BagOfWords::BoWDocument& document,
                      MultimediaXMLStructureReader* handler,
                      bool useIterator);
-  
+
   void readBinNum(std::istream& file,uint64_t& cid,std::string& path,std::string& name,std::vector<float>& vect);
 
   private:

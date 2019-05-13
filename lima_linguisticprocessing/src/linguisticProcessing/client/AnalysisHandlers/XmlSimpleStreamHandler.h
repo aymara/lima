@@ -5,15 +5,15 @@
 #ifndef FRCEALIC2M_XMLSIMPLESTREAMHANDLER_H
 #define FRCEALIC2M_XMLSIMPLESTREAMHANDLER_H
 
-#include "multimediadocumenthandler_export.h"
+#include "AnalysisHandlersExport.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "common/Handler/AbstractXmlDocumentHandler.h"
 #include <ostream>
 
 namespace Lima {
 //! @brief Manipulation de media ; separation du contenu et de la structure
-class MULTIMEDIADOCUMENTHANDLER_EXPORT XmlSimpleStreamHandler : 
-  public Lima::LinguisticProcessing::SimpleStreamHandler, 
+class LIMA_ANALYSISHANDLERS_EXPORT XmlSimpleStreamHandler :
+  public Lima::LinguisticProcessing::SimpleStreamHandler,
     public Lima::AbstractXmlDocumentHandler
 {
 public:

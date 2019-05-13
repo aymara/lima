@@ -8,7 +8,7 @@
 #ifndef MULTIMEDIADOCUMENTHANDLER_H
 #define MULTIMEDIADOCUMENTHANDLER_H
 
-#include "client/AnalysisHandlers/multimediadocumenthandler_export.h"
+#include "client/AnalysisHandlers/AnalysisHandlersExport.h"
 #include "common/Handler/AbstractXmlDocumentHandler.h"
 
 #include <sstream>
@@ -22,7 +22,7 @@ typedef enum {
 } MultimediaFileType;
 
 //! @brief Manipulation de media ; separation du contenu et de la structure
-class MULTIMEDIADOCUMENTHANDLER_EXPORT MultimediaDocumentHandler : public Lima::AbstractXmlDocumentHandler
+class LIMA_ANALYSISHANDLERS_EXPORT MultimediaDocumentHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
   MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >());

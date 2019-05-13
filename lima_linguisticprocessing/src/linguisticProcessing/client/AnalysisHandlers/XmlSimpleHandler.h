@@ -8,13 +8,13 @@
 #ifndef XMLSIMPLEHANDLER_H
 #define XMLSIMPLEHANDLER_H
 
-#include "multimediadocumenthandler_export.h"
+#include "AnalysisHandlersExport.h"
 #include <sstream>
 #include "common/Handler/AbstractXmlDocumentHandler.h"
 
 namespace Lima {
 //! @brief Manipulation de media ; separation du contenu et de la structure
-class MULTIMEDIADOCUMENTHANDLER_EXPORT XmlSimpleHandler : public Lima::AbstractXmlDocumentHandler
+class LIMA_ANALYSISHANDLERS_EXPORT XmlSimpleHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
     XmlSimpleHandler();
@@ -22,7 +22,7 @@ public:
     ~XmlSimpleHandler() {};
 
     void handle ( const char* buf,int length ) override;
-    
+
     void startAnalysis(const std::string& bloc_type) override;
 
     void startAnalysis() override;
@@ -45,7 +45,7 @@ public:
     void endNode ( const Lima::Common::Misc::GenericDocumentProperties& props ) override;
 
     void setOut(std::ostream* out) override;
-    
+
     std::ostream* m_out;
     std::ostringstream m_buffer;
     std::vector<bool> m_indexingNodeStack;

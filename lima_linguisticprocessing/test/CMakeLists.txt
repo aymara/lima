@@ -153,7 +153,7 @@ target_link_libraries(analyzeXml
   lima-lp-syntacticanalysis
   lima-lp-flattokenizer
   lima-common-xmlconfigurationfiles
-  lima-xp-multimediadocumenthandler
+#   lima-xp-multimediadocumenthandler
   lima-lp-textsegmentation
   lima-xp-client
   lima-xp-core
@@ -187,7 +187,7 @@ target_link_libraries(readMultFile
   lima-common-time
   lima-common-factory
   lima-common-tools
-  lima-xp-multimediadocumenthandler
+#   lima-xp-multimediadocumenthandler
   lima-lp-linguisticprocessing-core
   lima-lp-analysishandlers
   lima-lp-bagofwords

@@ -44,9 +44,9 @@ target_link_libraries(tvx
   lima-lp-syntacticanalysis
   lima-lp-textsegmentation
   lima-lp-tgv
-  lima-xp-multimediadocumenthandler 
+#   lima-xp-multimediadocumenthandler
   lima-xp-client
-  lima-xp-core 
+  lima-xp-core
 
   ${Boost_LIBRARIES}
   ${QT_LIBRARIES}
