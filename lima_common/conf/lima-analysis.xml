@@ -48,6 +48,11 @@
         <entry key="fre" value="easy"/>
         <entry key="por" value="easy"/>
       </map>
+      <map name="xml">
+        <entry key="eng" value="xml"/>
+        <entry key="fre" value="xml"/>
+        <entry key="por" value="xml"/>
+      </map>
       <!-- The none pipeline is an empty one allowing to not do anything. For tests mainly. -->
       <map name="none">
         <entry key="eng" value="none"/>
@@ -76,4 +81,373 @@
       </list>
     </group>
   </module>
-</modulesConfig> 
+
+  <!-- configuration du xmlreader client -->
+  <module name="lp-structuredXmlreaderclient">
+    <group name="documentXMLParser" class="StructuredDocumentXMLParser">
+      <param key="addAbsoluteOffsetToTokens" value="yes"/>
+      <map name="availableMediaAndFactories">
+        <entry key="eng" value="lpFactory"/>
+        <entry key="fre" value="lpFactory"/>
+        <entry key="por" value="lpFactory"/>
+      </map>
+      <map name="specialCharacterSize">
+        <entry key="&lt;" value="4"/>
+        <entry key="&gt;" value="4"/>
+        <entry key="&amp;" value="5"/>
+      </map>
+      <list name="discardableNodes">
+        <item value="USELESS" />
+        <item value="Sync" />
+      </list>
+      <!-- hierarchyNodes: the nodes that will be stored in the structure index.
+           All nodes (and their children) under a hierarchy node that is neither
+           a hierarchy node nor an indexing node will be ignored. Thus, a
+           continuous path of hierarchy nodes must be present under all indexing
+           nodes.-->
+      <list name="hierarchyNodes">
+        <item value="Chapitre" />
+        <item value="DOCSET" />
+        <item value="docset" />
+        <item value="Conference" />
+        <item value="Hierarchie" />
+        <item value="COLLECTION" />
+        <item value="topics" />
+        <item value="top" />
+        <item value="topic" />
+        <item value="document" />
+        <item value="Trans" />
+        <!--item value="Speakers" /-->
+        <item value="Episode" />
+        <item value="Section" />
+        <item value="Audiofile" />
+        <item value="DOC" />
+        <item value="doc" />
+      </list>
+      <!-- indexingNodes: the list of nodes whose content will be indexed in one
+           of the medias indexes -->
+      <list name="indexingNodes">
+        <item value="engText" />
+        <item value="freText" />
+        <item value="porText" />
+        <item value="LD" />
+        <item value="TI" />
+        <item value="TX" />
+        <item value="TITLE" />
+        <item value="TEXT" />
+        <item value="HEADLINE" />
+        <item value="title" />
+        <item value="desc" />
+        <item value="narr" />
+      </list>
+      <!-- indexingNodesCorrespondance: set which media to use for some of the
+           indexing nodes. If not set here, a default will be used: the first
+           media (or language) set on the command line. -->
+      <map name="indexingNodesCorrespondance">
+        <entry key="engText" value="eng"/>
+        <entry key="freText" value="fre"/>
+        <entry key="porText" value="por"/>
+      </map>
+      <!--do not changed description of DocumentPropertyType-list and DocumentPropertyType !!!-->
+      <!--They are predefined in the database schema. See firebird/create_table.sql-->
+      <!-- let alone titleProperty, all theses properties are mandatory -->
+      <!-- Some of theses properties are technical properties and not known from the user -->
+      <!-- During parsing of document, if these properties are  -->
+      <list name="standard-properties-list">
+        <item value="identPrpty"/>
+        <item value="titlePrpty"/>
+        <item value="srcePrpty"/>
+        <item value="offBegPrpty"/>
+        <item value="offEndPrpty"/>
+        <item value="indexDatePrpty"/>
+        <item value="typPrpty"/>
+        <item value="langPrpty"/>
+        <item value="encodPrpty"/>
+        <item value="namePrpty"/>
+      </list>
+      <!--WARNING! changes in description of DocumentPropertyType-list-->
+      <!--may lead to inconsistency in existing database-->
+      <list name="extended-properties-list">
+        <item value="datePrpty"/>
+        <item value="originPrpty"/>
+        <item value="authPrpty"/>
+        <item value="locationPrpty"/>
+        <item value="privacyPrpty"/>
+        <item value="countryPrpty"/>
+        <item value="senderPrpty"/>
+        <item value="docRefPrpty"/>
+        <item value="startTimePrpty"/>
+        <item value="endTimePrpty"/>
+        <item value="speakerPrpty"/>
+        <item value="chainePrpty"/>
+        <item value="dateDiffPrpty"/>
+        <item value="progPrpty"/>
+      </list>
+    </group>
+    <group name="identPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="mandatory"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="DOCID"/>
+        <item value="num"/>
+      </list>
+      <list name="attributeNames">
+        <item value="DOC id="/>
+        <item value="doc id="/>
+        <item value="document id="/>
+        <item value="Conference num="/>
+        <item value="Turn startTime="/>
+        <item value="SpeechSegment id="/>
+      </list>
+    </group>
+    <group name="titlePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="256"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="Titre"/>
+        <item value="title"/>
+        <item value="TI"/>
+        <item value="TITLE"/>
+        <item value="engTITLE"/>
+        <item value="freTITLE"/>
+        <item value="HEADLINE"/>
+      </list>
+      <list name="attributeNames">
+        <item value="Trans audio_filename="/>
+        <item value="Audiofile filename="/>
+      </list>
+    </group>
+    <group name="srcePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="256"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="source"/>
+        <item value="FILENAME"/>
+      </list>
+      <list name="attributeNames">
+        <item value="filename name="/>
+      </list>
+    </group>
+    <group name="offBegPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="integer"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="mandatory"/>
+      <param key="propagated" value="false"/>
+      <list name="attributeNames">
+      </list>
+    </group>
+    <group name="offEndPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="integer"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="mandatory"/>
+      <param key="propagated" value="true"/>
+      <list name="attributeNames">
+      </list>
+    </group>
+    <group name="startTimePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="mandatory"/>
+      <param key="propagated" value="false"/>
+      <list name="attributeNames">
+        <item value="Section startTime="/>
+        <item value="Turn startTime="/>
+        <item value="SpeechSegment stime="/>
+      </list>
+    </group>
+    <group name="endTimePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="mandatory"/>
+      <param key="propagated" value="false"/>
+      <list name="attributeNames">
+        <item value="Section endTime="/>
+        <item value="Turn endTime="/>
+        <item value="SpeechSegment etime="/>
+      </list>
+    </group>
+    <group name="indexDatePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="date"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="date"/>
+      </list>
+    </group>
+    <group name="typPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <list name="attributeNames">
+        <item value="type id="/>
+        <item value="Section type="/>
+      </list>
+      <list name="elementNames">
+        <item value="type"/>
+      </list>
+    </group>
+    <group name="langPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <list name="elementNames">
+        <item value="LANGUAGE"/>
+      </list>
+      <list name="attributeNames">
+        <item value="langue-et-encodagendTimee langue="/>
+        <item value="language id="/>
+        <item value="DOC lang="/>
+        <item value="SpeechSegment lang="/>
+      </list>
+    </group>
+    <group name="encodPrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="attributeNames">
+        <item value="langue-et-encodage encodage="/>
+      </list>
+    </group>
+    <group name="namePrpty" class="StandardDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="256"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="attributeNames">
+        <item value="Turn speaker="/>
+      </list>
+    </group>
+
+    <group name="datePrpty" class="ExtensionDocumentPropertyType">
+      <!--value is "integer" (64 bits integer), "string" (utf8 string), "date" (boost::gregorian_date)-->
+      <param key="storageType" value="date"/>
+      <!--value is "optional" (0..1), "mandatory" (1, not null) "multi-valued"-->
+      <param key="cardinality" value="optional"/>
+      <!--value is "document" or "node"-->
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="date"/>
+      </list>
+    </group>
+    <group name="originPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="origin"/>
+      </list>
+      <list name="attributeNames">
+        <item value="COLLECTION verse_par="/>
+      </list>
+
+    </group>
+    <group name="authPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="multi-valued"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="author"/>
+        <item value="Nom"/>
+      </list>
+    </group>
+    <group name="locationPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="location"/>
+      </list>
+    </group>
+    <group name="privacyPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="privacy"/>
+      </list>
+    </group>
+    <group name="countryPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="country"/>
+      </list>
+    </group>
+    <group name="senderPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="sender"/>
+      </list>
+    </group>
+    <group name="docRefPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="int"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="false"/>
+      <list name="elementNames">
+        <item value="reference"/>
+      </list>
+    </group>
+    <group name="speakerPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <list name="elementNames">
+      </list>
+      <list name="attributeNames">
+        <item value="SpeechSegment spkr="/>
+      </list>
+    </group>
+    <group name="chainePrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <param key="storageSize" value="10"/>
+      <list name="elementNames">
+      </list>
+      <list name="attributeNames">
+        <item value="Audiofile chaine="/>
+      </list>
+    </group>
+    <group name="dateDiffPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <param key="storageSize" value="8"/>
+      <list name="elementNames">
+      </list>
+      <list name="attributeNames">
+        <item value="Audiofile dateDiff="/>
+      </list>
+    </group>
+    <group name="progPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <param key="propagated" value="true"/>
+      <param key="storageSize" value="20"/>
+      <list name="elementNames">
+      </list>
+      <list name="attributeNames">
+        <item value="Audiofile heureDiff="/>
+        <item value="Audiofile prog="/>
+      </list>
+    </group>
+    <group name="config">
+      <param key="delegateClient" value="lima-coreclient"/>
+      <param key="textSplitting" value="n"/>
+    </group>
+    <group name="XMLEntities">
+    </group>
+    <group name="tagSemantic">
+    </group>
+  </module>
+
+
+</modulesConfig>

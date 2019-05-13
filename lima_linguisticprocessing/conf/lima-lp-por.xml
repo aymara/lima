@@ -97,6 +97,27 @@
         <item value="easyXmlDumper"/>
       </list>
     </group>
+    <group name="xml" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="regexmatcher"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="idiomaticAlternatives"/>
+        <!-- Uncoment spellingAlternatives below if lima is built with Enchant
+          support and if you wish to support background spelling correction -->
+            <!--item value="spellingAlternatives"/-->
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="@PosTagger@"/>
+        <item value="sentenceBoundariesFinder"/>
+        <item value="syntacticAnalyzerNoChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="syntacticAnalyzerDepsHetero"/>
+        <item value="syntacticAnalyzerDummy"/>
+        <item value="bowDumperXml"/>
+      </list>
+    </group>
     <group name="none" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
@@ -221,16 +242,16 @@
      </map>
     </group>
     <group name="wordSenseDisambiguation" class="WordSenseDisambiguation" >
-      <!--param key="mode" value="b_Romanseval_most_frequent"/>     
-      <param key="sensesPath" value="/home/cm218888/opendata/romanseval_data/SenseInventory" /-->      
+      <!--param key="mode" value="b_Romanseval_most_frequent"/>
+      <param key="sensesPath" value="/home/cm218888/opendata/romanseval_data/SenseInventory" /-->
       <param key="mode" value="b_Jaws_most_frequent"/>
-      <param key="sensesPath" value="/home/cm218888/otherdata/jaws-1.0/SenseInventory" />      
+      <param key="sensesPath" value="/home/cm218888/otherdata/jaws-1.0/SenseInventory" />
       <!--param key="mode" value="s_Wsi_mrd"/>
-      <param key="sensesPath" value="/home/cm218888/otherdata/wsi/clustersBin" />      
-      <param key="mapping" value="m_Jaws_senses" />      
+      <param key="sensesPath" value="/home/cm218888/otherdata/wsi/clustersBin" />
+      <param key="mapping" value="m_Jaws_senses" />
       <param key="mappingFile" value="mapping.txt" /-->
       <param key="dictionaryFile" value="/home/cm218888/otherdata/words.ids" />
-      <param key="bestNNDir" value="knnall" />  
+      <param key="bestNNDir" value="knnall" />
       <list name="NounContextList">
         <item value="COD_V"/>
         <!--item value="SUJ_V"/>
@@ -334,7 +355,7 @@
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="PU+FORTE" />  
+        <item value="PU+FORTE" />
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
@@ -455,7 +476,7 @@
     </group>
     <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".default.xml"/>
-    </group>    
+    </group>
     <group name="wordSenseXmlLogger" class="WordSenseXmlLogger">
       <param key="outputSuffix" value=".senses.xml"/>
     </group>
@@ -929,8 +950,8 @@
     <group name="bowTextHandler" class="BowTextHandler"/>
     <group name="bowDocumentHandler" class="BowDocumentHandler"/>
     <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
-    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>    
-    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>    
+    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
     <group name="xmlDocumentHandler" class="xmlDocumentHandler"/>
   </module>
 </modulesConfig>

@@ -92,7 +92,7 @@ LimaServer::LimaServer( const QString& configPath,
 {
   LIMASERVERLOGINIT;
   LDEBUG << "::LimaServer::LimaServer()...";
-  
+
   std::ostringstream oss;
   std::ostream_iterator<std::string> out_it (oss,", ");
   std::copy ( langs.begin(), langs.end(), out_it );
@@ -107,7 +107,7 @@ LimaServer::LimaServer( const QString& configPath,
     configPath.toUtf8().constData(),
     commonConfigFile.toUtf8().constData(),
     langs);
-  
+
   // initialize linguistic processing
   QString fullLpConfigFile = findFileInPaths(configPath, lpConfigFile);
   std::string clientId("lima-coreclient");
@@ -119,10 +119,10 @@ LimaServer::LimaServer( const QString& configPath,
     lpconfig,
     langs,
     pipelines);
-  
+
   LDEBUG << "LimaServer::LimaServer: createClient...";
   m_analyzer = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId));
-  
+
   LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
   m_server = new QHttpServer(this);
   LDEBUG << "LimaServer::LimaServer: connect...";
@@ -131,7 +131,8 @@ LimaServer::LimaServer( const QString& configPath,
 
   LINFO << "LimaServer::LimaServer: server listen...";
   m_server->listen(QHostAddress::Any, port);
-  LINFO << "Server listening";
+  LINFO << "Server listening on host" << QHostAddress::Any
+        << "and port" << port;
  }
 
 LimaServer::~LimaServer()
@@ -171,13 +172,13 @@ void LimaServer::slotHandleEndedRequest()
   LDEBUG << "LimaServer::slotHandleEndedRequest";
   QHttpRequest *req = static_cast<QHttpRequest*>(sender());
   QHttpResponse *resp = m_responses[req];
-  
+
   LDEBUG << "LimaServer::slotHandleEndedRequest: create AnalysisThread...";
   AnalysisThread *thread = new AnalysisThread(m_analyzer.get(), req, resp, m_langs, this );
   // Need to get request from thread in sendResults
   m_requests.insert(std::pair<QThread*,QHttpRequest*>(thread,req));
   m_threads.insert(std::pair<QHttpResponse*,QThread*>(resp,thread));
-  
+
 #ifdef MULTITHREAD
   connect(thread, SIGNAL(finished()), this, SLOT(sendResults()));
 //  connect(thread,SIGNAL(finished()),thread, SLOT(deleteLater()));
@@ -207,7 +208,7 @@ void LimaServer::sendResults()
   QHttpRequest *req = m_requests[thread];
   QHttpResponse *resp = m_responses[req];
   AnalysisThread* analysisthread = static_cast<AnalysisThread*>(sender());
-  
+
   resp->writeHead(analysisthread->response_code());
   const std::map<QString,QString>& headers = analysisthread->response_header();
   for( std::map<QString,QString>::const_iterator headerIt = headers.begin() ; headerIt != headers.end() ; headerIt++ ) {
@@ -215,10 +216,10 @@ void LimaServer::sendResults()
   }
 
   resp->end(analysisthread->response_body());
-  
+
   // req->deleteLater();
   // thread->deleteLater();
-  
+
   // TODO: clean: remove element from m_requests and m_responses
   LDEBUG << "LimaServer::sendResults done";
 

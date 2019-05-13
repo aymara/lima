@@ -9,6 +9,8 @@
       </list>
       <list name="pipelines">
         <item value="limaserver"/>
+        <item value="main"/>
+        <item value="deep"/>
       </list>
     </group>
     <group name="address">

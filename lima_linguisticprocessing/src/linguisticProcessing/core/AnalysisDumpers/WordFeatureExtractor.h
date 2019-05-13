@@ -17,16 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       Features.h
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Feb  7 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
- * 
  * @brief      accessors for various features of a word
- * 
- * 
  ***********************************************************************/
 
 #ifndef WORDFEATUREEXTRACTOR_H
@@ -48,7 +42,7 @@ public:
   AbstractFeatureExtractor(MediaId language, const std::string& complement="");
   virtual ~AbstractFeatureExtractor() {}
 
-  virtual std::string 
+  virtual std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v, AnalysisContent &analysis) const=0;
   const std::string& getName() { return m_name; }
@@ -61,19 +55,19 @@ protected:
 
 //----------------------------------------------------------------------
 // Asbtract factory for abstract feature extractor
-class LIMA_ANALYSISDUMPERS_EXPORT AbstractFeatureExtractorFactory : 
+class LIMA_ANALYSISDUMPERS_EXPORT AbstractFeatureExtractorFactory :
   public RegistrableFactory<AbstractFeatureExtractorFactory>
 {
 public:
-  AbstractFeatureExtractorFactory(const std::string& factoryId); 
+  AbstractFeatureExtractorFactory(const std::string& factoryId);
   virtual AbstractFeatureExtractor* create(MediaId language, const std::string& complement="")=0;
 private:
 };
 
 //----------------------------------------------------------------------
 // template for factories for actual instances of feature extractors
-template<typename FeatureExtractor> 
-class LIMA_ANALYSISDUMPERS_EXPORT FeatureExtractorFactory : 
+template<typename FeatureExtractor>
+class LIMA_ANALYSISDUMPERS_EXPORT FeatureExtractorFactory :
   public AbstractFeatureExtractorFactory
 {
 public:
@@ -94,7 +88,7 @@ public:
   WordFeatures();
   WordFeatures(MediaId language);
   ~WordFeatures();
-  
+
   void setLanguage(MediaId language) { m_language=language; }
   void initialize(const std::deque<std::string>& featureNames);
 private:
@@ -112,7 +106,7 @@ public:
 
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
-             LinguisticGraphVertex v, 
+             LinguisticGraphVertex v,
              AnalysisContent & ) const override;
 };
 
@@ -170,7 +164,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureProperty : public AbstractFeatureExtrac
 public:
   FeatureProperty(MediaId language, const std::string& complement="");
   ~FeatureProperty() {}
-  
+
   std::string
     getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
              LinguisticGraphVertex v,
@@ -216,7 +210,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureLemmaSpecificEntity : public AbstractFe
 public:
   FeatureLemmaSpecificEntity(MediaId language, const std::string& complement="");
   ~FeatureLemmaSpecificEntity() {}
-  
+
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
                        AnalysisContent &) const override;
@@ -229,7 +223,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT FeatureStoredData : public AbstractFeatureExtr
 public:
   FeatureStoredData(MediaId language, const std::string& complement="");
   ~FeatureStoredData() {}
-  
+
   std::string getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
                        LinguisticGraphVertex v,
                        AnalysisContent &) const override;

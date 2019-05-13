@@ -54,7 +54,7 @@
         <item value="syntacticAnalyzerFinalize"/>
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -71,6 +71,7 @@
         <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
+
     <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -96,6 +97,7 @@
         <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
+
     <group name="deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -104,7 +106,6 @@
         <item value="simpleWord"/>
         <item value="sentenceBoundariesFinderForSE"/>
         @tensorflowSpecificEntities@
-<!--        <item value="tensorflowSpecificEntities"/>-->
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
         <item value="idiomaticAlternatives"/>
@@ -132,7 +133,7 @@
         <item value="syntacticAnalyzerFinalize"/>
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -149,6 +150,7 @@
         <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
+
     <group name="limaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -159,8 +161,8 @@
         <item value="SpecificEntitiesModexForLimaserver"/>
         <item value="specificEntitiesXmlLoggerForLimaserver"/>
       </list>
-
     </group>
+
     <group name="query" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -186,17 +188,7 @@
         <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
-    <group name="limaserver" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="flattokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModexForLimaserver"/>
-        <item value="specificEntitiesXmlLoggerForLimaserver"/>
-      </list>
-    </group>
+
     <group name="easy" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -258,7 +250,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -270,7 +262,7 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
-    
+
      <group name="tag" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
 	<item value="flattokenizer"/>
@@ -304,7 +296,7 @@
         <!--item value="syntacticAnalysisXmlLogger"/-->
         <!--item value="compoundBuilderFromSyntacticData"/-->
         <!--item value="compoundsXmlLogger"/-->
-        <!--item value="coreferencesSolving"/--> 
+        <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
@@ -317,12 +309,35 @@
       </list>
     </group>
 
+    <group name="xml" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="regexmatcher"/>
+        <item value="simpleWord"/>
+        <item value="idiomaticAlternatives"/>
+        <item value="hyphenWordAlternatives"/>
+        <!-- Uncoment spellingAlternatives below if lima is built with Enchant
+          support and if you wish to support background spelling correction -->
+            <!--item value="spellingAlternatives"/-->
+        <item value="abbreviationSplitAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="@PosTagger@"/>
+        <item value="sentenceBoundariesFinder"/>
+        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerDeps"/>
+        <item value="syntacticAnalyzerDepsHetero"/>
+        <item value="syntacticAnalyzerDummy"/>
+        <item value="bowDumperXml"/>
+      </list>
+    </group>
+
     <group name="none" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************
   Definition of process units
-*********************************************** -->    
+*********************************************** -->
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -362,7 +377,7 @@
       <param key="scope" value="SENT" />
       <param key="threshold" value="130" />
       <param key="Resolve Definites" value="SENT" />
-      <param key="Resolve non third person pronouns" value="SENT" />  
+      <param key="Resolve non third person pronouns" value="SENT" />
       <map name="MacroCategories">
         <entry key="PronMacroCategory" value="PRON"/>
         <entry key="VerbMacroCategory" value="SENT" />
@@ -373,7 +388,7 @@
       <list name="LexicalAnaphora">
             <item value="PRP$"/>
       </list>
-      <list name="UndefinitePronouns"> 
+      <list name="UndefinitePronouns">
       </list>
       <list name="PrepRelation">
         <item value="PREPSUB"/>
@@ -399,15 +414,15 @@
         <item value="SujInv" />
       </list>
       <list name="AttributeRelation">
-              <item value="ATB_S"/>  
+              <item value="ATB_S"/>
       </list>
       <list name="CODRelation">
         <item value="COD_V" />
         <item value="CodPrev" />
       </list>
       <list name="COIRelation">
-        <item value="CoiPrev" />  
-        <item value="CPL_V" />  
+        <item value="CoiPrev" />
+        <item value="CPL_V" />
       </list>
       <list name="AdjunctRelation">
         <item value="CPLV_V" />

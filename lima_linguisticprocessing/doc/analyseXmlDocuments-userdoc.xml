@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd">
+<article lang="fr">
+  <articleinfo>
+    <copyright>
+      <year>2010 - 2014</year>
+      <holder>Gaël de Chalendar - CEA LIST</holder>
+    </copyright>
+
+    <authorgroup>
+      <author>
+        <firstname>Gaël</firstname>
+        <surname>de Chalendar</surname>
+        <affiliation>
+          <address>
+          CEA LIST
+          <email>gael.de-chalendar@cea.fr</email>
+        </address>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <title>Manuel utilisateur de l'outil d'analyse linguistique de documents XML analyseMultimediaXmlDocuments</title>
+
+    <revhistory>
+      <revision>
+        <revnumber>0.2</revnumber>
+        <date>01/05/2014</date>
+        <authorinitials>GC</authorinitials>
+        <revremark>Details on structured document format</revremark>
+      </revision>
+      <revision>
+        <revnumber>0.1</revnumber>
+        <date>24 septembre 2010</date>
+        <authorinitials>GC</authorinitials>
+        <revremark>première rédaction</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>L'objectif de ce document est d'expliquer l'utilisation du programme analyseXmlDocuments et en particulier sa configuration pour pouvoir traiter tout type de document XML.</para>
+  </section>
+
+  <section>
+    <title>Amose multimedia document representation</title>
+    <para>An Amose multimedia document is a tree of nodes. Leaf nodes which have an indexingNode property contain a content node with a type attribute. The type attribute defines the kind of media the current node contains and what will be the elements below. For the tokens type, content will be a BoWText.</para>
+    <para>Each node element has the following properties:
+      <itemizedlist>
+        <listitem>
+          <para>ContentId: </para>
+        </listitem>
+        <listitem>
+          <para>NodeId: </para>
+        </listitem>
+        <listitem>
+          <para>StructureId: </para>
+        </listitem>
+        <listitem>
+          <para>offBegPrpty: offset of the beginning of the content of the corresponding tag (after the '&gt; character') in the source document.</para>
+        </listitem>
+        <listitem>
+          <para>offEndPrpty: offset after the last character of the corresponding tag content (the '&lt; character') in the source document.</para>
+        </listitem>
+        <listitem>
+          <para>encodPrpty: </para>
+        </listitem>
+        <listitem>
+          <para>identPrpty: </para>
+        </listitem>
+        <listitem>
+          <para>srcePrpty: </para>
+        </listitem>
+        <listitem>
+          <para>indexDatePrpty:</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  <section>
+    <title>Fichier de configuration</title>
+
+    <section>
+      <title> module lp-structuredXmlreaderclient</title>
+
+      <para>Ce module est composé de plusieurs groupes :
+        <itemizedlist>
+          <listitem>
+            <para>documentXMLParser: définit quelles balises subiront tel ou tel traitement ;</para>
+          </listitem>
+
+          <listitem>
+            <para>xyzPrpty: ...</para>
+          </listitem>
+
+        </itemizedlist>
+      </para>
+
+      <para>Les sous-sections ci-dessous décrivent chaque groupe.</para>
+
+      <section>
+        <title>groupe documentXMLParser</title>
+        <para>Ce groupe définit quelles balises subiront tel ou tel traitement. Il est composé de la map specialCharacterSize et des listes discardableNodes, hierarchyNodes, indexingNodes, freNodes, etc.</para>
+        <para>En résumé, les balises parentes des balises dont le contenu doit être indexé doivent être listées dans hierarchyNodes, sans interruption de la chaîne. Les indexingNodes définissent les unités d'indexation pour le moteur de recherche. Il faut au moins une balise de type indexingNode pour pouvoir analyser un contenu. Les balises freNodes, etc. contenues dans les balise indexingNodes sont celle dont le texte sera analysé. Elles peuvent être entourées de balises qui seront simplement ignorées. Celles-ci doivent aussi être listées dans la liste hierarchyNodes. Les balises situées dans discardableNodes ainsi que tout leur contenu (sous-balises, texte, attributs) sont ignorés.</para>
+      </section>
+    </section>
+  </section>
+</article>

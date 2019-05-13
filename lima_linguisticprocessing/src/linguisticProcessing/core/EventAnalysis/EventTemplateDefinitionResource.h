@@ -4,7 +4,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Sep  2 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
+ * Project     LIMA
  * 
  * @brief      Linguistic resource storing the defintion of event templates
  * 

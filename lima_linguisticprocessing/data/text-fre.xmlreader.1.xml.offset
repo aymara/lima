@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF8"?>
+byte_start:1,  byte_end: 1+37-1=37
+<COLLECTION verse_par="CEA">
+byte_start:39,  byte_end: 28+39-1=66
+<DOC lang="fre">
+byte_start:68,  byte_end: 16+68-1=83
+  <FILENAME>d1.xml</FILENAME>
+byte_start:85,  byte_end: 29+85-1=113
+  <TITLE>dossier 1</TITLE>
+byte_start:115,  byte_end: 26+115-1=140
+  <SECTION version_maj="1" version_min="2" >truc est &lt; à machin
+byte_start:142,  byte_end: 67+142-1=208, offset_start: 0, offset_end: 0+68-3+1-1=71, offset(truc)=0+11-1=10
+    <TITLE>dossier 1</TITLE>
+byte_start:210,  byte_end: 28+210-1=237, offset_start: 0, offset_end:
+    <LANGUAGE>eng</LANGUAGE>
+byte_start:239,  byte_end: 28+239-1=266, offset_start: 0, offset_end:
+    <PARA>Ou est ce <BOLD>foutu</BOLD> chat
+byte_start:268,  byte_end: 43+268-1=310, offset_start: 0, offset_end:
+    ? </PARA>
+byte_start:312,  byte_end: 13+312-1=324, offset_start: 0, offset_end:
+    <USELESS>bon sang de bonsoir</USELESS>
+byte_start:326,  byte_end: 42+326-1=367, offset_start: 0, offset_end:
+    <PARA> - le terme utilise dans  un film de Tarantino serait </PARA>
+byte_start:369,  byte_end: 71+369-1=439, offset_start: 0, offset_end:
+    <PARA lang="eng">fucking -</PARA>
+byte_start:441,  byte_end: 37+441-1=477, offset_start: 0, offset_end:
+    and that's all
+byte_start:479,  byte_end: 18+479-1=496, offset_start: 0, offset_end:
+  </SECTION>
+byte_start:498,  byte_end: 12+498-1=509, offset_start: 0, offset_end:
+  <SECTION>
+byte_start:511,  byte_end: 11+511-1=521, offset_start: 0, offset_end:
+    <TITLE>dossier 2</TITLE>
+byte_start:523,  byte_end: 28+523-1=550, offset_start: 0, offset_end:
+    <EMPHASIS type="encadre">
+byte_start:552,  byte_end: 29+552-1=580, offset_start: 0, offset_end:
+    <PARA>Tout n'est pas important</PARA>
+byte_start:582,  byte_end: 41+582-1=622, offset_start: 0, offset_end:
+    <PARA>Le mot important apparait 2 fois</PARA>
+byte_start:624,  byte_end: 49+624-1=672, offset_start: 0, offset_end:
+    </EMPHASIS>
+byte_start:674,  byte_end: 15+674-1=688, offset_start: 0, offset_end:
+  </SECTION>
+byte_start:690,  byte_end: 12+690-1=701, offset_start: 0, offset_end:
+</DOC>
+byte_start:703,  byte_end: 6+703-1=708, offset_start: 0, offset_end:
+</COLLECTION>
+byte_start:710,  byte_end: 13+710-1=722, offset_start: 0, offset_end:

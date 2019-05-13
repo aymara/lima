@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COLLECTION verse_par="CEA">
+<DOC lang="fre">
+  <FILENAME>d1.xml</FILENAME>
+  <TITLE>dossier 1</TITLE>
+  <SECTION version_maj="1" version_min="2" >truc est &lt; à machin
+    <TITLE>dossier 1</TITLE>
+    <LANGUAGE>eng</LANGUAGE>
+    <PARA>Ou est ce <BOLD>foutu</BOLD> chat
+    ? </PARA>
+    <USELESS>bon sang de bonsoir</USELESS>
+    <PARA> - le terme utilise dans  un film de Tarantino serait </PARA>
+    <PARA lang="eng">fucking -</PARA>
+    and that's all
+  </SECTION>
+  <SECTION>
+    <TITLE>dossier 2</TITLE>
+    <EMPHASIS type="encadre">
+    <PARA>Tout n'est pas important</PARA>
+    <PARA>Le mot important apparait 2 fois</PARA>
+    </EMPHASIS>
+  </SECTION>
+</DOC>
+</COLLECTION>

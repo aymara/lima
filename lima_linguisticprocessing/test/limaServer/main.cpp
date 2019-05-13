@@ -74,18 +74,20 @@ int main(int argc, char **argv)
   po::options_description desc("Usage");
   desc.add_options()
   ("help,h", "Display this help message")
-  ("language,l", po::value< std::vector<std::string> >(&languages), "supported languages trigrams")
+  ("language,l", po::value< std::vector<std::string> >(&languages),
+   "supported languages trigrams")
   ("resources-dir", po::value<std::string>(&strResourcesPath),
-                                                                                                                              "Set the directory containing the LIMA linguistic resources")
+   "Set the directory containing the LIMA linguistic resources")
   ("config-dir", po::value<std::string>(&strConfigPath),
-                                                                                                                  "Set the directory containing the (LIMA) configuration files")
+   "Set the directory containing the (LIMA) configuration files")
   ("common-config-file", po::value<std::string>(&strCommonConfigFile)->default_value("lima-common.xml"),
-                                                                                  "Set the LIMA common libraries configuration file to use")
+   "Set the LIMA common libraries configuration file to use")
   ("lp-config-file", po::value<std::string>(&strLpConfigFile)->default_value("lima-analysis.xml"),
-                                                                          "Set the linguistic processing configuration file to use")
+   "Set the linguistic processing configuration file to use")
   ("server-config-file", po::value<std::string>(&strLimaServerConfigFile)->default_value("lima-server.xml"),
-                                                                                  "Set the LIMA server configuration file to use")
-  ("pipeline,p", po::value< std::vector<std::string> >(&pipelines), "Set the linguistic analysis supported pipelines")
+   "Set the LIMA server configuration file to use")
+  ("pipeline,p", po::value< std::vector<std::string> >(&pipelines),
+   "Set the linguistic analysis supported pipelines")
   ("port", po::value< int >(&optional_port),
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
@@ -244,7 +246,8 @@ int main(int argc, char **argv)
                     &app,
                     &t);
 
-  if (varMap.count("service-life")) {
+  if (varMap.count("service-life"))
+  {
     // Stop server and app after service-life seconds
     //note that we need to use t.connect, as main is not a QObject
     t.connect (&t, SIGNAL(timeout()), &server, SLOT(quit()));

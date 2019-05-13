@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Feb  7 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * Project     MM
+ * Project     LIMA
  * 
  * @brief      a dumper that outputs tab-separated word features, one word per line
  * 

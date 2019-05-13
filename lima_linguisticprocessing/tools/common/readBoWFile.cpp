@@ -320,11 +320,11 @@ int main(int argc, char **argv)
 int run(int argc,char** argv)
 {
   QStringList configDirs = buildConfigurationDirectoriesList(
-      QStringList({"amose", "lima"}), QStringList());
+      QStringList({"lima"}), QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
   QStringList resourcesDirs = buildResourcesDirectoriesList(
-      QStringList({"amose", "lima"}), QStringList());
+      QStringList({"lima"}), QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);

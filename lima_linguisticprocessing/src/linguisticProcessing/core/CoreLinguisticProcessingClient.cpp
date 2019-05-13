@@ -114,12 +114,11 @@ void CoreLinguisticProcessingClient::analyze(
 
   metadataholder->setMetaData(metaData);
   LimaStringText* lstexte=new LimaStringText(text); // will be destroyed in AnalysisContent destructor
-  analysis.setData("Text",lstexte);
+  analysis.setData("Text", lstexte);
 
   LINFO << "CoreLinguisticProcessingClient::analyze(";
-  for( std::map<std::string,std::string>::const_iterator attrIt = metaData.begin() ;
-	attrIt != metaData.end() ; attrIt++ ) {
-	LINFO << "attr:" << attrIt->first << "value:" << attrIt->second << ", " ;
+  for(auto attrIt = metaData.cbegin() ; attrIt != metaData.cend() ; attrIt++ ) {
+    LINFO << "attr:" << attrIt->first << "value:" << attrIt->second << ", " ;
   }
   LINFO;
 

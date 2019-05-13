@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="fre.xmlreader.0" type="bloquant">
+  <call-parameters>
+      <param key="textFilename" value="text-fre.xmlreader.0"/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>position offset debut et fin des elements hierarchique et des elements indexes</expl>
+  <test id="fre.xmlreader.0.1" trace=".bowdocument.xml"
+    comment="CONDITION: la position du premier element hierarchique de niveau 1 est correcte"
+    left="XPATH#//bowDocuments/hierarchy[@elementName='SECTION']/properties/property[@name='srcePrpty']/@value"
+    operator="="
+    right="./text-fre.xmlreader.0.xml.indexer"
+    conditionnal="yes"/>  
+</testcase>
+</testcases>

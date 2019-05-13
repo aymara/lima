@@ -35,6 +35,7 @@ add_subdirectory(EntityTracking)
 add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
 add_subdirectory(RegexMatcher)
+add_subdirectory(DocumentsReader)
 
 IF(TRE_FOUND)
   add_subdirectory(ApproxMatching)
@@ -45,7 +46,8 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
 endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
-add_definitions(-DLIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORTING)
+add_definitions( -DLIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORTING )
+add_definitions( -DCOREXMLREADERCLIENT_EXPORTING )
 
 ########### next target ###############
 
@@ -67,6 +69,32 @@ set_target_properties(lima-lp-linguisticprocessing-core PROPERTIES VERSION ${LIM
 install(TARGETS lima-lp-linguisticprocessing-core
   DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
+
+########### next target ###############
+add_definitions( -DCOREXMLREADERCLIENT_EXPORTING )
+
+set(lima-xp-core_LIB_SRCS
+  CoreXmlReaderClient.cpp
+)
+
+DECLARE_LIMA_PLUGIN(lima-xp-core)
+
+target_link_libraries(lima-xp-core
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
+  lima-common-xmlconfigurationfiles
+  lima-common-processunitframework
+  lima-common-factory
+  lima-common-tools
+  lima-common-data
+  lima-common-datahandler
+  lima-xp-documentsreader
+  lima-xp-client
+  ${QT_LIBRARIES}
+)
+
+set_target_properties(lima-xp-core PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
+install(TARGETS lima-xp-core DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############
 

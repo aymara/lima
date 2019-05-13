@@ -108,8 +108,10 @@ class SvmToolPosTaggerPrivate
 {
   friend class SvmToolPosTagger;
 
-  SvmToolPosTaggerPrivate() :  m_microAccessor(nullptr) {}
+  SvmToolPosTaggerPrivate();
   ~SvmToolPosTaggerPrivate() {}
+  SvmToolPosTaggerPrivate(const SvmToolPosTaggerPrivate&) = delete;
+  SvmToolPosTaggerPrivate& operator=(const SvmToolPosTaggerPrivate&) = delete;
 
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   MediaId m_language;
@@ -118,6 +120,16 @@ class SvmToolPosTaggerPrivate
   bool m_allFeatures;
   QStringList m_features;
 };
+
+SvmToolPosTaggerPrivate::SvmToolPosTaggerPrivate() :
+  m_microAccessor(nullptr),
+  m_language(0),
+  m_tagger(nullptr),
+  m_model(),
+  m_allFeatures(false),
+  m_features()
+{
+}
 
 SvmToolPosTagger::SvmToolPosTagger() :
   m_d(new SvmToolPosTaggerPrivate())
@@ -185,7 +197,7 @@ void SvmToolPosTagger::init(
         m_d->m_features << QString::fromUtf8(feature.c_str());
       }
     }
-    catch (Common::XMLConfigurationFiles::NoSuchParam& )
+    catch (Common::XMLConfigurationFiles::NoSuchList& )
     {
       // Ignored parameters allFeatures and features are optional. Then use only
       // main tag (micro category)

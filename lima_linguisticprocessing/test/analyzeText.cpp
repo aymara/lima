@@ -123,11 +123,11 @@ int run(int argc, char** argv)
 {
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
   auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                      QStringList());
-  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+  auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
