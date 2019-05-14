@@ -8,7 +8,7 @@
 #ifndef MULTIMEDIADOCUMENTHANDLER_H
 #define MULTIMEDIADOCUMENTHANDLER_H
 
-#include "client/AnalysisHandlers/AnalysisHandlersExport.h"
+#include "linguisticProcessing/client/AnalysisHandlers/AnalysisHandlersExport.h"
 #include "common/Handler/AbstractXmlDocumentHandler.h"
 
 #include <sstream>
