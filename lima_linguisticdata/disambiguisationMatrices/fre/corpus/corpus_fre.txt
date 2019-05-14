@@ -8284,9 +8284,9 @@ parcourir	VINF
 le	DET
 pays	NC
 d'	P
-est	NC
+Est	NC
 en	P
-ouest	NC
+Ouest	NC
 avec	P
 des	DET
 entrées	NC
@@ -92078,7 +92078,7 @@ mission	NC
 STS	NPP
 -	PONCT
 114	NC
-est	NC
+est	V
 prévue	VPP
 pour	P
 le	DET
