@@ -44,7 +44,7 @@ class AbstractXmlDocumentHandler :
             public StructureHandler,
             public AbstractXmlAnalysisHandler,
             public AbstractProcessingClientHandler,
-            public ContentHandler<Common::Misc::GenericDocumentProperties>,  
+            public ContentHandler<Common::Misc::GenericDocumentProperties>,
             public ContentHandler< std::vector<float> >
 {
 public:
@@ -93,12 +93,12 @@ public:
     {
         m_metadata["LastUri"]=uri;
     };
-    
+
     void set_lang(std::string lang)
     {
         m_metadata["Lang"]=lang;
     };
-    
+
     std::string get_lang() const
     {
       if (m_metadata.find("Lang")!=m_metadata.end())
@@ -107,6 +107,7 @@ public:
         return ""; //should not suppose a default language. Weird bugs otherwise.
     };
 
+    virtual void startAnalysis() {}
     virtual void startAnalysis(const std::string& bloc_type) {LIMA_UNUSED(bloc_type)}
 
     std::vector<NODE_ID> m_openedNodes;

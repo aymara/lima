@@ -26,62 +26,64 @@
 
 namespace Lima {
 
-class AbstractProcessingClientHandler 
+class AbstractProcessingClientHandler
 {
   public:
     virtual ~AbstractProcessingClientHandler() {}
-    
-    inline virtual void setAnalysisClient(const std::string& clientId, std::shared_ptr< AbstractProcessingClient > client)
+
+    inline virtual void setAnalysisClient(const std::string& clientId,
+                                          std::shared_ptr< AbstractProcessingClient > client)
     {
-        if (m_clients.find(clientId)!=m_clients.end())
-        {
-//             ABSTRACTPROCESSINGCLIENTLOGINIT;
-//             LERROR << "Handler for handlerId '" << handlerId << "' already exists !" ;
-//             throw LimaException();
-            m_clients.erase(clientId);
-        }
-        m_clients.insert(std::make_pair(clientId, client));
+      if (m_clients.find(clientId)!=m_clients.end())
+      {
+//         ABSTRACTPROCESSINGCLIENTLOGINIT;
+//         LERROR << "Handler for handlerId '" << handlerId << "' already exists !" ;
+//         throw LimaException();
+        m_clients.erase(clientId);
+      }
+      m_clients.insert(std::make_pair(clientId, client));
     }
-    
+
     inline virtual std::shared_ptr< AbstractProcessingClient > getAnalysisClient(const std::string& clientId)
     {
-        if (m_clients.find(clientId)==m_clients.end())
-        {
-          ABSTRACTPROCESSINGCLIENTLOGINIT;
-          LERROR << "AbstarctProcessingHandler::no Client for clientId" << clientId ;
-          throw LimaException();
-	    return NULL;
-        }
-        else
-	  return m_clients[clientId];
-    }    
-    
-    inline virtual std::map<std::string, std::shared_ptr< AbstractProcessingClient > > getAnalysisClients() const {return m_clients;};
-    inline virtual void setAnalysisClients(std::map<std::string, std::shared_ptr< AbstractProcessingClient > > clients){m_clients=clients;};   
-    
-   virtual void handleProc(	 const std::string& tagName,
-			 const std::string& content,
-                         const std::map<std::string,std::string>& metaData,
-                         const std::string& pipeline,
-			  const std::map<std::string, AbstractAnalysisHandler*>& handlers = std::map<std::string, AbstractAnalysisHandler*>(),
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>())
-	{
+      if (m_clients.find(clientId)==m_clients.end())
+      {
+        ABSTRACTPROCESSINGCLIENTLOGINIT;
+        LERROR << "AbstarctProcessingHandler::no Client for clientId" << clientId ;
+        throw LimaException();
+      }
+      return m_clients[clientId];
+    }
+
+    inline virtual std::map<std::string, std::shared_ptr< AbstractProcessingClient > > getAnalysisClients() const
+    {
+      return m_clients;
+    };
+    inline virtual void setAnalysisClients(std::map<std::string, std::shared_ptr< AbstractProcessingClient > > clients)
+    {
+      m_clients=clients;
+    };
+
+  virtual void handleProc(const std::string& tagName,
+                          const std::string& content,
+                          const std::map<std::string,std::string>& metaData,
+                          const std::string& pipeline,
+                          const std::map<std::string, AbstractAnalysisHandler*>& handlers = std::map<std::string, AbstractAnalysisHandler*>(),
+                          const std::set<std::string>& inactiveUnits = std::set<std::string>())
+  {
     ABSTRACTPROCESSINGCLIENTLOGINIT;
-    LDEBUG << "handleProc("<<tagName<<") gets " << (void*)getAnalysisClient(tagName).get() <<" class: "<<typeid(*getAnalysisClient(tagName)).name();
-	  getAnalysisClient(tagName)->analyze(content, metaData,pipeline,handlers,inactiveUnits);
-	}
+    auto& r = *getAnalysisClient(tagName).get();
+    LDEBUG << "handleProc("<<tagName<<") gets "
+            << (void*)getAnalysisClient(tagName).get() <<" class: "
+            << typeid(r).name();
+    getAnalysisClient(tagName)->analyze(content,
+                                        metaData,
+                                        pipeline,
+                                        handlers,
+                                        inactiveUnits);
+  }
 
-//   inline virtual void setAnalysisHandler(const std::string& handlerId, AbstractAnalysisHandler* handler)
-//   {
-//     std::map<std::string, AbstractProcessingClient*>::iterator ItrClients = m_clients.begin();
-//     for (;ItrClients!=m_clients.end();ItrClients++)
-//     {
-//       ItrClients->second->setAnalysisHandler(handlerId,handler);
-//     }
-//   }
-	
-
-  private:
+private:
   //! @brief list of handlers available
   std::map<std::string, std::shared_ptr< AbstractProcessingClient > > m_clients;
 };

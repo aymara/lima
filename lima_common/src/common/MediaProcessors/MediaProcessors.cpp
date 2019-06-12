@@ -62,21 +62,21 @@ MediaProcessorsPrivate::MediaProcessorsPrivate() :
 {
 }
 
-MediaProcessors::MediaProcessors() : 
-    Singleton<MediaProcessors>(), 
-    m_d(new MediaProcessorsPrivate()) 
+MediaProcessors::MediaProcessors() :
+    Singleton<MediaProcessors>(),
+    m_d(new MediaProcessorsPrivate())
 {
 }
 
-MediaProcessors::MediaProcessors(const MediaProcessors& mp) : 
-    Singleton<MediaProcessors>(), 
-    m_d(new MediaProcessorsPrivate(*mp.m_d)) 
+MediaProcessors::MediaProcessors(const MediaProcessors& mp) :
+    Singleton<MediaProcessors>(),
+    m_d(new MediaProcessorsPrivate(*mp.m_d))
 {
 }
 
 MediaProcessors::~MediaProcessors()
 {
-  for (auto it = m_d->m_pipelineManagers.begin(); 
+  for (auto it = m_d->m_pipelineManagers.begin();
        it != m_d->m_pipelineManagers.end(); it++ )
   {
     delete it->second;
@@ -154,7 +154,7 @@ void MediaProcessors::initPipelines(
   }
 #endif
   // init pipelines for all available medias
-  for (auto pipItr = pipelinesToInit.cbegin(); 
+  for (auto pipItr = pipelinesToInit.cbegin();
         pipItr != pipelinesToInit.cend(); pipItr++ )
   {
     //      std::cout << "initialize pipeline type  '" << *pipItr << "'" << std::endl;
@@ -162,7 +162,7 @@ void MediaProcessors::initPipelines(
     if ( pipelineMapping.empty() )
     {
       PROCESSORSLOGINIT;
-      LERROR << "no pipeline '" << *pipItr 
+      LERROR << "no pipeline '" << *pipItr
               << "' defined in pipeline declaration module!";
       continue;
     }
@@ -178,7 +178,7 @@ void MediaProcessors::initPipelines(
         continue;
       }
 #ifdef DEBUG_CD
-      LDEBUG << "MediaProcessors::initPipelines instanciating" 
+      LDEBUG << "MediaProcessors::initPipelines instanciating"
               << entryItr->second;
 #endif
       const MediaProcessUnit* pu = nullptr;
@@ -199,7 +199,7 @@ void MediaProcessors::initPipelines(
       if ( pipeline==0 )
       {
         PROCESSORSLOGINIT;
-        LERROR << "pipeline '" << *pipItr << "' for media " 
+        LERROR << "pipeline '" << *pipItr << "' for media "
                 << mediaStr << " is not of type ProcessUnitPipeline!";
         continue;
       }
@@ -209,7 +209,7 @@ void MediaProcessors::initPipelines(
 }
 
 
-const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId ( 
+const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
     MediaId med,
     const std::string& id ) const
 {
@@ -218,7 +218,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   if ( pipItr == m_d->m_pipelines.end() )
   {
     PROCESSORSLOGINIT;
-    LWARN << "no pipeline type '" << id << "' defined in media " << med 
+    LERROR << "no pipeline type '" << id << "' defined in media " << med
           << " configuration file !";
     return nullptr;
   }
@@ -226,32 +226,32 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   if ( medItr==pipItr->second.end() )
   {
     PROCESSORSLOGINIT;
-    LWARN << "no media [" << med << ":" 
-          << MediaticData::single().getMediaId(med).c_str() 
-          << "] defined for pipeline '" << id.c_str() 
+    LERROR << "no media [" << med << ":"
+          << MediaticData::single().getMediaId(med).c_str()
+          << "] defined for pipeline '" << id.c_str()
           << "' in the configuration file!";
     return nullptr;
   }
   return medItr->second;
 }
 
-const MediaAnalysisDumper* MediaProcessors::getAnalysisDumperForId ( 
-    MediaId med, 
+const MediaAnalysisDumper* MediaProcessors::getAnalysisDumperForId (
+    MediaId med,
     const std::string& type ) const
 {
   PROCESSORSLOGINIT;
   auto dumpItr = m_d->m_analysisDumpers.find ( type );
   if ( dumpItr == m_d->m_analysisDumpers.end() )
   {
-    LWARN << "no dumper type '" << type << "' defined in media " << med 
+    LWARN << "no dumper type '" << type << "' defined in media " << med
           << " configuration file ";
     return nullptr;
   }
   auto medItr = dumpItr->second.find ( med );
   if ( medItr==dumpItr->second.end() )
   {
-    LWARN << "no media [" << med << ":" 
-          << MediaticData::single().getMediaId(med) << "] defined for dumper '" 
+    LWARN << "no media [" << med << ":"
+          << MediaticData::single().getMediaId(med) << "] defined for dumper '"
           << type << "' in the configuration file !";
       return nullptr;
   }
@@ -264,14 +264,14 @@ void MediaProcessorsPrivate::includeProcessors(
     Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
     Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule)
 {
-  try 
+  try
   {
     auto includeList = includeModule.getListValuesAtKeyOfGroupNamed("includeList",
                                                                     "include");
-    for (auto it = includeList.cbegin(); it!=includeList.cend(); it++) 
+    for (auto it = includeList.cbegin(); it!=includeList.cend(); it++)
     {
       string::size_type i=(*it).find("/");
-      if ( i== string::npos) 
+      if ( i== string::npos)
       {
         //PROCESSORSLOGINIT;
         //LERROR << "Cannot include processors " << *it
@@ -280,7 +280,7 @@ void MediaProcessorsPrivate::includeProcessors(
       }
       QString fileName;
       std::string moduleName("");
-      try 
+      try
       {
         //PROCESSORSLOGINIT;
         //LDEBUG << "i="<< i;
@@ -294,7 +294,7 @@ void MediaProcessorsPrivate::includeProcessors(
         module.addModule(newMod);
         //LDEBUG << "added module";
         //ostringstream oss;
-        //for (auto it = module.cbegin(); it != module.cend(); it++) 
+        //for (auto it = module.cbegin(); it != module.cend(); it++)
         //{
         //    oss << (*it).first << ";";
         //}
@@ -305,13 +305,13 @@ void MediaProcessorsPrivate::includeProcessors(
         // with same name was already there : use the one in newMod
         includeProcessors(module,newMod);
       }
-      catch (NoSuchModule& ) 
+      catch (NoSuchModule& )
       {
           //PROCESSORSLOGINIT;
           //LERROR << "Cannot find module " << moduleName
           //       << " in file " << fileName;
       }
-      catch (std::exception& ) 
+      catch (std::exception& )
       {
           //PROCESSORSLOGINIT;
           //LERROR << "Error trying to find module " << moduleName
