@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 ARG BINTRAYKEY
-ARG JOB_NUMBER 
+ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -10,7 +10,7 @@ ARG NLTK_PTB_DP_FILE
 RUN echo "Acquire::http::Pipeline-Depth 0;" > /etc/apt/apt.conf.d/99fixbadproxy && echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixbadproxy && echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99fixbadproxy
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update -o Acquire::CompressionTypes::Order::=gz && apt-get install -y lsb-release locales apt-utils git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 qt5-default libqt5xmlpatterns5 libqt5qml5 libqt5declarative5 libqt5quick5 libqt5quicktest5 qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant1c2a libboost-date-time1.58.0 libboost-filesystem1.58.0 libboost-graph1.58.0 libboost-program-options1.58.0 libboost-test1.58.0 libboost-thread1.58.0 libboost-chrono1.58.0 libboost-atomic1.58.0  qtbase5-dev-tools libqt5xmlpatterns5-dev qtdeclarative5-dev     qml-module-qtquick2 libenchant-dev libboost-all-dev nodejs npm  libtre-dev -qq
-RUN locale-gen en_US.UTF-8 
+RUN locale-gen en_US.UTF-8
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
@@ -51,6 +51,8 @@ RUN cmake -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE
 WORKDIR /usr/share/apps/lima/tests
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+WORKDIR /usr/share/apps/lima/tests/xmlreader
+RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tva-eng.log" | tee tvx-fre.log"
 
 RUN curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-runtime.deb && curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limacommon-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limacommon-2.1.$(cat /src/lima/release)-devel.deb &&  curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-runtime.deb && curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticprocessing-2.1.$(cat /src/lima/release)-devel.deb && curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-common.deb && curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-eng.deb && curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-fre.deb && curl  -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limalinguisticdata-2.1.$(cat /src/lima/release)-por.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limalinguisticdata-2.1.$(cat /src/lima/release)-por.deb && curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-runtime.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-runtime.deb && curl -ukleag:$BINTRAYKEY -T /usr/share/apps/lima/packages/limagui-2.1.$(cat /src/lima/release)-devel.deb  https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/$JOB_NUMBER/limagui-2.1.$(cat /src/lima/release)-devel.deb &&  curl -XPOST -ukleag:$BINTRAYKEY https://api.bintray.com/content/kleag/ubuntu-16.04/lima/$JOB_NUMBER/publish && curl -XGET https://bintray.com/kleag/ubuntu-16.04/lima/$JOB_NUMBER
 

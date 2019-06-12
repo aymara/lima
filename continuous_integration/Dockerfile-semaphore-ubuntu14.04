@@ -1,25 +1,25 @@
 FROM ubuntu:14.04
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
 ARG BINTRAYKEY
-ARG JOB_NUMBER 
+ARG JOB_NUMBER
 
 # Setup
 RUN apt-get update -y -qq
 RUN apt-get install -y lsb-release apt-utils software-properties-common python-software-properties python3-software-properties ninja-build git gcc g++ autotools-dev dh-autoreconf curl python-nltk gawk wget qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev libboost-all-dev libenchant-dev libtre-dev -qq
 
-# Install cmake 3.4 needed by LIMA for ExternalProject_Add_Step options to be 
+# Install cmake 3.4 needed by LIMA for ExternalProject_Add_Step options to be
 # used with Ninja
 RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz && tar xzf cmake-3.4.1.tar.gz && cd cmake-3.4.1/ && ./configure && make && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
-RUN apt-get install -y nodejs 
+RUN apt-get install -y nodejs
 RUN npm install -g json
 
 
@@ -70,6 +70,8 @@ RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*/src/*-build/*.
 WORKDIR /usr/share/apps/lima/tests
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+WORKDIR /usr/share/apps/lima/tests/xmlreader
+RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tva-eng.log" | tee tvx-fre.log"
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin

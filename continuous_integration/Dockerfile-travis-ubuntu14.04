@@ -1,14 +1,14 @@
 FROM ubuntu:14.04
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
 ARG BRANCH
-ARG JOB_NUMBER 
+ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -27,7 +27,7 @@ WORKDIR /src/cmake-3.4.1/
 RUN ./configure && make install && update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
-RUN apt-get install -y nodejs 
+RUN apt-get install -y nodejs
 RUN npm install -g json
 
 
@@ -78,4 +78,6 @@ RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 WORKDIR /usr/share/apps/lima/tests
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+WORKDIR /usr/share/apps/lima/tests/xmlreader
+RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tva-eng.log" | tee tvx-fre.log"
 
