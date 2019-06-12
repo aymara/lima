@@ -54,6 +54,8 @@ AnalysisTestCaseProcessor::AnalysisTestCaseProcessor(
 
 TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV::TestCase& testCase)
 {
+  TGVLOGINIT;
+  LDEBUG << "AnalysisTestCaseProcessor::processTestCase(" << testCase.id << ")";
   // write text in file
   const std::string& text = testCase.getParam( "text" );
   std::string filename(m_workingDirectory+"/test"+testCase.id+".txt");

@@ -8,8 +8,8 @@ using namespace Lima;
 using namespace Lima;
 using namespace std;
 
-XmlSimpleHandler::XmlSimpleHandler() : 
-AbstractXmlDocumentHandler(), 
+XmlSimpleHandler::XmlSimpleHandler() :
+AbstractXmlDocumentHandler(),
 m_out(0),
 m_buffer(),
 m_indexingNodeStack()
@@ -39,11 +39,6 @@ void XmlSimpleHandler::handle ( const char* buf,int length )
 //    std::cerr << "XmlSimpleHandler::handle" << std::endl;
   // do not write directly into buffer (need properties to write whole doc)
   m_buffer.write(buf,length);
-}
-
-void XmlSimpleHandler::startAnalysis(const std::string& bloc_type)
-{
-  LIMA_UNUSED(bloc_type)
 }
 
 void XmlSimpleHandler::startAnalysis()
@@ -77,9 +72,9 @@ void XmlSimpleHandler::endNode ( const Common::Misc::GenericDocumentProperties& 
   string docId= props.getStringValue ( "identPrpty" ).first;
   std::replace( docId.begin(), docId.end(), ',', '_');
 
-  (*m_out) 
+  (*m_out)
     << "<DOC id=\"" << docId << "\">" << endl
-    << m_buffer.str() 
+    << m_buffer.str()
     << "</DOC>" << endl;
 
   m_out->flush();

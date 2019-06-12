@@ -1,13 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
 <modulesConfig>
+  <module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="VerbNet-modex.xml/Processors"/>
+        <item value="FrameNet-modex.xml/Processors"/>
+      </list>
+    </group>
+
 <!-- ******************************************
   Definition of pipelines
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="beginStatusLogger"/>
-        <item value="tokenizer"/>
+        <item value="flattokenizer"/>
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
@@ -17,20 +32,19 @@
         <!--item value="fullTokenXmlLoggerIdiomatic"/-->
         <item value="defaultProperties"/>
         <item value="dotGraphWriter-beforepos"/>
-        <item value="specificEntitiesRecognizer-beforepos"/>
-        <item value="specificEntities-beforeposXmlLogger"/>
-        <item value="specificEntitiesRecognizer"/>
-        <item value="specificEntitiesXmlLogger"/>
+        <item value="SpecificEntitiesModex"/>
+        <!--item value="specificEntitiesXmlLogger"/-->
         <item value="viterbiPostagger-freq"/>
         <item value="dotGraphWriter"/>
         <item value="sentenceBoundariesFinder"/>
         <!--item value="linearTextRepresentationLogger"/-->
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
         <!--item value="syntacticAnalyzerSimplifyFirst"/-->
         <!--item value="syntacticAnalyzerSimplify"/-->
+        <!--item value="syntacticAnalyzerSimplifyCoord"/-->
         <!--item value="syntacticAnalyzerSimplifyLast"/-->
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
         <item value="syntacticAnalyzerDepsHetero"/>
@@ -38,7 +52,7 @@
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="dotDepGraphWriter"/-->
         <!--item value="dotGraphWriterAfterSA"/-->
-        <item value="compoundBuilderFromSyntacticData"/>
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
         <!--item value="compoundsXmlLogger"/-->
   <!--item value="annotDotGraphWriter"/-->
         <!--item value="corefSolver"/-->
@@ -46,77 +60,69 @@
     </group>
     <group name="query" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
-        <item value="tokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <item value="viterbiPostagger-int-none"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="specificEntitiesRecognizer"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="SpecificEntitiesModex"/>
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="syntacticAnalyzerDepsHetero"/>
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
       </list>
     </group>
     <group name="indexer" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="beginStatusLogger"/>
-        <item value="tokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <item value="viterbiPostagger-freq"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="specificEntitiesRecognizer"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="SpecificEntitiesModex"/>
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="syntacticAnalyzerDepsHetero"/>
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
+        <item value="bowDumperXml"/>
       </list>
     </group>
     <group name="normalization" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="beginStatusLogger"/>
-        <item value="tokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
         <item value="viterbiPostagger-int-none"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="specificEntitiesRecognizer"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="SpecificEntitiesModex"/>
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
-        <item value="compoundBuilderFromSyntacticData"/>
-      </list>
-    </group>
-    <group name="normalization" class="ProcessUnitPipeline" >
-      <list name="processUnitSequence">
-        <item value="tokenizer"/>
-        <item value="simpleWord"/>
-        <item value="hyphenWordAlternatives"/>
-        <item value="idiomaticAlternatives"/>
-        <item value="defaultProperties"/>
-        <item value="viterbiPostagger-int-none"/>
-        <item value="sentenceBoundariesFinder"/>
-        <item value="specificEntitiesRecognizer"/>
-        <item value="syntacticAnalyzerChains"/>
-        <item value="syntacticAnalyzerDeps"/>
-        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="syntacticAnalyzerDepsHetero"/>
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
       </list>
     </group>
 <!-- ******************************************
   Definition of process units
-*********************************************** -->    
-    <group name="tokenizer" class="FlatTokenizer">
+*********************************************** -->
+    <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
-      <param key="charChart" value="charchart"/>
+      <param key="charChart" value="flatcharchart"/>
     </group>
     <group name="simpleWord" class="SimpleWord">
         <param key="dictionary" value="mainDictionary"/>
         <param key="confidentMode" value="true"/>
-        <param key="charChart" value="charchart"/>
+        <param key="charChart" value="flatcharchart"/>
         <param key="parseConcatenated" value="false"/>
     </group>
     <group name="corefSolver" class="CorefSolver">
@@ -126,8 +132,8 @@
     </group>
     <group name="hyphenWordAlternatives" class="HyphenWordAlternatives">
       <param key="dictionary" value="mainDictionary"/>
-      <param key="charChart" value="charchart"/>
-      <param key="tokenizer" value="tokenizer"/>
+      <param key="charChart" value="flatcharchart"/>
+      <param key="tokenizer" value="flattokenizer"/>
     </group>
     <group name="idiomaticAlternatives" class="ApplyRecognizer">
       <param key="automaton" value="idiomaticExpressionsRecognizer"/>
@@ -136,7 +142,7 @@
     </group>
     <group name="defaultProperties" class="DefaultProperties">
       <param key="dictionary" value="mainDictionary"/>
-      <param key="charChart" value="charchart"/>
+      <param key="charChart" value="flatcharchart"/>
       <param key="defaultPropertyFile" value="LinguisticProcessings/fre/default-fre.dat"/>
       <list name="skipUnmarkStatus">
         <item value="t_dot_number"/>
@@ -148,64 +154,52 @@
         <item value="NP NP_GEN"/>
       </list>
     </group>
-    <group name="mincostPostagger" class="MinCostPosTagger">
-      <param key="trigramMatrix" value="trigramMatrix"/>
-      <param key="bigramMatrix" value="bigramMatrix"/>
+    <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-fre.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-fre.dat"/>
       <param key="costFunction" value="FrequencyCost"/>
-      <param key="trigramThreshold" value="0.1" />
-      <param key="goodTrigramCost" value="0" />
-      <param key="badTrigramCost" value="1" />
-      <param key="bigramCost" value="4" />
-      <param key="unigramCost" value="10" />
       <param key="defaultCategory" value="PONCTU_FORTE"/>
       <list name="stopCategories">
         <item value="PONCTU_FORTE" />
       </list>
     </group>
-    <group name="viterbiPostagger-freq" class="MinCostPosTagger">
+    <group name="viterbiPostagger-int" class="ViterbiPosTagger">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-fre.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-fre.dat"/>
-      <param key="costFunction" value="ViterbiFrequencyCost"/>
+      <param key="costFunction" value="IntegerCost"/>
       <param key="defaultCategory" value="PONCTU_FORTE"/>
       <list name="stopCategories">
         <item value="PONCTU_FORTE" />
       </list>
     </group>
-    <group name="viterbiPostagger-int" class="MinCostPosTagger">
+    <group name="viterbiPostagger-int-none" class="ViterbiPosTagger">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-fre.dat"/>
       <param key="bigramFile" value="Disambiguation/bigramMatrix-fre.dat"/>
-      <param key="costFunction" value="ViterbiIntegerCost"/>
-      <param key="defaultCategory" value="PONCTU_FORTE"/>
-      <list name="stopCategories">
-        <item value="PONCTU_FORTE" />
-      </list>
-    </group>
-    <group name="viterbiPostagger-int-none" class="MinCostPosTagger">
-      <param key="trigramFile" value="Disambiguation/trigramMatrix-fre.dat"/>
-      <param key="bigramFile" value="Disambiguation/bigramMatrix-fre.dat"/>
-      <param key="costFunction" value="ViterbiIntegerCost"/>
+      <param key="costFunction" value="IntegerCost"/>
       <param key="defaultCategory" value="NONE_1"/>
       <list name="stopCategories">
         <item value="PONCTU_FORTE" />
       </list>
     </group>
-    <group name="sentenceBoundariesFinder" class="sentenceBoundariesFinder">
+    <group name="SvmToolPosTagger" class="SvmToolPosTagger">
+      <param key="model" value="Disambiguation/SVMToolModel-fre/lima"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
     </group>
-    <group name="specificEntitiesRecognizer" class="ApplyRecognizer">
-      <param key="automaton" value="specificEntitiesAutomaton"/>
-      <param key="useDicoWords" value="no"/>
-      <param key="applyOnGraph" value="AnalysisGraph"/>
-      <param key="updateGraph" value="yes"/>
-      <param key="useSentenceBounds" value="no"/>
+    <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
+      <param key="graph" value="PosGraph"/>
+      <list name="micros">
+        <item value="PONCTU_FORTE" />
+      </list>
     </group>
-    <group name="specificEntitiesRecognizer-beforepos" class="ApplyRecognizer">
-      <param key="automaton" value="specificEntitiesAutomaton-beforepos"/>
-      <param key="useDicoWords" value="no"/>
-      <param key="applyOnGraph" value="AnalysisGraph"/>
-      <param key="updateGraph" value="yes"/>
-      <param key="useSentenceBounds" value="no"/>
-    </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
+    experimental module used to test if LIMA analysis works without nominal and
+    verbal. It allows also to build compounds using verbs and heterosyntagmatic
+    dependencies. For that, one have to add adequate relations in
+    CompoundRelations in mm-common. -->
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>
@@ -216,16 +210,13 @@
     </group>
     <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
       <list name="actions">
-          <item value="setr2l"/>
-          <item value="r2l-pass1HomoSyntagmaticRelationRules"/>
-          <item value="setl2r"/>
-          <item value="l2rHomoSyntagmaticRelationRules"/>
-          <item value="setr2l"/>
-          <item value="r2lHomoSyntagmaticRelationRules"/>
-          <!--item value="setl2r"/-->
-          <!--item value="l2rPleonasticPronouns"/-->
+        <item value="pass0HomoSyntagmaticRelationRules"/>
+        <item value="pass1HomoSyntagmaticRelationRules"/>
+        <item value="pass2HomoSyntagmaticRelationRules"/>
+        <item value="pleonasticPronouns"/>
+        <item value="compoundTensesRules"/>
       </list>
-      <param key="disambiguated" value="true"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="syntacticAnalyzerSimplifyFirst" class="SyntacticAnalyzerSimplify">
       <param key="simplifyAutomaton" value="simplifyAutomatonFirst"/>
@@ -233,13 +224,18 @@
     <group name="syntacticAnalyzerSimplify" class="SyntacticAnalyzerSimplify">
       <param key="simplifyAutomaton" value="simplifyAutomaton"/>
     </group>
+    <group name="syntacticAnalyzerSimplifyCoord" class="SyntacticAnalyzerSimplify">
+      <param key="simplifyAutomaton" value="simplifyAutomatonCoord"/>
+    </group>
     <group name="syntacticAnalyzerSimplifyLast" class="SyntacticAnalyzerSimplify">
       <param key="simplifyAutomaton" value="simplifyAutomatonLast"/>
     </group>
     <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
       <param key="rules" value="heteroSyntagmaticRelationRules"/>
+      <param key="selectionalPreferences" value="selectionalPreferences"/>
       <param key="unfold" value="true"/>
       <param key="linkSubSentences" value="true"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
       <map name="subSentencesRules">
         <entry key="SubSent" value="heteroSyntagmaticRelationRules"/>
         <entry key="SubordRel" value="heteroSyntagmaticRelationRules"/>
@@ -264,7 +260,7 @@
         <entry key="ConjSecond" value="heteroSyntagmaticRelationRules"/>
         <entry key="InciseNom" value="heteroSyntagmaticRelationRules"/>
         <entry key="CompCirc" value="heteroSyntagmaticRelationRules"/>
-  <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
+        <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
         <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
       </map>
     </group>
@@ -272,10 +268,6 @@
       <list name="actions">
         <item value="l2rDummyRules"/>
       </list>
-      <param key="disambiguated" value="true"/>
-    </group>
-    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
-      <param key="depGraphMaxBranchingFactor" value="100"/>
     </group>
     <!-- ******************************************
   Definition of loggers
@@ -405,12 +397,31 @@
       <param key="commonNounCategory" value="NC"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
-  </module>
-<!-- ******************************************
+è<!-- ******************************************
   Definition of dumpers
 *********************************************** -->
-  <module name="AnalysisDumpers">
     <group name="agXmlDumper" class="AnnotationGraphXmlDumper">
+    </group>
+    <group name="bowDumperXml" class="BowDumper">
+      <param key="handler" value="xmlDocumentHandler"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="bowDumper" class="BowDumper">
       <param key="stopList" value="stopList"/>
@@ -506,13 +517,21 @@
   Definition of Resources
 *********************************************** -->
   <module name="Resources">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/resources-fre"/>
+        <item value="VerbNet-modex.xml/resources-fre"/>
+        <item value="FrameNet-modex.xml/resources-fre"/>
+      </list>
+    </group>
+
     <group name="FsaStringsPool">
       <param key="mainKeys" value="globalFsaAccess"/>
     </group>
-    <group name="charchart" class="FlatCharChart">
-  <param key="charFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.chars.tok"/>
+    <group name="flatcharchart" class="FlatTokenizerCharChart">
+      <param key="charFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.chars.tok"/>
     </group>
-    <group name="mainDictionary" class="SimpleAnalysisDictionary">
+    <group name="mainDictionary" class="EnhancedAnalysisDictionary">
       <param key="accessKeys" value="globalFsaAccess"/>
       <param key="dictionaryValuesFile" value="LinguisticProcessings/fre/dicoDat-fre.dat"/>
     </group>
@@ -529,7 +548,7 @@
       <param key="codeListFile" value="LinguisticProcessings/fre/codesList-fre.dat"/>
     </group>
     <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
-      <param key="rules" value="LinguisticProcessings/fre/idiomaticExpressions-fre.rules"/>
+      <param key="rules" value="LinguisticProcessings/fre/idiomaticExpressions-fre.bin"/>
     </group>
     <group name="trigramMatrix" class="TrigramMatrix">
       <param key="trigramFile" value="Disambiguation/trigramMatrix-fre.dat"/>
@@ -553,29 +572,40 @@
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
       <param key="file" value="SyntacticAnalysis/chainsMatrix-fre.bin"/>
     </group>
-    <group name="l2rHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/l2rHomoSyntagamaticRelationsRules-fre.bin"/>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass1.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2lHomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/r2lHomoSyntagamaticRelationsRules-fre.bin"/>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass2.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="r2l-pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/r2l-pass1HomoSyntagamaticRelationsRules-fre.bin"/>
+    <group name="pass0HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-homodeps-pass0.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="l2rPleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/l2rPleonasticPronouns-fre.bin"/>
+    <group name="pleonasticPronouns" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-pleonasticPronouns.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="compoundTensesRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-compoundTense.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
     <group name="simplifyAutomatonFirst" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-first-rules-fre.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-first-rules-fre.txt.bin"/>
     </group>
     <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-fre.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-rules-fre.txt.bin"/>
+    </group>
+    <group name="simplifyAutomatonCoord" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-fre-coord.bin"/>
     </group>
     <group name="simplifyAutomatonLast" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-last-rules-fre.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-last-rules-fre.txt.bin"/>
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/heteroSyntagmaticRelationsRules-fre.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-fre-heterodeps.txt.bin"/>
     </group>
     <group name="l2rDummyRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/l2rDummy-fre.bin"/>
@@ -583,5 +613,13 @@
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>
     </group>
+    <group name="bowTextWriter" class="BowTextWriter"/>
+    <group name="bowTextXmlWriter" class="BowTextXmlWriter"/>
+    <group name="bowTextHandler" class="BowTextHandler"/>
+    <group name="bowDocumentHandler" class="BowDocumentHandler"/>
+    <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="xmlDocumentHandler" class="xmlDocumentHandler"/>
   </module>
 </modulesConfig>

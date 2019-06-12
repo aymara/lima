@@ -313,25 +313,32 @@ void CoreLinguisticProcessingClientFactory::configure(
     try
     {
       QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+      if (configPaths.isEmpty())
+      {
+        LERROR << "no config paths available in MediaticData";
+        throw InvalidConfiguration("no config paths available in MediaticData");
+      }
+      QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
+            "lima-coreclient",
+            "mediaProcessingDefinitionFiles",
+            *langItr).c_str());
       Q_FOREACH(QString confPath, configPaths)
       {
-        QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
-             "lima-coreclient",
-             "mediaProcessingDefinitionFiles",
-             *langItr).c_str());
         if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
         {
           file = confPath + "/" + mediaProcessingDefinitionFile;
           break;
         }
       }
+      if (file.isEmpty())
+      {
+        LERROR << "no language definition file"<< mediaProcessingDefinitionFile
+                << "for language" << *langItr << "found in config paths"
+                << configPaths;
+        throw InvalidConfiguration("no language definition file for language ");
+      }
     }
     catch (NoSuchParam& )
-    {
-      LERROR << "no language definition file for language " << *langItr;
-      throw InvalidConfiguration("no language definition file for language ");
-    }
-    if (file.isEmpty())
     {
       LERROR << "no language definition file for language " << *langItr;
       throw InvalidConfiguration("no language definition file for language ");

@@ -73,23 +73,16 @@ int main(int argc, char **argv)
 
 int run(int ,char** )
 {
-  QStringList configDirs = buildConfigurationDirectoriesList(
-      QStringList({"lima"}), QStringList());
+  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                      QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(
-      QStringList({"lima"}), QStringList());
+  auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                     QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  QsLogging::initQsLog(configPath);
-  XMLREADERCLIENTLOGINIT;
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-  //   std::cerr << "Amose plugins initialized" << std::endl;
-
-  QString lpConfigFile("mm-lp-tvx.xml");
-  QString commonConfigFile("mm-common.xml");
+  QString lpConfigFile("lima-lp-tvx.xml");
+  QString commonConfigFile("lima-common.xml");
   QString pipeline("indexer"); // image analyzed through Juilet
   QString useHandler("multimedia");
   QString clientId("lp-structuredXmlreaderclient");
@@ -153,7 +146,6 @@ int run(int ,char** )
 
   parser.process(QCoreApplication::arguments());
 
-
   if (parser.isSet(lpConfigFileOption))
     lpConfigFile = parser.value(lpConfigFileOption);
   if (parser.isSet(commonConfigFileOption))
@@ -184,6 +176,17 @@ int run(int ,char** )
 
   pipelines.push_back(pipeline.toUtf8().constData());
 ///////////////////////////////////////////////////////////////////////////
+  QsLogging::initQsLog(configPath);
+  XMLREADERCLIENTLOGINIT;
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    std::cerr << "Can't load plugins. Aborting." << std::endl;
+    return 1;
+  }
+
+  setlocale(LC_ALL,"fr_FR.UTF-8");
 
   // initialize common
   MediaticData::changeable().init(

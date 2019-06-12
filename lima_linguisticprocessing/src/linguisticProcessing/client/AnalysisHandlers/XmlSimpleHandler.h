@@ -23,8 +23,6 @@ public:
 
     void handle ( const char* buf,int length ) override;
 
-    void startAnalysis(const std::string& bloc_type) override;
-
     void startAnalysis() override;
 
     // OLD : garde la version avec le props car hérite de AbstractTextualAnalysisHandler

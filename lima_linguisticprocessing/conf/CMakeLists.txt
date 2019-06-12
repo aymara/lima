@@ -50,5 +50,6 @@ install(FILES
   lima-dbusserver.xml
   lima-analysis-art.xml
   lima-lp-tvx.xml
+  lima-lp-tvx-fre.xml
   DESTINATION share/config/lima
   COMPONENT runtime)

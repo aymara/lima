@@ -54,6 +54,12 @@ install(
     test-fre.tokenizer.xml
     #test-fre.se-beforepos.xml
     test-fre.multilevel.xml
+  DESTINATION share/apps/lima/tests
+  COMPONENT runtime
+)
+
+install(
+  FILES
     test-fre.xmlreader.xml
     text-fre.xmlreader.0.xml
     text-fre.xmlreader.1.xml
@@ -61,6 +67,6 @@ install(
     text-fre.xmlreader.3.xml
     text-fre.xmlreader.4.xml
     text-fre.xmlreader.5.xml
-  DESTINATION share/apps/lima/tests
+  DESTINATION share/apps/lima/tests/xmlreader
   COMPONENT runtime
 )

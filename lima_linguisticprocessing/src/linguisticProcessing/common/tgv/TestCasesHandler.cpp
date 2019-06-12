@@ -65,7 +65,7 @@ bool TestCasesHandler::startElement (
   LIMA_UNUSED(namespaceURI);
   TGVLOGINIT;
   std::string name=getName(localname,qname);
-  
+
   if (name=="testcase")
   {
     LDEBUG << "TestCasesHandler::startElement: new testcase ";
@@ -92,7 +92,7 @@ bool TestCasesHandler::startElement (
     if( pos == currentTestCase.multiValCallParams.end() ) {
       // typedef std::map<std::string,std::list<std::string> > MultiValCallParams;
       std::pair<std::string,std::list<std::string> > newElem(m_listKey,std::list<std::string>() );
-//      std::pair<MultiValCallParams::iterator,bool> ret = 
+//      std::pair<MultiValCallParams::iterator,bool> ret =
 //        currentTestCase.multiValCallParams.insert(
 //          std::pair<std::string,std::list<std::string> >(m_listKey,std::list<std::string>) );
       /*std::pair<MultiValCallParams::iterator,bool> ret =*/ currentTestCase.multiValCallParams.insert(newElem);
@@ -105,7 +105,7 @@ bool TestCasesHandler::startElement (
     if( pos == currentTestCase.mapValCallParams.end() ) {
       // typedef std::map<std::string,std::list<std::string> > MultiValCallParams;
       std::pair<std::string,std::map<std::string,std::string> > newElem(m_mapKey,std::map<std::string,std::string>() );
-//      std::pair<MultiValCallParams::iterator,bool> ret = 
+//      std::pair<MultiValCallParams::iterator,bool> ret =
 //        currentTestCase.multiValCallParams.insert(
 //          std::pair<std::string,std::list<std::string> >(m_listKey,std::list<std::string>) );
       /*std::pair<MapValCallParams::iterator,bool> ret =*/ currentTestCase.mapValCallParams.insert(newElem);
@@ -162,7 +162,7 @@ bool TestCasesHandler::startElement (
            << ", op =" << tu.op
            << ", right =" << tu.right
            << ", conditional =" << tu.conditional;
-           
+
   }
   return true;
 }
@@ -177,7 +177,7 @@ bool TestCasesHandler::characters(const QString& chars)
 
     SimpleValCallParams::iterator pos = currentTestCase.simpleValCallParams.find("text");
     if( pos == currentTestCase.simpleValCallParams.end() ) {
-//       std::pair<SimpleValCallParams::iterator,bool> ret = 
+//       std::pair<SimpleValCallParams::iterator,bool> ret =
         currentTestCase.simpleValCallParams.insert(std::pair<std::string, std::string>("text",newTextVal) );
     }
     else {
@@ -186,7 +186,7 @@ bool TestCasesHandler::characters(const QString& chars)
     }
   }
   return true;
-  
+
 }
 
 bool TestCasesHandler::endElement (const QString & namespaceURI, const QString & localname, const QString & qname)
@@ -197,37 +197,37 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
   if (name=="testcase")
   {
     m_reportByType[currentTestCase.type].nbtests++;
-      LDEBUG << "TestCasesHandler::endElement: call processTestCase(" << currentTestCase.id
-                                                             << "," << currentTestCase.type << ")";
-      TestCaseError e = m_processor.processTestCase(currentTestCase);
-      if (e())
+    LDEBUG << "TestCasesHandler::endElement: call processTestCase(" << currentTestCase.id
+                                                            << "," << currentTestCase.type << ")";
+    TestCaseError e = m_processor.processTestCase(currentTestCase);
+    if (e())
+    {
+      std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): " << std::endl << e.what() << std::endl;
+        if (currentTestCase.type == FATAL_ERROR_TYPE) {
+        m_hasFatalError = true;
+      }
+      if (e() == TestCaseError::TestCaseFailed)
       {
-        std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): " << std::endl << e.what() << std::endl;
-         if (currentTestCase.type == FATAL_ERROR_TYPE) {
-          m_hasFatalError = true;
-        }
-        if (e() == TestCaseError::TestCaseFailed)
+        if (e.isConditional())
         {
-          if (e.isConditional())
-          {
-            m_reportByType[currentTestCase.type].conditional++;
-          } else
-          {
-            m_reportByType[currentTestCase.type].failed++;
-          }
-        }
-        else
+          m_reportByType[currentTestCase.type].conditional++;
+        } else
         {
-          std::cout << "runtime error: " << e.what() << std::endl;
           m_reportByType[currentTestCase.type].failed++;
-          throw std::runtime_error(e.what());
         }
       }
       else
       {
-        std::cout << currentTestCase.id << " (" << currentTestCase.type << ") passed successfully." << std::endl;;
-        m_reportByType[currentTestCase.type].success++;
+        std::cout << "runtime error: " << e.what() << std::endl;
+        m_reportByType[currentTestCase.type].failed++;
+        throw std::runtime_error(e.what());
       }
+    }
+    else
+    {
+      std::cout << currentTestCase.id << " (" << currentTestCase.type << ") passed successfully." << std::endl;;
+      m_reportByType[currentTestCase.type].success++;
+    }
   } else if (name=="text") {
     // For compatibility with old testTva format
     m_inText=false;
@@ -245,7 +245,7 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
 
 std::string TestCasesHandler::getName(const QString& localName,
                                        const QString& qName) {
-  
+
   return Common::Misc::limastring2utf8stdstring( (localName.isEmpty())?qName:localName );
 }
 
