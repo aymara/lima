@@ -19,28 +19,30 @@ vendredi,Vendredi,VENDREDI,
 samedi,Samedi,SAMEDI,
 dimanche,Dimanche,DIMANCHE);
 
-@month=(janvier,JANVIER,Janvier,janv,Janv,JANV,
+@month=(janvier,JANVIER,Janvier,janv,Janv,JANV,Jan,
 février,FEVRIER,Février,fév,FEV,Fév,
 mars,MARS,Mars,mar,Mar,MAR,
-avril,AVRIL,Avril,avr,
+avril,AVRIL,Avril,avr,Avr,
 mai,MAI,Mai,
-juin,JUIN,Juin,
-juillet,JUILLET,Juillet,juil,Juil,JUIL,
-août,AOUT,Août,
-septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,
+juin,JUIN,Juin,Jui,
+juillet,JUILLET,Juillet,juil,Juil,JUIL,Jui,
+août,AOUT,Août,Aôu,
+septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,Sep,
 octobre,OCTOBRE,Octobre,octobr,oct,OCT,Oct,octob,OCTOB,Octob,
 novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
-décembre,DECEMBRE,Décembre,déc,dec);
+décembre,DECEMBRE,Décembre,déc,dec,Déc);
 
-@monthAbbrev=(janv,Janv,JANV,
+@monthAbbrev=(janv,Janv,JANV,Jan,
 fév,FEV,Fév,févr,Févr,FEVR,
 mar,Mar,MAR,
-avr,
+avr,Avr,
+Jui,
 juil,Juil,JUIL,
-sept,SEPT,Sept,
+Aôu,
+sept,SEPT,Sept,Sep,
 octobr,oct,OCT,Oct,octob,OCTOB,Octob,
 nov,NOV,Nov,
-déc,dec);
+déc,dec,Déc);
 
 @monthNoAbbrev=(janvier,JANVIER,Janvier,
 février,FEVRIER,Février,
@@ -104,8 +106,8 @@ trente et un,
 @numyear=(t_integer>1700<2050,t_integer>1<99)
 @numyear4=(t_integer>1700<2050)
 
-# lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015,  mercredi 26 févr, mercredi 26 févr. 
-//@monthAbbrev|@monthAbbrev \.? = Warning, need to use the both annotations. 
+# lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015,  mercredi 26 févr, mercredi 26 févr.
+//@monthAbbrev|@monthAbbrev \.? = Warning, need to use the both annotations.
 @day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev|@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
 =>NormalizeDate()
 
@@ -217,7 +219,7 @@ siècle$NC:<NUMBER>::DATE:
 #=>NormalizeRelativeDate("diff_0")
 
 #GC20130730: aujourd\'hui as dates are given category NC while they should remain adverbs.
-# Should find a solution: specific EN type,  ? 
+# Should find a solution: specific EN type,  ?
 
 #aujourd\'hui:::DATE:
 #=>NormalizeRelativeDate("date_document,diff_0d")
@@ -241,7 +243,7 @@ t_date:::DATE:
 #------------------------------
 # numeric forms (should be recognized by tokenizer in the future)
 
-# 22-05-68 
+# 22-05-68
 # integer - integer - integer
 
 t_integer>1<31::- t_integer - t_integer:DATE:
@@ -253,7 +255,7 @@ t_integer>1<31::- t_integer - t_integer:DATE:
 @numyear4::- t_integer - t_integer:DATE:
 =>NormalizeDate()
 
-# 22/05/68 
+# 22/05/68
 # fraction / integer or integer / integer / integer
 
 @numday::/ t_integer / t_integer:DATE:
@@ -267,7 +269,7 @@ t_integer>1<31::/ t_integer / t_integer:DATE:
 #=>NormalizeDate()
 
 
-# numbers between 1700 and 2050 are dates 
+# numbers between 1700 and 2050 are dates
 # unless followed by a unit
 
 @numyear4::(de|d\')? $NC:NOT_DATE:
