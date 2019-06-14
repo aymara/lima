@@ -21,12 +21,14 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
     PythonUppsalaTensorFlowTokenizer.cpp
     PythonTensorFlowTokenizer.cpp
+    DeepTokenizerBase.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-pythontensorflowtokenizer)
 
 target_compile_definitions(lima-lp-pythontensorflowtokenizer
-  PRIVATE "-DLIMA_TENSORFLOWTOKENIZER_EXPORTING")
+    PRIVATE "-DLIMA_TENSORFLOWTOKENIZER_EXPORTING"
+)
 
 target_link_libraries(lima-lp-pythontensorflowtokenizer
     lima-lp-linguisticdata
@@ -39,47 +41,67 @@ target_link_libraries(lima-lp-pythontensorflowtokenizer
 )
 
 set_target_properties(lima-lp-pythontensorflowtokenizer PROPERTIES
-  VERSION ${LIMA_LP_LIB_VERSION}
-  SOVERSION ${LIMA_LP_LIB_SOVERSION})
+    VERSION ${LIMA_LP_LIB_VERSION}
+    SOVERSION ${LIMA_LP_LIB_SOVERSION}
+)
 
-install(TARGETS lima-lp-pythontensorflowtokenizer DESTINATION ${LIB_INSTALL_DIR}
-  COMPONENT runtime)
+install(
+    TARGETS lima-lp-pythontensorflowtokenizer
+    DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT runtime
+)
 
 ########### next target ###############
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
-SET(lima-lp-tensorflowtokenizer_LIB_SRCS
-    tokUtils.cpp
-    CppTensorFlowTokenizer.cpp
-)
+    SET(lima-lp-tensorflowtokenizer_LIB_SRCS
+        tokUtils.cpp
+        CppUppsalaTensorFlowTokenizer.cpp
+        DeepTokenizerBase.cpp
+    )
 
-DECLARE_LIMA_PLUGIN(lima-lp-tensorflowtokenizer)
+    DECLARE_LIMA_PLUGIN(lima-lp-tensorflowtokenizer)
 
-target_compile_definitions(lima-lp-tensorflowtokenizer
-  PRIVATE "-DLIMA_TENSORFLOWTOKENIZER_EXPORTING")
+    target_compile_definitions(lima-lp-tensorflowtokenizer
+        PRIVATE "-DLIMA_TENSORFLOWTOKENIZER_EXPORTING"
+    )
 
-target_link_libraries(lima-lp-tensorflowtokenizer
-    lima-lp-linguisticdata
-    lima-lp-linguisticresources
-    lima-lp-annotationgraph
-    lima-lp-linguisticanalysisstructure
-    lima-lp-textsegmentation
-    lima-common
-    ${TensorFlow_LIBRARIES}
-)
+    target_link_libraries(lima-lp-tensorflowtokenizer
+        lima-lp-linguisticdata
+        lima-lp-linguisticresources
+        lima-lp-annotationgraph
+        lima-lp-linguisticanalysisstructure
+        lima-lp-textsegmentation
+        lima-common
+        ${TensorFlow_LIBRARIES}
+    )
 
-set_target_properties(lima-lp-tensorflowtokenizer PROPERTIES
-  VERSION ${LIMA_LP_LIB_VERSION}
-  SOVERSION ${LIMA_LP_LIB_SOVERSION})
+    set_target_properties(lima-lp-tensorflowtokenizer PROPERTIES
+        VERSION ${LIMA_LP_LIB_VERSION}
+        SOVERSION ${LIMA_LP_LIB_SOVERSION}
+    )
 
-install(TARGETS lima-lp-tensorflowtokenizer DESTINATION ${LIB_INSTALL_DIR}
-  COMPONENT runtime)
+    install(
+       TARGETS lima-lp-tensorflowtokenizer
+       DESTINATION ${LIB_INSTALL_DIR}
+       COMPONENT runtime
+    )
+
+#    install(
+#        FILES
+#            models/eng/ewt/UD_English-EWT.conf
+#            models/eng/ewt/UD_English-EWT.model
+#        DESTINATION
+#            share/apps/lima/resources/TensorFlowTokenizer/eng.ud/ewt/
+#    )
 endif()
 
 ########### install files ###############
-install(FILES
-    TensorFlowTokenizerExport.h
-  DESTINATION include/linguisticProcessing/core/TensorFlowTokenizer
-  COMPONENT devel
+install(
+    FILES
+        TensorFlowTokenizerExport.h
+    DESTINATION
+        include/linguisticProcessing/core/TensorFlowTokenizer
+    COMPONENT devel
 )
 

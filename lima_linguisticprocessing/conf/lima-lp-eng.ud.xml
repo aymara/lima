@@ -30,7 +30,7 @@
         <item value="simpleWord"/>
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
-        <item value="idiomaticAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
         <!--item value="fullTokenXmlLoggerIdiomatic"/-->
         <item value="hyphenWordAlternatives"/>
         <!--item value="fullTokenXmlLoggerHyphen"/-->
@@ -239,13 +239,8 @@
       <param key="automatonFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.tok"/>
       <param key="charChart" value="flatcharchart"/>
     </group>
-    <group name="cpptftokenizer" class="CppTensorFlowTokenizer">
-      <param key="corpus" value="en"/>
-      <param key="embeddings_path" value="/home/gael/Projets/Lima/TFUDPipe/log"/>
-      <param key="model_path" value="/home/gael/Projets/Lima/TFUDPipe/udmodel"/>
-      <param key="graphOutputFile" value="frozen_model.pb"/>
-      <param key="window_size" value="20"/>
-      <param key="batch_size" value="200"/>
+    <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
+      <param key="model_prefix" value="ewt/UD_English-EWT"/>
     </group>
     <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
       <param key="corpus" value="en"/>
