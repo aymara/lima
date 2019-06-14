@@ -187,7 +187,6 @@
         <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
-        <item value="syntacticAnalyzerDummy"/>
         <item value="bowDumperXml"/>
       </list>
     </group>
@@ -1080,7 +1079,7 @@
       <param key="rules" value="SyntacticAnalysis/rules-fre-heterodeps.txt.bin"/>
     </group>
     <group name="l2rDummyRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/l2rDummy-fre.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-fre-dummy.txt.bin"/>
     </group>
     <group name="selectionalPreferences" class="SelectionalPreferences">
       <param key="file" value="SyntacticAnalysis/selectionalPreferences-fre.bin"/>
