@@ -24,6 +24,7 @@
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/misc/AbstractAccessByString.h"
+#include "common/misc/escaper.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
@@ -459,16 +460,21 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         LDEBUG << "ConllDumper::process features:" << features;
 #endif
 
-        QString inflectedToken = ft->stringForm();
-        QString lemmatizedToken;
+        std::string inflectedToken = ft->stringForm().toUtf8().constData();
+        if (inflectedToken.find_first_of("\r\n\t") != std::string::npos)
+          boost::find_format_all(inflectedToken, boost::token_finder(!boost::is_print()), character_escaper());
+
+        std::string lemmatizedToken;
         if (morphoData != 0 && !morphoData->empty())
         {
-          lemmatizedToken=sp[(*morphoData)[0].lemma];
+          lemmatizedToken=sp[(*morphoData)[0].lemma].toUtf8().constData();
+          if (lemmatizedToken.find_first_of("\r\n\t") != std::string::npos)
+            boost::find_format_all(lemmatizedToken, boost::token_finder(!boost::is_print()), character_escaper());
         }
-        if (lemmatizedToken.isEmpty())
-        {
+
+        if (lemmatizedToken.empty())
           lemmatizedToken = inflectedToken;
-        }
+
         // @TODO Should follow instructions here to output all MWE:
         // https://universaldependencies.org/format.html#words-tokens-and-empty-nodes
         QString neType = QString::fromUtf8("_") ;
@@ -582,8 +588,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           }
         }
         dstream->out()  << tokenId // ID
-                        << "\t" << inflectedToken.toUtf8().constData() // FORM
-                        << "\t" << lemmatizedToken.toUtf8().constData() // LEMMA
+                        << "\t" << inflectedToken // FORM
+                        << "\t" << lemmatizedToken // LEMMA
                         << "\t" << micro.toUtf8().constData() // UPOS
                         << "\t" << "_" // XPOS
                         << "\t" << "_" // FEATS
