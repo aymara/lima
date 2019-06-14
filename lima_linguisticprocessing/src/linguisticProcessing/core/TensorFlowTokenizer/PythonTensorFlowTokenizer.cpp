@@ -18,6 +18,7 @@
 */
 
 #include "PythonTensorFlowTokenizer.h"
+#include "DeepTokenizerBase.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
@@ -50,13 +51,11 @@ namespace TensorFlowTokenizer
 
 static SimpleFactory<MediaProcessUnit,PythonTensorFlowTokenizer> pythontokenizerFactory(PYTHONTENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
-class PythonTokenizerPrivate
+class PythonTokenizerPrivate : public DeepTokenizerBase
 {
 public:
   PythonTokenizerPrivate();
   virtual ~PythonTokenizerPrivate();
-
-  void computeDefaultStatus(Token& token);
 
   MediaId m_language;
   PyObject* m_instance;
@@ -230,7 +229,7 @@ void PythonTensorFlowTokenizer::init(
   }
 
 
-  // Initialize the python SRL system
+  // Initialize the python SRL system
   // Find the first python executable in the path and use it as the program name.
   // This allows to find the modules set up in an activated virtualenv
   QString str_program_name;
@@ -515,179 +514,6 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
   return SUCCESS_ID;
 }
-
-// set default key in status according to other elements in status
-void PythonTokenizerPrivate::computeDefaultStatus(Token& token)
-{
-#ifdef DEBUG_LP
-  TOKENIZERLOGINIT;
-  LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus"
-          << token.stringForm();
-#endif
-  static QRegularExpression reCapital("^[[:upper:]]+$");
-  static QRegularExpression reSmall("^[[:lower:]]+$");
-  static QRegularExpression reCapital1st("^[[:upper:]]\\w+$");
-  static QRegularExpression reAcronym("^([[:upper:]]\\.)+$");
-  static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$");
-  static QRegularExpression reAbbrev("^\\w+\\.$");
-  static QRegularExpression reTwitter("^[@#]\\w+$");
-
-//       t_cardinal_roman
-  static QRegularExpression reCardinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
-//       t_ordinal_roman
-  static QRegularExpression reOrdinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})(st|nd|d|th|er|ème)$");
-//       t_integer
-  static QRegularExpression reInteger("^\\d+$");
-//       t_comma_number
-  static QRegularExpression reCommaNumber("^\\d+,\\d$");
-//       t_dot_number
-  static QRegularExpression reDotNumber("^\\d\\.\\d$");
-//       t_fraction
-  static QRegularExpression reFraction("^\\d([.,]\\d+)?/\\d([.,]\\d+)?$");
-//       t_ordinal_integer
-  static QRegularExpression reOrdinalInteger("^\\d+(st|nd|d|th|er|ème)$");
-//       t_alphanumeric
-  static QRegularExpression reAlphanumeric("^[\\d[:lower:][:upper:]]+$");
-  static QRegularExpression reSentenceBreak("^[;.!?]$");
-
-  LinguisticAnalysisStructure::TStatus curSettings;
-  if (reCapital.match(token.stringForm()).hasMatch())
-  {
-// #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital";
-// #endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_capital"));
-  }
-  else if (reSmall.match(token.stringForm()).hasMatch())
-  {
-// #ifdef DEBUG_LP
-//     LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_small";
-// #endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_small"));
-  }
-  else if (reCapital1st.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_1st";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_capital_1st"));
-  }
-  else if (reAcronym.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_acronym";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_acronym"));
-  }
-  else if (reCapitalSmall.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_capital_small";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_capital_small"));
-  }
-  else if (reAbbrev.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_abbrev";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_abbrev"));
-  }
-  else if (reTwitter.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_twitter";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_twitter"));
-  }
-  else if (reCardinalRoman.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_cardinal_roman";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_cardinal_roman"));
-  }
-  else if (reOrdinalRoman.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_roman";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_roman"));
-  }
-  else if (reInteger.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_integer";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_integer"));
-  }
-  else if (reCommaNumber.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_comma_number";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_comma_number"));
-  }
-  else if (reDotNumber.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_dot_number";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_dot_number"));
-  }
-  else if (reFraction.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_fraction";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_fraction"));
-  }
-  else if (reOrdinalInteger.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_integer"));
-  }
-  else if (reAlphanumeric.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_alphanumeric";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_alphanumeric"));
-  }
-  else if (reSentenceBreak.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_sentence_brk";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_sentence_brk"));
-  }
-
-
-  else // if (reSmall.match(token.stringForm()).hasMatch())
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "PythonTokenizerPrivate::computeDefaultStatus t_word_brk (default)";
-#endif
-    curSettings.setDefaultKey(QString::fromUtf8("t_word_brk"));
-  }
-  // //       t_not_roman
-//   static QRegularExpression reNotRoman("^$");
-// //     t_alpha_concat_abbrev
-//   static QRegularExpression reAlphConcatAbbrev("^$");
-// //       t_pattern
-//   static QRegularExpression rePattern("^$");
-// //       t_word_brk
-//   static QRegularExpression reWordBreak("^$");
-// //       t_sentence_brk
-//   static QRegularExpression reSentenceBreak("^$");
-// //       t_paragraph_brk
-//   static QRegularExpression reParagraphBreak("^$");
-
-  token.setStatus(curSettings);
-}
-
 
 } //namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing

@@ -25,7 +25,7 @@ namespace TensorFlowTokenizer
 
 /** @brief Indicates if the code is running well
  */
-enum class TokStatusCode : unsigned int {SUCCESS,MISSING_DATA,EMPTY_FILE};
+enum class TokStatusCode : unsigned int {SUCCESS,MISSING_DATA,EMPTY_FILE,INTERNAL_ERROR};
 
 /**
  * @class UnknownWordClassException
