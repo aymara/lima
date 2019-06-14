@@ -587,6 +587,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             deprel = "nsubj";
           }
         }
+        if (0 == tokenId)
+        {
+            DUMPERLOGINIT;
+            LERROR << "ConllDumper::process: tokenId == 0.";
+            throw LimaException();
+        }
         dstream->out()  << tokenId // ID
                         << "\t" << inflectedToken // FORM
                         << "\t" << lemmatizedToken // LEMMA
