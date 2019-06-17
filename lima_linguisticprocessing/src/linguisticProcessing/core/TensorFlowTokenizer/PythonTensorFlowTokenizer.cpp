@@ -362,6 +362,7 @@ void PythonTensorFlowTokenizer::init(
 // PyObject -> Vector
 std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
 {
+  Q_ASSERT(incoming != nullptr);
   std::vector<PyObject*> data;
   if (PyTuple_Check(incoming))
   {
@@ -416,7 +417,10 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
                                                  pyTokenize,
                                                  pyText,
                                                  NULL);
-
+  if (pySentences == NULL)
+  {
+    python_error();
+  }
   // Convert resulting python list of list of tuples (pairs) to Qt or std
   // objects
   auto sentencesPyTokens = pyListOrTupleToVector(pySentences);
