@@ -174,7 +174,7 @@ void CppTensorFlowTokenizer::init(
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
 
- try
+  try
   {
     m_d->m_data = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("data").c_str());
   }
@@ -398,9 +398,10 @@ void CppTokenizerPrivate::init(const QString& corpus,
     throw LimaException();
   }
 
-  QString frozenFile = Common::Misc::findFileInPaths(
-    Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
-    QString("%1/frozen_model.pb").arg(m_model_path));
+//   QString frozenFile = Common::Misc::findFileInPaths(
+//     Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+//     QString("%1/frozen_model.pb").arg(m_model_path));
+  QString frozenFile = QString("%1/frozen_model.pb").arg(m_model_path);
 
   // load frozen graph
   load_graph(frozenFile);
@@ -443,9 +444,10 @@ CppTokenizerPrivate::load_embeddings_dictionary()
 #endif
   std::map<QString,int> dictionary;
   std::map<int,QString> reverse_dictionary;
-  QString metadataFile = Common::Misc::findFileInPaths(
-    Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
-    QString("%1/metadata.tsv").arg(m_model_path));
+//   QString metadataFile = Common::Misc::findFileInPaths(
+//     Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+//     QString("%1/metadata.tsv").arg(m_model_path));
+  QString metadataFile = QString("%1/metadata.tsv").arg(m_model_path);
 
   QFile metadata(metadataFile);
   if (!metadata.open(QFile::ReadOnly))
