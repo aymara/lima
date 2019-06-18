@@ -42,7 +42,7 @@
 
 #include <string>
 
-//#define DEBUG_THIS_FILE true
+#define DEBUG_THIS_FILE true
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -60,6 +60,8 @@ namespace LinguisticProcessing
 {
 namespace TensorFlowTokenizer
 {
+
+static u32string SPACE = QString::fromUtf8(" ").toStdU32String();
 
 static SimpleFactory<MediaProcessUnit,CppUppsalaTensorFlowTokenizer> cppupsalatokenizerFactory(CPPUPPSALATENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
@@ -92,7 +94,7 @@ public:
   QString m_data;
 
 protected:
-  TokStatusCode encode_text(const wstring& text,
+  TokStatusCode encode_text(const u32string& text,
                             vector<vector<unsigned int>>& ngram_idxs);
 
   TokStatusCode generate_batch(const vector<vector<unsigned int>>& ngram_idxs,
@@ -127,8 +129,8 @@ protected:
   struct TDict
   {
     // N-gram dictionaries are in UTF-32 (wchar_t)
-    vector<wstring> m_i2w;
-    map<wstring, unsigned int> m_w2i;
+    vector<u32string> m_i2w;
+    map<u32string, unsigned int> m_w2i;
   };
 
   // Dictionaries of tags are ordinary 1-byte strings
@@ -151,8 +153,8 @@ protected:
   vector<vector<float>> m_crf;
 
   static void load_string_array(const QJsonArray& jsa, vector<string>& v);
-  static void load_string_array(const QJsonArray& jsa, vector<wstring>& v);
-  static void load_string_to_uint_map(const QJsonObject& jso, map<wstring, unsigned int>& v);
+  static void load_string_array(const QJsonArray& jsa, vector<u32string>& v);
+  static void load_string_to_uint_map(const QJsonObject& jso, map<u32string, unsigned int>& v);
 
   static float viterbi_decode(const vector<vector<float>>& scores,
                               const vector<vector<float>>& transitions,
@@ -342,7 +344,7 @@ void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector
   }
 }
 
-void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector<wstring>& v)
+void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector<u32string>& v)
 {
   v.clear();
   v.reserve(jsa.size());
@@ -350,7 +352,7 @@ void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector
   {
     QJsonValue value = *i;
     QString s = value.toString();
-    v.push_back(s.toStdWString());
+    v.push_back(s.toStdU32String());
   }
 }
 
@@ -366,15 +368,15 @@ void CppUppsalaTokenizerPrivate::load_ngram_defs(const QJsonArray& jsa)
   }
 }
 
-void CppUppsalaTokenizerPrivate::load_string_to_uint_map(const QJsonObject& jso, map<wstring, unsigned int>& v)
+void CppUppsalaTokenizerPrivate::load_string_to_uint_map(const QJsonObject& jso, map<u32string, unsigned int>& v)
 {
   v.clear();
   for (QJsonObject::const_iterator i = jso.begin(); i != jso.end(); ++i)
   {
-    if (v.end() != v.find(i.key().toStdWString()))
+    if (v.end() != v.find(i.key().toStdU32String()))
       LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_string_to_uint_map: \"" << i.key() << "\" already known.",
                           LimaException());
-    v[i.key().toStdWString()] = i.value().toInt();
+    v[i.key().toStdU32String()] = i.value().toInt();
   }
 }
 
@@ -447,7 +449,7 @@ void CppUppsalaTokenizerPrivate::load_graph(const QString& model_path)
                         LimaException());
 }
 
-TokStatusCode CppUppsalaTokenizerPrivate::encode_text(const wstring& text, vector<vector<unsigned int>>& ngram_idxs)
+TokStatusCode CppUppsalaTokenizerPrivate::encode_text(const u32string& text, vector<vector<unsigned int>>& ngram_idxs)
 {
   ngram_idxs.clear();
   ngram_idxs.resize(m_ngram_defs.size());
@@ -456,13 +458,13 @@ TokStatusCode CppUppsalaTokenizerPrivate::encode_text(const wstring& text, vecto
   {
     const TNGramDef& ngram_def = m_ngram_defs[n];
     const TDict& dict = m_ngrams[n];
-    unsigned int idx_UNK = dict.m_w2i.find(L"<UNK>")->second;
+    unsigned int idx_UNK = dict.m_w2i.find(QString::fromUtf8("<UNK>").toStdU32String())->second;
     ngram_idxs[n].reserve(text.size() - 2);
 
     for (size_t i = 1; i < text.size() - 1; i++)
     {
       size_t start = i + ngram_def.m_start;
-      const wstring ngram = text.substr(start, ngram_def.m_len);
+      const u32string ngram = text.substr(start, ngram_def.m_len);
       if (ngram.size() != ngram_def.m_len)
         return TokStatusCode::INTERNAL_ERROR;
 
@@ -604,13 +606,13 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::tokenize" << text.left(100));
 
   // Encode text
-  wstring wtext = L" " + text.toStdWString() + L" ";
-  wstring simplified_copy = wtext;
-  std::replace(simplified_copy.begin(), simplified_copy.end(), L'\u00A0', L' ');
-  std::replace(simplified_copy.begin(), simplified_copy.end(), L'\u000A', L' ');
-  std::replace(simplified_copy.begin(), simplified_copy.end(), L'\u000D', L' ');
+  QString simplified_copy = text;
+  simplified_copy.replace(QString::fromUtf8("\u00A0"), " ");
+  simplified_copy.replace(QString::fromUtf8("\u000A"), " ");
+  simplified_copy.replace(QString::fromUtf8("\u000D"), " ");
+  u32string wtext = SPACE + simplified_copy.toStdU32String() + SPACE;
   vector<vector<unsigned int>> ngram_idxs;
-  if (encode_text(simplified_copy, ngram_idxs) != TokStatusCode::SUCCESS)
+  if (encode_text(wtext, ngram_idxs) != TokStatusCode::SUCCESS)
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while encoding text to ngrams' indices.",
                         LimaException());
 
@@ -630,7 +632,7 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
   vector< vector< pair<QString, int> > > sentences;
   vector< pair<QString, int> > current_sentence;
-  wstring current_token;
+  u32string current_token;
   int current_token_offset = 0;
 
   auto scores = out[0].tensor<float, 3>();
@@ -663,9 +665,9 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
             current_token_offset = i * 400 + j;
         }
 
-        if (current_token.size() > 0 && current_token != L" ")
+        if (current_token.size() > 0 && current_token != SPACE)
         {
-          current_sentence.push_back(make_pair(QString::fromStdWString(current_token), current_token_offset));
+          current_sentence.push_back(make_pair(QString::fromStdU32String(current_token), current_token_offset));
           current_token.clear();
         }
       }
