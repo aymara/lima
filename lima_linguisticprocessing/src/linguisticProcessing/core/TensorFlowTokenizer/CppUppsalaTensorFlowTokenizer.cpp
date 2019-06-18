@@ -280,12 +280,13 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init" << model_prefix);
 
-  QString lang_str = MediaticData::MediaticData::single().media(m_language).c_str();
-  QString resources_path = MediaticData::MediaticData::single().getResourcesPath().c_str();
-  QString model_path = QDir::toNativeSeparators(resources_path + "/TensorFlowTokenizer/" + lang_str);
-  QString full_prefix =  QDir(model_path).filePath(model_prefix);
+  QString lang_str = Common::MediaticData::MediaticData::single().media(m_language).c_str();
+  QString resources_path = Common::MediaticData::MediaticData::single().getResourcesPath().c_str();
 
-  load_config(full_prefix);
+  auto config_file_name = findFileInPaths(resources_path,
+                                          QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
+                                            .arg(lang_str).arg(model_prefix));
+  load_config(config_file_name);
 
   tensorflow::SessionOptions options;
   tensorflow::ConfigProto & config = options.config;
@@ -298,7 +299,9 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
                         << status.ToString(),
                         LimaException());
 
-  m_model_path = full_prefix + ".model";
+  m_model_path = findFileInPaths(resources_path,
+                                 QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
+                                  .arg(lang_str).arg(model_prefix));
   load_graph(m_model_path);
 
   // Add the graph to the session
@@ -389,9 +392,9 @@ void CppUppsalaTokenizerPrivate::load_dicts(const QJsonArray& jsa)
   }
 }
 
-void CppUppsalaTokenizerPrivate::load_config(const QString& model_prefix)
+void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 {
-  QString config_file_name = model_prefix + ".conf";
+//   QString config_file_name = model_prefix + ".conf";
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
@@ -496,9 +499,9 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
   for (size_t i = 0; i < m_ngram_defs.size(); ++i)
   {
     Tensor indices_tensor(DT_INT32, TensorShape({reserve, m_max_seq_len}));
-    char buff[64];
-    snprintf(buff, sizeof(buff), "ngram_idx_%d-%zu", m_ngram_defs[i].m_start, m_ngram_defs[i].m_len);
-    string tensor_name = string(buff);
+    QString buff = QString::fromUtf8("ngram_idx_%1-%2")
+      .arg(m_ngram_defs[i].m_start).arg(m_ngram_defs[i].m_len);
+    string tensor_name = buff.toUtf8().constData();
 
     batch.push_back( { tensor_name, indices_tensor } );
     indices_tensor_pos.push_back(batch.size() - 1);
