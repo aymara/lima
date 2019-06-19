@@ -519,8 +519,12 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
     {
       auto indices = batch[indices_tensor_pos[i]].second.tensor<int, 2>();
 
-      for (size_t j = 0; j < this_seq_len; j++)
+      size_t j = 0;
+      for (; j < this_seq_len; j++)
         indices(seq_num, j) = ngram_idxs[i][p + j];
+
+      for (; j < m_max_seq_len; j++)
+        indices(seq_num, j) = 0;
     }
 
     seq_num += 1;
