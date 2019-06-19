@@ -109,7 +109,7 @@ protected:
 
   QString m_model_path;
 
-  Session* m_session;
+  std::unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
   int64 m_max_seq_len;
@@ -169,6 +169,14 @@ CppUppsalaTokenizerPrivate::CppUppsalaTokenizerPrivate() :
 
 CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate()
 {
+  auto status = m_session->Close();
+  if (!status.ok())
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate: Error closing s"
+            << status.ToString();
+  }
+
 }
 
 CppUppsalaTensorFlowTokenizer::CppUppsalaTensorFlowTokenizer() :
@@ -295,12 +303,13 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   config.set_inter_op_parallelism_threads(8);
   config.set_intra_op_parallelism_threads(8);
   config.set_use_per_session_threads(false);
-  Status status = NewSession(options, &m_session);
+  Session* session = 0;
+  Status status = NewSession(options, &session);
   if (!status.ok())
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
                         << status.ToString(),
                         LimaException());
-
+  m_session = std::unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
                                  QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
                                   .arg(lang_str).arg(model_prefix));
