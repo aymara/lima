@@ -47,7 +47,6 @@ namespace Common {
 class DynamicLibrariesManagerPrivate
 {
 friend class DynamicLibrariesManager;
-  DynamicLibrariesManagerPrivate();
 
   bool isSomethingSimilarLoaded(const std::string& libName) const;
 
@@ -57,11 +56,6 @@ friend class DynamicLibrariesManager;
   std::vector<std::string> m_supplementarySearchPath;
 };
 
-DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
-    m_handles(),
-    m_supplementarySearchPath()
-{
-}
 
 bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string& libName) const
 {
