@@ -65,7 +65,7 @@ public:
     const std::set<std::string>& langs);
   ~AnalysisThreadPrivate() {}
 
-  QString ConllToJson( const QString& str );
+  QString TokensToJson( const QString& str );
 
   Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
   QHttpRequest* m_request;
@@ -171,11 +171,11 @@ void AnalysisThread::startAnalysis()
 
   if(m_d->m_request->methodString() == "HTTP_GET")
   {
-    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
+    LDEBUG << "AnalysisThread::startAnalysis: process request (mode HTTP_GET)";
   }
   else if(m_d->m_request->methodString() == "HTTP_POST")
   {
-    LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
+    LDEBUG << "AnalysisThread::startAnalysis: process request (mode HTTP_POST)";
   }
 
   QString language;
@@ -231,7 +231,7 @@ void AnalysisThread::startAnalysis()
     textQS = QString::fromUtf8( body.data() );
   }
   QString truncated = textQS.mid(0,20);
-  LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << truncated << "...'";
+  LDEBUG << "AnalysisThread::startAnalysis: text='"<<truncated<<"...'";
 
   if( language.isEmpty() )
   {
@@ -311,16 +311,14 @@ void AnalysisThread::startAnalysis()
     QString resultString;
     if( m_d->m_mediaType.compare("text/xml") == 0)
     {
-      resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+      resultString.append("<?xml version='1.0' encoding='UTF-8'?>\n");
+      resultString.append("<tokens>\n");
       resultString.append(QString::fromUtf8(oss.str().c_str()));
+      resultString.append("\n</tokens>\n");
     }
-    else if( m_d->m_mediaType.compare("application/json") == 0)
+    else /*if( m_d->m_mediaType.compare("application/json") == 0)*/
     {
-      resultString.append(m_d->ConllToJson(QString::fromUtf8(oss.str().c_str())));
-    }
-    else
-    {
-      resultString.append(m_d->ConllToJson(QString::fromUtf8(oss.str().c_str())));
+      resultString.append(m_d->TokensToJson(QString::fromUtf8(oss.str().c_str())));
     }
 
     LDEBUG << "AnalysisThread::startAnalysis: seLogger output is "
@@ -332,7 +330,7 @@ void AnalysisThread::startAnalysis()
         std::pair<QString,QString>("Content-Type",
                                    "text/xml; charset=utf-8"));
     }
-    if( m_d->m_mediaType.compare("application/json") == 0)
+    else /*if( m_d->m_mediaType.compare("application/json") == 0)*/
     {
       m_d->m_response_header.insert(
         std::pair<QString,QString>("Content-Type",
@@ -351,11 +349,11 @@ void AnalysisThread::startAnalysis()
 #endif
 }
 
-QString AnalysisThreadPrivate::ConllToJson( const QString & str )
+QString AnalysisThreadPrivate::TokensToJson( const QString & str )
 {
   LIMASERVERLOGINIT;
-//   LDEBUG << "AnalysisThread::ConllToJson str=" << str.left(30) << "...";
-  LDEBUG << "AnalysisThreadPrivate::ConllToJson str=" << str;
+  LDEBUG << "AnalysisThread::TokensToJson str=" << str.left(30) << "...";
+//  LDEBUG << "AnalysisThreadPrivate::TokensToJson str=" << str;
 
   // Array of tokens
   QJsonArray array;
@@ -373,6 +371,6 @@ QString AnalysisThreadPrivate::ConllToJson( const QString & str )
   QJsonDocument doc(object);
   QString result(QString::fromUtf8(doc.toJson().constData()));
 
-  LDEBUG << "AnalysisThreadPrivate::ConllToJson: result=" << result.left(80) << "...";
+  LDEBUG << "AnalysisThreadPrivate::TokensToJson: result=" << result.left(80) << "...";
   return result;
 }

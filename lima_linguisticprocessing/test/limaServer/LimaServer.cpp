@@ -209,11 +209,12 @@ void LimaServer::sendResults()
   QHttpResponse *resp = m_responses[req];
   AnalysisThread* analysisthread = static_cast<AnalysisThread*>(sender());
 
-  resp->writeHead(analysisthread->response_code());
   const std::map<QString,QString>& headers = analysisthread->response_header();
   for( std::map<QString,QString>::const_iterator headerIt = headers.begin() ; headerIt != headers.end() ; headerIt++ ) {
+    LDEBUG << "LimaServer::sendResults headers : " << headerIt->first << ": " << headerIt->second ;
     resp->setHeader(headerIt->first, headerIt->second);
   }
+  resp->writeHead(analysisthread->response_code());
 
   resp->end(analysisthread->response_body());
 
