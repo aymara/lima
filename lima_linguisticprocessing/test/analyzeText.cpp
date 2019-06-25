@@ -29,6 +29,7 @@
 #include "common/MediaticData/mediaticData.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
@@ -318,12 +319,18 @@ int run(int argc, char** argv)
 
   uint64_t beginTime=TimeUtils::getCurrentTime();
 
+  try {
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
+  }
+  catch( const InvalidConfiguration& e ) {
+    std::cerr << "Media configuration error" << std::endl;
+    return 1;
+  }
 
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
