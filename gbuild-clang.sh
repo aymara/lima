@@ -14,27 +14,29 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-#Fail if anything goes wrong 
+#Fail if anything goes wrong
 # set -o errexit
 # set -o nounset
 # set -o xtrace
 
-usage() 
-{ 
-cat << EOF 1>&2; exit 1; 
+usage()
+{
+cat << EOF 1>&2; exit 1;
 Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
 
   -m mode       <(debug)|release> compile mode
-  -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
-                Necessary to be able to build with no parallelism as  it currently fail on 
-                some machines.
+  -j n          <INTEGER> set the compilation to a number of parallel processes.
+                Default 0 => the value is derived from CPUs available.
+  -p boolean    <(true)|false> will build in parallel (make -jn) if true.
+                Necessary to be able to build with no parallelism as it currently fails on
+                some machines. "-p false" will overwrite the value of "-j" to 1.
   -r resources  <precompiled|(build)> build the linguistic resources or use the
                 precompiled ones
-  -v version    <(val)|rev> version number is set either to the value set by  
+  -v version    <(val)|rev> version number is set either to the value set by
                 config files or to the short git sha1
-  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.  
+  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.
 EOF
 exit 1
 }
@@ -43,6 +45,7 @@ exit 1
 [ -z "$LIMA_DIST" ] && echo "Need to set LIMA_DIST" && exit 1;
 
 arch="generic"
+j="0"
 mode="Debug"
 version="val"
 resources="build"
@@ -51,7 +54,7 @@ CMAKE_GENERATOR="Unix"
 USE_TF=false
 TF_SOURCES_PATH=""
 
-while getopts ":m:p:r:v:G:P:T" o; do
+while getopts ":m:p:r:v:G:P:Tj:" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
@@ -60,6 +63,14 @@ while getopts ":m:p:r:v:G:P:T" o; do
         n)
             arch=${OPTARG}
             [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
+            ;;
+        j)
+            j=${OPTARG}
+            [[ -n "${j##*[!0-9]*}" ]] || usage
+            ;;
+        p)
+            parallel=${OPTARG}
+            [[ "$parallel" == "true" || "$parallel" == "false" ]] || usage
             ;;
         G)
             CMAKE_GENERATOR=${OPTARG}
@@ -70,10 +81,6 @@ while getopts ":m:p:r:v:G:P:T" o; do
                    "$CMAKE_GENERATOR" == "NMake" ||
                    "$CMAKE_GENERATOR" == "VS"
             ]] || usage
-            ;;
-        p)
-            parallel=${OPTARG}
-            [[ "$parallel" == "true" || "$parallel" == "false" ]] || usage
             ;;
         r)
             resources=${OPTARG}
@@ -117,17 +124,23 @@ else
   release="2"
 fi
 
-j="1"
-if [[ $parallel = "true" ]]; then
+if [[ $parallel = "false" ]]; then
+  j="1"
+fi
+if [[ "$j" == "0" ]]; then
   if [[ $CMAKE_GENERATOR == "VS" ]]; then
     j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
-  elif [[ $CMAKE_GENERATOR == "Unix" ]]; then
+  elif [[ $CMAKE_GENERATOR == "Unix" || $CMAKE_GENERATOR == "Ninja" ]]; then
     j=`grep -c ^processor /proc/cpuinfo`
   fi
-  echo "Parallel build on $j processors"
-else
-  echo "Linear build"
 fi
+if [[ "$j" == "1" ]]; then
+  echo "Linear build"
+else
+  echo "Parallel build on $j processors"
+fi
+
+exit 0
 
 # export VERBOSE=1
 if [[ $mode == "Release" ]]; then
@@ -143,7 +156,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_package="make package"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
-  make_cmd="ninja"
+  make_cmd="ninja -j $j"
   make_test=""
   make_install="ninja install"
   make_package="ninja package"

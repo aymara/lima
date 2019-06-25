@@ -14,14 +14,14 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-#Fail if anything goes wrong 
+#Fail if anything goes wrong
 # set -o errexit
 # set -o nounset
 # set -o xtrace
 
-usage() 
-{ 
-cat << EOF 1>&2; exit 1; 
+usage()
+{
+cat << EOF 1>&2; exit 1;
 Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
@@ -30,10 +30,12 @@ Options default values are in parentheses.
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
+  -j n              <INTEGER> set the compilation to a number of parallel processes.
+                    Default 0 => the value is derived from CPUs available.
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
-  -v version        <(val)|rev> version number is set either to the value set by  
+  -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
   -T                Use TensorFlow
@@ -46,6 +48,7 @@ exit 1
 [ -z "$LIMA_DIST" ] && echo "Need to set LIMA_DIST" && exit 1;
 
 arch="generic"
+j="0"
 WITH_DEBUG_MESSAGES="OFF"
 mode="Debug"
 version="val"
@@ -57,7 +60,7 @@ SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=false
 TF_SOURCES_PATH=""
 
-while getopts ":d:m:n:r:v:G:a:P:sT" o; do
+while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -74,6 +77,10 @@ while getopts ":d:m:n:r:v:G:a:P:sT" o; do
         n)
             arch=${OPTARG}
             [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
+            ;;
+        j)
+            j=${OPTARG}
+            [[ -n "${j##*[!0-9]*}" ]] || usage
             ;;
         G)
             CMAKE_GENERATOR=${OPTARG}
@@ -130,13 +137,18 @@ else
   release="0"
 fi
 
-j="1"
-if [[ $CMAKE_GENERATOR == "VS" ]]; then
-  j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
-elif [[ $CMAKE_GENERATOR == "Unix" ]]; then
-  j=`grep -c ^processor /proc/cpuinfo`
+if [[ "$j" == "0" ]]; then
+  if [[ $CMAKE_GENERATOR == "VS" ]]; then
+    j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
+  elif [[ $CMAKE_GENERATOR == "Unix" || $CMAKE_GENERATOR == "Ninja" ]]; then
+    j=`grep -c ^processor /proc/cpuinfo`
+  fi
 fi
-echo "Parallel build on $j processors"
+if [[ "$j" == "1" ]]; then
+  echo "Linear build"
+else
+  echo "Parallel build on $j processors"
+fi
 
 # export VERBOSE=1
 if [[ $mode == "Release" ]]; then
@@ -160,7 +172,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_package="make package"
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
-  make_cmd="ninja"
+  make_cmd="ninja -j $j"
   make_test=""
   make_install="ninja install"
   make_package="ninja package"
