@@ -140,7 +140,6 @@ else
   echo "Parallel build on $j processors"
 fi
 
-exit 0
 
 # export VERBOSE=1
 if [[ $mode == "Release" ]]; then
