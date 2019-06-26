@@ -130,7 +130,13 @@ LimaServer::LimaServer( const QString& configPath,
           this, SLOT(handleRequest(QHttpRequest*,QHttpResponse*)));
 
   LINFO << "LimaServer::LimaServer: server listen...";
-  m_server->listen(QHostAddress::Any, port);
+  bool st = m_server->listen(QHostAddress::Any, port);
+  if(!st) {
+    LERROR << "LimaServer::LimaServer: could not listen on configured host and port (" << port << ")";
+    LERROR << "LimaServer::LimaServer: this port might be already in use";
+    throw InvalidConfiguration("could not listen on configured host and port");
+    return;
+  }
   LINFO << "Server listening on host" << QHostAddress::Any
         << "and port" << port;
  }

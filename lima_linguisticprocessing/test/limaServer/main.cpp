@@ -235,8 +235,11 @@ int main(int argc, char **argv)
   }
 
   QTimer t;
+
   // Create instance of server
-  LimaServer server(configPath,
+  LimaServer* server=NULL;
+  try {
+    server = new LimaServer(configPath,
                     QString::fromUtf8(strCommonConfigFile.c_str()),
                     QString::fromUtf8(strLpConfigFile.c_str()),
                     resourcesPath,
@@ -245,15 +248,24 @@ int main(int argc, char **argv)
                     port,
                     &app,
                     &t);
+  }
+  catch (const InvalidConfiguration& e) {
+    std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
+    std::cerr << "main: abort" << std::endl;
+    if(server) delete server;
+    return 1;
+  }
 
   if (varMap.count("service-life"))
   {
     // Stop server and app after service-life seconds
     //note that we need to use t.connect, as main is not a QObject
-    t.connect (&t, SIGNAL(timeout()), &server, SLOT(quit()));
+    t.connect (&t, SIGNAL(timeout()), server, SLOT(quit()));
     int time_out = service_life*1000;
     t.start(time_out);
   }
+
+  if(server) delete server;
 
   //return app.exec();
   int ret = app.exec();
