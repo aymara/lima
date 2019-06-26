@@ -488,12 +488,18 @@ int run(int argc, char** argv)
                     << " (" << percent.toUtf8().constData()
                     << "%) lines. At " << file.pos();
         }
-        // analyze it
-        client->analyze(contentText,
-                        metaData,
-                        pipeline,
-                        handlers,
-                        inactiveUnits);
+        try {
+          // analyze it
+          client->analyze(contentText,
+                          metaData,
+                          pipeline,
+                          handlers,
+                          inactiveUnits);
+        }
+        catch( const LinguisticProcessingException& e) {
+          std::cerr << "Error while analyzing line "<< lineNum << ": " << e.what();
+          break;
+        }
       }
       file.close();
     }
@@ -512,7 +518,12 @@ int run(int argc, char** argv)
       TimeUtils::updateCurrentTime();
 
       // analyze it
-      client->analyze(contentText,metaData, pipeline, handlers, inactiveUnits);
+      try {
+        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+      }
+      catch( const LinguisticProcessingException& e) {
+        std::cerr << "Error while analyzing file "<< *fileItr << ": " << e.what();
+      }
     }
 
     // Close and delete opened output files
