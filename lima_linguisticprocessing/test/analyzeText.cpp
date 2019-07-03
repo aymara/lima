@@ -74,14 +74,12 @@ std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler,
                                     const std::set< std::string >& dumpers,
                                     const std::string& dumperId);
 void closeHandlerOutputFile(std::ostream* ofs);
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
-#ifndef DEBUG_CD
   try
   {
-#endif
     QCoreApplication a(argc, argv);
     QCoreApplication::setApplicationName("analyzeText");
     QCoreApplication::setApplicationVersion(LIMA_VERSION);
@@ -99,24 +97,46 @@ int main(int argc, char **argv)
     QTimer::singleShot(0, task, SLOT(run()));
 
     return a.exec();
-#ifndef DEBUG_CD
+  }
+  catch( const InvalidConfiguration& e ) {
+    std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
+    #ifndef DEBUG_LP
+    return UNSUPPORTED_LANGUAGE;
+    #endif
+    throw;
+  }
+  catch (const LinguisticProcessingException& e)
+  {
+    std::cerr << "Catched LinguisticProcessingException: " << e.what() << std::endl;
+    #ifndef DEBUG_LP
+    return INVALID_CONFIGURATION;
+    #endif
+    throw;
   }
   catch (const Lima::LimaException& e)
   {
-    std::cerr << "Catched LimaException:" << e.what() << std::endl;
+    std::cerr << "Catched LimaException: " << e.what() << std::endl;
+    #ifndef DEBUG_LP
+    return UNKNOWN_ERROR;
+    #endif
     throw;
   }
   catch (const std::exception& e)
   {
-    std::cerr << "Catched std::exception:" << e.what() << std::endl;
+    std::cerr << "Catched std::exception: " << e.what() << std::endl;
+    #ifndef DEBUG_LP
+    return UNKNOWN_ERROR;
+    #endif
     throw;
   }
   catch (...)
   {
     std::cerr << "Catched unknown exception" << std::endl;
+    #ifndef DEBUG_LP
+    return UNKNOWN_ERROR;
+    #endif
     throw;
   }
-#endif
 }
 
 
@@ -212,7 +232,7 @@ int run(int argc, char** argv)
   catch (const boost::program_options::unknown_option& e)
   {
     std::cerr << e.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
   if (vm.count("help"))
   {
@@ -259,7 +279,7 @@ int run(int argc, char** argv)
   if (langs.size()<1)
   {
     std::cerr << "no language defined !" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   QMap< QString, QString > outputs;
@@ -319,18 +339,12 @@ int run(int argc, char** argv)
 
   uint64_t beginTime=TimeUtils::getCurrentTime();
 
-  try {
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
-  }
-  catch( const InvalidConfiguration& e ) {
-    std::cerr << "Media configuration error" << std::endl;
-    return 1;
-  }
 
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
@@ -488,18 +502,14 @@ int run(int argc, char** argv)
                     << " (" << percent.toUtf8().constData()
                     << "%) lines. At " << file.pos();
         }
-        try {
-          // analyze it
-          client->analyze(contentText,
-                          metaData,
-                          pipeline,
-                          handlers,
-                          inactiveUnits);
-        }
-        catch( const LinguisticProcessingException& e) {
-          std::cerr << "Error while analyzing line "<< lineNum << ": " << e.what();
-          break;
-        }
+
+        // analyze it
+        client->analyze(contentText,
+                        metaData,
+                        pipeline,
+                        handlers,
+                        inactiveUnits);
+
       }
       file.close();
     }
@@ -518,12 +528,7 @@ int run(int argc, char** argv)
       TimeUtils::updateCurrentTime();
 
       // analyze it
-      try {
-        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
-      }
-      catch( const LinguisticProcessingException& e) {
-        std::cerr << "Error while analyzing file "<< *fileItr << ": " << e.what();
-      }
+      client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
     }
 
     // Close and delete opened output files
