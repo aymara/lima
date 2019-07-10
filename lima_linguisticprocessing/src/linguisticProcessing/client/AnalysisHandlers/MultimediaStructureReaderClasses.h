@@ -17,9 +17,9 @@ namespace Handler {
 
 class LIMA_ANALYSISHANDLERS_EXPORT MultimediaXMLStructureReader:
             public Lima::StructureHandler,
-            public Lima::ContentHandler<Lima::Common::Misc::GenericDocumentProperties>,
+            public Lima::ContentHandler<Common::Misc::GenericDocumentProperties>,
             public Lima::ContentHandler< std::vector<float> >,
-            public Lima::ContentHandler< Lima::Common::BagOfWords::BoWText >
+            public Lima::ContentHandler< Common::BagOfWords::BoWText >
 {
 public:
 
@@ -27,17 +27,22 @@ public:
 
   virtual ~MultimediaXMLStructureReader();
 
-  void processBoWText(const Lima::Common::BagOfWords::BoWText* text,int cId);
+  MultimediaXMLStructureReader(const MultimediaXMLStructureReader&) = delete;
+  MultimediaXMLStructureReader& operator=(const MultimediaXMLStructureReader&) = delete;
+
+  void processBoWText(const Common::BagOfWords::BoWText* text, int cId);
 
   void processSBinNum(const std::vector<float>& vect, const std::string& SID, int CID);
 
-  void openSNode( const Lima::Common::Misc::GenericDocumentProperties* /*unused properties*/,const std::string& elementName );
+  void openSNode(const Common::Misc::GenericDocumentProperties* /*unused properties*/,
+                 const std::string& elementName );
 
-  void openSIndexingNode(const Lima::Common::Misc::GenericDocumentProperties* /*unused properties*/,const std::string& elementName );
+  void openSIndexingNode(const Common::Misc::GenericDocumentProperties* /*unused properties*/,
+                         const std::string& elementName );
 
   void closeSNode();
 
-  void processSContent( const Lima::Common::Misc::GenericDocumentProperties* properties );
+  void processSContent( const Common::Misc::GenericDocumentProperties* properties );
 
   void closeSContent();
 
@@ -45,7 +50,7 @@ public:
 
   void  writeVectorFloat(const std::vector<float>& vect);
 
-  void closePropertiesNode(const Lima::Common::Misc::GenericDocumentProperties* prop);
+  void closePropertiesNode(const Common::Misc::GenericDocumentProperties* prop);
 
   void addContentNode(const Lima::Node& node);
 
@@ -60,18 +65,25 @@ private:
 
 };
 
-class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryStructureReader: public Lima::Common::BagOfWords::BoWBinaryReader
+class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryStructureReader:
+    public Common::BagOfWords::BoWBinaryReader
 {
  public:
   MultimediaBinaryStructureReader();
   virtual ~MultimediaBinaryStructureReader();
+  MultimediaBinaryStructureReader(const MultimediaBinaryStructureReader&) = delete;
+  MultimediaBinaryStructureReader& operator=(const MultimediaBinaryStructureReader&) = delete;
 
   void readMultimediaDocumentBlock(std::istream& file,
-                     Lima::Common::BagOfWords::BoWDocument& document,
-                     MultimediaXMLStructureReader* handler,
-                     bool useIterator);
+                                   Common::BagOfWords::BoWDocument& document,
+                                   MultimediaXMLStructureReader* handler,
+                                   bool useIterator);
 
-  void readBinNum(std::istream& file,uint64_t& cid,std::string& path,std::string& name,std::vector<float>& vect);
+  void readBinNum(std::istream& file,
+                  uint64_t& cid,
+                  std::string& path,
+                  std::string& name,
+                  std::vector<float>& vect);
 
   private:
 };

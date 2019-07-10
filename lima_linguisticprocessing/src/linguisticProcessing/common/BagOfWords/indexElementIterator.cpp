@@ -48,7 +48,7 @@ namespace BagOfWords {
 class IndexElementIteratorPrivate
 {
   friend class IndexElementIterator;
-  
+
   IndexElementIteratorPrivate(const BoWText& bowText,
                        AbstractLexiconIdGenerator* idAccessor=0,
                        const uint64_t maxCompoundSize=0,
@@ -60,10 +60,10 @@ class IndexElementIteratorPrivate
   /** */
   void getPositionLengthList(const std::vector<uint64_t>& structure,
                              Misc::PositionLengthList& poslenlist) const;
-                             
+
   /** Add @ref newElement in queue, only if queue size is lower than its maximum.
-    * Only used for compound elements 
-    * @return true if the element has been added and false otherwise (size of queue would become 
+    * Only used for compound elements
+    * @return true if the element has been added and false otherwise (size of queue would become
     * greater than max)
     */
   bool addInPartQueue(const IndexElement& newElement);
@@ -76,18 +76,18 @@ class IndexElementIteratorPrivate
                               std::pair<std::vector<uint64_t>, uint64_t> & ids_rels,
                               const uint64_t rel);
 
-  /** 
+  /**
     * this function is recursive to build all composed elements that contains
-    * the head and all or parts of the extensions, for all possible values (ids) 
+    * the head and all or parts of the extensions, for all possible values (ids)
     * of head and extensions
-    * 
+    *
     * @param partIdsRels : the possible ids of each part, plus one relation per part
     * @param head : the position of the head in the parts
     * @param ids : the id list in which new ids are added for combined element
     * @param structure : the current structure
     * @param i : the current part looked at
-    * 
-    * @return 
+    *
+    * @return
     */
   bool addCombinedPartsInQueue(const Lima::Common::BagOfWords::BoWType type,
                                const std::vector<std::pair<std::vector<uint64_t>, uint64_t> >& partIds_Rels,
@@ -181,16 +181,16 @@ bool IndexElementIterator::isAtEnd() const
 // get current element ("dereference" iterator)
 //**********************************************************************
 // getting parts is done in this function (rather than in ++ function):
-// which means that if a ++ is done before calling a getElement on 
+// which means that if a ++ is done before calling a getElement on
 // a complex token, no parts will be explored
 IndexElement IndexElementIterator::getElement()
 {
 #ifdef DEBUG_CD
   BOWLOGINIT;
   LDEBUG  << "IndexElementIterator::getElement empty:" << m_d->m_partQueue.empty();
-#endif  
+#endif
   // If queue is empty
-  // - for simple tokens: a new index element is returned 
+  // - for simple tokens: a new index element is returned
   // - for complex tokens : it is filled and then its front is returned
   if (m_d->m_partQueue.empty())
   {
@@ -198,14 +198,14 @@ IndexElement IndexElementIterator::getElement()
     { // at end
 #ifdef DEBUG_CD
       LDEBUG  << "IndexElementIterator::getElement at end: return empty element";
-#endif  
+#endif
       return IndexElement(); // empty element has id 0
     }
     else
     {
       boost::shared_ptr< BoWToken> token = boost::dynamic_pointer_cast<BoWToken>((*m_d->m_iterator));
       boost::shared_ptr< BoWPredicate > predicate;
-      
+
       switch ((*m_d->m_iterator)->getType())
       {
         case BoWType::BOW_TOKEN:
@@ -231,7 +231,8 @@ IndexElement IndexElementIterator::getElement()
           LDEBUG  << "IndexElementIterator::getElement term:" << token->getIdUTF8String();
 #endif
           m_d->storePartsInQueue(token);
-          if (m_d->m_partQueue.empty()) {
+          if (m_d->m_partQueue.empty())
+          {
 #ifdef DEBUG_CD
             LDEBUG  << "IndexElementIterator::getElement term: part queue is empty" ;
 #endif
@@ -243,7 +244,7 @@ IndexElement IndexElementIterator::getElement()
 #endif
           m_d->m_alreadyFoundElements.insert(QString::fromUtf8(token->getIdUTF8String().c_str()),m_d->m_partQueue.front());
           return m_d->m_partQueue.front();
-          
+
         case BoWType::BOW_NAMEDENTITY:
 #ifdef DEBUG_CD
           LDEBUG  << "IndexElementIterator::getElement named entity:" << boost::dynamic_pointer_cast<BoWNamedEntity>(*m_d->m_iterator)->getIdUTF8String() ;//<< Lima::Common::MediaticData::MediaticData::single().getEntityName(static_cast<BoWNamedEntity*>((*m_d->m_iterator))->getNamedEntityType());
@@ -253,9 +254,17 @@ IndexElement IndexElementIterator::getElement()
 #ifdef DEBUG_CD
           LDEBUG  << "IndexElementIterator::getElement ne after storePartsInQueue front is:" << m_d->m_partQueue.front();
 #endif
+          if (m_d->m_partQueue.empty())
+          {
+#ifdef DEBUG_CD
+            LDEBUG  << "IndexElementIterator::getElement ne: part queue is empty" ;
+#endif
+            (*this)++;
+            return getElement();
+          }
           m_d->m_alreadyFoundElements.insert(QString::fromUtf8(token->getIdUTF8String().c_str()),m_d->m_partQueue.front());
           return m_d->m_partQueue.front();
-          
+
         // FIXME Change the handling of predicates to take into account their complex structure nature
         case BoWType::BOW_PREDICATE:
         {
@@ -282,7 +291,7 @@ IndexElement IndexElementIterator::getElement()
 #endif
     return m_d->m_partQueue.front();
   }
-  
+
   // Unreachable
   return IndexElement(); // empty element has id 0
 }
@@ -290,7 +299,7 @@ IndexElement IndexElementIterator::getElement()
 //**********************************************************************
 // operator ++
 //**********************************************************************
-IndexElementIterator& IndexElementIterator::operator++() 
+IndexElementIterator& IndexElementIterator::operator++()
 {
 #ifdef DEBUG_CD
   BOWLOGINIT;
@@ -348,12 +357,12 @@ void IndexElementIteratorPrivate::getPositionLengthList(const std::vector<uint64
   // update position/length list for structure
   // use previous elements in queue
   for (std::vector<uint64_t>::const_iterator it = structure.begin(); it != structure.end(); ++it) {
-    
+
     QMap<QString,IndexElement>::const_iterator found = m_alreadyFoundElements.begin();
     while (found != m_alreadyFoundElements.end() && *it != found.value().getId()) {
       ++found;
     }
-    
+
     if (found != m_alreadyFoundElements.end()) {
       const PositionLengthList& p = found.value().getPositionLengthList();
       poslenlist.insert(poslenlist.end(), p.begin(), p.end());
@@ -377,10 +386,10 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 #endif
   if (m_partQueue.size() >= m_maxSizeQueue) {
     BOWLOGINIT;
-    LWARN << "size of queue exceeded"; 
+    LWARN << "size of queue exceeded";
     return false;
   }
-  
+
   m_partQueue.push_back(newElement);
 //   BOWLOGINIT;
 //   if (logger.isDebugEnabled()) {
@@ -389,7 +398,7 @@ bool IndexElementIteratorPrivate::addInPartQueue(const IndexElement& newElement)
 //            it_end=structure.end(); it!=it_end; it++) {
 //       oss << *it << ";";
 //     }
-//     LDEBUG << "add in part queue " << id << ":" 
+//     LDEBUG << "add in part queue " << id << ":"
 //            << oss.str()
 //            << ";size of queue=" << m_partQueue.size()
 //           ;
@@ -413,7 +422,7 @@ void IndexElementIteratorPrivate::storePartsInQueue(boost::shared_ptr< Lima::Com
 
 bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWToken > token,
                        pair<vector<uint64_t>, uint64_t>& ids_rel,
-                       uint64_t rel) 
+                       uint64_t rel)
 {
 #ifdef DEBUG_CD
   BOWLOGINIT;
@@ -452,7 +461,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
       ids_rel=make_pair(vector<uint64_t>(1,m_alreadyFoundElements[QString::fromUtf8(token->getIdUTF8String().c_str())].getId()),rel);
       return result;
     }
-    case BoWType::BOW_NAMEDENTITY: 
+    case BoWType::BOW_NAMEDENTITY:
       neType=boost::dynamic_pointer_cast<BoWNamedEntity>(token)->getNamedEntityType();
       break;
     case BoWType::BOW_TERM:
@@ -464,7 +473,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
   // is a complex token
   boost::shared_ptr< BoWComplexToken > complexToken=
     boost::dynamic_pointer_cast<BoWComplexToken>(token);
-  
+
   if (complexToken==0) {
     BOWLOGINIT;
     LERROR << "failed to convert BoWText element in complex token";
@@ -477,7 +486,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
 #endif
     // only one part, do not get into it
     // (for instance, named entity with one element)
-    // push simple token in parts 
+    // push simple token in parts
     if (!m_alreadyFoundElements.contains(QString::fromUtf8(token->getIdUTF8String().c_str())))
     {
       uint64_t id=m_idGenerator->getId(token->getString());
@@ -500,7 +509,7 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
     }
     return result;
   }
-  
+
 #ifdef DEBUG_CD
   LDEBUG  << "IndexElementIteratorPrivate::addPartElementsInQueue complex token of size" << complexToken->size();
 #endif
@@ -515,11 +524,11 @@ bool IndexElementIteratorPrivate::addPartElementsInQueue(boost::shared_ptr< BoWT
     pair<vector<uint64_t>, uint64_t>& thisPartIdsRels=partIdsRels[i];
     uint64_t relType;
     boost::shared_ptr< BoWRelation > relation=(complexToken->getParts()[i]).getBoWRelation();
-    if (relation !=0 ) relType=relation->getSynType(); else  relType=0; 
+    if (relation !=0 ) relType=relation->getSynType(); else  relType=0;
     if (!addPartElementsInQueue(complexToken->getParts()[i].getBoWToken(),thisPartIdsRels,relType)) {
       return false;
     }
-    
+
     if (i==head) {
       // add ids of the head
         ids_rel.first.insert(ids_rel.first.end(),thisPartIdsRels.first.begin(),thisPartIdsRels.first.end());
@@ -555,7 +564,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
     structureKey << QString::number(*it);
   }
 #ifdef DEBUG_CD
-  LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size() 
+  LDEBUG << "addCombinedPartsInQueue: nb parts=" << partIdsRels.size()
         << ", head=" << head << ", current=" << current << ", structure=" << structureKey.join(";");
 #endif
   bool result = false;
@@ -584,7 +593,7 @@ bool IndexElementIteratorPrivate::addCombinedPartsInQueue(
         return true;
       }
       // at end of parts => add current structure
-      
+
       uint64_t id=m_idGenerator->getId(structure);
 #ifdef DEBUG_CD
       LDEBUG << "IndexElementIterator: got id from generator " << id;
