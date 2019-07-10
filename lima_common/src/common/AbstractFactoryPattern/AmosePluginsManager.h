@@ -26,19 +26,33 @@
 
 namespace Lima
 {
-  
+
 class LIMA_FACTORY_EXPORT AmosePluginsManager :
 public Singleton<AmosePluginsManager>
 {
   friend class Singleton<AmosePluginsManager>;
 public:
   virtual ~AmosePluginsManager() {}
-  
-  /** Load plugins in the plugins subdir of the semicolon separated config dirs 
-   * @param configDirs semicolon separated list of config dirs. If empty, loads a default location
+
+  /**
+   * @brief Load plugins in the 'plugins' subdir of the semicolon separated
+   * config dirs
+   *
+   * If a plugin is present in several config dirs, then only the first
+   * occurrence is loaded.
+   *
+   * If a plugin is commented out (line starting with the '#' symbol), then it
+   * is considered as being forbidenned and then it will be ignored if found
+   * again in subsequent directories.
+   *
+   * @param configDirs semicolon separated list of config dirs. If empty, loads
+   * a default location.
+   *
+   * @return true if there is no error and false otherwise. The function return
+   * at the first error.
    */
   bool loadPlugins(const QString& configDirs = "");
-  
+
 private:
   AmosePluginsManager();
 

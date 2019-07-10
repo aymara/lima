@@ -40,6 +40,8 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
   LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
   Common::DynamicLibrariesManager::changeable().addSearchPathes(configDirs);
 
+  QStringList forbiddenPlugins;
+  QStringList alreadyLoaded;
   //   DynamicLibrariesManager::changeable().addSearchPath("c:\amose\lib");;
   // open LIMA_CONF/plugins file
 
@@ -56,17 +58,18 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-    LDEBUG << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
+    LINFO << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
 
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-     LDEBUG << "AmosePluginsManager::loadPlugins loading plugins file "
+     LINFO << "AmosePluginsManager::loadPlugins loading plugins file "
             << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
-      if (!file.open(QIODevice::ReadOnly)) {
+      if (!file.open(QIODevice::ReadOnly))
+      {
         ABSTRACTFACTORYPATTERNLOGINIT;
         LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file "
                 << pluginsFile.toUtf8().data();
@@ -80,7 +83,10 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         QString line = QString(file.readLine()).trimmed();
 
         // Allow empty and comment lines.
-        if ( !line.isEmpty() && !line.startsWith('#') )
+        if ( !line.isEmpty() && !line.startsWith('#')
+          && !forbiddenPlugins.contains(line)
+          && !alreadyLoaded.contains(line)
+        )
         {
           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
@@ -88,6 +94,30 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
             LERROR << "AmosePluginsManager::loadLibrary(\"" << line.toStdString() << "\") failed.";
             return false;
           }
+          else
+          {
+            alreadyLoaded << line;
+          }
+        }
+        else if (alreadyLoaded.contains(line))
+        {
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+                  << "was alreadyLoaded in another plugins dir. Plugins file:"
+                  << pluginsDir.path() + "/" + pluginsFile;
+        }
+        else if (forbiddenPlugins.contains(line))
+        {
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+                  << "was set to be forbidden in anothe plugins dir. Plugins file:"
+                  << pluginsDir.path() + "/" + pluginsFile;
+        }
+        else if (line.startsWith('#'))
+        {
+          line.remove(0,1);
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+                  << "forbidden from now on. Plugins file:"
+                  << pluginsDir.path() + "/" + pluginsFile;
+          forbiddenPlugins << line;
         }
       }
     }
