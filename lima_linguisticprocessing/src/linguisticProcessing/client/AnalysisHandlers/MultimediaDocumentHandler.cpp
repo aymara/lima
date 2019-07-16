@@ -15,7 +15,7 @@ using namespace Lima::Common::BagOfWords;
 using namespace Lima::Handler;
 using namespace std;
 
-MultimediaDocumentHandler::MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom) : 
+MultimediaDocumentHandler::MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom) :
     AbstractXmlDocumentHandler(shiftFrom)
 {
 #ifdef DEBUG_LP
@@ -23,7 +23,7 @@ MultimediaDocumentHandler::MultimediaDocumentHandler(const QMap< uint64_t,uint64
   LDEBUG << "MultimediaDocumentHandler::MultimediaDocumentHandler" << shiftFrom.size();
 #endif
   set_LastStructureId ( 0 );
-  set_lastNodeId ( 1 ); 
+  set_lastNodeId ( 1 );
 }
 
 void MultimediaDocumentHandler::setOut(std::ostream* out)
@@ -35,7 +35,7 @@ void MultimediaDocumentHandler::setOut(std::ostream* out)
   m_out = out;
   MultimediaBinaryWriter writer(shiftFrom());
 //   BoWBinaryWriter writer(shiftFrom());
-  writer.writeHeader(*m_out,BOWFILE_SDOCUMENT);    
+  writer.writeHeader(*m_out,BOWFILE_SDOCUMENT);
 }
 
 void MultimediaDocumentHandler::handle ( const char* buf,int length )
@@ -63,7 +63,7 @@ void MultimediaDocumentHandler::startAnalysis(const std::string& bloc_type)
   HANDLERLOGINIT;
   LDEBUG << "MultimediaDocumentHandler::startAnalysis(bloc_type) write BLOC " << bloc_type;
 #endif
-  
+
   if (bloc_type.compare("lpFactory")==0)
     Misc::writeOneByteInt(*m_out,Common::BagOfWords::BOW_TEXT_BLOC);
   else if(bloc_type.compare("ImaFactory")==0)
@@ -96,9 +96,21 @@ void MultimediaDocumentHandler::startNode ( const std::string& elementName, bool
 
   if (forIndexing)
     set_LastContentId(get_LastContentId()+1);
-  
-  std::string MULTIMEDIA_DOCUMENT_HANDLER0("MULTIMEDIA_DOCUMENT_HANDLER0");
-  Node newNode(MULTIMEDIA_DOCUMENT_HANDLER0, get_LastStructureId(),nodeId,-1,0,get_lastUri(),"xml",elementName,"none",1,0,0,1,0,0,0,get_parentlastOpenedNode() );
+
+  Node newNode("MULTIMEDIA_DOCUMENT_HANDLER0",  // docName
+               get_LastStructureId(),           // structId
+               nodeId,                          // nodeId
+               -1,                              // contentId
+               0,                               // indexid
+               get_lastUri(),                   // uri
+               "xml",                           // nodeMedia
+               elementName,                     // nodeType
+               "none",                          // descrId
+               0,                               // nodeStart
+               0,                               // nodeEnd
+               0,                               // nodeLength
+               get_parentlastOpenedNode()       // nodeParent
+              );
   newNode.indexId(0);
 //   cout<<" ajout noeud "<<newNode<<endl;
   StructureHandler::add_Node ( newNode );
@@ -123,7 +135,7 @@ void MultimediaDocumentHandler::startNode ( const std::string& elementName, bool
 #endif
   Lima::Common::Misc::writeStringField(*m_out, elementName);
 
-//cerr >>     std::cerr << "MultimediaDocumentHandler::startNode ici" << elementName << std::endl; 
+//cerr >>     std::cerr << "MultimediaDocumentHandler::startNode ici" << elementName << std::endl;
 }
 
 //! @brief called by the document analyzer at the end of a hierarchy node
@@ -143,7 +155,7 @@ void MultimediaDocumentHandler::endNode ( const Common::Misc::GenericDocumentPro
 
 //   Node newNodeProps(Sid,Nid,contentId,0,get_lastUri(),"xml","props","none",1,0,0,1,0,0,0,get_parentlastOpenedNode() );
 //   newNodeProps.m_indexId=0;
-// 
+//
 //   add_Node ( newNodeProps );
 
 //   string docName= props.getStringValue ( "identPrpty" ).first;

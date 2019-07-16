@@ -159,19 +159,20 @@ void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocume
       srcePrpty = uri;
 
    // TODO: replace MULTIMEDIA_DOCUMENT_READER0 with consistent value
-   std::string MULTIMEDIA_DOCUMENT_READER0("MULTIMEDIA_DOCUMENT_READER0");
-   Node node(MULTIMEDIA_DOCUMENT_READER0,
-             StructId ,
-             NodeId,
-             laNode.get_ContentId(),
-             laNode.indexId(),
-             srcePrpty , "", "",
-             laNode.descrId(),
-             0, 0, 0, 0,
-             offBegPrpty,
-             offEndPrpty,
-             offEndPrpty-offBegPrpty,
-             m_lastNode);
+   Node node("MULTIMEDIA_DOCUMENT_READER0", // docName
+             StructId,                      // structId
+             NodeId,                        // nodeId
+             laNode.get_ContentId(),        // contentId
+             laNode.indexId(),              // indexid
+             srcePrpty,                     // uri
+             "",                            // nodeMedia
+             "",                            // nodeType
+             laNode.descrId(),              // descrId
+             offBegPrpty,                   // nodeStart
+             offEndPrpty,                   // nodeEnd
+             offEndPrpty-offBegPrpty,       // nodeLength
+             m_lastNode                     // nodeParent
+            );
 //    cout<<"la "<<StructId<<"insertion dans la structure "<<node<<endl;
    StructureHandler::add_Node(node);
   }
@@ -230,16 +231,21 @@ void MultimediaBinaryStructureReader::readMultimediaDocumentBlock(
       handler->StructureHandler::set_LastStructureId(handler->StructureHandler::get_LastStructureId()+1);
 // 	cout<<"ici ----1--- "<<handler->StructureHandler::get_LastStructureId()<<endl;
       handler->lastNode(0);
-      // TODO replace MULTIMEDIA_DOCUMENT_READER0 with consistent value
-      std::string MULTIMEDIA_DOCUMENT_READER0("MULTIMEDIA_DOCUMENT_READER0");
-      Node node( MULTIMEDIA_DOCUMENT_READER0,
-                 handler->StructureHandler::get_LastStructureId(),
-                 0, 0, 0,
-                 "",
-                 "xml", "",
-                 "hierarchy",
-                 false, false, false, false,
-                 0, 0, 0, 0);
+
+      Node node("MULTIMEDIA_DOCUMENT_READER0",                    // docName
+                handler->StructureHandler::get_LastStructureId(), // structId
+                0,                                                // nodeId
+                0,                                                // contentId
+                0,                                                // indexid
+                "",                                               // uri
+                "xml",                                            // nodeMedia
+                "",                                               // nodeType
+                "hierarchy",                                      // descrId
+                0,                                                // nodeStart
+                0,                                                // nodeEnd
+                0,                                                // nodeLength
+                0                                                 // nodeParent
+               );
       handler->openSNode(&document, elementName);
       node.set_NodeId(handler->lastNode());
       handler->addContentNode(node);
@@ -277,17 +283,21 @@ void MultimediaBinaryStructureReader::readMultimediaDocumentBlock(
       //TODO: trouver un contentId
       handler->processSBinNum(vect, name,
                               handler->StructureHandler::get_LastContentId());
-      // Node ( STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent )
-      // TODO replace MULTIMEDIA_DOCUMENT_READER0 with consistent value
-      std::string MULTIMEDIA_DOCUMENT_READER2("MULTIMEDIA_DOCUMENT_READER2");
-      Node node(MULTIMEDIA_DOCUMENT_READER2,
-                handler->StructureHandler::get_LastStructureId(),
-                0,
-                handler->StructureHandler::get_LastContentId(),
-                2,
-                path, "ima", "", name,
-                false, false, false, false,
-                0, 0, 0, 0);
+
+      Node node("MULTIMEDIA_DOCUMENT_READER2",                    // docName
+                handler->StructureHandler::get_LastStructureId(), // structId
+                0,                                                // nodeId
+                handler->StructureHandler::get_LastContentId(),   // contentId
+                2,                                                // indexid
+                path,                                             // uri
+                "ima",                                            // nodeMedia
+                "",                                               // nodeType
+                name,                                             // descrId
+                0,                                                // nodeStart
+                0,                                                // nodeEnd
+                0,                                                // nodeLength
+                0                                                 // nodeParent
+               );
       handler->addContentNode(node);
       handler->StructureHandler::set_LastContentId(handler->StructureHandler::get_LastContentId()+1);
       break;
@@ -306,17 +316,21 @@ void MultimediaBinaryStructureReader::readMultimediaDocumentBlock(
       //TODO: donner un nouveau contentId
       handler->processBoWText(&document,
                               handler->StructureHandler::get_LastContentId());
-      // Node ( STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent )
-      // TODO: replace MULTIMEDIA_DOCUMENT_READER3 with consistent value
-      std::string MULTIMEDIA_DOCUMENT_READER3("MULTIMEDIA_DOCUMENT_READER3");
-      Node node(MULTIMEDIA_DOCUMENT_READER3,
-                handler->StructureHandler::get_LastStructureId(),
-                0,
-                handler->StructureHandler::get_LastContentId(),
-                1,
-                "", "text", "", "bow",
-                false, false, false, false,
-                0, 0, 0, 0);
+
+      Node node("MULTIMEDIA_DOCUMENT_READER3",                    // docName
+                handler->StructureHandler::get_LastStructureId(), // structId
+                0,                                                // nodeId
+                handler->StructureHandler::get_LastContentId(),   // contentId
+                1,                                                // indexid
+                "",                                               // uri
+                "text",                                           // nodeMedia
+                "",                                               // nodeType
+                "bow",                                            // descrId
+                0,                                                // nodeStart
+                0,                                                // nodeEnd
+                0,                                                // nodeLength
+                0                                                 // nodeParent
+               );
       handler->addContentNode(node);
       handler->StructureHandler::set_LastContentId(handler->StructureHandler::get_LastContentId()+1);
       break;
@@ -372,15 +386,16 @@ void MultimediaXMLStructureReader::
 processBoWText(const BoWText* text,int cId)
 {
 //   cout<<"ajout d'un contenu linguistique "<<cId<<" "<<*text<<endl;
-  ContentHandler <BoWText >::addContent(cId, *text);
+  ContentHandler<BoWText>::addContent(cId, *text);
 }
 
-void MultimediaXMLStructureReader::processSBinNum(const std::vector< float >& vect,
-                                                  const string& SID,
-                                                  int CID)
+void MultimediaXMLStructureReader::processSBinNum(
+    const std::vector< float >& vect,
+    const string& SID,
+    int CID)
 {
   LIMA_UNUSED(SID);
 //   m_dmult->writeMultimediaFeature(vect);
-  ContentHandler <std::vector <float > >::addContent ( CID , vect );
+  ContentHandler<std::vector <float > >::addContent ( CID , vect );
 }
 

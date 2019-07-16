@@ -19,7 +19,7 @@
 /** **********************************************************************
  *
  * @file       DataTypes.h
- * @author     Bertrand Delezoide <bertrand.delezoide@cea.fr> 
+ * @author     Bertrand Delezoide <bertrand.delezoide@cea.fr>
 
  *             Hervé Le Borgne <herve.le-borgne@cea.fr>
  * @date       fev 2008
@@ -41,12 +41,12 @@
 #include <vector>
 
 namespace Lima {
-  
+
     /**
      * Identifier of a structure in the structure index
      */
     typedef uint64_t STRUCT_ID;
-    
+
      /**
      * Identifier of a node in a document
      */
@@ -56,19 +56,21 @@ namespace Lima {
      * Identifier of an feature content
      */
     typedef uint64_t CONTENT_ID;
-    
+
     /**
     * Topology information
     */
     typedef uint64_t TOPO_POS;
 
 
-//! @brief noeud de contenu au sein d'une structure.
-//! Un noeud de contenu est caractérisé par trois identifiants au sein de la
-//! structure (structId,nodeId,contentId) ainsi que par le type de contenu (descrId).
-//! Il existe aussi un identifiant au sein de la base de contenu correspondante (contentId
-//! dans la base SQL) qui n'est pas dans la classe Node.
 class LIMA_DATA_EXPORT NodePrivate;
+/**
+ * @brief noeud de contenu au sein d'une structure.
+ * Un noeud de contenu est caractérisé par trois identifiants au sein de la
+ * structure (structId,nodeId,contentId) ainsi que par le type de contenu (descrId).
+ * Il existe aussi un identifiant au sein de la base de contenu correspondante (contentId
+ * dans la base SQL) qui n'est pas dans la classe Node
+ */
 class LIMA_DATA_EXPORT Node
 {
 public:
@@ -92,20 +94,23 @@ public:
     //! @param nodeMedia
     //! @param nodeType
     //! @param descrId
-    //! @param isRoot
-    //! @param isLeaf
-    //! @param isFile
-    //! @param isMultimedia
     //! @param nodeStart
     //! @param nodeEnd
     //! @param nodeLength
     //! @param nodeParent
-    Node(const std::string &docName, STRUCT_ID structId, NODE_ID nodeId,
-         CONTENT_ID contentId, int indexid , std::string uri,
-         std::string nodeMedia, std::string nodeType, std::string descrId,
-         bool isRoot, bool isLeaf, bool isFile, bool isMultimedia,
-         TOPO_POS nodeStart, TOPO_POS nodeEnd,
-         TOPO_POS nodeLength, NODE_ID nodeParent);
+    Node(const std::string &docName,
+         STRUCT_ID structId,
+         NODE_ID nodeId,
+         CONTENT_ID contentId,
+         int indexid ,
+         std::string uri,
+         std::string nodeMedia,
+         std::string nodeType,
+         std::string descrId,
+         TOPO_POS nodeStart,
+         TOPO_POS nodeEnd,
+         TOPO_POS nodeLength,
+         NODE_ID nodeParent);
     std::string get_DocName() const;
     void  set_DocName ( const std::string& docName );
     STRUCT_ID get_StructId() const;
@@ -119,10 +124,6 @@ public:
     void indexId(int32_t id);
     const std::string& descrId() const;
 
-    bool isRoot() const;
-    bool isLeaf() const;
-    bool isFile() const;
-    bool isMultimedia() const;
     TOPO_POS nodeStart() const;
     void nodeStart(TOPO_POS ns);
     TOPO_POS nodeEnd() const;
@@ -131,10 +132,10 @@ public:
     void nodeLength(TOPO_POS ns);
     NODE_ID nodeParent() const;
     void nodeParent(NODE_ID np);
-    
+
     const std::string& uri() const;
     const std::string& nodeMedia() const;
-    
+
 
 private:
   NodePrivate* m_d;
@@ -155,7 +156,7 @@ public:
     Structure(const Structure& s);
     Structure ( STRUCT_ID structID );
     Structure& operator=( const Structure& s );
-    
+
     //! @brief destructeur: delete des 'Nodes' de contenu
     ~Structure();
 
@@ -177,9 +178,9 @@ public:
     //! @return the set of all nodes of the current structure
     const std::map<CONTENT_ID,Node>* getNodes() const;
     std::map<CONTENT_ID,Node>* getNodes();
-    
+
     STRUCT_ID getStructId() const;
-    
+
     void setStructId(STRUCT_ID structId);
 
 private:
