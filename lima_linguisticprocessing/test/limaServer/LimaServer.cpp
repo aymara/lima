@@ -126,8 +126,16 @@ LimaServer::LimaServer( const QString& configPath,
   LDEBUG << "LimaServer::LimaServer: create QHttpServer...";
   m_server = new QHttpServer(this);
   LDEBUG << "LimaServer::LimaServer: connect...";
-  connect(m_server, SIGNAL(newRequest(QHttpRequest*,QHttpResponse*)),
-          this, SLOT(handleRequest(QHttpRequest*,QHttpResponse*)));
+  QMetaObject::Connection connection = connect(m_server,
+                                               &QHttpServer::newRequest,
+                                               this,
+                                               &LimaServer::handleRequest);
+  if( !connection ) {
+    LERROR << "LimaServer::LimaServer: could not connect signal/slot.";
+    LERROR << "LimaServer::LimaServer: Either signal / slot were not found, or the arguments did not match.";
+    throw InvalidConfiguration("could not open connection");
+  }
+  LDEBUG << "LimaServer::LimaServer: connection signal/slot succesfull";
 
   LINFO << "LimaServer::LimaServer: server listen...";
   bool st = m_server->listen(QHostAddress::Any, port);
@@ -135,10 +143,10 @@ LimaServer::LimaServer( const QString& configPath,
     LERROR << "LimaServer::LimaServer: could not listen on configured host and port (" << port << ")";
     LERROR << "LimaServer::LimaServer: this port might be already in use";
     throw InvalidConfiguration("could not listen on configured host and port");
-    return;
+  } else {
+    LINFO << "Server listening on host" << QHostAddress::Any
+          << "and port" << port;
   }
-  LINFO << "Server listening on host" << QHostAddress::Any
-        << "and port" << port;
  }
 
 LimaServer::~LimaServer()
