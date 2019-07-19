@@ -78,8 +78,10 @@ int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
+#ifndef DEBUG_LP
   try
   {
+#endif
     QCoreApplication a(argc, argv);
     QCoreApplication::setApplicationName("analyzeText");
     QCoreApplication::setApplicationVersion(LIMA_VERSION);
@@ -97,46 +99,33 @@ int main(int argc, char **argv)
     QTimer::singleShot(0, task, SLOT(run()));
 
     return a.exec();
+#ifndef DEBUG_LP
   }
   catch( const InvalidConfiguration& e ) {
     std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
-    #ifndef DEBUG_LP
     return UNSUPPORTED_LANGUAGE;
-    #endif
-    throw;
   }
   catch (const LinguisticProcessingException& e)
   {
     std::cerr << "Catched LinguisticProcessingException: " << e.what() << std::endl;
-    #ifndef DEBUG_LP
     return INVALID_CONFIGURATION;
-    #endif
-    throw;
   }
   catch (const Lima::LimaException& e)
   {
     std::cerr << "Catched LimaException: " << e.what() << std::endl;
-    #ifndef DEBUG_LP
     return UNKNOWN_ERROR;
-    #endif
-    throw;
   }
   catch (const std::exception& e)
   {
     std::cerr << "Catched std::exception: " << e.what() << std::endl;
-    #ifndef DEBUG_LP
     return UNKNOWN_ERROR;
-    #endif
-    throw;
   }
   catch (...)
   {
     std::cerr << "Catched unknown exception" << std::endl;
-    #ifndef DEBUG_LP
     return UNKNOWN_ERROR;
-    #endif
-    throw;
   }
+#endif
 }
 
 
