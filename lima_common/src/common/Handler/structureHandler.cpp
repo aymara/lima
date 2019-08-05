@@ -29,7 +29,7 @@ namespace Lima {
 class StructureHandlerPrivate
 {
   friend class StructureHandler;
-  
+
   StructureHandlerPrivate();
   StructureHandlerPrivate(const StructureHandlerPrivate& shp);
   virtual ~StructureHandlerPrivate();
@@ -38,7 +38,7 @@ class StructureHandlerPrivate
   STRUCT_ID m_lastStructureId;
   CONTENT_ID m_lastContentId;
 };
-  
+
 StructureHandlerPrivate::StructureHandlerPrivate(): m_structures(), m_lastStructureId(0), m_lastContentId(0)
 {
 }
@@ -105,14 +105,15 @@ CONTENT_ID StructureHandler::get_LastContentId()
 }
 void StructureHandler::set_LastContentId(CONTENT_ID CID)
 {
-    m_d->m_lastContentId=CID;
+    m_d->m_lastContentId = CID;
 }
 
 void StructureHandler::resetStructure()
 {
-    m_d->m_lastStructureId=0;
-    m_d->m_lastContentId=0;
-    m_d->m_structures.getNodes()->erase( m_d->m_structures.getNodes()->begin() , m_d->m_structures.getNodes()->end() );
+    m_d->m_lastStructureId = 0;
+    m_d->m_lastContentId = 0;
+    m_d->m_structures.getNodes().erase(m_d->m_structures.getNodes().begin(),
+                                       m_d->m_structures.getNodes().end());
 }
 
 }

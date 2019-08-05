@@ -165,19 +165,21 @@ public:
     void addNode ( CONTENT_ID ContentId, const Node& node );
 
     //! @brief get a content node, given its odentifiers
-    //! @param StructId TODO erreur --> devrait utiliser seulement le StructId de la Structure courante (m_structId)
-    //! @param NodeId node identifier
     //! @param ContentId content identifier (different for each type)
     //! @return a content node
     Node* getNode ( CONTENT_ID ContentId );
-    Node* getFirstNode ( STRUCT_ID StructureId );
     const Node* getNode ( CONTENT_ID ContentId ) const;
+
+    //! @brief get a content node, given its odentifiers
+    //! @param StructId TODO erreur --> devrait utiliser seulement le StructId de la Structure courante (m_structId)
+    //! @return a content node
+    Node* getFirstNode ( STRUCT_ID StructureId );
     const Node* getFirstNode ( STRUCT_ID StructureId ) const;
 
     //! @brief get all nodes of the current structure
     //! @return the set of all nodes of the current structure
-    const std::map<CONTENT_ID,Node>* getNodes() const;
-    std::map<CONTENT_ID,Node>* getNodes();
+    const std::map<CONTENT_ID, Node>& getNodes() const;
+    std::map<CONTENT_ID, Node>& getNodes();
 
     STRUCT_ID getStructId() const;
 

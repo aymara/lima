@@ -400,14 +400,14 @@ const Node* Structure::getNode ( CONTENT_ID ContentId ) const
   return &m_d->m_nodes[ContentId];
 }
 
-const map<CONTENT_ID,Node>* Structure::getNodes() const
+const map<CONTENT_ID,Node>& Structure::getNodes() const
 {
-  return &m_d->m_nodes;
+  return m_d->m_nodes;
 }
 
-map<CONTENT_ID,Node>* Structure::getNodes()
+map<CONTENT_ID,Node>& Structure::getNodes()
 {
-  return &m_d->m_nodes;
+  return m_d->m_nodes;
 }
 
 STRUCT_ID Structure::getStructId() const
@@ -415,7 +415,7 @@ STRUCT_ID Structure::getStructId() const
     return m_d->m_structId;
 }
 
-Node* Structure::getFirstNode ( STRUCT_ID StructureId )
+Node*Structure::getFirstNode ( STRUCT_ID StructureId )
 {
   LIMA_UNUSED(StructureId);
   for (auto ItrNodes=m_d->m_nodes.begin();
@@ -467,20 +467,20 @@ QDebug& operator<<(QDebug& os, const Node& node)
 
 std::ostream& operator<<(ostream& os, const Structure& structure)
 {
-  const map<CONTENT_ID,Node>* nodes=structure.getNodes();
-  for (auto ItrNodes=nodes->begin(); ItrNodes!=nodes->end(); ItrNodes++)
+  const auto& nodes = structure.getNodes();
+  for (auto ItrNodes = nodes.cbegin(); ItrNodes != nodes.cend(); ItrNodes++)
   {
-    os<<ItrNodes->second;
+    os << ItrNodes->second;
   }
   return os;
 }
 
 QDebug& operator<<(QDebug& os, const Structure& structure)
 {
-  const map<CONTENT_ID,Node>* nodes=structure.getNodes();
+  const auto& nodes = structure.getNodes();
   os << "Structure( structId:" << structure.getStructId()
-     << ", nodes ("<<nodes->size()<<"): ";
-  for (auto ItrNodes = nodes->cbegin(); ItrNodes != nodes->cend() ; ItrNodes++)
+     << ", nodes ("<<nodes.size()<<"): ";
+  for (auto ItrNodes = nodes.cbegin(); ItrNodes != nodes.cend() ; ItrNodes++)
   {
     os << "node (" << ItrNodes->first << ":" << ItrNodes->second<<")";
   }
