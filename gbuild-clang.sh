@@ -211,7 +211,7 @@ echo "Launching cmake from $PWD"
 export CC=/usr/bin/clang
 export CXX=/usr/bin/clang++
 
-cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/ClangOverrides.txt  -D_CMAKE_TOOLCHAIN_PREFIX=llvm- -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/ClangOverrides.txt  -D_CMAKE_TOOLCHAIN_PREFIX=llvm- -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
 echo "Running make command:"
 echo "$make_cmd"
