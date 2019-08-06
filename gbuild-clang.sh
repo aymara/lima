@@ -14,27 +14,27 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-#Fail if anything goes wrong 
+#Fail if anything goes wrong
 # set -o errexit
 # set -o nounset
 # set -o xtrace
 
-usage() 
-{ 
-cat << EOF 1>&2; exit 1; 
+usage()
+{
+cat << EOF 1>&2; exit 1;
 Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
 
   -m mode       <(debug)|release> compile mode
-  -p boolean    <(true)|false> will build in parallel (make -jn) if true. 
-                Necessary to be able to build with no parallelism as  it currently fail on 
+  -p boolean    <(true)|false> will build in parallel (make -jn) if true.
+                Necessary to be able to build with no parallelism as  it currently fail on
                 some machines.
   -r resources  <precompiled|(build)> build the linguistic resources or use the
                 precompiled ones
-  -v version    <(val)|rev> version number is set either to the value set by  
+  -v version    <(val)|rev> version number is set either to the value set by
                 config files or to the short git sha1
-  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.  
+  -G Generator <(Unix)|MSYS|NMake|VS> which cmake generator to use.
 EOF
 exit 1
 }
@@ -199,7 +199,7 @@ echo "Launching cmake from $PWD"
 export CC=/usr/bin/clang
 export CXX=/usr/bin/clang++
 
-cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/ClangOverrides.txt  -D_CMAKE_TOOLCHAIN_PREFIX=llvm- -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST $source_dir
+cmake -DCMAKE_USER_MAKE_RULES_OVERRIDE=~/ClangOverrides.txt  -D_CMAKE_TOOLCHAIN_PREFIX=llvm- -G "$generator" -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
 
 echo "Running make command:"
 echo "$make_cmd"
