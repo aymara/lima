@@ -208,6 +208,6 @@ private:
 
 }
 
-#include "ViterbiPosTagger.tcc"
+#include "ViterbiPosTagger.hpp"
 
 #endif
