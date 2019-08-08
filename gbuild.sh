@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,14 +16,14 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #!/bin/bash
 
-#Fail if anything goes wrong 
-# set -o errexit
-# set -o nounset
-# set -o xtrace
+#Fail if anything goes wrong
+set -o errexit
+set -o nounset
+set -o xtrace
 
-usage() 
-{ 
-cat << EOF 1>&2; exit 1; 
+usage()
+{
+cat << EOF 1>&2; exit 1;
 Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
@@ -32,7 +34,7 @@ Options default values are in parentheses.
   -n arch           <(generic)|native> target architecture mode
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
-  -v version        <(val)|rev> version number is set either to the value set by  
+  -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
   -T                Use TensorFlow
