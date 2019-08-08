@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -15,9 +17,9 @@
 #!/bin/bash
 
 #Fail if anything goes wrong
-# set -o errexit
-# set -o nounset
-# set -o xtrace
+set -o errexit
+set -o nounset
+set -o xtrace
 
 usage()
 {
