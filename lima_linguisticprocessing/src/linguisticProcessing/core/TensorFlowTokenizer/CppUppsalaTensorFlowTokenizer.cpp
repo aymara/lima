@@ -112,7 +112,7 @@ protected:
   std::unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
-  int64 m_max_seq_len;
+  size_t m_max_seq_len;
 
   struct TNGramDef
   {
@@ -239,7 +239,7 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
 
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
-  analysis.setData(m_d->m_data.toUtf8().constData(), sb);
+  analysis.setData(m_d->m_data.toStdString(), sb);
 
   remove_edge(anagraph->firstVertex(),
               anagraph->lastVertex(),
@@ -509,10 +509,12 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
 
   for (size_t i = 0; i < m_ngram_defs.size(); ++i)
   {
-    Tensor indices_tensor(DT_INT32, TensorShape({reserve, m_max_seq_len}));
-    QString buff = QString::fromUtf8("ngram_idx_%1-%2")
+    Tensor indices_tensor(DT_INT32,
+                          TensorShape({reserve,
+                            static_cast<long long>(m_max_seq_len)}));
+    auto buff = QString::fromUtf8("ngram_idx_%1-%2")
       .arg(m_ngram_defs[i].m_start).arg(m_ngram_defs[i].m_len);
-    string tensor_name = buff.toUtf8().constData();
+    string tensor_name = buff.toStdString();
 
     batch.push_back( { tensor_name, indices_tensor } );
     indices_tensor_pos.push_back(batch.size() - 1);
@@ -609,7 +611,7 @@ float CppUppsalaTokenizerPrivate::viterbi_decode(const vector<vector<float>>& sc
     if (trellis[trellis.size() - 1][i] > trellis[trellis.size() - 1][max_pos])
       max_pos = i;
 
-  float viterbi_score = trellis[trellis.size() - 1][max_pos];
+  auto viterbi_score = trellis[trellis.size() - 1][max_pos];
 
   return viterbi_score;
 }
@@ -623,7 +625,11 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   simplified_copy.replace(QString::fromUtf8("\u00A0"), " ");
   simplified_copy.replace(QString::fromUtf8("\u000A"), " ");
   simplified_copy.replace(QString::fromUtf8("\u000D"), " ");
-  u32string wtext = SPACE + simplified_copy.toStdU32String() + SPACE;
+  auto u32Copy = simplified_copy.toStdU32String();
+  u32string wtext;
+  wtext.assign(SPACE);
+  wtext.append(u32Copy);
+  wtext.append(SPACE);
   vector<vector<unsigned int>> ngram_idxs;
   if (encode_text(wtext, ngram_idxs) != TokStatusCode::SUCCESS)
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while encoding text to ngrams' indices.",
@@ -666,13 +672,13 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
     for (size_t j = 0; j < viterbi.size(); ++j)
     {
-      if (m_token_end == viterbi[j] || m_token_end_last == viterbi[j] || m_token_single == viterbi[j] || m_token_single_last == viterbi[j])
+      if (m_token_end == viterbi[j] || m_token_end_last == viterbi[j]
+        || m_token_single == viterbi[j] || m_token_single_last == viterbi[j])
       {
         unsigned int pos = i * 400 + j;
-        if (current_token.size() > 0 || L' ' != wtext[pos + 1])
+        if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
         {
           current_token += wtext[pos + 1];
-
 
           if (m_token_single == viterbi[j] || m_token_single_last == viterbi[j])
             current_token_offset = i * 400 + j;
@@ -680,14 +686,16 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
         if (current_token.size() > 0 && current_token != SPACE)
         {
-          current_sentence.push_back(make_pair(QString::fromStdU32String(current_token), current_token_offset));
+          current_sentence.push_back(
+            make_pair(QString::fromStdU32String(current_token),
+                      current_token_offset));
           current_token.clear();
         }
       }
       else if (m_token_begin == viterbi[j] || m_token_inside == viterbi[j])
       {
         unsigned int pos = i * 400 + j;
-        if (current_token.size() > 0 || L' ' != wtext[pos + 1])
+        if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
         {
           current_token += wtext[pos + 1];
           if (m_token_begin == viterbi[j])

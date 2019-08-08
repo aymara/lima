@@ -581,12 +581,12 @@ push(const LinguisticGraphVertex& vertex,
 
   while (m_searchGraph->getNextVertex(m_graph.getGraph(),nextVertex)) {
 
-#ifdef DEBUG_LP
-    LDEBUG << "SearchGraph (inside while):";
-    ostringstream oss;
-    output(oss, m_searchGraph, m_graph.getGraph());
-    LDEBUG << oss.str();
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "SearchGraph (inside while):";
+//     ostringstream oss;
+//     output(oss, m_searchGraph, m_graph.getGraph());
+//     LDEBUG << oss.str();
+// #endif
 
     if (! isEndVertex(nextVertex)) {
 
