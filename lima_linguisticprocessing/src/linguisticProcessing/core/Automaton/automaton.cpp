@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2018 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -581,12 +581,12 @@ push(const LinguisticGraphVertex& vertex,
 
   while (m_searchGraph->getNextVertex(m_graph.getGraph(),nextVertex)) {
 
-#ifdef DEBUG_LP
-    LDEBUG << "SearchGraph (inside while):";
-    ostringstream oss;
+// #ifdef DEBUG_LP
+//     LDEBUG << "SearchGraph (inside while):";
+//     ostringstream oss;
 //     output(oss, m_searchGraph, m_graph.getGraph());
-    LDEBUG << oss.str();
-#endif
+//     LDEBUG << oss.str();
+// #endif
 
     if (! isEndVertex(nextVertex)) {
 
