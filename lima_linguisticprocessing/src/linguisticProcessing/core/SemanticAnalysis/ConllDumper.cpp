@@ -301,7 +301,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     int tokenId = 0;
     LinguisticGraphVertex v = 0;
-    LinguisticGraphVertex previous = -1;
+    uint64_t previous = std::numeric_limits<uint64_t>::max();
 
     // First traversing of the sentence to fill the
     // vertexDependencyInformations and segmentationMapping data structures
@@ -606,7 +606,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             LERROR << "ConllDumper::process: tokenId == 0.";
             throw LimaException();
         }
-        if (v != previous)
+        auto position = ft->position();
+#ifdef DEBUG_LP
+        LDEBUG << "ConllDumper::process previous:" << previous
+                << "; position:" << position;
+#endif
+        if (position != previous)
         {
           dstream->out()  << tokenId // ID
                           << "\t" << inflectedToken // FORM
@@ -629,10 +634,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                                                               "Predicate");
 
             // Now output the roles supported by the current PoS graph token
-  #ifdef DEBUG_LP
+#ifdef DEBUG_LP
             LDEBUG << "ConllDumper::process output the roles for the"
                     << keys.size() << "predicates";
-  #endif
+#endif
             for (int i = 0; i < keys.size(); i++)
             {
               auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
@@ -684,7 +689,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
           dstream->out() << std::endl;
         }
-        previous = v;
+        previous = position;
       }
 
       if (v == sentenceEnd)
