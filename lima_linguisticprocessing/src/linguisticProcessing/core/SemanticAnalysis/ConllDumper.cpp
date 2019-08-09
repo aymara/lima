@@ -689,11 +689,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
           dstream->out() << std::endl;
         }
+        else
+        {
+          tokenId--;
+        }
         previous = position;
-      }
-      else
-      {
-        tokenId--;
       }
 
       if (v == sentenceEnd)
