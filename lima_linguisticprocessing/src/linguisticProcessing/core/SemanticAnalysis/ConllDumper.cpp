@@ -738,10 +738,6 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
       {
         miscField << (QString("NE=") + neType);
       }
-      else
-      {
-        tokenId--;
-      }
 
       miscField << (QString("Pos=") + QString::number(ft->position()) );
       miscField << (QString("Len=") +  QString::number(ft->length()) );
