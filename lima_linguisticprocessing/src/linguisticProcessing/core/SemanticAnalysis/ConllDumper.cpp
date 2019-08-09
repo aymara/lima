@@ -301,6 +301,25 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     int tokenId = 0;
     LinguisticGraphVertex v = 0;
+    /*
+     * The @ref previous variable allows to circumvent the bug creating
+     * duplicate tokens in certain configurations, like that:
+17      78712-1179      78712-1179      PUNCT   _       _       18      nsubj   _       _
+18      512-232-2787    512-232-2787    PUNCT   _       _       19      nsubj   _       _
+19      (       (       PUNCT   _       _       21      nsubj   _       _
+20      (       (       X       _       _       22      nsubj   _       _
+21      phone   phone   NOUN    _       _       23      nsubj   _       _
+22      phone   phone   NOUN    _       _       24      nsubj   _       _
+23      )       )       X       _       _       25      nsubj   _       _
+24      )       )       PUNCT   _       _       26      nsubj   _       _
+25      512-471-5073    512-471-5073    PUNCT   _       _       27      nsubj   _       _
+26      512-471-5073    512-471-5073    PUNCT   _       _       28      nsubj   _       _
+      * As we have not been able to find the true cause of this problem which
+      * occurs only on some computers and does not produce exploitable traces
+      * in Valgrind, we use the "previous" variable to check the position of
+      * the precedent outputed token and avoiding to output two tokens from the
+      * same position in the text.
+     */
     uint64_t previous = std::numeric_limits<uint64_t>::max();
 
     // First traversing of the sentence to fill the
@@ -611,6 +630,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         LDEBUG << "ConllDumper::process previous:" << previous
                 << "; position:" << position;
 #endif
+        // See the comment associated to the declaration of "previous" to
+        // understand its use
         if (position != previous)
         {
           dstream->out()  << tokenId // ID
