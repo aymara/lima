@@ -184,7 +184,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   const auto& mediaData = static_cast<const LanguageData&>(
           MedData::single().mediaData(m_d->m_language));
   const auto& propertyCodeManager = mediaData.getPropertyCodeManager();
-  const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   const auto& managers = propertyCodeManager.getPropertyManagers();
 
   auto metadata = static_cast<LinguisticMetaData*>(
@@ -302,6 +301,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     int tokenId = 0;
     LinguisticGraphVertex v = 0;
+    LinguisticGraphVertex previous = -1;
 
     // First traversing of the sentence to fill the
     // vertexDependencyInformations and segmentationMapping data structures
@@ -606,81 +606,85 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             LERROR << "ConllDumper::process: tokenId == 0.";
             throw LimaException();
         }
-        dstream->out()  << tokenId // ID
-                        << "\t" << inflectedToken // FORM
-                        << "\t" << lemmatizedToken // LEMMA
-                        << "\t" << micro.toStdString() // UPOS
-                        << "\t" << "_" // XPOS
-                        << "\t" << "_" // FEATS
-                        << "\t" << head.toStdString() // HEAD
-                        << "\t" << deprel.toStdString() // DEPREL
-                        << "\t" << "_"; // DEPS
-        QStringList miscField;
-        if (neType != "_")
+        if (v != previous)
         {
-          miscField << (QString("NE=") + neType);
-        }
-//           LDEBUG << "ConllDumper::process output the predicate if any";
-        if (annotationData != nullptr && predicates.contains(v))
-        {
-          auto predicate = annotationData->stringAnnotation(predicates.value(v),
-                                                            "Predicate");
-
-          // Now output the roles supported by the current PoS graph token
-#ifdef DEBUG_LP
-          LDEBUG << "ConllDumper::process output the roles for the"
-                  << keys.size() << "predicates";
-#endif
-          for (size_t i = 0; i < keys.size(); i++)
+          dstream->out()  << tokenId // ID
+                          << "\t" << inflectedToken // FORM
+                          << "\t" << lemmatizedToken // LEMMA
+                          << "\t" << micro.toStdString() // UPOS
+                          << "\t" << "_" // XPOS
+                          << "\t" << "_" // FEATS
+                          << "\t" << head.toStdString() // HEAD
+                          << "\t" << deprel.toStdString() // DEPREL
+                          << "\t" << "_"; // DEPS
+          QStringList miscField;
+          if (neType != "_")
           {
-            auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
+            miscField << (QString("NE=") + neType);
+          }
+  //           LDEBUG << "ConllDumper::process output the predicate if any";
+          if (annotationData != nullptr && predicates.contains(v))
+          {
+            auto predicate = annotationData->stringAnnotation(predicates.value(v),
+                                                              "Predicate");
 
-            auto vMatches = annotationData->matches("PosGraph", v, "annot");
-            if (!vMatches.empty())
+            // Now output the roles supported by the current PoS graph token
+  #ifdef DEBUG_LP
+            LDEBUG << "ConllDumper::process output the roles for the"
+                    << keys.size() << "predicates";
+  #endif
+            for (int i = 0; i < keys.size(); i++)
             {
-#ifdef DEBUG_LP
-              LDEBUG << "ConllDumper::process there is" << vMatches.size()
-                      << "nodes matching PoS graph vertex" << v
-                      << "in the annotation graph.";
-#endif
-              QString roleAnnotation;
-              for (auto vMatch: vMatches)
+              auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
+
+              auto vMatches = annotationData->matches("PosGraph", v, "annot");
+              if (!vMatches.empty())
               {
-                AnnotationGraphInEdgeIt vMatchInEdgesIt, vMatchInEdgesIt_end;
-                boost::tie(vMatchInEdgesIt, vMatchInEdgesIt_end) =
-                    boost::in_edges(vMatch,annotationData->getGraph());
-                for (; vMatchInEdgesIt != vMatchInEdgesIt_end; vMatchInEdgesIt++)
+  #ifdef DEBUG_LP
+                LDEBUG << "ConllDumper::process there is" << vMatches.size()
+                        << "nodes matching PoS graph vertex" << v
+                        << "in the annotation graph.";
+  #endif
+                QString roleAnnotation;
+                for (auto vMatch: vMatches)
                 {
-                  auto inVertex = boost::source(*vMatchInEdgesIt,
-                                                annotationData->getGraph());
-                  auto inVertexAnnotPosGraphMatches =
-                      annotationData->matches("annot", inVertex, "PosGraph");
-                  if (inVertex == predicateVertex
-                      && !inVertexAnnotPosGraphMatches.empty())
+                  AnnotationGraphInEdgeIt vMatchInEdgesIt, vMatchInEdgesIt_end;
+                  boost::tie(vMatchInEdgesIt, vMatchInEdgesIt_end) =
+                      boost::in_edges(vMatch,annotationData->getGraph());
+                  for (; vMatchInEdgesIt != vMatchInEdgesIt_end; vMatchInEdgesIt++)
                   {
-                    // Current edge is holding a role of the current predicate
-                    roleAnnotation =
-                        annotationData->stringAnnotation(*vMatchInEdgesIt,
-                                                         "SemanticRole");
-                    break;
+                    auto inVertex = boost::source(*vMatchInEdgesIt,
+                                                  annotationData->getGraph());
+                    auto inVertexAnnotPosGraphMatches =
+                        annotationData->matches("annot", inVertex, "PosGraph");
+                    if (inVertex == predicateVertex
+                        && !inVertexAnnotPosGraphMatches.empty())
+                    {
+                      // Current edge is holding a role of the current predicate
+                      roleAnnotation =
+                          annotationData->stringAnnotation(*vMatchInEdgesIt,
+                                                          "SemanticRole");
+                      break;
+                    }
                   }
                 }
+                if (!roleAnnotation.isEmpty() )
+                  predicate = roleAnnotation + ":" + predicate;
               }
-              if (!roleAnnotation.isEmpty() )
-                predicate = roleAnnotation + ":" + predicate;
+            }
+            if (!predicate.isEmpty())
+            {
+              miscField << predicate;
             }
           }
-          if (!predicate.isEmpty())
+          if (miscField.empty())
           {
-            miscField << predicate;
+            miscField << "_";
           }
+          dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
+          dstream->out() << std::endl;
         }
-        if (miscField.empty())
-        {
-          miscField << "_";
-        }
-        dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
-        dstream->out() << std::endl;
+        previous = v;
       }
 
       if (v == sentenceEnd)
