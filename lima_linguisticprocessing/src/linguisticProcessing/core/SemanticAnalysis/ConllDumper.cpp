@@ -691,6 +691,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         }
         previous = position;
       }
+      else
+      {
+        tokenId--;
+      }
 
       if (v == sentenceEnd)
       {
