@@ -416,8 +416,8 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
 
-  m_max_seq_len = data["conf"]["max_seq_len"].toInt();
-  load_string_array(data["conf"]["i2t"].toArray(), m_i2t);
+  m_max_seq_len = data.object().value("conf").toObject().value("max_seq_len").toInt();
+  load_string_array(data.object().value("conf").toObject().value("i2t").toArray(), m_i2t);
 
   for (size_t i = 0; i < m_i2t.size(); ++i)
   {
@@ -441,8 +441,8 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
                           LimaException());
   }
 
-  load_ngram_defs(data["conf"]["ngrams"].toArray());
-  load_dicts(data["dicts"]["ngrams"].toArray());
+  load_ngram_defs(data.object().value("conf").toObject().value("ngrams").toArray());
+  load_dicts(data.object().value("dicts").toObject().value("ngrams").toArray());
 }
 
 void CppUppsalaTokenizerPrivate::load_graph(const QString& model_path)
