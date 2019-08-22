@@ -895,10 +895,12 @@
     </group>
     <group name="conllDumperToFile" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
+      <param key="withColsHeader" value="true"/>
       <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
     </group>
     <group name="conllDumper" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
+      <param key="withColsHeader" value="true"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>

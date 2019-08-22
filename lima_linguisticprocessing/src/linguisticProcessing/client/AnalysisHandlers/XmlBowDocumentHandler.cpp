@@ -19,7 +19,7 @@ XmlBowDocumentHandler::XmlBowDocumentHandler() : AbstractXmlDocumentHandler()
 {
     set_LastStructureId ( 0 );
     set_lastNodeId ( 1 );
-    
+
 };
 
 void XmlBowDocumentHandler::setOut(std::ostream* out)
@@ -70,10 +70,21 @@ void XmlBowDocumentHandler::startNode ( const string& elementName, bool forIndex
 
   set_LastContentId(get_LastContentId()+1);
   CONTENT_ID contentId=get_LastContentId();
-  
-  // TODO replace XML_BOW_DOCUMENT_HANDLER0 with consistent value
-  std::string XML_BOW_DOCUMENT_HANDLER0("XML_BOW_DOCUMENT_HANDLER0");
-  Node newNode(XML_BOW_DOCUMENT_HANDLER0, get_LastStructureId(),*m_openedNodes.rbegin(),contentId,0,get_lastUri(),"xml",elementName,"none",1,0,0,1,0,0,0,get_parentlastOpenedNode() );
+
+  Node newNode("XML_BOW_DOCUMENT_HANDLER0", // docName
+               get_LastStructureId(),       // structId
+               *m_openedNodes.rbegin(),     // nodeId
+               contentId,                   // contentId
+               0,                           // indexid
+               get_lastUri(),               // uri
+               "xml",                       // nodeMedia
+               elementName,                 // nodeType
+               "none",                      // descrId
+               0,                           // nodeStart
+               0,                           // nodeEnd
+               0,                           // nodeLength
+               get_parentlastOpenedNode()   // nodeParent
+              );
   newNode.indexId(0);
   add_Node ( newNode );
 
@@ -97,7 +108,7 @@ void XmlBowDocumentHandler::startNode ( const string& elementName, bool forIndex
 #endif
   Lima::Common::Misc::writeStringField(*m_out, elementName);
 
-//     std::cerr << "XmlBowDocumentHandler::startNode ici" << elementName << std::endl; 
+//     std::cerr << "XmlBowDocumentHandler::startNode ici" << elementName << std::endl;
 }
 
 //! @brief called by the document analyzer at the end of a hierarchy node
@@ -114,9 +125,21 @@ void XmlBowDocumentHandler::endNode ( const Common::Misc::GenericDocumentPropert
 
   Common::Misc::GenericDocumentProperties proposcopy=props;
   ContentHandler<Common::Misc::GenericDocumentProperties>::addContent(Nid,proposcopy);
-  
-  std::string XML_BOW_DOCUMENT_HANDLER1("XML_BOW_DOCUMENT_HANDLER1");
-  Node newNodeProps(XML_BOW_DOCUMENT_HANDLER1,Sid,Nid,contentId,0,get_lastUri(),"xml","props","none",1,0,0,1,0,0,0,get_parentlastOpenedNode() );
+
+  Node newNodeProps("XML_BOW_DOCUMENT_HANDLER1",  // docName
+                    Sid,                          // structId
+                    Nid,                          // nodeId
+                    contentId,                    // contentId
+                    0,                            // indexid
+                    get_lastUri(),                // uri
+                    "xml",                        // nodeMedia
+                    "props",                      // nodeType
+                    "none",                       // descrId
+                    0,                            // nodeStart
+                    0,                            // nodeEnd
+                    0,                            // nodeLength
+                    get_parentlastOpenedNode()    // nodeParent
+                   );
   newNodeProps.indexId(0);
 
   add_Node ( newNodeProps );

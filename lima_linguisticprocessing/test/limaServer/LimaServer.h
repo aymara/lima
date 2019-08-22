@@ -88,9 +88,8 @@ private:
   std::map<QThread*,QHttpRequest*> m_requests;
   std::map<QHttpResponse*,QThread*>m_threads;
 
-
   std::shared_ptr< Lima::LinguisticProcessing::AbstractLinguisticProcessingClient > m_analyzer;
 };
 
  #endif
- 
+

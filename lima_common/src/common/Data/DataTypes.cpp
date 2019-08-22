@@ -36,7 +36,19 @@ public:
   NodePrivate(const NodePrivate& n);
   NodePrivate& operator=(const NodePrivate& n);
 
-  NodePrivate ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent );
+  NodePrivate(const std::string& docName,
+              STRUCT_ID structId,
+              NODE_ID nodeId,
+              CONTENT_ID contentId,
+              int32_t indexid ,
+              std::string uri,
+              std::string nodeMedia,
+              std::string nodeType,
+              std::string descrId ,
+              TOPO_POS nodeStart,
+              TOPO_POS nodeEnd,
+              TOPO_POS nodeLength,
+              NODE_ID nodeParent);
 
   //! @brief identifiant de structure
   STRUCT_ID m_structId;
@@ -51,10 +63,6 @@ public:
   std::string m_nodeType;
   //! @brief identifiant de type de contenu
   std::string m_descrId;
-  bool m_isRoot;
-  bool m_isLeaf;
-  bool m_isFile;
-  bool m_isMultimedia;
   TOPO_POS m_nodeStart;
   TOPO_POS m_nodeEnd;
   TOPO_POS m_nodeLength;
@@ -74,10 +82,6 @@ NodePrivate::NodePrivate(const NodePrivate& n)
   m_uri = n.m_uri;
   m_nodeMedia = n.m_nodeMedia;
   m_nodeType = n.m_nodeType;
-  m_isRoot = n.m_isRoot;
-  m_isLeaf = n.m_isLeaf;
-  m_isFile = n.m_isFile;
-  m_isMultimedia = n.m_isMultimedia;
   m_nodeStart = n.m_nodeStart;
   m_nodeEnd = n.m_nodeEnd;
   m_nodeLength = n.m_nodeLength;
@@ -95,10 +99,6 @@ NodePrivate& NodePrivate::operator=(const NodePrivate& n)
   m_uri = n.m_uri;
   m_nodeMedia = n.m_nodeMedia;
   m_nodeType = n.m_nodeType;
-  m_isRoot = n.m_isRoot;
-  m_isLeaf = n.m_isLeaf;
-  m_isFile = n.m_isFile;
-  m_isMultimedia = n.m_isMultimedia;
   m_nodeStart = n.m_nodeStart;
   m_nodeEnd = n.m_nodeEnd;
   m_nodeLength = n.m_nodeLength;
@@ -109,7 +109,19 @@ NodePrivate& NodePrivate::operator=(const NodePrivate& n)
   return *this;
 }
 
-NodePrivate::NodePrivate ( const string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int32_t indexid, string uri, string nodeMedia, string nodeType, string descrId, bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent )
+NodePrivate::NodePrivate(const string& docName,
+                         STRUCT_ID structId,
+                         NODE_ID nodeId,
+                         CONTENT_ID contentId,
+                         int32_t indexid,
+                         string uri,
+                         string nodeMedia,
+                         string nodeType,
+                         string descrId,
+                         TOPO_POS nodeStart,
+                         TOPO_POS nodeEnd,
+                         TOPO_POS nodeLength,
+                         NODE_ID nodeParent )
 {
   m_docName = docName;
   m_structId = structId;
@@ -118,10 +130,6 @@ NodePrivate::NodePrivate ( const string& docName, STRUCT_ID structId, NODE_ID no
   m_uri = uri;
   m_nodeMedia = nodeMedia;
   m_nodeType = nodeType;
-  m_isRoot = isRoot;
-  m_isLeaf = isLeaf;
-  m_isFile = isFile;
-  m_isMultimedia = isMultimedia;
   m_nodeStart = nodeStart;
   m_nodeEnd = nodeEnd;
   m_nodeLength = nodeLength;
@@ -134,6 +142,7 @@ NodePrivate::NodePrivate ( const string& docName, STRUCT_ID structId, NODE_ID no
 Node::Node() : m_d(new NodePrivate()) {}
 Node::~Node() {delete m_d;}
 Node::Node(const Node& n) : m_d(new NodePrivate(*n.m_d)) {}
+
 Node &Node::operator=(const Node& n)
 {
   if (this == &n)
@@ -147,32 +156,65 @@ Node &Node::operator=(const Node& n)
 }
 
 
-Node::Node ( const std::string& docName, STRUCT_ID structId, NODE_ID nodeId, CONTENT_ID contentId, int indexid , std::string uri, std::string nodeMedia, std::string nodeType, std::string descrId , bool isRoot, bool isLeaf, bool isFile, bool isMultimedia, TOPO_POS nodeStart, TOPO_POS nodeEnd, TOPO_POS nodeLength, NODE_ID nodeParent ) : m_d(new NodePrivate(docName,structId, nodeId, contentId, indexid , uri, nodeMedia, nodeType, descrId , isRoot, isLeaf, isFile, isMultimedia, nodeStart, nodeEnd, nodeLength, nodeParent))
+Node::Node (const std::string& docName,
+            STRUCT_ID structId,
+            NODE_ID nodeId,
+            CONTENT_ID contentId,
+            int indexid ,
+            std::string uri,
+            std::string nodeMedia,
+            std::string nodeType,
+            std::string descrId ,
+            TOPO_POS nodeStart,
+            TOPO_POS nodeEnd,
+            TOPO_POS nodeLength,
+            NODE_ID nodeParent ) :
+    m_d(new NodePrivate(docName,
+                        structId,
+                        nodeId,
+                        contentId,
+                        indexid ,
+                        uri,
+                        nodeMedia,
+                        nodeType,
+                        descrId ,
+                        nodeStart,
+                        nodeEnd,
+                        nodeLength,
+                        nodeParent))
 {
 }
 
-std::string Node::get_DocName() const {
+std::string Node::get_DocName() const
+{
   return m_d->m_docName;
 };
-void  Node::set_DocName ( const std::string& docName ) {
+void  Node::set_DocName ( const std::string& docName )
+{
   m_d->m_docName=docName;
 }
-STRUCT_ID Node::get_StructId() const {
+STRUCT_ID Node::get_StructId() const
+{
   return m_d->m_structId;
 };
-void  Node::set_StructId ( STRUCT_ID structId ) {
+void  Node::set_StructId ( STRUCT_ID structId )
+{
   m_d->m_structId=structId;
 }
-NODE_ID Node::get_NodeId() const {
+NODE_ID Node::get_NodeId() const
+{
   return m_d->m_nodeId;
 };
-void  Node::set_NodeId ( NODE_ID NodeId ) {
+void  Node::set_NodeId ( NODE_ID NodeId )
+{
   m_d->m_nodeId=NodeId;
 }
-CONTENT_ID Node::get_ContentId() const {
+CONTENT_ID Node::get_ContentId() const
+{
   return m_d->m_contentId;
 };
-void  Node::set_ContentId ( CONTENT_ID ContentId ) {
+void  Node::set_ContentId ( CONTENT_ID ContentId )
+{
   m_d->m_contentId=ContentId;
 }
 
@@ -196,26 +238,6 @@ const std::string& Node::nodeType() const
   return m_d->m_nodeType;
 }
 
-bool Node::isRoot() const
-{
-  return m_d->m_isRoot;
-}
-
-bool Node::isLeaf() const
-{
-  return m_d->m_isLeaf;
-}
-
-bool Node::isFile() const
-{
-  return m_d->m_isFile;
-}
-
-bool Node::isMultimedia() const
-{
-  return m_d->m_isMultimedia;
-}
-
 TOPO_POS Node::nodeStart() const
 {
   return m_d->m_nodeStart;
@@ -235,7 +257,7 @@ TOPO_POS Node::nodeLength() const
 
 NODE_ID Node::nodeParent() const
 {
-  return m_d->m_isRoot;
+  return m_d->m_nodeParent;
 }
 
 const std::string& Node::uri() const
@@ -273,27 +295,32 @@ void Node::nodeParent(NODE_ID np)
 
 class LIMA_DATA_EXPORT StructurePrivate
 {
-    friend class Structure;
+  friend class Structure;
 public:
   StructurePrivate();
   StructurePrivate(const StructurePrivate& sp);
   StructurePrivate ( STRUCT_ID structID );
   StructurePrivate& operator= ( const StructurePrivate& sp );
 
-    //! @brief destructeur: delete des 'Nodes' de contenu
-    ~StructurePrivate();
+  //! @brief destructeur: delete des 'Nodes' de contenu
+  ~StructurePrivate();
 
-    //! @brief the set of
-    std::map<CONTENT_ID,Node> m_nodes;
+  //! @brief the set of
+  std::map<CONTENT_ID,Node> m_nodes;
 
-    //! @brief the numeric identifier of the current structure
-    STRUCT_ID m_structId;
+  //! @brief the numeric identifier of the current structure
+  STRUCT_ID m_structId;
 };
 
-StructurePrivate::StructurePrivate() : m_structId(std::numeric_limits< STRUCT_ID >::max()) {}
+StructurePrivate::StructurePrivate() :
+    m_nodes(),
+    m_structId(std::numeric_limits< STRUCT_ID >::max())
+{
+}
 
 StructurePrivate::StructurePrivate(const StructurePrivate& sp) :
-m_nodes(sp.m_nodes), m_structId(sp.m_structId)
+    m_nodes(sp.m_nodes),
+    m_structId(sp.m_structId)
 {
 }
 
@@ -304,7 +331,9 @@ StructurePrivate& StructurePrivate::operator=(const StructurePrivate& sp)
   return *this;
 }
 
-StructurePrivate::StructurePrivate ( STRUCT_ID structID ) : m_structId(structID)
+StructurePrivate::StructurePrivate ( STRUCT_ID structID ) :
+    m_nodes(),
+    m_structId(structID)
 {
 }
 
@@ -314,13 +343,17 @@ StructurePrivate::~StructurePrivate()
 }
 
 ///////////////// Structure methods
-Structure::Structure() : m_d(new StructurePrivate()) {}
-
-Structure::Structure ( STRUCT_ID structID )  : m_d(new StructurePrivate(structID))
+Structure::Structure() : m_d(new StructurePrivate())
 {
 }
 
-Structure::Structure ( const Structure& s )  : m_d(new StructurePrivate(*s.m_d))
+Structure::Structure ( STRUCT_ID structID ) :
+    m_d(new StructurePrivate(structID))
+{
+}
+
+Structure::Structure ( const Structure& s ) :
+    m_d(new StructurePrivate(*s.m_d))
 {
 }
 
@@ -329,7 +362,8 @@ Structure& Structure::operator=( const Structure& s )
   if (this == &s)
     return *this;
 
-  if (m_d!=0) {
+  if (m_d!=0)
+  {
     delete m_d;
   }
   m_d = new StructurePrivate(*s.m_d);
@@ -339,54 +373,55 @@ Structure& Structure::operator=( const Structure& s )
 //! @brief destructeur: delete des 'Nodes' de contenu
 Structure::~Structure()
 {
-    delete m_d;
+  delete m_d;
 }
 
 void Structure::addNode (const Node& node )
 {
-  m_d->m_nodes[node.get_ContentId()]=node;
+  m_d->m_nodes[node.get_ContentId()] = node;
 }
 
 void Structure::addNode ( CONTENT_ID ContentId, const Node& node )
 {
-    m_d->m_nodes[ContentId]=node;
+    m_d->m_nodes[ContentId] = node;
 }
 
 Node* Structure::getNode ( CONTENT_ID ContentId )
 {
   if (m_d->m_nodes.find(ContentId) == m_d->m_nodes.end())
-    return 0;
+    return nullptr;
   return &m_d->m_nodes[ContentId];
 }
 
 const Node* Structure::getNode ( CONTENT_ID ContentId ) const
 {
   if (m_d->m_nodes.find(ContentId) == m_d->m_nodes.end())
-    return 0;
+    return nullptr;
   return &m_d->m_nodes[ContentId];
 }
 
-const map<CONTENT_ID,Node>* Structure::getNodes() const
+const map<CONTENT_ID,Node>& Structure::getNodes() const
 {
-  return &m_d->m_nodes;
+  return m_d->m_nodes;
 }
 
-map<CONTENT_ID,Node>* Structure::getNodes()
+map<CONTENT_ID,Node>& Structure::getNodes()
 {
-  return &m_d->m_nodes;
+  return m_d->m_nodes;
 }
 
-STRUCT_ID Structure::getStructId() const {
+STRUCT_ID Structure::getStructId() const
+{
     return m_d->m_structId;
 }
 
-Node* Structure::getFirstNode ( STRUCT_ID StructureId )
+Node*Structure::getFirstNode ( STRUCT_ID StructureId )
 {
   LIMA_UNUSED(StructureId);
-  map<CONTENT_ID,Node>::iterator ItrNodes;
-  for (ItrNodes=m_d->m_nodes.begin();ItrNodes!=m_d->m_nodes.end();ItrNodes++)
+  for (auto ItrNodes=m_d->m_nodes.begin();
+       ItrNodes!=m_d->m_nodes.end(); ItrNodes++)
   {
-    if ((ItrNodes->second.nodeType()=="topic"))
+    if ((ItrNodes->second.nodeType() == "topic"))
     {
       return getNode(ItrNodes->first);
     }
@@ -397,9 +432,9 @@ Node* Structure::getFirstNode ( STRUCT_ID StructureId )
 const Node* Structure::getFirstNode ( STRUCT_ID StructureId ) const
 {
   LIMA_UNUSED(StructureId);
-  for (auto nodesIt=m_d->m_nodes.begin();nodesIt!=m_d->m_nodes.end();nodesIt++)
+  for (auto nodesIt=m_d->m_nodes.begin(); nodesIt!=m_d->m_nodes.end();nodesIt++)
   {
-    if ((nodesIt->second.nodeType()=="topic"))
+    if ((nodesIt->second.nodeType() == "topic"))
     {
       return getNode(nodesIt->first);
     }
@@ -409,57 +444,52 @@ const Node* Structure::getFirstNode ( STRUCT_ID StructureId ) const
 
 std::ostream& operator<<(ostream& os, const Node& node)
 {
-  os<<"Node "<<node.get_StructId()<<" "<<node.get_NodeId()<<" "<<node.get_ContentId()<<" "<<node.indexId()<<" "<<node.descrId()<<" "<<node.get_DocName()<<std::endl;
+  os << "Node " << node.get_StructId() << " " << node.get_NodeId() << " "
+      << node.get_ContentId() << " " << node.indexId() << " " << node.descrId()
+      << " " << node.get_DocName() << std::endl;
   return os;
 }
 
 QDebug& operator<<(QDebug& os, const Node& node)
 {
-  os << "Node(structId:" << node.get_StructId() << ", nodeId:" << node.get_NodeId()
-     << ", contentId:" << node.get_ContentId() << ", indexId:" << node.indexId() << ", descrId:"
-     << node.descrId() << ", docName:" << node.get_DocName() << ", nodeStart:" << node.nodeStart()
-     << ", nodeEnd:" << node.nodeEnd() << ", nodeLength:" << node.nodeLength() << ")";
+  os << "Node(structId:" << node.get_StructId()
+     << ", nodeId:" << node.get_NodeId()
+     << ", contentId:" << node.get_ContentId()
+     << ", indexId:" << node.indexId()
+     << ", descrId:" << node.descrId()
+     << ", docName:" << node.get_DocName()
+     << ", nodeStart:" << node.nodeStart()
+     << ", nodeEnd:" << node.nodeEnd()
+     << ", nodeLength:" << node.nodeLength()
+     << ", nodeParent:" << node.nodeParent() << ")";
   return os;
 }
 
 std::ostream& operator<<(ostream& os, const Structure& structure)
 {
-  const map<CONTENT_ID,Node>* nodes=structure.getNodes();
-  map<CONTENT_ID,Node>::const_iterator ItrNodes;
-  for (ItrNodes=nodes->begin();ItrNodes!=nodes->end();ItrNodes++)
+  const auto& nodes = structure.getNodes();
+  for (auto ItrNodes = nodes.cbegin(); ItrNodes != nodes.cend(); ItrNodes++)
   {
-    os<<ItrNodes->second;
+    os << ItrNodes->second;
   }
   return os;
 }
+
 QDebug& operator<<(QDebug& os, const Structure& structure)
 {
-  const map<CONTENT_ID,Node>* nodes=structure.getNodes();
-  os << "Structure( structId:" << structure.getStructId() << ", nodes ("<<nodes->size()<<"): ";
-  for (map<CONTENT_ID,Node>::const_iterator ItrNodes = nodes->begin(); ItrNodes != nodes->end() ; ItrNodes++)
+  const auto& nodes = structure.getNodes();
+  os << "Structure( structId:" << structure.getStructId()
+     << ", nodes ("<<nodes.size()<<"): ";
+  for (auto ItrNodes = nodes.cbegin(); ItrNodes != nodes.cend() ; ItrNodes++)
   {
-    os<<"node ("<<ItrNodes->first<<":" << ItrNodes->second<<")";
+    os << "node (" << ItrNodes->first << ":" << ItrNodes->second<<")";
   }
   return os;
 }
-/*
-NODE_ID Structure::getNodeId(string featId,CONTENT_ID contentId,int indexId)
-{
-      map<CONTENT_ID,Node>* nodes=getNodes();
-      map<CONTENT_ID,Node>::iterator ItrNodes;
-for (ItrNodes=nodes->begin();ItrNodes!=nodes->end();ItrNodes++)
-{
-  Node node=ItrNodes->second;
-  if ((node.m_descrId==featId)&&(node.m_contentId==contentId)&&(node.m_indexId==indexId))
-    return node.m_nodeId;
-}
-return 0;
-}*/
 
 void Structure::setStructId(STRUCT_ID structId)
 {
-  m_d->m_structId=structId;
+  m_d->m_structId = structId;
 }
-
 
 } // Lima

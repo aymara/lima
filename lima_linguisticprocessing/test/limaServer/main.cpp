@@ -29,6 +29,7 @@
 #include "common/QsLog/QsLogCategories.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 // #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif
@@ -36,6 +37,7 @@ using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::LinguisticProcessing;
 
 #define DEFAULT_PORT 8080
 
@@ -220,7 +222,7 @@ int main(int argc, char **argv)
     }
     catch (NoSuchModule& e1)
     {
-	qDebug() << "http-server module not defined in config file. Ininialize with all available pipelines";
+    qDebug() << "http-server module not defined in config file. Ininialize with all available pipelines";
     }
     catch (NoSuchParam& e3)
     {
@@ -236,10 +238,12 @@ int main(int argc, char **argv)
 
   QTimer t;
 
+  int ret = EXIT_SUCCESS;
   // Create instance of server
-  LimaServer* server=NULL;
+#ifndef DEBUG_LP
   try {
-    server = new LimaServer(configPath,
+#endif
+    LimaServer server(configPath,
                     QString::fromUtf8(strCommonConfigFile.c_str()),
                     QString::fromUtf8(strLpConfigFile.c_str()),
                     resourcesPath,
@@ -248,27 +252,50 @@ int main(int argc, char **argv)
                     port,
                     &app,
                     &t);
+
+      if (varMap.count("service-life"))
+      {
+        // Stop server and app after service-life seconds
+        //note that we need to use t.connect, as main is not a QObject
+        t.connect (&t, SIGNAL(timeout()), &server, SLOT(quit()));
+        int time_out = service_life*1000;
+        t.start(time_out);
+      }
+
+      ret = app.exec();
+#ifndef DEBUG_LP
   }
   catch (const InvalidConfiguration& e) {
     std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
     std::cerr << "main: abort" << std::endl;
-    if(server) delete server;
-    return 1;
+    return EXIT_FAILURE;
   }
-
-  if (varMap.count("service-life"))
+  catch (const LinguisticProcessingException& e)
   {
-    // Stop server and app after service-life seconds
-    //note that we need to use t.connect, as main is not a QObject
-    t.connect (&t, SIGNAL(timeout()), server, SLOT(quit()));
-    int time_out = service_life*1000;
-    t.start(time_out);
+    std::cerr << "Catched LinguisticProcessingException: " << e.what() << std::endl;
+    std::cerr << "main: abort" << std::endl;
+    return EXIT_FAILURE;
   }
+  catch (const Lima::LimaException& e)
+  {
+    std::cerr << "Catched LimaException: " << e.what() << std::endl;
+    std::cerr << "main: abort" << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Catched std::exception: " << e.what() << std::endl;
+    std::cerr << "main: abort" << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch (...)
+  {
+    std::cerr << "Catched unknown exception" << std::endl;
+    std::cerr << "main: abort" << std::endl;
+    return EXIT_FAILURE;
+  }
+#endif
 
-  if(server) delete server;
-
-  //return app.exec();
-  int ret = app.exec();
   std::cout << "main: return " << ret;
   return ret;
 }

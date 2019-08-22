@@ -19,11 +19,11 @@
 /************************************************************************
  *
  * @file       LimaCommon.h (from s2Common.h)
- * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+ * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
- *             Benoit Mathieu <mathieub@zoe.cea.fr> 
+ *             Benoit Mathieu <mathieub@zoe.cea.fr>
 
- *             Hervé Le Borgne <herve.le-borgne@cea.fr> 
+ *             Hervé Le Borgne <herve.le-borgne@cea.fr>
 
  * @date       mar déc 18 2007
  * copyright   Copyright (C) 2003-2012 by CEA LIST
@@ -158,7 +158,7 @@ typedef unsigned __int64 uint64_t;
 #define LERROR QLOG_ERROR()
 #define LFATAL QLOG_FATAL()
 
-// #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X); 
+// #define LOGINIT(X) QsLogging::Logger& logger = QsLogging::Logger::instance(X);
 // logger.setLoggingLevel( QsLogging::Categories::instance().levelFor( X ) );
 
 class LogInit
@@ -229,9 +229,9 @@ namespace Lima
 
 enum LimaStatusCode {
     SUCCESS_ID,
+    UNKNOWN_ERROR,
     CANNOT_OPEN_FILE_ERROR,
     OUT_OF_RANGE_ERROR,
-    UNKNOWN_ERROR,
     UNSUPPORTED_LANGUAGE,
     INVALID_CONFIGURATION,
     MISSING_DATA
@@ -247,12 +247,12 @@ BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
 class LimaException : public std::exception
 {
 public:
-    LimaException(const std::string& message = "") : 
-        std::exception(), m_reason(message) 
+    LimaException(const std::string& message = "") :
+        std::exception(), m_reason(message)
     {
     }
     virtual ~LimaException() throw() {}
-    virtual const char * what () const throw() override 
+    virtual const char * what () const throw() override
     {
         return m_reason.c_str();
     }
@@ -264,8 +264,8 @@ protected:
 class InvalidConfiguration : public LimaException
 {
 public:
-    InvalidConfiguration(const std::string& message = "") : 
-        LimaException(message) 
+    InvalidConfiguration(const std::string& message = "") :
+        LimaException(message)
     {
     }
 
@@ -276,11 +276,11 @@ private:
 class MediaNotInitialized : public LimaException
 {
 public :
-    MediaNotInitialized(MediaId medId) : 
+    MediaNotInitialized(MediaId medId) :
         LimaException(),
         m_medId(medId),
         m_med(),
-        m_num(true) 
+        m_num(true)
     {
       if (m_num)
       {
@@ -292,12 +292,12 @@ public :
         m_reason = std::string("uninitialized media ")+m_med;
       }
     }
-    
-    MediaNotInitialized(const std::string& media) : 
+
+    MediaNotInitialized(const std::string& media) :
         LimaException(media),
         m_medId(0),
         m_med(media),
-        m_num(false) 
+        m_num(false)
     {
       if (m_num)
       {
@@ -308,7 +308,7 @@ public :
       {
         m_reason = std::string("uninitialized media ")+m_med;
       }
-      
+
     };
     virtual ~MediaNotInitialized() throw() {};
 
@@ -319,14 +319,14 @@ private:
   bool m_num;
 };
 
-class LanguageNotInitialized : public LimaException 
+class LanguageNotInitialized : public LimaException
 {
 public :
-    LanguageNotInitialized(MediaId langId) : 
+    LanguageNotInitialized(MediaId langId) :
         LimaException(),
         m_langId(langId),
         m_lang(),
-        m_num(true) 
+        m_num(true)
     {
         if (m_num) {
             std::ostringstream oo(m_reason);
@@ -336,11 +336,11 @@ public :
         }
 
     }
-    LanguageNotInitialized(const std::string& language) : 
+    LanguageNotInitialized(const std::string& language) :
         LimaException(),
         m_langId(0),
         m_lang(language),
-        m_num(false) 
+        m_num(false)
     {
         if (m_num) {
             std::ostringstream oo(m_reason);
@@ -360,10 +360,10 @@ private:
   bool m_num;
 };
 
-class AccessByStringNotInitialized : public LimaException 
+class AccessByStringNotInitialized : public LimaException
 {
 public :
-    AccessByStringNotInitialized(const std::string& reason) : 
+    AccessByStringNotInitialized(const std::string& reason) :
         LimaException(reason)
     {
         m_reason = std::string("Fsa not initialized because of ") + reason;
@@ -374,7 +374,7 @@ private:
   AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&);
 };
 
-class AccessByStringOutOfRange : public LimaException 
+class AccessByStringOutOfRange : public LimaException
 {
 public :
     AccessByStringOutOfRange(const std::string& reason) : LimaException()
@@ -387,7 +387,7 @@ private:
   AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&);
 };
 
-class IncompleteResources : public LimaException 
+class IncompleteResources : public LimaException
 {
 public :
     IncompleteResources(const std::string& reason) : LimaException()
@@ -403,8 +403,8 @@ private:
 class XMLException : public Lima::LimaException
 {
 public:
-  explicit XMLException(const std::string& message = "") : 
-      Lima::LimaException() 
+  explicit XMLException(const std::string& message = "") :
+      Lima::LimaException()
   {
     m_reason = std::string("XMLException: ") + message;
   }

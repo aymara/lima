@@ -714,11 +714,12 @@
       <param key="temporaryFileMetadata" value="srlTemporary"/>
       <param key="inputSuffix" value=".conll.srl"/>
     </group>
-    <!-- ******************************************
-  Definition of dumpers
+<!-- ******************************************
+Definition of dumpers
 *********************************************** -->
     <group name="conllDumperToFile" class="ConllDumper">
       <param key="outputSuffix" value=".conll"/>
+      <param key="withColsHeader" value="true"/>
       <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
     </group>
     <group name="conllDumper" class="ConllDumper">
