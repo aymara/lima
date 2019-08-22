@@ -44,7 +44,7 @@ RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com
 RUN TEMP_DEB="$(mktemp)" && wget -O "$TEMP_DEB" $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest | grep browser_download_url | grep ubuntu16 | cut -d '"' -f 4) && dpkg -i "$TEMP_DEB"
 
 RUN mkdir -p /src/
-RUN git clone https://github.com/aymara/lima /src/lima
+RUN git clone --recurse-submodules https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
