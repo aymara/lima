@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # kate: encoding utf-8;
 
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2019 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -88,6 +88,7 @@ def main(argv):
                     features_kept_string = ''
                     if features_kept:
                         features_kept_string = '-{}'.format('|'.join(features_kept))
-                    print('{}\t{}{}'.format(token, udtag, features_kept_string))
+                    out_line = '{}\t{}{}'.format(token udtag, features_kept_string)
+                    print(out_line.encode('utf-8'))
 
 main(sys.argv[1:])
