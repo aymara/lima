@@ -174,9 +174,8 @@ CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate()
   {
     TOKENIZERLOGINIT;
     LERROR << "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate: Error closing s"
-            << status.ToString();
+           << status.ToString();
   }
-
 }
 
 CppUppsalaTensorFlowTokenizer::CppUppsalaTensorFlowTokenizer() :
@@ -249,6 +248,9 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
   // Insert the tokens in the graph and create sentence limits
   for (const auto& sentence: sentencesTokens)
   {
+    if (sentence.size() < 1)
+      continue;
+
     LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
     {
@@ -257,7 +259,7 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
       LOG_MESSAGE(LDEBUG, "      Adding token '" << str << "'");
 
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
-      Token *tToken = new Token(form,str, token.second, token.first.size());
+      Token *tToken = new Token(form, str, token.second, token.first.size());
       if (tToken == 0)
         LOG_ERROR_AND_THROW("CppUppsalaTensorFlowTokenizer::process: Can't allocate memory with \"new Token(...)\"",
                             MemoryErrorException());
@@ -672,38 +674,43 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
     for (size_t j = 0; j < viterbi.size(); ++j)
     {
-      if (m_token_end == viterbi[j] || m_token_end_last == viterbi[j]
-        || m_token_single == viterbi[j] || m_token_single_last == viterbi[j])
+      unsigned int pos = i * 400 + j;
+      if (pos + 1 >= wtext.size())
+          break;
+      const auto &tag = viterbi[j];
+
+      if (m_token_end == tag || m_token_end_last == tag || m_token_single == tag || m_token_single_last == tag)
       {
-        unsigned int pos = i * 400 + j;
         if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
         {
-          current_token += wtext[pos + 1];
+          if (m_token_single == tag || m_token_single_last == tag || 0 == current_token.size())
+            current_token_offset = pos;
 
-          if (m_token_single == viterbi[j] || m_token_single_last == viterbi[j])
-            current_token_offset = i * 400 + j;
+          current_token += wtext[pos + 1];
         }
 
         if (current_token.size() > 0 && current_token != SPACE)
         {
-          current_sentence.push_back(
-            make_pair(QString::fromStdU32String(current_token),
-                      current_token_offset));
+          current_sentence.push_back(make_pair(QString::fromStdU32String(current_token),
+                                               current_token_offset));
+          //if (current_sentence.size() > 1
+          //        && current_sentence[current_sentence.size() - 2].second == current_token_offset)
+          //    throw;
           current_token.clear();
         }
       }
-      else if (m_token_begin == viterbi[j] || m_token_inside == viterbi[j])
+      else if (m_token_begin == tag || m_token_inside == tag)
       {
-        unsigned int pos = i * 400 + j;
         if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
         {
+          if (m_token_begin == tag || 0 == current_token.size())
+            current_token_offset = pos;
+
           current_token += wtext[pos + 1];
-          if (m_token_begin == viterbi[j])
-            current_token_offset = i * 400 + j;
         }
       }
 
-      if (m_token_end_last == viterbi[j] || m_token_single_last == viterbi[j])
+      if (m_token_end_last == tag || m_token_single_last == tag)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();
@@ -711,11 +718,18 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
     }
   }
 
+  if (current_token.size() > 0)
+      current_sentence.push_back(make_pair(QString::fromStdU32String(current_token),
+                                           current_token_offset));
+
+  if (current_sentence.size() > 0)
+    sentences.push_back(current_sentence);
+
   LOG_MESSAGE(LDEBUG, "CppUppsalaTensorFlowTokenizer::tokenize final sentences:" << sentences);
 
   return sentences;
 }
 
-} //namespace TensorFlowTokenizer
+} // namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing
 } // namespace Lima

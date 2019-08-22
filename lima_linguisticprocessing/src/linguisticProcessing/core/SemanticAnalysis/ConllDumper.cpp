@@ -49,6 +49,8 @@
 
 #include <fstream>
 
+#include <boost/type_index.hpp>
+
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
@@ -208,7 +210,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   {
     DUMPERLOGINIT;
     LERROR << "ConllDumper::process graph" << m_d->m_graph
-            << "has not been produced: check pipeline";
+           << "has not been produced: check pipeline";
     return MISSING_DATA;
   }
   auto graph = tokenList->getGraph();
@@ -255,9 +257,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   auto sentenceBegin = sbItr->getFirstVertex();
   auto sentenceEnd = sbItr->getLastVertex();
 
-
-    const auto& sp = MedData::single().stringsPool(
-      m_d->m_language);
+  const auto& sp = MedData::single().stringsPool(m_d->m_language);
 //   for (auto im=m_d->m_conllLimaDepMapping.begin();im!=m_d->m_conllLimaDepMapping.end();im++)
 //   {
 //     LDEBUG << "("<< (*im).first<< "," << (*im).second << ")" << endl;
@@ -275,6 +275,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
   while (sbItr != sd->getSegments().end() ) //for each sentence
   {
+    if (sentenceNb > 0)
+    {
+      dstream->out() << std::endl;
+    }
     sentenceNb++;
     dstream->out() << "# sent_id = " << sentenceNb << std::endl;
     // @TODO Fill the text below. It is mandatory for CONLL-U format
@@ -301,26 +305,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     int tokenId = 0;
     LinguisticGraphVertex v = 0;
-    /*
-     * The @ref previous variable allows to circumvent the bug creating
-     * duplicate tokens in certain configurations, like that:
-17      78712-1179      78712-1179      PUNCT   _       _       18      nsubj   _       _
-18      512-232-2787    512-232-2787    PUNCT   _       _       19      nsubj   _       _
-19      (       (       PUNCT   _       _       21      nsubj   _       _
-20      (       (       X       _       _       22      nsubj   _       _
-21      phone   phone   NOUN    _       _       23      nsubj   _       _
-22      phone   phone   NOUN    _       _       24      nsubj   _       _
-23      )       )       X       _       _       25      nsubj   _       _
-24      )       )       PUNCT   _       _       26      nsubj   _       _
-25      512-471-5073    512-471-5073    PUNCT   _       _       27      nsubj   _       _
-26      512-471-5073    512-471-5073    PUNCT   _       _       28      nsubj   _       _
-      * As we have not been able to find the true cause of this problem which
-      * occurs only on some computers and does not produce exploitable traces
-      * in Valgrind, we use the "previous" variable to check the position of
-      * the precedent outputed token and avoiding to output two tokens from the
-      * same position in the text.
-     */
-    uint64_t previous = std::numeric_limits<uint64_t>::max();
 
     // First traversing of the sentence to fill the
     // vertexDependencyInformations and segmentationMapping data structures
@@ -335,7 +319,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       segmentationMappingReverse.insert(std::make_pair(tokenId,v));
 #ifdef DEBUG_LP
       LDEBUG << "ConllDumper::process conll id : " << tokenId
-              << " Lima id : " << v;
+             << " Lima id : " << v;
 #endif
       auto dcurrent = syntacticData->depVertexForTokenVertex(v);
       DependencyGraphOutEdgeIt dit, dit_end;
@@ -344,7 +328,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       {
 #ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process Dumping dependency edge "
-                << (*dit).m_source << " -> " << (*dit).m_target;
+               << (*dit).m_source << " -> " << (*dit).m_target;
 #endif
         auto typeMap = get(edge_deprel_type, *depGraph);
         auto type = typeMap[*dit];
@@ -353,12 +337,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #ifdef DEBUG_LP
         LDEBUG << "ConllDumper::process relation = " << syntRelName;
         LDEBUG << "ConllDumper::process Src  : Dep vertex= "
-                << boost::source(*dit, *depGraph);
+               << boost::source(*dit, *depGraph);
         auto src = syntacticData->tokenVertexForDepVertex(
             boost::source(*dit, *depGraph));
         LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
         LDEBUG << "ConllDumper::process Targ : Dep vertex= "
-                << boost::target(*dit, *depGraph);
+               << boost::target(*dit, *depGraph);
 #endif
         auto dest =
             syntacticData->tokenVertexForDepVertex(boost::target(*dit,
@@ -370,7 +354,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         {
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process saving target for"
-                  << v << ":" << dest << syntRelName;
+                 << v << ":" << dest << syntRelName;
 #endif
           vertexDependencyInformations.insert(
               std::make_pair(v, std::make_pair(dest,syntRelName)));
@@ -409,7 +393,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                                                    sentenceEnd );
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumper::process predicates for sentence between"
-            << sentenceBegin << "and" << sentenceEnd << "are:" << predicates;
+           << sentenceBegin << "and" << sentenceEnd << "are:" << predicates;
 #endif
     auto keys = predicates.keys();
 
@@ -538,7 +522,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           auto target = vertexDependencyInformations.find(v)->second.first;
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process target saved for"
-                  << v << "is" << target;
+                 << v << "is" << target;
 #endif
           if (segmentationMapping.find(target) != segmentationMapping.end())
           {
@@ -548,14 +532,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           {
             DUMPERLOGINIT;
             LERROR << "ConllDumper::process target" << target
-                    << "not found in token to CoNLL id mapping for" << v << "-"
-                    << vertexDependencyInformations.find(v)->second.second
-                    << "->" << target ;
+                   << "not found in token to CoNLL id mapping for" << v << "-"
+                   << vertexDependencyInformations.find(v)->second.second
+                   << "->" << target ;
             LERROR << "    This relation is a cross-sentence relation. This is a parsing error.";
           }
 #ifdef DEBUG_LP
           LDEBUG << "ConllDumper::process conll target saved for "
-                  << tokenId << " is " << targetConllId;
+                 << tokenId << " is " << targetConllId;
 #endif
           QString relName = QString::fromUtf8(
             vertexDependencyInformations.find(v)->second.second.c_str());
@@ -572,7 +556,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             conllRelName= "nsubj";
             DUMPERLOGINIT;
             LWARN << "ConllDumper::process" << relName
-                    << "not found in LIMA to CoNLL dependencies mapping. Using 'nsubj'";
+                  << "not found in LIMA to CoNLL dependencies mapping. Using 'nsubj'";
           }
         }
 
@@ -625,96 +609,84 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
             LERROR << "ConllDumper::process: tokenId == 0.";
             throw LimaException();
         }
-        auto position = ft->position();
-#ifdef DEBUG_LP
-        LDEBUG << "ConllDumper::process previous:" << previous
-                << "; position:" << position;
-#endif
-        // See the comment associated to the declaration of "previous" to
-        // understand its use
-        if (position != previous)
+
+        dstream->out()  << tokenId // ID
+                        << "\t" << inflectedToken // FORM
+                        << "\t" << lemmatizedToken // LEMMA
+                        << "\t" << micro.toStdString() // UPOS
+                        << "\t" << "_" // XPOS
+                        << "\t" << "_" // FEATS
+                        << "\t" << head.toStdString() // HEAD
+                        << "\t" << deprel.toStdString() // DEPREL
+                        << "\t" << "_"; // DEPS
+
+        QStringList miscField;
+        if (neType != "_")
         {
-          dstream->out()  << tokenId // ID
-                          << "\t" << inflectedToken // FORM
-                          << "\t" << lemmatizedToken // LEMMA
-                          << "\t" << micro.toStdString() // UPOS
-                          << "\t" << "_" // XPOS
-                          << "\t" << "_" // FEATS
-                          << "\t" << head.toStdString() // HEAD
-                          << "\t" << deprel.toStdString() // DEPREL
-                          << "\t" << "_"; // DEPS
-          QStringList miscField;
-          if (neType != "_")
-          {
-            miscField << (QString("NE=") + neType);
-          }
-  //           LDEBUG << "ConllDumper::process output the predicate if any";
-          if (annotationData != nullptr && predicates.contains(v))
-          {
-            auto predicate = annotationData->stringAnnotation(predicates.value(v),
-                                                              "Predicate");
+          miscField << (QString("NE=") + neType);
+        }
 
-            // Now output the roles supported by the current PoS graph token
+        // LDEBUG << "ConllDumper::process output the predicate if any";
+        if (annotationData != nullptr && predicates.contains(v))
+        {
+          auto predicate = annotationData->stringAnnotation(predicates.value(v),
+                                                            "Predicate");
+
+          // Now output the roles supported by the current PoS graph token
 #ifdef DEBUG_LP
-            LDEBUG << "ConllDumper::process output the roles for the"
-                    << keys.size() << "predicates";
+          LDEBUG << "ConllDumper::process output the roles for the"
+                 << keys.size() << "predicates";
 #endif
-            for (int i = 0; i < keys.size(); i++)
-            {
-              auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
+          for (int i = 0; i < keys.size(); i++)
+          {
+            auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
 
-              auto vMatches = annotationData->matches("PosGraph", v, "annot");
-              if (!vMatches.empty())
+            auto vMatches = annotationData->matches("PosGraph", v, "annot");
+            if (!vMatches.empty())
+            {
+#ifdef DEBUG_LP
+              LDEBUG << "ConllDumper::process there is" << vMatches.size()
+                     << "nodes matching PoS graph vertex" << v
+                     << "in the annotation graph.";
+#endif
+              QString roleAnnotation;
+              for (auto vMatch: vMatches)
               {
-  #ifdef DEBUG_LP
-                LDEBUG << "ConllDumper::process there is" << vMatches.size()
-                        << "nodes matching PoS graph vertex" << v
-                        << "in the annotation graph.";
-  #endif
-                QString roleAnnotation;
-                for (auto vMatch: vMatches)
+                AnnotationGraphInEdgeIt vMatchInEdgesIt, vMatchInEdgesIt_end;
+                boost::tie(vMatchInEdgesIt, vMatchInEdgesIt_end) =
+                    boost::in_edges(vMatch,annotationData->getGraph());
+                for (; vMatchInEdgesIt != vMatchInEdgesIt_end; vMatchInEdgesIt++)
                 {
-                  AnnotationGraphInEdgeIt vMatchInEdgesIt, vMatchInEdgesIt_end;
-                  boost::tie(vMatchInEdgesIt, vMatchInEdgesIt_end) =
-                      boost::in_edges(vMatch,annotationData->getGraph());
-                  for (; vMatchInEdgesIt != vMatchInEdgesIt_end; vMatchInEdgesIt++)
+                  auto inVertex = boost::source(*vMatchInEdgesIt,
+                                                annotationData->getGraph());
+                  auto inVertexAnnotPosGraphMatches =
+                      annotationData->matches("annot", inVertex, "PosGraph");
+                  if (inVertex == predicateVertex
+                      && !inVertexAnnotPosGraphMatches.empty())
                   {
-                    auto inVertex = boost::source(*vMatchInEdgesIt,
-                                                  annotationData->getGraph());
-                    auto inVertexAnnotPosGraphMatches =
-                        annotationData->matches("annot", inVertex, "PosGraph");
-                    if (inVertex == predicateVertex
-                        && !inVertexAnnotPosGraphMatches.empty())
-                    {
-                      // Current edge is holding a role of the current predicate
-                      roleAnnotation =
-                          annotationData->stringAnnotation(*vMatchInEdgesIt,
-                                                          "SemanticRole");
-                      break;
-                    }
+                    // Current edge is holding a role of the current predicate
+                    roleAnnotation =
+                        annotationData->stringAnnotation(*vMatchInEdgesIt,
+                                                        "SemanticRole");
+                    break;
                   }
                 }
-                if (!roleAnnotation.isEmpty() )
-                  predicate = roleAnnotation + ":" + predicate;
               }
-            }
-            if (!predicate.isEmpty())
-            {
-              miscField << predicate;
+              if (!roleAnnotation.isEmpty() )
+                predicate = roleAnnotation + ":" + predicate;
             }
           }
-          if (miscField.empty())
+          if (!predicate.isEmpty())
           {
-            miscField << "_";
+            miscField << predicate;
           }
-          dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
-          dstream->out() << std::endl;
         }
-        else
+        if (miscField.empty())
         {
-          tokenId--;
+          miscField << "_";
         }
-        previous = position;
+        dstream->out() << "\t" << miscField.join('|').toStdString(); // MISC
+        dstream->out() << std::endl;
       }
 
       if (v == sentenceEnd)
@@ -744,7 +716,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       }
       tokenId++;
     }
-    dstream->out() << std::endl;
+
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb,
                                                    segmentationMappingReverse));
     sbItr++;
