@@ -49,8 +49,6 @@
 
 #include <fstream>
 
-#include <boost/type_index.hpp>
-
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
