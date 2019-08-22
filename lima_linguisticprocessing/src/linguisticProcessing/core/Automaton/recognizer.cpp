@@ -350,6 +350,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     if( match ) {
       for( std::deque<LinguisticGraphVertex>::const_iterator vIt = vertices.begin(); vIt != vertices.end() ; vIt++ ) {
         triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
+        right=*vIt;
       }
     }
   }
