@@ -53,7 +53,7 @@ RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(c
 RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep ubuntu18 | grep '.deb"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
 
 RUN mkdir -p /src/
-RUN git clone --branch=$BRANCH https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+RUN git clone --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull

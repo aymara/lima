@@ -47,7 +47,7 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
 RUN mkdir -p /src/
-RUN git clone -v --branch=$BRANCH https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
