@@ -22,55 +22,68 @@
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
+
+        <!-- Tokenization -->
         <item value="cpptftokenizer"/>
-<!--         <item value="pytftokenizer"/> -->
-<!--         <item value="flattokenizer"/> -->
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
-        <item value="regexmatcher"/>
-        <item value="simpleWord"/>
+        <!--item value="regexmatcher"/-->                         <!-- URL lookup -->
+
+        <!-- Morphology -->
+        <!--item value="simpleWord"/-->                           <!-- dict-based morphology -->
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
         <!--item value="idiomaticAlternatives"/-->
         <!--item value="fullTokenXmlLoggerIdiomatic"/-->
-        <item value="hyphenWordAlternatives"/>
+        <!--item value="hyphenWordAlternatives"/-->
         <!--item value="fullTokenXmlLoggerHyphen"/-->
-<!--         <item value="abbreviationSplitAlternatives"/> -->
+        <!--item value="abbreviationSplitAlternatives"/-->
         <!--item value="fullTokenXmlLoggerAbbreviations"/-->
-        <item value="defaultProperties"/>
+        <!--item value="defaultProperties"/-->                    <!-- morphology for OOV -->
         <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
-<!--         <item value="SpecificEntitiesModex"/> -->
+
+        <!-- NER -->
+        <!--item value="SpecificEntitiesModex"/-->
         <!--item value="specificEntitiesXmlLogger"/-->
+
+        <!-- Morphology -->
         <!--item value="dotGraphWriter-beforepos"/-->
-<!--         <item value="viterbiPostagger-freq"/> -->
-<!--         <item value="SvmToolPosTagger"/> -->
+        <!--item value="viterbiPostagger-freq"/-->
+        <!--item value="SvmToolPosTagger"/-->
         <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesTransfer"/>
+
+        <!-- Syntax -->
         <item value="syntacticAnalyzerChains"/>
-<!--         <item value="syntacticAnalyzerSimplify"/> -->
-<!--         <item value="syntacticAnalyzerSimplifyQuotes"/> -->
+        <!--item value="syntacticAnalyzerSimplify"/-->
+        <!--item value="syntacticAnalyzerSimplifyQuotes"/-->
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
-<!--         <item value="syntacticAnalyzerFinalize"/> -->
+        <!--item value="syntacticAnalyzerFinalize"/-->
         <item value="syntacticAnalyzerDummy"/>
         <!--item value="dotDepGraphWriter"/-->
+
+        <!-- Coreference -->
         <!--item value="coreferencesSolving"/-->
         <!--item value="annotDotGraphWriter"/-->
         <!--item value="depTripletLogger"/-->
         <!--item value="corefLogger" /-->
+
         <!-- VerbNetRecognition is a fake/empty modex allowing to define VerbNet entity types -->
         <!--item value="VerbNetRecognition"/-->
         <!--item value="VerbNetRecognition"/-->
         <!--item value="kbsrl"/-->
+
+        <!-- Dumpers -->
         <item value="conllDumper"/>
-<!--         <item value="bowDumper"/> -->
-<!--         <item value="textDumper"/> -->
-<!--         <item value="fullXmlDumper"/> -->
-<!--         <item value="NullDumper"/> -->
-<!--         <item value="temporalXmlDumper"/> -->
-<!--         <item value="afterFusionXmlDumper"/> -->
+        <!--item value="bowDumper"/-->
+        <!--item value="textDumper"/-->
+        <!--item value="fullXmlDumper"/-->
+        <!--item value="NullDumper"/-->
+        <!--item value="temporalXmlDumper"/-->
+        <!--item value="afterFusionXmlDumper"/-->
       </list>
     </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
@@ -825,7 +838,7 @@
       <!-- The fakeDependencyGraph parameter allow to apply the CoNLL Shared
            Task  2018 evaluation tool on LIMA output even if the LIMA parser
            output is invalid. -->
-      <param key="fakeDependencyGraph" value="false"/>
+      <param key="fakeDependencyGraph" value="true"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
