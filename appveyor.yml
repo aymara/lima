@@ -57,6 +57,10 @@ install:
   - ps: cd c:\
   - c:\msys64\usr\bin\cat /c/dependency_treebank/wsj_*.dp | c:\msys64\usr\bin\grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
 
+  - appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.9.0-lima/tensorflow-1.9.0.zip -FileName tensorflow-1.9.0.zip
+  - ps: unzip c:\tensorflow-1.9.0.zip -d c:\
+  - c:\tensorflow-1.9.0.exe /SD
+
 build_script:
   - ps: pushd c:/projects/lima
   - git submodule update --init --recursive
