@@ -12,10 +12,12 @@ environment:
   Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_67_0'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_67_0\lib64-msvc-14.1'
-  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
   NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
+  TFDIR: 'c:\Program Files\tensorflow 1.9.0'
+  TFINCLUDE: 'c:\Program Files\tensorflow 1.9.0\include'
+  PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%TFDIR%;%PATH%'
   GITHUB_OAUTH_TOKEN:
     secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
 
@@ -77,8 +79,8 @@ build_script:
   - echo %BOOST_LIBRARYDIR%
   - echo %PATH%
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBoost_DEBUG=ON" "-DBoost_COMPILER=-vc141" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
-  - cmake --build . --config Release
+  - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" "-DTF_SOURCES_PATH=%TFINCLUDE%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
+  - cmake --build . --config RelWithDebInfo
 
 after_build:
   - cmake --build . --config Release --target install
