@@ -443,5 +443,40 @@
           operator="="
           right="Person.PERSON"/>
   </testcase>  
+  <testcase id="fre.se.pers.comp.8" type="pertinent">
+    <call-parameters>
+      <param key="text" value="Sa Majesté Elizabeth II."/>
+      <param key="language" value="fre"/>
+      <list key="pipelines">
+        <item value="limaserver"/>
+      </list>
+    </call-parameters>
+    <expl>PERSON : titre</expl>
+    <test id="fre.se.pers.comp.8.1" trace=".se.xml"
+          comment="type d'entité = Person.PERSONNE"
+          left="XPATH#//entities/entity[pos=1][len=23]/type"
+          operator="="
+          right="Person.PERSON"/>
+    <test id="fre.se.pers.comp.8.2" trace=".se.xml"
+          comment="titre = Sa Majesté"
+          left="XPATH#//entities/entity/components/title[@pos=1]"
+          operator="="
+          right="Sa"/>
+    <test id="fre.se.pers.comp.8.3" trace=".se.xml"
+          comment="titre = Sa Majesté"
+          left="XPATH#//entities/entity/components/title[@pos=4]"
+          operator="="
+          right="Majesté"/>
+    <test id="fre.se.pers.comp.8.4" trace=".se.xml"
+          comment="prénom = Elizabeth"
+          left="XPATH#//entities/entity/components/firstname[@pos=12]"
+          operator="="
+          right="Elizabeth"/>
+    <test id="fre.se.pers.comp.8.5" trace=".se.xml"
+          comment="prénom = II"
+          left="XPATH#//entities/entity/components/firstname[@pos=22]"
+          operator="="
+          right="II"/>
+  </testcase>
   </testcases>
 

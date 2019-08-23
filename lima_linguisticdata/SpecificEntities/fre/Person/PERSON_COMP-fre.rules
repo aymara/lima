@@ -63,6 +63,17 @@ use person.lst
 =<ClearEntityFeatures()
 
 # generic with title (take precedence over generic with firstname because title is before firstname)
+# Sa Majesté Elizabeth II
+@Title::@Firstname @DynastyOrder? (@particule? @PersonNamePart){0-2}:PERSON:
+=>AddEntityFeature(trigger,"title")
+=>SetEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# generic with title (take precedence over generic with firstname because title is before firstname)
 # Dr Watson
 # le président Ambroise de Monge
 # le président Ambroise André Monge: 2 firstname disable, NOK because of duration of compilation
@@ -71,7 +82,18 @@ use person.lst
 # Une des responsables de l'opération "Pièces Jaunes" est Mme Bernadette Chirac.
 # le président Ambroise Monge mange
 @Title::@Firstname? (@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2}:PERSON:
-=>SetEntityFeature(trigger,"title")
+=>AddEntityFeature(trigger,"title")
+=>SetEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# generic with title (take precedence over generic with firstname because title is before firstname)
+# Sa Majesté Elizabeth II
+@Title::@Firstname @DynastyOrder (@particule? @PersonNamePart){1-2}:PERSON:
+=>AddEntityFeature(trigger,"title")
 =>SetEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")
 =>AppendEntityFeature(right.3,"lastname")
