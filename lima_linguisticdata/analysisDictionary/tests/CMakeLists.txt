@@ -34,49 +34,8 @@ add_executable(EnhancedAnalysisDictionaryTest0
 )
 
 target_link_libraries(EnhancedAnalysisDictionaryTest0
-  lima-common-factory
-  lima-common-fsaaccess
-  lima-common-xmlconfigurationfiles
-  lima-common-tools
-  lima-common-datahandler
-  lima-common-mediaprocessors
-  lima-common-time
-  lima-common-misc
-  lima-common-data
-  lima-common-mediaticdata
-  lima-lp-annotationgraph
-  lima-lp-lineartextrepresentation
-  lima-lp-misc
-  lima-lp-tgv
-  lima-lp-linguisticdata
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-regexmatcher
-  lima-lp-wordsensetagger
-  lima-lp-linguisticprocessing-core
-  lima-lp-analysisdict
-  lima-lp-eventanalyzer
-  lima-lp-corefsolver
-  lima-lp-specificentities
-  lima-lp-syntacticanalysis
   lima-lp-morphologicanalysis
-  lima-lp-dictionary
-  lima-lp-easyxmldumper
-  lima-lp-analysisdumpers
-  lima-lp-textsegmentation
-  lima-lp-linguisticanalysisstructure
-  lima-lp-semanticanalysis
-  lima-lp-linguisticresources
-  lima-lp-entitytracker
-  lima-lp-flattokenizer
-  lima-lp-applyrecognizer
-  lima-lp-linguisticprocessors
-  lima-lp-postagger
-  lima-lp-automaton
-  lima-lp-analysishandlers
-  lima-lp-client
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  Qt5::Test
 )
 
 add_dependencies(EnhancedAnalysisDictionaryTest0 pretest-execEnv)
@@ -88,6 +47,7 @@ add_test(NAME EnhancedAnalysisDictionaryTest0
     LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
     ./EnhancedAnalysisDictionaryTest0
 )
+
 
 ########### next test ###############
 
@@ -109,49 +69,8 @@ add_executable(EnhancedAnalysisDictionaryTest1
 )
 
 target_link_libraries(EnhancedAnalysisDictionaryTest1
-  lima-common-factory
-  lima-common-fsaaccess
-  lima-common-xmlconfigurationfiles
-  lima-common-tools
-  lima-common-datahandler
-  lima-common-mediaprocessors
-  lima-common-time
-  lima-common-misc
-  lima-common-data
-  lima-common-mediaticdata
-  lima-lp-annotationgraph
-  lima-lp-lineartextrepresentation
-  lima-lp-misc
-  lima-lp-tgv
-  lima-lp-linguisticdata
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-regexmatcher
-  lima-lp-wordsensetagger
-  lima-lp-linguisticprocessing-core
-  lima-lp-analysisdict
-  lima-lp-eventanalyzer
-  lima-lp-corefsolver
-  lima-lp-specificentities
-  lima-lp-syntacticanalysis
   lima-lp-morphologicanalysis
-  lima-lp-dictionary
-  lima-lp-easyxmldumper
-  lima-lp-analysisdumpers
-  lima-lp-textsegmentation
-  lima-lp-linguisticanalysisstructure
-  lima-lp-semanticanalysis
-  lima-lp-linguisticresources
-  lima-lp-entitytracker
-  lima-lp-flattokenizer
-  lima-lp-applyrecognizer
-  lima-lp-linguisticprocessors
-  lima-lp-postagger
-  lima-lp-automaton
-  lima-lp-analysishandlers
-  lima-lp-client
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  Qt5::Test
 )
 
 add_test(NAME EnhancedAnalysisDictionaryTest1
@@ -173,7 +92,6 @@ qt5_wrap_cpp (DictionaryDataTest1_MOC_OUTFILES
   ${DictionaryDataTest1_MOC_HEADERS}
 )
 
-
 SET(DictionaryDataTest1_SRCS
   DictionaryDataTest1.cpp
 )
@@ -184,48 +102,8 @@ add_executable(DictionaryDataTest1
 )
 
 target_link_libraries(DictionaryDataTest1
-  lima-common-factory
-  lima-common-xmlconfigurationfiles
-  lima-common-tools
-  lima-common-datahandler
-  lima-common-mediaprocessors
-  lima-common-time
-  lima-common-misc
-  lima-common-data
-  lima-common-mediaticdata
-  lima-lp-annotationgraph
-  lima-lp-lineartextrepresentation
-  lima-lp-misc
-  lima-lp-tgv
-  lima-lp-linguisticdata
-  lima-lp-bagofwords
-  lima-lp-propertycode
-  lima-lp-regexmatcher
-  lima-lp-wordsensetagger
-  lima-lp-linguisticprocessing-core
-  lima-lp-analysisdict
-  lima-lp-eventanalyzer
-  lima-lp-corefsolver
-  lima-lp-specificentities
-  lima-lp-syntacticanalysis
   lima-lp-morphologicanalysis
-  lima-lp-dictionary
-  lima-lp-easyxmldumper
-  lima-lp-analysisdumpers
-  lima-lp-textsegmentation
-  lima-lp-linguisticanalysisstructure
-  lima-lp-semanticanalysis
-  lima-lp-linguisticresources
-  lima-lp-entitytracker
-  lima-lp-flattokenizer
-  lima-lp-applyrecognizer
-  lima-lp-linguisticprocessors
-  lima-lp-postagger
-  lima-lp-automaton
-  lima-lp-analysishandlers
-  lima-lp-client
-  ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  Qt5::Test
 )
 
 add_test(NAME DictionaryDataTest1
