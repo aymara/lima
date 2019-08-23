@@ -88,7 +88,6 @@ def main(argv):
                     features_kept_string = ''
                     if features_kept:
                         features_kept_string = '-{}'.format('|'.join(features_kept))
-                    out_line = '{}\t{}{}'.format(token, udtag, features_kept_string)
-                    print(out_line.encode('utf-8'))
+                    print('{}\t{}{}'.format(token, udtag, features_kept_string))
 
 main(sys.argv[1:])
