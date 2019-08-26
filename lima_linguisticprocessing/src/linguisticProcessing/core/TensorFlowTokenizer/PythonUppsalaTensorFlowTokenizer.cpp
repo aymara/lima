@@ -18,8 +18,8 @@
 */
 
 #include "PythonUppsalaTensorFlowTokenizer.h"
-#include "PythonTensorFlowTokenizer.h"
 #include "DeepTokenizerBase.h"
+#include "PythonHelpers.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
@@ -80,7 +80,8 @@ PythonUppsalaTokenizerPrivate::~PythonUppsalaTokenizerPrivate()
 }
 
 PythonUppsalaTensorFlowTokenizer::PythonUppsalaTensorFlowTokenizer() : m_d(new PythonUppsalaTokenizerPrivate())
-{}
+{
+}
 
 PythonUppsalaTensorFlowTokenizer::~PythonUppsalaTensorFlowTokenizer()
 {
@@ -90,39 +91,6 @@ PythonUppsalaTensorFlowTokenizer::~PythonUppsalaTensorFlowTokenizer()
   Py_Finalize();
   delete m_d;
 }
-
-auto python_error = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << __FILE__ << __LINE__ << ": Python error";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto failed_to_allocate_memory = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << __FILE__ << __LINE__ << ": Failed to allocate memory";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto failed_to_import_the_sys_module = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << "Failed to import the sys module";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto cannot_instantiate_the_tokenizer_python_class = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << "Cannot instantiate the PythonUppsalaTensorFlowTokenizer python class";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
 
 void PythonUppsalaTensorFlowTokenizer::init(
     GroupConfigurationStructure& unitConfiguration,
@@ -456,6 +424,6 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
   return SUCCESS_ID;
 }
 
-} //namespace TensorFlowTokenizer
+} // namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing
 } // namespace Lima
