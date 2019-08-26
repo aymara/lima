@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -29,16 +29,12 @@
 #include "TensorFlowTokenizerExport.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
-#include <Python.h>
-
 namespace Lima
 {
 namespace LinguisticProcessing
 {
 namespace TensorFlowTokenizer
 {
-
-std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming);
 
 #define PYTHONTENSORFLOWTOKENIZER_CLASSID "PythonTensorFlowTokenizer"
 
@@ -77,7 +73,7 @@ public:
     PythonTokenizerPrivate* m_d;
 };
 
-} //namespace TensorFlowTokenizer
+} // namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing
 } // namespace Lima
 

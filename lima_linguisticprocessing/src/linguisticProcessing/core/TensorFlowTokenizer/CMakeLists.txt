@@ -22,6 +22,7 @@ SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
     PythonUppsalaTensorFlowTokenizer.cpp
     PythonTensorFlowTokenizer.cpp
     DeepTokenizerBase.cpp
+    PythonHelpers.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-pythontensorflowtokenizer)

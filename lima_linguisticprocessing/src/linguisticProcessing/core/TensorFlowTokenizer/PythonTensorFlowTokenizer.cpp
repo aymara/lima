@@ -19,6 +19,7 @@
 
 #include "PythonTensorFlowTokenizer.h"
 #include "DeepTokenizerBase.h"
+#include "PythonHelpers.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
@@ -77,7 +78,8 @@ PythonTokenizerPrivate::~PythonTokenizerPrivate()
 }
 
 PythonTensorFlowTokenizer::PythonTensorFlowTokenizer() : m_d(new PythonTokenizerPrivate())
-{}
+{
+}
 
 PythonTensorFlowTokenizer::~PythonTensorFlowTokenizer()
 {
@@ -87,39 +89,6 @@ PythonTensorFlowTokenizer::~PythonTensorFlowTokenizer()
   Py_Finalize();
   delete m_d;
 }
-
-auto python_error = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << __FILE__ << __LINE__ << ": Python error";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto failed_to_allocate_memory = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << __FILE__ << __LINE__ << ": Failed to allocate memory";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto failed_to_import_the_sys_module = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << "Failed to import the sys module";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
-auto cannot_instantiate_the_tokenizer_python_class = []()
-{
-  TOKENIZERLOGINIT;
-  LERROR << "Cannot instantiate the PythonTensorFlowTokenizer python class";
-  PyErr_Print();
-  Py_Exit(1);
-};
-
 
 void PythonTensorFlowTokenizer::init(
     GroupConfigurationStructure& unitConfiguration,
@@ -359,37 +328,6 @@ void PythonTensorFlowTokenizer::init(
   }
 }
 
-// PyObject -> Vector
-std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
-{
-  Q_ASSERT(incoming != nullptr);
-  std::vector<PyObject*> data;
-  if (PyTuple_Check(incoming))
-  {
-    for(Py_ssize_t i = 0; i < PyTuple_Size(incoming); i++)
-    {
-      PyObject *value = PyTuple_GetItem(incoming, i);
-      data.push_back( value );
-    }
-  }
-  else
-  {
-    if (PyList_Check(incoming))
-    {
-      for(Py_ssize_t i = 0; i < PyList_Size(incoming); i++)
-      {
-        PyObject *value = PyList_GetItem(incoming, i);
-        data.push_back( value );
-      }
-    }
-    else
-    {
-      throw std::logic_error("Passed PyObject pointer was not a list or tuple!");
-    }
-  }
-  return data;
-}
-
 LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
 {
   TimeUtilsController TensorFlowTokenizerProcessTime("TensorFlowTokenizer");
@@ -519,6 +457,6 @@ LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) con
   return SUCCESS_ID;
 }
 
-} //namespace TensorFlowTokenizer
+} // namespace TensorFlowTokenizer
 } // namespace LinguisticProcessing
 } // namespace Lima
