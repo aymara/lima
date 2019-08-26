@@ -389,7 +389,7 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
       Py_XDECREF(pyStr);
 
       auto offset = PyLong_AsLong(pyToken[1]);
-      if (offset == -1 and PyErr_Occurred())
+      if (offset == -1 && PyErr_Occurred())
       {
         python_error();
       }
