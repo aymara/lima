@@ -24,9 +24,9 @@ set (EnhancedAnalysisDictionaryTest0_MOC_HEADERS
   EnhancedAnalysisDictionaryTest0.h
 )
 
-qt5_wrap_cpp (EnhancedAnalysisDictionaryTest0_MOC_OUTFILES
-  ${EnhancedAnalysisDictionaryTest0_MOC_HEADERS}
-)
+#qt5_wrap_cpp (EnhancedAnalysisDictionaryTest0_MOC_OUTFILES
+#  ${EnhancedAnalysisDictionaryTest0_MOC_HEADERS}
+#)
 
 add_executable(EnhancedAnalysisDictionaryTest0
   ${EnhancedAnalysisDictionaryTest0_SRCS}
@@ -59,9 +59,9 @@ set (EnhancedAnalysisDictionaryTest1_MOC_HEADERS
   EnhancedAnalysisDictionaryTest1.h
 )
 
-qt5_wrap_cpp (EnhancedAnalysisDictionaryTest1_MOC_OUTFILES
-  ${EnhancedAnalysisDictionaryTest1_MOC_HEADERS}
-)
+#qt5_wrap_cpp (EnhancedAnalysisDictionaryTest1_MOC_OUTFILES
+#  ${EnhancedAnalysisDictionaryTest1_MOC_HEADERS}
+#)
 
 add_executable(EnhancedAnalysisDictionaryTest1
   ${EnhancedAnalysisDictionaryTest1_SRCS}
@@ -88,9 +88,9 @@ set (DictionaryDataTest1_MOC_HEADERS
   DictionaryDataTest1.h
 )
 
-qt5_wrap_cpp (DictionaryDataTest1_MOC_OUTFILES
-  ${DictionaryDataTest1_MOC_HEADERS}
-)
+#qt5_wrap_cpp (DictionaryDataTest1_MOC_OUTFILES
+#  ${DictionaryDataTest1_MOC_HEADERS}
+#)
 
 SET(DictionaryDataTest1_SRCS
   DictionaryDataTest1.cpp
