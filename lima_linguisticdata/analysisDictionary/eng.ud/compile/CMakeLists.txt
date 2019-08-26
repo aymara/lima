@@ -29,6 +29,7 @@ get_filename_component(
   NAME_WE
 )
 
+if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 add_custom_command(
   OUTPUT ${DICOFILENAME}Dat-eng.ud.dat
   COMMAND compile-dictionary
@@ -62,6 +63,41 @@ add_custom_command(
   COMMENT "compile-dictionary output ${DICOFILENAME}Dat-eng.ud.dat"
   VERBATIM
 )
+else()
+add_custom_command(
+  OUTPUT ${DICOFILENAME}Dat-eng.ud.dat
+  COMMAND compile-dictionary
+      --configDir=${CMAKE_BINARY_DIR}/execEnv/config
+      --charChart=${CHARCHART}
+      --extractKeyList=keys
+      ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
+  COMMAND sort -T . -u keys > keys.sorted
+  COMMAND testDict16
+      --configDir=${CMAKE_BINARY_DIR}/execEnv/config
+      --charSize=2
+      --listOfWords=keys.sorted
+      --output=${DICOFILENAME}Key-eng.ud.dat
+#    COMMAND testDict16 --charSize=2
+#         --input=${DICOFILENAME}Key-eng.ud.dat.tmp
+#         --spare
+#         --output=${DICOFILENAME}Key-eng.ud.dat >> output
+  COMMAND compile-dictionary
+      --configDir=${CMAKE_BINARY_DIR}/execEnv/config
+      --charChart=${CHARCHART}
+      --fsaKey=${DICOFILENAME}Key-eng.ud.dat
+      --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-eng.ud.xml
+      --symbolicCodes=${CMAKE_CURRENT_BINARY_DIR}/../convert/symbolicCode-eng.ud.xml
+      --output=${DICOFILENAME}Dat-eng.ud.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
+  DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
+    ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-eng.ud.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/../convert/symbolicCode-eng.ud.xml
+    ${CHARCHART}
+  COMMENT "compile-dictionary output ${DICOFILENAME}Dat-eng.ud.dat"
+  VERBATIM
+)
+endif()
 
 add_custom_target(
   compilexmldiceng.ud${_dicostr}
