@@ -14,7 +14,7 @@ namespace LinguisticProcessing
 namespace TensorFlowTokenizer
 {
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QString,int> loadFileWords(const QString& filepath)
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<QString,int> loadFileWords(const QString& filepath)
 {
     QFile file(filepath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -36,7 +36,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QString,int> loadFileWords(const
     return d;
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QChar,int> loadFileChars(const QString& filepath)
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<QChar,int> loadFileChars(const QString& filepath)
 {
     QFile file(filepath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -58,7 +58,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QChar,int> loadFileChars(const Q
     return d;
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<unsigned int,QString> loadFileTags(const QString& filepath)
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<unsigned int,QString> loadFileTags(const QString& filepath)
 {
     QFile file(filepath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -80,7 +80,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<unsigned int,QString> loadFileTa
     return d;
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode loadTextToEvaluate(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode loadTextToEvaluate(
   QTextStream& qtIn,
   QFile& file,
   const std::string& filepath)
@@ -98,7 +98,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode loadTextToEvaluate(
 }
 
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProcessingWord(
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::pair<std::vector<int>,int> getProcessingWord(
   const QString& wordOriginal,
   const std::map<QString,int>& vocabWords,
   const std::map<QChar,int>& vocabChars,
@@ -161,7 +161,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
   }
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode predictBatch(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode predictBatch(
   const std::shared_ptr<tensorflow::Status>& status,
   tensorflow::Session* session,
   int batchSize,
@@ -261,7 +261,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode predictBatch(
   return TokStatusCode::SUCCESS;
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode getFeedDict(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode getFeedDict(
   std::vector< std::pair< std::string, tensorflow::Tensor > >& inputs,
   std::vector<std::vector< std::vector< int > >>& charIds,
   std::vector<std::vector< int >>& wordIds,
@@ -342,7 +342,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode getFeedDict(
   return TokStatusCode::SUCCESS;
 }
 
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT Eigen::MatrixXi viterbiDecode(
+LIMA_TENSORFLOWTOKENIZER_EXPORT Eigen::MatrixXi viterbiDecode(
   const Eigen::MatrixXf& score,
   const Eigen::MatrixXf& transitionParams){
   if(score.size()==0){
