@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2019 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -29,7 +29,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convertCodeToSymbolicCode.py ../code/coded.txt > ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND convertSymbolicCodes --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
-  COMMAND parseXMLPropertyFile --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+  COMMAND parseXMLPropertyFile --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-eng.ud.xml.log
   DEPENDS ../code/code-eng.ud.xml ../code/coded.txt
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMENT "Generate convjys.txt and symbolicCode-eng.ud.xml"
@@ -71,7 +71,7 @@ else()
     COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.ud.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt default-eng.ud.dat
     COMMAND mv dico.xml.tmp dico.xml
     DEPENDS
       ${dicoFiles}
