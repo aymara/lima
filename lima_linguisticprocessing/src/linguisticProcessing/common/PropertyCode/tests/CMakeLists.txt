@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2019 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@
 SET(PropertyCodeTest0_SRCS PropertyCodeTest0.cpp)
 
 set (PropertyCodeTest0_MOC_HEADERS PropertyCodeTest0.h)
-qt5_wrap_cpp (PropertyCodeTest0_MOC_OUTFILES ${PropertyCodeTest0_MOC_HEADERS})
 
 add_executable(PropertyCodeTest0 ${PropertyCodeTest0_SRCS} ${PropertyCodeTest0_MOC_OUTFILES})
 target_link_libraries(PropertyCodeTest0 lima-linguisticprocessing)
