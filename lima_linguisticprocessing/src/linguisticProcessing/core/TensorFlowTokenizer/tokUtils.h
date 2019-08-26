@@ -14,7 +14,7 @@
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow/cc/client/client_session.h"
 
-#include "linguisticProcessing/core/TensorflowSpecificEntities/TensorflowSpecificEntitiesExport.h"
+#include "TensorFlowTokenizerExport.h"
 
 namespace Lima
 {
@@ -53,25 +53,25 @@ public:
  * @param[in] filepath the file to load, e.g. data/IOB1/words.txt
  * @return a map which associates to each word from the file an identifier
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QString,int> loadFileWords(const QString& filepath);
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<QString,int> loadFileWords(const QString& filepath);
 
 /** @brief Loads the vocabulary from a file into a std::map
  * @param[in] filepath the file to load, e.g. data/IOB1/chars.txt
  * @return a map which associates to each character from the file an identifier
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map< QChar, int > loadFileChars(const QString&  filepath);
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map< QChar, int > loadFileChars(const QString&  filepath);
 
 /** @brief Loads the vocabulary from a file into a std::map
  * @param[in] filepath the file to load, e.g. data/IOB1/tags.txt
  * @return a map which associates to each tag from the file an identifier
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<unsigned int,QString> loadFileTags(const QString& filepath);
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<unsigned int,QString> loadFileTags(const QString& filepath);
 
 /** @brief Opens the text to evaluate
  * @param[in] filepath the file to load, e.g. data/test_to_evaluate.txt
  * @return TokStatusCode::SUCCESS if succeeded else TokStatusCode::EMPTY_FILE
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode loadTextToEvaluate(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode loadTextToEvaluate(
   QTextStream& qtIn,
   QFile& file,
   const std::string& filepath);
@@ -95,7 +95,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode loadTextToEvaluate(
  *
  * @throw NerException if @ref allowUnk is set to false and word is unkonw from the vocabulary.
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProcessingWord(
+LIMA_TENSORFLOWTOKENIZER_EXPORT std::pair<std::vector<int>,int> getProcessingWord(
   const QString& wordOriginal,
   const std::map<QString,int>& vocabWords,
   const std::map<QChar,int>& vocabChars,
@@ -122,7 +122,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
  * TokStatusCode::SUCCESS if success
  * else TokStatusCode::MISSING_DATA if some data are missing
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode predictBatch(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode predictBatch(
   const std::shared_ptr<tensorflow::Status>& status,
   tensorflow::Session* session,
   int batchSize,
@@ -146,7 +146,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode predictBatch(
  *
  * @return TokStatusCode::SUCCESS if succeeded else TokStatusCode::MISSING_DATA if data is missing
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode getFeedDict(
+LIMA_TENSORFLOWTOKENIZER_EXPORT TokStatusCode getFeedDict(
   std::vector< std::pair< std::string, tensorflow::Tensor > >& inputs,
   std::vector<std::vector< std::vector< int > >>& charIds,
   std::vector<std::vector< int >>& wordIds,
@@ -176,7 +176,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT TokStatusCode getFeedDict(
  * viterbi: A [seq_len] list of integers containing the highest scoring tag indices.
  * viterbi_score: A float containing the score for the Viterbi sequence.
 */
-LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT Eigen::MatrixXi viterbiDecode(
+LIMA_TENSORFLOWTOKENIZER_EXPORT Eigen::MatrixXi viterbiDecode(
   const Eigen::MatrixXf& score,
   const Eigen::MatrixXf& transitionParams);
 
