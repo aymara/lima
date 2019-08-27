@@ -148,7 +148,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
   for(uint64_t i(1); i<argc; i++)
   {
     for (size_t j = 0; j < argc; j++)
-      std::cout << "arg (" << i << ") #" << j << " == " << argv[j] << std::endl;
+      std::cerr << "arg (" << i << ") #" << j << " == " << argv[j] << std::endl;
 
     std::string s(argv[i]);
     if (s=="-h" || s=="--help")
@@ -261,7 +261,7 @@ int run(int aargc, char** aargv);
 int main(int argc, char **argv)
 {
   for (size_t j = 0; j < argc; j++)
-      std::cout << "arg #" << j << " == " << argv[j] << std::endl;
+      std::cerr << "arg #" << j << " == " << argv[j] << std::endl;
   QCoreApplication a(argc, argv);
 
   // Task parented to the application so that it
