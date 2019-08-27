@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -64,15 +64,15 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-     LINFO << "AmosePluginsManager::loadPlugins loading plugins file "
-            << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
+      std::cerr << "AmosePluginsManager::loadPlugins loading plugins file "
+            << (pluginsDir.path()+"/"+pluginsFile).toUtf8().data() << std::endl;
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly))
       {
         ABSTRACTFACTORYPATTERNLOGINIT;
-        LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file "
-                << pluginsFile.toUtf8().data();
+        std::cerr << "AmosePluginsManager::loadPlugins: cannot open plugins file "
+                << pluginsFile.toUtf8().data() << std::endl;
         return false;
       }
 
@@ -91,9 +91,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
-            LERROR << "AmosePluginsManager::loadLibrary(\""
-                    << line.toStdString() << "\") failed while handling"
-                    << (pluginsDir.path() + "/" + pluginsFile) << ".";
+            std::cerr << "AmosePluginsManager::loadLibrary(\"" << line.toStdString() << "\") failed." << std::endl;
             return false;
           }
           else
