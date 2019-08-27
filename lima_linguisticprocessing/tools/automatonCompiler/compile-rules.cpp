@@ -257,6 +257,8 @@ int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
+  for (size_t i = 0; i < argc; i++)
+      std::cout << "arg #" << i << " == " << argv[i] << std::endl;
   QCoreApplication a(argc, argv);
 
   // Task parented to the application so that it
