@@ -63,6 +63,7 @@ install:
   - appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.9.0-lima/tensorflow-1.9.0.zip -FileName tensorflow-1.9.0.zip
   - ps: unzip c:\tensorflow-1.9.0.zip -d c:\
   - c:\tensorflow-1.9.0.exe /S
+  - set PATH="C:\Program Files\tensorflow 1.9.0\bin";%PATH%
 
 build_script:
   - ps: pushd c:/projects/lima
