@@ -30,7 +30,7 @@ add_custom_command(
   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convertCodeToSymbolicCode.py ../code/coded.txt > ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND convertSymbolicCodes --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CMAKE_CURRENT_BINARY_DIR}/symbolicCode-eng.ud.xml
   COMMAND parseXMLPropertyFile --configDir=${CMAKE_BINARY_DIR}/execEnv/config --code=../code/code-eng.ud.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-eng.ud.xml.log
-  DEPENDS ../code/code-eng.ud.xml ../code/coded.txt
+  DEPENDS ../code/code-eng.ud.xml ../code/coded.txt ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMENT "Generate convjys.txt and symbolicCode-eng.ud.xml"
   VERBATIM
