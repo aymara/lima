@@ -63,7 +63,7 @@ install:
   - appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.9.0-lima/tensorflow-1.9.0.zip -FileName tensorflow-1.9.0.zip
   - ps: unzip c:\tensorflow-1.9.0.zip -d c:\
   - c:\tensorflow-1.9.0.exe /S
-  - set PATH="C:\Program Files\tensorflow 1.9.0\bin";%PATH%
+  - set PATH=C:\Program Files\tensorflow 1.9.0\bin;%PATH%
 
 build_script:
   - ps: pushd c:/projects/lima
@@ -81,7 +81,6 @@ build_script:
   - echo %PATH%
   - mkdir c:\b\execEnv
   - mkdir c:\b\execEnv\lib
-  - cp "C:\Program Files\tensorflow 1.9.0\bin"\tensorflow-for-lima.dll c:\b\execEnv\lib\
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
   - cmake -G "Ninja" "-DCMAKE_PREFIX_PATH=%QTDIR%;%BOOST_ROOT%" "-DLIMA_RESOURCES=build" "-DLIMA_VERSION_RELEASE:STRING=%LIMA_VERSION_RELEASE%" "-DCMAKE_BUILD_TYPE=RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=c:\d" "-DBOOST_ROOT:STRING=%BOOST_ROOT%" "-DBOOST_LIBRARYDIR:STRING=%BOOST_LIBRARYDIR%" "-DTF_SOURCES_PATH=%TFINCLUDE%" -DCMAKE_IGNORE_PATH="C:/msys64/usr/bin" c:/projects/lima
   - cmake --build . --config RelWithDebInfo
