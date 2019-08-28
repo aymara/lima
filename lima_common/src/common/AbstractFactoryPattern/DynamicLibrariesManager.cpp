@@ -150,11 +150,11 @@ isLoaded(const std::string& libName)
 bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LDEBUG << "DynamicLibrariesManager::loadLibrary() -- libName=" << libName;
+  std::cerr << "DynamicLibrariesManager::loadLibrary() -- libName=" << libName << std::endl;
 
   if (m_d->isSomethingSimilarLoaded(libName))
   {
-    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library " << libName;
+    std::cerr << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library " << libName << std::endl;
     LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
     return true;
   }
@@ -162,7 +162,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   auto it=m_d->m_handles.find(libName);
   if (it != m_d->m_handles.end())
   {
-    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName;
+    std::cerr << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName << std::endl;
     LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
     return true;
   }
