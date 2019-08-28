@@ -187,8 +187,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LDEBUG << "DynamicLibrariesManager::loadLibrary() -- "
-             << "Failed to open supplementary lib " << libhandle->errorString();
+      std::cerr << "DynamicLibrariesManager::loadLibrary() -- "
+             << "Failed to open supplementary lib " << libhandle->errorString().toUtf8().constData() << std::endl;
       libhandle.reset();
     }
   }
@@ -210,8 +210,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      LERROR << "DynamicLibrariesManager::loadLibrary() -- "
-             << "Failed to open system lib " << libhandle->errorString();
+      std::cerr << "DynamicLibrariesManager::loadLibrary() -- "
+             << "Failed to open system lib " << libhandle->errorString().toUtf8().constData() << std::endl;
       return false;
     }
   }
