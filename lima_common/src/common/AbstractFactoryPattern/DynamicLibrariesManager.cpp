@@ -150,11 +150,11 @@ isLoaded(const std::string& libName)
 bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  std::cerr << "DynamicLibrariesManager::loadLibrary() -- libName=" << libName << std::endl;
+  LDEBUG << "DynamicLibrariesManager::loadLibrary() -- libName=" << libName;
 
   if (m_d->isSomethingSimilarLoaded(libName))
   {
-    std::cerr << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library " << libName << std::endl;
+    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library " << libName;
     LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
     return true;
   }
@@ -162,7 +162,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   auto it=m_d->m_handles.find(libName);
   if (it != m_d->m_handles.end())
   {
-    std::cerr << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName << std::endl;
+    LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName;
     LTRACE << "DynamicLibrariesManager::loadLibrary this is not an error, silently ignoring.";
     return true;
   }
@@ -187,8 +187,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      std::cerr << "DynamicLibrariesManager::loadLibrary() -- "
-             << "Failed to open supplementary lib " << libhandle->errorString().toUtf8().constData() << std::endl;
+      LDEBUG << "DynamicLibrariesManager::loadLibrary() -- "
+             << "Failed to open supplementary lib " << libhandle->errorString();
       libhandle.reset();
     }
   }
@@ -210,8 +210,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      std::cerr << "DynamicLibrariesManager::loadLibrary() -- "
-             << "Failed to open system lib " << libhandle->errorString().toUtf8().constData() << std::endl;
+      LERROR << "DynamicLibrariesManager::loadLibrary() -- "
+             << "Failed to open system lib " << libhandle->errorString();
       return false;
     }
   }
