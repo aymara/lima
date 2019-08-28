@@ -147,9 +147,6 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 //   bool languageSpecified(false);
   for(uint64_t i(1); i<argc; i++)
   {
-    for (size_t j = 0; j < argc; j++)
-      std::cerr << "arg (" << i << ") #" << j << " == " << argv[j] << std::endl;
-
     std::string s(argv[i]);
     if (s=="-h" || s=="--help")
     {
