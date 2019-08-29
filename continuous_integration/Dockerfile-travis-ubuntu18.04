@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Use clang
 RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales  bash coreutils apt-utils lsb-release git llvm build-essential clang clang-tidy clang-tools make cmake cmake-data curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel qtdeclarative5-qtquick2-plugin -qq
 
+RUN apt install -y software-properties-common && add-apt-repository -y ppa:limapublisher/ppa && apt update && apt install -y libtensorflow-for-lima-dev
+
 RUN update-alternatives --set cc /usr/bin/clang
 RUN update-alternatives --set c++ /usr/bin/clang++
 
@@ -59,6 +61,8 @@ ARG CACHEBUST=1
 RUN git pull
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
+RUN mkdir /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.1-beta/lima-deep-models-tokenizer-eng.ud-ewt_0.1.1_all.deb && dpkg -i *.deb
+
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
 
@@ -72,8 +76,8 @@ ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
-#
-RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH="/usr/include/tensorflow-for-lima/" ..
+# 
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH=/usr/include/tensorflow-for-lima/ ..
 RUN ninja && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
@@ -82,6 +86,12 @@ RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | te
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
 WORKDIR /usr/share/apps/lima/tests/xmlreader
 RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+
+# UD Tests
+#
+RUN git clone https://github.com/UniversalDependencies/tools udtools
+RUN wget http://universaldependencies.org/conll18/conll18_ud_eval.py
+RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator=/conllu18_ud_eval.py
 
 # install github-release to be able to deploy packages
 RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin

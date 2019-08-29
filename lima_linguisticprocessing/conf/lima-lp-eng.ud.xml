@@ -47,9 +47,9 @@
 
         <!-- Morphology -->
         <!--item value="dotGraphWriter-beforepos"/-->
-        <!--item value="viterbiPostagger-freq"/-->
-        <!--item value="SvmToolPosTagger"/-->
-        <item value="@PosTagger@"/>
+        <item value="viterbiPostagger-freq"/>
+        <!--item value="SvmToolPosTagger"/-->                     <!-- SvmTool POS Tagger is broken at least for eng.ud -->
+        <!--item value="@PosTagger@"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
