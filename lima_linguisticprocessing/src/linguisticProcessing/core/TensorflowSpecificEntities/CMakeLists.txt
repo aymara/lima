@@ -120,24 +120,18 @@ if(WIN32)
 	  "copy /b ${FR_OUTPUTGRAPH_FILES_CONCAT} ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
 	  )
 
-else() # expect sh-like environment
+else()
 
-  execute_process(
-	  COMMAND
-	  bash
-	  "-c" "cp ${CMAKE_CURRENT_SOURCE_DIR}/results/fr/output_graph.pbaa ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-	  )
-
-  foreach(FR_OUTPUTGRAPH_FILE ${FR_OUTPUTGRAPH_FILES})
-    message(STATUS "Appending ${FR_OUTPUTGRAPH_FILE} to ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb ...")
-    execute_process(
-	    COMMAND
-	    bash
-	    "-c" "cat ${FR_OUTPUTGRAPH_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb"
-	    )
-  endforeach()
+  add_custom_target(
+    output_graph.pb
+    COMMAND cat ${FR_OUTPUTGRAPH_FILES} > ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb
+    COMMENT cat ${FR_OUTPUTGRAPH_FILES} > ${CMAKE_CURRENT_BINARY_DIR}/output_graph.pb
+    VERBATIM
+  )
 
 endif()
+
+add_dependencies(limaTfNer output_graph.pb)
 
 install(FILES
      data/IOB1/fr/words.txt
