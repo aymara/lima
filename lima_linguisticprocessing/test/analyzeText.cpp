@@ -505,7 +505,7 @@ int run(int argc, char** argv)
       TimeUtils::updateCurrentTime();
 
       // analyze it
-      client->analyze(contentText,metaData, pipeline, handlers, inactiveUnits);
+      client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
     }
 
     // Close and delete opened output files
