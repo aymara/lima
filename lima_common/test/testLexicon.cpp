@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -142,7 +142,7 @@ void ByMapStringAccess::read(
 }
 
 class TestDataOutputHandler : public Common::FsaAccess::FsaAccessDataOutputHandler {
-public: 
+public:
   TestDataOutputHandler( std::string filename );
   ~TestDataOutputHandler();
   void saveData( const char* m_buffer, uint64_t m_size ) override;
@@ -163,7 +163,7 @@ void TestDataOutputHandler::saveData( const char* m_buffer, uint64_t m_size ) {
 }
 
 class TestDataInputHandler : public Common::FsaAccess::FsaAccessDataInputHandler {
-public: 
+public:
   TestDataInputHandler( std::string filename );
   ~TestDataInputHandler();
   TestDataInputHandler() {}
@@ -213,9 +213,9 @@ void test_print() {
   MyInformer myInformer;
   LexiconIdGenerator<ByMapStringAccess> lexiconIdGenerator(&myInformer);
 //   LimaString termIncr=Common::Misc::utf8stdstring2limastring("lemmeIncrEntry");
-  
+
 //   uint64_t idTIncr = lexiconIdGenerator.getId(termIncr);
-  
+
   lexiconIdGenerator.print( std::cout );
 }
 
@@ -248,18 +248,22 @@ int main(int argc, char *argv[])
   std::cerr << "idT1=" << idT1 << std::endl;
   uint64_t idT1_prim = lexiconIdGenerator.getId(t1);
   assert(idT1_prim == idT1);
+  LIMA_UNUSED(idT1_prim);
   uint64_t idE1 = lexiconIdGenerator.getId(e1);
   std::cerr << "idE1=" << idE1 << std::endl;
   uint64_t idE1_prim = lexiconIdGenerator.getId(e1);
   assert(idE1_prim == idE1);
+  LIMA_UNUSED(idE1_prim);
   uint64_t idT2_1 = lexiconIdGenerator.getId(t2_1);
   std::cerr << "idT2_1=" << idT2_1 << std::endl;
   uint64_t idT2_1_prim = lexiconIdGenerator.getId(t2_1);
   assert(idT2_1_prim == idT2_1);
+  LIMA_UNUSED(idT2_1_prim);
   uint64_t idE2_1 = lexiconIdGenerator.getId(e2_1);
   std::cerr << "idE2_1=" << idE2_1 << std::endl;
   uint64_t idE2_1_prim = lexiconIdGenerator.getId(e2_1);
   assert(idE2_1_prim == idE2_1);
+  LIMA_UNUSED(idE2_1_prim);
   std::vector<uint64_t> vE2;
   vE2.push_back(idT2_1);
   vE2.push_back(idE2_1);
@@ -268,6 +272,7 @@ int main(int argc, char *argv[])
   std::cerr << "idE2=" << idE2 << std::endl;
   uint64_t idE2_prim = lexiconIdGenerator.getId(vE2);
   assert( idE2_prim == idE2 );
+  LIMA_UNUSED(idE2_prim);
   std::vector<uint64_t> vE1;
   vE1.push_back(idT1);
   vE1.push_back(idE1);
@@ -276,6 +281,7 @@ int main(int argc, char *argv[])
   std::cerr << "idE=" << idE << std::endl;
   uint64_t idE_prim = lexiconIdGenerator.getId(vE1);
   assert( idE_prim == idE );
+  LIMA_UNUSED(idE_prim);
 
   std::cerr << "lexiconIdGenerator.getSize() = " << lexiconIdGenerator.getSize() << std::endl;
   std::cerr << "lexiconIdGenerator = " << std::endl;
@@ -303,7 +309,7 @@ int main(int argc, char *argv[])
     // fill accessor with siple word data from generator
     lexiconIdAccessor.read(intputHandler);
   }
-  
+
   std::cerr << "lexiconIdAccessor.getSize() = " << lexiconIdAccessor.getSize() << std::endl;
   std::cerr << "lexiconIdAccessor = " << std::endl;
   lexiconIdAccessor.print(std::cerr);
@@ -312,6 +318,7 @@ int main(int argc, char *argv[])
   LimaString unKnownTerm(Common::Misc::utf8stdstring2limastring(std::string("schsaipa")));
   uint64_t idUnknown = lexiconIdAccessor.getId(unKnownTerm);
   assert( idUnknown == Common::AbstractLexiconIdAccessor::NOT_A_LEXICON_ID );
+  LIMA_UNUSED(idUnknown);
   assert( idE2 == lexiconIdAccessor.getId(vE2) );
   assert( idE == lexiconIdAccessor.getId(vE1) );
   // LimaString t1(Common::Misc::utf8stdstring2limastring(std::string("stabilite")));
@@ -322,7 +329,7 @@ int main(int argc, char *argv[])
   // uint64_t idE1 = lexiconIdGenerator.getId(e1);
   // uint64_t idT2_1 = lexiconIdGenerator.getId(t2_1);
   // uint64_t idE2_1 = lexiconIdGenerator.getId(e2_1);
-  
+
   uint64_t dup_idT1 = lexiconIdAccessor.getId(t1);
   assert( dup_idT1 == idT1);
   uint64_t dup_idE1 = lexiconIdAccessor.getId(e1);
@@ -344,7 +351,7 @@ int main(int argc, char *argv[])
   uint64_t dup_idE = lexiconIdAccessor.getId(dup_vE1);
   assert( dup_idE == idE );
   std::cerr << "dup_idE=" << dup_idE << std::endl;
-  
+
   // create a duplicate of LexiconIdGenerator to test operation read() and add of new word
   LexiconIdGenerator<ByMapStringAccess> increaseLexiconIdGenerator(&myInformer);
   {
@@ -394,6 +401,7 @@ int main(int argc, char *argv[])
   vE3.push_back(idE2);
   uint64_t idNewComp = increaseLexiconIdGenerator.getId(vE3);
   assert( idNewComp > idE);
+  LIMA_UNUSED(idNewComp);
 
   test_print();
 
