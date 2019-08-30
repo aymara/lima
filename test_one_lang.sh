@@ -76,8 +76,8 @@ do
   perl $UD_TOOLS/conllu_to_text.pl < $SRC_FILE > $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.txt
 
   time analyzeText -l $LIMA_LANG $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.txt \
-                      >  $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t-pred.conllu \
-                      2> $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.lima-errors
+                      >  $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t-pred.conllu
+                      #2> $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.lima-errors
   ERROR_CODE=$?
   if [ $ERROR_CODE -ne 0 ]; then
     echo analyzeText failed with code $ERROR_CODE TMP_DIR is $TMP_DIR
