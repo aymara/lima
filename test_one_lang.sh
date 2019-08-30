@@ -73,7 +73,7 @@ do
   echo
   echo $UD_CORPUS "-" $t
 
-  $UD_TOOLS/conllu_to_text.pl < $SRC_FILE > $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.txt
+  perl $UD_TOOLS/conllu_to_text.pl < $SRC_FILE > $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.txt
 
   time analyzeText -l $LIMA_LANG $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t.txt \
                       >  $TMP_DIR/$UD_CORPUS/$UD_BASE_NAME-ud-$t-pred.conllu \
