@@ -89,6 +89,7 @@ RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.
 
 # UD Tests
 #
+WORKDIR /
 RUN git clone https://github.com/UniversalDependencies/tools udtools
 RUN ls -l /udtools/
 RUN wget http://universaldependencies.org/conll18/conll18_ud_eval.py
