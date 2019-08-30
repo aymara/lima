@@ -129,9 +129,9 @@ else()
     VERBATIM
   )
 
-endif()
+  add_dependencies(limaTfNer output_graph.pb)
 
-add_dependencies(limaTfNer output_graph.pb)
+endif()
 
 install(FILES
      data/IOB1/fr/words.txt
