@@ -58,7 +58,7 @@ ARG CACHEBUST=1
 RUN git pull
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
-RUN mkdir /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.1-beta/lima-deep-models-tokenizer-eng.ud-ewt_0.1.1_all.deb && dpkg -i *.deb
+RUN mkdir /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.2-beta/lima-deep-models-tokenizer-eng.ud-ewt_0.1.2_all.deb && dpkg -i *.deb
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
@@ -84,7 +84,7 @@ WORKDIR /
 RUN git clone https://github.com/UniversalDependencies/tools udtools
 RUN ls -l /udtools/
 RUN wget http://universaldependencies.org/conll18/conll18_ud_eval.py
-RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator=/conllu18_ud_eval.py
+RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator=/conll18_ud_eval.py
 
 # TVA Tests
 #
