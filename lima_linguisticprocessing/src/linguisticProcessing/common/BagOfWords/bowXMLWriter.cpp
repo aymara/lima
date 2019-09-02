@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (besanconr@zoe.cea.fr)
  * @date       Wed May  5 2004
  * copyright   Copyright (C) 2004 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "bowXMLWriter.h"
@@ -98,7 +98,7 @@ friend class BoWXMLWriter;
 
 void BoWXMLWriter::incIndent() { m_d->incIndent() ; }
 void BoWXMLWriter::decIndent() { m_d->decIndent(); }
-  
+
 BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os):
 m_outputStream(os),
 m_currentTokId(0),
@@ -139,7 +139,7 @@ void BoWXMLWriter::writeBoWDocumentsFooter() {
   m_d->m_outputStream <<"</bowDocuments>" << endl;
 }
 
-void BoWXMLWriter::openSBoWNode( 
+void BoWXMLWriter::openSBoWNode(
   const Lima::Common::Misc::GenericDocumentProperties* /*unused properties*/,
   const std::string& elementName ) {
   m_d->m_outputStream << m_d->m_spaces << "<hierarchy elementName=\"" << elementName << "\">" << std::endl;
@@ -166,7 +166,7 @@ void BoWXMLWriter::processSBoWText( const BoWText* boWText, bool useIterator,
   m_d->writeBoWTokenList(boWText,useIterator,useIndexIterator);
 }
 
-void BoWXMLWriter::processProperties( 
+void BoWXMLWriter::processProperties(
  const Misc::GenericDocumentProperties* properties, bool /*unused useIterators*/,
                          bool /*useIndexIterator*/) {
   m_d->writeGenericDocumentProperties(properties);
@@ -176,24 +176,25 @@ void BoWXMLWriter::writeBoWText(
                                 const BoWText* text,
                                 const bool useIterator,
                                 const bool useIndexIterator) {
-  m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
 
-  m_d->m_spaces="";
-  m_d->m_outputStream <<"<bowText>" << std::endl;
+  m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( text->lang );
+  m_d->m_spaces = "";
+  m_d->m_outputStream << "<bowText>" << std::endl;
   m_d->incIndent();
-  m_d->writeBoWTokenList(text,useIterator,useIndexIterator);
+  m_d->writeBoWTokenList(text, useIterator, useIndexIterator);
   m_d->decIndent();
-  m_d->m_outputStream <<"</bowText>" << std::endl;
+  m_d->m_outputStream << "</bowText>" << std::endl;
 }
-void BoWXMLWriter::writeBoWToken(const BoWToken* token)
-{
+
+void BoWXMLWriter::writeBoWToken(const BoWToken* token) {
    m_d->writeBoWToken(token);
 }
-// definition of template can be in .cpp because all needed 
+
+// definition of template can be in .cpp because all needed
 // instanciations are in this definition file
 template<typename PropertyType>
 void BoWXMLWriterPrivate::writeProperty( const std::string& name,
-                                 const std::string& type, 
+                                 const std::string& type,
                                  const PropertyType& value) {
   m_outputStream <<m_spaces << "<property name=\"" << name
      << "\" type=\""<< type
@@ -215,7 +216,7 @@ void BoWXMLWriterPrivate::writeGenericDocumentProperties(
       std::pair<std::string,uint64_t> elmt = *it;
       m_outputStream <<m_spaces << "<property name=\"" << elmt.first << "\""
          << " type=\"int\""
-         << " value=\"" << elmt.second << "\"/>"  
+         << " value=\"" << elmt.second << "\"/>"
          << std::endl;
     }
   }
@@ -226,7 +227,7 @@ void BoWXMLWriterPrivate::writeGenericDocumentProperties(
       std::pair<std::string,std::string> elmt = *it;
       m_outputStream <<m_spaces << "<property name=\"" << elmt.first << "\""
          << " type=\"string\""
-         << " value=\"" << xmlString(elmt.second) << "\"/>"  
+         << " value=\"" << xmlString(elmt.second) << "\"/>"
          << std::endl;
     }
   }
@@ -264,13 +265,13 @@ void BoWXMLWriterPrivate::writeGenericDocumentProperties(
     for( ; svit.first != svit.second ;  (svit.first)++ ) {
       m_outputStream <<m_spaces << "<property name=\"" << propName << "\""
          << " type=\"multString\""
-         << " value=\"" << xmlString(*(svit.first)) << "\"/>"  
+         << " value=\"" << xmlString(*(svit.first)) << "\"/>"
          << std::endl;
     }
   }
   std::pair<Misc::MultiValuedPropertyIterator<std::pair<std::string,float> >,
             Misc::MultiValuedPropertyIterator<std::pair<std::string,float> > > swnit =
-    prop->getWeightedPropPropertyNames();  
+    prop->getWeightedPropPropertyNames();
 //  m_outputStream << "BoWXMLWriter::writeGenericDocumentProperties: has multi-valued string properties "
 //         << (swnit.first != swnit.second ? "yes" : "no" ) << std::endl;
   for( ; swnit.first != swnit.second; (swnit.first)++ ) {
@@ -280,11 +281,11 @@ void BoWXMLWriterPrivate::writeGenericDocumentProperties(
       m_outputStream <<m_spaces << "<property name=\"" << propName << "\""
          << " type=\"multWeightedId\""
          << "\" value=\"" << xmlString((*(svit.first)).first)
-         << "\" weight=\"" << (*(svit.first)).second << "\"/>"  
+         << "\" weight=\"" << (*(svit.first)).second << "\"/>"
          << std::endl;
     }
   }
-  
+
   decIndent();
   m_outputStream <<m_spaces << "</properties>" << std::endl;
 }
@@ -312,14 +313,14 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
                                      const BoWText* text,
                                      const bool useIterator,
                                      const bool useIndexIterator) {
-  
+
   m_outputStream <<m_spaces << "<tokens>" << std::endl;
   incIndent();
   if (useIterator)
   {
     BoWTokenIterator it(*text);
     while (! it.isAtEnd())
-    { 
+    {
       writeBoWToken( &*it.getElement());
       it++;
     }
@@ -328,7 +329,7 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
   {
     IndexElementIterator it(*text);
     while (! it.isAtEnd())
-    { 
+    {
       writeIndexElement(it.getElement());
       it++;
     }
@@ -377,7 +378,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
     m_outputStream << "/>" << endl;
     return;
   }
-  
+
   // compound
   if (element.isNamedEntity()) {
     m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
@@ -388,13 +389,13 @@ void BoWXMLWriterPrivate::writeIndexElement(
   }
   m_outputStream << ">" << endl
      << m_spaces << "  <structure>" << endl;
-  
+
   for (uint64_t i(0),size=element.getStructure().size(); i<size; i++) {
     m_outputStream << m_spaces << "    <termRef id=\""
        << element.getStructure()[i]
-       << "\" rel=\"" << element.getRelations()[i] 
+       << "\" rel=\"" << element.getRelations()[i]
        << "\"/>" << endl;
-    
+
   }
   m_outputStream << m_spaces << "  </structure>" << endl
      << m_spaces << "</term>" << endl;
@@ -402,7 +403,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
 
 void BoWXMLWriterPrivate::writeBoWRelation(const BoWRelation* relation) {
     m_outputStream <<m_spaces << "<bowRelation "
-       << "realization=\"" 
+       << "realization=\""
        << xmlString(Misc::limastring2utf8stdstring(relation->getRealization( )))
        << "\" type=\"" << relation->getType() << "\"/>"
        << std::endl;
@@ -421,8 +422,8 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(tok->getLemma()))
        << "\" category=\"" << cat
-       <<"\" position=\"" << tok->getPosition() 
-       << "\" length=\"" << tok->getLength() << "\"" 
+       <<"\" position=\"" << tok->getPosition()
+       << "\" length=\"" << tok->getLength() << "\""
        << "/>" << std::endl;
     break;
   }
@@ -431,8 +432,8 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "<bowPredicate "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(term->getPredicateType())))
-       <<"\" position=\"" << term->getPosition() 
-       << "\" length=\"" << term->getLength() << "\"" 
+       <<"\" position=\"" << term->getPosition()
+       << "\" length=\"" << term->getLength() << "\""
        << ">" << std::endl;
     incIndent();
     writePredicateRoles(term);
@@ -465,11 +466,11 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(ne->getLemma()))
        << "\" category=\"" << cat
-       <<"\" position=\"" << ne->getPosition() 
-       << "\" length=\"" << ne->getLength() 
-       << "\" type=\""  
-       << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(ne->getNamedEntityType())) 
-       << "\"" 
+       <<"\" position=\"" << ne->getPosition()
+       << "\" length=\"" << ne->getLength()
+       << "\" type=\""
+       << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(ne->getNamedEntityType()))
+       << "\""
        << ">" << std::endl;
     incIndent();
     writeComplexTokenParts( ne);
@@ -477,7 +478,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
            feature=ne->getFeatures().begin();
          feature!=ne->getFeatures().end(); feature++) {
       m_outputStream <<m_spaces << "<feature name=\"" << (*feature).first
-         << "\" value=\"" 
+         << "\" value=\""
          << xmlString(Common::Misc::limastring2utf8stdstring((*feature).second))
          << "\"/>" <<std::endl;
     }
@@ -498,7 +499,7 @@ void BoWXMLWriterPrivate::writeComplexTokenParts(const BoWComplexToken* token) {
   m_outputStream <<m_spaces << "<parts head=\""<< token->getHead() << "\">" << std::endl;
   incIndent();
   for (std::deque<BoWComplexToken::Part>::const_iterator
-         part=token->getParts().begin(); 
+         part=token->getParts().begin();
        part!=token->getParts().end(); part++)
   {
 //     m_outputStream <<m_spaces << "<part>" << std::endl;
@@ -567,8 +568,8 @@ void BoWXMLWriter::setLanguage(const std::string& lang)
 
 void BoWXMLWriterPrivate::setLanguage(const std::string& lang)
 {
-  lang.empty() 
-    ? MediaId(0) 
+  lang.empty()
+    ? MediaId(0)
     : m_language = MediaticData::MediaticData::single().getMediaId (lang);
 }
 

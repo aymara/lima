@@ -38,9 +38,9 @@
 std::ostream& operator<<(std::ostream& oss, const QStringList& qsl)
 {
   oss << "{";
-  Q_FOREACH(QString s, qsl)
+  for(const auto& s : qsl)
   {
-    oss << s.toUtf8().constData() << ",";
+    oss << s.toStdString() << ",";
   }
   oss << "}";
   return oss;
@@ -68,181 +68,202 @@ TestCaseProcessor::TestCaseProcessor(  const std::string workingDirectory) :
   configure( workingDirectory);
 }
 
-TestCaseProcessor::~TestCaseProcessor() {
+TestCaseProcessor::~TestCaseProcessor()
+{
   terminate();
 }
 
 TestCaseError TestCaseProcessor::evalTestCase(
-  const TestCase& testCase, const std::string& pipeName, 
+  const TestCase& testCase, const std::string& pipeName,
   const std::string& textFile, const std::string& traceFilePrefix ) const
 {
   LIMA_UNUSED(textFile);
   TGVLOGINIT;
   // Valid TestUnits
-  for (std::list<TestCase::TestUnit>::const_iterator tuItr=testCase.tests.begin();
-      tuItr!=testCase.tests.end();
-      tuItr++)
+  for (auto tu: testCase.tests)
   {
-    std::string traceFile(traceFilePrefix+tuItr->trace);
+    std::string traceFile(traceFilePrefix+tu.trace);
     QFile sourceDocument;
     sourceDocument.setFileName(traceFile.c_str());
     if (!sourceDocument.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
     {
         LERROR << "Error: Unable to open file " << traceFile;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                             "No output file to evaluate !", pipeName,
+                             tu);
     }
-    
+
     /* Load XML document */
     QXmlQuery theDocument;
-    if (!theDocument.setFocus(&sourceDocument)) {
-      QByteArray data = sourceDocument.readAll();
-      QString str = QString(data);
+    if (!theDocument.setFocus(&sourceDocument))
+    {
+      auto data = sourceDocument.readAll();
+      auto str = QString(data);
       if (!theDocument.setFocus(str))
       {
         LERROR << "Error: Unable to set focus " << traceFile;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                             "No output file to evaluate !",
+                             pipeName, tu);
       }
       //LERROR << "Error: Unable to parse file " << traceFile;
-      //return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+      //return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, tu);
     }
 
     // OK, let's evaluate the expression...
     // Check unary operators before evaluate se right member
 
-    if (tuItr->op=="notexists")
+    if (tu.op == "notexists")
     {
-      if (existsExpression(tuItr->left,theDocument))
+      if (existsExpression(tu.left, theDocument))
       {
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "an element exists !", pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                             "an element exists !", pipeName, tu);
       }
     }
-    else if (tuItr->op=="exists")
+    else if (tu.op == "exists")
     {
-      if (!existsExpression(tuItr->left,theDocument))
+      if (!existsExpression(tu.left, theDocument))
       {
         std::ostringstream oss;
-        oss << "element doesn't exist ! : " << tuItr->left;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+        oss << "element doesn't exist ! : " << tu.left;
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                             oss.str(), pipeName, tu);
       }
     }
     else
     {
 
       // operator is a binary one. evaluate the second expression
-      QStringList left=evaluateExpression(tuItr->left, theDocument);
+      auto left = evaluateExpression(tu.left, theDocument);
       left.removeDuplicates();
-      QStringList right=evaluateExpression(tuItr->right, theDocument);
+      auto right = evaluateExpression(tu.right, theDocument);
       right.removeDuplicates();
 
       QSet<QString> sleft;
-      
-      Q_FOREACH (QString element, left)
+
+      for (const auto& element : left)
       {
         sleft.insert(element);
       }
       QSet<QString> sright;
-      Q_FOREACH (QString element, right)
+      for (const auto& element : right)
       {
         sright.insert(element);
       }
-      
-      if (tuItr->op=="=")
+
+      if (tu.op == "=")
       {
-        if (sleft!=sright)
+        if (sleft != sright)
         {
           std::ostringstream oss;
-          oss << "equality check failed : " << left << " != " << right << std::endl;
-          oss << "                        left : " << tuItr->left << std::endl;
-          oss << "                        right: " << tuItr->right;
-          
-          return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+          oss << "equality check failed : " << left << " != " << right
+              << std::endl;
+          oss << "                        left : " << tu.left << std::endl;
+          oss << "                        right: " << tu.right;
+
+          return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                               oss.str(), pipeName, tu);
         }
         else if (left.size()==0)
         {
           std::ostringstream oss;
           oss << "left and right member are empty !";
-          return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+          return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                               oss.str(), pipeName, tu);
         }
       }
-      else if (tuItr->op=="!=")
+      else if (tu.op == "!=")
       {
-        if (sleft==sright)
+        if (sleft == sright)
         {
           std::ostringstream oss;
-          oss << "inequality check failed : " << left << " == " << right << std::endl;
-          oss << "                          left : " << tuItr->left << std::endl;
-          oss << "                          right: " << tuItr->right;
-          return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+          oss << "inequality check failed : " << left << " == " << right
+          << std::endl;
+          oss << "                          left : " << tu.left << std::endl;
+          oss << "                          right: " << tu.right;
+          return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                               oss.str(), pipeName, tu);
         }
       }
-      else if (tuItr->op=="contains")
+      else if (tu.op == "contains")
       {
-        Q_FOREACH(QString s, sright)
+        for (const auto& s : sright)
         {
           if (!sleft.contains(s))
           {
             std::ostringstream oss;
-            oss << "includes check failed : " << left << " not contains " << right << std::endl;
-            oss << "                          left : " << tuItr->left << std::endl;
-            oss << "                          right: " << tuItr->right;
-            return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+            oss << "includes check failed : " << left << " not contains "
+                << right << std::endl;
+            oss << "                          left : " << tu.left << std::endl;
+            oss << "                          right: " << tu.right;
+            return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                                 oss.str(), pipeName, tu);
           }
         }
       }
-      else if (tuItr->op=="notcontains")
+      else if (tu.op == "notcontains")
       {
-        Q_FOREACH(QString s, sleft)
+        for (const auto& s : sleft)
         {
           if (!sright.contains(s))
           {
             std::ostringstream oss;
-            oss << "not includes check failed : " << left << " contains " << right;
-            return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+            oss << "not includes check failed : " << left << " contains "
+                << right;
+            return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                                 oss.str(), pipeName, tu);
           }
         }
       }
-      else if (tuItr->op=="distinct")
+      else if (tu.op == "distinct")
       {
-        Q_FOREACH(QString l, sleft)
+        for(const auto& l : sleft)
         {
-          Q_FOREACH(QString r, sright)
+          for(const auto& r : sright)
           {
-            if (l==r)
+            if (l == r)
             {
               std::ostringstream oss;
-              oss << l.toUtf8().data() << " is a common value of the two sets that should be disctinct !" << std::endl;
-              oss << "                          left : " << tuItr->left << std::endl;
-              oss << "                          right: " << tuItr->right;
-              return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+              oss << l.toUtf8().data()
+                  << " is a common value of the two sets that should be disctinct !"
+                  << std::endl;
+              oss << "                          left : " << tu.left
+                  << std::endl;
+              oss << "                          right: " << tu.right;
+              return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                                   oss.str(), pipeName, tu);
             }
           }
         }
       }
-      else if (tuItr->op=="intersect")
+      else if (tu.op == "intersect")
       {
-        Q_FOREACH(QString l, sleft)
+        for (const auto& l : sleft)
         {
-          Q_FOREACH(QString r, sright)
+          for (const auto& r : sright)
           {
-            if (l==r)
+            if (l == r)
             {
               return TestCaseError();
             }
           }
         }
         std::ostringstream oss;
-        oss << "intersect failed : no common value between " << left << " and " << right << " !" << std::endl;
-        oss << "                          left : " << tuItr->left << std::endl;
-        oss << "                          right: " << tuItr->right;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
+        oss << "intersect failed : no common value between " << left << " and "
+            << right << " !" << std::endl;
+        oss << "                          left : " << tu.left << std::endl;
+        oss << "                          right: " << tu.right;
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(),
+                             pipeName, tu);
       }
-      else if ((tuItr->op!="exists") && (tuItr->op!="notexists"))
+      else if ((tu.op != "exists") && (tu.op != "notexists"))
       {
-        return TestCaseError(testCase, 
+        return TestCaseError(testCase,
                              TestCaseError::InvalidOperator,
-                             (*tuItr).id.toUtf8().constData(), 
-                             pipeName, 
-                             *tuItr);
+                             (tu).id.toUtf8().constData(),
+                             pipeName,
+                             tu);
       }
     }
   }
@@ -256,36 +277,37 @@ QStringList TestCaseProcessor::evaluateExpression(
   TGVLOGINIT;
   QStringList results;
 
-  if (expr.substr(0,6)=="XPATH#")
+  if (expr.substr(0,6) == "XPATH#")
   {
     /* Evaluate xpath expression */
-    QString xpath = QString::fromUtf8(expr.substr(6).c_str())+"/string()";
+    QString xpath = QString::fromStdString(expr.substr(6))+"/string()";
     LDEBUG << "TestCaseProcessor::evaluateExpression setQuery("<<xpath<<");";
     document.setQuery(xpath);
-    if(!document.evaluateTo(&results)) {
+    if(!document.evaluateTo(&results))
+    {
       LERROR << "TestCaseProcessor::evaluateExpression unable to evaluate xpath expression \""<<xpath;
       return results;
     }
     LDEBUG << "TestCaseProcessor::evaluateExpression evaluates to " << results;
   }
-  else if (expr.substr(0,4)=="SET#")
+  else if (expr.substr(0,4) == "SET#")
   {
-    size_t start=4;
-    while (start<expr.size())
+    size_t start = 4;
+    while (start < expr.size())
     {
-      size_t end=expr.find('#',start);
-      if (end==std::string::npos)
+      auto end = expr.find('#',start);
+      if (end == std::string::npos)
       {
-        end=expr.size();
+        end = expr.size();
       }
-      std::string val=expr.substr(start,end-start);
-      results.push_back(QString::fromUtf8(val.c_str()));
+      auto val = expr.substr(start, end-start);
+      results.push_back(QString::fromStdString(val));
       start=end+1;
     }
   }
   else
   {
-    results.push_back(QString::fromUtf8(expr.c_str()));
+    results.push_back(QString::fromStdString(expr));
   }
   return results;
 }
@@ -295,7 +317,7 @@ bool TestCaseProcessor::existsExpression(
   QXmlQuery& document)
 {
 //   TGVLOGINIT;
-  return !evaluateExpression(expr,document).empty();
+  return !evaluateExpression(expr, document).empty();
 }
 
 
