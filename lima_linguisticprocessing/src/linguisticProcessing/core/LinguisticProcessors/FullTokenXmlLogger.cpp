@@ -102,6 +102,7 @@ LimaStatusCode FullTokenXmlLogger::process(
   }
 
   dump(fout, *tokenList);
+  fout.flush();
   fout.close();
   return SUCCESS_ID;
 }
