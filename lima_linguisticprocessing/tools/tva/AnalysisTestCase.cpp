@@ -52,74 +52,97 @@ AnalysisTestCaseProcessor::AnalysisTestCaseProcessor(
   m_lpclient(client),
   m_handlers(handlers) {}
 
-TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV::TestCase& testCase)
+TestCaseError AnalysisTestCaseProcessor::processTestCase(
+    const Lima::Common::TGV::TestCase& testCase)
 {
   // write text in file
-  const std::string& text = testCase.getParam( "text" );
+  const auto& text = testCase.getParam( "text" );
   std::string filename(m_workingDirectory+"/test"+testCase.id.toUtf8().constData()+".txt");
   {
-    ofstream fout(filename.c_str(), std::ofstream::binary);
+    ofstream fout(filename.c_str(),
+                  std::ofstream::out|std::ofstream::trunc|std::ofstream::binary);
     fout << text;
     fout.flush();
     fout.close();
   }
-  LimaString contentText = Common::Misc::utf8stdstring2limastring(text);
-  const std::string& language = testCase.getParam("language");
-  std::string metaValuesStr = testCase.getParam("meta");
-  std::map<std::string,std::string> userMetaData;
+  auto contentText = QString::fromStdString(text);
+  auto language = testCase.getParam("language");
+  auto metaValuesStr = testCase.getParam("meta");
+  std::map<std::string, std::string> userMetaData;
   if(!metaValuesStr.empty())
   {
     std::string::size_type k=0;
-    do {
-      k=metaValuesStr.find(",");
+    do
+    {
+      k = metaValuesStr.find(",");
       //if (k==std::string::npos) continue;
       std::string str(metaValuesStr,0,k);
       std::string::size_type i=str.find(":");
-      if (i==std::string::npos) {
+      if (i == std::string::npos)
+      {
         std::cerr << "in test Case " << testCase.id
-                  << " meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
+                  << " meta argument '" << str
+                  << "' is not of the form XXX:YYY: ignored"
+                  << std::endl;
       }
-      else {
+      else
+      {
         //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-        userMetaData.insert(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
+        userMetaData.insert(std::make_pair(std::string(str,0,i),
+                                           std::string(str,i+1)));
       }
-      if (k!=std::string::npos) {
-        metaValuesStr=std::string(metaValuesStr,k+1);
+      if (k!=std::string::npos)
+      {
+        metaValuesStr = std::string(metaValuesStr,k+1);
       }
-    }  while (k!=std::string::npos);
+    } while (k!=std::string::npos);
   }
 
   // For each pipeline process test
-  MultiValCallParams::const_iterator pos = testCase.multiValCallParams.find("pipelines");
-  if( pos != testCase.multiValCallParams.end() ) {
-    const list<string>& pipeList = (*pos).second;
-    for (list<string>::const_iterator pipItr=pipeList.begin();
-         pipItr!=pipeList.end();  pipItr++)
+  auto pos = testCase.multiValCallParams.find("pipelines");
+  if( pos != testCase.multiValCallParams.end() )
+  {
+    const auto& pipeList = (*pos).second;
+    for (const auto& pip: pipeList)
     {
-
-      string filenameWithPipeLine=filename+"."+*pipItr;
+      auto filenameWithPipeLine = filename+"." + pip;
 
       // Analyse text
-      map<string,string> metaData;
-      metaData["Lang"]=language;
-      metaData["FileName"]=filenameWithPipeLine;
-      metaData["DocumentName"]=testCase.id.toUtf8().constData();
-      metaData.insert(userMetaData.begin(),userMetaData.end());
-      m_lpclient->analyze(contentText, metaData, *pipItr, m_handlers);
-      BowTextHandler* bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);
+      std::map<std::string,std::string> metaData;
+      metaData["Lang"] = language;
+      metaData["FileName"] = filenameWithPipeLine;
+      metaData["DocumentName"] = testCase.id.toStdString();
+      metaData.insert(userMetaData.begin(), userMetaData.end());
+      m_lpclient->analyze(contentText, metaData, pip, m_handlers);
+      auto bowHandler = static_cast<BowTextHandler*>(m_handlers["bowTextHandler"]);
       // dump results
-      Common::BagOfWords::BoWText& text=bowHandler->getBowText();
+      auto& text=bowHandler->getBowText();
       text.lang = language;
-      string outputfile=filenameWithPipeLine+".indexed.xml";
-      ofstream fout(outputfile.c_str(), std::ofstream::binary);
-      fout << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
-      Common::BagOfWords::BoWXMLWriter writer(fout);
-      writer.writeBoWText(&text, true, false);
-      fout.flush();
-      fout.close();
-      std::cout << "Test results saved to \"" << outputfile << "\"" << std::endl;
+      std::string outputfile = filenameWithPipeLine + ".indexed.xml";
+      {
+        std::ofstream fout(outputfile,
+                           std::ofstream::out|std::ofstream::trunc|std::ofstream::binary);
+        if (fout.is_open())
+        {
+          fout << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
+          Common::BagOfWords::BoWXMLWriter writer(fout);
+          writer.writeBoWText(&text, true, false);
+          fout.flush();
+          fout.close();
+          std::cout << "Test results saved to \"" << outputfile << "\"" << std::endl;
+        }
+        else
+        {
+          TestCaseError error(testCase,
+                              TestCaseError::TestCaseFailed,
+                              std::string("Unable to open file for writing: ") + outputfile,
+                              pip,
+                              TestCase::TestUnit());
+          return error;
+        }
+      }
 
-      TestCaseError error = evalTestCase( testCase, *pipItr, filename, filenameWithPipeLine );
+      auto error = evalTestCase(testCase, pip, filename, filenameWithPipeLine);
       if (error())
         return error;
     }
