@@ -86,7 +86,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
     std::string traceFile(traceFilePrefix+tuItr->trace);
     QFile sourceDocument;
     sourceDocument.setFileName(traceFile.c_str());
-    if (!sourceDocument.open(QIODevice::ReadOnly))
+    if (!sourceDocument.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
     {
         LERROR << "Error: Unable to open file " << traceFile;
         return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
