@@ -89,7 +89,7 @@ RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator
 # TVA Tests
 #
 WORKDIR /usr/share/apps/lima/tests
-RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml || ls -l"
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
 
 # install github-release to be able to deploy packages

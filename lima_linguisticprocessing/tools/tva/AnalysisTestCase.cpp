@@ -115,8 +115,8 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
       fout << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
       Common::BagOfWords::BoWXMLWriter writer(fout);
       writer.writeBoWText(&text, true, false);
-      fout.close();
       fout.flush();
+      fout.close();
       std::cout << "Test results saved to \"" << outputfile << "\"" << std::endl;
 
       TestCaseError error = evalTestCase( testCase, *pipItr, filename, filenameWithPipeLine );
