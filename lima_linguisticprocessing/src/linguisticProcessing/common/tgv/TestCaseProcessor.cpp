@@ -86,13 +86,17 @@ TestCaseError TestCaseProcessor::evalTestCase(
     std::string traceFile(traceFilePrefix+tuItr->trace);
     QFile sourceDocument;
     sourceDocument.setFileName(traceFile.c_str());
-    sourceDocument.open(QIODevice::ReadOnly);
+    if (!sourceDocument.open(QIODevice::ReadOnly))
+    {
+        LERROR << "Error: Unable to open file " << traceFile;
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+    }
     
     /* Load XML document */
     QXmlQuery theDocument;
     if (!theDocument.setFocus(&sourceDocument)) {
       LERROR << "Error: Unable to parse file " << traceFile;
-      return TestCaseError(testCase, TestCaseError::TestCaseFailed,"No output file to evaluate !", pipeName, *tuItr);
+      return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
     }
 
     // OK, let's evaluate the expression...
@@ -102,7 +106,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
     {
       if (existsExpression(tuItr->left,theDocument))
       {
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed,"an element exists !", pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "an element exists !", pipeName, *tuItr);
       }
     }
     else if (tuItr->op=="exists")
@@ -111,16 +115,16 @@ TestCaseError TestCaseProcessor::evalTestCase(
       {
         std::ostringstream oss;
         oss << "element doesn't exist ! : " << tuItr->left;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
       }
     }
     else
     {
 
       // operator is a binary one. evaluate the second expression
-      QStringList left=evaluateExpression(tuItr->left,theDocument);
+      QStringList left=evaluateExpression(tuItr->left, theDocument);
       left.removeDuplicates();
-      QStringList right=evaluateExpression(tuItr->right,theDocument);
+      QStringList right=evaluateExpression(tuItr->right, theDocument);
       right.removeDuplicates();
 
       QSet<QString> sleft;
@@ -150,7 +154,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
         {
           std::ostringstream oss;
           oss << "left and right member are empty !";
-          return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+          return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
         }
       }
       else if (tuItr->op=="!=")
@@ -161,7 +165,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
           oss << "inequality check failed : " << left << " == " << right << std::endl;
           oss << "                          left : " << tuItr->left << std::endl;
           oss << "                          right: " << tuItr->right;
-          return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+          return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
         }
       }
       else if (tuItr->op=="contains")
@@ -174,7 +178,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
             oss << "includes check failed : " << left << " not contains " << right << std::endl;
             oss << "                          left : " << tuItr->left << std::endl;
             oss << "                          right: " << tuItr->right;
-            return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+            return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
           }
         }
       }
@@ -186,7 +190,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
           {
             std::ostringstream oss;
             oss << "not includes check failed : " << left << " contains " << right;
-            return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+            return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
           }
         }
       }
@@ -202,7 +206,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
               oss << l.toUtf8().data() << " is a common value of the two sets that should be disctinct !" << std::endl;
               oss << "                          left : " << tuItr->left << std::endl;
               oss << "                          right: " << tuItr->right;
-              return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+              return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
             }
           }
         }
@@ -223,7 +227,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
         oss << "intersect failed : no common value between " << left << " and " << right << " !" << std::endl;
         oss << "                          left : " << tuItr->left << std::endl;
         oss << "                          right: " << tuItr->right;
-        return TestCaseError(testCase, TestCaseError::TestCaseFailed,oss.str(), pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
       }
       else if ((tuItr->op!="exists") && (tuItr->op!="notexists"))
       {
