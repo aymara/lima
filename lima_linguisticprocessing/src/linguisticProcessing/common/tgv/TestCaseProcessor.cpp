@@ -95,8 +95,15 @@ TestCaseError TestCaseProcessor::evalTestCase(
     /* Load XML document */
     QXmlQuery theDocument;
     if (!theDocument.setFocus(&sourceDocument)) {
-      LERROR << "Error: Unable to parse file " << traceFile;
-      return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+      QByteArray data = sourceDocument.readAll();
+      QString str = QString(data);
+      if (!theDocument.setFocus(str))
+      {
+        LERROR << "Error: Unable to set focus " << traceFile;
+        return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
+      }
+      //LERROR << "Error: Unable to parse file " << traceFile;
+      //return TestCaseError(testCase, TestCaseError::TestCaseFailed, "No output file to evaluate !", pipeName, *tuItr);
     }
 
     // OK, let's evaluate the expression...
