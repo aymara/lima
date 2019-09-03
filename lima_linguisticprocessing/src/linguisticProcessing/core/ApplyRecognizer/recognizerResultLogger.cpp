@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,8 +22,8 @@
  * @author     besancon (romaric.besancon@cea.fr)
  * @date       Tue Oct 25 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2019 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "recognizerResultLogger.h"
@@ -42,7 +42,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace ApplyRecognizer {
 
-SimpleFactory<MediaProcessUnit,RecognizerResultLogger> 
+SimpleFactory<MediaProcessUnit,RecognizerResultLogger>
 RecognizerResultLogger(RECOGNIZERRESULTLOGGER_CLASSID);
 
 RecognizerResultLogger::RecognizerResultLogger():
@@ -69,7 +69,7 @@ void RecognizerResultLogger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     APPRLOGINIT;
-    LERROR << "missing \"data\" parameter in configuration of RecognizerResultLogger" 
+    LERROR << "missing \"data\" parameter in configuration of RecognizerResultLogger"
            << " for language " << (int) m_language;
     throw InvalidConfiguration();
   }
@@ -87,7 +87,7 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
-  
+
   std::ofstream fout;
   if (!openLogFile(fout,metadata->getMetaData("FileName"))) {
       APPRLOGINIT;
@@ -136,18 +136,18 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
       m_end=(*it).end();
     for (; m!=m_end; m++) {
       //LimaString normalizedForm=(*m).getNormalizedForm().normStr();
-      fout << "<entity>" 
-           << "<pos>" << offset+(*m).positionBegin() << "</pos>" 
-           << "<len>" << (*m).length() << "</len>" 
+      fout << "<entity>"
+           << "<pos>" << offset+(*m).positionBegin() << "</pos>"
+           << "<len>" << (*m).length() << "</len>"
         //<< "<typeNum>" << (*m).getType() << "</typeNum>"
-           << "<type>" 
+           << "<type>"
            << Common::MediaticData::MediaticData::single().
               getEntityName((*m).getType())
            << "</type>"
-           << "<string>"<< (*m).getString() << "</string>" 
+           << "<string>"<< (*m).getString() << "</string>"
            << "<norm>";
       const Automaton::EntityFeatures& features=m->features();
-      for (Automaton::EntityFeatures::const_iterator 
+      for (Automaton::EntityFeatures::const_iterator
              featureItr=features.begin(),features_end=features.end();
            featureItr!=features_end; featureItr++)
       {
@@ -155,13 +155,14 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
              << featureItr->getValueString()
              << "</" << featureItr->getName() << ">";
       }
-      
+
       fout << "</norm>"
            << "</entity>"
            << endl;
     }
   }
   fout << "</entities>" << endl;
+  fout.flush();
   fout.close();
   return SUCCESS_ID;
 }

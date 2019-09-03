@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -124,19 +124,20 @@ LimaStatusCode EntityTrackerXmlLogger::process(
   }
 
   out << "<coreference>" << endl;
-  for (CoreferenceData::const_iterator it=corefData->begin(), 
+  for (CoreferenceData::const_iterator it=corefData->begin(),
          it_end=corefData->end(); it != it_end; it++)
   {
     out << "<entity mentions=\"" << (*it).size() << "\">" << endl;
     for (vector<Token>::const_iterator it2=(*it).begin(), it2_end=(*it).end();
          it2 != it2_end; it2++)
     {
-      out << "  <entity_mention>" 
+      out << "  <entity_mention>"
           << limastring2utf8stdstring((*it2).stringForm())
           <<"</entity_mention>";
     }
     out << "<entity>" <<endl;
   }
+  out.flush();
   out.close();
 
   return SUCCESS_ID;

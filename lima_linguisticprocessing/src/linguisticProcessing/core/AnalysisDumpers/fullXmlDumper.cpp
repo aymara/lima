@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -207,8 +207,6 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
   outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
   outputStream << "<lima_analysis_dump>" << std::endl;
 
-
-
   // ??OME2 SegmentationData::iterator sbItr=sb->begin();
   std::vector<Segment>::iterator sbItr=(sb->getSegments()).begin();
 
@@ -300,8 +298,6 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     outputStream << "</PosGraph>" << std::endl;
 
   }
-
-
 
   // dump annotation graph
   m_annotXmlDumperPtr->dump( analysis );
@@ -479,7 +475,6 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
     }
   }
 
-
   MorphoSyntacticData* data = get(vertex_data, graph, v);
   if (data == 0)
   {
@@ -507,8 +502,8 @@ void FullXmlDumper::outputEdge(const LinguisticGraphEdge e,
                               const LinguisticGraph& graph,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "  <edge src=\"" << source(e, graph)
-          << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;
+  xmlStream << "    <edge src=\"" << source(e, graph)
+            << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;
 }
 
 
