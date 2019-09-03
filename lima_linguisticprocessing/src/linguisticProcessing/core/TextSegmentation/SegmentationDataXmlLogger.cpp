@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Jan 21 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "SegmentationDataXmlLogger.h"
@@ -102,19 +102,19 @@ LimaStatusCode SegmentationDataXmlLogger::process(
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
   }
 
-  // log 
+  // log
   out << "<segmentation>" << endl;
   const AnalysisData* data =analysis.getData(m_data);
   if (data!=0) {
     const SegmentationData* segData=static_cast<const SegmentationData*>(data);
     const vector<Segment> seg=segData->getSegments();
     for (vector<Segment>::const_iterator it=seg.begin(), it_end=seg.end(); it!=it_end; it++) {
-      out 
-        << "<segment>" 
-        << "<pos>" << (*it).getPosBegin() << "</pos>" 
+      out
+        << "<segment>"
+        << "<pos>" << (*it).getPosBegin() << "</pos>"
         << "<len>" << (*it).getLength() << "</len>"
         << "<type>" << (*it).getType() << "</type>"
-        << "</segment>" 
+        << "</segment>"
         << endl;
     }
   }
@@ -122,8 +122,9 @@ LimaStatusCode SegmentationDataXmlLogger::process(
     LOGINIT("LP::Segmentation");
     LDEBUG << "no SegmentationData of name " << m_data;
   }
-  
+
   out << "</segmentation>" << endl;
+  out.flush();
   out.close();
 
   TimeUtils::logElapsedTime("SegmentationDataXmlLogger");

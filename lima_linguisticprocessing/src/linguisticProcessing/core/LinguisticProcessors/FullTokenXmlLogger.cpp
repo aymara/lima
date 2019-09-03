@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -157,7 +157,7 @@ void DumpXMLVisitor::discover_vertex(LinguisticGraphVertex v,
 
   m_ostream << "<vertex id=\"" << v << "\">" << std::endl;
   Token* t = get(vertex_token,g,v);
-  if (t != 0) 
+  if (t != 0)
   {
     m_ostream << "  <token>" << std::endl;
     t->outputXml(m_ostream,m_propertyCodeManager,m_stringsPool);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "DisambiguatedGraphXmlLogger.h"
@@ -104,7 +104,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
 
   AnalysisGraph* posTokenList=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   const LinguisticGraph* posGraph=posTokenList->getGraph();
-  
+
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
   out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
@@ -155,6 +155,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
     out << "</vertex>" << endl;
   }
   out << "</vertices>" << endl;
+  out.flush();
   out.close();
 
   TimeUtils::logElapsedTime("DisambiguatedGraphXmlLogger");

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2008 by CEA LIST                              *
+ *   Copyright (C) 2008 by CEA LIST                                        *
  *                                                                         *
  ***************************************************************************/
 
@@ -62,7 +62,7 @@ namespace Lima
       void CorefSolvingNormalizedXmlLogger::init(
         Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
         Manager* manager)
-      
+
       {
 //         COREFSOLVERLOGINIT;
         AbstractLinguisticLogger::init(unitConfiguration,manager);
@@ -172,6 +172,7 @@ namespace Lima
           }
         }
         out << "</coreferences>" << endl;
+        out.flush();
         out.close();
 
         TimeUtils::logElapsedTime("CorefSolvingNormalizedXmlLogger");

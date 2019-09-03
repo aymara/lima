@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -80,7 +80,7 @@ void DisambiguationLogger::init(
    * - <b>&lt;group name="..." class="DisambiguationLogger"&gt;</b>
    *  -  logAll : if 'true' then log all categories. Default is 'false'
    */
-    
+
   m_language=manager->getInitializationParameters().media;
   m_microManager=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO"));
   try
@@ -159,6 +159,7 @@ LimaStatusCode DisambiguationLogger::process(
 
   }
 
+  fout.flush();
   fout.close();
   TimeUtils::logElapsedTime("DisambiguationLogger");
   return SUCCESS_ID;
