@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -120,6 +120,7 @@
 #define GEOENTITIESTAGGERLOGINIT LOGINIT("LP::GeoEntities");
 #define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
 #define LIMASERVERLOGINIT LOGINIT("LP::LimaServer");
+#define TENSORFLOWMORPHOSYNTAXLOGINIT LOGINIT("LP::TensorFlowMorphoSyntax");
 
 
 #define L_NONE static_cast<LinguisticCode>(0)

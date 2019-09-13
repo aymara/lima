@@ -15,6 +15,7 @@
       <param key="eng" value="lima-lp-eng.xml" />
       <param key="eng.ud" value="lima-lp-eng.ud.xml" />
       <param key="fre" value="lima-lp-fre.xml" />
+      <param key="fre.ud" value="lima-lp-fre.ud.xml" />
       <param key="por" value="lima-lp-por.xml" />
     </group>
     <group name="pipelines">
@@ -30,6 +31,10 @@
         <entry key="eng.ud" value="main"/>
         <entry key="fre" value="main"/>
         <entry key="por" value="main"/>
+      </map>
+      <map name="deepud">
+        <entry key="eng.ud" value="deepud"/>
+        <entry key="fre.ud" value="deepud"/>
       </map>
       <map name="deep">
         <entry key="eng" value="deep"/>

@@ -411,9 +411,9 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config can't load config from \""
-                          << config_file_name << "\".",
-                          LimaException());
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config can't load config from \""
+                        << config_file_name << "\".",
+                        LimaException());
 
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);

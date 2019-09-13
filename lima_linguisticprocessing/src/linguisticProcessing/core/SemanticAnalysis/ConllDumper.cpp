@@ -127,7 +127,7 @@ void ConllDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructur
     m_d->m_graph = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("graph").c_str());
   }
   catch (NoSuchParam& ) {} // keep default value
-  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData     ::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
+  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
   m_d->m_propertyAccessor=&codeManager.getPropertyAccessor("MICRO");
 
   try
@@ -202,8 +202,8 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     DUMPERLOGINIT;
     LINFO << "ConllDumper::process no AnnotationData ! Will not contain NE nor predicates";
   }
-  auto tokenList = static_cast<AnalysisGraph*>(analysis.getData(
-    m_d->m_graph.toStdString()));//est de type PosGraph et non pas AnalysisGraph
+  auto tokenList = static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph.toStdString()));
+                   // tokenList est de type PosGraph et non pas AnalysisGraph
   if (tokenList == nullptr)
   {
     DUMPERLOGINIT;
@@ -212,8 +212,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
   auto graph = tokenList->getGraph();
-  auto sd = static_cast<SegmentationData*>(
-    analysis.getData("SentenceBoundaries"));
+  auto sd = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sd == nullptr)
   {
     DUMPERLOGINIT;
@@ -221,15 +220,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  auto syntacticData = static_cast<SyntacticData*>(
-    analysis.getData("SyntacticData"));
+  auto syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
   if (syntacticData == nullptr)
   {
     syntacticData = new SyntacticData(tokenList,0);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData", syntacticData);
   }
-  const auto depGraph = syntacticData-> dependencyGraph();
+  const auto depGraph = syntacticData->dependencyGraph();
 
   QScopedPointer<DumperStream> dstream(initialize(analysis));
 
@@ -437,7 +435,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           {
             auto value = QString::fromStdString(
               propItr->second.getPropertySymbolicValue(
-                morphoData->firstValue(*m_d->m_propertyAccessor)));
+                morphoData->firstValue(propertyCodeManager.getPropertyAccessor(key.toStdString()))));
             if (value != "NONE")
             {
               featuresList << QString("%1=%2").arg(key).arg(value);
@@ -547,11 +545,15 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 #endif
           if (m_d->m_conllLimaDepMapping.contains(relName))
           {
-            conllRelName=m_d->m_conllLimaDepMapping[relName];
+            conllRelName = m_d->m_conllLimaDepMapping[relName];
+          }
+          else if (relName.startsWith("ud:"))
+          {
+            conllRelName = relName.right(relName.size() - 3);
           }
           else
           {
-            conllRelName= "nsubj";
+            conllRelName = "nsubj";
             DUMPERLOGINIT;
             LWARN << "ConllDumper::process" << relName
                   << "not found in LIMA to CoNLL dependencies mapping. Using 'nsubj'";
@@ -603,17 +605,19 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         }
         if (0 == tokenId)
         {
-            DUMPERLOGINIT;
-            LERROR << "ConllDumper::process: tokenId == 0.";
-            throw LimaException();
+          DUMPERLOGINIT;
+          LERROR << "ConllDumper::process: tokenId == 0.";
+          throw LimaException();
         }
+        if (deprel == "root")
+          head = "0";
 
         dstream->out()  << tokenId // ID
                         << "\t" << inflectedToken // FORM
                         << "\t" << lemmatizedToken // LEMMA
                         << "\t" << micro.toStdString() // UPOS
                         << "\t" << "_" // XPOS
-                        << "\t" << "_" // FEATS
+                        << "\t" << features.toStdString() // FEATS
                         << "\t" << head.toStdString() // HEAD
                         << "\t" << deprel.toStdString() // DEPREL
                         << "\t" << "_"; // DEPS

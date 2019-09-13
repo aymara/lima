@@ -15,21 +15,4 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-########### install files ###############
-
-install(FILES
-    log4cpp.properties
-    lima-analysis.xml
-    lima-common-eng.xml
-    lima-common-eng.ud.xml
-    lima-common-fre.xml
-    lima-common-fre.ud.xml
-    lima-common-por.xml
-    lima-common.xml
-  DESTINATION share/config/lima
-  COMPONENT runtime)
-
-  install(FILES
-    log4cpp/limacommon.log.properties
-  DESTINATION share/config/lima/log4cpp
-  COMPONENT runtime)
+add_subdirectory(code)

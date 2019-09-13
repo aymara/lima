@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -172,7 +172,6 @@ const CharClass* Text::currentClass() const
 
 }
 
-
 // flushes current token
 void Text::flush()
 {
@@ -234,14 +233,14 @@ LimaChar Text::operator[] (int i) const {
   return m_text[_curPtr+i];
 }
 
-void Text::setAlphaCapital(const LinguisticAnalysisStructure::AlphaCapitalType alphaCapital) 
+void Text::setAlphaCapital(const LinguisticAnalysisStructure::AlphaCapitalType alphaCapital)
 {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
   LDEBUG << "Text::setAlphaCapital " << alphaCapital;
 #endif
   _curSettings.setAlphaCapital(alphaCapital);
-  switch (alphaCapital)  
+  switch (alphaCapital)
   {
     case T_CAPITAL:
       _curSettings.setDefaultKey(Common::Misc::utf8stdstring2limastring("t_capital"));
@@ -395,7 +394,7 @@ void Text::setStatus(const LinguisticAnalysisStructure::StatusType status)
 
 }
 
-void Text::setDefaultKey(const Lima::LimaString& defaultKey) 
+void Text::setDefaultKey(const Lima::LimaString& defaultKey)
 {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;

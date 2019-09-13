@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -97,7 +97,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
     annotationData=new Common::AnnotationGraphs::AnnotationData();
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
-    * associated to the morphosyntactic vertex number */
+      * associated to the morphosyntactic vertex number */
     if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
     {
       static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");

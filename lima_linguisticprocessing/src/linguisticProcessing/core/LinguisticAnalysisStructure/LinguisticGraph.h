@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
   * @brief        A graph structure for linguistic analysis
   *
   * @file         LinguisticGraph.h
-  * @author       Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author       Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   * @author       Benoit Mathieu
   *
@@ -45,7 +45,7 @@
 // the graphs are always constructed such as first vertex is numbered 0
 // and last vertex is numbered 1
 //========== Vertex properties
-/** This vertex proprerty represents the linguistic object  pointed by the node with
+/** This vertex proprerty represents the linguistic object pointed by the node with
   * position and length. Its orthographic alternatives (Token*) will be
   * distributed through several vertices each having the same FullToken* for
   * VertexLingProp */
@@ -55,7 +55,7 @@ enum vertex_token_t { vertex_token = 1000 };
 typedef boost::property< vertex_token_t, VertexTokenProp > VertexTokenProperty;
 namespace boost {BOOST_INSTALL_PROPERTY(vertex, token);}
 
-/** This vertex proprerty represents the linguitic object  pointed by the node
+/** This vertex proprerty represents the linguitic object pointed by the node
   * It points to only one word defined as a lemma and its category */
 
 typedef Lima::LinguisticProcessing::LinguisticAnalysisStructure::MorphoSyntacticData* VertexDataProp;

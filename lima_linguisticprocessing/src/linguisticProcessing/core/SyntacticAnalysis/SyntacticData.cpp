@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /** @brief       Data used for the syntactic analyzis of texts
   *
   * @file        SyntacticData.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2003 by CEA
   * @date        Created on Oct, 1 2003
@@ -262,7 +262,7 @@ void SyntacticData::addRelationNoChain(const Common::MediaticData::SyntacticRela
 //     put(edge_depchain_id, *m_depGraph, edge, noChain);
 #ifdef DEBUG_LP
     SALOGINIT;
-    LDEBUG << "Storing relation "<<v1<<","<<v2<<"," << relType;
+    LDEBUG << "Storing relation " << v1 << "," <<v2 << "," << relType;
 #endif
     put(edge_deprel_type, *m_depGraph, edge, relType);
   }
@@ -316,7 +316,7 @@ bool SyntacticData::removeDependency(const LinguisticGraphVertex& v1,
   LDEBUG << "SyntacticData::removeDependency " << v1 << ", " << v2 << ", " << relationType;
 #endif
   EdgeDepRelTypePropertyMap relTypeMap = get(edge_deprel_type, *m_depGraph);
-  
+
   DependencyGraphVertex dv1 = depVertexForTokenVertex(v1);
   DependencyGraphVertex dv2 = depVertexForTokenVertex(v2);
 #ifdef DEBUG_LP

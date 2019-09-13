@@ -88,13 +88,6 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
        COMPONENT runtime
     )
 
-#    install(
-#        FILES
-#            models/eng/ewt/UD_English-EWT.conf
-#            models/eng/ewt/UD_English-EWT.model
-#        DESTINATION
-#            share/apps/lima/resources/TensorFlowTokenizer/eng.ud/ewt/
-#    )
 endif()
 
 ########### install files ###############

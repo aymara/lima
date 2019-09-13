@@ -24,11 +24,11 @@
       <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
 
-        <!-- item value="dotGraphWriter-beforepos"/-->
+        <item value="dotGraphWriter-beforepos"/>
 
         <item value="tfmorphosyntax"/>
 
-        <!-- item value="dotGraphWriter"/-->
+        <item value="dotGraphWriter"/>
 
         <item value="conllDumper"/>
       </list>
@@ -44,7 +44,7 @@
         <!--item value="regexmatcher"/-->                         <!-- URL lookup -->
 
         <!-- Morphology -->
-        <item value="simpleWord"/>                                <!-- dict-based morphology -->
+        <item value="simpleWord"/>                           <!-- dict-based morphology -->
         <!--item value="dotGraphWriter-forCorefEval"/-->
         <!--item value="fullTokenXmlLoggerSimpleWord"/-->
         <!--item value="idiomaticAlternatives"/-->
@@ -61,6 +61,7 @@
         <!--item value="specificEntitiesXmlLogger"/-->
 
         <item value="dotGraphWriter-beforepos"/>
+
 
         <!-- Morphology -->
         <!--item value="dotGraphWriter-beforepos"/-->
@@ -273,11 +274,11 @@
       <param key="charChart" value="flatcharchart"/>
     </group>
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="ewt/UD_English-EWT"/>
+      <param key="model_prefix" value="sequoia/UD_French-Sequoia"/>
     </group>
     <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
-      <param key="model_prefix" value="ewt/UD_English-EWT"/>
-      <param key="embeddings" value=""/>
+      <param key="model_prefix" value="sequoia/UD_French-Sequoia"/>
+      <param key="embeddings" value="cc.fr.300.bin"/>
     </group>
     <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
       <param key="corpus" value="en"/>
