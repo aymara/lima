@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /**
   *
   * @file        SyntacticAnalyzer-deps.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2003 by CEA
   * @date        Created on Aug, 31 2004
@@ -82,16 +82,16 @@ void SyntacticAnalyzerDeps::init(
   actionsit = m_actions.begin(); actionsit_end = m_actions.end();
   for (; actionsit != actionsit_end; actionsit++)
   {
-      std::string action = *actionsit;
-      if ( (action != "setl2r") &&  (action != "setr2l") )
-      {
-          m_recognizers[action] = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,action));
-      }
-      else
-      {
-        LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated";
-      }
-}
+    std::string action = *actionsit;
+    if ( (action != "setl2r") &&  (action != "setr2l") )
+    {
+      m_recognizers[action] = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,action));
+    }
+    else
+    {
+      LWARN << "SyntacticAnalyzerDeps actions setl2r and setr2l are deprecated";
+    }
+  }
 
   try {
     std::string val=unitConfiguration.getParamsValueAtKey("applySameRuleWhileSuccess");
@@ -103,8 +103,6 @@ void SyntacticAnalyzerDeps::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
-
-
 }
 
 LimaStatusCode SyntacticAnalyzerDeps::process(
@@ -145,7 +143,7 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
     recoData = new RecognizerData();
     analysis.setData("RecognizerData", recoData);
   }
-  
+
   // ??OME2 for (SegmentationData::const_iterator boundItr=sb->begin();
   //     boundItr!=sb->end();
   for (std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
@@ -171,7 +169,7 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
 #ifdef DEBUG_LP
         LDEBUG << "Geting automaton for action" << action;
 #endif
-        Automaton::Recognizer* recognizer = const_cast< Automaton::Recognizer*  >((*(m_recognizers.find(action))).second);
+        Automaton::Recognizer* recognizer = const_cast< Automaton::Recognizer* >((*(m_recognizers.find(action))).second);
         std::vector<Automaton::RecognizerMatch> result;
 #ifdef DEBUG_LP
         LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
@@ -181,10 +179,10 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
                           endSentence,
                           analysis,
                           result,
-                          true, // test all vertices=true
-                          false,// stop at first success=false
+                          true,   // test all vertices=true
+                          false,  // stop at first success=false
                           false,  // only one success per type=true
-                          false, // return at first success=false
+                          false,  // return at first success=false
                           m_applySameRuleWhileSuccess // depends on config file
                           );
       }

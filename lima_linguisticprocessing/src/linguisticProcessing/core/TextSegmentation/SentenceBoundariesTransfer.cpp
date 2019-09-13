@@ -133,7 +133,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
     if (firstVxMatches.empty())
     {
       LERROR << "SentenceBoundariesTransfer::process: no PoS graph vertex for segment first AnalysisGraph vextex"
-              << segment.getFirstVertex();
+             << segment.getFirstVertex();
       continue;
     }
     auto lastVxMatches = annotationData->matches("AnalysisGraph",
@@ -144,7 +144,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
     if (lastVxMatches.empty())
     {
       LERROR << "SentenceBoundariesTransfer::process: no PoS graph vertex for segment last AnalysisGraph vextex"
-              << segment.getLastVertex();
+             << segment.getLastVertex();
       continue;
     }
     Segment newSegment("sentence",*firstVxMatches.begin(),*lastVxMatches.begin(),posgraph);

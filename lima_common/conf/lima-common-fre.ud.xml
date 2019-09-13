@@ -18,7 +18,7 @@
       <list name="sentenceBreakMicros">
 <!--         <item value="SENT"/> -->
       </list>
-      <param key = "PropertyCodeFile" value = "LinguisticProcessings/eng.ud/code-eng.ud.xml" />
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/fre.ud/code-fre.ud.xml" />
       <list name="emptyMacro">
         <item value="DET" />
         <item value="PRON" />
@@ -162,6 +162,7 @@
         <item value="ud:root"/>        <!-- UD 2.0: root                                         -->
         <item value="ud:vocative"/>    <!-- UD 2.0: vocative                                     -->
         <item value="ud:xcomp"/>       <!-- UD 2.0: open clausal complement                      -->
+        <item value="ud:_"/>           <!-- ?                                                    -->
         <!-- Other relations can be added by syntactic model loader at runtime. -->
       </list>
     </group>

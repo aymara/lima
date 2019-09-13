@@ -35,6 +35,7 @@ endif()
 configure_file(lima-lp-eng.xml lima-lp-eng.xml @ONLY)
 configure_file(lima-lp-eng.ud.xml lima-lp-eng.ud.xml @ONLY)
 configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
+configure_file(lima-lp-fre.ud.xml lima-lp-fre.ud.xml @ONLY)
 configure_file(lima-lp-por.xml lima-lp-por.xml @ONLY)
 
 
