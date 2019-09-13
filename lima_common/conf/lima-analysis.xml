@@ -187,7 +187,6 @@
     <group name="identPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="mandatory"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="DOCID"/>
         <item value="num"/>
@@ -205,7 +204,6 @@
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="Titre"/>
         <item value="title"/>
@@ -224,7 +222,6 @@
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="source"/>
         <item value="FILENAME"/>
@@ -237,7 +234,6 @@
       <param key="storageType" value="integer"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
-      <param key="propagated" value="false"/>
       <list name="attributeNames">
       </list>
     </group>
@@ -245,7 +241,6 @@
       <param key="storageType" value="integer"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
-      <param key="propagated" value="true"/>
       <list name="attributeNames">
       </list>
     </group>
@@ -253,7 +248,6 @@
       <param key="storageType" value="string"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
-      <param key="propagated" value="false"/>
       <list name="attributeNames">
         <item value="Section startTime="/>
         <item value="Turn startTime="/>
@@ -264,7 +258,6 @@
       <param key="storageType" value="string"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
-      <param key="propagated" value="false"/>
       <list name="attributeNames">
         <item value="Section endTime="/>
         <item value="Turn endTime="/>
@@ -274,7 +267,6 @@
     <group name="indexDatePrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="date"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="date"/>
       </list>
@@ -282,7 +274,6 @@
     <group name="typPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <list name="attributeNames">
         <item value="type id="/>
         <item value="Section type="/>
@@ -294,7 +285,6 @@
     <group name="langPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <list name="elementNames">
         <item value="LANGUAGE"/>
       </list>
@@ -308,7 +298,6 @@
     <group name="encodPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="attributeNames">
         <item value="langue-et-encodage encodage="/>
       </list>
@@ -317,7 +306,6 @@
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="attributeNames">
         <item value="Turn speaker="/>
       </list>
@@ -329,7 +317,6 @@
       <!--value is "optional" (0..1), "mandatory" (1, not null) "multi-valued"-->
       <param key="cardinality" value="optional"/>
       <!--value is "document" or "node"-->
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="date"/>
       </list>
@@ -337,7 +324,6 @@
     <group name="originPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="origin"/>
       </list>
@@ -349,7 +335,6 @@
     <group name="authPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="multi-valued"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="author"/>
         <item value="Nom"/>
@@ -358,7 +343,6 @@
     <group name="locationPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="location"/>
       </list>
@@ -366,7 +350,6 @@
     <group name="privacyPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="privacy"/>
       </list>
@@ -374,7 +357,6 @@
     <group name="countryPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="country"/>
       </list>
@@ -382,7 +364,6 @@
     <group name="senderPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="sender"/>
       </list>
@@ -390,7 +371,6 @@
     <group name="docRefPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="int"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="false"/>
       <list name="elementNames">
         <item value="reference"/>
       </list>
@@ -398,7 +378,6 @@
     <group name="speakerPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <list name="elementNames">
       </list>
       <list name="attributeNames">
@@ -408,7 +387,6 @@
     <group name="chainePrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <param key="storageSize" value="10"/>
       <list name="elementNames">
       </list>
@@ -419,7 +397,6 @@
     <group name="dateDiffPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <param key="storageSize" value="8"/>
       <list name="elementNames">
       </list>
@@ -430,7 +407,6 @@
     <group name="progPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
       <param key="cardinality" value="optional"/>
-      <param key="propagated" value="true"/>
       <param key="storageSize" value="20"/>
       <list name="elementNames">
       </list>
