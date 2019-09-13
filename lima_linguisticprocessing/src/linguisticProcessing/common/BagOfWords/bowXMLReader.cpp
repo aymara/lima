@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (besanconr@zoe.cea.fr)
  * @date       Wed May  5 2004
  * copyright   Copyright (C) 2004 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "bowXMLReader.h"
@@ -53,7 +53,7 @@ public:
 
 //**********************************************************************
 // reader functions
-//********************************************************************** 
+//**********************************************************************
 BoWXMLReader::BoWXMLReader(const std::string& filename,
                            std::ostream& output):
 m_parser()
@@ -83,7 +83,7 @@ m_parser()
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
       throw XMLException(QString(QLatin1String("Error parsing %1: %2"))
-              .arg(filename.c_str(), 
+              .arg(filename.c_str(),
                     m_parser->errorHandler()->errorString()).toUtf8().constData());
     }
   }
@@ -98,12 +98,12 @@ BoWXMLReader::~BoWXMLReader() {
   //  Delete the parser itself.  Must be done prior to calling Terminate
   delete m_parser;
 
-  // do not delete document or text (pointers are passed in return) 
+  // do not delete document or text (pointers are passed in return)
 }
 
 //**********************************************************************
 // xerces handler functions
-//********************************************************************** 
+//**********************************************************************
 BoWXMLHandler::BoWXMLHandler(std::ostream& output):
 m_outputStream(output),
 m_currentBoWDocument(),
@@ -172,7 +172,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   uint64_t position(0);
   uint64_t length(0);
   uint64_t id(0);
-  
+
   if (stringName == "bowDocument") {
     m_currentBoWDocument.clear();
   }
@@ -187,7 +187,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
       if (indexingNode == "yes") {
         isIndexingNode=true;
       }
-    } 
+    }
     catch (NoAttributeException& ) {
       // do nothing -> is not indexing node
     }
@@ -201,7 +201,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     string elementName("");
     try {
       elementName=getStringAttribute(attributes,"elementName");
-    } 
+    }
     catch (NoAttributeException& ) {
       LERROR << "missing attribute elementName in " << stringName;
     }
@@ -229,8 +229,8 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
     if (m_currentComplexToken.empty()) {
       m_currentBoWText->push_back(token);
     }
-    else { 
-      if (m_currentComplexToken.back().currentPart == 
+    else {
+      if (m_currentComplexToken.back().currentPart ==
           m_currentComplexToken.back().head) {
         m_currentComplexToken.back().token->addPart(token,true);
       }
@@ -257,7 +257,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
                                           position,length));
     m_refMap[id]=ne;
     m_currentComplexToken.push_back(CurrentComplexToken(ne));
-  } 
+  }
   else if (stringName == "parts") {
     m_currentComplexToken.back().head=getIntAttribute(attributes,"head");
     m_currentComplexToken.back().currentPart=0;
@@ -284,7 +284,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
   LDEBUG << "End Element " << stringName;
 
   if (stringName == "bowNamedEntity" ||
-      stringName == "bowTerm") 
+      stringName == "bowTerm")
   {
     boost::shared_ptr< BoWToken > token=m_currentComplexToken.back().token;
     m_currentComplexToken.pop_back();
@@ -292,7 +292,7 @@ bool BoWXMLHandler::endElement(const QString & namespaceURI, const QString & nam
       m_currentBoWText->push_back(token);
     }
     else { // this complex token is a part of another
-      if (m_currentComplexToken.back().currentPart == 
+      if (m_currentComplexToken.back().currentPart ==
           m_currentComplexToken.back().head) {
         m_currentComplexToken.back().token->addPart(token,true);
       }
@@ -336,13 +336,13 @@ bool BoWXMLHandler::addProperty(const QXmlAttributes& attributes) {
   string typName=getStringAttribute(attributes,"type");
   try {
     if (typName == "int") {
-      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value")); 
+      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value"));
     }
     else if (typName == "string") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
+      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
     }
     else if (typName == "date") {
-      m_currentProperties.setDateValue(propName, getDateAttribute(attributes,"value")); 
+      m_currentProperties.setDateValue(propName, getDateAttribute(attributes,"value"));
     }
     else if (typName == "dateRange") {
       QDate dateBegin = getDateAttribute(attributes,"valueBegin");
@@ -350,76 +350,13 @@ bool BoWXMLHandler::addProperty(const QXmlAttributes& attributes) {
       m_currentProperties.setDateIntervalValue( propName, make_pair(dateBegin, dateEnd));
     }
     else if (typName == "multString") {
-      m_currentProperties.addStringValue( propName, getStringAttribute(attributes,"value")); 
+      m_currentProperties.addStringValue( propName, getStringAttribute(attributes,"value"));
     }
     else if (typName == "multWeightedId") {
-      string val = getStringAttribute(attributes,"value"); 
-      float score = getFloatAttribute(attributes,"weight"); 
+      string val = getStringAttribute(attributes,"value");
+      float score = getFloatAttribute(attributes,"weight");
       m_currentProperties.addWeightedPropValue( propName, make_pair(val,score));
     }
-/*      
-    if (propName == "srcePrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "offBegPrpty") {
-      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value")); 
-    }
-    else if (propName == "offEndPrpty") {
-      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value")); 
-    }
-    else if (propName == "indexDatePrpty") {
-      m_currentProperties.setDateValue(propName, getDateAttribute(attributes,"value")); 
-    }
-    else if (propName == "langPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "encodPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "identPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "docintref") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "titlePrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "date_begin") {
-      // ruse!!
-      std::pair<std::pair<QDate,QDate>, bool> creationDateRet =
-         m_currentProperties.getDateIntervalValue(std::string("datePrpty"));
-      
-      m_currentProperties.setDateIntervalValue(std::string("datePrpty"),
-                                               make_pair(getDateAttribute(attributes,"value"), 
-                                                         creationDateRet.first.second ));
-    }
-    else if (propName == "date_end") {
-      std::pair<std::pair<QDate,QDate>, bool> creationDateRet =
-         m_currentProperties.getDateIntervalValue(std::string("datePrpty"));
-      m_currentProperties.setDateIntervalValue(std::string("datePrpty"),
-                                               make_pair(creationDateRet.first.first,
-                                                         getDateAttribute(attributes,"value")));
-    }
-    else if (propName == "typPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "originPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "locationPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "countryPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "senderPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-    else if (propName == "privacyPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value")); 
-    }
-*/  
   }
   catch (exception& e) {
     BOWLOGINIT;
@@ -428,7 +365,7 @@ bool BoWXMLHandler::addProperty(const QXmlAttributes& attributes) {
   return true;
 }
 
-uint64_t 
+uint64_t
 BoWXMLHandler::getTokenAttributes(const QXmlAttributes& attributes,
                                   LimaString& lemma,
                                   LinguisticCode& category,
@@ -443,18 +380,18 @@ BoWXMLHandler::getTokenAttributes(const QXmlAttributes& attributes,
   return 0;
 }
 
-uint64_t 
+uint64_t
 BoWXMLHandler::getIntAttribute(const QXmlAttributes& attributes,
                                const char* name) const {
   // do not make conversion at once in case the getValue fails
   const QString& chars=attributes.value(name);
-  
+
   if (chars==0) {
     ostringstream oss;
     oss << "expected attribute \""<<name<<"\" not found";
     throw NoAttributeException(oss.str());
   }
-  
+
   return chars.toULong();
 }
 
@@ -463,27 +400,27 @@ BoWXMLHandler::getFloatAttribute(const QXmlAttributes& attributes,
                                const char* name) const {
   // do not make conversion at once in case the getValue fails
   const QString& chars=attributes.value(name);
-  
+
   if (chars==0) {
     ostringstream oss;
     oss << "expected attribute \""<<name<<"\" not found";
     throw NoAttributeException(oss.str());
   }
-  
+
   return chars.toFloat();
 }
 
-std::string 
+std::string
 BoWXMLHandler::getStringAttribute(const QXmlAttributes& attributes,
-                                  const char* name) const 
+                                  const char* name) const
 {
   return limastring2utf8stdstring(getLimaStringAttribute(attributes,name));
 }
 
-QDate 
+QDate
 BoWXMLHandler::getDateAttribute(const QXmlAttributes& attributes,
                                   const char* name) const {
-  
+
   const QString& chars=attributes.value(name);
 
   if (chars==0) {
@@ -503,15 +440,15 @@ BoWXMLHandler::getDateAttribute(const QXmlAttributes& attributes,
   }
   catch (exception& e) {
     BOWLOGINIT;
-    LERROR << "Error trying to read date: " << e.what(); 
+    LERROR << "Error trying to read date: " << e.what();
     return QDate();
-  }    
+  }
 }
 
 LimaString
 BoWXMLHandler::getLimaStringAttribute(const QXmlAttributes& attributes,
                                        const char* name) const {
-  
+
   QString chars=attributes.value(name);
 
   if (chars.isEmpty()) {

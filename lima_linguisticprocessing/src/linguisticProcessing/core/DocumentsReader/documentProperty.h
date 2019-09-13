@@ -67,7 +67,6 @@ public:
   const StorageType& getStorageType() const;
   const CardinalityType& getValueCardinality() const;
   const long int& getStorageSize() const;
-  bool isPropagated() const;
   const std::deque< QString >& getElementTagNames() const;
   const std::deque< std::pair<QString,QString> > & getAttributeTagNames() const;
   bool isValueInElement( const QString& elementName ) const;
@@ -75,7 +74,6 @@ public:
   StorageType& getStorageType();
   CardinalityType& getValueCardinality();
   long int& getStorageSize();
-  bool& isPropagated();
 
   bool operator<(const DocumentPropertyType& dpt) const;
 
