@@ -484,7 +484,7 @@ QDebug& operator<<(QDebug& os, const Structure& structure)
   {
     os << "node (" << ItrNodes->first << ":" << ItrNodes->second<<")";
   }
-  os << " )"
+  os << " )";
   return os;
 }
 
