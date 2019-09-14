@@ -27,7 +27,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 #define PYTHONUPPSALATENSORFLOWTOKENIZER_CLASSID "PythonUppsalaTensorFlowTokenizer"
@@ -67,7 +69,8 @@ public:
     PythonUppsalaTokenizerPrivate* m_d;
 };
 
-} // namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

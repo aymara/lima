@@ -31,7 +31,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 // set default key in status according to other elements in status
@@ -46,7 +48,7 @@ void DeepTokenizerBase::computeDefaultStatus(TStatus& curSettings)
         case T_CAPITAL_1ST   : defaultKey = "t_capital_1st"  ; break;
         case T_ACRONYM       : defaultKey = "t_acronym"      ; break;
         case T_CAPITAL_SMALL : defaultKey = "t_capital_small"; break;
-        case T_ABBREV       : defaultKey = "t_abbrev"      ; break;
+        case T_ABBREV        : defaultKey = "t_abbrev"       ; break;
         default : break;
       }
       switch (curSettings.getAlphaRoman()) { // Roman supersedes Cardinal
@@ -262,6 +264,7 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
   token.setStatus(curSettings);
 }
 
-} //namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima

@@ -11,7 +11,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 LIMA_TENSORFLOWTOKENIZER_EXPORT std::map<QString,int> loadFileWords(const QString& filepath)
@@ -390,7 +392,6 @@ LIMA_TENSORFLOWTOKENIZER_EXPORT Eigen::MatrixXi viterbiDecode(
 }
 
 }
-
 }
-
+}
 }

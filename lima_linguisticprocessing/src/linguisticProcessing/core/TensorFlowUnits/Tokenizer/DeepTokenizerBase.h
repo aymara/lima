@@ -27,7 +27,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 class DeepTokenizerBase
@@ -42,7 +44,8 @@ public:
   virtual void computeDefaultStatus(LinguisticAnalysisStructure::Token& token);
 };
 
-} //namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

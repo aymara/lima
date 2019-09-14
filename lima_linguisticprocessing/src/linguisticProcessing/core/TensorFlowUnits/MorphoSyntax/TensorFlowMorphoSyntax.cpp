@@ -17,7 +17,12 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "TensorFlowMorphoSyntax.h"
+#include <iostream>
+#include <iterator>
+#include <set>
+#include <algorithm>
+
+#include <QJsonDocument>
 
 #include "common/MediaticData/mediaticData.h"
 #include "common/Data/strwstrtools.h"
@@ -33,21 +38,18 @@
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 
-#include <iostream>
-#include <iterator>
-#include <set>
-#include <map>
-#include <algorithm>
-
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow/cc/client/client_session.h"
 
 #include "fastText/src/fasttext.h"
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+#include "Viterbi.h"
+#include "QJsonHelpers.h"
+#include "TensorFlowHelpers.h"
+
+#include "TensorFlowMorphoSyntax.h"
+
 
 #define DEBUG_THIS_FILE true
 
@@ -62,12 +64,15 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
+using namespace Lima::LinguisticProcessing::TensorFlowUnits::Common;
 
 namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlow_MorphoSyntax
+namespace TensorFlowUnits
+{
+namespace MorphoSyntax
 {
 
 SimpleFactory<MediaProcessUnit, TensorFlowMorphoSyntax> tensorflowmorphosyntaxFactory(TENSORFLOWMORPHOSYNTAX_CLASSID);
@@ -92,7 +97,7 @@ public:
   TensorFlowMorphoSyntaxPrivate()
     : m_stringsPool(nullptr) { }
 
-  void init(Common::XMLConfigurationFiles::GroupConfigurationStructure&,
+  void init(GroupConfigurationStructure&,
             MediaId lang,
             const QString& model_prefix,
             const QString& embeddings);
@@ -155,7 +160,7 @@ protected:
     vector<string> i2t;         // index -> UD label
     vector<LinguisticCode> i2c; // index -> LinguisticCode
 
-    const Common::PropertyCode::PropertyAccessor* accessor;
+    const PropertyAccessor* accessor;
   };
 
   struct DepparseOutput
@@ -187,7 +192,7 @@ protected:
 
   QString m_model_path;
 
-  std::unique_ptr<Session> m_session;
+  unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
   fasttext::FastText m_fasttext;
@@ -216,7 +221,7 @@ TensorFlowMorphoSyntax::~TensorFlowMorphoSyntax()
 }
 
 void TensorFlowMorphoSyntax::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& gcs,
+  GroupConfigurationStructure& gcs,
   Manager* manager)
 {
   QString modelPrefix;
@@ -245,16 +250,16 @@ void TensorFlowMorphoSyntax::init(
 }
 
 void TensorFlowMorphoSyntaxPrivate::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& /*gcs*/,
+  GroupConfigurationStructure& /*gcs*/,
   MediaId lang,
   const QString& model_prefix,
   const QString& embeddings)
 {
   m_language = lang;
-  m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
+  m_stringsPool = &MediaticData::changeable().stringsPool(m_language);
 
-  QString lang_str = Common::MediaticData::MediaticData::single().media(m_language).c_str();
-  QString resources_path = Common::MediaticData::MediaticData::single().getResourcesPath().c_str();
+  QString lang_str = MediaticData::single().media(m_language).c_str();
+  QString resources_path = MediaticData::single().getResourcesPath().c_str();
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.conf")
@@ -272,7 +277,7 @@ void TensorFlowMorphoSyntaxPrivate::init(
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't create TensorFlow session: "
                         << status.ToString(),
                         LimaException());
-  m_session = std::unique_ptr<Session>(session);
+  m_session = unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
                                  QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.model")
                                   .arg(lang_str).arg(model_prefix));
@@ -438,16 +443,16 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
   LinguisticGraph* result_graph = posgraph->getGraph();
   //remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *result_graph);
 
-  const LanguageData& ld = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language));
   vector<TSentence> sentences;
 
-  for (std::vector<Segment>::const_iterator boundItr = (sb->getSegments()).begin();
+  for (vector<Segment>::const_iterator boundItr = (sb->getSegments()).begin();
        boundItr != (sb->getSegments()).end();
        boundItr++)
   {
     LinguisticGraphVertex beginSentence = boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence = boundItr->getLastVertex();
-    LOG_MESSAGE(LDEBUG, "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence);
+    LOG_MESSAGE(LDEBUG, "analyze sentence from vertex " << beginSentence
+		        << " to vertex " << endSentence);
 
     TSentence sent(beginSentence, endSentence, m_max_seq_len);
 
@@ -470,12 +475,12 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
       }
       if (out_set.size() > 1)
       {
-        LOG_MESSAGE(LERROR, "Non unique out path from vertex "); // << *it);
+        LOG_MESSAGE(LERROR, "Non unique out path from vertex ");
         return UNKNOWN_ERROR;
       }
       if (out_set.size() == 0)
       {
-        LOG_MESSAGE(LERROR, "Zero out paths from vertex "); // << *it);
+        LOG_MESSAGE(LERROR, "Zero out paths from vertex ");
         return UNKNOWN_ERROR;
       }
       curr = *out_set.begin();
@@ -498,76 +503,6 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
   TimeUtils::logElapsedTime("TensorFlowMorphoSyntax");
 
   return SUCCESS_ID;
-}
-
-inline float viterbi_decode(const vector<vector<float>>& scores,
-                     const vector<vector<float>>& transitions,
-                     vector<size_t>& result)
-{
-  size_t max_steps = scores.size();
-  size_t max_states = transitions.size();
-
-  vector<vector<float>> trellis;
-  vector<vector<size_t>> backpointers;
-  vector<vector<float>> v;
-
-  trellis.resize(max_steps);
-  for (auto& x : trellis)
-    x.resize(max_states, 0.0);
-
-  backpointers.resize(max_steps);
-  for (auto& x : backpointers)
-    x.resize(max_states, 0);
-
-  v.resize(max_states);
-  for (auto& x : v)
-    x.resize(max_states, 0.0);
-
-  trellis[0] = scores[0];
-
-  for (size_t k = 1; k < scores.size(); ++k)
-  {
-    for (size_t i = 0; i < max_states; ++i)
-      for (size_t j = 0; j < max_states; ++j)
-        v[i][j] = trellis[k-1][i] + transitions[i][j];
-        // transitions from [i] to [j]
-
-    trellis[k] = scores[k];
-    for (size_t i = 0; i < max_states; ++i)
-    {
-      size_t max_prev_state_no = 0;
-      for (size_t j = 1; j < max_states; ++j)
-        if (v[j][i] > v[max_prev_state_no][i])
-          max_prev_state_no = j;
-      trellis[k][i] += v[max_prev_state_no][i];
-      backpointers[k][i] = max_prev_state_no;
-    }
-  }
-
-  result.clear();
-  result.resize(scores.size());
-  size_t max_pos = 0;
-  for (size_t i = 1; i < max_states; ++i)
-    if (trellis[max_steps - 1][i] > trellis[max_steps - 1][max_pos])
-      max_pos = i;
-
-  result[0] = max_pos;
-  vector<vector<size_t>> bp = backpointers;
-  reverse(bp.begin(), bp.end());
-
-  for (size_t i = 0; i < max_steps - 1; ++i)
-    result[i+1] = bp[i][result[i]];
-
-  reverse(result.begin(), result.end());
-
-  max_pos = 0;
-  for (size_t i = 1; i < max_states; ++i)
-    if (trellis[trellis.size() - 1][i] > trellis[trellis.size() - 1][max_pos])
-      max_pos = i;
-
-  auto viterbi_score = trellis[trellis.size() - 1][max_pos];
-
-  return viterbi_score;
 }
 
 void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
@@ -629,7 +564,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         for (size_t a = 0; a < viterbi.size() - 1; ++a)
         {
           size_t pred = viterbi[a + 1];
-          if (m_seqtag_outputs[out_idx].i2c[pred] != 0)
+          if (m_seqtag_outputs[out_idx].i2c[pred] != LinguisticCode(0))
           {
             TToken& t = sent.tokens[a];
             if (nullptr != t.morpho)
@@ -670,11 +605,15 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
           if (pred_head != 0)
           {
             TToken& h = sent.tokens[pred_head];
-            syntacticData.addRelationNoChain(ld.getSyntacticRelationId(out_descr.i2t[pred_tag]), t.vertex, h.vertex);
+            syntacticData.addRelationNoChain(ld.getSyntacticRelationId(out_descr.i2t[pred_tag]),
+			                     t.vertex,
+					     h.vertex);
           }
           else
           {
-            syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"), t.vertex, t.vertex);
+            syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"),
+			                     t.vertex,
+					     t.vertex);
           }
         }
       }
@@ -682,27 +621,6 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
     i += this_batch_size;
   }
-}
-
-#define init_1d_tensor(t, v) \
-{ \
-  for (int64 i = 0; i < t.dimension(0); ++i) \
-    t(i) = v; \
-}
-
-#define init_2d_tensor(t, v) \
-{ \
-  for (int64 i = 0; i < t.dimension(0); ++i) \
-    for (int64 j = 0; j < t.dimension(1); ++j) \
-      t(i, j) = v; \
-}
-
-#define init_3d_tensor(t, v) \
-{ \
-  for (int64 i = 0; i < t.dimension(0); ++i) \
-    for (int64 j = 0; j < t.dimension(1); ++j) \
-      for (int64 k = 0; k < t.dimension(2); ++k) \
-        t(i, j, k) = v; \
 }
 
 void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sentences,
@@ -807,43 +725,6 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
     }
 
     len(i) = n;
-  }
-}
-
-inline void load_string_array(const QJsonArray& jsa, vector<string>& v)
-{
-  v.clear();
-  v.reserve(jsa.size());
-  for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
-  {
-    const QJsonValue value = *i;
-    QString s = value.toString();
-    v.push_back(s.toStdString());
-  }
-}
-
-inline void load_string_array(const QJsonArray& jsa, vector<u32string>& v)
-{
-  v.clear();
-  v.reserve(jsa.size());
-  for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
-  {
-    QJsonValue value = *i;
-    QString s = value.toString();
-    v.push_back(s.toStdU32String());
-  }
-}
-
-inline void load_string_to_uint_map(const QJsonObject& jso, map<u32string, unsigned int>& v)
-{
-  v.clear();
-  for (QJsonObject::const_iterator i = jso.begin(); i != jso.end(); ++i)
-  {
-    if (v.end() != v.find(i.key().toStdU32String()))
-      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_string_to_uint_map: \"" << i.key() << "\" already known.",
-                          LimaException());
-
-    v[i.key().toStdU32String()] = i.value().toInt();
   }
 }
 
@@ -975,6 +856,7 @@ void TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes(const PropertyCodeMana
   }
 }
 
-} // TensorFlow_MorphoSyntax
+} // MorphoSyntax
+} // TensorFlowUnits
 } // LinguisticProcessing
 } // Lima

@@ -17,14 +17,11 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "CppUppsalaTensorFlowTokenizer.h"
-#include "DeepTokenizerBase.h"
-#include "tokUtils.h"
+#include <QtCore/QTemporaryFile>
+#include <QtCore/QRegularExpression>
+#include <QDir>
+#include <QJsonDocument>
 
-#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "common/misc/Exceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
@@ -33,24 +30,29 @@
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 
-#include <QtCore/QTemporaryFile>
-#include <QtCore/QRegularExpression>
-#include <QDir>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 
-#include <string>
+#include "Viterbi.h"
+#include "QJsonHelpers.h"
+
+#include "CppUppsalaTensorFlowTokenizer.h"
+#include "DeepTokenizerBase.h"
+#include "tokUtils.h"
+
 
 #define DEBUG_THIS_FILE true
 
 using namespace std;
-using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace tensorflow;
+using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
-using namespace Lima::Common;
-using namespace tensorflow;
+using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
+using namespace Lima::LinguisticProcessing::TensorFlowUnits::Common;
 
 #define EIGEN_DONT_VECTORIZE
 
@@ -58,7 +60,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 static u32string SPACE = QString::fromUtf8(" ").toStdU32String();
@@ -151,14 +155,6 @@ protected:
   vector<TDict> m_ngrams;
 
   vector<vector<float>> m_crf;
-
-  static void load_string_array(const QJsonArray& jsa, vector<string>& v);
-  static void load_string_array(const QJsonArray& jsa, vector<u32string>& v);
-  static void load_string_to_uint_map(const QJsonObject& jso, map<u32string, unsigned int>& v);
-
-  static float viterbi_decode(const vector<vector<float>>& scores,
-                              const vector<vector<float>>& transitions,
-                              vector<size_t>& result);
 };
 
 CppUppsalaTokenizerPrivate::CppUppsalaTokenizerPrivate() :
@@ -189,14 +185,14 @@ CppUppsalaTensorFlowTokenizer::~CppUppsalaTensorFlowTokenizer()
 }
 
 void CppUppsalaTensorFlowTokenizer::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTensorFlowTokenizer::init");
 
   m_d->m_language = manager->getInitializationParameters().media;
-  m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
+  m_d->m_stringsPool = &MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
 
   try
   {
@@ -292,8 +288,8 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init" << model_prefix);
 
-  QString lang_str = Common::MediaticData::MediaticData::single().media(m_language).c_str();
-  QString resources_path = Common::MediaticData::MediaticData::single().getResourcesPath().c_str();
+  QString lang_str = MediaticData::MediaticData::single().media(m_language).c_str();
+  QString resources_path = MediaticData::MediaticData::single().getResourcesPath().c_str();
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
@@ -343,30 +339,6 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   }
 }
 
-void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector<string>& v)
-{
-  v.clear();
-  v.reserve(jsa.size());
-  for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
-  {
-    const QJsonValue value = *i;
-    QString s = value.toString();
-    v.push_back(s.toStdString());
-  }
-}
-
-void CppUppsalaTokenizerPrivate::load_string_array(const QJsonArray& jsa, vector<u32string>& v)
-{
-  v.clear();
-  v.reserve(jsa.size());
-  for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
-  {
-    QJsonValue value = *i;
-    QString s = value.toString();
-    v.push_back(s.toStdU32String());
-  }
-}
-
 void CppUppsalaTokenizerPrivate::load_ngram_defs(const QJsonArray& jsa)
 {
   m_ngram_defs.clear();
@@ -376,18 +348,6 @@ void CppUppsalaTokenizerPrivate::load_ngram_defs(const QJsonArray& jsa)
     QJsonObject obj = (*i).toObject();
     TNGramDef def(obj["start"].toInt(), obj["len"].toInt());
     m_ngram_defs.push_back(def);
-  }
-}
-
-void CppUppsalaTokenizerPrivate::load_string_to_uint_map(const QJsonObject& jso, map<u32string, unsigned int>& v)
-{
-  v.clear();
-  for (QJsonObject::const_iterator i = jso.begin(); i != jso.end(); ++i)
-  {
-    if (v.end() != v.find(i.key().toStdU32String()))
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_string_to_uint_map: \"" << i.key() << "\" already known.",
-                          LimaException());
-    v[i.key().toStdU32String()] = i.value().toInt();
   }
 }
 
@@ -407,7 +367,6 @@ void CppUppsalaTokenizerPrivate::load_dicts(const QJsonArray& jsa)
 
 void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 {
-//   QString config_file_name = model_prefix + ".conf";
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
@@ -548,76 +507,6 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
   return TokStatusCode::SUCCESS;
 }
 
-float CppUppsalaTokenizerPrivate::viterbi_decode(const vector<vector<float>>& scores,
-                                                 const vector<vector<float>>& transitions,
-                                                 vector<size_t>& result)
-{
-  size_t max_steps = scores.size();
-  size_t max_states = transitions.size();
-
-  vector<vector<float>> trellis;
-  vector<vector<size_t>> backpointers;
-  vector<vector<float>> v;
-
-  trellis.resize(max_steps);
-  for (auto& x : trellis)
-    x.resize(max_states, 0.0);
-
-  backpointers.resize(max_steps);
-  for (auto& x : backpointers)
-    x.resize(max_states, 0);
-
-  v.resize(max_states);
-  for (auto& x : v)
-    x.resize(max_states, 0.0);
-
-  trellis[0] = scores[0];
-
-  for (size_t k = 1; k < scores.size(); ++k)
-  {
-    for (size_t i = 0; i < max_states; ++i)
-      for (size_t j = 0; j < max_states; ++j)
-        v[i][j] = trellis[k-1][i] + transitions[i][j];
-        // transitions from [i] to [j]
-
-    trellis[k] = scores[k];
-    for (size_t i = 0; i < max_states; ++i)
-    {
-      size_t max_prev_state_no = 0;
-      for (size_t j = 1; j < max_states; ++j)
-        if (v[j][i] > v[max_prev_state_no][i])
-          max_prev_state_no = j;
-      trellis[k][i] += v[max_prev_state_no][i];
-      backpointers[k][i] = max_prev_state_no;
-    }
-  }
-
-  result.clear();
-  result.resize(scores.size());
-  size_t max_pos = 0;
-  for (size_t i = 1; i < max_states; ++i)
-    if (trellis[max_steps - 1][i] > trellis[max_steps - 1][max_pos])
-      max_pos = i;
-
-  result[0] = max_pos;
-  vector<vector<size_t>> bp = backpointers;
-  reverse(bp.begin(), bp.end());
-
-  for (size_t i = 0; i < max_steps - 1; ++i)
-    result[i+1] = bp[i][result[i]];
-
-  reverse(result.begin(), result.end());
-
-  max_pos = 0;
-  for (size_t i = 1; i < max_states; ++i)
-    if (trellis[trellis.size() - 1][i] > trellis[trellis.size() - 1][max_pos])
-      max_pos = i;
-
-  auto viterbi_score = trellis[trellis.size() - 1][max_pos];
-
-  return viterbi_score;
-}
-
 vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(const QString& text)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::tokenize" << text.left(100));
@@ -730,6 +619,7 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   return sentences;
 }
 
-} // namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima

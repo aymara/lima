@@ -45,8 +45,7 @@ ENDIF(TRE_FOUND)
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
   add_subdirectory(TensorflowSpecificEntities)
-  add_subdirectory(TensorFlowTokenizer)
-  add_subdirectory(TensorFlowMorphoSyntax)
+  add_subdirectory(TensorFlowUnits)
 endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
