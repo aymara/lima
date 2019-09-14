@@ -49,7 +49,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 static SimpleFactory<MediaProcessUnit,CppTensorFlowTokenizer> cpptokenizerFactory(CPPTENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
@@ -1003,7 +1005,7 @@ TokStatusCode CppTokenizerPrivate::getFeedDict(
   return TokStatusCode::SUCCESS;
 }
 
-
-} //namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima

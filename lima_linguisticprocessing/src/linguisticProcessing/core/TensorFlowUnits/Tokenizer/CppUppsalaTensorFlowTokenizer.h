@@ -27,7 +27,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 #define CPPUPPSALATENSORFLOWTOKENIZER_CLASSID "CppUppsalaTensorFlowTokenizer"
@@ -53,7 +55,7 @@ public:
   CppUppsalaTensorFlowTokenizer();
   virtual ~CppUppsalaTensorFlowTokenizer();
 
-  void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  void init(Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
             Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
@@ -62,7 +64,8 @@ private:
   CppUppsalaTokenizerPrivate* m_d;
 };
 
-} //namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

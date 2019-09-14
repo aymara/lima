@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "PythonUppsalaTensorFlowTokenizer.h"
+#include "PythonTensorFlowTokenizer.h"
 #include "DeepTokenizerBase.h"
 #include "PythonHelpers.h"
 
@@ -33,8 +33,6 @@
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 
-#include <Python.h>
-
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QRegularExpression>
 
@@ -49,16 +47,18 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
-static SimpleFactory<MediaProcessUnit,PythonUppsalaTensorFlowTokenizer> pythonuppsalatokenizerFactory(PYTHONUPPSALATENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
+static SimpleFactory<MediaProcessUnit,PythonTensorFlowTokenizer> pythontokenizerFactory(PYTHONTENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
-class PythonUppsalaTokenizerPrivate : public DeepTokenizerBase
+class PythonTokenizerPrivate : public DeepTokenizerBase
 {
 public:
-  PythonUppsalaTokenizerPrivate();
-  virtual ~PythonUppsalaTokenizerPrivate();
+  PythonTokenizerPrivate();
+  virtual ~PythonTokenizerPrivate();
 
   MediaId m_language;
   PyObject* m_instance;
@@ -68,22 +68,22 @@ public:
 
 };
 
-PythonUppsalaTokenizerPrivate::PythonUppsalaTokenizerPrivate() :
+PythonTokenizerPrivate::PythonTokenizerPrivate() :
     m_instance(nullptr),
     m_stringsPool(nullptr),
     m_currentVx(0)
 {
 }
 
-PythonUppsalaTokenizerPrivate::~PythonUppsalaTokenizerPrivate()
+PythonTokenizerPrivate::~PythonTokenizerPrivate()
 {
 }
 
-PythonUppsalaTensorFlowTokenizer::PythonUppsalaTensorFlowTokenizer() : m_d(new PythonUppsalaTokenizerPrivate())
+PythonTensorFlowTokenizer::PythonTensorFlowTokenizer() : m_d(new PythonTokenizerPrivate())
 {
 }
 
-PythonUppsalaTensorFlowTokenizer::~PythonUppsalaTensorFlowTokenizer()
+PythonTensorFlowTokenizer::~PythonTensorFlowTokenizer()
 {
   Py_DECREF(m_d->m_instance);
 
@@ -92,14 +92,14 @@ PythonUppsalaTensorFlowTokenizer::~PythonUppsalaTensorFlowTokenizer()
   delete m_d;
 }
 
-void PythonUppsalaTensorFlowTokenizer::init(
+void PythonTensorFlowTokenizer::init(
     GroupConfigurationStructure& unitConfiguration,
     Manager* manager)
 
 {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-  LDEBUG << "PythonUppsalaTensorFlowTokenizer::init";
+  LDEBUG << "PythonTensorFlowTokenizer::init";
 #endif
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
@@ -125,29 +125,80 @@ void PythonUppsalaTensorFlowTokenizer::init(
     throw InvalidConfiguration();
   }
 
-  QString model_path; // The path to the LIMA python tensorflow-based tokenizer
+  QString udCorpus; // The name/id of the Universal Dependencies corpus used for training
   try
   {
-    model_path = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model_path").c_str());
+    udCorpus = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("corpus").c_str());
   }
   catch (NoSuchParam& )
   {
     TOKENIZERLOGINIT;
-    LERROR << "no param 'model_path' in TensorFlowTokenizer group configuration";
+    LERROR << "no param 'corpus' in PythonTensorFlowTokenizer group configuration";
     throw InvalidConfiguration();
   }
 
-  QString model;
+  QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
   try
   {
-    model = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model").c_str());
+    embeddingsPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("embeddings_path").c_str());
   }
   catch (NoSuchParam& )
   {
     TOKENIZERLOGINIT;
-    LERROR << "no param 'model' in PythonUppsalaTensorFlowTokenizer group configuration";
+    LERROR << "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration";
     throw InvalidConfiguration();
   }
+
+  QString modelPath; // The path to the LIMA python tensorflow-based tokenizer
+  try
+  {
+    modelPath = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model_path").c_str());
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  int windowSize = -1; // The window size used with the tensorflow-based tokenizer
+  try
+  {
+    bool success;
+    windowSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("window_size").c_str()).toInt(&success);
+    if (!success)
+    {
+      TOKENIZERLOGINIT;
+      LERROR << "Param 'window_size' in PythonTensorFlowTokenizer group configuration is not an integer";
+      throw InvalidConfiguration();
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'window_size' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
+  int batchSize = -1; // The bach size used with the tensorflow-based tokenizer
+  try
+  {
+    bool success;
+    batchSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("batch_size").c_str()).toInt(&success);
+    if (!success)
+    {
+      TOKENIZERLOGINIT;
+      LERROR << "Param 'batch_size' in PythonTensorFlowTokenizer group configuration is not an integer";
+      throw InvalidConfiguration();
+    }
+  }
+  catch (NoSuchParam& )
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "no param 'batch_size' in PythonTensorFlowTokenizer group configuration";
+    throw InvalidConfiguration();
+  }
+
 
   // Initialize the python SRL system
   // Find the first python executable in the path and use it as the program name.
@@ -174,21 +225,7 @@ void PythonUppsalaTensorFlowTokenizer::init(
   Py_Initialize();
 
   PyObject* main_module = PyImport_ImportModule("__main__");
-  if (main_module == nullptr)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to import the __main__ module";
-    PyErr_Print();
-    Py_Exit(1);
-  }
   PyObject* main_dict = PyModule_GetDict(main_module);
-  if (main_dict == nullptr)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to get the main dictionary";
-    PyErr_Print();
-    Py_Exit(1);
-  }
   PyObject* sys_module = PyImport_ImportModule("sys");
   if (sys_module == nullptr)
   {
@@ -196,22 +233,10 @@ void PythonUppsalaTensorFlowTokenizer::init(
     Py_Exit(1);
   }
 
-  if (PyDict_SetItemString(main_dict, "sys", sys_module) == -1)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to set the sys module in main dict";
-    PyErr_Print();
-    Py_Exit(1);
-  }
+  PyDict_SetItemString(main_dict, "sys", sys_module);
+
   // Add the path to the knowledgesrl pachkage to putho path
   PyObject* pythonpath = PySys_GetObject("path");
-  if (pythonpath == NULL)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to get the 'path' object";
-    PyErr_Print();
-    Py_Exit(1);
-  }
   if (PyList_Append(pythonpath, PyUnicode_DecodeFSDefault(path.toUtf8().constData())) ==  -1)
   {
     TOKENIZERLOGINIT;
@@ -221,11 +246,11 @@ void PythonUppsalaTensorFlowTokenizer::init(
   }
 
   // Import the tokenizer module
-  PyObject* tokenizer_module = PyImport_ImportModule("segmenter_predict");
+  PyObject* tokenizer_module = PyImport_ImportModule("tfudpipe-predict");
   if (tokenizer_module == NULL)
   {
     TOKENIZERLOGINIT;
-    LERROR << "PythonUppsalaTensorFlowTokenizer::init"<< __FILE__ << __LINE__
+    LERROR << "PythonTensorFlowTokenizer::init"<< __FILE__ << __LINE__
             << ": Failed to import tokenizer module";
     PyErr_Print();
     Py_Exit(1);
@@ -233,45 +258,49 @@ void PythonUppsalaTensorFlowTokenizer::init(
 
   // pDict is a borrowed reference
   auto pDict = PyModule_GetDict(tokenizer_module);
-  if (pDict == NULL)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to get the tokenizer_module dict";
-    PyErr_Print();
-    Py_Exit(1);
-  }
 
   // Build the name of a callable class
   auto pClass = PyDict_GetItemString(pDict, "Tokenizer");
-  if (pClass == NULL)
-  {
-    TOKENIZERLOGINIT;
-    LERROR << "Failed to get the Tokenizer class";
-    PyErr_Print();
-    Py_Exit(1);
-  }
   // Create an instance of the class
   if (PyCallable_Check(pClass))
   {
     //     corpus, embeddings_path, model_path, window_size
-    auto pymodel = PyUnicode_FromString(model.toUtf8().constData());
-    if (pymodel == NULL)
+    auto corpus = PyUnicode_FromString(udCorpus.toUtf8().constData());
+    if (corpus == NULL)
     {
       failed_to_allocate_memory();
     }
-    auto pymodel_path = PyUnicode_FromString(model_path.toUtf8().constData());
-    if (pymodel_path == NULL)
+    auto embeddings_path = PyUnicode_FromString(embeddingsPath.toUtf8().constData());
+    if (embeddings_path == NULL)
+    {
+      failed_to_allocate_memory();
+    }
+    auto model_path = PyUnicode_FromString(modelPath.toUtf8().constData());
+    if (model_path == NULL)
+    {
+      failed_to_allocate_memory();
+    }
+    auto window_size = PyLong_FromLong(windowSize);
+    if (window_size == NULL)
+    {
+      failed_to_allocate_memory();
+    }
+    auto batch_size = PyLong_FromLong(batchSize);
+    if (batch_size == NULL)
     {
       failed_to_allocate_memory();
     }
 
-    auto pArgs = PyTuple_New(2);
+    auto pArgs = PyTuple_New(5);
     if (pArgs == NULL)
     {
       failed_to_allocate_memory();
     }
-    if (PyTuple_SetItem(pArgs, 0, pymodel_path) != 0
-        || PyTuple_SetItem(pArgs, 1, pymodel) != 0)
+    if (PyTuple_SetItem(pArgs, 0, corpus) != 0
+        || PyTuple_SetItem(pArgs, 1, embeddings_path) != 0
+        || PyTuple_SetItem(pArgs, 2, model_path) != 0
+        || PyTuple_SetItem(pArgs, 3, window_size) != 0
+        || PyTuple_SetItem(pArgs, 4, batch_size) != 0)
     {
       python_error();
     }
@@ -283,11 +312,14 @@ void PythonUppsalaTensorFlowTokenizer::init(
     }
 #ifdef DEBUG_LP
     TOKENIZERLOGINIT;
-    LDEBUG << "PythonUppsalaTensorFlowTokenizer::init";
+    LDEBUG << "PythonTensorFlowTokenizer::init";
 #endif
 
-    Py_DECREF(pymodel_path);
-    Py_DECREF(pymodel);
+    Py_DECREF(corpus);
+    Py_DECREF(embeddings_path);
+    Py_DECREF(model_path);
+    Py_DECREF(window_size);
+    Py_DECREF(batch_size);
   }
   else
   {
@@ -298,7 +330,7 @@ void PythonUppsalaTensorFlowTokenizer::init(
   }
 }
 
-LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis) const
+LimaStatusCode PythonTensorFlowTokenizer::process(AnalysisContent& analysis) const
 {
   TimeUtilsController TensorFlowTokenizerProcessTime("TensorFlowTokenizer");
   TOKENIZERLOGINIT;
@@ -325,7 +357,10 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
                                                  pyTokenize,
                                                  pyText,
                                                  NULL);
-
+  if (pySentences == NULL)
+  {
+    python_error();
+  }
   // Convert resulting python list of list of tuples (pairs) to Qt or std
   // objects
   auto sentencesPyTokens = pyListOrTupleToVector(pySentences);
@@ -375,7 +410,7 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
   analysis.setData(m_d->m_data.toUtf8().constData(), sb);
 
 #ifdef DEBUG_LP
-    LDEBUG << "PythonUppsalaTensorFlowTokenizer::process removing edge"
+    LDEBUG << "PythonTensorFlowTokenizer::process removing edge"
             << anagraph->firstVertex() << anagraph->lastVertex();
 #endif
   remove_edge(anagraph->firstVertex(),
@@ -424,6 +459,7 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
   return SUCCESS_ID;
 }
 
-} // namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima

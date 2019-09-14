@@ -17,27 +17,42 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_PythonHelpers_H
-#define LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_PythonHelpers_H
-
-#include <Python.h>
+#ifndef LIMA_TENSORFLOWUNITS_TENSORFLOWHELPERS_H
+#define LIMA_TENSORFLOWUNITS_TENSORFLOWHELPERS_H
 
 namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Common
 {
 
-void python_error();
-void failed_to_allocate_memory();
-void failed_to_import_the_sys_module();
-void cannot_instantiate_the_tokenizer_python_class();
+#define init_1d_tensor(t, v) \
+{ \
+  for (int64 i = 0; i < t.dimension(0); ++i) \
+    t(i) = v; \
+}
 
-std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming);
+#define init_2d_tensor(t, v) \
+{ \
+  for (int64 i = 0; i < t.dimension(0); ++i) \
+    for (int64 j = 0; j < t.dimension(1); ++j) \
+      t(i, j) = v; \
+}
 
-} // namespace TensorFlowTokenizer
-} // namespace LinguisticProcessing
-} // namespace Lima
+#define init_3d_tensor(t, v) \
+{ \
+  for (int64 i = 0; i < t.dimension(0); ++i) \
+    for (int64 j = 0; j < t.dimension(1); ++j) \
+      for (int64 k = 0; k < t.dimension(2); ++k) \
+	t(i, j, k) = v; \
+}
+
+}
+}
+}
+}
 
 #endif

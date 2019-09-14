@@ -27,7 +27,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 void python_error();
@@ -98,7 +100,8 @@ std::vector<PyObject*> pyListOrTupleToVector(PyObject* incoming)
   return data;
 }
 
-} // namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,9 +26,10 @@
 #ifndef Exceptions_H
 #define Exceptions_H
 
-//#include "common/misc/LimaString.h"
-
 #include <stdexcept>
+
+#include "common/Data/LimaString.h"
+
 
 namespace Lima {
 

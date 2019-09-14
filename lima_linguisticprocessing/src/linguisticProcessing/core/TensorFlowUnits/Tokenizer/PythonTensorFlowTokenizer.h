@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
 //
 // jys 24-JUL-2002
 //
-// CppTensorFlowTokenizer is the main program of CppTensorFlowTokenizer stuff.
+// PythonTensorFlowTokenizer is the main program of PythonTensorFlowTokenizer stuff.
 
 #ifndef LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
 #define LIMA_LINGUISTICPROCESSING_TensorFlowTokenizer_Tokenizer_H
@@ -33,14 +33,16 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
-#define CPPTENSORFLOWTOKENIZER_CLASSID "CppTensorFlowTokenizer"
+#define PYTHONTENSORFLOWTOKENIZER_CLASSID "PythonTensorFlowTokenizer"
 
 class CharChart;
 
-class CppTokenizerPrivate;
+class PythonTokenizerPrivate;
 
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
   *
@@ -54,12 +56,12 @@ class CppTokenizerPrivate;
   * - Preconditions: the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
   * - Effects: the AnalysisContent will contain an AnalysisData of type AnalysisGraph named "AnalysisGraph" which is a linear graph (a string) containing one vertex for each detected token.
   */
-class LIMA_TENSORFLOWTOKENIZER_EXPORT CppTensorFlowTokenizer : public MediaProcessUnit
+class LIMA_TENSORFLOWTOKENIZER_EXPORT PythonTensorFlowTokenizer : public MediaProcessUnit
 {
 
 public:
-  CppTensorFlowTokenizer();
-  virtual ~CppTensorFlowTokenizer();
+  PythonTensorFlowTokenizer();
+  virtual ~PythonTensorFlowTokenizer();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -70,10 +72,11 @@ public:
 
   private:
 
-    CppTokenizerPrivate* m_d;
+    PythonTokenizerPrivate* m_d;
 };
 
-} //namespace TensorFlowTokenizer
+} // namespace Tokenizer
+} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

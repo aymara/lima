@@ -32,7 +32,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlow_MorphoSyntax
+namespace TensorFlowUnits
+{
+namespace MorphoSyntax
 {
 
 #define TENSORFLOWMORPHOSYNTAX_CLASSID "TensorFlowMorphoSyntax"
@@ -47,7 +49,7 @@ public:
   virtual ~TensorFlowMorphoSyntax();
 
   void init(
-    Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+    Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
@@ -57,7 +59,8 @@ private:
   TensorFlowMorphoSyntaxPrivate *m_d;
 };
 
-} // TensorFlow_MorphoSyntax
+} // MorphoSyntax
+} // TensorFlowUnits
 } // LinguisticProcessing
 } // Lima
 

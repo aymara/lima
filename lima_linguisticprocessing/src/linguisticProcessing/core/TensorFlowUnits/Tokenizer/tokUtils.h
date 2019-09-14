@@ -20,7 +20,9 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowTokenizer
+namespace TensorFlowUnits
+{
+namespace Tokenizer
 {
 
 /** @brief Indicates if the code is running well
@@ -181,9 +183,8 @@ LIMA_TENSORFLOWTOKENIZER_EXPORT Eigen::MatrixXi viterbiDecode(
   const Eigen::MatrixXf& transitionParams);
 
 }
-
 }
-
+}
 }
 
 #endif // TOK_UTILS_H
