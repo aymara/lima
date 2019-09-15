@@ -444,6 +444,7 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
   //remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *result_graph);
 
   vector<TSentence> sentences;
+  LinguisticGraphVertex prevSentenceEnd = LinguisticGraphVertex(0);
 
   for (vector<Segment>::const_iterator boundItr = (sb->getSegments()).begin();
        boundItr != (sb->getSegments()).end();
@@ -459,11 +460,14 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     LinguisticGraphVertex curr = beginSentence;
     while (curr != endSentence)
     {
-      Token* token = get(vertex_token, *result_graph, curr);
-      MorphoSyntacticData* morpho_data = get(vertex_data, *result_graph, curr);
+      if (sentences.size() == 0 || (sentences.size() > 0 && prevSentenceEnd != curr))
+      {
+        Token* token = get(vertex_token, *result_graph, curr);
+        MorphoSyntacticData* morpho_data = get(vertex_data, *result_graph, curr);
 
-      if (token != nullptr)
-        sent.append(curr, token, morpho_data);
+        if (token != nullptr)
+          sent.append(curr, token, morpho_data);
+      }
 
       LinguisticGraphOutEdgeIt it, it_end;
       boost::tie(it, it_end) = out_edges(curr, *result_graph);
@@ -490,7 +494,10 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     MorphoSyntacticData* morpho_data = get(vertex_data, *result_graph, curr);
 
     if (token != nullptr)
+    {
       sent.append(curr, token, morpho_data);
+      prevSentenceEnd = curr;
+    }
 
     sentences.push_back(sent);
   }
@@ -520,6 +527,8 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
   {
       requested_nodes.push_back(out.arcs_pred_node_name);
       requested_nodes.push_back(out.tags_pred_node_name);
+      requested_nodes.push_back(out.arcs_logits_node_name);
+      requested_nodes.push_back(out.tags_logits_node_name);
   }
 
   for (size_t i = 0; i < sentences.size();)
@@ -584,6 +593,10 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
     {
       auto arcs_tensor = out[out_idx].tensor<int, 2>();
       auto tags_tensor = out[out_idx + 1].tensor<int, 2>();
+
+      auto arcs_logits = out[out_idx + 2].tensor<float, 3>();
+      auto tags_logits = out[out_idx + 3].tensor<float, 3>();
+
       const DepparseOutput& out_descr = *(m_depparse_outputs.begin());
 
       for (int64 p = 0; p < arcs_tensor.dimension(0); p++)
