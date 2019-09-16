@@ -47,8 +47,8 @@
 
 using namespace std;
 using namespace tensorflow;
-using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -185,14 +185,14 @@ CppUppsalaTensorFlowTokenizer::~CppUppsalaTensorFlowTokenizer()
 }
 
 void CppUppsalaTensorFlowTokenizer::init(
-  XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+  GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTensorFlowTokenizer::init");
 
   m_d->m_language = manager->getInitializationParameters().media;
-  m_d->m_stringsPool = &MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
+  m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
 
   try
   {
@@ -288,8 +288,8 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init" << model_prefix);
 
-  QString lang_str = MediaticData::MediaticData::single().media(m_language).c_str();
-  QString resources_path = MediaticData::MediaticData::single().getResourcesPath().c_str();
+  QString lang_str = MediaticData::single().media(m_language).c_str();
+  QString resources_path = MediaticData::single().getResourcesPath().c_str();
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
