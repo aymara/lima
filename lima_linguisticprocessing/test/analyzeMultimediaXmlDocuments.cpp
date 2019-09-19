@@ -57,6 +57,10 @@ int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
+#ifndef DEBUG_LP
+  try
+  {
+#endif
   QCoreApplication a(argc, argv);
   QCoreApplication::setApplicationName("analyzeXml");
   QCoreApplication::setApplicationVersion(LIMA_VERSION);
@@ -67,17 +71,44 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &LimaMainTaskRunner::finished,
+                    &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
-  return a.exec();
-
+    return a.exec();
+#ifndef DEBUG_LP
+  }
+  catch( const InvalidConfiguration& e ) {
+    std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
+    return UNSUPPORTED_LANGUAGE;
+  }
+  catch (const LinguisticProcessingException& e)
+  {
+    std::cerr << "Catched LinguisticProcessingException: " << e.what() << std::endl;
+    return INVALID_CONFIGURATION;
+  }
+  catch (const Lima::LimaException& e)
+  {
+    std::cerr << "Catched LimaException: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Catched std::exception: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (...)
+  {
+    std::cerr << "Catched unknown exception" << std::endl;
+    return UNKNOWN_ERROR;
+  }
+#endif
 }
 
 
-int run(int,char**)
+int run(int argc, char** argv)
 {
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
@@ -87,6 +118,7 @@ int run(int,char**)
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
+  //std::cerr<< configPath.toStdString() << std::endl;
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
@@ -122,7 +154,7 @@ int run(int,char**)
   parser.addOption(availableUnitsOption);
   QCommandLineOption progressOption(
       QStringList() << "P" << "Progress",
-      QCoreApplication::translate("main", "Show progress. "));
+      QCoreApplication::translate("main", "Show progress."));
   parser.addOption(progressOption);
   QCommandLineOption lpConfigFileOption(
       QStringList() << "lp-config-file",
@@ -262,9 +294,9 @@ int run(int,char**)
       {
         if (parser.isSet(progressOption))
         {
-          std::cout << "\rAnalyzing "<< i << "/" << files.size()
+          std::cout << "Analyzing "<< i << "/" << files.size()
                 << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-                << fileName.toUtf8().constData() << "'" /*<< std::endl*/ << std::flush;
+                << fileName.toUtf8().constData() << "'" << std::endl;
         }
         // loading of the input file
         TimeUtils::updateCurrentTime();
@@ -445,4 +477,3 @@ void listunits()
     }
     exit(0);
 }
-

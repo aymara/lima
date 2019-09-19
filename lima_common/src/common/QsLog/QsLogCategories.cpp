@@ -81,6 +81,7 @@ void Categories::configureFileChanged ( const QString & path )
 
 bool Categories::configure(const QString& fileName)
 {
+  //std::cerr << "Categories::configure " << fileName.toStdString() << std::endl;
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
@@ -135,7 +136,7 @@ bool Categories::configure(const QString& fileName)
           d->categories.insert(category,QsLogging::FatalLevel);
         else
         {
-          std::cerr << "Error reading \"" << fileName.toUtf8().constData() << "\": unknow level \"" << value.toUtf8().constData() << "\". Using TRACE" << std::endl;
+          std::cerr << "Error reading \"" << fileName.toUtf8().constData() << "\": unknown level \"" << value.toUtf8().constData() << "\". Using TRACE" << std::endl;
           res = false;
           d->categories.insert(category,QsLogging::TraceLevel);
         }
@@ -282,4 +283,3 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
 }
 
 } // end namespace
-
