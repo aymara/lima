@@ -185,7 +185,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       m_firstItem=false;
     }
     else if (nbAtt>1 && !m_itemWithAttributes) {
-      // was indeed in list of item with attributes => has to change     
+      // was indeed in list of item with attributes => has to change
       m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
       m_itemWithAttributes=true;
     }
@@ -193,7 +193,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     if (m_itemWithAttributes) {
       string itemName=toString(attributes.value("value"));
       ItemWithAttributes item(itemName);
-      for (uint32_t i=1; i<nbAtt; i++) {
+      for (uint32_t i=0; i<nbAtt; i++) {
         item.addAttribute(toString(attributes.localName(i)),
                           toString(attributes.value(i)));
       }

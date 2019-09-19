@@ -841,7 +841,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
       {
         EntityGroupId groupId = addEntityGroup(groupName);
 #ifdef DEBUG_CD
-        LDEBUG << "initEntityTypes: id is " << groupId;
+        LDEBUG << "initEntityTypes: read list as " << groupId;
 #endif
         GroupConfigurationStructure& groupConf=(*it).second;
         try
@@ -862,7 +862,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
         }
         catch(NoSuchList& e)
         {
-          // no simple list: may be list of items with attributes (to deal with is-a relations of entities)
+          // no simple list: may be list of items with attributes (to deal with isA relations of entities)
           auto& items = groupConf.getListOfItems("entityList");
           for (const auto& i: items)
           {
@@ -875,9 +875,9 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 #ifdef DEBUG_CD
             LDEBUG << "initEntityTypes: type is " << ent;
 #endif
-            if (i.hasAttribute("is-a"))
+            if (i.hasAttribute("isA"))
             {
-              auto parentName = utf8stdstring2limastring(i.getAttribute("is-a"));
+              auto parentName = utf8stdstring2limastring(i.getAttribute("isA"));
               auto parent = getEntityType(groupId,parentName);
 #ifdef DEBUG_CD
               LDEBUG << "initEntityTypes: add parent link:" << ent
