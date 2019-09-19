@@ -36,21 +36,20 @@ public:
   StorageType m_storageType;
   long int m_storageSize;
   CardinalityType m_cardinalityType;
-  bool m_propagated;
   std::deque< QString > m_tagElementNames;
   std::deque< std::pair<QString,QString> > m_tagAttributeNames;
 };
 
 DocumentPropertyTypePrivate::DocumentPropertyTypePrivate()
         : m_storageType ( STORAGE_UTF8_STRING ), m_storageSize ( 0 ),
-        m_cardinalityType ( CARDINALITY_OPTIONAL ), m_propagated ( false ),
+        m_cardinalityType ( CARDINALITY_OPTIONAL ),
         m_tagElementNames(), m_tagAttributeNames()
 {
 }
 
 DocumentPropertyTypePrivate::DocumentPropertyTypePrivate(const DocumentPropertyTypePrivate& dpt)
         : m_storageType ( dpt.m_storageType ), m_storageSize ( dpt.m_storageSize ),
-        m_cardinalityType ( dpt.m_cardinalityType ), m_propagated ( dpt.m_propagated ),
+        m_cardinalityType ( dpt.m_cardinalityType ),
         m_tagElementNames(dpt.m_tagElementNames), m_tagAttributeNames(dpt.m_tagAttributeNames)
 {
 }
@@ -60,7 +59,6 @@ DocumentPropertyTypePrivate& DocumentPropertyTypePrivate::operator=(const Docume
   m_storageType = dpt.m_storageType;
   m_storageSize = dpt.m_storageSize;
   m_cardinalityType = dpt.m_cardinalityType;
-  m_propagated = dpt.m_propagated;
   m_tagElementNames = dpt.m_tagElementNames;
   m_tagAttributeNames = dpt.m_tagAttributeNames;
   return *this;
@@ -93,14 +91,12 @@ DocumentPropertyType::~DocumentPropertyType()
 const StorageType& DocumentPropertyType::getStorageType(void) const { return m_d->m_storageType; }
 const CardinalityType& DocumentPropertyType::getValueCardinality(void) const { return m_d->m_cardinalityType; }
 const long int& DocumentPropertyType::getStorageSize(void) const { return m_d->m_storageSize; }
-bool DocumentPropertyType::isPropagated(void) const { return m_d->m_propagated; }
 const std::deque< QString >& DocumentPropertyType::getElementTagNames() const { return m_d->m_tagElementNames; }
 const std::deque< std::pair<QString,QString> > & DocumentPropertyType::getAttributeTagNames() const { return m_d->m_tagAttributeNames; }
 
 StorageType& DocumentPropertyType::getStorageType(void) { return m_d->m_storageType; }
 CardinalityType& DocumentPropertyType::getValueCardinality(void) { return m_d->m_cardinalityType; }
 long int& DocumentPropertyType::getStorageSize(void) { return m_d->m_storageSize; }
-bool& DocumentPropertyType::isPropagated(void) { return m_d->m_propagated; }
 
 
 void DocumentPropertyType::init (
@@ -133,7 +129,7 @@ void DocumentPropertyType::init (
         throw Lima::InvalidConfiguration();
     }
 
-    // taille pour le stockage (nombre de bytes pour une cha�ne de caract�res)
+    // taille pour le stockage (nombre de bytes pour une chaine de caracteres)
     try
     {
         m_d->m_storageSize=atoi ( unitConfiguration.getParamsValueAtKey ( "storageSize" ).c_str() );
@@ -213,25 +209,6 @@ void DocumentPropertyType::init (
  #ifdef DEBUG_LP
        LDEBUG << "no list 'attributeNames' in DocumentPropertyType group for " << getId();
 #endif
-    }
-
-    try
-    {
-        std::string scopeId = unitConfiguration.getParamsValueAtKey ( "propagated" );
-        if ( !scopeId.compare ( "false" ) )
-        {
-            m_d->m_propagated = false;
-        }
-        else
-        {
-            m_d->m_propagated = true;
-        }
-    }
-    catch ( NoSuchParam& e )
-    {
-        m_d->m_propagated = false;
-        DRLOGINIT;
-        LWARN << "no param 'propagated' in DocumentPropertyType group for " << getId();
     }
 
 }

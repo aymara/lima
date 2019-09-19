@@ -3,7 +3,7 @@
   <module name="Processors">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex.xml/Processors"/>
+<!--         <item value="SpecificEntities-modex.xml/Processors"/> -->
       </list>
     </group>
 
@@ -108,13 +108,13 @@
           support and if you wish to support background spelling correction -->
             <!--item value="spellingAlternatives"/-->
         <item value="defaultProperties"/>
-        <item value="SpecificEntitiesModex"/>
+<!--         <item value="SpecificEntitiesModex"/> -->
         <item value="@PosTagger@"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerNoChains"/>
+<!--        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
-        <item value="syntacticAnalyzerDummy"/>
+        <item value="syntacticAnalyzerDummy"/>-->
         <item value="bowDumperXml"/>
       </list>
     </group>
@@ -861,7 +861,7 @@
   <module name="Resources">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex.xml/resources-por"/>
+<!--         <item value="SpecificEntities-modex.xml/resources-por"/> -->
       </list>
     </group>
 

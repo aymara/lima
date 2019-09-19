@@ -40,7 +40,7 @@ CoreXmlReaderClient::CoreXmlReaderClient(Lima::Common::XMLConfigurationFiles::XM
     XMLREADERCLIENTLOGINIT;
     LDEBUG << "CoreXmlReaderClient::CoreXmlReaderClient";
 #endif
-    ModuleConfigurationStructure &conf = configuration.getModuleConfiguration("lp-structuredXmlreaderclient");
+    auto& conf = configuration.getModuleConfiguration("lp-structuredXmlreaderclient");
     m_documentReader = new DocumentsReader::DocumentReader(conf);
     m_documentReader->setLinguisticXMLDocHandler(this);
     m_emptyTextChars = utf8stdstring2limastring(" \t\n");
@@ -64,8 +64,8 @@ void CoreXmlReaderClient::startHierarchy(const DocumentsReader::ContentStructure
 void CoreXmlReaderClient::endHierarchy(const DocumentsReader::ContentStructuredDocument &contentDocument)
 {
     // last element
-    AbstractStructuredDocumentElement *absElement = contentDocument.back();
-    DocumentsReader::HierarchyDocumentElement *element  =
+    auto absElement = contentDocument.back();
+    auto element  =
         dynamic_cast<DocumentsReader::HierarchyDocumentElement *>(absElement);
 
     // must be a structured Element
@@ -88,24 +88,26 @@ void CoreXmlReaderClient::endHierarchy(const DocumentsReader::ContentStructuredD
     m_handler->endNode(*element);
 }
 
-void CoreXmlReaderClient::startIndexing(const DocumentsReader::ContentStructuredDocument &contentDocument)
+void CoreXmlReaderClient::startIndexing(
+  const DocumentsReader::ContentStructuredDocument &contentDocument)
 {
     startNode(contentDocument, true);
 }
 
-void CoreXmlReaderClient::endIndexing(const DocumentsReader::ContentStructuredDocument &contentDocument)
+void CoreXmlReaderClient::endIndexing(
+  const DocumentsReader::ContentStructuredDocument &contentDocument)
 {
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
     LDEBUG << "CoreXmlReaderClient::endIndexing";
  #endif
    // last element
-    AbstractStructuredDocumentElement *absElement = contentDocument.back();
-    DocumentsReader::IndexingDocumentElement *element  =
-        dynamic_cast<DocumentsReader::IndexingDocumentElement *>(absElement);
+    auto absElement = contentDocument.back();
+    auto element =
+      dynamic_cast<DocumentsReader::IndexingDocumentElement *>(absElement);
 
     // must be a structured Element
-    if (element == 0)
+    if (element == nullptr)
     {
       XMLREADERCLIENTLOGINIT;
       LERROR << "CoreXmlReaderClient::endIndexing must be a structured Element" ;
@@ -129,8 +131,11 @@ void CoreXmlReaderClient::endIndexing(const DocumentsReader::ContentStructuredDo
 }
 
 
-void CoreXmlReaderClient::handle(const DocumentsReader::ContentStructuredDocument &contentDocument,
-                                 const Lima::LimaString &text, unsigned long int offset, const string  tagName)
+void CoreXmlReaderClient::handle(
+    const DocumentsReader::ContentStructuredDocument &contentDocument,
+    const Lima::LimaString &text,
+    unsigned long int offset,
+    const string  tagName)
 {
 #ifdef DEBUG_LP
   XMLREADERCLIENTLOGINIT;
@@ -193,16 +198,12 @@ void CoreXmlReaderClient::handle(const DocumentsReader::ContentStructuredDocumen
     // cast element to GenericDocumentProperties
 //     Common::Misc::GenericDocumentProperties &props = *element;
     // get byte offset after end of element
-    unsigned long offsetIndexingNode = element->getIntValue("offBegPrpty").first;
+    auto offsetIndexingNode = element->getIntValue("offBegPrpty").first;
     ostringstream os2;
     os2 << offsetIndexingNode;
     m_docMetaData["StartOffsetIndexingNode"] = os2.str();
 
-    string strText = limastring2utf8stdstring(text);
-
-//     size_t posEmptyTextChars = strText.find_first_not_of(m_emptyTextChars.toUtf8().constData());
-//     if (posEmptyTextChars!=string::npos)
-//       strText=strText.substr(posEmptyTextChars,strText.length()-posEmptyTextChars);
+    auto strText = text.toStdString();
 
     m_handler->handleProc(
         tagName,
@@ -214,8 +215,9 @@ void CoreXmlReaderClient::handle(const DocumentsReader::ContentStructuredDocumen
 }
 
 
-void CoreXmlReaderClient::handleProperty(const DocumentsReader::DocumentPropertyType &property,
-        const std::string &data)
+void CoreXmlReaderClient::handleProperty(
+    const DocumentsReader::DocumentPropertyType &property,
+    const std::string &data)
 {
 
     if(!property.getId().compare("langPrpty")) {
@@ -247,11 +249,12 @@ void CoreXmlReaderClient::handleProperty(const DocumentsReader::DocumentProperty
 
 //!@brief analyse effective d'un fichier XML
 //! Fait appel a m_handler (type xmlDocumentHandler)
-void CoreXmlReaderClient::analyze(const std::string &text,
-                                  const std::map<std::string, std::string>& metaData,
-                                  const std::string &pipeline,
-                                  const std::map<std::string, Lima::AbstractAnalysisHandler *>& handlers,
-                                  const std::set<std::string>& inactiveUnits) const
+void CoreXmlReaderClient::analyze(
+    const std::string &text,
+    const std::map<std::string, std::string>& metaData,
+    const std::string &pipeline,
+    const std::map<std::string, Lima::AbstractAnalysisHandler *>& handlers,
+    const std::set<std::string>& inactiveUnits) const
 {
     (void) handlers;      // avoid warning
     (void) inactiveUnits; // avoid warning
@@ -281,7 +284,10 @@ void CoreXmlReaderClient::analyze(const std::string &text,
     Common::Misc::GenericDocumentProperties dummyProperties;
     m_handler->startDocument(dummyProperties);   // NB : ne fait rien!
 #ifdef DEBUG_LP
-    LDEBUG << "CoreXmlReaderClient::analyze: start analyze" << (*docMetadataPtr) ["filePath"] << " ; pipeline='" << std::string((*docMetadataPtr) ["pipeline"]) << "' ; language='" << std::string((*docMetadataPtr)["Lang"]) << "'";
+    LDEBUG << "CoreXmlReaderClient::analyze: start analyze"
+            << (*docMetadataPtr) ["filePath"] << " ; pipeline='"
+            << std::string((*docMetadataPtr) ["pipeline"]) << "' ; language='"
+            << std::string((*docMetadataPtr)["Lang"]) << "'";
 #endif
     m_handler->set_lastUri(string((*docMetadataPtr) ["filePath"]));
     m_handler->set_lang(string((*docMetadataPtr) ["Lang"]));
@@ -353,14 +359,16 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
 {
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
-    LDEBUG << "CoreXmlReaderClient::setAnalysisHandler (" << handlerId << ", " << handler << ")";
+    LDEBUG << "CoreXmlReaderClient::setAnalysisHandler (" << handlerId << ", "
+            << handler << ")";
 #endif
     if (m_mapHandlers.find(handlerId) != m_mapHandlers.end()) {
       XMLREADERCLIENTLOGINIT;
-      LERROR << "Error: CoreXmlReaderClient::setAnalysisHandler already contains a handler with the ID" << handlerId;
+      LERROR << "Error: CoreXmlReaderClient::setAnalysisHandler already contains a handler with the ID"
+              << handlerId;
       return;
     }
-    AbstractXmlDocumentHandler* abstractHandler = dynamic_cast<AbstractXmlDocumentHandler *>(handler);
+    auto abstractHandler = dynamic_cast<AbstractXmlDocumentHandler*>(handler);
     if(abstractHandler != 0) {
         // lien avec les clients d'analyse
         m_handler = abstractHandler;
@@ -368,7 +376,8 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
         m_mapHandlers.insert(make_pair(handlerId, handler));
     } else {
         XMLREADERCLIENTLOGINIT;
-        LERROR << "Error: handler " << handlerId << " is not compatible with XML analysis. Segmentation fault to come...";
+        LERROR << "Error: handler " << handlerId
+                << " is not compatible with XML analysis. Segmentation fault to come...";
     }
 }
 
@@ -430,16 +439,17 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
 
     // containeur (map) permettant de les retrouver un client d'analyse
     // a partir  du nom de la fabrique
-    std::map<std::string, std::shared_ptr< AbstractProcessingClient > >   mapMediaClient;
+    std::map<std::string, std::shared_ptr< AbstractProcessingClient > > mapMediaClient;
 
     // parcourt des media disponibles: crée les client d'analyse (PC) nécessaires
-    std::map<std::string, std::string>::const_iterator ItrMedia;
-    for(ItrMedia = m_mapMediaFactory.begin(); ItrMedia != m_mapMediaFactory.end(); ItrMedia++)
+    for(auto ItrMedia = m_mapMediaFactory.cbegin();
+        ItrMedia != m_mapMediaFactory.cend(); ItrMedia++)
     {
         string media = ItrMedia->first;
         string PCfactoryName = ItrMedia->second;
 #ifdef DEBUG_LP
-        LDEBUG << "Media [" << media << "] is analysed by [" << PCfactoryName << "]";
+        LDEBUG << "Media [" << media << "] is analysed by [" << PCfactoryName
+                << "]";
 #endif
         std::shared_ptr< Lima::ProcessingClientFactory >PCfactory = getFactoryFromId(PCfactoryName);
 

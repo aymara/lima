@@ -21,6 +21,7 @@ namespace DocumentsReader {
   class DocumentPropertyType;
 }
 namespace XmlReader {
+
 //! @brief client de lecture des fichier XML faisant appel aux clients d'analyse
 //! Lors de la lecture d'un fichier XML, les clients d'analyse sont appelés
 //! en fonction des tags trouvés. Par exemple:
@@ -30,7 +31,9 @@ namespace XmlReader {
 //! Ce client de lecture étant donné en handler (StructuredXmlDocumentHandler)
 //! au programme de lecture XML (DocumentReader) il est a nouveau appelé pour
 //! effectuer certaines actions quand des noeuds sont lus.
-class COREXMLREADERCLIENT_EXPORT CoreXmlReaderClient : public AbstractXmlReaderClient, public StructuredXmlDocumentHandler
+class COREXMLREADERCLIENT_EXPORT CoreXmlReaderClient :
+    public AbstractXmlReaderClient,
+    public StructuredXmlDocumentHandler
 {
 public:
     //! @brief constructeur
@@ -78,8 +81,10 @@ public:
 	//! @param offset ??? unused ?
 	//! @param tagName XML tag for the text analysed:
 	//! should specify the content type (freText, image...)
-    void handle ( const DocumentsReader::ContentStructuredDocument& contentDocument,
-                  const Lima::LimaString& text, unsigned long int offset, const std::string tagName) override;
+    void handle (const DocumentsReader::ContentStructuredDocument& contentDocument,
+                 const Lima::LimaString& text,
+                 unsigned long int offset,
+                 const std::string tagName) override;
 
     void handleProperty ( const DocumentsReader::DocumentPropertyType& property,
                           const std::string& data ) override ;
