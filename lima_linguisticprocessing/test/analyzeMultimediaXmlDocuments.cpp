@@ -13,6 +13,7 @@
 #include "common/tools/FileUtils.h"
 #include "common/tools/LimaMainTaskRunner.h"
 
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentWriter.h"
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
-    return a.exec();
+  return a.exec();
 #ifndef DEBUG_LP
   }
   catch( const InvalidConfiguration& e ) {
