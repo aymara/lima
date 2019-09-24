@@ -84,7 +84,7 @@ SimpleFactory<MediaProcessUnit, TensorFlowMorphoSyntax> tensorflowmorphosyntaxFa
                                       }
 
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
-  #define LOG_MESSAGE(stream, msg) { TENSORFLOWMORPHOSYNTAXLOGINIT; stream << msg; }
+  #define LOG_MESSAGE(stream, msg) { stream << msg; }
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) TENSORFLOWMORPHOSYNTAXLOGINIT; LOG_MESSAGE(stream, msg);
 #else
   #define LOG_MESSAGE(stream, msg) ;
