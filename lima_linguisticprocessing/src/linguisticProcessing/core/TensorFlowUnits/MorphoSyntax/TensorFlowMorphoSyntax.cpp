@@ -767,18 +767,108 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
 
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
+  if (data.isNull())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
+                        << config_file_name << "\". Invalid Json.",
+                        LimaException());
+  if (!data.isObject())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
+                        << config_file_name << "\". Loaded data is not an object",
+                        LimaException());
+  auto params = data.object().value("params");
+  if (params.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value params.",
+      LimaException());
+  auto paramsObject = params.toObject();
+  if (paramsObject.isEmpty())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" params is not an object.",
+      LimaException());
+  if (paramsObject.value("maxSeqLen").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" missing param maxSeqLen.",
+      LimaException());
+  if (!paramsObject.value("maxSeqLen").isDouble())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" param maxSeqLen is not a number.",
+      LimaException());
+  m_max_seq_len = paramsObject.value("maxSeqLen").toInt();
 
-  m_max_seq_len = data.object().value("params").toObject().value("maxSeqLen").toInt();
-  m_max_word_len = data.object().value("params").toObject().value("maxWordLen").toInt();
-  m_batch_size = data.object().value("params").toObject().value("batchSize").toInt();
+  if (paramsObject.value("maxWordLen").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" missing param maxWordLen.",
+      LimaException());
+  if (!paramsObject.value("maxWordLen").isDouble())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" param maxWordLen is not a number.",
+      LimaException());
+  m_max_word_len = params.toObject().value("maxWordLen").toInt();
 
-  load_string_to_uint_map(data.object().value("dicts").toObject().value("c2i").toObject(), m_char2idx);
-  load_string_to_uint_map(data.object().value("dicts").toObject().value("w2i").toObject(), m_word2idx);
+  if (paramsObject.value("batchSize").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" missing param batchSize.",
+      LimaException());
+  if (!paramsObject.value("batchSize").isDouble())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" param batchSize is not a number.",
+      LimaException());
+  m_batch_size = params.toObject().value("batchSize").toInt();
 
-  load_output_description(data.object().value("output").toObject());
+  auto dicts = data.object().value("dicts");
+  if (dicts.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value dicts.",
+      LimaException());
+  auto dictsObject = dicts.toObject();
+  if (dictsObject.isEmpty())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" dicts is not an object.",
+      LimaException());
 
-  const QJsonObject& jso = data.object().value("input").toObject();
-  for (QJsonObject::const_iterator i = jso.begin(); i != jso.end(); ++i)
+  auto c2i = dictsObject.value("c2i");
+  if (c2i.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value dicts[\"c2i\"].",
+      LimaException());
+  auto c2iObject = c2i.toObject();
+  if (c2iObject.isEmpty())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" c2i object is empty.",
+      LimaException());
+  load_string_to_uint_map(c2iObject, m_char2idx);
+
+  auto w2i = dictsObject.value("w2i");
+  if (w2i.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value dicts[\"w2i\"].",
+      LimaException());
+  auto w2iObject = w2i.toObject();
+  if (w2iObject.isEmpty())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" w2i object is empty.",
+      LimaException());
+  load_string_to_uint_map(w2iObject, m_word2idx);
+
+  auto output = data.object().value("output");
+  if (output.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value output.",
+      LimaException());
+  auto outputObject = output.toObject();
+  if (outputObject.isEmpty())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" output object is empty.",
+      LimaException());
+  load_output_description(outputObject);
+
+  auto input = data.object().value("input");
+  if (input.isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
+          << config_file_name << "\" has no value input.",
+      LimaException());
+  auto jso = input.toObject();
+  for (auto i = jso.constBegin(); i != jso.constEnd(); ++i)
   {
     m_input_node_names[i.key().toStdString()] = i.value().toString().toStdString();
   }
