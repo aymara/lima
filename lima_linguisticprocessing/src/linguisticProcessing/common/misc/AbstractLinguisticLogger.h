@@ -23,9 +23,9 @@
  * @date       Thu Aug  3 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
  * Project     LinguisticProcessing
- * 
+ *
  * @brief      generic process unit logger
- * 
+ *
  ***********************************************************************/
 
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSORS_ABSTRACTLINGUISTICLOGGER_H
@@ -39,7 +39,7 @@ namespace LinguisticProcessing {
 
 /**
  * @brief A generic process unit to log information in files:
- * contains some common informations such as : output suffix, 
+ * contains some common informations such as : output suffix,
  * files in append mode etc...
  */
 class LIMA_LPMISC_EXPORT AbstractLinguisticLogger : public MediaProcessUnit
@@ -52,7 +52,7 @@ public:
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) override;
 
-  bool openLogFile(std::ofstream& output,const std::string& sourceFile) const;
+  bool openLogFile(std::ofstream& output, const std::string& sourceFile) const;
 
   virtual LimaStatusCode process(AnalysisContent& analysis) const override = 0;
 

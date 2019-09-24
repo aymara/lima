@@ -23,7 +23,7 @@
  * @date       Thu Aug  3 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
  * Project     LinguisticProcessing
- * 
+ *
  ***********************************************************************/
 
 #include "AbstractLinguisticLogger.h"
@@ -68,21 +68,20 @@ void AbstractLinguisticLogger::init(
   catch (NoSuchParam& ) {} // keep default value
 }
 
-bool AbstractLinguisticLogger::
-openLogFile(std::ofstream& output,
-            const std::string& sourceFile) const
+bool AbstractLinguisticLogger::openLogFile(std::ofstream& output,
+                                           const std::string& sourceFile) const
 {
-  string outputFile=sourceFile + m_outputSuffix;
+  auto outputFile = sourceFile + m_outputSuffix;
   if (m_append) {
-    output.open(outputFile.c_str(),ios::app | std::ofstream::binary);
+    output.open(outputFile, ios::app | std::ofstream::binary);
   }
   else {
-    output.open(outputFile.c_str(), std::ofstream::binary);
+    output.open(outputFile, std::ofstream::binary);
   }
   if (!output.good())
   {
     CORECLIENTLOGINIT;
-    LERROR << "Can't open log file" << outputFile.c_str();
+    LERROR << "Can't open log file" << outputFile;
   }
   return output.good();
 }
