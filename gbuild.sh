@@ -19,7 +19,7 @@
 #Fail if anything goes wrong
 set -o errexit
 set -o nounset
-set -o xtrace
+# set -o xtrace
 
 usage()
 {
@@ -40,7 +40,6 @@ Options default values are in parentheses.
   -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
-  -T                Use TensorFlow
   -P tfsrcpath      <> Path to TensorFlow sources
 EOF
 exit 1
@@ -59,10 +58,9 @@ CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
-USE_TF=false
 TF_SOURCES_PATH=""
 
-while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
+while getopts ":d:m:n:r:v:G:a:P:sj:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -104,9 +102,6 @@ while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
             ;;
         s)
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
-            ;;
-        T)
-            USE_TF=true
             ;;
         P)
             TF_SOURCES_PATH=$OPTARG
@@ -215,19 +210,14 @@ else
   pushd $build_prefix/$mode/$current_project
 fi
 
-if [ "$USE_TF" = false ] ; then
-  TF_SOURCES_PATH=""
-else
-  if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
-    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
-  fi
-
-  echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
+if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
+  TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
 fi
-
 
 export LSAN_OPTIONS=suppressions=$LIMA_SOURCES_DIR/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
+
+echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
 
 echo "Launching cmake from $PWD"
 cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
