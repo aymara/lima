@@ -139,9 +139,20 @@ protected:
 
     void append(LinguisticGraphVertex v, Token *t, MorphoSyntacticData *m)
     {
+#ifdef DEBUG_LP
+      TENSORFLOWMORPHOSYNTAXLOGINIT;
+      LDEBUG << "TSentence::append" << v << t->stringForm();
+#endif
       if (tokens.size() <= token_count)
-        LOG_ERROR_AND_THROW("TSentence::append: there is no more space for new token",
-                            LimaException());
+      {
+        QString errorString;
+        QTextStream ts(&errorString);
+        ts << "TSentence::append tokens size (" << tokens.size() << ") <= token_count ("
+            << token_count << ")";
+        TENSORFLOWMORPHOSYNTAXLOGINIT;
+        LERROR << errorString;
+        throw std::runtime_error(errorString.toStdString());
+      }
 
       tokens[token_count].vertex = v;
       tokens[token_count].token = t;
@@ -351,7 +362,7 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 {
   TimeUtils::updateCurrentTime();
 
-  LOG_MESSAGE(LINFO, "Start of TensorFlowMorphoSyntax");
+  LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowMorphoSyntax");
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   AnalysisGraph* posgraph = new AnalysisGraph("PosGraph", m_language, false, false, *anagraph);
@@ -745,6 +756,8 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
 
 void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
 {
+  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowMorphoSyntaxPrivate::load_config" << config_file_name)
+
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
