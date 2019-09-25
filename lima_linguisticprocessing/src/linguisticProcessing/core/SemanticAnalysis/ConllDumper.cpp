@@ -497,26 +497,46 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         QString neType = QString::fromUtf8("_") ;
         if (annotationData != nullptr)
         {
-          std::set< AnnotationGraphVertex > anaVertices =
-              annotationData->matches("PosGraph", v, "AnalysisGraph");
-          // note: anaVertices size should be 0 or 1
-          for (const auto& anaVertex: anaVertices)
+          // Check if the PosGraph vertex holds a specific entity
+          auto matches = annotationData->matches("PosGraph",
+                                                v,
+                                                "annot");
+          for (const auto& vx: matches)
           {
-            auto matches = annotationData->matches("AnalysisGraph",
-                                                  anaVertex,
-                                                  "annot");
-            for (const auto& vx: matches)
+            if (annotationData->hasAnnotation(
+              vx, QString::fromUtf8("SpecificEntity")))
             {
-              if (annotationData->hasAnnotation(
-                vx, QString::fromUtf8("SpecificEntity")))
-              {
-                auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
-                  pointerValue<SpecificEntityAnnotation>();
-                neType = MedData::single().getEntityName(se->getType());
-                break;
-              }
+              auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
+                pointerValue<SpecificEntityAnnotation>();
+              neType = MedData::single().getEntityName(se->getType());
+              break;
             }
-            if (neType != "_") break;
+          }
+          if (neType == "_")
+          {
+            // The PosGraph vertex did not hold a specific entity,
+            // check if the AnalysisGraph vertex does
+            std::set< AnnotationGraphVertex > anaVertices =
+                annotationData->matches("PosGraph", v, "AnalysisGraph");
+            // note: anaVertices size should be 0 or 1
+            for (const auto& anaVertex: anaVertices)
+            {
+              auto matches = annotationData->matches("AnalysisGraph",
+                                                    anaVertex,
+                                                    "annot");
+              for (const auto& vx: matches)
+              {
+                if (annotationData->hasAnnotation(
+                  vx, QString::fromUtf8("SpecificEntity")))
+                {
+                  auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
+                    pointerValue<SpecificEntityAnnotation>();
+                  neType = MedData::single().getEntityName(se->getType());
+                  break;
+                }
+              }
+              if (neType != "_") break;
+            }
           }
         }
         QString conllRelName = "_";
