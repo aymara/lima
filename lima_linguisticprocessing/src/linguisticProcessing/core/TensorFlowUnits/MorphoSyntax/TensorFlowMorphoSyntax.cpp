@@ -719,7 +719,7 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
       // words
       const u32string u32_form = form.toStdU32String();
       size_t max_chars = u32_form.size() > m_max_word_len ? m_max_word_len : u32_form.size();
-      size_t k = 0;
+      int64 k = 0;
       for (; k < max_chars; ++k)
       {
         unsigned int char_idx = char_idx_unk;
