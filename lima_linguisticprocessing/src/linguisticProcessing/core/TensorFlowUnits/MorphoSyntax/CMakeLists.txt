@@ -40,9 +40,14 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
         lima-lp-textsegmentation
         lima-lp-syntacticanalysis
         lima-common
-        fasttext-shared
         ${TensorFlow_LIBRARIES}
     )
+
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        target_link_libraries(lima-lp-tensorflowmorphosyntax fasttext-static)
+    else()
+        target_link_libraries(lima-lp-tensorflowmorphosyntax fasttext-shared)
+    endif()
 
     set_target_properties(lima-lp-tensorflowmorphosyntax PROPERTIES
         VERSION ${LIMA_LP_LIB_VERSION}
