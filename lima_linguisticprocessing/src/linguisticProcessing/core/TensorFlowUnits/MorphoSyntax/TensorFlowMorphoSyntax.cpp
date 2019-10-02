@@ -140,7 +140,8 @@ protected:
     void append(LinguisticGraphVertex v, Token *t, MorphoSyntacticData *m)
     {
       if (tokens.size() <= token_count)
-          throw;
+        LOG_ERROR_AND_THROW("TSentence::append: there is no more space for new token",
+                            LimaException());
 
       tokens[token_count].vertex = v;
       tokens[token_count].token = t;
@@ -329,7 +330,8 @@ void TensorFlowMorphoSyntaxPrivate::init_crf()
 void TensorFlowMorphoSyntaxPrivate::add_linguistic_element(MorphoSyntacticData* msdata, const Token &token) const
 {
   if (msdata == nullptr)
-    throw;
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::add_linguistic_element: msdata == nullptr",
+                        LimaException());
 
   LinguisticElement elem;
   elem.inflectedForm = token.form();
@@ -474,8 +476,8 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
       set<LinguisticGraphVertex> out_set;
       while (it != it_end)
       {
-          out_set.insert(target(*it, *result_graph));
-          it++;
+        out_set.insert(target(*it, *result_graph));
+        it++;
       }
       if (out_set.size() > 1)
       {
@@ -520,15 +522,15 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
   vector<string> requested_nodes;
   for (auto& out : m_seqtag_outputs)
   {
-      requested_nodes.push_back(out.logits_node_name);
+    requested_nodes.push_back(out.logits_node_name);
   }
 
   for (auto& out : m_depparse_outputs)
   {
-      requested_nodes.push_back(out.arcs_pred_node_name);
-      requested_nodes.push_back(out.tags_pred_node_name);
-      requested_nodes.push_back(out.arcs_logits_node_name);
-      requested_nodes.push_back(out.tags_logits_node_name);
+    requested_nodes.push_back(out.arcs_pred_node_name);
+    requested_nodes.push_back(out.tags_pred_node_name);
+    requested_nodes.push_back(out.arcs_logits_node_name);
+    requested_nodes.push_back(out.tags_logits_node_name);
   }
 
   for (size_t i = 0; i < sentences.size();)
@@ -556,7 +558,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         TSentence& sent = sentences[i+p];
         size_t len = sent.token_count;
         if (0 == len)
-            continue;
+          continue;
 
         vector<vector<float>> converted_scores;
         converted_scores.resize(len + 1);
@@ -604,7 +606,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         TSentence& sent = sentences[i+p];
         size_t len = sent.token_count;
         if (0 == len)
-            continue;
+          continue;
 
         for (size_t j = 1; j < len + 1; j++)
         {
@@ -619,14 +621,14 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
           {
             TToken& h = sent.tokens[pred_head];
             syntacticData.addRelationNoChain(ld.getSyntacticRelationId(out_descr.i2t[pred_tag]),
-			                     t.vertex,
-					     h.vertex);
+                                             t.vertex,
+                                             h.vertex);
           }
           else
           {
             syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"),
-			                     t.vertex,
-					     t.vertex);
+                                             t.vertex,
+                                             t.vertex);
           }
         }
       }
@@ -737,7 +739,7 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
         input_pretrained(i, n, a) = vec[a];
     }
 
-    len(i) = n;
+    len(i) = n + 1;
   }
 }
 
