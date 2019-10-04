@@ -277,7 +277,7 @@
     </group>
     <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
       <param key="model_prefix" value="ewt/UD_English-EWT"/>
-      <param key="embeddings" value=""/>
+      <param key="embeddings" value="cc.en.300.bin"/>
     </group>
     <group name="pytftokenizer" class="PythonTensorFlowTokenizer">
       <param key="corpus" value="en"/>
