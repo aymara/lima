@@ -59,11 +59,11 @@ class AnalysisThreadPrivate
 {
 friend class AnalysisThread;
 public:
-  AnalysisThreadPrivate (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer, 
+  AnalysisThreadPrivate (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer,
                         QHttpRequest *req, QHttpResponse *resp,
                         const std::set<std::string>& langs);
   ~AnalysisThreadPrivate() {}
-  
+
   Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
   QHttpRequest* m_request;
   // QHttpResponse* m_response;
@@ -74,7 +74,7 @@ public:
   QByteArray m_response_body;
 };
 
-AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
+AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer,
                     QHttpRequest *req, QHttpResponse *resp,
                     const std::set<std::string>& langs) :
     m_analyzer(analyzer),
@@ -86,8 +86,8 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(Lima::LinguisticProcessing::Abstrac
   LIMA_UNUSED(resp);
 }
 
-AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer, 
-                  QHttpRequest *req, QHttpResponse *resp, 
+AnalysisThread::AnalysisThread (Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* analyzer,
+                  QHttpRequest *req, QHttpResponse *resp,
                   const std::set<std::string>& langs, QObject* parent ):
 #ifdef MULTITHREAD
     QThread(parent),
@@ -140,19 +140,24 @@ void AnalysisThread::run ()
 void AnalysisThread::startAnalysis()
 {
   LIMASERVERLOGINIT;
-  LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
+  LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString()
+          << m_d->m_request->url().path();
   LDEBUG << "AnalysisThread::startAnalysis mediaType=" << m_d->m_mediaType;
   int exitStatus=0;
   if( m_d->m_request->url().path() != "/extractEN")
   {
-    LWARN << "AnalysisThread::startAnalysis: entry point " << m_d->m_request->url().path() << " not recognized";
+    LWARN << "AnalysisThread::startAnalysis: entry point "
+          << m_d->m_request->url().path() << " not recognized";
     m_d->m_response_code = 400;
     m_d->m_response_header.insert(std::pair<QString,QString>("Allow","extractEN"));
     m_d->m_response_body=QByteArray("Only extractEN entry point accepted.");
     exitStatus=1;
   }
-  if( (m_d->m_request->methodString() != "HTTP_GET") && (m_d->m_request->methodString() != "HTTP_POST") ) {
-    LWARN << "AnalysisThread::startAnalysis: methodString " << m_d->m_request->methodString() << " not recognized";
+  if( (m_d->m_request->methodString() != "HTTP_GET")
+    && (m_d->m_request->methodString() != "HTTP_POST") )
+  {
+    LWARN << "AnalysisThread::startAnalysis: methodString "
+          << m_d->m_request->methodString() << " not recognized";
     m_d->m_response_code = 405;
     m_d->m_response_header.insert(std::pair<QString,QString>("Allow","GET,POST"));
     m_d->m_response_body=QByteArray("Only GET and POST methods currently allowed.");
@@ -163,156 +168,164 @@ void AnalysisThread::startAnalysis()
   QString pipeline ;
   QString textQS;
   std::string text_s;
-  QPair<QString, QString> item;
   std::map<std::string,std::string> metaData;
   std::set<std::string> inactiveUnits;
 
-  if(m_d->m_request->methodString() == "HTTP_GET") {
+  if(m_d->m_request->methodString() == "HTTP_GET")
+  {
     LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_GET)";
   }
-  else if(m_d->m_request->methodString() == "HTTP_POST"){
+  else if(m_d->m_request->methodString() == "HTTP_POST")
+  {
     LDEBUG << "AnalysisThread::startAnalysis: process extractEN request (mode HTTP_POST)";
   }
-    
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    Q_FOREACH( item, m_d->m_request->url().queryItems(QUrl::FullyDecoded))
-#else
-    Q_FOREACH( item, QUrlQuery(m_d->m_request->url()).queryItems(QUrl::FullyDecoded))
-#endif
+
+  for (const auto& item :
+    QUrlQuery(m_d->m_request->url()).queryItems(QUrl::FullyDecoded))
+  {
+    QTemporaryFile tempFile;
+    metaData["FileName"] = tempFile.fileName().toStdString();
+    if (item.first == "lang")
     {
-      QTemporaryFile tempFile;
-      metaData["FileName"]=tempFile.fileName().toUtf8().constData();
-      if (item.first == "lang")
+      language = item.second;
+      metaData["Lang"] = language.toStdString();
+      LDEBUG << "AnalysisThread::startAnalysis: language=" << language;
+    }
+    if (item.first == "pipeline")
+    {
+      pipeline = item.second;
+      LDEBUG << "AnalysisThread::startAnalysis: pipeline=" << pipeline;
+    }
+    if (item.first == "meta")
+    {
+      auto metadataValues = item.second.split(",");
+      LDEBUG << "AnalysisThread::startAnalysis: meta=" << metadataValues;
+      for (const auto& metadataValue: metadataValues)
       {
-        language = item.second;
-        metaData["Lang"]=language.toUtf8().data();
-        LDEBUG << "AnalysisThread::startAnalysis: language=" << language;
+        auto metaDataKeyValue = metadataValue.split(":");
+        if (metaDataKeyValue.size() != 2)
+        {
+          LIMASERVERLOGINIT;
+          LERROR << "meta argument '"<< metadataValue
+                  << "' is not of the form XXX:YYY: ignored";
+        }
+        else
+        {
+          metaData.insert(std::make_pair(metaDataKeyValue[0].toStdString(),
+                                         metaDataKeyValue[1].toStdString()));
+        }
       }
-      if (item.first == "pipeline")
-      {
-        pipeline = item.second;
-        LDEBUG << "AnalysisThread::startAnalysis: pipeline=" << pipeline;
-      }
-      if (item.first == "meta")
-      {
-        QString metadataValues= item.second;
-        LDEBUG << "AnalysisThread::startAnalysis: meta=" << metadataValues;
-        std::string metaString = metadataValues.toStdString();
-        std::string::size_type k=0;
-        do {
-          k=metaString.find(",");
-          //if (k==std::string::npos) continue;
-          std::string str(metaString,0,k);
-          std::string::size_type i=str.find(":");
-          if (i==std::string::npos) {
-            std::cerr << "meta argument '"<< str <<"' is not of the form XXX:YYY: ignored" << std::endl;
-          }
-          else {
-            //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-            metaData.insert(std::make_pair(std::string(str,0,i),std::string(str,i+1)));
-          }
-          if (k!=std::string::npos) {
-            metaString=std::string(metaString,k+1);
-          }
-        }  while (k!=std::string::npos);
-        
-      }
-      if( (item.first == "text") & (m_d->m_request->methodString() == "HTTP_GET") )
-      {
-        // Get text from parameter in GET mode
-        textQS = item.second;
-      }
+
     }
-    if(m_d->m_request->methodString() == "HTTP_POST") {
-      // Get text from body in POST mode
-      const QByteArray& body = m_d->m_request->body();
-      text_s = std::string(body.data());
-      textQS = Misc::utf8stdstring2limastring(text_s);
-    }
-    QString truncated = textQS.mid(0,20);
-    LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << truncated << "...'";
-    
-    if( language.isEmpty() )
+    if( (item.first == "text") & (m_d->m_request->methodString() == "HTTP_GET") )
     {
-      m_d->m_response_code = 400;
-      m_d->m_response_body=QByteArray("Empty language");
-      exitStatus=1;
+      // Get text from parameter in GET mode
+      textQS = item.second;
     }
-    else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
-    {
-      m_d->m_response_code = 400;
-      QString errorMessage = QString(tr("Language '%1' is not initialized")).arg(language);
-      m_d->m_response_body=errorMessage.toUtf8();
-      exitStatus=1;
-    }
-    else if( pipeline.isEmpty() )
-    {
-      m_d->m_response_code = 400;
-      m_d->m_response_body=QByteArray("Empty pipeline");
-      exitStatus=1;
-    }
-    else if( textQS.isEmpty() )
-    {
-      m_d->m_response_code = 400;
-      m_d->m_response_body=QByteArray("Empty text");
-      exitStatus=1;
-    }
-    
-    if( exitStatus != 0 ) {
-      exit(exitStatus); // exit the eventLoop
-      return;
-    }
-    else {
-      std::map<std::string, AbstractAnalysisHandler*> handlers;
-      LinguisticProcessing::SimpleStreamHandler* seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
-      handlers.insert(std::make_pair("se", seLogWriter));
-      LinguisticProcessing::SimpleStreamHandler* simpleStreamHandler = new LinguisticProcessing::SimpleStreamHandler();
-      handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler));
+  }
+  if(m_d->m_request->methodString() == "HTTP_POST")
+  {
+    // Get text from body in POST mode
+    const auto& body = m_d->m_request->body();
+    text_s = std::string(body.data());
+    textQS = QString::fromUtf8(text_s.c_str());
+  }
+  auto truncated = textQS.mid(0,20);
+  LDEBUG << "AnalysisThread::startAnalysis: " << "text='" << truncated << "...'";
 
-      std::ostringstream* oss = new std::ostringstream();
-      seLogWriter->setOut(oss);
-      simpleStreamHandler->setOut(oss);
+  if( language.isEmpty() )
+  {
+    m_d->m_response_code = 400;
+    m_d->m_response_body = QByteArray("Empty language");
+    exitStatus=1;
+  }
+  else if( m_d->m_langs.find(metaData["Lang"]) == m_d->m_langs.end() )
+  {
+    m_d->m_response_code = 400;
+    auto errorMessage = QString(tr("Language '%1' is not initialized")).arg(language);
+    m_d->m_response_body = errorMessage.toUtf8();
+    exitStatus=1;
+  }
+  else if( pipeline.isEmpty() )
+  {
+    m_d->m_response_code = 400;
+    m_d->m_response_body = QByteArray("Empty pipeline");
+    exitStatus=1;
+  }
+  else if( textQS.isEmpty() )
+  {
+    m_d->m_response_code = 400;
+    m_d->m_response_body = QByteArray("Empty text");
+    exitStatus=1;
+  }
 
-      LDEBUG << "Analyzing" << language << textQS.mid(0,20) << "...";
-      // std::ostringstream ots;
-      
-      QTemporaryFile tempFile;
-      metaData["FileName"]=tempFile.fileName().toUtf8().constData();
-      std::string pipe = pipeline.toUtf8().data();
-      
-      m_d->m_analyzer->analyze(textQS,metaData, pipe, handlers, inactiveUnits);
-
-      std::string resultString;
-      if( m_d->m_mediaType.compare("text/xml") == 0) {
-        resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
-        resultString.append(oss->str());
-      }
-      else if( m_d->m_mediaType.compare("application/json") == 0) {
-        resultString.append(ConllToJson( oss->str()));
-      }
-      else
-        resultString.append(ConllToJson( oss->str()));
-
-      LDEBUG << "AnalysisThread::startAnalysis: seLogger output is " << QString::fromUtf8((std::string(resultString,0, 30)).c_str());
-
-      if( m_d->m_mediaType.compare("text/xml") == 0) {
-        m_d->m_response_header.insert(std::pair<QString,QString>("Content-Type","text/xml; charset=utf-8"));
-      }
-      if( m_d->m_mediaType.compare("application/json") == 0) {
-        m_d->m_response_header.insert(std::pair<QString,QString>("Content-Type","application/json; charset=utf-8"));
-      }
-      m_d->m_response_code=200;
-
-      m_d->m_response_body=(QByteArray(resultString.c_str()));
-      LDEBUG << "AnalysisThread::startAnalysis: delete oss... ";
-      delete seLogWriter;
-      delete oss; oss = 0;
-    }
-#ifdef MULTITHREAD
-    // m_d->m_request->deleteLater();
-    // deleteLater();
-    // quit(); // exit the eventLoop
+  if( exitStatus != 0 )
+  {
     exit(exitStatus); // exit the eventLoop
+    return;
+  }
+  else
+  {
+    std::map<std::string, AbstractAnalysisHandler*> handlers;
+    auto seLogWriter = new LinguisticProcessing::SimpleStreamHandler();
+    handlers.insert(std::make_pair("se", seLogWriter));
+    auto simpleStreamHandler = new LinguisticProcessing::SimpleStreamHandler();
+    handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler));
+
+    auto oss = new std::ostringstream();
+    seLogWriter->setOut(oss);
+    simpleStreamHandler->setOut(oss);
+
+    LDEBUG << "Analyzing" << language << textQS.mid(0,20) << "...";
+    // std::ostringstream ots;
+
+    QTemporaryFile tempFile;
+    metaData["FileName"] = tempFile.fileName().toStdString();
+    std::string pipe = pipeline.toStdString();
+
+    m_d->m_analyzer->analyze(textQS,metaData, pipe, handlers, inactiveUnits);
+
+    std::string resultString;
+    if( m_d->m_mediaType.compare("text/xml") == 0)
+    {
+      resultString.append("<?xml version='1.0' encoding='UTF-8'?>");
+      resultString.append(oss->str());
+    }
+    else if( m_d->m_mediaType.compare("application/json") == 0)
+    {
+      resultString.append(ConllToJson( oss->str()));
+    }
+    else
+    {
+      resultString.append(ConllToJson( oss->str()));
+    }
+
+    LDEBUG << "AnalysisThread::startAnalysis: seLogger output is "
+            << QString::fromUtf8((std::string(resultString,0, 30)).c_str());
+
+    if( m_d->m_mediaType.compare("text/xml") == 0)
+    {
+      m_d->m_response_header.insert(
+        std::pair<QString,QString>("Content-Type","text/xml; charset=utf-8"));
+    }
+    if( m_d->m_mediaType.compare("application/json") == 0)
+    {
+      m_d->m_response_header.insert(
+        std::pair<QString,QString>("Content-Type",
+                                   "application/json; charset=utf-8"));
+    }
+    m_d->m_response_code = 200;
+
+    m_d->m_response_body = QByteArray(resultString.c_str());
+    LDEBUG << "AnalysisThread::startAnalysis: delete oss... ";
+    delete seLogWriter;
+    delete oss; oss = 0;
+  }
+#ifdef MULTITHREAD
+  // m_d->m_request->deleteLater();
+  // deleteLater();
+  // quit(); // exit the eventLoop
+  exit(exitStatus); // exit the eventLoop
 #else
 #endif
 }
@@ -322,26 +335,31 @@ std::string  AnalysisThread::ConllToJson( const std::string & str )
   LIMASERVERLOGINIT;
   // LDEBUG << "AnalysisThread::ConllToJson str=" << std::string(str,0, 30) << "...";
   LDEBUG << "AnalysisThread::ConllToJson str=" << str;
-  
+
   // Array of tokens
   QJsonArray array;
   std::string::size_type pos = 0;
   std::string::size_type i=0;
-  for(; i != std::string::npos ;) {
+  for(; i != std::string::npos ;)
+  {
     // search for EOL: each line represents a token (or end of sentence for an empty line)
     i = str.find('\n', pos);
     // LDEBUG << "AnalysisThread::ConllToJson: pos:" << pos << ", i:"<< i;
     QJsonValue qval;
-    if( pos == i ) {
+    if( pos == i )
+    {
       // empty line = end of sentence
       qval = QJsonValue("");
     }
-    else {
+    else
+    {
       std::string line;
-      if( i == std::string::npos ) {
+      if( i == std::string::npos )
+      {
         line = std::string(str,pos);
       }
-      else {
+      else
+      {
         line = std::string(str,pos,i-pos);
       }
       qval = QJsonValue(line.c_str());
@@ -350,10 +368,10 @@ std::string  AnalysisThread::ConllToJson( const std::string & str )
     pos = i+1;
   }
   QJsonObject object;
-  object["tokens"]=array;
+  object["tokens"] = array;
   QJsonDocument doc(object);
   std::string result(doc.toJson().data());
-  
+
   std::string truncated = std::string(result,0, 80);
   LDEBUG << "AnalysisThread::ConllToJson: result=" << truncated << "...";
   return result;
