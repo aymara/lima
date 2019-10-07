@@ -88,7 +88,6 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(
     m_langs(langs),
     m_mediaType((req->header("content-type")).toStdString())
 {
-  LIMA_UNUSED(resp);
 }
 
 AnalysisThread::AnalysisThread (
