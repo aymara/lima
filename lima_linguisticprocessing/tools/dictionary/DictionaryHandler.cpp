@@ -31,6 +31,8 @@ using namespace Lima::Common::Misc;
 namespace Lima
 {
 
+#define CODED_INT_BUFFER_SIZE 10
+
 DictionaryCompiler::DictionaryCompiler(
   LinguisticProcessing::FlatTokenizer::CharChart* charChart,
   AbstractAccessByString* access,
@@ -65,7 +67,7 @@ DictionaryCompiler::DictionaryCompiler(
   S_DELETE="delete";
   S_ADD="add";
   m_entries.resize(access->getSize());
-  m_codedintbuf=new char[5];
+  m_codedintbuf=new char[CODED_INT_BUFFER_SIZE];
   m_charbuf=new char[BUFFER_SIZE];
   m_charbufSize=BUFFER_SIZE;
 
@@ -73,18 +75,18 @@ DictionaryCompiler::DictionaryCompiler(
   m_lingProps.insert(make_pair(std::vector<LinguisticCode>(),0));
 
   // set cache size
-  m_strCache.resize(5,make_pair(LimaString(),0));
+  m_strCache.resize(CODED_INT_BUFFER_SIZE,make_pair(LimaString(),0));
 }
 
-DictionaryCompiler::~DictionaryCompiler() 
+DictionaryCompiler::~DictionaryCompiler()
 {
   delete[] m_codedintbuf;
   delete[] m_charbuf;
 }
 
-bool DictionaryCompiler::startElement(const QString & namespaceURI, 
-                                      const QString & name, 
-                                      const QString & qName, 
+bool DictionaryCompiler::startElement(const QString & namespaceURI,
+                                      const QString & name,
+                                      const QString & qName,
                                       const QXmlAttributes & attributes)
 {
   LIMA_UNUSED(namespaceURI)
@@ -94,9 +96,9 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
   if (name==S_ENTRY)
   {
     QString k=attributes.value(S_K);
-    if (k==0)
+    if (k.isEmpty())
     {
-      cerr << "ERROR : no attribute 'k' for entry !" << endl;
+      std::cerr << "ERROR : no attribute 'k' for entry !" << std::endl;
       exit(-1);
     }
     m_currentKey=k;
@@ -124,7 +126,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     QString op=attributes.value(S_OP);
     bool hasToDesaccentuate=true;
     m_inDeleteEntry=false;
-    if (op != 0)
+    if (!op.isEmpty())
     {
       if (op==S_REPLACE)
       {
@@ -155,11 +157,11 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
         {
           Accented acc;
           acc.id=m_currentIndex;
-          if (desacc == 0 || desacc==S_YES)
+          if (desacc.isEmpty() || desacc==S_YES)
           {
             acc.del=false;
           }
-          else if (desacc !=0 && desacc==S_NO)
+          else if (!desacc.isEmpty() && desacc==S_NO)
           {
             acc.del=true;
           }
@@ -198,7 +200,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     }
     QString op=attributes.value(S_OP);
     m_inDeleteLingInfo=false;
-    if (op != 0)
+    if (!op.isEmpty())
     {
       if (op==S_REPLACE || op==S_DELETE)
       {
@@ -214,10 +216,10 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
       }
     }
     QString l=attributes.value(S_L);
-    if (l != 0)
+    if (!l.isEmpty())
     {
       LimaString lemma=l;
-      //      cerr << "read lemma " << limastring2utf8stdstring(lemma) << endl;
+//       std::cerr << "read lemma " << limastring2utf8stdstring(lemma) << std::endl;
       int64_t lemmaIndex=getStringIndex(lemma);
       //      if (lemmaIndex!=m_currentIndex)
       //      {
@@ -229,7 +231,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
       m_currentLingInfo->lemma=currentFormIndex;
     }
     QString n=attributes.value(S_N);
-    if (n != 0)
+    if (!n.isEmpty())
     {
       LimaString norm=n;
       //      cerr << "read norm " << limastring2utf8stdstring(norm) << endl;
@@ -247,15 +249,17 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
       LERROR << "ERROR : found property in delete lingInfo for entry " << m_currentKey << " ! data can be inconsistant";
     }
     QString v = attributes.value(S_V);
-    if (v == 0)
+    if (v.isEmpty())
     {
-      LERROR << "ERROR : tag <p> has no attribute 'v' for '" 
+      LERROR << "ERROR : tag <p> has no attribute 'v' for '"
               << m_currentKey << "'!";
       return false;
     }
     const auto & it = m_conv.find(Common::Misc::limastring2utf8stdstring(v));
     if (it != m_conv.end())
     {
+//       std::cerr << "DictionaryCompiler::startElement push in current ling prop: "
+//                 << it->second << std::endl;
       m_currentLingProps.push_back(it->second);
     }
     else
@@ -273,7 +277,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     m_inDeleteConcat=false;
     m_concatStack.push_back(Concat());
     QString op=attributes.value(S_OP);
-    if ((op!=0) && (op==S_REPLACE || op==S_DELETE))
+    if ((!op.isEmpty()) && (op==S_REPLACE || op==S_DELETE))
     {
       m_concatStack.back().del=true;
       if (op==S_DELETE)
@@ -281,7 +285,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
         m_inDeleteConcat=true;
       }
     }
-    else if (op!=0 && op!=S_ADD)
+    else if (!op.isEmpty() && op!=S_ADD)
     {
       LERROR << "ERROR : invalid attribute op=\"" << op << "\" for tag concat ! ignore it" ;
     }
@@ -295,7 +299,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
       LERROR << "ERROR : found component in delete concatenated for entry " << m_currentKey << " ! data can be inconsistant";
     }
     QString form=attributes.value(S_FORM);
-    if (form == 0)
+    if (form.isEmpty())
     {
       LERROR << "ERROR : tag <c> has no attribute 'form' !";
     }
@@ -323,7 +327,7 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
       position=0;
     }
     QString pos=attributes.value(S_POS);
-    if (pos != 0)
+    if (!pos.isEmpty())
     {
       position=pos.toInt();
     }
@@ -349,15 +353,13 @@ bool DictionaryCompiler::startElement(const QString & namespaceURI,
     LERROR << "ERROR : unknown open tag <" << name << "> in input file";
   }
   return true;
-  
+
 }
 
-bool DictionaryCompiler::endElement(const QString& namespaceURI, 
-                                    const QString& name, 
+bool DictionaryCompiler::endElement(const QString& namespaceURI,
+                                    const QString& name,
                                     const QString & qName)
 {
-  LIMA_UNUSED(namespaceURI)
-  LIMA_UNUSED(qName)
   //  cerr << "endElement " << name << endl;
   if (name==S_ENTRY)
   {
@@ -430,13 +432,24 @@ bool DictionaryCompiler::endElement(const QString& namespaceURI,
   }
   else if (name==S_I)
   {
-    sort(m_currentLingProps.begin(),m_currentLingProps.end());
-    pair<vector<LinguisticCode>,uint64_t> value=make_pair(m_currentLingProps,m_lingProps.size());
-    pair<map<vector<LinguisticCode>,uint64_t>::iterator,bool> res(m_lingProps.insert(value));
-    m_currentLingInfo->lingProps=res.first->second;
-    m_currentLingProps.clear();
-    m_currentLingInfo=0;
-    m_inDeleteLingInfo=false;
+    std::sort(m_currentLingProps.begin(),m_currentLingProps.end());
+    auto value = std::make_pair(m_currentLingProps,m_lingProps.size());
+    auto res = m_lingProps.insert(value);
+    if (!res.second)
+    {
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "DictionaryCompiler::endElement failed to insert element "
+          << namespaceURI << ", " << name << ", " << qName;
+//       throw std::runtime_error(errorString.toStdString());
+    }
+    else
+    {
+      m_currentLingInfo->lingProps=res.first->second;
+      m_currentLingProps.clear();
+      m_currentLingInfo=0;
+      m_inDeleteLingInfo=false;
+    }
   }
   else if (name==S_CONCAT)
   {
@@ -526,7 +539,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
       out.write(m_charbuf,entryItr->concatLength);
     }
   }
-  cerr << "wrote " << m_entries.size() << " entries" << endl;
+//   cerr << "wrote " << nbEntries << " entries" << endl;
   m_entries.clear();
   m_entryData.clear();
 
@@ -539,7 +552,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
     lingPropVec[lingItr->second]=&lingItr->first;
   }
   writeCodedInt(out,lingPropVec.size());
-  for (vector<const vector<LinguisticCode>*>::const_iterator it=lingPropVec.begin();
+  for (vector< const vector<LinguisticCode>* >::const_iterator it=lingPropVec.begin();
        it!=lingPropVec.end();
        it++)
   {
@@ -547,7 +560,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
     writeCodedInt(out,l);
     out.write(m_charbuf,l);
   }
-  cerr << "wrote " << lingPropVec.size() << " linguistic property set" << endl;
+//   std::cerr << "wrote " << lingPropVec.size() << " linguistic property set" << std::endl;
   lingPropVec.clear();
 }
 
@@ -557,6 +570,15 @@ unsigned char DictionaryCompiler::writeCodedInt(ostream& out,uint64_t number)
   unsigned char i=0;
   do
   {
+    if (i >= CODED_INT_BUFFER_SIZE)
+    {
+      ANALYSISDICTLOGINIT;
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "DictionaryCompiler::writeCodedInt number too large to be coded in buffer of size "
+          << CODED_INT_BUFFER_SIZE << ": " << number;
+      throw std::runtime_error(errorString.toStdString());
+    }
     m_codedintbuf[i]=(n & 0x7F) << 1;
     n >>= 7;
     i++;
@@ -599,16 +621,14 @@ void DictionaryCompiler::placeEntryDataIntoCharBuf(streampos pos,uint64_t len)
 
 uint64_t DictionaryCompiler::placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps)
 {
-  //  cerr << "placeLingPropsIntoCharBuf size=" << lingProps.size() << endl;
+//   std::cerr << "placeLingPropsIntoCharBuf size=" << lingProps.size() << std::endl;
   uint64_t len=0;
-  for (vector<LinguisticCode>::const_iterator it=lingProps.begin();
-       it!=lingProps.end();
-       it++)
+  for (const auto& lingProp : lingProps)
   {
     // coded int should never exceed 5 byte, so 10 bound size should works well ;-)
     if (len + 10 > m_charbufSize)
     {
-      cerr << "info : has to increase buffer size" << endl;
+//       std::cerr << "info : has to increase buffer size" << std::endl;
       m_charbufSize*=2;
       char* newbuf=new char[m_charbufSize];
       memcpy(newbuf,m_charbuf,len);
@@ -616,29 +636,40 @@ uint64_t DictionaryCompiler::placeLingPropsIntoCharBuf(const std::vector<Linguis
       m_charbuf=newbuf;
     }
 
-    uint64_t n(*it);
-    //    cerr << "code lingProp " << n << endl;
+//     std::cerr << "code lingProp " << lingProp << std::endl;
+    uint64_t n = lingProp;
     unsigned char i=0;
     do
     {
+      if (i >= CODED_INT_BUFFER_SIZE)
+      {
+        ANALYSISDICTLOGINIT;
+        QString errorString;
+        QTextStream qts(&errorString);
+        qts << "DictionaryCompiler::placeLingPropsIntoCharBuf number too large to be coded in buffer of size "
+            << CODED_INT_BUFFER_SIZE << ": " << lingProp;
+        throw std::runtime_error(errorString.toStdString());
+      }
       m_codedintbuf[i]=(n & 0x7F) << 1;
       n >>= 7;
       i++;
-      //      cerr << "byte " << i-1 << " is " << (unsigned short)m_codedintbuf[i-1] << " now n=" << n << endl;
-    }
-    while (n); // need 5 bytes for values > 268435455
-    //    cerr << "use " << (int)i << " bytes" << endl;
+//       std::cerr << "byte " << i-1 << " is "
+//                 << (unsigned short)m_codedintbuf[i-1]
+//                 << " now n=" << n << std::endl;
+    } while (n); // need 5 bytes for values > 268435455
+//     std::cerr << "use " << (int)i << " bytes" << std::endl;
     i--;
     for(;i>0;i--)
     {
-      //      cerr << "tmp[i]=" << (unsigned short)m_codedintbuf[i] << endl;
+//       std::cerr << "tmp[i]=" << (unsigned short)m_codedintbuf[i] << std::endl;
       m_charbuf[len++] = m_codedintbuf[i] | 0x1;
-      //      cerr << "wrote char " << (int)i << " : " << (unsigned short)m_charbuf[len-1] << endl;
+//       std::cerr << "wrote char " << (int)i << " : "
+//                 << (unsigned short)m_charbuf[len-1] << std::endl;
     }
     m_charbuf[len++] = m_codedintbuf[0];
-    //    cerr << "wrote char 0 : " << (unsigned short)m_codedintbuf[0] << endl;
+//     std::cerr << "wrote char 0 : " << (unsigned short)m_codedintbuf[0] << std::endl;
   }
-  //  cerr << "return len=" << len << endl;
+//   std::cerr << "return len=" << len << std::endl;
   return len;
 }
 
