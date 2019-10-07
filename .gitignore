@@ -32,3 +32,6 @@ CMakeLists.txt.user
 
 # vim
 *.sw?
+
+.directory
+
