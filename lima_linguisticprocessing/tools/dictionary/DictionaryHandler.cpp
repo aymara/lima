@@ -306,7 +306,7 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
         else
         {
           Accented acc;
-          acc.id = m_currentIndex;
+          acc.id=m_currentIndex;
           if (desacc.isEmpty() || desacc==S_YES)
           {
             acc.del = false;
