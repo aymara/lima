@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST
+ *   Copyright (C) 2004-2020 by CEA LIST
  *
  *   Main LIMA executable
  *
@@ -89,12 +89,12 @@ int main(int argc, char **argv)
 
     // Task parented to the application so that it
     // will be deleted by the application.
-    LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+    auto task = new LimaMainTaskRunner(argc, argv, run, &a);
 
     // This will cause the application to exit when
     // the task signals finished.
     QObject::connect(task, &LimaMainTaskRunner::finished,
-                    &a, &QCoreApplication::exit);
+                     &a, &QCoreApplication::exit);
 
     // This will run the task from the application event loop.
     QTimer::singleShot(0, task, SLOT(run()));
@@ -139,6 +139,15 @@ int run(int argc, char** argv)
   auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadLibrary method failed.");
+  }
+  //   std::cerr << "Amose plugins initialized" << std::endl;
 
   std::string strResourcesPath;
   std::string lpConfigFile;
@@ -274,10 +283,9 @@ int run(int argc, char** argv)
   }
 
   QMap< QString, QString > outputs;
-  for(std::vector<std::string>::const_iterator outputsIt = outputsv.begin();
-      outputsIt != outputsv.end(); outputsIt++)
+  for(const auto& soutput : outputsv)
   {
-    QStringList output = QString::fromUtf8((*outputsIt).c_str()).split(":");
+    QStringList output = QString::fromStdString(soutput).split(":");
     if (output.size()==2)
     {
       outputs[output[0]] = output[1];
@@ -285,7 +293,7 @@ int run(int argc, char** argv)
     else
     {
       // Option syntax  error
-      std::cerr << "syntax error in output setting:" << *outputsIt << std::endl;
+      std::cerr << "syntax error in output setting:" << soutput << std::endl;
     }
   }
   std::vector<std::pair<std::string,std::string> > userMetaData;
@@ -324,11 +332,9 @@ int run(int argc, char** argv)
   {
     inactiveUnits.insert(inactiveUnit);
   }
-  std::deque<std::string> pipelines;
+  std::deque<std::string> pipelines({pipeline});
 
-  pipelines.push_back(pipeline);
-
-  uint64_t beginTime=TimeUtils::getCurrentTime();
+  auto beginTime = TimeUtils::getCurrentTime();
 
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
@@ -337,8 +343,8 @@ int run(int argc, char** argv)
     commonConfigFile,
     langs);
 
-  bool clientFactoryConfigured = false;
-  Q_FOREACH(QString configDir, configDirs)
+  auto clientFactoryConfigured = false;
+  for(const auto& configDir: configDirs)
   {
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
@@ -360,19 +366,17 @@ int run(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  std::shared_ptr< AbstractLinguisticProcessingClient > client =
-      std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
+  auto client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
           LinguisticProcessingClientFactory::single().createClient(clientId));
 
   // Set the handlers
   std::map<std::string, AbstractAnalysisHandler*> handlers;
-  BowTextWriter* bowTextWriter = 0;
-  EventAnalysis::EventHandler* eventHandler = 0;
-  BowTextHandler* bowTextHandler = 0;
-  SimpleStreamHandler* simpleStreamHandler = 0;
-  SimpleStreamHandler* fullXmlSimpleStreamHandler = 0;
-  LTRTextHandler* ltrTextHandler=0;
-  XmlBowDocumentHandler* xmlDocumentHandler = nullptr;
+  BowTextWriter* bowTextWriter = nullptr;
+  EventAnalysis::EventHandler* eventHandler = nullptr;
+  BowTextHandler* bowTextHandler = nullptr;
+  SimpleStreamHandler* simpleStreamHandler = nullptr;
+  SimpleStreamHandler* fullXmlSimpleStreamHandler = nullptr;
+  LTRTextHandler* ltrTextHandler = nullptr;
 
   if (dumpers.find("event") != dumpers.end())
   {
@@ -419,7 +423,7 @@ int run(int argc, char** argv)
 
   std::map<std::string,std::string> metaData;
 
-  metaData["Lang"]=langs[0];
+  metaData["Lang"] = langs[0];
   for (const auto& meta : userMetaData)
   {
     metaData[meta.first] = meta.second;
@@ -430,79 +434,77 @@ int run(int argc, char** argv)
   }
 
   uint64_t i=1;
-  for (std::vector<std::string>::iterator fileItr=files.begin();
-       fileItr!=files.end();
-  fileItr++, i++)
+  for (const auto&  file : files)
   {
     // display the progress of the analysis
     std::cerr << "\rAnalyzing "<< i << "/" << files.size()
               << " ("  << std::setiosflags(std::ios::fixed)
               << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
-              << *fileItr << "'" << std::flush;
+              << file << "'" << std::flush;
 
     // set the output files (to 0 if not in list)
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
     QString bowOut = outputs.contains("bow")
         ? (outputs["bow"] == "stdout"
             ? "stdout"
-            : QString::fromUtf8((*fileItr).c_str())+outputs["bow"])
-        : QString::fromUtf8((*fileItr).c_str())+".bin";
-    std::ostream* bowofs  = openHandlerOutputFile(bowTextWriter,
-                                                  std::string(bowOut.toUtf8().constData()),
-                                                  dumpers,
-                                                  "bow");
+            : QString::fromUtf8((file).c_str())+outputs["bow"])
+        : QString::fromUtf8((file).c_str())+".bin";
+    auto bowofs  = openHandlerOutputFile(bowTextWriter,
+                                         std::string(bowOut.toStdString()),
+                                         dumpers,
+                                         "bow");
     QString textOut = outputs.contains("text")
         ? (outputs["text"] == "stdout"
             ? "stdout"
-            : QString::fromUtf8((*fileItr).c_str())+outputs["text"])
+            : QString::fromUtf8((file).c_str())+outputs["text"])
         : "stdout";
-    std::ostream* txtofs  = openHandlerOutputFile(simpleStreamHandler,
-                                                  std::string(textOut.toUtf8().constData()),
-                                                  dumpers,
-                                                  "text");
+    auto txtofs  = openHandlerOutputFile(simpleStreamHandler,
+                                         std::string(textOut.toStdString()),
+                                         dumpers,
+                                         "text");
     QString fullxmlOut = outputs.contains("fullxml")
         ? (outputs["fullxml"] == "stdout"
             ? "stdout"
-            : QString::fromUtf8((*fileItr).c_str())+outputs["fullxml"])
+            : QString::fromStdString(file)+outputs["fullxml"])
         : "stdout";
-    std::ostream* fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler,
-                                                      std::string(fullxmlOut.toUtf8().constData()),
-                                                      dumpers,
-                                                      "fullxml");
+    auto fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler,
+                                             std::string(fullxmlOut.toStdString()),
+                                             dumpers,
+                                             "fullxml");
 
     // loading of the input file
     TimeUtils::updateCurrentTime();
-    QFile file(fileItr->c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    QFile qfile(file.c_str());
+    if (!qfile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-      std::cerr << "Cannot open file " << *fileItr << " ! " << std::endl;
+      std::cerr << "Cannot open file " << file << " ! " << std::endl;
       continue;
     }
-    metaData["FileName"]=*fileItr;
+    metaData["FileName"]=file;
 
     if (splitMode == "lines")
     {
       int lineNum = 0, nbLines = 0;
       std::cerr << "Counting number of lines…";
-      while (!file.atEnd())
+      while (!qfile.atEnd())
       {
-        file.readLine();
+        qfile.readLine();
         nbLines++;
       }
-      file.seek(0);
+      qfile.seek(0);
 
-      QTextStream in(&file);
+      QTextStream in(&qfile);
       std::cerr << "\rStarting analysis";
       while (!in.atEnd())
       {
         lineNum++;
-        QString percent = QString::number((lineNum*1.0/nbLines*100),'f',2);
-        QString contentText = in.readLine();
+        auto percent = QString::number((lineNum*1.0/nbLines*100),'f',2);
+        auto contentText = in.readLine();
         if ( (lineNum % 100) == 0)
         {
           std::cerr << "\rAnalyzed "<< lineNum << "/" << nbLines
                     << " (" << percent.toUtf8().constData()
-                    << "%) lines. At " << file.pos();
+                    << "%) lines. At " << qfile.pos();
         }
 
         // analyze it
@@ -513,15 +515,15 @@ int run(int argc, char** argv)
                         inactiveUnits);
 
       }
-      file.close();
+      qfile.close();
     }
     else // default == none
     {
-      QString contentText = QString::fromUtf8(file.readAll().constData());
-      file.close();
+      auto contentText = QString::fromUtf8(qfile.readAll().constData());
+      qfile.close();
       if (contentText.isEmpty())
       {
-        std::cerr << "file " << *fileItr << " has empty input ! " << std::endl;
+        std::cerr << "file " << file << " has empty input ! " << std::endl;
         continue;
       }
 
@@ -572,7 +574,7 @@ std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler,
                                     const std::set<std::string>&dumpers,
                                     const std::string& dumperId)
 {
-  std::ostream* ofs = 0;
+  std::ostream* ofs = nullptr;
   if (dumpers.find(dumperId)!=dumpers.end())
   {
     if (fileName=="stdout")
@@ -605,7 +607,7 @@ void closeHandlerOutputFile(std::ostream* ofs)
   {
     dynamic_cast<std::ofstream*>(ofs)->close();
     delete ofs;
-    ofs = 0;
+    ofs = nullptr;
   }
 }
 
