@@ -122,11 +122,12 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
 {
 #ifdef DEBUG_LP
   SEMLOGINIT;
-  LDEBUG << "CreateSemanticRelation::operator()" << vertex1 << vertex2 << m_semanticRelationType;
+  LDEBUG << "CreateSemanticRelation::operator()" << vertex1 << vertex2
+          << m_semanticRelationType;
 #endif
   LIMA_UNUSED(anagraph);
-  SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
-  if (semanticData==0)
+  auto semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
+  if (semanticData == nullptr)
   {
     semanticData=new SemanticRelationData();
     analysis.setData("SemanticRelationData",semanticData);

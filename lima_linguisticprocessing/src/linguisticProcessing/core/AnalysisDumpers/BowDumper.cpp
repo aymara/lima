@@ -98,7 +98,7 @@ void BowDumper::init(
   Manager* manager)
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
-  
+
   MediaId language = manager->getInitializationParameters().media;
   try
   {
@@ -118,7 +118,7 @@ void BowDumper::init(
     LERROR << "Missing parameter handler in BowDumper configuration";
     throw InvalidConfiguration();
   }
-  
+
   m_bowGenerator->init(unitConfiguration, language);
 }
 
@@ -186,7 +186,7 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
 
-  // Exclude from the shift list XML entities preceding the offset and 
+  // Exclude from the shift list XML entities preceding the offset and
   // readjust positions regarding the beginning of the node being analyzed
   uint64_t offset = metadata->getStartOffset();
   QMap<uint64_t, uint64_t> localShiftFrom;
@@ -214,7 +214,7 @@ LimaStatusCode BowDumper::process(
 #ifdef DEBUG_LP
     LDEBUG << "BowDumper::process after shiftFrom loop, diff is:" << diff;
 #endif
-    // rewind by one to not miss the first entity and then 
+    // rewind by one to not miss the first entity and then
     // continue from where we stoped the shift corrections
     for (it = it -1; it!=globalShiftFrom.constEnd(); ++it)
     {
@@ -226,7 +226,7 @@ LimaStatusCode BowDumper::process(
       if (it.key()+diff >= offset && it.value() > diff)
       {
         // empirical correction but seems to work
-        localShiftFrom.insert(it.key()+diff, it.value()-diff); 
+        localShiftFrom.insert(it.key()+diff, it.value()-diff);
       }
     }
   }
@@ -315,29 +315,32 @@ void BowDumper::buildBoWText(
     LDEBUG << "BowDumper::buildBoWText on annotation edge "
            << source(*it,annotGraph) << "->" << target(*it,annotGraph);
 #endif
-    if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    if (annotationData->hasAnnotation(*it,
+      QString::fromUtf8("SemanticRelation")))
     {
 #ifdef DEBUG_LP
       LDEBUG << "found semantic relation";
 #endif
       try
       {
-        AnnotationGraphVertex agvs = source(*it,annotGraph);
-        AnnotationGraphVertex agvt = target(*it,annotGraph);
-        std::set< LinguisticGraphVertex > anaGraphVertices = annotationData->matches("annot", agvs, "AnalysisGraph");
+        auto agvs = source(*it,annotGraph);
+        auto agvt = target(*it,annotGraph);
+        auto anaGraphVertices = annotationData->matches("annot", agvs,
+                                                        "AnalysisGraph");
         if  (anaGraphVertices.empty())
         {
           DUMPERLOGINIT;
-          LERROR << "Found no analysis graph vertex associated to the annotation graph vertex" << agvs << ". It will crash";
+          LERROR << "Found no analysis graph vertex associated to the annotation graph vertex"
+                  << agvs << ". It will crash";
         }
-        LinguisticGraphVertex lgvs = *anaGraphVertices.begin();
+        auto lgvs = *anaGraphVertices.begin();
         std::set< LinguisticGraphVertex > visited;
-        bool keepAnyway=true;
+        bool keepAnyway = true;
 
-        const SemanticRelationAnnotation& annot = annotationData->annotation(
-          *it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
+        const auto& annot = annotationData->annotation(
+          *it, QString::fromUtf8("SemanticRelation"))
               .value<SemanticRelationAnnotation>();
-        boost::shared_ptr< BoWPredicate > predicate = m_bowGenerator->createPredicate(
+        auto predicate = m_bowGenerator->createPredicate(
                                         lgvs, agvs, agvt, annot,
                                         annotationData,
                                         *anagraph->getGraph(),
@@ -376,7 +379,7 @@ void BowDumper::addVerticesToBoWText(
 
   const LinguisticGraph& beforePoSGraph=*(anagraph->getGraph());
   const LinguisticGraph& graph=*(posgraph->getGraph());
-  
+
   // go through the graph, add BoWTokens that are not in complex terms
   // Don't use visitor to avoid throwing exceptions
 
@@ -454,13 +457,13 @@ void BowDumper::addVerticesToBoWText(
 // #endif
             }
             else
-            {             
+            {
               bowText.push_back((*bowItr).second); // copy pointer
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               //std::set<LinguisticGraphVertex> bowTokenVertices = (*bowItr)->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-              
+
 // #ifdef DEBUG_LP
 //               std::ostringstream oss;
 //               //std::set<uint32_t>::const_iterator asvit, asvit_end;
@@ -485,8 +488,8 @@ void BowDumper::addVerticesToBoWText(
       }
       else if (alreadyStoredVertices.find(v) == alreadyStoredVertices.end())
       {
-// Commented out code below was handling a bug causing to dump as a simple term 
-// a token member of a compound. As it is better handled by setting a correct 
+// Commented out code below was handling a bug causing to dump as a simple term
+// a token member of a compound. As it is better handled by setting a correct
 // annotation to the token, this code is removed
 //         bool isInCompound = false;
 //         DependencyGraphVertex dgv = syntacticData->depVertexForTokenVertex(v);
@@ -496,20 +499,20 @@ void BowDumper::addVerticesToBoWText(
 //               dgoutItr++)
 //         {
 //           auto relTypeMap = get(edge_deprel_type, *syntacticData->dependencyGraph());
-// 
+//
 //           Common::MediaticData::SyntacticRelationId relType=relTypeMap[*dgoutItr];
 //           std::string relName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relType);
-// 
+//
 //           LDEBUG << "Relation name" << relName;
-// 
+//
 //           if (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).isACompoundRel(relName))
 //           {
 //             isInCompound = true;
 //             break;
 //           }
 //         }
-// 
-//         
+//
+//
 //         if   (!isInCompound)
         {
 // #ifdef DEBUG_LP
@@ -544,7 +547,7 @@ void BowDumper::addVerticesToBoWText(
               std::set<uint64_t> bowTokenVertices = (*bowItr).second->getVertices();
               alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
               alreadyStored.insert(elem);
-            
+
 // #ifdef DEBUG_LP
 //               std::ostringstream oss;
 //               //std::set<uint32_t>::const_iterator asvit, asvit_end;

@@ -20,7 +20,7 @@
   * @file       xmlConfigurationFileParser.cpp
   * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -122,7 +122,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
       LOGINIT("FilesReporting");
       LINFO << "File parsed:" << m_configurationFileName;
     }
-    
+
 }
 
 // XMLConfigurationFileParser::XMLConfigurationFileParser() :
@@ -168,7 +168,7 @@ ModuleConfigurationStructure& XMLConfigurationFileParser::getModuleConfiguration
     XMLCFGLOGINIT;
     LDEBUG << "XMLConfigurationFileParser::getModuleConfiguration no such module"
             << moduleName << "in" << m_d->m_configurationFileName;
-    throw NoSuchModule(std::string(m_d->m_configurationFileName.toUtf8().constData())+":["+moduleName+"]");
+    throw NoSuchModule(std::string(m_d->m_configurationFileName.toStdString())+":["+moduleName+"]");
   }
   return (*it).second;
 }

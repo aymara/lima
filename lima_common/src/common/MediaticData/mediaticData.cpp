@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
-  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr>
   * @date          Started on Mon dec, 2 2002
   */
 
@@ -71,7 +71,7 @@ class MediaticDataPrivate
 private:
   MediaticDataPrivate();
   virtual ~MediaticDataPrivate();
-  
+
 protected:
 
     virtual void initMedias(
@@ -238,7 +238,7 @@ void MediaticData::init(
 
 //  TimeUtils::updateCurrentTime();
   MDATALOGINIT;
-  LINFO << "MediaticData::init " << resourcesPath << " " 
+  LINFO << "MediaticData::init " << resourcesPath << " "
         << configPath << " " << configFile;
   //LINFO << "Mediatic data initialization";
 
@@ -256,7 +256,7 @@ void MediaticData::init(
     {
       if (QFileInfo::exists(confPath + "/" + confFile))
       {
-        LDEBUG << "MediaticData::init parse configuration file: " 
+        LDEBUG << "MediaticData::init parse configuration file: "
                 << (confPath + "/" + confFile);
         configurationFileFound = true;
         XMLConfigurationFileParser configuration(confPath + "/" + confFile);
@@ -267,9 +267,9 @@ void MediaticData::init(
         initEntityTypes(configuration);
 
         m_d->initRelations(configuration);
-        
+
         m_d->initConceptTypes(configuration);
-        
+
         /**
           * initialize active medias
           */
@@ -278,7 +278,7 @@ void MediaticData::init(
           LINFO << "    " << (*it).c_str();
 
         m_d->initMedias(configuration, meds);
-        
+
         m_d->m_mediasData.clear();
         for (auto it = m_d->m_mediasIds.cbegin();
              it != m_d->m_mediasIds.cend(); it++)
@@ -352,7 +352,7 @@ MediaId MediaticData::getMediaId(const std::string& stringId) const
   if (stringId.empty())
   {
     MDATALOGINIT;
-    LERROR << "MediaticData::getMediaId invalid empty argument stringId at" 
+    LERROR << "MediaticData::getMediaId invalid empty argument stringId at"
             << __FILE__ << ", line" << __LINE__;
     throw std::runtime_error(
       std::string("MediaticData::getMediaId invalid empty argument stringId at ").c_str() );
@@ -373,7 +373,7 @@ MediaId MediaticData::getMediaId(const std::string& stringId) const
       // initialization if this is a real error, the catcher can print this
       // message.
       MDATALOGINIT;
-      LERROR << "MediaId for string " << stringId.c_str() 
+      LERROR << "MediaId for string " << stringId.c_str()
               << " is still not initialized after on-demand initialization ! ";
       throw MediaNotInitialized(stringId);
     }
@@ -510,7 +510,7 @@ void MediaticDataPrivate::initMedias(
           {
             MDATALOGINIT;
             LERROR << "No media definition file'"<<deffile
-                    <<"' has been found for media id" << id 
+                    <<"' has been found for media id" << id
                     << "in config paths:" << configPaths;
             throw InvalidConfiguration();
           }
@@ -518,7 +518,7 @@ void MediaticDataPrivate::initMedias(
         catch (NoSuchList& e)
         {
           MDATALOGINIT;
-          LERROR << "missing definition file for media " << (*it).c_str() 
+          LERROR << "missing definition file for media " << (*it).c_str()
                   << ":" << e.what();
           throw InvalidConfiguration(
             std::string("Failed to init media ")+(*it)+": "+e.what());
@@ -526,7 +526,7 @@ void MediaticDataPrivate::initMedias(
         catch (NoSuchParam& e)
         {
           MDATALOGINIT;
-          LERROR << "missing definition file for media " << (*it).c_str() 
+          LERROR << "missing definition file for media " << (*it).c_str()
                   << ":" << e.what();
         throw InvalidConfiguration(
           std::string("Failed to init media ")+(*it)+": "+e.what());
@@ -629,7 +629,7 @@ void MediaticDataPrivate::initRelations(
 #endif
   m_relTypes[s_undefinedRelation]=0;
   m_relTypesNum[0]=s_undefinedRelation;
-  
+
   try
   {
     const auto& rels=configParser.getModuleConfiguration("common")
@@ -661,13 +661,13 @@ void MediaticDataPrivate::initRelations(
 }
 
 void MediaticDataPrivate::initConceptTypes(
-    XMLConfigurationFiles::XMLConfigurationFileParser& configParser) 
+    XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticDataPrivate::initConceptTypes";
 #endif
-  
+
   try {
     const auto& mapping = configParser.getModuleConfiguration("common")
       .getGroupNamed("SemanticData").getMapAtKey("conceptTypes");
@@ -684,13 +684,15 @@ void MediaticDataPrivate::initConceptTypes(
   catch (NoSuchGroup& e)
   {
     MDATALOGINIT;
-    LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file";
+    LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file:"
+            << e.what();
     throw InvalidConfiguration(e.what());
   }
   catch (NoSuchMap& e)
   {
     MDATALOGINIT;
-    LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file";
+    LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file:"
+            << e.what();
     throw InvalidConfiguration(e.what());
   }
 }
@@ -716,7 +718,7 @@ const std::string& MediaticData::getConceptName(const ConceptType& type) const
   if (m_d->m_conceptNames.find(type) == m_d->m_conceptNames.end())
   {
     MDATALOGINIT;
-    LERROR << "Concept type " << type 
+    LERROR << "Concept type " << type
             << " not found. Returning for 0 (should be 'LatticeDown').";
     return (*(m_d->m_conceptNames.find(static_cast<ConceptType>(0)))).second;
   }
@@ -762,7 +764,7 @@ void printEntities(
   const auto& g = groups.getAccessMap();
   for (auto it = g.cbegin(); it != g.cend(); it++)
   {
-    LDEBUG << *((*it).first) << "(" << (*it).first << ")" 
+    LDEBUG << *((*it).first) << "(" << (*it).first << ")"
             << "->" << (*it).second;
     if ((*it).second < types.size())
     {
@@ -798,16 +800,16 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
   try
   {
     auto& moduleConf = configParser.getModuleConfiguration("entities");
-    
+
     for (auto it = moduleConf.begin(); it != moduleConf.end(); it++)
     {
 #ifdef DEBUG_CD
       LDEBUG << "initEntityTypes: looking at group " << (*it).first.c_str();
 #endif
-     
+
       LimaString groupName = Common::Misc::utf8stdstring2limastring((*it).first);
 
-      if (groupName == "include") 
+      if (groupName == "include")
       {
         auto includeList = moduleConf.getListValuesAtKeyOfGroupNamed("includeList",
                                                                      "include");
@@ -818,7 +820,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           i=includeList[k].find("/");
           if (i==string::npos)
           {
-            LERROR << "Cannot include resources " << includeList[k] 
+            LERROR << "Cannot include resources " << includeList[k]
                     << ": must specify file and module name";
             continue;
           }
@@ -972,8 +974,11 @@ EntityType MediaticData::getEntityType(const LimaString& entityName) const
   if (i==-1)
   {
     MDATALOGINIT;
-    LERROR << "missing group name in entity name " << entityName;
-    throw LimaException();
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "missing group name in entity name " << entityName;
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
   LimaString groupName = entityName.left(i);
   LimaString name = entityName.mid(i+m_d->s_entityTypeNameSeparator.length());
@@ -985,9 +990,12 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
 {
   if (static_cast<size_t>(groupId)>=m_d->m_entityTypes.size()) {
     MDATALOGINIT;
-    LERROR << "MediaticData::getEntityType unknown entity group id " << groupId
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "MediaticData::getEntityType unknown entity group id " << groupId
             <<"accessing" << entityName;
-    throw LimaException("MediaticData::getEntityType unknown entity group id");
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
   try
   {
@@ -996,8 +1004,11 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
   catch(LimaException& e)
   {
     MDATALOGINIT;
-    LWARN << "Unknown entity type " << entityName << "in group id:"<<groupId
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "Unknown entity type " << entityName << "in group id:"<<groupId
           <<"; exception:" << e.what();
+    LWARN << errorString;
     throw;
   }
 }
@@ -1038,9 +1049,12 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
     LERROR << "MediaticData::getEntityName type.getGroupId()="
             << type.getGroupId()<<" > m_entityTypes.size()="
             << m_d->m_entityTypes.size();
-    LERROR << "MediaticData::getEntityName unknown entity group id "
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "MediaticData::getEntityName unknown entity group id "
             << type.getGroupId() << " in entity " << type;
-    throw LimaException();
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
   try {
     // return m_entityTypes[type.getGroupId()]->get(type.getTypeId());
@@ -1136,7 +1150,7 @@ void MediaticData::readEntityTypes(std::istream& file,
 #endif
   uint64_t size=Misc::readCodedInt(file);
   // read group names
-  for (uint64_t i(0); i<size; i++) 
+  for (uint64_t i(0); i<size; i++)
   {
     EntityGroupId groupId= static_cast<EntityGroupId>(Misc::readCodedInt(file));
 #ifdef DEBUG_CD
@@ -1150,7 +1164,7 @@ void MediaticData::readEntityTypes(std::istream& file,
     EntityGroupId newGroupId=addEntityGroup(groupName);
     entityGroupIdMapping[groupId]=newGroupId;
 #ifdef DEBUG_CD
-    LDEBUG << "readEntityTypes: added group id mapping " << groupId 
+    LDEBUG << "readEntityTypes: added group id mapping " << groupId
             << "->" << newGroupId;
 #endif
     // read entities for this group
