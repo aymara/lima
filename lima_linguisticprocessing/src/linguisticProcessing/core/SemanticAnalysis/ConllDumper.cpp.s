@@ -514,7 +514,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           }
           if (neType == "_")
           {
-//             // The PosGraph vertex did not hold a specific entity,
+            // The PosGraph vertex did not hold a specific entity,
             // check if the AnalysisGraph vertex does
             std::set< AnnotationGraphVertex > anaVertices =
                 annotationData->matches("PosGraph", v, "AnalysisGraph");
