@@ -208,7 +208,10 @@ int run(int argc, char** argv)
 
 
   if (parser.isSet(availableUnitsOption))
+  {
     listunits();
+    return EXIT_SUCCESS;
+  }
   if (parser.isSet(lpConfigFileOption))
     lpConfigFile = parser.value(lpConfigFileOption);
   if (parser.isSet(commonConfigFileOption))
@@ -362,8 +365,9 @@ int run(int argc, char** argv)
         {
           std::cerr << "Error: unknown handler type " << useHandler
                     << ": must be [bow|txt|xml]" << std::endl;
-          exit(1);
+          continue;
         }
+
         AbstractAnalysisHandler *handler = nullptr;
         std::string handlerName = "";
         if(useHandler == "bow")
@@ -410,6 +414,7 @@ int run(int argc, char** argv)
           LDEBUG << "run call handler setAnalysisHandler " << handlerName
                   << handler;
           client->setAnalysisHandler(handlerName, handler);
+          delete handler;
         }
 
         TimeUtils::logElapsedTime("PrepareAnalysis");
@@ -476,5 +481,4 @@ void listunits()
 //     }
 //     cout << endl;
     }
-    exit(0);
 }

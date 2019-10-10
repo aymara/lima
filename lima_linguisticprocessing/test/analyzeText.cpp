@@ -166,8 +166,7 @@ int run(int argc, char** argv)
   po::options_description desc("Usage");
   desc.add_options()
   ("help,h", "Display this help message")
-  ("version,v",
-   QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
+  ("version,v", QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
   ("language,l", po::value< std::vector<std::string> >(&languages),
    "supported languages trigrams")
   ("dumper,d",
@@ -414,6 +413,10 @@ int run(int argc, char** argv)
   for (const auto& meta : userMetaData)
   {
     metaData[meta.first] = meta.second;
+  }
+
+  if(!files.size()){
+      std::cerr << "No file to analyze." << std::endl;
   }
 
   uint64_t i=1;

@@ -31,6 +31,7 @@ SET(analyzeText_SRCS
 )
 
 add_executable(analyzeText ${analyzeText_SRCS})
+set_target_properties(analyzeText PROPERTIES VERSION ${LIMA_VERSION})
 MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 
@@ -66,6 +67,7 @@ if (${PYTHONLIBS_FOUND})
   )
 
   add_executable(srl ${srl_SRCS})
+  set_target_properties(srl PROPERTIES VERSION ${LIMA_VERSION})
   target_link_libraries(srl
       ${PYTHON_LIBRARIES}
       lima-common-tools
@@ -98,6 +100,7 @@ SET(analyzetextservercore_SRCS
 )
 
 add_executable(analyzetextservercore ${analyzetextservercore_SRCS})
+set_target_properties(analyzetextservercore PROPERTIES VERSION ${LIMA_VERSION})
 
 target_link_libraries(analyzetextservercore
   lima-linguisticprocessing
@@ -116,6 +119,7 @@ SET(analyzeXml_SRCS
 )
 
 add_executable(analyzeXml ${analyzeXml_SRCS})
+set_target_properties(analyzeXml PROPERTIES VERSION ${LIMA_VERSION})
 
 target_link_libraries(analyzeXml
   lima-common-time
@@ -181,6 +185,7 @@ SET(readMultFile_SRCS
 )
 
 add_executable(readMultFile ${readMultFile_SRCS})
+set_target_properties(readMultFile PROPERTIES VERSION ${LIMA_VERSION})
 
 target_link_libraries(readMultFile
   lima-common-tools

@@ -26,6 +26,7 @@
  *
  ***********************************************************************/
 
+ #include "common/LimaVersion.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
@@ -41,6 +42,8 @@
 #include <QtCore/QCoreApplication>
 
 #include <fstream>
+#include <iomanip>
+
 
 namespace Lima {
   namespace Common {
@@ -60,9 +63,9 @@ using namespace Lima::Common::Misc;
 // declarations
 //****************************************************************************
 // help mode & usage
-Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : readBoWFile [options] fileIn fileOut\n"));
+Q_GLOBAL_STATIC_WITH_ARGS(string, USAGE, ("usage : readBoWFile [options] fileIn [fileIn ...]\n"));
 
-Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("read a binary file containing a bag-of-words representations of texts or documents (example program)\n")
+Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("read binary files containing bag-of-words representations of texts or documents (example program)\n")
                          +*USAGE
                          +"\n"
 +"--xml : use XML as output format\n"
@@ -90,7 +93,7 @@ FormatType readFormatType(const std::string& str)
   else
   {
     cerr << "format type " << str << " is not defined";
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -98,14 +101,14 @@ FormatType readFormatType(const std::string& str)
 // GLOBAL variable -> the command line arguments
 struct Param
 {
-  string inputFile;           // input file
+  QStringList files;     // input file
   FormatType outputFormat;    // format of the output file
   bool useIterator;           // use BoWTokenIterator to go through BoWText
   bool useIndexIterator;      // use IndexElementIterator to go through BoWText
   uint64_t maxCompoundSize; // maximum size of compounds (only if useIndexIterator)
   bool help;                  // help mode
 }
-param={"",
+param={ QStringList(),
        TEXT,
        false,
        false,
@@ -134,14 +137,13 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     }
     else if (s[0]=='-')
     {
-      cerr << "unrecognized option " <<  s
-      << endl;
+      cerr << "unrecognized option " <<  s << endl;
       cerr << *USAGE << endl;
-      exit(1);
+      exit(EXIT_FAILURE);
     }
     else
     {
-      param.inputFile=s;
+      param.files << QString::fromStdString(std::string(s));
     }
   }
 }
@@ -299,7 +301,13 @@ int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
+#ifndef DEBUG_LP
+  try
+  {
+#endif
   QCoreApplication a(argc, argv);
+  QCoreApplication::setApplicationName("readBowFile");
+  QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
   // Task parented to the application so that it
   // will be deleted by the application.
@@ -307,13 +315,30 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &LimaMainTaskRunner::finished, &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
+#ifndef DEBUG_LP
+  }
+  catch (const Lima::LimaException& e)
+  {
+    std::cerr << "Catched LimaException: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Catched std::exception: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (...)
+  {
+    std::cerr << "Catched unknown exception" << std::endl;
+    return UNKNOWN_ERROR;
+  }
+#endif
 }
 
 
@@ -334,7 +359,7 @@ int run(int argc,char** argv)
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
   {
     cerr << "Can't load plugins." << endl;
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   std::string commonConfigFile = "lima-common.xml";
@@ -342,25 +367,18 @@ int run(int argc,char** argv)
   if (argc<1)
   {
     cerr << *USAGE;
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   readCommandLineArguments(argc,argv);
   if (param.help)
   {
     cerr << *HELP;
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   BOWLOGINIT;
 
   // read BoWFile and output documents
-
-  std::ifstream fileIn(param.inputFile.c_str(),std::ifstream::binary);
-  if (! fileIn)
-  {
-    cerr << "cannot open input file [" << param.inputFile << "]" << endl;
-    exit(1);
-  }
 
   // initialize common
   Lima::Common::MediaticData::MediaticData::changeable().init(
@@ -370,105 +388,137 @@ int run(int argc,char** argv)
           langs);
 
 
-  BoWBinaryReader reader;
-  try
+  uint64_t i=1;
+  for (const auto& inputFile: param.files)
   {
-    reader.readHeader(fileIn);
-  }
-  catch (exception& e)
-  {
-    cerr << "Error: " << e.what() << endl;
-    exit(1);
-  }
 
-  switch (reader.getFileType())  {
+  std::cout << "\rReading file "<< i << "/" << param.files.size()
+          << " ("  << std::setiosflags(std::ios::fixed)
+          << std::setprecision(2) << (i*100.0/param.files.size()) <<"%) '"
+          << inputFile.toUtf8().constData() << "'" /*<< std::endl*/
+          << std::flush;
 
-  case BOWFILE_TEXT: {
-
-    LINFO << "ReadBoWFile: file contains a BoWText";
-    BoWText text;
-    reader.readBoWText(fileIn,text);
-
-    switch (param.outputFormat) {
-    case XML: {
-      BoWXMLWriter writer(cout);
-      writer.writeBoWText(&text,
-                          param.useIterator,
-                          param.useIndexIterator);
-      break;
-    }
-    case BOWFILE_NOTYPE: {
-      if (param.useIterator) {
-        BoWTokenIterator it(text);
-        while (! it.isAtEnd()) {
-          cout << it.getElement()->getOutputUTF8String() << endl;
-          it++;
-        }
-      }
-      else if (param.useIndexIterator) {
-        LINFO << "ReadBoWFile: call IndexElementIterator with maxCompoundSize=" << param.maxCompoundSize;
-        IndexElementIterator it(text,0,param.maxCompoundSize);
-        while (! it.isAtEnd()) {
-          cout << it.getElement() << endl;
-          it++;
-        }
-      }
-      else {
-        cout << text << endl;
-      }
-      break;
-    }
-    default: cerr << "Error: output format not handled" << endl;
-    }
-    break;
-  }
-  case BOWFILE_SDOCUMENT:
-  {
-    LINFO << "ReadBoWFile: file contains a StructuredBoWDocument";
-    BoWDocument* document=new BoWDocument();
-    try
+    std::ifstream fileIn(inputFile.toUtf8().constData(), std::ifstream::binary);
+    if (! fileIn)
     {
-      readSDocuments(fileIn, document, reader);
+      std::cerr << "cannot open input file [" << inputFile.toUtf8().constData()
+                << "]" << std::endl;
+      i++;
+      continue;
     }
-    catch (exception& e) { cerr << "Error: " << e.what() << endl; }
-    fileIn.close();
-    delete document;
-    break;
-  }
-/*
-  case BOWFILE_DOCUMENT: {
-    cerr << "ReadBoWFile: file contains a BoWDocument" << endl;
-    BoWDocument* document=new BoWDocument();
+
+    BoWBinaryReader reader;
+#ifndef DEBUG_LP
     try
+    { // try to read the bowFile, and catch the exception in release mode
+#endif
+      // Let the exception rise in debug mode,
+      // so we can traceback the exception occuring location in the debugger
+      reader.readHeader(fileIn);
+#ifndef DEBUG_LP
+    }
+    catch (exception& e)
+    {
+      cerr << "Error: input file does not seem to be a BowBinary file. Skip" << endl;
+      fileIn.close();
+      i++;
+      continue;
+    }
+#endif
+
+    switch (reader.getFileType())  {
+    case BOWFILE_TEXT: {
+
+      LINFO << "ReadBoWFile: file contains a BoWText";
+      BoWText text;
+      reader.readBoWText(fileIn,text);
+
+      switch (param.outputFormat) {
+      case XML: {
+        BoWXMLWriter writer(cout);
+        writer.writeBoWText(&text,
+                            param.useIterator,
+                            param.useIndexIterator);
+        break;
+      }
+      case BOWFILE_NOTYPE: {
+        if (param.useIterator) {
+          BoWTokenIterator it(text);
+          while (! it.isAtEnd()) {
+            cout << it.getElement()->getOutputUTF8String() << endl;
+            it++;
+          }
+        }
+        else if (param.useIndexIterator) {
+          LINFO << "ReadBoWFile: call IndexElementIterator with maxCompoundSize=" << param.maxCompoundSize;
+          IndexElementIterator it(text,0,param.maxCompoundSize);
+          while (! it.isAtEnd()) {
+            cout << it.getElement() << endl;
+            it++;
+          }
+        }
+        else {
+          cout << text << endl;
+        }
+        break;
+      }
+      default: cerr << "Error: output format not handled" << endl;
+      }
+      fileIn.close();
+      break;
+    }
+    case BOWFILE_SDOCUMENT:
+    {
+      LINFO << "ReadBoWFile: file contains a StructuredBoWDocument";
+      BoWDocument* document = new BoWDocument();
+      try
       {
+        readSDocuments(fileIn, document, reader);
+      }
+      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      fileIn.close();
+      delete document;
+      break;
+    }
+  /*
+    case BOWFILE_DOCUMENT: {
+      cerr << "ReadBoWFile: file contains a BoWDocument" << endl;
+      BoWDocument* document=new BoWDocument();
+      try
+        {
+          BoWXMLWriter::getInstance().writeBoWDocumentsHeader(cout);
+          readDocuments(fileIn,document);
+          BoWXMLWriter::getInstance().writeBoWDocumentsFooter(cout);
+        }
+      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      fileIn.close();
+      delete document;
+      break;
+    }
+    case BOWFILE_DOCUMENTST: {
+      cerr << "ReadBoWFile: file contains a BoWDocumentST" << endl;
+      BoWDocument* document=new BoWDocumentST();
+      try {
         BoWXMLWriter::getInstance().writeBoWDocumentsHeader(cout);
         readDocuments(fileIn,document);
         BoWXMLWriter::getInstance().writeBoWDocumentsFooter(cout);
       }
-    catch (exception& e) { cerr << "Error: " << e.what() << endl; }
-    fileIn.close();
-    delete document;
-    break;
-  }
-  case BOWFILE_DOCUMENTST: {
-    cerr << "ReadBoWFile: file contains a BoWDocumentST" << endl;
-    BoWDocument* document=new BoWDocumentST();
-    try {
-      BoWXMLWriter::getInstance().writeBoWDocumentsHeader(cout);
-      readDocuments(fileIn,document);
-      BoWXMLWriter::getInstance().writeBoWDocumentsFooter(cout);
+      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      fileIn.close();
+      delete document;
+      break;
     }
-    catch (exception& e) { cerr << "Error: " << e.what() << endl; }
-    fileIn.close();
-    delete document;
-    break;
-  }
-*/
-  default: {
-    cerr << "format of file " << reader.getFileTypeString() << " not managed"
-         << endl;
-    exit(1);
-  }
-  }
+  */
+      default: {
+        cerr << "format of file " << reader.getFileTypeString() << " not managed"
+             << endl;
+        fileIn.close();
+        i++;
+        continue;
+      }
+    }// end of switch type
+
+    i++;
+  } // end of loop on inputFiles
   return EXIT_SUCCESS;
 }

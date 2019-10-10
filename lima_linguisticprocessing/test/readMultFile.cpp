@@ -8,6 +8,7 @@
  *
  ***********************************************************************/
 
+#include "common/LimaVersion.h"
 #include "linguisticProcessing/client/AnalysisHandlers/MultimediaDocumentReaderWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/MultimediaDocumentHandler.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
@@ -284,7 +285,13 @@ int run(int aargc,char** aargv);
 
 int main(int argc, char **argv)
 {
+#ifndef DEBUG_LP
+  try
+  {
+#endif
   QCoreApplication a(argc, argv);
+  QCoreApplication::setApplicationName("readMultFile");
+  QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
   // Task parented to the application so that it
   // will be deleted by the application.
@@ -292,13 +299,31 @@ int main(int argc, char **argv)
 
   // This will cause the application to exit when
   // the task signals finished.
-  QObject::connect(task, SIGNAL(finished(int)), &a, SLOT(quit()));
+  QObject::connect(task, &LimaMainTaskRunner::finished,
+                  &a, &QCoreApplication::exit);
 
   // This will run the task from the application event loop.
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
+#ifndef DEBUG_LP
+  }
+  catch (const Lima::LimaException& e)
+  {
+    std::cerr << "Catched LimaException: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Catched std::exception: " << e.what() << std::endl;
+    return UNKNOWN_ERROR;
+  }
+  catch (...)
+  {
+    std::cerr << "Catched unknown exception" << std::endl;
+    return UNKNOWN_ERROR;
+  }
+#endif
 }
 
 
@@ -341,18 +366,27 @@ int run(int argc,char** argv)
     {
       std::cerr << "cannot open input file [" << inputFile.toUtf8().constData()
                 << "]" << std::endl;
-      QCoreApplication::exit(1);
+      i++;
+      continue;
     }
     MultimediaBinaryReader reader;
-  //   try
-  //   {
+#ifndef DEBUG_LP
+    try
+    { // try to read the multFile, and catch the exception in release mode
+#endif
+      // Let the exception rise in debug mode,
+      // so we can traceback the exception occuring location in the debugger
       reader.readHeader(fileIn);
-  //   }
-  //   catch (exception& e)
-  //   {
-  //     cerr << "Error: " << e.what() << endl;
-  //     exit(1);
-  //   }
+#ifndef DEBUG_LP
+    }
+    catch (exception& e)
+    {
+      cerr << "Error: input file does not seem to be of mult type, Skip : " << e.what() << endl;
+      fileIn.close();
+      ++i;
+      continue;
+    }
+#endif
 
     QString outputFile;
     if (!param.extension.isEmpty())
@@ -361,16 +395,16 @@ int run(int argc,char** argv)
     }
     LINFO << "ReadMultimediaFile: file contains a StructuredDocument";
     BoWDocument document;
-  //   try
-  //   {
+    try
+    {
       readSDocuments(fileIn,
                      document,
                      reader,
                      outputFile,
                      param.useIterator,
                      param.useIndexIterator);
-  //   }
-  //   catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+    }
+    catch (exception& e) { cerr << "Error: " << e.what() << endl; }
     fileIn.close();
     ++i;
   }
