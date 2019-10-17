@@ -414,7 +414,6 @@ int run(int argc, char** argv)
           LDEBUG << "run call handler setAnalysisHandler " << handlerName
                   << handler;
           client->setAnalysisHandler(handlerName, handler);
-          delete handler;
         }
 
         TimeUtils::logElapsedTime("PrepareAnalysis");
