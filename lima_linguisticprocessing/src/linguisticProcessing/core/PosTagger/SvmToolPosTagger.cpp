@@ -292,7 +292,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       QString token = tok->stringForm();
       // if token is a newline, the SVMToolPosTagger will fail, replace it by
       // Unicode char U+200B ZERO WIDTH SPACE
-      if (token == '\n') token = QString::fromUtf8(u8"\u200B");
+      if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
 
       token.replace(" ", "_");
       std::ostringstream lineoss("");
@@ -404,7 +404,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     QString token = currentAnaToken->stringForm();
     // if token is a newline, the SVMToolPosTagger will fail, replace it by
     // Unicode char U+200B ZERO WIDTH SPACE
-    if (token == '\n') token = QString::fromUtf8(u8"\u200B");
+    if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
     token.replace(" ", "_");
     if (token.toStdString() != elements[0])
     {
