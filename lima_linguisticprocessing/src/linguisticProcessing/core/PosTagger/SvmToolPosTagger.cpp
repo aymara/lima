@@ -289,10 +289,14 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     if (currentVx != 0 && tokens[currentVx] != 0)
     {
       auto tok = tokens[currentVx];
-      std::string token = tok->stringForm().toUtf8().constData();
-      boost::replace_all(token, " ", "_");
+      QString token = tok->stringForm();
+      // if token is a newline, the SVMToolPosTagger will fail, replace it by
+      // Unicode char U+200B ZERO WIDTH SPACE
+      if (token == '\n') token = QString::fromUtf8(u8"\u200B");
+
+      token.replace(" ", "_");
       std::ostringstream lineoss("");
-      lineoss << token << " (";
+      lineoss << token.toStdString() << " (";
       auto morphoData = get(vertex_data,*srcgraph,currentVx);
       for (auto morphDataIt = morphoData->begin();
            morphDataIt != morphoData->end(); morphDataIt++)
@@ -397,9 +401,12 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     }
     auto anaVertex = anaVertices[anaVerticesIndex];
     auto currentAnaToken = tokens[anaVertex];
-    std::string token = currentAnaToken->stringForm().toUtf8().constData();
-    boost::replace_all(token, " ", "_");
-    if (token != elements[0])
+    QString token = currentAnaToken->stringForm();
+    // if token is a newline, the SVMToolPosTagger will fail, replace it by
+    // Unicode char U+200B ZERO WIDTH SPACE
+    if (token == '\n') token = QString::fromUtf8(u8"\u200B");
+    token.replace(" ", "_");
+    if (token.toStdString() != elements[0])
     {
       PTLOGINIT;
       LERROR << "Error in SVMTagger result alignement with analysis graph: got '"
