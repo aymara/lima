@@ -17,9 +17,11 @@ pts,Pts,
 €,Euro,Euros,
 M€,Mds€,Md€,
 ME,MdsE,MdE,MEuros,
-Go,Mo,t,m,MF,
+Go,Mo,To,MF,T,
+h,m,s,min,sec,
 m2,
 p,
+i,
 °$NC,
 ALL$NC,
 ARS$NC,
@@ -447,6 +449,8 @@ kina$NC,
 kuna$NC,
 kyat$NC,
 lampe$NC,
+l$NC,
+l$DET,
 lats$NC,
 lek$NC,
 lempira$NC,
@@ -905,5 +909,8 @@ zloty$NC,
 émine$NC,
 éminée$NC)
 
-@units::(/ @units)?:UNIT:
+@units::par @units:UNIT:
+@units::/ @units:UNIT:
+@units:::UNIT:
+
 
