@@ -20,7 +20,7 @@
   *              level API to access it
   *
   * @file        AnnotationData.cpp
-  * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *              Copyright (c) 2004-2005 by CEA
   * @date        Created on Nov, 8 2004
@@ -51,8 +51,8 @@ namespace AnnotationGraphs
   * @return <I>int</I> The dummy dumping is considered as succesful, so
   *         SUCCESS_ID is returned.
   */
-class LIMA_ANNOTATIONGRAPH_EXPORT DummyDumpFunction : 
-    public AnnotationData::Dumper 
+class LIMA_ANNOTATIONGRAPH_EXPORT DummyDumpFunction :
+    public AnnotationData::Dumper
 {
 public:
   virtual int dump(std::ostream&, GenericAnnotation&) const override;
@@ -87,7 +87,7 @@ class AnnotationDataPrivate
    *  values are the matching target graph vertices
    */
   std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> > m_matchings;
-  
+
   CVertexAGGannotPropertyMap m_mapCVertexAGGannotPropertyMap;
   CVertexAGSannotPropertyMap m_mapCVertexAGSannotPropertyMap;
   VertexAGIannotPropertyMap m_mapVertexAGIannotPropertyMap;
@@ -678,12 +678,12 @@ const AnnotationData::Dumper* AnnotationData::dumpFunction(uint64_t annot)
   * the annotations of an annotation graph
   * @param @b os <I>std::ostream&amp;</I> the stream on which to dump
   * @param @b ga <I>GenericAnnotation&amp;</I> the annotation to be dumped.
-  * @return <I>int</I> The dummy dumping is considered as succesful, so
+  * @return <I>int</I> The dummy dumping is considered as successful, so
   *         SUCCESS_ID is returned.
   */
 int DummyDumpFunction::dump(std::ostream& os, GenericAnnotation&) const
 {
-  os << "<no_dump_function_defined/>";
+  os << "no_dump_function_defined";
   return SUCCESS_ID;
 }
 
@@ -709,7 +709,7 @@ void AnnotationData::addMatching(const std::string& first, AnnotationGraphVertex
   AGLOGINIT;
   LDEBUG << "AnnotationData::addMatching " << first << firstVx << second << secondVx;
 #endif
-  
+
   addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(first + second) ], firstVx, secondVx);
   addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(second + first) ], secondVx, firstVx);
 }

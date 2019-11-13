@@ -59,7 +59,7 @@ IdiomaticExpressionAnnotation::~IdiomaticExpressionAnnotation()
 
 void IdiomaticExpressionAnnotation::dump(std::ostream& os)
 {
-  os << "<ie vertices=\"";
+  os << "ie_vertices:";
 
   //std::vector< const uint64_t >
   std::vector< LinguisticGraphVertex >::const_iterator it, it_end;
@@ -73,7 +73,6 @@ void IdiomaticExpressionAnnotation::dump(std::ostream& os)
   {
     os << "," << *it;
   }
-  os << "\" />" << std::endl;
 }
 
   int DumpIdiomaticExpressionAnnotation::dump(
