@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_ANALYSISDICTMULTILEVELANALYSISDICTIONARY_H
 #define LIMA_LINGUISTICPROCESSING_ANALYSISDICTMULTILEVELANALYSISDICTIONARY_H
 
@@ -37,64 +33,49 @@ namespace AnalysisDict {
 
 #define MULTILEVELANALYSISDICTIONARY_CLASSID "MultiLevelAnalysisDictionary"
 
+class MultiLevelAnalysisDictionaryPrivate;
 /**
 @author Benoit Mathieu
+@author Gaël de Chalendar
 */
 class LIMA_ANALYSISDICT_EXPORT MultiLevelAnalysisDictionary : public AbstractAnalysisDictionary
 {
+  friend class MultiLevelAnalysisDictionaryPrivate;
   Q_OBJECT
 public:
     MultiLevelAnalysisDictionary();
 
     virtual ~MultiLevelAnalysisDictionary();
-    
+
+    MultiLevelAnalysisDictionary(const MultiLevelAnalysisDictionary&) = delete;
+    MultiLevelAnalysisDictionary& operator=(const MultiLevelAnalysisDictionary&) = delete;
+
     virtual void init(
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
       Manager* manager) override;
 
     virtual DictionaryEntry getEntry(const Lima::LimaString& word) const override;
     virtual DictionaryEntry getEntry(const StringsPoolIndex wordId) const override;
-    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId, 
+    virtual DictionaryEntry getEntry(const StringsPoolIndex wordId,
                                      const Lima::LimaString& word) const override;
     DictionaryEntry getEntry(const std::vector<uint64_t>& indexes) const;
     DictionaryEntry getEntry(const StringsPoolIndex wordId,
                              const std::vector<uint64_t>& indexes) const;
-    
-    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator > 
+
+    virtual std::pair< DictionarySubWordIterator, DictionarySubWordIterator >
     getSubWordEntries(const int offset, const LimaString& key) const override;
 
-    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > 
+    virtual std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator >
     getSuperWordEntries(const LimaString& key) const override;
 
     virtual uint64_t getSize() const override;
-    
-    inline uint64_t getDictionaryCount() const;
+
+    uint64_t getDictionaryCount() const;
 
 
 private:
-
-  struct LevelDico {
-    LevelDico() : id(),keys(0),data(),mainKeys(false) {};
-    std::string id;
-    Lima::Common::AbstractAccessByString* keys;
-    DictionaryData* data;
-    bool mainKeys;
-  };
-  
-  /**
-  * Les dicos sont ordonn�es du plus sp�cifique au plus g�n�rique.
-  * L'ordre dans lequel ils sont d�clar�s dans le fichier de conf est l'ordre dans
-  * lequel ils sont lus.
-  */
-  std::vector<LevelDico> m_dicos;
-  Lima::FsaStringsPool* m_sp;
-  uint64_t m_mainKeySize;
-  
+  MultiLevelAnalysisDictionaryPrivate* m_d;
 };
-
-inline uint64_t MultiLevelAnalysisDictionary::getDictionaryCount() const {
-  return m_dicos.size();
-}
 
 }
 

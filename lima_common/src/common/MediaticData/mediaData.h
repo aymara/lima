@@ -46,7 +46,7 @@ namespace MediaticData
 {
 #define MEDIADATA_CLASSID "MediaData"
 
-BOOST_STRONG_TYPEDEF(boost::uint32_t, ConceptType);
+BOOST_STRONG_TYPEDEF(uint32_t, ConceptType);
 
 class MediaDataPrivate;
 /**
@@ -86,7 +86,7 @@ public:
 
   /** @return the numerical id of the language */
   MediaId getMedia() const;
-  
+
 
 //   const PropertyCode::PropertyCodeManager& getPropertyCodeManager() const;
 

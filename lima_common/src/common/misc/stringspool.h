@@ -19,7 +19,7 @@
 //
 // C++ Interface: stringspool
 //
-// Description: 
+// Description:
 //
 //
 // Author: CEA LIST <Gael.de-Chalendar@cea.fr>
@@ -47,7 +47,11 @@
 namespace Lima {
 
 class StringsPoolPrivate;
-BOOST_STRONG_TYPEDEF(uint64_t, StringsPoolIndex);
+
+#define STRINGS_POOL_INDEX_TYPE uint64_t
+BOOST_STRONG_TYPEDEF(STRINGS_POOL_INDEX_TYPE, StringsPoolIndex);
+#define STRINGS_POOL_INDEX_MAX_VALUE std::numeric_limits<STRINGS_POOL_INDEX_TYPE>::max()
+
 /**
 @author CEA LIST
 */
@@ -60,15 +64,15 @@ public:
 
     StringsPoolIndex operator[](const LimaString& str) const;
     StringsPoolIndex operator[](const LimaString& str);
-    
+
     const LimaString& operator[](const StringsPoolIndex ind) const;
     LimaString& operator[](const StringsPoolIndex ind);
-    
+
     void registerUser(void* p);
     void unregisterUser(void* p);
-    
+
     void endResourcesPool();
-    
+
     bool empty() const;
     uint64_t size() const;
 

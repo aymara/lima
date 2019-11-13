@@ -36,11 +36,13 @@ namespace LinguisticProcessing
 namespace AnalysisDict
 {
 
+class MultiLevelAnalysisDictionaryEntryPrivate;
 /**
 @author Benoit Mathieu
 */
 class LIMA_ANALYSISDICT_EXPORT MultiLevelAnalysisDictionaryEntry : public AbstractDictionaryEntry
 {
+  friend class MultiLevelAnalysisDictionaryEntryPrivate;
 public:
 
   struct LevelData
@@ -64,7 +66,10 @@ public:
     Lima::FsaStringsPool* sp);
 
 
-  virtual ~MultiLevelAnalysisDictionaryEntry();
+  virtual ~MultiLevelAnalysisDictionaryEntry() = default;
+
+  MultiLevelAnalysisDictionaryEntry(const MultiLevelAnalysisDictionaryEntry&);
+  MultiLevelAnalysisDictionaryEntry& operator=(const MultiLevelAnalysisDictionaryEntry&);
 
   virtual AbstractDictionaryEntry* clone() override;
   virtual void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const override;
@@ -73,110 +78,7 @@ public:
 
 
 private:
-  std::vector<LevelData> m_data;
-  Lima::FsaStringsPool* m_sp;
-
-  class LingInfoLevelState
-  {
-  public:
-  
-    // position attributes
-    unsigned char* pos;
-    unsigned char* posEnd;
-
-    // state attributes
-    StringsPoolIndex currentLemma;
-    LimaString lemmaStr;
-    StringsPoolIndex currentNorm;
-    LimaString normStr;
-    uint64_t lingInfoOffset;
-    bool final;
-
-    // data attributes
-    bool mainKeys;
-    const Lima::Common::AbstractAccessByString* keys;
-    const DictionaryData* dicoData;
-
-    LingInfoLevelState();
-    virtual ~LingInfoLevelState();
-   
-    void next(FsaStringsPool& sp);
-    bool end() const;
-    bool operator<(const LingInfoLevelState& lis) const;
-    bool operator==(const LingInfoLevelState& lis) const;
-
-  };
-  
-  class ConcatenatedLevelState
-  {
-  public:
-
-    class Component
-    {
-    public:
-      StringsPoolIndex form;
-      LimaString formStr;
-      uint64_t pos;
-      uint64_t len;
-      LingInfoLevelState liState;
-      Component();
-      virtual ~Component();
-      bool operator<(const Component& c) const { return formStr<c.formStr;};
-      bool operator==(const Component& c) const { return form==c.form;};
-    };
-
-    // position attributes
-    unsigned char* pos;
-    unsigned char* posEnd;
-
-    // state attributes
-    bool final;
-    std::vector<Component> components;
-
-    // data attributes
-    bool mainKeys;
-    const Lima::Common::AbstractAccessByString* keys;
-    const DictionaryData* dicoData;
-
-    ConcatenatedLevelState();
-    virtual ~ConcatenatedLevelState();
-    bool operator<(const ConcatenatedLevelState& cls) const { return (cls.components.empty() || ( !components.empty() && (components < cls.components) ) ); };
-    bool operator==(const ConcatenatedLevelState& cls) const { return (components == cls.components); };
-
-    void next(FsaStringsPool& sp);
-    bool end() const;
-
-  };
-
-  class AccentedLevelState
-  {
-  public:
-
-    // position attributes
-    unsigned char* pos;
-    unsigned char* posEnd;
-
-    // state attributes
-    StringsPoolIndex accentedForm;
-    LimaString accentedFormStr;
-    StringsPoolIndex accentedEntry;
-    bool final;
-
-    // data attributes
-    bool mainKeys;
-    const Lima::Common::AbstractAccessByString* keys;
-    const DictionaryData* dicoData;
-
-    void next(FsaStringsPool& sp);
-    bool end() const;
-    bool operator<(const AccentedLevelState& lis) const;
-    bool operator==(const AccentedLevelState& lis) const;
-  };
-  
-  
-  static void parseLingInfos(std::vector<MultiLevelAnalysisDictionaryEntry::LingInfoLevelState>& data,Lima::FsaStringsPool* sp,AbstractDictionaryEntryHandler* handler);
-  static void parseConcatenated(std::vector<MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState>& data,Lima::FsaStringsPool* sp,AbstractDictionaryEntryHandler* handler);
-
+  MultiLevelAnalysisDictionaryEntryPrivate* m_d;
 };
 
 }

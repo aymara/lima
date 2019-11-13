@@ -34,9 +34,9 @@
 #include <iostream>
 
 using namespace Lima::Common;
-using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::Common::Misc;
 using namespace Lima::Common::MediaticData;
-using namespace std;
+using namespace Lima::Common::XMLConfigurationFiles;
 
 namespace Lima
 {
@@ -47,125 +47,174 @@ namespace LinguisticProcessing
 namespace AnalysisDict
 {
 
-SimpleFactory<AbstractResource,MultiLevelAnalysisDictionary> multiLevelAnalysisDictionaryFactory(MULTILEVELANALYSISDICTIONARY_CLASSID);
+SimpleFactory<AbstractResource,MultiLevelAnalysisDictionary>
+multiLevelAnalysisDictionaryFactory(MULTILEVELANALYSISDICTIONARY_CLASSID);
 
-MultiLevelAnalysisDictionary::MultiLevelAnalysisDictionary()
-    : AbstractAnalysisDictionary()
-{}
+
+struct LevelDico {
+  LevelDico() : id(),keys(0),data(),mainKeys(false) {};
+  std::string id;
+  Lima::Common::AbstractAccessByString* keys;
+  DictionaryData* data;
+  bool mainKeys;
+};
+
+class MultiLevelAnalysisDictionaryPrivate
+{
+friend class MultiLevelAnalysisDictionary;
+    MultiLevelAnalysisDictionaryPrivate() = default;
+
+    ~MultiLevelAnalysisDictionaryPrivate() = default;
+
+    MultiLevelAnalysisDictionaryPrivate(const MultiLevelAnalysisDictionaryPrivate&) = delete;
+    MultiLevelAnalysisDictionaryPrivate& operator=(const MultiLevelAnalysisDictionaryPrivate&) = delete;
+
+  /**
+  * Les dicos sont ordonn�es du plus sp�cifique au plus g�n�rique.
+  * L'ordre dans lequel ils sont d�clar�s dans le fichier de conf est l'ordre dans
+  * lequel ils sont lus.
+  */
+  std::vector<LevelDico> m_dicos;
+  Lima::FsaStringsPool* m_sp;
+  uint64_t m_mainKeySize;
+
+};
+
+
+MultiLevelAnalysisDictionary::MultiLevelAnalysisDictionary() :
+    AbstractAnalysisDictionary(),
+    m_d(new MultiLevelAnalysisDictionaryPrivate())
+{
+}
 
 
 MultiLevelAnalysisDictionary::~MultiLevelAnalysisDictionary()
-{}
+{
+  delete m_d;
+}
 
 void MultiLevelAnalysisDictionary::init(
-  Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-  Manager* manager)
+    XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+    Manager* manager)
 {
   ANALYSISDICTLOGINIT;
   LINFO << "init MultiLevelAnalysisDictionary";
-  MediaId language=manager->getInitializationParameters().language;
-  m_sp=&Common::MediaticData::MediaticData::changeable().stringsPool(language);
-  m_mainKeySize=0;
+  auto language = manager->getInitializationParameters().language;
+  m_d->m_sp = &Common::MediaticData::MediaticData::changeable().stringsPool(language);
+  m_d->m_mainKeySize = 0;
   try
   {
-    const deque<string>& accesses=unitConfiguration.getListsValueAtKey("accessKeys");
-    const deque<string>& data=unitConfiguration.getListsValueAtKey("dictionaryValuesFiles");
-    deque<string>::const_iterator keyIt=accesses.begin(),dataIt=data.begin();
-    bool hasMainKeys=false;
-    for (;keyIt!=accesses.end() && dataIt!=data.end();)
+    const auto& accesses = unitConfiguration.getListsValueAtKey("accessKeys");
+    const auto& data = unitConfiguration.getListsValueAtKey("dictionaryValuesFiles");
+    auto keyIt = accesses.cbegin(), dataIt = data.cbegin();
+    auto hasMainKeys = false;
+    for (; keyIt!=accesses.end() && dataIt!=data.end();)
     {
       LINFO << "load LevelDictionary : key=" << *keyIt << " data=" << *dataIt;
-      const AbstractResource* res=LinguisticResources::single().getResource(language,*keyIt);
-      const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
+      auto res = LinguisticResources::single().getResource(language, *keyIt);
+      auto aar = static_cast<const AbstractAccessResource*>(res);
       LevelDico ldico;
-      ldico.id=*keyIt;
-      ldico.keys=aar->getAccessByString();
-      ldico.mainKeys=aar->isMainKeys();
+      ldico.id = *keyIt;
+      ldico.keys = aar->getAccessByString();
+      ldico.mainKeys = aar->isMainKeys();
       if (aar->isMainKeys())
       {
-        hasMainKeys=true;
-        m_mainKeySize=ldico.keys->getSize();
+        hasMainKeys = true;
+        m_d->m_mainKeySize = ldico.keys->getSize();
       }
-      QString dataFile = Common::Misc::findFileInPaths( Common::MediaticData::MediaticData::single().getResourcesPath().c_str(), (*dataIt).c_str());
-      ldico.data=new DictionaryData();
-      ldico.data->loadBinaryFile(dataFile.toUtf8().constData());
-      m_dicos.push_back(ldico);
+      auto dataFile = findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+                                      (*dataIt).c_str());
+      ldico.data = new DictionaryData();
+      ldico.data->loadBinaryFile(dataFile.toStdString());
+      m_d->m_dicos.push_back(ldico);
       keyIt++;
       dataIt++;
     }
     if ((keyIt!=accesses.end()) || (dataIt!=data.end()))
     {
-      LERROR << "missing keys or data in configuration for MultiLevelAnalysisDictionary ! for language " << (int) language;
-      throw InvalidConfiguration();
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "missing keys or data in configuration for MultiLevelAnalysisDictionary ! for language "
+          << (int) language;
+      LERROR << errorString;
+      throw InvalidConfiguration(errorString.toStdString());
     }
     if (!hasMainKeys)
     {
-      LERROR << "no accessKeys are main keys (stringspool keys) in MultiLevelAnalysisDictionary  for language " << (int) language;
-      throw InvalidConfiguration();
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "no accessKeys are main keys (stringspool keys) in MultiLevelAnalysisDictionary  for language "
+              << (int) language;
+      LERROR << errorString;
+      throw InvalidConfiguration(errorString.toStdString());
     }
   }
   catch (NoSuchList& )
   {
-    LERROR << "no param 'accessKeys' in MultiLevelAnalysisDictionary group for language " << (int) language;
-    throw InvalidConfiguration();
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "no param 'accessKeys' in MultiLevelAnalysisDictionary group for language "
+        << (int) language;
+    LERROR << errorString;
+    throw InvalidConfiguration(errorString.toStdString());
   }
-
-
 }
 
 DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const Lima::LimaString& word) const
 {
   StringsPoolIndex form(0);
-  vector<uint64_t> indexes;
-  for (vector<LevelDico>::const_iterator it=m_dicos.begin();
-       it!=m_dicos.end();
-       it++)
+  std::vector<uint64_t> indexes;
+  for (const auto& dico: m_d->m_dicos)
   {
-    indexes.push_back(it->keys->getIndex(word));
-    if (it->mainKeys)
+    indexes.push_back(dico.keys->getIndex(word));
+    if (dico.mainKeys)
     {
       form=indexes.back();
     }
   }
-  return getEntry(form,indexes);
+  return getEntry(form, indexes);
 }
 
 DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex wordId) const
 {
-  const FsaStringsPool& csp=*m_sp;
-  LimaString word=csp[wordId];
-  return getEntry(wordId,word);
+  const auto& csp = *m_d->m_sp;
+  LimaString word = csp[wordId];
+  return getEntry(wordId, word);
 }
 
-DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex wordId, const Lima::LimaString& word) const
+DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex wordId,
+                                                       const Lima::LimaString& word) const
 {
-  vector<uint64_t> indexes;
-  for (vector<LevelDico>::const_iterator it=m_dicos.begin();
-       it!=m_dicos.end();
-       it++)
+  std::vector<uint64_t> indexes;
+  for (const auto& dico : m_d->m_dicos)
   {
-    if (it->mainKeys)
+    if (dico.mainKeys)
     {
-      if (wordId<m_mainKeySize) {
+      if (wordId < m_d->m_mainKeySize)
+      {
         indexes.push_back(wordId);
-      } else {
+      }
+      else
+      {
         indexes.push_back(0);
       }
     }
     else
     {
-      indexes.push_back(it->keys->getIndex(word));
+      indexes.push_back(dico.keys->getIndex(word));
     }
   }
-  return getEntry(wordId,indexes);
+  return getEntry(wordId, indexes);
 }
 
 DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const std::vector<uint64_t>& indexes) const
 {
-  vector<uint64_t>::const_iterator indexItr=indexes.begin();
-  for (std::vector<LevelDico>::const_iterator dicoItr=m_dicos.begin();
-       (indexItr != indexes.end()) && (dicoItr != m_dicos.end());
-       indexItr++,dicoItr++)
+  ANALYSISDICTLOGINIT;
+  LDEBUG << "MultiLevelAnalysisDictionary::getEntry" << indexes;
+  auto indexItr = indexes.cbegin();
+  for (auto dicoItr = m_d->m_dicos.cbegin();
+       (indexItr != indexes.cend()) && (dicoItr != m_d->m_dicos.cend());
+       indexItr++, dicoItr++)
   {
     if (dicoItr->mainKeys)
     {
@@ -173,51 +222,55 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const std::vector<uint64_
     }
   }
   Q_ASSERT(indexItr!=indexes.end());
-  if (*indexItr != 0) {
-    return getEntry(static_cast<StringsPoolIndex>(*indexItr),indexes);
+  if (*indexItr != 0)
+  {
+    return getEntry(static_cast<StringsPoolIndex>(*indexItr), indexes);
   }
   // entry doesn't exist in main key : search in other key
-  indexItr=indexes.begin();
+  indexItr = indexes.cbegin();
   StringsPoolIndex form(0);
-  for (std::vector<LevelDico>::const_iterator dicoItr=m_dicos.begin();
-       (indexItr != indexes.end()) && (dicoItr != m_dicos.end());
-       indexItr++,dicoItr++)
+  for (auto dicoItr = m_d->m_dicos.cbegin();
+       (indexItr != indexes.end()) && (dicoItr != m_d->m_dicos.end());
+       indexItr++, dicoItr++)
   {
-    if (*indexItr > 0) {
-      form=(*m_sp)[dicoItr->keys->getSpelling(*indexItr)];
+    if (*indexItr > 0)
+    {
+      form = (*m_d->m_sp)[dicoItr->keys->getSpelling(*indexItr)];
       break;
     }
   }
   return getEntry(form,indexes);
 }
 
-DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex form,const std::vector<uint64_t>& indexes) const
+DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex form,
+                                                       const std::vector<uint64_t>& indexes) const
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "getEntry";
 
-  vector<MultiLevelAnalysisDictionaryEntry::LevelData> entryData;
+  std::vector<MultiLevelAnalysisDictionaryEntry::LevelData> entryData;
 
-  bool empty=true;
-  bool final=false;
-  bool hasLing=false;
-  bool hasAccented=false;
-  bool hasConcat=false;
+  auto empty = true;
+  auto final = false;
+  auto hasLing = false;
+  auto hasAccented = false;
+  auto hasConcat = false;
 
-  vector<uint64_t>::const_iterator indexIt=indexes.begin();
-  vector<LevelDico>::const_iterator dicoIt=m_dicos.begin();
+  auto indexIt = indexes.cbegin();
+  auto dicoIt = m_d->m_dicos.cbegin();
   MultiLevelAnalysisDictionaryEntry::LevelData data;
-  for (;indexIt!=indexes.end() && dicoIt!=m_dicos.end() && !final;indexIt++,dicoIt++)
+  for (;indexIt != indexes.end() && dicoIt != m_d->m_dicos.end() && !final;
+       indexIt++, dicoIt++)
   {
     LDEBUG << "read level " << dicoIt->id << " : entry index = " << *indexIt;
-    unsigned char* p=dicoIt->data->getEntryAddr(*indexIt);
-    uint64_t read=DictionaryData::readCodedInt(p);
+    auto p = dicoIt->data->getEntryAddr(*indexIt);
+    auto read = DictionaryData::readCodedInt(p);
     LDEBUG << "read " << read;
     if (read == 1)
     {
       LDEBUG << "final = true";
-      final=true;
-      read=DictionaryData::readCodedInt(p);
+      final = true;
+      read = DictionaryData::readCodedInt(p);
     }
     if (read == 0)
     {
@@ -226,66 +279,69 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex fo
       continue;
     }
     // if here, then entry is not empty
-    empty=false;
+    empty = false;
     LDEBUG << "entry has length " << read;
-    data.startEntryData=p;
-    data.endEntryData=p+read;
-    read=DictionaryData::readCodedInt(p);
+    data.startEntryData = p;
+    data.endEntryData = p + read;
+    read = DictionaryData::readCodedInt(p);
     if (read!=0)
     {
       hasLing=true;
     }
     LDEBUG << "info length = " << read;
-    p+=read;
-    if (p!=data.endEntryData)
+    p += read;
+    if (p != data.endEntryData)
     {
-      read=DictionaryData::readCodedInt(p);
+      read = DictionaryData::readCodedInt(p);
       LDEBUG << "accented length = " << read;
-      if (read!=0)
+      if (read != 0)
       {
-        hasAccented=true;
+        hasAccented = true;
       }
-      p+=read;
-      if (p!=data.endEntryData)
+      p += read;
+      if (p != data.endEntryData)
       {
-        read=DictionaryData::readCodedInt(p);
+        read = DictionaryData::readCodedInt(p);
         LDEBUG << "concat length = " << read;
         if (read != 0)
         {
-          hasConcat=true;
+          hasConcat = true;
         }
-        p+=read;
+        p += read;
       }
     }
-    Q_ASSERT(p==data.endEntryData);
+    Q_ASSERT(p == data.endEntryData);
 
-    data.dicoData=dicoIt->data;
-    data.keys=dicoIt->keys;
-    data.mainKeys=dicoIt->mainKeys;
+    data.dicoData = dicoIt->data;
+    data.keys = dicoIt->keys;
+    data.mainKeys = dicoIt->mainKeys;
     entryData.push_back(data);
   }
-  return DictionaryEntry(new MultiLevelAnalysisDictionaryEntry(form,final,empty,hasLing,hasConcat,hasAccented,entryData,m_sp));
+  return DictionaryEntry(new MultiLevelAnalysisDictionaryEntry(form,
+                                                               final,
+                                                               empty,
+                                                               hasLing,
+                                                               hasConcat,
+                                                               hasAccented,
+                                                               entryData,
+                                                               m_d->m_sp));
 }
 
-std::pair< DictionarySubWordIterator, DictionarySubWordIterator > MultiLevelAnalysisDictionary::getSubWordEntries(const int offset, const LimaString& key) const
+std::pair< DictionarySubWordIterator, DictionarySubWordIterator > MultiLevelAnalysisDictionary::getSubWordEntries(
+    const int offset, const LimaString& key) const
 {
-
   // build iterator
   std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> > accessItrs;
-  for (std::vector<LevelDico>::const_iterator dicoItr=m_dicos.begin();
-       dicoItr!=m_dicos.end();
-       dicoItr++)
+  for (const auto& dico : m_d->m_dicos)
   {
-    accessItrs.push_back(dicoItr->keys->getSubWords(offset,key));
+    accessItrs.push_back(dico.keys->getSubWords(offset, key));
   }
 
   // build end iterator
   std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> > accessItrsEnd(accessItrs);
-  for (std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> >::iterator it=accessItrsEnd.begin();
-       it!=accessItrsEnd.end();
-       it++)
+  for (auto& accessItr : accessItrsEnd)
   {
-    it->first=it->second;
+    accessItr.first = accessItr.second;
   }
 
   return std::pair< DictionarySubWordIterator, DictionarySubWordIterator >(
@@ -293,7 +349,8 @@ std::pair< DictionarySubWordIterator, DictionarySubWordIterator > MultiLevelAnal
            DictionarySubWordIterator(new MultiLevelAnalysisDictionarySubWordIterator(accessItrsEnd,*this)));
 }
 
-std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > MultiLevelAnalysisDictionary::getSuperWordEntries(const LimaString& key) const
+std::pair< DictionarySuperWordIterator, DictionarySuperWordIterator > MultiLevelAnalysisDictionary::getSuperWordEntries(
+    const LimaString& key) const
 {
   LIMA_UNUSED(key);
   // TODO unimplemented method
@@ -308,6 +365,11 @@ uint64_t MultiLevelAnalysisDictionary::getSize() const
   std::cerr << "unimplemented method at "<<__FILE__<<", line "<<__LINE__<< std::endl;
   Q_ASSERT(false);
   return 0;
+}
+
+uint64_t MultiLevelAnalysisDictionary::getDictionaryCount() const
+{
+  return m_d->m_dicos.size();
 }
 
 }

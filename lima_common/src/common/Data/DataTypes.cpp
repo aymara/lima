@@ -314,7 +314,7 @@ public:
 
 StructurePrivate::StructurePrivate() :
     m_nodes(),
-    m_structId(std::numeric_limits< STRUCT_ID >::max())
+    m_structId(std::numeric_limits< uint64_t >::max())
 {
 }
 

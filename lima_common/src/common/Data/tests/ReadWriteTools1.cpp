@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE( ReadWriteTools1_1 )
   std::ostringstream oss;
   Lima::Common::Misc::writeCodedInt(oss, written_number);
   std::string buffer = oss.str();
-  
+
   std::istringstream iss(buffer);
   uint16_t read_number = Lima::Common::Misc::readCodedInt(iss);
   BOOST_REQUIRE( written_number == read_number );
@@ -55,26 +55,27 @@ BOOST_AUTO_TEST_CASE( ReadWriteTools1_2 )
   BOOST_REQUIRE( written_number == read_number );
 }
 
+/// Read and write the higher 32 bits integer
 BOOST_AUTO_TEST_CASE( ReadWriteTools1_3 )
 {
   uint64_t written_number = std::numeric_limits<uint32_t>::max();
   std::string buffer;
   std::ostringstream oss(buffer);
   Lima::Common::Misc::writeCodedInt(oss, written_number);
-  
+
   std::istringstream iss(oss.str());
-  uint64_t read_number = Lima::Common::Misc::readCodedInt(iss);
+  auto read_number = Lima::Common::Misc::readCodedInt(iss);
   BOOST_REQUIRE( written_number == read_number );
 }
 
 BOOST_AUTO_TEST_CASE( ReadWriteTools1_4 )
 {
-  uint64_t written_number = std::numeric_limits<uint64_t>::max();
+  auto written_number = std::numeric_limits<uint64_t>::max();
   std::string buffer;
   std::ostringstream oss(buffer);
   Lima::Common::Misc::writeCodedInt(oss, written_number);
-  
+
   std::istringstream iss(oss.str());
-  uint64_t read_number = Lima::Common::Misc::readCodedInt(iss);
+  auto read_number = Lima::Common::Misc::readCodedInt(iss);
   BOOST_REQUIRE( written_number == read_number );
 }
