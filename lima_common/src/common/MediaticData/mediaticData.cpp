@@ -250,9 +250,9 @@ void MediaticData::init(
   QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(LIMA_PATH_SEPARATOR);
   QStringList configFiles = QString::fromUtf8(configFile.c_str()).split(LIMA_PATH_SEPARATOR);
   bool configurationFileFound = false;
-  Q_FOREACH(QString confPath, configPaths)
+  for(QString confPath: configPaths)
   {
-    Q_FOREACH(QString confFile, configFiles)
+    for(QString confFile: configFiles)
     {
       if (QFileInfo::exists(confPath + "/" + confFile))
       {
@@ -826,7 +826,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           }
           auto configPaths = QString::fromUtf8(
             m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
-          Q_FOREACH(QString confPath, configPaths)
+          for(QString confPath: configPaths)
           {
             if (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
@@ -982,7 +982,8 @@ EntityType MediaticData::getEntityType(const LimaString& entityName) const
   }
   LimaString groupName = entityName.left(i);
   LimaString name = entityName.mid(i+m_d->s_entityTypeNameSeparator.length());
-  return getEntityType(getEntityGroupId(groupName),name);
+  EntityGroupId groupId(getEntityGroupId(groupName));
+  return getEntityType(groupId,name);
 }
 
 EntityType MediaticData::getEntityType(const EntityGroupId groupId,
@@ -993,13 +994,14 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     QString errorString;
     QTextStream qts(&errorString);
     qts << "MediaticData::getEntityType unknown entity group id " << groupId
-            <<"accessing" << entityName;
+            << "accessing" << entityName;
     LERROR << errorString;
     throw LimaException(errorString.toStdString());
   }
   try
   {
-    return EntityType(m_d->m_entityTypes[groupId]->get(entityName),groupId);
+    EntityTypeId typeId(m_d->m_entityTypes[groupId]->get(entityName));
+    return EntityType(typeId,groupId);
   }
   catch(LimaException& e)
   {
@@ -1007,7 +1009,7 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     QString errorString;
     QTextStream qts(&errorString);
     qts << "Unknown entity type " << entityName << "in group id:"<<groupId
-          <<"; exception:" << e.what();
+          << "; exception:" << e.what();
     LWARN << errorString;
     throw;
   }
