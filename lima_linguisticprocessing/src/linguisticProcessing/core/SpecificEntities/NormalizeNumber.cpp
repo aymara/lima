@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Jun 13 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "NormalizeNumber.h"
@@ -87,8 +87,8 @@ m_microAccessor(0)
 // specific helper functions for the normalization of numbers
 // not part of the class: are language independant
 
-// some local typedefs 
- // use a single double: is 0, indicates it is a conjunction 
+// some local typedefs
+ // use a single double: is 0, indicates it is a conjunction
 typedef double NumberPart;
 // current state: must add or multiply with following value
 typedef enum { ADDITIVE, MULTIPLICATIVE } NumberNormalizationMode;
@@ -100,7 +100,7 @@ bool isIntegerWithDot(Token* t);
 double getValueHeuristic(const LimaString& str, LimaChar sep);
 bool isMultiplierNumber(double n);
 double computeNumberValue(vector<NumberPart>& m,
-                          vector<NumberPart>::iterator itBegin, 
+                          vector<NumberPart>::iterator itBegin,
                           vector<NumberPart>::iterator itEnd,
                           NumberNormalizationMode mode=ADDITIVE);
 
@@ -119,19 +119,31 @@ getNumberValue(Token* t,MorphoSyntacticData* data) const
   {
     return getValueHeuristic(t->stringForm(),LimaChar('.'));
   }
-  
+
   // get the normalized form : contains the numeric form
   // (normalized form corresponding to a macro_micro identifying a number)
-  MorphoSyntacticData::const_iterator  
+  MorphoSyntacticData::const_iterator
     it=data->begin(),
     it_end=data->end();
   for (; it!=it_end; it++) {
     if (testMicroCategory(m_microsForNumber,m_microAccessor,(*it).properties)) {
       const LimaString& str=
         Common::MediaticData::MediaticData::single().stringsPool(m_language)[(*it).normalizedForm];
-      return str.toDouble();
+      bool ok;
+      double d = str.toDouble(&ok);
+      if(ok) {
+#ifdef DEBUG_LP
+        SELOGINIT;
+        LDEBUG << "getNumberValue of " << t->stringForm() << ". Found number "<< d;
+#endif
+        return d;
+      }
     }
   }
+#ifdef DEBUG_LP
+  SELOGINIT;
+  LDEBUG << "getNumberValue of " << t->stringForm() << ". Could not read number.";
+#endif
   return 0;
 }
 
@@ -140,7 +152,7 @@ getNumberValue(Token* t,MorphoSyntacticData* data) const
 /***********************************************************************/
 bool NormalizeNumber::
 operator()(RecognizerMatch& m,
-           AnalysisContent& analysis) const 
+           AnalysisContent& analysis) const
 {
 #ifdef DEBUG_LP
   SELOGINIT;
@@ -151,7 +163,7 @@ operator()(RecognizerMatch& m,
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
 
   vector<NumberPart> values;
-  
+
   // a first pass on the match to eliminate what isn't a number
   for (RecognizerMatch::iterator it=m.begin(),it_end=m.end();
        it!=it_end; it++) {
@@ -222,11 +234,11 @@ operator()(RecognizerMatch& m,
     // features
     return true;
   }
-  
+
   // then compute the number
   double number=computeNumberValue(values,values.begin(),values.end());
 #ifdef DEBUG_LP
-  LDEBUG << "NormalizeNumber: add feature VALUE " << number;
+  LDEBUG << "NormalizeNumber: add feature NUMVALUE " << number;
 #endif
   m.features().addFeature(NUMVALUE_FEATURE_NAME,number);
   m.features().addFeature(DEFAULT_ATTRIBUTE,m.getString());
@@ -336,19 +348,22 @@ bool isMultiplierNumber(double n) {
 // recursive function to compute the value of a composed number
 // (for instance "trente trois mille vingt et un" or "22 millions")
 double computeNumberValue(vector<NumberPart>& m,
-                          vector<NumberPart>::iterator itBegin, 
+                          vector<NumberPart>::iterator itBegin,
                           vector<NumberPart>::iterator itEnd,
                           NumberNormalizationMode mode)
 {
+  for (int i=0;i<m.size();i++){
+  }
+
   if (itBegin == itEnd) { // neutral element
     switch(mode) {
     case ADDITIVE: return 0;
     case MULTIPLICATIVE: return 1;
     }
   }
-  
+
   vector<NumberPart>::iterator tmp(itBegin);
-  if (++tmp == itEnd) { // single element 
+  if (++tmp == itEnd) { // single element
     return *itBegin;
   }
 
@@ -371,20 +386,20 @@ double computeNumberValue(vector<NumberPart>& m,
       }
     }
   }
-  
+
   // if there is a multiplier
   if (biggestMultiplier != itEnd) {
-    return (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
+    double d= (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
             biggestMultiplierValue
             +computeNumberValue(m,biggestMultiplier+1,itEnd));
-  }
-  
-  // if there is a conjunction
-  if (ConjunctionPosition != itEnd) {
-    return ( computeNumberValue(m,itBegin,ConjunctionPosition) + 
-             computeNumberValue(m,ConjunctionPosition+1,itEnd) );
+    return d;
   }
 
+  // if there is a conjunction
+  if (ConjunctionPosition != itEnd) {
+    double d= ( computeNumberValue(m,itBegin,ConjunctionPosition) +
+             computeNumberValue(m,ConjunctionPosition+1,itEnd) );
+  }
   return 0;
 }
 

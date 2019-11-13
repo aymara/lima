@@ -104,7 +104,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
 
   AnalysisGraph* posTokenList=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   const LinguisticGraph* posGraph=posTokenList->getGraph();
-  
+
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
   out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;

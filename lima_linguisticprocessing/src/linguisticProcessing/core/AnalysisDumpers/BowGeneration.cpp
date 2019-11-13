@@ -1073,8 +1073,8 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
     LERROR << "Empty data for vertex " << vertex << " at " << __FILE__ << ", line " << __LINE__;
     LERROR << "This is a bug. Returning null entity for" << se->getString() << typeName;
     return boost::shared_ptr< BoWNamedEntity >();
-
   }
+
   LinguisticCode category=m_macroAccessor->readValue(data->begin()->properties);
 
   boost::shared_ptr< BoWNamedEntity > bowNE( new
@@ -1085,6 +1085,7 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
                                           se->getLength()) );
   // add named entity parts
   auto neParts = createNEParts(v, annotationData, anagraph, posgraph, frompos);
+
   if (neParts.empty())
   {
     DUMPERLOGINIT;
@@ -1112,11 +1113,11 @@ boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
 #ifdef DEBUG_LP
       LDEBUG << "BowGenerator: specific entity part infl " << (*p).inflectedForm;
 #endif
-
       bowNE->addPart(bowToken);
 
     }
   }
+
 
   // add the features
   const Automaton::EntityFeatures& features=(*se).getFeatures();
@@ -1224,7 +1225,7 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
 #endif
             std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr< AbstractBoWElement > > > semRoleTokens = createAbstractBoWElement(posGraphSemRoleVertex, anagraph,posgraph, offset, annotationData, visited, keepAnyway);
 #ifdef DEBUG_LP
-            LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<"token for the role associated to " << predicate;
+            LDEBUG << "BowGenerator::createPredicate Created "<< semRoleTokens.size()<<" token for the role associated to " << predicate;
 #endif
   //               if (semRoleTokens[0].second!="")
             if (!semRoleTokens.empty())

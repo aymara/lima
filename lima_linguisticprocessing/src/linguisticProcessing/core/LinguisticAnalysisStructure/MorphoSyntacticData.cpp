@@ -208,26 +208,26 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
         form=it->inflectedForm;
         lemma=it->lemma;
         norm=it->normalizedForm;
-        xmlStream << "      <form infl=\"" << Common::Misc::transcodeToXmlEntities(sp[form]) << "\" ";
+        xmlStream << "        <form infl=\"" << Common::Misc::transcodeToXmlEntities(sp[form]) << "\" ";
         xmlStream << "lemma=\"" << Common::Misc::transcodeToXmlEntities(sp[lemma]) << "\" ";
         xmlStream << "norm=\"" << Common::Misc::transcodeToXmlEntities(sp[norm]) << "\">" << std::endl;
       }
       const std::map<std::string,Common::PropertyCode::PropertyManager>& managers=pcm.getPropertyManagers();
-      xmlStream << "        <property>" << std::endl;
+      xmlStream << "          <property>" << std::endl;
       for (std::map<std::string,Common::PropertyCode::PropertyManager>::const_iterator propItr=managers.begin();
            propItr!=managers.end();
            propItr++)
       {
         if (!propItr->second.getPropertyAccessor().empty(it->properties))
         {
-          xmlStream << "          <p prop=\"" << propItr->first << "\" val=\"" << propItr->second.getPropertySymbolicValue(it->properties) << "\"/>" << std::endl;
+          xmlStream << "            <p prop=\"" << propItr->first << "\" val=\"" << propItr->second.getPropertySymbolicValue(it->properties) << "\"/>" << std::endl;
         }
       }
-      xmlStream << "        </property>" << std::endl;
+      xmlStream << "          </property>" << std::endl;
       firstEntry=false;
     }
-    xmlStream << "      </form>" << std::endl;
-    xmlStream << "    </" << currentType << ">" << std::endl;
+    xmlStream << "        </form>" << std::endl;
+    xmlStream << "      </" << currentType << ">" << std::endl;
   }
   xmlStream << "    </data>" << std::endl;
 }

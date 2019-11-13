@@ -293,7 +293,7 @@ void SyntacticAnalysisXmlLogger::outputEdge(const LinguisticGraphEdge e,
                               const LinguisticGraph& graph,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "<edge src=\"" << source(e, graph)
+  xmlStream << "  <edge src=\"" << source(e, graph)
           << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;
 }
 

@@ -894,8 +894,10 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
       recoData->setEntityFeature(m_featureName,featureValue.toInt());
       break;
-
     case QVariant::Double:
+#ifdef DEBUG_LP
+      LDEBUG << "SetEntityFeature:: recoData->setEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue.toDouble() << ")";
+#endif
       recoData->setEntityFeature(m_featureName,featureValue.toDouble());
       break;
     default:
@@ -1010,7 +1012,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 }
 
 //----------------------------------------------------------------------------------------
-// AddEntityFeatureAsEntity : assert the the vertex is a named entity.
+// AddEntityFeatureAsEntity : assert the vertex is a named entity.
 // Add it to the list of components as an embeded entity (the list is used to create the link
 // "holds" between the annotation of the embeded and the embedding entity.
 // Remember the embedding entity is no yet created.
@@ -1129,10 +1131,15 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       recoData->addEntityFeature(m_featureName,featureValue);
       break;
     case QVariant::Int:
+#ifdef DEBUG_LP
+      LDEBUG << "AddEntityFeature:: recoData->addEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue.toInt()<< ")";
+#endif
       recoData->addEntityFeature(m_featureName,featureValue.toInt());
       break;
-
     case QVariant::Double:
+#ifdef DEBUG_LP
+      LDEBUG << "AddEntityFeature:: recoData->addEntityFeature(feature:" << m_featureName << ", featureValue:" << featureValue.toDouble()<< ")";
+#endif
       recoData->addEntityFeature(m_featureName,featureValue.toDouble());
       break;
     default:

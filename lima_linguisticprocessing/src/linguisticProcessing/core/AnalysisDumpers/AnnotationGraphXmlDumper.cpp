@@ -183,11 +183,11 @@ void AnnotationGraphXmlDumper::outputVertex(const AnnotationGraphVertex v,
                                 const AnnotationData& annotData,
                                 std::ostream& xmlStream) const
 {
-  xmlStream << "<vertex id=\"" << v << "\" >" << std::endl;
+  xmlStream << "  <vertex id=\"" << v << "\" >" << std::endl;
   outputVertexIAnnotations(v, graph, annotData, xmlStream);
   outputVertexSAnnotations(v, graph, annotData, xmlStream);
   outputVertexGAnnotations(v, graph, annotData, xmlStream);
-  xmlStream << "</vertex>" << std::endl;
+  xmlStream << "  </vertex>" << std::endl;
 }
 
 void AnnotationGraphXmlDumper::outputVertexIAnnotations(const AnnotationGraphVertex v,
@@ -200,12 +200,12 @@ void AnnotationGraphXmlDumper::outputVertexIAnnotations(const AnnotationGraphVer
   it = map.begin(); it_end = map.end();
   if (it != it_end)
   {
-    xmlStream << "<iannots>" << std::endl;
+    xmlStream << "    <iannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
+      xmlStream << "      <iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
-    xmlStream << "</iannots>" << std::endl;
+    xmlStream << "    </iannots>" << std::endl;
   }
 }
 
@@ -220,12 +220,12 @@ void AnnotationGraphXmlDumper::outputVertexSAnnotations(const AnnotationGraphVer
 
   if (it != it_end)
   {
-    xmlStream << "<sannots>" << std::endl;
+    xmlStream << "    <sannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
+      xmlStream << "      <sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
-    xmlStream << "</sannots>" << std::endl;
+    xmlStream << "    </sannots>" << std::endl;
   }
 }
 
@@ -239,14 +239,14 @@ void AnnotationGraphXmlDumper::outputVertexGAnnotations(const AnnotationGraphVer
   it = const_cast<AGGannotProp&>(map).begin(); it_end = const_cast<AGGannotProp&>(map).end();
   if (it != it_end)
   {
-    xmlStream << "<annots>" << std::endl;
+    xmlStream << "    <annots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
+      xmlStream << "      <annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
       const_cast<AnnotationData&>(annotData).dumpFunction((*it).first)->dump(xmlStream, ((*it).second));
       xmlStream << "\" />" << std::endl;
     }
-    xmlStream << "</annots>" << std::endl;
+    xmlStream << "    </annots>" << std::endl;
   }
 }
 
@@ -255,12 +255,12 @@ void AnnotationGraphXmlDumper::outputEdge(const AnnotationGraphEdge e,
                               const AnnotationData& annotData,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "<edge src=\"" << source(e, graph)
+  xmlStream << "  <edge src=\"" << source(e, graph)
           << "\" targ=\"" << target(e, graph) << "\">" << std::endl;
   outputEdgeIAnnotations(e, graph, annotData, xmlStream);
   outputEdgeSAnnotations(e, graph, annotData, xmlStream);
   outputEdgeGAnnotations(e, graph, annotData, xmlStream);
-  xmlStream << "</edge>" << std::endl;
+  xmlStream << "  </edge>" << std::endl;
 }
 
 void AnnotationGraphXmlDumper::outputEdgeIAnnotations(const AnnotationGraphEdge e,
@@ -273,12 +273,12 @@ void AnnotationGraphXmlDumper::outputEdgeIAnnotations(const AnnotationGraphEdge 
   it = map.begin(); it_end = map.end();
   if (it != it_end)
   {
-    xmlStream << "<iannots>" << std::endl;
+    xmlStream << "    <iannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
+      xmlStream << "      <iannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
-    xmlStream << "</iannots>" << std::endl;
+    xmlStream << "    </iannots>" << std::endl;
   }
 }
 
@@ -292,12 +292,12 @@ void AnnotationGraphXmlDumper::outputEdgeSAnnotations(const AnnotationGraphEdge 
   it = map.begin(); it_end = map.end();
   if (it != it_end)
   {
-    xmlStream << "<sannots>" << std::endl;
+    xmlStream << "    <sannots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
+      xmlStream << "      <sannot name=\"" << annotData.annotationName((*it).first) << "\" value=\"" << (*it).second << "\" />" << std::endl;
     }
-    xmlStream << "</sannots>" << std::endl;
+    xmlStream << "    </sannots>" << std::endl;
   }
 }
 
@@ -311,14 +311,14 @@ void AnnotationGraphXmlDumper::outputEdgeGAnnotations(const AnnotationGraphEdge 
   it = const_cast<AGGannotProp&>(map).begin(); it_end = const_cast<AGGannotProp&>(map).end();
   if (it != it_end)
   {
-    xmlStream << "<annots>" << std::endl;
+    xmlStream << "    <annots>" << std::endl;
     for (; it != it_end; it++)
     {
-      xmlStream << "<annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
+      xmlStream << "      <annot name=\"" << annotData.annotationName((*it).first) << "\" value=\"";
       const_cast<AnnotationData&>(annotData).dumpFunction((*it).first)->dump(xmlStream, ((*it).second));
       xmlStream << "\" />" << std::endl;
     }
-    xmlStream << "</annots>" << std::endl;
+    xmlStream << "    </annots>" << std::endl;
   }
 }
 

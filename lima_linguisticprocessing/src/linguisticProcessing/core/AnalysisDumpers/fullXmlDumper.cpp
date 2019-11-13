@@ -258,7 +258,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     }
     // ??OME2 LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << sb->end()->getLastVertex();
     LDEBUG << "FullXmlDumper: end of posgraph for: sbItr "<< sbItr->getLastVertex() << " sb-end() " << (sb->getSegments()).end()->getLastVertex();
-    outputStream << "  <PosGraph>" << std::endl;
+    outputStream << "<PosGraph>" << std::endl;
     // ??OME2 while (sbItr!=sb->end())
     while (sbItr!=(sb->getSegments()).end())
     {
@@ -297,7 +297,7 @@ LimaStatusCode FullXmlDumper::process(AnalysisContent& analysis) const
     }
     outputStream << "  </DetachedVertices>" << std::endl;
 
-    outputStream << "  </PosGraph>" << std::endl;
+    outputStream << "</PosGraph>" << std::endl;
 
   }
 
@@ -357,7 +357,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   }
   else
   {
-    os << "  <"<<graphId<<">" << std::endl;
+    os << "<"<<graphId<<">" << std::endl;
   }
   try
   {
@@ -388,7 +388,7 @@ void FullXmlDumper::dumpLimaData(std::ostream& os,
   }
   else
   {
-    os << "  </"<<graphId<<">" << std::endl;
+    os << "</"<<graphId<<">" << std::endl;
   }
 }
 
@@ -423,18 +423,18 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
   if (v == syntacticData->iterator()->firstVertex() ||
       v == syntacticData->iterator()->lastVertex())
   {
-      xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
+      xmlStream << "  <vertex id=\"_" << v << "\" />" << std::endl;
       return;
   }
   if (token == 0)
   {
     DUMPERLOGINIT;
     LWARN << "No token (vertex_token) for vertex "  << v;
-    xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
+    xmlStream << "  <vertex id=\"_" << v << "\" />" << std::endl;
     return;
   }
 
-  xmlStream << "    <vertex id=\"_" << v << "\"";
+  xmlStream << "  <vertex id=\"_" << v << "\"";
 // debugging to take out JGF
 //   DUMPERLOGINIT;
   const VertexChainIdProp& chains = get(vertex_chain_id, graph,v);
@@ -499,7 +499,7 @@ void FullXmlDumper::outputVertex(const LinguisticGraphVertex v,
     xmlStream << "    <ref>" << tokenId << "</ref>" << std::endl;
   }
   alreadyDumpedTokens[tokenId] = true;
-  xmlStream << "    </vertex>" << std::endl;
+  xmlStream << "  </vertex>" << std::endl;
  }
 }
 
@@ -507,7 +507,7 @@ void FullXmlDumper::outputEdge(const LinguisticGraphEdge e,
                               const LinguisticGraph& graph,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "    <edge src=\"" << source(e, graph)
+  xmlStream << "  <edge src=\"" << source(e, graph)
           << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;
 }
 

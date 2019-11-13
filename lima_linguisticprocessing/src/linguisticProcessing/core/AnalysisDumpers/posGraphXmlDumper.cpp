@@ -19,17 +19,17 @@
 /**
   *
   * @file       posGraphXmlDumper.cpp
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
-  *             Jorge García Flores <jorge.garcia-flores@cea.fr>  
+  *             Jorge García Flores <jorge.garcia-flores@cea.fr>
   *             Copyright (C) 2004 by CEA LIST
   * @author     Besancon Romaric (besanconr@zoe.cea.fr)
   * @date       March 28 2008
   *
   * @brief      dump just the content of the posgraph in XML format
   *
-  * @change_log: 
-  * 12/2007:   JGF: changed breadth_first_visit instead of breadth_first_search 
+  * @change_log:
+  * 12/2007:   JGF: changed breadth_first_visit instead of breadth_first_search
   * 03/2007:    JGF: correct duplicate vertex error in ::outputVertex
   * 01/2012:    GC: no more boost search algorithm
   */
@@ -141,7 +141,7 @@ void posGraphXmlDumper::init(
 
   m_bowGenerator = new BowGenerator();
   m_bowGenerator->init(unitConfiguration, m_language);
-  
+
 }
 
 LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
@@ -206,12 +206,12 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
 
 
 
-   // ??OME2 SegmentationData::iterator sbItr=sb->begin();
-   std::vector<Segment>::iterator sbItr=(sb->getSegments().begin());
+  // ??OME2 SegmentationData::iterator sbItr=sb->begin();
+  std::vector<Segment>::iterator sbItr=(sb->getSegments().begin());
 
-   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-   AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-   if (posgraph != 0)
+  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  if (posgraph != 0)
   {
     std::vector< bool > alreadyDumpedTokens;
     std::map< LinguisticAnalysisStructure::Token*, uint64_t > fullTokens;
@@ -224,7 +224,7 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
       fullTokens[get(vertex_token, *posgraph->getGraph(), *i)] = id;
       id++;
     }
-    outputStream << "  <PosGraph>" << std::endl;
+    outputStream << "<PosGraph>" << std::endl;
     int sentenceId = 0;
     // ??OME2 while (sbItr!=sb->end())
     while (sbItr!=(sb->getSegments().end()))
@@ -243,7 +243,7 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
 
       sbItr++;
     }
-    outputStream << "  </PosGraph>" << std::endl;
+    outputStream << "</PosGraph>" << std::endl;
   }
   outputStream << "</lima_analysis_dump>" << std::endl;
   handler->endAnalysis();
@@ -361,19 +361,19 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
     if (v == syntacticData->iterator()->firstVertex() ||
         v == syntacticData->iterator()->lastVertex())
     {
-        xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
+        xmlStream << "  <vertex id=\"_" << v << "\" />" << std::endl;
         return;
     }
     if (token == 0)
     {
       DUMPERLOGINIT;
       LWARN << "No token (vertex_token) for vertex "  << v;
-      xmlStream << "    <vertex id=\"_" << v << "\" />" << std::endl;
+      xmlStream << "  <vertex id=\"_" << v << "\" />" << std::endl;
       return;
     }
 
 
-    xmlStream << "    <vertex id=\"_" << v << "\"";
+    xmlStream << "  <vertex id=\"_" << v << "\"";
   // debugging to take out JGF
   //   DUMPERLOGINIT;
     const VertexChainIdProp& chains = get(vertex_chain_id, lposgraph,v);
@@ -479,7 +479,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
       xmlStream << "    <ref>" << tokenId << "</ref>" << std::endl;
     }
     alreadyDumpedTokens[tokenId] = true;
-    xmlStream << "    </vertex>" << std::endl;
+    xmlStream << "  </vertex>" << std::endl;
 
   // dump complex tokens this token is the head of
 
@@ -514,10 +514,10 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
             Q_FOREACH(const LimaString& compoundString, compounds)
             {
 //               qDebug() << "naturalCompoundTokenString :" << compoundString;
-              xmlStream << "    <vertex id=\"_compound\">" << std::endl;
-              xmlStream << "      <string>" << Common::Misc::transcodeToXmlEntities(compoundString) << "</string>" << std::endl;
-              xmlStream << "      <position>" << compound->getPosition() << "</position>" << std::endl;
-              xmlStream << "      <length>" << compound->getLength() << "</length>" << std::endl;
+              xmlStream << "  <vertex id=\"_compound\">" << std::endl;
+              xmlStream << "    <string>" << Common::Misc::transcodeToXmlEntities(compoundString) << "</string>" << std::endl;
+              xmlStream << "    <position>" << compound->getPosition() << "</position>" << std::endl;
+              xmlStream << "    <length>" << compound->getLength() << "</length>" << std::endl;
               MorphoSyntacticData* data = get(vertex_data, lposgraph, v);
               if (data == 0)
               {
@@ -526,8 +526,8 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
               }
               else
               {
-                xmlStream << "      <data>" << std::endl;
-                xmlStream << "      <compound>" << std::endl;
+                xmlStream << "    <data>" << std::endl;
+                xmlStream << "    <compound>" << std::endl;
                 LimaString form=compoundString;
                 LimaString lemma=compoundString;
                 LimaString norm=compoundString;
@@ -548,7 +548,7 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
               xmlStream << "      </form>" << std::endl;
               xmlStream << "    </compound>" << std::endl;
               xmlStream << "    </data>" << std::endl;
-              xmlStream << "    </vertex>" << std::endl;
+              xmlStream << "  </vertex>" << std::endl;
             }
           }
   //           outputCompound();
@@ -606,8 +606,8 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
 //     qDebug() << "posGraphXmlDumper::naturalCompoundTokenString recurseResult lambda "<<i<<" returns result of size" << recurseResultResult.size()<<recurseResultResult;
     return recurseResultResult;
   };
-  
-  
+
+
   std::function< QMap<int, QSet<LimaString> >(std::deque< BoWComplexToken::Part >&,int)> recurse;
   recurse = [&recurse,&recurseResult](std::deque< BoWComplexToken::Part >& parts,uint64_t head) -> QMap<int, QSet<LimaString> >
   {
@@ -638,7 +638,7 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
         // After building all terms for the parts, add the head
         // @TODO Add all terms built from the head token if complex
         partStrings.insert(parts[head].getBoWToken()->getLemma());
-        
+
 //         qDebug() << "posGraphXmlDumper::naturalCompoundTokenString recurse lambda after return from recurseResult with nb terms:" << partStrings.size();
         recurseresults.insert(partToken->getPosition(), QSet<LimaString>());
         Q_FOREACH(const QString& partString, partStrings)
@@ -664,7 +664,7 @@ void posGraphXmlDumper::naturalCompoundTokenString(const Common::BagOfWords::BoW
 //     qDebug() << "posGraphXmlDumper::naturalCompoundTokenString final result:" << string;
     strings << string;
   }
-  
+
 #endif
 #endif
   return;
@@ -675,7 +675,7 @@ void posGraphXmlDumper::outputEdge(const LinguisticGraphEdge e,
                               const LinguisticGraph& graph,
                               std::ostream& xmlStream) const
 {
-  xmlStream << "    <edge src=\"" << source(e, graph)
+  xmlStream << "  <edge src=\"" << source(e, graph)
           << "\" targ=\"" << target(e, graph) << "\" />" << std::endl;
 }
 

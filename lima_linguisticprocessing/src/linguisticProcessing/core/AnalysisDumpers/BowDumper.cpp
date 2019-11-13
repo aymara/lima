@@ -184,7 +184,7 @@ LimaStatusCode BowDumper::process(
   // build BoWText from the result of the analysis
   BoWText bowText;
   bowText.lang=metadata->getMetaData("Lang");
-  buildBoWText(annotationData, syntacticData, bowText,analysis,anagraph,posgraph);
+  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph);
 
   // Exclude from the shift list XML entities preceding the offset and
   // readjust positions regarding the beginning of the node being analyzed

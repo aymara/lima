@@ -154,20 +154,20 @@ void DumpXMLVisitor::discover_vertex(LinguisticGraphVertex v,
                                      const LinguisticGraph& g)
 {
 
-  m_ostream << "<vertex id=\"" << v << "\">" << std::endl;
+  m_ostream << "  <vertex id=\"" << v << "\">" << std::endl;
   Token* t = get(vertex_token,g,v);
-  if (t != 0) 
+  if (t != 0)
   {
-    m_ostream << "  <token>" << std::endl;
+    m_ostream << "    <token>" << std::endl;
     t->outputXml(m_ostream,m_propertyCodeManager,m_stringsPool);
-    m_ostream << "  </token>" << std::endl;
+    m_ostream << "    </token>" << std::endl;
   }
   MorphoSyntacticData* data = get(vertex_data,g,v);
   if (data != 0 )
   {
     data->outputXml(m_ostream,m_propertyCodeManager,m_stringsPool);
   }
-  m_ostream << "</vertex>" << std::endl;
+  m_ostream << "  </vertex>" << std::endl;
 }
 
 //**********************************************************************
