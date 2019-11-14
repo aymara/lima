@@ -25,8 +25,8 @@
 #include <iostream>
 #include <limits>
 #ifdef WIN32
-#undef min  
-#undef max 
+#undef min
+#undef max
 #endif
 #include <cassert>
 
@@ -54,29 +54,27 @@ MultiLevelAnalysisDictionarySubWordIterator::operator*() const
 {
 
   std::vector<uint64_t> indexes(m_dico.getDictionaryCount(),0);
-  std::vector<uint64_t>::iterator indexItr=indexes.begin();
-  uint64_t offset;
-  offset = std::numeric_limits< uint64_t >::max();
-  for (std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> >::const_iterator it=m_accessItrs.begin();
-       it!=m_accessItrs.end();
-       it++,indexItr++)
+  auto indexItr = indexes.begin();
+  auto offset = std::numeric_limits< uint64_t >::max();
+  for (auto it = m_accessItrs.cbegin();
+       it != m_accessItrs.cend(); it++, indexItr++)
   {
     if (it->first != it->second)
     {
-      std::pair<uint64_t, uint64_t> data=*(it->first); // clazy:exclude=rule-of-two-soft
+      auto data = *(it->first); // clazy:exclude=rule-of-two-soft
       if (data.first < offset)
       {
-        offset=data.first;
-        std::fill(indexes.begin(),indexes.end(),0);
-        *indexItr=data.second;
+        offset = data.first;
+        std::fill(indexes.begin(), indexes.end(), 0);
+        *indexItr = data.second;
       }
       else if (data.first == offset)
       {
-        *indexItr=data.second;
+        *indexItr = data.second;
       }
     }
   }
-  return std::make_pair(offset,m_dico.getEntry(indexes));
+  return std::make_pair(offset, m_dico.getEntry(indexes));
 }
 
 AbstractDictionarySubWordIterator* MultiLevelAnalysisDictionarySubWordIterator::clone() const
@@ -88,47 +86,44 @@ AbstractDictionarySubWordIterator* MultiLevelAnalysisDictionarySubWordIterator::
 MultiLevelAnalysisDictionarySubWordIterator& MultiLevelAnalysisDictionarySubWordIterator::operator++(int)
 {
   // find lower offset
-  int offset = std::numeric_limits<int>::max();
-  for (std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> >::iterator it=m_accessItrs.begin();
-       it!=m_accessItrs.end();
-       it++)
+  auto offset = std::numeric_limits<uint64_t>::max();
+  for (auto accessItr : m_accessItrs)
   {
-    if (it->first != it->second)
+    if (accessItr.first != accessItr.second)
     {
-      std::pair<int,uint64_t> data=*(it->first);
+      auto data = *(accessItr.first);
       if (data.first < offset)
       {
-        offset=data.first;
+        offset = data.first;
       }
     }
   }
   // advance lower offset iteratos
-  for (std::vector<std::pair<Common::AccessSubWordIterator,Common::AccessSubWordIterator> >::iterator it=m_accessItrs.begin();
-       it!=m_accessItrs.end();
-       it++)
+  for (auto accessItr : m_accessItrs)
   {
-    if (it->first != it->second)
+    if (accessItr.first != accessItr.second)
     {
-      std::pair<int,uint64_t> data=*(it->first);
+      auto data = *(accessItr.first);
       if (data.first == offset)
       {
-        (it->first)++;
+        (accessItr.first)++;
       }
     }
   }
   return *this;
 }
 
-bool MultiLevelAnalysisDictionarySubWordIterator::operator==(const AbstractDictionarySubWordIterator& abit) const
+bool MultiLevelAnalysisDictionarySubWordIterator::operator==(
+    const AbstractDictionarySubWordIterator& abit) const
 {
-  const MultiLevelAnalysisDictionarySubWordIterator& it=static_cast<const MultiLevelAnalysisDictionarySubWordIterator&>(abit);
-  return m_accessItrs==it.m_accessItrs;
+  const auto& it = static_cast<const MultiLevelAnalysisDictionarySubWordIterator&>(abit);
+  return m_accessItrs == it.m_accessItrs;
 }
 
 bool MultiLevelAnalysisDictionarySubWordIterator::operator!=(const AbstractDictionarySubWordIterator& abit) const
 {
-  const MultiLevelAnalysisDictionarySubWordIterator& it=static_cast<const MultiLevelAnalysisDictionarySubWordIterator&>(abit);
-  return m_accessItrs!=it.m_accessItrs;
+  const auto& it = static_cast<const MultiLevelAnalysisDictionarySubWordIterator&>(abit);
+  return m_accessItrs != it.m_accessItrs;
 }
 
 
@@ -138,7 +133,8 @@ MultiLevelAnalysisDictionarySuperWordIterator::MultiLevelAnalysisDictionarySuper
 {}
 
 
-MultiLevelAnalysisDictionarySuperWordIterator::MultiLevelAnalysisDictionarySuperWordIterator(const MultiLevelAnalysisDictionarySuperWordIterator& source) :
+MultiLevelAnalysisDictionarySuperWordIterator::MultiLevelAnalysisDictionarySuperWordIterator(
+  const MultiLevelAnalysisDictionarySuperWordIterator& source) :
     AbstractDictionarySuperWordIterator(),
     m_accessItrs(source.m_accessItrs)
 {}

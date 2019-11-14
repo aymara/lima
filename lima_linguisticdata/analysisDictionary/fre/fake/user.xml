@@ -1,45 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <dictionary>
-<entry k="élève">
-  <i l="Eleve">
-    <p v="Npgms-"/>
-  </i>
-</entry>
+  <entry k="Est" op="delete"/>
+  <entry k="élève" desacc="no">
+    <i l="élève" op="replace">
+      <p v="NC:mp-"/>
+    </i>
+  </entry>
+  <entry k="élève">
+    <i l="Eleve">
+      <p v="NPP"/>
+    </i>
+  </entry>
 <entry k="nouveau-phoenix">
   <concat>
     <c form="nouveau">
       <i l="nouveau">
-        <p v="Afb--fs"/>
-        <p v="Afd--fs"/>
-        <p v="Afha-fs"/>
-        <p v="Afhp-fs"/>
-        <p v="Afz--fs"/>
+        <p v="ADJ:-fs"/>
       </i>
     </c>
     <c form="phoenix">
       <i l="phenix">
-        <p v="Vpipi3-s"/>
+        <p v="V:pi3-s"/>
       </i>
     </c>
   </concat>
   <concat>
     <c form="nouveau">
       <i l="nouveau">
-        <p v="Afb--fs"/>
-        <p v="Afd--fs"/>
-        <p v="Afha-fs"/>
-        <p v="Afhp-fs"/>
-        <p v="Afz--fs"/>
+          <p v="ADJ:-fs"/>
       </i>
     </c>
     <c form="phoe">
       <i l="fée">
-        <p v="Afhp-fs"/>
-        <p v="Vpipi3-s"/>
+          <p v="ADJ:-fs"/>
+        <p v="V:pi3-s"/>
       </i>
     </c>
     <c form="nix">
       <i l="nicky">
-        <p v="Npgfs-"/>
+        <p v="NPP"/>
       </i>
     </c>
   </concat>

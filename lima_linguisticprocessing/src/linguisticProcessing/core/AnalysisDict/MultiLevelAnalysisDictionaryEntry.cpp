@@ -33,16 +33,167 @@
 #include <cassert>
 #include <set>
 
-using namespace std;
+namespace Lima {
+namespace LinguisticProcessing {
+namespace AnalysisDict {
 
-namespace Lima
+class LingInfoLevelState
 {
+public:
+  LingInfoLevelState();
+  ~LingInfoLevelState() = default;
+  LingInfoLevelState(const LingInfoLevelState&) = default;
+  LingInfoLevelState& operator=(const LingInfoLevelState&) = default;
 
-namespace LinguisticProcessing
-{
+  // position attributes
+  unsigned char* pos;
+  unsigned char* posEnd;
 
-namespace AnalysisDict
+  // state attributes
+  StringsPoolIndex currentLemma;
+  LimaString lemmaStr;
+  StringsPoolIndex currentNorm;
+  LimaString normStr;
+  uint64_t lingInfoOffset;
+  bool final;
+
+  // data attributes
+  bool mainKeys;
+  const Lima::Common::AbstractAccessByString* keys;
+  const DictionaryData* dicoData;
+
+  void next(FsaStringsPool& sp);
+  bool end() const;
+  bool operator<(const LingInfoLevelState& lis) const;
+  bool operator==(const LingInfoLevelState& lis) const;
+
+};
+
+class ConcatenatedLevelState
 {
+public:
+
+  class Component
+  {
+  public:
+    StringsPoolIndex form;
+    LimaString formStr;
+    uint64_t pos;
+    uint64_t len;
+    LingInfoLevelState liState;
+
+    Component() = default;
+    ~Component() = default;
+    Component(const Component&) = default;
+    Component& operator=(const Component&) = default;
+
+    bool operator<(const Component& c) const { return formStr<c.formStr;};
+    bool operator==(const Component& c) const { return form==c.form;};
+  };
+
+  ConcatenatedLevelState() = default;
+  ~ConcatenatedLevelState() = default;
+  ConcatenatedLevelState(const ConcatenatedLevelState&) = default;
+  ConcatenatedLevelState& operator=(const ConcatenatedLevelState&) = default;
+
+  // position attributes
+  unsigned char* pos;
+  unsigned char* posEnd;
+
+  // state attributes
+  bool final;
+  std::vector<Component> components;
+
+  // data attributes
+  bool mainKeys;
+  const Lima::Common::AbstractAccessByString* keys;
+  const DictionaryData* dicoData;
+
+
+  bool operator<(const ConcatenatedLevelState& cls) const
+  {
+    return (cls.components.empty()
+      || ( !components.empty() && (components < cls.components) ) );
+  };
+  bool operator==(const ConcatenatedLevelState& cls) const
+  {
+    return (components == cls.components);
+  };
+
+  void next(FsaStringsPool& sp);
+  bool end() const;
+
+};
+
+class AccentedLevelState
+{
+public:
+  AccentedLevelState();
+  ~AccentedLevelState() = default;
+  AccentedLevelState(const AccentedLevelState&) = default;
+  AccentedLevelState& operator=(const AccentedLevelState&) = default;
+
+  // position attributes
+  unsigned char* pos;
+  unsigned char* posEnd;
+
+  // state attributes
+  StringsPoolIndex accentedForm;
+  LimaString accentedFormStr;
+  StringsPoolIndex accentedEntry;
+  bool final;
+
+  // data attributes
+  bool mainKeys;
+  const Lima::Common::AbstractAccessByString* keys;
+  const DictionaryData* dicoData;
+
+  void next(FsaStringsPool& sp);
+  bool end() const;
+  bool operator<(const AccentedLevelState& lis) const;
+  bool operator==(const AccentedLevelState& lis) const;
+};
+
+AccentedLevelState::AccentedLevelState() :
+    pos(0),
+    posEnd(0),
+    accentedForm(STRINGS_POOL_INDEX_MAX_VALUE),
+    accentedFormStr(),
+    accentedEntry(STRINGS_POOL_INDEX_MAX_VALUE),
+    final(false),
+    mainKeys(false),
+    keys(0),
+    dicoData(0)
+{}
+
+
+void parseLingInfos(std::vector<LingInfoLevelState>& data,Lima::FsaStringsPool* sp,
+                    AbstractDictionaryEntryHandler* handler);
+void parseConcatenated(std::vector<ConcatenatedLevelState>& data,Lima::FsaStringsPool* sp,
+                       AbstractDictionaryEntryHandler* handler);
+
+
+class MultiLevelAnalysisDictionaryEntryPrivate
+{
+  friend class MultiLevelAnalysisDictionaryEntry;
+
+  MultiLevelAnalysisDictionaryEntryPrivate(
+    const std::vector<MultiLevelAnalysisDictionaryEntry::LevelData>& data,
+    Lima::FsaStringsPool* sp) :
+      m_data(data),
+      m_sp(sp) {};
+
+
+  virtual ~MultiLevelAnalysisDictionaryEntryPrivate() = default;
+
+  MultiLevelAnalysisDictionaryEntryPrivate(const MultiLevelAnalysisDictionaryEntryPrivate& ) = default;
+  MultiLevelAnalysisDictionaryEntryPrivate& operator=(const MultiLevelAnalysisDictionaryEntryPrivate& ) = default;
+
+  std::vector<MultiLevelAnalysisDictionaryEntry::LevelData> m_data;
+  Lima::FsaStringsPool* m_sp;
+
+};
+
 
 MultiLevelAnalysisDictionaryEntry::MultiLevelAnalysisDictionaryEntry(
   StringsPoolIndex formId,
@@ -52,15 +203,30 @@ MultiLevelAnalysisDictionaryEntry::MultiLevelAnalysisDictionaryEntry(
   bool hasConcatenated,
   bool hasAccentedForm,
   const std::vector<LevelData>& data,
-  Lima::FsaStringsPool* sp
-) :
-    AbstractDictionaryEntry(formId,isFinal,isEmpty,hasLingInfos,hasConcatenated,hasAccentedForm),
-    m_data(data),
-    m_sp(sp)
-{}
+  Lima::FsaStringsPool* sp) :
+    AbstractDictionaryEntry(formId,
+                            isFinal,
+                            isEmpty,
+                            hasLingInfos,
+                            hasConcatenated,
+                            hasAccentedForm),
+    m_d(new MultiLevelAnalysisDictionaryEntryPrivate(data, sp))
+{
+}
 
-MultiLevelAnalysisDictionaryEntry::~MultiLevelAnalysisDictionaryEntry()
-{}
+MultiLevelAnalysisDictionaryEntry::MultiLevelAnalysisDictionaryEntry(
+  const MultiLevelAnalysisDictionaryEntry& made) :
+    AbstractDictionaryEntry(made),
+    m_d(new MultiLevelAnalysisDictionaryEntryPrivate(*made.m_d))
+{
+}
+
+MultiLevelAnalysisDictionaryEntry& MultiLevelAnalysisDictionaryEntry::operator=(
+  const MultiLevelAnalysisDictionaryEntry& made)
+{
+  *m_d = *made.m_d;
+  return *this;
+}
 
 
 AbstractDictionaryEntry* MultiLevelAnalysisDictionaryEntry::clone()
@@ -68,39 +234,38 @@ AbstractDictionaryEntry* MultiLevelAnalysisDictionaryEntry::clone()
   return new MultiLevelAnalysisDictionaryEntry(*this);
 }
 
-void MultiLevelAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEntryHandler* handler) const
+void MultiLevelAnalysisDictionaryEntry::parseAccentedForms(
+  AbstractDictionaryEntryHandler* handler) const
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseAccentedForms";
   handler->startEntry(m_entryId);
 
   // initialize states
-  vector<AccentedLevelState> state;
-  for (vector<LevelData>::const_iterator it=m_data.begin();
-       it!=m_data.end();
-       it++)
+  std::vector<AccentedLevelState> state;
+  for (const auto& ld : m_d->m_data)
   {
     AccentedLevelState curState;
 
     // set position attributes
-    curState.pos=it->startEntryData;
-    assert(curState.pos != it->endEntryData);
+    curState.pos = ld.startEntryData;
+    assert(curState.pos != ld.endEntryData);
     // skip linginfos
-    uint64_t read=DictionaryData::readCodedInt(curState.pos);
-    curState.pos+=read;
-    if (curState.pos != it->endEntryData)
+    auto read = DictionaryData::readCodedInt(curState.pos);
+    curState.pos += read;
+    if (curState.pos != ld.endEntryData)
     {
       // read accented
-      read=DictionaryData::readCodedInt(curState.pos);
+      read = DictionaryData::readCodedInt(curState.pos);
       curState.posEnd= curState.pos + read;
 
       // set data attributes
-      curState.mainKeys=it->mainKeys;
-      curState.keys=it->keys;
-      curState.dicoData=it->dicoData;
+      curState.mainKeys = ld.mainKeys;
+      curState.keys = ld.keys;
+      curState.dicoData = ld.dicoData;
 
       // set state attributes
-      curState.next(*m_sp);
+      curState.next(*m_d->m_sp);
 
       state.push_back(curState);
     }
@@ -110,59 +275,55 @@ void MultiLevelAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEnt
   while (true)
   {
     // find lower state
-    AccentedLevelState lowerState = state.front();
-    bool final=lowerState.final;
-    bool hasInfo= !lowerState.final;
-    for (vector<AccentedLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    auto* lowerState = &state.front();
+    auto final = lowerState->final;
+    auto hasInfo = !lowerState->final;
+    for (auto& als : state)
     {
-      if (*stateItr < lowerState)
+      if (als < *lowerState)
       {
-        lowerState = *stateItr;
-        final=stateItr->final;
+        lowerState = &als;
+        final=als.final;
       }
-      else if (*stateItr == lowerState)
+      else if (als == *lowerState)
       {
-        if (stateItr->final)
+        if (als.final)
         {
           final=true;
         }
       }
     }
 
-    if (lowerState.end())
+    if (lowerState->end())
     {
       break;
     }
 
     if (final)
     {
-      handler->deleteAccentedForm(lowerState.accentedForm);
+      handler->deleteAccentedForm(lowerState->accentedForm);
     }
     if (hasInfo)
     {
-      handler->foundAccentedForm(lowerState.accentedForm);
-      vector<LingInfoLevelState> liStates;
-      vector<ConcatenatedLevelState> concatStates;
-      bool finalReached=false;
-      for (vector<AccentedLevelState>::iterator stateItr=state.begin();
-           stateItr!=state.end();
-           stateItr++)
+      handler->foundAccentedForm(lowerState->accentedForm);
+      std::vector<LingInfoLevelState> liStates;
+      std::vector<ConcatenatedLevelState> concatStates;
+      auto finalReached = false;
+      for (const auto& als : state)
       {
-        if (*stateItr == lowerState)
+        if (als == *lowerState)
         {
-          finalReached = finalReached || stateItr->final;
+          finalReached = finalReached || als.final;
           if (!finalReached)
           {
 
-            unsigned char* acc=stateItr->dicoData->getEntryAddr(stateItr->accentedEntry);
-            uint64_t tmp=DictionaryData::readCodedInt(acc);
+            auto acc = als.dicoData->getEntryAddr(als.accentedEntry);
+            auto tmp = DictionaryData::readCodedInt(acc);
             if (tmp == 1)
             {
               ANALYSISDICTLOGINIT;
               LWARN << "WARNING ! should never accentuate to a delete entry !";
-              tmp=DictionaryData::readCodedInt(acc);
+              tmp = DictionaryData::readCodedInt(acc);
             }
             // tmp contains length
             if (tmp == 0)
@@ -170,173 +331,166 @@ void MultiLevelAnalysisDictionaryEntry::parseAccentedForms(AbstractDictionaryEnt
               ANALYSISDICTLOGINIT
               LWARN << "WARNING ! should never accentuate to a empty entry !";
             }
-            unsigned char* accEnd=acc+tmp;
+            auto accEnd = acc+tmp;
             // read linginfo
-            tmp=DictionaryData::readCodedInt(acc);
-            if (tmp>0)
+            tmp = DictionaryData::readCodedInt(acc);
+            if (tmp > 0)
             {
               LingInfoLevelState curState;
-              curState.pos=acc;
-              curState.posEnd=acc+tmp;
+              curState.pos = acc;
+              curState.posEnd = acc + tmp;
 
               // set data attributes
-              curState.mainKeys=stateItr->mainKeys;
-              curState.keys=stateItr->keys;
-              curState.dicoData=stateItr->dicoData;
+              curState.mainKeys = als.mainKeys;
+              curState.keys = als.keys;
+              curState.dicoData = als.dicoData;
 
               // set state attributes
-              curState.next(*m_sp);
+              curState.next(*m_d->m_sp);
 
               liStates.push_back(curState);
 
-              acc+=tmp;
+              acc += tmp;
             }
             if (acc != accEnd)
             {
               // skip accented
-              tmp=DictionaryData::readCodedInt(acc);
-              acc+=tmp;
+              tmp = DictionaryData::readCodedInt(acc);
+              acc += tmp;
               if (acc != accEnd)
               {
                 // read concat
-                tmp=DictionaryData::readCodedInt(acc);
+                tmp = DictionaryData::readCodedInt(acc);
 
                 ConcatenatedLevelState curState;
-                curState.pos=acc;
-                curState.posEnd=acc+tmp;
+                curState.pos = acc;
+                curState.posEnd = acc+tmp;
 
                 // set data attributes
-                curState.mainKeys=stateItr->mainKeys;
-                curState.keys=stateItr->keys;
-                curState.dicoData=stateItr->dicoData;
+                curState.mainKeys = als.mainKeys;
+                curState.keys = als.keys;
+                curState.dicoData = als.dicoData;
 
                 // set state attributes
-                curState.next(*m_sp);
+                curState.next(*m_d->m_sp);
 
                 concatStates.push_back(curState);
 
-                acc+=tmp;
+                acc += tmp;
                 assert(acc == accEnd);
-
               }
             }
-
           }
 
-          parseLingInfos(liStates,m_sp,handler);
-          parseConcatenated(concatStates,m_sp,handler);
+          AnalysisDict::parseLingInfos(liStates, m_d->m_sp, handler);
+          AnalysisDict::parseConcatenated(concatStates, m_d->m_sp, handler);
 
         }
       }
       handler->endAccentedForm();
     }
     // advance states
-    for (vector<AccentedLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    for (auto& als : state)
     {
-      if (*stateItr == lowerState)
+      if (als == *lowerState)
       {
-        stateItr->next(*m_sp);
+        als.next(*m_d->m_sp);
       }
     }
   }
   handler->endEntry();
 }
 
-void MultiLevelAnalysisDictionaryEntry::parseConcatenated(AbstractDictionaryEntryHandler* handler) const
+void MultiLevelAnalysisDictionaryEntry::parseConcatenated(
+  AbstractDictionaryEntryHandler* handler) const
 {
 
   handler->startEntry(m_entryId);
 
   // initialize states
-  vector<ConcatenatedLevelState> state;
+  std::vector<ConcatenatedLevelState> state;
 
-  for (vector<LevelData>::const_iterator it=m_data.begin();
-       it!=m_data.end();
-       it++)
+  for (const auto& ld : m_d->m_data)
   {
     ConcatenatedLevelState curState;
 
     // set position attributes
-    curState.pos=it->startEntryData;
-    assert(curState.pos != it->endEntryData);
+    curState.pos = ld.startEntryData;
+    assert(curState.pos != ld.endEntryData);
+
     // skip linginfos
-    uint64_t read=DictionaryData::readCodedInt(curState.pos);
-    curState.pos+=read;
-    if (curState.pos != it->endEntryData)
+    uint64_t read = DictionaryData::readCodedInt(curState.pos);
+    curState.pos += read;
+    if (curState.pos != ld.endEntryData)
     {
       // skip accented
-      read=DictionaryData::readCodedInt(curState.pos);
-      curState.pos+=read;
-      if (curState.pos != it->endEntryData)
+      read = DictionaryData::readCodedInt(curState.pos);
+      curState.pos += read;
+      if (curState.pos != ld.endEntryData)
       {
         // read concat
-        read=DictionaryData::readCodedInt(curState.pos);
-        curState.posEnd=curState.pos+read;
+        read = DictionaryData::readCodedInt(curState.pos);
+        curState.posEnd = curState.pos+read;
 
         // set data attributes
-        curState.mainKeys=it->mainKeys;
-        curState.keys=it->keys;
-        curState.dicoData=it->dicoData;
+        curState.mainKeys = ld.mainKeys;
+        curState.keys = ld.keys;
+        curState.dicoData = ld.dicoData;
 
         // set state attributes
-        curState.next(*m_sp);
+        curState.next(*m_d->m_sp);
 
         state.push_back(curState);
-
       }
     }
-
   }
 
-  parseConcatenated(state,m_sp,handler);
+  AnalysisDict::parseConcatenated(state, m_d->m_sp, handler);
 
   handler->endEntry();
 
 }
 
-void MultiLevelAnalysisDictionaryEntry::parseLingInfos(AbstractDictionaryEntryHandler* handler) const
+void MultiLevelAnalysisDictionaryEntry::parseLingInfos(
+  AbstractDictionaryEntryHandler* handler) const
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos initialize entry reading";
-	
+
   handler->startEntry(m_entryId);
 
   // initialize states
-  vector<LingInfoLevelState> state;
-  for (vector<LevelData>::const_iterator it=m_data.begin();
-       it!=m_data.end();
-       it++)
+  std::vector<LingInfoLevelState> states;
+  for (const auto& ld : m_d->m_data)
   {
     LingInfoLevelState curState;
 
     // set position attributes
-    curState.pos=it->startEntryData;
-    uint64_t read=DictionaryData::readCodedInt(curState.pos);
-    curState.posEnd=curState.pos + read;
+    curState.pos = ld.startEntryData;
+    auto read = DictionaryData::readCodedInt(curState.pos);
+    curState.posEnd = curState.pos + read;
 
     // set data attributes
-    curState.mainKeys=it->mainKeys;
-    curState.keys=it->keys;
-    curState.dicoData=it->dicoData;
+    curState.mainKeys = ld.mainKeys;
+    curState.keys = ld.keys;
+    curState.dicoData = ld.dicoData;
 
-    // read state;
-    curState.next(*m_sp);
+    // read current level first state;
+    curState.next(*m_d->m_sp);
 
-    state.push_back(curState);
+    states.push_back(curState);
   }
-  parseLingInfos(state,m_sp,handler);
+  AnalysisDict::parseLingInfos(states, m_d->m_sp, handler);
 
   handler->endEntry();
 }
 
-MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::LingInfoLevelState() :
+LingInfoLevelState::LingInfoLevelState() :
     pos(0),
     posEnd(0),
-    currentLemma(0),
+    currentLemma(STRINGS_POOL_INDEX_MAX_VALUE),
     lemmaStr(),
-    currentNorm(0),
+    currentNorm(STRINGS_POOL_INDEX_MAX_VALUE),
     normStr(),
     lingInfoOffset(0),
     final(false),
@@ -345,66 +499,66 @@ MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::LingInfoLevelState() :
     dicoData(0)
 {}
 
-MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::~LingInfoLevelState() {}
-
-
-void MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::next(FsaStringsPool& sp)
+void LingInfoLevelState::next(FsaStringsPool& sp)
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "LingInfoLevelState::next" << (void*)pos << (void*)posEnd;
+  LDEBUG << "LingInfoLevelState::next" << (void*)pos << (void*)posEnd
+          << "lemma : " << lemmaStr << ", norm : " << normStr;
   if (pos != posEnd)
   {
-    currentLemma=DictionaryData::readCodedInt(pos);
-    if (currentLemma==0)
+    currentLemma = DictionaryData::readCodedInt(pos);
+    if (currentLemma == 0)
     {
-      final=true;
-      currentLemma=DictionaryData::readCodedInt(pos);
+      final = true;
+      currentLemma = DictionaryData::readCodedInt(pos);
     }
     else
     {
-      final=false;
+      final = false;
     }
-    lemmaStr=keys->getSpelling(currentLemma);
+    lemmaStr = keys->getSpelling(currentLemma);
     if (!mainKeys)
     {
-      currentLemma=sp[lemmaStr];
+      currentLemma = sp[lemmaStr];
     }
-    currentNorm=DictionaryData::readCodedInt(pos);
-    if (currentNorm==0)
+    currentNorm = DictionaryData::readCodedInt(pos);
+    if (currentNorm == 0)
     {
-      currentNorm=currentLemma;
-      normStr=lemmaStr;
+      currentNorm = currentLemma;
+      normStr = lemmaStr;
     }
     else
     {
-      normStr=keys->getSpelling(currentNorm);
+      normStr = keys->getSpelling(currentNorm);
       if (!mainKeys)
       {
-        currentNorm=sp[normStr];
+        currentNorm = sp[normStr];
       }
     }
-    LDEBUG << "LingInfoLevelState::next lemma : " << lemmaStr << ", norm : " << normStr;
-    lingInfoOffset=DictionaryData::readCodedInt(pos);
+    lingInfoOffset = DictionaryData::readCodedInt(pos);
   }
   else
   {
-    currentLemma = std::numeric_limits<StringsPoolIndex>::max();
+    currentLemma = STRINGS_POOL_INDEX_MAX_VALUE;
     lemmaStr.clear();
-    currentNorm = std::numeric_limits<StringsPoolIndex>::max();
+    currentNorm = STRINGS_POOL_INDEX_MAX_VALUE;
     normStr.clear();
     final = false;
     lingInfoOffset = 0;
   }
+  LDEBUG << "LingInfoLevelState::next on OUT:" << (void*)pos << (void*)posEnd
+          << "lemma : " << lemmaStr << ", norm : " << normStr;
 }
 
-bool MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::end() const
+bool LingInfoLevelState::end() const
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "LingInfoLevelState::end" << currentLemma << std::numeric_limits<StringsPoolIndex>::max();
-  return ((pos==posEnd) && (currentLemma == std::numeric_limits<StringsPoolIndex>::max()));
+  LDEBUG << "LingInfoLevelState::end" << pos << posEnd << currentLemma
+          << STRINGS_POOL_INDEX_MAX_VALUE;
+  return ((pos==posEnd) && (currentLemma == STRINGS_POOL_INDEX_MAX_VALUE));
 }
 
-bool MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::operator<(const LingInfoLevelState& lis) const
+bool LingInfoLevelState::operator<(const LingInfoLevelState& lis) const
 {
   if (lis.end()) return true;
   if (end()) return false;
@@ -412,17 +566,17 @@ bool MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::operator<(const Ling
   return lemmaStr < lis.lemmaStr;
 }
 
-bool MultiLevelAnalysisDictionaryEntry::LingInfoLevelState::operator==(const LingInfoLevelState& lis) const
+bool LingInfoLevelState::operator==(const LingInfoLevelState& lis) const
 {
   return ((currentLemma == lis.currentLemma) && (currentNorm == lis.currentNorm));
 }
 
-void MultiLevelAnalysisDictionaryEntry::parseLingInfos(
-  std::vector<LingInfoLevelState>& state,
+void parseLingInfos(
+  std::vector<LingInfoLevelState>& states,
   Lima::FsaStringsPool* sp,
   AbstractDictionaryEntryHandler* handler)
 {
-  if (state.empty()) return;
+  if (states.empty()) return;
 
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos IN";
@@ -431,89 +585,89 @@ void MultiLevelAnalysisDictionaryEntry::parseLingInfos(
   while (true)
   {
     // find lower lemma,norm
-    LingInfoLevelState& lowerState=state.front();
-    bool final=false;
-    bool hasInfos=false;
-    LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos find lower state. state size=" << state.size();
-    for (vector<LingInfoLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    auto* lowerState = &states.front();
+    auto final = false;
+    auto hasInfos = false;
+    LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos find lower state. state size="
+            << states.size();
+    for (auto& state : states)
     {
-      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos next level is at state lemma=" << stateItr->lemmaStr;
-      if (*stateItr < lowerState)
+      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos next level is at state lemma="
+              << state.lemmaStr;
+      if (state < *lowerState)
       {
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos is lower !";
-        lowerState = *stateItr;
-        hasInfos=(lowerState.lingInfoOffset !=0);
-        final = lowerState.final;
+        lowerState = &state;
+        hasInfos = (lowerState->lingInfoOffset !=0);
+        final = lowerState->final;
       }
-      else if (*stateItr == lowerState)
+      else if (state == *lowerState)
       {
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos stateItr == lowerState";
-        if (!final && stateItr->lingInfoOffset !=0)
+        if (!final && state.lingInfoOffset != 0)
         {
-          hasInfos=true;
+          hasInfos = true;
         }
-        final = stateItr->final;
+        final = state.final;
       }
     }
-    if (lowerState.end())
+    if (lowerState->end())
     {
-      // nothing more to read, exit
+      // nothing more to read, exit the while(true)
       LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos nothing more to read, exit";
       break;
     }
-    LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos lowerState found lemma=" << lowerState.lemmaStr << ", norm=" << lowerState.normStr;
+    LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos lowerState found lemma="
+            << lowerState->lemmaStr << ", norm=" << lowerState->normStr;
     // if final then call delete
     if (final)
     {
-      handler->deleteLingInfos(lowerState.currentLemma,lowerState.currentNorm);
+      handler->deleteLingInfos(lowerState->currentLemma, lowerState->currentNorm);
     }
     // if has info, should have some properties
     if (hasInfos)
     {
-      handler->foundLingInfos(lowerState.currentLemma,lowerState.currentNorm);
+      handler->foundLingInfos(lowerState->currentLemma, lowerState->currentNorm);
     }
-    bool finalReached=false;
-    set<LinguisticCode> propsRead;
-    for (vector<LingInfoLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    bool finalReached = false;
+    std::set<LinguisticCode> propsRead;
+    for (auto& state : states)
     {
-      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos in second states loop. lemma="  << stateItr->lemmaStr << ", norm=" << stateItr->normStr;
-      if (*stateItr == lowerState)
+      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos in second states loop. lemma="
+              << state.lemmaStr << ", norm=" << state.normStr;
+      if (state == *lowerState)
       {
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos stateItr == lowerState !";
         // read this level
         if (!finalReached)
         {
-          finalReached=stateItr->final;
-          if (stateItr->lingInfoOffset!=0)
+          finalReached = state.final;
+          if (state.lingInfoOffset != 0)
           {
-            LDEBUG << "read level info";
-            if (stateItr->lingInfoOffset != 0)
+            LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos read level info";
+            if (state.lingInfoOffset != 0)
             {
-              unsigned char* props = stateItr->dicoData->getLingPropertiesAddr(stateItr->lingInfoOffset);
-              uint64_t read = DictionaryData::readCodedInt(props);
-              unsigned char* propsEnd = props + read;
+              auto props = state.dicoData->getLingPropertiesAddr(state.lingInfoOffset);
+              auto read = DictionaryData::readCodedInt(props);
+              auto propsEnd = props + read;
               while (props!=propsEnd)
               {
-                LinguisticCode l=static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
-                if (propsRead.find(l)==propsRead.end())
+                auto l = static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
+                if (propsRead.find(l) == propsRead.end())
                 {
                   handler->foundProperties(l);
                   propsRead.insert(l);
                 }
                 else
                 {
-                  LDEBUG << "ling properties already read in previous dictionary !";
+                  LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos ling properties already read in previous dictionary !";
                 }
               }
             }
           }
         }
         // next state
-        (*stateItr).next(*sp);
+        state.next(*sp);
       }
     }
     if (hasInfos)
@@ -523,73 +677,50 @@ void MultiLevelAnalysisDictionaryEntry::parseLingInfos(
   }
 }
 
-MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::Component::Component() :
-    form(0),
-    formStr(),
-    pos(0),
-    len(0),
-    liState()
-{}
-
-MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::Component::~Component()
-{}
-
-MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::ConcatenatedLevelState() :
-    pos(0),
-    posEnd(0),
-    final(false),
-    components(),
-    mainKeys(false),
-    keys(0),
-    dicoData(0)
-{}
-
-MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::~ConcatenatedLevelState() {}
-
-void MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::next(FsaStringsPool& sp)
+void ConcatenatedLevelState::next(FsaStringsPool& sp)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "ConcatenatedLevelState::next" << (void*)pos << (void*)posEnd;
-  
+
   components.clear();
   if (pos != posEnd)
   {
-    uint64_t read=DictionaryData::readCodedInt(pos);
-    if (read==0)
+    auto read = DictionaryData::readCodedInt(pos);
+    if (read == 0)
     {
-      final=true;
-      read=DictionaryData::readCodedInt(pos);
+      final = true;
+      read = DictionaryData::readCodedInt(pos);
     }
     else
     {
-      final=false;
+      final = false;
     }
     // read the components
-    for (uint64_t nb=read;nb>0;nb--)
+    for (uint64_t nb = read; nb > 0; nb--)
     {
       components.push_back(Component());
-      Component& c=components.back();
+      auto& c = components.back();
 
       // set component attributes
-      c.form=DictionaryData::readCodedInt(pos);
-      c.formStr=keys->getSpelling(c.form);
+      c.form = DictionaryData::readCodedInt(pos);
+      c.formStr = keys->getSpelling(c.form);
       if (!mainKeys)
       {
-        c.form=sp[c.formStr];
+        c.form = sp[c.formStr];
       }
-      c.pos=DictionaryData::readCodedInt(pos);
-      c.len=DictionaryData::readCodedInt(pos);
+      c.pos = DictionaryData::readCodedInt(pos);
+      c.len = DictionaryData::readCodedInt(pos);
 
       // set ling info state position attribute
-      read=DictionaryData::readCodedInt(pos);
-      c.liState.pos=pos;
-      pos+=read;
-      c.liState.posEnd=pos;
+      read = DictionaryData::readCodedInt(pos);
+      c.liState.pos = pos;
+      pos += read;
+      c.liState.posEnd = pos;
 
       // set ling info state data attributes
-      c.liState.mainKeys=mainKeys;
-      c.liState.keys=keys;
-      c.liState.dicoData=dicoData;
+      c.liState.mainKeys = mainKeys;
+      c.liState.keys = keys;
+      c.liState.dicoData = dicoData;
 
       // set ling info state attributes
       c.liState.next(sp);
@@ -597,61 +728,58 @@ void MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::next(FsaStringsP
   }
 }
 
-bool MultiLevelAnalysisDictionaryEntry::ConcatenatedLevelState::end() const
+bool ConcatenatedLevelState::end() const
 {
   return (pos==posEnd) && components.empty();
 }
 
 
-void MultiLevelAnalysisDictionaryEntry::parseConcatenated(
+void parseConcatenated(
   std::vector<ConcatenatedLevelState>& state,
   Lima::FsaStringsPool* sp,
   AbstractDictionaryEntryHandler* handler)
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated";
+  LDEBUG << "parseConcatenated";
   if (state.empty()) return;
+
   // read entry
-
-
-
   while (true)
   {
     // find lower state
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated find lower concat state";
-    ConcatenatedLevelState lowerState=state.front();
-    bool final=false;
-    bool hasInfos=false;
-    for (vector<ConcatenatedLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    auto* lowerState = &state.front();
+    auto final = false;
+    auto hasInfos = false;
+    for (auto& cls : state)
     {
-      LDEBUG << "state has " << stateItr->components.size() << " components";
-      if (*stateItr < lowerState)
+      LDEBUG << "state has " << cls.components.size() << " components";
+      if (cls < *lowerState)
       {
         LDEBUG << "is lower !";
-        lowerState = *stateItr;
-        final=stateItr->final;
-        hasInfos= (stateItr->components.front().liState.lingInfoOffset != 0);
+        lowerState = &cls;
+        final = cls.final;
+        hasInfos = (cls.components.front().liState.lingInfoOffset != 0);
       }
-      else if (*stateItr == lowerState)
+      else if (cls == *lowerState)
       {
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated stateItr == lowerState";
         if (!final)
         {
-          if (!stateItr->components.empty() && stateItr->components.front().liState.lingInfoOffset != 0)
+          if (!cls.components.empty()
+            && cls.components.front().liState.lingInfoOffset != 0)
           {
-            hasInfos=true;
+            hasInfos = true;
           }
-          if (stateItr->final)
+          if (cls.final)
           {
-            final=true;
+            final = true;
           }
         }
       }
     }
     // check if info to read
-    if (lowerState.end())
+    if (lowerState->end())
     {
       break;
     }
@@ -660,91 +788,88 @@ void MultiLevelAnalysisDictionaryEntry::parseConcatenated(
     if (final)
     {
       handler->deleteConcatenated();
-      for (vector<ConcatenatedLevelState::Component>::const_iterator cItr=lowerState.components.begin();
-           cItr!=lowerState.components.end();
-           cItr++)
+      for (const auto& component : lowerState->components)
       {
-        handler->foundComponent(cItr->pos,cItr->len,cItr->form);
+        handler->foundComponent(component.pos, component.len, component.form);
       }
       handler->endConcatenated();
     }
-    bool finalReached=false;
+    auto finalReached = false;
     if (hasInfos)
     {
-      // retrive all components iterators
-      vector<pair<vector<ConcatenatedLevelState::Component>::iterator,vector<ConcatenatedLevelState::Component>::iterator> > componentsIt;
-      for (vector<ConcatenatedLevelState>::iterator stateItr=state.begin();
-           stateItr!=state.end();
-           stateItr++)
+      // retrieve all components iterators
+      std::vector<std::pair<std::vector<ConcatenatedLevelState::Component>::iterator,
+                            std::vector<ConcatenatedLevelState::Component>::iterator> > componentsIt;
+      for (auto& cls : state)
       {
-        if (*stateItr == lowerState)
+        if (cls == *lowerState)
         {
           LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated stateItr == lowerState";
           if (!finalReached)
           {
-            componentsIt.push_back(make_pair(stateItr->components.begin(),stateItr->components.end()));
-            if (stateItr->final)
+            componentsIt.push_back(std::make_pair(cls.components.begin(),
+                                                  cls.components.end()));
+            if (cls.final)
             {
-              finalReached=true;
+              finalReached = true;
             }
           }
         }
       }
       // read all components
-      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated read the " << componentsIt.size() << " level iterators";
+      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated read the "
+              << componentsIt.size() << " level iterators";
       handler->foundConcatenated();
       while (componentsIt.front().first != componentsIt.front().second)
       {
-        handler->foundComponent(componentsIt.front().first->pos,componentsIt.front().first->len,componentsIt.front().first->form);
-        vector<LingInfoLevelState> lingInfoState;
-        for (vector<pair<vector<ConcatenatedLevelState::Component>::iterator,vector<ConcatenatedLevelState::Component>::iterator> >::iterator stateItr=componentsIt.begin();
-             stateItr!=componentsIt.end();
-             stateItr++)
+        handler->foundComponent(componentsIt.front().first->pos,
+                                componentsIt.front().first->len,
+                                componentsIt.front().first->form);
+        std::vector<LingInfoLevelState> lingInfoState;
+        for (auto& component : componentsIt)
         {
-          assert(stateItr->first != stateItr->second);
-          lingInfoState.push_back(stateItr->first->liState);
-          stateItr->first.operator++();
+          assert(component.first != component.second);
+          lingInfoState.push_back(component.first->liState);
+          component.first.operator++();
         }
-        parseLingInfos(lingInfoState,sp,handler);
+        parseLingInfos(lingInfoState, sp, handler);
         handler->endComponent();
       }
       handler->endConcatenated();
     }
     // next states
-    for (vector<ConcatenatedLevelState>::iterator stateItr=state.begin();
-         stateItr!=state.end();
-         stateItr++)
+    for (auto& cls : state)
     {
-      if (*stateItr == lowerState)
+      if (cls == *lowerState)
       {
-        stateItr->next(*sp);
+        cls.next(*sp);
       }
     }
 
   }
 }
 
-void MultiLevelAnalysisDictionaryEntry::AccentedLevelState::next(FsaStringsPool& sp)
+void AccentedLevelState::next(FsaStringsPool& sp)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "AccentedLevelState::next" << (void*)pos << (void*)posEnd;
 
   if (pos != posEnd)
   {
-    accentedEntry=DictionaryData::readCodedInt(pos);
+    accentedEntry = DictionaryData::readCodedInt(pos);
     if (accentedEntry == 0)
     {
-      final=true;
-      accentedEntry=DictionaryData::readCodedInt(pos);
+      final = true;
+      accentedEntry = DictionaryData::readCodedInt(pos);
     }
     else
     {
-      final=false;
+      final = false;
     }
-    accentedFormStr=keys->getSpelling(accentedEntry);
+    accentedFormStr = keys->getSpelling(accentedEntry);
     if (!mainKeys)
     {
-      accentedForm=sp[accentedFormStr];
+      accentedForm = sp[accentedFormStr];
     }
     else
     {
@@ -753,35 +878,31 @@ void MultiLevelAnalysisDictionaryEntry::AccentedLevelState::next(FsaStringsPool&
   }
   else
   {
-    final=false;
-    accentedEntry=numeric_limits<StringsPoolIndex>::max();
-    accentedForm=numeric_limits<StringsPoolIndex>::max();
+    final = false;
+    accentedEntry = STRINGS_POOL_INDEX_MAX_VALUE;
+    accentedForm = STRINGS_POOL_INDEX_MAX_VALUE;
   }
 
 }
 
-bool MultiLevelAnalysisDictionaryEntry::AccentedLevelState::end() const
+bool AccentedLevelState::end() const
 {
-  return accentedForm == numeric_limits<StringsPoolIndex>::max();
+  return accentedForm == STRINGS_POOL_INDEX_MAX_VALUE;
 }
 
-bool MultiLevelAnalysisDictionaryEntry::AccentedLevelState::operator<(const AccentedLevelState& as) const
+bool AccentedLevelState::operator<(const AccentedLevelState& as) const
 {
   if (as.end()) return true;
   if (end()) return false;
   return accentedFormStr < as.accentedFormStr;
 }
 
-bool MultiLevelAnalysisDictionaryEntry::AccentedLevelState::operator==(const AccentedLevelState& as) const
+bool AccentedLevelState::operator==(const AccentedLevelState& as) const
 {
   return accentedForm == as.accentedForm;
 }
 
 
-
-
-}
-
-}
-
-}
+} // namespace
+} // namespace
+} // namespace

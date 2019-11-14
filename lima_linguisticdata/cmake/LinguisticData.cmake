@@ -52,7 +52,9 @@ macro (CODES _lang)
   )
 
   install(
-    FILES code-${_lang}.xml
+    FILES
+      code-${_lang}.xml
+      symbolicCode-${_lang}.xml
     COMPONENT ${_lang}
     DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
 

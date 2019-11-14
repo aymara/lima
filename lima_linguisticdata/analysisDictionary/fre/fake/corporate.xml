@@ -1,40 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <dictionary>
 <entry k="musique">
   <i l="musique">
-    <p v="Ncgms-"/>
+    <p v="NC:ms-"/>
   </i>
   <i l="musique" n="musik">
-    <p v="Ncgfs-"/>
+      <p v="NC:fs-"/>
   </i>
   <i l="musik">
-    <p v="Ncgfs-"/>
+      <p v="NC:fs-"/>
   </i>
 </entry>
 <entry k="Goban" desacc="no">
   <i l="Goban">
-    <p v="Ncgfs-"/>
+      <p v="NC:fs-"/>
   </i>
-</entry>
+</entry>-->
 <entry k="Est" op="delete"/>
 <entry k="élève" desacc="no">
   <i l="élève" op="replace">
-    <p v="Ncgmp-"/>
+      <p v="NC:mp-"/>
   </i>
 </entry>
 <entry k="nouveau-phoenix" desacc="no">
   <concat>
     <c form="nouveau">
       <i l="nouveau">
-        <p v="Afb--fs"/>
-        <p v="Afd--fs"/>
-        <p v="Afha-fs"/>
-        <p v="Afhp-fs"/>
-        <p v="Afz--fs"/>
+        <p v="ADJ:-fs"/>
       </i>
     </c>
     <c form="phoenix">
       <i l="phoenix">
-        <p v="Vpipi1-s"/>
+        <p v="V:pi1-s"/>
       </i>
     </c>
   </concat>

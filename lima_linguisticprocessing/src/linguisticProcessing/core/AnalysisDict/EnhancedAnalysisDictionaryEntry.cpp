@@ -26,8 +26,6 @@
 #include <cassert>
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
-using namespace std;
-
 namespace Lima
 {
 
