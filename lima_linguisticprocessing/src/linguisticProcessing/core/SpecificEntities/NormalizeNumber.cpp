@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
  * @file       NormalizeNumber.cpp
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Jun 13 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
+ * copyright   Copyright (C) 2006-2020 by CEA LIST
  *
  ***********************************************************************/
 
