@@ -111,18 +111,24 @@ class DictionaryCompilerPrivate
   const std::map<std::string,LinguisticCode>& m_conv;
   bool m_reverseKeys;
 
-  /* usefull function */
+  /** Write the 64 bits integer @ref number on the @ref out stream with the
+   * minimum number of bytes possible
+  */
   unsigned char writeCodedInt(std::ostream& out,uint64_t number);
+  /** Computes the minimum number of bytes possible to encode the given 64 bits
+   * number @ref number
+   */
   unsigned char sizeOfCodedInt(uint64_t number) const;
   void placeEntryDataIntoCharBuf(std::streampos pos,uint64_t len);
   uint64_t placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps);
 
-  /* buffer for coded int */
+  /** buffer for coded int */
   char* m_codedintbuf=new char[CODED_INT_BUFFER_SIZE];
   char* m_charbuf=new char[BUFFER_SIZE];
   uint64_t m_charbufSize = BUFFER_SIZE;
 
-  /* constant */
+  ///@{
+  /** Symbolic names for XML tags */
   const QString S_DICTIONARY = "dictionary";
   const QString S_ENTRY = "entry";
   const QString S_K = "k";
@@ -142,6 +148,7 @@ class DictionaryCompilerPrivate
   const QString S_REPLACE = "replace";
   const QString S_DELETE = "delete";
   const QString S_ADD = "add";
+  ///@}
 
   /* state attributes, used when parsing input file*/
   std::vector<LingInfo> m_lingInfosStack;
@@ -346,13 +353,14 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
     m_inDeleteLingInfo = false;
     if (!op.isEmpty())
     {
-      if (op == S_REPLACE || op == S_DELETE)
+      if (op == S_REPLACE)
       {
         m_currentLingInfo->del = true;
-        if (op == S_DELETE)
-        {
-          m_inDeleteLingInfo = true;
-        }
+      }
+      else if (op == S_DELETE)
+      {
+        m_currentLingInfo->del = true;
+        m_inDeleteLingInfo = true;
       }
       else if (op != S_ADD)
       {
@@ -431,18 +439,22 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
     m_inDeleteConcat = false;
     m_concatStack.push_back(Concat());
     auto op = attributes.value(S_OP);
-    if ((!op.isEmpty()) && (op == S_REPLACE || op == S_DELETE))
+    if (!op.isEmpty())
     {
-      m_concatStack.back().del = true;
-      if (op == S_DELETE)
+      if (op == S_REPLACE )
       {
+        m_concatStack.back().del = true;
+      }
+      else if (op == S_DELETE)
+      {
+        m_concatStack.back().del = true;
         m_inDeleteConcat = true;
       }
-    }
-    else if (!op.isEmpty() && op != S_ADD)
-    {
-      LERROR << "ERROR : invalid attribute op=\"" << op
-              << "\" for tag concat ! ignore it" ;
+      else if (op != S_ADD)
+      {
+        LERROR << "ERROR : invalid attribute op=\"" << op
+                << "\" for tag concat ! ignore it" ;
+      }
     }
     m_inConcat = true;
     m_nextComponentPos = 0;
@@ -615,7 +627,7 @@ bool DictionaryCompilerPrivate::endElement(const QString& namespaceURI,
     std::sort(m_currentLingProps.begin(), m_currentLingProps.end());
     auto value = std::make_pair(m_currentLingProps, m_lingProps.size());
     auto res = m_lingProps.insert(value);
-    m_currentLingInfo->lingProps=res.first->second;
+    m_currentLingInfo->lingProps = res.first->second;
     m_currentLingProps.clear();
     m_currentLingInfo = 0;
     m_inDeleteLingInfo = false;
