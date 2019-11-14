@@ -31,9 +31,149 @@ using namespace Lima::Common::Misc;
 namespace Lima
 {
 
+#define BUFFER_SIZE 4096
+
 #define CODED_INT_BUFFER_SIZE 10
 
-DictionaryCompiler::DictionaryCompiler(
+/* data type */
+struct LingInfo
+{
+  LingInfo() : del(false),lemma(0),norm(0),lingProps(0) {};
+  bool del;
+  uint64_t lemma;
+  uint64_t norm;
+  uint64_t lingProps;
+};
+
+struct Accented
+{
+  Accented() : del(false),id(0) {};
+  bool operator<(const Accented& a) const {return id<a.id;};
+  bool del;
+  uint64_t id;
+};
+
+struct Component
+{
+  Component() : form(0),pos(0),len(0),lingInfos() {};
+  uint64_t form;
+  unsigned char pos;
+  unsigned char len;
+  std::list<LingInfo> lingInfos;
+};
+
+struct Concat
+{
+  Concat() : del(false),components() {};
+  bool del;
+  std::list<Component> components;
+};
+
+struct Entry
+{
+  Entry() : del(false),lingInfoPos(0),lingInfoLength(0),accented(),concatPos(0),concatLength(0) {};
+  bool del;
+  std::streampos lingInfoPos;
+  unsigned short lingInfoLength;
+  std::list<Accented> accented;
+  std::streampos concatPos;
+  unsigned short concatLength;
+};
+
+class DictionaryCompilerPrivate
+{
+  friend class DictionaryCompiler;
+
+  DictionaryCompilerPrivate(
+    LinguisticProcessing::FlatTokenizer::CharChart* charChart,
+    Common::AbstractAccessByString* access,
+    const std::map<std::string,LinguisticCode>& conversionMap,
+    bool reverseKeys);
+
+  ~DictionaryCompilerPrivate();
+  DictionaryCompilerPrivate(const DictionaryCompilerPrivate&) = delete;
+  DictionaryCompilerPrivate& operator=(const DictionaryCompilerPrivate&) = delete;
+
+  bool startElement(const QString & namespaceURI,
+                    const QString & name,
+                    const QString & qName,
+                    const QXmlAttributes & atts);
+
+  bool endElement(const QString& namespaceURI,
+                  const QString& name,
+                  const QString & qName);
+
+  void writeBinaryDictionary(std::ostream& out);
+
+  /* resources and parameters */
+  LinguisticProcessing::FlatTokenizer::CharChart* m_charChart;
+  Common::AbstractAccessByString* m_access;
+  const std::map<std::string,LinguisticCode>& m_conv;
+  bool m_reverseKeys;
+
+  /* usefull function */
+  unsigned char writeCodedInt(std::ostream& out,uint64_t number);
+  unsigned char sizeOfCodedInt(uint64_t number) const;
+  void placeEntryDataIntoCharBuf(std::streampos pos,uint64_t len);
+  uint64_t placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps);
+
+  /* buffer for coded int */
+  char* m_codedintbuf=new char[CODED_INT_BUFFER_SIZE];
+  char* m_charbuf=new char[BUFFER_SIZE];
+  uint64_t m_charbufSize = BUFFER_SIZE;
+
+  /* constant */
+  const QString S_DICTIONARY = "dictionary";
+  const QString S_ENTRY = "entry";
+  const QString S_K = "k";
+  const QString S_I = "i";
+  const QString S_L = "l";
+  const QString S_N = "n";
+  const QString S_P = "p";
+  const QString S_V = "v";
+  const QString S_CONCAT = "concat";
+  const QString S_C = "c";
+  const QString S_FORM = "form";
+  const QString S_POS = "pos";
+  const QString S_DESACC = "desacc";
+  const QString S_YES = "yes";
+  const QString S_NO = "no";
+  const QString S_OP = "op";
+  const QString S_REPLACE = "replace";
+  const QString S_DELETE = "delete";
+  const QString S_ADD = "add";
+
+  /* state attributes, used when parsing input file*/
+  std::vector<LingInfo> m_lingInfosStack;
+  std::vector<Concat> m_concatStack;
+
+  Entry* m_currentEntry;
+  LingInfo* m_currentLingInfo;
+  uint64_t m_currentIndex;
+  LimaString m_currentKey;
+  bool m_inConcat = false;
+  bool m_inDeleteEntry = false;
+  bool m_inDeleteLingInfo = false;
+  bool m_inDeleteConcat = false;
+  uint64_t m_nextComponentPos;
+  uint64_t m_count = 0;
+  std::vector<LinguisticCode> m_currentLingProps;
+
+  /* building data*/
+  std::stringstream m_entryData;
+  // to ensure the 'no ling prop' vector is id 0;
+  std::map<std::vector<LinguisticCode>,uint64_t> m_lingProps = { { {}, 0 } };
+;
+  std::vector<Entry> m_entries;
+  Entry m_invalidEntry;
+
+  /* cache access to FsaAccess */
+  std::list<std::pair<LimaString,uint64_t> > m_strCache;
+  uint64_t getStringIndex(const LimaString& str);
+
+};
+
+DictionaryCompilerPrivate::DictionaryCompilerPrivate(
   LinguisticProcessing::FlatTokenizer::CharChart* charChart,
   AbstractAccessByString* access,
   const std::map<std::string,LinguisticCode>& conversionMap,
@@ -42,49 +182,42 @@ DictionaryCompiler::DictionaryCompiler(
     m_access(access),
     m_conv(conversionMap),
     m_reverseKeys(reverseKeys),
-    m_inConcat(false),
-    m_count(0),
     m_entryData(ios::in | ios::out | ios::binary),
     m_strCache()
 {
-  S_DICTIONARY="dictionary";
-  S_ENTRY="entry";
-  S_K="k";
-  S_I="i";
-  S_L="l";
-  S_N="n";
-  S_P="p";
-  S_V="v";
-  S_CONCAT="concat";
-  S_C="c";
-  S_FORM="form";
-  S_POS="pos";
-  S_DESACC="desacc";
-  S_YES="yes";
-  S_NO="no";
-  S_OP="op";
-  S_REPLACE="replace";
-  S_DELETE="delete";
-  S_ADD="add";
   m_entries.resize(access->getSize());
-  m_codedintbuf=new char[CODED_INT_BUFFER_SIZE];
-  m_charbuf=new char[BUFFER_SIZE];
-  m_charbufSize=BUFFER_SIZE;
-
-  // to ensure the 'no ling prop' vector is id 0;
-  m_lingProps.insert(make_pair(std::vector<LinguisticCode>(), 0));
-
   // set cache size
   m_strCache.resize(CODED_INT_BUFFER_SIZE,make_pair(LimaString(), 0));
 }
 
-DictionaryCompiler::~DictionaryCompiler()
+DictionaryCompilerPrivate::~DictionaryCompilerPrivate()
 {
   delete[] m_codedintbuf;
   delete[] m_charbuf;
 }
 
+DictionaryCompiler::DictionaryCompiler(
+  LinguisticProcessing::FlatTokenizer::CharChart* charChart,
+  AbstractAccessByString* access,
+  const std::map<std::string,LinguisticCode>& conversionMap,
+  bool reverseKeys) :
+    QXmlDefaultHandler(),
+    m_d(new DictionaryCompilerPrivate(charChart,
+                                      access,
+                                      conversionMap,
+                                      reverseKeys))
+{
+}
+
 bool DictionaryCompiler::startElement(const QString & namespaceURI,
+                                      const QString & name,
+                                      const QString & qName,
+                                      const QXmlAttributes & attributes)
+{
+  return m_d->startElement(namespaceURI, name, qName, attributes);
+}
+
+bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
                                       const QString & name,
                                       const QString & qName,
                                       const QXmlAttributes & attributes)
@@ -408,6 +541,13 @@ bool DictionaryCompiler::endElement(const QString& namespaceURI,
                                     const QString& name,
                                     const QString & qName)
 {
+  return m_d->endElement(namespaceURI, name, qName);
+}
+
+bool DictionaryCompilerPrivate::endElement(const QString& namespaceURI,
+                                    const QString& name,
+                                    const QString & qName)
+{
   //  cerr << "endElement " << name << endl;
   if (name == S_ENTRY)
   {
@@ -498,6 +638,11 @@ bool DictionaryCompiler::endElement(const QString& namespaceURI,
 
 void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
 {
+  m_d->writeBinaryDictionary(out);
+}
+
+void DictionaryCompilerPrivate::writeBinaryDictionary(std::ostream& out)
+{
 
   // write dictionary entries data
 
@@ -572,9 +717,9 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
 
   // write linguisticPropertiesdata;
   std::vector< const std::vector<LinguisticCode>* > lingPropVec(m_lingProps.size());
-  for (const auto& [key, value] : m_lingProps)
+  for (const auto& elem : m_lingProps)
   {
-    lingPropVec[value]=&key;
+    lingPropVec[elem.second]=&elem.first;
   }
   writeCodedInt(out,lingPropVec.size());
   for (const auto& lingProp : lingPropVec)
@@ -587,7 +732,7 @@ void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
   lingPropVec.clear();
 }
 
-unsigned char DictionaryCompiler::writeCodedInt(ostream& out, uint64_t number)
+unsigned char DictionaryCompilerPrivate::writeCodedInt(ostream& out, uint64_t number)
 {
   uint64_t n(number);
   unsigned char i = 0;
@@ -617,7 +762,7 @@ unsigned char DictionaryCompiler::writeCodedInt(ostream& out, uint64_t number)
   return i;
 }
 
-unsigned char DictionaryCompiler::sizeOfCodedInt(uint64_t number) const
+unsigned char DictionaryCompilerPrivate::sizeOfCodedInt(uint64_t number) const
 {
   uint64_t n(number);
   unsigned char i=0;
@@ -630,7 +775,7 @@ unsigned char DictionaryCompiler::sizeOfCodedInt(uint64_t number) const
   return i;
 }
 
-void DictionaryCompiler::placeEntryDataIntoCharBuf(streampos pos, uint64_t len)
+void DictionaryCompilerPrivate::placeEntryDataIntoCharBuf(streampos pos, uint64_t len)
 {
   if (len>m_charbufSize)
   {
@@ -642,7 +787,7 @@ void DictionaryCompiler::placeEntryDataIntoCharBuf(streampos pos, uint64_t len)
   m_entryData.read(m_charbuf, len);
 }
 
-uint64_t DictionaryCompiler::placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps)
+uint64_t DictionaryCompilerPrivate::placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps)
 {
 //   std::cerr << "placeLingPropsIntoCharBuf size=" << lingProps.size() << std::endl;
   uint64_t len = 0;
@@ -697,7 +842,7 @@ uint64_t DictionaryCompiler::placeLingPropsIntoCharBuf(const std::vector<Linguis
   return len;
 }
 
-uint64_t DictionaryCompiler::getStringIndex(const LimaString& str)
+uint64_t DictionaryCompilerPrivate::getStringIndex(const LimaString& str)
 {
   // look at cache
   for (auto it = m_strCache.begin(); it!=m_strCache.end(); it++)

@@ -210,7 +210,7 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex wo
 DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const std::vector<uint64_t>& indexes) const
 {
   ANALYSISDICTLOGINIT;
-  LDEBUG << "MultiLevelAnalysisDictionary::getEntry" << indexes;
+  LDEBUG << "MultiLevelAnalysisDictionary::getEntry" << indexes.size();
   auto indexItr = indexes.cbegin();
   for (auto dicoItr = m_d->m_dicos.cbegin();
        (indexItr != indexes.cend()) && (dicoItr != m_d->m_dicos.cend());
