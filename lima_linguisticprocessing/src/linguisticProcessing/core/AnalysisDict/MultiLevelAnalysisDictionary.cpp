@@ -106,6 +106,15 @@ void MultiLevelAnalysisDictionary::init(
   {
     const auto& accesses = unitConfiguration.getListsValueAtKey("accessKeys");
     const auto& data = unitConfiguration.getListsValueAtKey("dictionaryValuesFiles");
+    if (accesses.size() != data.size())
+    {
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "accessKeys and dictionaryValuesFiles do not have the same number of entries for language "
+              << (int) language;
+      LERROR << errorString;
+      throw InvalidConfiguration(errorString.toStdString());
+    }
     auto keyIt = accesses.cbegin(), dataIt = data.cbegin();
     auto hasMainKeys = false;
     for (; keyIt!=accesses.end() && dataIt!=data.end();)

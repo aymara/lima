@@ -237,8 +237,10 @@ AbstractDictionaryEntry* MultiLevelAnalysisDictionaryEntry::clone()
 void MultiLevelAnalysisDictionaryEntry::parseAccentedForms(
   AbstractDictionaryEntryHandler* handler) const
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseAccentedForms";
+#endif
   handler->startEntry(m_entryId);
 
   // initialize states
@@ -454,8 +456,10 @@ void MultiLevelAnalysisDictionaryEntry::parseConcatenated(
 void MultiLevelAnalysisDictionaryEntry::parseLingInfos(
   AbstractDictionaryEntryHandler* handler) const
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos initialize entry reading";
+#endif
 
   handler->startEntry(m_entryId);
 
@@ -501,9 +505,11 @@ LingInfoLevelState::LingInfoLevelState() :
 
 void LingInfoLevelState::next(FsaStringsPool& sp)
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "LingInfoLevelState::next" << (void*)pos << (void*)posEnd
           << "lemma : " << lemmaStr << ", norm : " << normStr;
+#endif
   if (pos != posEnd)
   {
     currentLemma = DictionaryData::readCodedInt(pos);
@@ -546,15 +552,19 @@ void LingInfoLevelState::next(FsaStringsPool& sp)
     final = false;
     lingInfoOffset = 0;
   }
+#ifdef DEBUG_LP
   LDEBUG << "LingInfoLevelState::next on OUT:" << (void*)pos << (void*)posEnd
           << "lemma : " << lemmaStr << ", norm : " << normStr;
+#endif
 }
 
 bool LingInfoLevelState::end() const
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "LingInfoLevelState::end" << pos << posEnd << currentLemma
           << STRINGS_POOL_INDEX_MAX_VALUE;
+#endif
   return ((pos==posEnd) && (currentLemma == STRINGS_POOL_INDEX_MAX_VALUE));
 }
 
@@ -578,9 +588,10 @@ void parseLingInfos(
 {
   if (states.empty()) return;
 
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos IN";
-
+#endif
   // read entry
   while (true)
   {
@@ -592,18 +603,24 @@ void parseLingInfos(
             << states.size();
     for (auto& state : states)
     {
+#ifdef DEBUG_LP
       LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos next level is at state lemma="
               << state.lemmaStr;
+#endif
       if (state < *lowerState)
       {
+#ifdef DEBUG_LP
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos is lower !";
+#endif
         lowerState = &state;
         hasInfos = (lowerState->lingInfoOffset !=0);
         final = lowerState->final;
       }
       else if (state == *lowerState)
       {
+#ifdef DEBUG_LP
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos stateItr == lowerState";
+#endif
         if (!final && state.lingInfoOffset != 0)
         {
           hasInfos = true;
@@ -614,7 +631,9 @@ void parseLingInfos(
     if (lowerState->end())
     {
       // nothing more to read, exit the while(true)
-      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos nothing more to read, exit";
+ #ifdef DEBUG_LP
+     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos nothing more to read, exit";
+#endif
       break;
     }
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos lowerState found lemma="
@@ -633,18 +652,24 @@ void parseLingInfos(
     std::set<LinguisticCode> propsRead;
     for (auto& state : states)
     {
+#ifdef DEBUG_LP
       LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos in second states loop. lemma="
               << state.lemmaStr << ", norm=" << state.normStr;
+#endif
       if (state == *lowerState)
       {
+#ifdef DEBUG_LP
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos stateItr == lowerState !";
+#endif
         // read this level
         if (!finalReached)
         {
           finalReached = state.final;
           if (state.lingInfoOffset != 0)
           {
+#ifdef DEBUG_LP
             LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos read level info";
+#endif
             if (state.lingInfoOffset != 0)
             {
               auto props = state.dicoData->getLingPropertiesAddr(state.lingInfoOffset);
@@ -653,6 +678,7 @@ void parseLingInfos(
               while (props!=propsEnd)
               {
                 auto l = static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
+                LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos got linguistic code" << l;
                 if (propsRead.find(l) == propsRead.end())
                 {
                   handler->foundProperties(l);
@@ -660,7 +686,9 @@ void parseLingInfos(
                 }
                 else
                 {
+#ifdef DEBUG_LP
                   LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos ling properties already read in previous dictionary !";
+#endif
                 }
               }
             }
@@ -679,8 +707,10 @@ void parseLingInfos(
 
 void ConcatenatedLevelState::next(FsaStringsPool& sp)
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "ConcatenatedLevelState::next" << (void*)pos << (void*)posEnd;
+#endif
 
   components.clear();
   if (pos != posEnd)
@@ -739,31 +769,41 @@ void parseConcatenated(
   Lima::FsaStringsPool* sp,
   AbstractDictionaryEntryHandler* handler)
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "parseConcatenated";
+#endif
   if (state.empty()) return;
 
   // read entry
   while (true)
   {
     // find lower state
+#ifdef DEBUG_LP
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated find lower concat state";
+#endif
     auto* lowerState = &state.front();
     auto final = false;
     auto hasInfos = false;
     for (auto& cls : state)
     {
+#ifdef DEBUG_LP
       LDEBUG << "state has " << cls.components.size() << " components";
+#endif
       if (cls < *lowerState)
       {
+#ifdef DEBUG_LP
         LDEBUG << "is lower !";
+#endif
         lowerState = &cls;
         final = cls.final;
         hasInfos = (cls.components.front().liState.lingInfoOffset != 0);
       }
       else if (cls == *lowerState)
       {
+#ifdef DEBUG_LP
         LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated stateItr == lowerState";
+#endif
         if (!final)
         {
           if (!cls.components.empty()
@@ -783,7 +823,9 @@ void parseConcatenated(
     {
       break;
     }
+#ifdef DEBUG_LP
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated read infos";
+#endif
     // read info
     if (final)
     {
@@ -804,7 +846,9 @@ void parseConcatenated(
       {
         if (cls == *lowerState)
         {
+#ifdef DEBUG_LP
           LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated stateItr == lowerState";
+#endif
           if (!finalReached)
           {
             componentsIt.push_back(std::make_pair(cls.components.begin(),
@@ -817,8 +861,10 @@ void parseConcatenated(
         }
       }
       // read all components
+#ifdef DEBUG_LP
       LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseConcatenated read the "
               << componentsIt.size() << " level iterators";
+#endif
       handler->foundConcatenated();
       while (componentsIt.front().first != componentsIt.front().second)
       {
@@ -851,8 +897,10 @@ void parseConcatenated(
 
 void AccentedLevelState::next(FsaStringsPool& sp)
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LDEBUG << "AccentedLevelState::next" << (void*)pos << (void*)posEnd;
+#endif
 
   if (pos != posEnd)
   {

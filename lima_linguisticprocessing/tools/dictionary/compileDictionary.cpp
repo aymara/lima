@@ -28,11 +28,12 @@
 #include <cstdlib>
 
 #include "common/LimaCommon.h"
-#include "common/Data/strwstrtools.h"
 #include "common/Data/LimaString.h"
-#include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
+#include "common/Data/strwstrtools.h"
 #include "common/FsaAccess/FsaAccessSpare16.h"
 #include "common/misc/AbstractAccessByString.h"
+#include "common/tools/FileUtils.h"
+#include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 // #include "linguisticProcessing/core/Tokenizer/ParseChar.h"
 // #include "linguisticProcessing/core/Tokenizer/ParseCharClass.h"
@@ -164,14 +165,11 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0) ? string(getenv("LIMA_RESOURCES")) : string("/usr/share/apps/lima/resources");
-  std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
-  if (configPath.size() == 0)
-    configPath = string(getenv("LIMA_CONF"));
-  if (configPath.size() == 0)
-    configPath = string("/usr/share/config/lima");
+  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                      QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  if (QsLogging::initQsLog(configPath) != 0)
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
@@ -188,36 +186,38 @@ int run(int argc, char** argv)
     ifstream fin(param->input.c_str(), std::ifstream::binary);
     if (!fin.good())
     {
-      cerr << "can't open input file " << param->input << endl;
+      std::cerr << "can't open input file " << param->input << std::endl;
       exit(-1);
     }
     fin.close();
   }
 
   // parse charchart
-  if (param->charChart == "") {
-    cerr << "please specify CharChart file with --charChart=<file> option" << endl;
-    exit(0);
+  if (param->charChart == "")
+  {
+    LOGINIT("Common::Misc");
+    LERROR << "please specify CharChart file with --charChart=<file> option";
+    return EXIT_FAILURE;
   }
   CharChart charChart;
   charChart.loadFromFile(param->charChart);
 
-  try
-  {
-    cerr << "parse charChart file : " << param->charChart << endl;
-//     cerr << "TODO: to implement at "<<__FILE__<<", line "<<__LINE__<<"!" <<std::endl;
+//   try
+//   {
+//     std::cerr << "parse charChart file : " << param->charChart << std::endl;
+//     std::cerr << "TODO: to implement at "<<__FILE__<<", line "<<__LINE__<<"!" <<std::endl;
 //     exit(2);
 //     charChart = 0;
 /*    ParseCharClass parseCharClass;
     parseCharClass.parse(param->charChart);
     charChart = ParseChar::parse(param->charChart, parseCharClass);*/
-  }
-  catch (exception& e)
-  {
-    cerr << "Caught exception while parsing file " << param->charChart << endl;
-    cerr << e.what() << endl;
-    exit(-1);
-  }
+//   }
+//   catch (exception& e)
+//   {
+//     std::cerr << "Caught exception while parsing file " << param->charChart << std::endl;
+//     std::cerr << e.what() << std::endl;
+//     exit(-1);
+//   }
 
   if (param->extractKeys != "")
   {
@@ -225,12 +225,12 @@ int run(int argc, char** argv)
     ofstream fout(param->extractKeys.c_str(), std::ofstream::binary);
     if (!fout.good())
     {
-      cerr << "can't open file " << param->extractKeys << endl;
+      std::cerr << "can't open file " << param->extractKeys << std::endl;
       exit(-1);
     }
-    KeysLogger keysLogger(fout,&charChart,param->reverseKeys);
+    KeysLogger keysLogger(fout, &charChart, param->reverseKeys);
 
-    cerr << "parse input file : " << param->input << endl;
+    std::cerr << "parse input file : " << param->input << std::endl;
     try
     {
       QXmlSimpleReader parser;
@@ -248,8 +248,10 @@ int run(int argc, char** argv)
       }
       if (!parser.parse( QXmlInputSource(&file)))
       {
-        std::cerr << "Error parsing " << param->input << " : " << parser.errorHandler()->errorString().toUtf8().constData() << std::endl;
-        return 1;
+        std::cerr << "Error parsing " << param->input << " : "
+                  << parser.errorHandler()->errorString().toUtf8().constData()
+                  << std::endl;
+        return EXIT_FAILURE;
       }
       else
       {
@@ -258,42 +260,50 @@ int run(int argc, char** argv)
     }
     catch (const XMLException& toCatch)
     {
-      std::cerr << "An error occurred  Error: " << toCatch.what() << endl;
+      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
       throw;
     }
     fout.close();
-  } else {
+  }
+  else
+  {
     // compile dictionaries
 
-    cerr << "parse property code file : " << param->propertyFile << endl;
+    std::cerr << "parse property code file : " << param->propertyFile << std::endl;
     PropertyCodeManager propcodemanager;
     propcodemanager.readFromXmlFile(param->propertyFile);
 
-    cerr << "parse symbolicCode file : " << param->symbolicCodes << endl;
+    std::cerr << "parse symbolicCode file : " << param->symbolicCodes << std::endl;
     map<string,LinguisticCode> conversionMap;
     propcodemanager.convertSymbolicCodes(param->symbolicCodes,conversionMap);
-    cerr << conversionMap.size() << " code read from symbolicCode file" << endl;
+    std::cerr << conversionMap.size() << " code read from symbolicCode file" << std::endl;
 /*    for (map<string,LinguisticCode>::const_iterator it=conversionMap.begin();
          it!=conversionMap.end();
          it++)
     {
-      cerr << it->first << " -> " << it->second << endl;
+      std::cerr << it->first << " -> " << it->second << std::endl;
     }*/
 
-    AbstractAccessByString* access(0);
-    if (param->fsaKey!="") {
-      cerr << "load fsa access method : " << param->fsaKey << endl;
-      FsaAccessSpare16* fsaAccess=new FsaAccessSpare16();
+    AbstractAccessByString* access = nullptr;
+    if (param->fsaKey!="")
+    {
+      std::cerr << "load fsa access method : " << param->fsaKey << std::endl;
+      auto fsaAccess = new FsaAccessSpare16();
       fsaAccess->read(param->fsaKey);
-      access=fsaAccess;
-    } else {
-      cerr << "ERROR : no access Keys defined !" << endl;
-      exit(-1);
+      access = fsaAccess;
     }
-    cerr << access->getSize() << " keys loaded" << endl;
+    else
+    {
+      std::cerr << "ERROR : no access Keys defined !" << std::endl;
+      return EXIT_FAILURE;
+    }
+    std::cerr << access->getSize() << " keys loaded" << std::endl;
 
-    cerr << "parse input file : " << param->input << endl;
-    DictionaryCompiler handler(&charChart,access,conversionMap,param->reverseKeys);
+    std::cerr << "parse input file : " << param->input << std::endl;
+    DictionaryCompiler handler(&charChart,
+                               access,
+                               conversionMap,
+                               param->reverseKeys);
 
     QXmlSimpleReader parser;
 //     parser->setValidationScheme(SAXParser::Val_Auto);
@@ -312,22 +322,24 @@ int run(int argc, char** argv)
       }
       if (!parser.parse( QXmlInputSource(&file)))
       {
-        std::cerr << "Error parsing " << param->input << " : " << parser.errorHandler()->errorString().toUtf8().constData() << std::endl;
-        return 1;
+        std::cerr << "Error parsing " << param->input << " : "
+                  << parser.errorHandler()->errorString().toUtf8().constData()
+                  << std::endl;
+        return EXIT_FAILURE;
       }
     }
     catch (const XMLException& toCatch)
     {
-      cerr << "An error occurred  Error: " << toCatch.what() << endl;
+      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
       throw;
     }
 
-    cerr << "write data to output file : " << param->output << endl;
+    std::cerr << "write data to output file : " << param->output << std::endl;
     ofstream fout(param->output.c_str(),ios::out | ios::binary);
     if (!fout.good())
     {
-      cerr << "can't open file " << param->output << endl;
-      exit(-1);
+      std::cerr << "can't open file " << param->output << std::endl;
+      return EXIT_FAILURE;
     }
     handler.writeBinaryDictionary(fout);
     fout.close();
@@ -342,11 +354,11 @@ void usage(int argc, char *argv[])
   LIMA_UNUSED(argv);
   std::cerr << "USAGE : compileDictionary [OPTIONS] file" << std::endl;
   std::cerr << "where [OPTIONS] are : " << std::endl;
-  std::cerr << "  --extractKeyList=<outputfile> : only extract keys list to file, no compilation" << endl;
-  std::cerr << "  --charChart=<charChatFile> : specify charchart file" << endl;
-  std::cerr << "  --fsaKey=<fsaFile> : provide fsa access keys to compile" << endl;
-  std::cerr << "  --propertyFile=<propFile> : specify property coding system (xml file)" << endl;
-  std::cerr << "  --symbolicCodes=<codeFile> : specify symbolic codes file (xml)" << endl;
-  std::cerr << "  --output=<outputFile> : specify output file" << endl;
-  std::cerr << "  --reverse-keys : reverse entries keys" << endl;
+  std::cerr << "  --extractKeyList=<outputfile> : only extract keys list to file, no compilation" << std::endl;
+  std::cerr << "  --charChart=<charChatFile> : specify charchart file" << std::endl;
+  std::cerr << "  --fsaKey=<fsaFile> : provide fsa access keys to compile" << std::endl;
+  std::cerr << "  --propertyFile=<propFile> : specify property coding system (xml file)" << std::endl;
+  std::cerr << "  --symbolicCodes=<codeFile> : specify symbolic codes file (xml)" << std::endl;
+  std::cerr << "  --output=<outputFile> : specify output file" << std::endl;
+  std::cerr << "  --reverse-keys : reverse entries keys" << std::endl;
 }
