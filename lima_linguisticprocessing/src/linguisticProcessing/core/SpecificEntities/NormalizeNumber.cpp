@@ -352,8 +352,6 @@ double computeNumberValue(vector<NumberPart>& m,
                           vector<NumberPart>::iterator itEnd,
                           NumberNormalizationMode mode)
 {
-  for (int i=0;i<m.size();i++){
-  }
 
   if (itBegin == itEnd) { // neutral element
     switch(mode) {
@@ -389,7 +387,7 @@ double computeNumberValue(vector<NumberPart>& m,
 
   // if there is a multiplier
   if (biggestMultiplier != itEnd) {
-    double d= (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
+    const double d= (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
             biggestMultiplierValue
             +computeNumberValue(m,biggestMultiplier+1,itEnd));
     return d;
@@ -397,8 +395,9 @@ double computeNumberValue(vector<NumberPart>& m,
 
   // if there is a conjunction
   if (ConjunctionPosition != itEnd) {
-    double d= ( computeNumberValue(m,itBegin,ConjunctionPosition) +
+    const double d= ( computeNumberValue(m,itBegin,ConjunctionPosition) +
              computeNumberValue(m,ConjunctionPosition+1,itEnd) );
+    return d;
   }
   return 0;
 }

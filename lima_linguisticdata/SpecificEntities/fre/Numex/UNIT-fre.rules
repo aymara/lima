@@ -18,8 +18,7 @@ pts,Pts,
 M€,Mds€,Md€,
 ME,MdsE,MdE,MEuros,
 Go,Mo,To,MF,T,
-h,m,s,min,sec,
-m2,
+m,m2,
 p,
 i,
 °$NC,
@@ -909,8 +908,14 @@ zloty$NC,
 émine$NC,
 éminée$NC)
 
-@units::par @units:UNIT:
-@units::/ @units:UNIT:
-@units:::UNIT:
+@time_units=(
+h,m,s,min,sec
+)
 
+
+@units::par @units:UNIT:
+@units::par @time_units:UNIT:
+@units::/ @units:UNIT:
+@units::/ @time_units:UNIT:
+@units:::UNIT:
 

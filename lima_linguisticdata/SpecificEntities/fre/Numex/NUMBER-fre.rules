@@ -206,8 +206,7 @@ LE:::NOT_NUMBER:
 @ChiffreAines:@Number?:((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
 @ChiffreAines:@ChiffreAines: de @ChiffreAines:NUMBER:NormalizeNumber()
 @ChiffreAines::de @ChiffreAines:NUMBER:NormalizeNumber()
-
-
+@Number::((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
 
 # In sport scores like "1 - 1", each integer is a number and the - is not a minus sign
 @NumForm:[@NumForm] [(+|-)]::NUMBER:=>NormalizeNumber()
