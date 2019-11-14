@@ -35,6 +35,7 @@
 #include "common/LimaCommon.h"
 
 #include <iostream>
+#include <map>
 
 #include <boost/serialization/strong_typedef.hpp>
 
@@ -75,18 +76,20 @@ private:
   EntityTypePrivate* m_d;
 };
 
-// hierachy of entity types 
+// hierarchy of entity types
 class EntityTypeHierarchyPrivate;
 class LIMA_MEDIATICDATA_EXPORT EntityTypeHierarchy
 {
 public:
   EntityTypeHierarchy();
   ~EntityTypeHierarchy();
-  
+
   void addParentLink(const EntityType& child, const EntityType& parent);
-  bool isParent(const EntityType& child, const EntityType& parent) const; 
+  bool isParent(const EntityType& child, const EntityType& parent) const;
   bool isAncestor(const EntityType& child, const EntityType& parent) const;
-  
+  bool getAncestor(const EntityType& child, EntityType& ancestor) const;
+  bool getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const;
+
 private:
   EntityTypeHierarchyPrivate* m_d;
 };

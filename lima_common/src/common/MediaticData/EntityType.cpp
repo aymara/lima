@@ -36,7 +36,7 @@ class EntityTypePrivate
   friend QTextStream& operator << (QTextStream&, const EntityType&);
   friend std::ostream& operator << (std::ostream&, const EntityType&);
   friend QDebug& operator << (QDebug&, const EntityType&);
-  
+
   EntityTypePrivate();
   EntityTypePrivate(const EntityTypePrivate& etp);
   EntityTypePrivate& operator=(const EntityTypePrivate& etp);
@@ -99,17 +99,17 @@ m_d(new EntityTypePrivate(id, groupId))
 {
 }
 
-EntityType::~EntityType() 
+EntityType::~EntityType()
 {
   delete m_d;
 }
 
-bool EntityType::operator==(const EntityType& other) const 
+bool EntityType::operator==(const EntityType& other) const
 {
   return (m_d->m_groupId==other.m_d->m_groupId && m_d->m_id==other.m_d->m_id);
 }
 
-bool EntityType::operator!=(const EntityType& other) const 
+bool EntityType::operator!=(const EntityType& other) const
 {
   return !(operator==(other));
 }
@@ -221,6 +221,34 @@ bool EntityTypeHierarchy::isAncestor(const EntityType& child,
   return isAncestor((*it).second,parent);
 }
 
+bool EntityTypeHierarchy::getAncestor(const EntityType& child,
+                                      EntityType& ancestor) const
+{
+  const auto& it=m_d->find(child);
+  if (it==m_d->end())
+  {
+    return false;
+  }
+  EntityType parent = (*it).second;
+  const auto& it_p=m_d->find(parent);
+  if (it_p==m_d->end())
+  {
+    ancestor = parent;
+    return true;
+  }
+  return getAncestor(parent,ancestor);
+}
+
+bool EntityTypeHierarchy::getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const
+{
+  for(auto it = m_d->begin(); it != m_d->end(); it++){
+      if( isParent( (*it).first, ancestor) ){
+          childList.insert( std::make_pair( (*it).first, (*it).second) );
+          getChildren((*it).first, childList);
+      }
+  }
+  return true;
+}
 
 } // end namespace
 } // end namespace

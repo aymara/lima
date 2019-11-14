@@ -966,6 +966,17 @@ bool MediaticData::isEntityAncestor(const EntityType& child,
   return m_d->m_entityHierarchy.isAncestor(child,parent);
 }
 
+bool MediaticData::getEntityAncestor(const EntityType& child,
+                                    EntityType& ancestor) const
+{
+  return m_d->m_entityHierarchy.getAncestor(child,ancestor);
+}
+
+bool MediaticData::getEntityChildList(const EntityType& parent,
+                        std::map<EntityType,EntityType>& childList) const
+{
+  return m_d->m_entityHierarchy.getChildren(parent, childList);
+}
 
 // entity types accessors
 EntityType MediaticData::getEntityType(const LimaString& entityName) const
@@ -994,7 +1005,7 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     QString errorString;
     QTextStream qts(&errorString);
     qts << "MediaticData::getEntityType unknown entity group id " << groupId
-            << "accessing" << entityName;
+            << " accessing " << entityName;
     LERROR << errorString;
     throw LimaException(errorString.toStdString());
   }
@@ -1008,7 +1019,7 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     MDATALOGINIT;
     QString errorString;
     QTextStream qts(&errorString);
-    qts << "Unknown entity type " << entityName << "in group id:"<<groupId
+    qts << "Unknown entity type " << entityName << " in group id: "<<groupId
           << "; exception:" << e.what();
     LWARN << errorString;
     throw;

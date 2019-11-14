@@ -18,7 +18,7 @@
 */
 /**
   * @file          mediaticData.h
-  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *                Copyright (C) 2002-2012 by CEA LIST
   * @date          Started on Mon dec, 2 2002
@@ -128,7 +128,10 @@ public:
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-    
+    bool getEntityAncestor(const EntityType& child, EntityType& ancestor) const;
+    bool getEntityChildList(const EntityType& parent,
+                            std::map<EntityType,EntityType>& EntityTypeMapping) const;
+
     // read/write function necessary because entity types
     // are saved in temporary files
     void writeEntityTypes(std::ostream& os) const;
@@ -171,7 +174,7 @@ private:
   MediaticData();
   MediaticData(const MediaticData& md);
   MediaticData& operator=(const MediaticData& md);
-  
+
   MediaticDataPrivate* m_d;
 
 };
