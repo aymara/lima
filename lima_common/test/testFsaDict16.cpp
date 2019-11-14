@@ -182,7 +182,7 @@ int readListOfWords(
     wList.getline(strbuff, 200, '\n' );
     string line(strbuff);
     if( line.size() == 0 ) {
-      std::cerr <<  "end of list of words. counter=" << counter << std::endl;
+      std::cerr << std::endl <<  "readListOfWords: end of list of words. counter=" << counter << std::endl;
       break;
     }
     else {
