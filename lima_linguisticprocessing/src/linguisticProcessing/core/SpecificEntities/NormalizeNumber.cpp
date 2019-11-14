@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,8 @@
  * @file       NormalizeNumber.cpp
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Jun 13 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2006-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "NormalizeNumber.h"
@@ -87,8 +87,8 @@ m_microAccessor(0)
 // specific helper functions for the normalization of numbers
 // not part of the class: are language independant
 
-// some local typedefs 
- // use a single double: is 0, indicates it is a conjunction 
+// some local typedefs
+ // use a single double: is 0, indicates it is a conjunction
 typedef double NumberPart;
 // current state: must add or multiply with following value
 typedef enum { ADDITIVE, MULTIPLICATIVE } NumberNormalizationMode;
@@ -100,7 +100,7 @@ bool isIntegerWithDot(Token* t);
 double getValueHeuristic(const LimaString& str, LimaChar sep);
 bool isMultiplierNumber(double n);
 double computeNumberValue(vector<NumberPart>& m,
-                          vector<NumberPart>::iterator itBegin, 
+                          vector<NumberPart>::iterator itBegin,
                           vector<NumberPart>::iterator itEnd,
                           NumberNormalizationMode mode=ADDITIVE);
 
@@ -119,10 +119,10 @@ getNumberValue(Token* t,MorphoSyntacticData* data) const
   {
     return getValueHeuristic(t->stringForm(),LimaChar('.'));
   }
-  
+
   // get the normalized form : contains the numeric form
   // (normalized form corresponding to a macro_micro identifying a number)
-  MorphoSyntacticData::const_iterator  
+  MorphoSyntacticData::const_iterator
     it=data->begin(),
     it_end=data->end();
   for (; it!=it_end; it++) {
@@ -140,7 +140,7 @@ getNumberValue(Token* t,MorphoSyntacticData* data) const
 /***********************************************************************/
 bool NormalizeNumber::
 operator()(RecognizerMatch& m,
-           AnalysisContent& analysis) const 
+           AnalysisContent& analysis) const
 {
 #ifdef DEBUG_LP
   SELOGINIT;
@@ -151,7 +151,7 @@ operator()(RecognizerMatch& m,
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
 
   vector<NumberPart> values;
-  
+
   // a first pass on the match to eliminate what isn't a number
   for (RecognizerMatch::iterator it=m.begin(),it_end=m.end();
        it!=it_end; it++) {
@@ -222,7 +222,7 @@ operator()(RecognizerMatch& m,
     // features
     return true;
   }
-  
+
   // then compute the number
   double number=computeNumberValue(values,values.begin(),values.end());
 #ifdef DEBUG_LP
@@ -334,7 +334,7 @@ bool isMultiplierNumber(double n) {
 // recursive function to compute the value of a composed number
 // (for instance "trente trois mille vingt et un" or "22 millions")
 double computeNumberValue(vector<NumberPart>& m,
-                          vector<NumberPart>::iterator itBegin, 
+                          vector<NumberPart>::iterator itBegin,
                           vector<NumberPart>::iterator itEnd,
                           NumberNormalizationMode mode)
 {
@@ -344,9 +344,9 @@ double computeNumberValue(vector<NumberPart>& m,
     case MULTIPLICATIVE: return 1;
     }
   }
-  
+
   vector<NumberPart>::iterator tmp(itBegin);
-  if (++tmp == itEnd) { // single element 
+  if (++tmp == itEnd) { // single element
     return *itBegin;
   }
 
@@ -369,18 +369,20 @@ double computeNumberValue(vector<NumberPart>& m,
       }
     }
   }
-  
+
   // if there is a multiplier
   if (biggestMultiplier != itEnd) {
-    return (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
+    const double d= (computeNumberValue(m,itBegin,biggestMultiplier,MULTIPLICATIVE)*
             biggestMultiplierValue
             +computeNumberValue(m,biggestMultiplier+1,itEnd));
+    return d;
   }
-  
+
   // if there is a conjunction
   if (ConjunctionPosition != itEnd) {
-    return ( computeNumberValue(m,itBegin,ConjunctionPosition) + 
+    const double d= ( computeNumberValue(m,itBegin,ConjunctionPosition) +
              computeNumberValue(m,ConjunctionPosition+1,itEnd) );
+    return d;
   }
 
   return 0;
