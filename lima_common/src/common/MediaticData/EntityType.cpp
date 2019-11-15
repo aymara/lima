@@ -221,6 +221,20 @@ bool EntityTypeHierarchy::isAncestor(const EntityType& child,
   return isAncestor((*it).second,parent);
 }
 
+EntityType EntityTypeHierarchy::getAncestor(const EntityType& child) const
+{
+  // get oldest ancestor
+  EntityType current=child;
+  auto it=m_d->find(current);
+  while (it != m_d->end())
+  {
+    current=(*it).second;
+    it=m_d->find(current);
+  }
+  return current; // if no parent, return type itself
+}
+
+
 
 } // end namespace
 } // end namespace

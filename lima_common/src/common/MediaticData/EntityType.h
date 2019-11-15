@@ -86,7 +86,9 @@ public:
   void addParentLink(const EntityType& child, const EntityType& parent);
   bool isParent(const EntityType& child, const EntityType& parent) const; 
   bool isAncestor(const EntityType& child, const EntityType& parent) const;
-  
+  // get highest ancestor in the hierarchy (return child itself if has no parent)
+  EntityType getAncestor(const EntityType& child) const;
+ 
 private:
   EntityTypeHierarchyPrivate* m_d;
 };

@@ -128,7 +128,9 @@ public:
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-    
+     //get highest ancestor in the hierarchy
+    EntityType getEntityAncestor(const EntityType& child) const;
+   
     // read/write function necessary because entity types
     // are saved in temporary files
     void writeEntityTypes(std::ostream& os) const;

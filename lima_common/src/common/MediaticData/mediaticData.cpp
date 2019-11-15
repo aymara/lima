@@ -966,6 +966,11 @@ bool MediaticData::isEntityAncestor(const EntityType& child,
   return m_d->m_entityHierarchy.isAncestor(child,parent);
 }
 
+EntityType MediaticData::getEntityAncestor(const EntityType& child) const
+{
+  return m_d->m_entityHierarchy.getAncestor(child);
+}
+
 
 // entity types accessors
 EntityType MediaticData::getEntityType(const LimaString& entityName) const
