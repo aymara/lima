@@ -221,22 +221,17 @@ bool EntityTypeHierarchy::isAncestor(const EntityType& child,
   return isAncestor((*it).second,parent);
 }
 
-bool EntityTypeHierarchy::getAncestor(const EntityType& child,
-                                      EntityType& ancestor) const
+EntityType EntityTypeHierarchy::getAncestor(const EntityType& child) const
 {
-  const auto& it=m_d->find(child);
-  if (it==m_d->end())
+  // get oldest ancestor
+  EntityType current=child;
+  auto it=m_d->find(current);
+  while (it != m_d->end())
   {
-    return false;
+    current=(*it).second;
+    it=m_d->find(current);
   }
-  EntityType parent = (*it).second;
-  const auto& it_p=m_d->find(parent);
-  if (it_p==m_d->end())
-  {
-    ancestor = parent;
-    return true;
-  }
-  return getAncestor(parent,ancestor);
+  return current; // if no parent, return type itself
 }
 
 bool EntityTypeHierarchy::getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const

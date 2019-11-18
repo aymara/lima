@@ -599,8 +599,10 @@ void parseLingInfos(
     auto* lowerState = &states.front();
     auto final = false;
     auto hasInfos = false;
+#ifdef DEBUG_LP
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos find lower state. state size="
             << states.size();
+#endif
     for (auto& state : states)
     {
 #ifdef DEBUG_LP
@@ -631,13 +633,15 @@ void parseLingInfos(
     if (lowerState->end())
     {
       // nothing more to read, exit the while(true)
- #ifdef DEBUG_LP
+#ifdef DEBUG_LP
      LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos nothing more to read, exit";
 #endif
       break;
     }
+#ifdef DEBUG_LP
     LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos lowerState found lemma="
             << lowerState->lemmaStr << ", norm=" << lowerState->normStr;
+#endif
     // if final then call delete
     if (final)
     {
@@ -678,7 +682,9 @@ void parseLingInfos(
               while (props!=propsEnd)
               {
                 auto l = static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
+#ifdef DEBUG_LP
                 LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos got linguistic code" << l;
+#endif
                 if (propsRead.find(l) == propsRead.end())
                 {
                   handler->foundProperties(l);

@@ -87,7 +87,9 @@ public:
   void addParentLink(const EntityType& child, const EntityType& parent);
   bool isParent(const EntityType& child, const EntityType& parent) const;
   bool isAncestor(const EntityType& child, const EntityType& parent) const;
-  bool getAncestor(const EntityType& child, EntityType& ancestor) const;
+  // get highest ancestor in the hierarchy (return child itself if has no parent)
+  EntityType getAncestor(const EntityType& child) const;
+  // get the list of nodes under the given ancestor as a map of child-firstParent tuples
   bool getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const;
 
 private:

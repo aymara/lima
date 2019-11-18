@@ -37,53 +37,33 @@ class LIMA_ENTITYTRACKING_EXPORT CoreferenceEngine
 {
 public:
     /* test if the two string are equals */
-  inline bool isEqual(const std::string a,const std::string b) const {if (strcmp(a.c_str(),b.c_str())==0) return true; else return false;}
+  bool isEqual(const QString& a, const QString& b) const;
   /* return true if the current word is included in the original word */
-  bool isInclude(const std::string original, const std::string currentWord) const;
+  bool isInclude(const QString& original, const QString& currentWord) const;
   /* return true if the current word is an acronym of the original word */
-  bool isAcronym(const std::string original, const std::string currentWord) const;
+  bool isAcronym(const QString& original, const QString& currentWord) const;
 
-  void addNewForm(const std::string original, const std::string currentWord);
-  bool exist(const std::string original) const;
+  void addNewForm(const QString& original, const QString& currentWord);
+  bool exist(const QString& original) const;
 
-  std::vector<LinguisticAnalysisStructure::Token> searchCoreference(const LinguisticAnalysisStructure::Token& tok);
+  std::vector<LinguisticAnalysisStructure::Token> searchCoreference(
+    const LinguisticAnalysisStructure::Token& tok);
 
-  void storeSpecificEntity (const Lima::LinguisticProcessing::
-        SpecificEntities::SpecificEntityAnnotation * se) const;
+  void storeSpecificEntity (const SpecificEntities::SpecificEntityAnnotation* se) const;
 
-  inline std::vector<LinguisticAnalysisStructure::Token>& getToken(){return allTokens;}
-  inline std::vector<LinguisticAnalysisStructure::Token>& getAnnotations() {return storedAnnotation;}
-  inline std::vector< std::vector<std::string> > getAcronym() {return Acronyms;}
-  inline void storeAllToken(const LinguisticAnalysisStructure::Token);
-  inline void storeAnnot(const LinguisticAnalysisStructure::Token);
+  std::vector<LinguisticAnalysisStructure::Token>& getToken();
+  std::vector<LinguisticAnalysisStructure::Token>& getAnnotations();
+  std::vector< std::vector<QString> >& getAcronym();
+  void storeAllToken(const LinguisticAnalysisStructure::Token& token);
+  void storeAnnot(const LinguisticAnalysisStructure::Token& token);
 
 private:
 
-  std::vector< std::vector<std::string> > Acronyms;  // the vector of acronyms
+  std::vector< std::vector<QString> > m_acronyms;  // the vector of acronyms
   std::vector<LinguisticAnalysisStructure::Token> allTokens;       /* all token in the graph */
   std::vector<LinguisticAnalysisStructure::Token> storedAnnotation;
- 
+
 };
-
-/*inline void CoreferenceEngine::setToken(const vector<Token> &tok)
-{
-  for(vector<Token>::const_iterator it1=tok.begin(), it1_end=tok.end();
-      it1 != it1_end;
-      it1++)
-  {
-    allTokens.push_back(*it1);
-  }
-}
-*/
-inline void CoreferenceEngine::storeAllToken(const LinguisticAnalysisStructure::Token tok)
-{
-  allTokens.push_back(tok);
-}
-
-inline void CoreferenceEngine::storeAnnot(const LinguisticAnalysisStructure::Token tok)
-{
-  storedAnnotation.push_back(tok);
-}
 
 } // SpecificEntities
 } // LinguisticProcessing

@@ -826,7 +826,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
           }
           auto configPaths = QString::fromUtf8(
             m_d->m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
-          for(QString confPath: configPaths)
+          Q_FOREACH(QString confPath, configPaths)
           {
             if (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
@@ -966,10 +966,9 @@ bool MediaticData::isEntityAncestor(const EntityType& child,
   return m_d->m_entityHierarchy.isAncestor(child,parent);
 }
 
-bool MediaticData::getEntityAncestor(const EntityType& child,
-                                    EntityType& ancestor) const
+EntityType MediaticData::getEntityAncestor(const EntityType& child) const
 {
-  return m_d->m_entityHierarchy.getAncestor(child,ancestor);
+  return m_d->m_entityHierarchy.getAncestor(child);
 }
 
 bool MediaticData::getEntityChildList(const EntityType& parent,

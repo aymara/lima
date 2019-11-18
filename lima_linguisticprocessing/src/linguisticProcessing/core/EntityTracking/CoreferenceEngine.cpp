@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -34,53 +34,55 @@ namespace LinguisticProcessing
 {
 namespace EntityTracking
 {
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-bool CoreferenceEngine::isInclude(const std::string original, const std::string currentWord) const
+
+bool CoreferenceEngine::isEqual(const QString& a,
+                                const QString& b) const
 {
-  if ((currentWord.size() > original.size()) ||(!isupper(currentWord[0])))
+  return (a == b);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+bool CoreferenceEngine::isInclude(const QString& original,
+                                  const QString& currentWord) const
+{
+  if ((currentWord.size() > original.size()) ||(currentWord[0].isUpper()))
     return false;
 
-  if ((currentWord.compare("is") == 0) ||
-    (currentWord.compare("as") == 0) ||
-    (currentWord.compare("a") == 0) ||
-    (currentWord.compare("to") == 0) ||
-    (currentWord.compare("and") == 0))
+  if ((currentWord == "is") ||
+    (currentWord == "as") ||
+    (currentWord == "a") ||
+    (currentWord == "to") ||
+    (currentWord == "and"))
   {
     return false;
   }
-  uint64_t comptCurrent(0);
+  int comptCurrent = 0;
 
-  for (uint64_t i(0); i< original.size(); i++)
+  for (int i = 0; i < original.length(); i++)
   {
     if (original[i] == currentWord[comptCurrent])
     {
       comptCurrent++;
     }
   }
-  
-  if (comptCurrent == currentWord.size())
-    return true;
-  else
-    return false;
+
+  return (comptCurrent == currentWord.length());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
-bool CoreferenceEngine::isAcronym(const std::string original, const std::string currentWord) const
+bool CoreferenceEngine::isAcronym(const QString& original,
+                                  const QString& currentWord) const
 {
-  for (std::vector< std::vector<std::string> >::const_iterator it = Acronyms.begin(), it_end = Acronyms.end();
-       it != it_end;
-       it++)
+  for (const auto& acronym : m_acronyms)
   {
-    if (strcmp((*(*it).begin()).c_str(),original.c_str()) == 0)
+    if (*acronym.begin() == original)
     {
-      for (std::vector<string>::const_iterator it_intern = (*it).begin(), it_int_end = (*it).end();
-           it_intern != it_int_end;
-           it_intern++)
+      for (const auto& initial : acronym)
       {
-        if ((strcmp((*it_intern).c_str(),currentWord.c_str()) == 0) ||
-            (isInclude(*it_intern,currentWord)))
+        if ( (initial == currentWord) ||
+            (isInclude(initial, currentWord)))
           return true;
       }
     }
@@ -90,15 +92,14 @@ bool CoreferenceEngine::isAcronym(const std::string original, const std::string 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
-void CoreferenceEngine::addNewForm(const std::string original, const std::string currentWord)
+void CoreferenceEngine::addNewForm(const QString& original,
+                                   const QString& currentWord)
 {
-  for (std::vector< std::vector<std::string> >::iterator it = Acronyms.begin(), it_end = Acronyms.end();
-       it != it_end;
-       it++)
+  for (auto& acronym : m_acronyms)
   {
-    if (strcmp((*(*it).begin()).c_str(),original.c_str()) == 0)
+    if (*acronym.begin() == original)
     {
-      (*it).push_back(currentWord);
+      acronym.push_back(currentWord);
       return;
     }
   }
@@ -106,25 +107,16 @@ void CoreferenceEngine::addNewForm(const std::string original, const std::string
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
-bool CoreferenceEngine::exist(const std::string mot) const
+bool CoreferenceEngine::exist(const QString& mot) const
 {
-  std::vector<std::string>::const_iterator iterat;
-  for (std::vector< std::vector<std::string> >::const_iterator it = Acronyms.begin(), it_end = Acronyms.end();
-       it != it_end;
-       it++)
+  for (const auto& acronym : m_acronyms)
   {
-    for (std::vector<std::string>::const_iterator it_inte=(*it).begin(), it_end_inter=(*it).end();
-        it_inte != it_end_inter;
-        it_inte++)
+    for (const auto& initial : acronym)
     {
-      if (mot.compare(*it_inte) == 0){
-        return true;}
-//     iterat = find((*it).begin(),(*it).end(),mot);
-//     cout <<mot<<endl;
-//     if ((*iterat).compare("") != 0)
-//     {
-//       return true;
-//     }
+      if (mot == initial)
+      {
+        return true;
+      }
     }
   }
   return false;
@@ -134,32 +126,56 @@ bool CoreferenceEngine::exist(const std::string mot) const
 //////////////////////////////////////////////////////////////////////////////////////////
 vector<Token> CoreferenceEngine::searchCoreference(const Token& tok)
 {
-  vector<Token> newToken;
+  std::vector<Token> newToken;
   //newToken.push_back(tok);
-  /* Si le mot existe dans le vecteur des acronyms, ça ne sert à rien chercher ses acronyms parce qu'ils
-     sont recherchés */
-  vector<string> tempAcronyms;
-  if (!exist(limastring2utf8stdstring(tok.stringForm()))) 
+  /* Si le mot existe dans le vecteur des acronyms, ça ne sert à rien chercher
+   * ses acronyms parce qu'ils
+   * sont recherchés */
+  std::vector<QString> tempAcronyms;
+  if (!exist(tok.stringForm()))
   {
     /* parcourir tous les noeuds */
-    for(vector<Token>::const_iterator it1=allTokens.begin(), it1_end=allTokens.end();
-        it1 != it1_end;
-        it1++)
+    for(const auto& token : allTokens)
     {
       //string mot;
       /* Recherche dans le texte de toutes les formes de mot précédent dans tout le text */
-      if ((isEqual(limastring2utf8stdstring(tok.stringForm()),limastring2utf8stdstring((*it1).stringForm()))) ||
-          (isInclude(limastring2utf8stdstring(tok.stringForm()),limastring2utf8stdstring((*it1).stringForm())))/* ||
-          (isAcronym(limastring2utf8stdstring(tok.stringForm()),limastring2utf8stdstring((*it1).stringForm())))*/)
+      if ( ( isEqual(tok.stringForm(), token.stringForm())) ||
+          ( isInclude(tok.stringForm(), token.stringForm()))/* ||
+          (isAcronym(tok.stringForm(), token.stringForm()))*/)
       {
-        tempAcronyms.push_back(limastring2utf8stdstring((*it1).stringForm()));
-        newToken.push_back((*it1));
+        tempAcronyms.push_back(token.stringForm());
+        newToken.push_back(token);
       }
     }
   }
-  Acronyms.push_back(tempAcronyms);
+    m_acronyms.push_back(tempAcronyms);
 
   return newToken;
+}
+
+std::vector<LinguisticAnalysisStructure::Token>& CoreferenceEngine::getToken()
+{
+  return allTokens;
+}
+
+std::vector<LinguisticAnalysisStructure::Token>& CoreferenceEngine::getAnnotations()
+{
+  return storedAnnotation;
+}
+
+std::vector< std::vector<QString> >& CoreferenceEngine::getAcronym()
+{
+  return m_acronyms;
+}
+
+void CoreferenceEngine::storeAllToken(const LinguisticAnalysisStructure::Token& tok)
+{
+  allTokens.push_back(tok);
+}
+
+void CoreferenceEngine::storeAnnot(const LinguisticAnalysisStructure::Token& tok)
+{
+  storedAnnotation.push_back(tok);
 }
 
 }

@@ -36,12 +36,12 @@ macro (CODES _lang)
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
-    COMMAND convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
-    COMMAND parseXMLPropertyFile --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+    COMMAND convertSymbolicCodes --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
+    COMMAND parseXMLPropertyFile --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
     DEPENDS code-${_lang}.xml ${ARGN} convertSymbolicCodes
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "PATH is $ENV{PATH}"
-    COMMENT "convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
+    COMMENT "convertSymbolicCodes --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
     VERBATIM
   )
 
@@ -213,25 +213,25 @@ macro(COMPILEXMLDIC _lang _dico _subdir)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND LC_ALL="C" sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${LIMA_CONF} --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/  --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${LIMA_CONF}  --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 endif ()

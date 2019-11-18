@@ -128,7 +128,9 @@ public:
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-    bool getEntityAncestor(const EntityType& child, EntityType& ancestor) const;
+     //get highest ancestor in the hierarchy
+    EntityType getEntityAncestor(const EntityType& child) const;
+    // get the list of nodes under the given ancestor as child->firstParent tuples
     bool getEntityChildList(const EntityType& parent,
                             std::map<EntityType,EntityType>& EntityTypeMapping) const;
 
@@ -174,7 +176,7 @@ private:
   MediaticData();
   MediaticData(const MediaticData& md);
   MediaticData& operator=(const MediaticData& md);
-
+  
   MediaticDataPrivate* m_d;
 
 };
