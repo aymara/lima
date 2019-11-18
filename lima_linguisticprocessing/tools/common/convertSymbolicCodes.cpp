@@ -27,10 +27,12 @@
 #include <fstream>
 
 #include "common/LimaCommon.h"
+#include "common/tools/FileUtils.h"
 #include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
 using namespace std;
 using namespace Lima;
+using namespace Lima::Common::Misc;
 using namespace Lima::Common::PropertyCode;
 
 void usage(int argc, char *argv[]);
@@ -120,14 +122,17 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-  std::string resourcesPath = (getenv("LIMA_RESOURCES")!=0) ? string(getenv("LIMA_RESOURCES")) : string("/usr/share/apps/lima/resources");
-  std::string configPath = (param->configDir.size()>0) ? param->configDir : string("");
-  if (configPath.size() == 0)
-    configPath = string(getenv("LIMA_CONF"));
-  if (configPath.size() == 0)
-    configPath = string("/usr/share/config/lima");
+  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                      QStringList());
+  auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  if (!param->configDir.empty())
+  {
+    configPath = QString::fromUtf8(param->configDir.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
+
+  if (QsLogging::initQsLog(configPath) != 0)
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
