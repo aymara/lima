@@ -169,6 +169,12 @@ int run(int argc, char** argv)
                                                       QStringList());
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
+  if (!param->configDir.empty())
+  {
+    configPath = QString::fromUtf8(param->configDir.c_str());
+    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+  }
+
   if (QsLogging::initQsLog(configPath) != 0)
   {
     LOGINIT("Common::Misc");
