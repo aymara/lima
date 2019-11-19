@@ -48,7 +48,10 @@ macro (CODES _lang)
   add_custom_target(
     code${_lang}
     ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
+    DEPENDS
+        ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
+        rules-configEnv
+        rules-${_lang}-execEnv
   )
 
   install(
@@ -73,7 +76,10 @@ macro (FLEXION _lang)
   add_custom_target(
     flex${_lang}
     ALL
-    DEPENDS formes-${_lang}.txt
+    DEPENDS
+      formes-${_lang}.txt
+        rules-configEnv
+        rules-${_lang}-execEnv
   )
   add_dependencies(flex${_lang} code${_lang})
 
@@ -564,7 +570,11 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
   add_custom_target(
     syntanalrules-${_lang}
     ALL
-    DEPENDS ${${_lang}_BIN_RULES_FILES} ${${_lang}_SA_DEPENDS_FILES} rules-${_lang}-execEnv rules-configEnv
+    DEPENDS
+      ${${_lang}_BIN_RULES_FILES}
+      ${${_lang}_SA_DEPENDS_FILES}
+      rules-${_lang}-execEnv
+      rules-configEnv
   )
 
   foreach (file ${${_lang}_BIN_RULES_FILES})
