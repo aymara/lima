@@ -521,6 +521,12 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   wtext.assign(SPACE);
   wtext.append(u32Copy);
   wtext.append(SPACE);
+
+  u32string original_text;
+  original_text.assign(SPACE);
+  original_text.append(text.toStdU32String());
+  original_text.append(SPACE);
+
   vector<vector<unsigned int>> ngram_idxs;
   if (encode_text(wtext, ngram_idxs) != TokStatusCode::SUCCESS)
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while encoding text to ngrams' indices.",
@@ -561,11 +567,35 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
     vector<size_t> viterbi;
     viterbi_decode(converted_scores, m_crf, viterbi);
 
+    u32string SENTENCE_BREAKS = QString::fromUtf8("\u000A\u000D").toStdU32String();
+    for (size_t j = 1; j < viterbi.size(); ++j)
+    {
+      unsigned int pos = i * 400 + j;
+      if (pos + 2 >= original_text.size())
+        break;
+
+      // TODO: check for \r\n and other combinations too
+      if (SENTENCE_BREAKS.find(original_text[pos+1]) != u32string::npos
+          && SENTENCE_BREAKS.find(original_text[pos+2]) != u32string::npos
+          && original_text[pos+1] == original_text[pos+2])
+      {
+        size_t t = j-1;
+        while (viterbi[t] == m_token_outside && t > 0)
+          t -= 1;
+
+        if (viterbi[t] == m_token_end)
+          viterbi[t] = m_token_end_last;
+
+        if (viterbi[t] == m_token_single)
+          viterbi[t] = m_token_single_last;
+      }
+    }
+
     for (size_t j = 0; j < viterbi.size(); ++j)
     {
       unsigned int pos = i * 400 + j;
       if (pos + 1 >= wtext.size())
-          break;
+        break;
       const auto &tag = viterbi[j];
 
       if (m_token_end == tag || m_token_end_last == tag || m_token_single == tag || m_token_single_last == tag)

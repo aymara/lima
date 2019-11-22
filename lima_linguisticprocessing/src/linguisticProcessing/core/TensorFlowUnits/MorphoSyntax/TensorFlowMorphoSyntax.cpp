@@ -21,6 +21,7 @@
 #include <iterator>
 #include <set>
 #include <algorithm>
+#include <typeinfo>
 
 #include <QJsonDocument>
 
@@ -45,6 +46,7 @@
 #include "fastText/src/fasttext.h"
 
 #include "Viterbi.h"
+#include "Arborescence.h"
 #include "QJsonHelpers.h"
 #include "TensorFlowHelpers.h"
 
@@ -130,9 +132,10 @@ protected:
 
     vector<TToken> tokens;
     size_t token_count;
+    size_t offset;
 
     TSentence(LinguisticGraphVertex b, LinguisticGraphVertex e, size_t max_len)
-      : begin(b), end(e), token_count(0)
+      : begin(b), end(e), token_count(0), offset(0)
     {
       tokens.resize(max_len);
     }
@@ -145,13 +148,13 @@ protected:
 #endif
       if (tokens.size() <= token_count)
       {
+        tokens.resize(tokens.size() * 2);
         QString errorString;
         QTextStream ts(&errorString);
-        ts << "TSentence::append tokens size (" << tokens.size() << ") <= token_count ("
-            << token_count << ")";
+        ts << "TSentence::append tokens size (" << tokens.size() << ") <= token_count (" << token_count << ")";
         TENSORFLOWMORPHOSYNTAXLOGINIT;
-        LERROR << errorString;
-        throw std::runtime_error(errorString.toStdString());
+        LWARN << errorString;
+        //throw std::runtime_error(errorString.toStdString());
       }
 
       tokens[token_count].vertex = v;
@@ -184,6 +187,7 @@ protected:
     string tags_logits_node_name;
     string tags_pred_node_name;
     vector<string> i2t;
+    size_t root_tag_idx;
   };
 
   vector<SeqTagOutput> m_seqtag_outputs;
@@ -220,6 +224,18 @@ protected:
                       size_t start,
                       size_t size,
                       vector<pair<string, Tensor>>& batch) const;
+
+  void save_arcs_logits(const TSentence& sent,
+                        const TTypes<float, 3>::Tensor& logits,
+                        int64 idx,
+                        const string& prefix,
+                        size_t id) const;
+  size_t fix_tag_for_no_root_link(const DepparseOutput& out_descr,
+                                  size_t pred_tag,
+                                  size_t pos_in_batch,
+                                  size_t word_num,
+                                  const TTypes<float, 3>::Tensor& tags_logits) const;
+
 };
 
 TensorFlowMorphoSyntax::TensorFlowMorphoSyntax()
@@ -468,7 +484,7 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     LOG_MESSAGE(LDEBUG, "analyze sentence from vertex " << beginSentence
 		        << " to vertex " << endSentence);
 
-    TSentence sent(beginSentence, endSentence, m_max_seq_len);
+    TSentence sent(beginSentence, endSentence, m_max_seq_len - 1);
 
     LinguisticGraphVertex curr = beginSentence;
     while (curr != endSentence)
@@ -512,7 +528,27 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
       prevSentenceEnd = curr;
     }
 
-    sentences.push_back(sent);
+    if (sent.token_count < m_max_seq_len - 1)
+      sentences.push_back(sent);
+    else
+    {
+      size_t offset = 0;
+      while (offset < sent.token_count)
+      {
+        TSentence s(sent.begin, sent.end, m_max_seq_len - 1);
+        size_t m = sent.token_count - offset;
+        if (m > m_max_seq_len - 1)
+          m = m_max_seq_len - 1;
+        for (size_t j = 0; j < m; j++)
+          s.tokens[j] = sent.tokens[offset + j];
+        s.token_count = m;
+
+        s.offset = offset;
+        sentences.push_back(s);
+
+        offset += m;
+      }
+    }
   }
 
   syntacticData->setupDependencyGraph();
@@ -523,6 +559,43 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
   TimeUtils::logElapsedTime("TensorFlowMorphoSyntax");
 
   return SUCCESS_ID;
+}
+
+size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOutput& out_descr,
+                                                               size_t pred_tag,
+                                                               size_t pos_in_batch,
+                                                               size_t word_num,
+                                                               const TTypes<float, 3>::Tensor& tags_logits) const
+{
+  size_t new_pred_tag = pred_tag;
+
+  if (pred_tag == out_descr.root_tag_idx || out_descr.i2t[pred_tag] == "ud:_")
+  {
+    // pred_head != 0 => this isn't a root => we have to change tag
+    size_t a = 0;
+    float best_score = tags_logits(pos_in_batch, word_num, a);
+    while (a == out_descr.root_tag_idx || a == pred_tag || out_descr.i2t[a] == "ud:_")
+    {
+      a++;
+      best_score = tags_logits(pos_in_batch, word_num, a);
+    }
+
+    new_pred_tag = a;
+    while (a < tags_logits.dimension(2))
+    {
+      float score = tags_logits(pos_in_batch, word_num, a);
+      if (tags_logits(pos_in_batch, word_num, a) > best_score
+              && a != out_descr.root_tag_idx
+              && out_descr.i2t[a] != "ud:_")
+      {
+        best_score = tags_logits(pos_in_batch, word_num, a);
+        new_pred_tag = a;
+      }
+      a += 1;
+    }
+  }
+
+  return new_pred_tag;
 }
 
 void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
@@ -612,6 +685,8 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
       const DepparseOutput& out_descr = *(m_depparse_outputs.begin());
 
+      LinguisticGraphVertex prev_sent_head = 0;
+
       for (int64 p = 0; p < arcs_tensor.dimension(0); p++)
       {
         TSentence& sent = sentences[i+p];
@@ -619,33 +694,94 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         if (0 == len)
           continue;
 
+        //parents.reserve(m_max_seq_len);
+        vector<size_t> parents;
+        parents.resize(len + 1);
+        arborescence<size_t, float>([&arcs_logits, p](size_t i, size_t j) -> float {
+                                      return arcs_logits(p, i, j);
+                                    },
+                                    len + 1,
+                                    parents);
+
+        size_t root_counter = 0;
+        for (size_t a = 1; a < len + 1; a++)
+          if (parents[a] == 0)
+            root_counter += 1;
+
+        if (root_counter > 1)
+        {
+          LOG_MESSAGE_WITH_PROLOG(LERROR, "Multiple roots in sentence " << i + p);
+        }
+        //save_arcs_logits(sent, arcs_logits, p, "matrix_", i+p);
+
         for (size_t j = 1; j < len + 1; j++)
         {
-          size_t pred_head = arcs_tensor(p, j);
+          size_t pred_head = parents[j];
           size_t pred_tag = tags_tensor(p, j);
-          TToken& t = sent.tokens[j-1];
 
-          if (pred_head > 0)
-            pred_head -= 1;
+          if (sent.offset == 0 && pred_head == 0)
+            prev_sent_head = sent.tokens[j-1].vertex; // we use this in case of splitted sentences
+
+          TToken& t = sent.tokens[j-1];
 
           if (pred_head != 0)
           {
-            TToken& h = sent.tokens[pred_head];
+            pred_tag = fix_tag_for_no_root_link(out_descr, pred_tag, p, j, tags_logits);
+
+            TToken& h = sent.tokens[pred_head - 1];
             syntacticData.addRelationNoChain(ld.getSyntacticRelationId(out_descr.i2t[pred_tag]),
                                              t.vertex,
                                              h.vertex);
           }
           else
           {
-            syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"),
-                                             t.vertex,
-                                             t.vertex);
+            if (sent.offset > 0)
+            {
+              pred_tag = fix_tag_for_no_root_link(out_descr, pred_tag, p, j, tags_logits);
+              syntacticData.addRelationNoChain(ld.getSyntacticRelationId(out_descr.i2t[pred_tag]),
+                                               t.vertex,
+                                               prev_sent_head);
+            }
+            else
+            {
+              syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"),
+                                               t.vertex,
+                                               t.vertex);
+            }
           }
         }
       }
     }
 
     i += this_batch_size;
+  }
+}
+
+void TensorFlowMorphoSyntaxPrivate::save_arcs_logits(const TSentence& sent,
+                                                     const TTypes<float, 3>::Tensor& logits,
+                                                     int64 idx,
+                                                     const string& prefix,
+                                                     size_t id
+                                                     ) const
+{
+  stringstream file_name;
+  file_name << prefix << id << ".tsv";
+  ofstream file(file_name.str());
+
+  size_t len = sent.token_count;
+  for (int64 i = 0; i < len + 1; i++)
+  {
+    LimaString tok_str = "ROOT";
+    if (i > 0 && sent.tokens[i-1].token != NULL)
+      tok_str = (*m_stringsPool)[sent.tokens[i-1].token->form()];
+
+    file << tok_str.toStdString();
+    for (int64 j = 0; j < len + 1; j++)
+    {
+      float v = logits(idx, i, j);
+      file << "\t" << v;
+    }
+    file << endl;
   }
 }
 
@@ -751,6 +887,8 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
     }
 
     len(i) = n + 1;
+    if (n + 1 > m_max_seq_len)
+      throw;
   }
 }
 
@@ -775,7 +913,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
                         << config_file_name << "\". Loaded data is not an object",
                         LimaException());
-  auto params = data.object().value("params");
+  auto params = data.object().value("conf");
   if (params.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value params.",
@@ -885,6 +1023,9 @@ void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& j
 
     if (type == string("seqtag"))
     {
+      if (i.key().endsWith("-bw") || i.key().endsWith("-fw"))
+        continue;
+
       SeqTagOutput out;
       out.full_name = i.key().toStdString();
       out.feat_name = out.full_name;
@@ -922,7 +1063,11 @@ void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& j
       load_string_array(obj.value("tags").toObject().value("i2t").toArray(), out.i2t);
 
       for (size_t j = 0; j < out.i2t.size(); ++j)
-          out.i2t[j] = string("ud:") + out.i2t[j];
+      {
+        if (out.i2t[j] == "root")
+          out.root_tag_idx = j;
+        out.i2t[j] = string("ud:") + out.i2t[j];
+      }
 
       m_depparse_outputs.push_back(out);
       m_depparse_id2idx[out.feat_name] = m_depparse_outputs.size() - 1;
