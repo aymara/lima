@@ -168,8 +168,9 @@ LimaStatusCode SimpleWord::process(
       ConcatenatedDataHandler* concatHandler=0;
       AccentedConcatenatedDataHandler* accentedConcatHandler=0;
       AbstractDictionaryEntryHandler* accentedHandler=lingInfoHandler;
-      
-      if (m_parseConcatenated) {
+
+      if (m_parseConcatenated)
+      {
         concatHandler=new ConcatenatedDataHandler(g,currentToken,SIMPLE_WORD,m_sp);
         accentedConcatHandler=new AccentedConcatenatedDataHandler(
           g,
@@ -184,52 +185,58 @@ LimaStatusCode SimpleWord::process(
         seh->addHandler(accentedConcatHandler);
         accentedHandler=seh;
       }
-      
+
       // parse data
-      DictionaryEntry entry(m_dictionary->getEntry(currentToken->form(),currentToken->stringForm()));
-      m_reader->readAlternatives(
-        *currentToken,
-        *m_dictionary,
-        lingInfoHandler,
-        concatHandler,
-        accentedHandler);
-      
+      DictionaryEntry entry(m_dictionary->getEntry(currentToken->form(),
+                                                   currentToken->stringForm()));
+      m_reader->readAlternatives(*currentToken,
+                                 *m_dictionary,
+                                 lingInfoHandler,
+                                 concatHandler,
+                                 accentedHandler);
+
       // finalize
-      if (concatHandler && !concatHandler->getConcatVertices().empty()) {
+      if (concatHandler && !concatHandler->getConcatVertices().empty())
+      {
         linkConcatVertices(g,*it,concatHandler->getConcatVertices());
-        if (msd->empty()) {
+        if (msd->empty())
+        {
           clear_vertex(*it,*g);
         }
       }
-      if (accentedConcatHandler && !accentedConcatHandler->getConcatVertices().empty()) {
+      if (accentedConcatHandler && !accentedConcatHandler->getConcatVertices().empty())
+      {
         linkConcatVertices(g,*it,accentedConcatHandler->getConcatVertices());
-        if (msd->empty()) {
+        if (msd->empty())
+        {
           clear_vertex(*it,*g);
         }
       }
-      if (m_parseConcatenated) {
+      if (m_parseConcatenated)
+      {
         delete concatHandler;
         delete accentedConcatHandler;
         delete accentedHandler;
       }
       delete lingInfoHandler;
-      
     }
   }
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LINFO << "SimpleWord::process no annotation data, creating and populating it";
-    annotationData=new AnnotationData();
-    analysis.setData("AnnotationData",annotationData);
+    annotationData = new AnnotationData();
+    analysis.setData("AnnotationData", annotationData);
   }
   tokenList->populateAnnotationGraph(annotationData, "AnalysisGraph");
   if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
   {
-    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+      annotationData,
+      "PosGraph");
   }
-  
+
 #ifdef DEBUG_LP
   LDEBUG << "ending process SimpleWord";
 #endif

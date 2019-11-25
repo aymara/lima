@@ -584,7 +584,7 @@ push(const LinguisticGraphVertex& vertex,
 #ifdef DEBUG_LP
     LDEBUG << "SearchGraph (inside while):";
     ostringstream oss;
-    output(oss, m_searchGraph, m_graph.getGraph());
+//     output(oss, m_searchGraph, m_graph.getGraph());
     LDEBUG << oss.str();
 #endif
 

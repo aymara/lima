@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
- *                                                                         *
- ***************************************************************************/
 #include "EnhancedAnalysisDictionaryEntry.h"
 
 #include <iostream>
@@ -181,67 +177,65 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(
 {
   LIMA_UNUSED(endEntry);
 
-// "Le lotus croit dans le feu, et demeure invulnerable" ???
-
 #ifdef DEBUG_LP
  ANALYSISDICTLOGINIT;
- LDEBUG << "parseLingInfos : " << (uint64_t)startEntry << " , "
-        << (uint64_t)endEntry;
+ LDEBUG << "EnhancedAnalysisDictionaryEntry::parseLingInfos : "
+        << (uint64_t)startEntry << " , " << (uint64_t)endEntry;
 #endif
 
-  unsigned char* p=startEntry;
+  unsigned char* p = startEntry;
   assert(p != endEntry);
-  uint64_t read=DictionaryData::readCodedInt(p);
+  uint64_t read = DictionaryData::readCodedInt(p);
 #ifdef DEBUG_LP
- LDEBUG << "read linginfo length = " << read;
+  LDEBUG << "read linginfo length = " << read;
 #endif
-  unsigned char* end=p+read;
+  unsigned char* end = p + read;
 #ifdef DEBUG_LP
  LDEBUG << "end = " << (uint64_t)(end);
 #endif
-  while (p!=end)
+  while ( p != end)
   {
 #ifdef DEBUG_LP
     LDEBUG << "read linginfo p = " << (uint64_t)p;
 #endif
-    bool toDelete=false;
+    bool toDelete = false;
     auto lemma = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
 
     if (lemma == static_cast<StringsPoolIndex>(0))
     {
 #ifdef DEBUG_LP
-     LDEBUG << "read delete flag (p=" << (uint64_t)p << ")";
+     LDEBUG << "read delete flag (p =" << (uint64_t)p << ")";
 #endif
-      toDelete=true;
+      toDelete = true;
       lemma = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     }
 #ifdef DEBUG_LP
-   LDEBUG << "read lemma " << lemma << " (p=" << (uint64_t)p << ")";
+   LDEBUG << "read lemma " << lemma << " (p =" << (uint64_t)p << ")";
 #endif
-    auto norm =  static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
+    auto norm = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
     if (norm == static_cast<StringsPoolIndex>(0))
     {
       norm = lemma;
     }
 #ifdef DEBUG_LP
-   LDEBUG << "read norm " << norm << " (p=" << (uint64_t)p << ")" ;
+   LDEBUG << "read norm " << norm << " (p =" << (uint64_t)p << ")" ;
 #endif
     if (toDelete)
     {
-      handler->deleteLingInfos(lemma,norm);
+      handler->deleteLingInfos(lemma, norm);
     }
-    uint64_t lingOffset=DictionaryData::readCodedInt(p);
+    uint64_t lingOffset = DictionaryData::readCodedInt(p);
 #ifdef DEBUG_LP
-   LDEBUG << "read lingOffset = " << lingOffset << " (p=" << (uint64_t)p << ")";
+   LDEBUG << "read lingOffset = " << lingOffset << " (p =" << (uint64_t)p << ")";
 #endif
     // lingOffset=0 means there is no ling properties
-    if (lingOffset!=0)
+    if (lingOffset != 0)
     {
-      handler->foundLingInfos(lemma,norm);
+      handler->foundLingInfos(lemma, norm);
       auto props = dicoData->getLingPropertiesAddr(lingOffset);
       read = DictionaryData::readCodedInt(props);
       auto propsEnd = props + read;
-      while (props!=propsEnd)
+      while (props != propsEnd)
       {
         handler->foundProperties(
           static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));

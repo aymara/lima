@@ -32,6 +32,7 @@ target_link_libraries(lima-lp-applyrecognizer
    lima-lp-linguisticprocessors
    lima-lp-annotationgraph
    lima-lp-automaton
+   lima-lp-textsegmentation
 )
 
 set_target_properties(lima-lp-applyrecognizer PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

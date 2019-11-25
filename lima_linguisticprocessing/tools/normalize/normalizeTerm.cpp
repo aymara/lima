@@ -277,9 +277,9 @@ int dowork(int argc,char* argv[])
         //        cout << "normalize " << line << endl;
         LimaString contentText;
         // The input text MUST be UTF-8 encoded !!!
-        contentText = utf8stdstring2limastring(line).trimmed();
+        contentText = QString::fromStdString(line).trimmed();
         // analyze it
-        metaData["FileName"]=*fileItr;
+        metaData["FileName"] = *fileItr;
 
         // Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
         client->analyze(contentText,metaData,pipeline,handlers);

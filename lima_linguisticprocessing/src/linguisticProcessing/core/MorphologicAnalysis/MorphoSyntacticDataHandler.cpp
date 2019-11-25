@@ -62,7 +62,7 @@ void MorphoSyntacticDataHandler::foundLingInfos(StringsPoolIndex lemma,StringsPo
 void MorphoSyntacticDataHandler::endLingInfos()
 {}
 
-void MorphoSyntacticDataHandler::foundAccentedForm(StringsPoolIndex form) 
+void MorphoSyntacticDataHandler::foundAccentedForm(StringsPoolIndex form)
 {
 #ifdef DEBUG_LP
   MORPHOLOGINIT;
@@ -77,6 +77,11 @@ void MorphoSyntacticDataHandler::endAccentedForm()
 
 void MorphoSyntacticDataHandler::foundProperties(LinguisticCode lings)
 {
+#ifdef DEBUG_LP
+  MORPHOLOGINIT;
+  LDEBUG << "MorphoSyntacticDataHandler::foundProperties" << lings
+          << "("<<m_inConcat<<")";
+#endif
   if (!m_inConcat) {
     m_current.properties=lings;
     m_output.push_back(m_current);

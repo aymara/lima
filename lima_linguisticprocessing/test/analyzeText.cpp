@@ -45,6 +45,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/XmlBowDocumentHandler.h"
 #include "linguisticProcessing/core/EventAnalysis/EventHandler.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -162,11 +163,11 @@ int run(int argc, char** argv)
    "supported languages trigrams")
   ("dumper,d",
    po::value< std::vector<std::string> >(&dumpersv),
-   "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter),bowh (BowTextHandler),fullxml (SimpleStreamHandler),text (SimpleStreamHandler), event (EventHandler)]. To use any of them, the corresponding dumper must be available in the pipeline configuration. Default is bow but must be set if any other is set")
+   "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter),bowh (BowTextHandler),fullxml (SimpleStreamHandler),text (SimpleStreamHandler), event (EventHandler), xmlbow (XmlBowDocumentHandler)]. To use any of them, the corresponding dumper must be available in the pipeline configuration. Default is bow but must be set if any other is set")
   ("output,o",
    po::value< std::vector<std::string> >(&outputsv),
    "where to write dumpers output. By default, each dumper writes its results on a file whose name is the input file with a predefined suffix  appended. This option allows to chose another suffix or to write on standard output. Its syntax  is the following: <dumper>:<destination> with <dumper> a  dumper name and destination, either the value 'stdout' or a suffix.")
-  ("mm-core-client",
+  ("client,c",
    po::value<std::string>(&clientId)->default_value("lima-coreclient"),
    "Set the linguistic processing client to use")
   ("resources-dir", po::value<std::string>(&strResourcesPath),
@@ -371,6 +372,7 @@ int run(int argc, char** argv)
   SimpleStreamHandler* simpleStreamHandler = 0;
   SimpleStreamHandler* fullXmlSimpleStreamHandler = 0;
   LTRTextHandler* ltrTextHandler=0;
+  XmlBowDocumentHandler* xmlDocumentHandler = nullptr;
 
   if (dumpers.find("event") != dumpers.end())
   {
@@ -407,6 +409,12 @@ int run(int argc, char** argv)
     ltrTextHandler= new LTRTextHandler();
     handlers.insert(std::make_pair("ltrTextHandler",
                                    ltrTextHandler));
+  }
+  if (dumpers.find("xmlbow") != dumpers.end())
+  {
+    xmlDocumentHandler = new XmlBowDocumentHandler();
+    handlers.insert(std::make_pair("xmlDocumentHandler",
+                                   xmlDocumentHandler));
   }
 
   std::map<std::string,std::string> metaData;
