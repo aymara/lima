@@ -136,9 +136,6 @@ use AutomobileManu.lst
 # @companies:::ORGANIZATION:
 @Autos:::ORGANIZATION:
 
-# abbreviated newspaper names
-@newspaperPrincipalKey:::ORGANIZATION:
-
 @organization:::ORGANIZATION:
 @organizationCommon:::ORGANIZATION:
 
