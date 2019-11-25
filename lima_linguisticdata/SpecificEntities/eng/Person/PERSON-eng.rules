@@ -50,7 +50,7 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.lst,speech_verb.lst,wd_firstname.lst,wd_lastname.lst
 
 @AnyFirstname=(@Firstname,@WikidataFirstname)
-@AnyLastname=(@WikidataLastname)
+#@AnyLastname=(@WikidataLastname)
 
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 

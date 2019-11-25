@@ -84,10 +84,10 @@ use ../Location/cities.lst,../Location/states.lst
 @City::(@newspaperPrincipalKey|@newspaperSecondaryKey){1-2}:ORGANIZATION:
 @State::(@newspaperPrincipalKey|@newspaperSecondaryKey):ORGANIZATION:
 
-@newspaperPrincipalKey:[(the|The)]:of the? t_capital_1st t_capital_1st{0-2} (of t_capital_1st t_capital_1st{0-2})?:ORGANIZATION:
+#@newspaperPrincipalKey:[(the|The)]:of the? t_capital_1st t_capital_1st{0-2} (of t_capital_1st t_capital_1st{0-2})?:ORGANIZATION:
 
-@newspaperPrincipalKey:[(the|The)]::ORGANIZATION:
-@newspaperPrincipalKey:(t_capital_1st|t_capital){1-2}::ORGANIZATION:
+#@newspaperPrincipalKey:[(the|The)]::ORGANIZATION:
+#@newspaperPrincipalKey:(t_capital_1st|t_capital){1-2}::ORGANIZATION:
 
 [@newspaperTrigger]:[(The|the)]::NOT_ORGANIZATION:
 [@newspaperTrigger]:(t_capital_1st|t_capital){1-2}::ORGANIZATION:

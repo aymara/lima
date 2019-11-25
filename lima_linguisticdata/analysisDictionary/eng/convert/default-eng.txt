@@ -14,6 +14,7 @@ t_capital	PROPN
 t_capital	PROPN
 t_comma_number	NUM
 t_dot_number	NUM
+t_filename	NOUN
 t_fraction	NUM
 t_integer	NUM
 t_cardinal_roman	NUM
@@ -22,6 +23,7 @@ t_cardinal_roman	NOUN
 t_ordinal_roman	NUM
 t_ordinal_integer	NUM
 t_pattern	COLON
+t_path	NOUN
 t_sentence_brk	SENT
 t_small	NOUN
 t_small	NOUN
