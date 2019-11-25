@@ -119,18 +119,6 @@ int run(int argc, char** argv)
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  //std::cerr<< configPath.toStdString() << std::endl;
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
-
-  XMLREADERCLIENTLOGINIT;
-  setlocale(LC_ALL, "");
-
   QString lpConfigFile("lima-analysis.xml");
   QString commonConfigFile("lima-common.xml");
   QString pipeline("xml");
@@ -205,6 +193,18 @@ int run(int argc, char** argv)
   parser.addOption(handlerOption);
 
   parser.process(QCoreApplication::arguments());
+
+  //std::cerr<< configPath.toStdString() << std::endl;
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadLibrary method failed.");
+  }
+
+  XMLREADERCLIENTLOGINIT;
+  setlocale(LC_ALL, "");
 
 
   if (parser.isSet(availableUnitsOption))

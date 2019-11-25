@@ -167,7 +167,7 @@ int run(int argc, char** argv)
 
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
   if (!param->configDir.empty())
   {

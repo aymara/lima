@@ -139,15 +139,6 @@ int run(int argc, char** argv)
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
-  //   std::cerr << "Amose plugins initialized" << std::endl;
-
   std::string strResourcesPath;
   std::string lpConfigFile;
   std::string commonConfigFile;
@@ -243,6 +234,8 @@ int run(int argc, char** argv)
     configPath = QString::fromUtf8(strConfigPath.c_str());
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
+
+
   std::deque<std::string> langs(languages.size());
   std::copy(languages.begin(), languages.end(), langs.begin());
 
@@ -258,6 +251,15 @@ int run(int argc, char** argv)
       dumpers.insert(dumpersv[i]);
     }
   }
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadLibrary method failed.");
+  }
+  //   std::cerr << "Amose plugins initialized" << std::endl;
 
   if (vm.count("availableUnits"))
   {
