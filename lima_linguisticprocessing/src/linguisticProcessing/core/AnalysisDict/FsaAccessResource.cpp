@@ -74,7 +74,7 @@ void FsaAccessResource::init(
    * - <b>&lt;group name="..." class="FsaAccess"&gt;</b>
    *    -  keyFile : file containing the compiled access keys
    */
-    
+
   ANALYSISDICTLOGINIT;
   try
   {
@@ -96,18 +96,25 @@ void FsaAccessResource::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'keyFile' in FsaAccessResource group for language " << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "no param 'keyFile' in FsaAccessResource group for language "
+        << (int)  manager->getInitializationParameters().language;
+    LERROR << errorString;
+    throw InvalidConfiguration(errorString.toStdString());
   }
   catch (AccessByStringNotInitialized& )
   {
-    LERROR << "keyfile "
-           << Common::MediaticData::MediaticData::single().getResourcesPath()
-           << "/"
-           << unitConfiguration.getParamsValueAtKey("keyFile")
-           << " no found for language " 
-           << (int)  manager->getInitializationParameters().language;
-    throw InvalidConfiguration();
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "keyfile "
+        << unitConfiguration.getParamsValueAtKey("keyFile").c_str()
+        << " not found for language "
+        << (int)  manager->getInitializationParameters().language
+        << " in paths "
+        << Common::MediaticData::MediaticData::single().getResourcesPath().c_str();
+    LERROR << errorString;
+    throw InvalidConfiguration(errorString.toStdString());
   }
 }
 
@@ -117,8 +124,8 @@ AbstractAccessByString* FsaAccessResource::getAccessByString() const
 void FsaAccessResource::accessFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
-  // Check if the file exists as, when a file is replaced, accessFileChanged can be triggered 
-  // two times, when it is first suppressed and when the new version is available. One should not 
+  // Check if the file exists as, when a file is replaced, accessFileChanged can be triggered
+  // two times, when it is first suppressed and when the new version is available. One should not
   // try to load the missing file
   if (QFileInfo::exists(path))
   {
