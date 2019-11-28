@@ -1,6 +1,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <list>
 #include <iostream>
 #include <sstream>
 #include <boost/pending/disjoint_sets.hpp>
@@ -47,6 +48,263 @@ class Arborescence
   }
 
 public:
+
+  static void fill_heads_with_max(const std::function <float(size_t, size_t)>& adj_matrix,
+                                  size_t len,
+                                  std::vector<size_t>& heads)
+  {
+    for (vertex_idx_t i = 1; i < len; i++)
+    {
+      vertex_idx_t max_id = 0;
+      float max_value = adj_matrix(i, max_id);
+      for (vertex_idx_t j = 1; j < len; j++)
+      {
+        if (i == j)
+          continue;
+
+        if (adj_matrix(i, j) > max_value)
+        {
+          max_id = j;
+          max_value = adj_matrix(i, j);
+        }
+      }
+      heads[i] = max_id;
+    }
+  }
+
+  static size_t count_roots(const std::vector<size_t>& heads, size_t len)
+  {
+    size_t c = 0;
+    for (size_t i = 1; i < len; i++)
+    {
+      if (heads[i] == 0)
+        c++;
+    }
+    return c;
+  }
+
+  static bool is_connected(const std::vector<size_t>& heads, size_t len)
+  {
+    std::vector< std::vector<size_t> > head2child;
+    head2child.resize(len);
+    for (size_t i = 1; i < len; i++)
+    {
+      head2child[heads[i]].push_back(i);
+    }
+
+    std::vector<size_t> visited(len, 0);
+    std::vector<size_t> stack;
+    stack.reserve(len);
+    stack.push_back(0);
+    while (stack.size() > 0)
+    {
+      size_t from = stack.back();
+      stack.pop_back();
+
+      for (size_t to : head2child[from])
+      {
+        if (visited[to] == 0)
+        {
+          stack.push_back(to);
+          visited[to] += 1;
+        }
+      }
+    }
+
+    for (size_t i = 1; i < visited.size(); i++)
+      if (visited[i] == 0)
+        return false;
+
+    return true;
+  }
+
+  static void find_disconnected_groups(const std::vector< std::vector<size_t> >& head2child,
+                                       size_t len,
+                                       std::vector<size_t>& accessibility_map)
+  {
+    std::fill(accessibility_map.begin(), accessibility_map.end(), 0);
+
+    std::vector<size_t> stack;
+    stack.reserve(len);
+    stack.push_back(0);
+    while (stack.size() > 0)
+    {
+      size_t from = stack.back();
+      stack.pop_back();
+
+      for (size_t to : head2child[from])
+      {
+        if (accessibility_map[to] == 0)
+        {
+          stack.push_back(to);
+          accessibility_map[to] += 1;
+        }
+      }
+    }
+  }
+
+  static void find_loops(const std::vector<size_t>& heads,
+                         std::vector< std::vector<size_t> >& loops,
+                         const std::vector<size_t>& connected,
+                         size_t len)
+  {
+    std::vector<size_t> visited = connected;
+    loops.clear();
+
+    for (size_t i = 1; i < len; i++)
+    {
+      if (visited[i] > 0)
+      {
+        visited[i] = 1;
+        continue;
+      }
+
+      std::vector<size_t> loop_counter(len, 0);
+      std::list<size_t> loop_items;
+      size_t j = i;
+      while (loop_counter[j] == 0 && visited[j] == 0)
+      {
+        loop_counter[j] += 1;
+        loop_items.push_back(j);
+        j = heads[j];
+      }
+
+      if (visited[j] > 0)
+        continue;
+
+      while (loop_items.front() != j)
+        loop_items.pop_front();
+
+      std::vector<size_t> new_loop;
+      for (size_t x : loop_items)
+      {
+        visited[x] = 1;
+        new_loop.push_back(x);
+      }
+
+      loops.push_back(new_loop);
+    }
+  }
+
+  static void make_connected(const std::function <float(size_t, size_t)>& adj_matrix,
+                             size_t len,
+                             std::vector<size_t>& heads)
+  {
+    std::vector< std::vector<size_t> > head2child;
+    head2child.resize(len);
+    for (size_t i = 1; i < len; i++)
+    {
+      head2child[heads[i]].push_back(i);
+    }
+
+    std::vector<size_t> connected(len, 0);
+    find_disconnected_groups(head2child, len, connected);
+
+    while (std::find(std::next(connected.begin()), connected.end(), 0) != connected.end())
+    {
+      std::vector< std::vector<size_t> > loops;
+      find_loops(heads, loops, connected, len);
+
+      std::pair<size_t, size_t> best_new_arc = std::make_pair(0, 0); // child -> parent
+      float best_score = 0;
+      for (size_t l = 0; l < loops.size(); l++)
+      {
+        for (size_t i = 0; i < loops[l].size(); i++)
+        {
+          size_t from = loops[l][i];
+          for (size_t j = 1; j < len; j++)
+          {
+            if (connected[j] == 0)
+              continue; // we have no intentions to create new loops
+            if (j == heads[from])
+              continue; // this value of j changes nothing
+            if (adj_matrix(from, j) > best_score || best_new_arc.first == 0)
+            {
+              best_score = adj_matrix(from, j);
+              best_new_arc = std::make_pair(from, j);
+            }
+          }
+        }
+      }
+
+      if (best_new_arc.first == 0 || best_new_arc.second == 0)
+        throw;
+
+      heads[best_new_arc.first] = best_new_arc.second;
+
+      head2child.clear();
+      head2child.resize(len);
+      for (size_t i = 1; i < len; i++)
+      {
+        head2child[heads[i]].push_back(i);
+      }
+
+      std::fill(connected.begin(), connected.end(), 0);
+      find_disconnected_groups(head2child, len, connected);
+    }
+  }
+
+  static void choose_one_root(const std::function <float(size_t, size_t)>& adj_matrix,
+                              size_t len,
+                              std::vector<size_t>& heads)
+  {
+    std::vector<std::pair<size_t, float>> roots;
+    roots.reserve(16);
+    for (size_t i = 1; i < len; i++)
+    {
+      if (heads[i] == 0)
+      {
+        roots.push_back(std::make_pair(i, adj_matrix(i, 0)));
+      }
+    }
+
+    if (roots.size() == 0)
+      throw; // This function is intended to choose from a several (> 0) of roots
+
+    if (roots.size() == 1)
+      return;
+
+    size_t best_root = 0;
+    float best_root_score = 0;
+    for (size_t i = 0; i < roots.size(); i++)
+    {
+      if (best_root == 0 || roots[i].second > best_root_score)
+      {
+        best_root = roots[i].first;
+        best_root_score = roots[i].second;
+      }
+    }
+
+    for (auto& r : roots)
+    {
+      if (r.first != best_root)
+        heads[r.first] = best_root;
+    }
+  }
+
+  static void choose_root(const std::function <float(size_t, size_t)>& adj_matrix,
+                            size_t len,
+                            std::vector<size_t>& heads)
+  {
+    if (len < 3)
+    {
+      heads[1] = 0;
+      return;
+    }
+
+    size_t best_root = 1;
+    float best_root_score = adj_matrix(best_root, 0);
+    for (size_t i = 2; i < len; i++)
+    {
+      if (adj_matrix(i, 0) > best_root_score)
+      {
+        best_root = i;
+        best_root_score = adj_matrix(i, 0);
+      }
+    }
+
+    heads[best_root] = 0;
+  }
 
   // adj_matrix[i][j]: i <- j (j is head)
   static void arborescence_impl(const std::function <float(size_t, size_t)>& adj_matrix,
@@ -261,6 +519,36 @@ void arborescence(const std::function <weight_t(vertex_idx_t, vertex_idx_t)>& ad
                   size_t len,
                   std::vector<vertex_idx_t>& heads)
 {
+  impl::Arborescence<vertex_idx_t, weight_t>::fill_heads_with_max(adj_matrix, len, heads);
+
+  size_t n_roots = impl::Arborescence<vertex_idx_t, weight_t>::count_roots(heads, len);
+
+  if (n_roots == 0)
+    impl::Arborescence<vertex_idx_t, weight_t>::choose_root(adj_matrix, len, heads);
+
+  if (n_roots > 1)
+    impl::Arborescence<vertex_idx_t, weight_t>::choose_one_root(adj_matrix, len, heads);
+
+  n_roots = impl::Arborescence<vertex_idx_t, weight_t>::count_roots(heads, len);
+
+  if (n_roots != 1)
+    throw; // there is a bug in choose_one_root
+
+  // now n_roots == 1
+  if (impl::Arborescence<vertex_idx_t, weight_t>::is_connected(heads, len))
+   return;
+
+  impl::Arborescence<vertex_idx_t, weight_t>::make_connected(adj_matrix, len, heads);
+
+  n_roots = impl::Arborescence<vertex_idx_t, weight_t>::count_roots(heads, len);
+
+  if (n_roots == 1)
+    if (impl::Arborescence<vertex_idx_t, weight_t>::is_connected(heads, len))
+      return;
+
+  // we still have problems. Retrying with full tree reconstruction.
+  std::fill(heads.begin(), heads.end(), 0);
+
   impl::Arborescence<vertex_idx_t, weight_t>::arborescence_impl(adj_matrix, len, heads);
 }
 
