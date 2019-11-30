@@ -108,7 +108,7 @@ trente\ et\ un
 =<ClearEntityFeatures()
 =>NormalizeDate("isInterval")
 
-# de début septembre 98 à fin janvier 2012
+# du 3 septembre 98 au 20 janvier 2012
 <NUMBER>:[du]:(@month)? (@numyear)? [au] [((@numday|t_integer>1<31)|<NUMBER>)] [@month] [(@numyear)?]:DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.1,"month")
