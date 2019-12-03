@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -170,7 +170,7 @@ void MediaProcessors::initPipelines(
           mapItr != m_d->m_pipelineManagers.cend(); mapItr++ )
     {
       const std::string& mediaStr=MediaticData::single().getMediaId ( mapItr->first );
-      auto entryItr =pipelineMapping.find ( mediaStr );
+      auto entryItr = pipelineMapping.find ( mediaStr );
       if ( entryItr == pipelineMapping.end() )
       {
         PROCESSORSLOGINIT;

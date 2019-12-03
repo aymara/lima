@@ -37,7 +37,7 @@ configure_file(lima-lp-eng.ud.xml lima-lp-eng.ud.xml @ONLY)
 configure_file(lima-lp-fre.xml lima-lp-fre.xml @ONLY)
 configure_file(lima-lp-fre.ud.xml lima-lp-fre.ud.xml @ONLY)
 configure_file(lima-lp-por.xml lima-lp-por.xml @ONLY)
-
+configure_file(lima-lp-ud.xml lima-lp-ud.xml @ONLY)
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml

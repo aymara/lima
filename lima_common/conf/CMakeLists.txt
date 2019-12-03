@@ -26,6 +26,7 @@ install(FILES
     lima-common-fre.ud.xml
     lima-common-por.xml
     lima-common.xml
+    lima-common-ud.xml # Generic config for Universal Dependencies
   DESTINATION share/config/lima
   COMPONENT runtime)
 

@@ -8,6 +8,7 @@
         <item value="fre" />
         <item value="por" />
         <item value="fre.ud" />
+        <item value="ud" />
       </list>
     </group>
     <group name="mediasIds">
@@ -16,6 +17,7 @@
       <param key="por" value="7"/>
       <param key="eng.ud" value="8"/>
       <param key="fre.ud" value="9"/>
+      <param key="ud" value="10"/>
     </group>
     <group name="mediaDefinitionFiles">
       <param key="eng" value="lima-common-eng.xml" />
@@ -23,6 +25,7 @@
       <param key="fre" value="lima-common-fre.xml" />
       <param key="por" value="lima-common-por.xml" />
       <param key="fre.ud" value="lima-common-fre.ud.xml" />
+      <param key="ud" value="lima-common-ud.xml" />
     </group>
     <group name="stringPool">
       <param key="release" value="false"/>
