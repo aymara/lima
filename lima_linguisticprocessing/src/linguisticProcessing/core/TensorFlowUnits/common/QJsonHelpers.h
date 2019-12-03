@@ -74,6 +74,20 @@ inline void load_string_to_uint_map(const QJsonObject& jso, std::map<std::u32str
   }
 }
 
+inline void load_string_to_uint_map(const QJsonObject& jso, std::map<std::string, unsigned int>& v)
+{
+  v.clear();
+  for (QJsonObject::const_iterator i = jso.begin(); i != jso.end(); ++i)
+  {
+    if (v.end() != v.find(i.key().toStdString()))
+      throw std::logic_error(std::string("TensorFlowMorphoSyntax::load_string_to_uint_map: \"")
+                     + i.key().toStdString()
+                 + std::string("\" already known."));
+
+    v[i.key().toStdString()] = i.value().toInt();
+  }
+}
+
 }
 }
 }
