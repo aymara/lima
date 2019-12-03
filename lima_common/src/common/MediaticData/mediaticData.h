@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2019 CEA LIST
 
     This file is part of LIMA.
 
@@ -18,9 +18,9 @@
 */
 /**
   * @file          mediaticData.h
-  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
-  *                Copyright (C) 2002-2012 by CEA LIST
+  *                Copyright (C) 2002-2019 by CEA LIST
   * @date          Started on Mon dec, 2 2002
   */
 
@@ -80,7 +80,8 @@ public:
         const std::string& resourcesPath,
         const std::string& configPath,
         const std::string& configFile,
-        const std::deque< std::string >& meds);
+        const std::deque< std::string >& meds,
+        const std::map< std::string, std::string >& opts = {});
 
     void initMedia(const std::string& media);
 
@@ -128,7 +129,7 @@ public:
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-    
+
     // read/write function necessary because entity types
     // are saved in temporary files
     void writeEntityTypes(std::ostream& os) const;
@@ -143,6 +144,8 @@ public:
 
     ConceptType getConceptType(const std::string& typeName) const;
     const std::string& getConceptName(const ConceptType& typeName) const;
+
+    bool getOptionValue(const std::string& name, std::string& value) const;
 
     /*********************************************************************
       * Configuration functions
@@ -171,7 +174,7 @@ private:
   MediaticData();
   MediaticData(const MediaticData& md);
   MediaticData& operator=(const MediaticData& md);
-  
+
   MediaticDataPrivate* m_d;
 
 };

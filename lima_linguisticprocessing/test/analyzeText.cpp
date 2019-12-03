@@ -119,6 +119,39 @@ int main(int argc, char **argv)
 }
 
 
+std::map<std::string, std::string> parse_options_line(const std::string& s, char comma, char colon)
+{
+  std::map<std::string, std::string> opts;
+
+  size_t start = 0;
+  size_t comma_pos = s.find(comma, 0);
+  do
+  {
+    //comma_pos = s.find(comma, comma_pos);
+    std::string key, value;
+    size_t colon_pos = s.find(colon, start);
+    if (colon_pos != std::string::npos && colon_pos != comma_pos)
+    {
+      key = s.substr(start, colon_pos - start);
+      size_t value_start = colon_pos + 1;
+      value = s.substr(value_start, comma_pos == std::string::npos ? comma_pos : (comma_pos - value_start));
+    }
+    else
+    {
+      key = s.substr(start, comma_pos == std::string::npos ? comma_pos : (comma_pos - start - 1));
+      value = "";
+    }
+
+    if (key.size() > 0)
+      opts[key] = value;
+
+    start = (comma_pos == std::string::npos) ? comma_pos : comma_pos + 1;
+    comma_pos = s.find(comma, start);
+  } while (start != std::string::npos);
+
+  return opts;
+}
+
 int run(int argc, char** argv)
 {
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
@@ -149,6 +182,7 @@ int run(int argc, char** argv)
   std::vector<std::string> files;
   std::vector<std::string> vinactiveUnits;
   std::string meta;
+  std::string opts;
   std::string splitMode;
   std::string strConfigPath;
 
@@ -193,6 +227,9 @@ int run(int argc, char** argv)
   ("meta",
    po::value< std::string >(&meta),
    "Sets metadata values, in the format data1:value1,data2:value2,...")
+  ("opts",
+   po::value< std::string >(&opts),
+   "Sets options values, in the format data1:value1,data2:value2,...")
   ("split-mode,s",
    po::value< std::string >(&splitMode)->default_value("none"),
    "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
@@ -320,7 +357,8 @@ int run(int argc, char** argv)
     resourcesPath.toUtf8().constData(),
     configPath.toUtf8().constData(),
     commonConfigFile,
-    langs);
+    langs,
+    parse_options_line(opts, ',', ':'));
 
   auto clientFactoryConfigured = false;
   for(const auto& configDir: configDirs)

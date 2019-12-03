@@ -290,10 +290,15 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
 
   QString lang_str = MediaticData::single().media(m_language).c_str();
   QString resources_path = MediaticData::single().getResourcesPath().c_str();
+  QString model_name = model_prefix;
+  string udlang;
+  MediaticData::single().getOptionValue("udlang", udlang);
+
+  model_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
-                                            .arg(lang_str).arg(model_prefix));
+                                            .arg(lang_str).arg(model_name));
   load_config(config_file_name);
 
   tensorflow::SessionOptions options;
@@ -310,7 +315,7 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   m_session = std::unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
                                  QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
-                                  .arg(lang_str).arg(model_prefix));
+                                  .arg(lang_str).arg(model_name));
   load_graph(m_model_path);
 
   // Add the graph to the session
