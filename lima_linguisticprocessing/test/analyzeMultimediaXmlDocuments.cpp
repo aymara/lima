@@ -282,29 +282,31 @@ int run(int argc, char** argv)
     }
     // Create the client
 
-    LDEBUG << "Creating client";
-    std::shared_ptr< AbstractXmlReaderClient > client(XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
-    map<string, string> metaData;
-    if(!medias.empty())
-    {
-        metaData["Lang"] = "LanguageNotYetSet";
-    }
-
     uint64_t i=1;
-    for(auto filesIt = files.begin(); filesIt != files.end(); filesIt++)
+    #pragma omp parallel for
+    for(auto filesIt = files.cbegin(); filesIt != files.cend(); filesIt++)
     {
-      QString fileName = QFileInfo((*filesIt)).absoluteFilePath();
+      LDEBUG << "Creating client";
+      std::shared_ptr< AbstractXmlReaderClient > client(XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
+      map<string, string> metaData;
+      if(!medias.empty())
+      {
+          metaData["Lang"] = "LanguageNotYetSet";
+      }
+
+      const auto& fileName = QFileInfo(*filesIt).absoluteFilePath();
       try
       {
         if (parser.isSet(progressOption))
         {
           std::cout << "Analyzing "<< i << "/" << files.size()
-                << " ("  << std::setiosflags(std::ios::fixed) << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
+                << " ("  << std::setiosflags(std::ios::fixed)
+                << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
                 << fileName.toUtf8().constData() << "'" << std::endl;
         }
         // loading of the input file
         TimeUtils::updateCurrentTime();
-        std::ifstream file(fileName.toUtf8().constData(), std::ifstream::binary);
+        std::ifstream file(fileName.toStdString(), std::ifstream::binary);
         std::string text_s;
         readStream(file, text_s);
         QString qtext_s = QString::fromUtf8(text_s.c_str());
