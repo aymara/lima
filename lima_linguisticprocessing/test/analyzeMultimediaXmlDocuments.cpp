@@ -111,6 +111,8 @@ int main(int argc, char **argv)
 
 int run(int argc, char** argv)
 {
+  LIMA_UNUSED(argc);
+  LIMA_UNUSED(argv);
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
   auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
@@ -284,9 +286,10 @@ int run(int argc, char** argv)
 
     uint64_t i=1;
     #pragma omp parallel for
-    for(auto filesIt = files.cbegin(); filesIt != files.cend(); filesIt++)
+    for(int filesCounter = 0; filesCounter < files.size(); filesCounter++)
     {
       LDEBUG << "Creating client";
+      const auto& file = files[filesCounter];
       std::shared_ptr< AbstractXmlReaderClient > client(XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
       map<string, string> metaData;
       if(!medias.empty())
@@ -294,7 +297,7 @@ int run(int argc, char** argv)
           metaData["Lang"] = "LanguageNotYetSet";
       }
 
-      const auto& fileName = QFileInfo(*filesIt).absoluteFilePath();
+      const auto& fileName = QFileInfo(file).absoluteFilePath();
       try
       {
         if (parser.isSet(progressOption))
