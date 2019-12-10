@@ -43,6 +43,10 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
    GenericXmlDumper.cpp
    BowGeneration.cpp
    CompoundsXmlLogger.cpp
+   AbstractIEDumper.cpp
+   BratDumper.cpp
+   XmlIEDumper.cpp
+   OffsetMapping.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-analysisdumpers)
@@ -53,6 +57,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-syntacticanalysis
   lima-lp-semanticanalysis
   lima-lp-textsegmentation
+  lima-lp-eventanalyzer
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -79,6 +84,10 @@ install(FILES
     DepTripletLogger.h
     BowGeneration.h
     CompoundsXmlLogger.h
+    AbstractIEDumper.h
+    BratDumper.h
+    XmlIEDumper.h
+    OffsetMapping.h
   DESTINATION include/linguisticProcessing/core/AnalysisDumpers
   COMPONENT devel
 )
