@@ -727,6 +727,19 @@ Definition of dumpers
       <param key="withColsHeader" value="true"/>
       <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
     </group>
+    <group name="bratDumper" class="BratDumper">
+      <!--param key="handler" value="simpleStreamHandler"/-->
+      <param key="outputSuffix" value=".ann"/>
+      <param key="stripInputSuffix" value="true"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="domain" value=""/>
+      <param key="followGraph" value="true"/>
+      <param key="outputGroups" value="false"/>
+      <param key="useNorms" value="false"/>
+      <param key="outputAllAttributes" value="false"/>
+      <list name="attributes"/>
+      <list name="eventTemplates"/>
+    </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>
       <param key="stopList" value="stopList"/>
