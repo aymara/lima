@@ -464,9 +464,9 @@ QJsonObject TensorFlowMorphoSyntaxPrivate::get_json_object(const QJsonObject& ro
 
   QJsonObject object = value.toObject();
 
-  if (object.isEmpty())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::get_json_object object \""
-                        << child_name << "\" is empty", LimaException());
+  //if (object.isEmpty())
+  //  LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::get_json_object object \""
+  //                      << child_name << "\" is empty", LimaException());
 
   return object;
 }
