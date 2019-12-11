@@ -1521,8 +1521,8 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
   else if (useDefaultParts)
   {
     // get the parts of the named entity match
-    for (auto m = namedEntity->m_vertices.cbegin();
-         m != namedEntity->m_vertices.cend(); m++)
+    for (auto m = namedEntity->vertices().cbegin();
+         m != namedEntity->vertices().cend(); m++)
     {
       const auto token = get(vertex_token, graph, *m);
       const auto data = get(vertex_data, graph, *m);
