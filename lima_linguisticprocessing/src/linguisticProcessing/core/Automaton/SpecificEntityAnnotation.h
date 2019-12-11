@@ -41,11 +41,13 @@ namespace LinguisticProcessing
 namespace SpecificEntities
 {
 
+class SpecificEntityAnnotationPrivate;
 /**
 * @brief A representation of a specific entity to store in the annotation graph
 */
 class LIMA_AUTOMATON_EXPORT SpecificEntityAnnotation
 {
+  friend class SpecificEntityAnnotationPrivate;
 public:
 
   SpecificEntityAnnotation(const Automaton::RecognizerMatch& entity,
@@ -59,41 +61,28 @@ public:
                             uint64_t length,
                             FsaStringsPool& sp);
   virtual ~SpecificEntityAnnotation();
+  SpecificEntityAnnotation(const SpecificEntityAnnotation& annotation);
+  SpecificEntityAnnotation& operator=(const SpecificEntityAnnotation& annotation);
 
-  inline LinguisticGraphVertex getHead() const;
-  inline void setHead(const LinguisticGraphVertex& head);
-  inline Common::MediaticData::EntityType getType() const;
-  inline void setType(const Common::MediaticData::EntityType& type);
-  inline const Automaton::EntityFeatures& getFeatures() const;
-  inline void setFeatures(const Automaton::EntityFeatures& features);
-  inline StringsPoolIndex getString() const;
-  inline StringsPoolIndex getNormalizedString() const;
-  inline StringsPoolIndex getNormalizedForm() const;
-  inline uint64_t getPosition() const;
-  inline uint64_t getLength() const;
+  LinguisticGraphVertex getHead() const;
+  void setHead(const LinguisticGraphVertex& head);
+  Common::MediaticData::EntityType getType() const;
+  void setType(const Common::MediaticData::EntityType& type);
+  const Automaton::EntityFeatures& getFeatures() const;
+  void setFeatures(const Automaton::EntityFeatures& features);
+  StringsPoolIndex getString() const;
+  StringsPoolIndex getNormalizedString() const;
+  StringsPoolIndex getNormalizedForm() const;
+  uint64_t getPosition() const;
+  uint64_t getLength() const;
+  const std::vector< LinguisticGraphVertex>& vertices() const;
 
   /** @brief The functions that dumps a SpecificEntityAnnotation on an output stream */
   void dump(std::ostream& os) const;
 
-  std::vector< LinguisticGraphVertex> m_vertices;
+
 private:
-
-  LinguisticGraphVertex m_head;
-  Common::MediaticData::EntityType m_type;    /**< the type of the entity */
-  Automaton::EntityFeatures m_features;
-  StringsPoolIndex m_string;
-  StringsPoolIndex m_normalizedString;
-  StringsPoolIndex m_normalizedForm;
-  uint64_t m_position;
-  uint64_t m_length;
-
-  //  Linguistic properties and normalized form are given by the normalized
-  //  form of the vertex in the morphological graph
-  //
-  //  LinguisticCode m_linguisticProperties; /**< associated ling prop */
-  //  StringsPoolIndex m_normalizedForm; /**< the normalized form of the
-  //                                        recognized entity*/
-
+  SpecificEntityAnnotationPrivate* m_d;
 };
 
 
@@ -106,71 +95,16 @@ private:
   *         displayed in the case where the given annotation is not a specific entity
   *         annotation and UNKNOWN_ERROR is returned .
   */
-class LIMA_AUTOMATON_EXPORT DumpSpecificEntityAnnotation : 
-    public Common::AnnotationGraphs::AnnotationData::Dumper 
+class LIMA_AUTOMATON_EXPORT DumpSpecificEntityAnnotation :
+    public Common::AnnotationGraphs::AnnotationData::Dumper
 {
 public:
   virtual ~DumpSpecificEntityAnnotation() {}
-  virtual int dump(std::ostream& os, 
+  virtual int dump(std::ostream& os,
                     Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 
 
-
-inline LinguisticGraphVertex SpecificEntityAnnotation::getHead() const
-{
-  return m_head;
-}
-
-inline void SpecificEntityAnnotation::setHead(const LinguisticGraphVertex& head)
-{
-  m_head = head;
-}
-
-inline Common::MediaticData::EntityType SpecificEntityAnnotation::getType() const
-{
-  return m_type;
-}
-
-inline void SpecificEntityAnnotation::setType(const Common::MediaticData::EntityType& type)
-{
-  m_type = type;
-}
-
-inline const Automaton::EntityFeatures& SpecificEntityAnnotation::getFeatures() const
-{
-  return m_features;
-}
-
-inline void SpecificEntityAnnotation::setFeatures(const Automaton::EntityFeatures& features)
-{
-  m_features = features;
-}
-
-inline StringsPoolIndex SpecificEntityAnnotation::getString() const
-{
-  return m_string;
-}
-
-inline StringsPoolIndex SpecificEntityAnnotation::getNormalizedString() const
-{
-  return m_normalizedString;
-}
-
-inline StringsPoolIndex SpecificEntityAnnotation::getNormalizedForm() const
-{
-  return m_normalizedForm;
-}
-
-inline uint64_t SpecificEntityAnnotation::getPosition() const
-{
-  return m_position;
-}
-
-inline uint64_t SpecificEntityAnnotation::getLength() const
-{
-  return m_length;
-}
 
 } // SpecificEntities
 } // LinguisticProcessing

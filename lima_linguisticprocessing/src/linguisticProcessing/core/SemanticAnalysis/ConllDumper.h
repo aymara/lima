@@ -35,7 +35,9 @@ class ConllDumperPrivate;
 class OutputFormatter;
 
 /**
-@author Gael de Chalendar
+ * This dumper outputs analysis result in various CoNLL formats. Default is
+ * CoNLL-U but CoNLL-2003 is also supported.
+ * @author Gael de Chalendar
 */
 class LIMA_SEMANTICANALYSIS_EXPORT ConllDumper : public AbstractTextualAnalysisDumper
 {
