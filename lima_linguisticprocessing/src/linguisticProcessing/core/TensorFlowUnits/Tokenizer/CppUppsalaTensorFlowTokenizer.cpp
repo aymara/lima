@@ -140,6 +140,9 @@ protected:
   // Dictionaries of tags are ordinary 1-byte strings
   vector<string> m_i2t;
 
+  // Parameters
+  bool m_ignoreEOL;
+
   // Codes
   size_t m_token_begin;        // B
   size_t m_token_inside;       // I
@@ -159,7 +162,8 @@ protected:
 
 CppUppsalaTokenizerPrivate::CppUppsalaTokenizerPrivate() :
   m_stringsPool(nullptr),
-  m_currentVx(0)
+  m_currentVx(0),
+  m_ignoreEOL(false)
 {
 }
 
@@ -382,8 +386,16 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
 
-  m_max_seq_len = data.object().value("conf").toObject().value("max_seq_len").toInt();
-  load_string_array(data.object().value("conf").toObject().value("i2t").toArray(), m_i2t);
+  QJsonObject conf = data.object().value("conf").toObject();
+
+  QJsonObject::ConstIterator i = conf.constFind("ignoreEOL");
+  if (conf.constEnd() != i)
+  {
+    m_ignoreEOL = conf.value("ignoreEOL").toBool();
+  }
+
+  m_max_seq_len = conf.value("max_seq_len").toInt();
+  load_string_array(conf.value("i2t").toArray(), m_i2t);
 
   for (size_t i = 0; i < m_i2t.size(); ++i)
   {
@@ -407,7 +419,7 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
                           LimaException());
   }
 
-  load_ngram_defs(data.object().value("conf").toObject().value("ngrams").toArray());
+  load_ngram_defs(conf.value("ngrams").toArray());
   load_dicts(data.object().value("dicts").toObject().value("ngrams").toArray());
 }
 
@@ -519,8 +531,17 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   // Encode text
   QString simplified_copy = text;
   simplified_copy.replace(QString::fromUtf8("\u00A0"), " ");
-  simplified_copy.replace(QString::fromUtf8("\u000A"), " ");
-  simplified_copy.replace(QString::fromUtf8("\u000D"), " ");
+
+  if (m_ignoreEOL)
+  {
+    simplified_copy.replace(QString::fromUtf8("\u000A"), "");
+    simplified_copy.replace(QString::fromUtf8("\u000D"), "");
+  }
+  else
+  {
+    simplified_copy.replace(QString::fromUtf8("\u000A"), " ");
+    simplified_copy.replace(QString::fromUtf8("\u000D"), " ");
+  }
   auto u32Copy = simplified_copy.toStdU32String();
   u32string wtext;
   wtext.assign(SPACE);
@@ -529,7 +550,10 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
   u32string original_text;
   original_text.assign(SPACE);
-  original_text.append(text.toStdU32String());
+  if (m_ignoreEOL)
+    original_text.append(simplified_copy.toStdU32String());
+  else
+    original_text.append(text.toStdU32String());
   original_text.append(SPACE);
 
   vector<vector<unsigned int>> ngram_idxs;
