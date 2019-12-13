@@ -1204,7 +1204,9 @@ void TensorFlowMorphoSyntaxPrivate::generate_lemmatizer_batch(const vector<TSent
     }
 
     // context
-    for (size_t n = 1; n <= 3; n++)
+    size_t left_context_size = 0;
+    size_t right_context_size = 0;
+    for (size_t n = 1; n <= left_context_size; n++)
     {
       if (current_token < n)
         continue;
@@ -1213,14 +1215,14 @@ void TensorFlowMorphoSyntaxPrivate::generate_lemmatizer_batch(const vector<TSent
     }
 
     size_t code = get_code_for_feature(sent, current_token, m_lemmatizer_conf.pos_dict);
-    context(i, 3) = code;
+    context(i, left_context_size) = code;
 
-    for (size_t n = 1; n <= 3; n++)
+    for (size_t n = 1; n <= right_context_size; n++)
     {
       if (sent.token_count - 1 < current_token + n)
         continue;
 
-      context(i, 3 + n) = get_code_for_feature(sent, current_token + n, m_lemmatizer_conf.pos_dict);
+      context(i, left_context_size + n) = get_code_for_feature(sent, current_token + n, m_lemmatizer_conf.pos_dict);
     }
 
     // features
