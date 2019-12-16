@@ -89,8 +89,22 @@ public:
   CppUppsalaTokenizerPrivate();
   virtual ~CppUppsalaTokenizerPrivate();
 
+  struct TPrimitiveToken
+  {
+    TPrimitiveToken() { }
+    TPrimitiveToken(const QString& w,
+                    int pos,
+                    const QString& orig=QString())
+        : wordText(w), start(pos), originalText(orig)
+    { }
+
+    QString wordText;
+    QString originalText;
+    int start;
+  };
+
   void init(const QString& model_refix);
-  vector< vector< pair<QString, int> > > tokenize(const QString& text);
+  vector< vector< TPrimitiveToken > > tokenize(const QString& text);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
@@ -105,6 +119,10 @@ protected:
                                size_t start,
                                size_t size,
                                vector<pair<string, Tensor>>& batch);
+
+  void append_new_word(vector< TPrimitiveToken >& current_sentence,
+                       const u32string& current_token,
+                       int current_token_offset) const;
 
   void load_graph(const QString& frozen_graph_filename);
   void load_config(const QString& model_prefix);
@@ -156,6 +174,8 @@ protected:
 
   vector<TNGramDef> m_ngram_defs;
   vector<TDict> m_ngrams;
+
+  map<QString, vector<QString>> m_trrules;
 
   vector<vector<float>> m_crf;
 };
@@ -254,15 +274,23 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
     LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
     {
-      const auto& str = token.first;
+      const auto& str = token.wordText;
 
       LOG_MESSAGE(LDEBUG, "      Adding token '" << str << "'");
 
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
-      Token *tToken = new Token(form, str, token.second, token.first.size());
+      Token *tToken = new Token(form, str, token.start, token.wordText.size());
       if (tToken == 0)
         LOG_ERROR_AND_THROW("CppUppsalaTensorFlowTokenizer::process: Can't allocate memory with \"new Token(...)\"",
                             MemoryErrorException());
+
+      if (token.originalText.size() > 0)
+      {
+        // tranduced token
+        // save original word as orph alternative
+        StringsPoolIndex orig = (*m_d->m_stringsPool)[token.originalText];
+        tToken->addOrthographicAlternatives(orig);
+      }
 
       m_d->computeDefaultStatus(*tToken);
 
@@ -421,6 +449,44 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 
   load_ngram_defs(conf.value("ngrams").toArray());
   load_dicts(data.object().value("dicts").toObject().value("ngrams").toArray());
+
+  i = conf.constFind("transduction_rules");
+  if (conf.constEnd() != i)
+  {
+    QJsonArray jsa = conf.value("transduction_rules").toArray();
+    for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
+    {
+      QJsonObject obj = (*i).toObject();
+
+      if (obj.value("token").isUndefined())
+        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule.",
+          LimaException());
+      if (!obj.value("token").isString())
+        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule: no/wrong \"token\".",
+          LimaException());
+      QString token = obj.value("token").toString();
+
+      if (obj.value("words").isUndefined())
+        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule.",
+          LimaException());
+      if (!obj.value("words").isArray())
+        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule: no/wrong \"words\".",
+          LimaException());
+      vector<QString> words;
+      load_string_array(obj.value("words").toArray(), words);
+
+      if (m_trrules.find(token) != m_trrules.end())
+          LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
+                << config_file_name << "\" incorrect transduction rule: duplicate items.",
+            LimaException());
+
+      m_trrules[token] = words;
+    }
+  }
 }
 
 void CppUppsalaTokenizerPrivate::load_graph(const QString& model_path)
@@ -524,7 +590,34 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
   return TokStatusCode::SUCCESS;
 }
 
-vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(const QString& text)
+void CppUppsalaTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& current_sentence,
+                                                 const u32string& current_token,
+                                                 int current_token_offset) const
+{
+  QString ctoken_lower = QString::fromStdU32String(current_token).toLower();
+
+  map<QString, vector<QString>>::const_iterator i = m_trrules.find(ctoken_lower);
+  if (i == m_trrules.end())
+  {
+    current_sentence.push_back(TPrimitiveToken(QString::fromStdU32String(current_token),
+                                               current_token_offset));
+  }
+  else
+  {
+    size_t n = 0;
+    for (const QString& w : i->second)
+    {
+      if (n == 0)
+        current_sentence.push_back(TPrimitiveToken(w,
+                                                   current_token_offset,
+                                                   QString::fromStdU32String(current_token)));
+      else
+          current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+    }
+  }
+}
+
+vector< vector< CppUppsalaTokenizerPrivate::TPrimitiveToken > > CppUppsalaTokenizerPrivate::tokenize(const QString& text)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::tokenize" << text.left(100));
 
@@ -575,8 +668,8 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
                         << status.ToString(),
                         LimaException());
 
-  vector< vector< pair<QString, int> > > sentences;
-  vector< pair<QString, int> > current_sentence;
+  vector< vector< TPrimitiveToken > > sentences;
+  vector< TPrimitiveToken > current_sentence;
   u32string current_token;
   int current_token_offset = 0;
 
@@ -652,8 +745,8 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
 
         if (current_token.size() > 0 && current_token != SPACE)
         {
-          current_sentence.push_back(make_pair(QString::fromStdU32String(current_token),
-                                               current_token_offset));
+          append_new_word(current_sentence, current_token, current_token_offset);
+
           //if (current_sentence.size() > 1
           //        && current_sentence[current_sentence.size() - 2].second == current_token_offset)
           //    throw;
@@ -680,13 +773,10 @@ vector< vector< pair<QString, int> > > CppUppsalaTokenizerPrivate::tokenize(cons
   }
 
   if (current_token.size() > 0)
-      current_sentence.push_back(make_pair(QString::fromStdU32String(current_token),
-                                           current_token_offset));
+    append_new_word(current_sentence, current_token, current_token_offset);
 
   if (current_sentence.size() > 0)
     sentences.push_back(current_sentence);
-
-  LOG_MESSAGE(LDEBUG, "CppUppsalaTensorFlowTokenizer::tokenize final sentences:" << sentences);
 
   return sentences;
 }

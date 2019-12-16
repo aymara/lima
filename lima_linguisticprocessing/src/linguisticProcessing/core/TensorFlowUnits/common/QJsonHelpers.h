@@ -60,6 +60,18 @@ inline void load_string_array(const QJsonArray& jsa, std::vector<std::u32string>
   }
 }
 
+inline void load_string_array(const QJsonArray& jsa, std::vector<QString>& v)
+{
+  v.clear();
+  v.reserve(jsa.size());
+  for (QJsonArray::const_iterator i = jsa.begin(); i != jsa.end(); ++i)
+  {
+    QJsonValue value = *i;
+    QString s = value.toString();
+    v.push_back(s);
+  }
+}
+
 inline void load_string_to_uint_map(const QJsonObject& jso, std::map<std::u32string, unsigned int>& v)
 {
   v.clear();

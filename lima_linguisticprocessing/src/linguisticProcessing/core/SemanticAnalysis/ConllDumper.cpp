@@ -42,6 +42,7 @@
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
 #include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
 #include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
+#include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 
 #include <QQueue>
 #include <QSet>
@@ -54,6 +55,7 @@ using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::AnnotationGraphs;
+using namespace Lima::LinguisticProcessing;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SemanticAnalysis;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
@@ -383,6 +385,74 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     sentenceBegin=sbItr->getFirstVertex();
     sentenceEnd=sbItr->getLastVertex();
 
+    // Search for transduced tokens
+
+    toVisit.enqueue(sentenceBegin);
+    tokenId = 0;
+    v = 0;
+    LinguisticGraphVertex oldvEndDone = vEndDone;
+    int firstTransducedTokenId = -1;
+    uint64_t prev_pos = 0;
+    std::map<int, size_t> transducedTokens;
+
+    while (!toVisit.empty() && v!=sentenceEnd)
+    { //as long as there are vertices in the sentence
+      v = toVisit.dequeue();
+      auto notDone = true;
+      if( v == vEndDone )
+        notDone = false;
+
+      const Token *ft = get(vertex_token,*graph,v);
+
+      if (ft != nullptr && prev_pos > 0 && prev_pos == ft->position())
+      {
+        if (firstTransducedTokenId >= 0)
+        {
+          transducedTokens[firstTransducedTokenId] += 1;
+        }
+        else
+        {
+          if (tokenId == 0)
+            throw;
+          transducedTokens[tokenId - 1] = 2;
+          firstTransducedTokenId = tokenId - 1;
+        }
+      }
+      else
+      {
+        firstTransducedTokenId = -1;
+      }
+
+      if (ft != nullptr)
+        prev_pos = ft->position();
+
+      if (v == sentenceEnd)
+      {
+        vEndDone = v;
+        continue;
+      }
+
+      LinguisticGraphOutEdgeIt outIter,outIterEnd;
+      for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*graph);
+           outIter != outIterEnd; outIter++)
+      {
+        auto next = boost::target(*outIter, *graph);
+        if (!visited.contains(next))
+        {
+          visited.insert(next);
+          toVisit.enqueue(next);
+        }
+      }
+      tokenId++;
+    }
+
+    toVisit.clear();
+    visited.clear();
+
+    sentenceBegin=sbItr->getFirstVertex();
+    sentenceEnd=sbItr->getLastVertex();
+    // End of search for transduced tokens
+
     // get the list of predicates for the current sentence
     auto predicates = m_d->collectPredicateTokens( analysis,
                                                    sentenceBegin,
@@ -396,6 +466,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     toVisit.enqueue(sentenceBegin);
     tokenId = 0;
     v = 0;
+    vEndDone = oldvEndDone;
 
     // Second traversing of the sentence
     while (!toVisit.empty() && v!=sentenceEnd)
@@ -611,6 +682,29 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         }
         if (deprel == "root")
           head = "0";
+
+        if (transducedTokens.find(tokenId) != transducedTokens.end())
+        {
+          int firstTokenId = tokenId;
+          int lastTokenId = tokenId + transducedTokens[tokenId] - 1;
+          QString tokenForm;
+          if (ft->orthographicAlternatives().size() > 0)
+          {
+            StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
+            tokenForm = sp[idx];
+          }
+          dstream->out()  << firstTokenId << "-" << lastTokenId
+                          << "\t" << tokenForm // FORM
+                          << "\t" << "_" // LEMMA
+                          << "\t" << "_" // UPOS
+                          << "\t" << "_" // XPOS
+                          << "\t" << "_" // FEATS
+                          << "\t" << "_" // HEAD
+                          << "\t" << "_" // DEPREL
+                          << "\t" << "_" // DEPS
+                          << "\t" << "_" // MISC
+                          << std::endl;
+        }
 
         dstream->out()  << tokenId // ID
                         << "\t" << inflectedToken // FORM
