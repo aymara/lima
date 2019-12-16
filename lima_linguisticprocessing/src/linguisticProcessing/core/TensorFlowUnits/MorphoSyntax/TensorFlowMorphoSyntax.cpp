@@ -559,7 +559,14 @@ void TensorFlowMorphoSyntaxPrivate::load_lemmatizer_config(const QString& config
     m_lemmatizer_conf.feature_dicts[f] = LemmatizerConf::dict<string>();
     load_string_array(get_json_array(feature, "i2c"), m_lemmatizer_conf.feature_dicts[f].m_i2w);
     load_string_to_uint_map(get_json_object(feature, "c2i"), m_lemmatizer_conf.feature_dicts[f].m_w2i);
-    m_lemmatizer_conf.feature_dicts[f].accessor = &(pcm.getPropertyAccessor(f));
+    try
+    {
+      m_lemmatizer_conf.feature_dicts[f].accessor = &(pcm.getPropertyAccessor(f));
+    }
+    catch (const InvalidConfiguration& e)
+    {
+      continue;
+    }
     m_lemmatizer_conf.feature_dicts[f].fill_linguistic_codes(pcm.getPropertyManager(f));
   }
 
@@ -1232,6 +1239,10 @@ void TensorFlowMorphoSyntaxPrivate::generate_lemmatizer_batch(const vector<TSent
       auto t = batch[feat2idx[name]].second.tensor<int, 1>();
       auto it = m_lemmatizer_conf.feature_dicts.find(kv.first);
       const LemmatizerConf::dict<string> &rd = it->second;
+      if (rd.accessor == nullptr)
+      {
+        continue;
+      }
       size_t code = get_code_for_feature(sent, current_token, rd);
       t(i) = code;
     }
