@@ -99,7 +99,8 @@ class TensorFlowMorphoSyntaxPrivate
 {
 public:
   TensorFlowMorphoSyntaxPrivate()
-    : m_stringsPool(nullptr) { }
+    : m_stringsPool(nullptr),
+      m_lemmatization_required(false) { }
 
   void init(GroupConfigurationStructure&,
             MediaId lang,
@@ -284,6 +285,7 @@ protected:
 
   map<string, string> m_lemmatizer_input_node_names;
 
+  bool m_lemmatization_required;
   LemmatizerConf m_lemmatizer_conf;
   size_t m_lemmatizer_batch_size;
   size_t m_lemmatizer_max_input_len;
@@ -504,6 +506,22 @@ void TensorFlowMorphoSyntaxPrivate::load_lemmatizer_config(const QString& config
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config can't load config from \""
                         << config_file_name << "\". Loaded data is not an object",
                         LimaException());
+
+  if (!data.object().value("lemmatize").isUndefined())
+  {
+    if (!data.object().value("lemmatize").isBool())
+    {
+      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
+                          << config_file_name << "\": lemmatize parameter must be bool.",
+                          LimaException());
+    }
+
+    m_lemmatization_required = data.object().value("lemmatize").toBool();
+    if (!m_lemmatization_required)
+      return;
+  }
+
+  m_lemmatization_required = true;
 
   // batch_size
   if (data.object().value("batch_size").isUndefined())
@@ -1015,7 +1033,8 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
     i += this_batch_size;
   }
 
-  lemmatize(sentences, syntacticData);
+  if (m_lemmatization_required)
+    lemmatize(sentences, syntacticData);
 }
 
 void TensorFlowMorphoSyntaxPrivate::lemmatize(vector<TSentence>& sentences,
@@ -1312,7 +1331,7 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
   // batch_size x max_seq_len x embd_dim
   Tensor t_input_pretrained(DT_FLOAT, TensorShape({static_cast<long long>(batch_size),
                                                    static_cast<long long>(m_max_seq_len),
-                                                   static_cast<long long>(300)
+                                                   static_cast<long long>(m_fasttext.getDimension())
                                                   }));
 
   batch.push_back({ m_input_node_names.find("input_trainable")->second, t_input_trainable });
@@ -1374,7 +1393,7 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
       word_len(i, n) = k;
 
       // input pretrained
-      fasttext::Vector vec(300);
+      fasttext::Vector vec(m_fasttext.getDimension());
       m_fasttext.getWordVector(vec, form.toUtf8().toStdString());
       for (int64 a = 0; a < vec.size(); ++a)
         input_pretrained(i, n, a) = vec[a];
