@@ -110,3 +110,4 @@ semaine,semaines,mois,an,ans
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeLocalTime()
+
