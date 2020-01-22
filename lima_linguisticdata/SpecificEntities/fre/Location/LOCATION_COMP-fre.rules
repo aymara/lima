@@ -27,29 +27,24 @@ use annonceurFact.lst
 @PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
 #----------------------------------------------------------------------
-# recognition of web adresses
+# recognition of web adresses and ip adresses
 #----------------------------------------------------------------------
-36-15::$NC:COORDINATE:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
 t_url:::URL:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#Radio Bleue sur 98.8 MHz
+#----------------------------------------------------------------------
+# recognition radio fm
+#----------------------------------------------------------------------
+
+#Radio Bleue sur 98.8 MHz . en conflit avec NUMEX qui capte le sequence <NUMBER> <UNIT>
 MHz:t_dot_number::COORDINATE:
-=>AppendEntityFeature(left,"name")
+=>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
+=>SetEntityFeature("location_type","FM Radio")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#@leguidedannotation
-\@::(*):COORDINATE:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition tel adresses
@@ -58,13 +53,15 @@ MHz:t_dot_number::COORDINATE:
 t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
+=>AppendEntityFeature("location_type","phone number")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#+33 1 23 45 67 89 a
+#+33 1 23 45 67 89
 +33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
+=>AppendEntityFeature("location_type","phone number")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 

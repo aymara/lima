@@ -203,12 +203,23 @@
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
-        <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <!-- acronym -->
+        <entry key="[a-zA-Z](\.[a-zA-Z])+\.?" value="t_acronym"/>
+        <!-- email adress -->
+        <entry key="\w+(\.[\w\-]+)*\@\w[\w\-]*(\.\w[\w\-]+)*\.\w{2,3}" value="t_url"/>
+        <!-- twitter -->
+        <entry key="\@\w{3}\w*" value="t_url"/>
+        <!-- ip address -->
+        <entry key="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" value="t_url"/>
+        <!-- minitel 36-15 ... -->
+        <entry key="36-\d{1,2} [a-zA-Z]+" value="t_url"/>
+        <!-- web adress -->
+        <entry key="((mailto|http|ftp|https):\/\/)?\w[\w\-]+(\.\w[\w\-]+)*(\.\w\w+)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-]+)+\.(uk|com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
-            <param key="dictionary" value="mainDictionary"/>
+        <param key="dictionary" value="mainDictionary"/>
         <param key="confidentMode" value="true"/>
         <param key="charChart" value="flatcharchart"/>
         <param key="parseConcatenated" value="false"/>
