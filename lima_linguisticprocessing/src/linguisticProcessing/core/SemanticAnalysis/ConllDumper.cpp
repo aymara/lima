@@ -1123,7 +1123,7 @@ void ConllDumperPrivate::dumpNamedEntity(QScopedPointer<DumperStream>& dstream,
 
 }
 
-
+// TODO Split idiomatic alternative tokens and compound tokens
 LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
   QScopedPointer<DumperStream>& dstream,
   LinguisticGraphVertex v,
@@ -1304,7 +1304,9 @@ void ConllDumperPrivate::dumpToken(
     LDEBUG << "ConllDumperPrivate::dumpToken" << tokenId
             << inflectedToken.toStdString() << neType << previousNeType;
 #endif
-    dstream->out()  << inflectedToken.toStdString() // FORM
+    QString inflectedTokenEscaped = inflectedToken;
+    inflectedTokenEscaped.replace(" ", "_");
+    dstream->out()  << inflectedTokenEscaped.toStdString() // FORM
                     << " " << micro.toStdString() // UPOS
                     << " " << "I-NP";
     if (neType.isEmpty() || neType == "_")
