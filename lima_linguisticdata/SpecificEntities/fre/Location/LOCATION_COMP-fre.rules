@@ -29,6 +29,10 @@ use annonceurFact.lst
 #----------------------------------------------------------------------
 # recognition of web adresses and ip adresses
 #----------------------------------------------------------------------
+36-15::$NC:COORDINATE:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 t_url:::URL:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -39,12 +43,18 @@ t_url:::URL:
 
 #Radio Bleue sur 98.8 MHz . en conflit avec NUMEX qui capte le sequence <NUMBER> <UNIT>
 MHz:t_dot_number::COORDINATE:
-=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>SetEntityFeature("location_type","FM Radio")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+#@leguidedannotation
+\@::(*):COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition tel adresses
