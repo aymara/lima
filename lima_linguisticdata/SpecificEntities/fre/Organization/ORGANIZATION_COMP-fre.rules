@@ -1,0 +1,91 @@
+set encoding=utf8
+using modex Organization-modex.xml,Location-modex.xml
+using groups Organization
+set defaultAction=>CreateSpecificEntity()
+
+use organization.lst,carMakers.lst
+use ../../common/organizationCommon.lst
+use annonceurOrg.lst
+
+@OrganizationNamePart=(T_A1,T_Amh,$NP,t_capital,t_capital_1st,t_capital_small)
+
+
+# .com companies (unless preceded by a "sur" indicating the web site)
+com:@OrganizationNamePart .::ORGANIZATION:
+
+# known organizations
+
+include organizations.rules
+
+# journaux/radios/télés
+include newspapersAndMedia.rules
+
+# autres journaux
+Financial::Times:ORGANIZATION:
+Wall::Street Journal:ORGANIZATION:
+
+# entreprises avec code bourse
+
+@OrganizationNamePart::[(\( NYSE \: T_Ni )]:ORGANIZATION:
+@OrganizationNamePart::[(\( Paris \: T_Ni . PA)]:ORGANIZATION:
+@OrganizationNamePart::[(\( Xetra \: T_Ni . DE)]:ORGANIZATION:
+@OrganizationNamePart::[(\( Amsterdam \: T_Ac . AS)]:ORGANIZATION:
+@OrganizationNamePart::[(\( Helsinki \: T_Ac)]:ORGANIZATION:
+@OrganizationNamePart::[(\( London \: T_Ac . LN)]:ORGANIZATION:
+
+# entreprises étrangères (annonceurs anglais)
+@EnglishTriggers=(Center,Airlines,Group)
+@EnglishTriggers:@OrganizationNamePart{1-3}::ORGANIZATION:
+
+# organisations politiques françaises
+include partis_politiques.rules
+
+# en Bourse -> not organization
+Bourse:en::NOT_ORGANIZATION:
+
+# villes qui ont des bourses
+@SECities=(Paris,Londres,Francfort,New-York,Tokyo,Milan)
+
+bourse::de @SECities:ORGANIZATION:
+Bourse::de @SECities:ORGANIZATION:
+
+# products that have same triggers as companies
+#Boeing::(707|717|727|737|747|757|767|777):PRODUCT:
+#Airbus::(A300|A310|A319|A320|A321|A330|A340):PRODUCT:
+#Microsoft::Office:PRODUCT:
+
+# list of organizations common to all languages
+
+include ../../common/companies.rules
+
+# car makers (composed names)
+
+include carMakers.rules
+
+#------------------------------
+# contextual rules for organizations
+@leadershipOrganizationPart=(patron,dirigeant,dirigeants,courtier,responsable,responsables,direction,directeur,directrice,reprise,président,vice-président)
+@activitiesOrganizationPart=(faillite,ruine,banqueroute,reprise,affaire,activité,activités)
+
+[filiale]::[$ADJ?] [(de|d\')] @OrganizationNamePart{1-2}:ORGANIZATION:
+[@activitiesOrganizationPart]::[$ADJ?] [(de|d\')] @OrganizationNamePart:ORGANIZATION:
+[@leadershipOrganizationPart]::[$ADJ?] [(de|d\')] @OrganizationNamePart:ORGANIZATION:
+
+[@AnnonceurOrg]::@OrganizationNamePart (@OrganizationNamePart?):ORGANIZATION:
+
+# cour d\'appel de Paris
+# Université de Besançon
+@locOrg=(université,cour d\'appel)
+
+<Location.LOCATION>:@locOrg de::ORGANIZATION:
+
+@organization:::ORGANIZATION:
+@carMakers:::ORGANIZATION:
+@organizationCommon:::ORGANIZATION:
+
+
+t_acronym:::ORGANIZATION:
+=>NormalizeEntity()
+=>AppendEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+
