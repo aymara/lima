@@ -3,7 +3,9 @@ using modex Location-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
-
+#----------------------------------------------------------------------
+# loading of gazeteers
+#----------------------------------------------------------------------
 use regions.lst
 use countries.lst
 use cities.lst
@@ -12,7 +14,10 @@ use miscLocations.lst
 use highways.lst
 use annonceurLieu.lst
 use greeklocations.lst
-
+use annonceurVille.lst
+use annonceurVoie.lst
+use annonceurGeo.lst
+use annonceurFact.lst
 
 @aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,courant$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
@@ -201,37 +206,73 @@ Elysée:::LOCATION:Élysée
 # => la plupart des occurrences de Nord, Sud-Est etc ne sont pas étiquetées
 #@PrecisionGeographique::(du pays)?:LOCATION:
 
-36-15::$NC:LOCATION:
+
+#----------------------------------------------------------------------
+# recognition of web adresses and ip adresses
+#----------------------------------------------------------------------
+36-15::$NC:COORDINATE:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#CONTACT
 
 t_url:::URL:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#CONTACT
 
-#Radio Bleue sur 98.8 MHz
-MHz:t_dot_number::LOCATION:
+#----------------------------------------------------------------------
+# recognition radio fm
+#----------------------------------------------------------------------
+
+#Radio Bleue sur 98.8 MHz . en conflit avec NUMEX qui capte le sequence <NUMBER> <UNIT>
+MHz:t_dot_number::COORDINATE:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>SetEntityFeature("location_type","FM Radio")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #@leguidedannotation
-\@::(*):LOCATION:
+\@::(*):COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#CONTACT
 
-#01 69 85 80 02 ou 01-69-85-80-02
-t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
+#----------------------------------------------------------------------
+# recognition telephone numbers
+#----------------------------------------------------------------------
+#01 69 85 80 02
+t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>SetEntityFeature("location_type","phone number")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#CONTACT
 
-#+33 1 23 45 67 89 a
-+33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :LOCATION:
+#01-69-85-80-02
+t_integer>0<99:t_integer>0<9 -:- t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
+#+33 1 23 45 67 89
+#+33::t_integer>0<9 t_integer>0<99 t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
+#+33.1.23.45.67.89
+#+33::t_integer>0<9 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
 
 
 #mon identifiant skype est jean.dupont

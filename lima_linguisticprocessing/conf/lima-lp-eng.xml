@@ -412,7 +412,7 @@
         <entry key="NomPropreMacroCategory" value="NP" />
       </map>
       <list name="LexicalAnaphora">
-            <item value="PRP$"/>
+        <item value="PRP$"/>
       </list>
       <list name="UndefinitePronouns">
       </list>
