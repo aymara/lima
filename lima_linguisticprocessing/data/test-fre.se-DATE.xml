@@ -81,7 +81,7 @@
           operator="="
           right="1950-04-01"/>
   </testcase>
-  <!--testcase id="fre.se.timex.02" type="blocking">
+  <testcase id="fre.se.timex.02" type="bloquant">
     <call-parameters>
       <param key="text" value="Il est mort le 02/03/2015"/>
       <param key="language" value="fre"/>
@@ -98,9 +98,9 @@
           comment="date jour/mois/année"
           left="XPATH#//entities/entity[pos=16][len=10]/string"
           operator="="
-          right="March, 2015"/>
-  </testcase-->
-  <!--testcase id="fre.se.timex.1" type="blocking">
+          right="02/03/2015"/>
+  </testcase>
+  <testcase id="fre.se.timex.1" type="bloquant">
     <call-parameters>
       <param key="text" value="juillet 1982 fut remarquable pour la maturation de la vigne"/>
       <param key="language" value="fre"/>
@@ -123,8 +123,8 @@
           left="XPATH#//entities/entity[pos=1][len=12]/components/numyear"
           operator="="
           right="1982"/>
-  </testcase-->
-  <!--testcase id="fre.se.timex.2" type="blocking">
+  </testcase>
+  <!--testcase id="fre.se.timex.2" type="bloquing">
     <call-parameters>
       <param key="text" value="06/09/2004"/>
       <param key="language" value="eng"/>
@@ -287,90 +287,5 @@
           left="XPATH#//entities/entity[position=1][length=11]/type"
           operator="="
           right="DateTime.DATE"/>
-  </testcase-->
-  <!--==================== tests NUMEX ====================-->
-  <!--testcase id="eng.se.numex.1" type="blocking">
-    <call-parameters>
-      <param key="text" value="he won 8000 dollars"/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.1.1" trace=".se.xml"
-          comment="simple nombre format numérique"
-          left="XPATH#//specific_entities/specific_entity[position=8][length=12]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
-  <!--testcase id="eng.se.numex.2" type="blocking">
-    <call-parameters>
-      <param key="text" value="the other won twenty euros"/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.2.1" trace=".se.xml"
-          comment="nombre en lettres + unité de mesure"
-          left="XPATH#//specific_entities/specific_entity[position=15][length=12]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
-  <!--testcase id="eng.se.numex.3" type="blocking">
-    <call-parameters>
-      <param key="text" value="Keep humidity levels in your home between 30 and 60 percent."/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.3.1" trace=".se.xml"
-          comment=""
-          left="XPATH#//specific_entities/specific_entity[position=50][length=10]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
-  <!--testcase id="eng.se.numex.4" type="blocking">
-    <call-parameters>
-      <param key="text" value="They are typically about five watts."/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.4.1" trace=".se.xml"
-          comment="five watts"
-          left="XPATH#//specific_entities/specific_entity[position=26][length=10]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
-  <!--testcase id="eng.se.numex.5" type="blocking">
-    <call-parameters>
-      <param key="text" value="These are visible from 500 feet and can help guests locate your home quickly."/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.5.1" trace=".se.xml"
-          comment="five watts"
-          left="XPATH#//specific_entities/specific_entity[position=24][length=8]/type"
-          operator="="
-          right="Numex.NUMEX"/>
-  </testcase-->
-  <!--testcase id="eng.se.numex.6" type="blocking">
-    <call-parameters>
-      <param key="text" value="A child picks up a 12-pound backpack."/>
-      <param key="language" value="eng"/>
-      <list key="pipelines">
-        <item value="limaserver"/>
-      </list>
-    </call-parameters>
-    <test id="eng.se.numex.6.1" trace=".se.xml"
-          comment="five watts"
-          left="XPATH#//specific_entities/specific_entity[position=20][length=8]/type"
-          operator="="
-          right="Numex.NUMEX"/>
   </testcase-->
 </testcases>
