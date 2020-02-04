@@ -61,8 +61,8 @@ ARG CACHEBUST=1
 RUN git pull
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
-RUN mkdir /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.3-beta/lima-deep-models-english_0.1.3_all.deb && dpkg -i *.deb
-RUN mkdir /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.3-beta/lima-deep-models-french_0.1.3_all.deb && dpkg -i *.deb
+RUN mkdir -p /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.3-beta/lima-deep-models-english_0.1.3_all.deb && dpkg -i *.deb
+RUN mkdir -p /models && cd /models && wget https://github.com/aymara/lima-models/releases/download/v0.1.3-beta/lima-deep-models-french_0.1.3_all.deb && dpkg -i *.deb
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
