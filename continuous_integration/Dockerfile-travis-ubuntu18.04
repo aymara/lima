@@ -85,7 +85,7 @@ WORKDIR /
 RUN git clone https://github.com/UniversalDependencies/tools udtools
 RUN ls -l /udtools/
 RUN wget http://universaldependencies.org/conll18/conll18_ud_eval.py
-RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator=/conll18_ud_eval.py
+#RUN cd /src/lima/ && ./test_all_ud_languages.sh --ud_tools=/udtools --comparator=/conll18_ud_eval.py
 
 # TVA Tests
 #
