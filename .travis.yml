@@ -62,8 +62,9 @@ deploy:
       repo: aymara/lima
       tags: false
       branches:
-        except:
-        - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
+        only:
+          - master
+          - universal_dependencies
   #- provider: script
     #script: bash continuous_integration/docker_push.sh
     #on:
