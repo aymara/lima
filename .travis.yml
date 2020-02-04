@@ -25,7 +25,7 @@ matrix:
 before_script:
   - echo TRAVIS_BRANCH=$TRAVIS_BRANCH
 
-script: 
+script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - echo BRANCH=$BRANCH
   - docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg BRANCH="$BRANCH" --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" -f ./continuous_integration/Dockerfile-$DISTRIB .
@@ -57,8 +57,9 @@ deploy:
       repo: aymara/lima
       tags: false
       branches:
-        except:
-        - /^\d\d\d\d\d\d\d\d\d\d\d\d\d\d-[\da-f]+$/
+        only:
+          - master
+          - universal_dependencies
   #- provider: script
     #script: bash continuous_integration/docker_push.sh
     #on:
