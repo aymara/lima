@@ -33,7 +33,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     if (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
     else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -mtune=generic")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -mtune=generic -msse4.2")
     endif()
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
