@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     if (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
     else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -msse4.2")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic")
     endif()
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
@@ -76,7 +76,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 
     if (WITH_ASAN)
       # NOTE: check -fsanitize=address flag failed if this flag is not set also
-      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for 
+      # for the linker (use CMAKE_REQUIRED_FLAGS to set linker flag for
       # CHECK_CXX_COMPILER_FLAG macro).
       set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
       set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
@@ -116,7 +116,7 @@ if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
 else ()
   message("Windows flags")
   add_definitions(-D WIN32)
-  
+
   # By default, do not warn when built on machines using only VS Express:
   if(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
