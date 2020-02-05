@@ -13,15 +13,15 @@ RUN apt install -y software-properties-common && add-apt-repository -y ppa:limap
 #RUN update-alternatives --set cc /usr/bin/clang
 #RUN update-alternatives --set c++ /usr/bin/clang++
 
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
 ARG BRANCH
 ARG GITHUB_TOKEN
-ARG JOB_NUMBER 
+ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -74,8 +74,8 @@ ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
-# 
-RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH=/usr/include/tensorflow-for-lima/ ..
+#
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DWITH_ARCH:BOOL=OFF -DTF_SOURCES_PATH:PATH=/usr/include/tensorflow-for-lima/ ..
 RUN ninja && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
