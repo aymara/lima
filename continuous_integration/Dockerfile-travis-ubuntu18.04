@@ -10,8 +10,8 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get in
 
 RUN apt install -y software-properties-common && add-apt-repository -y ppa:limapublisher/ppa && apt update && apt install -y libtensorflow-for-lima-dev
 
-RUN update-alternatives --set cc /usr/bin/clang
-RUN update-alternatives --set c++ /usr/bin/clang++
+#RUN update-alternatives --set cc /usr/bin/clang
+#RUN update-alternatives --set c++ /usr/bin/clang++
 
 RUN locale-gen en_US.UTF-8  
 ENV LANG en_US.UTF-8  
