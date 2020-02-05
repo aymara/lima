@@ -20,7 +20,64 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### next target ###############
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
-    add_subdirectory(fastText)
+
+#     include_directories(fasttext)
+
+    ### BEGIN FastText stuff
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -funroll-loops")
+
+    set(HEADER_FILES
+        fastText/src/args.h
+        fastText/src/densematrix.h
+        fastText/src/dictionary.h
+        fastText/src/fasttext.h
+        fastText/src/loss.h
+        fastText/src/matrix.h
+        fastText/src/meter.h
+        fastText/src/model.h
+        fastText/src/productquantizer.h
+        fastText/src/quantmatrix.h
+        fastText/src/real.h
+        fastText/src/utils.h
+        fastText/src/vector.h)
+
+    set(SOURCE_FILES
+        fastText/src/args.cc
+        fastText/src/densematrix.cc
+        fastText/src/dictionary.cc
+        fastText/src/fasttext.cc
+        fastText/src/loss.cc
+        fastText/src/main.cc
+        fastText/src/matrix.cc
+        fastText/src/meter.cc
+        fastText/src/model.cc
+        fastText/src/productquantizer.cc
+        fastText/src/quantmatrix.cc
+        fastText/src/utils.cc
+        fastText/src/vector.cc)
+
+    add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
+    add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
+    add_library(fasttext-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
+    set_target_properties(fasttext-shared PROPERTIES OUTPUT_NAME fasttext-lima)
+    set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
+    set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
+      POSITION_INDEPENDENT_CODE True)
+    add_executable(fasttext-bin fastText/src/main.cc)
+    target_link_libraries(fasttext-bin pthread fasttext-static)
+    set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)
+    install (TARGETS fasttext-shared
+        LIBRARY DESTINATION lib)
+    install (TARGETS fasttext-static
+        ARCHIVE DESTINATION lib)
+    install (TARGETS fasttext-static_pic
+        ARCHIVE DESTINATION lib)
+    install (TARGETS fasttext-bin
+        RUNTIME DESTINATION bin
+    PUBLIC_HEADER DESTINATION include/fasttext-lima)
+
+    ### END FastText stuff
+
 
     SET(lima-lp-tensorflowmorphosyntax_LIB_SRCS
         TensorFlowMorphoSyntax.cpp
