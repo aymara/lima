@@ -109,7 +109,7 @@ trente-et-un,
 
 # lundi 22 mai 1968 | lundi, 4 sepetembre 2014 | lundi 18 octobre, 2014 | Mer. 28 février 2015,  mercredi 26 févr, mercredi 26 févr.
 # @monthAbbrev|@monthAbbrev \.? = Warning, need to use the both annotations.
-@day::\.? ,? (@numday|t_integer>10<31) (@monthAbbrev|@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
+@day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev|@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"numday")
 =>SetEntityFeature(right.2,"month")
