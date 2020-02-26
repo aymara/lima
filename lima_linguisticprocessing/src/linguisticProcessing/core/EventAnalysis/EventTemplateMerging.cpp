@@ -79,9 +79,9 @@ void EventTemplateMerging::init(
     LERROR << "EventTemplateMerging: Missing 'eventTemplate' parameter in EventTemplateMerging definition";
     //throw InvalidConfiguration;
   }
-  catch (std::exception& ) {
+  catch (std::exception& e) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateMerging: Missing ressource for 'eventTemplate' parameter";
+    LERROR << "EventTemplateMerging: Missing ressource for 'eventTemplate' parameter" << e.what();
     //throw InvalidConfiguration;
   }
   

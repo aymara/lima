@@ -26,6 +26,7 @@ EventTemplateDefinitionResourceFactory(EVENTTEMPLATEDEFINITIONRESOURCE_CLASSID);
 
 //----------------------------------------------------------------------
 EventTemplateDefinitionResource::EventTemplateDefinitionResource():
+AbstractResource(),
 m_language(0),
 m_templates(),
 m_elementMapping()
@@ -70,6 +71,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   LOGINIT("LP::EventAnalysis");
 
   m_language=manager->getInitializationParameters().language;
+  LDEBUG << "initialize EventTemplateDefinitionResource for language " << (int)m_language;
   EventTemplateStructure structure;
   // get name
   try
@@ -105,8 +107,8 @@ init(GroupConfigurationStructure& unitConfiguration,
       structure.addTemplateElement((*it).first,(*it).second);
     }
   }
-  catch (NoSuchParam& ) {
-    LERROR << "No param 'templateName' in EventTemplateDefinition for language " << (int)m_language;
+  catch (NoSuchMap& ) {
+    LERROR << "No map 'templateElements' in EventTemplateDefinition for language " << (int)m_language;
     throw InvalidConfiguration();
   }
 

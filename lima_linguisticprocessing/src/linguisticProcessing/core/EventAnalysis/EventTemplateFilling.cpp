@@ -83,7 +83,7 @@ void EventTemplateFilling::init(
   }
   catch (std::exception& e) {
     LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateFilling: Missing ressource for 'eventTemplate' parameter";
+    LERROR << "EventTemplateFilling: Missing ressource for 'eventTemplate' parameter for language" << language << ":" << e.what();
     //throw InvalidConfiguration;
   }
 }

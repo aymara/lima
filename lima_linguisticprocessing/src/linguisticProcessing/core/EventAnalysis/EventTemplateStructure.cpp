@@ -34,9 +34,15 @@ void EventTemplateStructure::addTemplateElement(const std::string& role,
             <<"' is defined twice";
   }
   else {
-    auto type = MediaticData::MediaticData::single().getEntityType(
-      QString::fromUtf8(entityType.c_str()));
-    m_structure[role]=type;
+    try {
+      auto type = MediaticData::MediaticData::single().getEntityType(
+        QString::fromUtf8(entityType.c_str()));
+      m_structure[role]=type;
+    }
+    catch (LimaException& e) {
+      LOGINIT("LP::EventAnalysis");
+      LERROR << "EventTemplateStructure: failed to resolve entity type" << entityType << ": ignore role" << role;    
+    }
   }
 }
 
