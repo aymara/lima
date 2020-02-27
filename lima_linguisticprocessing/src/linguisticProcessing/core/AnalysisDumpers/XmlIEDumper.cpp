@@ -115,7 +115,9 @@ outputEntityString(std::ostream& out,
     std::string::iterator new_end =
         std::unique(str.begin(), str.end(), [=](char lhs, char rhs){ return (lhs == rhs) && (lhs == ' '); } );
     str.erase(new_end, str.end());
-    out << "<string>" << Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(str)) << "</string>";
+    out << "<string>"
+        << Common::Misc::transcodeToXmlEntities(QString::fromStdString(str)).toStdString()
+        << "</string>";
     out << "<norm>";
 
     for (Automaton::EntityFeatures::const_iterator
@@ -123,7 +125,7 @@ outputEntityString(std::ostream& out,
          featureItr!=features_end; featureItr++)
     {
       out << "<" << featureItr->getName() << ">"
-          << Common::Misc::limastring2utf8stdstring(Common::Misc::transcodeToXmlEntities(Common::Misc::utf8stdstring2limastring(featureItr->getValueString())))
+          << Common::Misc::transcodeToXmlEntities(QString::fromStdString(featureItr->getValueString())).toStdString()
           << "</" << featureItr->getName() << ">";
     }
     out << "</norm>";
