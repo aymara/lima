@@ -154,3 +154,4 @@ t_ordinal_integer	ADJ:-mp
 t_ordinal_integer	ADJ:-fp
 t_pattern	U
 t_fallback	U
+t_url	NPP:---

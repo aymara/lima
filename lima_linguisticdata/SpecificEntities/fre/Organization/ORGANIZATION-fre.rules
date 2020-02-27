@@ -82,3 +82,10 @@ include carMakers.rules
 @organization:::ORGANIZATION:
 @carMakers:::ORGANIZATION:
 @organizationCommon:::ORGANIZATION:
+
+
+t_acronym:::ORGANIZATION:
+=>NormalizeEntity()
+=>AppendEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+

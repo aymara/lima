@@ -19,7 +19,7 @@
 /**
  *
  * @file       ConstituantAndRelationExtractor.h
- * @author     Damien Nouvel <Damien.Nouvel@cea.fr> 
+ * @author     Damien Nouvel <Damien.Nouvel@cea.fr>
 
  *             Copyright (C) 2004 by CEA LIST
  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
@@ -107,7 +107,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
   {
     for (; itLing != itLing_end; itLing++)
     {
-      const LinguisticGraphVertex& nextVertex = target(*itLing, posGraph);
+      const auto& nextVertex = target(*itLing, posGraph);
       LDEBUG << "ConstituantAndRelationExtractor:: visiting out edge " << nextVertex;
       visitBoostGraph(nextVertex,
                       end,
@@ -121,19 +121,23 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     }
   }
 
-  Forme* forme = extractVertex(v, posGraph, true, fullTokens, alreadyDumpedTokens, language);
+  auto forme = extractVertex(v, posGraph, true, fullTokens,
+                             alreadyDumpedTokens, language);
 
-  if(forme == 0)
+  if (forme == 0)
     return;
 
-  LDEBUG << "ConstituantAndRelationExtractor:: insert form in index " << forme->id;
+  LDEBUG << "ConstituantAndRelationExtractor:: insert form in index "
+          << forme->id;
   m_formesIndex[forme->id] = forme;
-  m_positionsFormsIds.insert(std::make_pair(forme->poslong.position, forme->id));
+  m_positionsFormsIds.insert(std::make_pair(forme->poslong.position,
+                                            forme->id));
   m_vertexToFormeIds.insert(std::make_pair(v,forme->id));
   m_formeIdsToVertex.insert(std::make_pair(forme->id,v));
 
   // Looking for compound tense in annotation data
-  std::set<AnnotationGraphVertex> vAnnot = annotationData.matches("PosGraph", v, "annot");
+  std::set<AnnotationGraphVertex> vAnnot = annotationData.matches("PosGraph",
+                                                                  v, "annot");
   if (!vAnnot.empty())
   {
     std::set<AnnotationGraphVertex>::const_iterator vAnnotIt, vAnnotIt_end;
@@ -144,7 +148,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
       // if corresponding AnnotationGraph vertex, link it
       m_posAnnotMatching.insert(std::make_pair(forme->poslong.position,*vAnnotIt));
       m_annotPosMatching.insert(std::make_pair(*vAnnotIt,forme->poslong.position));
-      if(annotationData.hasIntAnnotation(*vAnnotIt, Common::Misc::utf8stdstring2limastring("CpdTense")))
+      if(annotationData.hasIntAnnotation(*vAnnotIt, QString::fromUtf8("CpdTense")))
       {
         bool foundCpdAux = false, foundCpdPp = false;
         AnnotationGraphVertex auxVertex, ppVertex;
@@ -153,19 +157,19 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
         boost::tie(vAnnotOutIt, vAnnotOutIt_end) = boost::out_edges(*vAnnotIt, annotationData.getGraph());
         for (; vAnnotOutIt != vAnnotOutIt_end; vAnnotOutIt++)
         {
-          if (annotationData.hasIntAnnotation(*vAnnotOutIt,Common::Misc::utf8stdstring2limastring("Aux")))
+          if (annotationData.hasIntAnnotation(*vAnnotOutIt, QString::fromUtf8("Aux")))
           {
             auxVertex = boost::target(*vAnnotOutIt, annotationData.getGraph());
             if(auxVertex != 0) foundCpdAux = true;
           }
-          else if(annotationData.hasIntAnnotation(*vAnnotOutIt,Common::Misc::utf8stdstring2limastring("PastPart")))
+          else if(annotationData.hasIntAnnotation(*vAnnotOutIt, QString::fromUtf8("PastPart")))
           {
             ppVertex = boost::target(*vAnnotOutIt, annotationData.getGraph());
             if(ppVertex != 0) foundCpdPp = true;          }
         }
         if(foundCpdAux && foundCpdPp)
         {
-          LinguisticGraphVertex auxV = *(annotationData.matches("annot", auxVertex, "PosGraph").begin());
+          auto auxV = *(annotationData.matches("annot", auxVertex, "PosGraph").begin());
           visitBoostGraph(auxV,
                           end,
                           anaGraph,
@@ -175,7 +179,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
                           fullTokens,
                           alreadyDumpedTokens,
                           language);
-          LinguisticGraphVertex ppV = *(annotationData.matches("annot", ppVertex, "PosGraph").begin());
+          auto ppV = *(annotationData.matches("annot", ppVertex, "PosGraph").begin());
           visitBoostGraph(ppV,
                           end,
                           anaGraph,
@@ -187,7 +191,8 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
                           language);
           if(m_formesIndex[auxV] != 0 && m_formesIndex[ppV] != 0)
           {
-            LDEBUG << "ConstituantAndRelationExtractor:: register compound tense " << *vAnnotIt << ", " << forme->forme;
+            LDEBUG << "ConstituantAndRelationExtractor:: register compound tense "
+                    << *vAnnotIt << ", " << forme->forme;
             m_compoundTenses[*vAnnotIt] = std::make_pair(auxV, ppV);
           }
         }
@@ -205,7 +210,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
     for (; vAnnotIt != vAnnotIt_end; vAnnotIt++)
     {
 
-      LimaString idiomExprLimaString = Common::Misc::utf8stdstring2limastring("IdiomExpr");
+      LimaString idiomExprLimaString = QString::fromUtf8("IdiomExpr");
       if(annotationData.hasAnnotation(*vAnnotIt, idiomExprLimaString))
       {
         LDEBUG << "ConstituantAndRelationExtractor:: found idiomatic " << *vAnnotIt << ", " << forme->forme;
@@ -220,7 +225,7 @@ void ConstituantAndRelationExtractor::visitBoostGraph(const LinguisticGraphVerte
           language);
       }
 
-      LimaString seLimaString = Common::Misc::utf8stdstring2limastring("SpecificEntity");
+      LimaString seLimaString = QString::fromUtf8("SpecificEntity");
       if(annotationData.hasAnnotation(*vAnnotIt, seLimaString))
       {
         LDEBUG << "ConstituantAndRelationExtractor:: found specific entity " << *vAnnotIt << ", " << forme->forme;
@@ -273,11 +278,11 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
   DUMPERLOGINIT;
   if(token == 0)
     return 0;
-  if(checkFullTokens){
-    LDEBUG << "ConstituantAndRelationExtractor:: check token " << v  << "(" 
+  if(checkFullTokens)
+  {
+    LDEBUG << "ConstituantAndRelationExtractor:: check token " << v  << "("
            << token->stringForm() << ")";
-    std::map< LinguisticAnalysisStructure::Token*, uint64_t >::const_iterator tokenIter;
-    tokenIter = fullTokens.find(token);
+    auto tokenIter = fullTokens.find(token);
     if(tokenIter != fullTokens.end())
     {
       uint64_t tokenId = tokenIter->second;
@@ -287,7 +292,7 @@ Forme* ConstituantAndRelationExtractor::extractVertex(const LinguisticGraphVerte
     }
   }
 
-  LDEBUG << "ConstituantAndRelationExtractor:: extract vertex " << v << "(" 
+  LDEBUG << "ConstituantAndRelationExtractor:: extract vertex " << v << "("
          << token->stringForm() << ")";
   Forme* forme = new Forme();
   forme->id = v;

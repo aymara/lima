@@ -161,7 +161,8 @@ std::ostream& operator << (std::ostream& os, const EntityType& type)
 
 QDebug& operator << (QDebug& os, const EntityType& type)
 {
-  return os << type.m_d->m_groupId << "." << type.m_d->m_id;
+  os.nospace() << type.m_d->m_groupId << "." << type.m_d->m_id;
+  return os.space();
 }
 
 //***********************************************************************

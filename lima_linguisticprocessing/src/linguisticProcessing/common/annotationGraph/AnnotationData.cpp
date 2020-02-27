@@ -644,7 +644,7 @@ bool AnnotationData::hasAnnotation(AnnotationGraphEdge e, uint64_t annot) const
 
 void AnnotationData::dumpFunction(const std::string& annot, const AnnotationData::Dumper* f)
 {
-  LimaString wannot = Misc::utf8stdstring2limastring(annot);
+  LimaString wannot = QString::fromStdString(annot);
   uint64_t annotId = annotationId(wannot);
   if (m_d->m_dumpFunctions.find(annotId) != m_d->m_dumpFunctions.end())
   {
@@ -657,7 +657,7 @@ void AnnotationData::dumpFunction(const std::string& annot, const AnnotationData
 
 const AnnotationData::Dumper* AnnotationData::dumpFunction(const std::string& annot)
 {
-  LimaString wannot = Misc::utf8stdstring2limastring(annot);
+  LimaString wannot = QString::fromStdString(annot);
   uint64_t annotId = annotationId(wannot);
   if (m_d->m_dumpFunctions.find(annotId) == m_d->m_dumpFunctions.end())
   {
@@ -697,21 +697,21 @@ void AnnotationData::addMatching(const StringsPoolIndex& direction, AnnotationGr
 const std::map<StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> >& AnnotationData::matchings() const {return m_d->m_matchings;}
 
 
-/** @brief Adds a symetric matching between two vertices of two graphs
- * identified by the two string parameters
- */
-//void AnnotationData::addMatching(const std::string& first, uint64_t firstVx,
-//                                 const std::string& second, uint64_t secondVx)
-void AnnotationData::addMatching(const std::string& first, AnnotationGraphVertex firstVx,
-                                 const std::string& second, AnnotationGraphVertex secondVx)
+void AnnotationData::addMatching(const std::string& first,
+                                 AnnotationGraphVertex firstVx,
+                                 const std::string& second,
+                                 AnnotationGraphVertex secondVx)
 {
 #ifdef DEBUG_LP
   AGLOGINIT;
-  LDEBUG << "AnnotationData::addMatching " << first << firstVx << second << secondVx;
+  LDEBUG << "AnnotationData::addMatching " << first << firstVx
+          << second << secondVx;
 #endif
 
-  addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(first + second) ], firstVx, secondVx);
-  addMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(second + first) ], secondVx, firstVx);
+  addMatching( m_d->m_pool[ QString::fromStdString(first + second) ],
+               firstVx, secondVx);
+  addMatching( m_d->m_pool[ QString::fromStdString(second + first) ],
+               secondVx, firstVx);
 }
 
 /** @brief Gets the set of vertices matched in the second graph by the given
@@ -720,7 +720,7 @@ void AnnotationData::addMatching(const std::string& first, AnnotationGraphVertex
 std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& first, AnnotationGraphVertex firstVx,
       const std::string& second) const
   {
-    return matches( m_d->m_pool[ Misc::utf8stdstring2limastring(first + second) ], firstVx);
+    return matches( m_d->m_pool[ QString::fromStdString(first + second) ], firstVx);
   }
 
 /** @brief Tests if the two given vertices are matching in the two given graphs
@@ -728,7 +728,7 @@ std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& fir
 bool AnnotationData::isMatching(const std::string& first, AnnotationGraphVertex firstVx,
                                 const std::string& second, AnnotationGraphVertex secondVx) const
 {
-  return isMatching( m_d->m_pool[ Misc::utf8stdstring2limastring(first + second) ], firstVx, secondVx);
+  return isMatching( m_d->m_pool[ QString::fromStdString(first + second) ], firstVx, secondVx);
 }
 
 void AnnotationData::addMatching(const StringsPoolIndex& first, AnnotationGraphVertex firstVx,
@@ -750,27 +750,28 @@ bool AnnotationData::isMatching(const StringsPoolIndex& first, AnnotationGraphVe
   return isMatching( m_d->m_pool[ m_d->m_pool[first] + m_d->m_pool[second] ], firstVx, secondVx);
 }
 
-std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& direction,
-      AnnotationGraphVertex firstVx) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(
+    const StringsPoolIndex& direction,
+    AnnotationGraphVertex firstVx) const
+{
+  if (m_d->m_matchings.find(direction) == m_d->m_matchings.end())
   {
-    if (m_d->m_matchings.find(direction) == m_d->m_matchings.end())
-    {
-      return std::set< AnnotationGraphVertex >();
-    }
-    else
-    {
-      std::set< AnnotationGraphVertex > result;
-      std::pair< std::multimap<AnnotationGraphVertex, AnnotationGraphVertex>::const_iterator, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex>::const_iterator > range;
-      range = const_cast< std::map< StringsPoolIndex, std::multimap<AnnotationGraphVertex, AnnotationGraphVertex> >& >(m_d->m_matchings)[direction].equal_range(firstVx);
-      for (; range.first != range.second; range.first++)
-      {
-        result.insert( (*(range.first)).second);
-      }
-      return result;
-    }
+    return std::set< AnnotationGraphVertex >();
   }
+  else
+  {
+    std::set< AnnotationGraphVertex > result;
+    auto range = m_d->m_matchings[direction].equal_range(firstVx);
+    for (; range.first != range.second; range.first++)
+    {
+      result.insert( (*(range.first)).second);
+    }
+    return result;
+  }
+}
 
-bool AnnotationData::isMatching(const StringsPoolIndex& direction, AnnotationGraphVertex firstVx,
+bool AnnotationData::isMatching(const StringsPoolIndex& direction,
+                                AnnotationGraphVertex firstVx,
                                 AnnotationGraphVertex secondVx) const
 {
   if (m_d->m_matchings.find(direction) == m_d->m_matchings.end())
@@ -802,7 +803,7 @@ void AnnotationData::cloneAnnotations(AnnotationGraphVertex src,
   eit=excepted.begin(); eit_end = excepted.end();
   for (; eit!=eit_end; eit++)
   {
-    iexcepted.insert(m_d->m_pool[Misc::utf8stdstring2limastring(*eit)]);
+    iexcepted.insert(m_d->m_pool[QString::fromStdString(*eit)]);
   }
 
   AGIannotProp& srcimap = m_d->m_mapVertexAGIannotPropertyMap[src];

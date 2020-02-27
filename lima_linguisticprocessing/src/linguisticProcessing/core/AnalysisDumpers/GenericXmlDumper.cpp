@@ -131,12 +131,12 @@ void GenericXmlDumper::init(
 
   m_features.setLanguage(m_language);
   m_bowFeatures.setLanguage(m_language);
-  try { 
+  try {
     // if some features are specified, all must be specified: do not keep any default ones
-    map<string,string> featuresMap=unitConfiguration.getMapAtKey("features"); 
+    map<string,string> featuresMap=unitConfiguration.getMapAtKey("features");
     try {
       // order can be specified (not in map: map is unordered)
-      deque<string> featureOrder=unitConfiguration.getListsValueAtKey("featureOrder"); 
+      deque<string> featureOrder=unitConfiguration.getListsValueAtKey("featureOrder");
       initializeFeatures(featuresMap,featureOrder);
     }
     catch (NoSuchList& ) { // no order specified: keep order from map
@@ -160,7 +160,7 @@ void GenericXmlDumper::init(
     }
   }
   catch (NoSuchParam& ) {// optional : do not output entities if param not specified
-  } 
+  }
 
   try {
     string str=unitConfiguration.getParamsValueAtKey("specificEntities");
@@ -171,7 +171,7 @@ void GenericXmlDumper::init(
     }
   }
   catch (NoSuchParam& ) {// optional : do not output entities if param not specified
-  } 
+  }
 
   try {
     string str=unitConfiguration.getParamsValueAtKey("specificEntityParts");
@@ -180,7 +180,7 @@ void GenericXmlDumper::init(
     }
   }
   catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
-  
+
   try {
     string str=unitConfiguration.getParamsValueAtKey("sentenceBoundaries");
     if (str!="no" && str!="false" && str!="") {
@@ -220,21 +220,21 @@ void GenericXmlDumper::init(
   }
   catch (NoSuchParam& ) { }// optional : do not output entities if param not specified
 
-  
+
 /*  const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
   m_propertyAccessor=&codeManager.getPropertyAccessor(m_property);
   m_propertyManager=&codeManager.getPropertyManager(m_property);
 
-  try { 
-    std::string str=unitConfiguration.getParamsValueAtKey("outputTStatus"); 
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("outputTStatus");
     if (str=="yes" || str=="1") {
       m_outputTStatus=true;
     }
   }
   catch (NoSuchParam& ) {} // keep default value
- 
- try { 
-   std::string str=unitConfiguration.getParamsValueAtKey("outputVerbTense"); 
+
+ try {
+   std::string str=unitConfiguration.getParamsValueAtKey("outputVerbTense");
    if (str=="yes" || str=="1") {
      m_outputVerbTense=true;
      m_tenseAccessor=&codeManager.getPropertyAccessor("TIME");
@@ -242,16 +242,16 @@ void GenericXmlDumper::init(
    }
  }
  catch (NoSuchParam& ) {} // keep default value
-*/ 
+*/
 }
 
-void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap, 
-                                          const std::deque<std::string>& featureOrder) 
+void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
+                                          const std::deque<std::string>& featureOrder)
 {
   clearFeatures();
   bool useMapOrder(false);
   if (! featureOrder.empty()) {
-    // use specified order 
+    // use specified order
     DUMPERLOGINIT;
     LDEBUG << "GenericXmlDumper: initialize features: use order";
     for (deque<string>::const_iterator it=featureOrder.begin(),it_end=featureOrder.end();it!=it_end;it++) {
@@ -274,7 +274,7 @@ void GenericXmlDumper::initializeFeatures(const map<string,string>& featuresMap,
   else {
     useMapOrder=true;
   }
-  
+
   if (useMapOrder) {
     for (map<string,string>::const_iterator it=featuresMap.begin(),it_end=featuresMap.end();it!=it_end; it++) {
       const std::string& featureName=(*it).second;
@@ -298,7 +298,7 @@ process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
   DUMPERLOGINIT;
   LDEBUG << "GenericXmlDumper::process";
-  
+
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
@@ -353,7 +353,7 @@ xmlOutput(std::ostream& out,
   DUMPERLOGINIT;
 
   out << "<text>" << endl;
-  
+
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
@@ -391,14 +391,14 @@ xmlOutput(std::ostream& out,
       // LinguisticGraphVertex sentenceEnd=(*sb)[i].getLastVertex();
       LinguisticGraphVertex sentenceBegin=(sb->getSegments())[i].getFirstVertex();
       LinguisticGraphVertex sentenceEnd=(sb->getSegments())[i].getLastVertex();
-      
+
       // if (sentenceEnd==posgraph->lastVertex()) {
       //   continue;
       // }
 
       LDEBUG << "dump sentence between " << sentenceBegin << " and " << sentenceEnd;
       LDEBUG << "dump simple terms for this sentence";
-      
+
       ostringstream oss;
       xmlOutputVertices(oss,
                         analysis,
@@ -443,14 +443,14 @@ xmlOutputVertices(std::ostream& out,
 
   LinguisticGraph* graph=posgraph->getGraph();
   LinguisticGraphVertex lastVertex=posgraph->lastVertex();
-  
+
   map<Token*, vector<LinguisticGraphVertex>, lTokenPosition> sortedTokens;
 
   std::queue<LinguisticGraphVertex> toVisit;
   std::set<LinguisticGraphVertex> visited;
-  
+
   LinguisticGraphOutEdgeIt outItr,outItrEnd;
- 
+
   // output vertices between begin and end,
   // but do not include begin (beginning of text or previous end of sentence) and include end (end of sentence)
   toVisit.push(begin);
@@ -466,8 +466,8 @@ xmlOutputVertices(std::ostream& out,
     if (v == end) {
       last=true;
     }
-    
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
+
+    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
     {
       LinguisticGraphVertex next=target(*outItr,*graph);
       if (visited.find(next)==visited.end())
@@ -476,7 +476,7 @@ xmlOutputVertices(std::ostream& out,
         toVisit.push(next);
       }
     }
-    
+
     if (first) {
       first=false;
     }
@@ -487,13 +487,13 @@ xmlOutputVertices(std::ostream& out,
       }
     }
   }
-  
+
   // for compounds
   std::set<LinguisticGraphVertex> alreadyStoredVertices;
-  
+
   // store outputs, sorting them by their positions (useful for compounds)
   map<uint64_t,vector<string> > xmlOutputs;
-  
+
   for (map< Token*,vector<LinguisticGraphVertex>,lTokenPosition >::const_iterator
          it=sortedTokens.begin(),it_end=sortedTokens.end(); it!=it_end; it++)
   {
@@ -503,10 +503,10 @@ xmlOutputVertices(std::ostream& out,
       LERROR << "GenericXmlDumper: no vertices for token " << (*it).first->stringForm();
       continue;
     }
-    
+
     for (vector<LinguisticGraphVertex>::const_iterator d=vertices.begin(),
       d_end=vertices.end(); d!=d_end; d++) {
-      
+
       /*if (alreadyStoredVertices.find(*d)!=alreadyStoredVertices.end()) {
         // if already printed as a compound part
         continue;
@@ -524,11 +524,11 @@ xmlOutputVertices(std::ostream& out,
       out << *s;
     }
   }
-  
+
 }
 
 void GenericXmlDumper::
-xmlOutputVertex(std::ostream& out, 
+xmlOutputVertex(std::ostream& out,
                 AnalysisContent& analysis,
                 LinguisticGraphVertex v,
                 AnalysisGraph* anagraph,
@@ -564,7 +564,7 @@ xmlOutputVertex(std::ostream& out,
     checkCompound(v, anagraph, posgraph, annotationData, syntacticData, offset, visited);
     if (compoundTokens.size()!=0) {
       for (auto it=compoundTokens.begin(), it_end=compoundTokens.end();it!=it_end;it++) {
-        
+
         xmlOutputCompound(out,analysis,(*it),anagraph,posgraph,annotationData,sp,offset);
         std::set<uint64_t> bowTokenVertices = (*it)->getVertices();
         alreadyStoredVertices.insert(bowTokenVertices.begin(), bowTokenVertices.end());
@@ -620,7 +620,7 @@ GenericXmlDumper::checkSpecificEntity(LinguisticGraphVertex v,
         pointerValue<SpecificEntityAnnotation>();
       return make_pair(se,posgraph);
     }
-  }  
+  }
   return std::pair<const SpecificEntityAnnotation*,AnalysisGraph*>((const SpecificEntityAnnotation*)0,(AnalysisGraph*)0);
 }
 
@@ -637,7 +637,7 @@ xmlOutputSpecificEntity(std::ostream& out,
     LERROR << "missing specific entity annotation";
     return false;
   }
-  
+
   // output enclosing tag for entity with associated information
   if (m_outputSpecificEntities) {
     out << "<" << m_specificEntityTag;
@@ -655,8 +655,8 @@ xmlOutputSpecificEntity(std::ostream& out,
     if (m_outputSpecificEntityParts) {
       // output tag as enclosing tag, with parts enclosed
       out << ">" << endl;
-      for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
-           m != se->m_vertices.end(); m++)
+      for (std::vector< LinguisticGraphVertex>::const_iterator m(se->vertices().begin());
+           m != se->vertices().end(); m++)
       {
         xmlOutputVertexInfos(out,analysis,(*m),graph,offset);
       }
@@ -669,13 +669,13 @@ xmlOutputSpecificEntity(std::ostream& out,
   }
   else {
     // output parts as simple words
-    for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
-         m != se->m_vertices.end(); m++)
+    for (std::vector< LinguisticGraphVertex>::const_iterator m(se->vertices().begin());
+         m != se->vertices().end(); m++)
     {
       xmlOutputVertexInfos(out,analysis,(*m),graph,offset);
     }
   }
-  
+
   // take as category for parts the category for the named entity
   /*LinguisticCode category=m_propertyAccessor->readValue(data->begin()->properties);
   DUMPERLOGINIT;
@@ -696,33 +696,33 @@ checkCompound(LinguisticGraphVertex v,
               set<LinguisticGraphVertex>& visited) const
 {
   DUMPERLOGINIT;
-  LDEBUG << "GenericXmlDumper: check if compound for vertex " << v; 
-  
+  LDEBUG << "GenericXmlDumper: check if compound for vertex " << v;
+
   std::set< AnnotationGraphVertex > cpdsHeads = annotationData->matches("PosGraph", v, "cpdHead");
   if (cpdsHeads.empty())
   {
     // not a compound
     return std::vector< boost::shared_ptr< BoWToken > >();
   }
-  
+
   LDEBUG << "GenericXmlDumper: -- is head of a compound ";
   std::vector< boost::shared_ptr< BoWToken > > tokens;
   std::set< std::string > alreadyStored;
-  for (std::set< AnnotationGraphVertex >::const_iterator it=cpdsHeads.begin(), it_end=cpdsHeads.end(); 
+  for (std::set< AnnotationGraphVertex >::const_iterator it=cpdsHeads.begin(), it_end=cpdsHeads.end();
        it!=it_end; it++)
   {
     const AnnotationGraphVertex& agv=*it;
 
     // create compound using BoWGeneration : store in BoW
     std::vector<std::pair<boost::shared_ptr< BoWRelation >, boost::shared_ptr<BoWToken> > > bowTokens =
-    m_bowGenerator->buildTermFor(agv, agv, *(anagraph->getGraph()), *(posgraph->getGraph()), offset, 
+    m_bowGenerator->buildTermFor(agv, agv, *(anagraph->getGraph()), *(posgraph->getGraph()), offset,
                                  syntacticData, annotationData, visited);
     for (auto bowItr=bowTokens.begin();
          bowItr!=bowTokens.end(); bowItr++)
     {
       std::string elem = (*bowItr).second->getIdUTF8String();
       if (alreadyStored.find(elem) != alreadyStored.end())
-      {  
+      {
         // already stored
         //          LDEBUG << "BuildBoWTokenListVisitor: BoWToken already stored. Skipping it.";
       }
@@ -736,7 +736,7 @@ checkCompound(LinguisticGraphVertex v,
 }
 
 void GenericXmlDumper::
-xmlOutputCompound(std::ostream& out, 
+xmlOutputCompound(std::ostream& out,
                   AnalysisContent& analysis,
                   boost::shared_ptr<Common::BagOfWords::AbstractBoWElement> token,
                   LinguisticAnalysisStructure::AnalysisGraph* anagraph,
@@ -758,7 +758,7 @@ xmlOutputCompound(std::ostream& out,
       // compound informations
       out << "<" << m_compoundTag;
       xmlOutputBoWInfos(out,&*token,offset);
-      
+
       if (m_outputCompoundParts) {
         // close opening tag, then parts, then closing tag
         out << ">" << endl;
@@ -767,7 +767,7 @@ xmlOutputCompound(std::ostream& out,
         //single tag
         out << "/>" << endl;
       }
-      
+
       // go through parts in any case, at least to get enclosed compounds
       if (m_outputAllCompounds) {
         // use iterator to create all partial compounds
@@ -826,12 +826,12 @@ xmlOutputCompound(std::ostream& out,
     default: {
       DUMPERLOGINIT;
       LERROR << "GenericXmlDumper: Error: BowToken has type BoWType::BOW_NOTYPE";
-      
+
     }
   }
 }
 
-void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out, 
+void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out,
                                             AnalysisContent& analysis,
                                            LinguisticGraphVertex v,
                                            LinguisticAnalysisStructure::AnalysisGraph* graph,
@@ -854,7 +854,7 @@ void GenericXmlDumper::xmlOutputVertexInfos(std::ostream& out,
     out << " " << m_featureTags[i] << "=\"" << value << "\"";
   }
   out << "/>" << endl;
-}                          
+}
 
 void GenericXmlDumper::xmlOutputBoWInfos(ostream& out, AbstractBoWElement* token, uint64_t offset) const
 {
@@ -881,9 +881,9 @@ specificEntityFeature(const SpecificEntities::SpecificEntityAnnotation* se,
                       const FsaStringsPool& sp,
                       uint64_t offset) const
 {
-  // all hard-coded feature names : not really clean, but a clean definition of all features for 
+  // all hard-coded feature names : not really clean, but a clean definition of all features for
   // a specialized class such as SpecificEntityAnnotation seems a bit too much...
-  if (featureName=="position") { 
+  if (featureName=="position") {
     uint64_t pos=se->getPosition();
     pos+=offset;
     ostringstream oss;
@@ -926,8 +926,8 @@ std::string GenericXmlDumper::xmlString(const std::string& inputStr) const
   return str;
 }
 
-void GenericXmlDumper::replace(std::string& str, 
-                              const std::string& toReplace, 
+void GenericXmlDumper::replace(std::string& str,
+                              const std::string& toReplace,
                               const std::string& newValue) const
 {
   string::size_type oldLen=toReplace.size();

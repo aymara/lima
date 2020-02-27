@@ -17,6 +17,6 @@
 set (DEPENDENCIES annonceurOrg.lst carMakers.lst computers.lst organization.lst ../../common/organizationCommon.lst carMakers.rules journaux_fr.rules newspapersAndMedia.rules organizations.rules partis_politiques.rules)
 
 SPECIFICENTITIES(main fre Organization 
-  ORGANIZATION-fre.rules 
+  ORGANIZATION-fre.rules
   ORGANIZATION_COMP-fre.rules)
 

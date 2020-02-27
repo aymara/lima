@@ -416,9 +416,9 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     }
 
     auto newVx = boost::add_vertex(*resultgraph);
-    annotationData->addMatching("PosGraph", newVx, "annot", anaVertex);
-    annotationData->addMatching("AnalysisGraph", anaVertex, "PosGraph", newVx);
     auto agv =  annotationData->createAnnotationVertex();
+    annotationData->addMatching("PosGraph", newVx, "annot", agv);
+    annotationData->addMatching("AnalysisGraph", anaVertex, "PosGraph", newVx);
     annotationData->annotate(agv, QString::fromUtf8("PosGraph"), newVx);
 
     // set linguistic infos

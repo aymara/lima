@@ -24,6 +24,7 @@ Cour::constitutionnelle:ORGANIZATION:Cour constitutionnelle
 Département::d'État:ORGANIZATION:Département d'État
 E.E.C.:::ORGANIZATION:C.E.E.
 Ku::Klux Klan:ORGANIZATION:Ku Klux Klan
+KKK:::ORGANIZATION:Ku Klux Klan
 N.A.T.O.:::ORGANIZATION:O.T.A.N.
 O.T.A.N.:::ORGANIZATION:O.T.A.N.
 Organisation::du traité de l'Atlantique Nord:ORGANIZATION:OTAN
@@ -41,6 +42,8 @@ Caisse::Primaire d' Assurance Maladie:ORGANIZATION:C.P.A.M.
 C.P.A.M.:::ORGANIZATION:C.P.A.M.
 Banque::de France:ORGANIZATION:
 commissariat$NC::à l' énergie$NC atomique$ADJ:ORGANIZATION:C.E.A.
+C.E.A:::ORGANIZATION:C.E.A.
+CEA:::ORGANIZATION:C.E.A.
 
 Autorité::palestinienne:ORGANIZATION:
 

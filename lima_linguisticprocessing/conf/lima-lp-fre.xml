@@ -203,12 +203,23 @@
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
-        <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
-        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <!-- acronym -->
+        <entry key="[a-zA-Z](\.[a-zA-Z])+\.?" value="t_acronym"/>
+        <!-- email adress -->
+        <entry key="\w+(\.[\w\-]+)*\@\w[\w\-]*(\.\w[\w\-]+)*\.\w{2,3}" value="t_url"/>
+        <!-- twitter -->
+        <entry key="\@\w{3}\w*" value="t_url"/>
+        <!-- ip address -->
+        <entry key="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" value="t_url"/>
+        <!-- minitel 36-15 ... -->
+        <entry key="36-\d{1,2} [a-zA-Z]+" value="t_url"/>
+        <!-- web adress -->
+        <entry key="((mailto|http|ftp|https):\/\/)?\w[\w\-]+(\.\w[\w\-]+)*(\.\w\w+)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-]+)+\.(uk|com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
     </group>
     <group name="simpleWord" class="SimpleWord">
-            <param key="dictionary" value="mainDictionary"/>
+        <param key="dictionary" value="mainDictionary"/>
         <param key="confidentMode" value="true"/>
         <param key="charChart" value="flatcharchart"/>
         <param key="parseConcatenated" value="false"/>
@@ -723,9 +734,26 @@ Definition of dumpers
       <param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/>
     </group>
     <group name="conllDumper" class="ConllDumper">
+      <param key="format" value="CoNLL-U"/> <!-- default -->
       <param key="handler" value="simpleStreamHandler"/>
       <param key="withColsHeader" value="true"/>
-      <!--param key="mappingFile" value="SRLIntegration/lima_conll_dependency_tag_mapping/mapping_conll_Lima.txt"/-->
+    </group>
+    <group name="conll03Dumper" class="ConllDumper">
+      <param key="format" value="CoNLL-03"/>
+      <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="bratDumper" class="BratDumper">
+      <!--param key="handler" value="simpleStreamHandler"/-->
+      <param key="outputSuffix" value=".ann"/>
+      <param key="stripInputSuffix" value="true"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="domain" value=""/>
+      <param key="followGraph" value="true"/>
+      <param key="outputGroups" value="false"/>
+      <param key="useNorms" value="false"/>
+      <param key="outputAllAttributes" value="false"/>
+      <list name="attributes"/>
+      <list name="eventTemplates"/>
     </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>

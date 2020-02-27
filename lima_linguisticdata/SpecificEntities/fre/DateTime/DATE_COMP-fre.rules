@@ -3,10 +3,59 @@ using modex DateTime-modex.xml,Numex-modex.xml
 using groups DateTime,Numex
 set defaultAction=>CreateSpecificEntity()
 
+@day=(lundi,Lundi,LUNDI,lun,lund,Lun,Lund,LUN,LUND,
+mardi,Mardi,MARDI,mard,mar,Mard,Mar,MARD,MAR,Mar\.,
+mercredi,Mercredi,MERCREDI,mercred,mer,mercre,Mercred,Mer,Mercred,MERCRED,MER,MERCRE,
+jeudi,Jeudi,JEUDI,jeu,jeud,Jeu,Jeud,JEU,JEUD,
+vendredi,Vendredi,VENDREDI,ven,vendred,Ven,Vendred,VEN,VENDRED,
+samedi,Samedi,SAMEDI,sam,samed,SAM,Samed,SAM,SAMED,
+dimanche,Dimanche,DIMANCHE,dim,dimanch,di,Dim,Dimanch,Di,DIM,DIMANCH,DI);
 
-@day=(lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche)
+@dayNoAbbrev=(lundi,Lundi,LUNDI,
+mardi,Mardi,MARDI,
+mercredi,Mercredi,MERCREDI,
+jeudi,Jeudi,JEUDI,
+vendredi,Vendredi,VENDREDI,
+samedi,Samedi,SAMEDI,
+dimanche,Dimanche,DIMANCHE);
 
-@month=(janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre)
+@month=(janvier,JANVIER,Janvier,janv,Janv,JANV,Jan,
+février,FEVRIER,Février,fév,FEV,Fév,
+mars,MARS,Mars,mar,Mar,MAR,
+avril,AVRIL,Avril,avr,Avr,
+mai,MAI,Mai,
+juin,JUIN,Juin,Jui,
+juillet,JUILLET,Juillet,juil,Juil,JUIL,Jui,
+août,AOUT,Août,Aôu,
+septembre,SEPTEMBRE,Septembre,sept,SEPT,Sept,Sep,
+octobre,OCTOBRE,Octobre,octobr,oct,OCT,Oct,octob,OCTOB,Octob,
+novembre,NOVEMBRE,Novembre,nov,NOV,Nov,
+décembre,DECEMBRE,Décembre,déc,dec,Déc);
+
+@monthAbbrev=(janv,Janv,JANV,Jan,
+fév,FEV,Fév,févr,Févr,FEVR,
+mar,Mar,MAR,
+avr,Avr,
+Jui,
+juil,Juil,JUIL,
+Aôu,
+sept,SEPT,Sept,Sep,
+octobr,oct,OCT,Oct,octob,OCTOB,Octob,
+nov,NOV,Nov,
+déc,dec,Déc);
+
+@monthNoAbbrev=(janvier,JANVIER,Janvier,
+février,FEVRIER,Février,
+mars,MARS,Mars,
+avril,AVRIL,Avril,
+mai,MAI,Mai,
+juin,JUIN,Juin,
+juillet,JUILLET,Juillet,
+août,AOUT,Août,
+septembre,SEPTEMBRE,Septembre
+octobre,OCTOBRE,Octobre,
+novembre,NOVEMBRE,Novembre,
+décembre,DECEMBRE,Décembre);
 
 @numday=(
 premier,
@@ -40,13 +89,23 @@ vingt-sept,
 vingt-huit,
 vingt-neuf,
 trente,
-trente\ et\ un
+trente\ et\ un,
+trente-et-un,
+01,
+02,
+03,
+04,
+05,
+06,
+07,
+08,
+09
 )
 
 @nummonth=(t_integer>1<12)
 
-@numyear=(t_integer>1700<2950,t_integer>1<99)
-@numyear4=(t_integer>1700<2950)
+@numyear=(t_integer>1700<2050,t_integer>1<99)
+@numyear4=(t_integer>1700<2050)
 
 # lundi 22 mai 1968
 @day::(@numday|t_integer>1<31) @month @numyear?:DATE:
@@ -69,7 +128,7 @@ trente\ et\ un
 =>NormalizeRelativeDate()
 
 # ce lundi
-@day:ce::DATE:
+@dayNoAbbrev:ce::DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(left.1,"datemod")
 =>NormalizeEntity()
@@ -77,7 +136,7 @@ trente\ et\ un
 =>NormalizeRelativeDate()
 
 # lundi prochain
-@day::prochain:DATE:
+@dayNoAbbrev::prochain:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
 =>NormalizeEntity()
@@ -85,7 +144,7 @@ trente\ et\ un
 =>NormalizeRelativeDate("next_day")
 
 # lundi après-midi, lundi dernier, lundi 8
-@day::(dernier|@daytime|(@numday|t_integer>1<31))?:DATE:
+@dayNoAbbrev::(dernier|@daytime|@numday|t_integer>1<31)?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
 =>NormalizeEntity()
@@ -109,7 +168,7 @@ trente\ et\ un
 =>NormalizeDate("isInterval")
 
 # du 3 septembre 98 au 20 janvier 2012
-<NUMBER>:[du]:(@month)? (@numyear)? [au] [((@numday|t_integer>1<31)|<NUMBER>)] [@month] [(@numyear)?]:DATE:
+<NUMBER>:[du]:(@month)? (@numyear)? [au] [((@numday|t_integer>10<31)|<NUMBER>)] [@month] [(@numyear)?]:DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.1,"month")
 =>SetEntityFeature(right.2,"numyear")
@@ -145,13 +204,15 @@ trente\ et\ un
 
 # 22 mai 1968
 # 22 mai
+# 02 mai
 # mai 1968
 # mai
 # 18 juin 40
 # 31 octobre prochain
+# 22 sept. 2014
 # 1er avril 1950
-@month:(@numday|t_integer>1<31)?:@numyear:DATE:
-=>SetEntityFeature(left,"numday")
+@month:[(le)?] (@numday|t_integer>10<31)?:[(\.? \,?)?] @numyear:DATE:
+=>SetEntityFeature(left.2,"numday")
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right,"numyear")
 =>NormalizeEntity()
@@ -248,7 +309,7 @@ siècle$NC:<NUMBER>::DATE:
 
 @in=(en,depuis)
 
-@month:[(@in|au? mois de)?]::DATE:
+@monthNoAbbrev:[(@in|au? mois de)?]::DATE:
 =>SetEntityFeature(trigger,"month")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -284,46 +345,41 @@ siècle$NC:<NUMBER>::DATE:
 # 22-05-68 
 # integer - integer - integer
 
-
-
-# Obligé de dupliquer la règle car on n'accepte pas "trente et un" et t_integer dans un gazeteer pour un trigger
-t_integer>1<31::- t_integer - t_integer:DATE:
-=>SetEntityFeature(trigger,"numday")
-=>SetEntityFeature(right.2,"month")
-=>SetEntityFeature(right.4,"numyear")
+@nummonth:(@numday|t_integer>10<31) -:- (@numyear|@numyear4):DATE:
+=>SetEntityFeature(left.1,"numday")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@numday::- t_integer - t_integer:DATE:
-=>SetEntityFeature(trigger,"numday")
-=>SetEntityFeature(right.2,"month")
-=>SetEntityFeature(right.4,"numyear")
+@nummonth:(@numyear|@numyear4) -:- (@numday|t_integer>10<31):DATE:
+=>SetEntityFeature(left.1,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numday")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@numyear4::- t_integer - t_integer:DATE:
-=>SetEntityFeature(trigger,"numyear")
-=>SetEntityFeature(right.2,"month")
-=>SetEntityFeature(right.4,"numday")
+@month:@numday:(@numyear|@numyear4):DATE:
+=>SetEntityFeature(left,"numday")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
 # 22/05/68 
 # fraction / integer or integer / integer / integer
-
-
-t_integer>1<31::/ t_integer / t_integer:DATE:
-=>SetEntityFeature(trigger,"numday")
-=>SetEntityFeature(right.2,"month")
-=>SetEntityFeature(right.4,"numyear")
+@nummonth:(@numyear|@numyear4):/ (@numday|t_integer>10<31):DATE:
+=>SetEntityFeature(left.1,"numyear")
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(right.2,"numday")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@numday::/ t_integer / t_integer:DATE:
+(@numday|t_integer>10<31)::/ @nummonth / (@numyear|@numyear4):DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.2,"month")
 =>SetEntityFeature(right.4,"numyear")

@@ -26,49 +26,6 @@ use annonceurFact.lst
 
 @PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
-#----------------------------------------------------------------------
-# recognition of web adresses
-#----------------------------------------------------------------------
-36-15::$NC:COORDINATE:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-t_url:::URL:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#Radio Bleue sur 98.8 MHz
-MHz:t_dot_number::COORDINATE:
-=>AppendEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#@leguidedannotation
-\@::(*):COORDINATE:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#----------------------------------------------------------------------
-# recognition tel adresses
-#----------------------------------------------------------------------
-#01 69 85 80 02 ou 01-69-85-80-02
-t_integer::-? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#+33 1 23 45 67 89 a
-+33::t_integer -? t_integer -? t_integer -? t_integer -? t_integer :COORDINATE:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-
 @AnnonceurLieu::(t_alphanumeric):NOT_LOCATION: 
 
 #----------------------------------------------------------------------
@@ -158,7 +115,7 @@ triangle::de Rocquencourt:ODO:
 =<ClearEntityFeatures()
 # loc.adm.reg
 #loc phys
-# est = dist (imm guide - p7) 
+# est = dist (imm guide - p7)
 
 ########################### CITY ##############################################
 
@@ -320,4 +277,78 @@ Trévaresse:::GEO:
 # (je ne peux pas me permettre d\'étiqueter "est" tout seul)
 # => la plupart des occurrences de Nord, Sud-Est etc ne sont pas étiquetées
 #@PrecisionGeographique::(du pays)?:LOCATION:
+
+
+#----------------------------------------------------------------------
+# recognition of web adresses and ip adresses
+#----------------------------------------------------------------------
+36-15::$NC:COORDINATE:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+t_url:::URL:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
+# recognition radio fm
+#----------------------------------------------------------------------
+
+#Radio Bleue sur 98.8 MHz . en conflit avec NUMEX qui capte le sequence <NUMBER> <UNIT>
+MHz:t_dot_number::COORDINATE:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>SetEntityFeature("location_type","FM Radio")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#@leguidedannotation
+\@::(*):COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
+# recognition telephone numbers
+#----------------------------------------------------------------------
+#01 69 85 80 02
+t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>SetEntityFeature("location_type","phone number")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#01-69-85-80-02
+#t_integer>0<99:t_integer>0<9 - : - t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(left,"name")
+#=>AppendEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
+#+33 1 23 45 67 89
+\+33::t_integer>0<9 t_integer>0<99 t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>SetEntityFeature("location_type","phone number")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#+33.1.23.45.67.89
+\+33::t_integer>0<9 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99:COORDINATE:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>SetEntityFeature("location_type","phone number")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+
+#mon identifiant skype est jean.dupont
+#todo => car LIMA perd les espaces.
+
 

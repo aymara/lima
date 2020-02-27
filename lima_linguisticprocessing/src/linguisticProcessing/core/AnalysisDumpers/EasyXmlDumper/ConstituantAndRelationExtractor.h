@@ -19,7 +19,7 @@
 /**
  *
  * @file       ConstituantAndRelationExtractor.h
- * @author     Damien Nouvel <Damien.Nouvel@cea.fr> 
+ * @author     Damien Nouvel <Damien.Nouvel@cea.fr>
 
  *             Copyright (C) 2004 by CEA LIST
  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
@@ -153,10 +153,11 @@ private:
     AnnotationType genAnnotVect = genAnnot.value<AnnotationType>();
     m_namedEntitiesVertices.insert(std::make_pair(forme.id, forme));
     m_posAnaMatching.insert(std::make_pair(forme.id, v));
-    std::vector< LinguisticGraphVertex >::iterator genAnnotVectIt, genAnnotVectIt_end;
-    genAnnotVectIt = genAnnotVect.m_vertices.begin(); genAnnotVectIt_end = genAnnotVect.m_vertices.end();
+
     std::vector<uint64_t> genAnaVertices;
-    for(; genAnnotVectIt != genAnnotVectIt_end; genAnnotVectIt++)
+    for(auto genAnnotVectIt = genAnnotVect.vertices().begin(),
+             genAnnotVectIt_end = genAnnotVect.vertices().end();
+        genAnnotVectIt != genAnnotVectIt_end; genAnnotVectIt++)
     {
       Forme* anaForme = extractVertex(*genAnnotVectIt, anaGraph, false, fullTokens, alreadyDumpedTokens, language);
       if(anaForme != 0)

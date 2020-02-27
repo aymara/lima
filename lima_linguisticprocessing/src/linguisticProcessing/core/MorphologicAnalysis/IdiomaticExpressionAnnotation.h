@@ -49,28 +49,31 @@ public:
 
     ~IdiomaticExpressionAnnotation();
 
-    /** @brief The functions that dumps an IdiomaticExpressionAnnotation 
-     *  on an output stream 
+    /** @brief The functions that dumps an IdiomaticExpressionAnnotation
+     *  on an output stream
      */
     void dump(std::ostream& os);
 
+    const std::vector< LinguisticGraphVertex >& vertices() const {return m_vertices;}
+
+private:
     std::vector< LinguisticGraphVertex > m_vertices;
 };
 
 /** @brief Definition of a function suitable to be used as a dumper for idiomatic expressions
-  * annotations of an annotation graph 
-  * @param @b os <I>std::ostream&amp;</I> the stream on which to dump the point 
-  * @param @b ga <I>GenericAnnotation&amp;</I> the specific entity annotation to be 
-  *        dumped. 
-  * @return <I>int</I> If succesful, SUCCESS_ID is returned. An error is 
+  * annotations of an annotation graph
+  * @param @b os <I>std::ostream&amp;</I> the stream on which to dump the point
+  * @param @b ga <I>GenericAnnotation&amp;</I> the specific entity annotation to be
+  *        dumped.
+  * @return <I>int</I> If succesful, SUCCESS_ID is returned. An error is
   *         displayed in the case where the given annotation is not a specific entity
   *         annotation and UNKNOWN_ERROR is returned .
   */
-class DumpIdiomaticExpressionAnnotation : 
+class DumpIdiomaticExpressionAnnotation :
     public Common::AnnotationGraphs::AnnotationData::Dumper
 {
   public:
-    virtual int dump(std::ostream& os, 
+    virtual int dump(std::ostream& os,
                      Common::AnnotationGraphs::GenericAnnotation& ga) const override;
 };
 

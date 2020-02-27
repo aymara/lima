@@ -493,8 +493,8 @@ outputSpecificEntity(std::ostream& out,
 
   // get the parts of the named entity match
   // use the category of the named entity for all elements
-  for (std::vector< LinguisticGraphVertex>::const_iterator m(se->m_vertices.begin());
-       m != se->m_vertices.end(); m++)
+  for (std::vector< LinguisticGraphVertex>::const_iterator m(se->vertices().begin());
+       m != se->vertices().end(); m++)
   {
     const Token* token = get(vertex_token, *graph, *m);
     if (token != 0) {
