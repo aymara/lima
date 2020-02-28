@@ -4,7 +4,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Sep  2 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "EventTemplateDefinitionResource.h"
@@ -20,7 +20,7 @@ namespace LinguisticProcessing {
 namespace EventAnalysis {
 
 //----------------------------------------------------------------------
-SimpleFactory<AbstractResource,EventTemplateDefinitionResource> 
+SimpleFactory<AbstractResource,EventTemplateDefinitionResource>
 EventTemplateDefinitionResourceFactory(EVENTTEMPLATEDEFINITIONRESOURCE_CLASSID);
 
 
@@ -55,7 +55,7 @@ const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefin
 void EventTemplateDefinitionResource::
 init(GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
-   
+
 {
   LOGINIT("LP::EventAnalysis");
 
@@ -67,19 +67,19 @@ init(GroupConfigurationStructure& unitConfiguration,
     string name = unitConfiguration.getParamsValueAtKey("templateName");
     m_structure.setName(name);
     LDEBUG << "Template name = "<< name;
-    
+
   }
   catch (NoSuchParam& ) {
     LERROR << "No param 'templateName' in EventTemplateDefinitionResource for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try{
-  
+
     string nameMention = unitConfiguration.getParamsValueAtKey("templateMention");
     LDEBUG << "Template mention = "<< nameMention;
     m_structure.setMention(nameMention);
   }
-  
+
   catch (NoSuchParam& ) {
     LERROR << "No param 'templateMention' in EventTemplateDefinitionResource for language " << (int)m_language;
     //throw InvalidConfiguration();
@@ -112,14 +112,14 @@ init(GroupConfigurationStructure& unitConfiguration,
       boost::char_separator<char> sep(",; ");
       boost::tokenizer<boost::char_separator<char> > tok(elements,sep);
       for(auto e=tok.begin(),e_end=tok.end(); e!=e_end;e++) {
-        LDEBUG << "EventTemplateDefinitionResource: add mapping " 
+        LDEBUG << "EventTemplateDefinitionResource: add mapping "
                 << (*it).first << ":" << *e;
         m_elementMapping[(*it).first].insert(*e);
       }
     }
   }
   catch (NoSuchMap& ) {
-    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " 
+    LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language "
             << (int)m_language;
   }
 }
@@ -127,7 +127,7 @@ init(GroupConfigurationStructure& unitConfiguration,
 int EventTemplateDefinitionResource::
 existsMapping(const std::string& eltName1, const std::string& eltName2) const
 {
-  int res=0; 
+  int res=0;
   map<string,set<string> >::const_iterator it=m_elementMapping.find(eltName1);
   if (it!=m_elementMapping.end()) {
     if ( (*it).second.find(eltName2) != (*it).second.end() ) {
