@@ -96,7 +96,7 @@ outputEntityString(std::ostream& out,
                    const std::string& entityType,
                    const std::string& entityString,
                    const std::vector<std::pair<uint64_t,uint64_t> >& positions,
-                   const Automaton::EntityFeatures& entityFeatures) const
+                   const Automaton::EntityFeatures& entityFeatures, bool /*noNorm*/) const
 {
     out << "<entity>"
         << "<id>" << "T" << entityId  << "</id>"
@@ -140,9 +140,9 @@ outputEntityNorm([[maybe_unused]] std::ostream& out,
 }
 
 void XmlIEDumper::
-outputAttributesString(std::ostream& out,
-                        unsigned int entityId,
-                        std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& mapAttributes) const
+outputAttributesString(std::ostream& /*out*/,
+                        unsigned int /*entityId*/,
+                        std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& /*mapAttributes*/) const
 {
 }
 

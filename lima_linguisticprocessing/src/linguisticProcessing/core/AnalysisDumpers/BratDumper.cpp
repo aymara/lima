@@ -75,7 +75,7 @@ outputEntityString(ostream& out,
                    const std::string& entityType,
                    const std::string& entityString,
                    const vector<pair<uint64_t,uint64_t> >& positions,
-                   const Automaton::EntityFeatures& entityFeatures) const
+                   const Automaton::EntityFeatures& entityFeatures, bool noNorm) const
 {
   out << "T" << entityId << "\t" << entityType << " ";
   if (positions.size()==0) {
@@ -92,7 +92,7 @@ outputEntityString(ostream& out,
     }
   }
   out << "\t" << entityString << "\n";
-  if (m_useNormalizedForms) {
+  if (m_useNormalizedForms && !noNorm) {
     bool done(false);
     for (Automaton::EntityFeatures::const_iterator
       featureItr=entityFeatures.begin(),features_end=entityFeatures.end();
@@ -198,7 +198,9 @@ outputEventString(ostream& out,
 {
   out << "E" << eventId << "\t";
   // mention type is now one of the roles
-  out << eventMentionType << ":T" << eventMentionId;
+  if (eventMentionId!=0) {
+    out << eventMentionType << ":T" << eventMentionId;
+  }
   if (eventRoleId.size()==0) {out << endl; return; }
 //   out << eventRoleType[0] << ":T" << eventRoleId[0]; // first one without space before
 //   for (unsigned int i(1), n=eventRoleId.size(); i<n; i++) {

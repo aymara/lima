@@ -28,7 +28,7 @@ EventTemplateDefinitionResourceFactory(EVENTTEMPLATEDEFINITIONRESOURCE_CLASSID);
 EventTemplateDefinitionResource::EventTemplateDefinitionResource():
 AbstractResource(),
 m_language(0),
-m_templates(),
+m_structure(),
 m_elementMapping()
 {
 }
@@ -36,30 +36,19 @@ m_elementMapping()
 EventTemplateDefinitionResource::~EventTemplateDefinitionResource() {
 }
 
-const std::string& EventTemplateDefinitionResource::getMention (const std::string name) const
+const std::string& EventTemplateDefinitionResource::getMention () const
 {
-  static std::string mention="";
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "getMention m_templates.size() " << m_templates.size();
-  for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
-  {
-    LDEBUG << "Cuurent Mention " << it->getMention();
-    if (name.compare(it->getName())==0) return it->getMention();
-  }
-  return mention;
+  return m_structure.getMention();
 }
 
-const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure (const std::string name) const
+const std::string& EventTemplateDefinitionResource::getName () const
 {
-  static std::map<std::string,Common::MediaticData::EntityType> structure;
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "getMention m_templates.size() " << m_templates.size();
-  for(std::vector<EventTemplateStructure>::const_iterator it=m_templates.begin();it!=m_templates.end();it++)
-  {
-    //LDEBUG << "Cuurent Mention " << it->getMention();
-    if (name.compare(it->getName())==0) return it->getStructure();
-  }
-  return structure;
+  return m_structure.getName();
+}
+
+const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure () const
+{
+  return m_structure.getStructure();
 }
 
 //----------------------------------------------------------------------
@@ -72,12 +61,11 @@ init(GroupConfigurationStructure& unitConfiguration,
 
   m_language=manager->getInitializationParameters().language;
   LDEBUG << "initialize EventTemplateDefinitionResource for language " << (int)m_language;
-  EventTemplateStructure structure;
   // get name
   try
   {
     string name = unitConfiguration.getParamsValueAtKey("templateName");
-    structure.setName(name);
+    m_structure.setName(name);
     LDEBUG << "Template name = "<< name;
     
   }
@@ -89,7 +77,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   
     string nameMention = unitConfiguration.getParamsValueAtKey("templateMention");
     LDEBUG << "Template mention = "<< nameMention;
-    structure.setMention(nameMention);
+    m_structure.setMention(nameMention);
   }
   
   catch (NoSuchParam& ) {
@@ -104,7 +92,7 @@ init(GroupConfigurationStructure& unitConfiguration,
     LDEBUG << "templateElements .size " << elts.size();
     for(auto it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
       LDEBUG << "templateElement =" << (*it).first;
-      structure.addTemplateElement((*it).first,(*it).second);
+      m_structure.addTemplateElement((*it).first,(*it).second);
     }
   }
   catch (NoSuchMap& ) {
@@ -134,8 +122,6 @@ init(GroupConfigurationStructure& unitConfiguration,
     LDEBUG << "No param 'elementMapping' in EventTemplateDefinition for language " 
             << (int)m_language;
   }
-  LDEBUG << "Adding Structure ";
-  m_templates.push_back(structure);
 }
 
 int EventTemplateDefinitionResource::
