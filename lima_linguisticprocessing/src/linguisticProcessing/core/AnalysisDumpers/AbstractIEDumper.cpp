@@ -49,6 +49,7 @@ m_domain(""),
 m_attributes(),
 m_all_attributes(false),
 m_templateDefinitions(),
+m_templateNames(),
 m_offsetMapping(nullptr),
 m_outputGroups(false)
 {
@@ -145,7 +146,9 @@ void AbstractIEDumper::init(
         EventTemplateDefinitionResource* templateDefinitions=static_cast<EventTemplateDefinitionResource*>(res);
         m_templateDefinitions.insert(std::make_pair(templateResource,templateDefinitions));
       }
-
+    }
+    for (const auto t:m_templateDefinitions) {
+      m_templateNames.insert(t.second->getMention());
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // do nothing: optional
@@ -410,27 +413,22 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
     const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
 
-      std::string templateType=it->getType();
-      LDEBUG << "templateType " << templateType;
-
-      EventTemplateDefinitionResource* res=NULL;
-      for(auto itm=m_templateDefinitions.cbegin();
-          itm!=m_templateDefinitions.cend();itm++)
-      {
-        if (itm->first.compare(templateType)==0) res=itm->second;
-      }
+      const std::string& templateName=it->getType();
+      LDEBUG << "templateName:" << templateName;
+      
       std::string templateMention="";
-      if (res!=NULL) {
-        templateMention=res->getMention(templateType);
+      for(const auto t:m_templateDefinitions)
+      {
+        if (t.second->getName()==templateName) templateMention=t.second->getMention();
       }
-      LDEBUG << "templateMention " << templateMention;
-
+      LDEBUG << "templateMention" << templateMention;
+      
       EventInfos eventInfos;
 
       for(map<string,EventTemplateElement>::const_iterator it1= templateElements.begin(); it1!= templateElements.end();it1++)
       {
         const string typeName=it1->first;
-        LDEBUG << "typeName=" << typeName << ",templateMention=" << templateMention;
+        LDEBUG << "typeName='" << typeName << "',templateMention='" << templateMention << "'";
 
         LinguisticGraphVertex v=(*it1).second.getVertex();
         LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
@@ -441,6 +439,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
         if (addEventMentionAsEntity() && templateMention.compare(typeName)==0)
         {
           // specific treatment for event mention: add a new entity with the corresponding type
+          LDEBUG << "add event mention as entity typeName=" << typeName;
           eventInfos.eventMentionString=stringForm;
           eventInfos.eventMentionPosition=position;
           eventInfos.eventMentionLength=length;
@@ -457,6 +456,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
           uint64_t id(0);
           if (itE!=mapEntities.end()) {
             id=(*itE).second;
+            LDEBUG << "AbstractIEDumper: found index" << id << "for entity (" << position << "," << length << "," << entityType << ")";
           }
           else {
             LERROR << "AbstractIEDumper: cannot find index of entity (" << position << "," << length << "," << entityType << ")";
@@ -475,7 +475,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
           }
         }
       }
-      LDEBUG << "Add event infos" << eventInfos.eventMentionId << "/" << eventInfos.eventMentionPosition;
+      LDEBUG << "Add event infos" << eventInfos.eventMentionId << "/" << eventInfos.eventMentionPosition << "/" << eventInfos.eventMentionType;
       events.insert(eventInfos);
       LDEBUG << "=>" << events.size() << "events";
       // use a bufferEvents to have all event mentions as entities before all events
@@ -490,10 +490,10 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
       LimaString eventMentionString=Lima::Common::Misc::utf8stdstring2limastring(e.eventMentionString);
       computePositions(positions,eventMentionString,e.eventMentionPosition,e.eventMentionLength);
       if (m_outputGroups && !m_domain.empty()) {
-        outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures());
+        outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
       }
       else {
-        outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures());
+        outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
       }
       idEntity++;
     }
@@ -654,7 +654,12 @@ outputEntity(std::ostream& out,
     //std::cout << "domainType " << domainType << " domainType.size " << domainType.size() << std::endl;
     //std::cout << "Entity is printed " << entityType << "domain=" << domainType << " / targetDomain=" << m_domain << std::endl;
     const Automaton::EntityFeatures& entityFeatures = annot->getFeatures();
-    outputEntityString(out, index, entityType, stringForm.toUtf8().data(), positions, entityFeatures);
+    bool forceNoNorm=false;
+    if (m_templateNames.find(entityType)!=m_templateNames.end()) {
+      // if the entity is a template mention, must not have a normalization (according to Brat)
+      forceNoNorm=true;
+    }
+    outputEntityString(out, index, entityType, stringForm.toUtf8().data(), positions, entityFeatures,forceNoNorm);
 
     // identify attributes as entityFeatures having a "POSITION" (or parts of a numex) and being in the declared list of attributes to display
     for(Automaton::EntityFeatures::const_iterator featureItr=entityFeatures.cbegin(),features_end=entityFeatures.cend();

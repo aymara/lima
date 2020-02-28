@@ -37,7 +37,7 @@ public:
                           const std::string& entityType,
                           const std::string& entityString,
                           const std::vector<std::pair<uint64_t,uint64_t> >& positions,
-                          const Automaton::EntityFeatures& entityFeatures) const override;
+                          const Automaton::EntityFeatures& entityFeatures, bool noNorm=false) const override;
 
   void outputAttributesString(std::ostream& out,
                           unsigned int entityId,

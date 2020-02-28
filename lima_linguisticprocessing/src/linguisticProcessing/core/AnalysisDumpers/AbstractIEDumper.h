@@ -60,7 +60,8 @@ public:
                                   const std::string& entityType,
                                   const std::string& entityString,
                                   const std::vector<std::pair<uint64_t,uint64_t> >& positions,
-                                  const Automaton::EntityFeatures& entityFeatures) const=0;
+                                  const Automaton::EntityFeatures& entityFeatures,
+                                  bool noNorm=false) const=0;
 
   virtual void outputAttributesString(std::ostream& out,
                                   unsigned int entityId,
@@ -97,6 +98,7 @@ protected:
   std::deque< std::string > m_attributes;
   bool m_all_attributes;
   std::map<std::string,EventAnalysis::EventTemplateDefinitionResource*> m_templateDefinitions;
+  std::set<std::string> m_templateNames;
   // small hack: make it mutable so that process() can be const
   // @todo: pass it as argument to all the internal functions where needed
   mutable OffsetMapping* m_offsetMapping;

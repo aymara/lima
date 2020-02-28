@@ -36,12 +36,13 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionResource : public Abstrac
   
   // mapping is oriented, return 1 if mapping elt1 -> elt2, -1 if mapping elt2 -> elt1, 0 otherwise
   int existsMapping(const std::string& eltName1, const std::string& eltName2) const;
-  const std::string& getMention(const std::string)  const;
-  const std::map<std::string,Common::MediaticData::EntityType>& getStructure(const std::string)  const;
+  const std::string& getName()  const;
+  const std::string& getMention()  const;
+  const std::map<std::string,Common::MediaticData::EntityType>& getStructure()  const;
     
  private:
   MediaId m_language;
-  std::vector<EventTemplateStructure> m_templates;
+  EventTemplateStructure m_structure;
   std::map<std::string, std::set<std::string> > m_elementMapping;
   
 };
