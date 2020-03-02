@@ -9,7 +9,7 @@ environment:
   LIMA_EXTERNALS: c:/d
   LIMA_CONF: 'c:\b\execEnv\config'
   LIMA_RESOURCES: 'c:\b\execEnv\resources'
-  Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2015_64'
+  Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
   BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
   BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.0'
   PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
