@@ -10,8 +10,8 @@ environment:
   LIMA_CONF: 'c:\b\execEnv\config'
   LIMA_RESOURCES: 'c:\b\execEnv\resources'
   Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
-  BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
-  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.1'
+  BOOST_ROOT: 'C:\Libraries\boost_1_67_0'
+  BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_67_0\lib64-msvc-14.1'
   PATH: 'C:\b\execEnv\lib;%Qt5_INSTALL_DIR%\bin;%BOOST_LIBRARYDIR%;c:\msys64\usr\bin;%PATH%'
   LIMA_DISABLE_FSW_TESTING: true
   NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
