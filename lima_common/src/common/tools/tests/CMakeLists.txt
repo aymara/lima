@@ -15,6 +15,7 @@ add_executable(LimaFileSystemWatcherTest0
 
 target_link_libraries(LimaFileSystemWatcherTest0
   lima-common-factory
+  lima-common-tools
   Qt5::Test
 )
 

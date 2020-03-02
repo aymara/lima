@@ -299,19 +299,22 @@ int run(int argc, char** argv)
 
   if (QsLogging::initQsLog(configPath) != 0)
   {
-    LOGINIT("Automaton::Compiler");
-    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
+    std::cerr << "Call to QsLogging::initQsLog(\"" << configPath.toStdString() 
+              << "\") failed.";
     return EXIT_FAILURE;
   }
-
+  std::cerr << "compile_rules before Lima::AmosePluginsManager::single";
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
 //   Lima::AmosePluginsManiager::changeable().loadPlugins(configPath);
+  std::cerr << "compile_rules before loadPlugins";
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
   {
     LOGINIT("Automaton::Compiler");
     LERROR << "compile-rules: Call to loadPlugins(\""
             << configPath << "\") failed.";
+    std::cerr << "compile-rules: Call to loadPlugins(\""
+              << configPath.toStdString() << "\") failed.";
     return EXIT_FAILURE;
   }
 
@@ -325,6 +328,7 @@ int run(int argc, char** argv)
     LOGINIT("Automaton::Compiler");
     LDEBUG << "main: MediaticData::changeable().init( "
             << param.resourcesDir << ")...";
+  std::cerr << "compile_rules before MediaticData::changeable().init";
     MediaticData::changeable().init(
       resourcesPath.toUtf8().constData(),
       configPath.toUtf8().constData(),
@@ -374,6 +378,9 @@ int run(int argc, char** argv)
       LOGINIT("Automaton::Compiler");
       LERROR << "No language was configured configured with" << configDirs
               << "and" << param.lpConfigFile.c_str();
+      std::cerr << "No language was configured configured with" 
+                << configDirs.join(":").toStdString()
+                << "and" << param.lpConfigFile;
       return EXIT_FAILURE;
     }
 

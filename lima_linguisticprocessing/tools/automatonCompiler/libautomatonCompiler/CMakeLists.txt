@@ -40,6 +40,7 @@ ADD_DLL_TO_PATH(lima-lp-automatoncompiler)
 target_link_libraries(lima-lp-automatoncompiler
   lima-lp-automaton
   lima-lp-analysisdict
+  lima-xp-core
 )
 
 set_target_properties(lima-lp-automatoncompiler PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

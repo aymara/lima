@@ -39,22 +39,20 @@ SET(lima-common-tools_LIB_SRCS
     FileUtils.cpp
   )
 
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-SET(lima-common-tools_LIB_SRCS
-    ${lima-common-tools_LIB_SRCS}
-  )
-
-endif()
-add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS} ${lima-common-tools_MOC_OUTFILES})
+add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS})
 ADD_DLL_TO_PATH(lima-common-tools)
 
 target_link_libraries(lima-common-tools
   Qt5::Core
 )
 
-set_target_properties(lima-common-tools PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
-install(TARGETS lima-common-tools DESTINATION ${LIB_INSTALL_DIR}
-    COMPONENT runtime)
+set_target_properties(lima-common-tools PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+  
+install(TARGETS lima-common-tools 
+  DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 add_subdirectory(tests)
 

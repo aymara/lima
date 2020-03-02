@@ -17,16 +17,6 @@
 project(limacommon)
 cmake_minimum_required(VERSION 3.4.0)
 
-#cmake_policy
-if(POLICY CMP0020)
-cmake_policy(SET CMP0020 OLD)
-endif()
-
-# Use these cmake parameters (adapt to your setup) to compile under Windows
-# -DCMAKE_INSTALL_PREFIX="c:/amose" -DCMAKE_BUILD_TYPE=Release
-# -DCMAKE_INSTALL_PREFIX="c:/amose-debug" -DCMAKE_BUILD_TYPE=RelWithDebInfo
-
-set(CMAKE_USE_RELATIVE_PATHS OFF)
 enable_testing()
 
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
@@ -71,7 +61,8 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.54 REQUIRED COMPONENTS unit_test_framework system filesystem)
+find_package(Boost 1.54 REQUIRED 
+  COMPONENTS unit_test_framework system filesystem)
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
