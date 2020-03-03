@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales apt-utils lsb-release git gcc g++ make cmake cmake-data curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm -qq
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales apt-utils lsb-release git gcc g++ make curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qtdeclarative5-models-plugin qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm -qq
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -10,12 +10,20 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
+
 ARG BRANCH
 ARG GITHUB_TOKEN
 ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
+
+# Install recent cmake
+WORKDIR /cmake_build
+RUN wget https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
+RUN sh cmake-3.16.4-Linux-x86_64.sh --prefix=/usr --exclude-subdir --skip-license
+RUN cmake --version
+WORKDIR /
 
 # Setup
 RUN npm install -g json
