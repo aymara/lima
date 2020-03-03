@@ -71,23 +71,18 @@ else ()
     ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
   )
 
-  SET(limadbusserver_MOC_HEADERS
-    LimaDBusServer.h
-    AnalysisWrapper.h
-  )
-
-  qt5_generate_dbus_interface(
-    LimaDBusServer.h
-    fr.cea.limadbusserver.xml
-    OPTIONS -a -M
-  )
-  # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
+#   qt5_generate_dbus_interface(
+#     LimaDBusServer.h
+#     fr.cea.limadbusserver.xml
+#     OPTIONS -a -M
+#   )
+#   # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
   qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
                        LimaDBusServer.h LimaDBusServer)
   # qt5_add_resources(limadbusserver limaserver.qrc)
 
-  # add_executable(limadbusserver ${limaserver_SRCS} ${limaserver_QRCS} ${limaserver_MOC_OUTFILES})
+  # add_executable(limadbusserver ${limaserver_SRCS} ${limaserver_QRCS})
   add_executable(limadbusserver ${limadbusserver_SRCS})
 
   target_link_libraries(limadbusserver

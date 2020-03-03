@@ -26,14 +26,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 #
 # ########### next target ###############
 #
-# set (lima-common-qslog_MOC_HEADERS
-#     QsLogCategories.h
-# )
-#
-#
-# qt5_wrap_cpp (lima-common-qslog_MOC_OUTFILES ${lima-common-qslog_MOC_HEADERS})
-#
-#
 # SET(lima-common-qslog_LIB_SRCS
 #     QsLog.cpp
 #     QsDebugOutput.cpp

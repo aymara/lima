@@ -109,9 +109,6 @@ target_link_libraries(ReadWriteTools2
 add_test(NAME ReadWriteTools2 COMMAND ReadWriteTools2)
 
 ########### next test ###############
-# set (FileUtilsTest0_MOC_HEADERS FileUtilsTest.h)
-# qt5_wrap_cpp (FileUtilsTest0_MOC_OUTFILES ${FileUtilsTest0_MOC_HEADERS})
-
 
 SET(FileUtilsTest0_SRCS
   FileUtilsTest.cpp
