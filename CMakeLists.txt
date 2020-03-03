@@ -1,5 +1,5 @@
 project(Lima)
-cmake_minimum_required(VERSION 3.4.0)
+cmake_minimum_required(VERSION 3.12.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()

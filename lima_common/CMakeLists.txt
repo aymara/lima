@@ -55,13 +55,14 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
           COMPONENT runtime)
 endif ()
 
+add_definitions( -DBoost_DEBUG=ON )
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.54 REQUIRED 
+find_package(Boost 1.54 REQUIRED
   COMPONENTS unit_test_framework system filesystem)
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
