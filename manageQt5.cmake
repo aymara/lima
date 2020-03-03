@@ -53,6 +53,19 @@ macro(addQt5Modules)
     foreach( _module ${_MODULES})
       message("Adding module ${_module}")
       set(Qt5_LIBRARIES ${Qt5_LIBRARIES} Qt5::${_module} )
+
+      get_target_property(QtModule_location Qt5::${_module} LOCATION)
+
+      if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        install(FILES ${QtModule_location}
+                DESTINATION ${LIB_INSTALL_DIR}
+                COMPONENT runtime)
+        set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+          ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+          ${QtModule_location}
+          )
+      endif ()
+
     endforeach()
   endif()
 endmacro()

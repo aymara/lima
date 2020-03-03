@@ -1,9 +1,13 @@
+cmake_minimum_required(VERSION 3.10)
 project(Lima)
-cmake_minimum_required(VERSION 3.12.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 enable_testing()
+include(GNUInstallDirs)
+
 include(${CMAKE_SOURCE_DIR}/SystemSpecificInformations.cmake)
+message("System name is ${CMAKE_SYSTEM_NAME}")
 
 message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
 # Find*.cmake will be searched in the following dirs if not found in system dirs
@@ -17,9 +21,9 @@ set(CMAKE_MODULE_PATH
 
 # find_path and find_library will search in these dirs too
 set(CMAKE_PREFIX_PATH
+    "${CMAKE_PREFIX_PATH}"
     "$ENV{LIMA_EXTERNALS}"
 )
-
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
@@ -101,9 +105,235 @@ else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
 endif()
 
+include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
+addQt5Modules(Core Gui Qml Quick QuickTest Test Xml XmlPatterns Widgets )
+# include_directories(${Qt5_INCLUDES})
+message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
+
+# Search Qt5 optional components
+find_package(Qt5 COMPONENTS DBus)
+if (Qt5DBus_FOUND)
+  addQt5Modules(DBus)
+  get_target_property(QtDBus_location Qt5::DBus LOCATION)
+endif()
+
+if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
+  message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
+else ()
+endif()
+
+add_definitions( -DBoost_DEBUG=ON )
+add_definitions( -DBOOST_ALL_NO_LIB )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+set( Boost_USE_STATIC_LIBS OFF )
+set( Boost_USE_MULTITHREADED ON )
+set( Boost_USE_STATIC_RUNTIME OFF )
+set( BOOST_LIB_DIAGNOSTIC )
+find_package(Boost 1.58 REQUIRED
+  COMPONENTS regex filesystem program_options system thread unit_test_framework)
+
+
+message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG})
+    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_DEBUG})
+  else()
+    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
+  endif()
+  install(FILES ${Boost_SYSTEM_LIBRARY_dll}
+                ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
+                ${Boost_REGEX_LIBRARY_dll}
+                ${Boost_FILESYSTEM_LIBRARY_dll}
+                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+                ${Boost_THREAD_LIBRARY_dll}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${Boost_REGEX_LIBRARY_dll}
+      ${Boost_FILESYSTEM_LIBRARY_dll}
+      ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
+      ${Boost_THREAD_LIBRARY_dll})
+endif ()
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
+file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
+
+macro (DECLARE_LIMA_PLUGIN _plugin)
+  file (APPEND ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "${_plugin}\n")
+  add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
+  ADD_DLL_TO_PATH(${_plugin})
+endmacro ()
+
+SET(optionalLibs)
+
+if (DEFINED ENV{PYTHON_VERSION})
+  set(Python_ADDITIONAL_VERSIONS $ENV{PYTHON_VERSION})
+else ()
+  set(Python_ADDITIONAL_VERSIONS 3.5 3.6 3.7)
+endif ()
+
+find_package(PythonLibs 3)
+if (${PYTHONLIBS_FOUND})
+  include_directories(${PYTHON_INCLUDE_DIRS})
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set(PYTHON_DLLS "")
+    foreach(PYTHON_LIB ${PYTHON_LIBRARIES})
+      message("Python lib: ${PYTHON_LIB}")
+      if (NOT EXISTS ${PYTHON_LIB})
+        continue()
+      endif()
+#      string(REPLACE "/" "\\" PYTHON_LIB ${PYTHON_LIB})
+#      get_filename_component(PYTHON_LIB_FILE_NAME, ${PYTHON_LIB}, NAME)
+#      it looks like get_Filename_component doesn't work (cmake 3.13.3 - 3.13.4)
+      string(REGEX MATCH "[^/\\]+$" PYTHON_LIB_FILE_NAME ${PYTHON_LIB})
+      string(LENGTH "${PYTHON_LIB_FILE_NAME}" PYTHON_LIB_FILE_NAME_LEN)
+#      message("SRC: ${PYTHON_LIB} FN: ${PYTHON_LIB_FILE_NAME} LEN: ${PYTHON_LIB_FILE_NAME_LEN}")
+      if ("${PYTHON_LIB_FILE_NAME_LEN}" LESS 6)
+        continue()
+      endif()
+      message("Python lib name: ${PYTHON_LIB_FILE_NAME}")
+      string(SUBSTRING ${PYTHON_LIB_FILE_NAME} 0, 6, FIRST_SIX_CHARS_OF_LIB_NAME)
+#      message("First six chars: ${FIRST_SIX_CHARS_OF_LIB_NAME}")
+      if (NOT ${FIRST_SIX_CHARS_OF_LIB_NAME} STREQUAL "python")
+         continue()
+      endif()
+      string(REPLACE ".lib" ".dll" PYTHON_DLL ${PYTHON_LIB})
+      string(REPLACE "libs" "" PYTHON_DLL ${PYTHON_DLL})
+      message("Python dll: ${PYTHON_DLL} / Python lib: ${PYTHON_LIB}")
+      if(EXISTS ${PYTHON_DLL})
+        string(REPLACE "\\" "\\\\" ESCAPED_PATH_TO_PYTHON_DLL ${PYTHON_DLL})
+        list(APPEND PYTHON_DLLS ${ESCAPED_PATH_TO_PYTHON_DLL})
+        break()
+      else()
+        message(FATAL_ERROR "Could not find Python ( ${PYTHON_DLL} / ${PYTHON_LIB} )")
+      endif()
+    endforeach()
+
+    message("PYTHON_DLLS = ${PYTHON_DLLS} / PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
+
+    string(LENGTH "${PYTHON_DLLS}" PYTHON_DLLS_LEN)
+    if (${PYTHON_DLLS_LEN} LESS 1)
+      message(FATAL_ERROR "Could not find Python")
+    endif()
+
+    install(FILES ${PYTHON_DLLS}
+            DESTINATION ${LIB_INSTALL_DIR}
+            COMPONENT runtime)
+
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+        ${PYTHON_DLLS})
+
+    install(FILES ${PYTHON_LIB}
+            DESTINATION ${LIB_INSTALL_DIR}
+            COMPONENT runtime)
+
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+        ${PYTHON_LIB})
+
+  endif ()
+endif ()
+
+find_package(SVMTOOL++)
+if(SVMTOOL++_FOUND)
+  set(optionalLibs ${optionalLibs} ${SVMTOOL++_NAMES})
+  include_directories(${SVMTOOL++CPP_INCLUDE_DIR})
+  link_directories(${SVMTOOL++CPP_LIBRARY_DIRS})
+  message(STATUS "Hi, Found SVMTool++ ${SVMTOOL++CPP_INCLUDE_DIR}.")
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${SVMTOOL++_NAMES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${SVMTOOL++_NAMES})
+  endif()
+else ()
+  message(STATUS "Hi, Could not find SVMTool++. SVM-base PoS tagger will not be available.")
+endif()
+
+find_package (Enchant)
+if (ENCHANT_FOUND)
+  set(optionalLibs ${optionalLibs} ${ENCHANT_LIBRARIES})
+  include_directories(${ENCHANT_INCLUDE_DIRS})
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${ENCHANT_LIBRARIES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${ENCHANT_LIBRARIES})
+  endif ()
+
+else ()
+  message(STATUS "Could not find Enchant ${ENCHANT_INCLUDE_DIRS}. Spelling correction will not be built.")
+endif ()
+
+find_package (Tre)
+if (TRE_FOUND)
+  set(optionalLibs ${optionalLibs} ${TRECPP_LIBRARIES})
+  include_directories(${TRECPP_INCLUDE_DIRS})
+  message(STATUS "Found tre library. Module ApproxStringMatcher will be built")
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${TRECPP_LIBRARIES}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${TRECPP_LIBRARIES})
+  endif ()
+else (TRECPP_FOUND)
+  message(STATUS "Could not find tre ${TRECPP_INCLUDE_DIRS}. ApproxStringMatcher module will not be built.")
+endif (TRE_FOUND)
+
+# QHttpServer is necessary for limaserver HTTP server
+find_package(QHttpServer QUIET)
+if (NOT QHTTPSERVER_FOUND)
+  message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
+else ()
+  message(STATUS "Found QHttpServer. lima HTTP server will be built with ${QHTTPSERVERCPP_INCLUDE_DIR} and ${QHTTPSERVERCPP_LIBRARY}")
+  include_directories(${QHTTPSERVERCPP_INCLUDE_DIR})
+  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    string(REPLACE ".lib" ".dll" QHTTPSERVERCPP_LIBRARY_DLL ${QHTTPSERVERCPP_LIBRARY})
+    install(FILES ${QHTTPSERVERCPP_LIBRARY} ${QHTTPSERVERCPP_LIBRARY_DLL}
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${QHTTPSERVERCPP_LIBRARY})
+  endif ()
+endif ()
+
+message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
+
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR} REQUIRED)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMACOMMONConfig.cmake
+  DESTINATION share/apps/lima/cmake/Modules
+  COMPONENT devel)
+
+set(LIMA_LP_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
+set(LIMA_LP_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
+
 
 set(CPACK_PACKAGE_VENDOR "CEA LIST")
 set(CPACK_PACKAGE_CONTACT "Gaël de Chalendar <Gael.de-Chalendar@cea.fr>")
@@ -112,10 +342,6 @@ SET(CPACK_PACKAGE_VERSION_MINOR "${LIMA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_VERSION "${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Lima-${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}")
-
-add_definitions(-D QT_NO_KEYWORDS)
-include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
-addQt5Modules(Core Xml Test Qml Quick QuickTest Gui Widgets XmlPatterns)
 
 include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
 
