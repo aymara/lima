@@ -31,7 +31,7 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt
 )
 
-DISAMBMATRICES(fre succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl U,ET,PREF,NPP,PONCT,CC,CS)
+DISAMBMATRICES(fre succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_prior-convert.pl U,ET,PREF,NPP,PONCT,CC,CS)
 
 add_dependencies(trigrammatrix-fre categs-fre)
 

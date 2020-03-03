@@ -23,13 +23,13 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT lefff-ext-simplified.txt
     COMMAND cat ${lefffFiles} > lefff-ext.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh lefff-ext.txt > lefff-ext-simplified.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/extract-lefff-forms.sh lefff-ext.txt > lefff-ext-simplified.txt
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt >> lefff-ext-simplified.txt
     COMMAND LC_ALL="C" sort -u -o lefff-ext-simplified.txt lefff-ext-simplified.txt
     DEPENDS 
       ${lefffFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt
-      ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh
+      ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/extract-lefff-forms.sh
     COMMENT "Simplify the Lefff"
     VERBATIM
   )
@@ -37,13 +37,13 @@ else()
   add_custom_command(
     OUTPUT lefff-ext-simplified.txt
     COMMAND cat ${lefffFiles} > lefff-ext.txt
-    COMMAND ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh lefff-ext.txt > lefff-ext-simplified.txt
+    COMMAND ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/extract-lefff-forms.sh lefff-ext.txt > lefff-ext-simplified.txt
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt >> lefff-ext-simplified.txt
     COMMAND sort -u -o lefff-ext-simplified.txt lefff-ext-simplified.txt
     DEPENDS 
       ${lefffFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/lefff-amalgames.txt
-      ${PROJECT_SOURCE_DIR}/scripts/extract-lefff-forms.sh
+      ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/extract-lefff-forms.sh
     COMMENT "Simplify the Lefff"
     VERBATIM
   )

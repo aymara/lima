@@ -27,19 +27,19 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     OUTPUT dico.xml forms.dic default-eng.dat
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
     COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  
+    DEPENDS
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
       ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
-      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
+      ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Linux"
     VERBATIM
   )
@@ -49,19 +49,19 @@ else()
     OUTPUT dico.xml forms.dic default-eng.dat
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
+    COMMAND python ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
     COMMAND sort -u -o forms.dic.3 forms.dic.2
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
+    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt ../code/convjys.txt default-eng.dat
     COMMAND mv dico.xml.tmp dico.xml
-    DEPENDS  
-      ${dicoFiles} 
-      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt 
+    DEPENDS
+      ${dicoFiles}
+      ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt
       ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt
-      ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py
+      ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/merge-dico-poscorpus.py
     COMMENT "produce eng XML dico under Windows"
   )
 endif()
@@ -80,7 +80,7 @@ add_custom_target(
 add_dependencies(converteng dicoxmleng )
 
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat 
-  COMPONENT eng 
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/default-eng.dat
+  COMPONENT eng
   DESTINATION share/apps/lima/resources/LinguisticProcessings/eng
 )
