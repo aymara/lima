@@ -8,6 +8,7 @@
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/traceUtils.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "common/MediaProcessors/MediaAnalysisDumper.h"
@@ -38,7 +39,7 @@ using namespace Lima::LinguisticProcessing;
 class LimaDBusServerPrivate
 {
   friend class LimaDBusServer;
-  LimaDBusServerPrivate( const std::string& limaServerConfigFile,
+  LimaDBusServerPrivate( const QString& configPath,
               const std::deque<std::string>& langs,
               const std::deque<std::string>& pipelines,
               LimaDBusServer* p);
@@ -51,7 +52,7 @@ class LimaDBusServerPrivate
 };
 
 
-LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
+LimaDBusServerPrivate::LimaDBusServerPrivate( const QString& configPath,
                                 const std::deque<std::string>& langs,
                                 const std::deque<std::string>& pipelines,
                                 LimaDBusServer* p)
@@ -59,7 +60,7 @@ LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
 {
   CORECLIENTLOGINIT;
   LDEBUG << "::LimaDBusServer::LimaDBusServer()...";
-  
+
   // initialize common
   std::string resourcesPath = qgetenv("LIMA_RESOURCES").constData();
   if( resourcesPath.empty() )
@@ -71,20 +72,20 @@ LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
   std::copy ( langs.begin(), langs.end(), out_it );
   LDEBUG << "LimaDBusServer::LimaDBusServer: init MediaticData("
            << "resourcesPath=" << resourcesPath
-           << "configDir=" << configDir
+           << "configPath=" << configPath
            << "commonConfigFile=" << commonConfigFile
            << "langs=" << oss.str();
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath,
-    configDir,
+    configPath.toStdString(),
     commonConfigFile,
     langs);
-  
+
   // initialize linguistic processing
   QString clientId("lima-coreclient");
   QString lpConfigFile("lima-analysis.xml");
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-    QString::fromUtf8(configDir.c_str()) + "/" + lpConfigFile);
+  QString fullLpConfigFile = findFileInPaths(configPath, lpConfigFile);
+  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(fullLpConfigFile);
 
   LDEBUG << "LimaDBusServer::LimaDBusServer: configureClientFactory...";
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
@@ -92,7 +93,7 @@ LimaDBusServerPrivate::LimaDBusServerPrivate( const std::string& configDir,
     lpconfig,
     langs,
     pipelines);
-  
+
   LDEBUG << "LimaDBusServer::LimaDBusServer: createClient...";
   m_analyzer=new AnalysisWrapper(std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(LinguisticProcessingClientFactory::single().createClient(clientId.toUtf8().constData())),m_langs,p);
 
@@ -106,12 +107,15 @@ LimaDBusServerPrivate::~LimaDBusServerPrivate()
   // delete m_analyzer;
 }
 
-LimaDBusServer::LimaDBusServer( const std::string& configDir,
+LimaDBusServer::LimaDBusServer( const QString& configPath,
                                 const std::deque<std::string>& langs,
                                 const std::deque<std::string>& pipelines,
                                 int serviceLife,
                                 QObject *parent)
-     : QObject(parent), m_d(new LimaDBusServerPrivate(configDir,langs,pipelines,this))
+     : QObject(parent), m_d(new LimaDBusServerPrivate(configPath,
+                                                      langs,
+                                                      pipelines,
+                                                      this))
 {
   CORECLIENTLOGINIT;
   LDEBUG << "LimaDBusServer::LimaDBusServer()" << serviceLife;

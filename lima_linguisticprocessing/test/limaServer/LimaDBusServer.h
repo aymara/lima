@@ -17,7 +17,7 @@ public:
   /**
    * @param serviceLife life of service in seconds. no limit if 0
    */
-    LimaDBusServer( const std::string& limaServerConfigFile,
+    LimaDBusServer(const QString& limaServerConfigPath,
                 const std::deque<std::string>& langs,
                 const std::deque<std::string>& pipelines,
                 int serviceLife = 0,
@@ -32,4 +32,4 @@ private:
 };
 
  #endif
- 
+

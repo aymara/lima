@@ -1,24 +1,6 @@
 
-# find_package(QHttpServer QUIET)
-# if (NOT QHTTPSERVER_FOUND)
-#   message(STATUS "QHttpServer Not found...")
-# else(NOT QHTTPSERVER_FOUND)
-#   message(STATUS "Found QHttpServer??")
-#   message (STATUS,"QHTTPSERVER_NAMES: ${QHTTPSERVER_NAMES}")
-#   message(STATUS "QHTTPSERVERCPP_INCLUDE_DIR=${QHTTPSERVERCPP_INCLUDE_DIR}")
-#   message(STATUS "QHTTPSERVERCPP_LIBRARY_DIRS=${QHTTPSERVERCPP_LIBRARY_DIRS}")
-#   include_directories($ENV{LIMA_EXTERNALS}/include)
-#   link_directories($ENV{LIMA_EXTERNALS}/lib)
-# endif (NOT QHTTPSERVER_FOUND)
-
-
 ########### next target ###############
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/test ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-
-# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-# foreach(dir ${dirs})
-#   message(STATUS "dir='${dir}'")
-# endforeach()
 
 SET(limaserver_SRCS
   LimaServer.cpp
@@ -26,9 +8,6 @@ SET(limaserver_SRCS
   analysisthread.cpp
 )
 
-# qt5_add_resources(limaserver limaserver.qrc)
-
-# add_executable(limaserver ${limaserver_SRCS} ${limaserver_QRCS} ${limaserver_MOC_OUTFILES})
 add_executable(limaserver ${limaserver_SRCS})
 
 target_link_libraries(limaserver
@@ -64,6 +43,12 @@ if (NOT Qt5DBus_FOUND)
   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 else ()
 
+  qt5_generate_dbus_interface(
+    LimaDBusServer.h
+    fr.cea.limadbusserver.xml
+    OPTIONS -a -M
+  )
+
   SET(limadbusserver_SRCS
     LimaDBusServer.cpp
     mainLimaDBusServer.cpp
@@ -71,18 +56,11 @@ else ()
     ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
   )
 
-#   qt5_generate_dbus_interface(
-#     LimaDBusServer.h
-#     fr.cea.limadbusserver.xml
-#     OPTIONS -a -M
-#   )
-#   # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
-
-  qt5_add_dbus_adaptor(limadbusserver_SRCS ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
-                       LimaDBusServer.h LimaDBusServer)
+  qt5_add_dbus_adaptor(limadbusserver_SRCS
+      ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
+      LimaDBusServer.h LimaDBusServer)
   # qt5_add_resources(limadbusserver limaserver.qrc)
 
-  # add_executable(limadbusserver ${limaserver_SRCS} ${limaserver_QRCS})
   add_executable(limadbusserver ${limadbusserver_SRCS})
 
   target_link_libraries(limadbusserver

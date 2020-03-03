@@ -26,6 +26,7 @@
 
 #include "common/LimaCommon.h"
 #include "common/QsLog/QsLogCategories.h"
+#include "common/tools/FileUtils.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 // #ifdef WIN32
@@ -33,6 +34,7 @@
 // #endif
 using namespace Lima;
 using namespace Lima::Common;
+using namespace Lima::Common::Misc;
 using namespace Lima::Common::XMLConfigurationFiles;
 
 #define DEFAULT_PORT 8080
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
 
-  std::string configDir;
+  std::string configPath;
   std::string limaServerConfigFile;
   // list of langs to initialize analyzer
   std::vector<std::string> languages;
@@ -60,13 +62,13 @@ int main(int argc, char **argv)
   int optional_port;
   // time before service stop
   int service_life = 0;
-  
+
   // Declare the supported options.
   po::options_description desc("Usage");
   desc.add_options()
   ("help,h", "Display this help message")
   ("language,l", po::value< std::vector<std::string> >(&languages), "supported languages trigrams")
-  ("config-dir", po::value<std::string>(&configDir)->default_value(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData(),"$LIMA_CONF"),
+  ("config-dir", po::value<std::string>(&configPath)->default_value(qgetenv("LIMA_CONF").constData()==0?"":qgetenv("LIMA_CONF").constData(),"$LIMA_CONF"),
                                                                                                                   "Set the directory containing the (LIMA) configuration files")
   ("common-config-file", po::value<std::string>(&limaServerConfigFile)->default_value("lima-dbusserver.xml"),
                                                                                   "Set the LIMA server configuration file to use")
@@ -77,32 +79,32 @@ int main(int argc, char **argv)
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
    "set the service life (nb seconds)");
-  
+
   po::positional_options_description p;
   p.add("input-file", -1);
-  
+
   // store value of options
   po::variables_map varMap;
   // parse args and set values in store
   po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), varMap);
   po::notify(varMap);
 
-  // 
+  //
   if (varMap.count("help")) {
     std::cout << desc << std::endl;
     return 1;
   }
-  if (configDir.empty())
+  if (configPath.empty())
   {
-    configDir = "/usr/share/config/lima/";
+    configPath = "/usr/share/config/lima/";
   }
-  
+
   // Parse configuration file of lima server
   // options in command line supercede options in configuration file
   // port
-  std::string fileName(configDir);
-  fileName.append("/").append(limaServerConfigFile);
-  XMLConfigurationFileParser configLimaServer(fileName.c_str());
+  QString fileName = findFileInPaths(QString::fromStdString(configPath),
+                                     QString::fromStdString(limaServerConfigFile));
+  XMLConfigurationFileParser configLimaServer(fileName);
 
   // analyzer languages
   {
@@ -179,7 +181,11 @@ int main(int argc, char **argv)
   }
 
   // Create instance of server
-  LimaDBusServer server( configDir, langs, pipes, service_life*1000, &app);
+  LimaDBusServer server(QString::fromStdString(configPath),
+                        langs,
+                        pipes,
+                        service_life*1000,
+                        &app);
 
   //return app.exec();
   int ret = app.exec();
