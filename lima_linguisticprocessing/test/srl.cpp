@@ -17,8 +17,13 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include <Python.h>
-#include <iostream>
+#ifdef _DEBUG
+  #undef _DEBUG
+  #include <Python.h>
+  #define _DEBUG
+#else
+  #include <Python.h>
+#endif#include <iostream>
 #include <QtCore>
 
 #if PY_MAJOR_VERSION < 3

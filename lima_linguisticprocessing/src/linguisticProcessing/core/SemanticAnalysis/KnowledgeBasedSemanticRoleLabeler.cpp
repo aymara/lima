@@ -34,7 +34,13 @@
 #include "common/time/timeUtilsController.h"
 
 #include <string>
-#include <Python.h>
+#ifdef _DEBUG
+  #undef _DEBUG
+  #include <Python.h>
+  #define _DEBUG
+#else
+  #include <Python.h>
+#endif
 #include <QtCore/QTemporaryFile>
 
 using namespace std;

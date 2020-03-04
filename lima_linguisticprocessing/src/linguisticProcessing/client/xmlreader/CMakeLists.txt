@@ -9,6 +9,7 @@ set(lima-xp-client_LIB_SRCS
 )
 
 add_library(lima-xp-client SHARED ${lima-xp-client_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-xp-client)
 
 target_link_libraries(lima-xp-client
   lima-common-mediaprocessors

@@ -15,6 +15,7 @@ set(lima-xp-documentsreader_LIB_SRCS
 )
 
 add_library(lima-xp-documentsreader SHARED ${lima-xp-documentsreader_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-xp-documentsreader)
 
 target_link_libraries(lima-xp-documentsreader
   lima-common-mediaprocessors

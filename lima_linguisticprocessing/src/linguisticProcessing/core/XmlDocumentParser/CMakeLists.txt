@@ -8,6 +8,7 @@ SET(lima-xp-xmldocumentparser_LIB_SRCS
 )
 
 add_library(lima-xp-xmldocumentparser SHARED ${lima-xp-xmldocumentparser_LIB_SRCS})
+ADD_DLL_TO_PATH(lima-xp-xmldocumentparser)
 
 target_link_libraries(lima-xp-xmldocumentparser)
 

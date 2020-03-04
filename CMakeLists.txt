@@ -174,6 +174,33 @@ endif ()
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
 file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
 
+macro (ADD_DLL_TO_PATH _lib)
+    message("ADD_DLL_TO_PATH ${_lib}")
+    set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
+
+    if(WIN32)
+      set(ADD_DLL_TO_PATH_LIB_NAME ${_lib}.dll)
+    endif()
+    message("Will copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/")
+    add_custom_command(
+      OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
+      COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME}
+        ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+      DEPENDS
+        ${_lib}
+      COMMENT "Copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}"
+      VERBATIM
+    )
+    add_custom_target(
+      ${_lib}_dll
+      ALL
+      DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
+    )
+    add_dependencies(rules-configEnv ${_lib}_dll)
+endmacro()
+
 macro (DECLARE_LIMA_PLUGIN _plugin)
   file (APPEND ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "${_plugin}\n")
   add_library(${_plugin} SHARED ${${_plugin}_LIB_SRCS} ${${_plugin}_MOC_OUTFILES})
@@ -348,33 +375,6 @@ include(${CMAKE_SOURCE_DIR}/lima_linguisticdata/cmake/LinguisticData.cmake)
 set(ENV{PATH} "$ENV{PATH};${CMAKE_BINARY_DIR}/execEnv/lib")
 
 SPECIFICENTITIES_GENERIC_CONFIGENV()
-
-macro (ADD_DLL_TO_PATH _lib)
-    message("ADD_DLL_TO_PATH ${_lib}")
-    set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
-
-    if(WIN32)
-      set(ADD_DLL_TO_PATH_LIB_NAME ${_lib}.dll)
-    endif()
-    message("Will copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/")
-    add_custom_command(
-      OUTPUT ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/lib
-      COMMAND ${CMAKE_COMMAND} -E copy
-        $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME}
-        ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
-      DEPENDS
-        ${_lib}
-      COMMENT "Copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}"
-      VERBATIM
-    )
-    add_custom_target(
-      ${_lib}_dll
-      ALL
-      DEPENDS ${CMAKE_BINARY_DIR}/execEnv/lib/${ADD_DLL_TO_PATH_LIB_NAME}
-    )
-    add_dependencies(rules-configEnv ${_lib}_dll)
-endmacro()
 
 add_subdirectory(cmake)
 

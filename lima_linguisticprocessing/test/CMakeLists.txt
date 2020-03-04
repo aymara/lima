@@ -61,20 +61,20 @@ install(TARGETS limasimple-analyze DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
-if (${PYTHONLIBS_FOUND})
-  SET(srl_SRCS
-    srl.cpp
-  )
-
-  add_executable(srl ${srl_SRCS})
-  set_target_properties(srl PROPERTIES VERSION ${LIMA_VERSION})
-  target_link_libraries(srl
-      ${PYTHON_LIBRARIES}
-      lima-common-tools
-  )
-
-  install(TARGETS srl DESTINATION bin)
-endif()
+# if (${PYTHONLIBS_FOUND})
+#   SET(srl_SRCS
+#     srl.cpp
+#   )
+# 
+#   add_executable(srl ${srl_SRCS})
+#   set_target_properties(srl PROPERTIES VERSION ${LIMA_VERSION})
+#   target_link_libraries(srl
+#       ${PYTHON_LIBRARIES}
+#       lima-common-tools
+#   )
+# 
+#   install(TARGETS srl DESTINATION bin)
+# endif()
 ########### next target ###############
 
 # SET(threadedAnalyzeText_SRCS

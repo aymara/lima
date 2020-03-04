@@ -38,7 +38,9 @@ target_link_libraries(lima-common-data
   lima-common-tools
 )
 
-set_target_properties(lima-common-data PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
+set_target_properties(lima-common-data PROPERTIES 
+  VERSION ${LIMA_COMMON_LIB_VERSION} 
+  SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-data DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime)
 
