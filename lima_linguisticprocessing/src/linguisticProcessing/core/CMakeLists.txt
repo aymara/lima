@@ -38,6 +38,7 @@ add_subdirectory(WordSenseAnalysis)
 add_subdirectory(RegexMatcher)
 add_subdirectory(DocumentsReader)
 add_subdirectory(TensorFlowTokenizer)
+add_subdirectory(ConlluReader)
 
 IF(TRE_FOUND)
   add_subdirectory(ApproxMatching)

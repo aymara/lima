@@ -51,6 +51,7 @@
 #include "Arborescence.h"
 #include "QJsonHelpers.h"
 #include "TensorFlowHelpers.h"
+#include "Cache.h"
 
 #include "TensorFlowMorphoSyntax.h"
 
@@ -99,15 +100,14 @@ class TensorFlowMorphoSyntaxPrivate
 {
 public:
   TensorFlowMorphoSyntaxPrivate()
-    : m_stringsPool(nullptr),
-      m_lemmatization_required(false) { }
+    : m_stringsPool(nullptr) { }
 
   void init(GroupConfigurationStructure&,
             MediaId lang,
             const QString& model_prefix,
             const QString& embeddings);
 
-  LimaStatusCode process(AnalysisContent& analysis) const;
+  LimaStatusCode process(AnalysisContent& analysis);
 
 private:
   void add_linguistic_element(MorphoSyntacticData* msdata, const Token &token) const;
@@ -234,6 +234,11 @@ protected:
   vector<DepparseOutput> m_depparse_outputs;
   map<string, size_t> m_depparse_id2idx;
 
+  vector<string> m_feat_order;
+  vector<set<string>> m_feat_deps;
+  LimaString m_main_alphabet;
+  size_t m_upos_idx;
+
   size_t m_max_seq_len;
   size_t m_max_word_len;
   size_t m_batch_size;
@@ -258,7 +263,7 @@ protected:
   bool fill_linguistic_codes(const PropertyCodeManager& pcm, SeqTagOutput& out);
   void init_crf();
 
-  void analyze(vector<TSentence>& sentences, SyntacticData& syntacticData) const;
+  void analyze(vector<TSentence>& sentences, SyntacticData& syntacticData);
   void generate_batch(const vector<TSentence>& sentences,
                       size_t start,
                       size_t size,
@@ -274,33 +279,15 @@ protected:
                                   size_t pos_in_batch,
                                   size_t word_num,
                                   const TTypes<float, 3>::Tensor& tags_logits) const;
+  void fixMissingFeature(const vector<vector<float>>& converted_scores,
+                         const string& feat_name,
+                         TToken& t,
+                         size_t a,
+                         size_t& pred);
 
   // Json parsing
   QJsonObject get_json_object(const QJsonObject& root, const QString& child_name);
   QJsonArray get_json_array(const QJsonObject& root, const QString& child_name);
-
-  // Lemmatizer
-  unique_ptr<Session> m_lemmatizer_session;
-  GraphDef m_lemmatizer_graph_def;
-
-  map<string, string> m_lemmatizer_input_node_names;
-
-  bool m_lemmatization_required;
-  LemmatizerConf m_lemmatizer_conf;
-  size_t m_lemmatizer_batch_size;
-  size_t m_lemmatizer_max_input_len;
-  size_t m_lemmatizer_ctx_len;
-
-  void lemmatize(vector<TSentence>& sentences, SyntacticData& syntacticData) const;
-  void load_lemmatizer_config(const QString& config_file_name);
-  void init_lemmatizer(GroupConfigurationStructure& gcs);
-  size_t get_code_for_feature(const TSentence &sent, size_t tid, const LemmatizerConf::dict<string> &d) const;
-
-  void generate_lemmatizer_batch(const vector<TSentence>& sentences,
-                                 size_t& current_sentence,
-                                 size_t& current_token,
-                                 size_t batch_size,
-                                 vector<pair<string, Tensor>>& batch) const;
 };
 
 TensorFlowMorphoSyntax::TensorFlowMorphoSyntax()
@@ -399,62 +386,8 @@ void TensorFlowMorphoSyntaxPrivate::init(
   QString embeddings_path = findFileInPaths(resources_path,
                                             QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2")
                                              .arg(lang_str).arg(embeddings_name));
+
   m_fasttext.loadModel(embeddings_path.toStdString());
-
-  init_lemmatizer(gcs);
-}
-
-void TensorFlowMorphoSyntaxPrivate::init_lemmatizer(GroupConfigurationStructure& gcs)
-{
-  QString lang_str = MediaticData::single().media(m_language).c_str();
-  QString resources_path = MediaticData::single().getResourcesPath().c_str();
-
-  QString model_name;
-
-  try
-  {
-    model_name = QString::fromUtf8(gcs.getParamsValueAtKey("lemmatizer_model_prefix").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'lemmatizer_model_prefix' in TensorFlowMorphoSyntax group configuration",
-                        InvalidConfiguration());
-  }
-
-  string udlang;
-  MediaticData::single().getOptionValue("udlang", udlang);
-
-  model_name.replace(QString("$udlang"), QString(udlang.c_str()));
-
-  auto config_file_name = findFileInPaths(resources_path,
-                                          QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.conf")
-                                            .arg(lang_str).arg(model_name));
-  load_lemmatizer_config(config_file_name);
-
-  tensorflow::SessionOptions options;
-  tensorflow::ConfigProto & config = options.config;
-  config.set_inter_op_parallelism_threads(4);
-  config.set_intra_op_parallelism_threads(4);
-  config.set_use_per_session_threads(false);
-  Session* session = 0;
-  Status status = NewSession(options, &session);
-  if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't create TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
-  m_lemmatizer_session = unique_ptr<Session>(session);
-
-  m_model_path = findFileInPaths(resources_path,
-                                 QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.model")
-                                  .arg(lang_str).arg(model_name));
-  load_graph(m_model_path, &m_lemmatizer_graph_def);
-
-  // Add the graph to the session
-  status = m_lemmatizer_session->Create(m_lemmatizer_graph_def);
-  if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't add graph to TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
 }
 
 QJsonObject TensorFlowMorphoSyntaxPrivate::get_json_object(const QJsonObject& root, const QString& child_name)
@@ -483,125 +416,6 @@ QJsonArray TensorFlowMorphoSyntaxPrivate::get_json_array(const QJsonObject& root
   QJsonArray array = value.toArray();
 
   return array;
-}
-
-void TensorFlowMorphoSyntaxPrivate::load_lemmatizer_config(const QString& config_file_name)
-{
-  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowMorphoSyntaxPrivate::load_lemmatizer_config" << config_file_name)
-
-  QFile file(config_file_name);
-
-  if (!file.open(QIODevice::ReadOnly))
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config can't load config from \""
-                        << config_file_name << "\".",
-                        LimaException());
-
-  QByteArray bytes = file.readAll();
-  QJsonDocument data = QJsonDocument::fromJson(bytes);
-  if (data.isNull())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config can't load config from \""
-                        << config_file_name << "\". Invalid Json.",
-                        LimaException());
-  if (!data.isObject())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config can't load config from \""
-                        << config_file_name << "\". Loaded data is not an object",
-                        LimaException());
-
-  if (!data.object().value("lemmatize").isUndefined())
-  {
-    if (!data.object().value("lemmatize").isBool())
-    {
-      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-                          << config_file_name << "\": lemmatize parameter must be bool.",
-                          LimaException());
-    }
-
-    m_lemmatization_required = data.object().value("lemmatize").toBool();
-    if (!m_lemmatization_required)
-      return;
-  }
-
-  m_lemmatization_required = true;
-
-  // batch_size
-  if (data.object().value("batch_size").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" missing param batch_size.",
-      LimaException());
-  if (!data.object().value("batch_size").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" param batch_size is not a number.",
-      LimaException());
-  m_lemmatizer_batch_size = data.object().value("batch_size").toInt();
-
-  QJsonObject encoder_conf = get_json_object(data.object(), "encoder");
-
-  // max_input_len
-  if (encoder_conf.value("max_len").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" missing param max_len.",
-      LimaException());
-  if (!encoder_conf.value("max_len").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" param max_len is not a number.",
-      LimaException());
-  m_lemmatizer_max_input_len = encoder_conf.value("max_len").toInt();
-
-  // ctx_len
-  if (encoder_conf.value("ctx_len").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" missing param ctx_len.",
-      LimaException());
-  if (!encoder_conf.value("ctx_len").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_lemmatizer_config config file \""
-          << config_file_name << "\" param ctx_len is not a number.",
-      LimaException());
-  m_lemmatizer_ctx_len = encoder_conf.value("ctx_len").toInt();
-
-  load_string_array(get_json_array(encoder_conf, "i2c"), m_lemmatizer_conf.encoder_dict.m_i2w);
-  load_string_to_uint_map(get_json_object(encoder_conf, "c2i"), m_lemmatizer_conf.encoder_dict.m_w2i);
-
-  QJsonObject decoder_conf = get_json_object(data.object(), "decoder");
-  load_string_array(get_json_array(decoder_conf, "i2c"), m_lemmatizer_conf.decoder_dict.m_i2w);
-  load_string_to_uint_map(get_json_object(decoder_conf, "c2i"), m_lemmatizer_conf.decoder_dict.m_w2i);
-
-  vector<string> feats_to_use;
-  load_string_array(get_json_array(encoder_conf, "feats_to_use"), feats_to_use);
-
-  const auto &pcm = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-
-  QJsonObject all_feats = get_json_object(encoder_conf, "feats");
-  for (const string& f : feats_to_use)
-  {
-    QJsonObject feature = get_json_object(all_feats, f.c_str());
-    m_lemmatizer_conf.feature_dicts[f] = LemmatizerConf::dict<string>();
-    load_string_array(get_json_array(feature, "i2c"), m_lemmatizer_conf.feature_dicts[f].m_i2w);
-    load_string_to_uint_map(get_json_object(feature, "c2i"), m_lemmatizer_conf.feature_dicts[f].m_w2i);
-    try
-    {
-      m_lemmatizer_conf.feature_dicts[f].accessor = &(pcm.getPropertyAccessor(f));
-    }
-    catch (const InvalidConfiguration& e)
-    {
-      continue;
-    }
-    m_lemmatizer_conf.feature_dicts[f].fill_linguistic_codes(pcm.getPropertyManager(f));
-  }
-
-  load_string_array(get_json_array(encoder_conf, "i2t"), m_lemmatizer_conf.pos_dict.m_i2w);
-  load_string_to_uint_map(get_json_object(encoder_conf, "t2i"), m_lemmatizer_conf.pos_dict.m_w2i);
-  m_lemmatizer_conf.pos_dict.accessor = &(pcm.getPropertyAccessor("MICRO"));
-  m_lemmatizer_conf.pos_dict.fill_linguistic_codes(pcm.getPropertyManager("MICRO"));
-
-  m_lemmatizer_input_node_names["input"] = "input";
-  m_lemmatizer_input_node_names["length"] = "length";
-  m_lemmatizer_input_node_names["context"] = "context";
-
-  for (const string& f : feats_to_use)
-  {
-    string name = "feat_" + f;
-    m_lemmatizer_input_node_names[name] = name;
-  }
 }
 
 void TensorFlowMorphoSyntaxPrivate::init_crf()
@@ -649,7 +463,7 @@ LimaStatusCode TensorFlowMorphoSyntax::process(AnalysisContent& analysis) const
   return m_d->process(analysis);
 }
 
-LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis) const
+LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 {
   TimeUtils::updateCurrentTime();
 
@@ -874,7 +688,7 @@ size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOut
 }
 
 void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
-                                            SyntacticData& syntacticData) const
+                                            SyntacticData& syntacticData)
 {
   const LanguageData& ld = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language));
 
@@ -909,9 +723,11 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
                           LimaException());
 
     // Apply prediction to Lima graphs
-    size_t out_idx = 0;
-    for (; out_idx < m_seqtag_outputs.size(); ++out_idx)
+    for (const string& feat_name : m_feat_order)
     {
+      if (m_seqtag_id2idx.end() == m_seqtag_id2idx.find(feat_name))
+          LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::analyze: unknown feature: " << feat_name, LimaException());
+      size_t out_idx = m_seqtag_id2idx.find(feat_name)->second;
       auto scores = out[out_idx].tensor<float, 3>();
       for (int64 p = 0; p < out[out_idx].dim_size(0); p++)
       {
@@ -935,13 +751,18 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         for (size_t a = 0; a < viterbi.size() - 1; ++a)
         {
           size_t pred = viterbi[a + 1];
-          if (m_seqtag_outputs[out_idx].i2c[pred] != LinguisticCode(0))
+          //if (m_seqtag_outputs[out_idx].i2c[pred] != LinguisticCode(0))
           {
             TToken& t = sent.tokens[a];
             if (nullptr != t.morpho)
             {
               if (t.morpho->size() == 0)
                 add_linguistic_element(t.morpho, *(t.token));
+
+              if (m_seqtag_outputs[out_idx].i2t[pred] == "#None")
+              {
+                fixMissingFeature(converted_scores, feat_name, t, a, pred);
+              }
 
               m_seqtag_outputs[out_idx].accessor->writeValue(m_seqtag_outputs[out_idx].i2c[pred],
                                                              t.morpho->begin()->properties);
@@ -951,7 +772,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
       }
     }
 
-    for (; (out_idx - m_seqtag_outputs.size()) < m_depparse_outputs.size(); ++out_idx)
+    for (size_t out_idx = m_seqtag_outputs.size(); (out_idx - m_seqtag_outputs.size()) < m_depparse_outputs.size(); ++out_idx)
     {
       auto arcs_tensor = out[out_idx].tensor<int, 2>();
       auto tags_tensor = out[out_idx + 1].tensor<int, 2>();
@@ -1032,269 +853,50 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
     i += this_batch_size;
   }
-
-  if (m_lemmatization_required)
-    lemmatize(sentences, syntacticData);
 }
 
-void TensorFlowMorphoSyntaxPrivate::lemmatize(vector<TSentence>& sentences,
-                                              SyntacticData& syntacticData) const
+void TensorFlowMorphoSyntaxPrivate::fixMissingFeature(const vector<vector<float>>& converted_scores,
+                                                      const string& feat_name,
+                                                      TToken& t,
+                                                      size_t a,
+                                                      size_t& pred)
 {
-  const LanguageData& ld = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language));
-  FsaStringsPool* stringsPool = &MediaticData::changeable().stringsPool(m_language);
-  const auto &pcm = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
+  if (m_main_alphabet.size() > 0 && nullptr != t.token && m_main_alphabet.indexOf(t.token->stringForm()[0]) == -1)
+    return;
 
-  set<LinguisticCode> dont_lemmatize;
-  const auto& pm = pcm.getPropertyManager("MICRO");
-  dont_lemmatize.insert(pm.getPropertyValue("CCONJ"));
-  dont_lemmatize.insert(pm.getPropertyValue("SCONJ"));
-  dont_lemmatize.insert(pm.getPropertyValue("PUNCT"));
-
-  vector<string> requested_nodes;
-  requested_nodes.push_back("Decoder/decoder_1/transpose_1");
-
-  size_t current_sentence = 0;
-  size_t current_token = 0;
-
-  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
-
-  u32string EOS = cvt.from_bytes("<EOS>");
-  size_t idx_EOS = m_lemmatizer_conf.decoder_dict.m_w2i.find(EOS)->second;
-
-  while (current_sentence < sentences.size())
-  {
-    // Generate batch
-    vector<pair<string, Tensor>> inputs;
-    size_t old_current_sentence = current_sentence;
-    size_t old_current_token = current_token;
-    generate_lemmatizer_batch(sentences, current_sentence, current_token, m_lemmatizer_batch_size, inputs);
-
-    // Run model
-    vector<Tensor> out;
-    Status status = m_lemmatizer_session->Run(inputs, requested_nodes, {}, &out);
-    if (!status.ok())
-      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
-                          << status.ToString(),
-                          LimaException());
-
-    auto sample_id = out[0].tensor<int, 2>();
-
-    for (size_t i = 0; i < sample_id.dimension(0); i++)
+  LinguisticCode lc_upos = m_seqtag_outputs[m_upos_idx].accessor->readValue(t.morpho->begin()->properties);
+  string upos_str = "";
+  size_t upos_val = 0;
+  for (size_t ii = 0; ii < m_seqtag_outputs[m_upos_idx].i2c.size(); ii++)
+    if (lc_upos == m_seqtag_outputs[m_upos_idx].i2c[ii])
     {
-      if (old_current_token >= sentences[old_current_sentence].token_count)
-      {
-        old_current_sentence += 1;
-        old_current_token = 0;
-      }
-
-      if (old_current_sentence >= sentences.size())
-      {
-        break;
-      }
-
-      u32string lemma;
-      size_t c = 0;
-      while (sample_id(i, c) != idx_EOS && c < sample_id.dimension(1))
-      {
-        char32_t ch = sample_id(i, c);
-        lemma += m_lemmatizer_conf.decoder_dict.m_i2w[ch];
-        c++;
-      }
-
-      //cout << cvt.to_bytes(lemma) << endl;
-      string utf8_lemma = cvt.to_bytes(lemma);
-
-      TSentence &sent = sentences[old_current_sentence];
-      TToken &token = sent.tokens[old_current_token];
-      LinguisticCode pos_code = token.morpho->firstValue(*m_lemmatizer_conf.pos_dict.accessor);
-
-      size_t src_size = (*m_stringsPool)[token.token->form()].size();
-      size_t size_diff = (lemma.size() > src_size) ? lemma.size() - src_size : src_size - lemma.size();
-      if (src_size > 1 && size_diff < 4 && dont_lemmatize.find(pos_code) == dont_lemmatize.end())
-      {
-        if (token.morpho != nullptr && token.morpho->size() > 0)
-        {
-          StringsPoolIndex lemma_idx = (*stringsPool)[QString(utf8_lemma.c_str())];
-          (*token.morpho)[0].lemma = lemma_idx ;
-        }
-      }
-
-      old_current_token++;
-    }
-  }
-}
-
-size_t TensorFlowMorphoSyntaxPrivate::get_code_for_feature(const TSentence &sent,
-                                                           size_t tid,
-                                                           const LemmatizerConf::dict<string> &d) const
-{
-  const TToken t = sent.tokens[tid];
-  LinguisticCode lc = t.morpho->firstValue(*d.accessor);
-
-  auto it = d.m_c2i.find(lc);
-  if (d.m_c2i.end() == it)
-    throw;
-  return it->second;
-}
-
-void TensorFlowMorphoSyntaxPrivate::generate_lemmatizer_batch(const vector<TSentence>& sentences,
-                                                   size_t& current_sentence,
-                                                   size_t& current_token,
-                                                   size_t batch_size,
-                                                   vector<pair<string, Tensor>>& batch) const
-{
-  // len - input word length
-  Tensor t_len(DT_INT32, TensorShape({static_cast<long long>(batch_size)}));
-
-  batch.push_back({ m_lemmatizer_input_node_names.find("length")->second, t_len });
-
-  // input - char indices
-  // batch_size x max_input_len
-  Tensor t_input(DT_INT32, TensorShape({static_cast<long long>(batch_size),
-                                        static_cast<long long>(m_lemmatizer_max_input_len)
-                                       }));
-
-  batch.push_back({ m_lemmatizer_input_node_names.find("input")->second, t_input });
-
-  // context - pos indices
-  // batch_size x ctx_len
-  Tensor t_context(DT_INT32, TensorShape({static_cast<long long>(batch_size),
-                                          static_cast<long long>(m_lemmatizer_ctx_len)
-                                         }));
-
-  batch.push_back({ m_lemmatizer_input_node_names.find("context")->second, t_context });
-
-  map<string, size_t> feat2idx;
-  for (const auto& kv : m_lemmatizer_conf.feature_dicts)
-  {
-    Tensor t_feat(DT_INT32, TensorShape({static_cast<long long>(batch_size)}));
-    string name = string("feat_") + kv.first;
-    batch.push_back({ m_lemmatizer_input_node_names.find(name)->second, t_feat });
-    feat2idx[name] = batch.size() - 1;
-    auto t = batch[batch.size() - 1].second.tensor<int, 1>();
-    init_1d_tensor(t, 0);
-  }
-
-  auto len = batch[0].second.tensor<int, 1>();
-  auto input = batch[1].second.tensor<int, 2>();
-  auto context = batch[2].second.tensor<int, 2>();
-
-  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
-
-  u32string EOS = cvt.from_bytes("<EOS>");
-  string PAD = "<PAD>";
-  size_t encoder_eos = m_lemmatizer_conf.encoder_dict.m_w2i.find(EOS)->second;
-  size_t encoder_pad = m_lemmatizer_conf.pos_dict.m_w2i.find(PAD)->second;
-
-  init_1d_tensor(len, 1);
-  init_2d_tensor(input, encoder_eos);
-  init_2d_tensor(context, encoder_pad);
-
-  for (size_t i = 0; i < batch_size; ++i)
-  {
-    if (current_token >= sentences[current_sentence].token_count)
-    {
-      current_sentence += 1;
-      current_token = 0;
-    }
-
-    if (current_sentence >= sentences.size())
-    {
+      upos_str = m_seqtag_outputs[m_upos_idx].i2t[ii];
+      upos_val = ii;
       break;
     }
 
-    const TSentence& sent = sentences[current_sentence];
-    const TToken& token = sent.tokens[current_token];
+  if (upos_str.size() == 0)
+    throw;
 
-    const LimaString& form = (*m_stringsPool)[token.token->form()];
-    const u32string u32_form_lc = form.toLower().toStdU32String();
+  if (m_feat_deps[upos_val].size() == 0)
+    return;
 
-    // len
-    size_t seq_length = u32_form_lc.size();
-    if (seq_length > input.dimension(1))
-        seq_length = input.dimension(1);
-
-    len(i) = seq_length;
-
-    // input
-    for (size_t n = 0; n < u32_form_lc.size() && n < seq_length; n++)
-    {
-      u32string current_symbol = u32_form_lc.substr(n, 1);
-      auto it = m_lemmatizer_conf.encoder_dict.m_w2i.find(current_symbol);
-      size_t code = encoder_eos;
-      if (it != m_lemmatizer_conf.encoder_dict.m_w2i.end())
-      {
-        code = it->second;
-        input(i, n) = code;
-      }
-    }
-
-    // context
-    size_t left_context_size = 0;
-    size_t right_context_size = 0;
-    for (size_t n = 1; n <= left_context_size; n++)
-    {
-      if (current_token < n)
-        continue;
-
-      context(i, n - 1) = get_code_for_feature(sent, current_token - n, m_lemmatizer_conf.pos_dict);
-    }
-
-    size_t code = get_code_for_feature(sent, current_token, m_lemmatizer_conf.pos_dict);
-    context(i, left_context_size) = code;
-
-    for (size_t n = 1; n <= right_context_size; n++)
-    {
-      if (sent.token_count - 1 < current_token + n)
-        continue;
-
-      context(i, left_context_size + n) = get_code_for_feature(sent, current_token + n, m_lemmatizer_conf.pos_dict);
-    }
-
-    // features
-    for (const auto& kv : m_lemmatizer_conf.feature_dicts)
-    {
-      string name = string("feat_") + kv.first;
-      auto t = batch[feat2idx[name]].second.tensor<int, 1>();
-      auto it = m_lemmatizer_conf.feature_dicts.find(kv.first);
-      const LemmatizerConf::dict<string> &rd = it->second;
-      if (rd.accessor == nullptr)
-      {
-        continue;
-      }
-      size_t code = get_code_for_feature(sent, current_token, rd);
-      t(i) = code;
-    }
-
-    current_token++;
-  }
-}
-
-void TensorFlowMorphoSyntaxPrivate::save_arcs_logits(const TSentence& sent,
-                                                     const TTypes<float, 3>::Tensor& logits,
-                                                     int64 idx,
-                                                     const string& prefix,
-                                                     size_t id
-                                                     ) const
-{
-  stringstream file_name;
-  file_name << prefix << id << ".tsv";
-  ofstream file(file_name.str());
-
-  size_t len = sent.token_count;
-  for (int64 i = 0; i < len + 1; i++)
+  if (m_feat_deps[upos_val].end() != m_feat_deps[upos_val].find(feat_name))
   {
-    LimaString tok_str = "ROOT";
-    if (i > 0 && sent.tokens[i-1].token != NULL)
-      tok_str = (*m_stringsPool)[sent.tokens[i-1].token->form()];
-
-    file << tok_str.toStdString();
-    for (int64 j = 0; j < len + 1; j++)
+    size_t curr_idx = 0;
+    float curr_val = -100500;
+    for (size_t k = 1; k < converted_scores[a+1].size(); k++)
     {
-      float v = logits(idx, i, j);
-      file << "\t" << v;
+      if (k == pred)
+        continue;
+
+      if (converted_scores[a+1][k] > curr_val)
+      {
+        curr_val = converted_scores[a+1][k];
+        curr_idx = k;
+      }
     }
-    file << endl;
+    pred = curr_idx;
   }
 }
 
@@ -1522,6 +1124,57 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
   for (auto i = jso.constBegin(); i != jso.constEnd(); ++i)
   {
     m_input_node_names[i.key().toStdString()] = i.value().toString().toStdString();
+  }
+
+  if (data.object().value("main_alphabet").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param main_alphabet.",
+      LimaException());
+  if (!data.object().value("main_alphabet").isString())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param main_alphabet is not a string.",
+      LimaException());
+  m_main_alphabet = data.object().value("main_alphabet").toString();
+
+  if (data.object().value("feat_order").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param feat_order.",
+      LimaException());
+  if (!data.object().value("feat_order").isArray())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param feat_order is not an array.",
+      LimaException());
+  load_string_array(data.object().value("feat_order").toArray(), m_feat_order);
+
+  if (data.object().value("feat_deps").isUndefined())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param feat_deps.",
+      LimaException());
+  if (!data.object().value("feat_deps").isObject())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param feat_deps is not an object.",
+      LimaException());
+  auto featDepsObject = data.object().value("feat_deps").toObject();
+
+  m_upos_idx = m_seqtag_id2idx.find("upos")->second;
+  m_feat_deps.resize(m_seqtag_outputs[m_upos_idx].i2t.size());
+
+  for (auto i = featDepsObject.constBegin(); i != featDepsObject.constEnd(); ++i)
+  {
+    string upos_name = i.key().toStdString();
+    for (size_t upos_idx = 0; upos_idx < m_seqtag_outputs[m_upos_idx].i2t.size(); upos_idx++)
+    {
+      if (upos_name == m_seqtag_outputs[m_upos_idx].i2t[upos_idx])
+      {
+        vector<string> v;
+        load_string_array(i.value().toArray(), v);
+        for ( const auto item : v )
+        {
+          m_feat_deps[upos_idx].insert(item);
+        }
+        break;
+      }
+    }
   }
 }
 
