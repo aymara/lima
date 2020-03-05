@@ -40,6 +40,11 @@
         <entry key="fre.ud" value="deepud"/>
         <entry key="ud" value="deepud"/>
       </map>
+      <map name="deepud-pretok">
+        <entry key="eng.ud" value="deepud-pretok"/>
+        <entry key="fre.ud" value="deepud-pretok"/>
+        <entry key="ud" value="deepud-pretok"/>
+      </map>
       <map name="deep">
         <entry key="eng" value="deep"/>
         <entry key="fre" value="deep"/>

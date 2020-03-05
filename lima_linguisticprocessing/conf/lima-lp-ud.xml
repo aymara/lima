@@ -24,6 +24,16 @@
       <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
         <item value="tfmorphosyntax"/>
+        <item value="tflemmatizer"/>
+        <item value="conllDumper"/>
+      </list>
+    </group>
+
+    <group name="deepud-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="tfmorphosyntax"/>
+        <item value="tflemmatizer"/>
         <item value="conllDumper"/>
       </list>
     </group>
@@ -38,11 +48,18 @@
       <param key="model_prefix" value="tokenizer-$udlang"/>
     </group>
 
+    <group name="conllureader" class="ConlluReader">
+    </group>
+
     <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
       <param key="model_prefix" value="morphosyntax-$udlang"/>
-      <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
       <param key="embeddings" value="fasttext-$udlang.bin"/>
     </group>
+
+    <group name="tflemmatizer" class="TensorFlowLemmatizer">
+      <param key="model_prefix" value="lemmatizer-$udlang"/>
+    </group>
+
 <!-- ******************************************
   Definition of loggers
 *********************************************** -->
