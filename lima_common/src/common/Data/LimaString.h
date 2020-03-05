@@ -30,7 +30,10 @@
 
 #include "common/LimaCommon.h"
 
+#include <functional>
+
 #include <QtCore/QString>
+#include <QtCore/QHash>
 
 namespace Lima
 {
@@ -40,5 +43,16 @@ namespace Lima
 LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const LimaString& s);
 
 } // closing namespace Lima
+
+namespace std {
+
+template<> struct hash<Lima::LimaString> {
+  std::size_t operator()(const Lima::LimaString& s) const noexcept {
+    return (size_t) qHash(s);
+  }
+};
+
+}
+
 
 #endif // LIMA_LIMASTRING_H

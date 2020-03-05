@@ -121,6 +121,7 @@
 #define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
 #define LIMASERVERLOGINIT LOGINIT("LP::LimaServer");
 #define TENSORFLOWMORPHOSYNTAXLOGINIT LOGINIT("LP::TensorFlowMorphoSyntax");
+#define TENSORFLOWLEMMATIZERLOGINIT LOGINIT("LP::TensorFlowLemmatizer");
 
 
 #define L_NONE static_cast<LinguisticCode>(0)

@@ -35,6 +35,7 @@ add_subdirectory(SpecificEntities)
 add_subdirectory(SyntacticAnalysis)
 add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
+add_subdirectory(ConlluReader)
 
 IF(TRE_FOUND)
   add_subdirectory(ApproxMatching)
