@@ -730,7 +730,7 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, 
   LimaString src_form = (*m_stringsPool)[token.token->form()];
   size_t src_size = src_form.size();
   size_t size_diff = (lemma.size() > src_size) ? lemma.size() - src_size : src_size - lemma.size();
-  if (src_size > 1 && size_diff < 4 && m_dont_lemmatize.find(pos_code) == m_dont_lemmatize.end()
+  if (src_size > 1 && size_diff < 10 && m_dont_lemmatize.find(pos_code) == m_dont_lemmatize.end()
           && hasCharFromList(src_form, m_main_alphabet)
           && hasNoCharsFromList(src_form, m_special_chars) )
   {
@@ -828,10 +828,17 @@ void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<TSentence>& senten
       c++;
     }
 
-    set_token_lemma(sentences, lemma, tokens_to_lemmatize[i].first, tokens_to_lemmatize[i].second);
-
     TSentence &sent = sentences[tokens_to_lemmatize[i].first];
     TToken &token = sent.tokens[tokens_to_lemmatize[i].second];
+
+    LimaString src_form = (*m_stringsPool)[token.token->form()];
+    size_t src_size = src_form.size();
+    size_t size_diff = (lemma.size() > src_size) ? lemma.size() - src_size : src_size - lemma.size();
+    if (size_diff >= 4)
+      lemma = src_form.toStdU32String();
+
+    set_token_lemma(sentences, lemma, tokens_to_lemmatize[i].first, tokens_to_lemmatize[i].second);
+
     LimaString src_form_key = create_form_key(token);
     m_cache.put(src_form_key, LimaString::fromStdU32String(lemma));
   }
