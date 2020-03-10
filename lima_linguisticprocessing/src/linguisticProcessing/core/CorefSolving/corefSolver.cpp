@@ -144,7 +144,7 @@ void CorefSolver::init(
   {
     LERROR << "One of the tags list is not defined in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
     LERROR << "Please check all of the following categories:";
-    LERROR << "'LexicalAnaphora', 'Undefinite Pronouns'.";
+    LERROR << "'LexicalAnaphora', 'UndefinitePronouns', 'PossessivePronouns'.";
   }
 
   try {

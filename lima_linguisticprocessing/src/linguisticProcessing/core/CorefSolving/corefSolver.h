@@ -19,7 +19,7 @@
 /**
   *
   * @file        corefSolver.h
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2004 by CEA
   * @date        Created on Dec, 1 2004
@@ -57,7 +57,7 @@ namespace LinguisticAnalysisStructure {
 class AnalysisGraph;
 }
 namespace Coreferences
-{ 
+{
 class CoreferentAnnotation;
 
 #define COREFSOLVINGPU_CLASSID "CoreferencesSolving"
@@ -68,8 +68,8 @@ typedef std::map< CoreferentAnnotation*,std::map <CoreferentAnnotation*,float> >
 
 
 
-/** @brief A  process unit implementing the Lappin & Leass algorithm for coreference solving 
- * The process unit configuration parameters are (@TODO add signification, defaul value and wether they are mandatory or optional):
+/** @brief A  process unit implementing the Lappin & Leass algorithm for coreference solving
+ * The process unit configuration parameters are (@TODO add signification, default value and whether they are mandatory or optional):
  * - scope
  * - threshold
  * - Resolve Definites
@@ -128,14 +128,14 @@ public:
   const std::map<std::string, int> slotValues() const;
 
 
-private:  
+private:
   void initSyntacticFilter(
     AnalysisContent& ac,
     LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     LinguisticProcessing::SyntacticAnalysis::SyntacticData* syntacticData,
     CoreferentAnnotation::Vertices* npAnaphora,
     std::deque<CoreferentAnnotation::Vertices>* npCandidates,
-    CoreferentAnnotation::VerticesRelation* roBinding) const;  
+    CoreferentAnnotation::VerticesRelation* roBinding) const;
 
   void bindingLexicalAnaphora(
     AnalysisContent& ac,
@@ -145,7 +145,7 @@ private:
     std::deque<CoreferentAnnotation::Vertices>* npCandidates,
     CoreferentAnnotation::WeightedVerticesRelation* pBinding) const;
 
-  void bindingPotentialCandidates(  
+  void bindingPotentialCandidates(
     //Common::AnnotationGraphs::AnnotationData* ad,
     LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     //  LinguisticProcessing::SyntacticAnalysis::SyntacticData* syntacticData,
@@ -173,7 +173,7 @@ private:
     const LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     AnalysisContent& ac) const;
 
-  void applyThresholdFilter(  
+  void applyThresholdFilter(
     CoreferentAnnotation::WeightedVerticesRelation* pBinding) const;
 
   void applyMorphoSyntacticFilter(
@@ -190,8 +190,8 @@ protected:
   bool m_resolveN3PPronouns;
   std::set< LinguisticCode > m_inNpCategs;
   std::set< LinguisticCode > m_definiteCategs;
-  std::map<std::string,LinguisticCode> m_tagLocalDef; 
-  std::map< std::string,std::deque<std::string> > m_relLocalDef; 
+  std::map<std::string,LinguisticCode> m_tagLocalDef;
+  std::map< std::string,std::deque<std::string> > m_relLocalDef;
   std::set<LinguisticCode> m_reflexiveReciprocal;
   std::set<LinguisticCode> m_undefPronouns;
   std::set<LinguisticCode> m_possPronouns;
@@ -270,27 +270,27 @@ inline const Common::PropertyCode::PropertyAccessor* CorefSolver::macroAccessor(
 {
   return m_macroAccessor;
 }
-inline 
+inline
   const Common::PropertyCode::PropertyAccessor* CorefSolver::microAccessor() const
 {
   return m_microAccessor;
 }
-inline 
+inline
   const Common::PropertyCode::PropertyAccessor* CorefSolver::genderAccessor() const
 {
   return m_genderAccessor;
 }
-inline 
+inline
   const Common::PropertyCode::PropertyAccessor* CorefSolver::personAccessor() const
 {
   return m_personAccessor;
 }
-inline 
+inline
   const Common::PropertyCode::PropertyAccessor* CorefSolver::numberAccessor() const
 {
   return m_numberAccessor;
 }
-inline 
+inline
   const std::map<std::string,float> CorefSolver::salienceWeights() const
 {
   return m_salienceWeights;

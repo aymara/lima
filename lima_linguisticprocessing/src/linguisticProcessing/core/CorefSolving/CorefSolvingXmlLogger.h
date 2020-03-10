@@ -16,7 +16,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/** @brief      xml logger for coreferences 
+/** @brief      xml logger for coreferences
   *
   * @file       CorefSolvingXmlLogger.h
   * @author     Claire Mouton <claire.mouton@cea.fr>
@@ -56,7 +56,7 @@ class LIMA_COREFSOLVING_EXPORT DumpXMLAnnotationVisitor : public boost::default_
   std::string m_memo;
 //   std::set<LinguisticGraphVertex> m_alreadyProcessedVertexs;
 //   std::set<LinguisticGraphVertex> m_alreadyProcessedTargets;
-  
+
 
 public:
   DumpXMLAnnotationVisitor(std::ostream& os,
@@ -68,7 +68,7 @@ public:
 
 
   void examine_edge(LinguisticGraphEdge e,
-                    const LinguisticGraph& g); 
+                    const LinguisticGraph& g);
 
   bool are_equivalent(
       LinguisticGraphEdge currentEdge,
@@ -77,20 +77,20 @@ public:
       const LinguisticGraph& g);
 
 //   void discover_vertex(DependencyGraphVertex v,
-//                                      const DependencyGraph& g); 
+//                                      const DependencyGraph& g);
 };
 
 
 /** @brief A logger process unit to output coreference solving results in XML format
  * The process unit configuration parameters are:
  * - outputSuffix: the suffix to add to the analyzed file name. It will be completed by ".xml". Default is: ".coref"
- * 
+ *
  * The output format is an XML with the analyzed text and tags identifying coreferences. Tags format is:
  *  <COREF ID="id" TYPE="coref_type" REF="ref_id" CATEG="categ">leur</COREF>
  * id value is ?
- * coref_type possible values are IDENT, ???
- * ref_id is the id of the refered entity, can be absent if the current tag is the refered entity
- * categ possible values are other, ???
+ * coref_type possible values are : IDENT, ???
+ * ref_id is the id of the referred entity, can be absent if the current tag is the referred entity
+ * categ possible values are : other, reflPron, undef, def, ???
  */
 class LIMA_COREFSOLVING_EXPORT CorefSolvingXmlLogger : public AbstractLinguisticLogger
 {
@@ -121,7 +121,7 @@ private:
   std::string m_memo;
 
   void dump(
-    std::ostream& fileName, 
+    std::ostream& fileName,
     LinguisticAnalysisStructure::AnalysisGraph* g,/*
     SyntacticAnalysis::SyntacticData* sd,*/
     Common::AnnotationGraphs::AnnotationData* ad) const;

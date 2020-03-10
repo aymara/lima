@@ -62,7 +62,7 @@ namespace Lima
       void CorefSolvingNormalizedXmlLogger::init(
         Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
         Manager* manager)
-      
+
       {
 //         COREFSOLVERLOGINIT;
         AbstractLinguisticLogger::init(unitConfiguration,manager);
@@ -164,6 +164,7 @@ namespace Lima
               {
                 out << "    <npRef>" << antecedent->id() << "</npRef>\n";
                 out << "    <refPosVertex>" << antecedent->morphVertex() << "</refPosVertex>\n";
+                out << "    <salience>" << annot->salience() << "</salience>\n";
               }
               out << "    <categ>" << annot->categ() << "</categ>\n"
                     << "  </reference>\n"
