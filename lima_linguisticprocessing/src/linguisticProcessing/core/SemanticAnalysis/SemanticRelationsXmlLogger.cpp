@@ -117,7 +117,7 @@ process(AnalysisContent& analysis) const
       return MISSING_DATA;
   }
 
-   DumperStream* dstream=initialize(analysis);
+   auto dstream = initialize(analysis);
   std::ostream& outputStream=dstream->out();
   
   ofstream out;
@@ -226,7 +226,7 @@ process(AnalysisContent& analysis) const
   outputStream << "</relations>" << endl;
   //out.close();
   outputStream << "</semantic_relation_dump>" << std::endl;
-  delete dstream;
+  
   TimeUtils::logElapsedTime("SemanticRelationsXmlLogger");
   return SUCCESS_ID;
 }

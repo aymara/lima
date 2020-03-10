@@ -86,7 +86,7 @@ class ConllDumperPrivate
   ~ConllDumperPrivate() = default;
 
   LimaStatusCode dumpPosGraphVertex(
-    QScopedPointer<DumperStream>& dstream,
+    std::shared_ptr<DumperStream>& dstream,
     LinguisticGraphVertex v,
     int& tokenId,
     LinguisticGraphVertex vEndDone,
@@ -97,7 +97,7 @@ class ConllDumperPrivate
    * holded by pos graph vertex @ref posGraphVertex
    */
   LimaStatusCode dumpAnalysisGraphVertex(
-    QScopedPointer<DumperStream>& dstream,
+    std::shared_ptr<DumperStream>& dstream,
     LinguisticGraphVertex v,
     LinguisticGraphVertex posGraphVertex,
     int& tokenId,
@@ -122,7 +122,7 @@ class ConllDumperPrivate
   /** Dumps the the named entity of type @ref neType associated to the PosGraph
    * vertex @ref v
    */
-  void dumpNamedEntity(QScopedPointer<DumperStream>& dstream,
+  void dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
                        LinguisticGraphVertex v,
                        int& tokenId,
                        LinguisticGraphVertex vEndDone,
@@ -139,7 +139,7 @@ class ConllDumperPrivate
     LinguisticGraphVertex sentenceEnd);
 
   void dumpToken(
-    QScopedPointer<DumperStream>& dstream,
+    std::shared_ptr<DumperStream>& dstream,
     int tokenId, // ID
     const QString& inflectedToken, // FORM
     const QString& lemmatizedToken, // LEMMA
@@ -334,7 +334,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   auto depGraph = syntacticData-> dependencyGraph();
   m_d->depGraph = depGraph;
 
-  QScopedPointer<DumperStream> dstream(initialize(analysis));
+  auto dstream = initialize(analysis);
 
   uint64_t nbSentences((sd->getSegments()).size());
   if (nbSentences == 0)
@@ -618,7 +618,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 }
 
 LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
-  QScopedPointer<DumperStream>& dstream,
+  std::shared_ptr<DumperStream>& dstream,
   LinguisticGraphVertex v,
   int& tokenId,
   LinguisticGraphVertex vEndDone,
@@ -1042,7 +1042,7 @@ QString matchesS(const std::set<AnnotationGraphVertex>& s)
   return result;
 }
 
-void ConllDumperPrivate::dumpNamedEntity(QScopedPointer<DumperStream>& dstream,
+void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
                                          LinguisticGraphVertex v,
                                          int& tokenId,
                                          LinguisticGraphVertex vEndDone,
@@ -1125,7 +1125,7 @@ void ConllDumperPrivate::dumpNamedEntity(QScopedPointer<DumperStream>& dstream,
 
 // TODO Split idiomatic alternative tokens and compound tokens
 LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
-  QScopedPointer<DumperStream>& dstream,
+  std::shared_ptr<DumperStream>& dstream,
   LinguisticGraphVertex v,
   LinguisticGraphVertex posGraphVertex,
   int& tokenId,
@@ -1231,7 +1231,7 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
 }
 
 void ConllDumperPrivate::dumpToken(
-  QScopedPointer<DumperStream>& dstream,
+  std::shared_ptr<DumperStream>& dstream,
   int tokenId, // ID
   const QString& inflectedToken, // FORM
   const QString& lemmatizedToken, // LEMMA

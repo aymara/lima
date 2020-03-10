@@ -118,7 +118,7 @@ LimaStatusCode TextFeaturesDumper::process(
       return MISSING_DATA;
   }
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
 
   map<Token*,LinguisticGraphVertex,lTokenPosition > categoriesMapping;
 
@@ -169,7 +169,7 @@ LimaStatusCode TextFeaturesDumper::process(
     outputVertex(dstream->out(),anagraph,ftItr->second,analysis,metadata->getStartOffset());
   }
 
-  delete dstream;
+  
   return SUCCESS_ID;
 }
 

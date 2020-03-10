@@ -234,13 +234,13 @@ LimaStatusCode BowDumper::process(
   LDEBUG << "BowDumper::process localShiftFrom:" << localShiftFrom;
 #endif
   BoWBinaryWriter writer(localShiftFrom);
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
 
 #ifdef DEBUG_LP
   LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
   writer.writeBoWText(dstream->out(),bowText);
-  delete dstream;
+  
   return SUCCESS_ID;
 }
 

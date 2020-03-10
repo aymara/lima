@@ -79,24 +79,24 @@ void SegmentFeaturesDumper::init(Common::XMLConfigurationFiles::GroupConfigurati
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
   }
   catch (NoSuchParam& ) {} // keep default value
-  
+
   try {
     m_data=unitConfiguration.getParamsValueAtKey("data");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // do nothing, keep default
 
-  try { 
-    m_sep=unitConfiguration.getParamsValueAtKey("sep"); 
-  }
-  catch (NoSuchParam& ) {} // keep default value
-  
-  try { 
-    m_sepReplace=unitConfiguration.getParamsValueAtKey("sep_replace"); 
+  try {
+    m_sep=unitConfiguration.getParamsValueAtKey("sep");
   }
   catch (NoSuchParam& ) {} // keep default value
 
-  try { 
-    std::deque<string> featureList=unitConfiguration.getListsValueAtKey("features"); 
+  try {
+    m_sepReplace=unitConfiguration.getParamsValueAtKey("sep_replace");
+  }
+  catch (NoSuchParam& ) {} // keep default value
+
+  try {
+    std::deque<string> featureList=unitConfiguration.getListsValueAtKey("features");
     // initialize feature access
     m_features=new SegmentFeatures(m_language);
     m_features->initialize(featureList);
@@ -105,7 +105,7 @@ void SegmentFeaturesDumper::init(Common::XMLConfigurationFiles::GroupConfigurati
     LOGINIT("LP::Dumper");
     LERROR << "Warning: no features selected in SegmentFeaturesDumper: output will be empty";
   }
-  
+
 }
 
 LimaStatusCode SegmentFeaturesDumper::process(
@@ -125,11 +125,11 @@ LimaStatusCode SegmentFeaturesDumper::process(
     return SUCCESS_ID;
   }
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream=initialize(analysis);
   m_features->update(analysis);
 
   ostream& out=dstream->out();
-  
+
   AnalysisData* data=analysis.getData(m_data);
   if (data==0) {
     LERROR << "Error: no data '"<< m_data << "'";
@@ -140,7 +140,7 @@ LimaStatusCode SegmentFeaturesDumper::process(
 
   // ??OME2 LDEBUG << "SegmentationData " << m_data << " has " << segmData->size() << " segments";
   LDEBUG << "SegmentationData " << m_data << " has " << segmData->getSegments().size() << " segments";
-  
+
   uint64_t i(0);
   // ??OME2 for (vector<Segment>::const_iterator s=segmData->begin(),
   //     s_end=segmData->end();s!=s_end;s++) {
@@ -160,7 +160,6 @@ LimaStatusCode SegmentFeaturesDumper::process(
     out << endl;
   }
 
-  delete dstream;
   return SUCCESS_ID;
 }
 
