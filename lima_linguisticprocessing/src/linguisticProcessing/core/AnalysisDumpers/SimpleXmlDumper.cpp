@@ -37,6 +37,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 
+
 #include <boost/graph/properties.hpp>
 
 #include <fstream>
@@ -69,6 +70,7 @@ m_propertyAccessor(0),
 m_propertyManager(0),
 m_outputVerbTense(false),
 m_outputTStatus(false),
+m_encapsulatingTag(""),
 m_tenseAccessor(0),
 m_tenseManager(0)
 {
@@ -85,6 +87,7 @@ void SimpleXmlDumper::init(
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
+  DUMPERLOGINIT;
   try
   {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
@@ -104,6 +107,7 @@ void SimpleXmlDumper::init(
     std::string str=unitConfiguration.getParamsValueAtKey("outputTStatus");
     if (str=="yes" || str=="1") {
       m_outputTStatus=true;
+      LINFO << "activate outputTStatus";
     }
   }
   catch (NoSuchParam& ) {} // keep default value
@@ -116,9 +120,20 @@ void SimpleXmlDumper::init(
         Common::MediaticData::MediaticData::single().mediaData(m_language)).getLimaToLanguageCodeMappingValue("TIME");
       m_tenseManager=&codeManager.getPropertyManager(timeCode.toUtf8().constData());
       m_tenseAccessor=&codeManager.getPropertyAccessor(timeCode.toUtf8().constData());
+      LINFO << "activate outputVerbTense";
     }
   }
  catch (NoSuchParam& ) {} // keep default value
+
+ try {
+   std::string str=unitConfiguration.getParamsValueAtKey("encapsulatingTag");
+   m_encapsulatingTag=str;
+   LINFO << "set encapsulatingTag: "<< m_encapsulatingTag;
+ }
+ catch (NoSuchParam& ) {
+     LDEBUG << "no encapsulatingTag option set. Keep default";
+ } // keep default value
+
 
 }
 
@@ -172,13 +187,27 @@ xmlOutput(std::ostream& out,
 {
   DUMPERLOGINIT;
 
-  out << "<text>" << endl;
-
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
 
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
+
+  if (m_encapsulatingTag!="" && !m_append) {
+      out << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" << endl;
+      out << "<"<< m_encapsulatingTag <<">" << endl;
+  }
+
+  std::string docId("");
+  try {
+    docId=metadata->getMetaData("FileName");
+  }
+  catch (LinguisticProcessingException& ) {
+    // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
+  }
+
+
+  out << "<DOC id=\""<< docId <<"\">" << endl;
 
   if (sb==0)
   {
@@ -238,7 +267,10 @@ xmlOutput(std::ostream& out,
       }
     }
   }
-  out << "</text>" << endl;
+  out << "</DOC>" << endl;
+  if(m_encapsulatingTag != "") {
+    out << "</"<< m_encapsulatingTag <<">" << endl;
+  }
 }
 
 void SimpleXmlDumper::
@@ -408,12 +440,12 @@ xmlOutputVertexInfos(std::ostream& out,
   for (vector<MorphoSyntacticData*>::const_iterator dataItr=data.begin(),
          dataItr_end=data.end(); dataItr!=dataItr_end; dataItr++)
   {
-    MorphoSyntacticData* data=*dataItr;
-    sort(data->begin(),data->end(),sorter);
+    MorphoSyntacticData* msData=*dataItr;
+    sort(msData->begin(),msData->end(),sorter);
     StringsPoolIndex norm(0),curNorm(0);
     LinguisticCode micro(0),curMicro(0);
-    for (MorphoSyntacticData::const_iterator elemItr=data->begin();
-         elemItr!=data->end();
+    for (MorphoSyntacticData::const_iterator elemItr=msData->begin();
+         elemItr!=msData->end();
          elemItr++)
     {
       curNorm=elemItr->normalizedForm;
@@ -444,8 +476,9 @@ xmlOutputVertexInfos(std::ostream& out,
     }
   }
 
+  /*
   // if category is specified and no matching data is found for this category: use first data
-  if (category != LinguisticCode(0) && ! output) {
+  if (category != LinguisticCode(0) && ! output ) {
     StringsPoolIndex norm=data.front()->begin()->normalizedForm;
     out << "<w p=\"" << position <<  "\""
         << " inf=\"" << xmlString(Common::Misc::limastring2utf8stdstring(ft->stringForm())) << "\""
@@ -453,6 +486,7 @@ xmlOutputVertexInfos(std::ostream& out,
         << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(sp[norm])) << "\""
         << "/>" << endl;
   }
+  */
 }
 
 bool SimpleXmlDumper::

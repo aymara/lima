@@ -46,7 +46,7 @@ namespace AnalysisDumpers {
 /**
 @author Romaric Besancon
 */
-class LIMA_ANALYSISDUMPERS_EXPORT SimpleXmlDumper : public AbstractTextualAnalysisDumper 
+class LIMA_ANALYSISDUMPERS_EXPORT SimpleXmlDumper : public AbstractTextualAnalysisDumper
 {
 public:
   SimpleXmlDumper();
@@ -68,16 +68,17 @@ protected:
   // output of some specific properties (temporary: should be inserted in WordFeatures with XML output)
   bool m_outputVerbTense;
   bool m_outputTStatus;
+  std::string m_encapsulatingTag;
   const Common::PropertyCode::PropertyAccessor* m_tenseAccessor;
   const Common::PropertyCode::PropertyManager* m_tenseManager;
-  
+
   // private member functions
   void xmlOutput(std::ostream& out,
                  AnalysisContent& analysis,
                  LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                  LinguisticAnalysisStructure::AnalysisGraph* posgraph,
                  const Common::AnnotationGraphs::AnnotationData* annotationData) const;
-  
+
   void xmlOutputVertices(std::ostream& out,
                          LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                          LinguisticAnalysisStructure::AnalysisGraph* posgraph,
@@ -86,7 +87,7 @@ protected:
                          const LinguisticGraphVertex end,
                          const FsaStringsPool& sp,const uint64_t offset) const;
 
-  void xmlOutputVertex(std::ostream& out, 
+  void xmlOutputVertex(std::ostream& out,
                        LinguisticGraphVertex v,
                        const LinguisticAnalysisStructure::Token* ft,
                        LinguisticAnalysisStructure::AnalysisGraph* anagraph,
@@ -95,14 +96,14 @@ protected:
                        const FsaStringsPool& sp,
                        uint64_t offset) const;
 
-  void xmlOutputVertexInfos(std::ostream& out, 
+  void xmlOutputVertexInfos(std::ostream& out,
                             const LinguisticAnalysisStructure::Token* ft,
                             const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
                             const FsaStringsPool& sp,
                             uint64_t offset,
                             LinguisticCode category=LinguisticCode(0)) const;
 
-  bool outputSpecificEntity(std::ostream& out, 
+  bool outputSpecificEntity(std::ostream& out,
                             const SpecificEntities::SpecificEntityAnnotation* se,
                             LinguisticAnalysisStructure::MorphoSyntacticData* data,
                             const LinguisticGraph* graph,
@@ -112,7 +113,7 @@ protected:
   // string manipulation functions to protect XML entities
   std::string xmlString(const std::string& str) const;
   void replace(std::string& str, const std::string& toReplace, const std::string& newValue) const;
-                            
+
 };
 
 } // AnalysisDumpers

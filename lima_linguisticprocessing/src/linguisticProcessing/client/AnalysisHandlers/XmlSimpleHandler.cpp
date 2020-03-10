@@ -9,7 +9,7 @@ using namespace Lima;
 using namespace std;
 
 XmlSimpleHandler::XmlSimpleHandler() :
-AbstractXmlDocumentHandler(),
+    AbstractXmlDocumentHandler(),
 m_out(0),
 m_buffer(),
 m_indexingNodeStack()
@@ -18,25 +18,27 @@ m_indexingNodeStack()
 
 void XmlSimpleHandler::setOut(std::ostream* out)
 {
-//    std::cerr << "XmlSimpleHandler::setOut" << std::endl;
+    std::cerr << "XmlSimpleHandler::setOut" << std::endl;
   m_out = out;
 }
 
 void XmlSimpleHandler::startDocument (const Common::Misc::GenericDocumentProperties& props)
 {
+  std::cerr << "XmlSimpleHandler::startDocument" << std::endl;
   LIMA_UNUSED(props)
   (*m_out) << "<DOCSET>" << endl;
 }
 
 void XmlSimpleHandler::endDocument()
 {
+  std::cerr << "XmlSimpleHandler::endDocument" << std::endl;
   (*m_out) << "</DOCSET>" << endl;
   m_out->flush();
 }
 
 void XmlSimpleHandler::handle ( const char* buf,int length )
 {
-//    std::cerr << "XmlSimpleHandler::handle" << std::endl;
+    std::cerr << "XmlSimpleHandler::handle" << std::endl;
   // do not write directly into buffer (need properties to write whole doc)
   m_buffer.write(buf,length);
 }
@@ -60,6 +62,7 @@ void XmlSimpleHandler::startNode ( const string& elementName, bool forIndexing )
 // TODO devrait s'appeler endHierarchyNode ?
 void XmlSimpleHandler::endNode ( const Common::Misc::GenericDocumentProperties& props )
 {
+  std::cerr << "XmlSimpleHandler::endNode" << std::endl;
   // only print output if end of indexing node
   if (! m_indexingNodeStack.back()) {
     m_indexingNodeStack.pop_back();

@@ -19,7 +19,7 @@
 /**
   *
   * @file       fullXmlDumper.h
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             Copyright (C) 2004 by CEA LIST
   * @author     Besancon Romaric (besanconr@zoe.cea.fr)
@@ -156,7 +156,7 @@ protected:
 
     bool m_dumpFullTokens;
     std::string m_graph;
-  std::string m_handler;
+    std::string m_handler;
 };
 
 } // end namespace AnalysisDumpers

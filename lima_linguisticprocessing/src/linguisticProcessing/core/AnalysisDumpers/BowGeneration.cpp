@@ -122,7 +122,7 @@ void BowGenerator::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "No param 'useStopList' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LWARN << "No param 'useStopList' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
     LWARN << "use default value : true";
   }
   if (m_useStopList)
@@ -140,7 +140,7 @@ void BowGenerator::init(
     }
     catch (NoSuchParam& )
     {
-      LERROR << "No param 'stopList' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+        LWARN << "No param 'stopList' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
 //       throw InvalidConfiguration();
     }
   }
@@ -151,7 +151,7 @@ void BowGenerator::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "No param 'useEmptyMacro' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LWARN << "No param 'useEmptyMacro' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
     LWARN << "use default value : true";
   }
   try
@@ -161,7 +161,7 @@ void BowGenerator::init(
   }
   catch (NoSuchParam& )
   {
-    LWARN << "No param 'useEmptyMicro' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LWARN << "No param 'useEmptyMicro' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
     LWARN << "use default value : true";
   }
   try
@@ -171,7 +171,7 @@ void BowGenerator::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "No param 'properNounCategory' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LERROR << "No param 'properNounCategory' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
 //     throw InvalidConfiguration();
   }
   try
@@ -181,7 +181,7 @@ void BowGenerator::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "No param 'commonNounCategory' in "<<unitConfiguration.getName()<<" configuration group for language " << (int)m_language;
+    LERROR << "No param 'commonNounCategory' in"<<unitConfiguration.getName()<<"configuration group for language " << (int)m_language;
 //     throw InvalidConfiguration();
   }
 

@@ -33,11 +33,8 @@ namespace SemanticAnalysis {
 
 
 
-LimaConllTokenIdMapping::LimaConllTokenIdMapping()
-{
-
-}
-  LimaConllTokenIdMapping::~LimaConllTokenIdMapping(){}
+LimaConllTokenIdMapping::LimaConllTokenIdMapping(){}
+LimaConllTokenIdMapping::~LimaConllTokenIdMapping(){}
 
 
 // private:
