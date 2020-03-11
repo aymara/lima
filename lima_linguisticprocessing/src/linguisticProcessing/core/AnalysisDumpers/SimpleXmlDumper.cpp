@@ -201,7 +201,6 @@ void SimpleXmlDumper::xmlOutput(
     docId=metadata->getMetaData("FileName");
   }
   catch (LinguisticProcessingException& ) {
-    // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
   }
 
 
@@ -474,7 +473,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
           out << "<w p=\"" << position <<  "\""
               << " inf=\"" << xmlString(ft->stringForm().toStdString()) << "\""
               << " pos=\"" << m_propertyManager->getPropertySymbolicValue(curMicro) << "\""
-              << " lemma=\"" << xmlString(sp[norm].toStdString()) << "\"";
+              << " lem=\"" << xmlString(sp[norm].toStdString()) << "\"";
           if (m_outputTStatus)
           {
             out << " tok=\"" << ft->status().defaultKey() << "\"";

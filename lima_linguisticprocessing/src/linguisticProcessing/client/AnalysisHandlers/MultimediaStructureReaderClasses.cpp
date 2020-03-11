@@ -359,6 +359,7 @@ void MultimediaBinaryStructureReader::readMultimediaDocumentBlock(
 #ifdef DEBUG_LP
       LDEBUG << "DOCUMENT_PROPERTIES_BLOC";
 #endif
+      break;
     }
     case ST_BLOC:
     { // do nothing ?
