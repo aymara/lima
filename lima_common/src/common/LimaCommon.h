@@ -174,7 +174,6 @@ public:
     QsLogging::Level level = QsLogging::Categories::instance().levelFor(x);
     pLogger->setLoggingLevel(level);
 #endif
-
   }
   QsLogging::Logger* pLogger;
 };

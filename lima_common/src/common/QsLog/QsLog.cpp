@@ -42,7 +42,8 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 
 namespace QsLogging
 {
-typedef QList<std::shared_ptr<Destination>> DestinationList;
+typedef std::shared_ptr<Destination> DestinationPtr;
+typedef QList< DestinationPtr > DestinationList;
 
 static const char TraceString[] = "TRACE";
 static const char DebugString[] = "DEBUG";
@@ -102,7 +103,7 @@ Logger::~Logger()
    delete d;
 }
 
-void Logger::addDestination(std::shared_ptr<Destination> destination)
+void Logger::addDestination(DestinationPtr destination)
 {
    assert(destination);
    d->destList.push_back(destination);
@@ -180,7 +181,7 @@ void Logger::Helper::writeToLog()
 
 Logger::Helper::~Helper()
 {
-  // writeToLog can throw. Catch its exceptions to avoid throwing from 
+  // writeToLog can throw. Catch its exceptions to avoid throwing from
   //destructor
   try
   {
@@ -196,7 +197,7 @@ void Logger::write(const QString& message)
 {
   if (message.isNull())
   {
-    std::cerr << "Logger::write null message for " << d->zone.toUtf8().constData() << std::endl;
+    std::cerr << "Logger::write null message for " << d->zone.toUtf8().constData() << std::endl << std::flush;
     return;
   }
    for(DestinationList::iterator it = d->destList.begin(),

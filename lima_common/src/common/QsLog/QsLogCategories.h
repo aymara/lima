@@ -50,11 +50,10 @@ private Q_SLOTS:
   void configureFileChanged ( const QString & path );
 
 private:
-  Categories(QObject* parent = 0);
+   Categories(QObject* parent = 0);
    Categories(const Categories&);
    virtual ~Categories();
    Categories& operator=(const Categories&);
-   
 
    CategoriesImpl* d;
 };

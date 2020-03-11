@@ -27,8 +27,8 @@
 #define QSLOGDEST_H
 
 #include <memory>
-#include <QString>
-#include <QObject>
+#include <QtCore/QString>
+#include <QtCore/QObject>
 
 
 #include "QsLog_export.h"
@@ -59,9 +59,10 @@ public:
   }
 
   bool setDefault();
+  bool removeDefault();
   bool configure(const QString& fileName);
 
-  const QMap< QString, std::shared_ptr<Destination> >& destinations() const;
+  const QMap< QString, DestinationPtr >& destinations() const;
 
 private Q_SLOTS:
   void configureFileChanged ( const QString & path );
@@ -75,7 +76,7 @@ private:
   DestinationsImpl* d;
 };
 
-//! Creates logging destinations/sinks. The caller will have ownership of 
+//! Creates logging destinations/sinks. The caller will have ownership of
 //! the newly created destinations.
 class LIMA_COMMONQSLOG_EXPORT DestinationFactory
 {

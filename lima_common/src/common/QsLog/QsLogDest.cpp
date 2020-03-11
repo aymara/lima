@@ -53,7 +53,7 @@ public:
    DestinationsImpl()
    {
    }
-   QMap< QString, std::shared_ptr<Destination> > m_destinations;
+   QMap< QString, DestinationPtr > m_destinations;
 
    LimaFileSystemWatcher m_configFileWatcher;
 };
@@ -71,7 +71,7 @@ Destinations::~Destinations()
    delete d;
 }
 
-const QMap< QString, std::shared_ptr<Destination> >& Destinations::destinations() const
+const QMap< QString, DestinationPtr >& Destinations::destinations() const
 {
   return d->m_destinations;
 }
@@ -86,8 +86,14 @@ void Destinations::configureFileChanged ( const QString & path )
 
 bool Destinations::setDefault()
 {
-  d->m_destinations.insert("DebugOutput",
+  d->m_destinations.insert("DefaultOutput",
                             DestinationFactory::MakeDebugOutputDestination());
+  return true;
+}
+
+bool Destinations::removeDefault()
+{
+  d->m_destinations.remove("DefaultOutput");
   return true;
 }
 
@@ -99,7 +105,7 @@ bool Destinations::configure(const QString& fileName)
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    std::cerr << "Destinations::configure Unable to open qslog configuration file: \"" 
+    std::cerr << "Destinations::configure Unable to open qslog configuration file: \""
               << fileName.toUtf8().data() << "\"" << std::endl;
     return false;
   }
@@ -119,16 +125,19 @@ bool Destinations::configure(const QString& fileName)
         QString value;
         if (elts.size()==2)
           value = elts.at(1).trimmed();
-        if (destination == "DebugOutput")
+        if (destination == "DebugOutput") {
           d->m_destinations.insert(destination,
                                    DestinationFactory::MakeDebugOutputDestination());
-        else if (destination == "File")
+          d->m_destinations.remove("DefaultOutput");
+        }
+        else if (destination == "File") {
           d->m_destinations.insert(destination,
                                    DestinationFactory::MakeFileDestination(value));
+        }
         else
         {
-          std::cerr << "Error reading \"" << fileName.toUtf8().constData() 
-                    << "\": unknow destination \"" 
+          std::cerr << "Error reading \"" << fileName.toUtf8().constData()
+                    << "\": unknown destination \""
                     << destination.toUtf8().constData()
                     << std::endl;
           res = false;
@@ -142,7 +151,7 @@ bool Destinations::configure(const QString& fileName)
         {
           includedInitFileName = configDir.filePath(includedInitFileName);
         }
-        configure(includedInitFileName);
+        res &= configure(includedInitFileName);
       }
     }
     line = in.readLine();
@@ -169,7 +178,7 @@ FileDestination::FileDestination(const QString& filePath)
   mFile.setFileName(filePath);
   mFile.open(QFile::WriteOnly|QFile::Append); //fixme: should throw on failure
 //   std::cerr << "FileDestination::FileDestination "
-//             << QFileInfo(mFile).absoluteFilePath().toUtf8().constData() 
+//             << QFileInfo(mFile).absoluteFilePath().toUtf8().constData()
 //             << std::endl;
   mOutputStream.setDevice(&mFile);
 }

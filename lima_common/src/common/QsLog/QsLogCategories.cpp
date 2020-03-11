@@ -40,7 +40,7 @@ using namespace Lima::Common::Misc;
 namespace QsLogging
 {
 
-// static const int init =  initQsLog();
+//static const int init = initQsLog();
 
 class CategoriesImpl
 {
@@ -57,13 +57,13 @@ Categories::Categories(QObject* parent) :
   QObject(parent),
   d(new CategoriesImpl())
 {
-  connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
-  QString category = "FilesReporting";
+  const QString category = "FilesReporting";
 #ifdef DEBUG_CD
   d->categories.insert(category,QsLogging::InfoLevel);
 #else
   d->categories.insert(category,QsLogging::ErrorLevel);
 #endif
+  connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
 }
 
 Categories::~Categories()
@@ -71,7 +71,7 @@ Categories::~Categories()
    delete d;
 }
 
-void Categories::configureFileChanged ( const QString & path )
+void Categories::configureFileChanged( const QString & path )
 {
   if (QFile(path).exists())
   {
@@ -81,27 +81,15 @@ void Categories::configureFileChanged ( const QString & path )
 
 bool Categories::configure(const QString& fileName)
 {
+  const QString local_zone("FilesReporting");
+  static LogInit logInit(local_zone.toUtf8().constData());
+  auto& logger = *(logInit.pLogger);
+
   //std::cerr << "Categories::configure " << fileName.toStdString() << std::endl;
+
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
-
-//   if (configDir.exists("log4cpp"))
-//   {
-//     QString log4cppSubdirName = configDir.filePath("log4cpp");
-//     QFileInfo log4cppSubdirInfo(log4cppSubdirName);
-//     if (log4cppSubdirInfo.isDir())
-//     {
-//       QStringList nameFilters;
-//       nameFilters << "log4cpp.*.properties";
-//       QDir log4cppSubdir(log4cppSubdirName);
-//       QFileInfoList configFiles = log4cppSubdir.entryInfoList(nameFilters);
-//       Q_FOREACH(QFileInfo configFile, configFiles)
-//       {
-//         configure(configFile.absoluteFilePath());
-//       }
-//     }
-//   }
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -117,7 +105,7 @@ bool Categories::configure(const QString& fileName)
   {
     if (!line.startsWith("#"))
     {
-      QStringList elts =line.split("=");
+      QStringList elts = line.split("=");
       if (elts.size()==2 && elts.at(0).trimmed().startsWith("log4j.category."))
       {
         QString category = elts.at(0).trimmed().remove(0,QLatin1String("log4j.category.").size());
@@ -140,6 +128,16 @@ bool Categories::configure(const QString& fileName)
           res = false;
           d->categories.insert(category,QsLogging::TraceLevel);
         }
+        if(category == local_zone) {
+            // Ensure the local logger knows all the latest declared destinations
+            for (auto destination: Destinations::instance().destinations())
+            {
+              logger.addDestination(destination);
+            }
+            // Ensure the local logger has its latest declared level
+            const QsLogging::Level lvl = QsLogging::Categories::instance().levelFor(local_zone);
+            logger.setLoggingLevel(lvl);
+        }
       }
       else if (elts.size()==2 && elts.at(0).trimmed() == "include")
       {
@@ -149,12 +147,11 @@ bool Categories::configure(const QString& fileName)
         {
           includedInitFileName = configDir.filePath(includedInitFileName);
         }
-        configure(includedInitFileName);
+        res &= configure(includedInitFileName);
       }
     }
     line = in.readLine();
   }
-  LOGINIT("FilesReporting");
   LINFO << "QsLog conf file loaded:" << fileName;
   return res;
 }
@@ -174,6 +171,8 @@ Level Categories::levelFor(const QString& category) const
 LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
 {
   QsLogging::Categories::instance();
+  QsLogging::Destinations::instance().setDefault();
+
   bool atLeastOneSuccessfulLoad = false;
   bool atLeastOneDestinationSuccessfulLoad = false;
   QStringList configDirsList;
@@ -195,20 +194,21 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       if (initDir.exists())
       {
         QStringList entryList = initDir.entryList(QDir::Files);
-        Q_FOREACH(QString entry, entryList)
+        for(QString entry : entryList)
         {
-          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
+          if (QsLogging::Destinations::instance().configure(configDir + "/log4cpp/" + entry))
           {
-            atLeastOneSuccessfulLoad = true;
+            atLeastOneDestinationSuccessfulLoad = true;
+            QsLogging::Destinations::instance().removeDefault();
           }
           else
           {
             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\"" << std::endl;
             return -1;
           }
-          if (QsLogging::Destinations::instance().configure(configDir + "/log4cpp/" + entry))
+          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
           {
-            atLeastOneDestinationSuccessfulLoad = true;
+            atLeastOneSuccessfulLoad = true;
           }
           else
           {
@@ -221,18 +221,19 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       QString initFileName = configDir + "/log4cpp.properties";
       if (QFileInfo::exists(initFileName))
       {
-        if (QsLogging::Categories::instance().configure(initFileName))
+        if (QsLogging::Destinations::instance().configure(initFileName))
         {
-          atLeastOneSuccessfulLoad = true;
+          atLeastOneDestinationSuccessfulLoad = true;
+          QsLogging::Destinations::instance().removeDefault();
         }
         else
         {
           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
           return -1;
         }
-        if (QsLogging::Destinations::instance().configure(initFileName))
+        if (QsLogging::Categories::instance().configure(initFileName))
         {
-          atLeastOneDestinationSuccessfulLoad= true;
+          atLeastOneSuccessfulLoad = true;
         }
         else
         {
@@ -244,18 +245,19 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
       initFileName = configDir + "/logTensorflowSpecificEntitiescpp.properties";
       if (QFileInfo::exists(initFileName))
       {
-        if (QsLogging::Categories::instance().configure(initFileName))
+        if (QsLogging::Destinations::instance().configure(initFileName))
         {
-          atLeastOneSuccessfulLoad = true;
+          atLeastOneDestinationSuccessfulLoad = true;
+          QsLogging::Destinations::instance().removeDefault();
         }
         else
         {
           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
           return -1;
         }
-        if (QsLogging::Destinations::instance().configure(initFileName))
+        if (QsLogging::Categories::instance().configure(initFileName))
         {
-          atLeastOneDestinationSuccessfulLoad = true;
+          atLeastOneSuccessfulLoad = true;
         }
         else
         {
@@ -275,10 +277,11 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
     std::cerr << "Configure Problem: no log configuration file has been found in \"" << configString.toStdString() << "\"" << std::endl;
     return -1;
   }
-  if (!atLeastOneDestinationSuccessfulLoad)
+  if (atLeastOneDestinationSuccessfulLoad)
   {
-    QsLogging::Destinations::instance().setDefault();
+    QsLogging::Destinations::instance().removeDefault();
   }
+
   return 0;
 }
 

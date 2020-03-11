@@ -96,7 +96,7 @@ public:
   bool isErrorEnabled() const;
   //! Returns true if logging level is lower than or equal to FatalLevel
   bool isFatalEnabled() const;
-  
+
    //! The helper forwards the streaming to QDebug and builds the final
    //! log message.
    class LIMA_COMMONQSLOG_EXPORT Helper
