@@ -495,13 +495,13 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
   }
 
   // if category is specified and no matching data is found for this category: use first data
-  if (category != LinguisticCode(0) && ! output)
+  if (category != LinguisticCode(0) && !output && data.front()->size()>0 )
   {
     auto norm = data.front()->begin()->normalizedForm;
     out << "<w p=\"" << position <<  "\""
         << " inf=\"" << xmlString(ft->stringForm().toStdString()) << "\""
         << " pos=\"" << m_propertyManager->getPropertySymbolicValue(category) << "\""
-        << " lemma=\"" << xmlString(sp[norm].toStdString()) << "\""
+        << " lem=\"" << xmlString(sp[norm].toStdString()) << "\""
         << "/>" << std::endl;
   }
 }
