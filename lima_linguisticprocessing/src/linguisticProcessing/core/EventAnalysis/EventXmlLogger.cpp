@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Thu Mar 24 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "common/time/traceUtils.h"
@@ -41,7 +41,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace EventAnalysis {
 
-SimpleFactory<MediaProcessUnit,EventXmlLogger> 
+SimpleFactory<MediaProcessUnit,EventXmlLogger>
 EventXmlLoggerFactory(EVENTXMLLOGGER_CLASSID);
 
 //***********************************************************************
@@ -52,14 +52,14 @@ m_eventData("EventData")
 {
 }
 
-EventXmlLogger::~EventXmlLogger() 
+EventXmlLogger::~EventXmlLogger()
 {
 }
 
 //***********************************************************************
 void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
                           Manager* manager)
-  
+
 {
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "EventXmlLogger::init";
@@ -71,7 +71,7 @@ void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // do nothing, keep default
 }
-  
+
 LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
@@ -79,7 +79,7 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // initialize output
-  DumperStream* dstream=AbstractTextualAnalysisDumper::initialize(analysis);
+  auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
   if (! m_eventData.empty()) {
@@ -110,7 +110,7 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
               LERROR << "no annotation graph available !";
               return MISSING_DATA;
             }
-            
+
             outputEvents(out, eventTemplateData->convertToEvents(annotationData));
           }
           else {
@@ -125,7 +125,6 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
       LERROR << "no data of name " << m_eventData;
     }
   }
-  delete dstream;
   TimeUtils::logElapsedTime("EventXmlLogger");
   return SUCCESS_ID;
 }
@@ -138,7 +137,7 @@ void EventXmlLogger::outputEvents(std::ostream& out,
   for (std::vector<Event*>::const_iterator iT= eventData->begin(); iT!= eventData->end();iT++)
   {
     i++;
-    out << "<event id=\"" << i << "\"" 
+    out << "<event id=\"" << i << "\""
         << " w=\"" << (*iT)->get_weight() << "\""
         << " main=\"" << (*iT)->getMain() << "\">" << endl;
     out << "<segments>" << endl;
@@ -182,12 +181,12 @@ void EventXmlLogger::outputEventData(std::ostream& out,
                                      const EventData* eventData) const
 {
   out << "<events>" << endl;
-  out << "<event id=\"" << 1 << "\"" 
+  out << "<event id=\"" << 1 << "\""
       << " w=\"" << 1 << "\""
       << " main=\"true\">" << endl;
   out << "  <entities>" << endl;
   const map<Common::MediaticData::EntityType,vector<Entity> >& entities=eventData->getEntities();
-  for (map<Common::MediaticData::EntityType,vector<Entity> >::const_iterator 
+  for (map<Common::MediaticData::EntityType,vector<Entity> >::const_iterator
     it=entities.begin(),it_end=entities.end();it!=it_end;it++) {
     out << "    <entity type=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName((*it).first)) << "\">" << endl;
     for(std::vector<Entity>::const_iterator e=(*it).second.begin(),e_end=(*it).second.end();e!=e_end;e++)
@@ -197,7 +196,7 @@ void EventXmlLogger::outputEventData(std::ostream& out,
     out << "    </entity>" << endl;
   }
   out << "  </entities>" << endl;
-      
+
   out << "</event>" << endl;
   out << "</events>" << endl;
 }
@@ -209,7 +208,7 @@ void EventXmlLogger::outputEntity(std::ostream& out, const Entity& e)  const
       << " len=\"" <<e.getLength() << "\"";
   string str(""),norm(""),role("");
   const Automaton::EntityFeatures& features=e.getFeatures();
-  for (Automaton::EntityFeatures::const_iterator 
+  for (Automaton::EntityFeatures::const_iterator
     featureItr=features.begin(),features_end=features.end();
   featureItr!=features_end; featureItr++)
   {

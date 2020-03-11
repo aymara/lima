@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Thu Mar 24 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "common/time/traceUtils.h"
@@ -46,7 +46,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace EventAnalysis {
 
-SimpleFactory<MediaProcessUnit,EventTemplateDataXmlLogger> 
+SimpleFactory<MediaProcessUnit,EventTemplateDataXmlLogger>
 EventTemplateDataXmlLoggerFactory(EVENTTEMPLATEDATAXMLLOGGER_CLASSID);
 
 //***********************************************************************
@@ -57,14 +57,14 @@ m_eventData("EventTemplateData")
 {
 }
 
-EventTemplateDataXmlLogger::~EventTemplateDataXmlLogger() 
+EventTemplateDataXmlLogger::~EventTemplateDataXmlLogger()
 {
 }
 
 //***********************************************************************
 void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
                           Manager* manager)
-  
+
 {
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "EventTemplateDataXmlLogger::init";
@@ -79,7 +79,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
     // not an error, keep default
   }
 }
-  
+
 LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
@@ -87,7 +87,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
   TimeUtils::updateCurrentTime();
 
   // initialize output
-  DumperStream* dstream=AbstractTextualAnalysisDumper::initialize(analysis);
+  auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
   const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -96,7 +96,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
     LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
-  
+
   if (! m_eventData.empty()) {
     const AnalysisData* data =analysis.getData(m_eventData);
     if (data!=0) {
@@ -116,8 +116,6 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
       LERROR << "no data of name " << m_eventData;
     }
   }
-  
-  delete dstream;
   TimeUtils::logElapsedTime("EventTemplateDataXmlLogger");
   return SUCCESS_ID;
 }
@@ -133,7 +131,7 @@ void EventTemplateDataXmlLogger::outputEventData(std::ostream& out,
     const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
       i++;
-      out << "  <event id=\"" << i << "\"" 
+      out << "  <event id=\"" << i << "\""
           << " w=\"" << (*it).getWeight() << "\""
           << " main=\"" << (*it).isMainEvent() << "\""
           << " type=\"" << (*it).getType() << "\">"
@@ -143,8 +141,8 @@ void EventTemplateDataXmlLogger::outputEventData(std::ostream& out,
       for(map<string,EventTemplateElement>::const_iterator it1= templateElements.begin(); it1!= templateElements.end();it1++)
       {
         string typeName=Common::Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName((*it1).second.getType()));
-        out << "      <entity role=\"" << (*it1).first << "\"" 
-            << " type=\"" << typeName << "\">" 
+        out << "      <entity role=\"" << (*it1).first << "\""
+            << " type=\"" << typeName << "\">"
             << endl;
         const LinguisticAnalysisStructure::AnalysisGraph* graph=(*it1).second.getGraph();
         LinguisticGraphVertex v=(*it1).second.getVertex();
@@ -160,7 +158,7 @@ void EventTemplateDataXmlLogger::outputEventData(std::ostream& out,
 }
 
 
-void EventTemplateDataXmlLogger::outputEntity(std::ostream& out, 
+void EventTemplateDataXmlLogger::outputEntity(std::ostream& out,
                                               const LinguisticAnalysisStructure::AnalysisGraph* graph,
                                               LinguisticGraphVertex v,
                                               const AnnotationData* annotationData)  const
@@ -177,7 +175,7 @@ void EventTemplateDataXmlLogger::outputEntity(std::ostream& out,
   string str(""),norm("");
   str=xmlString(Common::Misc::limastring2utf8stdstring(token->stringForm()));
 
-  // check if vertex corresponds to a specific entity found 
+  // check if vertex corresponds to a specific entity found
   std::set< AnnotationGraphVertex > matches = annotationData->matches(graph->getGraphId(),v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
   it != matches.end(); it++)
@@ -190,7 +188,7 @@ void EventTemplateDataXmlLogger::outputEntity(std::ostream& out,
       pointerValue<SpecificEntityAnnotation>();
 
       const Automaton::EntityFeatures& features=se->getFeatures();
-      for (Automaton::EntityFeatures::const_iterator 
+      for (Automaton::EntityFeatures::const_iterator
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {

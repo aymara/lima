@@ -49,7 +49,7 @@ namespace LinguisticProcessing
 namespace LinguisticAnalysisStructure
 {
 
-SimpleFactory<MediaProcessUnit,SentenceBoundariesXmlLogger> 
+SimpleFactory<MediaProcessUnit,SentenceBoundariesXmlLogger>
 sentenceBoundariesXmlLoggerFactory(SENTENCEBOUNDARIESXMLLOGGER_CLASSID);
 
 SentenceBoundariesXmlLogger::SentenceBoundariesXmlLogger():
@@ -95,7 +95,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
     return MISSING_DATA;
   }
   AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
-  
+
   AnalysisData* data=analysis.getData(m_boundaries);
   if (data == 0) {
     SENTBOUNDLOGINIT;
@@ -103,7 +103,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
     return MISSING_DATA;
   }
   SegmentationData* sb=static_cast<SegmentationData*>(data);
-  
+
   std::string docId("");
   try {
     docId=metadata->getMetaData("DocId");
@@ -120,21 +120,21 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
   }
 
-  DumperStream* dstream=AbstractTextualAnalysisDumper::initialize(analysis);
+  auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
-  
+
   if (!docId.empty()) {
-    out << "<sentence_boundaries id=\""<< docId 
-          << "\" offsetNode=\"" << offsetIndexingNode 
+    out << "<sentence_boundaries id=\""<< docId
+          << "\" offsetNode=\"" << offsetIndexingNode
           << "\">" << endl;
   }
   else {
     out << "<sentence_boundaries>" << endl;
   }
-  
+
   for (vector<Segment>::const_iterator it=sb->getSegments().begin(),it_end=sb->getSegments().end();
        it!=it_end; it++) {
-    
+
     // use end vertex of segment as sentence boundary
     LinguisticGraphVertex end=(*it).getLastVertex();
 
@@ -150,8 +150,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
          << "\"/>" << endl;
   }
   out << "</sentence_boundaries>" << endl;
-  delete dstream;
-  
+
   TimeUtils::logElapsedTime("SentenceBoundariesXmlLogger");
   return SUCCESS_ID;
 }

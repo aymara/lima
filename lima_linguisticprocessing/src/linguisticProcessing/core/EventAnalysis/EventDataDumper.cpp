@@ -22,7 +22,7 @@
  * @author     Olivier Mesnard (olivier.mesnard@cea.fr)
  * @date       Mon Sep 19 2011
  * copyright   Copyright (C) 2011 by CEA - LIST
- * 
+ *
  ***********************************************************************/
 #include "EventDataDumper.h"
 #include "common/time/traceUtils.h"
@@ -46,10 +46,10 @@ namespace LinguisticProcessing {
 namespace EventAnalysis {
 
 //***********************************************************************
-SimpleFactory<MediaProcessUnit,EventDataDumper> 
+SimpleFactory<MediaProcessUnit,EventDataDumper>
 EventDataDumperFactory(EVENTDATADUMPER_CLASSID);
 
-EventDataDumper::EventDataDumper() : 
+EventDataDumper::EventDataDumper() :
 AbstractTextualAnalysisDumper(),
 // key to access EventData in AnalysisContent
 m_eventData("EventData"),
@@ -64,7 +64,7 @@ EventDataDumper::~EventDataDumper() {
 void EventDataDumper::
 init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
-  
+
 {
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "EventDataDumper::init";
@@ -86,7 +86,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     // not an error, keep default
   }
 }
-  
+
 LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
@@ -94,7 +94,7 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // initialize output
-  DumperStream* dstream=AbstractTextualAnalysisDumper::initialize(analysis);
+  auto dstream = AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
   if ((! m_eventData.empty())
     &&(! m_segmentationData.empty())) {
@@ -147,8 +147,8 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
     LERROR << "no key to access eventData or segmentationData! ";
     return MISSING_DATA;
   }
-  
-  delete dstream;
+
+
   TimeUtils::logElapsedTime("EventDataDumper");
   return SUCCESS_ID;
 }

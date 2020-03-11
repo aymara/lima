@@ -89,7 +89,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
       return MISSING_DATA;
   }
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
   std::ostream& outputStream=dstream->out();
   /*std::ofstream outputStream;
   if (!openLogFile(outputStream,metadata->getMetaData("FileName")))
@@ -146,7 +146,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
   }
 
   outputStream << "</syntactic_analysis_dump>" << std::endl;
-  delete dstream;
+  
   TimeUtils::logElapsedTime("SyntacticAnalysisXmlLogger");
   return SUCCESS_ID;
 }

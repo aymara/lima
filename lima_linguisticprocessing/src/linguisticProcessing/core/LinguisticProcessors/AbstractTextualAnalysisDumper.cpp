@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Jan 21 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include <common/LimaCommon.h>
@@ -53,7 +53,7 @@ m_temporaryFileMetadata()
 {
 }
 
-AbstractTextualAnalysisDumper::~AbstractTextualAnalysisDumper() 
+AbstractTextualAnalysisDumper::~AbstractTextualAnalysisDumper()
 {
 }
 
@@ -61,7 +61,7 @@ AbstractTextualAnalysisDumper::~AbstractTextualAnalysisDumper()
 void AbstractTextualAnalysisDumper::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
-  
+
 {
   m_language = manager->getInitializationParameters().media;
 
@@ -71,7 +71,7 @@ void AbstractTextualAnalysisDumper::init(
   }
   catch (NoSuchParam& )  { }  // do nothing, optional
 
-  try 
+  try
   {
     m_temporaryFileMetadata = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("temporaryFileMetadata").c_str());
   }
@@ -107,15 +107,15 @@ void AbstractTextualAnalysisDumper::init(
   }
   catch (NoSuchParam& ) {} // keep default value
 }
-  
-DumperStream* AbstractTextualAnalysisDumper::
-initialize(AnalysisContent& analysis) const
+
+std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
+    AnalysisContent& analysis) const
 {
   DUMPERLOGINIT;
 // #ifdef DEBUG_LP
   LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream" << m_handlerName;
 // #endif
-  
+
   // if handler is defined, find handler
   if (! m_handlerName.empty()) {
 // #ifdef DEBUG_LP
@@ -126,10 +126,10 @@ initialize(AnalysisContent& analysis) const
     if (handler==0)
     {
       DUMPERLOGINIT;
-      LWARN << "handler " << m_handlerName << " has not been given to the core client";
+      LWARN << "AbstractTextualAnalysisDumper::initialize handler " << m_handlerName << " has not been given to the core client";
     }
     else {
-      return new DumperStream(handler);
+      return std::make_shared<DumperStream>(handler);
     }
   }
 
@@ -139,19 +139,21 @@ initialize(AnalysisContent& analysis) const
 // #endif
     LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
-        LERROR << "no LinguisticMetaData ! abort";
+        LERROR << "AbstractTextualAnalysisDumper::initialize no LinguisticMetaData ! abort";
     }
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with metadata value"<< metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData());
 // #endif
-    return new DumperStream(metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData()),m_append);
+    return std::make_shared<DumperStream>(
+      metadata->getMetaData(m_temporaryFileMetadata.toUtf8().constData()),
+      m_append);
   }
-  
+
   if (! m_outputFile.empty()) {
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with output file"<< m_outputFile << m_append;
 // #endif
-    return new DumperStream(m_outputFile,m_append);
+    return std::make_shared<DumperStream>(m_outputFile, m_append);
   }
 
   if (! m_outputSuffix.empty()) {
@@ -175,13 +177,13 @@ initialize(AnalysisContent& analysis) const
              << m_outputSuffix << " on file " << sourceFile;
 // #endif
       string outputFile=sourceFile + m_outputSuffix;
-      return new DumperStream(outputFile,m_append);
+      return std::make_shared<DumperStream>(outputFile, m_append);
     }
   }
 
   // return
   LERROR << "AbstractTextualAnalysisDumper::initialize: missing parameters to initialize output stream: use default file 'output'";
-  return new DumperStream("output",m_append);
+  return std::make_shared<DumperStream>("output", m_append);
 }
 
 } // end namespace

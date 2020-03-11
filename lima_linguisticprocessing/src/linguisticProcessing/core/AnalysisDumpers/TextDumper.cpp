@@ -150,7 +150,7 @@ LimaStatusCode TextDumper::process(
       return MISSING_DATA;
   }
 
-  QScopedPointer<DumperStream> dstream(initialize(analysis));
+  auto dstream = initialize(analysis);
 
   map<Token*,vector<MorphoSyntacticData*>,lTokenPosition > categoriesMapping;
 

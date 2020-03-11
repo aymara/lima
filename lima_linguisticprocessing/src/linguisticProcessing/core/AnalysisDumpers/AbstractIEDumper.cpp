@@ -221,7 +221,7 @@ LimaStatusCode AbstractIEDumper::process(
 
 
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
   ostream& out=dstream->out();
 
   uint64_t offset(0);
@@ -342,7 +342,6 @@ LimaStatusCode AbstractIEDumper::process(
 
   outputGlobalFooter(out);
 
-  delete dstream;
   TimeUtils::logElapsedTime("AbstractIEDumper");
   return SUCCESS_ID;
 
@@ -415,14 +414,14 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
 
       const std::string& templateName=it->getType();
       LDEBUG << "templateName:" << templateName;
-      
+
       std::string templateMention="";
       for(const auto t:m_templateDefinitions)
       {
         if (t.second->getName()==templateName) templateMention=t.second->getMention();
       }
       LDEBUG << "templateMention" << templateMention;
-      
+
       EventInfos eventInfos;
 
       for(map<string,EventTemplateElement>::const_iterator it1= templateElements.begin(); it1!= templateElements.end();it1++)
@@ -449,7 +448,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
 
           // entities in map are stored with original positions
           adjustPosition(position);
-          
+
           // get corresponding entity
           string entityType=Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName((*it1).second.getType()));
           const auto itE=mapEntities.find(make_tuple(position,length,entityType));
@@ -631,7 +630,7 @@ outputEntity(std::ostream& out,
     if (positions.size()>0) {
       len=positions.back().second-pos+1;
     }
-    
+
     auto entity=std::make_tuple(pos,len,entityName);
 
     if (mapEntities.find(entity)!=mapEntities.end())

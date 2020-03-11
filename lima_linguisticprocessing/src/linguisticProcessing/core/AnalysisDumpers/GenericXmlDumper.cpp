@@ -334,9 +334,9 @@ process(AnalysisContent& analysis) const
     }
   }
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
   xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData,syntacticData);
-  delete dstream;
+  
 
   TimeUtils::logElapsedTime("GenericXmlDumper");
   return SUCCESS_ID;

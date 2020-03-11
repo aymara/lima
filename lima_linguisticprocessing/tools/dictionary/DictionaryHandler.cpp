@@ -556,9 +556,9 @@ bool DictionaryCompiler::endElement(const QString& namespaceURI,
   return m_d->endElement(namespaceURI, name, qName);
 }
 
-bool DictionaryCompilerPrivate::endElement(const QString& namespaceURI,
+bool DictionaryCompilerPrivate::endElement([[maybe_unused]] const QString& namespaceURI,
                                     const QString& name,
-                                    const QString & qName)
+                                    [[maybe_unused]] const QString & qName)
 {
   //  cerr << "endElement " << name << endl;
   if (name == S_ENTRY)

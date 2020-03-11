@@ -45,7 +45,7 @@ class LIMA_SPECIFICENTITIES_EXPORT SpecificEntitiesXmlLogger : public AbstractTe
 public:
   SpecificEntitiesXmlLogger();
 
-  virtual ~SpecificEntitiesXmlLogger();
+  virtual ~SpecificEntitiesXmlLogger() = default;
 
   virtual void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -58,13 +58,13 @@ private:
   MediaId m_language;
   std::string m_graph;
   bool m_followGraph;
-  
+
   //member private members
-  const SpecificEntityAnnotation* 
+  const SpecificEntityAnnotation*
   getSpecificEntityAnnotation(LinguisticGraphVertex v,
                               const Common::AnnotationGraphs::AnnotationData* annotationData) const;
   void outputEntity(Common::AnnotationGraphs::AnnotationData* annotationData,
-                    std::ostream& out, 
+                    std::ostream& out,
                     LinguisticGraphVertex v,
                     const SpecificEntityAnnotation* annot,
                     const VertexTokenPropertyMap& tokenMap,

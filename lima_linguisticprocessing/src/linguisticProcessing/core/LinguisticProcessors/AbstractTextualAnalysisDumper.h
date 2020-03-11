@@ -35,7 +35,7 @@ namespace LinguisticProcessing {
 
   // TODO a faire hériter de AbstractAnalysisDumper dans Common.
   // [hlb] Pour une raison à déterminer, il y a un pb (pour les dumper fils) si cette classe n'hérite pas directement de MediaProcessUnit
-class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public MediaProcessUnit 
+class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public MediaProcessUnit
 {
  public:
   AbstractTextualAnalysisDumper();
@@ -48,24 +48,23 @@ class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public Me
 
   virtual LimaStatusCode process(AnalysisContent& analysis) const override=0;
 
-  // create the stream on which the data will be dump
-  // the pointer must be deleted by caller
-  DumperStream* initialize(AnalysisContent& analysis) const;
-  
+  // create the stream on which the data will be dumped
+  std::shared_ptr<DumperStream> initialize(AnalysisContent& analysis) const;
+
  protected:
   MediaId m_language;
   std::ostream* m_out;
-  
+
   std::string m_handlerName;      /* < the handler for communication with the client */
-  
+
   // members for file management
   std::string m_outputFile;   /* < the file name for local file logging */
   std::string m_outputSuffix; /* < the suffix for local file logging */
-  bool m_stripInputSuffix; /* < whether to remove the input file suffix before 
+  bool m_stripInputSuffix; /* < whether to remove the input file suffix before
                                 adding (or not) its suffix to the local file */
   bool m_append;
   QString m_temporaryFileMetadata;
-  
+
 };
 
 } // end namespace

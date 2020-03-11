@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Mon Sep 19 2011
  * copyright   Copyright (C) 2011 by CEA - LIST
- * 
+ *
  ***********************************************************************/
 
 #include "EventTemplateDataDumper.h"
@@ -46,10 +46,10 @@ namespace LinguisticProcessing {
 namespace EventAnalysis {
 
 //***********************************************************************
-SimpleFactory<MediaProcessUnit,EventTemplateDataDumper> 
+SimpleFactory<MediaProcessUnit,EventTemplateDataDumper>
 EventTemplateDataDumperFactory(EVENTTEMPLATEDATADUMPER_CLASSID);
 
-EventTemplateDataDumper::EventTemplateDataDumper() : 
+EventTemplateDataDumper::EventTemplateDataDumper() :
 AbstractTextualAnalysisDumper(),
 m_eventData("EventTemplateData")
 {
@@ -62,7 +62,7 @@ EventTemplateDataDumper::~EventTemplateDataDumper() {
 void EventTemplateDataDumper::
 init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
-  
+
 {
   LOGINIT("LP::EventAnalysis");
   LDEBUG << "EventTemplateDataDumper::init";
@@ -77,7 +77,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     // not an error, keep default
   }
 }
-  
+
 LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
@@ -85,7 +85,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // initialize output
-  DumperStream* dstream=AbstractTextualAnalysisDumper::initialize(analysis);
+  auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
   const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
@@ -94,7 +94,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
     LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
-  
+
   if (! m_eventData.empty()) {
     const AnalysisData* data =analysis.getData(m_eventData);
     if (data!=0) {
@@ -115,8 +115,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
       LERROR << "no data of name " << m_eventData;
     }
   }
-  
-  delete dstream;
+
   TimeUtils::logElapsedTime("EventTemplateDataDumper");
   return SUCCESS_ID;
 }

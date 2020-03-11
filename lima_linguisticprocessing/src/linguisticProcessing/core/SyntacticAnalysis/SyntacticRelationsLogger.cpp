@@ -91,7 +91,7 @@ LimaStatusCode SyntacticRelationsLogger::process(
       return MISSING_DATA;
   }
 
-  DumperStream* dstream=initialize(analysis);
+  auto dstream = initialize(analysis);
   std::ostream& outputStream=dstream->out();
   /*std::ofstream ofs;
   if (!openLogFile(ofs,metadata->getMetaData("FileName"))) {
@@ -105,7 +105,7 @@ LimaStatusCode SyntacticRelationsLogger::process(
   const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
   LDEBUG << "call of displayRelationsXMLFormat";
   SyntacticAnalysisTools::displayRelationsXMLFormat(*syntacticData,m_language,outputStream);
-  delete dstream;
+  
   TimeUtils::logElapsedTime("SyntacticRelationsLogger");
   return SUCCESS_ID;
 }
