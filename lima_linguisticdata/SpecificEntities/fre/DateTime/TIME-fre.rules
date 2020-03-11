@@ -20,15 +20,14 @@ heure$NC:(T_Ni|<NUMBER>):(T_Ni|(et (demie|quart)))?:TIME:
 @utc=(UTC,GMT)
 
 # 11:00 AM, cette forme apparait de plus en plus dans les textes en français
-T_Ni::\: T_Ni (\: T_Ni)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+T_Ni:T_Ni \::(\: T_Ni)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
 =>NormalizeLocalTime("date_current")
 
-t_integer::\: t_integer (\: t_integer)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+t_integer>0<60:t_integer>0<24 \::(\: t_integer>0<60)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
 =>NormalizeLocalTime("date_current")
 
-
-<NUMBER>::\: <NUMBER> (\: <NUMBER>)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
-=>NormalizeLocalTime("date_current")
+#<NUMBER>::\: <NUMBER> (\: <NUMBER>)? (AM|A.M.|PM|P.M.)? (@timezone)?:TIME:
+#=>NormalizeLocalTime("date_current")
 
 # when both local and UTC are specified
 @h:<NUMBER>:<NUMBER> (\(? @localtime \)?)? \( <NUMBER> @h <NUMBER> @utc \):TIME:
