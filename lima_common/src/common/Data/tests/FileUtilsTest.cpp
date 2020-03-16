@@ -29,7 +29,7 @@
 
 using namespace Lima::Common::Misc;
 
-QTEST_MAIN ( FileUtilsTest );
+QTEST_GUILESS_MAIN ( FileUtilsTest );
 
 // Testing uint64_t countLines(QFile& file)
 void FileUtilsTest::FileUtilsTest0()
@@ -37,7 +37,7 @@ void FileUtilsTest::FileUtilsTest0()
   try
   {
     QTemporaryFile file;
-    
+
     QVERIFY2( file.open(), "Opens a temporary file" );
     QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
     QTextStream stream(&file);
@@ -66,7 +66,7 @@ void FileUtilsTest::FileUtilsTest0()
 void FileUtilsTest::FileUtilsTest1()
 {
   QTemporaryFile file;
-  
+
   QVERIFY2( file.open(), "Opens a temporary file" );
   QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
   QTextStream stream(&file);
@@ -88,13 +88,13 @@ void FileUtilsTest::FileUtilsTest2()
   tempFile.close();
   std::fstream file;
   file.open(tempFileName.toUtf8().constData(),std::fstream::binary | std::fstream::in | std::fstream::out| std::fstream::trunc);
-  
+
   QVERIFY2( file.good(), "Opens a temporary file" );
 
   uint64_t nbLines = countLines(file);
   QVERIFY2( nbLines == 0, QString(QLatin1String("Initial temp file should be empty but has %1 lines.")).arg(nbLines).toUtf8().constData() );
-  
-  file << "auie" << std::flush; 
+
+  file << "auie" << std::flush;
   file.seekg(0, std::ios::beg);
   QVERIFY(file.good());
   nbLines = countLines(file);
@@ -123,7 +123,7 @@ void FileUtilsTest::FileUtilsTest3()
   std::fstream file;
   file.open(tempFileName.toUtf8().constData(),std::fstream::binary | std::fstream::in | std::fstream::out| std::fstream::trunc);
 
-  
+
   QVERIFY2( file.good(), "Opens a temporary file" );
 
   uint64_t nbLines = countLines(file);

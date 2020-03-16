@@ -35,24 +35,24 @@ using namespace Lima::Common::PropertyCode;
 
 void PropertyCodeTest0::initTestCase()
 {
-//   QStringList configDirs = buildConfigurationDirectoriesList(QStringList() 
+//   QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
 //       << "lima",QStringList());
 //   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-// 
-//   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList() 
+//
+//   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
 //       << "lima",QStringList());
 //   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-// 
+//
 //   std::string commonConfigFile=std::string("lima-common.xml");
-// 
+//
 //   std::deque<std::string> langs;
 //   langs.push_back("eng.ud");
-// 
+//
 //   QsLogging::initQsLog(configPath);
 //   // Necessary to initialize factories
 //   Lima::AmosePluginsManager::single();
 //   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-// 
+//
 //   // initialize common
 //   Common::MediaticData::MediaticData::changeable().init(
 //       resourcesPath.toUtf8().constData(),
@@ -78,8 +78,8 @@ void PropertyCodeTest0::test_load()
   LinguisticCode code = pmMicro.getPropertyValue("NOUN");
 
   QVERIFY( pmMicro.getPropertySymbolicValue(code) == "NOUN" );
-  
-  LinguisticCode encoded = pcm.encode({ 
+
+  LinguisticCode encoded = pcm.encode({
     {"MACRO", "NOUN"},
     {"MICRO", "NOUN"},
   });
@@ -87,5 +87,5 @@ void PropertyCodeTest0::test_load()
 
 }
 
-QTEST_MAIN(PropertyCodeTest0)
+QTEST_GUILESS_MAIN(PropertyCodeTest0)
 
