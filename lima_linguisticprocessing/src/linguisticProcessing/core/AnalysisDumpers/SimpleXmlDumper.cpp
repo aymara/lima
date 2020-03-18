@@ -196,15 +196,15 @@ void SimpleXmlDumper::xmlOutput(
       out << "<"<< m_encapsulatingTag <<">" << std::endl;
   }
 
-  std::string docId("");
+  QString docId("");
   try {
-    docId=metadata->getMetaData("FileName");
+    docId.fromStdString(metadata->getMetaData("FileName"));
   }
   catch (LinguisticProcessingException& ) {
   }
 
-
-  out << "<DOC id=\""<< docId <<"\">" << std::endl;
+  const std::string language = Common::MediaticData::MediaticData::single().media(m_language);
+  out << "<DOC id=\""<< docId.toHtmlEscaped() <<"\" lang=\""<<language<<"\">" << std::endl;
 
   if (sb==nullptr)
   {
