@@ -70,6 +70,13 @@
         <!--item value="temporalXmlDumper"/-->
         <!--item value="afterFusionXmlDumper"/-->
       </list>
+  </group>
+    <group name="deepud-nerrules" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
     </group>
 
     <group name="approxmatcher" class="ProcessUnitPipeline" >
@@ -348,13 +355,12 @@
       <param key="window_size" value="20"/>
       <param key="batch_size" value="200"/>
     </group>
-    <group name="cpptftokenizer" class="CppTensorFlowTokenizer">
-      <param key="corpus" value="en"/>
-      <param key="embeddings_path" value="path to tf tokenizer embeddings"/>
-      <param key="model_path" value="path to tf tokenizer model"/>
-      <param key="graphOutputFile" value="name of the frozen model pb file"/>
-      <param key="window_size" value="20"/>
-      <param key="batch_size" value="200"/>
+    <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
+      <param key="model_prefix" value="tokenizer-$udlang"/>
+    </group>
+    <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
+      <param key="model_prefix" value="morphosyntax-$udlang"/>
+      <param key="embeddings" value="fasttext-$udlang.bin"/>
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
@@ -966,6 +972,11 @@
     <group name="conll03Dumper" class="ConllDumper">
       <param key="format" value="CoNLL-03"/>
       <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="conllDumperFake" class="ConllDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <!--param key="fakeDependencyGraph" value="true"/-->
+      <param key="graph" value="AnalysisGraph"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
