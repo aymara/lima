@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -109,8 +109,8 @@ ConllDumperPrivate::~ConllDumperPrivate()
 {}
 
 ConllDumper::ConllDumper():
-AbstractTextualAnalysisDumper(),
-m_d(new ConllDumperPrivate())
+  AbstractTextualAnalysisDumper(),
+  m_d(new ConllDumperPrivate())
 {
 }
 
@@ -560,8 +560,17 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         auto neType = QString::fromUtf8("_") ;
         if (annotationData != nullptr)
         {
-          auto anaVertices = annotationData->matches("PosGraph", v,
-                                                     "AnalysisGraph");
+          std::set<AnnotationGraphVertex> anaVertices;
+          if ("AnalysisGraph" == m_d->m_graph.toStdString())
+          {
+            anaVertices.insert(v);
+          }
+          else
+          {
+            anaVertices = annotationData->matches(m_d->m_graph.toStdString(), v,
+                                                  "AnalysisGraph");
+          }
+
           // note: anaVertices size should be 0 or 1
           for (const auto& anaVertex: anaVertices)
           {
@@ -705,6 +714,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                           << "\t" << "_" // MISC
                           << std::endl;
         }
+
+        // for GramEval2020
+        // TODO: fix string pool behavior for smiles (don't fit to UTF-16)
 
         dstream->out()  << tokenId // ID
                         << "\t" << inflectedToken // FORM
