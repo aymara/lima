@@ -199,10 +199,6 @@ protected:
     string sample_id_node_name;
   };
 
-  size_t m_max_seq_len;
-  size_t m_max_word_len;
-  size_t m_batch_size;
-
   u32string m_unk;
   u32string m_eos;
 
@@ -223,9 +219,9 @@ protected:
 
   bool m_lemmatization_required;
   LemmatizerConf m_lemmatizer_conf;
-  size_t m_lemmatizer_batch_size;
-  size_t m_lemmatizer_max_input_len;
-  size_t m_lemmatizer_ctx_len;
+  size_t m_batch_size;
+  size_t m_max_input_len;
+  size_t m_ctx_len;
   size_t m_beam_size;
 
   set<LinguisticCode> m_dont_lemmatize;
@@ -233,19 +229,33 @@ protected:
   LimaString m_special_chars;
   LRUCache<LimaString, LimaString> m_cache;
 
+  struct TFormOccurrences
+  {
+    StringsPoolIndex form;
+    StringsPoolIndex lemma;
+    bool firstWord;
+    set<MorphoSyntacticData::iterator> occurrences;
+
+    TFormOccurrences() : firstWord(false) {}
+  };
+
   void lemmatize(vector<TSentence>& sentences, SyntacticData& syntacticData);
   size_t get_code_for_feature(const TSentence &sent, size_t tid, const LemmatizerConf::dict<string> &d) const;
   size_t get_code_for_feature(const TToken &token, const LemmatizerConf::dict<string> &d) const;
+  size_t get_code_for_feature(const LinguisticElement &le, const LemmatizerConf::dict<string> &d) const;
 
   void generate_batch(const vector<TSentence>& sentences,
-                                 size_t& current_sentence,
-                                 size_t& current_token,
-                                 size_t batch_size,
-                                 vector<pair<string, Tensor>>& batch) const;
+                      size_t& current_sentence,
+                      size_t& current_token,
+                      size_t batch_size,
+                      vector<pair<string, Tensor>>& batch) const;
 
   void generate_batch(const vector<TSentence>& sentences,
-                                 const vector<pair<size_t, size_t>>& tokens_to_lemmatize,
-                                 vector<pair<string, Tensor>>& batch) const;
+                      const vector<pair<size_t, size_t>>& tokens_to_lemmatize,
+                      vector<pair<string, Tensor>>& batch) const;
+
+  void generate_batch(const vector<TFormOccurrences*>& forms_to_lemmatize,
+                      vector<pair<string, Tensor>>& batch) const;
 
   void encode_token_for_batch(const vector<TSentence>& sentences,
                                          size_t current_sentence,
@@ -254,7 +264,17 @@ protected:
                                          size_t batch_item_idx,
                                          vector<pair<string, Tensor>>& batch) const;
 
+  void encode_token_for_batch(const TFormOccurrences* form_occurrences,
+                                         const map<string, size_t> &feat2idx,
+                                         size_t batch_item_idx,
+                                         vector<pair<string, Tensor>>& batch) const;
+
+
   void set_token_lemma(vector<TSentence>& sentences, const u32string& lemma, size_t current_sentence, size_t current_token) const;
+  void set_token_lemma(TToken &token, const u32string& lemma) const;
+  void set_token_lemma(TToken &token, const LimaString& lemma) const;
+  void set_token_lemma(MorphoSyntacticData::iterator& md_it, const u32string& lemma) const;
+  void set_token_lemma(MorphoSyntacticData::iterator& md_it, const LimaString& lemma) const;
 
   void create_batch_template(vector<pair<string, Tensor>>& batch,
                                    map<string, size_t>& feat2idx) const;
@@ -262,8 +282,13 @@ protected:
   void lemmatize_with_model(vector<TSentence>& sentences,
                             const vector<pair<size_t, size_t>> tokens_to_lemmatize);
 
+  void lemmatize_with_model(vector<map<StringsPoolIndex, map<LimaString, TFormOccurrences>>>& buckets);
+
+  void process_batch(vector<TFormOccurrences*>& forms_for_batch, size_t pos) const ;
+
   LimaString create_form_key(const TToken& token) const;
   LimaString create_form_key(const LimaString& form, const map<string, string>& features) const;
+  LimaString create_feat_str(const TToken& token, const LimaString& extra) const;
 
   bool hasCharFromList(const LimaString& str, const LimaString& char_list) const;
   bool hasNoCharsFromList(const LimaString& str, const LimaString& char_list) const;
@@ -430,16 +455,6 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
 
   m_lemmatization_required = true;
 
-  if (data.object().value("max_seq_len").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param max_seq_len.",
-      LimaException());
-  if (!data.object().value("max_seq_len").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param max_seq_len is not a number.",
-      LimaException());
-  m_max_seq_len = data.object().value("max_seq_len").toInt();
-
   // batch_size
   if (data.object().value("batch_size").isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
@@ -449,7 +464,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
     LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param batch_size is not a number.",
       LimaException());
-  m_lemmatizer_batch_size = data.object().value("batch_size").toInt();
+  m_batch_size = data.object().value("batch_size").toInt();
 
   QJsonObject encoder_conf = get_json_object(data.object(), "encoder");
 
@@ -462,7 +477,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
     LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param max_len is not a number.",
       LimaException());
-  m_lemmatizer_max_input_len = encoder_conf.value("max_len").toInt();
+  m_max_input_len = encoder_conf.value("max_len").toInt();
 
   // ctx_len
   if (encoder_conf.value("ctx_len").isUndefined())
@@ -473,7 +488,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
     LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param ctx_len is not a number.",
       LimaException());
-  m_lemmatizer_ctx_len = encoder_conf.value("ctx_len").toInt();
+  m_ctx_len = encoder_conf.value("ctx_len").toInt();
 
   // beam_size
   QJsonObject decoder_conf = get_json_object(data.object(), "decoder");
@@ -505,15 +520,18 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
     m_lemmatizer_conf.feature_dicts[f] = LemmatizerConf::dict<string>();
     load_string_array(get_json_array(feature, "i2c"), m_lemmatizer_conf.feature_dicts[f].m_i2w);
     load_string_to_uint_map(get_json_object(feature, "c2i"), m_lemmatizer_conf.feature_dicts[f].m_w2i);
-    try
+    if (f != "FirstWord")
     {
-      m_lemmatizer_conf.feature_dicts[f].accessor = &(pcm.getPropertyAccessor(f));
+      try
+      {
+        m_lemmatizer_conf.feature_dicts[f].accessor = &(pcm.getPropertyAccessor(f));
+      }
+      catch (const InvalidConfiguration& e)
+      {
+        continue;
+      }
+      m_lemmatizer_conf.feature_dicts[f].fill_linguistic_codes(pcm.getPropertyManager(f));
     }
-    catch (const InvalidConfiguration& e)
-    {
-      continue;
-    }
-    m_lemmatizer_conf.feature_dicts[f].fill_linguistic_codes(pcm.getPropertyManager(f));
   }
 
   load_string_array(get_json_array(encoder_conf, "i2t"), m_lemmatizer_conf.pos_dict.m_i2w);
@@ -619,7 +637,7 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
     LOG_MESSAGE(LDEBUG, "analyze sentence from vertex " << beginSentence
 		        << " to vertex " << endSentence);
 
-    TSentence sent(beginSentence, endSentence, m_max_seq_len - 1);
+    TSentence sent(beginSentence, endSentence, 100);
 
     LinguisticGraphVertex curr = beginSentence;
     while (curr != endSentence)
@@ -663,27 +681,7 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
       prevSentenceEnd = curr;
     }
 
-    if (sent.token_count < m_max_seq_len - 1)
-      sentences.push_back(sent);
-    else
-    {
-      size_t offset = 0;
-      while (offset < sent.token_count)
-      {
-        TSentence s(sent.begin, sent.end, m_max_seq_len - 1);
-        size_t m = sent.token_count - offset;
-        if (m > m_max_seq_len - 1)
-          m = m_max_seq_len - 1;
-        for (size_t j = 0; j < m; j++)
-          s.tokens[j] = sent.tokens[offset + j];
-        s.token_count = m;
-
-        s.offset = offset;
-        sentences.push_back(s);
-
-        offset += m;
-      }
-    }
+    sentences.push_back(sent);
   }
 
   lemmatize(sentences, *syntacticData);
@@ -716,6 +714,39 @@ bool TensorFlowLemmatizerPrivate::hasNoCharsFromList(const LimaString& str, cons
   return true;
 }
 
+void TensorFlowLemmatizerPrivate::set_token_lemma(TToken &token, const u32string& lemma) const
+{
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+  string utf8_lemma = cvt.to_bytes(lemma);
+
+  set_token_lemma(token, LimaString(utf8_lemma.c_str()));
+}
+
+void TensorFlowLemmatizerPrivate::set_token_lemma(TToken &token, const LimaString& lemma) const
+{
+  FsaStringsPool* stringsPool = &MediaticData::changeable().stringsPool(m_language);
+
+  if (token.morpho != nullptr)
+  {
+    StringsPoolIndex lemma_idx = (*stringsPool)[lemma];
+    (*token.morpho)[0].lemma = lemma_idx ;
+  }
+}
+
+void TensorFlowLemmatizerPrivate::set_token_lemma(MorphoSyntacticData::iterator& md_it, const LimaString& lemma) const
+{
+  StringsPoolIndex lemma_idx = (*m_stringsPool)[lemma];
+  md_it->lemma = lemma_idx ;
+}
+
+void TensorFlowLemmatizerPrivate::set_token_lemma(MorphoSyntacticData::iterator& md_it, const u32string& lemma) const
+{
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+  string utf8_lemma = cvt.to_bytes(lemma);
+
+  set_token_lemma(md_it, LimaString(utf8_lemma.c_str()));
+}
+
 void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, const u32string& lemma, size_t current_sentence, size_t current_token) const
 {
   FsaStringsPool* stringsPool = &MediaticData::changeable().stringsPool(m_language);
@@ -729,10 +760,8 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, 
 
   LimaString src_form = (*m_stringsPool)[token.token->form()];
   size_t src_size = src_form.size();
-  size_t size_diff = (lemma.size() > src_size) ? lemma.size() - src_size : src_size - lemma.size();
-  if (src_size > 1 && size_diff < 10 && m_dont_lemmatize.find(pos_code) == m_dont_lemmatize.end()
-          && hasCharFromList(src_form, m_main_alphabet)
-          && hasNoCharsFromList(src_form, m_special_chars) )
+  int size_diff = int(lemma.size()) - src_size;
+  if (hasCharFromList(src_form, m_main_alphabet) && hasNoCharsFromList(src_form, m_special_chars))
   {
     if (token.morpho != nullptr && token.morpho->size() > 0)
     {
@@ -745,7 +774,7 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, 
 LimaString TensorFlowLemmatizerPrivate::create_form_key(const LimaString& form,
                                                         const map<string, string>& features) const
 {
-  LimaString key = form.toLower() + LimaString::fromUtf8("\t");
+  LimaString key = form + LimaString::fromUtf8("\t");
 
   auto it = features.find("upos");
   if (features.end() == it)
@@ -767,12 +796,10 @@ LimaString TensorFlowLemmatizerPrivate::create_form_key(const LimaString& form,
   return key;
 }
 
-LimaString TensorFlowLemmatizerPrivate::create_form_key(const TToken& token) const
+LimaString TensorFlowLemmatizerPrivate::create_feat_str(const TToken& token, const LimaString& extra = LimaString("")) const
 {
-  LimaString key = (*m_stringsPool)[token.token->form()].toLower() + LimaString::fromUtf8("\t");
-
   size_t code = get_code_for_feature(token, m_lemmatizer_conf.pos_dict);
-  key += LimaString::fromStdString(m_lemmatizer_conf.pos_dict.m_i2w[code]);
+  LimaString key = LimaString::fromStdString(m_lemmatizer_conf.pos_dict.m_i2w[code]);
 
   for (const auto& kv : m_lemmatizer_conf.feature_dicts)
   {
@@ -789,6 +816,22 @@ LimaString TensorFlowLemmatizerPrivate::create_form_key(const TToken& token) con
             + LimaString::fromUtf8("=")
             + LimaString::fromStdString(kv.second.m_i2w[code]);
   }
+
+  if (extra.size() > 0)
+  {
+    if (key.size() > 0)
+      key += LimaString::fromUtf8("&");
+    key += extra;
+  }
+
+  return key;
+}
+
+LimaString TensorFlowLemmatizerPrivate::create_form_key(const TToken& token) const
+{
+  LimaString key = (*m_stringsPool)[token.token->form()]
+                 + LimaString::fromUtf8("\t")
+                 + create_feat_str(token);
 
   return key;
 }
@@ -833,14 +876,100 @@ void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<TSentence>& senten
 
     LimaString src_form = (*m_stringsPool)[token.token->form()];
     size_t src_size = src_form.size();
-    size_t size_diff = (lemma.size() > src_size) ? lemma.size() - src_size : src_size - lemma.size();
-    if (size_diff >= 4)
+    int size_diff = int(lemma.size()) - src_size;
+    if (size_diff >= 10)
       lemma = src_form.toStdU32String();
 
     set_token_lemma(sentences, lemma, tokens_to_lemmatize[i].first, tokens_to_lemmatize[i].second);
 
     LimaString src_form_key = create_form_key(token);
     m_cache.put(src_form_key, LimaString::fromStdU32String(lemma));
+  }
+}
+
+void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<map<StringsPoolIndex, map<LimaString, TFormOccurrences>>>& buckets)
+{
+  vector<string> requested_nodes;
+  requested_nodes.push_back("Decoder/decoder_with_shared_attention_mechanism_1/decoder/transpose");
+
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+  u32string EOS = cvt.from_bytes("<EOS>");
+  size_t idx_EOS = m_lemmatizer_conf.decoder_dict.m_w2i.find(EOS)->second;
+
+  vector<TFormOccurrences*> forms_for_batch;
+  forms_for_batch.resize(m_batch_size);
+
+  size_t pos = 0;
+  for (size_t i = 0; i < buckets.size(); i++)
+  {
+    for (auto form_it = buckets[i].begin(); form_it != buckets[i].end(); form_it++)
+    {
+      map<LimaString, TFormOccurrences>& homonyms = form_it->second;
+      for (auto feat_it = homonyms.begin(); feat_it != homonyms.end(); feat_it++)
+      {
+
+        forms_for_batch[pos] = &(feat_it->second);
+        pos++;
+        if (pos == m_batch_size)
+        {
+          process_batch(forms_for_batch, pos);
+          pos = 0;
+        }
+      }
+    }
+  }
+
+  if (pos > 0)
+  {
+    process_batch(forms_for_batch, pos);
+  }
+}
+
+void TensorFlowLemmatizerPrivate::process_batch(vector<TFormOccurrences*>& forms_for_batch, size_t pos) const
+{
+  vector<string> requested_nodes;
+  requested_nodes.push_back("Decoder/decoder_with_shared_attention_mechanism_1/decoder/transpose");
+
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+  u32string EOS = cvt.from_bytes("<EOS>");
+  size_t idx_EOS = m_lemmatizer_conf.decoder_dict.m_w2i.find(EOS)->second;
+
+  // Generate batch
+  vector<pair<string, Tensor>> inputs;
+  generate_batch(forms_for_batch, inputs);
+
+  // Run model
+  vector<Tensor> out;
+  Status status = m_session->Run(inputs, requested_nodes, {}, &out);
+  if (!status.ok())
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
+                        << status.ToString(),
+                        LimaException());
+
+  auto sample_id = out[0].tensor<int, 3>();
+
+  // Apply results
+  for (size_t j = 0; j < sample_id.dimension(0) && j < pos; j++)
+  {
+    u32string lemma;
+    size_t c = 0;
+    while (sample_id(j, c, 0) != idx_EOS && c < sample_id.dimension(1))
+    {
+      char32_t ch = sample_id(j, c, 0);
+      lemma += m_lemmatizer_conf.decoder_dict.m_i2w[ch];
+      c++;
+    }
+
+    LimaString src_form = (*m_stringsPool)[forms_for_batch[j]->form];
+    size_t src_size = src_form.size();
+    int size_diff = int(lemma.size()) - src_size;
+    if (size_diff >= 10)
+      lemma = src_form.toStdU32String();
+
+    for ( auto md_it : forms_for_batch[j]->occurrences )
+    {
+      set_token_lemma(md_it, lemma);
+    }
   }
 }
 
@@ -853,7 +982,9 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
   FsaStringsPool* stringsPool = &MediaticData::changeable().stringsPool(m_language);
 
   vector<pair<size_t, size_t>> tokens_to_lemmatize;
-  tokens_to_lemmatize.reserve(m_lemmatizer_batch_size);
+  tokens_to_lemmatize.reserve(m_batch_size);
+  vector<map<StringsPoolIndex, map<LimaString, TFormOccurrences>>> buckets;
+  buckets.resize(m_max_input_len);
 
   while (current_sentence < sentences.size())
   {
@@ -880,29 +1011,32 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
     if (m_cache.get(src_form_key, cached_lemma))
     {
       set_token_lemma(sentences, cached_lemma.toStdU32String(), current_sentence, current_token);
+      current_token++;
+      continue;
     }
-    else
+
+    LinguisticCode pos_code = token.morpho->firstValue(*m_lemmatizer_conf.pos_dict.accessor);
+    StringsPoolIndex form_idx = token.token->form();
+    const LimaString form = (*m_stringsPool)[form_idx];
+    if (m_dont_lemmatize.find(pos_code) != m_dont_lemmatize.end())
     {
-      tokens_to_lemmatize.push_back(make_pair(current_sentence, current_token));
+      set_token_lemma(token, form);
+      current_token++;
+      continue;
+    }
 
-      if (tokens_to_lemmatize.size() >= m_lemmatizer_batch_size)
-      {
-        if (tokens_to_lemmatize.size() > m_lemmatizer_batch_size)
-          LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::lemmatize: tokens_to_lemmatize.size() can't be greater than m_lemmatizer_batch_size",
-                              LimaException());
-
-        // It's time to lemmatize with TensorFlow module
-        lemmatize_with_model(sentences, tokens_to_lemmatize);
-
-        tokens_to_lemmatize.clear();
-      }
+    if (hasCharFromList(form, m_main_alphabet) && hasNoCharsFromList(form, m_special_chars))
+    {
+      const LimaString feat_str = create_feat_str(token, (0 == current_token ? "FirstWord=Yes" : ""));
+      buckets[form.size() - 1][form_idx][feat_str].form = form_idx;
+      buckets[form.size() - 1][form_idx][feat_str].firstWord = (0 == current_token);
+      buckets[form.size() - 1][form_idx][feat_str].occurrences.insert(token.morpho->begin());
     }
 
     current_token++;
   }
 
-  if (tokens_to_lemmatize.size() > 0)
-    lemmatize_with_model(sentences, tokens_to_lemmatize);
+  lemmatize_with_model(buckets);
 }
 
 size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
@@ -923,19 +1057,37 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
 }
 
 size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TSentence &sent,
-                                                           size_t tid,
-                                                           const LemmatizerConf::dict<string> &d) const
+                                                         size_t tid,
+                                                         const LemmatizerConf::dict<string> &d) const
 {
   const TToken t = sent.tokens[tid];
   return get_code_for_feature(t, d);
 }
 
+size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const LinguisticElement &le,
+                                                         const LemmatizerConf::dict<string> &d) const
+{
+
+  LinguisticCode lc = d.accessor->readValue(le.properties);;
+
+  auto it = d.m_c2i.find(lc);
+  if (d.m_c2i.end() == it)
+  {
+    LOG_MESSAGE_WITH_PROLOG(LINFO, "WARNING: unknown feature value in get_code_for_feature(const LinguisticElement, ...)\".");
+    auto it = d.m_c2i.find(LinguisticCode(0));
+    if (d.m_c2i.end() == it)
+      LOG_ERROR_AND_THROW("ERROR: can\'t find #None LinguisticCode.", LimaException());
+    return it->second;
+  }
+  return it->second;
+}
+
 void TensorFlowLemmatizerPrivate::encode_token_for_batch(const vector<TSentence>& sentences,
-                                                                      size_t current_sentence,
-                                                                      size_t current_token,
-                                                                      const map<string, size_t> &feat2idx,
-                                                                      size_t batch_item_idx,
-                                                                      vector<pair<string, Tensor>>& batch) const
+                                                         size_t current_sentence,
+                                                         size_t current_token,
+                                                         const map<string, size_t> &feat2idx,
+                                                         size_t batch_item_idx,
+                                                         vector<pair<string, Tensor>>& batch) const
 {
   auto len = batch[0].second.tensor<int, 1>();
   auto input = batch[1].second.tensor<int, 2>();
@@ -949,7 +1101,7 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const vector<TSentence>
   const TToken& token = sent.tokens[current_token];
 
   const LimaString& form = (*m_stringsPool)[token.token->form()];
-  const u32string u32_form_lc = form.toLower().toStdU32String();
+  const u32string u32_form_lc = form.toStdU32String();
 
   // len
   int seq_length = u32_form_lc.size();
@@ -1001,6 +1153,20 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const vector<TSentence>
     if (feat2idx.end() == feat_it)
       LOG_ERROR_AND_THROW("ERROR: something wrong in encode_token_for_lemmatizer_batch.", LimaException());
     auto t = batch[feat_it->second].second.tensor<int, 1>();
+
+    if ("FirstWord" == kv.first)
+    {
+      if (0 == current_token)
+      {
+        t(batch_item_idx) = 0;
+      }
+      else
+      {
+        t(batch_item_idx) = 0;
+      }
+      continue;
+    }
+
     auto it = m_lemmatizer_conf.feature_dicts.find(kv.first);
     const LemmatizerConf::dict<string> &rd = it->second;
     if (rd.accessor == nullptr)
@@ -1012,33 +1178,102 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const vector<TSentence>
   }
 }
 
+void TensorFlowLemmatizerPrivate::encode_token_for_batch(const TFormOccurrences* form_occurrences,
+                                       const map<string, size_t> &feat2idx,
+                                       size_t batch_item_idx,
+                                       vector<pair<string, Tensor>>& batch) const
+{
+    auto len = batch[0].second.tensor<int, 1>();
+    auto input = batch[1].second.tensor<int, 2>();
+    auto context = batch[2].second.tensor<int, 2>();
+
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+    u32string EOS = cvt.from_bytes("<EOS>");
+    size_t encoder_eos = m_lemmatizer_conf.encoder_dict.m_w2i.find(EOS)->second;
+
+    const LimaString& form = (*m_stringsPool)[form_occurrences->form];
+    const u32string u32_form_lc = form.toStdU32String();
+
+    // len
+    int seq_length = u32_form_lc.size();
+    if (seq_length > input.dimension(1))
+      seq_length = input.dimension(1);
+
+    len(batch_item_idx) = seq_length;
+
+    // input
+    for (size_t n = 0; n < u32_form_lc.size() && n < seq_length; n++)
+    {
+      u32string current_symbol = u32_form_lc.substr(n, 1);
+      auto it = m_lemmatizer_conf.encoder_dict.m_w2i.find(current_symbol);
+      size_t code = encoder_eos;
+      if (it != m_lemmatizer_conf.encoder_dict.m_w2i.end())
+      {
+        code = it->second;
+        input(batch_item_idx, n) = code;
+      }
+    }
+
+    // context
+    size_t code = get_code_for_feature(**(form_occurrences->occurrences.begin()), m_lemmatizer_conf.pos_dict);
+    context(batch_item_idx, 0) = code;
+
+    // features
+    for (const auto& kv : m_lemmatizer_conf.feature_dicts)
+    {
+      string name = string("feat_") + kv.first;
+      auto feat_it = feat2idx.find(name);
+      if (feat2idx.end() == feat_it)
+        LOG_ERROR_AND_THROW("ERROR: something wrong in encode_token_for_lemmatizer_batch.", LimaException());
+      auto t = batch[feat_it->second].second.tensor<int, 1>();
+
+      if ("FirstWord" == kv.first)
+      {
+        if (form_occurrences->firstWord)
+          t(batch_item_idx) = 1;
+        else
+          t(batch_item_idx) = 0;
+        continue;
+      }
+
+      auto it = m_lemmatizer_conf.feature_dicts.find(kv.first);
+      const LemmatizerConf::dict<string> &rd = it->second;
+      if (rd.accessor == nullptr)
+      {
+        continue;
+      }
+      size_t code = get_code_for_feature(**(form_occurrences->occurrences.begin()), rd);
+      t(batch_item_idx) = code;
+    }
+}
+
 void TensorFlowLemmatizerPrivate::create_batch_template(vector<pair<string, Tensor>>& batch,
                                                                      map<string, size_t>& feat2idx) const
 {
   // len - input word length
-  Tensor t_len(DT_INT32, TensorShape({static_cast<long long>(m_lemmatizer_batch_size)}));
+  Tensor t_len(DT_INT32, TensorShape({static_cast<long long>(m_batch_size)}));
 
   batch.push_back({ m_input_node_names.find("length")->second, t_len });
 
   // input - char indices
   // batch_size x max_input_len
-  Tensor t_input(DT_INT32, TensorShape({static_cast<long long>(m_lemmatizer_batch_size),
-                                        static_cast<long long>(m_lemmatizer_max_input_len)
+  Tensor t_input(DT_INT32, TensorShape({static_cast<long long>(m_batch_size),
+                                        static_cast<long long>(m_max_input_len)
                                        }));
 
   batch.push_back({ m_input_node_names.find("input")->second, t_input });
 
   // context - pos indices
   // batch_size x ctx_len
-  Tensor t_context(DT_INT32, TensorShape({static_cast<long long>(m_lemmatizer_batch_size),
-                                          static_cast<long long>(m_lemmatizer_ctx_len)
+  Tensor t_context(DT_INT32, TensorShape({static_cast<long long>(m_batch_size),
+                                          static_cast<long long>(m_ctx_len)
                                          }));
 
   batch.push_back({ m_input_node_names.find("context")->second, t_context });
 
   for (const auto& kv : m_lemmatizer_conf.feature_dicts)
   {
-    Tensor t_feat(DT_INT32, TensorShape({static_cast<long long>(m_lemmatizer_batch_size)}));
+    Tensor t_feat(DT_INT32, TensorShape({static_cast<long long>(m_batch_size)}));
     string name = string("feat_") + kv.first;
     batch.push_back({ m_input_node_names.find(name)->second, t_feat });
     feat2idx[name] = batch.size() - 1;
@@ -1048,8 +1283,8 @@ void TensorFlowLemmatizerPrivate::create_batch_template(vector<pair<string, Tens
 }
 
 void TensorFlowLemmatizerPrivate::generate_batch(const vector<TSentence>& sentences,
-                                                              const vector<pair<size_t, size_t>>& tokens_to_lemmatize,
-                                                              vector<pair<string, Tensor>>& batch) const
+                                                 const vector<pair<size_t, size_t>>& tokens_to_lemmatize,
+                                                 vector<pair<string, Tensor>>& batch) const
 {
   map<string, size_t> feat2idx;
   create_batch_template(batch, feat2idx);
@@ -1069,9 +1304,36 @@ void TensorFlowLemmatizerPrivate::generate_batch(const vector<TSentence>& senten
   init_2d_tensor(input, encoder_eos);
   init_2d_tensor(context, encoder_pad);
 
-  for (size_t i = 0; i < m_lemmatizer_batch_size && i < tokens_to_lemmatize.size(); ++i)
+  for (size_t i = 0; i < m_batch_size && i < tokens_to_lemmatize.size(); ++i)
   {
     encode_token_for_batch(sentences, tokens_to_lemmatize[i].first, tokens_to_lemmatize[i].second, feat2idx, i, batch);
+  }
+}
+
+void TensorFlowLemmatizerPrivate::generate_batch(const vector<TFormOccurrences*>& forms_to_lemmatize,
+                                                 vector<pair<string, Tensor>>& batch) const
+{
+  map<string, size_t> feat2idx;
+  create_batch_template(batch, feat2idx);
+
+  auto len = batch[0].second.tensor<int, 1>();
+  auto input = batch[1].second.tensor<int, 2>();
+  auto context = batch[2].second.tensor<int, 2>();
+
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+
+  u32string EOS = cvt.from_bytes("<EOS>");
+  string PAD = "<PAD>";
+  size_t encoder_eos = m_lemmatizer_conf.encoder_dict.m_w2i.find(EOS)->second;
+  size_t encoder_pad = m_lemmatizer_conf.pos_dict.m_w2i.find(PAD)->second;
+
+  init_1d_tensor(len, 1);
+  init_2d_tensor(input, encoder_eos);
+  init_2d_tensor(context, encoder_pad);
+
+  for (size_t i = 0; i < m_batch_size && i < forms_to_lemmatize.size(); ++i)
+  {
+    encode_token_for_batch(forms_to_lemmatize[i], feat2idx, i, batch);
   }
 }
 
@@ -1099,7 +1361,7 @@ void TensorFlowLemmatizerPrivate::generate_batch(const vector<TSentence>& senten
   init_2d_tensor(input, encoder_eos);
   init_2d_tensor(context, encoder_pad);
 
-  for (size_t i = 0; i < m_lemmatizer_batch_size; ++i)
+  for (size_t i = 0; i < m_batch_size; ++i)
   {
     if (current_token >= sentences[current_sentence].token_count)
     {
