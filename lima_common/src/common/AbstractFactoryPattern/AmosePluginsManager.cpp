@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -85,7 +85,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
-            LERROR << "AmosePluginsManager::loadLibrary(\"" << line.toStdString() << "\") failed.";
+            LERROR << "AmosePluginsManager::loadPlugins(\"" << line.toStdString() << "\") failed.";
             return false;
           }
         }
