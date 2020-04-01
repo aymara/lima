@@ -364,9 +364,10 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
 
   tensorflow::SessionOptions options;
   tensorflow::ConfigProto & config = options.config;
-  config.set_inter_op_parallelism_threads(4);
-  config.set_intra_op_parallelism_threads(4);
-  config.set_use_per_session_threads(false);
+  //config.set_inter_op_parallelism_threads(2);
+  //config.set_intra_op_parallelism_threads(0);
+  config.set_use_per_session_threads(true);
+  config.set_isolate_session_state(true);
   Session* session = 0;
   Status status = NewSession(options, &session);
   if (!status.ok())
@@ -907,7 +908,6 @@ void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<map<StringsPoolInd
       map<LimaString, TFormOccurrences>& homonyms = form_it->second;
       for (auto feat_it = homonyms.begin(); feat_it != homonyms.end(); feat_it++)
       {
-
         forms_for_batch[pos] = &(feat_it->second);
         pos++;
         if (pos == m_batch_size)
