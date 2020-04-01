@@ -91,7 +91,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
-            LERROR << "AmosePluginsManager::loadLibrary(\"" << line.toStdString() << "\") failed.";
+            LERROR << "AmosePluginsManager::loadPlugins(\"" << line.toStdString() << "\") failed.";
             return false;
           }
           else
