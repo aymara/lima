@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -43,6 +43,7 @@
 
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
+#include "tensorflow/core/common_runtime/local_device.h"
 #include "tensorflow/cc/client/client_session.h"
 
 #include "fastText/src/fasttext.h"
@@ -256,6 +257,7 @@ protected:
   GraphDef m_graph_def;
 
   fasttext::FastText m_fasttext;
+  LRUCache<StringsPoolIndex, fasttext::Vector> m_fasttext_cache;
 
   void load_config(const QString& config_file_name);
   void load_graph(const QString& model_path, GraphDef* graph_def);
@@ -267,7 +269,7 @@ protected:
   void generate_batch(const vector<TSentence>& sentences,
                       size_t start,
                       size_t size,
-                      vector<pair<string, Tensor>>& batch) const;
+                      vector<pair<string, Tensor>>& batch);
 
   void save_arcs_logits(const TSentence& sent,
                         const TTypes<float, 3>::Tensor& logits,
@@ -351,11 +353,16 @@ void TensorFlowMorphoSyntaxPrivate::init(
                                             .arg(lang_str).arg(model_name));
   load_config(config_file_name);
 
+  // Following line requires patched version of TensorFlow.
+  // It only helps to increase analysis speed and can be commented out.
+  tensorflow::LocalDevice::set_use_global_threadpool(false);
+
   tensorflow::SessionOptions options;
   tensorflow::ConfigProto & config = options.config;
-  config.set_inter_op_parallelism_threads(4);
-  config.set_intra_op_parallelism_threads(4);
-  config.set_use_per_session_threads(false);
+  config.set_inter_op_parallelism_threads(2);
+  config.set_intra_op_parallelism_threads(1);
+  config.set_use_per_session_threads(true);
+  config.set_isolate_session_state(true);
   Session* session = 0;
   Status status = NewSession(options, &session);
   if (!status.ok())
@@ -571,7 +578,7 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     LinguisticGraphVertex beginSentence = boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence = boundItr->getLastVertex();
     LOG_MESSAGE(LDEBUG, "analyze sentence from vertex " << beginSentence
-		        << " to vertex " << endSentence);
+                << " to vertex " << endSentence);
 
     TSentence sent(beginSentence, endSentence, m_max_seq_len - 1);
 
@@ -642,10 +649,11 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 
   syntacticData->setupDependencyGraph();
 
+  TimeUtils::logElapsedTime("TensorFlowMorphoSyntax::process");
+
   analyze(sentences, *syntacticData);
 
   LOG_MESSAGE(LINFO, "End of TensorFlowMorphoSyntax");
-  TimeUtils::logElapsedTime("TensorFlowMorphoSyntax");
 
   return SUCCESS_ID;
 }
@@ -690,6 +698,7 @@ size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOut
 void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
                                             SyntacticData& syntacticData)
 {
+  TimeUtils::updateCurrentTime();
   const LanguageData& ld = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language));
 
   vector<string> requested_nodes;
@@ -853,6 +862,10 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
     i += this_batch_size;
   }
+
+  m_session->Close();
+
+  TimeUtils::logElapsedTime("TensorFlowMorphoSyntax::analyze");
 }
 
 void TensorFlowMorphoSyntaxPrivate::fixMissingFeature(const vector<vector<float>>& converted_scores,
@@ -903,7 +916,7 @@ void TensorFlowMorphoSyntaxPrivate::fixMissingFeature(const vector<vector<float>
 void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sentences,
                                                    size_t start,
                                                    size_t batch_size,
-                                                   vector<pair<string, Tensor>>& batch) const
+                                                   vector<pair<string, Tensor>>& batch)
 {
   Tensor t_batch_size_tensor(DT_INT32, tensorflow::TensorShape());
 
@@ -996,7 +1009,11 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
 
       // input pretrained
       fasttext::Vector vec(m_fasttext.getDimension());
-      m_fasttext.getWordVector(vec, form.toUtf8().toStdString());
+      if (!m_fasttext_cache.get(t.token->form(), vec))
+      {
+        m_fasttext.getWordVector(vec, form.toUtf8().toStdString());
+        m_fasttext_cache.put(t.token->form(), vec);
+      }
       for (int64 a = 0; a < vec.size(); ++a)
         input_pretrained(i, n, a) = vec[a];
     }
