@@ -39,6 +39,7 @@ public:
   virtual bool has(const K& k) const = 0;
   virtual bool get(const K& k, V& v) = 0;
   virtual void put(const K& k, const V& v) = 0;
+  virtual size_t size() const = 0;
 };
 
 template <class K, class V>
@@ -50,6 +51,9 @@ class LRUCache : public Cache<K, V>
 
   virtual void clean()
   {
+    if (0 == max_size)
+      return;
+
     while (index.size() > max_size)
     {
       auto it = items.end();
@@ -97,6 +101,11 @@ public:
     items.push_front(std::make_pair(k, v));
     index.insert(std::make_pair(k, items.begin()));
     clean();
+  }
+
+  virtual size_t size() const
+  {
+    return index.size();
   }
 };
 

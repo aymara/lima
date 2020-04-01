@@ -48,6 +48,7 @@ namespace Lima {
 
 class StringsPoolPrivate;
 BOOST_STRONG_TYPEDEF(uint64_t, StringsPoolIndex);
+
 /**
 @author CEA LIST
 */
@@ -81,5 +82,15 @@ private:
 };
 
 } // closing namespace Lima
+
+namespace std {
+
+template<> struct hash<Lima::StringsPoolIndex> {
+  std::size_t operator()(const Lima::StringsPoolIndex s) const noexcept {
+    return (size_t) qHash(s);
+  }
+};
+
+}
 
 #endif // LIMA_DATA_STRINGSPOOL_H
