@@ -22,6 +22,7 @@
 
 #include <list>
 #include <unordered_map>
+#include <vector>
 
 namespace Lima
 {
@@ -40,6 +41,7 @@ public:
   virtual bool get(const K& k, V& v) = 0;
   virtual void put(const K& k, const V& v) = 0;
   virtual size_t size() const = 0;
+  virtual void get_keys(std::vector<K>& vec) const = 0;
 };
 
 template <class K, class V>
@@ -106,6 +108,12 @@ public:
   virtual size_t size() const
   {
     return index.size();
+  }
+
+  virtual void get_keys(std::vector<K>& vec) const
+  {
+    for ( const auto& item : items )
+      vec.push_back(item.first);
   }
 };
 
