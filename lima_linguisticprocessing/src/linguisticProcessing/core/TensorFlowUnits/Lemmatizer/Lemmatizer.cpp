@@ -97,7 +97,8 @@ class TensorFlowLemmatizerPrivate
 public:
   TensorFlowLemmatizerPrivate()
     : m_stringsPool(nullptr),
-      m_lemmatization_required(false) { }
+      m_lemmatization_required(false),
+      m_feat_separator(LimaString::fromUtf8("|")) { }
 
   void init(GroupConfigurationStructure&,
             MediaId lang,
@@ -211,7 +212,8 @@ protected:
 
   void load_config(const QString& config_file_name);
   void load_graph(const QString& model_path, GraphDef* graph_def);
-  void load_cache(const QString& cache_file_name);
+  void load_cache(const QString& file_name);
+  void save_cache(const QString& file_name);
 
   // Json parsing
   QJsonObject get_json_object(const QJsonObject& root, const QString& child_name);
@@ -228,6 +230,7 @@ protected:
   LimaString m_main_alphabet;
   LimaString m_special_chars;
   LRUCache<LimaString, LimaString> m_cache;
+  LimaString m_feat_separator;
 
   struct TFormOccurrences
   {
@@ -275,6 +278,7 @@ protected:
   void set_token_lemma(TToken &token, const LimaString& lemma) const;
   void set_token_lemma(MorphoSyntacticData::iterator& md_it, const u32string& lemma) const;
   void set_token_lemma(MorphoSyntacticData::iterator& md_it, const LimaString& lemma) const;
+  void set_token_lemma(MorphoSyntacticData::iterator& md_it, StringsPoolIndex lemma_idx) const;
 
   void create_batch_template(vector<pair<string, Tensor>>& batch,
                                    map<string, size_t>& feat2idx) const;
@@ -286,7 +290,7 @@ protected:
 
   void process_batch(vector<TFormOccurrences*>& forms_for_batch, size_t pos) const ;
 
-  LimaString create_form_key(const TToken& token) const;
+  LimaString create_form_key(const TToken& token, const LimaString& extra) const;
   LimaString create_form_key(const LimaString& form, const map<string, string>& features) const;
   LimaString create_feat_str(const TToken& token, const LimaString& extra) const;
 
@@ -734,10 +738,14 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(TToken &token, const LimaStrin
   }
 }
 
+void TensorFlowLemmatizerPrivate::set_token_lemma(MorphoSyntacticData::iterator& md_it, StringsPoolIndex lemma_idx) const
+{
+  md_it->lemma = lemma_idx;
+}
+
 void TensorFlowLemmatizerPrivate::set_token_lemma(MorphoSyntacticData::iterator& md_it, const LimaString& lemma) const
 {
-  StringsPoolIndex lemma_idx = (*m_stringsPool)[lemma];
-  md_it->lemma = lemma_idx ;
+  set_token_lemma(md_it, (*m_stringsPool)[lemma]);
 }
 
 void TensorFlowLemmatizerPrivate::set_token_lemma(MorphoSyntacticData::iterator& md_it, const u32string& lemma) const
@@ -788,7 +796,7 @@ LimaString TensorFlowLemmatizerPrivate::create_form_key(const LimaString& form,
     if (features.end() == it)
       continue;
 
-    key += LimaString::fromUtf8("&")
+    key += m_feat_separator
             + LimaString::fromStdString(kv.first)
             + LimaString::fromUtf8("=")
             + LimaString::fromStdString(it->second);
@@ -801,6 +809,7 @@ LimaString TensorFlowLemmatizerPrivate::create_feat_str(const TToken& token, con
 {
   size_t code = get_code_for_feature(token, m_lemmatizer_conf.pos_dict);
   LimaString key = LimaString::fromStdString(m_lemmatizer_conf.pos_dict.m_i2w[code]);
+  bool add_extra = (extra.size() > 0);
 
   for (const auto& kv : m_lemmatizer_conf.feature_dicts)
   {
@@ -812,27 +821,33 @@ LimaString TensorFlowLemmatizerPrivate::create_feat_str(const TToken& token, con
     if (0 == code)
       continue;
 
-    key += LimaString::fromUtf8("&")
-            + LimaString::fromStdString(kv.first)
+    LimaString k = LimaString::fromStdString(kv.first);
+    if (add_extra && extra < k)
+    {
+      key += m_feat_separator + extra;
+      add_extra = false;
+    }
+
+    key += m_feat_separator + k
             + LimaString::fromUtf8("=")
             + LimaString::fromStdString(kv.second.m_i2w[code]);
   }
 
-  if (extra.size() > 0)
+  if (add_extra)
   {
     if (key.size() > 0)
-      key += LimaString::fromUtf8("&");
+      key += m_feat_separator;
     key += extra;
   }
 
   return key;
 }
 
-LimaString TensorFlowLemmatizerPrivate::create_form_key(const TToken& token) const
+LimaString TensorFlowLemmatizerPrivate::create_form_key(const TToken& token, const LimaString& extra = LimaString("")) const
 {
   LimaString key = (*m_stringsPool)[token.token->form()]
                  + LimaString::fromUtf8("\t")
-                 + create_feat_str(token);
+                 + create_feat_str(token, extra);
 
   return key;
 }
@@ -966,9 +981,12 @@ void TensorFlowLemmatizerPrivate::process_batch(vector<TFormOccurrences*>& forms
     if (size_diff >= 10)
       lemma = src_form.toStdU32String();
 
+    StringsPoolIndex lemma_idx = (*m_stringsPool)[LimaString::fromStdU32String(lemma)];
+    forms_for_batch[j]->lemma = lemma_idx;
+
     for ( auto md_it : forms_for_batch[j]->occurrences )
     {
-      set_token_lemma(md_it, lemma);
+      set_token_lemma(md_it, lemma_idx);
     }
   }
 }
@@ -1005,7 +1023,7 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
       continue;
     }
 
-    LimaString src_form_key = create_form_key(token);
+    LimaString src_form_key = create_form_key(token, (0 == current_token ? "FirstWord=Yes" : ""));
 
     LimaString cached_lemma;
     if (m_cache.get(src_form_key, cached_lemma))
@@ -1037,10 +1055,31 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
   }
 
   lemmatize_with_model(buckets);
+
+  // Put results to cache
+  for (size_t i = 0; i < buckets.size(); i++)
+  {
+    for (auto form_it = buckets[i].begin(); form_it != buckets[i].end(); form_it++)
+    {
+      LimaString form = (*m_stringsPool)[form_it->first];
+      map<LimaString, TFormOccurrences>& homonyms = form_it->second;
+      for (auto feat_it = homonyms.begin(); feat_it != homonyms.end(); feat_it++)
+      {
+        LimaString k = form + LimaString::fromUtf8("\t") + feat_it->first;
+        if (!m_cache.has(k))
+        {
+          LimaString v = (*m_stringsPool)[feat_it->second.lemma];
+          m_cache.put(k, v);
+        }
+      }
+    }
+  }
+
+  save_cache("lemmatizer.cache");
 }
 
 size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
-                                                           const LemmatizerConf::dict<string> &d) const
+                                                         const LemmatizerConf::dict<string> &d) const
 {
   LinguisticCode lc = token.morpho->firstValue(*d.accessor);
 
@@ -1067,8 +1106,7 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TSentence &sent,
 size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const LinguisticElement &le,
                                                          const LemmatizerConf::dict<string> &d) const
 {
-
-  LinguisticCode lc = d.accessor->readValue(le.properties);;
+  LinguisticCode lc = d.accessor->readValue(le.properties);
 
   auto it = d.m_c2i.find(lc);
   if (d.m_c2i.end() == it)
@@ -1393,16 +1431,15 @@ void TensorFlowLemmatizerPrivate::load_graph(const QString& model_path, GraphDef
                         LimaException());
 }
 
-void TensorFlowLemmatizerPrivate::load_cache(const QString& cache_file_name)
+void TensorFlowLemmatizerPrivate::load_cache(const QString& file_name)
 {
-  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowLemmatizerPrivate::load_cache" << cache_file_name)
+  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowLemmatizerPrivate::load_cache" << file_name)
 
-  QFile file(cache_file_name);
+  QFile file(file_name);
 
   if (!file.open(QIODevice::ReadOnly))
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't load cache from \""
-                        << cache_file_name << "\".",
-                        LimaException());
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't load cache from "
+                        << file_name << ".", LimaException());
 
   QTextStream in(&file);
   while (!in.atEnd())
@@ -1410,16 +1447,14 @@ void TensorFlowLemmatizerPrivate::load_cache(const QString& cache_file_name)
     QString line = in.readLine();
     QStringList fields = line.split('\t');
     if (fields.size() != 3)
-      LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line \""
-                          << line << "\" from file \""
-                          << cache_file_name << "\".",
+      LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line "
+                          << line << " from file " << file_name << ".",
                           LimaException());
 
     if (fields[2].size() == 0)
     {
-      LOG_MESSAGE(LDEBUG, "TensorFlowLemmatizer::load_cache invalid cache record: \""
-                  << line << "\" from file \""
-                  << cache_file_name << "\".");
+      LOG_MESSAGE(LDEBUG, "TensorFlowLemmatizer::load_cache invalid cache record: "
+                  << line << " from file " << file_name << ".");
       continue;
     }
 
@@ -1428,17 +1463,50 @@ void TensorFlowLemmatizerPrivate::load_cache(const QString& cache_file_name)
     for (size_t i = 0; i < features.size(); i++)
     {
       QStringList kv = features[i].split("=");
-      if (kv.size() != 2)
-        LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line \""
-                            << line << "\" from file \""
-                            << cache_file_name << "\".",
+      if (i > 0 && kv.size() != 2)
+        LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line "
+                            << line << " from file " << file_name << ".",
                             LimaException());
 
-      features_map[kv[0].toStdString()] = kv[1].toStdString();
+      if (0 == i && 1 == kv.size())
+        features_map["upos"] = features[i].toStdString();
+      else
+        features_map[kv[0].toStdString()] = kv[1].toStdString();
     }
 
     LimaString form_key = create_form_key(fields[0], features_map);
     m_cache.put(form_key, fields[2]);
+  }
+
+  file.close();
+}
+
+void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
+{
+  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowLemmatizerPrivate::save_cache" << file_name)
+
+  QFile file(file_name);
+
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::save_cache can't save cache from "
+                        << file_name << ".",   LimaException());
+
+  QTextStream out(&file);
+  out.setCodec("UTF-8");
+
+  vector<LimaString> cache_keys;
+  cache_keys.reserve(m_cache.size());
+  m_cache.get_keys(cache_keys);
+
+  sort(cache_keys.begin(), cache_keys.end()/*, [](const LimaString& a, const LimaString& b) {
+    return a < b;
+  }*/);
+
+  for ( const auto& k : cache_keys )
+  {
+    LimaString v;
+    m_cache.get(k, v);
+    out << k << "\t" << v << endl;
   }
 
   file.close();
