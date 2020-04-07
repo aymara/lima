@@ -476,7 +476,7 @@ void FsaAccess16<graphType>::getPrefix(
 
   int32_t highCharTextPos = get(vname_map,from)&TEXT_POS_16;
 
-  int32_t edgeOffset;
+  int32_t edgeOffset = 0;
   if( prefixOffset == 1 ) {
     edgeOffset = findEdge( currentChar, text, 0, highCharTextPos, edgeOffset );
   }

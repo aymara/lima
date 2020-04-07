@@ -325,8 +325,8 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
     int32_t edgeOffset = vertexTextIt.findEdge( currentChar, wordOffset, highCharTextPos);
 */
     // find the path in the atomaton defined by the prefix
-    int32_t edgeOffset;
-    int32_t textOffset;
+    int32_t edgeOffset = 0;
+    int32_t textOffset = 0;
     Lima::LimaString& text = get(vtext_map,from);
 #ifdef DEBUG_CD
     std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(LimaString(text.data()));
@@ -514,7 +514,7 @@ bool FsaAccessBuilderRandom16::cloneConfluentStates(
   currentChar = prefixIt->getNextLetter(wordOffset);
 
   // find the path in the atomaton defined by the prefix
-  int32_t edgeOffset;
+  int32_t edgeOffset = 0;
   // iterator to select the right path among the out_edges
   boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
   boost::tie(ei,edge_end) = boost::out_edges(toOldPath, m_graph);
@@ -1085,11 +1085,11 @@ void FsaAccessBuilderRandom16::replaceOrRegister( dicoVertex candidateState,
   dicoGraph_traits16<graphType>::nconst_vname_map_type vname_map =
     boost::get(boost::vertex_name,m_graph);
   // find the path in the atomaton defined by the prefix
-  int32_t edgeOffset;
-  int32_t textOffset;
+  int32_t edgeOffset = 0;
+  int32_t textOffset = 0;
   Lima::LimaString& text = get(vtext_map,candidateState);
 #ifdef DEBUG_CD
-  std::string text8 = Lima::Common::Misc::limastring2utf8stdstring(LimaString(text.data()));
+  std::string text8 = LimaString(text.data()).toStdString();
   LDEBUG <<  "FsaAccessBuilderRandom16::replaceOrRegister: text = " << text8.c_str();
 #endif
   int32_t highCharTextPos = get(vname_map,candidateState)&TEXT_POS_16;
@@ -1223,8 +1223,8 @@ int FsaAccessBuilderRandom16::updateHash( dicoVertex from,
   // get first char (or last one if reverse) of word to search for in graph
   int32_t wordOffset;
   // find the path in the atomaton defined by the prefix
-  int32_t edgeOffset;
-  int32_t textOffset;
+  int32_t edgeOffset = 0;
+  int32_t textOffset = 0;
   if( prefixIt->hasNextLetter() ) {
     char32_t currentChar = prefixIt->getNextLetter((int32_t&)wordOffset);
 #ifdef DEBUG_CD

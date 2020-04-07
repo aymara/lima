@@ -273,7 +273,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
     // find the character letter in text property
     const Lima::LimaString& text = get(vtext_map,currentVertex);
     int32_t highCharTextPos = vprop&TEXT_POS_16;
-    int32_t edgeOffset;
+    int32_t edgeOffset = 0;
 #ifdef DEBUG_CD
     LTRACE <<  "FsaAccessReader::getIndex: highCharTextPos= "<< highCharTextPos;
 #endif
@@ -281,7 +281,7 @@ uint64_t FsaAccessReader16<graphType>::getIndex(const LimaString & word ) const
       edgeOffset = FsaAccess16<graphType>::findEdge( letter, text, 0, highCharTextPos, wordOffset );
     }
     else {
-      int32_t textOffset;
+      int32_t textOffset = 0;
       textOffset = FsaAccess16<graphType>::findEdge( letter, text, highCharTextPos, text.length(), wordOffset );
 #ifdef DEBUG_CD
     LTRACE <<  "FsaAccessReader::getIndex: textOffset= "<< textOffset;
@@ -504,7 +504,7 @@ fsaReader_subword_iterator16<graphType> & fsaReader_subword_iterator16<graphType
     const Lima::LimaString& text = get(vtext_map,m_curr);
     VERTEX_PROPERTY_16 vprop = get(vname_map,m_curr);
     int32_t highCharTextPos = vprop&TEXT_POS_16;
-    int32_t edgeOffset;
+    int32_t edgeOffset = 0;
     if( wordOffset == 1 ) {
       edgeOffset = m_dico.findEdge( letter, text, 0, highCharTextPos, wordOffset);
     }
@@ -945,7 +945,7 @@ FsaAccessReader16<graphType>::getStartNode(const LimaString& word ) const {
     char32_t letter = prefixIt->getNextLetter(wordOffset);
     
     // iterator to select the right path among the out_edges
-    int32_t edgeOffset;
+    int32_t edgeOffset = 0;
     //typename boost::graph_traits<graphType>::out_edge_iterator ei, edge_end;
     //boost::tie(ei,edge_end) = boost::out_edges(from,FsaAccess16<graphType>::m_graph);
     const Lima::LimaString& text = get(vtext_map,from);
