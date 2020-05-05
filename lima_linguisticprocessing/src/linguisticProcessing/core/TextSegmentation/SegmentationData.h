@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -39,15 +39,15 @@ public:
   explicit Segment(const std::string& type);
 
   /* smart constructors: give them part of the information, and they complete it using the graph */
-  Segment(const std::string& type, 
-          LinguisticGraphVertex begin, 
-          LinguisticGraphVertex end, 
+  Segment(const std::string& type,
+          LinguisticGraphVertex begin,
+          LinguisticGraphVertex end,
           LinguisticAnalysisStructure::AnalysisGraph* graph);
   /* Segment(const std::string& type,  */
   /*         uint64_t posBegin,  */
   /*         uint64_t length,  */
   /*         LinguisticAnalysisStructure::AnalysisGraph* graph); */
-  ~Segment();
+  ~Segment() { }
   bool operator<(const Segment& s) const;
 
   void addSegment(const Segment& s);
@@ -57,10 +57,10 @@ public:
                                 LinguisticAnalysisStructure::AnalysisGraph* anagraph);
 
   /* no setters : use constructors */
-  /* void setFirstVertex(LinguisticGraphVertex v) { m_begin=v; } */
-  /* void setLastVertex(LinguisticGraphVertex v) { m_end=v; } */
+  void setFirstVertex(LinguisticGraphVertex v) { m_begin=v; }
+  void setLastVertex(LinguisticGraphVertex v) { m_end=v; }
   /* void setPosBegin(uint64_t p) { m_posBegin=p; } */
-  /* void setLength(uint64_t l) { m_length=l; } */
+  void setLength(uint64_t l) { m_length=l; }
   void setType(const std::string& type) { m_type=type; }
 
   LinguisticGraphVertex getFirstVertex() const { return m_begin; }
@@ -69,10 +69,10 @@ public:
   uint64_t getPosEnd() const { return m_posBegin+m_length; }
   uint64_t getLength() const { return m_length; }
   const std::string& getType() const { return m_type; }
-  
+
 private:
   LinguisticGraphVertex m_begin; /*< the vertex before the first vertex of the segment */
-  LinguisticGraphVertex m_end;   /*< the vertex after the last vertex of the segment */ 
+  LinguisticGraphVertex m_end;   /*< the vertex after the last vertex of the segment */
   uint64_t m_posBegin;
   uint64_t m_length;
   std::string m_type;
@@ -90,7 +90,7 @@ class LIMA_TEXTSEGMENTATION_EXPORT SegmentationData : public AnalysisData
 // ??OME2 const std::vector<Segment>& getSegments() const { return *this; }
   const std::vector<Segment>& getSegments() const { return m_segments; }
   std::vector<Segment>& getSegments() { return m_segments; }
-  
+
   inline const std::string& getGraphId() const { return m_graphId; }
   std::vector<Segment> m_segments;
  private:

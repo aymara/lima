@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -121,7 +121,7 @@ typedef boost::property_map<LinguisticGraph, vertex_data_t>::const_type CVertexD
 typedef boost::property_map<LinguisticGraph, vertex_chain_id_t>::type VertexChainIdPropertyMap;
 typedef boost::property_map<LinguisticGraph, vertex_chain_id_t>::const_type CVertexChainIdPropertyMap;
 
-
+typedef std::set<LinguisticGraphVertex> SetOfLinguisticGraphVertices;
 
 // typedef boost::property_map<LinguisticGraph, edge_chain_id_t>::type EdgeChainIdPropertyMap;
 typedef boost::property_map<LinguisticGraph, boost::vertex_color_t >::type VertexColorLinguisticGraphPropertyMap;

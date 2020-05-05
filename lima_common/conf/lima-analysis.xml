@@ -52,6 +52,13 @@
         <entry key="fre" value="deepud-nerrules"/>
         <entry key="ud" value="deepud-nerrules"/>
       </map>
+      <map name="deepud-nerrules-pretok">
+        <entry key="eng.ud" value="deepud-nerrules-pretok"/>
+        <entry key="eng" value="deepud-nerrules-pretok"/>
+        <entry key="fre.ud" value="deepud-nerrules-pretok"/>
+        <entry key="fre" value="deepud-nerrules-pretok"/>
+        <entry key="ud" value="deepud-nerrules-pretok"/>
+      </map>
       <map name="deep">
         <entry key="eng" value="deep"/>
         <entry key="fre" value="deep"/>

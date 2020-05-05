@@ -251,7 +251,8 @@ vector< vector< ConlluReaderPrivate::TPrimitiveToken > > ConlluReaderPrivate::to
 
     if (fields.size() < 2)
     {
-      sentences.push_back(current_sentence);
+      if (current_sentence.size() > 0)
+        sentences.push_back(current_sentence);
       current_sentence.clear();
       continue;
     }
@@ -259,6 +260,9 @@ vector< vector< ConlluReaderPrivate::TPrimitiveToken > > ConlluReaderPrivate::to
     current_sentence.push_back(TPrimitiveToken(fields[1], current_token_offset));
     current_token_offset += fields[1].size() + 1;
   }
+
+  if (current_sentence.size() > 0)
+    sentences.push_back(current_sentence);
 
   return sentences;
 }
