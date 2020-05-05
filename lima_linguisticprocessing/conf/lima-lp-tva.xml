@@ -54,6 +54,12 @@
       <entry key="eng.ud" value="approxmatcher"/>
       <entry key="fre" value="approxmatcher"/>
     </map>
+    <map name="deepud-nerrules-pretok">
+      <entry key="eng" value="deepud-nerrules-pretok"/>
+      <entry key="eng.ud" value="deepud-nerrules-pretok"/>
+      <entry key="fre" value="deepud-nerrules-pretok"/>
+      <entry key="por" value="deepud-nerrules-pretok"/>
+    </map>
   </group>
   <group name="analysisDumpers">
     <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->

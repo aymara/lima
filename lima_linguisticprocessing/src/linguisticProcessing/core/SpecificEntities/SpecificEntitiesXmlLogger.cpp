@@ -16,6 +16,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
+/***************************************************************************
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
+ *                                                                         *
+ ***************************************************************************/
 #include "SpecificEntitiesXmlLogger.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 

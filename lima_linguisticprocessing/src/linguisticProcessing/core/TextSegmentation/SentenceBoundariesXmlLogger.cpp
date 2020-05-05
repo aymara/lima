@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -114,10 +114,13 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
 
   uint64_t offsetIndexingNode(0);
   try {
-    offsetIndexingNode=atoi(metadata->getMetaData("StartOffsetIndexingNode").c_str());
+    std::string value=metadata->getMetaData("StartOffsetIndexingNode");
+    offsetIndexingNode=atoi(value.c_str());
   }
-  catch (LinguisticProcessingException& ) {
+  catch (LinguisticProcessingException& e) {
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
+    SEGMENTATIONLOGINIT;
+    LERROR << e.what();
   }
 
   auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
@@ -150,6 +153,7 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
          << "\"/>" << endl;
   }
   out << "</sentence_boundaries>" << endl;
+  delete dstream;
 
   TimeUtils::logElapsedTime("SentenceBoundariesXmlLogger");
   return SUCCESS_ID;

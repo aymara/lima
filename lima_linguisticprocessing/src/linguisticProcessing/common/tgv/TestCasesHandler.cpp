@@ -56,6 +56,11 @@ TestCasesHandler::TestCasesHandler( TestCaseProcessor& processor) :
   m_reportByType(),
   m_processor(processor),
   m_hasFatalError(false),
+  m_inText(false),
+  m_inExpl(false),
+  m_inParam(false),
+  m_inList(false),
+  m_inMap(false),
   m_d(new TestCasesHandlerPrivate())
 {
 }
@@ -93,7 +98,6 @@ bool TestCasesHandler::startElement (
 {
   LIMA_UNUSED(namespaceURI);
   TGVLOGINIT;
-
   LDEBUG << "TestCasesHandler::startElement" << namespaceURI << localname
           << qname << lineNumber;
 
@@ -104,7 +108,6 @@ bool TestCasesHandler::startElement (
     m_d->m_testcasesId = attributeValue("id", attrs).toUtf8().constData();
     m_d->m_traceName = attributeValue("trace", attrs).toUtf8().constData();
   }
-
   if (name == "testcase")
   {
     LDEBUG << "TestCasesHandler::startElement: new testcase ";
@@ -318,7 +321,13 @@ bool TestCasesHandler::endElement (const QStringRef & namespaceURI,
       }
       if (e() == TestCaseError::TestCaseFailed)
       {
-        if (e.isConditional())
+        std::cout << currentTestCase.id.toUtf8().constData()
+                  << " (" << currentTestCase.type << ") got error (type: '"
+                  << e() << "'): " << std::endl << e.what() << std::endl;
+         if (currentTestCase.type == FATAL_ERROR_TYPE) {
+          m_hasFatalError = true;
+        }
+        if (e() == TestCaseError::TestCaseFailed)
         {
           m_reportByType[currentTestCase.type].conditional++;
         } else
@@ -328,9 +337,10 @@ bool TestCasesHandler::endElement (const QStringRef & namespaceURI,
       }
       else
       {
-        std::cout << "runtime error: " << e.what() << std::endl;
-        m_reportByType[currentTestCase.type].failed++;
-        throw std::runtime_error(e.what());
+        std::cout << currentTestCase.id.toUtf8().constData()
+                  << " (" << currentTestCase.type << ") passed successfully."
+                  << std::endl;;
+        m_reportByType[currentTestCase.type].success++;
       }
     }
     else

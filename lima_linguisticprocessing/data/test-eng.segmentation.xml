@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testcases>
+  <testcase id="eng.segmentation.eos" type="blocking">
+    <call-parameters>
+      <param key="file" value="test-eng.segmentation.eos.conllu"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="deepud-nerrules-pretok"/>
+      </list>
+    </call-parameters>
+    <test id="eng.segmentation.eos.1" trace=".sb.xml"
+          comment="last word of the first sentence"
+          left="XPATH#//sentence_boundaries/sentence_boundary[1]/@value"
+          operator="contains"
+          right="U.S ."/>
+    <test id="eng.segmentation.eos.2" trace=".sb.xml"
+          comment="last word of the second sentence"
+          left="XPATH#//sentence_boundaries/sentence_boundary[2]/@value"
+          operator="contains"
+          right="land"/>
+  </testcase>
+  <testcase id="eng.segmentation.merge" type="blocking">
+    <call-parameters>
+      <param key="file" value="test-eng.segmentation.merge.conllu"/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="deepud-nerrules-pretok"/>
+      </list>
+    </call-parameters>
+    <test id="eng.segmentation.merge.1" trace=".sb.xml"
+          comment="last word of single sentence"
+          left="XPATH#//sentence_boundaries/sentence_boundary[1]/@value"
+          operator="contains"
+          right="land"/>
+  </testcase>
+
+</testcases> 

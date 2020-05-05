@@ -130,9 +130,18 @@
         <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
+    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesLogger"/>
+      </list>
+    </group>
     <group name="fakeMultiLevel" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
       </list>
+    </group>
+    <group name="conllureader" class="ConlluReader">
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>
@@ -218,6 +227,10 @@
       <list name="micros">
         <item value="SENT"/>
       </list>
+    </group>
+    <group name="sentenceBoundariesLogger" class="SentenceBoundariesXmlLogger">
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="outputSuffix" value=".sb.xml"/>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>

@@ -103,7 +103,7 @@ void CoreLinguisticProcessingClient::analyze(
  static const QRegExp whitespaceOnly("\\s*");
  if (whitespaceOnly.exactMatch(text))
  {
-   LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
+   LERROR << "Empty text given to LIMA linguistic processing client. Nothing to do.";
    return;
  }
 
@@ -341,8 +341,10 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     catch (NoSuchParam& )
     {
-      LERROR << "No such param lima-coreclient/mediaProcessingDefinitionFiles/" << *langItr;
-      throw InvalidConfiguration("no language definition file for language ");
+      LERROR << "Language definition file" << mediaProcessingDefinitionFile
+              << "for language" << *langItr <<"not found in paths:"
+              << Common::MediaticData::MediaticData::single().getConfigPath();
+      throw InvalidConfiguration("Language definition file not found in paths");
     }
     XMLConfigurationFileParser langParser(file.toUtf8().constData());
 
