@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
 #endif
 
 /***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef WIN32
@@ -103,7 +103,7 @@ void CoreLinguisticProcessingClient::analyze(
  static const QRegExp whitespaceOnly("\\s*");
  if (whitespaceOnly.exactMatch(text))
  {
-   LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
+   LERROR << "Empty text given to LIMA linguistic processing client. Nothing to do.";
    return;
  }
 
@@ -335,8 +335,8 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     if (file.isEmpty())
     {
-      LERROR << "Language definition file" << mediaProcessingDefinitionFile 
-              << "for language" << *langItr <<"not found in paths:" 
+      LERROR << "Language definition file" << mediaProcessingDefinitionFile
+              << "for language" << *langItr <<"not found in paths:"
               << Common::MediaticData::MediaticData::single().getConfigPath();
       throw InvalidConfiguration("Language definition file not found in paths");
     }
@@ -357,7 +357,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     catch (NoSuchModule& e)
     {
-      LERROR << "no module 'Resources' in configuration file " 
+      LERROR << "no module 'Resources' in configuration file "
               << file << e.what();
       throw InvalidConfiguration("no module 'Resources' in configuration file ");
     }
@@ -374,7 +374,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
     catch (NoSuchModule& e)
     {
-      LERROR << "missing module 'Processors' in language configuration file " 
+      LERROR << "missing module 'Processors' in language configuration file "
               << file << e.what();
       throw InvalidConfiguration("missing module 'Processors' in language configuration file ");
     }

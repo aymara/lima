@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "SpecificEntitiesXmlLogger.h"
@@ -96,8 +96,8 @@ void SpecificEntitiesXmlLogger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // do nothing: optional
 
-  try { 
-    std::string str=unitConfiguration.getParamsValueAtKey("followGraph"); 
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("followGraph");
     if (str=="1" || str=="true" || str=="yes") {
       m_followGraph=true;
     }
@@ -121,8 +121,8 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     LERROR << "no annotationData ! abort";
     return MISSING_DATA;
   }
-  
-  
+
+
   LinguisticAnalysisStructure::AnalysisGraph* graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph));
   if (graphp == 0) {
     SELOGINIT;
@@ -132,7 +132,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *graphp;
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
-  
+
   LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SELOGINIT;
@@ -145,7 +145,8 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
 
   uint64_t offset(0);
   try {
-    offset=atoi(metadata->getMetaData("StartOffset").c_str());
+    std::string value = metadata->getMetaData("StartOffset");
+    offset=atoi(value.c_str());
   }
   catch (LinguisticProcessingException& ) {
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
@@ -169,7 +170,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
 
   if (m_compactFormat) {
     out << "<entities docid=\"" << docId
-    << "\" offsetNode=\"" << offsetIndexingNode 
+    << "\" offsetNode=\"" << offsetIndexingNode
     << "\" offset=\"" << offset
     << "\">" << endl;
   }
@@ -191,11 +192,11 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     }
     LinguisticGraph* graph=tokenList->getGraph();
     //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
-    
+
     std::queue<LinguisticGraphVertex> toVisit;
     std::set<LinguisticGraphVertex> visited;
     toVisit.push(tokenList->firstVertex());
-    
+
     LinguisticGraphOutEdgeIt outItr,outItrEnd;
     while (!toVisit.empty()) {
       LinguisticGraphVertex v=toVisit.front();
@@ -203,8 +204,8 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
       if (v == tokenList->lastVertex()) {
         continue;
       }
-      
-      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
+
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
       {
         LinguisticGraphVertex next=target(*outItr,*graph);
         if (visited.find(next)==visited.end())
@@ -241,7 +242,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
           LERROR << "This annotation is not a SpecificEntity; SE not logged";
           continue;
         }
-        
+
         // recuperer l'id du vertex morph cree
         LinguisticGraphVertex v;
         if (!annotationData->hasIntAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph)))
@@ -254,8 +255,8 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
         outputEntity(annotationData,out,v,annot,tokenMap,offset);
       }
     }
-  }   
-  
+  }
+
   //   LDEBUG << "    all vertices done";
   if (m_compactFormat) {
     out << "</entities>" << endl;
@@ -266,12 +267,12 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   delete dstream;
   TimeUtils::logElapsedTime("SpecificEntitiesXmlLogger");
   return SUCCESS_ID;
-  
+
 }
 
 void SpecificEntitiesXmlLogger::
 outputEntity( AnnotationData* annotationData,
-              std::ostream& out, 
+              std::ostream& out,
               LinguisticGraphVertex v,
               const SpecificEntityAnnotation* annot,
               const VertexTokenPropertyMap& tokenMap,
@@ -294,17 +295,17 @@ outputEntity( AnnotationData* annotationData,
       // components are the list of features whose value are strings in the texte with a (position,length) info
       // normalisations  are the list of features whose value are computed and does not have (position,length) info
       const Automaton::EntityFeatures& features=annot->getFeatures();
-      out << "<entity>" 
-      //<< "<pos>" << offset+annot->getPosition() << "</pos>" 
-      << "<pos>" << offset+annot->getPosition() << "</pos>" 
-      << "<len>" << annot->getLength() << "</len>" 
+      out << "<entity>"
+      //<< "<pos>" << offset+annot->getPosition() << "</pos>"
+      << "<pos>" << offset+annot->getPosition() << "</pos>"
+      << "<len>" << annot->getLength() << "</len>"
       //<< "<typeNum>" << (*m).getType() << "</typeNum>"
-      << "<type>" 
+      << "<type>"
       << Common::MediaticData::MediaticData::single().getEntityName(annot->getType()).toUtf8().data()
       << "</type>"
       << "<string>"<< Common::Misc::transcodeToXmlEntities(vToken->stringForm()).toUtf8().data() << "</string>"
       << "<components>";
-      for (Automaton::EntityFeatures::const_iterator 
+      for (Automaton::EntityFeatures::const_iterator
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {
@@ -317,7 +318,7 @@ outputEntity( AnnotationData* annotationData,
               << "</" << featureItr->getName() << ">";
         }
       }
-      
+
       // TODO: Follow "belongstose" links to outputs embeded entities as components
       // Get the current annotationVertex (is there any more simple solution???)
       std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
@@ -367,7 +368,7 @@ outputEntity( AnnotationData* annotationData,
       }
       out << "</components>"
       << "<normalization>";
-      for (Automaton::EntityFeatures::const_iterator 
+      for (Automaton::EntityFeatures::const_iterator
         featureItr=features.begin(),features_end=features.end();
       featureItr!=features_end; featureItr++)
       {
@@ -389,7 +390,7 @@ outputEntity( AnnotationData* annotationData,
       out << "  <string>" << Common::Misc::transcodeToXmlEntities(vToken->stringForm()).toUtf8().data() << "</string>" << endl;
       out << "  <position>" << vToken->position()<< "</position>" << endl;
       out << "  <length>" << vToken->length() << "</length>" << endl;
-      out << "  <type>" 
+      out << "  <type>"
       << Common::MediaticData::MediaticData::single().getEntityName(annot->getType())
       << "</type>" << endl;
       out << "  <normalization>" << std::endl;
@@ -414,9 +415,9 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
 {
 
   const SpecificEntityAnnotation* se=0;
-  
+
   // check only entity found in current graph (not previous graph such as AnalysisGraph)
- 
+
   std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
   it != matches.end(); it++)

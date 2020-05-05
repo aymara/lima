@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -55,8 +55,27 @@ AnalysisTestCaseProcessor::AnalysisTestCaseProcessor(
 TestCaseError AnalysisTestCaseProcessor::processTestCase(
     const Lima::Common::TGV::TestCase& testCase)
 {
+  auto input_filename = testCase.getParam( "file" );
+  auto text = testCase.getParam( "text" );
+  if (input_filename.size() > 0)
+  {
+    input_filename = m_workingDirectory+"/"+input_filename;
+    ifstream fin(input_filename.c_str(),
+                 std::ifstream::in|std::ifstream::binary);
+    if (!fin.is_open())
+    {
+      TestCaseError error(testCase,
+                          TestCaseError::TestCaseFailed,
+                          std::string("Unable to open file for reading: ") + input_filename,
+                          "",
+                          TestCase::TestUnit());
+      return error;
+    }
+    getline(fin, text, (char) fin.eof());
+    fin.close();
+  }
+
   // write text in file
-  const auto& text = testCase.getParam( "text" );
   std::string filename(m_workingDirectory+"/test"+testCase.id.toUtf8().constData()+".txt");
   {
     ofstream fout(filename.c_str(),
@@ -65,7 +84,8 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(
     fout.flush();
     fout.close();
   }
-  auto contentText = QString::fromStdString(text);
+
+  QString contentText = QString::fromStdString(text);
   auto language = testCase.getParam("language");
   auto metaValuesStr = testCase.getParam("meta");
   std::map<std::string, std::string> userMetaData;
