@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Fri Jan 14 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
  *
  ***********************************************************************/
 
@@ -35,8 +35,6 @@
 #include "common/time/timeUtilsController.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -48,6 +46,12 @@ namespace LinguisticProcessing {
 namespace ApplyRecognizer {
 
 SimpleFactory<MediaProcessUnit,ApplyRecognizer> ApplyRecognizer(APPLYRECOGNIZER_CLASSID);
+
+#define LOG_ERROR_AND_THROW(msg, exc) { \
+                                        APPRLOGINIT; \
+                                        LERROR << msg; \
+                                        throw exc; \
+                                      }
 
 ApplyRecognizer::ApplyRecognizer():
 MediaProcessUnit(),
@@ -216,7 +220,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   LDEBUG << "    - graphId                     :" << m_graphId;
   LDEBUG << "    - dataForStorage              :" << m_dataForStorage;
 #endif
-  
+
   LimaStatusCode returnCode(SUCCESS_ID);
 
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
@@ -272,11 +276,37 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
     recoData->deleteResultData();
     resultData=0;
   }
-  
+
   // remove recognizer data (used only internally to this process unit)
   analysis.removeData("RecognizerData");
 
   return returnCode;
+}
+
+bool ApplyRecognizer::checkGraphConsistency(const SegmentationData* sb,
+                                            const AnalysisGraph& graph) const
+{
+  APPRLOGINIT
+  std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
+  while (boundItr!=(sb->getSegments()).end())
+  {
+    LinguisticGraphVertex endSentence=boundItr->getLastVertex();
+
+    LinguisticGraphOutEdgeIt outItr,outItrEnd;
+    size_t counter=0;
+    for (boost::tie(outItr,outItrEnd)=boost::out_edges(endSentence,*graph.getGraph());
+         outItr!=outItrEnd; outItr++)
+    {
+      counter+=1;
+    }
+    if (0==counter)
+    {
+      LERROR << "ERROR: no way from " << endSentence;
+      return false;
+    }
+    boundItr++;
+  }
+  return true;
 }
 
 LimaStatusCode ApplyRecognizer::
@@ -287,13 +317,10 @@ processOnEachSentence(AnalysisContent& analysis,
   APPRLOGINIT;
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
-  if (anagraph == 0) {
+  if (nullptr==anagraph) {
     LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
     return MISSING_DATA;
   }
-
-//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-
 
   // get sentence bounds
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
@@ -304,18 +331,47 @@ processOnEachSentence(AnalysisContent& analysis,
   }
 
   std::vector<RecognizerMatch> seRecognizerResult;
-  // SegmentationData::const_iterator boundItr=sb->begin();
-  std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
-  // ??OME2 while (boundItr!=sb->end())
+  std::vector<Segment>::iterator boundItr=(sb->getSegments()).begin();
   while (boundItr!=(sb->getSegments()).end())
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+
+    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+
+    SetOfLinguisticGraphVertices afterEnd=getFollowingNodes<SetOfLinguisticGraphVertices>(*anagraph,endSentence);
+
+    if (0==afterEnd.size())
+      LOG_ERROR_AND_THROW("\"" << endSentence << "\" is the last vertex in the graph.", LimaException());
 
     seRecognizerResult.clear();
-    reco->apply(*anagraph,beginSentence,
-                        endSentence,analysis,seRecognizerResult);
+    reco->apply(*anagraph,beginSentence,endSentence,analysis,seRecognizerResult);
+
+    SetOfLinguisticGraphVertices newEndNodes;
+    for (auto v : afterEnd)
+    {
+      for (auto z : getPrecedingNodes<SetOfLinguisticGraphVertices>(*anagraph,v))
+      {
+        newEndNodes.insert(z);
+      }
+    }
+
+    if (1 != newEndNodes.size())
+    {
+      LOG_ERROR_AND_THROW("There is " << newEndNodes.size() << " vericies in the end of sentence.",
+                          LimaException());
+      // Last token must have only one corresponding vertex.
+    }
+
+    LinguisticGraphVertex newVertex = *newEndNodes.cbegin();
+
+    if (newVertex!=endSentence)
+    {
+      boundItr->setLastVertex(newVertex);
+      std::vector<Segment>::iterator nextSegmentItr=boundItr;
+      nextSegmentItr++;
+      nextSegmentItr->setFirstVertex(newVertex);
+    }
 
     //remove overlapping entities
     if (m_resolveOverlappingEntities) {
@@ -338,30 +394,173 @@ processOnWholeText(AnalysisContent& analysis,
 //   APPRLOGINIT;
 //   LDEBUG << "apply recognizer on whole text";
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
-  if (anagraph == 0) {
+  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
+  if (nullptr==anagraph) {
     APPRLOGINIT;
-    LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
+    LERROR << "graph with id '" << recoData->getGraphId() << "' is not available";
     return MISSING_DATA;
   }
 
-//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-
   std::vector<RecognizerMatch> seRecognizerResult;
+
+  map<LinguisticGraphVertex,size_t> oldFirstVertices;
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  if (nullptr!=sb)
+  {
+    for (size_t i=0;i<sb->getSegments().size();i++)
+    {
+      for (auto v : getFollowingNodes<SetOfLinguisticGraphVertices>(*anagraph,sb->getSegments()[i].getFirstVertex()))
+      {
+        oldFirstVertices[v]=i;
+      }
+    }
+  }
 
   reco->apply(*anagraph,
               anagraph->firstVertex(),
               anagraph->lastVertex(),
               analysis,seRecognizerResult,
               m_testAllVertices,m_stopAtFirstSuccess,m_onlyOneSuccessPerType);
-  
+
+  // The application of rules replaces the old vertices with the new ones.
+  // SentenceBoundaries holds the identifiers of verticies. Here we check that
+  // the boundaries are still valid. In case the boundaries aren't valid
+  // the corresponding segments have to be merged.
+  if (nullptr!=sb)
+  {
+    updateSegmentation(*sb,*anagraph,oldFirstVertices);
+  }
+
   //remove overlapping entities
   if (m_resolveOverlappingEntities) {
     reco->resolveOverlappingEntities(seRecognizerResult,
-                                             m_overlappingEntitiesStrategy);
+                                     m_overlappingEntitiesStrategy);
   }
 
   return SUCCESS_ID;
+}
+
+size_t ApplyRecognizer::
+updateSegmentation(SegmentationData& sb,
+                   const AnalysisGraph& graph,
+                   const map<LinguisticGraphVertex, size_t>& oldFirstVertices) const
+{
+  APPRLOGINIT;
+  size_t segmentsMerged = 0;
+
+  set<LinguisticGraphVertex> lastVerticies;
+  auto boundItr=sb.getSegments().begin();
+  while (boundItr!=sb.getSegments().end())
+  {
+    lastVerticies.insert(boundItr->getLastVertex());
+    boundItr++;
+  }
+
+  boundItr=sb.getSegments().begin();
+  set<LinguisticGraphVertex> visited;
+
+  size_t i=0;
+  while (i<sb.getSegments().size())
+  {
+    list<LinguisticGraphVertex> toVisit;
+    toVisit.push_back(sb.getSegments()[i].getFirstVertex());
+
+    while (!toVisit.empty())
+    {
+      LinguisticGraphVertex currentVertex=toVisit.front();
+      toVisit.pop_front();
+      visited.insert(currentVertex);
+
+      auto it=oldFirstVertices.find(currentVertex);
+      if (oldFirstVertices.end()!=it)
+      {
+        size_t segment_no=it->second-segmentsMerged;
+        bool beginFound=false;
+        set<LinguisticGraphVertex> preceding_vertices=getPrecedingNodes<SetOfLinguisticGraphVertices>(graph,currentVertex);
+        for ( LinguisticGraphVertex v : preceding_vertices )
+        {
+          if (sb.getSegments()[segment_no].getFirstVertex() == v)
+          {
+            beginFound=true;
+            break;
+          }
+        }
+        if (!beginFound)
+        {
+          if (1 != preceding_vertices.size())
+          {
+            LOG_ERROR_AND_THROW("There is " << preceding_vertices.size() << " vericies in the end of sentence.",
+                          LimaException());
+          }
+
+          sb.getSegments()[segment_no].setFirstVertex(*preceding_vertices.begin());
+          if (segment_no>0)
+          {
+            sb.getSegments()[segment_no-1].setLastVertex(*preceding_vertices.begin());
+          }
+          i++;
+        }
+      }
+
+      if (lastVerticies.end()!=lastVerticies.find(currentVertex))
+      {
+        if (sb.getSegments()[i].getLastVertex()==currentVertex)
+        {
+          lastVerticies.erase(lastVerticies.find(currentVertex));
+          break;
+        }
+
+        // we reached the end of some segment
+        size_t f=i;
+        i++;
+
+        if (i>=sb.getSegments().size())
+        {
+          break;
+        }
+
+        while (i<sb.getSegments().size() && sb.getSegments()[i].getLastVertex()!=currentVertex)
+        {
+          i++;
+        }
+
+        if (i>=sb.getSegments().size())
+        {
+          break;
+        }
+
+        sb.getSegments()[f].setLastVertex(sb.getSegments()[i].getLastVertex());
+
+        uint64_t len = sb.getSegments()[i].getLength();
+        for (size_t j=f; j<i; j++)
+        {
+          len += sb.getSegments()[j].getLength();
+        }
+        sb.getSegments()[f].setLength(len);
+
+        f++;
+        sb.getSegments().erase(sb.getSegments().begin()+f, sb.getSegments().begin()+i+1);
+        LDEBUG << "Sentences [" << f << ", " << i+1 << ") removed.";
+        i=f-1;
+        segmentsMerged++;
+        lastVerticies.erase(lastVerticies.find(currentVertex));
+        break;
+      }
+
+      for ( LinguisticGraphVertex next : getFollowingNodes<SetOfLinguisticGraphVertices>(graph, currentVertex) )
+      {
+        if (visited.end()==visited.find(next))
+        {
+          toVisit.push_back(next);
+        }
+      }
+    }
+
+    i++;
+  }
+
+  LDEBUG << "segmentsMerged==" << segmentsMerged;
+  return segmentsMerged;
 }
 
 } // end namespace

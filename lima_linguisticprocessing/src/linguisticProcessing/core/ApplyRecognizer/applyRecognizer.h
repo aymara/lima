@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,14 +22,14 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Fri Jan 14 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
  * Project     s2lp
- * 
+ *
  * @brief this class contains a generic process unit for the
  * application of automaton rules on a text (used for named entities,
  * syntactic analysis...)
- * 
- * 
+ *
+ *
  ***********************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_APPLYRECOGNIZER_H
 #define LIMA_LINGUISTICPROCESSING_APPLYRECOGNIZER_H
@@ -38,6 +38,8 @@
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "linguisticProcessing/core/Automaton/recognizer.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -56,7 +58,7 @@ public:
             Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-    
+
 private:
   // automaton to apply
   std::vector<Automaton::Recognizer*> m_recognizers;
@@ -78,11 +80,17 @@ private:
                            const std::string& param) const;
 
   LimaStatusCode processOnEachSentence(AnalysisContent& analysis,
-                                     Automaton::Recognizer* reco,
-                                     RecognizerData* recoData) const;
+                                       Automaton::Recognizer* reco,
+                                       RecognizerData* recoData) const;
   LimaStatusCode processOnWholeText(AnalysisContent& analysis,
-                                  Automaton::Recognizer* reco,
-                                  RecognizerData* recoData) const;
+                                    Automaton::Recognizer* reco,
+                                    RecognizerData* recoData) const;
+  size_t updateSegmentation(SegmentationData& sb,
+                            const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                            const std::map<LinguisticGraphVertex, size_t>& oldFirstVertices) const;
+  bool checkGraphConsistency(const SegmentationData* sb,
+                             const LinguisticAnalysisStructure::AnalysisGraph& graph) const;
+
 };
 
 } // end namespace

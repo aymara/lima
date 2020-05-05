@@ -1,5 +1,5 @@
 /*
-    Copyright 2011-2019 CEA LIST
+    Copyright 2011-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -272,10 +272,6 @@ void Segment::setVerticesFromPositions(uint64_t posBegin,
       }
     }
   }
-}
-
-Segment::~Segment()
-{
 }
 
 bool Segment::operator<(const Segment& s) const

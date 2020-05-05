@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICANALYSISSTRUCTUREANALYSISGRAPH_H
@@ -42,7 +42,6 @@ namespace LinguisticProcessing
 {
 }
 }
-
 
 namespace Lima
 {
@@ -99,7 +98,7 @@ public:
   *        are all included in the microFilters list. Returns last vertex
   *        if has reached it.
   * @param start @b IN vertex from which to start
-  * @param 
+  * @param
   */
   LinguisticGraphVertex nextMainPathVertex(
     LinguisticGraphVertex start,
@@ -130,19 +129,19 @@ public:
     //bool isFirstWordOfSentence(const LinguisticGraphVertex& v, MediaId language) const;
 
     /** @brief Creates the annotations in the agdata corresponding to this graphs
-    * vertices 
-    * @note The given annotation data should generaly be a new fresh empty one 
+    * vertices
+    * @note The given annotation data should generaly be a new fresh empty one
     * @param anagraph @b IN/OUT <I>AnnotationData\&</I>
     *        The annatation graph data to be populated
     */
     void populateAnnotationGraph(
                    Common::AnnotationGraphs::AnnotationData* annotData,
                    const std::string& src);
-  
+
   inline bool ownsTokens() const {return m_deleteTokenWhenDestroyed;}
-  
+
   inline bool ownsMorphData() const {return m_deleteDataWhenDestroyed;}
-  
+
 private:
 
   /** @{ Caution: copy constructor and assignment operators do
@@ -154,7 +153,7 @@ private:
 
   /**
    * create a new graph
-   * 
+   *
    */
   void createGraph();
 
@@ -173,18 +172,63 @@ private:
   /** @brief The last vertex of the graph. Does not change after
    * initialization */
   LinguisticGraphVertex m_lastVertex;
-  
+
   /** @brief if true, delete all tokenProperty pointer when destroyed
     */
   bool m_deleteTokenWhenDestroyed;
-  
+
   /** @brief if true, delete all dataProperty pointer when destroyed
     */
   bool m_deleteDataWhenDestroyed;
-  
+
   MediaId m_language;
   std::string m_graphId;
 };
+
+
+template<class T> inline
+void getFollowingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                       const LinguisticGraphVertex v,
+                       T& output_container)
+{
+  LinguisticGraphOutEdgeIt outEdge,outEdge_end;
+  boost::tie (outEdge,outEdge_end)=out_edges(v,*(graph.getGraph()));
+  for (; outEdge!=outEdge_end; outEdge++)
+  {
+    output_container.insert(target(*outEdge,*(graph.getGraph())));
+  }
+}
+
+template<class T> inline
+T getFollowingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                    const LinguisticGraphVertex v)
+{
+  T followingNodes;
+  getFollowingNodes<T>(graph, v, followingNodes);
+  return followingNodes;
+}
+
+template<class T> inline
+void getPrecedingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                       const LinguisticGraphVertex& v,
+                       T& output_container)
+{
+  LinguisticGraphInEdgeIt inEdge,inEdge_end;
+  boost::tie (inEdge,inEdge_end)=in_edges(v,*(graph.getGraph()));
+  for (; inEdge!=inEdge_end; inEdge++)
+  {
+    output_container.insert(source(*inEdge,*(graph.getGraph())));
+  }
+}
+
+template<class T> inline
+T getPrecedingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                    const LinguisticGraphVertex v)
+{
+  T precedingNodes;
+  getPrecedingNodes<T>(graph, v, precedingNodes);
+  return precedingNodes;
+}
 
 }
 

@@ -78,6 +78,13 @@
         <item value="conllDumperFake"/>
       </list>
     </group>
+    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -340,6 +347,8 @@
       <param key="window_size" value="20"/>
       <param key="batch_size" value="200"/>
     </group>
+    <group name="conllureader" class="ConlluReader">
+    </group>
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
       <param key="model_prefix" value="tokenizer-$udlang"/>
     </group>
@@ -554,14 +563,21 @@
         <item value="SENT"/>
       </list>
     </group>
-     <group name="sentenceBoundariesFinderForSE" class="SentenceBoundariesFinder">
+    <group name="sentenceBoundariesFinderForSE" class="SentenceBoundariesFinder">
       <param key="graph" value="AnalysisGraph"/>
       <param key="data" value="SentenceBoundariesForSE"/>
       <list name="micros">
         <item value="SENT"/>
       </list>
     </group>
-   <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+    <group name="sentenceBoundariesFinderNoMorph" class="SentenceBoundariesFinder">
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="data" value="SentenceBoundaries"/>
+      <list name="micros">
+        <item value="SENT"/>
+      </list>
+    </group>
+    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -385,7 +385,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
    LDEBUG << "Rule weights" << oss.str();
   }
 #endif
-  
+
   bool reapplySameRule(false);
 
   SetOfRules::const_iterator
@@ -452,7 +452,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     if (success) {
       // build complete match
- 
+
       match=new RecognizerMatch(leftmatch);
       if (leftmatch.getHead() != 0) {
         match->setHead(leftmatch.getHead());
@@ -487,6 +487,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                                   constraintCheckList,
                                                   success,
                                                   match);
+
       //LDEBUG << "actionSuccess=" << actionSuccess;
     }
 
@@ -500,12 +501,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       }
       if (success) {
         LDEBUG << "Recognizer::testSetOfRules: trigger " << v << "[" << str << "]:rule "
-               << currentRule->getRuleId() << "-> success=" << success 
+               << currentRule->getRuleId() << "-> success=" << success
                << ",actionSuccess=" << actionSuccess;
         LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
-        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule " 
+        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success= false";
       }
     }
@@ -531,8 +532,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 #ifdef DEBUG_LP
         if (logger.isDebugEnabled() && recoData != nullptr) {
           LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
-            << stopAtFirstSuccess << ") or next vertices empty (" 
-            << (recoData->getNextVertices().empty()) 
+            << stopAtFirstSuccess << ") or next vertices empty ("
+            << (recoData->getNextVertices().empty())
             << ")";
         }
 #endif
@@ -597,7 +598,7 @@ setNormalizedForm(const LimaString& norm,
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
-    // use surface form of the expression as normalized form 
+    // use surface form of the expression as normalized form
     match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
@@ -650,8 +651,11 @@ uint64_t Recognizer::
         bool stopAtFirstSuccess,
         bool onlyOneSuccessPerType,
         bool returnAtFirstSuccess,
-        bool applySameRuleWhileSuccess) const 
+        bool applySameRuleWhileSuccess) const
 {
+  SetOfLinguisticGraphVertices nodesAfterEnd = getFollowingNodes<SetOfLinguisticGraphVertices>(graph, end);
+  if (begin == end)
+    return 0;
 
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
@@ -665,7 +669,7 @@ uint64_t Recognizer::
   LDEBUG << "  stopAtFirstSuccess: " << stopAtFirstSuccess << "; onlyOneSuccessPerType: " << onlyOneSuccessPerType;
   LDEBUG << "  returnAtFirstSuccess: " << returnAtFirstSuccess << "; applySameRuleWhileSuccess: " << applySameRuleWhileSuccess;
 #endif
-  
+
   uint64_t numberOfRecognized(0);
   bool success(false);
 
@@ -673,7 +677,12 @@ uint64_t Recognizer::
   std::deque<LinguisticGraphVertex> toVisit;
   std::set<LinguisticGraphVertex> visited;
 
-  toVisit.push_back(begin);
+  for (auto v : getFollowingNodes<SetOfLinguisticGraphVertices>(graph, begin))
+  {
+    if (v != end)
+      toVisit.push_back(v);
+  }
+
   // patch for inifinite loop : avoid begin stopped at first step
   //visited.insert(begin);
 
@@ -732,20 +741,22 @@ uint64_t Recognizer::
 //           toVisit.clear();
 
         }
+
+        // TODO: update downstreamBound if end node changed
       }
     }
 
     // store following nodes to test
     LinguisticGraphOutEdgeIt outEdge,outEdge_end;
     boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,*(graph.getGraph()));
-
     for (; outEdge!=outEdge_end; outEdge++) {
       LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
       if (visited.find(next)==visited.end()) {
 #ifdef DEBUG_LP
         LDEBUG << "Recognizer: adding out edge target vertex to the 'to visit' list: " << next;
 #endif
-        toVisit.push_back(next);
+        if (nodesAfterEnd.end() == nodesAfterEnd.find(next))
+          toVisit.push_back(next);
         // do not put in visited unless it is really visited
         // (otherwise, may be suppressed when testAllVertices is false
         // and never visited)
@@ -758,23 +769,27 @@ uint64_t Recognizer::
       }
     }
     RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-    std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
-    if (recoData != 0 && !nextVertices.empty() )
+    if (nullptr != recoData)
     {
-#ifdef DEBUG_LP
-      LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
-#endif
-      std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
-      nvit = nextVertices.begin();
-      nvit_end = nextVertices.end();
-      for (; nvit != nvit_end; nvit++)
+      std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
+      if (!nextVertices.empty())
       {
-#ifdef DEBUG_LP
-        LDEBUG << "           - " << *nvit;
-#endif
-        toVisit.push_front(*nvit);
+  #ifdef DEBUG_LP
+        LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
+  #endif
+        std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
+        nvit = nextVertices.begin();
+        nvit_end = nextVertices.end();
+        for (; nvit != nvit_end; nvit++)
+        {
+  #ifdef DEBUG_LP
+          LDEBUG << "           - " << *nvit;
+  #endif
+          if (nodesAfterEnd.end() == nodesAfterEnd.find(*nvit))
+            toVisit.push_front(*nvit);
+        }
+        nextVertices.clear();
       }
-      nextVertices.clear();
     }
 #ifdef DEBUG_LP
     LDEBUG << "Recognizer: 'to visit' list size is now: " << toVisit.size();
@@ -828,7 +843,7 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       uint64_t nbSuccessForTheseRules=
         testSetOfRules(*((*ruleSet)->transitionUnit()),
                        (*ruleSet)->setOfRules(),
-                       graph, current, begin, end,analysis,
+                       graph, current, begin, end, analysis,
                        result, &forbiddenTypes,
                        stopAtFirstSuccess,
                        onlyOneSuccessPerType,
@@ -961,7 +976,7 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // find matching rules
   std::vector<const TriggerRule*> matchingRules;
   m_searchStructure.findMatchingTransitions(graph,vertex,analysis,token,data,matchingRules);
-  
+
   // matching rules are gathered by common trigger (transition unit)
   // we have to re-sort the rules by their weight at a global level, independently of the trigger
   // create a vector of TriggerRule where each contains only one rule, then sort it
@@ -972,7 +987,7 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   sort(matchingSetOfRules.begin(),matchingSetOfRules.end(),CompareTriggerRule());
 
-  // then, gather rules with the same trigger that are consecutive in this new list 
+  // then, gather rules with the same trigger that are consecutive in this new list
   // (may save some constraint checking on trigger)
   if (! matchingSetOfRules.empty()) {
     std::vector<TriggerRule*>::iterator it=matchingSetOfRules.begin();
