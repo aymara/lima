@@ -123,11 +123,11 @@ void BoWBinaryReader::readHeader(std::istream& file)
     Misc::readString(file,m_d->m_version);
     if (m_d->m_version != BOW_VERSION) {
         std::ostringstream oss;
-        oss << "uncompatible version : file is in version " << m_d->m_version
+        oss << "BoWBinaryReader::readHeader - incompatible version : file is in version " << m_d->m_version
         << "; current version is " << BOW_VERSION;
         BOWLOGINIT;
         LERROR << oss.str();
-        throw LimaException();
+        throw LimaException(oss.str());
     }
     m_d->m_fileType=static_cast<BoWFileType>(Misc::readOneByteInt(file));
 
