@@ -1144,52 +1144,95 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
   }
 
   if (data.object().value("main_alphabet").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param main_alphabet.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param main_alphabet.",
-      LimaException());
-  if (!data.object().value("main_alphabet").isString())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+      LimaException());*/
+  }
+  else if (!data.object().value("main_alphabet").isString())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param main_alphabet is not a string.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param main_alphabet is not a string.",
-      LimaException());
-  m_main_alphabet = data.object().value("main_alphabet").toString();
+      LimaException());*/
+  }
+  else
+  {
+    m_main_alphabet = data.object().value("main_alphabet").toString();
+  }
 
   if (data.object().value("feat_order").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param feat_order.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param feat_order.",
-      LimaException());
-  if (!data.object().value("feat_order").isArray())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+      LimaException());*/
+  }
+  else if (!data.object().value("feat_order").isArray())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param feat_order is not an array.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param feat_order is not an array.",
-      LimaException());
-  load_string_array(data.object().value("feat_order").toArray(), m_feat_order);
-
-  if (data.object().value("feat_deps").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param feat_deps.",
-      LimaException());
-  if (!data.object().value("feat_deps").isObject())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param feat_deps is not an object.",
-      LimaException());
-  auto featDepsObject = data.object().value("feat_deps").toObject();
+      LimaException());*/
+  }
+  else
+  {
+    load_string_array(data.object().value("feat_order").toArray(), m_feat_order);
+  }
 
   m_upos_idx = m_seqtag_id2idx.find("upos")->second;
   m_feat_deps.resize(m_seqtag_outputs[m_upos_idx].i2t.size());
 
-  for (auto i = featDepsObject.constBegin(); i != featDepsObject.constEnd(); ++i)
+  if (0 == m_feat_order.size())
   {
-    string upos_name = i.key().toStdString();
-    for (size_t upos_idx = 0; upos_idx < m_seqtag_outputs[m_upos_idx].i2t.size(); upos_idx++)
+    m_feat_order.push_back("upos");
+    for (const auto& out : m_seqtag_outputs)
     {
-      if (upos_name == m_seqtag_outputs[m_upos_idx].i2t[upos_idx])
+      if (string("upos") != out.feat_name)
+        m_feat_order.push_back(out.feat_name);
+    }
+  }
+
+  if (data.object().value("feat_deps").isUndefined())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param feat_deps.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param feat_deps.",
+      LimaException());*/
+  }
+  else if (!data.object().value("feat_deps").isObject())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param feat_deps is not an object.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param feat_deps is not an object.",
+      LimaException());*/
+  }
+  else
+  {
+    auto featDepsObject = data.object().value("feat_deps").toObject();
+
+    for (auto i = featDepsObject.constBegin(); i != featDepsObject.constEnd(); ++i)
+    {
+      string upos_name = i.key().toStdString();
+      for (size_t upos_idx = 0; upos_idx < m_seqtag_outputs[m_upos_idx].i2t.size(); upos_idx++)
       {
-        vector<string> v;
-        load_string_array(i.value().toArray(), v);
-        for ( const auto item : v )
+        if (upos_name == m_seqtag_outputs[m_upos_idx].i2t[upos_idx])
         {
-          m_feat_deps[upos_idx].insert(item);
+          vector<string> v;
+          load_string_array(i.value().toArray(), v);
+          for ( const auto item : v )
+          {
+            m_feat_deps[upos_idx].insert(item);
+          }
+          break;
         }
-        break;
       }
     }
   }
