@@ -496,16 +496,28 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   m_ctx_len = encoder_conf.value("ctx_len").toInt();
 
   // beam_size
+  m_beam_size = 5;
   QJsonObject decoder_conf = get_json_object(data.object(), "decoder");
   if (decoder_conf.value("beam_size").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param beam_size.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param beam_size.",
-      LimaException());
-  if (!decoder_conf.value("beam_size").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+      LimaException());*/
+  }
+  else if (!decoder_conf.value("beam_size").isDouble())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param beam_size is not a number.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param beam_size is not a number.",
-      LimaException());
-  m_beam_size = decoder_conf.value("beam_size").toInt();
+      LimaException());*/
+  }
+  else
+  {
+    m_beam_size = decoder_conf.value("beam_size").toInt();
+  }
 
   load_string_array(get_json_array(encoder_conf, "i2c"), m_lemmatizer_conf.encoder_dict.m_i2w);
   load_string_to_uint_map(get_json_object(encoder_conf, "c2i"), m_lemmatizer_conf.encoder_dict.m_w2i);
@@ -555,32 +567,62 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   }
 
   const auto& pm = pcm.getPropertyManager("MICRO");
-  vector<string> dont_lemmatize_pos_names;
-  load_string_array(get_json_array(data.object(), "dont_lemmatize"), dont_lemmatize_pos_names);
-  for ( const auto s : dont_lemmatize_pos_names )
+  if (!data.object().value("dont_lemmatize").isUndefined())
   {
-    m_dont_lemmatize.insert(pm.getPropertyValue(s));
+    vector<string> dont_lemmatize_pos_names;
+    load_string_array(get_json_array(data.object(), "dont_lemmatize"), dont_lemmatize_pos_names);
+    for ( const auto s : dont_lemmatize_pos_names )
+    {
+      m_dont_lemmatize.insert(pm.getPropertyValue(s));
+    }
+  }
+  else
+  {
+    LOG_MESSAGE(LERROR, "ERROR: TensorFlowLemmatizerPrivate::load_config: \"dont_lemmatize\" isn't defined.");
+    m_dont_lemmatize.insert(pm.getPropertyValue("PUNCT"));
   }
 
   if (data.object().value("main_alphabet").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param main_alphabet.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param main_alphabet.",
-      LimaException());
-  if (!data.object().value("main_alphabet").isString())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+      LimaException());*/
+  }
+  else if (!data.object().value("main_alphabet").isString())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param main_alphabet is not a string.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param main_alphabet is not a string.",
-      LimaException());
-  m_main_alphabet = data.object().value("main_alphabet").toString();
+      LimaException());*/
+  }
+  else
+  {
+    m_main_alphabet = data.object().value("main_alphabet").toString();
+  }
 
   if (data.object().value("special_chars").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" missing param special_chars.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param special_chars.",
-      LimaException());
-  if (!data.object().value("special_chars").isString())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+      LimaException());*/
+  }
+  else if (!data.object().value("special_chars").isString())
+  {
+    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+                << config_file_name << "\" param special_chars is not a string.");
+    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param special_chars is not a string.",
-      LimaException());
-  m_special_chars = data.object().value("special_chars").toString();
+      LimaException());*/
+  }
+  else
+  {
+    m_special_chars = data.object().value("special_chars").toString();
+  }
 }
 
 void TensorFlowLemmatizerPrivate::add_linguistic_element(MorphoSyntacticData* msdata, const Token &token) const
@@ -770,7 +812,8 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, 
   LimaString src_form = (*m_stringsPool)[token.token->form()];
   size_t src_size = src_form.size();
   int size_diff = int(lemma.size()) - src_size;
-  if (hasCharFromList(src_form, m_main_alphabet) && hasNoCharsFromList(src_form, m_special_chars))
+  if ((0 == m_main_alphabet.size() || hasCharFromList(src_form, m_main_alphabet))
+      && (0 == m_special_chars.size() || hasNoCharsFromList(src_form, m_special_chars)))
   {
     if (token.morpho != nullptr && token.morpho->size() > 0)
     {
@@ -1043,12 +1086,16 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
       continue;
     }
 
-    if (hasCharFromList(form, m_main_alphabet) && hasNoCharsFromList(form, m_special_chars))
+    if ((0 == m_main_alphabet.size() || hasCharFromList(form, m_main_alphabet))
+          && (0 == m_special_chars.size() || hasNoCharsFromList(form, m_special_chars)))
     {
       const LimaString feat_str = create_feat_str(token, (0 == current_token ? "FirstWord=Yes" : ""));
-      buckets[form.size() - 1][form_idx][feat_str].form = form_idx;
-      buckets[form.size() - 1][form_idx][feat_str].firstWord = (0 == current_token);
-      buckets[form.size() - 1][form_idx][feat_str].occurrences.insert(token.morpho->begin());
+      size_t form_size = form.size();
+      if (form_size > buckets.size())
+        form_size = buckets.size();
+      buckets[form_size - 1][form_idx][feat_str].form = form_idx;
+      buckets[form_size - 1][form_idx][feat_str].firstWord = (0 == current_token);
+      buckets[form_size - 1][form_idx][feat_str].occurrences.insert(token.morpho->begin());
     }
 
     current_token++;
