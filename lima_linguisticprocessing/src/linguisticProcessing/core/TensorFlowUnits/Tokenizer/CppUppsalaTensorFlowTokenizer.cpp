@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -104,7 +104,7 @@ public:
   };
 
   void init(const QString& model_refix);
-  vector< vector< TPrimitiveToken > > tokenize(const QString& text);
+  void tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
@@ -116,8 +116,9 @@ protected:
                             vector<vector<unsigned int>>& ngram_idxs);
 
   TokStatusCode generate_batch(const vector<vector<unsigned int>>& ngram_idxs,
-                               size_t start,
+                               size_t& start,
                                size_t size,
+                               size_t overlap,
                                vector<pair<string, Tensor>>& batch);
 
   void append_new_word(vector< TPrimitiveToken >& current_sentence,
@@ -254,7 +255,8 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
   LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
 
   // Evaluate TensorFlow model on the text
-  auto sentencesTokens = m_d->tokenize(*originalText);
+  vector< vector< CppUppsalaTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
+  m_d->tokenize(*originalText, sentencesTokens);
 
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
@@ -280,7 +282,7 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
 
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
       Token *tToken = new Token(form, str, token.start, token.wordText.size());
-      if (tToken == 0)
+      if (tToken == nullptr)
         LOG_ERROR_AND_THROW("CppUppsalaTensorFlowTokenizer::process: Can't allocate memory with \"new Token(...)\"",
                             MemoryErrorException());
 
@@ -533,15 +535,16 @@ TokStatusCode CppUppsalaTokenizerPrivate::encode_text(const u32string& text, vec
 }
 
 TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<unsigned int>>& ngram_idxs,
-                                                         size_t start,
+                                                         size_t& start,
                                                          size_t size,
+                                                         size_t overlap,
                                                          vector<pair<string, Tensor>>& batch)
 {
   batch.clear();
 
   int64 reserve = size;
-  if (0 == reserve)
-    reserve = 1 + (ngram_idxs[0].size() / 400);
+  //if (0 == reserve)
+  //  reserve = 1 + (ngram_idxs[0].size() / 400);
 
   Tensor seq_len_tensor(DT_INT32, TensorShape({reserve}));
   auto seq_len = seq_len_tensor.tensor<int, 1>();
@@ -565,9 +568,14 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
   }
 
   size_t seq_num = 0;
-  for (size_t p = start; p < ngram_idxs[0].size(); p += m_max_seq_len)
+  for (size_t iter = 0; iter < reserve; iter++)
   {
-    size_t this_seq_len = (p + m_max_seq_len < ngram_idxs[0].size()) ? m_max_seq_len : (ngram_idxs[0].size() - p);
+    size_t p = start + iter * (m_max_seq_len - overlap * 2);
+    size_t this_seq_len = 0;
+    if (p < ngram_idxs[0].size())
+    {
+      this_seq_len = (p + m_max_seq_len < ngram_idxs[0].size()) ? m_max_seq_len : (ngram_idxs[0].size() - p);
+    }
     seq_len(seq_num) = this_seq_len;
 
     for (size_t i = 0; i < m_ngram_defs.size(); ++i)
@@ -586,6 +594,8 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
     if (size > 0 && seq_num == size)
       break;
   }
+
+  start = start + reserve * (m_max_seq_len - overlap * 2);
 
   return TokStatusCode::SUCCESS;
 }
@@ -617,9 +627,15 @@ void CppUppsalaTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& curr
   }
 }
 
-vector< vector< CppUppsalaTokenizerPrivate::TPrimitiveToken > > CppUppsalaTokenizerPrivate::tokenize(const QString& text)
+void CppUppsalaTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences)
 {
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::tokenize" << text.left(100));
+  TimeUtils::updateCurrentTime();
+  sentences.clear();
+  sentences.reserve(text.size() / 15);
+
+  u32string SENTENCE_BREAKS = QString::fromUtf8("\u000A\u000D").toStdU32String();
+  u32string SPACE_CHARACTERS = QString::fromUtf8("\u0020\u000A\u000B\u000C\u000D").toStdU32String();
 
   // Encode text
   QString simplified_copy = text;
@@ -655,119 +671,125 @@ vector< vector< CppUppsalaTokenizerPrivate::TPrimitiveToken > > CppUppsalaTokeni
                         LimaException());
 
   // Generate batch
-  vector<pair<string, Tensor>> inputs;
-  if (generate_batch(ngram_idxs, 0, 0, inputs) != TokStatusCode::SUCCESS)
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while generating batch.",
-                        LimaException());
+  size_t iter_start = 0;
+  size_t num_batches = 128;
+  size_t overlap = 50;
 
-  // Run model
-  vector<Tensor> out;
-  Status status = m_session->Run(inputs, {"Dense/dropout/Identity"}, {}, &out);
-  if (!status.ok())
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: Can't execute \"Run\" in TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
-
-  vector< vector< TPrimitiveToken > > sentences;
+  //vector< vector< TPrimitiveToken > > sentences;
   vector< TPrimitiveToken > current_sentence;
   u32string current_token;
   int current_token_offset = 0;
 
-  auto scores = out[0].tensor<float, 3>();
-  for (int64 i = 0; i < out[0].dim_size(0); i++)
+  while (iter_start < ngram_idxs[0].size())
   {
-    size_t len = 400;
-    vector<vector<float>> converted_scores;
-    converted_scores.resize(len);
-    for (size_t j = 0; j < len; j++)
+    size_t old_iter_start = iter_start;
+    vector<pair<string, Tensor>> inputs;
+    if (generate_batch(ngram_idxs, iter_start, num_batches, overlap, inputs) != TokStatusCode::SUCCESS)
+      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while generating batch.",
+                          LimaException());
+
+    // Run model
+    vector<Tensor> out;
+    Status status = m_session->Run(inputs, {"Dense/dropout/Identity"}, {}, &out);
+    if (!status.ok())
+      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: Can't execute \"Run\" in TensorFlow session: "
+                          << status.ToString(),
+                          LimaException());
+
+    auto scores = out[0].tensor<float, 3>();
+    for (int64 i = 0; i < out[0].dim_size(0); i++)
     {
-      converted_scores[j].resize(out[0].dim_size(2));
-      for (int64 k = 0; k < out[0].dim_size(2); k++)
-        converted_scores[j][k] = scores(i, j, k);
-    }
-
-    vector<size_t> viterbi;
-    viterbi_decode(converted_scores, m_crf, viterbi);
-
-    u32string SENTENCE_BREAKS = QString::fromUtf8("\u000A\u000D").toStdU32String();
-    u32string SPACE_CHARACTERS = QString::fromUtf8("\u0020\u000A\u000B\u000C\u000D").toStdU32String();
-    for (size_t j = 0; j < viterbi.size(); ++j)
-    {
-      unsigned int pos = i * 400 + j;
-      if (pos + 2 >= original_text.size())
-        break;
-
-      // TODO: check for \r\n and other combinations too
-      if (SENTENCE_BREAKS.find(original_text[pos+1]) != u32string::npos
-          && SENTENCE_BREAKS.find(original_text[pos+2]) != u32string::npos
-          && original_text[pos+1] == original_text[pos+2]
-          && j > 0)
+      size_t len = m_max_seq_len;
+      vector<vector<float>> converted_scores;
+      converted_scores.resize(len);
+      for (size_t j = 0; j < len; j++)
       {
-        size_t t = j-1;
-        while (viterbi[t] == m_token_outside && t > 0)
-          t -= 1;
-
-        if (viterbi[t] == m_token_end)
-          viterbi[t] = m_token_end_last;
-
-        if (viterbi[t] == m_token_single)
-          viterbi[t] = m_token_single_last;
+        converted_scores[j].resize(out[0].dim_size(2));
+        for (int64 k = 0; k < out[0].dim_size(2); k++)
+          converted_scores[j][k] = scores(i, j, k);
       }
 
-      if (SPACE_CHARACTERS.find(original_text[pos+1]) == u32string::npos
-              && viterbi[j] == m_token_outside)
+      vector<size_t> viterbi;
+      viterbi_decode(converted_scores, m_crf, viterbi);
+
+      for (size_t j = 0; j < viterbi.size(); ++j)
       {
-        viterbi[j] = m_token_inside;
-        if (j+1 < viterbi.size())
+        unsigned int pos = old_iter_start + i * (m_max_seq_len - overlap * 2) + j;
+        if (pos + 2 >= original_text.size())
+          break;
+
+        // TODO: check for \r\n and other combinations too
+        if (SENTENCE_BREAKS.find(original_text[pos+1]) != u32string::npos
+            && SENTENCE_BREAKS.find(original_text[pos+2]) != u32string::npos
+            && original_text[pos+1] == original_text[pos+2]
+            && j > 0)
         {
-          if (viterbi[j+1] == m_token_begin || viterbi[j+1] == m_token_outside)
-            viterbi[j] = m_token_single;
-        }
-      }
-    }
+          size_t t = j-1;
+          while (viterbi[t] == m_token_outside && t > 0)
+            t -= 1;
 
-    for (size_t j = 0; j < viterbi.size(); ++j)
-    {
-      unsigned int pos = i * 400 + j;
-      if (pos + 1 >= wtext.size())
-        break;
-      const auto &tag = viterbi[j];
+          if (viterbi[t] == m_token_end)
+            viterbi[t] = m_token_end_last;
 
-      if (m_token_end == tag || m_token_end_last == tag || m_token_single == tag || m_token_single_last == tag)
-      {
-        if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
-        {
-          if (m_token_single == tag || m_token_single_last == tag || 0 == current_token.size())
-            current_token_offset = pos;
-
-          current_token += wtext[pos + 1];
+          if (viterbi[t] == m_token_single)
+            viterbi[t] = m_token_single_last;
         }
 
-        if (current_token.size() > 0 && current_token != SPACE)
+        if (SPACE_CHARACTERS.find(original_text[pos+1]) == u32string::npos
+                && viterbi[j] == m_token_outside)
         {
-          append_new_word(current_sentence, current_token, current_token_offset);
-
-          //if (current_sentence.size() > 1
-          //        && current_sentence[current_sentence.size() - 2].second == current_token_offset)
-          //    throw;
-          current_token.clear();
-        }
-      }
-      else if (m_token_begin == tag || m_token_inside == tag)
-      {
-        if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
-        {
-          if (m_token_begin == tag || 0 == current_token.size())
-            current_token_offset = pos;
-
-          current_token += wtext[pos + 1];
+          viterbi[j] = m_token_inside;
+          if (j+1 < viterbi.size())
+          {
+            if (viterbi[j+1] == m_token_begin || viterbi[j+1] == m_token_outside)
+              viterbi[j] = m_token_single;
+          }
         }
       }
 
-      if (m_token_end_last == tag || m_token_single_last == tag)
+      for (size_t j = ((i > 0 || old_iter_start > 0) ? overlap : 0); j < viterbi.size() - overlap; ++j)
       {
-        sentences.push_back(current_sentence);
-        current_sentence.clear();
+        unsigned int pos = old_iter_start + i * (m_max_seq_len - overlap * 2) + j;
+        if (pos + 1 >= wtext.size())
+          break;
+        const auto &tag = viterbi[j];
+
+        if (m_token_end == tag || m_token_end_last == tag || m_token_single == tag || m_token_single_last == tag)
+        {
+          if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
+          {
+            if (m_token_single == tag || m_token_single_last == tag || 0 == current_token.size())
+              current_token_offset = pos;
+
+            current_token += wtext[pos + 1];
+          }
+
+          if (current_token.size() > 0 && current_token != SPACE)
+          {
+            append_new_word(current_sentence, current_token, current_token_offset);
+
+            //if (current_sentence.size() > 1
+            //        && current_sentence[current_sentence.size() - 2].second == current_token_offset)
+            //    throw;
+            current_token.clear();
+          }
+        }
+        else if (m_token_begin == tag || m_token_inside == tag)
+        {
+          if (current_token.size() > 0 || SPACE[0] != wtext[pos + 1])
+          {
+            if (m_token_begin == tag || 0 == current_token.size())
+              current_token_offset = pos;
+
+            current_token += wtext[pos + 1];
+          }
+        }
+
+        if (m_token_end_last == tag || m_token_single_last == tag)
+        {
+          sentences.push_back(current_sentence);
+          current_sentence.clear();
+        }
       }
     }
   }
@@ -778,7 +800,8 @@ vector< vector< CppUppsalaTokenizerPrivate::TPrimitiveToken > > CppUppsalaTokeni
   if (current_sentence.size() > 0)
     sentences.push_back(current_sentence);
 
-  return sentences;
+  LOG_MESSAGE(LINFO, "End of Tokenizer");
+  TimeUtils::logElapsedTime("CppUppsalaTokenizerPrivate");
 }
 
 } // namespace Tokenizer
