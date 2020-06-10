@@ -72,7 +72,7 @@ define subautomaton InciseGroup {
 =<ClearStoredRelations()
 
 # "Hamburger 99"
-# This rule has to be rewritten with the AdjPostNum (does not exist  in Lima 
+# This rule has to be rewritten with the AdjPostNum (does not exist  in Lima
 # Libre) trigger replaced by a number specific entity
 #@AdjPostNum:@Substantif (@PrepComp|@AdjPost|@AdverbePositifDansChaineNominale){0-3}::SYNTACTIC_RELATION:
 #+SecondUngovernedBy(trigger.1,left.1,"ANY")
@@ -312,3 +312,15 @@ $NC::@PrepComp $DET? $ADV{0-3} $ADJ? ($NC|$NP) @TensedVerbSuj:SYNTACTIC_RELATION
 +CreateRelationBetween(trigger.1,right.1,"IncInc")
 =>AddRelationInGraph()
 =<ClearStoredRelations()
+
+###################################################
+# Specific rules to recover from PoS tagging issues
+###################################################
+
+@Substantif::des @Substantif:SYNTACTIC_RELATION:
++SecondUngovernedBy(right.2,trigger.1,"ANY")
++CreateRelationBetween(right.2,trigger.1,"COMPDUNOM")
+=>AddRelationInGraph()
+=<ClearStoredRelations()
+
+
