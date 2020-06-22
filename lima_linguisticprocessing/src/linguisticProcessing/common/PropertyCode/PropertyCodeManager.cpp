@@ -87,6 +87,7 @@ PropertyCodeManager::~PropertyCodeManager()
 
 PropertyCodeManager::PropertyCodeManager(const PropertyCodeManager& pcm)
 {
+  m_d = new PropertyCodeManagerPrivate();
   m_d->m_propertyManagers = pcm.m_d->m_propertyManagers;
 }
 
