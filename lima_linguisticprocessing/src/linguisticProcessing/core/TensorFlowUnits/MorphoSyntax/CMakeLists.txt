@@ -21,10 +21,13 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
 
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+
 #     include_directories(fasttext)
 
     ### BEGIN FastText stuff
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -funroll-loops")
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -funroll-loops")
 
     set(HEADER_FILES
         fastText/src/args.h
@@ -64,7 +67,9 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
     set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
       POSITION_INDEPENDENT_CODE True)
     add_executable(fasttext-bin fastText/src/main.cc)
-    target_link_libraries(fasttext-bin pthread fasttext-static)
+#     target_link_libraries(fasttext-bin pthread fasttext-static)
+    target_link_libraries(fasttext-shared  Threads::Threads)
+    target_link_libraries(fasttext-bin Threads::Threads fasttext-static)
     set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)
     install (TARGETS fasttext-shared
         LIBRARY DESTINATION lib)
