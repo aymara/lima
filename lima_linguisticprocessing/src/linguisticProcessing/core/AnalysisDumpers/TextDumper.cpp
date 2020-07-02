@@ -315,7 +315,6 @@ void TextDumperPrivate::outputVertex(std::ostream& out,
   // to add tokens possible tags to the tagger dictionary
   const auto& propertyManagers=propertyCodeManager.getPropertyManagers();
 
-
   ltNormProperty sorter(*m_propertyAccessor);
 
 //    uint64_t nbmicros=ft->countMicros();

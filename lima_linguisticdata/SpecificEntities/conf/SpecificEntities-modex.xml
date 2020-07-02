@@ -55,20 +55,6 @@
       </list>
     </group>
   </module>
-  <module name="resources-fre">
-    <group name="include">
-      <list name="includeList">
-        <item value="Numex-modex.xml/resources-fre"/>
-        <item value="DateTime-modex.xml/resources-fre"/>
-        <item value="Organization-modex.xml/resources-fre"/>
-        <item value="Location-modex.xml/resources-fre"/>
-        <item value="Person-modex.xml/resources-fre"/>
-        <item value="Event-modex.xml/resources-fre"/>
-        <item value="Product-modex.xml/resources-fre"/>
-        <item value="Miscellaneous-modex.xml/resources-fre"/>
-      </list>
-    </group>
-  </module>
   <module name="resources-eng">
     <group name="include">
       <list name="includeList">

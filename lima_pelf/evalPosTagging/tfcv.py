@@ -65,7 +65,6 @@ def SVMFormat(files, strip_size):
         if os.system('bash -c "set -o nounset -o errexit -o pipefail ; head -n {1} {0}/train.svmt > {0}/train.svmt.s ; mv {0}/train.svmt.s {0}/train.svmt"'.format(results, strip_size)) > 0:
             raise RuntimeError('system call returned non zero value')
 
-
 def Tagged2raw(testFile):
     """
     Product raw equivalent () text ready to be analyzed) of all 10% samples

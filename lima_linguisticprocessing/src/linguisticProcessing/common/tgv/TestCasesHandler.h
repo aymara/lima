@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -41,7 +41,7 @@ class TestCasesHandlerPrivate;
 class LIMA_TGV_EXPORT TestCasesHandler : public QXmlDefaultHandler
 {
   friend class TestCasesHandlerPrivate;
-  
+
 public:
   TestCasesHandler(TestCaseProcessor& processor);
   virtual ~ TestCasesHandler();
@@ -52,20 +52,20 @@ public:
   bool endElement(const QStringRef& namespaceURI,
                   const QStringRef & name,
                   const QStringRef & qName) ;
-  
+
   bool characters(const QStringRef& chars) ;
-  
+
   bool startElement(const QStringRef & namespaceURI,
                     const QStringRef & name,
                     const QStringRef & qName,
                     const QXmlStreamAttributes & attributes,
                     int lineNumber,
                     int columnNumber ) ;
-  
+
   bool startDocument() ;
-  
+
   inline bool hasFatalError() const { return m_hasFatalError; }
-  
+
   struct TestReport {
     uint64_t success;
     uint64_t failed;
@@ -75,22 +75,22 @@ public:
   };
 
   std::map<std::string,TestReport> m_reportByType;
-  
+
 private:
   QStringRef attributeValue(const QString& attr,
                             const QXmlStreamAttributes& attrs) const;
-  
+
   // Liste des parametres possibles et obligatoires dans un TestCase
   // pour lp: (text, language, pipeline?...)
   // std::map<std::string,bool> m_simpleValParamTestCaseKeys;
   // std::map<std::string,bool> m_multiValParamTestCaseKeys;
-  
+
   TestCaseProcessor& m_processor;
   TestCase currentTestCase;
 
   QStringRef getName(const QStringRef& localName,
                       const QStringRef& qName);
-  
+
   bool m_inText;
   bool m_inExpl;
   bool m_inParam;
@@ -98,7 +98,7 @@ private:
   bool m_inMap;
   std::string m_listKey;
   std::string m_mapKey;
-  
+
   bool m_hasFatalError;
   TestCasesHandlerPrivate* m_d;
 };

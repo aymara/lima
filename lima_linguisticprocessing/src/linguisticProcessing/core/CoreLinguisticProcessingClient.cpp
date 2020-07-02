@@ -339,7 +339,7 @@ void CoreLinguisticProcessingClientFactory::configure(
         throw InvalidConfiguration("no language definition file for language ");
       }
     }
-    catch (NoSuchParam& )
+    catch (NoSuchParam& e)
     {
       LERROR << "Language definition file" << mediaProcessingDefinitionFile
               << "for language" << *langItr <<"not found in paths:"

@@ -219,7 +219,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   {
     PROCESSORSLOGINIT;
     LERROR << "no pipeline type '" << id << "' defined in media " << med
-          << " configuration file !";
+           << " configuration file !";
     return nullptr;
   }
   map<MediaId,const MediaProcessUnitPipeline*>::const_iterator medItr=pipItr->second.find ( med );
@@ -227,9 +227,9 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   {
     PROCESSORSLOGINIT;
     LERROR << "no media [" << med << ":"
-          << MediaticData::single().getMediaId(med).c_str()
-          << "] defined for pipeline '" << id.c_str()
-          << "' in the configuration file!";
+           << MediaticData::single().getMediaId(med).c_str()
+           << "] defined for pipeline '" << id.c_str()
+           << "' in the configuration file!";
     return nullptr;
   }
   return medItr->second;

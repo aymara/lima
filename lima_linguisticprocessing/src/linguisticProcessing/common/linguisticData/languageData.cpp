@@ -420,6 +420,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 {
   LDATALOGINIT;
   LINFO << "initializes the compound tenses definitions";
+
   std::string resourcesPath=MediaticData::single().getResourcesPath();
 
   std::string compoundTensesDefinitionsFile;

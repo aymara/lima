@@ -88,6 +88,7 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(
     m_langs(langs),
     m_mediaType((req->header("content-type")).toStdString())
 {
+  LIMA_UNUSED(resp);
 }
 
 AnalysisThread::AnalysisThread (
@@ -145,12 +146,14 @@ void AnalysisThread::run ()
 void AnalysisThread::startAnalysis()
 {
   LIMASERVERLOGINIT;
-  LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString() << m_d->m_request->url().path();
+  LDEBUG << "AnalysisThread::startAnalysis" << m_d->m_request->methodString()
+          << m_d->m_request->url().path();
   LDEBUG << "AnalysisThread::startAnalysis mediaType=" << m_d->m_mediaType;
   int exitStatus=0;
   if( ! m_d->m_methods.contains( m_d->m_request->url().path() ) )
   {
-    LWARN << "AnalysisThread::startAnalysis: entry point " << m_d->m_request->url().path() << " not recognized";
+    LWARN << "AnalysisThread::startAnalysis: entry point "
+          << m_d->m_request->url().path() << " not recognized";
     m_d->m_response_code = 400;
     for (const auto& method: m_d->m_methods)
     {
@@ -341,10 +344,10 @@ void AnalysisThread::startAnalysis()
     m_d->m_response_body=resultString.toUtf8();
   }
 #ifdef MULTITHREAD
-    // m_d->m_request->deleteLater();
-    // deleteLater();
-    // quit(); // exit the eventLoop
-    exit(exitStatus); // exit the eventLoop
+  // m_d->m_request->deleteLater();
+  // deleteLater();
+  // quit(); // exit the eventLoop
+  exit(exitStatus); // exit the eventLoop
 #else
 #endif
 }
@@ -367,7 +370,7 @@ QString AnalysisThreadPrivate::TokensToJson( const QString & str )
     array.append(qval);
   }
   QJsonObject object;
-  object["tokens"]=array;
+  object["tokens"] = array;
   QJsonDocument doc(object);
   QString result(QString::fromUtf8(doc.toJson().constData()));
 

@@ -193,7 +193,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     if (m_itemWithAttributes) {
       string itemName=toString(attributes.value("value"));
       ItemWithAttributes item(itemName);
-      for (decltype(nbAtt) i=0; i<nbAtt; i++) {
+      for (decltype(nbAtt) i=1; i<nbAtt; i++) {
         item.addAttribute(toString(attributes.localName(i)),
                           toString(attributes.value(i)));
       }

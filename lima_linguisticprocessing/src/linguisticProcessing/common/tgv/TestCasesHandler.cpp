@@ -100,7 +100,6 @@ bool TestCasesHandler::startElement (
   TGVLOGINIT;
   LDEBUG << "TestCasesHandler::startElement" << namespaceURI << localname
           << qname << lineNumber;
-
   QStringRef name = getName(localname,qname);
 
   if (name == "testcases")

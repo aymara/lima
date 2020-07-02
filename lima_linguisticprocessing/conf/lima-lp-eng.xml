@@ -993,6 +993,11 @@
       <!--param key="fakeDependencyGraph" value="true"/-->
       <param key="graph" value="AnalysisGraph"/>
     </group>
+    <group name="conllDumperFake" class="ConllDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <!--param key="fakeDependencyGraph" value="true"/-->
+      <param key="graph" value="AnalysisGraph"/>
+    </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>
       <param key="handler" value="simpleStreamHandler"/>

@@ -170,7 +170,7 @@ int FsaAccessReader16<graphType>::computeHash( typename boost::graph_traits<grap
       if( i+1 < outd ) {
 #ifdef DEBUG_CD
         LTRACE << "FsaAccessReader16::computeHash(" << from
-                << "): counts.push_back(" << total << ")" ;
+               << "): counts.push_back(" << total << ")" ;
 #endif
         counts.push_back(total);
       }

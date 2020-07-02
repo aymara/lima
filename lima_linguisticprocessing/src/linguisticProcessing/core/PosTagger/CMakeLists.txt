@@ -38,17 +38,17 @@ SET(lima-lp-postagger_LIB_LINK
    Boost::regex
 )
 
-IF(SVMTOOL++_FOUND)
-SET(lima-lp-postagger_LIB_SRCS
-  ${lima-lp-postagger_LIB_SRCS}
-  SvmToolPosTagger.cpp
-  DynamicSvmToolPosTagger.cpp
-)
-SET(lima-lp-postagger_LIB_LINK
-  ${lima-lp-postagger_LIB_LINK}
-  svmtool
-)
-ENDIF(SVMTOOL++_FOUND)
+if(SVMTOOL++_FOUND)
+  set(lima-lp-postagger_LIB_SRCS
+    ${lima-lp-postagger_LIB_SRCS}
+    SvmToolPosTagger.cpp
+    DynamicSvmToolPosTagger.cpp
+  )
+  set(lima-lp-postagger_LIB_LINK
+    ${lima-lp-postagger_LIB_LINK}
+    svmtool
+  )
+endif()
 
 
 DECLARE_LIMA_PLUGIN(lima-lp-postagger)

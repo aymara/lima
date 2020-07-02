@@ -19,7 +19,6 @@
 /**
   * @file          mediaticData.h
   * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr>
-
   *                Copyright (C) 2002-2020 by CEA LIST
   * @date          Started on Mon dec, 2 2002
   */

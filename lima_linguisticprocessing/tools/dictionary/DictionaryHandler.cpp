@@ -30,7 +30,6 @@ using namespace Lima::Common::Misc;
 
 namespace Lima
 {
-
 #define BUFFER_SIZE 4096
 
 #define CODED_INT_BUFFER_SIZE 10
@@ -528,7 +527,7 @@ bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
           << "' ! data will be incorrect";
       LERROR << errorString;
       throw std::runtime_error(errorString.toStdString());
-   }
+    }
     if (m_reverseKeys)
     {
       position = m_currentKey.size() - position - formStr.size();

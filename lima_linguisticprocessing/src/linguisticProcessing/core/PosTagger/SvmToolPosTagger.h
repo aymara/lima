@@ -76,7 +76,6 @@ public:
   LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
-
   SvmToolPosTaggerPrivate* m_d;
 };
 
