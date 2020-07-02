@@ -65,7 +65,7 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
       POSITION_INDEPENDENT_CODE True)
     add_executable(fasttext-bin fastText/src/main.cc)
 
-    target_link_libraries(fasttext-shared  Threads::Threads)
+    target_link_libraries(fasttext-shared Threads::Threads)
     target_link_libraries(fasttext-bin Threads::Threads fasttext-static)
 
     set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)

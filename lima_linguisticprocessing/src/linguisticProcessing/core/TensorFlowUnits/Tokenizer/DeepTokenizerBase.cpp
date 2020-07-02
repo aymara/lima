@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -99,13 +99,14 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //   LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus"
 //           << token.stringForm();
 // #endif
-  static QRegularExpression reCapital("^[[:upper:]]+$");
-  static QRegularExpression reSmall("^[[:lower:]]+$");
-  static QRegularExpression reCapital1st("^[[:upper:]]\\w+$");
-  static QRegularExpression reAcronym("^([[:upper:]]\\.)+$");
-  static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$");
-  static QRegularExpression reAbbrev("^\\w+\\.$");
-  static QRegularExpression reTwitter("^[@#]\\w+$");
+  static QRegularExpression reCapital("^[[:upper:]]+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reSmall("^[[:lower:]]+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reCapital1st("^[[:upper:]]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAcronym("^([[:upper:]]\\.)+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAbbrev("^\\w+\\.$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reTwitter("^[@#]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAlphaHyphen("^\\w+[\\-]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
 
   // t_cardinal_roman
   static QRegularExpression reCardinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
@@ -122,7 +123,7 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
   // t_ordinal_integer
   static QRegularExpression reOrdinalInteger("^\\d+(st|nd|d|th|er|ème)$");
   // t_alphanumeric
-  static QRegularExpression reAlphanumeric("^[\\d[:lower:][:upper:]]+$");
+  static QRegularExpression reAlphanumeric("^[\\d[:lower:][:upper:]]+$", QRegularExpression::UseUnicodePropertiesOption);
   static QRegularExpression reSentenceBreak("^[;.!?]$");
 
   TStatus curSettings;
@@ -230,6 +231,11 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_alphanumeric";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_alphanumeric"));
+  }
+  else if (reAlphaHyphen.match(token.stringForm()).hasMatch())
+  {
+    curSettings.setDefaultKey(QString::fromUtf8("t_alpha_hyphen"));
+    curSettings.setAlphaHyphen(true);
   }
   else if (reSentenceBreak.match(token.stringForm()).hasMatch())
   {

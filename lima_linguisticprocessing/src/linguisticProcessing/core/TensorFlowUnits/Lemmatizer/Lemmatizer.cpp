@@ -174,6 +174,7 @@ protected:
       map<S, unsigned int> m_w2i;
 
       map<LinguisticCode, unsigned int> m_c2i; // LinguisticCode -> index
+      string m_tf_name;
 
       const PropertyAccessor* accessor;
 
@@ -535,6 +536,18 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   {
     QJsonObject feature = get_json_object(all_feats, f.c_str());
     m_lemmatizer_conf.feature_dicts[f] = LemmatizerConf::dict<string>();
+    m_lemmatizer_conf.feature_dicts[f].m_tf_name = f;
+    if (!feature.value("name_tf").isUndefined())
+    {
+      if (!feature.value("name_tf").isString())
+      {
+        LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
+              << config_file_name << "\" param " << f << "/name_tf is not a string.",
+          LimaException());
+      }
+
+      m_lemmatizer_conf.feature_dicts[f].m_tf_name = feature.value("name_tf").toString().toStdString();
+    }
     load_string_array(get_json_array(feature, "i2c"), m_lemmatizer_conf.feature_dicts[f].m_i2w);
     load_string_to_uint_map(get_json_object(feature, "c2i"), m_lemmatizer_conf.feature_dicts[f].m_w2i);
     if (f != "FirstWord")
@@ -563,7 +576,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   for (const string& f : feats_to_use)
   {
     string name = "feat_" + f;
-    m_input_node_names[name] = name;
+    m_input_node_names[name] = "feat_" + m_lemmatizer_conf.feature_dicts[f].m_tf_name;
   }
 
   const auto& pm = pcm.getPropertyManager("MICRO");
@@ -807,11 +820,9 @@ void TensorFlowLemmatizerPrivate::set_token_lemma(vector<TSentence>& sentences, 
 
   TSentence &sent = sentences[current_sentence];
   TToken &token = sent.tokens[current_token];
-  LinguisticCode pos_code = token.morpho->firstValue(*m_lemmatizer_conf.pos_dict.accessor);
 
   LimaString src_form = (*m_stringsPool)[token.token->form()];
   size_t src_size = src_form.size();
-  int size_diff = int(lemma.size()) - src_size;
   if ((0 == m_main_alphabet.size() || hasCharFromList(src_form, m_main_alphabet))
       && (0 == m_special_chars.size() || hasNoCharsFromList(src_form, m_special_chars)))
   {
@@ -953,7 +964,6 @@ void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<map<StringsPoolInd
 
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
   u32string EOS = cvt.from_bytes("<EOS>");
-  size_t idx_EOS = m_lemmatizer_conf.decoder_dict.m_w2i.find(EOS)->second;
 
   vector<TFormOccurrences*> forms_for_batch;
   forms_for_batch.resize(m_batch_size);
@@ -1039,8 +1049,6 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
 {
   size_t current_sentence = 0;
   size_t current_token = 0;
-
-  FsaStringsPool* stringsPool = &MediaticData::changeable().stringsPool(m_language);
 
   vector<pair<size_t, size_t>> tokens_to_lemmatize;
   tokens_to_lemmatize.reserve(m_batch_size);
@@ -1418,7 +1426,10 @@ void TensorFlowLemmatizerPrivate::generate_batch(const vector<TFormOccurrences*>
 
   for (size_t i = 0; i < m_batch_size && i < forms_to_lemmatize.size(); ++i)
   {
-    encode_token_for_batch(forms_to_lemmatize[i], feat2idx, i, batch);
+    if (nullptr != forms_to_lemmatize[i])
+    {
+      encode_token_for_batch(forms_to_lemmatize[i], feat2idx, i, batch);
+    }
   }
 }
 
