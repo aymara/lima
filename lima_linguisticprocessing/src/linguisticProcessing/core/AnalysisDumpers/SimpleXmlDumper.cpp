@@ -521,7 +521,7 @@ bool SimpleXmlDumper::outputSpecificEntity(
   std::string typeName("");
   std::string norm("");
   try {
-    LimaString str = MediaticData::MediaticData::single().getEntityName(se->getType());
+    LimaString str = Common::MediaticData::MediaticData::single().getEntityName(se->getType());
     typeName = str.toStdString();
   }
   catch (std::exception& ) {

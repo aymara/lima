@@ -46,7 +46,7 @@
 #include <sstream>
 
 class tagger;
-class node;
+class nodo;
 
 namespace Lima
 {
@@ -111,7 +111,7 @@ private:
   /* Useful functions */
   std::vector<std::string> getMicros(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
   std::set<LinguisticGraphVertex> getPreviousTokens(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
-  std::vector<node*> buildContext(const LinguisticGraph*, LinguisticGraphVertex, LinguisticGraphVertex, LinguisticGraphVertex) const;
+  std::vector<nodo*> buildContext(const LinguisticGraph*, LinguisticGraphVertex, LinguisticGraphVertex, LinguisticGraphVertex) const;
   std::string getWord(LinguisticGraphVertex token, const LinguisticGraph *srcGraph) const;
   LinguisticGraphVertex nextToken(LinguisticGraphVertex token, const LinguisticGraph* srcGraph) const;
   std::set<LinguisticGraphVertex> nextTokens(LinguisticGraphVertex token, const LinguisticGraph* srcGraph) const;
