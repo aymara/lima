@@ -37,129 +37,12 @@ message("lima_linguisticdata PATH=$ENV{PATH}")
 
 enable_testing()
 
-include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
-message("System name is ${CMAKE_SYSTEM_NAME}")
-
-include(${CMAKE_SOURCE_DIR}/../SetCompilerFlags.cmake)
-
 include(Languages.cmake)
 include(cmake/LinguisticData.cmake)
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 # for add_component macro (require 2.8.5)
 include(CPackComponent)
 
-<<<<<<< HEAD
-=======
-SET(optionalLibs)
-message (STATUS "CMAKE_SYSTEM_PREFIX_PATH ${CMAKE_SYSTEM_PREFIX_PATH}")
-# Find*.cmake will be searched in the following dirs if not found in system dirs
-set(CMAKE_MODULE_PATH
-    "${CMAKE_SOURCE_DIR}/cmake/Modules" # for those available in this project
-    "${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules" # for those available in the destination dir
-    "$ENV{LIMA_EXTERNALS}/share/apps/cmake/Modules" # for those available in the externals dir
-    "$ENV{LIMA_EXTERNALS}/share/cmake/Modules" # for those available in the externals dir
-    "/usr/share/apps/lima/cmake/Modules" # for those available on the system
-    "/usr/share/cmake/Modules" # for those available on the system
-)
-
-# find_path and find_library will search in these dirs too
-set(CMAKE_PREFIX_PATH
-    "${CMAKE_INSTALL_PREFIX}"
-    "$ENV{LIMA_EXTERNALS}"
-)
-
-include(${CMAKE_SOURCE_DIR}/../manageQt5.cmake)
-addQt5Modules(Core Xml XmlPatterns Network Test)
-
-# Search Qt5 optional components
-find_package(Qt5 COMPONENTS DBus)
-if (Qt5DBus_FOUND)
-  set(Qt5_INCLUDES ${Qt5_INCLUDES} ${Qt5DBus_INCLUDE_DIRS})
-  set(Qt5_LIBRARIES ${Qt5_LIBRARIES} ${Qt5DBus_LIBRARIES})
-endif()
-
-include_directories(${Qt5_INCLUDES})
-set(QT_LIBRARIES "${Qt5_LIBRARIES}")
-message(STATUS "Qt5_INCLUDES=${Qt5_INCLUDES}")
-get_target_property(QtNetwork_location Qt5::Network LOCATION)
-get_target_property(QtXmlPatterns_location Qt5::XmlPatterns LOCATION)
-if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
-  message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
-  get_target_property(QtDBus_location Qt5::DBus LOCATION)
-  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${QtDBus_location}
-            DESTINATION ${LIB_INSTALL_DIR})
-  endif ()
-else ()
-endif()
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(FILES ${QtNetwork_location}
-                ${QtXmlPatterns_location}
-          DESTINATION ${LIB_INSTALL_DIR})
-endif ()
-
-find_package(PythonLibs 3.4)
-if (${PYTHONLIBS_FOUND})
-  include_directories(${PYTHON_INCLUDE_DIRS})
-  link_directories(${PYTHON_LIBRARIES})
-endif()
-
-#add_definitions( -DBOOST_ALL_NO_LIB )
-add_definitions( -DBOOST_ALL_DYN_LINK )
-set( Boost_USE_STATIC_LIBS OFF )
-set( Boost_USE_STATIC_RUNTIME OFF )
-set( BOOST_LIB_DIAGNOSTIC )
-FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS regex filesystem program_options system thread unit_test_framework)
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_DEBUG})
-  else()
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
-  endif()
-  install(FILES ${Boost_REGEX_LIBRARY_dll}
-                ${Boost_FILESYSTEM_LIBRARY_dll}
-                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
-                ${Boost_THREAD_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR})
-endif ()
-
-
-FIND_PACKAGE(LIMACOMMON
-  PATHS
-    $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules
-    ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules
-    /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
-IF(LIMACOMMON_FOUND)
-  include_directories(${LIMACOMMON_INCLUDE_DIR})
-  link_directories(${LIMACOMMON_LIBRARY_DIRS})
-ELSE (LIMACOMMON_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find limacommon")
-ENDIF(LIMACOMMON_FOUND)
-
-FIND_PACKAGE(LIMALP
-  PATHS
-    $ENV{LIMA_DIST}/share/apps/lima/cmake/Modules
-    ${CMAKE_INSTALL_PREFIX}/share/apps/lima/cmake/Modules
-    /usr/share/apps/lima/cmake/Modules share/apps/lima/cmake/Modules)
-IF(LIMALP_FOUND)
-  include_directories(${LIMALP_INCLUDE_DIR})
-  link_directories(${LIMALP_LIBRARY_DIRS})
-ELSE (LIMALP_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find limalp")
-ENDIF(LIMALP_FOUND)
-
->>>>>>> Compile dico related unit tests in linguisticdata
 configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 LIMA_GENERIC_CONFIGENV(eng)

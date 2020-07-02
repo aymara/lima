@@ -43,7 +43,9 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-eng.ud.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-fre.ud.xml
   ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-por.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/lima-lp-ud.xml
   lima-lp-tva.xml
   lima-lp-tva-eng.xml
   lima-lp-tva-eng.ud.xml

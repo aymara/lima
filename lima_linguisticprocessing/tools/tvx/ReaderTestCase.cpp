@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -131,7 +131,7 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
       map<string,string> metaData;
       metaData["Lang"]=language;
       metaData["FileName"]=filenameWithPipeLine;
-      metaData["DocumentName"]=testCase.id;
+      metaData["DocumentName"]=testCase.id.toUtf8().constData();
       LDEBUG << "ReaderTestCaseProcessor::processTestCase call to analyze text("
              << *pipItr << ")";
       std::map<std::string, AbstractAnalysisHandler*> handlers;

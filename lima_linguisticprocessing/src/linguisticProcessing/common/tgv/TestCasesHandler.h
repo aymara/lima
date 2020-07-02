@@ -28,6 +28,7 @@
 #include "TestCase.h"
 #include "TestCaseProcessor.hpp"
 
+#include <QXmlDefaultHandler>
 #include <QXmlStreamAttributes>
 
 namespace Lima
@@ -37,7 +38,7 @@ namespace Common
 namespace TGV
 {
 class TestCasesHandlerPrivate;
-class LIMA_TGV_EXPORT TestCasesHandler 
+class LIMA_TGV_EXPORT TestCasesHandler : public QXmlDefaultHandler
 {
   friend class TestCasesHandlerPrivate;
   

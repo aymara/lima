@@ -33,7 +33,7 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt
 )
 
-DISAMBMATRICES(por succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
+DISAMBMATRICES(por succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
 
 add_dependencies(trigrammatrix-por categs-por)
 

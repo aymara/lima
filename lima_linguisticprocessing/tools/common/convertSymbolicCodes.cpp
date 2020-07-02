@@ -137,10 +137,6 @@ int run(int argc, char** argv)
                                                      QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-  auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
-                                                      QStringList());
-  auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
-
   if (!param->configDir.empty())
   {
     configPath = QString::fromUtf8(param->configDir.c_str());

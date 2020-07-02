@@ -82,6 +82,7 @@ public:
   std::string m_sep;
   std::string m_sepPOS;
   bool m_followGraph;
+  std::string m_verbTenseFlag; //Ajout
 
   bool m_allFeatures;
   QStringList m_features;
@@ -142,11 +143,13 @@ void TextDumper::init(Common::XMLConfigurationFiles::GroupConfigurationStructure
     m_d->m_followGraph=true;
   }
   //Ajout
-  try {
-    m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag");
+  try
+  {
+    m_d->m_verbTenseFlag=unitConfiguration.getParamsValueAtKey("verbTenseFlag");
   }
-  catch (NoSuchParam& ) {
-    m_verbTenseFlag=string("False");
+  catch (NoSuchParam& )
+  {
+    m_d->m_verbTenseFlag=string("False");
   } // keep default value
   try {
     m_d->m_sep=unitConfiguration.getParamsValueAtKey("sep");

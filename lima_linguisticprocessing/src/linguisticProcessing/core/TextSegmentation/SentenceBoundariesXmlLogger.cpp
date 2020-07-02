@@ -153,7 +153,6 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
          << "\"/>" << endl;
   }
   out << "</sentence_boundaries>" << endl;
-  delete dstream;
 
   TimeUtils::logElapsedTime("SentenceBoundariesXmlLogger");
   return SUCCESS_ID;

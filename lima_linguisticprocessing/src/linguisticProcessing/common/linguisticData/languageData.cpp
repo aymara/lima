@@ -53,6 +53,7 @@ namespace MediaticData
 class LanguageDataPrivate
 {
   friend class LanguageData;
+
   LanguageDataPrivate(LanguageData* ld);
 
   virtual ~LanguageDataPrivate();
@@ -122,8 +123,6 @@ class LanguageDataPrivate
   std::map< LinguisticCode, ConceptType > m_macro2ConceptMapping;
 
   std::map< std::string, SyntacticRelationId > m_syntacticRelations;
-
-  std::map<QString, QString> m_limaToLanguageCodeMapping;
 
   std::map<QString, QString> m_limaToLanguageCodeMapping;
 
@@ -421,7 +420,6 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
 {
   LDATALOGINIT;
   LINFO << "initializes the compound tenses definitions";
-
   std::string resourcesPath=MediaticData::single().getResourcesPath();
 
   std::string compoundTensesDefinitionsFile;

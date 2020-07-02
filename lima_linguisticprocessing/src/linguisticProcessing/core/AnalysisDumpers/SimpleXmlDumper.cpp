@@ -443,7 +443,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
                      uint64_t offset,
                      LinguisticCode category) const
 {
-  ltNormProperty sorter(m_propertyAccessor);
+  ltNormProperty sorter(*m_propertyAccessor);
   auto position = ft->position() + offset;
 
   auto output = false;

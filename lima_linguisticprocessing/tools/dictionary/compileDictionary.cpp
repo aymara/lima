@@ -165,7 +165,6 @@ int run(int argc, char** argv)
     exit(0);
   }
 
-<<<<<<< HEAD
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
   auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
@@ -175,12 +174,6 @@ int run(int argc, char** argv)
     configPath = QString::fromUtf8(param->configDir.c_str());
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
-=======
-  auto configDirs = buildConfigurationDirectoriesList(
-    QStringList({"lima"}),
-    QStringList(QString::fromUtf8(param->configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
->>>>>>> Change the way tok models are searched
 
   if (QsLogging::initQsLog(configPath) != 0)
   {

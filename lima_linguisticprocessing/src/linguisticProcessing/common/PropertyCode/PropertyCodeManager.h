@@ -53,7 +53,7 @@ public:
    * @brief Default Constructor
    * @return
    */
-//   PropertyCodeManager();
+  PropertyCodeManager();
 
   ~PropertyCodeManager();
 
@@ -131,16 +131,6 @@ public:
 private:
   PropertyCodeManagerPrivate* m_d;
 };
-
-inline const std::map<std::string,PropertyManager>& PropertyCodeManager::getPropertyManagers() const
-{
-  return m_propertyManagers;
-}
-
-inline const PropertyAccessor& PropertyCodeManager::getPropertyAccessor(const std::string& propertyName) const
-{
-  return getPropertyManager(propertyName).getPropertyAccessor();
-}
 
 } // PropertyCode
 } // Common
