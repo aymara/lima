@@ -214,6 +214,11 @@ if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
   TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
 fi
 
+if [ -n "${LIMA_SOURCES_DIR:-}" ] ; then
+  echo "LIMA_SOURCES_DIR=$LIMA_SOURCES_DIR"
+else
+  LIMA_SOURCES_DIR=`pwd`
+fi
 export LSAN_OPTIONS=suppressions=$LIMA_SOURCES_DIR/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
