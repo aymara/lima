@@ -423,7 +423,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     {
       auto posData = new MorphoSyntacticData();
       CheckDifferentPropertyPredicate differentMicro(
-          m_d->m_microAccessor,
+          *m_d->m_microAccessor,
           microManager.getPropertyValue(elements[1]));
       std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),
