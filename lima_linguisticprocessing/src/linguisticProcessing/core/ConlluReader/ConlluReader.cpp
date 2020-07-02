@@ -85,7 +85,7 @@ public:
     TPrimitiveToken(const QString& w,
                     int pos,
                     const QString& orig=QString())
-        : wordText(w), start(pos), originalText(orig)
+        : wordText(w), originalText(orig), start(pos)
     { }
 
     QString wordText;
@@ -256,6 +256,9 @@ vector< vector< ConlluReaderPrivate::TPrimitiveToken > > ConlluReaderPrivate::to
       current_sentence.clear();
       continue;
     }
+
+    if (-1 != fields[0].indexOf("-") || -1 != fields[0].indexOf("."))
+      continue;
 
     current_sentence.push_back(TPrimitiveToken(fields[1], current_token_offset));
     current_token_offset += fields[1].size() + 1;

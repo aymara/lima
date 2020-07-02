@@ -851,7 +851,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
             }
             else
             {
-              syntacticData.addRelationNoChain(ld.getSyntacticRelationId("ud:root"),
+              syntacticData.addRelationNoChain(ld.getSyntacticRelationId("root"),
                                                t.vertex,
                                                t.vertex);
             }
@@ -1293,7 +1293,7 @@ void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& j
       {
         if (out.i2t[j] == "root")
           out.root_tag_idx = j;
-        out.i2t[j] = string("ud:") + out.i2t[j];
+        out.i2t[j] = out.i2t[j];
       }
 
       m_depparse_outputs.push_back(out);

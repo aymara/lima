@@ -775,10 +775,6 @@ Definition of dumpers
       <param key="handler" value="simpleStreamHandler"/>
       <param key="graph" value="AnalysisGraph"/>
     </group>
-    <group name="conllDumperFake" class="ConllDumper">
-      <param key="handler" value="simpleStreamHandler"/>
-      <param key="graph" value="AnalysisGraph"/>
-    </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>
       <param key="stopList" value="stopList"/>

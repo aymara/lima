@@ -119,6 +119,8 @@ class ConllDumperPrivate
 
   QString getMicro(MorphoSyntacticData* morphoData);
 
+  QString getFeats(MorphoSyntacticData* morphoData);
+
   /** Dumps the the named entity of type @ref neType associated to the PosGraph
    * vertex @ref v
    */
@@ -380,7 +382,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     LERROR << errorMessage;
     return UNKNOWN_FORMAT;
   }
-  while (sbItr != sd->getSegments().end() ) //for each sentence
+  while (sbItr != sd->getSegments().end()) //for each sentence
   {
     sentenceNb++;
     // The cols list below is optionnal
@@ -607,14 +609,17 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         continue;
       }
     }
-    dstream->out() << std::endl;
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb,
                                                    segmentationMappingReverse));
+
     sbItr++;
+    if (sbItr != sd->getSegments().end())
+    {
+      dstream->out() << std::endl;
+    }
   }
 
   return SUCCESS_ID;
-
 }
 
 LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
@@ -658,44 +663,10 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     LDEBUG << "ConllDumper::process graphTag:" << micro;
 #endif
 
-//     QStringList featuresList;
-//     for (auto propItr = managers->cbegin();
-//           propItr != managers->cend(); propItr++)
-//     {
-//       auto key = QString::fromUtf8(propItr->first.c_str());
-//       if (key != "MACRO" && key != "MICRO")
-//       {
-//         auto value = QString::fromUtf8(
-//           propItr->second.getPropertySymbolicValue(
-//             morphoData->firstValue(*m_propertyAccessor)).c_str());
-//         if (value != "NONE")
-//         {
-//           featuresList << QString("%1=%2").arg(key).arg(value);
-//         }
-//       }
-//     }
-//     featuresList.sort();
-//     QString features;
-//     QTextStream featuresStream(&features);
-//     if (featuresList.isEmpty())
-//     {
-//       features = "_";
-//     }
-//     else
-//     {
-//       for (auto featuresListIt = featuresList.cbegin();
-//             featuresListIt != featuresList.cend(); featuresListIt++)
-//       {
-//         if (featuresListIt != featuresList.cbegin())
-//         {
-//           featuresStream << "|";
-//         }
-//         featuresStream << *featuresListIt;
-//       }
-//     }
-// #ifdef DEBUG_LP
-//     LDEBUG << "ConllDumper::process features:" << features;
-// #endif
+    auto feats = getFeats(morphoData);
+#ifdef DEBUG_LP
+    LDEBUG << "ConllDumper::dumpPosGraphVertex feats:" << feats;
+#endif
 
     auto inflectedToken = ft->stringForm().toStdString();
     if (inflectedToken.find_first_of("\r\n\t") != std::string::npos)
@@ -760,7 +731,7 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
                 lemmatizedToken, // LEMMA
                 micro, // UPOS
                 "_", // XPOS
-                "_", // FEATS @TODO
+                feats, // FEATS
                 targetConllIdString, // HEAD
                 conllRelName, // DEPREL
                 "_", // DEPS @TODO
@@ -931,10 +902,15 @@ std::pair<QString, QString> ConllDumperPrivate::getConllRelName(
       conllRelName = relName;
 //             LERROR << "ConllDumper::process" << relName << "not found in mapping";
     }
+
+    // There is no way for vertex to have 0 as head.
+    if (conllRelName == "root")
+    {
+      targetConllId = 0;
+    }
   }
-  QString targetConllIdString = targetConllId > 0
-                                  ? QString(QLatin1String("%1")).arg(targetConllId)
-                                  : "_";
+  QString targetConllIdString = QString(QLatin1String("%1")).arg(targetConllId);
+
   return { conllRelName, targetConllIdString };
 }
 
@@ -1034,6 +1010,53 @@ QString ConllDumperPrivate::getMicro(MorphoSyntacticData* morphoData)
           *m_propertyAccessor)).c_str());
 }
 
+QString ConllDumperPrivate::getFeats(MorphoSyntacticData* morphoData)
+{
+#ifdef DEBUG_LP
+  DUMPERLOGINIT;
+#endif
+
+  QStringList featuresList;
+  for (auto i = managers->cbegin(); i != managers->cend(); i++)
+  {
+    auto key = QString::fromUtf8(i->first.c_str());
+    if (key != "MACRO" && key != "MICRO")
+    {
+      const auto& pa = propertyCodeManager->getPropertyAccessor(key.toStdString());
+      LinguisticCode lc = morphoData->firstValue(pa);
+      auto value = QString::fromUtf8(i->second.getPropertySymbolicValue(lc).c_str());
+      if (value != "NONE")
+      {
+        featuresList << QString("%1=%2").arg(key).arg(value);
+      }
+    }
+  }
+
+  featuresList.sort();
+  QString features;
+  QTextStream featuresStream(&features);
+  if (featuresList.isEmpty())
+  {
+    features = "_";
+  }
+  else
+  {
+    for (auto featuresListIt = featuresList.cbegin(); featuresListIt != featuresList.cend(); featuresListIt++)
+    {
+      if (featuresListIt != featuresList.cbegin())
+      {
+        featuresStream << "|";
+      }
+      featuresStream << *featuresListIt;
+    }
+  }
+#ifdef DEBUG_LP
+  LDEBUG << "ConllDumper::process features:" << features;
+#endif
+
+  return features;
+}
+
 QString matchesS(const std::set<AnnotationGraphVertex>& s)
 {
   QString result;
@@ -1119,8 +1142,6 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
         previousNeType = neType;
     }
   }
-
-
 }
 
 // TODO Split idiomatic alternative tokens and compound tokens
@@ -1164,6 +1185,11 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     auto micro = getMicro(morphoData);
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumper::dumpAnalysisGraphVertex micro:" << micro;
+#endif
+
+    auto feats = getFeats(morphoData);
+#ifdef DEBUG_LP
+    LDEBUG << "ConllDumper::dumpAnalysisGraphVertex feats:" << feats;
 #endif
 
     auto inflectedToken = ft->stringForm().toStdString();
@@ -1218,7 +1244,7 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
               lemmatizedToken, // LEMMA
               micro, // UPOS
               "_", // XPOS
-              "_", // FEATS @TODO
+              feats, // FEATS
               targetConllIdString, // HEAD
               conllRelName, // DEPREL
               "_", // DEPS @TODO
