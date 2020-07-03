@@ -51,7 +51,7 @@ else()
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py fre forms.dic ${PROJECT_SOURCE_DIR}/disambiguisationMatrices/fre/corpus/corpus_fre.txt forms.dic.2
-    # WARNING: the sort command here must be a POSIX one. If you get failures 
+    # WARNING: the sort command here must be a POSIX one. If you get failures
     # here without clear error messages, verify that the sort command used is
     # not the Windows one.
     COMMAND sort -u -o forms.dic.3 forms.dic.2
