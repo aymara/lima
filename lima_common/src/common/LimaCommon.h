@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,7 +26,7 @@
  *             Hervé Le Borgne <herve.le-borgne@cea.fr>
 
  * @date       mar déc 18 2007
- * copyright   Copyright (C) 2003-2012 by CEA LIST
+ * copyright   Copyright (C) 2003-2020 by CEA LIST
  * Project     mm_common
  *
  * @brief      (short description)
@@ -237,7 +237,7 @@ enum LimaStatusCode {
     UNKNOWN_FORMAT
 };
 
-BOOST_STRONG_TYPEDEF(uint32_t, LinguisticCode);
+BOOST_STRONG_TYPEDEF(uint64_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()

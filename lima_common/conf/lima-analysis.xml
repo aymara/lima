@@ -8,11 +8,17 @@
     <group name="mediaProcessingDefinitionFiles">
       <list name="available">
         <item value="eng" />
+        <item value="eng.ud" />
         <item value="fre" />
+        <item value="fre.ud" />
+        <item value="ud" />
         <item value="por" />
       </list>
       <param key="eng" value="lima-lp-eng.xml" />
+      <param key="eng.ud" value="lima-lp-eng.ud.xml" />
       <param key="fre" value="lima-lp-fre.xml" />
+      <param key="fre.ud" value="lima-lp-fre.ud.xml" />
+      <param key="ud" value="lima-lp-ud.xml" />
       <param key="por" value="lima-lp-por.xml" />
     </group>
     <group name="pipelines">
@@ -25,8 +31,38 @@
       please use one of the others below -->
       <map name="main">
         <entry key="eng" value="main"/>
+        <entry key="eng.ud" value="main"/>
         <entry key="fre" value="main"/>
         <entry key="por" value="main"/>
+      </map>
+      <map name="deepud">
+        <entry key="eng.ud" value="deepud"/>
+        <entry key="fre.ud" value="deepud"/>
+        <entry key="ud" value="deepud"/>
+      </map>
+      <map name="deepud-pretok">
+        <entry key="eng.ud" value="deepud-pretok"/>
+        <entry key="fre.ud" value="deepud-pretok"/>
+        <entry key="ud" value="deepud-pretok"/>
+      </map>
+      <map name="deepud-tok">
+        <entry key="eng.ud" value="deepud-tok"/>
+        <entry key="fre.ud" value="deepud-tok"/>
+        <entry key="ud" value="deepud-tok"/>
+      </map>
+      <map name="deepud-nerrules">
+        <entry key="eng.ud" value="deepud-nerrules"/>
+        <entry key="eng" value="deepud-nerrules"/>
+        <entry key="fre.ud" value="deepud-nerrules"/>
+        <entry key="fre" value="deepud-nerrules"/>
+        <entry key="ud" value="deepud-nerrules"/>
+      </map>
+      <map name="deepud-nerrules-pretok">
+        <entry key="eng.ud" value="deepud-nerrules-pretok"/>
+        <entry key="eng" value="deepud-nerrules-pretok"/>
+        <entry key="fre.ud" value="deepud-nerrules-pretok"/>
+        <entry key="fre" value="deepud-nerrules-pretok"/>
+        <entry key="ud" value="deepud-nerrules-pretok"/>
       </map>
       <map name="deep">
         <entry key="eng" value="deep"/>
@@ -56,6 +92,7 @@
       <!-- The none pipeline is an empty one allowing to not do anything. For tests mainly. -->
       <map name="none">
         <entry key="eng" value="none"/>
+        <entry key="eng.ud" value="none"/>
         <entry key="fre" value="none"/>
         <entry key="por" value="none"/>
       </map>
@@ -67,6 +104,7 @@
            donner au client pour utiliser ce dumper -->
       <map name="bowDumper">
         <entry key="eng" value="bowDumper"/>
+        <entry key="eng.ud" value="bowDumper"/>
         <entry key="fre" value="bowDumper"/>
         <entry key="por" value="bowDumper"/>
       </map>

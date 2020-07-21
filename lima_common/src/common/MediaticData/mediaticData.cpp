@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -96,6 +96,7 @@ private:
     std::map< MediaId, std::string > m_mediasSymbol;
     std::map< MediaId, QString > m_mediaDefinitionFiles;
     std::map< MediaId, MediaData* > m_mediasData;
+    std::map< std::string, std::string > m_options;
 
     // entity types
     typedef Common::Misc::DoubleAccessObjectToIdMap<LimaString,EntityGroupId> EntityGroupMap;
@@ -144,7 +145,8 @@ MediaticDataPrivate::MediaticDataPrivate() :
     m_resourcesPath(),
     m_configPath(),
     m_conceptTypes(),
-    m_conceptNames()
+    m_conceptNames(),
+    m_options()
 {
   // null first element
   m_entityTypes.push_back( static_cast<EntityTypeMap*>(0));
@@ -233,7 +235,8 @@ void MediaticData::init(
   const std::string& resourcesPath,
   const std::string& configPath,
   const std::string& configFile,
-  const std::deque< std::string >& meds)
+  const std::deque< std::string >& meds,
+  const std::map< std::string, std::string >& opts)
 {
 
 //  TimeUtils::updateCurrentTime();
@@ -245,6 +248,8 @@ void MediaticData::init(
   m_d->m_resourcesPath=resourcesPath;
   m_d->m_configPath=configPath;
   m_d->m_configFile=configFile;
+
+  m_d->m_options = opts;
 
   //LINFO << "initialize XMLParser";
   QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(LIMA_PATH_SEPARATOR);
@@ -1227,6 +1232,16 @@ void MediaticData::readEntityTypes(std::istream& file,
     printEntities(logger,m_d->m_entityGroups,m_d->m_entityTypes);
   }*/
 #endif
+}
+
+bool MediaticData::getOptionValue(const std::string& name, std::string& value) const
+{
+  std::map< std::string, std::string >::const_iterator it = m_d->m_options.find(name);
+  if (it == m_d->m_options.end())
+    return false;
+
+  value = it->second;
+  return true;
 }
 
 const FsaStringsPool& MediaticData::stringsPool(MediaId med) const

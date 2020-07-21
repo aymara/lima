@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -20,7 +20,7 @@ add_subdirectory(corpus)
 add_custom_command(
   OUTPUT succession_categs_retag.txt
   COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt | gawk -F "	" "{print $2}" > succession_categs_retag.txt
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt 
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt corpus_por_merge.txt
 
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/corpus/macmorpho.conll.txt
   COMMENT "produce por categs succession"
@@ -33,7 +33,7 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt
 )
 
-DISAMBMATRICES(por succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
+DISAMBMATRICES(por succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl DIVERS_*,NOM_PROPRE*,CONJ_*,NOMBRE*)
 
 add_dependencies(trigrammatrix-por categs-por)
 

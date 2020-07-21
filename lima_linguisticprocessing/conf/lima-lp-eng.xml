@@ -70,8 +70,21 @@
         <!--item value="temporalXmlDumper"/-->
         <!--item value="afterFusionXmlDumper"/-->
       </list>
+  </group>
+    <group name="deepud-nerrules" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
     </group>
-
+    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="flattokenizer"/>
@@ -100,6 +113,7 @@
 
     <group name="deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
         <item value="flattokenizer"/>
         <item value="regexmatcher"/>
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
@@ -948,6 +962,11 @@
     <group name="conll03Dumper" class="ConllDumper">
       <param key="format" value="CoNLL-03"/>
       <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="conllDumperFake" class="ConllDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <!--param key="fakeDependencyGraph" value="true"/-->
+      <param key="graph" value="AnalysisGraph"/>
     </group>
     <group name="textDumper" class="TextDumper">
       <param key="outputSuffix" value=".out"/>

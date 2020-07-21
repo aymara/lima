@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,9 +26,10 @@
 #ifndef Exceptions_H
 #define Exceptions_H
 
-//#include "common/misc/LimaString.h"
-
 #include <stdexcept>
+
+#include "common/Data/LimaString.h"
+
 
 namespace Lima {
 
@@ -108,7 +109,7 @@ public:
     bad_alloc() {}
 };
 // when open file fails
-class OpenFileException : public std::runtime_error 
+class OpenFileException : public std::runtime_error
 {
 public:
   OpenFileException(const std::string& s) : runtime_error(s) {}
@@ -163,7 +164,7 @@ public:
         runtime_error("XML syntax error"),
         _why(why) {}
     XmlSyntaxException(
-        uint32_t lineNumber, 
+        uint32_t lineNumber,
         Why why) :
         runtime_error("XML syntax error"),
         _lineNumber(lineNumber),
@@ -194,4 +195,4 @@ public:
 
 } // Lima
 
-#endif  
+#endif

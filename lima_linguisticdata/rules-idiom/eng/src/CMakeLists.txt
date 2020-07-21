@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -14,12 +14,12 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/eng/code/symbolicCode*-eng.xml)
+file (GLOB SYMBOLICCODESENG ${PROJECT_SOURCE_DIR}/analysisDictionary/eng/code/symbolicCode*-eng.xml)
 
 add_custom_command(
   OUTPUT idiomaticExpressions-eng.rules
-  COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.txt > idioms-eng.grace
-  COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/tools/common/convertSymbolicCodes --configDir=${PROJECT_SOURCE_DIR}/lima_common/conf/ ${PROJECT_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/eng/code/code-eng.xml ${SYMBOLICCODESENG} idioms-eng.grace > idiomaticExpressions-eng.rules
+  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/reformat_idioms.pl ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.txt > idioms-eng.grace
+  COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/transcodeIdiomatic.pl ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/tools/common/convertSymbolicCodes --configDir=${PROJECT_SOURCE_DIR}/../lima_common/conf/ ${PROJECT_SOURCE_DIR}/analysisDictionary/eng/code/code-eng.xml ${SYMBOLICCODESENG} idioms-eng.grace > idiomaticExpressions-eng.rules
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/idioms-eng.txt
     ${SYMBOLICCODESENG}

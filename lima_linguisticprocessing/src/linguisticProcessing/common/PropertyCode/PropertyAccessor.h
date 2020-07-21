@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004 by CEA LIST                      *
+ *   Copyright (C) 2004 by CEA LIST                                        *
  *                                                                         *
  ***************************************************************************/
 
@@ -34,6 +34,7 @@ namespace Common
 namespace PropertyCode
 {
 
+class PropertyAccessorPrivate;
 /**
  * Provide function to read write and check a property.
  * @brief Class that provide read/write methods for a property
@@ -41,6 +42,7 @@ namespace PropertyCode
  */
 class LIMA_PROPERTYCODE_EXPORT PropertyAccessor
 {
+  friend class PropertyAccessorPrivate;
 public:
 
   /**
@@ -50,7 +52,14 @@ public:
    * @param mask mask use to test emptyNess of property. Different from mask \
    * only for subproperties.
    */
-  PropertyAccessor(const std::string& name,const LinguisticCode& mask,const LinguisticCode& emptyNessMask);
+  PropertyAccessor(const std::string& name,
+                   const LinguisticCode& mask,
+                   const LinguisticCode& emptyNessMask);
+
+  ~PropertyAccessor();
+
+  PropertyAccessor(const PropertyAccessor&);
+  PropertyAccessor& operator=(const PropertyAccessor&);
 
   /**
    * @brief Get the property name
@@ -66,7 +75,7 @@ public:
    * @return coded value of the property
    */
   LinguisticCode readValue(const LinguisticCode& code) const;
-  
+
   /**
    * @brief write a property value in a coded int.
    * This function writes the given coded property value in the given coded int,
@@ -74,53 +83,29 @@ public:
    * @param value coded property value to write. This value can hold several property data.
    * @param code coded int to write to.
    */
-  void writeValue(const LinguisticCode& value,LinguisticCode& code) const;
-  
+  void writeValue(const LinguisticCode& value, LinguisticCode& code) const;
+
   /**
    * @brief check property equality for two linguisticCode
-   * @param l1 
-   * @param l2 
+   * @param l1
+   * @param l2
    * @return true if l1 and l2 have same property value
    */
-  bool equal(const LinguisticCode& l1,const LinguisticCode& l2) const;
+  bool equal(const LinguisticCode& l1, const LinguisticCode& l2) const;
 
   /**
    * Test if the given code has property data. In the case of a simple property,
    * property is empty if equal to 0. In the case of a subproperty, the subproperty
    * can be empty and have a non null value, if the parent property is non null.
    * @brief return true if the given code has an empty property
-   * @param l 
+   * @param l
    * @return true if property is empty for l.
    */
   bool empty(const LinguisticCode& l) const;
 
 private:
-
-  LinguisticCode m_mask;
-  LinguisticCode m_emptyNessMask;
-  std::string m_name;
-
+  PropertyAccessorPrivate* m_d;
 };
-
-inline LinguisticCode PropertyAccessor::readValue(const LinguisticCode& code) const
-{
-  return static_cast<LinguisticCode>(code & m_mask);
-}
-
-inline void PropertyAccessor::writeValue(
-  const LinguisticCode& value,
-  LinguisticCode& code) const
-{
-  code = static_cast<LinguisticCode>(( code & ( ~ m_mask )) | (value & m_mask));
-}
-
-inline bool PropertyAccessor::equal(const LinguisticCode& l1,const LinguisticCode& l2) const {
-  return !(m_mask & (l1 ^ l2));
-}
-
-inline bool PropertyAccessor::empty(const LinguisticCode& l) const {
-  return !(l & m_emptyNessMask);
-}
 
 } // PropertyCode
 } // Common

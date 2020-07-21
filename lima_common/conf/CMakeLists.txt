@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2020 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -17,12 +17,20 @@
 
 ########### install files ###############
 
-install(FILES  
+install(FILES
     log4cpp.properties
     lima-analysis.xml
     lima-common-eng.xml
+    lima-common-eng.ud.xml
     lima-common-fre.xml
+    lima-common-fre.ud.xml
     lima-common-por.xml
     lima-common.xml
+    lima-common-ud.xml # Generic config for Universal Dependencies
   DESTINATION share/config/lima
+  COMPONENT runtime)
+
+  install(FILES
+    log4cpp/limacommon.log.properties
+  DESTINATION share/config/lima/log4cpp
   COMPONENT runtime)

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 //
 // C++ Implementation: stringspool
 //
-// Description: 
+// Description:
 //
 //
 // Author: CEA LIST <Gael.de-Chalendar@cea.fr>
@@ -39,7 +39,7 @@ namespace Lima {
 class StringsPoolPrivate
 {
   friend class StringsPool;
-  
+
   StringsPoolPrivate();
 
   StringsPoolPrivate(const StringsPool& /*unused p*/);
@@ -61,13 +61,13 @@ class StringsPoolPrivate
      }
      size_t operator()(const Lima::LimaString* s) const {
         const int shift[] = {0,8,16,24};    // 4 shifts to "occupy" 32 bits
-        uint32_t key = 0x55555555;        //0101...
-        uint32_t oneChar;
+        uint64_t key = 0x55555555;        //0101...
+        uint64_t oneChar;
         int depth = s->length();
         if (depth > MAX_DEPTH)
             depth = MAX_DEPTH;
         for (int i=0; i<depth; i++) {
-            oneChar = ((uint32_t) ((*s)[i].unicode()) )<<shift[i%4];
+            oneChar = ((uint64_t) ((*s)[i].unicode()) )<<shift[i%4];
             key^=oneChar;                    // exclusive or
         }
         return key;
@@ -80,10 +80,10 @@ class StringsPoolPrivate
      }
  };
  typedef stdext::hash_map<
-     const Lima::LimaString*, 
-     StringsPoolIndex, 
+     const Lima::LimaString*,
+     StringsPoolIndex,
      LimaStringPtrHasher
- > LimaStringPtrHashMap; 
+ > LimaStringPtrHashMap;
 #else
     struct HashLimaStringPtr
     {
@@ -94,7 +94,7 @@ class StringsPoolPrivate
     {
         bool operator()(const Lima::LimaString* s1, const Lima::LimaString* s2) const;
     };
-   
+
 #ifndef NO_STDCPP0X
     typedef std::unordered_map<
       const Lima::LimaString*,
@@ -191,7 +191,7 @@ StringsPoolIndex StringsPool::operator[](const LimaString& str) const
   }
 }
 
-StringsPoolIndex StringsPool::operator[](const LimaString& str) 
+StringsPoolIndex StringsPool::operator[](const LimaString& str)
 {
   //STRPOOLLOGINIT;
   //LTRACE << "StringsPool[" << str << "]";
@@ -217,27 +217,27 @@ const LimaString& StringsPool::operator[](const StringsPoolIndex ind) const
 {
   //STRPOOLLOGINIT;
   //LTRACE << "const StringsPool[" << ind << "]";
-  if (ind >= static_cast<StringsPoolIndex>(m_d->m_vecPool.size())) 
+  if (ind >= static_cast<StringsPoolIndex>(m_d->m_vecPool.size()))
   {
       std::ostringstream oss;
       oss << "stringspool(size = " << m_d->m_vecPool.size() << "): Out of bounds (" << ind << ")";
       throw std::runtime_error(oss.str());
-  }    
-  //LTRACE << "StringsPool[" << ind << "] = " << *(m_d->m_vecPool[ind]);        
+  }
+  //LTRACE << "StringsPool[" << ind << "] = " << *(m_d->m_vecPool[ind]);
   return *(m_d->m_vecPool[ind]);
 }
 
-LimaString& StringsPool::operator[](const StringsPoolIndex ind) 
+LimaString& StringsPool::operator[](const StringsPoolIndex ind)
 {
   //STRPOOLLOGINIT;
   //LTRACE << "StringsPool[" << ind << "]";
-  if (ind >= static_cast<StringsPoolIndex>(m_d->m_vecPool.size())) 
+  if (ind >= static_cast<StringsPoolIndex>(m_d->m_vecPool.size()))
   {
       std::ostringstream oss;
       oss << "stringspool(size = " << m_d->m_vecPool.size() << "): Out of bounds (" << ind << ")";
       throw std::runtime_error(oss.str());
-  }    
-  //LTRACE << "StringsPool[" << ind << "] = " << *(m_d->m_vecPool[ind]);        
+  }
+  //LTRACE << "StringsPool[" << ind << "] = " << *(m_d->m_vecPool[ind]);
   return *(m_d->m_vecPool[ind]);
 }
 
@@ -255,11 +255,11 @@ void StringsPool::unregisterUser(void* p)
     std::set< void* >::iterator it = m_d->m_users.find(p);
     if ( it != m_d->m_users.end() )
         m_d->m_users.erase(it);
-        
+
     if (m_d->m_users.empty())
         m_d->clear();
 }
-    
+
 void StringsPoolPrivate::clear()
 {
   clear(m_resourcesPoolIndex);
@@ -289,20 +289,20 @@ void StringsPoolPrivate::clear(const uint64_t pos)
 size_t StringsPoolPrivate::HashLimaStringPtr::operator()(const Lima::LimaString* s) const
 {
     const int shift[] = {0,8,16,24};    // 4 shifts to "occupy" 32 bits
-    uint32_t key = 0x55555555;        //0101...
-    uint32_t oneChar;
+    uint64_t key = 0x55555555;        //0101...
+    uint64_t oneChar;
     int depth = s->length();
     if (depth > MAX_DEPTH)
         depth = MAX_DEPTH;
     for (int i=0; i<depth; i++) {
-        oneChar = ((uint32_t) ((*s)[i].unicode()) )<<shift[i%4];
+        oneChar = ((uint64_t) ((*s)[i].unicode()) )<<shift[i%4];
         key^=oneChar;                    // exclusive or
     }
     return key;
 }
 
 bool StringsPoolPrivate::EquaLimaStringPtr::operator()(
-        const Lima::LimaString* s1, 
+        const Lima::LimaString* s1,
         const Lima::LimaString* s2) const
 {
     return ((*s1) == (*s2));

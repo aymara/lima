@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -85,5 +85,15 @@ private:
 };
 
 } // closing namespace Lima
+
+namespace std {
+
+template<> struct hash<Lima::StringsPoolIndex> {
+  std::size_t operator()(const Lima::StringsPoolIndex s) const noexcept {
+    return (size_t) qHash(s);
+  }
+};
+
+}
 
 #endif // LIMA_DATA_STRINGSPOOL_H

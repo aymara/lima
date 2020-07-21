@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2020 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,6 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+
 foreach(LANG ${LIMA_LANGUAGES})
   if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${LANG})
     add_subdirectory(${LANG})

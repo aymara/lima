@@ -1,0 +1,23 @@
+@streetKey=(
+Avenue,
+Ave,
+Ave .,
+Blvd,
+Blvd .,
+Crescent,
+Dr,
+Dr .,
+Drive,
+Hill,
+Lane,
+Rise,
+Road,
+Rd,
+Rd .,
+Square,
+Street,
+street,
+St,
+St .,
+Way
+)

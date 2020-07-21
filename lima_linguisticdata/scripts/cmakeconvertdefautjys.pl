@@ -1,5 +1,5 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #    
 #   This file is part of LIMA.
 #
@@ -42,12 +42,22 @@ while (<CONVERT>) {
 
 #fin du chargement des categories et de leurs correspondances
 
-$motstraites = 0;
-$motsnontraites = 0;
+my $motstraites = 0;
+my $motsnontraites = 0;
+my $lineNum = 0;
 
 while (<SOURCE>) {
+  $lineNum = $lineNum + 1;
 	chomp();
-	@donnees = split(/	/);
+	if (length $_ == 0 || substr( $_, 0, 1 ) eq "#") {
+    next;
+	}
+	@donnees = split(/\t/);
+	if (scalar(@donnees) != 2) {
+		print STDERR ("in file $ARGV[0] line $lineNum: wrong number of columns. Ignore line: $_\n");
+		print ERROR ("in file $ARGV[0] line $lineNum: wrong number of columns. Ignore line: $_\n");
+		next;
+	}
 	$type = $donnees[0];
 	$info = $donnees[1];
 	
@@ -56,11 +66,10 @@ while (<SOURCE>) {
 	#Fin du codage des categories
 
 	if ($tags{$info} ne "") {
-		print CIBLE ("$type	$tags{$info}
-");
+		print CIBLE ("$type	$tags{$info}\n");
 	}
 	else {
-		print STDERR ("in file $ARGV[0] : Invalid properties $info\n");
-		print ERROR ("in file $ARGV[0] : Invalid properties $info\n");
+		print STDERR ("in file $ARGV[0] line $lineNum: Invalid properties $type $info\n");
+		print ERROR ("in file $ARGV[0] line $lineNum: Invalid properties $type $info\n");
 	}
 }

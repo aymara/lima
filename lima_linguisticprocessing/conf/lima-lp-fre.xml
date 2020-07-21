@@ -77,6 +77,20 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
+    <group name="deepud-nerrules" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
+    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
     <group name="deep" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <!--item value="beginStatusLogger"/-->
@@ -197,6 +211,8 @@
 <!-- ******************************************
   Definition of process units
 *********************************************** -->
+    <group name="conllureader" class="ConlluReader">
+    </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -754,6 +770,10 @@ Definition of dumpers
       <param key="outputAllAttributes" value="false"/>
       <list name="attributes"/>
       <list name="eventTemplates"/>
+    </group>
+    <group name="conllDumperFake" class="ConllDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <param key="graph" value="AnalysisGraph"/>
     </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>

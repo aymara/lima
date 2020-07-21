@@ -1,0 +1,28 @@
+set encoding=utf8
+using modex Numex-modex.xml
+using groups Numex
+set defaultAction=>CreateSpecificEntity()
+
+
+#----------------------------------------------------------------------
+# recognition of numbers
+#----------------------------------------------------------------------
+# to bypass lacks in dictionary
+@units=(
+mph,volt,volts,
+ounce,ounces,tablespoon,tablespoons,cup,cups,
+teaspoon,teaspoons,calorie,calories,pint,pints,
+g,mg,gram,grams,ton,tons,tonne,tonnes,°,degree,degrees,
+cent,cents,dollar,dollars,euro,euros,
+yen,
+inch,inches,feet,foot,yard,yards,acre,acres,
+kt,kn,knot,knots,
+square-foot,square-mile,square-inch,
+square foot,square mile,square inch,
+square feet,square miles,square inches,
+miles square,feet square,inches square,
+square meter,square-meter,square metre,square-metre,
+square meters,square-meters,square metres,square-metres,
+pound,pounds,watt,watts,mV,°C,oC,°F)
+
+@units:::UNIT:

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,9 +19,9 @@
 /**
   * @file               LimaString.cpp
   * @date               Created on  : Mon Aug 04 2003
-  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
-  *                     Copyright (c) 2003-2012 CEA LIST
+  *                     Copyright (c) 2003-2020 CEA LIST
   * @version            $Id$
   */
 
@@ -30,7 +30,10 @@
 
 #include "common/LimaCommon.h"
 
+#include <functional>
+
 #include <QtCore/QString>
+#include <QtCore/QHash>
 
 namespace Lima
 {
@@ -40,5 +43,16 @@ namespace Lima
 LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const LimaString& s);
 
 } // closing namespace Lima
+
+namespace std {
+
+template<> struct hash<Lima::LimaString> {
+  std::size_t operator()(const Lima::LimaString& s) const noexcept {
+    return (size_t) qHash(s);
+  }
+};
+
+}
+
 
 #endif // LIMA_LIMASTRING_H

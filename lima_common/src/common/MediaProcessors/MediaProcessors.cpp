@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -170,7 +170,7 @@ void MediaProcessors::initPipelines(
           mapItr != m_d->m_pipelineManagers.cend(); mapItr++ )
     {
       const std::string& mediaStr=MediaticData::single().getMediaId ( mapItr->first );
-      auto entryItr =pipelineMapping.find ( mediaStr );
+      auto entryItr = pipelineMapping.find ( mediaStr );
       if ( entryItr == pipelineMapping.end() )
       {
         PROCESSORSLOGINIT;
@@ -219,7 +219,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   {
     PROCESSORSLOGINIT;
     LERROR << "no pipeline type '" << id << "' defined in media " << med
-          << " configuration file !";
+           << " configuration file !";
     return nullptr;
   }
   map<MediaId,const MediaProcessUnitPipeline*>::const_iterator medItr=pipItr->second.find ( med );
@@ -227,9 +227,9 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   {
     PROCESSORSLOGINIT;
     LERROR << "no media [" << med << ":"
-          << MediaticData::single().getMediaId(med).c_str()
-          << "] defined for pipeline '" << id.c_str()
-          << "' in the configuration file!";
+           << MediaticData::single().getMediaId(med).c_str()
+           << "] defined for pipeline '" << id.c_str()
+           << "' in the configuration file!";
     return nullptr;
   }
   return medItr->second;

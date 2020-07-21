@@ -1,0 +1,6 @@
+[submodule "lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT"]
+	path = lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT
+	url = https://github.com/UniversalDependencies/UD_English-EWT.git
+[submodule "lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowMorphoSyntax/fastText"]
+	path = lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/MorphoSyntax/fastText
+	url = https://github.com/facebookresearch/fastText.git

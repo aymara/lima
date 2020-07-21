@@ -27,11 +27,11 @@
 
 using namespace Lima;
 
-QTEST_MAIN ( LimaFileSystemWatcherTest );
+QTEST_GUILESS_MAIN ( LimaFileSystemWatcherTest );
 
 void LimaFileSystemWatcherTest::initTestCase()
 {
-    // Called before the first testfunction is executed
+  // Called before the first testfunction is executed
   QsLogging::initQsLog();
   // Necessary to initialize factories under Windows
   Lima::AmosePluginsManager::single();
@@ -39,17 +39,17 @@ void LimaFileSystemWatcherTest::initTestCase()
 
 void LimaFileSystemWatcherTest::cleanupTestCase()
 {
-    // Called after the last testfunction was executed
-} 
+  // Called after the last testfunction was executed
+}
 
 void LimaFileSystemWatcherTest::init()
 {
-    // Called before each testfunction is executed
+  // Called before each testfunction is executed
 }
 
 void LimaFileSystemWatcherTest::cleanup()
 {
-    // Called after every testfunction
+  // Called after every testfunction
 }
 
 void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
@@ -62,11 +62,11 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
 
   QCOMPARE( stateSpy.count(), 0 );
 
- 
+
   QTemporaryFile tmpFile;
   QVERIFY2(tmpFile.open(),"Was not able to open the temporary file");
   QString tmpFileName = tmpFile.fileName();
-  
+
   watcher.addPath(tmpFileName);
 
   QTextStream out(&tmpFile);
@@ -77,7 +77,7 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
 
   // remove the tmp file. This should trigger the signal
   QFile::remove(tmpFileName);
-  
+
   QVERIFY2( !QFile(tmpFileName).exists(),  "The tmpFile still exists while it has  been removed");
   QVERIFY2( stateSpy.wait(5000),  "We removed the file. The fileChanged signal should have been triggered");
 
@@ -87,6 +87,5 @@ void LimaFileSystemWatcherTest::LimaFileSystemWatcherTest0()
   std::cerr << "";
   recreatedFile.close();
   QVERIFY2( stateSpy.wait(5000), "We recreated the file. The fileChanged signal should have been triggered");
-
 }
 

@@ -1,4 +1,4 @@
-#   Copyright 2002-2013 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -44,7 +44,7 @@ add_custom_target(
   DEPENDS succession_categs_retag.txt corpus_eng_merge.txt
 )
 
-DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_prior-convert.pl X,SYM,UNK,PROPN,CONJ,NUM)
+DISAMBMATRICES(eng succession_categs_retag.txt ${CMAKE_CURRENT_SOURCE_DIR}/code_symbolic2lima.txt ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_prior-convert.pl X,SYM,UNK,PROPN,CONJ,NUM)
 
 add_dependencies(trigrammatrix-eng categs-eng)
 

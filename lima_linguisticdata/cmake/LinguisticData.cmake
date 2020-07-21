@@ -36,12 +36,12 @@ macro (CODES _lang)
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/convjys.txt
-    COMMAND convertSymbolicCodes --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
-    COMMAND parseXMLPropertyFile --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
+    COMMAND convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}
+    COMMAND parseXMLPropertyFile --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/code-${_lang}.xml.log
     DEPENDS code-${_lang}.xml ${ARGN} convertSymbolicCodes
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "PATH is $ENV{PATH}"
-    COMMENT "convertSymbolicCodes --configDir=${LIMA_CONF} --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
+    COMMENT "convertSymbolicCodes --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/ --code=code-${_lang}.xml --output=${CMAKE_CURRENT_BINARY_DIR}/convjys.txt ${CODES_FILES}"
     VERBATIM
   )
 
@@ -67,7 +67,7 @@ endmacro (CODES _lang)
 macro (FLEXION _lang)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/formes-${_lang}.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
     DEPENDS def.txt  mots-simples.txt exclude.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -90,9 +90,9 @@ macro(CONVERT _lang)
 
   add_custom_command(
     OUTPUT dicotabs.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
-    COMMENT "perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
+    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
     VERBATIM
   )
   add_custom_target(
@@ -104,9 +104,9 @@ macro(CONVERT _lang)
 
   add_custom_command(
     OUTPUT dicostd.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
     DEPENDS dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt
-    COMMENT "perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt"
+    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt"
     VERBATIM
   )
   add_custom_target(
@@ -120,9 +120,9 @@ macro(CONVERT _lang)
   foreach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
     add_custom_command(
       OUTPUT ${ADDED_LIST_FILE}.add
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
       DEPENDS dicostd.txt ${ADDED_LIST_FILE}
-      COMMENT "perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
+      COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
     )
     set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
   endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
@@ -163,12 +163,12 @@ macro(CONVERT _lang)
     add_custom_command(
       OUTPUT dico.xml
       COMMAND echo "<dictionary>" > dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
       COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
       COMMAND echo "</dictionary>" >> dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
       COMMAND mv dico.xml.tmp dico.xml
       DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
       COMMENT "CONVERT ${_lang} produce XML dico"
@@ -179,12 +179,12 @@ macro(CONVERT _lang)
     add_custom_command(
       OUTPUT dico.xml
       COMMAND echo ^<dictionary^> > dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
       COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
       COMMAND echo ^</dictionary^> >> dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
       COMMAND mv dico.xml.tmp dico.xml
       DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
       COMMENT "produce XML dico"
@@ -210,34 +210,36 @@ endmacro(CONVERT _lang)
 
 # Compile XML dictionary
 macro(COMPILEXMLDIC _lang _dico _subdir)
+  message( "${C_BoldYellow}COMPILEXMLDIC(${_lang} ${_dico} ${_subdir})${C_Norm}" )
+
 #   string(REPLACE "/" "" _dicostr ${_dico})
   get_filename_component(_dicostr ${_dico} NAME_WE)
 #  set (CHARCHART "${CMAKE_INSTALL_PREFIX}/share/apps/lima/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
-  set (CHARCHART "${PROJECT_SOURCE_DIR}/lima_linguisticdata/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
+  set (CHARCHART "${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok")
   get_filename_component(DICOFILENAME ${_dico} NAME_WE)
 
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND LC_ALL="C" sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${LIMA_CONF} --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 else ()
   add_custom_command(
     OUTPUT ${DICOFILENAME}Dat-${_lang}.dat
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}
     COMMAND sort -T . -u keys > keys_${_dicostr}.sorted
-    COMMAND testDict16 --configDir=${LIMA_CONF}  --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
+    COMMAND testDict16 --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charSize=2 --listOfWords=keys_${_dicostr}.sorted --output=${DICOFILENAME}Key-${_lang}.dat > output_${_dicostr}
 #    COMMAND testDict16 --charSize=2 --input=${DICOFILENAME}Key-${_lang}.dat.tmp --spare --output=${DICOFILENAME}Key-${_lang}.dat >> output_${_dicostr}
-    COMMAND compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
+    COMMAND compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --fsaKey=${DICOFILENAME}Key-${_lang}.dat --propertyFile=${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml --symbolicCodes=${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml --output=${DICOFILENAME}Dat-${_lang}.dat ${_dico}
     DEPENDS ${_dico} ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-${_lang}.xml ${CMAKE_CURRENT_SOURCE_DIR}/../code/symbolicCode-${_lang}.xml ${CHARCHART} ${CMAKE_CURRENT_BINARY_DIR}/../convert/dico.xml
-    COMMENT "compile-dictionary --configDir=${LIMA_CONF} --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
+    COMMENT "compile-dictionary --configDir=${CMAKE_SOURCE_DIR}/lima_common/conf/${LIMA_PATH_SEPARATOR}${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/ --charChart=${CHARCHART} --extractKeyList=keys ${_dico}"
     VERBATIM
   )
 endif ()
@@ -263,11 +265,11 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
 
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
     COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/lima_linguisticdata/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
 
     DEPENDS ${_codesymbol} ${_succession_categs}
     COMMENT "compile ${_lang} trigram matrix"
@@ -367,9 +369,13 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
+      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
+      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
+
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp
 
     COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/ApproxNames-modex.xml
@@ -417,6 +423,12 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
      ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
     COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
+     ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
+     ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
+    COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     DEPENDS
@@ -434,6 +446,8 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
+      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
     COMMENT "Create config environment common to all languages"
@@ -514,6 +528,85 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
   )
 endmacro ()
 
+###############
+#
+# LIMA_GENERIC_CONFIGENV_UD
+#
+#
+####################
+macro (LIMA_GENERIC_CONFIGENV_UD _lang)
+  message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV_UD(${_lang})${C_Norm}" )
+
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+    COMMENT "create language specific config env"
+    VERBATIM
+  )
+  add_custom_target(
+    rules-${_lang}-execEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+  )
+endmacro ()
+
+###############
+#
+# LIMA_PRETEST_CONFIGENV
+#
+#
+####################
+macro (LIMA_PRETEST_CONFIGENV _lang)
+  message( "${C_BoldYellow}LIMA_PRETEST_CONFIGENV(${_lang})${C_Norm}" )
+
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    DEPENDS
+      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
+      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
+      compilexmldic${_lang}dico
+      rules-${_lang}-execEnv
+    COMMENT "copy language specific LinguisticProcessing resources to execEnv"
+    VERBATIM
+  )
+  add_custom_target(
+    pretest-${_lang}-execEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+  )
+  add_dependencies(pretest-execEnv pretest-${_lang}-execEnv)
+endmacro()
+
 ####################
 # Specific Entities
 macro (SPECIFICENTITIES _subtarget _lang _group)
@@ -554,7 +647,6 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   )
 
 endmacro (SPECIFICENTITIES _lang _group)
-
 
 ####################
 # Syntactic analysis

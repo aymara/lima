@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
+
+add_subdirectory(tests)
 
 add_definitions(-DLIMA_PROPERTYCODE_EXPORTING)
 

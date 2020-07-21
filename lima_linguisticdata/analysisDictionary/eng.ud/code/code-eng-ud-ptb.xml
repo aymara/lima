@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Linguistic_codes>
+  <!-- Lexical features -->
+  <property name="PronType">
+    <value name="Art"/>
+    <value name="Dem"/>
+    <value name="Emp"/>
+    <value name="Exc"/>
+    <value name="Ind"/>
+    <value name="Int"/>
+    <value name="Neg"/>
+    <value name="Prs"/>
+    <value name="Rcp"/>
+    <value name="Rel"/>
+    <value name="Tot"/>
+  </property>
+  <property name="NumType">
+    <value name="Card"/>
+    <value name="Dist"/>
+    <value name="Frac"/>
+    <value name="Mult"/>
+    <value name="Ord"/>
+    <value name="Range"/>
+    <value name="Sets"/>
+  </property>
+  <property name="Poss">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <property name="Reflex">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <property name="Foreign">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <property name="Abbr">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+
+  <!-- Inflectional features -->
+  <!-- Inflectional features: Nominal -->
+  <property name="Gender">
+    <value name="Com"/>
+    <value name="Fem"/>
+    <value name="Masc"/>
+    <value name="Neut"/>
+  </property>
+<!--  <property name="GENDER">
+    <value name="MASC"/>
+    <value name="FEM"/>
+    <value name="NEUTRE"/>
+  </property>-->
+
+  <property name="Animacy">
+    <value name="Anim"/>
+    <value name="Hum"/>
+    <value name="Inan"/>
+    <value name="Nhum"/>
+  </property>
+  <property name="Number">
+    <value name="Coll"/>
+    <value name="Count"/>
+    <value name="Dual"/>
+    <value name="Grpa"/>
+    <value name="Grpl"/>
+    <value name="Inv"/>
+    <value name="Pauc"/>
+    <value name="Plur"/>
+    <value name="Ptan"/>
+    <value name="Sing"/>
+    <value name="Tri"/>
+  </property>
+  <property name="Case">
+    <!--Core-->
+    <value name="Abs"/>
+    <value name="Acc"/>
+    <value name="Erg"/>
+    <value name="Nom"/>
+    <!--Non-core-->
+    <value name="Abe"/>
+    <value name="Ben"/>
+    <value name="Cau"/>
+    <value name="Cmp"/>
+    <value name="Cns"/>
+    <value name="Com"/>
+    <value name="Dat"/>
+    <value name="Dis"/>
+    <value name="Equ"/>
+    <value name="Gen"/>
+    <value name="Ins"/>
+    <value name="Par"/>
+    <value name="Tem"/>
+    <value name="Tra"/>
+    <value name="Voc"/>
+    <!--Local-->
+    <value name="Abl"/>
+    <value name="Add"/>
+    <value name="Ade"/>
+    <value name="All"/>
+    <value name="Del"/>
+    <value name="Ela"/>
+    <value name="Ess"/>
+    <value name="Ill"/>
+    <value name="Ine"/>
+    <value name="Lat"/>
+    <value name="Loc"/>
+    <value name="Per"/>
+    <value name="Sub"/>
+    <value name="Sup"/>
+    <value name="Ter"/>
+  </property>
+  <property name="Definite">
+    <value name="Com"/>
+    <value name="Cons"/>
+    <value name="Def"/>
+    <value name="Ind"/>
+    <value name="Spec"/>
+  </property>
+  <property name="Degree">
+    <value name="Abs"/>
+    <value name="Cmp"/>
+    <value name="Equ"/>
+    <value name="Pos"/>
+    <value name="Sup"/>
+  </property>
+
+  <!-- Inflectional features: Verbal -->
+  <property name="VerbForm">
+    <value name="Conv"/>
+    <value name="Fin"/>
+    <value name="Gdv"/>
+    <value name="Ger"/>
+    <value name="Inf"/>
+    <value name="Part"/>
+    <value name="Sup"/>
+    <value name="Vnoun"/>
+  </property>
+  <property name="Mood">
+    <value name="Adm"/>
+    <value name="Cnd"/>
+    <value name="Des"/>
+    <value name="Imp"/>
+    <value name="Ind"/>
+    <value name="Jus"/>
+    <value name="Nec"/>
+    <value name="Opt"/>
+    <value name="Pot"/>
+    <value name="Prp"/>
+    <value name="Qot"/>
+    <value name="Sub"/>
+  </property>
+  <property name="Tense">
+    <value name="Fut"/>
+    <value name="Imp"/>
+    <value name="Past"/>
+    <value name="Pqp"/>
+    <value name="Pres"/>
+  </property>
+  <property name="Aspect">
+    <value name="Hab"/>
+    <value name="Imp"/>
+    <value name="Iter"/>
+    <value name="Perf"/>
+    <value name="Prog"/>
+    <value name="Prosp"/>
+  </property>
+  <property name="Voice">
+    <value name="Act"/>
+    <value name="Antip"/>
+    <value name="Cau"/>
+    <value name="Dir"/>
+    <value name="Inv"/>
+    <value name="Mid"/>
+    <value name="Pass"/>
+    <value name="Rcp"/>
+    </property>
+  <property name="Evident">
+    <value name="Fh"/>
+    <value name="Nfh"/>
+  </property>
+  <property name="Polarity">
+    <value name="Neg"/>
+    <value name="Pos"/>
+  </property>
+  <property name="Person">
+    <value name="0"/>
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+    <value name="4"/>
+  </property>
+<!--  <property name="PERSON">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>-->
+  <property name="Polite">
+    <value name="Elev"/>
+    <value name="Form"/>
+    <value name="Humb"/>
+    <value name="Infm"/>
+  </property>
+
+  <property name="MACRO">
+    <value name="ADJ"/>
+    <value name="ADV"/>
+    <value name="INTJ"/> <!--Was INTERJ-->
+    <value name="NOUN"/> <!--Was NC-->
+    <value name="PROPN"/> <!--Was NP-->
+    <value name="VERB"/> <!--Was V-->
+
+    <value name="ADP"/> <!--Was PREP-->
+    <value name="CONJ"/> <!--Kept. Two UD values are CCONJ and SCONJ-->
+    <value name="DET"/>
+    <value name="NUM"/>
+    <value name="PART"/>
+    <value name="PRON"/>
+
+    <value name="PUNCT"/>
+    <value name="DIVERS"/> <!--Kept. Two UD values are SYM and X-->
+  </property>
+
+  <!--
+  Penn TreeBank tags from http://bulba.sdsu.edu/jeanette/thesis/PennTags.html
+  
+  CC - Coordinating conjunction | CCONJ
+  CD - Cardinal number | NUM NumType=Card
+  DT - Determiner | DET
+  EX - Existential there | PRON
+  FW - Foreign word | X Foreign=Yes
+  IN - Preposition or subordinating conjunction | ADP
+  JJ - Adjective | ADJ
+  JJR - Adjective, comparative | ADJ Degree=Cmp
+  JJS - Adjective, superlative | ADJ Degree=Sup
+  LS - List item marker | X
+  MD - Modal | AUX VerbForm=Fin
+  NN - Noun, singular or mass | NOUN Number=Sing
+  NNS - Noun, plural | NOUN Number=Plur
+  NNP - Proper noun, singular | PROPN Number=Sing
+  NNPS - Proper noun, plural | PROPN Number=Plur
+  PDT - Predeterminer | DET
+  POS - Possessive ending | PART
+  PRP - Personal pronoun | PRON PronType=Prs
+  PRP$ - Possessive pronoun (prolog version PRP-S) | PRON Poss=Yes|PronType=Prs
+  RB - Adverb | ADV
+  RBR - Adverb, comparative | ADV Degree=Cmp
+  RBS - Adverb, superlative | ADV Degree=Sup
+  RP - Particle | ADP
+  SYM - Symbol | SYM
+  TO - to | PART
+  UH - Interjection | INTJ
+  VB - Verb, base form | VERB VerbForm=Inf
+  VBD - Verb, past tense | VERB Mood=Ind|Tense=Past|VerbForm=Fin (Number=Sing|Person=3 in some cases like was and also AUX for was, were, did...)
+  VBG - Verb, gerund or present participle | VERB VerbForm=Ger or VERB Tense=Pres|VerbForm=Part
+  VBN - Verb, past participle | VERB Tense=Past|VerbForm=Part (plus sometimes Voice=Pass)
+  VBP - Verb, non-3rd person singular present | VERB Mood=Ind|Tense=Pres|VerbForm=Fin
+  VBZ - Verb, 3rd person singular present | VERB Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin
+  WDT - Wh-determiner | PRON PronType=Rel
+  WP - Wh-pronoun | PRON PronType=Rel or Int
+  WP$ - Possessive wh-pronoun (prolog version WP-S) | PRON PronType=Int
+  WRB - Wh-adverb | ADV PronType=Int (sometimes PronType=Rel)
+    -->
+  <subproperty name="MICRO" parent="MACRO">
+    <subvalues value="ADJ">
+      <value name="ADJ"/>
+      <value name="ADJ-Degree=Cmp"/> <!--Was JJR-->
+      <value name="ADJ-Degree=Sup"/> <!--Was JJS-->
+    </subvalues>
+    <subvalues value="ADV">
+      <value name="ADV"/> <!--Was RB, ABOUTRB, THATRB, THERERB-->
+      <value name="ADV-Degree=Cmp"/> <!--Was RBR-->
+      <value name="ADV-Degree=Sup"/> <!--Was RBS-->
+      <value name="ADV-PronType=Int"/> <!--Was WRB-->
+      <value name="PART"/> <!--Was NOT-->
+    </subvalues>
+    <subvalues value="INTJ">
+      <value name="INTJ"/> <!--Was UH-->
+    </subvalues>
+    <subvalues value="NOUN">
+      <value name="NOUN-Number=Sing"/> <!--Was NN-->
+      <value name="NOUN-Number=Plur"/> <!--Was NNS-->
+    </subvalues>
+    <subvalues value="PROPN">
+      <value name="PROPN-Number=Sing"/> Was NNP
+      <value name="PROPN-Number=Plur"/> Was NNPS
+    </subvalues>
+    <subvalues value="VERB">
+      <value name="AUX"/> <!--Was AUX or MD-->
+      <value name="VERB-VerbForm=Inf"/> <!--Was VB-->
+      <value name="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/> <!--Was VBD-->
+      <value name="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin"/> <!--Was VBD-->
+      <value name="VERB-VerbForm=Ger"/> <!--Was VBG-->
+      <value name="VERB-Tense=Pres|VerbForm=Part"/> <!--Was VBG-->
+      <value name="VERB-Tense=Past|VerbForm=Part"/> <!--Was VBN-->
+      <value name="VERB-Tense=Past|VerbForm=Part|Voice=Pass"/> <!--Was VBN-->
+      <value name="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/> <!--Was VBP-->
+      <value name="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/> <!--Was VBZ-->
+    </subvalues>
+
+    <subvalues value="ADP">
+      <value name="ADP"/> <!--Was IN or ABOUTIN or RP-->
+    </subvalues>
+    <subvalues value="CONJ">
+      <value name="CCONJ"/> <!--Was CC-->
+      <value name="SCONJ"/> <!-- See Universal Dependencies -->
+    </subvalues>
+    <subvalues value="DET">
+      <value name="DET"/> <!--Was DT, THATDT, PDT-->
+    </subvalues>
+    <subvalues value="NUM"> <!--Was NOMBRE-->
+      <value name="NUM-NumType=Card"/> <!--Was CD-->
+    </subvalues>
+    <subvalues value="PART"> 
+      <value name="PART"/> <!--Was PART or TO-->
+    </subvalues>
+    <subvalues value="PRON">
+      <value name="PRON"/> <!--Was EX-->
+      <value name="PRON-PronType=Rel"/> <!--Was WDT-->
+      <value name="PRON-PronType=Prs"/> <!--Was PRP or THATPRP-->
+      <value name="PRON-Poss=Yes|PronType=Prs"/> <!--Was PRP$-->
+      <value name="PRON-PronType=Rel"/> <!--Was WP-->
+      <value name="PRON-PronType=Int"/> <!--Was WP or WP$-->
+    </subvalues>
+
+    <subvalues value="PUNCT"> <!--Was PONCTU-->
+      <value name="COMMA"/> <!--PUNCT+, in UD-->
+      <value name="COLON"/> <!--PUNCT+; in UD-->
+      <value name="OQU"/> <!--PUNCT+`« in UD-->
+      <value name="QUOT"/> <!--PUNCT+"» in UD-->
+      <value name="OPAR"/> <!--PUNCT+( in UD-->
+      <value name="CPAR"/> <!--PUNCT+) in UD-->
+      <value name="SENT"/> <!--PUNCT+. in UD-->
+    </subvalues>
+    <subvalues value="DIVERS">
+      <!--       <value name="FW"/> Foreign is a feature in UD -->
+      <value name="SYM"/>
+      <value name="X"/> 
+    </subvalues>
+  </subproperty>
+</Linguistic_codes>
