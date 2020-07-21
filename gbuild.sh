@@ -38,7 +38,7 @@ Options default values are in parentheses.
   -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
-  -T                Use TensorFlow
+  -T                Do not use TensorFlow (default is to use it)
   -P tfsrcpath      <> Path to TensorFlow sources
 EOF
 exit 1
@@ -57,7 +57,7 @@ CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
-USE_TF=false
+USE_TF=true
 TF_SOURCES_PATH=""
 
 while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
@@ -104,7 +104,7 @@ while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
             ;;
         T)
-            USE_TF=true
+            USE_TF=false
             ;;
         P)
             TF_SOURCES_PATH=$OPTARG
