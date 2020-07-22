@@ -34,7 +34,7 @@ WORKDIR /
 RUN wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver | json -a latest_version)/files | json 0.path) && dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/qhttpserver | json -a latest_version)/files | json 0.name) && wget https://bintray.com/artifact/download/kleag/ubuntu-16.04/$(echo $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp | json -a latest_version)/files | json 0.path)  | sed -e 's/\+/%2B/g') && dpkg -i $(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp/versions/$(curl https://api.bintray.com/packages/kleag/ubuntu-16.04/svmtool-cpp | json -a latest_version)/files | json 0.name)
 
 RUN mkdir -p /src/
-RUN git clone https://github.com/aymara/lima /src/lima
+RUN git clone --recurse-submodules https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
