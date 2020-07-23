@@ -45,9 +45,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo "<dictionary>" > dico.xml.tmp
-    COMMAND LC_ALL=en_US.UTF-8 ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py --features=none ${dicoFiles} > freeling-ext-lima.txt.tmp
-#     COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
-#     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../ud/ud.dic >> freeling-ext-lima.txt.tmp
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py --features=none --output=freeling-ext-lima.txt.tmp ${dicoFiles}
     COMMAND LC_ALL="C" sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND echo "</dictionary>" >> dico.xml.tmp
