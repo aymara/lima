@@ -595,7 +595,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           tokenForm = (*m_d->sp)[idx];
 
           dstream->out()  << firstTokenId << "-" << lastTokenId
-                          << "\t" << tokenForm // FORM
+                          << "\t" << tokenForm.toStdString() // FORM
                           << "\t" << "_" // LEMMA
                           << "\t" << "_" // UPOS
                           << "\t" << "_" // XPOS
