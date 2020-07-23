@@ -70,18 +70,23 @@ Token::~Token()
 {
 }
 
-void Token::outputXml(std::ostream& xmlStream,const Common::PropertyCode::PropertyCodeManager&,const FsaStringsPool& sp) const
+void Token::outputXml(std::ostream& xmlStream,
+                      const Common::PropertyCode::PropertyCodeManager&,
+                      const FsaStringsPool& sp) const
 {
-  xmlStream << "    <string>" << Common::Misc::transcodeToXmlEntities(m_stringForm) << "</string>" << std::endl;
+  xmlStream << "    <string>"
+            << Common::Misc::transcodeToXmlEntities(m_stringForm).toStdString()
+            << "</string>" << std::endl;
   xmlStream << "    <position>" << position() << "</position>" << std::endl;
   xmlStream << "    <length>" << length() << "</length>" << std::endl;
   if (!m_alternatives.empty()) {
     xmlStream << "    <alternatives>" << std::endl;
-    for (std::vector<StringsPoolIndex>::const_iterator it=m_alternatives.begin();
-         it!=m_alternatives.end();
+    for (auto it = m_alternatives.cbegin(); it != m_alternatives.cend();
          it++)
     {
-      xmlStream << "      <string>" << Common::Misc::transcodeToXmlEntities(sp[*it]) << "</string>" << std::endl;
+      xmlStream << "      <string>"
+                << Common::Misc::transcodeToXmlEntities(sp[*it]).toStdString()
+                << "</string>" << std::endl;
     }
     xmlStream << "    </alternatives>" << std::endl;
   }

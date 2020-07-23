@@ -279,12 +279,13 @@ void DictTester<dictType>::addListOfUnorderedWords() {
   readListOfWords(m_param.listOfWords, listOfWords);
 
   int counter(0);
-  for( std::vector<Lima::LimaString >::iterator itWord = listOfWords.begin() ;
-     itWord != listOfWords.end() ; itWord++, counter++ ) {
+  for( const auto& word :listOfWords) {
+    counter++;
 //    if( (counter%10000) == 0 ) {
-      std::cerr << "addListOfWords(" << *itWord << "),  counter = " << counter << std::endl;
+      std::cerr << "addListOfWords(" << word.toStdString() << "),  counter = "
+                << counter << std::endl;
 //    }
-    m_dico.addRandomWord( *itWord );
+    m_dico.addRandomWord( word );
   }
 
   if( m_param.printGraph ) {
@@ -316,13 +317,13 @@ void DictTester<dictType>::testIndex(
     if( m_param.withDebug ) {
       Lima::LimaString newWord = *lemma;
       std::cerr <<  "testIndex: getIndex("
-                << Lima::Common::Misc::limastring2utf8stdstring(newWord)
+                << newWord.toStdString()
                 <<  ")=" << index << std::endl;
     }
     else {
       if( index%10000 == 1 ) {
         Lima::LimaString newWord = *lemma;
-        std::cerr <<  "testIndex: getIndex(" << Lima::Common::Misc::limastring2utf8stdstring(newWord)
+        std::cerr <<  "testIndex: getIndex(" << newWord.toStdString()
                   <<  ")=" << index << std::endl;
       }
     }
@@ -871,7 +872,7 @@ int main(int argc, char *argv[])
             std::string utf8_hyperword(line, 0, hyperword_pos);
             Lima::LimaString hyperword = Lima::Common::Misc::utf8stdstring2limastring(utf8_hyperword);
             hyperwords.push_back(hyperword);
-            std::cerr << "push(" << hyperword;
+            std::cerr << "push(" << hyperword.toStdString();
 //            std::cerr << "offset=" << hyperword_pos << std::endl;
             // extraction offset
             std::string::size_type offset_pos = line.find(';', hyperword_pos+1);
@@ -888,7 +889,7 @@ int main(int argc, char *argv[])
               std::string utf8_answer(line, subword_pos0+1, subword_pos-(subword_pos0+1));
               Lima::LimaString answer = Lima::Common::Misc::utf8stdstring2limastring(utf8_answer);
               answers.push_back(answer);
-              std::cerr << "," << answer;
+              std::cerr << "," << answer.toStdString();
 //              std::cerr << "offset=" << subword_pos << std::endl;
               subword_pos0 = subword_pos;
             }

@@ -111,7 +111,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   Param param = {
                   std::string(""),
                   std::string("none"),
@@ -190,7 +190,7 @@ int run(int argc,char** argv)
   }
 
 
-  std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES") 
+  std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
       ?"/usr/share/apps/lima/resources"
       :string(qgetenv("LIMA_RESOURCES").constData());
   std::string configDir=qEnvironmentVariableIsEmpty("LIMA_CONF")
@@ -221,11 +221,13 @@ int run(int argc,char** argv)
       if (! param.limaConfigFile.empty()) {
         configurationFile=QString::fromUtf8(param.limaConfigFile.c_str());
       }
-      Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configurationFile.toUtf8().constData());
-      file = Common::Misc::findFileInPaths(configPath, QString::fromUtf8( configuration.getModuleGroupParamValue(
+      Common::XMLConfigurationFiles::XMLConfigurationFileParser configuration(configurationFile);
+      file = Common::Misc::findFileInPaths(
+          configPath,
+          QString::fromStdString( configuration.getModuleGroupParamValue(
              "lima-coreclient",
              "mediaProcessingDefinitionFiles",
-             param.language).c_str() ) );
+             param.language) ) );
     }
     catch (NoSuchParam& )
     {
@@ -233,7 +235,7 @@ int run(int argc,char** argv)
       throw InvalidConfiguration();
     }
 
-    XMLConfigurationFileParser langParser(file.toUtf8().constData());
+    XMLConfigurationFileParser langParser(file);
 
     // initialize resources
     try
@@ -246,7 +248,8 @@ int run(int argc,char** argv)
     }
     catch (NoSuchModule &)
     {
-      cerr << "no module 'Resources' in configuration file " << file << endl;
+      std::cerr << "no module 'Resources' in configuration file "
+                << file.toStdString() << std::endl;
       throw InvalidConfiguration();
     }
 
@@ -291,7 +294,7 @@ int run(int argc,char** argv)
     std::cout << "build accessMethod ..." << std::endl;
     FsaAccessSpare16* fsaAccess=new FsaAccessSpare16();
     fsaAccess->read(param.keyFileName);
-    
+
     std::cout << "register mainkeys" << std::endl;
     MediaId langid=MediaticData::single().getMediaId(param.language);
     FsaStringsPool& sp= Common::MediaticData::MediaticData::changeable().stringsPool(langid);
@@ -307,7 +310,7 @@ int run(int argc,char** argv)
   }
 
   MediaId langid=MediaticData::single().getMediaId(param.language);
-  
+
   std::cout << "process test" << std::endl;
   std::vector<Lima::LimaString> terms;
 
@@ -335,7 +338,7 @@ int run(int argc,char** argv)
   {
     terms.push_back(Common::Misc::utf8stdstring2limastring(param.key));
   }
-  
+
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(langid);
   const Common::PropertyCode::PropertyCodeManager& pcm = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(langid)).getPropertyCodeManager();
   DictionaryEntryLogger del(&cout,&sp,&pcm);
@@ -379,16 +382,16 @@ int run(int argc,char** argv)
   return EXIT_SUCCESS;
 }
 
-void displayEntry( 
+void displayEntry(
   const Lima::LinguisticProcessing::AnalysisDict::DictionaryEntry& entry,
   const FsaStringsPool& sp,
   DictionaryEntryLogger& logger)
 {
-  if (entry.isEmpty()) { 
+  if (entry.isEmpty()) {
     cout << "DictionaryEntry : empty" << endl;
     return;
   }
-  
+
   cout << "DictionaryEntry : form=\"" << Lima::Common::Misc::limastring2utf8stdstring(sp[entry.getEntryId()]) << "\" ";
   if (entry.isFinal()) {
     cout << " final=\"true\" ";

@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -27,19 +27,18 @@ SET(lima-common-data_LIB_SRCS
    genericDocumentProperties.cpp
    readwritetools.cpp
    strwstrtools.cpp
-   LimaString.cpp
 )
 
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})
 
 ADD_DLL_TO_PATH(lima-common-data)
 
-target_link_libraries(lima-common-data 
+target_link_libraries(lima-common-data
   lima-common-tools
 )
 
-set_target_properties(lima-common-data PROPERTIES 
-  VERSION ${LIMA_COMMON_LIB_VERSION} 
+set_target_properties(lima-common-data PROPERTIES
+  VERSION ${LIMA_COMMON_LIB_VERSION}
   SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
 install(TARGETS lima-common-data DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime)

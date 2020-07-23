@@ -1397,7 +1397,7 @@ void CoreferentAnnotation::outputXml(std::ostream& xmlStream,const LinguisticGra
   Token* token = get(vertex_token, g, m_morphVertex);
   if (token != 0)
   {
-    xmlStream << token->stringForm();
+    xmlStream << token->stringForm().toStdString();
     if (token->status().isAlphaPossessive())
     {
       xmlStream << "'s ";

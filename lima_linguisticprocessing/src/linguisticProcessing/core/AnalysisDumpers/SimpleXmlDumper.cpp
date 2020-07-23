@@ -203,15 +203,16 @@ void SimpleXmlDumper::xmlOutput(
   catch (LinguisticProcessingException& ) {
   }
 
-  const std::string language = Common::MediaticData::MediaticData::single().media(m_language);
-  out << "<DOC id=\""<< docId.toHtmlEscaped() <<"\" lang=\""<<language<<"\">" << std::endl;
+  const auto& language = Common::MediaticData::MediaticData::single().media(m_language);
+  out << "<DOC id=\"" << docId.toHtmlEscaped().toStdString()
+      << "\" lang=\"" << language << "\">" << std::endl;
 
-  if (sb==nullptr)
+  if (sb == nullptr)
   {
     LWARN << "no SentenceBoundaries";
   }
 
-  if (sb==nullptr)
+  if (sb == nullptr)
   {
     // no sentence bounds : there can be specific entities,
     // but no compounds (syntactic analysis depend on sentence bounds)
@@ -476,7 +477,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
               << " lem=\"" << xmlString(sp[norm].toStdString()) << "\"";
           if (m_outputTStatus)
           {
-            out << " tok=\"" << ft->status().defaultKey() << "\"";
+            out << " tok=\"" << ft->status().defaultKey().toStdString() << "\"";
           }
           if (m_outputVerbTense)
           {
