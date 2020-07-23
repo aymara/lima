@@ -544,10 +544,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       {
         if(firstTime)
         {
-            pStart = ft->position()-1;
+            pStart = ft->position();
             firstTime = false;
         }
-        pEnd = ft->position()-1 + ft->length();
+        pEnd = ft->position() + ft->length();
       }
       LinguisticGraphOutEdgeIt outIter,outIterEnd;
       for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,*posGraph);
@@ -593,18 +593,19 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         {
           StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
           tokenForm = (*m_d->sp)[idx];
+
+          dstream->out()  << firstTokenId << "-" << lastTokenId
+                          << "\t" << tokenForm // FORM
+                          << "\t" << "_" // LEMMA
+                          << "\t" << "_" // UPOS
+                          << "\t" << "_" // XPOS
+                          << "\t" << "_" // FEATS
+                          << "\t" << "_" // HEAD
+                          << "\t" << "_" // DEPREL
+                          << "\t" << "_" // DEPS
+                          << "\t" << "_" // MISC
+                          << std::endl;
         }
-        dstream->out()  << firstTokenId << "-" << lastTokenId
-                        << "\t" << tokenForm // FORM
-                        << "\t" << "_" // LEMMA
-                        << "\t" << "_" // UPOS
-                        << "\t" << "_" // XPOS
-                        << "\t" << "_" // FEATS
-                        << "\t" << "_" // HEAD
-                        << "\t" << "_" // DEPREL
-                        << "\t" << "_" // DEPS
-                        << "\t" << "_" // MISC
-                        << std::endl;
       }
 
       m_d->dumpPosGraphVertex(dstream,
