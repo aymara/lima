@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2011-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -39,109 +39,166 @@ namespace LinguisticProcessing {
 
 //***********************************************************************
 // Segment class
-Segment::Segment(const std::string& type):
-m_begin(0),
-m_end(0),
-m_posBegin(0),
-m_length(0),
-m_type(type)
+Segment::Segment(const std::string& type) :
+    m_begin(0),
+    m_end(0),
+    m_posBegin(0),
+    m_length(0),
+    m_type(type)
 {
 }
 
-Segment::Segment(const std::string& type, 
-                 LinguisticGraphVertex begin, 
-                 LinguisticGraphVertex end, 
-                 LinguisticAnalysisStructure::AnalysisGraph* anagraph):
-m_begin(begin),
-m_end(end),
-m_posBegin(0),
-m_length(0),
-m_type(type)
+Segment::Segment(const std::string& type,
+                 LinguisticGraphVertex begin,
+                 LinguisticGraphVertex end,
+                 LinguisticAnalysisStructure::AnalysisGraph* anagraph) :
+    m_begin(begin),
+    m_end(end),
+    m_posBegin(0),
+    m_length(0),
+    m_type(type)
 {
+#ifdef DEBUG_LP
+  SEGMENTATIONLOGINIT;
+  LDEBUG << "Segment::Segment :"<< begin << end;
+#endif
   // find position and length in graph
-  LinguisticGraph* graph=anagraph->getGraph();
+  LinguisticGraph* graph = anagraph->getGraph();
 
   // begin vertex is the vertex before first element of the segment :
   // use following vertices to find position of first element
   uint64_t position(0);
   bool foundPos(false);
   LinguisticGraphOutEdgeIt it, it_end;
-  boost::tie(it, it_end)=boost::out_edges(begin, *graph);
-  for (; it!=it_end; it++) {
-    LinguisticGraphVertex v=target(*it,*graph);
-    if (v==end) { // vertex following begin vertex is end vertex => empty segment
+  boost::tie(it, it_end) = boost::out_edges(begin, *graph);
+  for (; it != it_end; it++)
+  {
+    LinguisticGraphVertex v = target(*it, *graph);
+    if (v == 1)
+    { // vertex following begin vertex is end of graph vertex => empty segment
 #ifdef DEBUG_LP
-      LOGINIT("LP::Segmentation");
       LDEBUG << "Warning: empty segment";
 #endif
       // keep default 0 values for (pos,len) to be informed that this is an empty segment
-      return;
+//       return;
     }
     Token* t = get(vertex_token,*graph,v);
-    if (t!=0) {
-      if (foundPos && position!=t->position()) {
-        LOGINIT("LP::Segmentation");
+    if (t != nullptr)
+    {
+      if (foundPos && position!=t->position())
+      {
+        SEGMENTATIONLOGINIT;
         LWARN << "Warning: conflicting position for alternative vertices";
       }
-      else {
+      else
+      {
         position=t->position();
         foundPos=true;
       }
     }
-    else {
+    else
+    {
 #ifdef DEBUG_LP
-      LOGINIT("LP::Segmentation");
-      LDEBUG << "Warning: no token for vertex " << v;
+      LDEBUG << "Warning: no token for vertex v after begin:" << v;
 #endif
     }
   }
-  if (foundPos) {
+  if (foundPos)
+  {
     m_posBegin=position;
   }
-  else {
-    LOGINIT("LP::Segmentation");
-    LERROR << "Error: cannot find position of begin vertex " << begin << " for segmentation data";
+  else
+  {
+    SEGMENTATIONLOGINIT;
+    LERROR << "Error: cannot find position of begin vertex "
+            << begin << " for segmentation data";
   }
 
-  // last vertex is the vertex just after the last element of the
-  // segment : use previous vertices (cannot use this one because it
-  // can have no token, for instance, can be the last vertex of the
-  // graph)
+  // last vertex is the last element of the segment except if it is vertex 1
+  // (last one in the graph). Then use previous vertices. If the (only) previous
+  // vertex is 0, then the graph is empty and length is null.
+
   uint64_t positionEnd(0);
   bool foundPosEnd(false);
   LinguisticGraphInEdgeIt pit, pit_end;
-  boost::tie(pit, pit_end)=boost::in_edges(end, *graph);
-  for (; pit!=pit_end; pit++) {
-    LinguisticGraphVertex v=source(*pit,*graph);
-    Token* t = get(vertex_token,*graph,v);
-    if (t!=0) {
-      if (foundPosEnd && positionEnd!=t->position()+t->length()) {
-        LOGINIT("LP::Segmentation");
+  if (end == 1)
+  {
+    boost::tie(pit, pit_end) = boost::in_edges(end, *graph);
+    for (; pit != pit_end; pit++)
+    {
+      LinguisticGraphVertex v=source(*pit,*graph);
+      if (v == 0)
+      {
+        m_length = 0;
+        return;
+      }
+      else
+      {
+        Token* t = get(vertex_token, *graph, v);
+        if (t != nullptr)
+        {
+          if (foundPosEnd && positionEnd != t->position()+t->length())
+          {
+            SEGMENTATIONLOGINIT;
+            LWARN << "Warning: conflicting position for alternative vertices";
+          }
+          else
+          {
+            positionEnd=t->position()+t->length();
+            foundPosEnd=true;
+          }
+        }
+        else
+        {
+          SEGMENTATIONLOGINIT;
+          LWARN << "Warning: no token for vertex before end" << v;
+        }
+      }
+    }
+  }
+  else
+  {
+    Token* t = get(vertex_token,*graph,end);
+    if (t != nullptr)
+    {
+      if (foundPosEnd && positionEnd!=t->position()+t->length())
+      {
+        SEGMENTATIONLOGINIT;
         LWARN << "Warning: conflicting position for alternative vertices";
       }
-      else {
+      else
+      {
         positionEnd=t->position()+t->length();
         foundPosEnd=true;
       }
     }
-    else {
-      LOGINIT("LP::Segmentation");
-      LWARN << "Warning: no token for vertex " << v;
+    else
+    {
+      SEGMENTATIONLOGINIT;
+      LWARN << "Warning: no token for vertex end" << end;
     }
   }
-  if (foundPosEnd) {
+  if (foundPosEnd)
+  {
+#ifdef DEBUG_LP
+  LDEBUG << "Segment::Segment m_length = "<< positionEnd << "-" << m_posBegin << "+1";
+#endif
     m_length=positionEnd-m_posBegin+1;
   }
-  else {
-    LOGINIT("LP::Segmentation");
+  else
+  {
+    SEGMENTATIONLOGINIT;
     LERROR << "Error: cannot determine length of segment for segmentation data ("
            << begin << "," << end << ")";
   }
+#ifdef DEBUG_LP
+  LDEBUG << "Segment::Segment :"<< m_begin << m_end << m_posBegin << m_length;
+#endif
 }
 
-// Segment::Segment(const std::string& type, 
-//                  uint64_t posBegin, 
-//                  uint64_t length, 
+// Segment::Segment(const std::string& type,
+//                  uint64_t posBegin,
+//                  uint64_t length,
 //                  LinguisticAnalysisStructure::AnalysisGraph* anagraph):
 // m_begin(0),
 // m_end(0),
@@ -149,8 +206,8 @@ m_type(type)
 // m_length(length),
 // m_type(type)
 
-void Segment::setVerticesFromPositions(uint64_t posBegin, 
-               uint64_t length, 
+void Segment::setVerticesFromPositions(uint64_t posBegin,
+               uint64_t length,
                LinguisticAnalysisStructure::AnalysisGraph* anagraph)
 {
   m_posBegin=posBegin;
@@ -163,43 +220,52 @@ void Segment::setVerticesFromPositions(uint64_t posBegin,
 
   std::queue<std::pair<LinguisticGraphVertex,LinguisticGraphVertex> > toVisit;
   std::set<LinguisticGraphVertex> visited;
-  
+
   LinguisticGraphOutEdgeIt outItr,outItrEnd;
- 
+
   // output vertices between begin and end,
-  // but do not include begin (beginning of text or previous end of sentence) and include end (end of sentence)
+  // but do not include begin (beginning of text or previous end of sentence)
+  // and include end (end of sentence)
   toVisit.push(make_pair(anagraph->firstVertex(),0));
 
   bool first=true;
-  while (!toVisit.empty()) {
-    pair<LinguisticGraphVertex,LinguisticGraphVertex> v=toVisit.front(); // clazy:exclude=rule-of-two-soft
+  while (!toVisit.empty())
+  {
+    auto v = toVisit.front(); // clazy:exclude=rule-of-two-soft
     toVisit.pop();
-    if (v.first == anagraph->lastVertex()) {
+    if (v.first == anagraph->lastVertex())
+    {
       break;
     }
 
     bool endIsNextVertex(false);
-    if (first) {
-      first=false;
+    if (first)
+    {
+      first = false;
     }
-    else {
-      Token* t=get(vertex_token,*graph,v.first);
+    else
+    {
+      Token* t = get(vertex_token,*graph,v.first);
       if(t!=0) {
-        if (t->position() == posBegin) {
-          m_begin=v.second;
+        if (t->position() == posBegin)
+        {
+          m_begin = v.second;
         }
-        if (t->position()+t->length()==posEnd) {
+        if (t->position()+t->length() == posEnd)
+        {
           // must take next vertex
-          endIsNextVertex=true;
+          endIsNextVertex = true;
         }
       }
     }
 
     // add next vertices
-    for (boost::tie(outItr,outItrEnd)=out_edges(v.first,*graph); outItr!=outItrEnd; outItr++) 
+    for (boost::tie(outItr,outItrEnd)=out_edges(v.first,*graph);
+         outItr != outItrEnd; outItr++)
     {
-      LinguisticGraphVertex next=target(*outItr,*graph);
-      if (endIsNextVertex) {
+      LinguisticGraphVertex next = target(*outItr,*graph);
+      if (endIsNextVertex)
+      {
         m_end=next;
         break; // no need to go further in the graph
       }
@@ -212,10 +278,6 @@ void Segment::setVerticesFromPositions(uint64_t posBegin,
   }
 }
 
-Segment::~Segment()
-{
-}
-
 bool Segment::operator<(const Segment& s) const
 {
   return (m_posBegin<s.getPosBegin());
@@ -224,16 +286,17 @@ bool Segment::operator<(const Segment& s) const
 void Segment::addSegment(const Segment& s)
 {
 #ifdef DEBUG_LP
-  LOGINIT("LP::Segmentation");
-  LDEBUG << "add segment [" << s.getPosBegin() << "," << s.getLength() << "] to [" << getPosBegin() << "," << getLength() << "]";
+  SEGMENTATIONLOGINIT;
+  LDEBUG << "Segment::addSegment [" << s.getPosBegin() << "," << s.getLength()
+          << "] to [" << getPosBegin() << "," << getLength() << "]";
 #endif
-  
+
   // do not check types, keep type of current segment
   // do not check adjacency, juste update end of segment
-  m_end=s.getLastVertex();
-  m_length=s.getPosEnd()-m_posBegin;
+  m_end = s.getLastVertex();
+  m_length = s.getPosEnd() - m_posBegin;
 }
-  
+
 //***********************************************************************
 // constructors and destructors
 SegmentationData::SegmentationData(const std::string& graphId):
@@ -241,23 +304,29 @@ m_graphId(graphId)
 {
 }
 
-SegmentationData::~SegmentationData() {
+SegmentationData::~SegmentationData()
+{
 }
 
 //***********************************************************************
 void SegmentationData::add(const Segment& s)
 {
-  // segments are sorted in the vector: use binary search to insert new segment
-  if (s.getLength()==0) {
 #ifdef DEBUG_LP
-    LOGINIT("LP::Segmentation");
-    LDEBUG << "add(): trying to add empty segment: ignored";
+  SEGMENTATIONLOGINIT;
+  LDEBUG << "SegmentationData::add" << s.getType().c_str()
+          << s.getFirstVertex() << s.getLastVertex();
+#endif
+  // segments are sorted in the vector: use binary search to insert new segment
+  if (s.getLength() == 0)
+  {
+#ifdef DEBUG_LP
+    LDEBUG << "SegmentationData::add trying to add empty segment: ignored";
 #endif
   }
-  else {
-    
+  else
+  {
     // ??OME2 SegmentationData::iterator it=lower_bound( begin(),end(),s);
-    std::vector<Lima::LinguisticProcessing::Segment>::iterator it=lower_bound( m_segments.begin(),m_segments.end(),s);
+    auto it = lower_bound( m_segments.begin(),m_segments.end(),s);
     // ??OME2 insert(it,s);
     m_segments.insert(it,s);
   }
