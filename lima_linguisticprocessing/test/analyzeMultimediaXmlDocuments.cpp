@@ -312,7 +312,7 @@ int run(int argc, char** argv)
         std::ifstream file(fileName.toStdString(), std::ifstream::binary);
         std::string text_s;
         readStream(file, text_s);
-        QString qtext_s = QString::fromUtf8(text_s.c_str());
+        auto qtext_s = QString::fromUtf8(text_s.c_str());
 
         QRegExp rx("(&[^;]*;)");
         int shift = 0;
@@ -368,7 +368,8 @@ int run(int argc, char** argv)
         }
         else
         {
-          std::cerr << "Error: unknown handler type " << useHandler
+          std::cerr << "Error: unknown handler type "
+                    << useHandler.toStdString()
                     << ": must be [bow|txt|xml]" << std::endl;
           continue;
         }
@@ -407,7 +408,7 @@ int run(int argc, char** argv)
         }
         else
         {
-          std::cerr << "unknown handler" << useHandler << std::endl;
+          std::cerr << "unknown handler" << useHandler.toStdString() << std::endl;
           throw InvalidConfiguration(std::string("unknown handler") + useHandler.toUtf8().constData());
         }
         std::ofstream fout(outputFile.toUtf8().constData(),
@@ -430,12 +431,14 @@ int run(int argc, char** argv)
       }
       catch(NoSuchMap &e)
       {
-        cerr << "Analysis failed on file " << (fileName)
+        cerr << "Analysis failed on file "
+              << fileName.toStdString()
               << ": (NoSuchMap) " << e.what() << endl;
       }
       catch(XMLConfigurationFileException &e)
       {
-        cerr << "Analysis failed on file " << (fileName)
+        cerr << "Analysis failed on file "
+              << fileName.toStdString()
               << ": (XMLConfigurationFileException) " << e.what() << endl;
       }
       ++i;

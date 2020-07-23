@@ -414,7 +414,7 @@ void SpecificEntitiesXmlLogger::outputEntity(AnnotationData* annotationData,
       out << "  <position>" << vToken->position()<< "</position>" << endl;
       out << "  <length>" << vToken->length() << "</length>" << endl;
       out << "  <type>"
-          << Common::MediaticData::MediaticData::single().getEntityName(annot->getType())
+          << Common::MediaticData::MediaticData::single().getEntityName(annot->getType()).toStdString()
           << "</type>" << std::endl;
       out << "  <normalization>" << std::endl;
       const auto& features = annot->getFeatures();

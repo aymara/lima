@@ -1401,11 +1401,11 @@ void ConllDumperPrivate::dumpToken(
                     << "\t" << inflectedToken.toStdString() // FORM
                     << "\t" << lemmatizedToken.toStdString() // LEMMA
                     << "\t" << micro.toStdString() // UPOS
-                    << "\t" << xpos // XPOS
-                    << "\t" << features // FEATS @TODO
+                    << "\t" << xpos.toStdString() // XPOS
+                    << "\t" << features.toStdString() // FEATS @TODO
                     << "\t" << targetConllIdString.toStdString() // HEAD
                     << "\t" << conllRelName.toStdString() // DEPREL
-                    << "\t" << deps // DEPS @TODO
+                    << "\t" << deps.toStdString() // DEPS @TODO
                     << "\t" << miscField.join('|').toStdString(); // MISC
     dstream->out() << std::endl;
   }
@@ -1444,7 +1444,7 @@ void ConllDumperPrivate::dumpToken(
       {
         dstream->out() << " " << "I-";
       }
-      dstream->out() << neType;
+      dstream->out() << neType.toStdString();
     }
     dstream->out() << std::endl;
   }

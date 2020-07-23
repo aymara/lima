@@ -32,25 +32,31 @@
 
 #include <functional>
 
+#include <QtGlobal>
 #include <QtCore/QString>
 #include <QtCore/QHash>
 
 namespace Lima
 {
-  typedef QChar LimaChar;
-  typedef QString LimaString;
-
-LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const LimaString& s);
-
+  /** @deprecated LimaChar is an alias for QChar. All its occurences will be
+   *  removed enventually. */
+  using LimaChar = QChar;
+  /** @deprecated LimaString is an alias for QString. All its occurences will be
+   *  removed enventually. */
+  using LimaString = QString;
 } // closing namespace Lima
 
-namespace std {
+namespace std
+{
 
-template<> struct hash<Lima::LimaString> {
-  std::size_t operator()(const Lima::LimaString& s) const noexcept {
-    return (size_t) qHash(s);
-  }
-};
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  // With Qt 5.14 and higher, this definition is not necessary anymore
+  template<> struct hash<QString> {
+    std::size_t operator()(const QString& s) const noexcept {
+      return (size_t) qHash(s);
+    }
+  };
+#endif
 
 }
 

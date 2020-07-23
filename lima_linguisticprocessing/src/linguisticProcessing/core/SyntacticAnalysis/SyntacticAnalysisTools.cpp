@@ -19,7 +19,7 @@
 /** @brief       Dependency graph text form displaying tools
   *
   * @file        SyntacticAnalysisTools.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2005 by CEA
   * @date
@@ -176,27 +176,29 @@ void SyntacticAnalysisTools::displayChain(
         std::ostream& out)
 {
     out << "Chain " << chain << "\t";
-    const LinguisticGraph* graph=anagraph->getGraph();
-    LinguisticGraphVertex currentVx=start;
+    auto graph = anagraph->getGraph();
+    auto currentVx = start;
     LinguisticGraphOutEdgeIt it,itEnd;
-    LinguisticGraphVertex lastVx=anagraph->lastVertex();
+    auto lastVx = anagraph->lastVertex();
     while (currentVx!=lastVx)
     {
         MorphoSyntacticData* data=get(vertex_data,*graph,currentVx);
         Token* token=get(vertex_token,*graph,currentVx);
         if ( (token != 0) && (data != 0) && (!data->empty()) )
-            out << token->stringForm() << "[" << currentVx << "]{"
+            out << token->stringForm().toStdString()
+                << "[" << currentVx << "]{"
                 << data->begin()->properties << "} ";
         else
-            out << token->stringForm() << "[" << currentVx << "]{NA} ";
-        boost::tie(it,itEnd)=out_edges(currentVx,*graph);
-        currentVx=lastVx;
+            out << token->stringForm().toStdString()
+                << "[" << currentVx << "]{NA} ";
+        boost::tie(it, itEnd) = out_edges(currentVx,*graph);
+        currentVx = lastVx;
         for (;it!=itEnd;it++)
         {
-            set< ChainIdStruct > chains=get(vertex_chain_id, *graph, target(*it, *graph));
+            auto chains = get(vertex_chain_id, *graph, target(*it, *graph));
             if (chains.find(chain) != chains.end())
             {
-                currentVx=target(*it,*graph);
+                currentVx = target(*it,*graph);
                 break;
             }
         }
@@ -236,31 +238,37 @@ displayDependancies(const SyntacticData& data,
         Token* token=get(vertex_token,*linguisticGraph,s);
         if ( (token != 0) && (currentData != 0) && (!currentData->empty()) )
     {
-    if (DisplayLemma == true) 
-      out << Common::MediaticData::MediaticData::single().stringsPool(language)[currentData->front().lemma]  << "[" << src << "|" << s << "]{"
-                << currentData->begin()->properties << "} ";
+    if (DisplayLemma == true)
+      out << Common::MediaticData::MediaticData::single().stringsPool(language)[currentData->front().lemma].toStdString()
+          << "[" << src << "|" << s << "]{"
+          << currentData->begin()->properties << "} ";
     else
     //    out << currentData->front().lemma
-            out << token->stringForm() << "[" << src << "|" << s << "]{"
+            out << token->stringForm().toStdString()
+                << "[" << src << "|" << s << "]{"
                 << currentData->begin()->properties << "} ";
     }
         else
-            out << token->stringForm() << "[" << src << "|" << s << "]{NA} ";
+            out << token->stringForm().toStdString()
+                << "[" << src << "|" << s << "]{NA} ";
         LinguisticGraphVertex t=data.tokenVertexForDepVertex(targ);
         currentData=get(vertex_data,*linguisticGraph,t);
         token=get(vertex_token,*linguisticGraph,t);
         if ( (token != 0) && (currentData != 0) && (!currentData->empty()) )
-          {
+        {
           if (DisplayLemma == true)
-            out << Common::MediaticData::MediaticData::single().stringsPool(language)[currentData->front().lemma]  << "[" << targ << "|" << t << "]{"
+            out << Common::MediaticData::MediaticData::single().stringsPool(language)[currentData->front().lemma].toStdString()
+                << "[" << targ << "|" << t << "]{"
     << currentData->begin()->properties << "} ";
-         else
+          else
     //      out << currentData->front().lemma
-    out << token->stringForm() << "[" << targ << "|" << t << "]{"
-        << currentData->begin()->properties << "} ";
-          }
+            out << token->stringForm().toStdString()
+                << "[" << targ << "|" << t << "]{"
+                << currentData->begin()->properties << "} ";
+        }
         else
-            out << token->stringForm() << "[" << targ << "|" << t << "]{NA} ";
+            out << token->stringForm().toStdString()
+                << "[" << targ << "|" << t << "]{NA} ";
       out << std::endl;
     }
 
@@ -407,7 +415,7 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
 {
   const DependencyGraph* depGraph=data.dependencyGraph();
   const LinguisticGraph* linguisticGraph=data.graph();
-  
+
   xmlStream << "<syntactic_relations>" << std::endl;
 
   DependencyGraphEdgeIt it,itEnd;
@@ -416,7 +424,7 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
 
     const DepRelTypeProp relType=get(edge_deprel_type,*depGraph,*it);
 //     xmlStream << LinguisticData::single().languageData(language).getSyntacticRelationName(relType) << " ";
-    
+
     //string relLabel = LinguisticData::single().languageData(language).getSyntacticRelationName(relType);
     string relLabel = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationName(relType);
 
@@ -444,7 +452,7 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
       LERROR << e.what();
       continue;
     }
-    
+
     // output distance between source and target
     Token* srcToken = get(vertex_token,*linguisticGraph,srcVertex);
     Token* tgtToken = get(vertex_token,*linguisticGraph,tgtVertex);
@@ -452,11 +460,11 @@ void SyntacticAnalysisTools::displayRelationsXMLFormat(const SyntacticData& data
     uint64_t tgtPosition=tgtToken->position();
     uint64_t srcLength=srcToken->length();
     uint64_t tgtLength=tgtToken->length();
-    
+
     string scrString=limastring2utf8stdstring(srcToken->stringForm());
     string tgtString=Lima::Common::Misc::limastring2utf8stdstring(tgtToken->stringForm());
     uint64_t pathDistance=0;
-    
+
     if (srcPosition>tgtPosition+tgtLength) {
       // target of relation before source of relation in text
       pathDistance = srcPosition-(tgtPosition+tgtLength);

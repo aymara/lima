@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
 #include "MorphoSyntacticData.h"
 #include "MorphoSyntacticDataUtils.h"
 
@@ -28,7 +24,6 @@
 
 #include <algorithm>
 
-using namespace std;
 using namespace Lima::Common::MediaticData;
 
 namespace Lima
@@ -65,28 +60,27 @@ MorphoSyntacticData::MorphoSyntacticData()
 MorphoSyntacticData::~MorphoSyntacticData()
 {}
 
-bool MorphoSyntacticData::hasUniqueMicro(const Common::PropertyCode::PropertyAccessor& microAccessor,const std::list<LinguisticCode>& microFilter)
+bool MorphoSyntacticData::hasUniqueMicro(
+    const Common::PropertyCode::PropertyAccessor& microAccessor,
+    const std::list<LinguisticCode>& microFilter)
 {
   LinguisticCode micro(0);
-  for (const_iterator it=begin();
-       it!=end();
-       it++)
+  for (auto it = cbegin(); it != cend(); it++)
   {
-    LinguisticCode tmp=microAccessor.readValue(it->properties);
-    if (micro!=static_cast<LinguisticCode>(0))
+    auto tmp = microAccessor.readValue(it->properties);
+    if (micro != static_cast<LinguisticCode>(0))
     {
-      if (micro!=tmp)
+      if (micro != tmp)
       {
         return false;
       }
     }
     else
     {
-      micro=tmp;
+      micro = tmp;
     }
     bool found=false;
-    for (list<LinguisticCode>::const_iterator filterItr=microFilter.begin();
-         filterItr!=microFilter.end();
+    for (auto filterItr = microFilter.cbegin(); filterItr != microFilter.cend();
          filterItr++)
     {
       if (tmp==*filterItr)
@@ -104,44 +98,46 @@ bool MorphoSyntacticData::hasUniqueMicro(const Common::PropertyCode::PropertyAcc
   return micro!=static_cast<LinguisticCode>(0);
 }
 
-uint64_t MorphoSyntacticData::countValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor)
+uint64_t MorphoSyntacticData::countValues(
+      const Common::PropertyCode::PropertyAccessor& propertyAccessor)
 {
-  set<LinguisticCode> values;
-  allValues(propertyAccessor,values);
+  std::set<LinguisticCode> values;
+  allValues(propertyAccessor, values);
   return values.size();
 }
 
-void MorphoSyntacticData::allValues(const Common::PropertyCode::PropertyAccessor& propertyAccessor,std::set<LinguisticCode>& result) const
+void MorphoSyntacticData::allValues(
+    const Common::PropertyCode::PropertyAccessor& propertyAccessor,
+    std::set<LinguisticCode>& result) const
+{
+  for (auto it = cbegin(); it != cend(); it++)
   {
-    for (const_iterator it=begin();
-         it!=end();
-         it++)
+    if (!propertyAccessor.empty(it->properties))
     {
-      if (!propertyAccessor.empty(it->properties))
-      {
-        result.insert(propertyAccessor.readValue(it->properties));
-      }
+      result.insert(propertyAccessor.readValue(it->properties));
     }
   }
+}
 
-void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::PropertyCode::PropertyCodeManager& pcm,const FsaStringsPool& sp) const
+void MorphoSyntacticData::outputXml(
+    std::ostream& xmlStream,
+    const Common::PropertyCode::PropertyCodeManager& pcm,
+    const FsaStringsPool& sp) const
 {
   xmlStream << "    <data>" << std::endl;
 
   if (!empty())
   {
-    // trie pour avoir les donn�s group�s par strings
+    // trie pour avoir les donnees groupees par strings
     MorphoSyntacticData tmp(*this);
     sort(tmp.begin(),tmp.end(),ltString());
     MorphoSyntacticType type(NO_MORPHOSYNTACTICTYPE);
     StringsPoolIndex form(0);
     StringsPoolIndex lemma(0);
     StringsPoolIndex norm(0);
-    string currentType;
-    bool firstEntry=true;
-    for (const_iterator it=tmp.begin();
-         it!=tmp.end();
-         it++)
+    std::string currentType;
+    bool firstEntry = true;
+    for (auto it = tmp.cbegin(); it != tmp.cend(); it++)
     {
       if (it->type != type)
       {
@@ -199,28 +195,37 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
         }
         xmlStream << "      <" << currentType << ">" << std::endl;
       }
-      if ((it->inflectedForm != form) || (it->lemma != lemma) || (it->normalizedForm != norm))
+      if ((it->inflectedForm != form) || (it->lemma != lemma)
+          || (it->normalizedForm != norm))
       {
         if (!firstEntry)
         {
           xmlStream << "        </form>" << std::endl;
         }
-        form=it->inflectedForm;
-        lemma=it->lemma;
-        norm=it->normalizedForm;
-        xmlStream << "        <form infl=\"" << Common::Misc::transcodeToXmlEntities(sp[form]) << "\" ";
-        xmlStream << "lemma=\"" << Common::Misc::transcodeToXmlEntities(sp[lemma]) << "\" ";
-        xmlStream << "norm=\"" << Common::Misc::transcodeToXmlEntities(sp[norm]) << "\">" << std::endl;
+        form = it->inflectedForm;
+        lemma = it->lemma;
+        norm = it->normalizedForm;
+        xmlStream << "        <form infl=\""
+                  << Common::Misc::transcodeToXmlEntities(sp[form]).toStdString()
+                  << "\" ";
+        xmlStream << "lemma=\""
+                  << Common::Misc::transcodeToXmlEntities(sp[lemma]).toStdString()
+                  << "\" ";
+        xmlStream << "norm=\""
+                  << Common::Misc::transcodeToXmlEntities(sp[norm]).toStdString()
+                  << "\">" << std::endl;
       }
-      const std::map<std::string,Common::PropertyCode::PropertyManager>& managers=pcm.getPropertyManagers();
+      const auto& managers = pcm.getPropertyManagers();
       xmlStream << "          <property>" << std::endl;
-      for (std::map<std::string,Common::PropertyCode::PropertyManager>::const_iterator propItr=managers.begin();
-           propItr!=managers.end();
+      for (auto propItr = managers.cbegin(); propItr != managers.cend();
            propItr++)
       {
         if (!propItr->second.getPropertyAccessor().empty(it->properties))
         {
-          xmlStream << "            <p prop=\"" << propItr->first << "\" val=\"" << propItr->second.getPropertySymbolicValue(it->properties) << "\"/>" << std::endl;
+          xmlStream << "            <p prop=\"" << propItr->first
+                    << "\" val=\""
+                    << propItr->second.getPropertySymbolicValue(it->properties)
+                    << "\"/>" << std::endl;
         }
       }
       xmlStream << "          </property>" << std::endl;
@@ -234,10 +239,8 @@ void MorphoSyntacticData::outputXml(std::ostream& xmlStream,const Common::Proper
 
 std::set<StringsPoolIndex> MorphoSyntacticData::allInflectedForms() const
   {
-    set<StringsPoolIndex> forms;
-    for (const_iterator it=begin();
-         it!=end();
-         it++)
+    std::set<StringsPoolIndex> forms;
+    for (auto it = cbegin(); it != cend(); it++)
     {
       forms.insert(it->inflectedForm);
     }
@@ -246,10 +249,8 @@ std::set<StringsPoolIndex> MorphoSyntacticData::allInflectedForms() const
 
 std::set<StringsPoolIndex> MorphoSyntacticData::allLemma() const
   {
-    set<StringsPoolIndex> lemma;
-    for (const_iterator it=begin();
-         it!=end();
-         it++)
+    std::set<StringsPoolIndex> lemma;
+    for (auto it = cbegin(); it != cend(); it++)
     {
       lemma.insert(it->lemma);
     }
@@ -258,21 +259,18 @@ std::set<StringsPoolIndex> MorphoSyntacticData::allLemma() const
 
 std::set<StringsPoolIndex> MorphoSyntacticData::allNormalizedForms() const
   {
-    set<StringsPoolIndex> norms;
-    for (const_iterator it=begin();
-         it!=end();
-         it++)
+    std::set<StringsPoolIndex> norms;
+    for (auto it = cbegin(); it != cend(); it++)
     {
       norms.insert(it->normalizedForm);
     }
     return norms;
   }
 
-LinguisticCode MorphoSyntacticData::firstValue(const Common::PropertyCode::PropertyAccessor& propertyAccessor) const
+LinguisticCode MorphoSyntacticData::firstValue(
+    const Common::PropertyCode::PropertyAccessor& propertyAccessor) const
 {
-  for (const_iterator it=begin();
-       it!=end();
-       it++)
+  for (auto it = cbegin(); it != cend(); it++)
   {
     if (!propertyAccessor.empty(it->properties))
     {

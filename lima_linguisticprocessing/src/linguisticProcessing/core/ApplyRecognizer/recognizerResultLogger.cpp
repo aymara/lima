@@ -23,7 +23,7 @@
  * @date       Tue Oct 25 2005
  * @version    $Id$
  * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "recognizerResultLogger.h"
@@ -42,7 +42,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace ApplyRecognizer {
 
-SimpleFactory<MediaProcessUnit,RecognizerResultLogger> 
+SimpleFactory<MediaProcessUnit,RecognizerResultLogger>
 RecognizerResultLogger(RECOGNIZERRESULTLOGGER_CLASSID);
 
 RecognizerResultLogger::RecognizerResultLogger():
@@ -69,7 +69,7 @@ void RecognizerResultLogger::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     APPRLOGINIT;
-    LERROR << "missing \"data\" parameter in configuration of RecognizerResultLogger" 
+    LERROR << "missing \"data\" parameter in configuration of RecognizerResultLogger"
            << " for language " << (int) m_language;
     throw InvalidConfiguration();
   }
@@ -87,7 +87,7 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
-  
+
   std::ofstream fout;
   if (!openLogFile(fout,metadata->getMetaData("FileName"))) {
       APPRLOGINIT;
@@ -131,31 +131,29 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
     it_end=recoData->end();
   fout << "<entities offsetNode=\"" << offsetIndexingNode << "\">" << endl;
   for (; it!=it_end; it++) {
-    vector<Automaton::RecognizerMatch>::const_iterator
-      m=(*it).begin(),
-      m_end=(*it).end();
-    for (; m!=m_end; m++) {
+    auto m = (*it).cbegin(), m_end = (*it).cend();
+    for (; m != m_end; m++)
+    {
       //LimaString normalizedForm=(*m).getNormalizedForm().normStr();
-      fout << "<entity>" 
-           << "<pos>" << offset+(*m).positionBegin() << "</pos>" 
-           << "<len>" << (*m).length() << "</len>" 
+      fout << "<entity>"
+           << "<pos>" << offset+(*m).positionBegin() << "</pos>"
+           << "<len>" << (*m).length() << "</len>"
         //<< "<typeNum>" << (*m).getType() << "</typeNum>"
-           << "<type>" 
+           << "<type>"
            << Common::MediaticData::MediaticData::single().
-              getEntityName((*m).getType())
+              getEntityName((*m).getType()).toStdString()
            << "</type>"
-           << "<string>"<< (*m).getString() << "</string>" 
+           << "<string>"<< (*m).getString().toStdString() << "</string>"
            << "<norm>";
-      const Automaton::EntityFeatures& features=m->features();
-      for (Automaton::EntityFeatures::const_iterator 
-             featureItr=features.begin(),features_end=features.end();
-           featureItr!=features_end; featureItr++)
+      const auto& features = m->features();
+      for (auto featureItr = features.cbegin(), features_end = features.cend();
+           featureItr != features_end; featureItr++)
       {
         fout << "<" << featureItr->getName() << ">"
              << featureItr->getValueString()
              << "</" << featureItr->getName() << ">";
       }
-      
+
       fout << "</norm>"
            << "</entity>"
            << endl;

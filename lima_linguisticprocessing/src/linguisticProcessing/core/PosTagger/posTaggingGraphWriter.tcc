@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-template <typename Graph, typename Vertex> class PosTaggingVertexWriter 
+template <typename Graph, typename Vertex> class PosTaggingVertexWriter
 {
 public:
   PosTaggingVertexWriter(const Graph* graph,
@@ -47,17 +47,19 @@ public:
      {
       out << "no FullToken";
      }
-     else 
+     else
      {
-       LinguisticAnalysisStructure::Token* token=get(vertex_token,*m_graph,v);
+       auto token = get(vertex_token,*m_graph, v);
        if (m_display.size()==0)
        {
-         out << token->stringForm() << " [" << microManager.getPropertyAccessor().readValue(data->begin()->properties) << "] ";
-       } 
+         out << token->stringForm().toStdString()
+              << " ["
+              << microManager.getPropertyAccessor().readValue(data->begin()->properties)
+              << "] ";
+       }
        else
        {
-          for (std::deque<std::string>::const_iterator it=m_display.begin();
-              it!=m_display.end(); it++)
+          for (auto it = m_display.cbegin(); it != m_display.cend(); it++)
           {
             if (it!=m_display.begin())
             {
@@ -70,122 +72,112 @@ public:
             else if (*it == "length" )
             {
               out << token->length();
-            } 
+            }
             else if (*it == "tstatus")
             {
               out << Common::Misc::limastring2utf8stdstring(token->status().defaultKey());
-            } 
-            else if (*it == "text") 
+            }
+            else if (*it == "text")
             {
-              Lima::LimaString ls=token->stringForm();
+              auto ls = token->stringForm();
               int index=ls.indexOf('"');
-              if (index!=-1) 
+              if (index!=-1)
               {
-                ls[index]=Lima::LimaChar('\'');
+                ls[index] = QChar('\'');
               }
-              out << ls;
-            } 
+              out << ls.toStdString();
+            }
             else if (*it == "inflectedform" )
             {
-              std::set<StringsPoolIndex> forms=data->allInflectedForms();
-              for (std::set<StringsPoolIndex>::const_iterator formItr=forms.begin();
-                   formItr!=forms.end();
+              const auto& forms = data->allInflectedForms();
+              for (auto formItr = forms.cbegin(); formItr != forms.cend();
                    formItr++)
               {
-                if (formItr!=forms.begin()) 
+                if (formItr != forms.begin())
                 {
                   out << "#";
                 }
-                Lima::LimaString ls=stringspool[*formItr];
-                int index=ls.indexOf('"');
-                if (index!=-1) 
+                auto ls = stringspool[*formItr];
+                int index = ls.indexOf('"');
+                if (index!=-1)
                 {
-                  ls[index]=Lima::LimaChar('\'');
+                  ls[index] = QChar('\'');
                 }
-                out << ls;
+                out << ls.toStdString();
               }
-            } 
+            }
             else if (*it == "lemme" )
             {
-              std::set<StringsPoolIndex> forms=data->allLemma();
-              for (std::set<StringsPoolIndex>::const_iterator formItr=forms.begin();
-                   formItr!=forms.end();
+              const auto& forms = data->allLemma();
+              for (auto formItr = forms.cbegin(); formItr != forms.cend();
                    formItr++)
               {
-                if (formItr!=forms.begin()) 
+                if (formItr!=forms.begin())
                 {
                   out << "#";
                 }
-                Lima::LimaString ls=stringspool[*formItr];
-                int index=ls.indexOf('"');
-                if (index!=-1) 
+                auto ls = stringspool[*formItr];
+                auto index = ls.indexOf('"');
+                if (index!=-1)
                 {
-                  ls[index]=Lima::LimaChar('\'');
+                  ls[index] = QChar('\'');
                 }
-                out << ls;
+                out << ls.toStdString();
               }
-            } 
+            }
             else if (*it == "symbolicmicrocategory" )
             {
               std::set<LinguisticCode> micros;
-              data->allValues(microManager.getPropertyAccessor(),micros);
-              for (std::set<LinguisticCode>::const_iterator it=micros.begin();
-                   it!=micros.end();
-                   it++)
+              data->allValues(microManager.getPropertyAccessor(), micros);
+              for (auto it = micros.cbegin(); it != micros.cend(); it++)
               {
-                if (it!=micros.begin()) 
+                if (it != micros.begin())
                 {
                   out << "#";
                 }
                 out << microManager.getPropertySymbolicValue(*it);
              }
-            } 
+            }
             else if (*it == "numericmicrocategory" )
             {
               std::set<LinguisticCode> micros;
-              data->allValues(microManager.getPropertyAccessor(),micros);
-              for (std::set<LinguisticCode>::const_iterator it=micros.begin();
-                   it!=micros.end();
-                   it++)
+              data->allValues(microManager.getPropertyAccessor(), micros);
+              for (auto it = micros.cbegin(); it != micros.cend(); it++)
               {
-                if (it!=micros.begin()) 
+                if (it!=micros.begin())
                 {
                   out << "#";
                 }
                 out << *it;
               }
-            } 
+            }
             else if (*it == "symbolicmacrocategory" )
             {
               std::set<LinguisticCode> macros;
-              data->allValues(macroManager.getPropertyAccessor(),macros);
-              for (std::set<LinguisticCode>::const_iterator it=macros.begin();
-                   it!=macros.end();
-                   it++)
+              data->allValues(macroManager.getPropertyAccessor(), macros);
+              for (auto it = macros.cbegin(); it != macros.cend(); it++)
               {
                 if (it!=macros.begin()) out << "#";
                 out << macroManager.getPropertySymbolicValue(*it);
               }
-            } 
+            }
             else if (*it == "numericmacrocategory" )
             {
               std::set<LinguisticCode> macros;
-              data->allValues(macroManager.getPropertyAccessor(),macros);
-              for (std::set<LinguisticCode>::const_iterator it=macros.begin();
-                   it!=macros.end();
-                   it++)
+              data->allValues(macroManager.getPropertyAccessor(), macros);
+              for (auto it = macros.cbegin(); it != macros.cend(); it++)
               {
                 if (it!=macros.begin()) out << "#";
                 out << *it;
               }
-            } 
+            }
             else if (*it == "genders" )
             {
-              const Common::PropertyCode::PropertyManager& genderManager = m_propertyCodeManager->getPropertyManager("GENDER");
+              const auto& genderManager = m_propertyCodeManager->getPropertyManager("GENDER");
               std::set< LinguisticCode > genders;
-              data->allValues(genderManager.getPropertyAccessor(),genders);
-              std::set< LinguisticCode >::const_iterator itgenders, itgenders_end;
-              itgenders = genders.begin(); itgenders_end = genders.end();
+              data->allValues(genderManager.getPropertyAccessor(), genders);
+              auto itgenders = genders.cbegin();
+              auto itgenders_end = genders.cend();
               if ( (itgenders != itgenders_end) && (*itgenders != NONE_1) )
               {
                 out << genderManager.getPropertySymbolicValue(*itgenders);
@@ -198,14 +190,14 @@ public:
                   out << "," << genderManager.getPropertySymbolicValue(*itgenders);
                 }
               }
-            } 
+            }
             else if (*it == "numbers" )
             {
-              const Common::PropertyCode::PropertyManager& numberManager = m_propertyCodeManager->getPropertyManager("NUMBER");
+              const auto& numberManager = m_propertyCodeManager->getPropertyManager("NUMBER");
               std::set< LinguisticCode > numbers;
-              data->allValues(numberManager.getPropertyAccessor(),numbers);
-              std::set< LinguisticCode >::const_iterator itnumbers, itnumbers_end;
-              itnumbers = numbers.begin(); itnumbers_end = numbers.end();
+              data->allValues(numberManager.getPropertyAccessor(), numbers);
+              auto itnumbers = numbers.cbegin();
+              auto itnumbers_end = numbers.cend();
               if ( (itnumbers != itnumbers_end) && (*itnumbers != NONE_1) )
               {
                 out << numberManager.getPropertySymbolicValue(*itnumbers);
@@ -214,14 +206,14 @@ public:
               for (; itnumbers != itnumbers_end; itnumbers++)
                 if (*itnumbers != NONE_1)
                   out << "," << numberManager.getPropertySymbolicValue(*itnumbers);
-            } 
+            }
             else if (*it == "syntax" )
             {
-              const Common::PropertyCode::PropertyManager& syntaxManager = m_propertyCodeManager->getPropertyManager("SYNTAX");
+              const auto& syntaxManager = m_propertyCodeManager->getPropertyManager("SYNTAX");
               std::set< LinguisticCode > syntax;
-              data->allValues(syntaxManager.getPropertyAccessor(),syntax);
-              std::set< LinguisticCode >::const_iterator itn, itn_end;
-              itn= syntax.begin(); itn_end = syntax.end();
+              data->allValues(syntaxManager.getPropertyAccessor(), syntax);
+              auto itn = syntax.cbegin();
+              auto itn_end = syntax.cend();
               if ( (itn!= itn_end) && (*itn != NONE_1) )
               {
                 out << syntaxManager.getPropertySymbolicValue(*itn);
@@ -248,93 +240,100 @@ public:
   std::deque<std::string> m_display;
 };
 
-template <typename Graph, typename Edge> class PosTaggingEdgeWriter {
-  public:
-    PosTaggingEdgeWriter(
+template <typename Graph, typename Edge> class PosTaggingEdgeWriter
+{
+public:
+  PosTaggingEdgeWriter(
     MediaId language,
-  const Graph* graph,
-  const Lima::LinguisticProcessing::PosTagger::TrigramMatrix* trigramMatrix,
-  const Lima::LinguisticProcessing::PosTagger::BigramMatrix* bigramMatrix) :
-  m_graph(graph),
-  m_trigramMatrix(trigramMatrix),
-  m_bigramMatrix(bigramMatrix) {
-      m_propertyCodeManager=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager());
+    const Graph* graph,
+    const Lima::LinguisticProcessing::PosTagger::TrigramMatrix* trigramMatrix,
+    const Lima::LinguisticProcessing::PosTagger::BigramMatrix* bigramMatrix) :
+    m_graph(graph),
+    m_trigramMatrix(trigramMatrix),
+    m_bigramMatrix(bigramMatrix)
+  {
+    m_propertyCodeManager=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager());
   }
 
-    void operator()(std::ostream& out, const Edge& e) const {
+  void operator()(std::ostream& out, const Edge& e) const
+  {
+    const auto& microManager = m_propertyCodeManager->getPropertyManager("MICRO");
 
-  const Common::PropertyCode::PropertyManager& microManager = m_propertyCodeManager->getPropertyManager("MICRO");
+    bool hasNonValidTrigram = false;
+    bool hasNonValidBigram = false;
 
+    std::vector<std::vector<uint64_t> > gramNotFound;
+    std::vector<uint64_t> gram;
 
-  bool hasNonValidTrigram=false;
-  bool hasNonValidBigram=false;
-
-  std::vector<std::vector<uint64_t> > gramNotFound;
-  std::vector<uint64_t> gram;
-
-  LinguisticCode cat1(0),cat2(0),cat3(0);
-  LinguisticAnalysisStructure::MorphoSyntacticData* d3=get(vertex_data,*m_graph,target(e,*m_graph));
-  if (d3!=0 && !d3->empty()) {
-    cat3=microManager.getPropertyAccessor().readValue(d3->begin()->properties);
-  }
-  LinguisticAnalysisStructure::MorphoSyntacticData* d2=get(vertex_data,*m_graph,source(e,*m_graph));
-  if (d2!=0 && !d2->empty()) {
-    cat2=microManager.getPropertyAccessor().readValue(d2->begin()->properties);
-  }
-  gram.push_back(cat2);
-  gram.push_back(cat3);
-
-  LinguisticGraphInEdgeIt inItr,inItrEnd;
-  for(boost::tie(inItr,inItrEnd)=in_edges(source(e,*m_graph),*m_graph);
-      inItr!=inItrEnd;
-      inItr++)
-      {
-    LinguisticAnalysisStructure::MorphoSyntacticData* d1=get(vertex_data,*m_graph,source(*inItr,*m_graph));
-    if (d1!=0 && !d1->empty()) {
-      cat1=microManager.getPropertyAccessor().readValue(d1->begin()->properties);
-    }
-    if (!m_trigramMatrix->exists(cat1,cat2,cat3))
+    LinguisticCode cat1(0), cat2(0), cat3(0);
+    auto d3 = get(vertex_data,*m_graph,target(e,*m_graph));
+    if (d3 != nullptr && !d3->empty())
     {
-        hasNonValidTrigram=true;
+      cat3 = microManager.getPropertyAccessor().readValue(d3->begin()->properties);
+    }
+    auto d2 = get(vertex_data,*m_graph,source(e,*m_graph));
+    if (d2 !=0 && !d2->empty())
+    {
+      cat2 = microManager.getPropertyAccessor().readValue(d2->begin()->properties);
+    }
+    gram.push_back(cat2);
+    gram.push_back(cat3);
+
+    LinguisticGraphInEdgeIt inItr, inItrEnd;
+    for(boost::tie(inItr,inItrEnd) = in_edges(source(e,*m_graph),*m_graph);
+        inItr!=inItrEnd;
+        inItr++)
+    {
+      auto d1 = get(vertex_data,*m_graph,source(*inItr,*m_graph));
+      if (d1 != 0 && !d1->empty())
+      {
+        cat1 = microManager.getPropertyAccessor().readValue(d1->begin()->properties);
+      }
+      if (!m_trigramMatrix->exists(cat1, cat2, cat3))
+      {
+        hasNonValidTrigram = true;
         gramNotFound.push_back(gram);
-        gramNotFound.back().insert(gramNotFound.back().begin(),cat1);
+        gramNotFound.back().insert(gramNotFound.back().begin(), cat1);
+      }
+
+    }
+    if (hasNonValidTrigram)
+    {
+      // check if bigram is valid
+      if (!m_bigramMatrix->exists(cat2, cat3))
+      {
+        gramNotFound.push_back(gram);
+        hasNonValidBigram = true;
+      }
     }
 
-      }
-  if (hasNonValidTrigram) {
-      // check if bigram is valid
-      if (!m_bigramMatrix->exists(cat2,cat3))
-      {
-    gramNotFound.push_back(gram);
-    hasNonValidBigram=true;
-      }
-  }
-
-  out << "[label=\"";
-  for (std::vector<std::vector<uint64_t> >::iterator it=gramNotFound.begin();
-       it!=gramNotFound.end();
-       it++)
-       {
-     copy(it->begin(),it->end(),std::ostream_iterator<uint64_t>(out,","));
-     out << "\\l";
-       }
-  out << "\",style=";
-  if (hasNonValidBigram)
-  {
+    out << "[label=\"";
+    for (auto it = gramNotFound.begin(); it != gramNotFound.end(); it++)
+    {
+      copy(it->begin(), it->end(),
+           std::ostream_iterator<uint64_t>(out,","));
+      out << "\\l";
+    }
+    out << "\",style=";
+    if (hasNonValidBigram)
+    {
       out << "dotted";
-  } else if (hasNonValidTrigram)
-  {
+    }
+    else if (hasNonValidTrigram)
+    {
       out << "dashed";
-  } else {
+    }
+    else
+    {
       out << "solid";
-  }
-      out << ",fontname=\"Monospace\",fontsize=\"9\"]";
+    }
+    out << ",fontname=\"Monospace\",fontsize=\"9\"]";
   }
 
 
   private:
     const Graph* m_graph;
-    const Lima::LinguisticProcessing::PosTagger::TrigramMatrix*        m_trigramMatrix;
-    const Lima::LinguisticProcessing::PosTagger::BigramMatrix*         m_bigramMatrix;
+    const Lima::LinguisticProcessing::PosTagger::TrigramMatrix* m_trigramMatrix;
+    const Lima::LinguisticProcessing::PosTagger::BigramMatrix* m_bigramMatrix;
     const Common::PropertyCode::PropertyCodeManager* m_propertyCodeManager;
  };

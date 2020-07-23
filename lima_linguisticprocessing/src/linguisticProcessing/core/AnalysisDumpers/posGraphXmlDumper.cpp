@@ -511,11 +511,13 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
 
             QVector<LimaString> compounds;
             naturalCompoundTokenString(boost::dynamic_pointer_cast< Common::BagOfWords::BoWTerm >(compound).get(), compounds);
-            Q_FOREACH(const LimaString& compoundString, compounds)
+            for(const auto& compoundString : compounds)
             {
 //               qDebug() << "naturalCompoundTokenString :" << compoundString;
               xmlStream << "  <vertex id=\"_compound\">" << std::endl;
-              xmlStream << "    <string>" << Common::Misc::transcodeToXmlEntities(compoundString) << "</string>" << std::endl;
+              xmlStream << "    <string>"
+                        << Common::Misc::transcodeToXmlEntities(compoundString).toStdString()
+                        << "</string>" << std::endl;
               xmlStream << "    <position>" << compound->getPosition() << "</position>" << std::endl;
               xmlStream << "    <length>" << compound->getLength() << "</length>" << std::endl;
               MorphoSyntacticData* data = get(vertex_data, lposgraph, v);
@@ -531,17 +533,27 @@ void posGraphXmlDumper::outputVertex(const LinguisticGraphVertex v,
                 LimaString form=compoundString;
                 LimaString lemma=compoundString;
                 LimaString norm=compoundString;
-                xmlStream << "      <form infl=\"" << Common::Misc::transcodeToXmlEntities(form) << "\" ";
-                xmlStream << "lemma=\"" << Common::Misc::transcodeToXmlEntities(lemma) << "\" ";
-                xmlStream << "norm=\"" << Common::Misc::transcodeToXmlEntities(norm) << "\">" << std::endl;
+                xmlStream << "      <form infl=\""
+                          << Common::Misc::transcodeToXmlEntities(form).toStdString()
+                          << "\" ";
+                xmlStream << "lemma=\""
+                          << Common::Misc::transcodeToXmlEntities(lemma).toStdString()
+                          << "\" ";
+                xmlStream << "norm=\""
+                          << Common::Misc::transcodeToXmlEntities(norm).toStdString()
+                          << "\">" << std::endl;
               }
-              const std::map<std::string,Common::PropertyCode::PropertyManager>& managers=m_propertyCodeManager->getPropertyManagers();
+              const auto& managers = m_propertyCodeManager->getPropertyManagers();
               xmlStream << "        <property>" << std::endl;
-              for (std::map<std::string,Common::PropertyCode::PropertyManager>::const_iterator propItr=managers.begin(); propItr!=managers.end(); propItr++)
+              for (auto propItr = managers.cbegin(); propItr != managers.cend();
+                   propItr++)
               {
                 if (!propItr->second.getPropertyAccessor().empty(data->begin()->properties))
                 {
-                  xmlStream << "          <p prop=\"" << propItr->first << "\" val=\"" << propItr->second.getPropertySymbolicValue(data->begin()->properties) << "\"/>" << std::endl;
+                  xmlStream << "          <p prop=\"" << propItr->first
+                            << "\" val=\""
+                            << propItr->second.getPropertySymbolicValue(data->begin()->properties)
+                            << "\"/>" << std::endl;
                 }
               }
               xmlStream << "        </property>" << std::endl;

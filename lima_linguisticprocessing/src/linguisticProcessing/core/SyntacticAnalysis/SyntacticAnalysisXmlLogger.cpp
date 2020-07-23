@@ -146,7 +146,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
   }
 
   outputStream << "</syntactic_analysis_dump>" << std::endl;
-  
+
   TimeUtils::logElapsedTime("SyntacticAnalysisXmlLogger");
   return SUCCESS_ID;
 }
@@ -203,12 +203,11 @@ void SyntacticAnalysisXmlLogger::dumpLimaData(std::ostream& os,
 //***********************************************************************
 
 
-LimaString SyntacticAnalysisXmlLogger::getPosition(const uint64_t position,
-                                     const uint64_t offsetBegin)
+LimaString SyntacticAnalysisXmlLogger::getPosition(
+    const uint64_t position,
+    const uint64_t offsetBegin)
 {
-  std::ostringstream pos;
-  pos << (offsetBegin+position);
-  return Common::Misc::utf8stdstring2limastring(pos.str());
+  return QString::number(offsetBegin+position);
 }
 
 void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
@@ -225,22 +224,24 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
         xmlStream << "<vertex id=\"" << v << "\" />" << std::endl;
         return;
     }
-    Token* token = get(vertex_token, graph, v);
+    auto token = get(vertex_token, graph, v);
 
-    uint64_t tokenId = (*(tokens.find(token))).second;
+    auto tokenId = (*(tokens.find(token))).second;
 //    bool alreadyDumped = alreadyDumpedTokens[tokenId];
 
-    xmlStream << "<vertex id=\"" << v << "\" form=\"" << limastring2utf8stdstring(token->stringForm()) << "\" pos=\"" << getPosition(token->position(),offsetBegin) << "\" ";
-    const VertexChainIdProp& chains = get(vertex_chain_id, graph,v);
+    xmlStream << "<vertex id=\"" << v << "\" form=\""
+              << token->stringForm().toStdString() << "\" pos=\""
+              << getPosition(token->position(), offsetBegin).toStdString()
+              << "\" ";
+    const auto& chains = get(vertex_chain_id, graph,v);
     xmlStream << " >" << std::endl;
     if (chains.size() > 0)
     {
         xmlStream << "<chains>" << std::endl;
-        VertexChainIdProp::const_iterator itChains, itChains_end;
-        itChains = chains.begin(); itChains_end = chains.end();
+        auto itChains = chains.cbegin(); auto itChains_end = chains.cend();
         for (; itChains != itChains_end; itChains++)
         {
-          const ChainIdStruct& ids = (*itChains);
+          const auto& ids = (*itChains);
           xmlStream << "<chain type=\"";
           if (ids.chainType() == Common::MediaticData::NO_CHAIN_TYPE)
               xmlStream << "0";
@@ -253,8 +254,8 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
         xmlStream << "</chains>" << std::endl;
     }
 
-    const DependencyGraph* depGraph = syntacticData->dependencyGraph();
-    DependencyGraphVertex depV = syntacticData->depVertexForTokenVertex(v);
+    const auto depGraph = syntacticData->dependencyGraph();
+    auto depV = syntacticData->depVertexForTokenVertex(v);
     if (out_degree(depV, *depGraph) > 0)
     {
 
@@ -263,13 +264,15 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
         boost::tie(depIt, depIt_end) = out_edges(depV, *depGraph);
         for (; depIt != depIt_end; depIt++)
         {
-            DependencyGraphVertex depTargV = target(*depIt, *depGraph);
-            LinguisticGraphVertex targV = syntacticData-> tokenVertexForDepVertex(depTargV);
+            auto depTargV = target(*depIt, *depGraph);
+            auto targV = syntacticData-> tokenVertexForDepVertex(depTargV);
 //             CEdgeDepChainIdPropertyMap chainsMap = get(edge_depchain_id, *depGraph);
             CEdgeDepRelTypePropertyMap relTypeMap = get(edge_deprel_type, *depGraph);
             xmlStream << "<dep v=\"" << targV;
 //             xmlStream << "\" c=\"" << chainsMap[*depIt];
-            std::string relName=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relTypeMap[*depIt]);
+            auto relName = static_cast<const Common::MediaticData::LanguageData&>(
+              Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(
+                relTypeMap[*depIt]);
             if (relName.empty())
             {
               relName="UNKNOWN";
@@ -279,10 +282,10 @@ void SyntacticAnalysisXmlLogger::outputVertex(const LinguisticGraphVertex v,
         xmlStream << "</dependents>" << std::endl;
     }
 
-    const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
+    const auto& sp = Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
-    MorphoSyntacticData* word = get(vertex_data, graph, v);
-    word->outputXml(xmlStream,*m_propertyCodeManager,sp);
+    auto word = get(vertex_data, graph, v);
+    word->outputXml(xmlStream, *m_propertyCodeManager, sp);
     xmlStream << "<ref>" << tokenId << "</ref>" << std::endl;
     alreadyDumpedTokens[tokenId] = true;
     xmlStream << "</vertex>" << std::endl;

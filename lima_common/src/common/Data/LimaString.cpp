@@ -19,7 +19,7 @@
 /**
   * @file               LimaString.cpp
   * @date               Created on  : Thu Oct 9, 2003
-  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *                     Copyright (c) 2003-2012 by CEA LIST
   * @version            $Id$
@@ -35,7 +35,7 @@ namespace Lima {
     os << s.toUtf8().data();
     return os;
   }
-  
-  
-  
+
+
+
 } // closing namespace Lima

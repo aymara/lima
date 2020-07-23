@@ -239,7 +239,7 @@ void CompoundsXmlLogger::dumpLimaData(
         {
           AnnotationGraphVertex agv  = *cpdsHeadsIt;
           std::vector<std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< BoWToken > > > bowTokens =
-            m_bowGenerator->buildTermFor(agv, agv, lanagraph, lposgraph, offsetBegin, 
+            m_bowGenerator->buildTermFor(agv, agv, lanagraph, lposgraph, offsetBegin,
                                          syntacticData, annotationData, visited);
           for (auto bowItr=bowTokens.begin();
                bowItr!=bowTokens.end();
@@ -283,19 +283,19 @@ void CompoundsXmlLogger::outputCompound(
 {
   COMPOUNDSLOGINIT;
   LDEBUG << "Outputing compound: " << compound;
-  uint64_t pos = getPosition(compound->getPosition(),offsetBegin);
-  LimaString form = compound->getLemma();
-  std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
-  os << "<compound pos=\"" << pos << "\" form=\"" << form
-  << "\" cat=\"" << cat << "\" >" << std::endl;
-  const BoWComplexToken* term = dynamic_cast<const BoWComplexToken*>(compound);
-  if (term != 0)
+  auto pos = getPosition(compound->getPosition(),offsetBegin);
+  auto form = compound->getLemma();
+  auto cat = static_cast<const Common::MediaticData::LanguageData&>(
+    Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(compound->getCategory());
+  os << "<compound pos=\"" << pos << "\" form=\"" << form.toStdString()
+      << "\" cat=\"" << cat << "\" >" << std::endl;
+  auto term = dynamic_cast<const BoWComplexToken*>(compound);
+  if (term != nullptr)
   {
-    uint64_t headId = term->getHead();
-    std::deque< BoWComplexToken::Part >::const_iterator partIt, partIt_end;
-    partIt = term->getParts().begin();
-    partIt_end = term->getParts().end();
-    for (uint64_t partId=0; partIt != partIt_end; partIt++,partId++)
+    auto headId = term->getHead();
+    auto partIt = term->getParts().cbegin();
+    auto partIt_end = term->getParts().cend();
+    for (auto partId = 0; partIt != partIt_end; partIt++, partId++)
     {
       boost::shared_ptr< BoWToken > partTok = (*partIt).get<1>();
       //        bool head = (*partIt).second;
@@ -310,8 +310,9 @@ void CompoundsXmlLogger::outputCompound(
         uint64_t partPos = getPosition(partTok->getPosition(),offsetBegin);
         LimaString partForm = partTok->getLemma();
         std::string partCat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(partTok->getCategory()) ;
-        os << "<word pos=\"" << partPos << "\" form=\"" << partForm
-        << "\" cat=\"" << partCat << "\" />" << std::endl;
+        os << "<word pos=\"" << partPos << "\" form=\""
+            << partForm.toStdString()
+            << "\" cat=\"" << partCat << "\" />" << std::endl;
       }
       os << "</part>" << std::endl;
     }
