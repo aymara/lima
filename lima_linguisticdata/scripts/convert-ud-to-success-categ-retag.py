@@ -37,12 +37,19 @@ def main(argv):
                         nargs='?',
                         default='Mood,PronType,Tense,VerbForm',
                         help='comma separated list of feature names')
+    parser.add_argument('--output',
+                        type=str,
+                        default='-',
+                        help='the name of output file. - for stdout')
     parser.add_argument('corpus',
                         type=argparse.FileType('r', encoding='utf-8'),
                         nargs='+',
                         help='input file: UD corpus file')
     param=parser.parse_args()
     print('param.features: {}'.format(param.features), file=sys.stderr)
+    output_file = None
+    if param.output is not None and param.output != '-':
+        output_file = open(param.output, 'w', encoding='utf-8')
     #features_to_keep = param.features.split(',') if param.features is not None else []
     for corpus in param.corpus:
         # tokens accumulates the adjacent tokens that must be grouped in the
@@ -88,6 +95,10 @@ def main(argv):
                     features_kept_string = ''
                     if features_kept:
                         features_kept_string = '-{}'.format('|'.join(features_kept))
-                    print('{}\t{}{}'.format(token, udtag, features_kept_string))
+                    output_line = u'{}\t{}{}'.format(token, udtag, features_kept_string)
+                    if output_file is None:
+                        print(output_line)
+                    else:
+                        output_file.write(output_line + '\n')
 
 main(sys.argv[1:])
