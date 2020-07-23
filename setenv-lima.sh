@@ -19,7 +19,7 @@ OPTIND=1    # also remember to initialize your flags and other variables
 
 usage()
 {
-cat << EOF 
+cat << EOF
 Synopsis: $0 [OPTIONS]
 
 Options default values are in parentheses.
@@ -31,18 +31,24 @@ EOF
 
 mode="debug"
 
-while getopts ":m:" o; do
+while getopts ":m:r:t" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
             if [[ "$mode" != "debug" && "$mode" != "release" ]] ;
             then
-              usage 
+              usage
               return 1 2>/dev/null || exit 1
             fi
             ;;
+        r)
+            suggested_root="${OPTARG}"
+            ;;
+        t)
+            suggested_root=/tmp/${PWD##*/}
+            ;;
         *)
-            usage 
+            usage
             return 1 2>/dev/null || exit 1
             ;;
     esac
@@ -50,16 +56,22 @@ done
 shift $((OPTIND-1))
 
 
-# Replace $PWD below by the path of  where you downloaded LIMA if you wish to 
+# Replace $PWD below by the path of  where you downloaded LIMA if you wish to
 # be able to source this script from elsewhere
-export LIMA_ROOT=$PWD/..
+
+
+if [ ${#suggested_root} -le 0 ] ; then
+  export LIMA_ROOT=$PWD/..
+else
+  export LIMA_ROOT=$suggested_root
+fi
 
 LIMA_SOURCES=$PWD
 pushd $LIMA_SOURCES > /dev/null
 current_branch=`git rev-parse --abbrev-ref HEAD`
 popd > /dev/null
 
-# Path to the nltk data necessary to learn the English part of speech tagging 
+# Path to the nltk data necessary to learn the English part of speech tagging
 # model.
 export NLTK_PTB_DP_FILE=$HOME/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
@@ -78,7 +90,7 @@ install -d $LIMA_DIST
 # runtime
 export LIMA_CONF=$LIMA_DIST/share/config/lima
 
-# Path to where the LIMA runtime linguistic resources (compiled dictionary and 
+# Path to where the LIMA runtime linguistic resources (compiled dictionary and
 # rules, ...) are installed. Can be overriden at runtime
 export LIMA_RESOURCES=$LIMA_DIST/share/apps/lima/resources
 
