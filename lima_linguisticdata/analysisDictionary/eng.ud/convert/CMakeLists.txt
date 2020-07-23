@@ -63,7 +63,7 @@ else()
   add_custom_command(
     OUTPUT dico.xml  freeling-ext-lima.txt default-eng.ud.dat
     COMMAND echo ^<dictionary^> > dico.xml.tmp
-    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py ${dicoFiles} > freeling-ext-lima.txt.tmp
+    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py --features=none --output=freeling-ext-lima.txt.tmp ${dicoFiles}
     COMMAND sort -u -o freeling-ext-lima.txt freeling-ext-lima.txt.tmp
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl freeling-ext-lima.txt dico.xml.tmp
     COMMAND echo ^</dictionary^> >> dico.xml.tmp
@@ -72,7 +72,7 @@ else()
     DEPENDS
       ${dicoFiles}
       ${CMAKE_CURRENT_SOURCE_DIR}/default-eng.txt
-      ${PROJECT_SOURCE_DIR}/scripts/convert-ptb-to-ud.py
+      ${PROJECT_SOURCE_DIR}/scripts/convert-ud-to-dic.py
     COMMENT "produce eng XML dico under Windows"
   )
 endif()
