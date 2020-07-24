@@ -60,8 +60,8 @@ install:
 
 build_script:
   - ps: pushd c:/projects/lima
-  - ps: git submodule init
-  - ps: git submodule update
+  - git submodule init
+  - git submodule update
   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://github.com/aymara/qhttpserver/releases/download/20180703132951-64591f4d/qhttpserver-0.0.20180703132951-64591f4d-win64.exe","c:/projects/lima/qhttpserver.exe")
   - qhttpserver.exe /S /NCRC /D=c:\d
