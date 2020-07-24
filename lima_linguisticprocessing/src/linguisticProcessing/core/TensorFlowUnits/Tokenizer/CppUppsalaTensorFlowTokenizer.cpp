@@ -193,9 +193,8 @@ CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate()
   auto status = m_session->Close();
   if (!status.ok())
   {
-    TOKENIZERLOGINIT;
-    LERROR << "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate: Error closing s"
-           << status.ToString();
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate(): Error closing session:"
+                        << status.ToString(), LimaException());
   }
 }
 

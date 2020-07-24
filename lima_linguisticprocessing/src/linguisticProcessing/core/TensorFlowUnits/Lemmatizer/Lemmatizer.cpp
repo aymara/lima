@@ -99,6 +99,7 @@ public:
     : m_stringsPool(nullptr),
       m_lemmatization_required(false),
       m_feat_separator(LimaString::fromUtf8("|")) { }
+  ~TensorFlowLemmatizerPrivate();
 
   void init(GroupConfigurationStructure&,
             MediaId lang,
@@ -324,6 +325,16 @@ void TensorFlowLemmatizer::init(GroupConfigurationStructure& gcs,
   }
 
   m_d->init(gcs, manager->getInitializationParameters().media, modelPrefix);
+}
+
+TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate()
+{
+  auto status = m_session->Close();
+  if (!status.ok())
+  {
+    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate(): Error closing session:"
+                        << status.ToString(), LimaException());
+  }
 }
 
 void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,

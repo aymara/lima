@@ -102,6 +102,7 @@ class TensorFlowMorphoSyntaxPrivate
 public:
   TensorFlowMorphoSyntaxPrivate()
     : m_stringsPool(nullptr) { }
+  ~TensorFlowMorphoSyntaxPrivate();
 
   void init(GroupConfigurationStructure&,
             MediaId lang,
@@ -863,9 +864,17 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
     i += this_batch_size;
   }
 
-  m_session->Close();
-
   TimeUtils::logElapsedTime("TensorFlowMorphoSyntax::analyze");
+}
+
+TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate()
+{
+  auto status = m_session->Close();
+  if (!status.ok())
+  {
+    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate(): Error closing session:"
+                        << status.ToString(), LimaException());
+  }
 }
 
 void TensorFlowMorphoSyntaxPrivate::fixMissingFeature(const vector<vector<float>>& converted_scores,
