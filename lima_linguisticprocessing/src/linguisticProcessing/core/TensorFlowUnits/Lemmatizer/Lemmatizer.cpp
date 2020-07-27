@@ -98,6 +98,10 @@ public:
   TensorFlowLemmatizerPrivate()
     : m_stringsPool(nullptr),
       m_lemmatization_required(false),
+      m_batch_size(0),
+      m_max_input_len(0),
+      m_ctx_len(0),
+      m_beam_size(0),
       m_feat_separator(LimaString::fromUtf8("|")) { }
   ~TensorFlowLemmatizerPrivate();
 
@@ -329,11 +333,14 @@ void TensorFlowLemmatizer::init(GroupConfigurationStructure& gcs,
 
 TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate()
 {
-  auto status = m_session->Close();
-  if (!status.ok())
+  if (m_session.get() != nullptr)
   {
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate(): Error closing session:"
-                        << status.ToString(), LimaException());
+    auto status = m_session->Close();
+    if (!status.ok())
+    {
+      LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate(): Error closing session:"
+                          << status.ToString(), LimaException());
+    }
   }
 }
 
@@ -369,6 +376,10 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
                                             .arg(lang_str).arg(model_name));
   load_config(config_file_name);
 
+  if (!m_lemmatization_required)
+  {
+    return;
+  }
   auto cache_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowLemmatizer/%1/%2.cache")
                                             .arg(lang_str).arg(model_name));
@@ -671,6 +682,10 @@ LimaStatusCode TensorFlowLemmatizer::process(AnalysisContent& analysis) const
 
 LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
 {
+  if (!m_lemmatization_required)
+  {
+    return SUCCESS_ID;
+  }
   TimeUtils::updateCurrentTime();
 
   LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowLemmatizer");
