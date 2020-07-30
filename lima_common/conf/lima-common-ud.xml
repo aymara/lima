@@ -131,6 +131,7 @@
         <item value="aux:pass"/>
         <item value="case"/>        <!-- UD 2.0: case marking                                 -->
         <item value="case:det"/>
+        <item value="case:pred"/>
         <item value="cc"/>          <!-- UD 2.0: coordinating conjunction                     -->
         <item value="ccomp"/>       <!-- UD 2.0: clausal complement                           -->
         <item value="clf"/>         <!-- UD 2.0: classifier                                   -->
@@ -156,13 +157,17 @@
         <item value="mark"/>        <!-- UD 2.0: marker                                       -->
         <item value="nmod"/>        <!-- UD 2.0: nominal modifier                             -->
         <item value="nmod:poss"/>
+        <item value="nmod:agent"/>
         <item value="nsubj"/>       <!-- UD 2.0: nominal subject                              -->
         <item value="nsubj:pass"/>
         <item value="nummod"/>      <!-- UD 2.0: numeric modifier                             -->
         <item value="nummod:entity"/>
         <item value="nummod:gov"/>
         <item value="obj"/>         <!-- UD 2.0: object                                       -->
+        <item value="obj:caus"/>
+        <item value="obj:appl"/>
         <item value="obl"/>         <!-- UD 2.0: oblique nominal                              -->
+        <item value="obl:appl"/>
         <item value="obl:agent"/>
         <item value="orphan"/>      <!-- UD 2.0: orphan                                       -->
         <item value="parataxis"/>   <!-- UD 2.0: parataxis                                    -->
@@ -171,6 +176,25 @@
         <item value="root"/>        <!-- UD 2.0: root                                         -->
         <item value="vocative"/>    <!-- UD 2.0: vocative                                     -->
         <item value="xcomp"/>       <!-- UD 2.0: open clausal complement                      -->
+        <item value="acl:periph"/>
+        <item value="advcl:cleft"/>
+        <item value="advcl:periph"/>
+        <item value="advmod:periph"/>
+        <item value="compound:prt"/>
+        <item value="compound:redup"/>
+        <item value="compound:svc"/>
+        <item value="conj:dicto"/>
+        <item value="expl:subj"/>
+        <item value="nmod:appos"/>
+        <item value="nummod:det"/>
+        <item value="nummod:mod"/>
+        <item value="obj:lvc"/>
+        <item value="obl:arg"/>
+        <item value="obl:mod"/>
+        <item value="parataxis:conj"/>
+        <item value="parataxis:discourse"/>
+        <item value="parataxis:dislocated"/>
+        <item value="parataxis:parenth"/>
         <!-- Other relations can be added by syntactic model loader at runtime. -->
       </list>
     </group>
