@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,8 @@
  * @file       applyRecognizerActions.cpp
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue Jan 25 2005
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "linguisticProcessing/core/Automaton/constraintFunctionFactory.h"
@@ -70,12 +70,12 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   else {
     lemmaString=recognizedExpression.getString();
   }
-  
+
   StringsPoolIndex lemma=(*m_stringsPool)[lemmaString];
   LinguisticCode idiomProperty=recognizedExpression.getLinguisticProperties();
 //   LOGINIT("LP::MorphologicAnalysis");
 //   LDEBUG << "Idiomatic property=" << idiomProperty;
-  
+
   if (recognizedExpression.getHead() == 0) {
 //     APPRLOGINIT;
 //     LDEBUG << "Expression " << lemmaString << " has no head";
@@ -107,22 +107,22 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
     lingElt.lemma=lemma;
     lingElt.normalizedForm=lemma;
     lingElt.properties=idiomProperty;
-    lingElt.type=IDIOMATIC_EXPRESSION; 
+    lingElt.type=IDIOMATIC_EXPRESSION;
     newData->push_back(lingElt);
     return make_pair(newToken,newData);
   }
 
   Token* headToken=recognizedExpression.getHeadToken();
   MorphoSyntacticData* headData=recognizedExpression.getHeadData();
-  
+
   // copy TStatus of the head
   newToken->setStatus(headToken->status());
 
   std::set<LinguisticCode> compatibleProperties;
   getCompatibleProperties(headData,idiomProperty,
                           compatibleProperties);
-  
-  // ensure that there is always a property, 
+
+  // ensure that there is always a property,
   // if none found, keep base one
   if (compatibleProperties.empty()) {
     APPRLOGINIT;
@@ -134,8 +134,8 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
   lingElt.inflectedForm=newToken->form();
   lingElt.lemma=lemma;
   lingElt.normalizedForm=lemma;
-  lingElt.type=IDIOMATIC_EXPRESSION; 
-  
+  lingElt.type=IDIOMATIC_EXPRESSION;
+
   std::set<LinguisticCode>::const_iterator
     prop=compatibleProperties.begin(),
     prop_end=compatibleProperties.end();
@@ -143,7 +143,7 @@ createAlternativeToken(const RecognizerMatch& recognizedExpression) const
     lingElt.properties=*prop;
     newData->push_back(lingElt);
   }
-  
+
   return make_pair(newToken,newData);
 }
 
@@ -151,7 +151,7 @@ bool CreateAlternative::
 getCompatibleProperties(const MorphoSyntacticData* headData,
                         const LinguisticCode& baseProperty,
                         std::set<LinguisticCode>& newProperties) const {
-  
+
   LinguisticCode newProperty; // completed property
   MorphoSyntacticData::const_iterator
     it=headData->begin(),
@@ -170,14 +170,14 @@ isCompatible(const LinguisticCode& baseProperty,
              LinguisticCode& newProperty) const {
 
   //check compatibility only on macro
-  if (!m_macroAccessor->empty(baseProperty) && 
+  if (!m_macroAccessor->empty(baseProperty) &&
       !m_macroAccessor->equal(property,baseProperty)) {
     return false;
   }
   // if compatible, complete expression property (baseProperty)
   // with head property (property)
   newProperty=baseProperty;
-  const std::map<std::string,Common::PropertyCode::PropertyManager>& 
+  const std::map<std::string,Common::PropertyCode::PropertyManager>&
     managers=m_propertyCodeManager->getPropertyManagers();
   for (map<string,Common::PropertyCode::PropertyManager>::const_iterator propIt=managers.begin();
        propIt!=managers.end();
@@ -205,7 +205,7 @@ addAlternativeVertex(Token* token,
 
 /**
  * create an alternative branch
- * 
+ *
  * @param startVertex where to start on the graph : the start vertex
  * is the first node to be avoided by the alternative : all previous
  * vertices attached to this node are branched to the alternative
@@ -234,7 +234,7 @@ void CreateAlternative::createBeginAlternative(
 
 /**
  * attach the end of an alternative to main path
- * 
+ *
  * @param alternativeLastVertex last vertex of the alternative to re-attach
  * to the path
  * @param endVertex where to attach it on the graph : the endVertex is the
@@ -273,7 +273,7 @@ m_propertyCodeManager(0)
   m_propertyCodeManager=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager());
   m_macroAccessor=&(m_propertyCodeManager->getPropertyAccessor("MACRO"));
   m_stringsPool=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
-  
+
   if (m_propertyCodeManager==0) {
     APPRLOGINIT;
     LERROR << "cannot acces property code manager for language " << (int) language;
@@ -298,20 +298,20 @@ operator()(RecognizerMatch& result,
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=anagraph->getGraph();
-  
+
   if (result.isContiguous()) {
     // only one part : terms in expression are adjacent -> easy part
-    
+
     // check if there is an overlap first
     if (recoData->matchOnRemovedVertices(result)) {
       // ignore current idiomatic expression, continue
       APPRLOGINIT;
-      LWARN << "recognized entity ignored: " 
+      LWARN << "recognized entity ignored: "
         << result.concatString()
             << ": overlapping with a previous one";
       return false;
     }
-    
+
     // create the new token
     pair<Token*,MorphoSyntacticData*> newToken=
       createAlternativeToken(result);
@@ -323,19 +323,19 @@ operator()(RecognizerMatch& result,
       return false;
     }
 //     LDEBUG << "create alternative token " << newToken.first->stringForm();
-    
+
     // add the vertex
-    LinguisticGraphVertex alternativeVertex = 
+    LinguisticGraphVertex alternativeVertex =
       addAlternativeVertex(newToken.first, newToken.second,graph);
 
 //     LDEBUG << "add alternative vertex " << alternativeVertex;
-    
+
     //create the alternative with this only vertex
     createBeginAlternative(result.front().getVertex(),
                            alternativeVertex,*graph);
     attachEndOfAlternative(alternativeVertex,
                            result.back().getVertex(),*graph);
-   
+
     // if expression is not contextual, only keep alternative
     if (! result.isContextual()) {
       recoData->storeVerticesToRemove(result,graph);
@@ -349,7 +349,7 @@ operator()(RecognizerMatch& result,
     {
       // ignore current expression, continue
       APPRLOGINIT;
-    LWARN << "alternative expression ignored: " 
+    LWARN << "alternative expression ignored: "
         << result.concatString()
             << ": overlapping with a previous one";
       return false;
@@ -365,11 +365,11 @@ operator()(RecognizerMatch& result,
       delete newToken.second;
       return false;
     }
-    
+
     // add the vertex
-    LinguisticGraphVertex altVertex = 
+    LinguisticGraphVertex altVertex =
       addAlternativeVertex(newToken.first,newToken.second,graph);
-    
+
     //create the alternative with this vertex and duplicate of other vertives
     deque<LinguisticGraphVertex> alternative;
     LinguisticGraphVertex headVertex=result.getHead();
@@ -418,7 +418,7 @@ operator()(RecognizerMatch& result,
             << "Alternative token is placed first";
       alternative.push_front(altVertex);
     }
-    
+
     // link alternatives
 //     LDEBUG << "alternative has " << alternative.size() << " vertex";
     createBeginAlternative(result.front().getVertex(),
@@ -436,7 +436,7 @@ operator()(RecognizerMatch& result,
     }
     attachEndOfAlternative(alternative.back(),
                            result.back().getVertex(),*graph);
-    
+
     // if expression is not contextual, only keep alternative
     if (! result.isContextual())
     {

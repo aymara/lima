@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
   *              functions for the detection of subsentences
   *
   * @file        SimplificationConstraints.h
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *              Copyright (c) 2005 by CEA
   * @date        Created on Tue Mar, 15 2005
@@ -57,7 +57,7 @@ public:
   explicit DefineString(MediaId language,
              const LimaString& complement=LimaString());
   ~DefineString() {}
-  
+
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
@@ -74,12 +74,12 @@ public:
   explicit SameString(MediaId language,
                     const LimaString& complement=LimaString());
   ~SameString() {}
-  
+
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
                   AnalysisContent& analysis) const override;
-                  
+
   bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
@@ -93,12 +93,12 @@ public:
   explicit DefineModel(MediaId language,
            const LimaString& complement=LimaString());
   ~DefineModel() {}
-  
+
   bool operator()(const Lima::LinguisticProcessing::LinguisticAnalysisStructure::AnalysisGraph& graph,
                   const LinguisticGraphVertex& v1,
                   const LinguisticGraphVertex& v2,
                   AnalysisContent& analysis) const override;
-                  
+
 };
 
 class LIMA_SYNTACTICANALYSIS_EXPORT SetInstance : public Automaton::ConstraintFunction

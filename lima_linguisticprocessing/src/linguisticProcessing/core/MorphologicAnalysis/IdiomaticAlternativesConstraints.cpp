@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "common/MediaticData/mediaticData.h"
@@ -66,7 +66,7 @@ CreateIdiomaticAlternative::CreateIdiomaticAlternative(
 
 
 void CreateIdiomaticAlternative::removeEdges(
-    LinguisticGraph& graph, 
+    LinguisticGraph& graph,
     const RecognizerMatch& match,
     AnalysisContent& analysis) const
 {
@@ -80,21 +80,21 @@ void CreateIdiomaticAlternative::removeEdges(
     return;
   }*/
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  
+
 
   std::set< LinguisticGraphVertex > matchVertices;
   Automaton::RecognizerMatch::const_iterator matchIt, matchIt_end;
 
   // noeuds eventuellement pendants a verifier
   std::set< LinguisticGraphVertex > verticesToCheck;
-  
+
   matchIt = match.begin();
   matchIt_end = match.end();
   for (; matchIt != matchIt_end; matchIt++)
   {
     matchVertices.insert((*matchIt).m_elem.first);
   }
-  
+
   matchIt = match.begin();
   matchIt_end = match.end();
   // parcours des noeuds du match
@@ -161,9 +161,9 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
   {
     annotationData->dumpFunction("IdiomExpr", new DumpIdiomaticExpressionAnnotation());
   }
-  
+
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  
+
   std::set<LinguisticGraphVertex> addedVertices;
   // initialize the vertices to clear
 
@@ -223,15 +223,15 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
                  result, analysis);
       //recoData->setNextVertex(idiomaticVertex);
       // if match was on single token, use next vertices (to avoid loops)
-      if (result.size() > 1) 
+      if (result.size() > 1)
       {
         recoData->setNextVertex(idiomaticVertex);
       }
-      else 
+      else
       {
         LinguisticGraphOutEdgeIt outItr,outItrEnd;
         boost::tie(outItr,outItrEnd) = out_edges(idiomaticVertex,*(graph.getGraph()));
-        for (;outItr!=outItrEnd;outItr++) 
+        for (;outItr!=outItrEnd;outItr++)
         {
           recoData->setNextVertex(target(*outItr, *(graph.getGraph())));
         }
@@ -283,7 +283,7 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
     LinguisticGraphVertex headVertex=result.getHead();
 #ifdef DEBUG_LP
    LDEBUG << "headVertex = " << headVertex;
-    if (headVertex!=0) 
+    if (headVertex!=0)
     {
       LDEBUG << "=> " << Common::Misc::limastring2utf8stdstring(get(vertex_token,*graph.getGraph(),headVertex)->stringForm());
     }
@@ -312,7 +312,7 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
         LDEBUG << "duplication of vertex " << matchItr->getVertex();;
 #endif
         Token* token=get(vertex_token,*graph.getGraph(),matchItr->getVertex());
-        MorphoSyntacticData* data = 
+        MorphoSyntacticData* data =
           new MorphoSyntacticData(*get(vertex_data,*graph.getGraph(),matchItr->getVertex()));
         LinguisticGraphVertex dupVx = add_vertex(const_cast<LinguisticGraph&>(*graph.getGraph()));
         put(vertex_token,const_cast<LinguisticGraph&>(*graph.getGraph()),dupVx,token);
@@ -321,7 +321,7 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
         AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
         annotationData->addMatching("AnalysisGraph", dupVx, "annot", agv);
         annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"), dupVx);
-        std::set< LinguisticGraphVertex > annotMatches = 
+        std::set< LinguisticGraphVertex > annotMatches =
           annotationData->matches("AnalysisGraph",matchItr->getVertex(),"annot");
         for (std::set< LinguisticGraphVertex >::const_iterator annotIt(annotMatches.begin());
               annotIt != annotMatches.end(); annotIt++)
@@ -353,7 +353,7 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
         }
       }
     }
-    if (!foundHead) 
+    if (!foundHead)
     {
       MORPHOLOGINIT;
       LWARN << "head token has not been found in non contiguous expression. "
@@ -416,7 +416,7 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
 //       recoData->storeVerticesToRemove(result,*graph);
       // no need to check size: if several parts, more than one vertex
       recoData->setNextVertex(idiomaticVertex);
-      
+
     }
   }
   RecognizerMatch::const_iterator matchItr=result.begin();

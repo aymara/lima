@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -157,7 +157,7 @@ bool SecondUngovernedBy::operator()(
   const LinguisticAnalysisStructure::AnalysisGraph& graph,
   const LinguisticGraphVertex& v1,
   const LinguisticGraphVertex& v2,
-                                     AnalysisContent& analysis ) const
+  AnalysisContent& analysis ) const
 {
 #ifdef DEBUG_LP
   SAPLOGINIT;

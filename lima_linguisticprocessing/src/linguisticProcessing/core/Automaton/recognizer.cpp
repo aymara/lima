@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -58,7 +58,7 @@ namespace Automaton {
 // to sort SetOfRules on decreasing rule weights
 class CompareRulePtr {
 public:
-  bool operator()(Rule* r1,Rule* r2) {
+  bool operator()(Rule* r1,Rule* r2) const {
     return (r1->getWeight() > r2->getWeight());
   }
 };
@@ -386,7 +386,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
    LDEBUG << "Rule weights" << oss.str();
   }
 #endif
-  
+
   bool reapplySameRule(false);
 
   SetOfRules::const_iterator
@@ -453,7 +453,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     if (success) {
       // build complete match
- 
+
       match=new RecognizerMatch(leftmatch);
       if (leftmatch.getHead() != 0) {
         match->setHead(leftmatch.getHead());
@@ -501,12 +501,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       }
       if (success) {
         LDEBUG << "Recognizer::testSetOfRules: trigger " << v << "[" << str << "]:rule "
-               << currentRule->getRuleId() << "-> success=" << success 
+               << currentRule->getRuleId() << "-> success=" << success
                << ",actionSuccess=" << actionSuccess;
         LDEBUG << "        matched:" << match->getNormalizedString(Common::MediaticData::MediaticData::single().stringsPool(m_language));
       }
       else {
-        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule " 
+        LDEBUG << "Recognizer::testSetOfRules: vertex " << v << "[" << str << "]:rule "
                << currentRule->getRuleId() << "-> success= false";
       }
     }
@@ -532,8 +532,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 #ifdef DEBUG_LP
         if (logger.isDebugEnabled()) {
           LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
-            << stopAtFirstSuccess << ") or next vertices empty (" 
-            << (recoData->getNextVertices().empty()) 
+            << stopAtFirstSuccess << ") or next vertices empty ("
+            << (recoData->getNextVertices().empty())
             << ")";
         }
 #endif
@@ -598,7 +598,7 @@ setNormalizedForm(const LimaString& norm,
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
   if (norm.isEmpty()) {
-    // use surface form of the expression as normalized form 
+    // use surface form of the expression as normalized form
     match.features().setFeature(DEFAULT_ATTRIBUTE,match.getNormalizedString(sp));
   }
   else {
@@ -651,7 +651,7 @@ uint64_t Recognizer::
         bool stopAtFirstSuccess,
         bool onlyOneSuccessPerType,
         bool returnAtFirstSuccess,
-        bool applySameRuleWhileSuccess) const 
+        bool applySameRuleWhileSuccess) const
 {
 
   if (returnAtFirstSuccess) {
@@ -666,7 +666,7 @@ uint64_t Recognizer::
   LDEBUG << "  stopAtFirstSuccess: " << stopAtFirstSuccess << "; onlyOneSuccessPerType: " << onlyOneSuccessPerType;
   LDEBUG << "  returnAtFirstSuccess: " << returnAtFirstSuccess << "; applySameRuleWhileSuccess: " << applySameRuleWhileSuccess;
 #endif
-  
+
   uint64_t numberOfRecognized(0);
   bool success(false);
 
@@ -962,7 +962,7 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // find matching rules
   std::vector<const TriggerRule*> matchingRules;
   m_searchStructure.findMatchingTransitions(graph,vertex,analysis,token,data,matchingRules);
-  
+
   // matching rules are gathered by common trigger (transition unit)
   // we have to re-sort the rules by their weight at a global level, independently of the trigger
   // create a vector of TriggerRule where each contains only one rule, then sort it
@@ -973,7 +973,7 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   sort(matchingSetOfRules.begin(),matchingSetOfRules.end(),CompareTriggerRule());
 
-  // then, gather rules with the same trigger that are consecutive in this new list 
+  // then, gather rules with the same trigger that are consecutive in this new list
   // (may save some constraint checking on trigger)
   if (! matchingSetOfRules.empty()) {
     std::vector<TriggerRule*>::iterator it=matchingSetOfRules.begin();

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -107,7 +107,7 @@ QDebug& operator<<(QDebug& os, const Solution& solution)
   return os;
 }
 
-bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) {
+bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) const {
   if( s1.suggestion.nb_error < s2.suggestion.nb_error ) {
     return true;
   }

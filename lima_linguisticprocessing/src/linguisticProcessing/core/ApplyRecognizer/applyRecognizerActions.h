@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,12 +21,12 @@
  * @file       applyRecognizerActions.h
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue Jan 25 2005
- * copyright   Copyright (C) 2005-2012 by CEA LIST
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
  * Project     s2lp
- * 
+ *
  * @brief      this class contains actions used by ApplyRecognizer process unit
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef APPLYRECOGNIZERACTIONS_H
@@ -55,7 +55,7 @@ public:
   virtual ~CreateAlternative() {}
   virtual bool operator()(Automaton::RecognizerMatch& result,
                           AnalysisContent& analysis) const override;
-  
+
   bool actionNeedsRecognizedExpression() override { return true; }
 
 private:
@@ -81,7 +81,7 @@ protected:
   bool isCompatible(const LinguisticCode& baseProperty,
                     const LinguisticCode& property,
                     LinguisticCode& newProperty) const;
-  LinguisticGraphVertex 
+  LinguisticGraphVertex
     addAlternativeVertex(LinguisticAnalysisStructure::Token*,
                          LinguisticAnalysisStructure::MorphoSyntacticData*,
                          LinguisticGraph* graph) const;
@@ -102,7 +102,7 @@ public:
   ~StoreInData() {}
   bool operator()(Automaton::RecognizerMatch& result,
                   AnalysisContent& analysis) const override;
-  
+
   bool actionNeedsRecognizedExpression() override { return true; }
 private:
 };
