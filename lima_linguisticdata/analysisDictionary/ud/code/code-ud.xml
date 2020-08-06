@@ -31,18 +31,14 @@
     <value name="Yes"/>
     <value name="No"/>
   </property>
-<!--  <property name="Foreign">
-    <value name="Yes"/>
-    <value name="No"/>
-  </property> -->
   <property name="Abbr">
     <value name="Yes"/>
     <value name="No"/>
   </property>
-  <property name="Typo">
+  <!--property name="Typo">
     <value name="Yes"/>
     <value name="No"/>
-  </property>
+  </property-->
   <!-- Inflectional features -->
   <!-- Inflectional features: Nominal -->
   <property name="Gender">
@@ -178,10 +174,10 @@
     <value name="Fh"/>
     <value name="Nfh"/>
   </property>-->
-<!--  <property name="Polarity">
+  <property name="Polarity">
     <value name="Neg"/>
     <value name="Pos"/>
-  </property>-->
+  </property>
   <property name="Person">
     <value name="0"/>
     <value name="1"/>
@@ -189,17 +185,6 @@
     <value name="3"/>
     <value name="4"/>
   </property>
-<!--  <property name="PERSON">
-    <value name="1"/>
-    <value name="2"/>
-    <value name="3"/>
-  </property>-->
-<!--  <property name="Polite">
-    <value name="Elev"/>
-    <value name="Form"/>
-    <value name="Humb"/>
-    <value name="Infm"/>
-  </property>-->
 
   <property name="MACRO">
     <value name="ADJ"/>
