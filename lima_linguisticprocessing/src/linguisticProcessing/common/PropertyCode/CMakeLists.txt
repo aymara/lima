@@ -36,6 +36,7 @@ ADD_DLL_TO_PATH(lima-lp-propertycode)
 
 target_link_libraries(lima-lp-propertycode
   lima-lp-misc
+  lima-common
   lima-common-mediaticdata
   lima-common-time
   lima-common-datahandler

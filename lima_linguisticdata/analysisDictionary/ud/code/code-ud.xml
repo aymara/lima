@@ -23,6 +23,15 @@
     <value name="Range"/>
     <value name="Sets"/>
   </property>
+  <property name="AdpType">
+    <value name="Prep"/>
+    <value name="Post"/>
+    <value name="Preppron"/>
+    <value name="Voc"/>
+    <value name="Circ"/>
+    <value name="Comprep"/>
+    <value name="Comadp"/>
+  </property>
   <property name="Poss">
     <value name="Yes"/>
     <value name="No"/>

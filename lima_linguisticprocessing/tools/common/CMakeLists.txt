@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -122,6 +122,7 @@ SET(convertSymbolicCodes_SRCS
 add_executable(convertSymbolicCodes ${convertSymbolicCodes_SRCS})
 
 target_link_libraries(convertSymbolicCodes
+  lima-common
   lima-common-factory
   lima-lp-propertycode
   ${optionalLibs}

@@ -121,6 +121,12 @@ typedef unsigned __int64 uint64_t;
    #define LIMA_XMLCONFIGURATIONFILES_EXPORT    __declspec(dllimport)
 #endif
 
+#ifdef LIMA_COMMON_EXPORTING
+   #define LIMA_COMMON_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_COMMON_EXPORT    __declspec(dllimport)
+#endif
+
 #else // Not WIN32
 
 #define LIMA_DATA_EXPORT
@@ -133,6 +139,7 @@ typedef unsigned __int64 uint64_t;
 #define LIMA_PROCESSUNITFRAMEWORK_EXPORT
 #define LIMA_TIME_EXPORT
 #define LIMA_XMLCONFIGURATIONFILES_EXPORT
+#define LIMA_COMMON_EXPORT
 
 #endif
 
@@ -237,8 +244,15 @@ enum LimaStatusCode {
     UNKNOWN_FORMAT
 };
 
-BOOST_STRONG_TYPEDEF(uint64_t, LinguisticCode);
+typedef unsigned __int128 uint128_t;
+BOOST_STRONG_TYPEDEF(uint128_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
+
+LIMA_COMMON_EXPORT std::ostream& operator<<(std::ostream& os, const uint128_t value);
+LIMA_COMMON_EXPORT std::istream& operator>>(std::istream& is, uint128_t& value);
+
+LIMA_COMMON_EXPORT QDebug& operator<<(QDebug& os, const uint128_t value);
+LIMA_COMMON_EXPORT QTextStream& operator<<(QTextStream& os, const uint128_t value);
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
 
