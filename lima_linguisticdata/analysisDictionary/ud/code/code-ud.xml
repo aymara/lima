@@ -32,6 +32,94 @@
     <value name="Comprep"/>
     <value name="Comadp"/>
   </property>
+  <property name="Strength">
+    <value name="Strong"/>
+    <value name="Weak"/>
+  </property>
+  <property name="PunctType">
+    <value name="Peri"/>
+    <value name="Comm"/>
+    <value name="Brck"/>
+    <value name="Quot"/>
+    <value name="Dash"/>
+    <value name="Hyph"/>
+    <value name="Qest"/>
+    <value name="Colo"/>
+    <value name="Excl"/>
+    <value name="Semi"/>
+    <value name="Ndash"/>
+    <value name="Slsh"/>
+    <value name="Elip"/>
+    <value name="Bull"/>
+  </property>
+  <property name="Subcat">
+    <value name="Tran"/>
+    <value name="Intr"/>
+    <value name="Int"/>
+    <value name="IntInd"/>
+    <value name="Ditran"/>
+    <value name="Prep"/>
+  </property>
+  <property name="PartType">
+    <value name="Inf"/>
+    <value name="Vbp"/>
+    <value name="Sub"/>
+    <value name="Vb"/>
+    <value name="Cop"/>
+    <value name="Cmpl"/>
+    <value name="Int"/>
+    <value name="Disc"/>
+    <value name="Ad"/>
+    <value name="Pat"/>
+    <value name="Neg"/>
+    <value name="Mod"/>
+    <value name="Comp"/>
+    <value name="Gen"/>
+    <value name="Conseq"/>
+    <value name="Voc"/>
+    <value name="Sup"/>
+    <value name="Res"/>
+    <value name="Num"/>
+    <value name="Emp"/>
+    <value name="Deg"/>
+  </property>
+  <property name="VerbType">
+    <value name="Mod"/>
+    <value name="Cop"/>
+    <value name="Quasi"/>
+    <value name="Pas"/>
+    <value name="Aux"/>
+  </property>
+  <property name="Variant">
+    <value name="Short"/>
+    <value name="Long"/>
+    <value name="Bound"/>
+    <value name="Full"/>
+    <value name="Uncontr"/>
+  </property>
+  <property name="Polite">
+    <value name="Form"/>
+    <value name="Infm"/>
+    <value name="Depr"/>
+  </property>
+  <property name="NameType">
+    <value name="Sur"/>
+    <value name="Geo"/>
+    <value name="Giv"/>
+    <value name="Com"/>
+    <value name="Nat"/>
+    <value name="Pro"/>
+    <value name="Prs"/>
+    <value name="Oth"/>
+    <value name="Pat"/>
+    <value name="Hom"/>
+  </property>
+  <property name="AdjType">
+    <value name="Attr"/>
+    <value name="Pred"/>
+  </property>
+
+
   <property name="Poss">
     <value name="Yes"/>
     <value name="No"/>
@@ -74,6 +162,11 @@
     <value name="Ptan"/>
     <value name="Sing"/>
     <value name="Tri"/>
+  </property>
+  <property name="Number[psor]">
+    <value name="Sing"/>
+    <value name="Plur"/>
+    <value name="Dual"/>
   </property>
   <property name="Case">
     <!--Core-->
@@ -179,10 +272,10 @@
     <value name="Pass"/>
     <value name="Rcp"/>
   </property>
-<!--  <property name="Evident">
+  <property name="Evident">
     <value name="Fh"/>
     <value name="Nfh"/>
-  </property>-->
+  </property>
   <property name="Polarity">
     <value name="Neg"/>
     <value name="Pos"/>
@@ -193,6 +286,11 @@
     <value name="2"/>
     <value name="3"/>
     <value name="4"/>
+  </property>
+  <property name="Person[psor]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
   </property>
 
   <property name="MACRO">
