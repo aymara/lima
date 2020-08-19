@@ -95,7 +95,7 @@ public:
     TPrimitiveToken(const QString& w,
                     int pos,
                     const QString& orig=QString())
-        : wordText(w), start(pos), originalText(orig)
+        : wordText(w), originalText(orig), start(pos)
     { }
 
     QString wordText;
@@ -193,8 +193,8 @@ CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate()
   auto status = m_session->Close();
   if (!status.ok())
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate(): Error closing session:"
-                        << status.ToString(), LimaException());
+    LOG_MESSAGE_WITH_PROLOG(LERROR, "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate(): Error closing session:"
+                            << status.ToString());
   }
 }
 
@@ -567,7 +567,7 @@ TokStatusCode CppUppsalaTokenizerPrivate::generate_batch(const vector<vector<uns
   }
 
   size_t seq_num = 0;
-  for (size_t iter = 0; iter < reserve; iter++)
+  for (size_t iter = 0; decltype(reserve)(iter) < reserve; iter++)
   {
     size_t p = start + iter * (m_max_seq_len - overlap * 2);
     size_t this_seq_len = 0;
