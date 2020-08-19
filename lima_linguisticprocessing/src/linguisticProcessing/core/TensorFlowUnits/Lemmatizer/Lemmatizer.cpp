@@ -192,7 +192,14 @@ protected:
           else
           {
             LinguisticCode code = pm.getPropertyValue(kv.first);
-            m_c2i[code] = kv.second;
+            if (LinguisticCode(0) == code)
+            {
+              LOG_MESSAGE_WITH_PROLOG(LWARN, "Unknown property value: \"" << kv.first << "\".");
+            }
+            else
+            {
+              m_c2i[code] = kv.second;
+            }
           }
         }
       }
