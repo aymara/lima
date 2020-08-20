@@ -1247,6 +1247,17 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
   }
 }
 
+inline string& std_string_replace(string& s, const string& str_old, const string& str_new)
+{
+  string::size_type pos = 0;
+  while ((pos = s.find(str_old, pos)) != string::npos)
+  {
+    s.replace(pos, str_old.size(), str_new);
+    pos += str_new.size();
+  }
+  return s;
+}
+
 void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& jso)
 {
   const auto &pcm = static_cast<const LanguageData&>(MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
@@ -1267,6 +1278,7 @@ void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& j
       string::size_type pos = out.feat_name.rfind('/');
       if (string::npos != pos)
         out.feat_name = out.feat_name.substr(pos + 1);
+      std_string_replace(std_string_replace(out.feat_name, "-_", "[") , "_-", "]");
 
       const QJsonObject& nodes = obj.value("nodes").toObject();
       out.logits_node_name = nodes.value("logits").toString().toStdString();
