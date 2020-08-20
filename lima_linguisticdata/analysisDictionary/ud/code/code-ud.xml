@@ -346,6 +346,20 @@
     <value name="HUFAL"/>
     <value name="PUAL"/>
   </property>
+  <property name="NounClass">
+    <value name="Wol1"/>
+    <value name="Wol2"/>
+    <value name="Wol3"/>
+    <value name="Wol4"/>
+    <value name="Wol5"/>
+    <value name="Wol6"/>
+    <value name="Wol7"/>
+    <value name="Wol8"/>
+    <value name="Wol9"/>
+    <value name="Wol10"/>
+    <value name="Wol11"/>
+    <value name="Wol12"/>
+  </property>
   <property name="MACRO">
     <value name="ADJ"/>
     <value name="ADV"/>
