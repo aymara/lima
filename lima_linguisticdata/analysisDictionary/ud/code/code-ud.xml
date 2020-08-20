@@ -118,7 +118,31 @@
     <value name="Attr"/>
     <value name="Pred"/>
   </property>
-
+  <property name="Form">
+    <value name="Len"/>
+    <value name="Ecl"/>
+    <value name="Adn"/>
+    <value name="Compl"/>
+    <value name="Aux"/>
+    <value name="HPref"/>
+    <value name="VF"/>
+    <value name="Emp"/>
+  </property>
+  <property name="Distance">
+    <value name="Dist"/>
+    <value name="Med"/>
+    <value name="Prox"/>
+  </property>
+  <property name="Mutation">
+    <value name="SM"/>
+    <value name="AM"/>
+    <value name="NM"/>
+  </property>
+  <property name="Deixis">
+    <value name="Prox"/>
+    <value name="Remt"/>
+    <value name="Med"/>
+  </property>
 
   <property name="Poss">
     <value name="Yes"/>
@@ -167,6 +191,17 @@
     <value name="Sing"/>
     <value name="Plur"/>
     <value name="Dual"/>
+  </property>
+  <property name="Number[psed]">
+    <value name="Sing"/>
+  </property>
+  <property name="Number[erg]">
+    <value name="Sing"/>
+    <value name="Plur"/>
+  </property>
+  <property name="Number[abs]">
+    <value name="Sing"/>
+    <value name="Plur"/>
   </property>
   <property name="Case">
     <!--Core-->
@@ -292,7 +327,25 @@
     <value name="2"/>
     <value name="3"/>
   </property>
-
+  <property name="Person[erg]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="Person[abs]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="HebBinyan">
+    <value name="PAAL"/>
+    <value name="HIFIL"/>
+    <value name="PIEL"/>
+    <value name="NIFAL"/>
+    <value name="HITPAEL"/>
+    <value name="HUFAL"/>
+    <value name="PUAL"/>
+  </property>
   <property name="MACRO">
     <value name="ADJ"/>
     <value name="ADV"/>
