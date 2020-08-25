@@ -14,15 +14,15 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-########### next target ###############
-
-include_directories(common)
-
-add_subdirectory(Tokenizer)
-add_subdirectory(MorphoSyntax)
-add_subdirectory(Lemmatizer)
-add_subdirectory(scripts)
+########### install files ###############
+install(
+    PROGRAMS
+        install_models.py
+    DESTINATION
+        bin
+    COMPONENT
+        runtime
+)
 
