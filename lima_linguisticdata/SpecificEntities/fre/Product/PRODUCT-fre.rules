@@ -6,7 +6,7 @@ set defaultAction=>CreateSpecificEntity()
 use product.lst
 
 @ProductNamePart=($NP,t_capital,t_capital_1st,t_capital_small)
-
+@RomanNum=(I,II,III,IV,V,VI,VII,VIII,IX,X,XI,XII,XIII,XIV,XV,XVI,XVII,XVIII,XIX,XX)
 
 # films
 Star::Wars:PRODUCT:
@@ -16,7 +16,7 @@ Star::Trek:PRODUCT:
 Boeing::(707|717|727|737|747|757|767|777):PRODUCT:
 Airbus::(A300|A310|A319|A320|A321|A330|A340):PRODUCT:
 Microsoft::Office:PRODUCT:
-Google::Desktop Search:PRODUCT:
+Google::(Chrome|chrome|Earth|earth|Books|books|Toolbar|toolbar|Maps|maps|News|news|Print|print|Scholar|scholar|Analytics|analytics|Documents|documents|Finance|finance|Agenda|agenda|Gears|gears|Apps|apps|Sites|sites|Traduction|traduction|Translate|translate|Wave|wave|Desktop|desktop|Talk|talls|Sketchup|sketchup|Desktop Search|Desktop search|desktop search):PRODUCT:
 MSN::Desktop Search:PRODUCT:
 
 @productAnnouncer=(produit,logiciel,software)
@@ -25,15 +25,37 @@ MSN::Desktop Search:PRODUCT:
 
 #other products (composed names or different normalizations)
 Boule::Quies:PRODUCT:Boule Quies
-Windows::Media Player:PRODUCT:
-Windows::(3.1|3.11|95|98|2000|NT|XP|Vista|VISTA|7):PRODUCT:
-WINDOWS::(3.1|3.11|95|98|2000|NT|XP|Vista|VISTA|7):PRODUCT:
+Windows:(Microsoft|MICROSOFT|microsoft)?:Media Player:PRODUCT:
+Windows:(Microsoft|MICROSOFT|microsoft)?:(3.1|3.11|95|98|2000|NT|Nt|nt|XP|Xp|xp|Vista|VISTA|vista|7|10|CE|Ce|ce):PRODUCT:
+WINDOWS:(Microsoft|MICROSOFT|microsoft)?:(3.1|3.11|95|98|2000|NT|Nt|nt|XP|Xp|xp|Vista|VISTA|vista|7|10|CE|Ce|ce):PRODUCT:
+Microsoft::(Windows|WINDOWS|windows|Office|OFFICE|office|Word|WORD|word) (XP|Xp|xp|95|97|98|2000|2003|2007)?:PRODUCT:
 Pocket::PC:PRODUCT:
 gMovie::player:PRODUCT:
 PowerPc::@ProductNamePart:PRODUCT:
 MacBook::@ProductNamePart:PRODUCT:
 Mac::OS X t_dot_number:PRODUCT:
 MacOS::X t_dot_number:PRODUCT:
+Nintendo:(Super)?:(DS,PSP,64,Entertainment System):PRODUCT:
+Apple::(Safari|iPhone|@RomanNum):PRODUCT:
+Mozilla::(Firefox|Thunderbird):PRODUCT:
+Excel:(Microsoft|MICROSOFT|microsoft)?::PRODUCT:
+PowerPoint:(Microsoft|MICROSOFT|microsoft)?::PRODUCT:
+Explorer:(Microsoft|MICROSOFT|microsoft)? Internet::PRODUCT:
+Borland::(Delphi|DELPHI|delphi|Pascal|pascal|C\+\+|c\+\+):PRODUCT:
+Intel::(Developer Forum|C\+\+|c\+\+|t_integer):PRODUCT:
+Microsoft::(SQL|sql|Sql) (SERVER|server|Server)?:PRODUCT:
+Microsoft::(Quick)? (BASIC|Basic|basic):PRODUCT:
+Microsoft::(MESSENGER|Messenger|messenger|\.NET|\.net|\.Net|UPDATE|Update|update|NETWORK|Network|network):PRODUCT:
+Peugeot::t_integer:PRODUCT:
+Palme::d\' (Or|or|PR):PRODUCT:
+Prix:Grand::PRODUCT:
+OS:(Palm)::PRODUCT:
+ZX::Spectrum:PRODUCT:
+IBM::(PC|Pc|pc|DB2|Db2|db2|t_integer):PRODUCT:
+
+Quest:(Dragon):@RomanNum:PRODUCT:
+Nukem:Duke:(3D|3d)?:PRODUCT:
+Quake::@RomanNum:PRODUCT:
 
 Mirage::2000:PRODUCT:
 Falcon::900:PRODUCT:

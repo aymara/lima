@@ -34,6 +34,21 @@
       </list>
     </group>
   </module>
+  <module name="resources-eng.ud">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-eng-ud.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="ProductRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PRODUCT-fre.bin"/>

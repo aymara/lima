@@ -62,7 +62,7 @@ void EnhancedAnalysisDictionaryTest1::initTestCase()
 
   std::string commonConfigFile=std::string("lima-common.xml");
 
-  std::deque<std::string> langs({"eng", "fre", "por"});
+  std::deque<std::string> langs({"eng", "eng.ud", "fre", "por"});
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
@@ -81,6 +81,17 @@ void EnhancedAnalysisDictionaryTest1::testEng()
 {
   testLanguage("eng",
                "lima-lp-eng.xml",
+               "door",
+               QStringList() << "door",
+               QStringList() << "door",
+               QStringList() << "door",
+               "NOUN");
+}
+
+void EnhancedAnalysisDictionaryTest1::testEngUD()
+{
+  testLanguage("eng.ud",
+               "lima-lp-eng.ud.xml",
                "door",
                QStringList() << "door",
                QStringList() << "door",

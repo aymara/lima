@@ -2096,7 +2096,7 @@ EMME:::ORGANIZATION:Editions MultiMédias Electroniques
 Emmett:Boyle::ORGANIZATION:Boyle Emmett
 EMOS:::ORGANIZATION:Aguas Andinas
 Empaques::Cyberpak:ORGANIZATION:Empaques Cyberpak
-Empire::(Co.)?:ORGANIZATION:Empire Co.
+Empire::(Co.|Co):ORGANIZATION:Empire Co.
 Empresas::Polar:ORGANIZATION:Empresas Polar
 Empresas::Richard Custer (S.A.)?:ORGANIZATION:Empresas Richard Custer S.A.
 Emstar:AHS::ORGANIZATION:AHS Emstar
@@ -4237,7 +4237,7 @@ Marocaine:Banque:pour le Commerce et l' Ind.:ORGANIZATION:Banque Marocaine pour 
 Marquard::\& Bahls:ORGANIZATION:Marquard \& Bahls
 Marquenterre:Sucreries du::ORGANIZATION:Sucreries du Marquenterre
 Marquess::of Normamby:ORGANIZATION:Marquess of Normamby
-Mars::(Inc.)?:ORGANIZATION:Mars Inc.
+Mars::(Inc.|Inc):ORGANIZATION:Mars Inc.
 Martelli::(SpA)?:ORGANIZATION:Martelli SpA
 Martha::Billes:ORGANIZATION:Martha Billes
 Martha::Tilaar Group:ORGANIZATION:Martha Tilaar Group
