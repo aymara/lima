@@ -15,8 +15,9 @@
 #!/bin/bash
 
 #Fail if anything goes wrong
-# set -o errexit
-# set -o nounset
+set -o errexit
+set -o pipefail
+set -o nounset
 # set -o xtrace
 
 usage()
@@ -29,9 +30,10 @@ Options default values are in parentheses.
   -a asan           <(OFF)|ON> compile with adress sanitizer
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
-  -n arch           <(generic)|native> target architecture mode
   -j n              <INTEGER> set the compilation to a number of parallel processes.
                     Default 0 => the value is derived from CPUs available.
+  -n arch           <(generic)|native> target architecture mode
+  -p package        <OFF|(ON)> package building selection
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
@@ -56,11 +58,12 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
+WITH_PACK="ON"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
 
-while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
+while getopts ":d:m:n:r:v:G:a:p:P:sTj:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -70,6 +73,10 @@ while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
             WITH_DEBUG_MESSAGES=${OPTARG}
             [[ "x$WITH_DEBUG_MESSAGES" == "xON" || "x$WITH_DEBUG_MESSAGES" == "xOFF" ]] || usage
             ;;
+        j)
+            j=${OPTARG}
+            [[ -n "${j##*[!0-9]*}" ]] || usage
+            ;;
         m)
             mode=${OPTARG}
             [[ "$mode" == "Debug" || "$mode" == "Release"  || "$mode" == "RelWithDebInfo" ]] || usage
@@ -78,9 +85,20 @@ while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
             arch=${OPTARG}
             [[ "x$arch" == "xnative" || "x$arch" == "xgeneric" ]] || usage
             ;;
-        j)
-            j=${OPTARG}
-            [[ -n "${j##*[!0-9]*}" ]] || usage
+        p)
+            WITH_PACK=${OPTARG}
+            [[ "$WITH_PACK" == "ON" || "$WITH_PACK" == "OFF" ]] || usage
+            ;;
+        r)
+            resources=${OPTARG}
+            [[ "$resources" == "precompiled" || "$resources" == "build" ]] || usage
+            ;;
+        s)
+            SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+            ;;
+        v)
+            version=$OPTARG
+            [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
             ;;
         G)
             CMAKE_GENERATOR=${OPTARG}
@@ -92,22 +110,11 @@ while getopts ":d:m:n:r:v:G:a:P:sTj:" o; do
                    "$CMAKE_GENERATOR" == "VS"
             ]] || usage
             ;;
-        r)
-            resources=${OPTARG}
-            [[ "$resources" == "precompiled" || "$resources" == "build" ]] || usage
-            ;;
-        v)
-            version=$OPTARG
-            [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
-            ;;
-        s)
-            SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+        P)
+            TF_SOURCES_PATH=$OPTARG
             ;;
         T)
             USE_TF=false
-            ;;
-        P)
-            TF_SOURCES_PATH=$OPTARG
             ;;
         *)
             usage
@@ -224,7 +231,7 @@ else
 fi
 
 
-export LSAN_OPTIONS=suppressions=$LIMA_SOURCES_DIR/suppr.txt
+# export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echo "Launching cmake from $PWD"
@@ -232,8 +239,13 @@ cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$W
 
 echo "Running make command:"
 echo "$make_cmd"
-eval $make_cmd && eval $make_test && eval $make_install && $make_package
+eval $make_cmd && eval $make_test && eval $make_install
 result=$?
+if [ $WITH_PACK == "ON" ] ;
+then
+  $make_package
+  result=$?
+fi
 
 #exit $result
 
