@@ -10,6 +10,7 @@ import unix_ar
 import tarfile
 import requests
 import urllib.request
+from tqdm import tqdm
 
 
 URL_DEB = 'https://github.com/aymara/lima-models/releases/download/v0.1.5-beta/lima-deep-models-%s-%s_0.1.5_all.deb'
@@ -70,15 +71,19 @@ def install_model(dir, fn):
 
 def download_binary_file(url, dir):
     chunk_size = 4096
-    response = requests.get(url)
     local_filename = os.path.join(dir, url.split('/')[-1])
     totalbytes = 0
+    response = requests.get(url, stream=True)
     if response.status_code == 200:
+        total_size_in_bytes= int(response.headers.get('content-length', 0))
+        progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
         with open(local_filename, 'wb') as f:
             for chunk in response.iter_content(chunk_size=chunk_size):
+                progress_bar.update(len(chunk))
                 if chunk:
                     totalbytes += chunk_size
                     f.write(chunk)
+    progress_bar.close()
 
 
 def find_lang_code(lang_str):
