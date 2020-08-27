@@ -131,22 +131,8 @@ std::string MediaticDataPrivate::s_undefinedRelation("Unknown");
 const std::string MediaticDataPrivate::s_nocateg=SYMBOLIC_NONE;
 
 MediaticDataPrivate::MediaticDataPrivate() :
-    m_mediasIds(),
-    m_mediasSymbol(),
-    m_mediaDefinitionFiles(),
-    m_mediasData(),
-    m_entityGroups(),
-    m_entityTypes(),
-    m_entityHierarchy(),
-    m_relTypes(),
-    m_relTypesNum(),
-    m_stringsPool(),
-    m_releaseStringsPool(false),
-    m_resourcesPath(),
-    m_configPath(),
-    m_conceptTypes(),
-    m_conceptNames(),
-    m_options()
+    m_releaseStringsPool(false)
+
 {
   // null first element
   m_entityTypes.push_back( static_cast<EntityTypeMap*>(0));
