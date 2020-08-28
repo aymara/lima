@@ -1,9 +1,12 @@
 # LIMA - Libre Multilingual Analyzer
 
-LIMA is mutliplatform. It has been developed under GNU/Linux and ported MS
+LIMA is mutliplatform. It has been developed under GNU/Linux and ported to MS
 Windows. Its build procedure under Linux is described bellow.
 Build instructions under Windows are still to be written but can be inferred
 from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml).
+
+LIMA has been occasionally built on MacOS but there is no standard procedure to
+do so.
 
 ## Install
 
@@ -77,7 +80,12 @@ $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
 ```
 
 :warning: **If you havn't already downloaded LIMA git repository (source code),
-please [do it now](https://github.com/aymara/lima.git).**
+please [do it now](https://github.com/aymara/lima.git)**:
+```bash
+$ cd $HOME
+$ git clone https://github.com/aymara/lima.git
+```
+
 
 Move to the root of the LIMA  git repository and clone submodules, e.g.:
 ```bash
@@ -110,25 +118,10 @@ This builds LIMA in release mode, assuring the best performance. To report bugs
 for example, you should build LIMA in debug mode. To do so, just omit the
 `-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`.
 
-Alternatively, you can
-
-1. define the following environment variables manually:
-
-`LIMA_DIST`             binaries and libraries
-`LIMA_EXTERNALS`        dependencies
-`LIMA_RESOURCES`        any kind of ressources (including training data)
-`LIMA_CONF`             configuration folder
-`LINGUISTIC_DATA_ROOT`  path to the lima_linguisticdata project root
-`NLTK_PTB_DP_FILE`      path to the Penn treebank extract from NLTK (see below)
-
-2. set `PATH` and `LD_LIBRARY_PATH`:
-
-```
-export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
-export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib
-```
-
-3. run `gbuild.sh`
+After the installation of LIMA, if you have built the neural network-based
+modules (the default, see above), you can
+[install the models](https://github.com/aymara/lima/wiki/DeepLima-beta#install-language-models)
+for one of the 60+ supported languages.
 
 ## Build troubleshoutings
 
