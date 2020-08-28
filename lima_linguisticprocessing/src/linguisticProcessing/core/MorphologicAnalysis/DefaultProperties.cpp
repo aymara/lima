@@ -126,7 +126,6 @@ LimaStatusCode DefaultProperties::process(
 
   try
   {
-
     LinguisticGraphVertexIt v, vEnd;
     boost::tie(v, vEnd) = vertices(*g);
 
@@ -145,11 +144,13 @@ LimaStatusCode DefaultProperties::process(
       if (currentData->empty())
       {
         std::map<LimaString,std::vector<LinguisticCode> >::const_iterator it=m_defaults.find(currentToken->status().defaultKey());
-        if (it!=m_defaults.end()) {
+        if (it!=m_defaults.end())
+        {
           LinguisticElement elem;
           elem.inflectedForm=currentToken->form();
           LimaString str=currentToken->stringForm();
-          if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end()){
+          if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
+          {
             str = m_charChart->unmark(currentToken->stringForm());
           }
           elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
@@ -163,7 +164,9 @@ LimaStatusCode DefaultProperties::process(
             elem.properties=*codeItr;
             currentData->push_back(elem);
           }
-        } else {
+        }
+        else
+        {
           LWARN << "No default property for " 
             << Common::Misc::limastring2utf8stdstring(currentToken->stringForm()) << ". Status : "
             << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey());
@@ -198,6 +201,10 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
 #ifdef DEBUG_LP
       LDEBUG << "read default " << type << " => " << props;
 #endif
+      if (props == LinguisticCode(0))
+      {
+        throw LimaException("Error: props == 0");
+      }
       m_defaults[Common::Misc::utf8stdstring2limastring(type)].push_back(props);
     }
   }

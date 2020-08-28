@@ -88,6 +88,14 @@ LIMA_COMMON_EXPORT std::istream& operator>>(std::istream& is, uint128_t& value)
 
   while (is.get(c))
   {
+    if (!std::isspace(c))
+    {
+      is.unget();
+      break;
+    }
+  }
+  while (is.get(c))
+  {
     if (!std::isdigit(c))
     {
       is.unget();
