@@ -622,7 +622,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     add_custom_command(
       OUTPUT ${BINFILENAME}
 	  COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml
-      DEPENDS lima-lp-specificentities ${_current} ${DEPENDENCIES}
+      DEPENDS lima-lp-specificentities rules-${_lang}-execEnv rules-configEnv ${_current} ${DEPENDENCIES}
       COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex.xml"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       VERBATIM
