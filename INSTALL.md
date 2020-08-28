@@ -1,18 +1,18 @@
 # LIMA - Libre Multilingual Analyzer
 
-LIMA is mutliplatform. It has been developed under GNU/Linux and ported MS 
-Windows. Its build procedure under Linux is described bellow. 
-Build instructions under Windows are still to be written but can be inferred 
+LIMA is mutliplatform. It has been developed under GNU/Linux and ported MS
+Windows. Its build procedure under Linux is described bellow.
+Build instructions under Windows are still to be written but can be inferred
 from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml).
 
 ## Install
 
-Build dependencies: 
-- Tools: cmake, ninja, C++ (tested with gcc and clang), gawk, NLTK, 
+Build dependencies:
+- Tools: cmake, ninja, C++ (tested with gcc and clang), gawk, NLTK,
 - Libraries and development packages for : boost , Qt5 and Qwt.
 
 Optional dependencies:
-- python3: 
+- python3:
 - enchant: for orthographic correction;
 - qhttpserver: lima http/json API;
 - svmtool++: for SVM-based PoS tagger;
@@ -76,9 +76,11 @@ $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
 
 :warning: **If you havn't already downloaded LIMA git repository (source code), please [do it now](https://github.com/aymara/lima.git).**
 
-Move to the root of the LIMA  git repository, e.g.:
+Move to the root of the LIMA  git repository and clone submodules, e.g.:
 ```bash
 $ cd $HOME/lima
+$ git submodule init
+$ git submodule update
 ```
 
 You need to set up a few environment variables. For this purpose, you can
@@ -99,8 +101,8 @@ By default LIMA is built without neural network-based modules (i.e. without Tens
 $ ./gbuild.sh -m Release -T
 ```
 
-This builds LIMA in release mode, assuring the best performance. To report bugs 
-for example, you should build LIMA in debug mode. To do so, just omit the 
+This builds LIMA in release mode, assuring the best performance. To report bugs
+for example, you should build LIMA in debug mode. To do so, just omit the
 `-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`.
 
 Alternatively, you can
