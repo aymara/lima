@@ -16,7 +16,8 @@ Optional dependencies:
 - enchant: for orthographic correction;
 - qhttpserver: lima http/json API;
 - svmtool++: for SVM-based PoS tagger;
-- TensorFlow, Eigen and Protobuf: for neural network-based modules (currently Named Entity Recognition and soon parsing too);
+- TensorFlow, Eigen and Protobuf: for neural network-based modules (currently
+Named Entity Recognition and soon parsing too);
 - tre: for approximate string matcher module;
 
 
@@ -43,7 +44,8 @@ $ make
 $ sudo cp svm_classify svm_learn /usr/bin
 ```
 
-For TensorFlow, we use a specially compiled version. It can be installed with our ppa in Ubuntu versions starting from 18.04:
+For TensorFlow, we use a specially compiled version. It can be installed with
+our ppa in Ubuntu versions starting from 18.04:
 
 ```bash
 $ sudo add-apt-repository ppa:limapublisher/ppa
@@ -74,7 +76,8 @@ $ cd $HOME/nltk_data/corpora/dependency_treebank
 $ cat wsj_*.dp | grep -v "^$" > nltk-ptb.dp
 ```
 
-:warning: **If you havn't already downloaded LIMA git repository (source code), please [do it now](https://github.com/aymara/lima.git).**
+:warning: **If you havn't already downloaded LIMA git repository (source code),
+please [do it now](https://github.com/aymara/lima.git).**
 
 Move to the root of the LIMA  git repository and clone submodules, e.g.:
 ```bash
@@ -84,7 +87,8 @@ $ git submodule update
 ```
 
 You need to set up a few environment variables. For this purpose, you can
-source the setenv-lima.sh script from the root of **the LIMA git repository** (please check
+source the setenv-lima.sh script from the root of **the LIMA git repository**
+(please check
 values before):
 ```bash
 $ source ./setenv-lima.sh -m release
@@ -95,7 +99,8 @@ Finally, from the LIMA repository root, run:
 $ ./gbuild.sh -m Release
 ```
 
-By default LIMA is built without neural network-based modules (i.e. without TensorFlow). To build LIMA with neural network-based modules use -T option:
+By default LIMA is built with neural network-based modules (i.e. with
+TensorFlow). To build LIMA without neural network-based modules use -T option:
 
 ```bash
 $ ./gbuild.sh -m Release -T
@@ -132,5 +137,8 @@ AND cmake fails on lima_linguisticprocessings indicating it found your boost
 version headers but it uses the system libraries, add the following definition
 at the beginning of the root CMakeLists.txt of each subproject :
 set(Boost_NO_SYSTEM_PATHS ON)
-* If some packages are not found at configure time (when running cmake), double check the dependencies packages you have installed. If it's OK, maybe we missed to indicate a dependency. Then, don't hesitate to open an issue. Or submit a merge request that solves the problem.
+* If some packages are not found at configure time (when running cmake), double
+check the dependencies packages you have installed. If it's OK, maybe we missed
+to indicate a dependency. Then, don't hesitate to open an issue. Or submit a
+merge request that solves the problem.
 
