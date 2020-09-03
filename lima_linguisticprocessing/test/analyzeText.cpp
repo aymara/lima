@@ -222,7 +222,7 @@ int run(int argc, char** argv)
    po::value<std::string>(&lpConfigFile)->default_value("lima-analysis.xml"),
    "Set the linguistic processing configuration file to use")
   ("pipeline,p",
-   po::value< std::string >(&pipeline)->default_value("main"),
+   po::value< std::string >(&pipeline)->default_value(""),
    "Set the linguistic analysis pipeline to use")
   ("input-file",
    po::value< std::vector<std::string> >(&files),
@@ -367,7 +367,6 @@ int run(int argc, char** argv)
   {
     inactiveUnits.insert(inactiveUnit);
   }
-  std::deque<std::string> pipelines({pipeline});
 
   auto beginTime = TimeUtils::getCurrentTime();
 
@@ -380,6 +379,20 @@ int run(int argc, char** argv)
     parse_options_line(opts, ',', ':'));
 
   langs = Common::MediaticData::MediaticData::changeable().getMedias();
+
+  if (pipeline.size() == 0)
+  {
+    if (langs.size() == 1 && langs.front() == "ud")
+    {
+      pipeline = "deepud";
+    }
+    else
+    {
+      pipeline = "main";
+    }
+  }
+
+  std::deque<std::string> pipelines({pipeline});
 
   auto clientFactoryConfigured = false;
   for(const auto& configDir: configDirs)

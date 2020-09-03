@@ -446,7 +446,14 @@ void MediaticDataPrivate::initMedias(
 #ifdef DEBUG_CD
           LDEBUG << "There is no language '" << med_str.c_str() << "' in LIMA. Trying 'ud'.";
 #endif
-          m_options["udlang"] = std::string("ud-") + med_str;
+          if (med_str.find("ud-") == 0)
+          {
+            m_options["udlang"] = med_str;
+          }
+          else
+          {
+            m_options["udlang"] = std::string("ud-") + med_str;
+          }
           med_str = "ud";
         }
         id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",med_str).c_str()));
