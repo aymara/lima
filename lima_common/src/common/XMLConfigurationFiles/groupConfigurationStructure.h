@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
   * @file       groupConfigurationStructure.h
   * @brief      originally detectGroupConfigurationStructure.h in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -42,7 +42,7 @@ namespace XMLConfigurationFiles {
 
 class GroupConfigurationStructurePrivate;
 class LIMA_XMLCONFIGURATIONFILES_EXPORT GroupConfigurationStructure {
-public: 
+public:
     GroupConfigurationStructure();
     GroupConfigurationStructure(const std::string& name);
     GroupConfigurationStructure(const GroupConfigurationStructure& group);
@@ -52,6 +52,7 @@ public:
     std::string& getName();
     std::string& getAttribute(const std::string& key);
     std::string& getParamsValueAtKey(const std::string& key);
+    bool getParamsValueAtKey(const std::string& key, std::string& value);
     std::deque< std::string >& getListsValueAtKey(const std::string& key);
     std::map<std::string,std::string>& getMapAtKey(const std::string& key);
     const std::map<std::string,std::string>& getParams();
@@ -67,7 +68,7 @@ public:
     std::deque<ItemWithAttributes>& getListOfItems(const std::string& key);
     std::map<std::string,ItemWithAttributes>& getMapOfItems(const std::string& key);
     void addListOfItems(const std::string& listName);
-    void addItemInListOfItems(const std::string& listName, 
+    void addItemInListOfItems(const std::string& listName,
                               const ItemWithAttributes& item);
     void addMapOfItems(const std::string& mapName);
     void addEntryInMapOfItems(const std::string& mapName,
@@ -77,7 +78,7 @@ public:
     void changeListToListOfItems(const std::string &listName);
     void changeMapToMapOfItems(const std::string &mapName);
 
-    
+
     friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
 
     // functions to access typed values

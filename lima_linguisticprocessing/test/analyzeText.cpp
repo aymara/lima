@@ -379,6 +379,8 @@ int run(int argc, char** argv)
     langs,
     parse_options_line(opts, ',', ':'));
 
+  langs = Common::MediaticData::MediaticData::changeable().getMedias();
+
   auto clientFactoryConfigured = false;
   for(const auto& configDir: configDirs)
   {

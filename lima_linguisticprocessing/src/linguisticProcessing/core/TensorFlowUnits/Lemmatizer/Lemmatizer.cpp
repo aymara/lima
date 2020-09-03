@@ -364,6 +364,16 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
+  if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+  {
+    udlang = udlang.substr(3);
+  }
+  else
+  {
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
+                        << udlang, LimaException());
+  }
+
   QString model_name;
 
   try

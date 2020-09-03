@@ -326,6 +326,15 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   QString model_name = model_prefix;
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
+  if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+  {
+    udlang = udlang.substr(3);
+  }
+  else
+  {
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
+                        << udlang, LimaException());
+  }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
@@ -342,9 +351,11 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   Session* session = 0;
   Status status = NewSession(options, &session);
   if (!status.ok())
+  {
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
                         << status.ToString(),
                         LimaException());
+  }
   m_session = std::unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
                                  QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
@@ -354,17 +365,21 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   // Add the graph to the session
   status = m_session->Create(m_graph_def);
   if (!status.ok())
+  {
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't add graph to TensorFlow session: "
                         << status.ToString(),
                         LimaException());
+  }
 
   vector<Tensor> out;
 
   status = m_session->Run({}, {"CRF/crf"}, {}, &out);
   if (!status.ok())
+  {
     LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't execute \"Run\" in TensorFlow session: "
                         << status.ToString(),
                         LimaException());
+  }
 
   auto crf = out[0].matrix<float>();
 
@@ -373,7 +388,9 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   {
     m_crf[j].resize(out[0].dim_size(1));
     for (int64 k = 0; k < out[0].dim_size(1); k++)
+    {
       m_crf[j][k] = crf(j, k);
+    }
   }
 }
 

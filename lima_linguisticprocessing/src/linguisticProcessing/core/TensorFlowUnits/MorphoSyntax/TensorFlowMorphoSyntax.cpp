@@ -347,6 +347,16 @@ void TensorFlowMorphoSyntaxPrivate::init(
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
+  if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+  {
+    udlang = udlang.substr(3);
+  }
+  else
+  {
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
+                        << udlang, LimaException());
+  }
+
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
   auto config_file_name = findFileInPaths(resources_path,

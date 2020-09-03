@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -168,6 +168,17 @@ string& GroupConfigurationStructure::getParamsValueAtKey(const string& key)
     throw NoSuchParam(m_d->m_groupName+"["+key+"]");
   //    cerr << "Found param value " << ((*it).second) << endl;
   return ((*it).second);
+}
+
+bool GroupConfigurationStructure::getParamsValueAtKey(const string& key, string& value)
+{
+  MSS::iterator it = m_d->m_params.find(key);
+  if (it == m_d->m_params.end())
+  {
+    return false;
+  }
+  value = it->second;
+  return true;
 }
 
 bool GroupConfigurationStructure::

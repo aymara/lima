@@ -433,34 +433,47 @@ void MediaticDataPrivate::initMedias(
     }
     for (auto it = meds.begin(); it != meds.end(); it++)
     {
+      std::string med_str = *it;
       MediaId id(0);
       try
       {
-        id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",*it).c_str()));
+        ModuleConfigurationStructure& mod_config = configParser.getModuleConfiguration("common");
+        GroupConfigurationStructure& grp_config = mod_config.getGroupNamed("mediasIds");
+        std::string value;
+        bool key_found = grp_config.getParamsValueAtKey(med_str, value);
+        if (!key_found)
+        {
 #ifdef DEBUG_CD
-        LDEBUG << "media '" << (*it).c_str() << "' has id " << id;
+          LDEBUG << "There is no language '" << med_str.c_str() << "' in LIMA. Trying 'ud'.";
+#endif
+          m_options["udlang"] = std::string("ud-") + med_str;
+          med_str = "ud";
+        }
+        id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",med_str).c_str()));
+#ifdef DEBUG_CD
+        LDEBUG << "media '" << med_str.c_str() << "' has id " << id;
         LDEBUG << (void*)this << " initialize string pool";
 #endif
       }
       catch (NoSuchList& e)
       {
         MDATALOGINIT;
-        LERROR << "missing id for media " << (*it).c_str() << ":" << e.what();
+        LERROR << "missing id for media " << med_str.c_str() << ":" << e.what();
         throw InvalidConfiguration(
-          std::string("Failed to init media ")+(*it)+": "+e.what());
+          std::string("Failed to init media ")+med_str+": "+e.what());
       }
       catch (NoSuchParam& e)
       {
         MDATALOGINIT;
-        LERROR << "missing id for media " << (*it).c_str() << ":" << e.what();
+        LERROR << "missing id for media " << med_str.c_str() << ":" << e.what();
         throw InvalidConfiguration(
-          std::string("Failed to init media ")+(*it)+": "+e.what());
+          std::string("Failed to init media ")+med_str+": "+e.what());
       }
 
-      if (qmeds.find(*it) != qmeds.end())
+      if (qmeds.find(med_str) != qmeds.end())
       {
         MDATALOGINIT;
-        LERROR << "media" << (*it).c_str() << "already initialized: reinit";
+        LERROR << "media" << med_str.c_str() << "already initialized: reinit";
         // clear initialization
         delete m_stringsPool[id];
         m_stringsPool.erase(id);
@@ -469,19 +482,19 @@ void MediaticDataPrivate::initMedias(
       // always perform initialization, even if language already initialized
       // (allows dynamic reinitialization of lima client)
       {
-        m_medias.push_back(*it);
+        m_medias.push_back(med_str);
         try
         {
           // initialize strings pool
           m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
 
-          m_mediasIds[*it]=id;
-          m_mediasSymbol[id]=*it;
+          m_mediasIds[med_str]=id;
+          m_mediasSymbol[id]=med_str;
 
           QString deffile =
             QString::fromUtf8(configParser.getModuleGroupParamValue("common",
                                                                     "mediaDefinitionFiles",
-                                                                    *it).c_str());
+                                                                    med_str).c_str());
           QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
           bool mediaDefinitionFileFound = false;
           for(auto confPath = configPaths.begin();
@@ -500,27 +513,27 @@ void MediaticDataPrivate::initMedias(
           if (!mediaDefinitionFileFound)
           {
             MDATALOGINIT;
-            LERROR << "No media definition file'"<<deffile
-                    <<"' has been found for media id" << id
-                    << "in config paths:" << configPaths;
+            LERROR << "No media definition file'" << deffile
+                   << "' has been found for media id" << id
+                   << "in config paths:" << configPaths;
             throw InvalidConfiguration();
           }
         }
         catch (NoSuchList& e)
         {
           MDATALOGINIT;
-          LERROR << "missing definition file for media " << (*it).c_str()
-                  << ":" << e.what();
+          LERROR << "missing definition file for media " << (med_str).c_str()
+                 << ":" << e.what();
           throw InvalidConfiguration(
-            std::string("Failed to init media ")+(*it)+": "+e.what());
+            std::string("Failed to init media ")+(med_str)+": "+e.what());
         }
         catch (NoSuchParam& e)
         {
           MDATALOGINIT;
-          LERROR << "missing definition file for media " << (*it).c_str()
+          LERROR << "missing definition file for media " << (med_str).c_str()
                   << ":" << e.what();
         throw InvalidConfiguration(
-          std::string("Failed to init media ")+(*it)+": "+e.what());
+          std::string("Failed to init media ")+(med_str)+": "+e.what());
         }
       }
     }
