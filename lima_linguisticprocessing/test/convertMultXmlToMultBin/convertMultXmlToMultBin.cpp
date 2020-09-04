@@ -185,10 +185,10 @@ int run(int argc,char** argv)
   }
 
   // initialize common
-  MediaticData::MediaticData::changeable().init(resourcesPath.toUtf8().constData(),
-                                                configPath.toUtf8().constData(),
-                                                param.commonConfigFile,
-                                                param.langs);
+  Common::MediaticData::MediaticData::changeable().init(resourcesPath.toUtf8().constData(),
+                                                        configPath.toUtf8().constData(),
+                                                        param.commonConfigFile,
+                                                        param.langs);
 
   std::deque<std::string> pipelines;
 
