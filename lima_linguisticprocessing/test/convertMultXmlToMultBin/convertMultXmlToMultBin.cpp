@@ -38,6 +38,7 @@ using namespace Lima::Common;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::BagOfWords;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::XmlReader;
 
@@ -55,50 +56,66 @@ static const std::string HELP("convert structured-bag-of-words representations o
 );
 
 //****************************************************************************
-// GLOBAL variable -> the command line arguments 
-struct Param {
+// GLOBAL variable -> the command line arguments
+struct Param
+{
   std::string inputFile;           // input file
   std::string outputFile;          // output file
-  bool help;                  // help mode
+  bool help;                       // help mode
   std::deque<std::string> langs;
   std::ifstream*  fileIn;          // stored in global for convenience
   std::ofstream*  fileOut;         // (not a really pretty solution, I guess)
   MultXmlReader* reader;
   std::string lpConfigFile ;
   std::string commonConfigFile;
-} param={"",
-         "",
-         false,
-         std::deque<std::string>(),
-         0,
-         0,
-         0,
-         "mm-analysis.xml",
-         "mm-common.xml"};
+}
+param =
+{
+    "",
+    "",
+    false,
+    std::deque<std::string>(),
+    0,
+    0,
+    0,
+    "mm-analysis.xml",
+    "mm-common.xml"
+};
 
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
   std::size_t pos;
-  for(uint64_t i(1); i<argc; i++){
+  for(uint64_t i(1); i<argc; i++)
+  {
     std::string arg(argv[i]);
     if (arg=="-h" || arg=="--help")
+    {
       param.help=true;
-    else if((pos = arg.find("--language=")) != std::string::npos)
-    param.langs.push_back(arg.substr(pos + 11));
+    }
+    else if ( (pos = arg.find("--language=")) != std::string::npos )
+    {
+      param.langs.push_back(arg.substr(pos + 11));
+    }
     else if ( (pos = arg.find("--lp-config-file=")) != std::string::npos )
+    {
       param.lpConfigFile = arg.substr(pos+17);
+    }
     else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
+    {
       param.commonConfigFile = arg.substr(pos+21);
-    else if (arg[0]=='-') {
-      std::cerr << "unrecognized option " <<  arg 
-        << std::endl;
+    }
+    else if (arg[0] == '-')
+    {
+      std::cerr << "unrecognized option " << arg << std::endl;
       std::cerr << USAGE << std::endl;
       exit(1);
     }
-    else if (param.inputFile.empty()) {
+    else if (param.inputFile.empty())
+    {
       param.inputFile=arg;
     }
-    else {
+    else
+    {
       param.outputFile=arg;
     }
   }
@@ -132,9 +149,7 @@ int main(int argc, char **argv)
   QTimer::singleShot(0, task, SLOT(run()));
 
   return a.exec();
-
 }
-
 
 int run(int argc,char** argv)
 {
@@ -146,47 +161,51 @@ int run(int argc,char** argv)
       QStringList({"lima"}), QStringList());
   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
-
   QsLogging::initQsLog(configPath);
+
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-  
-  XMLREADERCLIENTLOGINIT;
-  setlocale(LC_ALL, "");
 
-//  std::string lpConfigFile("mm-analysis.xml");
-//  std::string commonConfigFile("mm-common.xml");
+  setlocale(LC_ALL, "");
 
   std::deque<std::string> files;
 
-  if (argc<2) {    std::cerr << USAGE << std::endl; exit(1); }
+  if (argc<2)
+  {
+    std::cerr << USAGE << std::endl;
+    exit(1);
+  }
+
   readCommandLineArguments(argc,argv);
-  if (param.help) { std::cerr << HELP << std::endl; exit(1); }
-  
+  if (param.help)
+  {
+    std::cerr << HELP << std::endl;
+    exit(1);
+  }
 
   // initialize common
-  Lima::Common::MediaticData::MediaticData::changeable().init(resourcesPath.toUtf8().constData(),
-                                                              configPath.toUtf8().constData(), 
-                                                              param.commonConfigFile, 
-                                                              param.langs);
+  MediaticData::MediaticData::changeable().init(resourcesPath.toUtf8().constData(),
+                                                configPath.toUtf8().constData(),
+                                                param.commonConfigFile,
+                                                param.langs);
 
   std::deque<std::string> pipelines;
 
-  Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(Common::Misc::findFileInPaths(configPath, param.lpConfigFile.c_str()).toUtf8().constData());
+  XMLConfigurationFileParser lpconfig(findFileInPaths(configPath, param.lpConfigFile.c_str()).toUtf8().constData());
   LinguisticProcessingClientFactory::changeable().configureClientFactory(
             "lima-coreclient",
             lpconfig,
             param.langs,
             pipelines);
 
-
-  
   std::ofstream fileOut(param.outputFile.c_str(), std::ofstream::binary);
-  if (! fileOut.good()) {
+  if (! fileOut.good())
+  {
     std::cerr << "cannot open output file [" << param.outputFile << "]" << std::endl;
     exit(1);
   }
+
   // Reader constructor runs the parsing
   MultXmlReader reader(param.inputFile,fileOut);
   return EXIT_SUCCESS;

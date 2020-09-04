@@ -424,8 +424,8 @@ void ApproxStringMatcher::createVertex(
     AnnotationData* annotationData
 ) const
 {
-  MORPHOLOGINIT;
 #ifdef DEBUG_LP
+  MORPHOLOGINIT;
   LDEBUG << "ApproxStringMatcher::createVertex( solution=" << solution << ")";
 #endif
   // VertexTokenPropertyMap tokenMap=get(vertex_token,g);

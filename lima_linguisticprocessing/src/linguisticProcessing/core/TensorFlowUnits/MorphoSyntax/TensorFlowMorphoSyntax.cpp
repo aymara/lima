@@ -692,6 +692,7 @@ size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOut
     while (a < tags_logits.dimension(2))
     {
       float score = tags_logits(pos_in_batch, word_num, a);
+      LIMA_UNUSED(score);
       if (tags_logits(pos_in_batch, word_num, a) > best_score
               && a != out_descr.root_tag_idx
               && out_descr.i2t[a] != "ud:_")
@@ -882,8 +883,8 @@ TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate()
   auto status = m_session->Close();
   if (!status.ok())
   {
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate(): Error closing session:"
-                        << status.ToString(), LimaException());
+    LOG_MESSAGE_WITH_PROLOG(LERROR, "TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate(): Error closing session:"
+                            << status.ToString());
   }
 }
 

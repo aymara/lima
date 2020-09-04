@@ -244,7 +244,7 @@ vector< vector< ConlluReaderPrivate::TPrimitiveToken > > ConlluReaderPrivate::to
   int current_token_offset = 0;
 
   QStringList list = text.split(QString("\n"));
-  for (size_t i = 0; i < list.size(); i++)
+  for (size_t i = 0; i < size_t(list.size()); i++)
   {
     const QString line = list[i];
     QStringList fields = line.split(QString("\t"));
@@ -252,20 +252,26 @@ vector< vector< ConlluReaderPrivate::TPrimitiveToken > > ConlluReaderPrivate::to
     if (fields.size() < 2)
     {
       if (current_sentence.size() > 0)
+      {
         sentences.push_back(current_sentence);
+      }
       current_sentence.clear();
       continue;
     }
 
     if (-1 != fields[0].indexOf("-") || -1 != fields[0].indexOf("."))
+    {
       continue;
+    }
 
     current_sentence.push_back(TPrimitiveToken(fields[1], current_token_offset));
     current_token_offset += fields[1].size() + 1;
   }
 
   if (current_sentence.size() > 0)
+  {
     sentences.push_back(current_sentence);
+  }
 
   return sentences;
 }

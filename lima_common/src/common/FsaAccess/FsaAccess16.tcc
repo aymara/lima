@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -415,7 +415,9 @@ void FsaAccess16<graphType>::checkIntegrity(
   boost::get(vertex_count,m_graph);
 
   const Lima::LimaString& text = get(vtext_map,from);
+  LIMA_UNUSED(text);
   const std::vector<int>& counts = get(vcount_map,from);
+  LIMA_UNUSED(counts);
   typename graphType::degree_size_type outd = boost::out_degree(from, m_graph);
   if( outd == 0 )  {
     assert( text.length() == 0 );
@@ -472,7 +474,7 @@ void FsaAccess16<graphType>::getPrefix(
 //    assert(text.size() == static_cast<int>(boost::out_degree(from,m_graph)));
 //  }
   #endif
-  
+
 
   int32_t highCharTextPos = get(vname_map,from)&TEXT_POS_16;
 
@@ -601,7 +603,7 @@ int32_t min, int max, int nb_unit_per_char ) const {
     #endif
     return min;
   }
-  
+
   const QChar* text = textString.constData();
   int textLength = textString.length();
   char32_t edgeLabel;

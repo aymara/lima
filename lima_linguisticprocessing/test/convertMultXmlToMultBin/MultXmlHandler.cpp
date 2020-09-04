@@ -422,6 +422,8 @@ bool  MultXmlHandler::startEntity(const QString & name)
 #ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "MultXmlHandler::startEntity" << name;
+#else
+  LIMA_UNUSED(name);
 #endif
 
  return true;
@@ -432,6 +434,8 @@ bool  MultXmlHandler::endEntity(const QString & name)
 #ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "MultXmlHandler::endEntity" << name;
+#else
+  LIMA_UNUSED(name);
 #endif
 
   return true;

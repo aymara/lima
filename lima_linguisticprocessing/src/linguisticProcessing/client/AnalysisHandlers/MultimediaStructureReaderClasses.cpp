@@ -104,10 +104,10 @@ void MultimediaBinaryStructureReader::readBinNum(istream& file,
 
 void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocumentProperties* prop)
 {
-  int NodeId;
-  int StructId;
-  int offBegPrpty,offEndPrpty;
-  string encodPrpty,langPrpty,srcePrpty;
+  int NodeId = -1;
+  int StructId = -1;
+  int offBegPrpty = -1, offEndPrpty = -1;
+  string encodPrpty, langPrpty, srcePrpty;
   string indexDatePrpty;
   // write values of properties whose type is int
   auto beginEnd = prop->getIntProperties();
@@ -142,10 +142,10 @@ void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocume
       indexDatePrpty = elmt.second.toString(Qt::ISODate).toUtf8().data();
   }
 
-//   openedNodes.pop_back();
+  // openedNodes.pop_back();
 
   const std::map<uint64_t,Node> Nodes=m_mapNodes[StructId][NodeId];
-//    cout<<"ici   "<<StructId<<"       "<<NodeId<<endl;
+  // cout<<"ici   "<<StructId<<"       "<<NodeId<<endl;
   if (!m_openedNodes.empty())
     m_openedNodes.pop_back();
   else
@@ -158,23 +158,23 @@ void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocume
     if (uri.length()!=0)
       srcePrpty = uri;
 
-   // TODO: replace MULTIMEDIA_DOCUMENT_READER0 with consistent value
-   Node node("MULTIMEDIA_DOCUMENT_READER0", // docName
-             StructId,                      // structId
-             NodeId,                        // nodeId
-             laNode.get_ContentId(),        // contentId
-             laNode.indexId(),              // indexid
-             srcePrpty,                     // uri
-             "",                            // nodeMedia
-             "",                            // nodeType
-             laNode.descrId(),              // descrId
-             offBegPrpty,                   // nodeStart
-             offEndPrpty,                   // nodeEnd
-             offEndPrpty-offBegPrpty,       // nodeLength
-             m_lastNode                     // nodeParent
-            );
-//    cout<<"la "<<StructId<<"insertion dans la structure "<<node<<endl;
-   StructureHandler::add_Node(node);
+    // TODO: replace MULTIMEDIA_DOCUMENT_READER0 with consistent value
+    Node node("MULTIMEDIA_DOCUMENT_READER0", // docName
+              StructId,                      // structId
+              NodeId,                        // nodeId
+              laNode.get_ContentId(),        // contentId
+              laNode.indexId(),              // indexid
+              srcePrpty,                     // uri
+              "",                            // nodeMedia
+              "",                            // nodeType
+              laNode.descrId(),              // descrId
+              offBegPrpty,                   // nodeStart
+              offEndPrpty,                   // nodeEnd
+              offEndPrpty-offBegPrpty,       // nodeLength
+              m_lastNode                     // nodeParent
+             );
+    // cout<<"la "<<StructId<<"insertion dans la structure "<<node<<endl;
+    StructureHandler::add_Node(node);
   }
   if (!m_openedNodes.empty())
   {

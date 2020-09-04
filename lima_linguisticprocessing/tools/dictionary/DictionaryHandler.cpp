@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -752,7 +752,6 @@ unsigned char DictionaryCompilerPrivate::writeCodedInt(ostream& out, uint64_t nu
   {
     if (i >= CODED_INT_BUFFER_SIZE)
     {
-      ANALYSISDICTLOGINIT;
       QString errorString;
       QTextStream qts(&errorString);
       qts << "DictionaryCompiler::writeCodedInt number too large to be coded in buffer of size "
