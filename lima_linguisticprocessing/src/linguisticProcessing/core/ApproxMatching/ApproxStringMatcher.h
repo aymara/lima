@@ -71,7 +71,7 @@ typedef struct _Solution {
 } Solution;
 
 typedef struct _SolutionCompare {
-  bool operator() (const Solution& s1, const Solution& s2);
+  bool operator() (const Solution& s1, const Solution& s2) const;
 } SolutionCompare;
 
 LIMA_DATA_EXPORT  std::ostream& operator<<(std::ostream &os, const Solution& solution);
@@ -97,14 +97,14 @@ public:
 
 private:
   void matchApproxTokenAndFollowers(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     OrderedSolution& result) const;
 
   void computeVertexMatches(
-    const LinguisticGraph& g, 
+    const LinguisticGraph& g,
     const LinguisticGraphVertex vStart,
     const LinguisticGraphVertex vEnd,
     const Suggestion& suggestion, Solution& tempResult) const;
@@ -114,7 +114,7 @@ private:
     std::vector<Suggestion>& suggestions, int nbMaxError) const;
 
   void createVertex(
-    LinguisticGraph& g, 
+    LinguisticGraph& g,
     LinguisticGraphVertex vStart,
     LinguisticGraphVertex vEnd,
     const Solution& solution,
