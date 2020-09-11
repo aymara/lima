@@ -21,18 +21,17 @@
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "common/misc/Exceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 #include "SegmentationData.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 #include <string>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
-using namespace Lima::Common::XMLConfigurationFiles;
+//using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common;
 
 namespace Lima
@@ -75,86 +74,6 @@ inline string THIS_FILE_LOGGING_CATEGORY()
 #endif
 
 static SimpleFactory<MediaProcessUnit, SentenceBoundariesUpdater> sentenceboundariesupdaterFactory(SENTENCEBOUNDARIESUPDATER_CLASSID); // clazy:exclude=non-pod-global-static
-
-class ConfigurationHelper
-{
-protected:
-  ConfigurationHelper(const string& processUnitName, const string& loggingCategory)
-    : m_processUnitName(processUnitName),
-      m_loggingCategory(loggingCategory)
-  {
-  }
-
-  enum Flags
-  {
-    REQUIRED = 0x1,
-    NOT_EMPTY = 0x2
-  };
-
-protected:
-  void getStringParameter(
-      XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      const string& name,
-      string& value,
-      int flags = Flags::REQUIRED,
-      string default_value = "");
-
-  string getStringParameter(
-      XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      const string& name,
-      int flags = Flags::REQUIRED,
-      string default_value = "");
-
-
-private:
-  string m_processUnitName;
-  string m_loggingCategory;
-};
-
-void ConfigurationHelper::getStringParameter(
-    XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    const string& name,
-    string& value,
-    int flags,
-    string default_value)
-{
-  string tmp;
-  try
-  {
-    tmp = unitConfiguration.getParamsValueAtKey(name);
-  }
-  catch (NoSuchParam& )
-  {
-    if (flags & Flags::REQUIRED)
-    {
-      LOGINIT(m_loggingCategory.c_str());
-      LERROR << "no param \"" << name << "\" in " << m_processUnitName << " group configuration";
-      throw InvalidConfiguration();
-    }
-
-    tmp = default_value;
-  }
-
-  if (flags & Flags::NOT_EMPTY && tmp.size() == 0)
-  {
-    LOGINIT(m_loggingCategory.c_str());
-    LERROR << "param \"" << name << "\" in " << m_processUnitName << " group configuration has zero length";
-    throw InvalidConfiguration();
-  }
-
-  value = tmp;
-}
-
-string ConfigurationHelper::getStringParameter(
-    XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-    const string& name,
-    int flags,
-    string default_value)
-{
-  std::string value;
-  getStringParameter(unitConfiguration, name, value, flags, default_value);
-  return value;
-}
 
 class SentenceBoundariesUpdaterPrivate : public ConfigurationHelper
 {

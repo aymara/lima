@@ -25,7 +25,6 @@
 #include "common/misc/Exceptions.h"
 #include "common/Data/strwstrtools.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
@@ -34,6 +33,7 @@
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 #include "Viterbi.h"
 #include "QJsonHelpers.h"
@@ -83,7 +83,16 @@ static SimpleFactory<MediaProcessUnit,CppUppsalaTensorFlowTokenizer> cppupsalato
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
 #endif
 
-class CppUppsalaTokenizerPrivate : public DeepTokenizerBase
+namespace
+{
+inline string THIS_FILE_LOGGING_CATEGORY()
+{
+  TOKENIZERLOGINIT;
+  return logger.zone().toStdString();
+}
+}
+
+class CppUppsalaTokenizerPrivate : public DeepTokenizerBase, public ConfigurationHelper
 {
 public:
   CppUppsalaTokenizerPrivate();
@@ -103,7 +112,7 @@ public:
     int start;
   };
 
-  void init(const QString& model_refix);
+  void init(GroupConfigurationStructure& unitConfiguration);
   void tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences);
 
   MediaId m_language;
@@ -182,6 +191,7 @@ protected:
 };
 
 CppUppsalaTokenizerPrivate::CppUppsalaTokenizerPrivate() :
+  ConfigurationHelper("CppUppsalaTokenizerPrivate", THIS_FILE_LOGGING_CATEGORY()),
   m_stringsPool(nullptr),
   m_currentVx(0),
   m_ignoreEOL(false)
@@ -218,27 +228,7 @@ void CppUppsalaTensorFlowTokenizer::init(
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
 
-  try
-  {
-    m_d->m_data = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("data").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    m_d->m_data = QString::fromUtf8("SentenceBoundaries");
-  }
-
-  QString modelPrefix; // The path to the LIMA python tensorflow-based tokenizer
-  try
-  {
-    modelPrefix = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("model_prefix").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'model_prefix' in CppUppsalaTensorFlowTokenizer group configuration",
-                        InvalidConfiguration());
-  }
-
-  m_d->init(modelPrefix);
+  m_d->init(unitConfiguration);
 }
 
 LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis) const
@@ -317,8 +307,11 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
   return SUCCESS_ID;
 }
 
-void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
+void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
 {
+  m_data = QString(getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries").c_str());
+  QString model_prefix = getStringParameter(unitConfiguration, "model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
+
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init" << model_prefix);
 
   QString lang_str = MediaticData::single().media(m_language).c_str();

@@ -14,16 +14,41 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/linguisticProcessing )
+add_definitions(-DLIMA_LP_HELPERS_EXPORTING)
 
-add_subdirectory(BagOfWords)
-add_subdirectory(PropertyCode)
-add_subdirectory(annotationGraph)
-add_subdirectory(linguisticData)
-add_subdirectory(misc)
-add_subdirectory(tgv)
-add_subdirectory(linearTextRepresentation)
-add_subdirectory(helpers)
+########### next target ###############
+
+SET(lima-lp-helpers_LIB_SRCS
+  ConfigurationHelper.cpp
+)
+
+add_library(lima-lp-helpers
+  SHARED ${lima-lp-helpers_LIB_SRCS}
+)
+ADD_DLL_TO_PATH(lima-lp-helpers)
+
+target_link_libraries(lima-lp-helpers
+  lima-common-xmlconfigurationfiles
+)
+
+set_target_properties(lima-lp-helpers
+  PROPERTIES
+  VERSION ${LIMA_LP_LIB_VERSION}
+  SOVERSION ${LIMA_LP_LIB_SOVERSION}
+)
+
+install(
+  TARGETS lima-lp-helpers
+  DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime
+)
 
 ########### install files ###############
+
+install(FILES
+  ConfigurationHelper.h
+  DESTINATION include/linguisticProcessing/common/helpers
+  COMPONENT devel
+)
