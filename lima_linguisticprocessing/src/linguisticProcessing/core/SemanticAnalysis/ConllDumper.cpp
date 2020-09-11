@@ -164,6 +164,7 @@ class ConllDumperPrivate
 
   MediaId m_language;
   bool m_withColsHeader;
+  QString m_graph;
   QMap<QString, QString> m_conllLimaDepMapping;
   const Common::PropertyCode::PropertyAccessor* m_propertyAccessor;
   LinguisticGraph* posGraph;
@@ -182,10 +183,10 @@ class ConllDumperPrivate
                     std::string> > vertexDependencyInformations;
 };
 
-
 ConllDumperPrivate::ConllDumperPrivate():
   m_language(0),
   m_withColsHeader(false),
+  m_graph("PosGraph"),
   m_conllLimaDepMapping(),
   posGraph(nullptr),
   anaGraph(nullptr),
@@ -211,6 +212,13 @@ void ConllDumper::init(GroupConfigurationStructure& unitConfiguration,
 {
   DUMPERLOGINIT;
   AbstractTextualAnalysisDumper::init(unitConfiguration, manager);
+
+  try
+  {
+    m_d->m_graph = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("graph").c_str());
+  }
+  catch (NoSuchParam& ) {} // keep default value
+
   m_d->m_language = manager->getInitializationParameters().media;
   m_d->languageData = &static_cast<const LanguageData&>(MedData::single().mediaData(m_d->m_language));
   m_d->propertyCodeManager = &m_d->languageData->getPropertyCodeManager();
@@ -218,7 +226,6 @@ void ConllDumper::init(GroupConfigurationStructure& unitConfiguration,
   m_d->managers = &m_d->propertyCodeManager->getPropertyManagers();
   m_d->m_propertyAccessor = &m_d->propertyCodeManager->getPropertyAccessor("MICRO");
   m_d->sp = &MedData::single().stringsPool(m_d->m_language);
-
 
   try
   {
@@ -273,7 +280,6 @@ void ConllDumper::init(GroupConfigurationStructure& unitConfiguration,
     }
   }
   catch (NoSuchParam& ) {} // keep default value
-
 }
 
 LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
@@ -282,7 +288,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   DUMPERLOGINIT;
   LDEBUG << "ConllDumper::process";
 #endif
-
 
   LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(
     analysis.getData("LinguisticMetaData"));
@@ -293,19 +298,19 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  AnnotationData* annotationData = static_cast<AnnotationData*>(
-    analysis.getData("AnnotationData"));
+  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     DUMPERLOGINIT;
     LINFO << "ConllDumper::process no AnnotationData ! Will not contain NE nor predicates";
   }
   m_d->annotationData = annotationData;
-  auto posGraphData=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));//est de type PosGraph et non pas AnalysisGraph
+  auto posGraphData=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph.toStdString()));
+  // posGraphData est de type PosGraph et non pas AnalysisGraph
   if (posGraphData==0)
   {
     DUMPERLOGINIT;
-    LERROR << "ConllDumper::process graph PosGraph has not been produced: check pipeline";
+    LERROR << "ConllDumper::process graph" << m_d->m_graph << "has not been produced: check pipeline";
     return MISSING_DATA;
   }
   auto posGraph = posGraphData->getGraph();
@@ -791,11 +796,11 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
   if (annotationData == nullptr)
     predicates = result;
   auto tokenList = static_cast<AnalysisGraph*>(
-    analysis.getData("PosGraph"));
+    analysis.getData(m_graph.toStdString()));
   if (tokenList == nullptr)
   {
     DUMPERLOGINIT;
-    LERROR << "graph PosGraph has not been produced: check pipeline";
+    LERROR << "graph" << m_graph << "has not been produced: check pipeline";
     predicates = result;
   }
   auto graph = tokenList->getGraph();
@@ -1248,6 +1253,7 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
   LinguisticGraphVertex vEndDone,
   const QString& parentNeType)
 {
+  LIMA_UNUSED(posGraphVertex);
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex" << v << posGraphVertex
