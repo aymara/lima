@@ -66,7 +66,7 @@ def main(argv):
         features_kept = []
         for feature in features:
           #print(feature, file=sys.stderr)
-          if feature is not '_':
+          if feature != '_':
             feature_name, feature_value = feature.split('=')
             if param.features == 'all' or feature_name in param.features:
               features_kept.append(feature)
