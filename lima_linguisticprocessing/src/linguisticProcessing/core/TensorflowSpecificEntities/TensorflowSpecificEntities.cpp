@@ -79,7 +79,7 @@ TensorflowSpecificEntitiesPrivate::TensorflowSpecificEntitiesPrivate(
 
 TensorflowSpecificEntitiesPrivate::~TensorflowSpecificEntitiesPrivate()
 {
-    //8. Free any resources used by the session
+  // 8. Free any resources used by the session
   m_status.reset(new Status());
   *m_status = m_session->Close();
 
@@ -87,7 +87,6 @@ TensorflowSpecificEntitiesPrivate::~TensorflowSpecificEntitiesPrivate()
   {
     TFSELOGINIT;
     LERROR << m_status->ToString();
-    throw LimaException();
   }
 
   delete m_session;
@@ -112,8 +111,8 @@ void TensorflowSpecificEntities::init(
   m_d->m_microAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   m_d->m_sp = &(Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language));
 
-  //Load parameters required for running the graph
-//     std::string graph;
+  // Load parameters required for running the graph
+  // std::string graph;
   try
   {
     m_d->m_graph = Common::Misc::findFileInPaths(
