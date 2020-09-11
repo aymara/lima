@@ -514,8 +514,10 @@ QString ApproxStringMatcher::wcharStr2LimaStr(const std::basic_string<wchar_t>& 
 }
 
 std::basic_string<wchar_t> ApproxStringMatcher::buildPattern(const std::basic_string<wchar_t>& normalizedForm) const {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
-    // convert normalizedForm into std::basic_string<wchar_t>
+#endif
+  // convert normalizedForm into std::basic_string<wchar_t>
     // std::basic_string<wchar_t> wpattern = LimaStr2wcharStr(normalizedForm);
     std::basic_string<wchar_t> wpattern = normalizedForm;
     // escape 'regex special character', to avoid to interpret a character in a name as regex special character:
@@ -558,7 +560,9 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     OrderedSolution& result) const
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
+#endif
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
 
@@ -574,7 +578,7 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     if (currentToken!=0)
     {
       // Add enough space characters to adjust text to beginning of token
-      if (currentToken->position() > text.length()) {
+      if (currentToken->position() > (uint)text.length()) {
         for( int i = currentToken->position() - text.length() ; i > 0 ; i-- )
           text.append(BLANK_SEPARATOR);
       }
@@ -641,7 +645,9 @@ void ApproxStringMatcher::computeVertexMatches(
     const LinguisticGraphVertex vEnd,
     const Suggestion& suggestion, Solution& tempResult) const
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
+#endif
   Token* currentToken=get(vertex_token,g,vStart);
 
       tempResult.suggestion.nb_error = suggestion.nb_error;
