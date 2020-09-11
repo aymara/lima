@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -30,7 +30,10 @@ SET(compile-rules_SRCS
 
 add_executable(compile-rules ${compile-rules_SRCS})
 
-target_link_libraries(compile-rules lima-lp-automatoncompiler)
+target_link_libraries(compile-rules
+    lima-lp-automatoncompiler
+    lima-lp-specificentities
+)
 
 install(TARGETS compile-rules
         DESTINATION bin
