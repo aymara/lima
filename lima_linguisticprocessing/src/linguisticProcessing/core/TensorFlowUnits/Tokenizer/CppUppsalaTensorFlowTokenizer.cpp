@@ -332,8 +332,17 @@ void CppUppsalaTokenizerPrivate::init(const QString& model_prefix)
   }
   else
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
-                        << udlang, LimaException());
+    // parse lang codes like 'eng.ud'
+    if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
+    {
+      udlang = lang_str.left(3).toStdString();
+      lang_str = "ud";
+    }
+    else
+    {
+      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
+                          << udlang, Lima::InvalidConfiguration());
+    }
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
