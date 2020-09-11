@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -29,6 +29,8 @@ SET(lima-lp-textsegmentation_LIB_SRCS
    SentenceBoundariesFinder.cpp
    ParagraphBoundariesFinder.cpp
    SentenceBoundariesXmlLogger.cpp
+   SentenceBoundariesTransfer.cpp
+   SentenceBoundariesUpdater.cpp
 # TemporalSegmentationFeatures has to be moved to a new library just because otherwise it does not compile under Windows
 #   TemporalSegmentationFeatures.cpp
 )
@@ -60,6 +62,8 @@ install(FILES
     SentenceBoundariesXmlLogger.h
     TemporalSegmentationFeatures.h
     TextSegmentationExport.h
+    SentenceBoundariesTransfer.h
+    SentenceBoundariesUpdater.h
   DESTINATION include/linguisticProcessing/core/TextSegmentation
   COMPONENT devel
 )
