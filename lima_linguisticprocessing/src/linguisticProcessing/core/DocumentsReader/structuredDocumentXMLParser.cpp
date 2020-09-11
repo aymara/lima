@@ -588,14 +588,16 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
 void StructuredDocumentXMLParser::setCurrentByteOffset ( const unsigned int offset )
 {
 #ifdef DEBUG_LP
-    DRLOGINIT;
-    LDEBUG << "StructuredDocumentXMLParser::setCurrentByteOffset(" << offset << ")";
+  DRLOGINIT;
+  LDEBUG << "StructuredDocumentXMLParser::setCurrentByteOffset(" << offset << ")";
+#else
+  LIMA_UNUSED(offset);
 #endif
-    if ( m_currentDocument->size() != 0 )
-    {
-//         AbstractStructuredDocumentElement* currentElement = m_currentDocument->back();
-//         currentElement->moveByteReaderPosTo ( offset );
-    }
+  if ( m_currentDocument->size() != 0 )
+  {
+    // AbstractStructuredDocumentElement* currentElement = m_currentDocument->back();
+    // currentElement->moveByteReaderPosTo ( offset );
+  }
 }
 
 //**********************************************************************

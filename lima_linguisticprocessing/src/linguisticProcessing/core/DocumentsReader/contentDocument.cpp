@@ -2,8 +2,8 @@
  * @file   contentDocument.cpp
  * @author Besancon Romaric
  * @date   Wed Oct 29 13:31:44 2003
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #include "DocumentElements.h"
@@ -59,10 +59,9 @@ DocumentPropertyElement* ContentStructuredDocument::addPropertyChild(
 }
 
 HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
-    const QString& elementName, unsigned int parserOffset, 
+    const QString& elementName, unsigned int parserOffset,
     const DocumentPropertyType& propType )
 {
-  
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushHierarchyChild" << elementName << parserOffset;
@@ -72,6 +71,8 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
   else {
     LDEBUG  << "and without property";
   }
+#else
+  LIMA_UNUSED(propType);
 #endif
   HierarchyDocumentElement* result;
   if( empty() ) {
@@ -104,10 +105,10 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
 }
 
 IndexingDocumentElement* ContentStructuredDocument::pushIndexingChild(
-    const QString& elementName, unsigned int parserOffset, 
+    const QString& elementName, unsigned int parserOffset,
     const DocumentPropertyType& propType )
 {
-  
+
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushIndexingChild" << elementName<< parserOffset;
@@ -125,11 +126,11 @@ IndexingDocumentElement* ContentStructuredDocument::pushIndexingChild(
 #ifdef DEBUG_LP
   LDEBUG  << "structuredElement:" << hierarchyElement;
 #endif
-  if( hierarchyElement != 0 ) 
+  if( hierarchyElement != 0 )
   {
     result = new IndexingDocumentElement(elementName, parserOffset, propType, hierarchyElement->getPropertyList());
   }
-  else 
+  else
   {
     // Can have only hierarchy parent
     return 0;
@@ -146,7 +147,7 @@ IndexingDocumentElement* ContentStructuredDocument::pushIndexingChild(
 IgnoredDocumentElement* ContentStructuredDocument::pushIgnoredChild(
     const QString& elementName, unsigned int parserOffset, const DocumentPropertyType& propType )
 {
-  
+
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushIgnoredChild" << elementName<< parserOffset;
@@ -172,7 +173,7 @@ IgnoredDocumentElement* ContentStructuredDocument::pushIgnoredChild(
   return result;
 }
 
-DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(const QString& elementName, unsigned int parserOffset ) 
+DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(const QString& elementName, unsigned int parserOffset )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -184,30 +185,30 @@ DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(cons
   return result;
 }
 
-PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(const QString& elementName, unsigned int parserOffset ) 
+PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(const QString& elementName, unsigned int parserOffset )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushPresentationChild" << elementName << parserOffset <<back()->getOffset();
 #endif
-  
+
   PresentationDocumentElement* result;
 #ifdef DEBUG_LP
-  assert( !empty() ); 
+  assert( !empty() );
 #endif
   IndexingDocumentElement* structuredElement = dynamic_cast<IndexingDocumentElement*>(back());
-  if( structuredElement != 0 ) 
+  if( structuredElement != 0 )
   {
     result = new PresentationDocumentElement(elementName, parserOffset, structuredElement->getPropertyList() );
     result->addSpaces(parserOffset-back()->getOffset());
   }
-  else 
+  else
   {
     const std::map<DocumentPropertyType, std::string> emptyPropagated;
     result = new PresentationDocumentElement(elementName, parserOffset, emptyPropagated );
     result->addSpaces(parserOffset-back()->getOffset());
   }
-  
+
   push_back(result);
   return result;
 }
@@ -218,7 +219,7 @@ ContentStructuredDocument::~ContentStructuredDocument() {
   }
 }
 
-void ContentStructuredDocument::popDiscardableElement(unsigned int parserOffset) 
+void ContentStructuredDocument::popDiscardableElement(unsigned int parserOffset)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -232,7 +233,7 @@ void ContentStructuredDocument::popDiscardableElement(unsigned int parserOffset)
 #ifdef DEBUG_LP
   assert( size() != 0 );
 #endif
-  
+
   if (!empty())
   {
     AbstractStructuredDocumentElement* newCurrent = back();
@@ -242,7 +243,7 @@ void ContentStructuredDocument::popDiscardableElement(unsigned int parserOffset)
   delete currentElement;
 }
 
-void ContentStructuredDocument::popPropertyElement(unsigned int parserOffset) 
+void ContentStructuredDocument::popPropertyElement(unsigned int parserOffset)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -286,7 +287,7 @@ void ContentStructuredDocument::popPresentationElement( unsigned int parserOffse
   delete currentElement;
 }
 
-void ContentStructuredDocument::popIndexingElement(unsigned int parserOffset) 
+void ContentStructuredDocument::popIndexingElement(unsigned int parserOffset)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -313,7 +314,7 @@ void ContentStructuredDocument::popIndexingElement(unsigned int parserOffset)
   delete currentElement;
 }
 
-void ContentStructuredDocument::popIgnoredElement(unsigned int parserOffset) 
+void ContentStructuredDocument::popIgnoredElement(unsigned int parserOffset)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -400,7 +401,7 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
   StructuredXmlDocumentHandler* processor ) {
 #ifdef DEBUG_LP
   DRLOGINIT;
-  LDEBUG << "ContentStructuredDocument::setDataToElement" << absElement->getElementName() 
+  LDEBUG << "ContentStructuredDocument::setDataToElement" << absElement->getElementName()
         << property.getId() << property.getStorageType() << property.getValueCardinality() << data;
 #endif
   if(property.getId().empty()) {
@@ -409,16 +410,16 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
     return;
   }
   AbstractStructuredDocumentElementWithProperties* element = dynamic_cast<AbstractStructuredDocumentElementWithProperties*>(absElement);
-  
-  if( element == 0 ) 
+
+  if( element == 0 )
   {
     DRLOGINIT;
     LWARN << "ContentStructuredDocument::setDataToElement: element is not a AbstractStructuredDocumentElementWithProperties" << absElement->getElementName();
     return;
   }
-  
+
   switch (property.getStorageType()) {
-  
+
     case STORAGE_DATE: {
       QDate dateBegin;
       QDate dateEnd;
@@ -435,7 +436,7 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
       else
         element->setStringValue(property.getId(), data);
       break;
-    case STORAGE_INTEGER: 
+    case STORAGE_INTEGER:
       element->setIntValue(property.getId(), atoi(data.c_str()));
       break;
     default:
@@ -444,7 +445,7 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
   // ajout a la liste des proprietes a propager
   element->addProperty( property, data );
   processor->handleProperty( property, data);
-  
+
 #ifdef DEBUG_LP
   LDEBUG << "ContentStructuredDocument::setDataToElement" << element->getElementName() <<"field("  << property.getId()  << ")=["<< data <<"]" << element->getStringValue(property.getId()).first << (*element->getPropertyList().find(property)).second;
 #endif
@@ -478,7 +479,7 @@ void ContentStructuredDocument::parseDate(const string& dateStr,
         dateBegin=QDate::fromString(newDateStr.c_str());
         dateEnd=QDate::fromString(newDateStr.c_str());
       }
-      else { 
+      else {
         // one separator : suppose month/year
         // find end of month
         string month(dateStr,0,firstSep);
@@ -496,8 +497,8 @@ void ContentStructuredDocument::parseDate(const string& dateStr,
       dateEnd=QDate(yearNum,12,31);
     }
   }
-  //catch (boost::bad_lexical_cast& e) { 
-  catch (std::exception& e) { 
+  //catch (boost::bad_lexical_cast& e) {
+  catch (std::exception& e) {
     DRLOGINIT;
     LWARN << "Warning: " << e.what();
     LWARN << "Failed parsing of date [" << dateStr << "]";
