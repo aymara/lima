@@ -27,6 +27,7 @@ SET(lima-common-data_LIB_SRCS
    genericDocumentProperties.cpp
    readwritetools.cpp
    strwstrtools.cpp
+   LimaString.cpp
 )
 
 add_library(lima-common-data SHARED ${lima-common-data_LIB_SRCS})

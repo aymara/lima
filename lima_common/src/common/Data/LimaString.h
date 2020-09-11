@@ -44,6 +44,8 @@ namespace Lima
   /** @deprecated LimaString is an alias for QString. All its occurences will be
    *  removed enventually. */
   using LimaString = QString;
+  // keep ouput operators to avoid explicit conversion to utf8 at each output
+  LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const QString& s);
 } // closing namespace Lima
 
 namespace std
