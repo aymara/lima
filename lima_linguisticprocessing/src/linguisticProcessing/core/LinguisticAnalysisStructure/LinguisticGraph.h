@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,7 +20,7 @@
   * @brief        A graph structure for linguistic analysis
   *
   * @file         LinguisticGraph.h
-  * @author       Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author       Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   * @author       Benoit Mathieu
   *
@@ -55,7 +55,7 @@ enum vertex_token_t { vertex_token = 1000 };
 typedef boost::property< vertex_token_t, VertexTokenProp > VertexTokenProperty;
 namespace boost {BOOST_INSTALL_PROPERTY(vertex, token);}
 
-/** This vertex proprerty represents the linguitic object  pointed by the node
+/** This vertex proprerty represents the linguitic object pointed by the node
   * It points to only one word defined as a lemma and its category */
 
 typedef Lima::LinguisticProcessing::LinguisticAnalysisStructure::MorphoSyntacticData* VertexDataProp;
@@ -121,7 +121,7 @@ typedef boost::property_map<LinguisticGraph, vertex_data_t>::const_type CVertexD
 typedef boost::property_map<LinguisticGraph, vertex_chain_id_t>::type VertexChainIdPropertyMap;
 typedef boost::property_map<LinguisticGraph, vertex_chain_id_t>::const_type CVertexChainIdPropertyMap;
 
-
+typedef std::set<LinguisticGraphVertex> SetOfLinguisticGraphVertices;
 
 // typedef boost::property_map<LinguisticGraph, edge_chain_id_t>::type EdgeChainIdPropertyMap;
 typedef boost::property_map<LinguisticGraph, boost::vertex_color_t >::type VertexColorLinguisticGraphPropertyMap;

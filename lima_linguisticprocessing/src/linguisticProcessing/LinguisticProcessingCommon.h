@@ -123,6 +123,7 @@
 #define LIMASERVERLOGINIT LOGINIT("LP::LimaServer");
 #define TENSORFLOWMORPHOSYNTAXLOGINIT LOGINIT("LP::TensorFlowMorphoSyntax");
 #define TENSORFLOWLEMMATIZERLOGINIT LOGINIT("LP::TensorFlowLemmatizer");
+#define SENTENCEBOUNDARIESUPDATERLOGINIT LOGINIT("LP::SentenceBoundariesUpdater");
 
 #define L_NONE static_cast<LinguisticCode>(0)
 #define NONE_1 static_cast<LinguisticCode>(0)
