@@ -265,6 +265,7 @@ public:
         std::exception(), m_reason(message)
     {
     }
+    LimaException(const LimaException&) = default;
     virtual ~LimaException() throw() {}
     virtual const char * what () const throw() override
     {
@@ -282,6 +283,7 @@ public:
         LimaException(message)
     {
     }
+    InvalidConfiguration(const InvalidConfiguration&) = default;
 
 private:
   InvalidConfiguration& operator=(const InvalidConfiguration&) {return  *this;}
@@ -324,6 +326,8 @@ public :
       }
 
     };
+    
+    MediaNotInitialized(const MediaNotInitialized&)=default;
     virtual ~MediaNotInitialized() throw() {};
 
 private:
@@ -364,6 +368,7 @@ public :
         }
 
     }
+    LanguageNotInitialized(const LanguageNotInitialized&)=default;
     virtual ~LanguageNotInitialized() throw() {};
 
 private:
@@ -382,6 +387,7 @@ public :
     {
         m_reason = std::string("Fsa not initialized because of ") + reason;
     }
+    AccessByStringNotInitialized(const AccessByStringNotInitialized&)=default;
     virtual ~AccessByStringNotInitialized() throw() {};
 
 private:
@@ -395,6 +401,7 @@ public :
     {
       m_reason = std::string("parameter out of range ") + reason;
     }
+    AccessByStringOutOfRange(const AccessByStringOutOfRange&)=default;
     virtual ~AccessByStringOutOfRange() throw() {};
 
 private:
@@ -408,6 +415,7 @@ public :
     {
       m_reason = std::string("incomplete ressources:  ") + reason;
     }
+    IncompleteResources(const IncompleteResources&)=default;
     virtual ~IncompleteResources() throw() {}
 
 private:
@@ -422,7 +430,7 @@ public:
   {
     m_reason = std::string("XMLException: ") + message;
   }
-
+  XMLException(const XMLException&)=default;
 private:
   XMLException& operator=(const XMLException&);
 };
