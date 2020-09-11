@@ -30,12 +30,11 @@
 
 namespace Lima {
 
-  std::ostream& operator<<(std::ostream &os, const LimaString& s)
+  std::ostream& operator<<(std::ostream &os, const QString& s)
   {
     os << s.toUtf8().data();
     return os;
   }
-
 
 
 } // closing namespace Lima
