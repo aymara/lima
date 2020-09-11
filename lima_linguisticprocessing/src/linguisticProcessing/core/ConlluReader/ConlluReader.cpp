@@ -93,7 +93,7 @@ public:
     int start;
   };
 
-  void init(const QString& model_refix);
+  void init();
   vector< vector< TPrimitiveToken > > tokenize(const QString& text);
 
   MediaId m_language;
@@ -135,6 +135,7 @@ void ConlluReader::init(GroupConfigurationStructure& unitConfiguration,
                         Manager* manager)
 
 {
+  LIMA_UNUSED(manager);
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "ConlluReader::init");
 
   m_d->m_language = manager->getInitializationParameters().media;
@@ -223,9 +224,8 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
-void ConlluReaderPrivate::init(const QString& model_prefix)
+void ConlluReaderPrivate::init()
 {
-  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "ConlluReaderPrivate::init" << model_prefix);
 }
 
 void ConlluReaderPrivate::append_new_word(vector< TPrimitiveToken >& current_sentence,

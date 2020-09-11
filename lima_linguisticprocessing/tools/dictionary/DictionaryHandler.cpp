@@ -823,7 +823,6 @@ uint64_t DictionaryCompilerPrivate::placeLingPropsIntoCharBuf(const std::vector<
     {
       if (i >= CODED_INT_BUFFER_SIZE)
       {
-        ANALYSISDICTLOGINIT;
         QString errorString;
         QTextStream qts(&errorString);
         qts << "DictionaryCompiler::placeLingPropsIntoCharBuf number too large to be coded in buffer of size "

@@ -73,8 +73,9 @@ SentenceBoundariesTransfer::~SentenceBoundariesTransfer()
 void SentenceBoundariesTransfer::init(
   GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
-
 {
+  LIMA_UNUSED(unitConfiguration);
+  LIMA_UNUSED(manager);
 }
 
 

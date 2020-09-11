@@ -464,10 +464,12 @@ LimaStatusCode TensorflowSpecificEntities::process(
 
 bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis) const
 {
-//     LinguisticGraphVertex previous;
+  // LinguisticGraphVertex previous;
   auto analysisGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
 
+#ifdef DEBUG_LP
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());
+#endif
 
   auto itVisited = m_d->m_visitedVertex.cbegin();
   while(itVisited != m_d->m_visitedVertex.cend())

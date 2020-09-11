@@ -558,7 +558,9 @@ void ApproxStringMatcher::matchApproxTokenAndFollowers(
     std::pair<NameIndex::const_iterator,NameIndex::const_iterator> nameRange,
     OrderedSolution& result) const
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
+#endif
   VertexTokenPropertyMap tokenMap=get(vertex_token,g);
   // VertexDataPropertyMap dataMap=get(vertex_data,g);
 
@@ -641,7 +643,9 @@ void ApproxStringMatcher::computeVertexMatches(
     const LinguisticGraphVertex vEnd,
     const Suggestion& suggestion, Solution& tempResult) const
 {
+#ifdef DEBUG_LP
   MORPHOLOGINIT;
+#endif
   Token* currentToken=get(vertex_token,g,vStart);
 
       tempResult.suggestion.nb_error = suggestion.nb_error;
