@@ -653,13 +653,13 @@ int main(int argc, char *argv[])
     cerr << "--withoutTemplate ";
   if(param.subWord) {
     cerr << "--subWord ";
-    if(param.listOfHyperwords.size()){
+    if(param.listOfHyperwords.size()) {
       cerr << "--listOfHyperwords=" << param.listOfHyperwords << " ";
     }
   }
   if(param.composed)
     cerr << "--composed=" << param.inputDicoComp << " ";
-  cerr << "--charSize=" << param.charSize;
+  cerr << "--charSize=" << param.charSize << " ";
   if(param.inputDico.size()) {
     cerr << "--input='" << param.inputDico << "' ";
   }
@@ -668,6 +668,9 @@ int main(int argc, char *argv[])
   }
   if(param.listOfWords.size()) {
     cerr << "--listOfWords='" << param.listOfWords << "'";
+  }
+  if(param.configDir.size()) {
+    cerr << "--configDir='" << param.configDir << "'";
   }
   cerr << endl;
 
@@ -679,7 +682,7 @@ int main(int argc, char *argv[])
   if (QsLogging::initQsLog(configPath) != 0)
   {
     FSAALOGINIT;
-    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
+    LERROR << argv[0] << ": Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
     return EXIT_FAILURE;
   }
 
