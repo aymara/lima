@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -60,6 +60,7 @@ add_custom_command(
     ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-eng.ud.xml
     ${CMAKE_CURRENT_BINARY_DIR}/../convert/symbolicCode-eng.ud.xml
     ${CHARCHART}
+    rules-configEnv
   COMMENT "compile-dictionary output ${DICOFILENAME}Dat-eng.ud.dat"
   VERBATIM
 )
@@ -94,6 +95,7 @@ add_custom_command(
     ${CMAKE_CURRENT_SOURCE_DIR}/../code/code-eng.ud.xml
     ${CMAKE_CURRENT_BINARY_DIR}/../convert/symbolicCode-eng.ud.xml
     ${CHARCHART}
+    rules-configEnv
   COMMENT "compile-dictionary output ${DICOFILENAME}Dat-eng.ud.dat"
   VERBATIM
 )
