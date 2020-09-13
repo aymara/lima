@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -37,7 +37,7 @@ AmosePluginsManager::AmosePluginsManager()
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
+  LERROR << "AmosePluginsManager::loadPlugins" << configDirs;
   Common::DynamicLibrariesManager::changeable().addSearchPathes(configDirs);
 
   QStringList forbiddenPlugins;
@@ -58,13 +58,13 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-    LINFO << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
+    LERROR << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
 
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-     LINFO << "AmosePluginsManager::loadPlugins loading plugins file "
+     LERROR << "AmosePluginsManager::loadPlugins loading plugins file "
             << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
@@ -88,7 +88,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           && !alreadyLoaded.contains(line)
         )
         {
-          LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+          LERROR << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
             LERROR << "AmosePluginsManager::loadLibrary(\""
@@ -103,20 +103,20 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         }
         else if (alreadyLoaded.contains(line))
         {
-          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was alreadyLoaded in another plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
         }
         else if (forbiddenPlugins.contains(line))
         {
-          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was set to be forbidden in anothe plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
         }
         else if (line.startsWith('#'))
         {
           line.remove(0,1);
-          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
+          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "forbidden from now on. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
           forbiddenPlugins << line;
