@@ -667,10 +667,10 @@ int main(int argc, char *argv[])
     cerr << "--output='" << param.outputDico << "' ";
   }
   if(param.listOfWords.size()) {
-    cerr << "--listOfWords='" << param.listOfWords << "'";
+    cerr << "--listOfWords='" << param.listOfWords << "' ";
   }
   if(param.configDir.size()) {
-    cerr << "--configDir='" << param.configDir << "'";
+    cerr << "--configDir='" << param.configDir << "' ";
   }
   cerr << endl;
 
@@ -682,6 +682,7 @@ int main(int argc, char *argv[])
   if (QsLogging::initQsLog(configPath) != 0)
   {
     FSAALOGINIT;
+    LERROR << argv[0] << ": configDirs.size() == " << configDirs.size();
     LERROR << argv[0] << ": Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
     return EXIT_FAILURE;
   }
