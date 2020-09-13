@@ -679,7 +679,7 @@ int main(int argc, char *argv[])
     QStringList(QString::fromUtf8(param.configDir.c_str()).split(LIMA_PATH_SEPARATOR)));
   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  if (QsLogging::initQsLog(configPath) != 0)
+  if (QsLogging::initQsLog(param.configDir.c_str()) != 0)
   {
     FSAALOGINIT;
     LERROR << argv[0] << ": configDirs.size() == " << configDirs.size();

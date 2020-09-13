@@ -33,13 +33,13 @@ namespace Common {
 namespace Misc {
 
 uint64_t countLines(std::istream& file)
-{ 
+{
   uint64_t result = 0;
   std::streampos initialPosition = file.tellg();
   int c = file.get();
   while (c != -1)
   {
-    while (c != -1 && c != '\n') 
+    while (c != -1 && c != '\n')
     {
       c = file.get();
     }
@@ -52,13 +52,13 @@ uint64_t countLines(std::istream& file)
 }
 
 uint64_t countLines(QFile& file)
-{ 
+{
   uint64_t result = 0;
   qint64 initialPosition = file.pos();
   char c = '\0';
   while (!file.atEnd())
   {
-    while (!file.atEnd() && c != '\n') 
+    while (!file.atEnd() && c != '\n')
     {
       file.getChar(&c);
     }
@@ -71,19 +71,21 @@ uint64_t countLines(QFile& file)
 
 QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
 {
-//   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+  qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
   for (auto path = paths.begin(); path != paths.end(); ++path)
   {
     if (!path->isEmpty() && QDir(*path).exists())
+    {
       configDirs << *path;
+    }
   }
   for (auto it = projects.begin(); it != projects.end(); ++it)
   {
     QString project = *it;
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
-    if (!projectConf.isEmpty()) 
+    if (!projectConf.isEmpty())
       confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
     for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
     {
@@ -110,7 +112,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       else
       {
         configDir = QString::fromUtf8("/usr/share/config/") + project;
-//         qDebug() << "buildConfigurationDirectoriesList testing usr" << configDir 
+//         qDebug() << "buildConfigurationDirectoriesList testing usr" << configDir
 //                   << configDir.isEmpty() << QDir( configDir ).exists();
         if (!configDir.isEmpty() && QDir( configDir ).exists() )
         {
@@ -121,7 +123,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
         }
       }
     }
-    
+
     // If current project is not lima, try to add a lima config dir for this project
     if (project != "lima")
     {
@@ -147,7 +149,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     }
   }
 
-//   qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
+  qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
@@ -160,7 +162,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
     QString project = *it;
     QStringList resDirs;
     QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
-    if (!projectRes.isEmpty()) 
+    if (!projectRes.isEmpty())
       resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
     for (auto resourcesDir = resDirs.begin(); resourcesDir != resDirs.end(); ++resourcesDir)
     {
@@ -215,7 +217,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects, const QSt
     if (!path->isEmpty() && QDir(*path).exists())
       resourcesDirs << *path;
   }
-  
+
   LOGINIT("FilesReporting");
   LINFO << "Resources directories are:" << resourcesDirs;
   return resourcesDirs;
@@ -237,8 +239,8 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
       return path+ "/" + fileName;
     }
   }
-  std::cerr << "WARNING: findFileInPaths no '" << fileName.toUtf8().constData() 
-            << "' found in '" << paths.toUtf8().constData() 
+  std::cerr << "WARNING: findFileInPaths no '" << fileName.toUtf8().constData()
+            << "' found in '" << paths.toUtf8().constData()
             << "' separated by '" << separator.toLatin1() << "'" << std::endl;
   return QString();
 }
