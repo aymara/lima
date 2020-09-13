@@ -31,7 +31,6 @@
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
-//using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common;
 
 namespace Lima

@@ -58,5 +58,15 @@ private:
   std::string m_loggingCategory;
 };
 
+#define CONFIGURATIONHELPER_LOGGING_INIT(X) \
+    namespace \
+    { \
+        inline string THIS_FILE_LOGGING_CATEGORY() \
+        { \
+            X; \
+            return logger.zone().toStdString(); \
+        } \
+    }
+
 }
 }

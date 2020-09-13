@@ -40,6 +40,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
@@ -92,11 +93,14 @@ SimpleFactory<MediaProcessUnit, TensorFlowLemmatizer> tensorflowmorphosyntaxFact
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
 #endif
 
-class TensorFlowLemmatizerPrivate
+CONFIGURATIONHELPER_LOGGING_INIT(TENSORFLOWLEMMATIZERLOGINIT);
+
+class TensorFlowLemmatizerPrivate : public ConfigurationHelper
 {
 public:
   TensorFlowLemmatizerPrivate()
-    : m_stringsPool(nullptr),
+    : ConfigurationHelper("TensorFlowLemmatizerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+      m_stringsPool(nullptr),
       m_lemmatization_required(false),
       m_batch_size(0),
       m_max_input_len(0),
@@ -106,8 +110,7 @@ public:
   ~TensorFlowLemmatizerPrivate();
 
   void init(GroupConfigurationStructure&,
-            MediaId lang,
-            const QString& model_prefix);
+            MediaId lang);
 
   LimaStatusCode process(AnalysisContent& analysis);
 
@@ -323,18 +326,7 @@ TensorFlowLemmatizer::~TensorFlowLemmatizer()
 void TensorFlowLemmatizer::init(GroupConfigurationStructure& gcs,
                                 Manager* manager)
 {
-  QString modelPrefix;
-  try
-  {
-    modelPrefix = QString::fromUtf8(gcs.getParamsValueAtKey("model_prefix").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'model_prefix' in TensorFlowLemmatizer group configuration",
-                        InvalidConfiguration());
-  }
-
-  m_d->init(gcs, manager->getInitializationParameters().media, modelPrefix);
+  m_d->init(gcs, manager->getInitializationParameters().media);
 }
 
 TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate()
@@ -351,10 +343,8 @@ TensorFlowLemmatizerPrivate::~TensorFlowLemmatizerPrivate()
 }
 
 void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
-                                       MediaId lang,
-                                       const QString& model_prefix)
+                                       MediaId lang)
 {
-  LIMA_UNUSED(model_prefix);
   m_language = lang;
   m_stringsPool = &MediaticData::changeable().stringsPool(m_language);
 
@@ -383,18 +373,7 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
     }
   }
 
-  QString model_name;
-
-  try
-  {
-    model_name = QString::fromUtf8(gcs.getParamsValueAtKey("model_prefix").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'model_prefix' in TensorFlowLemmatizer group configuration",
-                        InvalidConfiguration());
-  }
-
+  QString model_name = getStringParameter(gcs, "model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
   auto config_file_name = findFileInPaths(resources_path,

@@ -83,14 +83,7 @@ static SimpleFactory<MediaProcessUnit,CppUppsalaTensorFlowTokenizer> cppupsalato
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
 #endif
 
-namespace
-{
-inline string THIS_FILE_LOGGING_CATEGORY()
-{
-  TOKENIZERLOGINIT;
-  return logger.zone().toStdString();
-}
-}
+CONFIGURATIONHELPER_LOGGING_INIT(TOKENIZERLOGINIT);
 
 class CppUppsalaTokenizerPrivate : public DeepTokenizerBase, public ConfigurationHelper
 {

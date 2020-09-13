@@ -40,6 +40,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
@@ -97,18 +98,18 @@ SimpleFactory<MediaProcessUnit, TensorFlowMorphoSyntax> tensorflowmorphosyntaxFa
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
 #endif
 
-class TensorFlowMorphoSyntaxPrivate
+CONFIGURATIONHELPER_LOGGING_INIT(TENSORFLOWMORPHOSYNTAXLOGINIT);
+
+class TensorFlowMorphoSyntaxPrivate : public ConfigurationHelper
 {
 public:
   TensorFlowMorphoSyntaxPrivate()
-    : m_stringsPool(nullptr) { }
+    : ConfigurationHelper("TensorFlowMorphoSyntaxPrivate", THIS_FILE_LOGGING_CATEGORY()),
+      m_stringsPool(nullptr)
+  { }
   ~TensorFlowMorphoSyntaxPrivate();
 
-  void init(GroupConfigurationStructure&,
-            MediaId lang,
-            const QString& model_prefix,
-            const QString& embeddings);
-
+  void init(GroupConfigurationStructure&, MediaId lang);
   LimaStatusCode process(AnalysisContent& analysis);
 
 private:
@@ -307,36 +308,12 @@ void TensorFlowMorphoSyntax::init(
   GroupConfigurationStructure& gcs,
   Manager* manager)
 {
-  QString modelPrefix;
-  try
-  {
-    modelPrefix = QString::fromUtf8(gcs.getParamsValueAtKey("model_prefix").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'model_prefix' in TensorFlowMorphoSyntax group configuration",
-                        InvalidConfiguration());
-  }
-
-  QString embeddings;
-  try
-  {
-    embeddings = QString::fromUtf8(gcs.getParamsValueAtKey("embeddings").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    LOG_ERROR_AND_THROW("no param 'embeddings' in TensorFlowMorphoSyntax group configuration",
-                        InvalidConfiguration());
-  }
-
-  m_d->init(gcs, manager->getInitializationParameters().media, modelPrefix, embeddings);
+  m_d->init(gcs, manager->getInitializationParameters().media);
 }
 
 void TensorFlowMorphoSyntaxPrivate::init(
   GroupConfigurationStructure& gcs,
-  MediaId lang,
-  const QString& model_prefix,
-  const QString& embeddings)
+  MediaId lang)
 {
   LIMA_UNUSED(gcs);
   m_language = lang;
@@ -344,7 +321,8 @@ void TensorFlowMorphoSyntaxPrivate::init(
 
   QString lang_str = MediaticData::single().media(m_language).c_str();
   QString resources_path = MediaticData::single().getResourcesPath().c_str();
-  QString model_name = model_prefix;
+  QString model_name = getStringParameter(gcs, "model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
+  QString embeddings = getStringParameter(gcs, "embeddings", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
