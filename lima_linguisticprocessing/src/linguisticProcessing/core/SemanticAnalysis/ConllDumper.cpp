@@ -718,14 +718,10 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     }
     // @TODO Should follow instructions here to output all MWE:
     // https://universaldependencies.org/format.html#words-tokens-and-empty-nodes
-    auto neType = parentNeType;
-    if (neType.isEmpty())
-    {
-      neType = getNeType(v);
-    }
+    QString neType = getNeType(v);
 
     // Collect NE vertices and output them instead of a single line for
-    // current v. NE vertices can not only by PosGraph
+    // current v. NE vertices can not only be PosGraph
     // vertices (and thus can just call dumpPosGraphVertex
     // recursively) but also AnalysisGraph vertices. In the latter case, data
     // come partly from the AnalysisGraph and partly from the PosGraph
@@ -736,6 +732,11 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     }
     else
     {
+      if (!parentNeType.isEmpty())
+      {
+        neType = parentNeType;
+      }
+
       QString conllRelName;
       QString targetConllIdString;
       std::tie(conllRelName,
@@ -818,7 +819,7 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
 #endif
     visited.insert(v);
 
-    auto vMatches = annotationData->matches("PosGraph", v, "annot");
+    auto vMatches = annotationData->matches(m_graph.toStdString(), v, "annot");
     for (const auto& vMatch : vMatches)
     {
       if (annotationData->hasStringAnnotation(vMatch, "Predicate"))
@@ -850,7 +851,7 @@ QString ConllDumperPrivate::getNeType(LinguisticGraphVertex posGraphVertex)
   if (annotationData != nullptr)
   {
     // Check if the PosGraph vertex holds a specific entity
-    auto matches = annotationData->matches("PosGraph", posGraphVertex, "annot");
+    auto matches = annotationData->matches(m_graph.toStdString(), posGraphVertex, "annot");
     for (const auto& vx: matches)
     {
       if (annotationData->hasAnnotation(
@@ -864,9 +865,9 @@ QString ConllDumperPrivate::getNeType(LinguisticGraphVertex posGraphVertex)
     }
     if (neType == "_")
     {
-//             // The PosGraph vertex did not hold a specific entity,
+      // The PosGraph vertex did not hold a specific entity,
       // check if the AnalysisGraph vertex does
-      auto anaVertices = annotationData->matches("PosGraph", posGraphVertex,
+      auto anaVertices = annotationData->matches(m_graph.toStdString(), posGraphVertex,
                                                   "AnalysisGraph");
       // note: anaVertices size should be 0 or 1
       for (const auto& anaVertex: anaVertices)
@@ -973,7 +974,7 @@ QStringList ConllDumperPrivate::getPredicate(LinguisticGraphVertex v)
     {
       auto predicateVertex = predicates.value(keys[keys.size()-1-i]);
 
-      auto vMatches = annotationData->matches("PosGraph", v, "annot");
+      auto vMatches = annotationData->matches(m_graph.toStdString(), v, "annot");
       if (!vMatches.empty())
       {
 #ifdef DEBUG_LP
@@ -993,7 +994,7 @@ QStringList ConllDumperPrivate::getPredicate(LinguisticGraphVertex v)
             auto inVertex = boost::source(*vMatchInEdgesIt,
                                           annotationData->getGraph());
             auto inVertexAnnotPosGraphMatches = annotationData->matches(
-              "annot",inVertex,"PosGraph");
+              "annot",inVertex,m_graph.toStdString());
             if (inVertex == predicateVertex
                 && !inVertexAnnotPosGraphMatches.empty())
             {
@@ -1186,7 +1187,7 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
   if (annotationData != nullptr)
   {
     // Check if the PosGraph vertex holds a specific entity
-    auto matches = annotationData->matches("PosGraph", v, "annot");
+    auto matches = annotationData->matches(m_graph.toStdString(), v, "annot");
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumperPrivate::dumpNamedEntity matches PosGraph" << v
             << "annot:" << matchesS(matches);
@@ -1209,7 +1210,7 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
          return;
       }
     }
-    auto anaVertices = annotationData->matches("PosGraph", v, "AnalysisGraph");
+    auto anaVertices = annotationData->matches(m_graph.toStdString(), v, "AnalysisGraph");
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumperPrivate::dumpNamedEntity anaVertices for" << v
             << ":" << matchesS(anaVertices);
@@ -1444,11 +1445,11 @@ void ConllDumperPrivate::dumpToken(
     {
       if (neType == previousNeType)
       {
-        dstream->out() << " " << "B-";
+        dstream->out() << " " << "I-";
       }
       else
       {
-        dstream->out() << " " << "I-";
+        dstream->out() << " " << "B-";
       }
       dstream->out() << neType.toStdString();
     }
