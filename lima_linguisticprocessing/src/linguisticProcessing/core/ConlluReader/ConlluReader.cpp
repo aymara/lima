@@ -95,6 +95,7 @@ public:
 
   void init();
   vector< vector< TPrimitiveToken > > tokenize(const QString& text);
+  void computeDefaultStatus(Token& token);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
@@ -202,6 +203,8 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
         tToken->addOrthographicAlternatives(orig);
       }*/
 
+      m_d->computeDefaultStatus(*tToken);
+
       LOG_MESSAGE(LDEBUG, "      status is " << tToken->status().toString());
 
       // Adds on the path
@@ -227,6 +230,187 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
 void ConlluReaderPrivate::init()
 {
 }
+
+// set default key in status according to other elements in status
+void ConlluReaderPrivate::computeDefaultStatus(Token& token)
+{
+// #ifdef DEBUG_LP
+//   TOKENIZERLOGINIT;
+//   LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus"
+//           << token.stringForm();
+// #endif
+  static QRegularExpression reCapital("^[[:upper:]]+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reSmall("^[[:lower:]]+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reCapital1st("^[[:upper:]]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAcronym("^([[:upper:]]\\.)+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reCapitalSmall("^([[:upper:][:lower:]])+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAbbrev("^\\w+\\.$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reTwitter("^[@#]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAlphaHyphen("^\\w+[\\-]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reAlpha("^\\w+$", QRegularExpression::UseUnicodePropertiesOption);
+
+  // t_cardinal_roman
+  static QRegularExpression reCardinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+  // t_ordinal_roman
+  static QRegularExpression reOrdinalRoman("^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})(st|nd|d|th|er|ème)$");
+  // t_integer
+  static QRegularExpression reInteger("^\\d+$");
+  // t_comma_number
+  static QRegularExpression reCommaNumber("^\\d+,\\d$");
+  // t_dot_number
+  static QRegularExpression reDotNumber("^\\d\\.\\d$");
+  // t_fraction
+  static QRegularExpression reFraction("^\\d([.,]\\d+)?/\\d([.,]\\d+)?$");
+  // t_ordinal_integer
+  static QRegularExpression reOrdinalInteger("^\\d+(st|nd|d|th|er|ème)$");
+  // t_alphanumeric
+  static QRegularExpression reAlphanumeric("^[\\d[:lower:][:upper:]]+$", QRegularExpression::UseUnicodePropertiesOption);
+  static QRegularExpression reSentenceBreak("^[;.!?]$");
+
+  TStatus curSettings;
+  if (reCapital.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_capital";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital"));
+  }
+  else if (reSmall.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_small";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_small"));
+  }
+  else if (reCapital1st.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_capital_1st";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital_1st"));
+  }
+  else if (reAcronym.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_acronym";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_acronym"));
+  }
+  else if (reCapitalSmall.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_capital_small";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_capital_small"));
+  }
+  else if (reAbbrev.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_abbrev";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_abbrev"));
+  }
+  else if (reTwitter.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_twitter";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_twitter"));
+  }
+  else if (reCardinalRoman.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_cardinal_roman";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_cardinal_roman"));
+  }
+  else if (reOrdinalRoman.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_ordinal_roman";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_roman"));
+  }
+  else if (reInteger.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_integer";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_integer"));
+  }
+  else if (reCommaNumber.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_comma_number";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_comma_number"));
+  }
+  else if (reDotNumber.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_dot_number";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_dot_number"));
+  }
+  else if (reFraction.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_fraction";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_fraction"));
+  }
+  else if (reOrdinalInteger.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_integer"));
+  }
+  else if (reAlphanumeric.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_alphanumeric";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_alphanumeric"));
+  }
+  else if (reAlphaHyphen.match(token.stringForm()).hasMatch())
+  {
+    curSettings.setDefaultKey(QString::fromUtf8("t_alpha_hyphen"));
+    curSettings.setAlphaHyphen(true);
+  }
+  else if (reSentenceBreak.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_sentence_brk";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_sentence_brk"));
+  }
+  else // if (reSmall.match(token.stringForm()).hasMatch())
+  {
+// #ifdef DEBUG_LP
+//     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_word_brk (default)";
+// #endif
+    curSettings.setDefaultKey(QString::fromUtf8("t_word_brk"));
+  }
+
+  /*
+  // t_not_roman
+  static QRegularExpression reNotRoman("^$");
+  // t_alpha_concat_abbrev
+  static QRegularExpression reAlphConcatAbbrev("^$");
+  // t_pattern
+  static QRegularExpression rePattern("^$");
+  // t_word_brk
+  static QRegularExpression reWordBreak("^$");
+  // t_sentence_brk
+  static QRegularExpression reSentenceBreak("^$");
+  //  t_paragraph_brk
+  static QRegularExpression reParagraphBreak("^$");
+  */
+
+  token.setStatus(curSettings);
+}
+
 
 void ConlluReaderPrivate::append_new_word(vector< TPrimitiveToken >& current_sentence,
                                           const u32string& current_token,
