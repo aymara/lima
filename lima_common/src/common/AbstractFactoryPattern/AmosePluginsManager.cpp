@@ -37,8 +37,9 @@ AmosePluginsManager::AmosePluginsManager()
 bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
-  LERROR << "AmosePluginsManager::loadPlugins" << configDirs;
+  LINFO << "AmosePluginsManager::loadPlugins" << configDirs;
   std::cerr << "AmosePluginsManager::loadPlugins" << configDirs.toStdString() << std::endl;
+
   Common::DynamicLibrariesManager::changeable().addSearchPathes(configDirs);
 
   QStringList forbiddenPlugins;
@@ -59,14 +60,14 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     QString stdPluginsDir(*it);
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
-    LERROR << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
+    LINFO << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
     std::cerr << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir.toStdString() << std::endl;
 
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-      LERROR << "AmosePluginsManager::loadPlugins loading plugins file "
+      LINFO << "AmosePluginsManager::loadPlugins loading plugins file "
              << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
       std::cerr << "AmosePluginsManager::loadPlugins loading plugins file " << (pluginsDir.path()+"/"+pluginsFile.toUtf8().data()).toStdString() << std::endl;
       // Open plugin file.
@@ -85,6 +86,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
       {
         // Remove whitespace characters from the start and the end.
         QString line = QString(file.readLine()).trimmed();
+        std::cerr << "AmosePluginsManager::loadPlugins: line = " << line.toStdString() << std::endl;
 
         // Allow empty and comment lines.
         if ( !line.isEmpty() && !line.startsWith('#')
@@ -92,8 +94,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           && !alreadyLoaded.contains(line)
         )
         {
-          LERROR << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+          LDEBUG << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
           std::cerr << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'" << std::endl;
+
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
             LERROR << "AmosePluginsManager::loadLibrary(\""
@@ -111,7 +114,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         }
         else if (alreadyLoaded.contains(line))
         {
-          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was alreadyLoaded in another plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
           std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
@@ -120,7 +123,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         }
         else if (forbiddenPlugins.contains(line))
         {
-          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was set to be forbidden in anothe plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
           std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
@@ -130,7 +133,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         else if (line.startsWith('#'))
         {
           line.remove(0,1);
-          LERROR << "AmosePluginsManager::loadLibrary plugin" << line
+          LDEBUG << "AmosePluginsManager::loadLibrary plugin" << line
                   << "forbidden from now on. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
           std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
