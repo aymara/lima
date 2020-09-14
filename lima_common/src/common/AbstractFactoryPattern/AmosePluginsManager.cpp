@@ -38,6 +38,7 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
   LERROR << "AmosePluginsManager::loadPlugins" << configDirs;
+  std::cerr << "AmosePluginsManager::loadPlugins" << configDirs.toStdString() << std::endl;
   Common::DynamicLibrariesManager::changeable().addSearchPathes(configDirs);
 
   QStringList forbiddenPlugins;
@@ -59,20 +60,23 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
     stdPluginsDir.append("/plugins");
     QDir pluginsDir(stdPluginsDir);
     LERROR << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir;
+    std::cerr << "AmosePluginsManager::loadPlugins in folder" << stdPluginsDir.toStdString() << std::endl;
 
     // For each file under plugins directory, read plugins names and deduce shared libraries to load.
     QStringList pluginsFiles = pluginsDir.entryList(QDir::Files);
     Q_FOREACH(QString pluginsFile, pluginsFiles)
     {
-     LERROR << "AmosePluginsManager::loadPlugins loading plugins file "
-            << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
+      LERROR << "AmosePluginsManager::loadPlugins loading plugins file "
+             << pluginsDir.path()+"/"+pluginsFile.toUtf8().data();
+      std::cerr << "AmosePluginsManager::loadPlugins loading plugins file " << (pluginsDir.path()+"/"+pluginsFile.toUtf8().data()).toStdString() << std::endl;
       // Open plugin file.
       QFile file(pluginsDir.path() + "/" + pluginsFile);
       if (!file.open(QIODevice::ReadOnly))
       {
         ABSTRACTFACTORYPATTERNLOGINIT;
         LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file "
-                << pluginsFile.toUtf8().data();
+               << pluginsFile.toUtf8().data();
+        std::cerr << "AmosePluginsManager::loadPlugins: cannot open plugins file " << pluginsFile.toUtf8().data() << std::endl;
         return false;
       }
 
@@ -89,11 +93,15 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         )
         {
           LERROR << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'";
+          std::cerr << "AmosePluginsManager::loadPlugins loading plugin '" << line.toStdString().c_str() << "'" << std::endl;
           if (!DynamicLibrariesManager::changeable().loadLibrary(line.toStdString().c_str()))
           {
             LERROR << "AmosePluginsManager::loadLibrary(\""
-                    << line.toStdString() << "\") failed while handling"
-                    << (pluginsDir.path() + "/" + pluginsFile) << ".";
+                   << line.toStdString() << "\") failed while handling"
+                   << (pluginsDir.path() + "/" + pluginsFile) << ".";
+            std::cerr << "AmosePluginsManager::loadLibrary(\""
+                      << line.toStdString() << "\") failed while handling"
+                      << (pluginsDir.path() + "/" + pluginsFile).toStdString() << "." << std::endl;
             return false;
           }
           else
@@ -106,12 +114,18 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was alreadyLoaded in another plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
+          std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
+                    << "was alreadyLoaded in another plugins dir. Plugins file:"
+                    << (pluginsDir.path() + "/" + pluginsFile).toStdString() << std::endl;
         }
         else if (forbiddenPlugins.contains(line))
         {
           LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "was set to be forbidden in anothe plugins dir. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
+          std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
+                  << "was set to be forbidden in anothe plugins dir. Plugins file:"
+                  << (pluginsDir.path() + "/" + pluginsFile).toStdString() << std::endl;
         }
         else if (line.startsWith('#'))
         {
@@ -119,6 +133,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
           LERROR << "AmosePluginsManager::loadLibrary plugin" << line
                   << "forbidden from now on. Plugins file:"
                   << pluginsDir.path() + "/" + pluginsFile;
+          std::cerr << "AmosePluginsManager::loadLibrary plugin" << line.toStdString()
+                    << "forbidden from now on. Plugins file:"
+                    << (pluginsDir.path() + "/" + pluginsFile).toStdString() << std::endl;
           forbiddenPlugins << line;
         }
       }
