@@ -7,8 +7,9 @@ use firstname.lst,prefirstname.lst
 use title.lst,function_title.lst
 use person.lst
 use ../../eng/Person/wd_firstname.lst
+use ../../eng/Person/wd_lastname.lst
 
-@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La,Le,d',de la)
+@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La,Le,d')
 
 #----------------------------------------------------------------------
 # contextual rules for person recognition
@@ -22,8 +23,9 @@ use ../../eng/Person/wd_firstname.lst
 @AnyFirstname:[(@PreFirstname)?]:$NP? @DynastyOrder (er)?:PERSON:=>NormalizePersonName()
 
 #------------------------------
-@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
-#@Firstname::@particule $NP{1-2}:PERSON:=>NormalizePersonName()
+# The rule below hands ConllDumper
+#@Firstname:[(@Title|@FunctionTitle)?]:@Firstname de la ($NP|t_capital|t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital|t_capital_1st)){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
@@ -81,7 +83,12 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 #------------------------------
 # a list of known persons (single entities)
 
+@person::@DynastyOrder:PERSON:=>NormalizePersonName()
+@Firstname::@DynastyOrder:PERSON:=>NormalizePersonName()
 @person:::PERSON:=>NormalizePersonName()
+@AnyFirstname::@WikidataLastname:PERSON:=>NormalizePersonName()
+#@AnyFirstname:@WikidataLastname::PERSON:=>NormalizePersonName()
+#@Firstname:[t_small]:[t_small]:PERSON:=>NormalizePersonName()
 
 include persons.rules
 
