@@ -6,6 +6,7 @@ import os.path
 import re
 import json
 import argparse
+import bz2
 
 
 RE_CHARS_TO_ESCAPE = re.compile(r'([:\.&@\,\(\)\[\]])')
@@ -78,11 +79,35 @@ def save_label(aliases, labels, files, obj_type):
                         files['rules'].write(make_rule(v, obj_type) + '\n')
 
 
+def parse_line(args, line, classes, files):
+    if len(line) < 4:
+        return True
+    line = line.rstrip().rstrip(',')
+
+    try:
+        js = json.loads(line)
+    except:
+        return False
+    sys.stderr.write(js['id'] + '\r')
+    aliases = None
+    labels = None
+    if 'aliases' in js and args.lang in js['aliases']:
+        aliases = js['aliases'][args.lang]
+    if 'labels' in js and args.lang in js['labels']:
+        labels = [js['labels'][args.lang]]
+    if aliases is not None or labels is not None:
+        for p in classes:
+            if is_instance(js, classes[p]):
+                save_label(aliases, labels, files[p], args.type)
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input', help="Input file name")
     parser.add_argument('-c', '--classes', nargs='+', help='Comma-separated list of classes')
     parser.add_argument('-f', '--file', nargs='+', help='File with new line separated list of classes')
-    parser.add_argument('-l', '--lang', help='WikiData language')
+    parser.add_argument('-l', '--lang', required=True, help='WikiData language')
     parser.add_argument('-t', '--type', help='Object type for rules')
     args = parser.parse_args()
 
@@ -108,13 +133,15 @@ def main():
     for p in classes:
         for x in classes[p]:
             if x in all_wd_classes:
-                sys.stderr.write('ERROR: class \"%s\" mentioned at least twice in input\n' % (x))
-                sys.exit(-1)
-            all_wd_classes[x] = 1
+                sys.stderr.write('WARNING: class \"%s\" mentioned at least twice in input\n' % (x))
+                #sys.exit(-1)
+            else:
+                all_wd_classes[x] = 0
+            all_wd_classes[x] += 1
 
     files = {}
     for p in classes:
-        fn = p + ".words"
+        fn = p + '.' + args.lang + ".words"
         if os.path.isfile(fn):
             sys.stderr.write('ERROR: file \"%s\" already exists\n' % (fn))
             sys.exit(-1)
@@ -122,7 +149,7 @@ def main():
             files[p] = {}
         files[p]['words'] = open(fn, mode='w')
 
-        fn = p + ".rules"
+        fn = p + '.' + args.lang + ".rules"
         if os.path.isfile(fn):
             sys.stderr.write('ERROR: file \"%s\" already exists\n' % (fn))
             sys.exit(-1)
@@ -130,22 +157,27 @@ def main():
             files[p] = {}
         files[p]['rules'] = open(fn, mode='w')
 
-    for line in sys.stdin:
-        if len(line) < 4:
-            continue
-        line = line.rstrip().rstrip(',')
-
-        js = json.loads(line)
-        aliases = None
-        labels = None
-        if 'aliases' in js and args.lang in js['aliases']:
-            aliases = js['aliases'][args.lang]
-        if 'labels' in js and args.lang in js['labels']:
-            labels = [ js['labels'][args.lang] ]
-        if aliases is not None or labels is not None:
-            for p in classes:
-                if is_instance(js, classes[p]):
-                    save_label(aliases, labels, files[p], args.type)
+    if args.input is None or args.input.lower() in [ '-', 'stdin' ]:
+        for line in sys.stdin:
+            parse_line(args, line, classes, files)
+    elif args.input.endswith('.bz2'):
+        with open(args.input, 'rb') as f:
+            decomp = bz2.BZ2Decompressor()
+            remains_to_parse = ''
+            for chunk in iter(lambda: f.read(1024*64), b''):
+                dc = decomp.decompress(chunk)
+                if len(dc) == 0:
+                    continue
+                lines = (remains_to_parse + dc.decode('utf-8')).splitlines(keepends=False)
+                for line in lines:
+                    if not parse_line(args, line, classes, files):
+                        remains_to_parse = line
+    else:
+        with open(args.input, 'rb') as f:
+            for line in f:
+                if not parse_line(args, line, classes, files):
+                    sys.stderr.write('ERROR: can\'t parse line \'%s\'\n' % (line))
+                    sys.exit(1)
 
 
 if __name__ == '__main__':
