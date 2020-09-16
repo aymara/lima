@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -139,6 +139,18 @@ bool RecognizerMatch::isContiguous() const {
     }
   }
   return true;
+}
+
+bool RecognizerMatch::hasDuplicateElements() const {
+  std::set<LinguisticGraphVertex> vertices;
+  for (RecognizerMatch::const_iterator it=begin(),it_end=end();
+       it!=it_end; it++) {
+    LinguisticGraphVertex v = (*it).m_elem.first;
+    if (vertices.find(v) != vertices.end())
+      return true;
+    vertices.insert(v);
+  }
+  return false;
 }
 
 LimaString RecognizerMatch::getString() const {

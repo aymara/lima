@@ -525,12 +525,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
             << ") on vertex " << position;
       RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-      if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
+      if (stopAtFirstSuccess||(recoData != nullptr && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
         delete match; // a copy has been made
         match=0;
 #ifdef DEBUG_LP
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled() && recoData != nullptr) {
           LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
             << stopAtFirstSuccess << ") or next vertices empty ("
             << (recoData->getNextVertices().empty())
@@ -653,6 +653,10 @@ uint64_t Recognizer::
         bool returnAtFirstSuccess,
         bool applySameRuleWhileSuccess) const
 {
+  if (begin == end)
+  {
+    return 0;
+  }
 
   if (returnAtFirstSuccess) {
     stopAtFirstSuccess=true; // implied by the other
@@ -759,23 +763,26 @@ uint64_t Recognizer::
       }
     }
     RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-    std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
-    if (recoData != 0 && !nextVertices.empty() )
+    if (nullptr != recoData)
     {
-#ifdef DEBUG_LP
-      LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
-#endif
-      std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
-      nvit = nextVertices.begin();
-      nvit_end = nextVertices.end();
-      for (; nvit != nvit_end; nvit++)
+      std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
+      if (!nextVertices.empty())
       {
 #ifdef DEBUG_LP
-        LDEBUG << "           - " << *nvit;
+        LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
 #endif
-        toVisit.push_front(*nvit);
+        std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
+        nvit = nextVertices.begin();
+        nvit_end = nextVertices.end();
+        for (; nvit != nvit_end; nvit++)
+        {
+#ifdef DEBUG_LP
+          LDEBUG << "           - " << *nvit;
+#endif
+          toVisit.push_front(*nvit);
+        }
+        nextVertices.clear();
       }
-      nextVertices.clear();
     }
 #ifdef DEBUG_LP
     LDEBUG << "Recognizer: 'to visit' list size is now: " << toVisit.size();
@@ -829,7 +836,7 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       uint64_t nbSuccessForTheseRules=
         testSetOfRules(*((*ruleSet)->transitionUnit()),
                        (*ruleSet)->setOfRules(),
-                       graph, current, begin, end,analysis,
+                       graph, current, begin, end, analysis,
                        result, &forbiddenTypes,
                        stopAtFirstSuccess,
                        onlyOneSuccessPerType,

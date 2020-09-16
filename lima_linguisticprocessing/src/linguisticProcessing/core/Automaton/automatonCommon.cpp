@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,8 +22,8 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Tue Mar 22 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "automatonCommon.h"
@@ -72,7 +72,7 @@ void writeLimaString(std::ofstream& file,const LimaString& s)
 // wordSet = set of multi-term
 void readWordVector(std::ifstream& file, std::vector<LimaString>& wordVector)
 {
-  int i = Misc::readCodedInt(file);
+  auto i = Misc::readCodedInt(file);
   for( ; i > 0 ; i-- ) {
     LimaString s;
     Misc::readUTF8StringField(file,s);

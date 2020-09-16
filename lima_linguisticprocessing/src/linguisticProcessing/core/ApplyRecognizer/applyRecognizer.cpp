@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Fri Jan 14 2005
  * @version    $Id$
- * copyright   Copyright (C) 2005-2012 by CEA LIST
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
  *
  ***********************************************************************/
 
@@ -216,7 +216,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   LDEBUG << "    - graphId                     :" << m_graphId;
   LDEBUG << "    - dataForStorage              :" << m_dataForStorage;
 #endif
-  
+
   LimaStatusCode returnCode(SUCCESS_ID);
 
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
@@ -272,7 +272,7 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
     recoData->deleteResultData();
     resultData=0;
   }
-  
+
   // remove recognizer data (used only internally to this process unit)
   analysis.removeData("RecognizerData");
 
@@ -287,17 +287,15 @@ processOnEachSentence(AnalysisContent& analysis,
   APPRLOGINIT;
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
-  if (anagraph == 0) {
+  if (nullptr==anagraph)
+  {
     LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
     return MISSING_DATA;
   }
 
-//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-
-
   // get sentence bounds
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
-  if (sb==0)
+  if (nullptr==sb)
   {
     LERROR << "no sentence bounds defined ! abort";
     return MISSING_DATA;
@@ -311,14 +309,15 @@ processOnEachSentence(AnalysisContent& analysis,
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+    // LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 
     seRecognizerResult.clear();
     reco->apply(*anagraph,beginSentence,
                         endSentence,analysis,seRecognizerResult);
 
     //remove overlapping entities
-    if (m_resolveOverlappingEntities) {
+    if (m_resolveOverlappingEntities)
+    {
       reco->resolveOverlappingEntities(seRecognizerResult,
                                        m_overlappingEntitiesStrategy);
     }
@@ -335,11 +334,12 @@ processOnWholeText(AnalysisContent& analysis,
                    Recognizer* reco,
                    RecognizerData* recoData ) const
 {
-//   APPRLOGINIT;
-//   LDEBUG << "apply recognizer on whole text";
+  // APPRLOGINIT;
+  // LDEBUG << "apply recognizer on whole text";
 
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
-  if (anagraph == 0) {
+  if (nullptr == anagraph)
+  {
     APPRLOGINIT;
     LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
     return MISSING_DATA;
@@ -354,9 +354,10 @@ processOnWholeText(AnalysisContent& analysis,
               anagraph->lastVertex(),
               analysis,seRecognizerResult,
               m_testAllVertices,m_stopAtFirstSuccess,m_onlyOneSuccessPerType);
-  
+
   //remove overlapping entities
-  if (m_resolveOverlappingEntities) {
+  if (m_resolveOverlappingEntities)
+  {
     reco->resolveOverlappingEntities(seRecognizerResult,
                                              m_overlappingEntitiesStrategy);
   }

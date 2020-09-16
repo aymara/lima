@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -78,6 +78,7 @@ class LIMA_AUTOMATON_EXPORT RecognizerMatch :
   bool operator == (const RecognizerMatch&);
 
   bool isContiguous() const;
+  bool hasDuplicateElements() const;
   uint64_t positionBegin() const;
   uint64_t positionEnd() const;
   uint64_t length() const;
@@ -120,13 +121,13 @@ class LIMA_AUTOMATON_EXPORT RecognizerMatch :
   LimaString concatString() const { return getString(); } // just an alias
 
   LimaString getNormalizedString(const FsaStringsPool& sp) const;
-  
+
   // overlap based on positions
   bool isOverlapping(const RecognizerMatch& otherMatch) const;
 
   friend LIMA_AUTOMATON_EXPORT std::ostream& operator << (std::ostream&, const RecognizerMatch&);
   friend LIMA_AUTOMATON_EXPORT QDebug& operator << (QDebug&, const RecognizerMatch&);
-  
+
  private:
   const LinguisticAnalysisStructure::AnalysisGraph* m_graph;
 };

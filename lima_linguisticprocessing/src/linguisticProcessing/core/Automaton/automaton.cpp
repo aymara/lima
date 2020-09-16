@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2018 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -664,8 +664,26 @@ getBestMatch(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                              backward,sense,controlParams);
   if (success) {
     // results are sorted so that first is best
-    longestMatch=results.begin()->first;
-    checkList=results.begin()->second;
+    success = false;
+    for ( auto & res : results ) {
+      if (res.first.hasDuplicateElements()) {
+        // As far as I understand duplicated elements in matching
+        // result are a sign of the bug in the matching engine
+        // TODO: fix matching engine or remove this workaround
+        AULOGINIT;
+        LERROR << "duplicate elements in RecognizerMatch:"
+               << res.first.getString();
+
+        continue;
+      }
+
+      longestMatch=res.first;
+      checkList=res.second;
+      success = true;
+      break;
+    }
+    if (! success)
+      return false;
     if (sense == BACKWARDSEARCH) {
       // reverse found match
       std::reverse(longestMatch.begin(),longestMatch.end());
