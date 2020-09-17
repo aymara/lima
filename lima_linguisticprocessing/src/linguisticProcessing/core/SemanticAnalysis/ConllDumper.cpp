@@ -795,7 +795,13 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
   auto annotationData = static_cast<AnnotationData*>(
     analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
+  {
+    DUMPERLOGINIT;
+    LERROR << "No annotation data exists: check pipeline";
     predicates = result;
+    return;
+  }
+
   auto tokenList = static_cast<AnalysisGraph*>(
     analysis.getData(m_graph.toStdString()));
   if (tokenList == nullptr)
@@ -803,9 +809,9 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
     DUMPERLOGINIT;
     LERROR << "graph" << m_graph << "has not been produced: check pipeline";
     predicates = result;
+    return;
   }
   auto graph = tokenList->getGraph();
-
 
   QQueue<LinguisticGraphVertex> toVisit;
   QSet<LinguisticGraphVertex> visited;
