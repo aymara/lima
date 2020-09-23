@@ -71,7 +71,7 @@ uint64_t countLines(QFile& file)
 
 QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
 {
-  qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+//  qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
   for (auto path = paths.begin(); path != paths.end(); ++path)
   {
@@ -149,7 +149,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     }
   }
 
-  qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
+//  qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
