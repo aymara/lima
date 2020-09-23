@@ -401,7 +401,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       if( sentenceNb==1 && m_d->m_withColsHeader )
       {
         dstream->out()
-          << "# global.columns = = ID\tFORM\tLEMMA\tUPOS\tXPOS\tFEATS\tHEAD\tDEPREL\tDEPS\tMISC"
+          << "# global.columns = ID\tFORM\tLEMMA\tUPOS\tXPOS\tFEATS\tHEAD\tDEPREL\tDEPS\tMISC"
           << std::endl;
       }
       dstream->out() << "# sent_id = " << sentenceNb << std::endl;
