@@ -6,6 +6,9 @@ set defaultAction=>CreateSpecificEntity()
 use organization.lst,carMakers.lst
 use ../../common/organizationCommon.lst
 use annonceurOrg.lst
+use annonceurOrgUnsafe.lst
+
+include wd_organizations.rules
 
 @OrganizationNamePart=(T_A1,T_Amh,$NP,t_capital,t_capital_1st,t_capital_small)
 
@@ -75,9 +78,12 @@ include carMakers.rules
 
 # cour d\'appel de Paris
 # Université de Besançon
-@locOrg=(université,cour d\'appel)
+@locOrg=(université,cour d\'appel,@AnnonceurOrgUnsafe)
 
 <Location.LOCATION>:@locOrg de::ORGANIZATION:
+
+@AnnonceurOrgUnsafe::(de|du|des|d\'|de la|de l\') @OrganizationNamePart:ORGANIZATION:
+@AnnonceurOrgUnsafe::@OrganizationNamePart{1-2}:ORGANIZATION:
 
 @organization:::ORGANIZATION:
 @carMakers:::ORGANIZATION:

@@ -7,7 +7,7 @@ use firstname.lst,prefirstname.lst
 use title.lst,function_title.lst
 use person.lst
 
-@particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
+@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La)
 
 #----------------------------------------------------------------------
 # contextual rules for person recognition
@@ -21,6 +21,8 @@ use person.lst
 
 #------------------------------
 @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital)){1-2}:PERSON:=>NormalizePersonName()
+
+#@Firstname::@particule $NP{1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
@@ -71,7 +73,6 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 # t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st|t_capital){0-2}:PERSON:=>NormalizePersonName()
 
 # t_capital_1st:(t_capital_1st|t_capital){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
-
 
 #------------------------------
 # a list of known persons (single entities)
