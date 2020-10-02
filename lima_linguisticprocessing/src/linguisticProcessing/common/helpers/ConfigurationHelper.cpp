@@ -79,5 +79,50 @@ string ConfigurationHelper::getStringParameter(
   return value;
 }
 
+void ConfigurationHelper::getIntParameter(
+    XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+    const string& name,
+    int& value,
+    int flags,
+    int default_value)
+{
+  int tmp;
+  try
+  {
+    tmp = QString::fromStdString(unitConfiguration.getParamsValueAtKey(name)).toInt();
+  }
+  catch (NoSuchParam& )
+  {
+    if (flags & Flags::REQUIRED)
+    {
+      LOGINIT(m_loggingCategory.c_str());
+      LERROR << "no param \"" << name << "\" in " << m_processUnitName << " group configuration";
+      throw InvalidConfiguration();
+    }
+
+    tmp = default_value;
+  }
+
+  if (flags & Flags::NOT_ZERO && tmp == 0)
+  {
+    LOGINIT(m_loggingCategory.c_str());
+    LERROR << "param \"" << name << "\" in " << m_processUnitName << " group configuration is zero";
+    throw InvalidConfiguration();
+  }
+
+  value = tmp;
+}
+
+int ConfigurationHelper::getIntParameter(
+    XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+    const string& name,
+    int flags,
+    int default_value)
+{
+  int value;
+  getIntParameter(unitConfiguration, name, value, flags, default_value);
+  return value;
+}
+
 }
 }

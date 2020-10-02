@@ -37,7 +37,8 @@ protected:
   enum Flags
   {
     REQUIRED = 0x1,
-    NOT_EMPTY = 0x2
+    NOT_EMPTY = 0x2,
+    NOT_ZERO = 0x2
   };
 
   void getStringParameter(
@@ -52,6 +53,19 @@ protected:
       const std::string& name,
       int flags = Flags::REQUIRED,
       std::string default_value = "");
+
+  void getIntParameter(
+      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+      const std::string& name,
+      int& value,
+      int flags = Flags::REQUIRED,
+      int default_value = 0);
+
+  int getIntParameter(
+      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+      const std::string& name,
+      int flags = Flags::REQUIRED,
+      int default_value = 0);
 
 private:
   std::string m_processUnitName;

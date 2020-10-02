@@ -19,6 +19,7 @@
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/core/SpecificEntities/SpecificEntitiesMicros.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 // includes system
 #include <QString>
@@ -31,6 +32,7 @@
 
 
 // declaration of using namespace
+using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -38,6 +40,7 @@ using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
 using namespace Lima::Common::AnnotationGraphs;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace tensorflow;
+using namespace std;
 
 #define EIGEN_DONT_VECTORIZE
 
@@ -47,31 +50,49 @@ namespace TensorflowSpecificEntities {
 
 SimpleFactory<MediaProcessUnit,TensorflowSpecificEntities> tensorflowSpecificEntitiesFactory(TENSORFLOWSPECIFICENTITIES_CLASSID);
 
-class TensorflowSpecificEntitiesPrivate
+namespace
+{
+inline string THIS_FILE_LOGGING_CATEGORY()
+{
+  TFSELOGINIT;
+  return logger.zone().toStdString();
+}
+}
+
+class TensorflowSpecificEntitiesPrivate : public ConfigurationHelper
 {
   friend class TensorflowSpecificEntities;
-  ~TensorflowSpecificEntitiesPrivate();
-  TensorflowSpecificEntitiesPrivate():m_microAccessor(nullptr),m_sp(nullptr),m_session(nullptr){}
+
+  TensorflowSpecificEntitiesPrivate()
+    : ConfigurationHelper("TensorflowSpecificEntities", THIS_FILE_LOGGING_CATEGORY()),
+      m_microAccessor(nullptr),
+      m_sp(nullptr),
+      m_session(nullptr)
+  {}
   TensorflowSpecificEntitiesPrivate(MediaId language);
-  std::string m_graph;
-  std::map<LinguisticGraphVertex,QString> m_matchingVertextoEntity;
-  std::vector<LinguisticGraphVertex> m_visitedVertex;
+  ~TensorflowSpecificEntitiesPrivate();
+
+  void init(XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration);
+
+  string m_graph;
   MediaId m_language;
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   FsaStringsPool* m_sp;
-  std::map<QString,int> m_vocabWords;
-  std::map<QChar,int> m_vocabChars;
-  std::map<unsigned int,QString> m_vocabTags;
+  map<QString,int> m_vocabWords;
+  map<QChar,int> m_vocabChars;
+  map<unsigned int,QString> m_vocabTags;
   Session* m_session;
-  std::shared_ptr<Status> m_status;
+  shared_ptr<Status> m_status;
   GraphDef m_graphDef;
   int m_batchSizeMax;
+  string m_sentBoundariesName;
 };
 
 TensorflowSpecificEntitiesPrivate::TensorflowSpecificEntitiesPrivate(
-    MediaId language) :
-  m_language(language),
-  m_session(nullptr)
+    MediaId language)
+  : ConfigurationHelper("TensorflowSpecificEntities", THIS_FILE_LOGGING_CATEGORY()),
+    m_language(language),
+    m_session(nullptr)
 {
   m_microAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   m_sp = &(Common::MediaticData::MediaticData::changeable().stringsPool(language));
@@ -106,48 +127,55 @@ void TensorflowSpecificEntities::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 {
-  TFSELOGINIT;
   m_d->m_language = manager->getInitializationParameters().media;
-  m_d->m_microAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-  m_d->m_sp = &(Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language));
+  m_d->init(unitConfiguration);
+}
+
+void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration)
+{
+  TFSELOGINIT;
+  m_microAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  m_sp = &(Common::MediaticData::MediaticData::changeable().stringsPool(m_language));
 
   // Load parameters required for running the graph
-  // std::string graph;
+  string m_graphOutputFileName = getStringParameter(unitConfiguration, "graphOutputFile", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY);
+
   try
   {
-    m_d->m_graph = Common::Misc::findFileInPaths(
+    m_graph = Common::Misc::findFileInPaths(
       QString::fromStdString(Common::MediaticData::MediaticData::single().getResourcesPath()),
-      QString::fromStdString(unitConfiguration.getParamsValueAtKey("graphOutputFile"))).toStdString();
+      QString::fromStdString(m_graphOutputFileName)).toStdString();
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'graphOutputFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    LERROR << "no param 'graphOutputFile' in TensorflowSpecificEntities group for m_language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
+  string charValuesFileName = getStringParameter(unitConfiguration, "charValuesFile", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY);
   QString fileChars,fileWords,fileTags;
   try
   {
     fileChars = Common::Misc::findFileInPaths(
       QString::fromStdString(Common::MediaticData::MediaticData::single().getResourcesPath()),
-      QString::fromStdString(unitConfiguration.getParamsValueAtKey("charValuesFile")));
+      QString::fromStdString(charValuesFileName));
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'charValuesFile' in TensorflowSpecificEntities group for m_d->m_language "
-            << (int) m_d->m_language;
+    LERROR << "no param 'charValuesFile' in TensorflowSpecificEntities group for m_language "
+           << (int) m_language;
     throw InvalidConfiguration();
   }
 
   try
   {
-      fileWords = Common::Misc::findFileInPaths(
-        QString::fromStdString(Common::MediaticData::MediaticData::single().getResourcesPath()),
-        QString::fromStdString(unitConfiguration.getParamsValueAtKey("wordValuesFile")));
+    fileWords = Common::Misc::findFileInPaths(
+      QString::fromStdString(Common::MediaticData::MediaticData::single().getResourcesPath()),
+      QString::fromStdString(unitConfiguration.getParamsValueAtKey("wordValuesFile")));
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'wordValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    LERROR << "no param 'wordValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_language;
     throw InvalidConfiguration();
   }
 
@@ -159,39 +187,30 @@ void TensorflowSpecificEntities::init(
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'tagValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_d->m_language;
+    LERROR << "no param 'tagValuesFile' in TensorflowSpecificEntities group for m_d->m_language " << (int) m_language;
     throw InvalidConfiguration();
   }
+
+  m_sentBoundariesName = getStringParameter(unitConfiguration, "sentBoundaries", ConfigurationHelper::NOT_EMPTY, "SentenceBoundariesForSE");
 
   //Minibatching (group of max 20 sentences of different size) is used in order to amortize the cost of loading the network weights from CPU/GPU memory across many inputs.
-    //and to take advantage from parallelism.
-//     std::string::size_type sz;
-  try
-  {
-    m_d->m_batchSizeMax = QString::fromStdString(
-      unitConfiguration.getParamsValueAtKey("batchSizeMax")).toInt();
-  }
-  catch (NoSuchParam& )
-  {
-    LERROR << "no param 'batchSizeMax' in TensorflowSpecificEntities group for m_d->m_language "
-            << (int) m_d->m_language;
-    throw InvalidConfiguration();
-  }
+  //and to take advantage from parallelism.
+  m_batchSizeMax = getIntParameter(unitConfiguration, "batchSizeMax", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_ZERO);
 
   try
   {
-    m_d->m_vocabWords = loadFileWords(fileWords);
-    if(m_d->m_vocabWords.empty())
+    m_vocabWords = loadFileWords(fileWords);
+    if(m_vocabWords.empty())
     {
       throw LimaException();
     }
-    m_d->m_vocabChars = loadFileChars(fileChars);
-    if(m_d->m_vocabChars.empty())
+    m_vocabChars = loadFileChars(fileChars);
+    if(m_vocabChars.empty())
     {
       throw LimaException();
     }
-    m_d->m_vocabTags = loadFileTags(fileTags);
-    if(m_d->m_vocabTags.empty())
+    m_vocabTags = loadFileTags(fileTags);
+    if(m_vocabTags.empty())
     {
       throw LimaException();
     }
@@ -204,36 +223,34 @@ void TensorflowSpecificEntities::init(
   }
 
   // Initialize a tensorflow session
-  m_d->m_status.reset(new Status(NewSession(SessionOptions(), &m_d->m_session)));
-  if (!m_d->m_status->ok())
+  m_status.reset(new Status(NewSession(SessionOptions(), &m_session)));
+  if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_d->m_status->ToString();
-    throw LimaException(m_d->m_status->ToString());
+    LERROR << m_status->ToString();
+    throw LimaException(m_status->ToString());
   }
 
   // Read in the protobuf graph we have exported
-  *m_d->m_status = ReadBinaryProto(Env::Default(), m_d->m_graph,
-                                   &m_d->m_graphDef);
-  if (!m_d->m_status->ok())
+  *m_status = ReadBinaryProto(Env::Default(), m_graph, &m_graphDef);
+  if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_d->m_status->ToString();
-    throw LimaException(m_d->m_status->ToString());
+    LERROR << m_status->ToString();
+    throw LimaException(m_status->ToString());
   }
 
   // Add the graph to the session
-  *m_d->m_status = m_d->m_session->Create(m_d->m_graphDef);
-  if (!m_d->m_status->ok())
+  *m_status = m_session->Create(m_graphDef);
+  if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_d->m_status->ToString();
-    throw LimaException(m_d->m_status->ToString());
+    LERROR << m_status->ToString();
+    throw LimaException(m_status->ToString());
   }
 }
 
-LimaStatusCode TensorflowSpecificEntities::process(
-  AnalysisContent& analysis) const
+LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) const
 {
   Lima::TimeUtilsController timer("TensorflowSpecificEntities");
   // Start named-entity recognition here !
@@ -241,7 +258,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
   LINFO << "start TensorflowSpecificEntities";
 
   // Get sentence bounds
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundariesForSE"));
+  auto sb = static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
   if(sb == nullptr)
   {
     TFSELOGINIT;
@@ -252,7 +269,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
   {
     TFSELOGINIT;
     LERROR << "TensorflowSpecificEntities::process: SentenceBounds are computed on graph '"
-            << sb->getGraphId() << "'";
+           << sb->getGraphId() << "'";
     LERROR << "can't compute TensorflowSpecificEntities on graph AnalysisGraph !";
     return INVALID_CONFIGURATION;
   }
@@ -263,7 +280,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
     LERROR << "No sentences to analyze.";
     return UNKNOWN_ERROR;
   }
-  auto boundItr = (sb->getSegments()).cbegin();
+  auto boundItr = (sb->getSegments()).begin();
 
   auto tokenList = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   auto g = tokenList->getGraph();
@@ -276,31 +293,41 @@ LimaStatusCode TensorflowSpecificEntities::process(
   Performs could be degraded since viterbi algorithm is applied on sentences at the end of the net.
   */
   auto endPrecedentSentence = boundItr->getFirstVertex();
+  vector<vector<Segment>::iterator> batch_segments;
+  batch_segments.resize(m_d->m_batchSizeMax);
 
   while(boundItr != (sb->getSegments()).cend())
   {
-    std::vector<std::vector<int>> wordIds(m_d->m_batchSizeMax); //list of identifiers of each word in each sentence from the batch
-    std::vector<std::vector<std::vector<int>>> charIds(m_d->m_batchSizeMax);//list of identifiers of each character from each word in each sentence from the batch
+    vector<vector<int>> wordIds(m_d->m_batchSizeMax);
+    //list of identifiers of each word in each sentence from the batch
+    vector<vector<vector<int>>> charIds(m_d->m_batchSizeMax);
+    //list of identifiers of each character from each word in each sentence from the batch
     int batchSize = 0;
-    m_d->m_visitedVertex.erase(m_d->m_visitedVertex.begin(),
-                               m_d->m_visitedVertex.end());
-    m_d->m_matchingVertextoEntity.erase(m_d->m_matchingVertextoEntity.begin(),
-                                        m_d->m_matchingVertextoEntity.end());
+
+    map<LinguisticGraphVertex,QString> matchingVertexToEntity;
+    vector<vector<LinguisticGraphVertex>> visitedVertex;
+    visitedVertex.resize(m_d->m_batchSizeMax);
 
     while(batchSize < m_d->m_batchSizeMax
       && boundItr != (sb->getSegments()).cend())
     {
-      m_d->m_visitedVertex.reserve(boundItr->getLength()+m_d->m_visitedVertex.size());
+      visitedVertex[batchSize].reserve(boundItr->getLength());
       QStringList wordsRaw; //batch of sentences
-
 
       /*a segment is characterized by the first and the last vertex. Thanks to the boost library,
       it is easy to get all the vertex from the same sentence by following edges until endSentence vertex is reached*/
 
       auto beginSentence = boundItr->getFirstVertex();
       auto endSentence = boundItr->getLastVertex();
-      std::queue<LinguisticGraphVertex> toVisit;
+      queue<LinguisticGraphVertex> toVisit;
       toVisit.push(beginSentence);
+
+      if (boundItr != sb->getSegments().begin())
+      {
+        auto prevBoundItr = boundItr;
+        prevBoundItr--;
+        endPrecedentSentence = prevBoundItr->getLastVertex();
+      }
 
       while(!toVisit.empty())
       {
@@ -314,7 +341,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
             auto currentToken = tokenMap[currentVertex];
             if(currentToken != nullptr && !currentToken->stringForm().isEmpty())
             {
-              m_d->m_visitedVertex.push_back(currentVertex);
+              visitedVertex[batchSize].push_back(currentVertex);
               wordsRaw << currentToken->stringForm();
             }
           }
@@ -341,7 +368,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
 
 #ifdef DEBUG_LP
       TFSELOGINIT;
-      std::ostringstream oss;
+      ostringstream oss;
       for(auto itSequenceBegin = wordsRaw.cbegin();
           itSequenceBegin != wordsRaw.cend(); ++itSequenceBegin)
       {
@@ -356,7 +383,7 @@ LimaStatusCode TensorflowSpecificEntities::process(
       }
 
       //1. Transform words into ids and split all the characters and identify them
-      std::vector< std::pair<std::vector<int>, int> > textConverted;
+      vector< pair<vector<int>, int> > textConverted;
       textConverted.reserve(wordsRaw.size());
       for(auto it = wordsRaw.cbegin(); it != wordsRaw.cend(); ++it)
       {
@@ -367,10 +394,6 @@ LimaStatusCode TensorflowSpecificEntities::process(
                                                     m_d->m_vocabChars,
                                                     true,
                                                     true));
-          if(!std::get<1>(textConverted.back()))
-          {
-            return MISSING_DATA;
-          }
         }
         catch(const UnknownWordClassException& e)
         {
@@ -384,12 +407,13 @@ LimaStatusCode TensorflowSpecificEntities::process(
 
       wordIds[batchSize].resize(wordsRaw.size());
       charIds[batchSize].resize(wordsRaw.size());
-      for(auto i=0; i < textConverted.size(); ++i)
+      for(size_t i=0; i < textConverted.size(); ++i)
       {
         charIds[batchSize][i].resize(textConverted[i].first.size());
         charIds[batchSize][i] = textConverted[i].first;
         wordIds[batchSize][i] = textConverted[i].second;
       }
+      batch_segments[batchSize] = boundItr;
       ++batchSize;
       ++boundItr;
     }
@@ -423,38 +447,51 @@ LimaStatusCode TensorflowSpecificEntities::process(
     if(itBatchChars != charIds.cend() || itSqChars != itBatchChars->cend())
     {
       //5. Predict entity
-      std::vector<Eigen::MatrixXi> result(batchSize);
+      vector<Eigen::MatrixXi> result(batchSize);
       if(predictBatch(m_d->m_status, m_d->m_session,
           batchSize, charIds, wordIds, result) == NERStatusCode::MISSING_DATA)
       {
         return MISSING_DATA;
       }
-      auto itVisited = m_d->m_visitedVertex.cbegin();
 
       //6. Store results in a map, mapping LinguisticGraphVertex to its entity, following sentence's order
-      for( auto i = 0; i <result.size(); ++i)
+      for(auto i=0;i<result.size();++i)
       {
-        for(auto j = 0; j<result[i].size(); ++j)
+        for(auto j=0;j<result[i].size();++j)
         {
-          m_d->m_matchingVertextoEntity[*itVisited] = m_d->m_vocabTags[result[i](j)];
-          ++itVisited;
+          LinguisticGraphVertex v = visitedVertex[i][j];
+          matchingVertexToEntity[v]=m_d->m_vocabTags[result[i](j)];
         }
       }
 
 #ifdef DEBUG_LP
       TFSELOGINIT;
-      std::ostringstream oss;
-      for(auto itBegin = m_d->m_visitedVertex.cbegin();
-          itBegin != m_d->m_visitedVertex.cend(); ++itBegin)
+      ostringstream oss;
+      for (auto sentIt = visitedVertex.cbegin(); sentIt != visitedVertex.cend(); ++sentIt)
       {
-        oss << tokenMap[*itBegin]->stringForm().toStdString()
-            <<"  " << m_d->m_matchingVertextoEntity[*itBegin].toStdString()
-            << "\n";
+        for(auto tokIt = sentIt->cbegin(); tokIt != sentIt->cend(); ++tokIt)
+        {
+          oss << tokenMap[*tokIt]->stringForm() << "  " << matchingVertexToEntity[*tokIt] << endl;
+        }
+        oss << endl;
       }
       LDEBUG << "Entities found :\n" << oss.str();
 #endif
-    //7. Update Graphs
-      updateAnalysisData(analysis);
+      //7. Update Graphs
+      try
+      {
+        if (!updateAnalysisData(analysis, visitedVertex, matchingVertexToEntity, batch_segments))
+        {
+          LERROR << "Error while updating analysis data";
+          return UNKNOWN_ERROR;
+        }
+      }
+      catch(...)
+      {
+        //TFSELOGINIT;
+        //LERROR << e.what();
+        return UNKNOWN_ERROR;
+      }
     }
     //Continue to the next batch
   }
@@ -462,7 +499,20 @@ LimaStatusCode TensorflowSpecificEntities::process(
   return SUCCESS_ID;
 }
 
-bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis) const
+inline const QString& get_const(const map<LinguisticGraphVertex, QString>& m, LinguisticGraphVertex k)
+{
+  map<LinguisticGraphVertex, QString>::const_iterator i = m.find(k);
+  if (m.end() == i)
+  {
+    throw logic_error("It is assumed that vertex exists in the map. But it doesn't.");
+  }
+  return i->second;
+}
+
+bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
+                                                    const vector<vector<LinguisticGraphVertex>>& visitedVertex,
+                                                    const map<LinguisticGraphVertex,QString>& matchingVertexToEntity,
+                                                    const vector<vector<Segment>::iterator>& batch_segments) const
 {
   // LinguisticGraphVertex previous;
   auto analysisGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -471,62 +521,121 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis) c
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());
 #endif
 
-  auto itVisited = m_d->m_visitedVertex.cbegin();
-  while(itVisited != m_d->m_visitedVertex.cend())
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
+  if (nullptr == sb)
   {
-    // Look for entities
-    if(m_d->m_matchingVertextoEntity[*itVisited] != "O")
+    throw runtime_error("TensorflowSpecificEntities::updateAnalysisData: no SentenceBounaries available");
+  }
+
+  for (size_t iSeg=0; iSeg<visitedVertex.size(); iSeg++)
+  {
+    vector<LinguisticGraphVertex>::const_iterator itVisited=visitedVertex[iSeg].cbegin();
+    while(itVisited!=visitedVertex[iSeg].cend())
     {
-      // Create a specific object to encapsulate LinguisticGraphVertex which forms the entity
-      Automaton::RecognizerMatch entityFound(analysisGraph, *itVisited, true);
-      itVisited++;
-      auto entityBegin = entityFound.getBegin();
-      //        Look for words from the same entity
-      //        [eng] It doesn't begin by B-XXX but by I-XXX according to
-      //          CoNLL format. The tag XXX has to be the same between words
-      //          from the same entity
-      while(itVisited != m_d->m_visitedVertex.cend() &&
-        m_d->m_matchingVertextoEntity[*itVisited][0] != 'B' &&
-        m_d->m_matchingVertextoEntity[*itVisited].endsWith(m_d->m_matchingVertextoEntity[entityBegin].mid(2)))
+      if (visitedVertex[iSeg].front() == batch_segments[iSeg]->getFirstVertex())
       {
-        entityFound.addBackVertex(*itVisited);
+        throw runtime_error("TensorflowSpecificEntities: first vertex must be before the segment.");
+      }
+
+      // Look for entities
+      if(get_const(matchingVertexToEntity, *itVisited)!="O")
+      {
+        // Create a specific object to encapsulate LinguisticGraphVertex which forms the entity
+        Automaton::RecognizerMatch entityFound(analysisGraph,*itVisited,true);
+        itVisited++;
+        LinguisticGraphVertex entityBegin=entityFound.getBegin();
+        // Look for words from the same entity
+        // [eng] It doesn't begin by B-XXX but by I-XXX according to CoNLL format.
+        // The tag XXX has to be the same between words from the same entity
+        const LimaString& first_tag = get_const(matchingVertexToEntity, entityBegin);
+        while(itVisited!=visitedVertex[iSeg].cend() &&
+              get_const(matchingVertexToEntity,*itVisited)[0]!='B' && get_const(matchingVertexToEntity,*itVisited).endsWith(first_tag.mid(2)))
+        {
+          entityFound.addBackVertex(*itVisited);
+          itVisited++;
+        }
+
+        LimaString entTypeName=get_const(matchingVertexToEntity,entityFound.getBegin());
+        entTypeName.remove(QRegularExpression("^[BI]-"));
+        EntityType seType=Common::MediaticData::MediaticData::single().getEntityType(entTypeName);
+        entityFound.setType(seType);
+#ifdef DEBUG_LP
+        TFSELOGINIT;
+        auto tokenMap = get(vertex_token, *lingGraph);
+        ostringstream oss;
+        for(auto itBeginEntity=entityFound.cbegin();itBeginEntity!=entityFound.cend();++itBeginEntity)
+        {
+          oss << tokenMap[(*itBeginEntity).m_elem.first]->stringForm()
+              << "  "
+              << Common::MediaticData::MediaticData::single().getEntityName(seType)
+              << " ; ";
+        }
+        LDEBUG << "Entity found :"<<oss.str();
+#endif
+        // Update AnalysisGraph
+
+        vector<Segment>::iterator segmentIt = batch_segments[iSeg];
+
+        LinguisticGraphVertex before = analysisGraph->firstVertex();
+        if (analysisGraph->firstVertex() != segmentIt->getFirstVertex())
+        {
+          before = getOnePrecedingNode(*analysisGraph, segmentIt->getFirstVertex());
+        }
+        LinguisticGraphVertex after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+
+        LinguisticGraphVertex newVertex = analysisGraph->firstVertex();
+        if(!createSpecificEntity(entityFound,analysis,newVertex))
+        {
+          TFSELOGINIT;
+          LERROR << "Error while creating an entity";
+          return false;
+        }
+
+        if (newVertex != analysisGraph->firstVertex())
+        {
+          // new vertex for an entity is created
+          if (analysisGraph->firstVertex() != segmentIt->getFirstVertex())
+          {
+            LinguisticGraphVertex newFirstVertex = getOneFollowingNode(*analysisGraph, before);
+            if (newFirstVertex != segmentIt->getFirstVertex() && newFirstVertex == newVertex)
+            {
+              segmentIt->setFirstVertex(newVertex);
+              if (segmentIt != sb->getSegments().begin())
+              {
+                auto t = segmentIt;
+                t--;
+                t->setLastVertex(newVertex);
+              }
+            }
+          }
+
+          LinguisticGraphVertex newLastVertex = getOnePrecedingNode(*analysisGraph, after);
+          if (newLastVertex != segmentIt->getLastVertex() && newLastVertex == newVertex)
+          {
+            segmentIt->setLastVertex(newVertex);
+            auto t = segmentIt;
+            t++;
+            if (t != sb->getSegments().end())
+            {
+              t->setFirstVertex(newVertex);
+            }
+          }
+        }
+      }
+      else
+      {
         itVisited++;
       }
-      EntityType seType = Common::MediaticData::MediaticData::single().getEntityType(m_d->m_matchingVertextoEntity[entityFound.getBegin()].remove(QRegularExpression("^[BI]-")));
-      entityFound.setType(seType);
-#ifdef DEBUG_LP
-      TFSELOGINIT;
-      auto tokenMap = get(vertex_token, *lingGraph);
-      std::ostringstream oss;
-      for(auto itBeginEntity = entityFound.cbegin();
-          itBeginEntity != entityFound.cend(); ++itBeginEntity)
-      {
-        oss << tokenMap[(*itBeginEntity).m_elem.first]->stringForm().toStdString()
-            <<"  "
-            << Common::MediaticData::MediaticData::single().getEntityName(seType).toStdString()
-            << " ; ";
-      }
-      LDEBUG << "Entity found :" << oss.str();
-#endif
-      // Update AnalysisGraph
-      if(!createSpecificEntity(entityFound, analysis))
-      {
-        return false;
-      }
-//         previous=entityFound.getEnd();
-    }
-    else
-    {
-//         previous=*itVisited;
-      itVisited++;
     }
   }
+
   return true;
 }
 
 bool TensorflowSpecificEntities::createSpecificEntity(
   Automaton::RecognizerMatch& entityFound,
-  AnalysisContent& analysis) const
+  AnalysisContent& analysis,
+  LinguisticGraphVertex& newVertex) const
 {
   if(entityFound.empty())
   {
@@ -557,7 +666,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
           && annotationData->annotation(*it, QString::fromUtf8("SpecificEntity"))
           .pointerValue<SpecificEntityAnnotation>()->getType() == entityFound.getType() )
       {
-        return false;
+        return true;
       }
     }
   }
@@ -573,7 +682,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
   auto dataMap = get(vertex_data, *lingGraph);
 
   SpecificEntityAnnotation annot(entityFound,*m_d->m_sp);
-  std::ostringstream oss;
+  ostringstream oss;
   annot.dump(oss);
 #ifdef DEBUG_LP
   LDEBUG << "CreateSpecificEntity: annot =  " << oss.str();
@@ -592,10 +701,10 @@ bool TensorflowSpecificEntities::createSpecificEntity(
 
   // all linguisticElements of this morphosyntacticData share common SE information
   LinguisticElement elem;
-  elem.inflectedForm = seFlex; // StringsPoolIndex
-  elem.lemma = seLemma; // StringsPoolIndex
+  elem.inflectedForm = seFlex;  // StringsPoolIndex
+  elem.lemma = seLemma;         // StringsPoolIndex
   elem.normalizedForm = seNorm; // StringsPoolIndex
-  elem.type = SPECIFIC_ENTITY; // MorphoSyntacticType
+  elem.type = SPECIFIC_ENTITY;  // MorphoSyntacticType
 
   auto seType = entityFound.getType();
   //useful to get micros categories linked
@@ -613,7 +722,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
 #ifdef DEBUG_LP
     if (logger.isDebugEnabled())
     {
-      std::ostringstream oss;
+      ostringstream oss;
       for (auto it = micros->cbegin(), it_end=micros->cend(); it != it_end; it++)
       {
         oss << (*it) << ";";
@@ -631,7 +740,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
     TFSELOGINIT;
     // cannot find micros for this type: error
     LERROR << "TensorflowSpecificEntities::createSpecificEntity: Missing resource "
-            << resourceName ;
+           << resourceName ;
     delete newMorphData;
     return false;
   }
@@ -664,7 +773,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
 #endif
   // Update SyntacticGraph
   auto syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  LinguisticGraphVertex newVertex;
+  //LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex = 0;
   if (syntacticData != 0)
   {
@@ -775,7 +884,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
 void TensorflowSpecificEntities::addMicrosToMorphoSyntacticData(
     LinguisticAnalysisStructure::MorphoSyntacticData* newMorphData,
     const LinguisticAnalysisStructure::MorphoSyntacticData* oldMorphData,
-    const std::set<LinguisticCode>& micros,
+    const set<LinguisticCode>& micros,
     LinguisticAnalysisStructure::LinguisticElement& elem) const
 {
   // try to filter existing microcategories
@@ -810,7 +919,7 @@ void TensorflowSpecificEntities::clearUnreachableVertices(
 #endif
   auto& g = *(anagraph->getGraph());
 
-  std::queue<LinguisticGraphVertex> verticesToCheck;
+  queue<LinguisticGraphVertex> verticesToCheck;
   verticesToCheck.push( from );
   while (! verticesToCheck.empty() )
   {

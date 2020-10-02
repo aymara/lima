@@ -99,8 +99,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
 {
   if (!vocabWords.empty()  && !vocabChars.empty()){
     if(wordOriginal.isEmpty()){
-      std::cerr<<"There is no word to analyze.\n";
-      return make_pair(std::vector<int>(),0);
+      throw std::logic_error("There is no word to analyze.");
     }
     QString word=wordOriginal;
     int word_id;
@@ -149,8 +148,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
     return make_pair(chars_ids,word_id);
   }
   else{
-    std::cerr<<"The vocabulary of chars or words  doesn't exist. \n";
-    return make_pair(std::vector<int>(),0);
+    throw std::logic_error("The vocabulary of chars or words  doesn't exist.");
   }
 }
 
@@ -193,7 +191,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
 
   //Calculate the size of the longest word from the current batch. Mandatory to perform padding.
   int maxSizeWord=0;
-    for(auto it=charIds.begin();it!=charIds.end();++it){
+  for(auto it=charIds.begin();it!=charIds.end();++it){
     for(auto it2=(*it).begin();it2!=(*it).end();++it2){
      maxSizeWord = std::max(static_cast<int>((*it2).size()),maxSizeWord);
     }
@@ -211,13 +209,13 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
   std::vector<Tensor> outputs(2);
   *status = session->Run(inputs, {"proj/output_node","transitions"}, {}, &outputs);
   if (!status->ok()) {
-    std::cerr << status->ToString() << "\n";
+    throw std::runtime_error(status->ToString());
   }
 
   // Print the results
   //"tensorflow/core/framework/tensor_shape.h"
 
-//   std::cerr << "The results : \n-logits : "<<outputs[0].DebugString() << "\n-transition matrix : "<<outputs[1].DebugString()<<std::endl;
+  //std::cerr << "The results : \n-logits : "<<outputs[0].DebugString() << "\n-transition matrix : "<<outputs[1].DebugString()<<std::endl;
 
   //   Grab all the outputs and convert the nodes to a matrix representation (Eigen::TensorMap<Eigen::Tensor>)
   auto oLogits = outputs[0].tensor<float, 3>(); //resulting a matrix (3D)

@@ -34,6 +34,8 @@
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+#include "linguisticProcessing/common/PropertyCode/PropertyManager.h"
+#include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
 
 #include "ConlluReader.h"
 
@@ -55,6 +57,15 @@ namespace LinguisticProcessing
 namespace ConlluReader
 {
 
+namespace
+{
+inline string THIS_FILE_LOGGING_CATEGORY()
+{
+  TOKENIZERLOGINIT;
+  return logger.zone().toStdString();
+}
+}
+
 static u32string SPACE = QString::fromUtf8(" ").toStdU32String();
 
 static SimpleFactory<MediaProcessUnit,ConlluReader> conlluReaderFactory(CONLLUREADER_CLASSID); // clazy:exclude=non-pod-global-static
@@ -73,7 +84,7 @@ static SimpleFactory<MediaProcessUnit,ConlluReader> conlluReaderFactory(CONLLURE
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
 #endif
 
-class ConlluReaderPrivate
+class ConlluReaderPrivate : public ConfigurationHelper
 {
 public:
   ConlluReaderPrivate();
@@ -93,14 +104,15 @@ public:
     int start;
   };
 
-  void init();
+  void init(MediaId language, GroupConfigurationStructure& unitConfiguration);
   vector< vector< TPrimitiveToken > > tokenize(const QString& text);
   void computeDefaultStatus(Token& token);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
   LinguisticGraphVertex m_currentVx;
-  QString m_data;
+  std::string m_data;
+  LinguisticCode m_boundaryMicro;
 
 protected:
   void append_new_word(vector< TPrimitiveToken >& current_sentence,
@@ -112,8 +124,10 @@ protected:
 };
 
 ConlluReaderPrivate::ConlluReaderPrivate() :
+  ConfigurationHelper("ConlluReader", THIS_FILE_LOGGING_CATEGORY()),
   m_stringsPool(nullptr),
   m_currentVx(0),
+  m_boundaryMicro(0),
   m_ignoreEOL(false)
 {
 }
@@ -136,20 +150,8 @@ void ConlluReader::init(GroupConfigurationStructure& unitConfiguration,
                         Manager* manager)
 
 {
-  LIMA_UNUSED(manager);
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "ConlluReader::init");
-
-  m_d->m_language = manager->getInitializationParameters().media;
-  m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
-
-  try
-  {
-    m_d->m_data = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("data").c_str());
-  }
-  catch (NoSuchParam& )
-  {
-    m_d->m_data = QString::fromUtf8("SentenceBoundaries");
-  }
+  m_d->init(manager->getInitializationParameters().media, unitConfiguration);
 }
 
 LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
@@ -168,13 +170,19 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
   auto sentencesTokens = m_d->tokenize(*originalText);
 
   // Insert the tokens in the graph and create sentence limits
-  SegmentationData* sb = new SegmentationData("AnalysisGraph");
-  analysis.setData(m_d->m_data.toStdString(), sb);
+  SegmentationData* sb = nullptr;
+  if (m_d->m_data.size() > 0)
+  {
+    sb = new SegmentationData("AnalysisGraph");
+    analysis.setData(m_d->m_data, sb);
+  }
+
+  auto microAccessor = &(GET_PROPERTY_ACCESSOR(m_d->m_language, "MICRO"));
 
   remove_edge(anagraph->firstVertex(),
               anagraph->lastVertex(),
               *graph);
-  LinguisticGraphVertex beginSentence = 0;
+  LinguisticGraphVertex beginSentence = anagraph->firstVertex();
 
   // Insert the tokens in the graph and create sentence limits
   for (const auto& sentence: sentencesTokens)
@@ -182,7 +190,7 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
     if (sentence.size() < 1)
       continue;
 
-    LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
+    LinguisticGraphVertex endSentence = anagraph->lastVertex();
     for (const auto& token: sentence)
     {
       const auto& str = token.wordText;
@@ -218,7 +226,27 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
 
     LOG_MESSAGE(LDEBUG, "adding sentence" << beginSentence << endSentence);
 
-    sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
+    if (nullptr != sb)
+    {
+      sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
+    }
+
+    Token *tToken = get(vertex_token, *graph, endSentence);
+    MorphoSyntacticData *morphoData = get(vertex_data, *graph, endSentence);
+    if (nullptr != morphoData)
+    {
+      LinguisticElement elem;
+      elem.inflectedForm = tToken->form();
+      elem.lemma = tToken->form();
+      elem.normalizedForm = tToken->form();
+      elem.type = SIMPLE_WORD;
+      microAccessor->writeValue(m_d->m_boundaryMicro, elem.properties);
+      morphoData->push_back(elem);
+    }
+    else
+    {
+      LOG_MESSAGE(LERROR, "vertex" << endSentence << "has no MorphoSyntacticData");
+    }
     beginSentence = endSentence;
   }
 
@@ -227,18 +255,34 @@ LimaStatusCode ConlluReader::process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
-void ConlluReaderPrivate::init()
+void ConlluReaderPrivate::init(MediaId language, GroupConfigurationStructure& unitConfiguration)
 {
+  m_language = language;
+  m_stringsPool = &MediaticData::changeable().stringsPool(m_language);
+
+  m_data = getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries");
+
+  try
+  {
+    string boundaryMicro = getStringParameter(unitConfiguration, "boundaryMicro", 0, "PONCTU_FORTE");
+
+    const auto& microManager = GET_PROPERTY_MANAGER(m_language, "MICRO");
+    m_boundaryMicro = microManager.getPropertyValue(boundaryMicro);
+    if (m_boundaryMicro == 0)
+    {
+      LOG_ERROR_AND_THROW("ConlluReaderPrivate::init(): cannot find linguistic code for micro " << boundaryMicro,
+                          InvalidConfiguration());
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
+    throw InvalidConfiguration("ConlluReaderPrivate::init(): can't find boundary micro");
+  }
 }
 
 // set default key in status according to other elements in status
 void ConlluReaderPrivate::computeDefaultStatus(Token& token)
 {
-// #ifdef DEBUG_LP
-//   TOKENIZERLOGINIT;
-//   LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus"
-//           << token.stringForm();
-// #endif
   static QRegularExpression reCapital("^[[:upper:]]+$", QRegularExpression::UseUnicodePropertiesOption);
   static QRegularExpression reSmall("^[[:lower:]]+$", QRegularExpression::UseUnicodePropertiesOption);
   static QRegularExpression reCapital1st("^[[:upper:]]\\w+$", QRegularExpression::UseUnicodePropertiesOption);
