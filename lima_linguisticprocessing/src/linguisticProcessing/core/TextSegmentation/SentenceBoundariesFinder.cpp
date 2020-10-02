@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "SentenceBoundariesFinder.h"
@@ -59,9 +59,9 @@ void SentenceBoundariesFinder::init(
 {
   /** @addtogroup ProcessUnitConfiguration
    * - <b>&lt;group name="..." class="SentenceBoundariesFinder"&gt;</b>
-   */  
+   */
   SENTBOUNDLOGINIT;
-  
+
   MediaId language=manager->getInitializationParameters().media;
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
@@ -86,7 +86,7 @@ void SentenceBoundariesFinder::init(
   {
     deque<string> boundariesRestrictions=unitConfiguration.getListsValueAtKey("values");
     for (deque<string>::const_iterator it=boundariesRestrictions.begin(),it_end=boundariesRestrictions.end();
-    it!=it_end; it++) 
+    it!=it_end; it++)
     {
 #ifdef DEBUG_LP
       LDEBUG << "init(): add filter for value " << *it;
@@ -95,14 +95,14 @@ void SentenceBoundariesFinder::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {} // optional
-  
+
   try
   {
     const Common::PropertyCode::PropertyManager& microManager=
     static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
     deque<string> boundariesRestrictions=unitConfiguration.getListsValueAtKey("micros");
     for (deque<string>::const_iterator it=boundariesRestrictions.begin(),it_end=boundariesRestrictions.end();
-    it!=it_end; it++) 
+    it!=it_end; it++)
     {
       LinguisticCode micro=microManager.getPropertyValue(*it);
       if (micro == 0) {
@@ -119,16 +119,15 @@ void SentenceBoundariesFinder::init(
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {
     LERROR << "Warning: No boundaries categories defined for language " << language;
     //throw InvalidConfiguration();
-  } 
+  }
 }
 
 
 LimaStatusCode SentenceBoundariesFinder::process(
   AnalysisContent& analysis) const
 {
-  
   Lima::TimeUtilsController timer("SentenceBoundariesFinder");
-  
+
   SENTBOUNDLOGINIT;
   LINFO << "start finding sentence bounds";
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
@@ -145,11 +144,19 @@ LimaStatusCode SentenceBoundariesFinder::process(
 
   SegmentationData* sb=new SegmentationData(m_graph);
   analysis.setData(m_data,sb);
-  
+
   if (m_boundaryValues.empty()) {
     while (beginSentence!=lastVx)
     {
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
+      if (endSentence == lastVx)
+      {
+        set<LinguisticGraphVertex> nextVx = getFollowingNodes<set<LinguisticGraphVertex>>(*anagraph, beginSentence);
+        if (nextVx.size() == 1 && *nextVx.begin() == lastVx)
+        {
+          break;
+        }
+      }
 #ifdef DEBUG_LP
       LDEBUG << "found endSentence at " << endSentence;
 #endif
@@ -158,7 +165,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
     }
   }
   else { // apply restriction on values for sentence boundaries
-    // cannot set endSentence from beginSentence inside the loop, because we have to continue 
+    // cannot set endSentence from beginSentence inside the loop, because we have to continue
     // moving forward even if there is no match (with restricted values)
     LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
     while (endSentence!=lastVx)
@@ -166,7 +173,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
       Token* t=get(vertex_token,*(anagraph->getGraph()),endSentence);
 #ifdef DEBUG_LP
       if (t!=0) {
-        LDEBUG << "found endSentence at " << endSentence  << "(" 
+        LDEBUG << "found endSentence at " << endSentence  << "("
                << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")";
       }
       else {
