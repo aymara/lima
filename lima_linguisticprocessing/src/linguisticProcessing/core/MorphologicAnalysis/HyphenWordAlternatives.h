@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -33,7 +33,7 @@
   * @file   HyphenWordAlternatives.h
   * @author NAUTITIA jys
   * @author Gael de Chalendar
-  * @author Copyright (c) 2002-2003 by CEA
+  * @author Copyright (c) 2002-2020 by CEA
   *
   * @date   created on Nov, 30 2002
   * @version    $Id$
@@ -49,6 +49,7 @@
 #include "linguisticProcessing/core/AnalysisDict/AbstractAnalysisDictionary.h"
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "AlternativesReader.h"
 
 namespace Lima {
@@ -89,11 +90,13 @@ private:
     MediaId m_language;
     MediaId m_engLanguageId;
     AlternativesReader* m_reader;
+    std::string m_sentBoundariesName;
 
     void makeHyphenSplitAlternativeFor(
         LinguisticGraphVertex splitted,
         LinguisticGraph* graph,
-        Common::AnnotationGraphs::AnnotationData* annotationData) const;
+        Common::AnnotationGraphs::AnnotationData* annotationData,
+        SegmentationData* sb) const;
 
     bool isWorthSplitting(
         LinguisticGraphVertex splitted,

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2018 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -33,7 +33,7 @@
   * @file   HyphenWordAlternatives.cpp
   * @author NAUTITIA jys
   * @author Gael de Chalendar
-  * @author Copyright (c) 2002-2003 by CEA
+  * @author Copyright (c) 2002-2020 by CEA
   *
   * @date   created on Nov, 30 2002
   * @version    $Id$
@@ -73,6 +73,7 @@ namespace MorphologicAnalysis
 SimpleFactory<MediaProcessUnit,HyphenWordAlternatives> hyphenwordAlternativesFactory(HYPHENWORDALTERNATIVESFACTORY_CLASSID);
 
 HyphenWordAlternatives::HyphenWordAlternatives()
+  : m_sentBoundariesName("SentenceBoundaries")
 {}
 
 HyphenWordAlternatives::~HyphenWordAlternatives()
@@ -146,6 +147,15 @@ void HyphenWordAlternatives::init(
 
   const auto &theMediaticData = static_cast<const Common::MediaticData::MediaticData&>(Common::MediaticData::MediaticData::single());
   m_engLanguageId = theMediaticData.getMediaId("eng");
+
+  try
+  {
+    m_sentBoundariesName=unitConfiguration.getParamsValueAtKey("sentBoundaries");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    LINFO << "no param 'sentBoundaries' in HyphenWordAlternatives group for language " << (int) m_language;
+  }
 }
 
 LimaStatusCode HyphenWordAlternatives::process(
@@ -156,7 +166,7 @@ LimaStatusCode HyphenWordAlternatives::process(
   LINFO << "MorphologicalAnalysis: starting process HyphenWordAlternatives";
 
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
-  if (annotationData==0)
+  if (nullptr == annotationData)
   {
     LDEBUG << "HyphenWordAlternatives::process: Misssing AnnotationData. Create it";
     annotationData = new AnnotationData();
@@ -169,6 +179,7 @@ LimaStatusCode HyphenWordAlternatives::process(
 
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentBoundariesName));
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
@@ -188,7 +199,7 @@ LimaStatusCode HyphenWordAlternatives::process(
       {
         if (tok->status().isAlphaHyphen() && isWorthSplitting(*it, graph))
         {
-          makeHyphenSplitAlternativeFor(*it, graph, annotationData);
+          makeHyphenSplitAlternativeFor(*it, graph, annotationData, sb);
         }
       }
     }
@@ -277,7 +288,8 @@ bool HyphenWordAlternatives::isWorthSplitting(
 void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
   LinguisticGraphVertex splitted,
   LinguisticGraph* graph,
-  AnnotationData* annotationData) const
+  AnnotationData* annotationData,
+  SegmentationData* sb) const
 {
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
@@ -324,6 +336,10 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
 
   bool isFirst=true;
 
+  LinguisticGraphVertex firstVertex;
+  LinguisticGraphVertex lastVertex;
+  size_t numVertices = 0;
+
   while (tokenizerToken)
   {
     // prepare the new vertex
@@ -332,10 +348,20 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
     MorphoSyntacticData* newData=new MorphoSyntacticData();
     LinguisticGraphVertex newVertex = add_vertex(*graph);
 
+    if (0 == numVertices)
+    {
+      firstVertex = newVertex;
+    }
+    else
+    {
+      lastVertex = newVertex;
+    }
+
+    numVertices++;
+
     AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
     annotationData->addMatching("AnalysisGraph", newVertex, "annot", agv);
     annotationData->annotate(agv, Common::Misc::utf8stdstring2limastring("AnalysisGraph"), newVertex);
-
 
     tokenMap[newVertex]=newFT;
     dataMap[newVertex]=newData;
@@ -417,6 +443,30 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
   if (m_deleteHyphenWord)
   {
     clear_vertex(splitted,*graph);
+  }
+
+  if (nullptr != sb)
+  {
+    for (size_t i = 0; i < sb->m_segments.size(); i++)
+    {
+      if (splitted == sb->m_segments[i].getFirstVertex())
+      {
+        sb->m_segments[i].setFirstVertex(firstVertex);
+        if (i > 0)
+        {
+          sb->m_segments[i-1].setLastVertex(firstVertex);
+        }
+      }
+
+      if (splitted == sb->m_segments[i].getLastVertex())
+      {
+        sb->m_segments[i].setLastVertex(lastVertex);
+        if (i + 1 < sb->m_segments.size())
+        {
+          sb->m_segments[i+1].setFirstVertex(lastVertex);
+        }
+      }
+    }
   }
 }
 

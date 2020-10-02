@@ -208,6 +208,27 @@ T getFollowingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   return followingNodes;
 }
 
+inline
+LinguisticGraphVertex getOneFollowingNode(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                                          const LinguisticGraphVertex v)
+{
+  LinguisticGraphOutEdgeIt outEdge,outEdge_end;
+  boost::tie (outEdge,outEdge_end)=out_edges(v,*(graph.getGraph()));
+  LinguisticGraphVertex result;
+  while (outEdge!=outEdge_end)
+  {
+    result=target(*outEdge,*(graph.getGraph()));
+    outEdge++;
+    if (outEdge!=outEdge_end)
+    {
+      throw std::logic_error("getOneFollowingNode assumes that there is one and only one following node. Multiple nodes detected.");
+    }
+    return result;
+  }
+
+  throw std::logic_error("getOneFollowingNode assumes that there is one and only one following node. No preceding nodes found.");
+}
+
 template<class T> inline
 void getPrecedingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                        const LinguisticGraphVertex& v,
@@ -228,6 +249,27 @@ T getPrecedingNodes(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   T precedingNodes;
   getPrecedingNodes<T>(graph, v, precedingNodes);
   return precedingNodes;
+}
+
+inline
+LinguisticGraphVertex getOnePrecedingNode(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                                          const LinguisticGraphVertex v)
+{
+  LinguisticGraphInEdgeIt inEdge,inEdge_end;
+  boost::tie (inEdge,inEdge_end)=in_edges(v,*(graph.getGraph()));
+  LinguisticGraphVertex result;
+  while (inEdge!=inEdge_end)
+  {
+    result=source(*inEdge,*(graph.getGraph()));
+    inEdge++;
+    if (inEdge!=inEdge_end)
+    {
+      throw std::logic_error("getOnePrecedingNode assumes that there is one and only one preceding node. Multiple nodes detected.");
+    }
+    return result;
+  }
+
+  throw std::logic_error("getOnePrecedingNode assumes that there is one and only one preceding node. No preceding nodes found.");
 }
 
 }
