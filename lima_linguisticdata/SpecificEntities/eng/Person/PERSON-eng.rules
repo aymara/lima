@@ -52,6 +52,9 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 @AnyFirstname=(@Firstname,@WikidataFirstname)
 #@AnyLastname=(@WikidataLastname)
 
+@DynastyOrder=(I,II,III,IV,V,VI,VII,VIII,IX,X,XI,XII,XIII,XIV,XV,XVI,XVII,XVIII,XIX,XX,XXI,XXII,XXIII,XXIV,XXV,XXVI,XXVII,XXVIII,XXIX,XXX)
+@AnyFirstname::$NP? @DynastyOrder (st|nd|rd)?:PERSON:=>NormalizePersonName()
+
 #@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
 #$NP:[(@Title|@FunctionTitle)]:$NP{0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
@@ -78,21 +81,21 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst,tussenvoegsel.l
 +LinguisticPropertyIs(right.3,"MACRO,NP,eng")
 =>NormalizePersonName()
 
-
-
 @AnyFirstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
 
-@Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)]:@Initial? [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:(@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)]:t_capital_1st{0-1} [($DET|$PRON|$ADJ|$V|,|\.)]:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
 @AnyFirstname:[(@Title|@FunctionTitle)?]:@Initial? (@Tussenvoegsel? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+
+@AnyFirstname::the (Great|great):PERSON:=>NormalizePersonName()
 
 @WikidataLastname:(@AnyFirstname|@Initial{1-2})::PERSON:=>NormalizePersonName()
 @WikidataLastname:[(@Title|@FunctionTitle)]::PERSON:=>NormalizePersonName()
@@ -202,6 +205,7 @@ use person.lst
 @person:::PERSON:=>NormalizePersonName()
 
 # firstnames alone ?
-#@Firstname:::PERSON:=>NormalizePersonName()
+@Firstname:::PERSON:=>NormalizePersonName()
+@WikidataLastname:::PERSON:=>NormalizePersonName()
 
 Organization.ORGANIZATION:::ORGANIZATION:

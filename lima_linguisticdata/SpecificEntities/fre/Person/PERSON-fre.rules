@@ -23,7 +23,7 @@ use ../../eng/Person/wd_lastname.lst
 @AnyFirstname:[(@PreFirstname)?]:$NP? @DynastyOrder (er)?:PERSON:=>NormalizePersonName()
 
 #------------------------------
-# The rule below hands ConllDumper
+# The rule below hangs ConllDumper
 #@Firstname:[(@Title|@FunctionTitle)?]:@Firstname de la ($NP|t_capital|t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
 @Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital|t_capital_1st)){1-2}:PERSON:=>NormalizePersonName()
 

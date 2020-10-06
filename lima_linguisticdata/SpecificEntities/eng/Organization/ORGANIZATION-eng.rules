@@ -26,6 +26,7 @@ use wd_organization.lst
 @WikidataOrganization:::ORGANIZATION:
 
 use ../Location/cities.lst,../Location/states.lst,../Location/countriesAndRegions.lst
+use ../Location/countries.lst
 
 # location based organization
 @locationOrg=(
@@ -46,10 +47,16 @@ de,
 del,
 of,
 the,
+The,
 and,
 \&)
 
-@orgPrefix=(National,International,United,State)
+@orgPrefix=(
+National,International,United,State,American,European,World,General,Royal,Catholic,Imperial,
+West,Western,North,Northern,Central,South,Southern,East,Eastern,
+African,Armenian,Australian,Brazilian,British,Canadian,Finnish,French,German,Greek,Indonesian,Italian,Irish,Polish,Palestinian,Russian,Soviet,Scottish,Spanish)
+
+@sportWord=(Athletic,Baseball,Football)
 
 use organizationkey.lst
 
@@ -76,6 +83,10 @@ party,
 [@orgKeyToHide]:[(The|the)] (t_capital_1st|t_capital){1-3} @conjunctions{0-2} (t_capital_1st|t_capital){0-3}:[(.)?]:ORGANIZATION:
 [@orgKeyToHide]:(t_capital_1st|t_capital|t_capital_small|\&){1-5}:[(.)?]:ORGANIZATION:
 [@orgKeyToHide]:(t_capital_1st|t_capital){1-3} @conjunctions{0-2} (t_capital_1st|t_capital){0-3}:[(.)?]:ORGANIZATION:
+
+United:(The|the)?:(States|Kingdom):NOT_ORGANIZATION:
+Soviet:(The|the)?:Union:NOT_ORGANIZATION:
+New:(The|the)?:York:NOT_ORGANIZATION:
 
 t_capital::\( t_capital_1st t_capital_1st{0-2} @conjunctions @conjunctions{0-1} t_capital_1st t_capital_1st{0-2} \):ORGANIZATION:
 # Probably there is a bug in handling X{1-n} expressions: it works on sequences of zero length but it shouldn't
@@ -104,7 +115,8 @@ University:(State)?:of <LOCATION> School of (t_capital_1st|t_capital|t_capital_s
 University:(State)?:of <LOCATION>:ORGANIZATION:
 
 @City::(@locationOrg):ORGANIZATION:
-@locationOrg:@orgPrefix?:of? (@City|@State):ORGANIZATION:
+@locationOrg:@orgPrefix?:of? (@City|@State|@Country):ORGANIZATION:
+@locationOrg:@orgPrefix?:of the? (@City|@State|@Country):ORGANIZATION:
 @State::@orgPrefix? state? @orgPrefix? (@locationOrg):ORGANIZATION:
 @locationOrg:@orgPrefix?::ORGANIZATION:
 
@@ -114,9 +126,9 @@ use organizationType.lst
 
 university:@orgPrefix?:of (@City|@State):ORGANIZATION:
 #university::of (@City|@State) (@City|@State)?:ORGANIZATION:
-@organizationType:@orgPrefix? <Location.LOCATION>::ORGANIZATION:
-@organizationType:@orgPrefix?:(of|de)? <Location.LOCATION>:ORGANIZATION:
-@organizationType:@orgPrefix?:(of|de)? (t_capital|t_capital_1st){1-3}:ORGANIZATION:
+@organizationType:@orgPrefix? @sportWord? <Location.LOCATION>::ORGANIZATION:
+@organizationType:@orgPrefix? @sportWord?:(of|de)? <Location.LOCATION>:ORGANIZATION:
+@organizationType:@orgPrefix? @sportWord?:(of|de)? (t_capital|t_capital_1st){1-3}:ORGANIZATION:
 #@organizationType:@orgPrefix?:(t_capital|t_capital_1st){1-2}:ORGANIZATION:
 
 @organizationType:[(The|the)] @orgPrefix? t_capital_1st{1-2}::ORGANIZATION:
@@ -124,6 +136,7 @@ university:@orgPrefix?:of (@City|@State):ORGANIZATION:
 @organizationType:@orgPrefix? t_capital_1st{1-2}::ORGANIZATION:
 @organizationType:<LOCATION> <LOCATION>::ORGANIZATION:
 
+@organizationType:@orgPrefix? @sportWord::ORGANIZATION:
 
 UN:::ORGANIZATION:
 un:::ORGANIZATION:
@@ -143,3 +156,8 @@ use AutomobileManu.lst
 
 use wd_organization.lst
 @WikidataOrganization:::ORGANIZATION:
+
+United:(The|the)?:(States|Kingdom):NOT_ORGANIZATION:
+Soviet:(The|the)?:Union:NOT_ORGANIZATION:
+New:(The|the)?:York:NOT_ORGANIZATION:
+New::York:NOT_ORGANIZATION:
