@@ -9,6 +9,12 @@ set defaultAction=>CreateSpecificEntity()
 com:$NP .::ORGANIZATION:
 =>CreateSpecificEntity()
 
+United:(The|the)?:(States|Kingdom):NOT_ORGANIZATION:
+Soviet:(The|the)?:Union:NOT_ORGANIZATION:
+New:(The|the)?:York:NOT_ORGANIZATION:
+New::York:NOT_ORGANIZATION:
+Academy::(awards|Awards):NOT_ORGANIZATION:
+
 # list of organizations common to all languages
 include ../../common/companies.rules
 
@@ -52,7 +58,7 @@ and,
 \&)
 
 @orgPrefix=(
-National,International,United,State,American,European,World,General,Royal,Catholic,Imperial,
+National,International,United,State,American,European,World,General,Royal,Catholic,Imperial,Federal,
 West,Western,North,Northern,Central,South,Southern,East,Eastern,
 African,Armenian,Australian,Brazilian,British,Canadian,Finnish,French,German,Greek,Indonesian,Italian,Irish,Polish,Palestinian,Russian,Soviet,Scottish,Spanish)
 
@@ -108,7 +114,7 @@ t_capital::[\(] [t_capital_1st{1-3}] [\)]:ORGANIZATION:
 [<Organization.ORGANIZATION>]::[\(] t_capital_1st{1-3} [\)]:ORGANIZATION:
 t_capital_1st:[\(] [<Organization.ORGANIZATION>] [\)]:t_capital_1st{1-3}:ORGANIZATION:
 t_capital_1st:[(The|the)]:t_capital_1st{0-2} [said]:ORGANIZATION:
-@orgPrefix:[(The|the)]:t_capital_1st{1-2}:ORGANIZATION:
+@orgPrefix:[(The|the)]:t_capital_1st{1-2} ((of|de) (t_capital_1st|t_capital|t_capital_small|\&){1-5})?:ORGANIZATION:
 # ORGANIZATION:::ORGANIZATION:
 
 University:(State)?:of <LOCATION> School of (t_capital_1st|t_capital|t_capital_small):ORGANIZATION:
@@ -157,7 +163,3 @@ use AutomobileManu.lst
 use wd_organization.lst
 @WikidataOrganization:::ORGANIZATION:
 
-United:(The|the)?:(States|Kingdom):NOT_ORGANIZATION:
-Soviet:(The|the)?:Union:NOT_ORGANIZATION:
-New:(The|the)?:York:NOT_ORGANIZATION:
-New::York:NOT_ORGANIZATION:
