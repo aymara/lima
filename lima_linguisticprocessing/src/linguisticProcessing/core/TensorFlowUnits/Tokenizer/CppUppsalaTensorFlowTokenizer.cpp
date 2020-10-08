@@ -312,7 +312,12 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   QString model_name = model_prefix;
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
-  if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+  if (udlang.size() == 0 && lang_str.size() > 0 && lang_str != QString("ud"))
+  {
+    udlang = lang_str.toStdString();
+    lang_str = "ud";
+  }
+  else if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
   {
     udlang = udlang.substr(3);
   }

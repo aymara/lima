@@ -213,7 +213,6 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
     MediaId med,
     const std::string& id ) const
 {
-
   auto pipItr = m_d->m_pipelines.find ( id );
   if ( pipItr == m_d->m_pipelines.end() )
   {
