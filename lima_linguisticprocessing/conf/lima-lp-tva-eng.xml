@@ -130,7 +130,7 @@
         <!--item value="SvmToolPosTagger"/-->
       </list>
     </group>
-    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+    <group name="ner-rules-pretok" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="conllureader"/>
         <item value="SpecificEntitiesModex"/>

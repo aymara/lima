@@ -77,20 +77,84 @@
         <!--item value="NullDumper"/-->
       </list>
     </group>
-    <group name="deepud-nerrules" class="ProcessUnitPipeline">
+    <!-- NER pipelines                                                    -->
+    <!--                                                                  -->
+    <!-- For plain text input (deep learning based plain text tokenizer): -->
+    <!-- * ner-rules:         rule-based NER                              -->
+    <!-- * ner-deep:          deep leraning based NER                     -->
+    <!-- * ner-fusion:        deep learning based NER + rule-based NER    -->
+    <!--                                                                  -->
+    <!-- For CoNLL-U input:                                               -->
+    <!-- * ner-rules-pretok:  rule-based NER                              -->
+    <!-- * ner-deep-pretok:   deep leraning based NER                     -->
+    <!-- * ner-fusion-pretok: deep learning based NER + rule-based NER    -->
+    <group name="ner-rules" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
         <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperFake"/>
       </list>
     </group>
-    <group name="deepud-nerrules-pretok" class="ProcessUnitPipeline">
+    <group name="ner-rules-pretok" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="conllureader"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperFake"/>
       </list>
     </group>
+    <group name="ner-deep" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
+    <group name="ner-deep-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
+    <group name="ner-fusion" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="cpptftokenizer"/>
+        <item value="simpleWord"/>
+        <item value="defaultProperties"/>
+        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
+    <group name="ner-fusion-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <item value="defaultProperties"/>
+        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesUpdater"/>
+        <item value="conllDumperFake"/>
+      </list>
+    </group>
+    <!-- End of NER pipelines                                             -->
     <group name="deep" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <!--item value="beginStatusLogger"/-->
@@ -213,6 +277,9 @@
 *********************************************** -->
     <group name="conllureader" class="ConlluReader">
     </group>
+    <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
+      <param key="model_prefix" value="tokenizer-$udlang"/>
+    </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -249,6 +316,15 @@
       <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
       <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
       <param key="batchSizeMax" value="20"/>
+      <param key="sentBoundaries" value="SentenceBoundariesForSE"/>
+    </group>
+    <group name="tensorflowSpecificEntitiesFusion" class="TensorflowSpecificEntities">
+      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
+      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
+      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
+      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
+      <param key="batchSizeMax" value="20"/>
+      <param key="sentBoundaries" value="SentenceBoundaries"/>
     </group>
     <group name="coreferencesSolving" class="CoreferencesSolving">
       <param key="scope" value="3" />
@@ -467,6 +543,10 @@
       <list name="micros">
         <item value="PONCTU_FORTE" />
       </list>
+    </group>
+    <group name="sentenceBoundariesUpdater" class="SentenceBoundariesUpdater">
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="data" value="SentenceBoundaries"/>
     </group>
     <group name="sentenceBoundariesFinderForSE" class="SentenceBoundariesFinder">
       <param key="graph" value="AnalysisGraph"/>
@@ -774,6 +854,7 @@ Definition of dumpers
     <group name="conllDumperFake" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
       <param key="graph" value="AnalysisGraph"/>
+      <param key="format" value="CoNLL-03"/>
     </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>

@@ -46,10 +46,10 @@
       <entry key="eng" value="approxmatcher"/>
       <entry key="fre" value="approxmatcher"/>
     </map>
-    <map name="deepud-nerrules-pretok">
-      <entry key="eng" value="deepud-nerrules-pretok"/>
-      <entry key="fre" value="deepud-nerrules-pretok"/>
-      <entry key="por" value="deepud-nerrules-pretok"/>
+    <map name="ner-rules-pretok">
+      <entry key="eng" value="ner-rules-pretok"/>
+      <entry key="fre" value="ner-rules-pretok"/>
+      <entry key="por" value="ner-rules-pretok"/>
     </map>
   </group>
   <group name="analysisDumpers">

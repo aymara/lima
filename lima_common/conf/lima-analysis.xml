@@ -30,39 +30,67 @@
       <!-- The main pipeline is a pipeline used for experimentations. For a stabilized process,
       please use one of the others below -->
       <map name="main">
-        <entry key="eng" value="main"/>
+        <entry key="eng"    value="main"/>
         <entry key="eng.ud" value="main"/>
-        <entry key="fre" value="main"/>
-        <entry key="por" value="main"/>
+        <entry key="fre"    value="main"/>
+        <entry key="por"    value="main"/>
       </map>
       <map name="deepud">
         <entry key="eng.ud" value="deepud"/>
         <entry key="fre.ud" value="deepud"/>
-        <entry key="ud" value="deepud"/>
+        <entry key="ud"     value="deepud"/>
       </map>
       <map name="deepud-pretok">
         <entry key="eng.ud" value="deepud-pretok"/>
         <entry key="fre.ud" value="deepud-pretok"/>
-        <entry key="ud" value="deepud-pretok"/>
+        <entry key="ud"     value="deepud-pretok"/>
       </map>
       <map name="deepud-tok">
         <entry key="eng.ud" value="deepud-tok"/>
         <entry key="fre.ud" value="deepud-tok"/>
-        <entry key="ud" value="deepud-tok"/>
+        <entry key="ud"     value="deepud-tok"/>
       </map>
-      <map name="deepud-nerrules">
-        <entry key="eng.ud" value="deepud-nerrules"/>
-        <entry key="eng" value="deepud-nerrules"/>
-        <entry key="fre.ud" value="deepud-nerrules"/>
-        <entry key="fre" value="deepud-nerrules"/>
-        <entry key="ud" value="deepud-nerrules"/>
+      <map name="ner-rules">
+        <entry key="eng.ud" value="ner-rules"/>
+        <entry key="eng"    value="ner-rules"/>
+        <entry key="fre.ud" value="ner-rules"/>
+        <entry key="fre"    value="ner-rules"/>
+        <entry key="ud"     value="ner-rules"/>
       </map>
-      <map name="deepud-nerrules-pretok">
-        <entry key="eng.ud" value="deepud-nerrules-pretok"/>
-        <entry key="eng" value="deepud-nerrules-pretok"/>
-        <entry key="fre.ud" value="deepud-nerrules-pretok"/>
-        <entry key="fre" value="deepud-nerrules-pretok"/>
-        <entry key="ud" value="deepud-nerrules-pretok"/>
+      <map name="ner-rules-pretok">
+        <entry key="eng.ud" value="ner-rules-pretok"/>
+        <entry key="eng"    value="ner-rules-pretok"/>
+        <entry key="fre.ud" value="ner-rules-pretok"/>
+        <entry key="fre"    value="ner-rules-pretok"/>
+        <entry key="ud"     value="ner-rules-pretok"/>
+      </map>
+      <map name="ner-fusion">
+        <entry key="eng.ud" value="ner-fusion"/>
+        <entry key="eng"    value="ner-fusion"/>
+        <entry key="fre.ud" value="ner-fusion"/>
+        <entry key="fre"    value="ner-fusion"/>
+        <entry key="ud"     value="ner-fusion"/>
+      </map>
+      <map name="ner-fusion-pretok">
+        <entry key="eng.ud" value="ner-fusion-pretok"/>
+        <entry key="eng"    value="ner-fusion-pretok"/>
+        <entry key="fre.ud" value="ner-fusion-pretok"/>
+        <entry key="fre"    value="ner-fusion-pretok"/>
+        <entry key="ud"     value="ner-fusion-pretok"/>
+      </map>
+      <map name="ner-deep">
+        <entry key="eng.ud" value="ner-deep"/>
+        <entry key="eng"    value="ner-deep"/>
+        <entry key="fre.ud" value="ner-deep"/>
+        <entry key="fre"    value="ner-deep"/>
+        <entry key="ud"     value="ner-deep"/>
+      </map>
+      <map name="ner-deep-pretok">
+        <entry key="eng.ud" value="ner-deep-pretok"/>
+        <entry key="eng"    value="ner-deep-pretok"/>
+        <entry key="fre.ud" value="ner-deep-pretok"/>
+        <entry key="fre"    value="ner-deep-pretok"/>
+        <entry key="ud"     value="ner-deep-pretok"/>
       </map>
       <map name="deep">
         <entry key="eng" value="deep"/>
