@@ -40,10 +40,10 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         download_binary_file(deb_url, tmpdirname)
-        install_model(target_dir, os.path.join(tmpdirname, deb_url.split('/')[-1]))
+        install_model(target_dir, os.path.join(tmpdirname, deb_url.split('/')[-1]), code)
 
 
-def install_model(dir, fn):
+def install_model(dir, fn, code):
     ar_file = unix_ar.open(fn)
     tarball = ar_file.open('data.tar.gz')
     tar_file = tarfile.open(fileobj=tarball)
@@ -67,6 +67,14 @@ def install_model(dir, fn):
                             if len(chunk) == 0:
                                 break
                             f.write(chunk)
+                    # LIMA historically uses 'fre' for French.
+                    # This workaround adds symlinks 'fre' -> 'fra' to support this.
+                    if code in [ 'fra' ]:
+                        src_name = os.path.join(target_dir, name)
+                        symlink_name = re.sub(r'-fra.(conf|model|bin)$', r'-fre.\1', name, 1)
+                        symlink_name = os.path.join(target_dir, symlink_name)
+                        if not os.path.isfile(symlink_name):
+                            os.symlink(src_name, symlink_name)
 
 
 def download_binary_file(url, dir):
