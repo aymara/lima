@@ -20,9 +20,11 @@ C2LC = { 'lang2code': {}, 'code2lang': {} }
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', '--lang', type=str, required=True,
-                        help='language name or language code (example: \'english\' or \'eng\'')
+                        help='language name or language code (example: \'english\' or \'eng\')')
     parser.add_argument('-d', '--dest', type=str,
                         help='destination directory')
+    parser.add_argument('-s', '--select', type=str,
+                        help='select particular models to install: tokenizer, morphosyntax, lemmatizer (comma separated list)')
     args = parser.parse_args()
 
     code, lang = find_lang_code(args.lang.lower())
@@ -38,12 +40,20 @@ def main():
     print('Installation dir: %s' % target_dir)
     print('Downloading %s' % deb_url)
 
+    prefix_list = []
+    if args.select is not None:
+        prefix_list = [ x.lower().strip() for x in args.select.split(',') ]
+        if 'morphosyntax' in prefix_list:
+            prefix_list.append('fasttext')
+
+        print('Installing only: %s' % ( ', '.join(prefix_list)))
+
     with tempfile.TemporaryDirectory() as tmpdirname:
         download_binary_file(deb_url, tmpdirname)
-        install_model(target_dir, os.path.join(tmpdirname, deb_url.split('/')[-1]), code)
+        install_model(target_dir, os.path.join(tmpdirname, deb_url.split('/')[-1]), code, prefix_list)
 
 
-def install_model(dir, fn, code):
+def install_model(dir, fn, code, prefix_list):
     ar_file = unix_ar.open(fn)
     tarball = ar_file.open('data.tar.gz')
     tar_file = tarfile.open(fileobj=tarball)
@@ -53,6 +63,10 @@ def install_model(dir, fn, code):
             file = tar_file.extractfile(m)
             if file is not None:
                 full_dir, name = os.path.split(m.name)
+                if len(prefix_list) > 0:
+                    name_prefix, _ = name.split('-')
+                    if name_prefix not in prefix_list:
+                        continue
                 mo = re.match(r'./usr/share/apps/lima/resources/(TensorFlow[A-Za-z\/\-\.0-9]+)', full_dir)
                 if mo:
                     subdir = mo.group(1)
