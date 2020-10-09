@@ -85,9 +85,12 @@
     <group name="ner-rules" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
+        <item value="simpleWord"/>
+        <!--item value="hyphenWordAlternatives"/-->
+        <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-rules-pretok" class="ProcessUnitPipeline">
@@ -98,7 +101,7 @@
         <item value="defaultProperties"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-deep" class="ProcessUnitPipeline">
@@ -109,7 +112,7 @@
         <item value="defaultProperties"/>
         <item value="tensorflowSpecificEntitiesFusion"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-deep-pretok" class="ProcessUnitPipeline">
@@ -120,7 +123,7 @@
         <item value="defaultProperties"/>
         <item value="tensorflowSpecificEntitiesFusion"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <!-- hyphenWordAlternatives commented out because it internally calls -->
@@ -134,7 +137,7 @@
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-fusion-pretok" class="ProcessUnitPipeline">
@@ -146,7 +149,7 @@
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
-        <item value="conllDumperFake"/>
+        <item value="conllDumperNer"/>
       </list>
     </group>
     <!-- End of NER pipelines                                             -->
@@ -916,7 +919,7 @@
       <list name="attributes"/>
       <list name="eventTemplates"/>
     </group>
-    <group name="conllDumperFake" class="ConllDumper">
+    <group name="conllDumperNer" class="ConllDumper">
       <param key="handler" value="simpleStreamHandler"/>
       <param key="graph" value="AnalysisGraph"/>
       <param key="format" value="CoNLL-03"/>
