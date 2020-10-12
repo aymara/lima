@@ -66,11 +66,20 @@ void BratJSONDumper::init(
 
 }
 
+// utility function to escape endlines in JSON
+std::string jsonEscape(const std::string& str)  {
+    std::string s=str;
+    boost::replace_all(s,"\n", "\\n");
+    boost::replace_all(s,"\r", "\\r");
+    boost::replace_all(s,"\t", "\\t");
+    return s;
+}
+
 // headers and footers 
 void BratJSONDumper::outputGlobalHeader(std::ostream& os, const std::string& /*sourceFile*/,
                                         const LimaStringText& originalText) const
 {
-  os << "{" << endl << "\"text\": \"" << limastring2utf8stdstring(originalText) << "\"," << endl;
+  os << "{" << endl << "\"text\": \"" << jsonEscape(limastring2utf8stdstring(originalText)) << "\"," << endl;
 }
 void BratJSONDumper::outputGlobalFooter(std::ostream& os) const
 {
