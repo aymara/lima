@@ -421,6 +421,7 @@
     </subvalues>
     <subvalues value="PUNCT">
       <value name="PUNCT"/>
+      <value name="SENT"/>
     </subvalues>
     <subvalues value="DIVERS">
       <value name="SYM"/>

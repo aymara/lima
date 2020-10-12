@@ -354,22 +354,25 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
-  if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+  if (lang_str != QString("ud") || udlang.find("ud-") == 0)
   {
-    udlang = udlang.substr(3);
-  }
-  else
-  {
-    // parse lang codes like 'eng.ud'
-    if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
+    if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
     {
-      udlang = lang_str.left(3).toStdString();
-      lang_str = "ud";
+      udlang = udlang.substr(3);
     }
     else
     {
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
-                          << udlang, LimaException());
+      // parse lang codes like 'eng.ud'
+      if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
+      {
+        udlang = lang_str.left(3).toStdString();
+        lang_str = "ud";
+      }
+      else
+      {
+        LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::init: Can't parse language id "
+                            << udlang, LimaException());
+      }
     }
   }
 

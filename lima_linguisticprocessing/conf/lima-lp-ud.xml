@@ -49,6 +49,7 @@
     </group>
 
     <group name="conllureader" class="ConlluReader">
+      <param key="boundaryMicro" value="SENT"/>
     </group>
 
     <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">

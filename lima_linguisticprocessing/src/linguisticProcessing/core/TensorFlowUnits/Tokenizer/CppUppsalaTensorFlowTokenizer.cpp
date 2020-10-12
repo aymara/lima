@@ -312,27 +312,32 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   QString model_name = model_prefix;
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
-  if (udlang.size() == 0 && lang_str.size() > 0 && lang_str != QString("ud"))
+
+  if (lang_str != QString("ud") || udlang.find("ud-") == 0)
   {
-    udlang = lang_str.toStdString();
-    lang_str = "ud";
-  }
-  else if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
-  {
-    udlang = udlang.substr(3);
-  }
-  else
-  {
-    // parse lang codes like 'eng.ud'
-    if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
+    if (udlang.size() == 0 && lang_str.size() > 0 && lang_str != QString("ud"))
     {
-      udlang = lang_str.left(3).toStdString();
+      // This block helps to use tokenizer in non-UD pipelines.
+      udlang = lang_str.toStdString();
       lang_str = "ud";
+    }
+    else if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
+    {
+      udlang = udlang.substr(3);
     }
     else
     {
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
-                          << udlang, Lima::InvalidConfiguration());
+      // parse lang codes like 'eng.ud'
+      if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
+      {
+        udlang = lang_str.left(3).toStdString();
+        lang_str = "ud";
+      }
+      else
+      {
+        LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
+                            << udlang, Lima::InvalidConfiguration());
+      }
     }
   }
 
