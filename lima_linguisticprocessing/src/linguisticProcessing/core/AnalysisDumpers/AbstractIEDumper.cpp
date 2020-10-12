@@ -247,7 +247,7 @@ LimaStatusCode AbstractIEDumper::process(
   catch (LinguisticProcessingException& ) {
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
   }
-  outputGlobalHeader(out,sourceFile);
+  outputGlobalHeader(out,sourceFile,*originalText);
 
   outputEntitiesHeader(out);
 

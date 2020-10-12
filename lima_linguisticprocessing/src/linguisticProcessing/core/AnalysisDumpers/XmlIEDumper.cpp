@@ -52,7 +52,8 @@ void XmlIEDumper::init(
   //...
 }
 
-void XmlIEDumper::outputGlobalHeader(std::ostream& out, const std::string& sourceFile) const
+void XmlIEDumper::outputGlobalHeader(std::ostream& out, const std::string& sourceFile, 
+                                     const LimaStringText& /*originalText*/) const
 {
   out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
   out << "<Doc>" << endl;

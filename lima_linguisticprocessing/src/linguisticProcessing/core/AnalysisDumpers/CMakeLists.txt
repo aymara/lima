@@ -45,6 +45,7 @@ SET(lima-lp-analysisdumpers_LIB_SRCS
    CompoundsXmlLogger.cpp
    AbstractIEDumper.cpp
    BratDumper.cpp
+   BratJSONDumper.cpp
    XmlIEDumper.cpp
    OffsetMapping.cpp
 )
@@ -86,6 +87,7 @@ install(FILES
     CompoundsXmlLogger.h
     AbstractIEDumper.h
     BratDumper.h
+    BratJSONDumper.h
     XmlIEDumper.h
     OffsetMapping.h
   DESTINATION include/linguisticProcessing/core/AnalysisDumpers

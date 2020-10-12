@@ -46,7 +46,8 @@ public:
    * @brief specific output functions to deal with actual output format
    * these functions are called inside the process() function.
    */
-  virtual void outputGlobalHeader(std::ostream& /*os*/, const std::string& /*sourceFile*/="") const {}
+  virtual void outputGlobalHeader(std::ostream& /*os*/, const std::string& /*sourceFile*/="", 
+                                  const LimaStringText& /*originalText*/=LimaStringText("")) const {}
   virtual void outputGlobalFooter(std::ostream& /*os*/) const {}
   virtual void outputEntitiesHeader(std::ostream& /*os*/) const {}
   virtual void outputEntitiesFooter(std::ostream& /*os*/) const {}
