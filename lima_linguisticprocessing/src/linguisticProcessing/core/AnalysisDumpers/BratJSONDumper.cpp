@@ -231,9 +231,9 @@ outputRelationString(ostream& out,
     
     if (m_firstRelation) { m_firstRelation=false; out << endl; } else { out << "," << endl; }
     
-    out << "[ \"R" << (relationId+i) << "\", \"" <<  rel.toUtf8().constData() << "\", [\""
+    out << "[ \"R" << (relationId+i) << "\", \"" <<  rel.toUtf8().constData() << "\", ["
         << "[\"Arg1\", \"T" << sourceArgString << "\"], "
-        << "[\"Arg2\", \"T" << targetArgString << "\"]] ]" << endl;
+        << "[\"Arg2\", \"T" << targetArgString << "\"]] ]";
     i++;
   }
   return i;
