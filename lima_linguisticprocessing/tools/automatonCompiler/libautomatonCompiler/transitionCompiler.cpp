@@ -129,7 +129,11 @@ TransitionUnit*
     return 0;
   }
   const Gazeteer& gazeteer = gazeteers[gazeteerIndex];
-  const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
+  // handle escape characters: copy gazeteer to modify the strings
+  std::vector<LimaString> gazeteerAsVectorOfString(gazeteer);
+  for (auto& s: gazeteerAsVectorOfString) {
+      removeEscapeCharacters(s);
+  }
   // TODO bool negative = automatonString.isNegative()??, Est-ce qu'on autorise un trigger avec une négation?
   bool negative(false);
   TransitionUnit* t = new GazeteerTransition(gazeteerAsVectorOfString, gazeteerName, keep);
