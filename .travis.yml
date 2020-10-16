@@ -43,6 +43,9 @@ script:
   - docker build --tag $DISTRIB --build-arg JOB_NUMBER=$TRAVIS_JOB_NUMBER --build-arg BRANCH="$BRANCH" --build-arg GITHUB_TOKEN="$GITHUB_TOKEN" --build-arg USE_TENSORFLOW="$USE_TENSORFLOW" -f ./continuous_integration/Dockerfile-$DISTRIB .
 
 after_success:
+- docker run --name travis-ubuntu20.04 -t -d travis-ubuntu20.04
+- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
+- docker stop travis-ubuntu20.04
 - docker run --name travis-ubuntu18.04 -t -d travis-ubuntu18.04
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
 - docker stop travis-ubuntu18.04
