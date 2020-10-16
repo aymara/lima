@@ -21,9 +21,9 @@ install(FILES
     log4cpp.properties
     lima-analysis.xml
     lima-common-eng.xml
-    lima-common-eng.ud.xml
+#     lima-common-eng.ud.xml
     lima-common-fre.xml
-    lima-common-fre.ud.xml
+#     lima-common-fre.ud.xml
     lima-common-por.xml
     lima-common.xml
     lima-common-ud.xml # Generic config for Universal Dependencies

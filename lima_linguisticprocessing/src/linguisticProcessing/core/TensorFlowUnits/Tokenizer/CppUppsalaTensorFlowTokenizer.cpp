@@ -346,6 +346,12 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
                                             .arg(lang_str).arg(model_name));
+  if (config_file_name.isEmpty())
+  {
+    LOG_ERROR_AND_THROW(
+      "CppUppsalaTokenizerPrivate::init: tokenizer config file not found.",
+      LimaException("CppUppsalaTokenizerPrivate::init: tokenizer config file not found."));
+  }
   load_config(config_file_name);
 
   tensorflow::SessionOptions options;
@@ -427,6 +433,11 @@ void CppUppsalaTokenizerPrivate::load_dicts(const QJsonArray& jsa)
 
 void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 {
+  if (config_file_name.isNull() || config_file_name.isEmpty())
+  {
+    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config can't load config from empty or null filename.",
+                        LimaException("CppUppsalaTokenizerPrivate::load_config can't load config from empty or null filename."));
+  }
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))

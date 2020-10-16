@@ -88,6 +88,7 @@ AnalysisThreadPrivate::AnalysisThreadPrivate(
     m_langs(langs),
     m_mediaType((req->header("content-type")).toStdString())
 {
+  LIMA_UNUSED(resp);
 }
 
 AnalysisThread::AnalysisThread (
@@ -357,7 +358,6 @@ QString AnalysisThreadPrivate::TokensToJson( const QString & str )
 
   // Array of tokens
   QJsonArray array;
-  std::string::size_type pos = 0;
   // search for EOL: each line represents a token (or end of sentence for an empty line)
   auto lines = str.split('\n');
   for(const auto& line: lines)

@@ -3,9 +3,10 @@
   <module name="http-server">
     <group name="analyzer">
       <list name="languages">
-        <item value="fre"/>
-        <item value="eng"/>
-        <item value="por"/>
+        <item value="eng" />
+        <item value="fre" />
+        <item value="por" />
+        <item value="ud" />
       </list>
       <list name="pipelines">
         <item value="limaserver"/>

@@ -181,7 +181,6 @@
 
     <group name="deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
         <item value="flattokenizer"/>
         <item value="regexmatcher"/>
         <!--item value="fullTokenXmlLoggerTokenizer"/-->

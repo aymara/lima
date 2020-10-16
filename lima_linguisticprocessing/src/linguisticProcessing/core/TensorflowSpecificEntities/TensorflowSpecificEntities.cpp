@@ -202,24 +202,39 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
     m_vocabWords = loadFileWords(fileWords);
     if(m_vocabWords.empty())
     {
-      throw LimaException();
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "TensorflowSpecificEntitiesPrivate::init empty words vocabulary" << __FILE__ << __LINE__;
+      LERROR << errorString;
+      throw LimaException(errorString.toStdString());
     }
     m_vocabChars = loadFileChars(fileChars);
     if(m_vocabChars.empty())
     {
-      throw LimaException();
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "TensorflowSpecificEntitiesPrivate::init empty chars vocabulary" << __FILE__ << __LINE__;
+      LERROR << errorString;
+      throw LimaException(errorString.toStdString());
     }
     m_vocabTags = loadFileTags(fileTags);
     if(m_vocabTags.empty())
     {
-      throw LimaException();
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << "TensorflowSpecificEntitiesPrivate::init empty tags vocabulary" << __FILE__ << __LINE__;
+      LERROR << errorString;
+      throw LimaException(errorString.toStdString());
     }
   }
   catch(const BadFileException& e)
   {
     TFSELOGINIT;
-    LERROR << e.what();
-    throw LimaException(e.what());
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "TensorflowSpecificEntitiesPrivate::init catched BadFileException" << __FILE__ << __LINE__ << e.what();
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
 
   // Initialize a tensorflow session
@@ -227,8 +242,12 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
   if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_status->ToString();
-    throw LimaException(m_status->ToString());
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "TensorflowSpecificEntitiesPrivate::init error creating tensorflow session"
+        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
 
   // Read in the protobuf graph we have exported
@@ -236,8 +255,12 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
   if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_status->ToString();
-    throw LimaException(m_status->ToString());
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "TensorflowSpecificEntitiesPrivate::init error reading tensorflow graph"
+        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
 
   // Add the graph to the session
@@ -245,8 +268,12 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
   if (!m_status->ok())
   {
     TFSELOGINIT;
-    LERROR << m_status->ToString();
-    throw LimaException(m_status->ToString());
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "TensorflowSpecificEntitiesPrivate::init error adding graph to tensorflow session"
+        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
+    LERROR << errorString;
+    throw LimaException(errorString.toStdString());
   }
 }
 
