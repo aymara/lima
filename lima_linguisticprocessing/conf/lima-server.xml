@@ -12,6 +12,7 @@
         <item value="limaserver"/>
         <item value="main"/>
         <item value="deep"/>
+        <item value="deepud"/>
       </list>
     </group>
     <group name="address">

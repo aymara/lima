@@ -191,7 +191,6 @@ int run(int argc, char** argv)
   std::vector<std::string> files;
   std::vector<std::string> vinactiveUnits;
   std::string meta;
-  std::string opts;
   std::string splitMode;
   std::string strConfigPath;
 
@@ -235,9 +234,6 @@ int run(int argc, char** argv)
   ("meta",
    po::value< std::string >(&meta),
    "Sets metadata values, in the format data1:value1,data2:value2,...")
-  ("opts",
-   po::value< std::string >(&opts),
-   "Sets options values, in the format data1:value1,data2:value2,...")
   ("split-mode,s",
    po::value< std::string >(&splitMode)->default_value("none"),
    "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
@@ -376,7 +372,7 @@ int run(int argc, char** argv)
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs,
-    parse_options_line(opts, ',', ':'));
+    parse_options_line(meta, ',', ':'));
 
   langs = Common::MediaticData::MediaticData::changeable().getMedias();
 

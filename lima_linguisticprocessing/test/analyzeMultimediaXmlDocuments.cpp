@@ -108,6 +108,38 @@ int main(int argc, char **argv)
 #endif
 }
 
+std::map<std::string, std::string> parse_options_line(const QString& meta, char comma, char colon)
+{
+  std::map<std::string, std::string> opts;
+  std::string s = meta.toStdString();
+
+  size_t start = 0;
+  size_t comma_pos = s.find(comma, 0);
+  do
+  {
+    std::string key, value;
+    size_t colon_pos = s.find(colon, start);
+    if (colon_pos != std::string::npos && colon_pos != comma_pos)
+    {
+      key = s.substr(start, colon_pos - start);
+      size_t value_start = colon_pos + 1;
+      value = s.substr(value_start, comma_pos == std::string::npos ? comma_pos : (comma_pos - value_start));
+    }
+    else
+    {
+      key = s.substr(start, comma_pos == std::string::npos ? comma_pos : (comma_pos - start - 1));
+      value = "";
+    }
+
+    if (key.size() > 0)
+      opts[key] = value;
+
+    start = (comma_pos == std::string::npos) ? comma_pos : comma_pos + 1;
+    comma_pos = s.find(comma, start);
+  } while (start != std::string::npos);
+
+  return opts;
+}
 
 int run(int argc, char** argv)
 {
@@ -126,6 +158,7 @@ int run(int argc, char** argv)
   QString pipeline("xml");
   QString useHandler("multimedia");
   QString clientId("lp-structuredXmlreaderclient");
+  QString meta;
 
   std::deque<std::string> medias;
   std::deque<std::string> pipelines;
@@ -193,6 +226,11 @@ int run(int argc, char** argv)
       QCoreApplication::translate("main", "A handler to activate."),
       "handler", useHandler);
   parser.addOption(handlerOption);
+  QCommandLineOption metadataOption(
+      QStringList() << "M" << "metadata",
+      QCoreApplication::translate("main", "Sets metadata values, in the format data1:value1,data2:value2,..."),
+      "metadata", meta);
+  parser.addOption(metadataOption);
 
   parser.process(QCoreApplication::arguments());
 
@@ -248,6 +286,8 @@ int run(int argc, char** argv)
 
   uint64_t beginTime = TimeUtils::getCurrentTime();
 
+  auto metaData = parse_options_line(meta, ',', ':');
+
   try
   {
     // initialize common
@@ -255,7 +295,8 @@ int run(int argc, char** argv)
         resourcesPath.toUtf8().constData(),
         configPath.toUtf8().constData(),
         commonConfigFile.toUtf8().constData(),
-        medias);
+        medias,
+        metaData);
 
     bool xmlReaderClientFactoryConfigured = false;
     for(const QString& limaConfDir: configDirs)
@@ -291,7 +332,6 @@ int run(int argc, char** argv)
       LDEBUG << "Creating client";
       const auto& file = files[filesCounter];
       std::shared_ptr< AbstractXmlReaderClient > client(XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
-      map<string, string> metaData;
       if(!medias.empty())
       {
           metaData["Lang"] = "LanguageNotYetSet";

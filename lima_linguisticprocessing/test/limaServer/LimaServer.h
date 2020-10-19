@@ -68,6 +68,7 @@ public:
                 const QString& resourcesPath,
                 const std::deque<std::string>& langs,
                 const std::deque<std::string>& pipelines,
+                const QString& meta,
                 int port,
                 QObject *parent,
                 QTimer* t);

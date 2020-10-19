@@ -68,6 +68,8 @@ int main(int argc, char **argv)
   std::vector<std::string> languages;
   // list of pipelines to initialize analyzer
   std::vector<std::string> pipelines;
+  std::string smeta;
+  QString meta;
   int optional_port;
   // time before service stop
   int service_life = 0;
@@ -90,6 +92,9 @@ int main(int argc, char **argv)
    "Set the LIMA server configuration file to use")
   ("pipeline,p", po::value< std::vector<std::string> >(&pipelines),
    "Set the linguistic analysis supported pipelines")
+  ("meta",
+   po::value< std::string >(&smeta),
+   "Sets metadata values, in the format data1:value1,data2:value2,...")
   ("port", po::value< int >(&optional_port),
    "set the listening port")
   ("service-life,t", po::value< int >(&service_life),
@@ -104,6 +109,7 @@ int main(int argc, char **argv)
   po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), varMap);
   po::notify(varMap);
 
+  meta = QString::fromStdString(smeta);
 
   if (varMap.count("help")) {
     std::cout << desc << std::endl;
@@ -249,6 +255,7 @@ int main(int argc, char **argv)
                     resourcesPath,
                     langs,
                     pipes,
+                    meta,
                     port,
                     &app,
                     &t);
