@@ -151,7 +151,10 @@ LimaStatusCode DefaultProperties::process(
           LimaString str=currentToken->stringForm();
           if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
           {
-            str = m_charChart->unmark(currentToken->stringForm());
+            LimaString unmarked = m_charChart->unmark(currentToken->stringForm());
+            if (! unmarked.isEmpty()) {
+                str=unmarked;
+            }
           }
           elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
           elem.normalizedForm=elem.lemma;
