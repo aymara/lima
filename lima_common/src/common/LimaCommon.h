@@ -246,11 +246,10 @@ enum LimaStatusCode {
 
 #ifdef WIN32
 #include <boost/multiprecision/cpp_int.hpp>
-  using uint128_t = boost::multiprecision::uint128_t;
+typedef boost::multiprecision::uint128_t uint128_t;
 #else
-  using uint128_t = unsigned __int128 ;
+typedef unsigned __int128 uint128_t;
 #endif
-
 BOOST_STRONG_TYPEDEF(uint128_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 
