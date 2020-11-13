@@ -599,17 +599,18 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
           StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
           tokenForm = (*m_d->sp)[idx];
 
-          dstream->out()  << firstTokenId << "-" << lastTokenId
-                          << "\t" << tokenForm.toStdString() // FORM
-                          << "\t" << "_" // LEMMA
-                          << "\t" << "_" // UPOS
-                          << "\t" << "_" // XPOS
-                          << "\t" << "_" // FEATS
-                          << "\t" << "_" // HEAD
-                          << "\t" << "_" // DEPREL
-                          << "\t" << "_" // DEPS
-                          << "\t" << "_" // MISC
-                          << std::endl;
+          if (m_d->m_format == "CoNLL-U")
+            dstream->out()  << firstTokenId << "-" << lastTokenId
+                            << "\t" << tokenForm.toStdString() // FORM
+                            << "\t" << "_" // LEMMA
+                            << "\t" << "_" // UPOS
+                            << "\t" << "_" // XPOS
+                            << "\t" << "_" // FEATS
+                            << "\t" << "_" // HEAD
+                            << "\t" << "_" // DEPREL
+                            << "\t" << "_" // DEPS
+                            << "\t" << "_" // MISC
+                            << std::endl;
         }
       }
 
