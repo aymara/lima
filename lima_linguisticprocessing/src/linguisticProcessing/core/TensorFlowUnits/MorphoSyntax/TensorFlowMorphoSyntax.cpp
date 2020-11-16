@@ -214,7 +214,7 @@ protected:
         for (const auto& kv : m_w2i)
         {
           if (kv.first == "#None")
-            m_c2i[LinguisticCode(0)] = kv.second;
+            m_c2i[L_NONE] = kv.second;
           else
           {
             LinguisticCode code = pm.getPropertyValue(kv.first);
