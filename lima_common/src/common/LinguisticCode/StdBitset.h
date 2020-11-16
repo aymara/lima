@@ -25,6 +25,10 @@
 #include <ostream>
 #include <istream>
 
+#ifdef WIN32
+#include <cctype>
+#endif
+
 namespace Lima
 {
 
