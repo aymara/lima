@@ -427,9 +427,11 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toStdString(),
     configPath.toStdString(),
-//    configDir,
+    // configDir,
     commonConfigFile.toStdString(),
-        languages);
+    languages,
+    {{"udlang", "eng"}}
+    );
 
 
   // initialize linguistic processing

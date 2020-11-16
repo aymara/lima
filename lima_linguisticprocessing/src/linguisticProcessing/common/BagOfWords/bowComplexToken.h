@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -63,28 +63,28 @@ public:
    * says if the BoWToken is also in the global list (the BoWText)
    * or not.
    */
-  class Part : public boost::tuple< boost::shared_ptr< BoWRelation >, 
+  class Part : public boost::tuple< boost::shared_ptr< BoWRelation >,
                                     boost::shared_ptr< BoWToken > >
   {
   public:
-    Part() : 
-        boost::tuple< boost::shared_ptr< BoWRelation >, 
-                      boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(), 
-                                                      boost::shared_ptr< BoWToken >() ) 
+    Part() :
+        boost::tuple< boost::shared_ptr< BoWRelation >,
+                      boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(),
+                                                      boost::shared_ptr< BoWToken >() )
     {
     }
 
     Part(boost::shared_ptr< BoWToken > tok):
-      boost::tuple< boost::shared_ptr< BoWRelation >, 
+      boost::tuple< boost::shared_ptr< BoWRelation >,
                     boost::shared_ptr< BoWToken > >(boost::shared_ptr< BoWRelation >(),
-                                                    tok) 
+                                                    tok)
     {
     }
 
-    Part(boost::shared_ptr< BoWRelation > rel, 
+    Part(boost::shared_ptr< BoWRelation > rel,
          boost::shared_ptr< BoWToken > tok) :
-        boost::tuple< boost::shared_ptr< BoWRelation >, 
-                      boost::shared_ptr< BoWToken >>(rel,tok) 
+        boost::tuple< boost::shared_ptr< BoWRelation >,
+                      boost::shared_ptr< BoWToken >>(rel,tok)
     {
     }
 
@@ -94,7 +94,7 @@ public:
 
     LimaString getLemma() const { return get<1>()->getLemma(); }
 
-    uint64_t getCategory() const { return get<1>()->getCategory(); }
+    LinguisticCode getCategory() const { return get<1>()->getCategory(); }
   };
 
   BoWComplexToken();
@@ -107,7 +107,7 @@ public:
 //    * (no creation of a new object), otherwise a new object is created.
 //    */
 //   BoWComplexToken(const BoWComplexToken&);
-// 
+//
 //   /**
 //    * specialized copy constructor that takes into account a
 //    * pointer-to-pointer map giving the correspondance of tokens for
@@ -118,7 +118,7 @@ public:
 //                   const std::map<BoWToken*,BoWToken*>&);
 
   BoWComplexToken(const Lima::LimaString& lemma,
-                  const uint64_t category,
+                  const LinguisticCode category,
                   const uint64_t position,
                   const uint64_t length);
 
@@ -136,15 +136,15 @@ public:
    *
    * @return
    */
-  BoWComplexToken(const Lima::LimaString& lemma, 
-                  const uint64_t category, 
-                  const uint64_t position, 
-                  const uint64_t length, 
-                  std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, 
+  BoWComplexToken(const Lima::LimaString& lemma,
+                  const LinguisticCode category,
+                  const uint64_t position,
+                  const uint64_t length,
+                  std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts,
                   const uint64_t head);
 
   virtual ~BoWComplexToken();
-  
+
 //   virtual BoWComplexToken* clone() const;
 //   virtual BoWComplexToken* clone(const std::map<BoWToken*,BoWToken*>&) const;
 
@@ -209,7 +209,7 @@ public:
 //   BoWToken* addPart(const boost::shared_ptr< BoWToken > tok,
 // //                     const bool isInList,
 //                     const bool isHead=false);
-  
+
   /**
    * add a part in the list of parts of the complex token. A pointer on a copy of @ref tok
    * is added in the list.
@@ -224,8 +224,8 @@ public:
 //                     const boost::shared_ptr< BoWToken > tok,
 // //                     const bool isInList,
 //                     const bool isHead=false);
-  
-  
+
+
 
   uint64_t getHead() const;
   void setHead(const uint64_t);
@@ -247,7 +247,7 @@ public:
    */
   void addToPosition(const uint64_t offset) override;
 
-  
+
   /**
    * returns the vertices of all its parts
    *
@@ -259,7 +259,7 @@ protected:
     BoWComplexToken(BoWComplexTokenPrivate& d);
 };
 
-  
+
 } // namespace BagOfWords
 } // namespace Common
 } // namespace Lima

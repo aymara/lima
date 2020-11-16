@@ -65,7 +65,7 @@
   Definition of loggers
 *********************************************** -->
     <group name="beginStatusLogger" class="StatusLogger">
-      <param key="outputFile" value="beginStatus-eng.ud.log"/>
+      <param key="outputFile" value="beginStatus-eng.log"/>
       <list name="toLog">
         <item value="VmSize"/>
         <item value="VmData"/>
@@ -482,58 +482,58 @@
       <param key="mainKeys" value="globalFsaAccess"/>
     </group>
     <group name="flatcharchart" class="FlatTokenizerCharChart">
-      <param key="charFile" value="LinguisticProcessings/eng.ud/tokenizerAutomaton-eng.ud.chars.tok"/>
+      <param key="charFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.chars.tok"/>
     </group>
     <group name="mainDictionary" class="EnhancedAnalysisDictionary">
       <param key="accessKeys" value="globalFsaAccess"/>
-      <param key="dictionaryValuesFile" value="LinguisticProcessings/eng.ud/dicoDat-eng.ud.dat"/>
+      <param key="dictionaryValuesFile" value="LinguisticProcessings/eng/dicoDat-eng.dat"/>
     </group>
     <group name="globalFsaAccess" class="FsaAccess">
-      <param key="keyFile" value="LinguisticProcessings/eng.ud/dicoKey-eng.ud.dat"/>
+      <param key="keyFile" value="LinguisticProcessings/eng/dicoKey-eng.dat"/>
     </group>
     <group name="dictionaryCode" class="DictionaryCode">
-      <param key="codeFile" value="LinguisticProcessings/eng.ud/code-eng.ud.dat"/>
-      <param key="codeListFile" value="LinguisticProcessings/eng.ud/codesList-eng.ud.dat"/>
-      <param key="categoriesNamesFile" value="LinguisticProcessings/eng.ud/categoriesNames-eng.ud.dat"/>
+      <param key="codeFile" value="LinguisticProcessings/eng/code-eng.dat"/>
+      <param key="codeListFile" value="LinguisticProcessings/eng/codesList-eng.dat"/>
+      <param key="categoriesNamesFile" value="LinguisticProcessings/eng/categoriesNames-eng.dat"/>
     </group>
     <group name="trigramMatrix" class="TrigramMatrix">
-      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.ud.dat"/>
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-eng.dat"/>
     </group>
     <group name="bigramMatrix" class="BigramMatrix">
-      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.ud.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-eng.dat"/>
     </group>
     <group name="stopList" class="StopList">
       <param key="file" value="LinguisticProcessings/StopLists/stopList-eng.dat"/>
     </group>
     <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
-      <param key="rules" value="LinguisticProcessings/eng.ud/idiomaticExpressions-eng.ud.bin"/>
+      <param key="rules" value="LinguisticProcessings/eng/idiomaticExpressions-eng.bin"/>
     </group>
     <group name="chainMatrix" class="SyntagmDefinitionStructure">
-      <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.ud.bin"/>
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-eng.bin"/>
     </group>
     <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-homodeps-pass1.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass1.txt.bin"/>
     </group>
     <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-homodeps-pass2.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-homodeps-pass2.txt.bin"/>
     </group>
     <group name="pleonasticPronouns" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-pleonasticPronouns.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-pleonasticPronouns.txt.bin"/>
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-heterodeps.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-heterodeps.txt.bin"/>
     </group>
     <group name="dummyRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-dummy.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-dummy.txt.bin"/>
     </group>
     <group name="finalizeRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng.ud-finalize.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/rules-eng-finalize.txt.bin"/>
     </group>
     <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.ud.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.txt.bin"/>
     </group>
     <group name="simplifyAutomatonQuotes" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.ud.txt.bin"/>
+      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.txt.bin"/>
     </group>
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>

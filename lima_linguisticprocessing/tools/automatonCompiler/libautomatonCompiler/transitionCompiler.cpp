@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -495,7 +495,7 @@ resolveEntityName(const LimaString s,
 // either 23-34 or NC_GEN
 //**********************************************************************
 Tpos createTpos(const std::string& s, MediaId language) {
-  Tpos p(0);
+  Tpos p;
   AUCLOGINIT;
   if (s.empty()) {
     LERROR << "empty Part-Of-Speech transition: use NONE_1";
@@ -514,7 +514,7 @@ Tpos createTpos(const std::string& s, MediaId language) {
     //int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO,0));
     int sep(findSpecialCharacter(Common::Misc::utf8stdstring2limastring(s),CHAR_SEP_MACROMICRO,0));
     if (sep==-1) {
-      p=static_cast<LinguisticCode>(atoi(s.c_str()));
+      p=LinguisticCode::fromString(s);
     }
   }
   else {

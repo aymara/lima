@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2020 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -35,6 +35,7 @@ ADD_DLL_TO_PATH(lima-lp-dictionary)
 
 target_link_libraries(lima-lp-dictionary
   lima-common-misc
+  lima-common
 )
 
 set_target_properties(lima-lp-dictionary PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})

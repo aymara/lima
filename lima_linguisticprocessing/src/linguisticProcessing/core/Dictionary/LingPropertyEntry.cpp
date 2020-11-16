@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -33,43 +33,51 @@ using namespace std;
 #include <wchar.h>
 
 
-namespace Lima {
-namespace LinguisticProcessing {
-namespace Dictionary {
+namespace Lima
+{
+namespace LinguisticProcessing
+{
+namespace Dictionary
+{
 
 // Creates LingPropertyEntry as an empty structure.
 LingPropertyEntry::LingPropertyEntry() :
-m_lingProperty(0) {
+m_lingProperty()
+{
 }
 
 LingPropertyEntry::LingPropertyEntry(const LingPropertyEntry& entry) :
-m_lingProperty(entry.m_lingProperty) {
+m_lingProperty(entry.m_lingProperty)
+{
 }
 
 LingPropertyEntry::LingPropertyEntry(const LinguisticCode& property) :
-m_lingProperty(property) {
+m_lingProperty(property)
+{
 }
 
 // Destroys LingPropertyEntry
 LingPropertyEntry::~LingPropertyEntry() {}
 
-// Assignment operator. Copies the specified LingPropertyEntry 
-// into self. Returns a reference to self. 
-LingPropertyEntry& LingPropertyEntry::operator=(const LingPropertyEntry& entry) {
-    m_lingProperty = entry.m_lingProperty;
-    return *this;
+// Assignment operator. Copies the specified LingPropertyEntry
+// into self. Returns a reference to self.
+LingPropertyEntry& LingPropertyEntry::operator=(const LingPropertyEntry& entry)
+{
+  m_lingProperty = entry.m_lingProperty;
+  return *this;
 }
 
 // Returns true if self is empty
-bool LingPropertyEntry::isEmpty() const {
-    return (m_lingProperty == 0);
+bool LingPropertyEntry::isEmpty() const
+{
+  return (m_lingProperty == L_NONE);
 }
 
 // Returns LingPropery code
-LinguisticCode LingPropertyEntry::data() const {
-    return m_lingProperty; 
+LinguisticCode LingPropertyEntry::data() const
+{
+  return m_lingProperty;
 }
-
 
 } // closing namespace Dictionary
 } // closing namespace LinguisticProcessing

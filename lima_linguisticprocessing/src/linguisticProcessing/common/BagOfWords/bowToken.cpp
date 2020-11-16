@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -76,7 +76,6 @@ bool BoWTokenPrivate::m_useOnlyLemma=true; //TODO mettre false quand indexation 
 BoWTokenPrivate::BoWTokenPrivate() :
     m_lemma(),
     m_inflectedForm(),
-    m_category(0),
     m_position(0),
     m_length(0),
     m_vertex(0)
@@ -86,7 +85,7 @@ BoWTokenPrivate::BoWTokenPrivate() :
 }
 
 BoWTokenPrivate::BoWTokenPrivate(const LimaString& lemma,
-                   const uint64_t category,
+                   const LinguisticCode category,
                    const uint64_t position,
                    const uint64_t length):
     m_lemma(lemma),
@@ -127,12 +126,12 @@ BoWTokenPrivate::BoWTokenPrivate(const LimaString& str,
   if (i == -1)
   {
     m_lemma=str;
-    m_category=0;
+    m_category=L_NONE;
   }
   else
   {
     m_lemma=str.mid(0,i);
-    m_category= str.midRef(i+1).toInt();
+    m_category=LinguisticCode::fromString(str.midRef(i+1).toString().toStdString());
   }
 
 //   BOWLOGINIT;
@@ -203,7 +202,7 @@ BoWToken::BoWToken() :
 }
 
 BoWToken::BoWToken(const LimaString& lemma,
-                   const uint64_t category,
+                   const LinguisticCode category,
                    const uint64_t position,
                    const uint64_t length):
     m_d(new BoWTokenPrivate(lemma, category, position, length))
@@ -254,12 +253,12 @@ BoWToken::BoWToken(const LimaString& str,
   if (i == -1)
   {
     m_d->m_lemma=str;
-    m_d->m_category=0;
+    m_d->m_category=L_NONE;
   }
   else
   {
     m_d->m_lemma=str.left(i);
-    m_d->m_category=str.midRef(i+1).toInt();
+    m_d->m_category=LinguisticCode::fromString(str.midRef(i+1).toString().toStdString());
   }
 
 //   BOWLOGINIT;
@@ -279,8 +278,8 @@ BoWToken* BoWToken::clone() const
 // {
   //     return new BoWToken(*this);
   // }
-  
-  
+
+
 
 //***********************************************************************
 // destructor
@@ -360,7 +359,7 @@ LimaString BoWToken::getString(void) const
   else
   {
     ostringstream cat;
-    cat << m_d->m_category;
+    cat << m_d->m_category.toString();
 //#ifdef DEBUG_LP
 //     LDEBUG << "BoWToken::getString: m_d->m_useOnlyLemma is 'false'";
 //#endif
@@ -430,14 +429,14 @@ bool BoWToken::operator!=(const BoWToken& t) const
 std::ostream& operator << (std::ostream& os, const BoWToken& tok)
 {
   os << "(" << Misc::limastring2utf8stdstring(tok.getLemma()) << "-"
-  << tok.m_d->m_category << "-" << tok.m_d->m_position << "-" << tok.m_d->m_length << ")";
+     << tok.m_d->m_category.toString() << "-" << tok.m_d->m_position << "-" << tok.m_d->m_length << ")";
   return os;
 }
 
 QDebug& operator << (QDebug& os, const BoWToken& tok)
 {
   os << "(" << tok.getLemma() << "-"
-  << tok.m_d->m_category << "-" << tok.m_d->m_position << "-" << tok.m_d->m_length << ")";
+     << tok.m_d->m_category.toString() << "-" << tok.m_d->m_position << "-" << tok.m_d->m_length << ")";
   return os;
 }
 
@@ -446,9 +445,13 @@ std::string BoWToken::getOutputUTF8String(const Common::PropertyCode::PropertyMa
   std::ostringstream oss;
   oss << "(" << Misc::limastring2utf8stdstring(getLemma()) << "-";
   if (macroManager==0)
-    oss << m_d->m_category;
+  {
+    oss << m_d->m_category.toString();
+  }
   else
+  {
     oss << macroManager->getPropertySymbolicValue(m_d->m_category);
+  }
   oss << "-" << m_d->m_position << ")";
   return oss.str();
 }
@@ -457,7 +460,7 @@ std::string BoWToken::getIdUTF8String() const
 {
   std::ostringstream oss;
   oss << "(" << Misc::limastring2utf8stdstring(m_d->m_lemma) << "-"
-  << m_d->m_category << "-" << m_d->m_position << ")";
+      << m_d->m_category.toString() << "-" << m_d->m_position << ")";
   return oss.str();
 }
 

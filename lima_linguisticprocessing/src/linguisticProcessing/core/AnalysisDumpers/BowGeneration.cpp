@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -93,8 +93,6 @@ BowGenerator::BowGenerator():
     m_useStopList(true),
     m_useEmptyMacro(true),
     m_useEmptyMicro(true),
-    m_properNounCategory(0),
-    m_commonNounCategory(0),
     m_keepAllNamedEntityParts(false),
     m_macroAccessor(0),
     m_microAccessor(0),
@@ -109,7 +107,6 @@ BowGenerator::~BowGenerator()
 void BowGenerator::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   MediaId language)
-
 {
   DUMPERLOGINIT;
   m_language=language;
@@ -730,7 +727,7 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >, boost::shared_ptr< Abs
   Token* token = get(vertex_token, posgraph, v);
 
   std::set<std::pair<StringsPoolIndex,LinguisticCode> > alreadyCreated;
-  std::pair<StringsPoolIndex,LinguisticCode> predNormCode = std::make_pair(StringsPoolIndex(0),LinguisticCode(0));
+  std::pair<StringsPoolIndex,LinguisticCode> predNormCode = std::make_pair(StringsPoolIndex(0),L_NONE);
 
   if (createdSpecificEntity) {
     // a specific entity has been created on the analysis graph: do not output a token
@@ -1447,7 +1444,7 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
 
   bool useOnePart(false);      // use one part, tagged as proper noun
   bool useDefaultParts(true); // use parts of named entity as they are in the graph
-  uint64_t useCategory((uint64_t)-1);   // use this category for each of the parts (NP or NC)
+  LinguisticCode useCategory = LinguisticCode::fromUInt((uint64_t)-1);   // use this category for each of the parts (NP or NC)
   uint64_t position(0);
   uint64_t length(0);
 
@@ -1539,8 +1536,8 @@ std::vector<BowGenerator::NamedEntityPart> BowGenerator::createNEParts(
           continue;
         }
 
-        uint64_t category(0);
-        if (useCategory != (uint64_t)-1)
+        LinguisticCode category;
+        if (useCategory != LinguisticCode::fromUInt((uint64_t)-1))
         {
           category = useCategory;
         }

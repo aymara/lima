@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -62,7 +62,7 @@ BoWComplexToken(d)
 
 
 BoWTerm::BoWTerm(const Lima::LimaString& lemma,
-                 const uint64_t category, 
+                 const LinguisticCode category,
                  const uint64_t position,
                  const uint64_t length):
     BoWComplexToken(*new BoWComplexTokenPrivate())
@@ -74,7 +74,7 @@ BoWTerm::BoWTerm(const Lima::LimaString& lemma,
 }
 
 BoWTerm::BoWTerm(const Lima::LimaString& lemma,
-                 const uint64_t category,
+                 const LinguisticCode category,
                  const uint64_t position,
                  const uint64_t length,
                  std::deque< boost::shared_ptr< BoWToken > >& parts,

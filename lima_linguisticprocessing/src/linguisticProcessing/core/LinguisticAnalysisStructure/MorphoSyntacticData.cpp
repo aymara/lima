@@ -64,11 +64,11 @@ bool MorphoSyntacticData::hasUniqueMicro(
     const Common::PropertyCode::PropertyAccessor& microAccessor,
     const std::list<LinguisticCode>& microFilter)
 {
-  LinguisticCode micro(0);
+  LinguisticCode micro;
   for (auto it = cbegin(); it != cend(); it++)
   {
     auto tmp = microAccessor.readValue(it->properties);
-    if (micro != static_cast<LinguisticCode>(0))
+    if (micro != L_NONE)
     {
       if (micro != tmp)
       {
@@ -95,7 +95,7 @@ bool MorphoSyntacticData::hasUniqueMicro(
     }
   }
   // if micro is 0, then there was no micros, return false
-  return micro!=static_cast<LinguisticCode>(0);
+  return micro!=L_NONE;
 }
 
 uint64_t MorphoSyntacticData::countValues(
@@ -277,10 +277,8 @@ LinguisticCode MorphoSyntacticData::firstValue(
       return propertyAccessor.readValue(it->properties);
     }
   }
-  return static_cast<LinguisticCode>(0);
+  return L_NONE;
 }
-
-
 
 } // LinguisticAnalysisStructure
 

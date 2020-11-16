@@ -127,7 +127,6 @@ ConlluReaderPrivate::ConlluReaderPrivate() :
   ConfigurationHelper("ConlluReader", THIS_FILE_LOGGING_CATEGORY()),
   m_stringsPool(nullptr),
   m_currentVx(0),
-  m_boundaryMicro(0),
   m_ignoreEOL(false)
 {
 }
@@ -268,7 +267,7 @@ void ConlluReaderPrivate::init(MediaId language, GroupConfigurationStructure& un
 
     const auto& microManager = GET_PROPERTY_MANAGER(m_language, "MICRO");
     m_boundaryMicro = microManager.getPropertyValue(boundaryMicro);
-    if (m_boundaryMicro == 0)
+    if (m_boundaryMicro == L_NONE)
     {
       LOG_ERROR_AND_THROW("ConlluReaderPrivate::init(): cannot find linguistic code for micro " << boundaryMicro,
                           InvalidConfiguration());

@@ -191,11 +191,11 @@ protected:
         for (const auto& kv : m_w2i)
         {
           if (kv.first == "#None")
-            m_c2i[LinguisticCode(0)] = kv.second;
+            m_c2i[L_NONE] = kv.second;
           else
           {
             LinguisticCode code = pm.getPropertyValue(kv.first);
-            if (LinguisticCode(0) == code)
+            if (L_NONE == code)
             {
               LOG_MESSAGE_WITH_PROLOG(LWARN, "Unknown property value: \"" << kv.first << "\".");
             }
@@ -1175,7 +1175,7 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
   if (d.m_c2i.end() == it)
   {
     LOG_MESSAGE_WITH_PROLOG(LINFO, "WARNING: unknown feature value for word \"" << token.token->stringForm() << "\".");
-    auto it = d.m_c2i.find(LinguisticCode(0));
+    auto it = d.m_c2i.find(L_NONE);
     if (d.m_c2i.end() == it)
       LOG_ERROR_AND_THROW("ERROR: can\'t find #None LinguisticCode.", LimaException());
     return it->second;
@@ -1200,7 +1200,7 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const LinguisticElement
   if (d.m_c2i.end() == it)
   {
     LOG_MESSAGE_WITH_PROLOG(LINFO, "WARNING: unknown feature value in get_code_for_feature(const LinguisticElement, ...)\".");
-    auto it = d.m_c2i.find(LinguisticCode(0));
+    auto it = d.m_c2i.find(L_NONE);
     if (d.m_c2i.end() == it)
       LOG_ERROR_AND_THROW("ERROR: can\'t find #None LinguisticCode.", LimaException());
     return it->second;

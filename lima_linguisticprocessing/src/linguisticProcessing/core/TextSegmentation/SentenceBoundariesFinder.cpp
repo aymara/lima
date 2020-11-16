@@ -105,10 +105,12 @@ void SentenceBoundariesFinder::init(
     it!=it_end; it++)
     {
       LinguisticCode micro=microManager.getPropertyValue(*it);
-      if (micro == 0) {
+      if (micro == L_NONE)
+      {
         LERROR << "init(): cannot find linguistic code for micro " << *it;
       }
-      else {
+      else
+      {
 #ifdef DEBUG_LP
         LDEBUG << "init(): add filter for micro " << micro;
 #endif
@@ -116,7 +118,8 @@ void SentenceBoundariesFinder::init(
       }
     }
   }
-  catch (Common::XMLConfigurationFiles::NoSuchList& ) {
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
     LERROR << "Warning: No boundaries categories defined for language " << language;
     //throw InvalidConfiguration();
   }
@@ -131,7 +134,8 @@ LimaStatusCode SentenceBoundariesFinder::process(
   SENTBOUNDLOGINIT;
   LINFO << "start finding sentence bounds";
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
-  if (anagraph==0) {
+  if (anagraph==0)
+  {
     LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
   }
@@ -145,7 +149,8 @@ LimaStatusCode SentenceBoundariesFinder::process(
   SegmentationData* sb=new SegmentationData(m_graph);
   analysis.setData(m_data,sb);
 
-  if (m_boundaryValues.empty()) {
+  if (m_boundaryValues.empty())
+  {
     while (beginSentence!=lastVx)
     {
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
@@ -172,19 +177,23 @@ LimaStatusCode SentenceBoundariesFinder::process(
     {
       Token* t=get(vertex_token,*(anagraph->getGraph()),endSentence);
 #ifdef DEBUG_LP
-      if (t!=0) {
+      if (t!=0)
+      {
         LDEBUG << "found endSentence at " << endSentence  << "("
                << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")";
       }
-      else {
+      else
+      {
         LDEBUG << "found endSentence at " << endSentence;
       }
 #endif
-      if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end()) {
+      if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end())
+      {
         sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
         beginSentence=endSentence;
       }
-      else {
+      else
+      {
 #ifdef DEBUG_LP
         LDEBUG << " -> not kept (not in restricted values)";
 #endif

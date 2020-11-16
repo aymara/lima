@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,8 @@
  * @file       TextWriterBoWDocumentHandler.cpp
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Mar  7 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2006-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "TextWriterBoWDocumentHandler.h"
@@ -41,10 +41,10 @@ namespace BagOfWords {
 class TextWriterBoWDocumentHandlerPrivate
 {
   friend class TextWriterBoWDocumentHandler;
-  
+
   TextWriterBoWDocumentHandlerPrivate(std::ostream& os);
   ~TextWriterBoWDocumentHandlerPrivate();
-  
+
   void writeIndexElement(const IndexElement& element);
 
   std::ostream& m_outputStream;
@@ -87,7 +87,7 @@ openSBoWIndexingNode(const Misc::GenericDocumentProperties* properties,
 }
 
 void TextWriterBoWDocumentHandler::
-processSBoWText(const BoWText* boWText, 
+processSBoWText(const BoWText* boWText,
                 bool useIterators, bool useIndexIterator)
 {
   if (useIterators) {
@@ -100,7 +100,7 @@ processSBoWText(const BoWText* boWText,
   else if (useIndexIterator) {
     IndexElementIterator it(*boWText);
     while (! it.isAtEnd())
-    { 
+    {
       m_d->writeIndexElement(it.getElement());
       it++;
     }
@@ -111,7 +111,7 @@ processSBoWText(const BoWText* boWText,
 }
 
 void TextWriterBoWDocumentHandler::
-processProperties(const Misc::GenericDocumentProperties* /*properties*/, 
+processProperties(const Misc::GenericDocumentProperties* /*properties*/,
                   bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   //os << *properties;
@@ -132,8 +132,8 @@ void TextWriterBoWDocumentHandlerPrivate::writeIndexElement(
 //     return;
 //   }
 //   if (element.isSimpleTerm()) {
-//     std::string cat = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(static_cast<Lima::LinguisticCode>(element.getCategory()));
-// 
+//     std::string cat = static_cast<const MediaticData::LanguageData&>(MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MACRO").getPropertySymbolicValue(element.getCategory());
+//
 //     m_outputStream << " lemma=\"" << xmlString(Common::Misc::limastring2utf8stdstring(element.getSimpleTerm()))
 //        << "\" category=\"" << cat
 //        << "\" position=\"" << element.getPosition()
@@ -148,7 +148,7 @@ void TextWriterBoWDocumentHandlerPrivate::writeIndexElement(
 //     m_outputStream << "/>" << endl;
 //     return;
 //   }
-//   
+//
 //   // compound
 //   if (element.isNamedEntity()) {
 //     m_outputStream << " neType=\"" << element.getNamedEntityType() << "\"";
@@ -159,13 +159,13 @@ void TextWriterBoWDocumentHandlerPrivate::writeIndexElement(
 //   }
 //   m_outputStream << ">" << endl
 //      << "  <structure>" << endl;
-//   
+//
 //   for (uint64_t i(0),size=element.getStructure().size(); i<size; i++) {
 //     m_outputStream << "    <termRef id=\""
 //        << element.getStructure()[i]
-//        << "\" rel=\"" << element.getRelations()[i] 
+//        << "\" rel=\"" << element.getRelations()[i]
 //        << "\"/>" << endl;
-//     
+//
 //   }
 //   m_outputStream << "  </structure>" << endl
 //      << "</term>" << endl;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -35,7 +35,7 @@ using namespace Lima::Common::BagOfWords;
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_1 )
 {
-  boost::shared_ptr< BoWToken > bt1(new BoWToken( QString::fromUtf8("lemma"), 1, 10, 5));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken( QString::fromUtf8("lemma"), Lima::LinguisticCode::fromUInt(1), 10, 5));
   BoWBinaryWriter writer;
   std::stringstream stream;
   writer.writeBoWToken(stream, bt1);
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_1 )
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_2 )
 {
-  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("démocratique"), Lima::LinguisticCode::fromUInt(1), 10, 12));
   BoWBinaryWriter writer;
   std::stringstream stream;
   writer.writeBoWToken(stream, bt1);
@@ -61,11 +61,11 @@ BOOST_AUTO_TEST_CASE( BagOfWordsTest1_2 )
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest1_3 )
 {
-  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+  boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), Lima::LinguisticCode::fromUInt(1), 10, 5));
   bt1->setInflectedForm(QString::fromUtf8("lemma"));
-  boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+  boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), Lima::LinguisticCode::fromUInt(1), 10, 12));
   bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-  boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+  boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), Lima::LinguisticCode::fromUInt(1), 10, 4));
   bt3->setInflectedForm(QString::fromUtf8("word"));
   BoWBinaryWriter writer;
   std::stringstream stream;

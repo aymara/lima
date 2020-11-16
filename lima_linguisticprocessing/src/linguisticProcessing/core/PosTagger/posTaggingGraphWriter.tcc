@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -148,7 +148,7 @@ public:
                 {
                   out << "#";
                 }
-                out << *it;
+                out << it->toString();
               }
             }
             else if (*it == "symbolicmacrocategory" )
@@ -168,7 +168,7 @@ public:
               for (auto it = macros.cbegin(); it != macros.cend(); it++)
               {
                 if (it!=macros.begin()) out << "#";
-                out << *it;
+                out << it->toString();
               }
             }
             else if (*it == "genders" )
@@ -262,10 +262,10 @@ public:
     bool hasNonValidTrigram = false;
     bool hasNonValidBigram = false;
 
-    std::vector<std::vector<uint64_t> > gramNotFound;
-    std::vector<uint64_t> gram;
+    std::vector<std::vector<LinguisticCode> > gramNotFound;
+    std::vector<LinguisticCode> gram;
 
-    LinguisticCode cat1(0), cat2(0), cat3(0);
+    LinguisticCode cat1, cat2, cat3;
     auto d3 = get(vertex_data,*m_graph,target(e,*m_graph));
     if (d3 != nullptr && !d3->empty())
     {
@@ -311,7 +311,7 @@ public:
     for (auto it = gramNotFound.begin(); it != gramNotFound.end(); it++)
     {
       copy(it->begin(), it->end(),
-           std::ostream_iterator<uint64_t>(out,","));
+           std::ostream_iterator<LinguisticCode>(out,","));
       out << "\\l";
     }
     out << "\",style=";

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -28,7 +28,7 @@
     @brief      build a LTRText from the graph resulting from the linguistic
                 analysis of a document
 
-    Copyright (C) 2005-2011 by CEA LIST
+    Copyright (C) 2005-2020 by CEA LIST
 
     ========================================================================= */
 
@@ -97,15 +97,15 @@ void LTRTextBuilder::buildLTRTextFrom(
     // add a global sentence boundary (thay covers all the text)
     DUMPERLOGINIT;
     LDEBUG << "LTR: add sentence bound at token" << tokenCounter;
-    textRep->addSentenceBound(tokenCounter); 
+    textRep->addSentenceBound(tokenCounter);
   }
   else {
-    // ??OME2 SegmentationData::iterator sbIt = sb->begin();    
-    std::vector<Segment>::iterator sbIt = (sb->getSegments()).begin();    
+    // ??OME2 SegmentationData::iterator sbIt = sb->begin();
+    std::vector<Segment>::iterator sbIt = (sb->getSegments()).begin();
     uint64_t tokenCounter = 0;
-    // ??OME2 while (sbIt != sb->end()) {        
-    while (sbIt != (sb->getSegments()).end()) {        
-      LinguisticGraphVertex sentenceBegin = sbIt->getFirstVertex();    
+    // ??OME2 while (sbIt != sb->end()) {
+    while (sbIt != (sb->getSegments()).end()) {
+      LinguisticGraphVertex sentenceBegin = sbIt->getFirstVertex();
       LinguisticGraphVertex sentenceEnd = sbIt->getLastVertex();
         this->addTokensToLTRTextFrom(
             graph,
@@ -214,7 +214,7 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
     sort(data->begin(),data->end(),ltNormProperty(m_macroAccessor));
 
     StringsPoolIndex norm(0),lastNorm(0);
-    LinguisticCode macro(0),lastMacro(0);
+    LinguisticCode macro,lastMacro;
     for (MorphoSyntacticData::const_iterator elemItr=data->begin();
          elemItr!=data->end(); elemItr++) {
         norm = elemItr->normalizedForm;

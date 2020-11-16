@@ -800,55 +800,17 @@ void DictionaryCompilerPrivate::placeEntryDataIntoCharBuf(streampos pos, uint64_
 
 uint64_t DictionaryCompilerPrivate::placeLingPropsIntoCharBuf(const std::vector<LinguisticCode>& lingProps)
 {
-//   std::cerr << "placeLingPropsIntoCharBuf size=" << lingProps.size() << std::endl;
   uint64_t len = 0;
   for (const auto& lingProp : lingProps)
   {
-    // coded int should never exceed CODED_INT_BUFFER_SIZE byte,
-    // so CODED_INT_BUFFER_SIZE + 5 bound size should works well ;-)
-    if (len + CODED_INT_BUFFER_SIZE + 5 > m_charbufSize)
+    std::stringstream ss;
+    LinguisticCode::encodeToBinary(ss, lingProp);
+    for ( char c : ss.str() )
     {
-//       std::cerr << "info : has to increase buffer size" << std::endl;
-      m_charbufSize *= 2;
-      char* newbuf = new char[m_charbufSize];
-      memcpy(newbuf, m_charbuf, len);
-      delete [] m_charbuf;
-      m_charbuf = newbuf;
+      m_charbuf[len++] = c;
     }
 
-//     std::cerr << "code lingProp " << lingProp << std::endl;
-    uint64_t n = lingProp;
-    unsigned char i=0;
-    do
-    {
-      if (i >= CODED_INT_BUFFER_SIZE)
-      {
-        QString errorString;
-        QTextStream qts(&errorString);
-        qts << "DictionaryCompiler::placeLingPropsIntoCharBuf number too large to be coded in buffer of size "
-            << CODED_INT_BUFFER_SIZE << ": " << lingProp;
-        throw std::runtime_error(errorString.toStdString());
-      }
-      m_codedintbuf[i] = (n & 0x7F) << 1;
-      n >>= 7;
-      i++;
-//       std::cerr << "byte " << i-1 << " is "
-//                 << (unsigned short)m_codedintbuf[i-1]
-//                 << " now n=" << n << std::endl;
-    } while (n); // need 5 bytes for values > 268435455
-//     std::cerr << "use " << (int)i << " bytes" << std::endl;
-    i--;
-    for(;i>0;i--)
-    {
-//       std::cerr << "tmp[i]=" << (unsigned short)m_codedintbuf[i] << std::endl;
-      m_charbuf[len++] = m_codedintbuf[i] | 0x1;
-//       std::cerr << "wrote char " << (int)i << " : "
-//                 << (unsigned short)m_charbuf[len-1] << std::endl;
-    }
-    m_charbuf[len++] = m_codedintbuf[0];
-//     std::cerr << "wrote char 0 : " << (unsigned short)m_codedintbuf[0] << std::endl;
   }
-//   std::cerr << "return len=" << len << std::endl;
   return len;
 }
 

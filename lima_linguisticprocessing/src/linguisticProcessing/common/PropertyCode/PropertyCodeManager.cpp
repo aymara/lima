@@ -43,11 +43,21 @@ namespace PropertyCode
 {
 
 //utility functions for debug
-string hexString(const uint64_t x) {
+string hexString(const uint64_t x)
+{
   ostringstream oss;
   oss << hex << x;
   return oss.str();
 }
+
+#ifdef uint128_t
+string hexString(const uint128_t x)
+{
+  ostringstream oss;
+  oss << hex << x;
+  return oss.str();
+}
+#endif
 
 class PropertyCodeManagerPrivate
 {
@@ -167,21 +177,21 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #endif
     LinguisticCode mask = m_d->computeMask(usedBits,nbBits);
 #ifdef DEBUG_LP
-    LDEBUG << "mask is " << hexString(mask);
+    LDEBUG << "mask is " << mask.toHexString();
 #endif
 
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
-    symbol2code["NONE"] = LinguisticCode(0);
-    LinguisticCode i(1);
+    symbol2code["NONE"] = L_NONE;
+    uint64_t i = 1;
     for (auto valItr = desc->values.cbegin();
          valItr != desc->values.cend();
          valItr++)
     {
-      symbol2code.insert(std::make_pair(*valItr,
-                                        LinguisticCode(i << usedBits)));
+      LinguisticCode new_code = LinguisticCode::fromUInt(i) << usedBits;
+      symbol2code.insert(std::make_pair(*valItr, new_code));
 #ifdef DEBUG_LP
-      LDEBUG << *valItr << " => " << hexString(i << usedBits);
+      LDEBUG << *valItr << " => " << new_code.toHexString();
 #endif
       i++;
     }
@@ -229,41 +239,39 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
            << nbBits << " bits";
 #endif
     LinguisticCode emptynessmask = m_d->computeMask(usedBits,nbBits);
-    LinguisticCode mask = LinguisticCode(emptynessmask + parentmask);
+    LinguisticCode mask = emptynessmask | parentmask;
 #ifdef DEBUG_LP
-    LDEBUG << "mask = " << hexString(mask);
-    LDEBUG << "emptyness mask = " << hexString(emptynessmask);
+    LDEBUG << "mask = " << mask.toHexString();
+    LDEBUG << "emptyness mask = " << emptynessmask.toHexString();
 #endif
 
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
-    symbol2code["NONE"] = LinguisticCode(0);
+    symbol2code["NONE"] = L_NONE;
     for (auto subItr = subvalues.cbegin();
          subItr!=subvalues.cend();
          subItr++)
     {
       LinguisticCode parentValue=parentProp.getPropertyValue(subItr->first);
-      if (parentValue == 0)
+      if (parentValue == L_NONE)
       {
         LERROR << "parent value " << subItr->first << " of subproperty "
                << desc->name << " is unknown !";
       }
 #ifdef DEBUG_LP
       LDEBUG << "compute subvalues of " << subItr->first << " ("
-             << hexString(parentValue) << ")";
+             << parentValue.toHexString() << ")";
 #endif
       symbol2code.insert(std::make_pair(string(subItr->first)+"-NONE",
                                         LinguisticCode(parentValue)));
-      LinguisticCode i(1);
+      uint64_t i = 1;
       for (auto valItr = subItr->second.cbegin();
            valItr!=subItr->second.cend();
            valItr++)
       {
-        symbol2code.insert(
-          std::make_pair(*valItr,
-                         LinguisticCode((i << usedBits) + parentValue)));
+        symbol2code.insert(std::make_pair(*valItr, (LinguisticCode::fromUInt(i) << usedBits) | parentValue));
 #ifdef DEBUG_LP
-        LDEBUG << *valItr << " => " << hexString(symbol2code[*valItr]);
+        LDEBUG << *valItr << " => " << symbol2code[*valItr].toHexString();
 #endif
         i++;
       }
@@ -313,8 +321,8 @@ const std::shared_ptr<PropertyAccessor> PropertyCodeManager::getPropertySetAcces
   PROPERTYCODELOGINIT;
   LDEBUG << "create propertysetAccessor for " << os.str();
 #endif
-  LinguisticCode propertySetMask(0);
-  LinguisticCode propertySetEmptyNessMask(0);
+  LinguisticCode propertySetMask;
+  LinguisticCode propertySetEmptyNessMask;
   for (auto propItr = propertyNames.cbegin();
        propItr != propertyNames.cend();
        propItr++)
@@ -324,9 +332,9 @@ const std::shared_ptr<PropertyAccessor> PropertyCodeManager::getPropertySetAcces
     propertySetEmptyNessMask |= man.getEmptyNessMask();
   }
 #ifdef DEBUG_LP
-  LDEBUG << "propertysetMask is " << hexString(propertySetMask);
+  LDEBUG << "propertysetMask is " << propertySetMask.toHexString();
   LDEBUG << "propertysetEmptyNessMask is "
-         << hexString(propertySetEmptyNessMask);
+         << propertySetEmptyNessMask.toHexString();
 #endif
   return std::shared_ptr<PropertyAccessor>(
     new PropertyAccessor(os.str(),
@@ -355,7 +363,7 @@ uint8_t PropertyCodeManagerPrivate::computeNbBitsNeeded(uint64_t nbvalues) const
 LinguisticCode PropertyCodeManagerPrivate::computeMask(uint8_t startBit,
                                                        uint8_t nbBits) const
 {
-  if (startBit + nbBits > sizeof(LinguisticCode)*8)
+  if (startBit + nbBits > LinguisticCode::size())
   {
     PROPERTYCODELOGINIT;
     LERROR << "Error: cannot compute mask. Would use more bits ("
@@ -363,12 +371,12 @@ LinguisticCode PropertyCodeManagerPrivate::computeMask(uint8_t startBit,
            << sizeof(LinguisticCode)*8 << ")";
     throw std::runtime_error("Error: cannot compute mask. Would use more bits than available");
   }
-  LinguisticCode mask(0);
+  LinguisticCode mask;
   for (uint8_t currentBit = startBit;
        currentBit < startBit + nbBits;
        currentBit++)
   {
-    mask += (LinguisticCode) std::pow(2.0, currentBit);
+    mask |= (LinguisticCode::fromUInt(1) << currentBit);
   }
   return mask;
 }
@@ -379,7 +387,7 @@ LinguisticCode PropertyCodeManager::encode(const std::map<std::string,
 #ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
 #endif
-  LinguisticCode coded(0);
+  LinguisticCode coded;
 #ifdef DEBUG_LP
   LDEBUG << "encode";
 #endif
@@ -388,7 +396,7 @@ LinguisticCode PropertyCodeManager::encode(const std::map<std::string,
     const auto& man = getPropertyManager(it->first);
     man.getPropertyAccessor().writeValue(man.getPropertyValue(it->second),coded);
  #ifdef DEBUG_LP
-   LDEBUG << it->first << " : " << it->second << " coded = " << hexString(coded);
+   LDEBUG << it->first << " : " << it->second << " coded = " << coded.toHexString();
  #endif
  }
   return coded;

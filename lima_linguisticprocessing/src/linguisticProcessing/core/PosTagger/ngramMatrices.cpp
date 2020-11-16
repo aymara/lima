@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -62,7 +62,7 @@ void TrigramMatrix::init(
    * - <b>&lt;group name="..." class="TrigramMatrix"&gt;</b>
    *    -  trigramFile : file containing trigram matrix
    */
-    
+
   PTLOGINIT;
   m_language = manager->getInitializationParameters().language;
   m_microManager=&( static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager("MICRO"));
@@ -122,9 +122,9 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
           std::string elem(what[count].first,what[count].second);
           strigram[count-1] = elem;
           if (boost::regex_match(elem,numre))
-          { // numerical element
-            std::istringstream matchStream(elem);
-            matchStream >> trigram[count];
+          {
+            // numerical element
+            trigram[count] = LinguisticCode::fromString(elem);
           }
           else
           {
@@ -135,7 +135,7 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
         std::istringstream sprobaStream(sproba);
         sprobaStream >> proba;
       }
-      else 
+      else
       {
           PTLOGINIT;
           LERROR << "Invalid trigram line " << linenum << " in: " << fileName;
@@ -238,9 +238,9 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
         std::string elem(what[count].first,what[count].second);
         sbigram[count-1] = elem;
         if (boost::regex_match(elem,numre))
-        { // numerical element
-          std::istringstream matchStream(elem);
-          matchStream >> bigram[count-1];
+        {
+          // numerical element
+          bigram[count-1] = LinguisticCode::fromString(elem);
         }
         else
         {
@@ -251,7 +251,7 @@ void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
       std::istringstream sprobaStream(sproba);
       sprobaStream >> proba;
     }
-    else 
+    else
     {
         PTLOGINIT;
         LERROR << "Invalid bigram line " << linenum << " in: " << fileName;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -345,7 +345,7 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 #endif
   LinguisticCode category;
   uint64_t position,length;
-  category=static_cast<LinguisticCode>(Misc::readCodedInt(file));
+  category = LinguisticCode::decodeFromBinary(file);
   position=Misc::readCodedInt(file);
   length=Misc::readCodedInt(file);
   token->setLemma(lemma);
@@ -613,7 +613,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
 #endif
   Misc::writeUTF8StringField(file,token->getInflectedForm());
-  Misc::writeCodedInt(file,token->getCategory());
+  LinguisticCode::encodeToBinary(file, token->getCategory());
 
   auto beg = token->getPosition();
   auto end = token->getLength() + beg;

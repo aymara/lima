@@ -145,7 +145,7 @@ LinguisticCode PropertyManager::getPropertyValue(
     PROPERTYCODELOGINIT;
     LWARN << "Ask for unknown value " << symbolicValue
           << " for property " << m_d->m_name;
-    return static_cast<LinguisticCode>(0);
+    return L_NONE;
   }
   return it->second;
 }

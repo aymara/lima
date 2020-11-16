@@ -1371,7 +1371,7 @@ bool TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes(const PropertyCodeMana
   for (size_t i = 0; i < out.i2t.size(); ++i)
   {
     if (out.i2t[i] == "#None")
-      out.i2c[i] = 0;
+      out.i2c[i] = L_NONE;
     else
       out.i2c[i] = pm.getPropertyValue(out.i2t[i]);
   }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -168,7 +168,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   LDEBUG << "Start Element " << stringName;
 
   LimaString lemma;
-  LinguisticCode category = static_cast<LinguisticCode>(0);
+  LinguisticCode category = L_NONE;
   uint64_t position(0);
   uint64_t length(0);
   uint64_t id(0);
@@ -373,7 +373,7 @@ BoWXMLHandler::getTokenAttributes(const QXmlAttributes& attributes,
                                   uint64_t& length,
                                   uint64_t& id) const {
   lemma=getLimaStringAttribute(attributes,"lemma");
-  category=getIntAttribute(attributes,"category");
+  category=LinguisticCode::fromUInt(getIntAttribute(attributes,"category"));
   position=getIntAttribute(attributes,"position");
   length=getIntAttribute(attributes,"length");
   id=getIntAttribute(attributes,"id");

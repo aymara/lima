@@ -230,6 +230,12 @@ QDebug&  operator<< (QDebug&  qd, const std::string& str );
 #define LIMA_UNUSED(x) (void)x;
 #endif
 
+#define USE_STD_BITSET_FOR_LINGUISTIC_CODE
+
+#ifdef USE_STD_BITSET_FOR_LINGUISTIC_CODE
+#include "LinguisticCode/StdBitset.h"
+#endif
+
 namespace Lima
 {
 
@@ -244,20 +250,7 @@ enum LimaStatusCode {
     UNKNOWN_FORMAT
 };
 
-#ifdef WIN32
-#include <boost/multiprecision/cpp_int.hpp>
-typedef boost::multiprecision::uint128_t uint128_t;
-#else
-typedef unsigned __int128 uint128_t;
-#endif
-BOOST_STRONG_TYPEDEF(uint128_t, LinguisticCode);
 BOOST_STRONG_TYPEDEF(char, NoParameters);
-
-LIMA_COMMON_EXPORT std::ostream& operator<<(std::ostream& os, const uint128_t value);
-LIMA_COMMON_EXPORT std::istream& operator>>(std::istream& is, uint128_t& value);
-
-LIMA_COMMON_EXPORT QDebug& operator<<(QDebug& os, const uint128_t value);
-LIMA_COMMON_EXPORT QTextStream& operator<<(QTextStream& os, const uint128_t value);
 
 #define UNDEFLANG std::numeric_limits<uint8_t>::max()
 

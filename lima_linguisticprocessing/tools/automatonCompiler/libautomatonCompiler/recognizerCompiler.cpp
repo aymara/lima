@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2018 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -808,7 +808,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //     }
 //     case T_POS: {
 //       LinguisticCode pos=rule.getLinguisticProperties();
-//       if (pos!=static_cast<LinguisticCode>(0)) {
+//       if (pos!=L_NONE) {
 //         if (static_cast<const PosTransition*>(trigger)->comparePos(pos)) {
 //           message << "line " << m_lineNumber
 //                   << ": rule may cause infinite loops "
@@ -846,7 +846,7 @@ expandSubAutomatonsInRule(LimaString& s,
 //       }
 //       return true;
 //     }
-//     case T_ENTITY GROUP: {
+//     case T_ENTITY GROUP: {
 //       if (static_cast<const EntityTransition*>(trigger)->entityType().getGroupId() == rule.getType().getGroupId()) {
 //         message << "line " << m_lineNumber
 //                 << ": rule may cause infinite loops "

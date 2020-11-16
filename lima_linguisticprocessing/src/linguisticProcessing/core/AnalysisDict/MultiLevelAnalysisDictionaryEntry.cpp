@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "MultiLevelAnalysisDictionaryEntry.h"
@@ -681,9 +681,9 @@ void parseLingInfos(
               auto propsEnd = props + read;
               while (props!=propsEnd)
               {
-                auto l = static_cast<LinguisticCode>(DictionaryData::readCodedInt(props));
+                auto l = LinguisticCode::decodeFromBinary(props);
 #ifdef DEBUG_LP
-                LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos got linguistic code" << l;
+                LDEBUG << "MultiLevelAnalysisDictionaryEntry::parseLingInfos got linguistic code" << l.toString();
 #endif
                 if (propsRead.find(l) == propsRead.end())
                 {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -50,9 +50,9 @@ namespace BagOfWords {
 
 class BoWTokenPrivate;
 /**
- * This class contains the representation of an element of the bag of words. 
- * This element is characterized by a normalized form, a grammatical category, 
- * its position and length. It can be a simple word, a multiterm or a named 
+ * This class contains the representation of an element of the bag of words.
+ * This element is characterized by a normalized form, a grammatical category,
+ * its position and length. It can be a simple word, a multiterm or a named
  * entity.
  **/
 class LIMA_BOW_EXPORT BoWToken : public AbstractBoWElement
@@ -61,7 +61,7 @@ class LIMA_BOW_EXPORT BoWToken : public AbstractBoWElement
 public:
 
   BoWToken(const Lima::LimaString& lemma,
-           const uint64_t category,
+           const LinguisticCode category,
            const uint64_t position,
            const uint64_t length);
   BoWToken(const Lima::LimaString& str,
@@ -107,7 +107,7 @@ public:
 
   /**
    * returns a singleton made of the value of the @ref getVertex function.
-   * 
+   *
    * Subclasses like BoWComplexToken reimplement this method to return the set
    * of vertices of all their parts.
    *
@@ -126,7 +126,7 @@ public:
 
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWToken&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWToken&);
-  
+
   /**
     * @brief redefine equality
     * @author Benoit Mathieu
@@ -162,7 +162,7 @@ public:
                                                     const Common::Misc::PositionLengthList& p);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug& os,
                                                     const Common::Misc::PositionLengthList& p);
-  
+
   static void setUseOnlyLemma(const bool b);
   static bool getUseOnlyLemma();
 
@@ -171,7 +171,7 @@ public:
                                                     const std::map<BoWToken*,uint64_t>& refMap);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug& os,
                                                     const std::map<BoWToken*,uint64_t>& refMap);
-  
+
 protected:
   BoWToken(BoWTokenPrivate& d);
   BoWToken& operator=(const BoWToken& tok);

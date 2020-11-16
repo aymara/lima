@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,8 +21,8 @@
  * @file       automatonReaderWriter.cpp
  * @author     besancon (besanconr@zoe.cea.fr)
  * @date       Fri Mar 18 2005
- * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2005-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "automatonReaderWriter.h"
@@ -90,11 +90,11 @@ void AutomatonReader::
 readRecognizer(const std::string& filename,
                Recognizer& reco)
 {
-  if (! filename.empty() && 
+  if (! filename.empty() &&
       filename[filename.size()-1] == '/') {
     AULOGINIT;
     ostringstream oss;
-    oss << "Cannot open [" << filename 
+    oss << "Cannot open [" << filename
            << "] ; it is a directory";
     LERROR << oss.str();
     throw OpenFileException(oss.str());
@@ -173,8 +173,8 @@ readHeader(std::ifstream& file)
   {
     AULOGINIT;
     ostringstream oss;
-    oss << "incompatible version of binary rules format: " 
-           << version << ", current version is " 
+    oss << "incompatible version of binary rules format: "
+           << version << ", current version is "
            << RECOGNIZER_VERSION;
     LERROR << oss.str();
     throw runtime_error(oss.str());
@@ -194,7 +194,7 @@ readHeader(std::ifstream& file)
     {
       AULOGINIT;
       ostringstream oss;
-      oss << "language " << language 
+      oss << "language " << language
           << " is not initialized";
       LERROR << oss.str();
       throw runtime_error(oss.str());
@@ -204,7 +204,7 @@ readHeader(std::ifstream& file)
 
   // readEntityType and save mapping
   Common::MediaticData::MediaticData::changeable().readEntityTypes(file,m_entityGroupMapping,m_entityTypeMapping);
-  
+
   // initialize constraint functions
   readRegisteredConstraints(file,lang);
 
@@ -233,13 +233,11 @@ readRule(std::ifstream& file,MediaId language)
   EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readCodedInt(file));
   // use EntityType mapping
   rule->setType(m_entityTypeMapping[EntityType(typeId,groupId)]);
-  uint64_t lingProp = 0;
-  file.read((char *) &lingProp,sizeof(uint64_t));
-  rule->setLinguisticProperties(static_cast<LinguisticCode>(lingProp));
+  rule->setLinguisticProperties(LinguisticCode::decodeFromBinary(file));
 
   // read list attribute values of normalized form
   Misc::readUTF8StringField(file,rule->m_normalizedForm);
-  
+
   rule->m_numberOfConstraints=Misc::readCodedInt(file);
   file.read((char *) &(rule->m_contextual), sizeof(bool));
   file.read((char *) &(rule->m_negative), sizeof(bool));
@@ -312,7 +310,7 @@ readConstraint(std::ifstream& file,
   // read id of constraint function
   uint64_t id=Misc::readCodedInt(file);
   c.m_functionAddr= m_constraintFunctionMap[id];
-  
+
   c.m_index=Misc::readCodedInt(file);
   c.m_action=static_cast<ConstraintAction>(Misc::readOneByteInt(file));
   file.read((char *) &(c.m_negative), sizeof(bool));
@@ -407,7 +405,7 @@ readTransitionUnit(std::ifstream& file,MediaId language)
     // read keep
     int keepVal = Misc::readCodedInt(file);
     // create transition
-    t=new GazeteerTransition(wordVector, alias, keepVal == 1); 
+    t=new GazeteerTransition(wordVector, alias, keepVal == 1);
     break; }
   case T_AND: {
     uint64_t size=Misc::readCodedInt(file);
@@ -441,24 +439,24 @@ readTransitionUnit(std::ifstream& file,MediaId language)
   }
   case T_EPSILON: {
     t=new EpsilonTransition();
-    break; 
+    break;
   }
   case T_STAR: {
     t=new StarTransition();
-    break; 
+    break;
   }
   case T_ENTITY: {
     EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
     EntityTypeId typeId=static_cast<EntityTypeId>(Misc::readCodedInt(file));
     // use entity type mapping
     t=new EntityTransition(m_entityTypeMapping[EntityType(typeId,groupId)]);
-    break; 
+    break;
   }
   case T_ENTITY_GROUP: {
     EntityGroupId groupId=static_cast<EntityGroupId>(Misc::readCodedInt(file));
     // use entityGroup mapping
     t=new EntityGroupTransition(m_entityGroupMapping[groupId]);
-    break; 
+    break;
   }
   default: {
     AULOGINIT;
@@ -553,22 +551,22 @@ writeRecognizer(std::ofstream& file,
 void AutomatonWriter::
 writeHeader(std::ofstream& file,
             MediaId language)
-{  
+{
   std::string version(RECOGNIZER_VERSION);
   if (m_debug) {
     version.append(RECOGNIZER_DEBUG_VERSION);
   }
-  
+
   // write version number
   Misc::writeStringField(file,version);
-  
+
   // write language
   Misc::writeStringField(file,Lima::Common::MediaticData::MediaticData::single().media(language));
 
   // write entity types
   Lima::Common::MediaticData::MediaticData::single().writeEntityTypes(file);
 
-  // write registered constraints (after language, because 
+  // write registered constraints (after language, because
   // language is needed when reinitializing constraints)
   writeRegisteredConstraints(file);
 }
@@ -576,7 +574,7 @@ writeHeader(std::ofstream& file,
 void AutomatonWriter::
 writeRule(std::ofstream& file,
           const Rule& rule,
-          MediaId language) 
+          MediaId language)
 {
   // write id if debug
   if (m_debug) {
@@ -593,9 +591,8 @@ writeRule(std::ofstream& file,
   Misc::writeCodedInt(file,rule.getType().getGroupId());
   Misc::writeCodedInt(file,rule.getType().getTypeId());
 
-  uint64_t lingProp=rule.getLinguisticProperties();
-  file.write((char *) &lingProp,sizeof(uint64_t));
-  
+  LinguisticCode::encodeToBinary(file, rule.getLinguisticProperties());
+
   // write normalized form (LimaString)
   Misc::writeUTF8StringField(file,rule.m_normalizedForm);
 
@@ -614,7 +611,7 @@ writeRule(std::ofstream& file,
   // write actions (with one argument) attached to the rule
   uint64_t nbActionsWithOneArgument=rule.m_actionsWithOneArgument.size();
   Common::Misc::writeCodedInt(file,nbActionsWithOneArgument);
-  for (std::vector<std::pair<LimaString,Constraint>>::const_iterator it = rule.m_actionsWithOneArgument.begin() ; 
+  for (std::vector<std::pair<LimaString,Constraint>>::const_iterator it = rule.m_actionsWithOneArgument.begin() ;
        it != rule.m_actionsWithOneArgument.end() ; it++ ) {
     writeConstraint(file,it->second);
     Misc::writeUTF8StringField(file,it->first);
@@ -625,7 +622,7 @@ writeRule(std::ofstream& file,
 void AutomatonWriter::
 writeAutomaton(std::ofstream& file,
                const Automaton& a,
-               MediaId language) 
+               MediaId language)
 {
   // first write the number of states
   writeTstate(file,a.m_numberStates);
@@ -690,9 +687,9 @@ writeTransitionUnit(std::ofstream& file,
     Misc::writeUTF8StringField(file,t->alias());
     writeWordSet(file,t->wordSet());
     if( t->keep() )
-      Misc::writeCodedInt(file,1); 
+      Misc::writeCodedInt(file,1);
     else
-      Misc::writeCodedInt(file,0); 
+      Misc::writeCodedInt(file,0);
     break;
   }
   case T_NUM: {
@@ -704,7 +701,7 @@ writeTransitionUnit(std::ofstream& file,
   }
   case T_TSTATUS: {
     TStatusTransition* t=static_cast<TStatusTransition*>(transition);
-    
+
     // write the Tstatus
     const TStatus& status=t->status();
     StatusType s(status.getStatus());
@@ -713,7 +710,7 @@ writeTransitionUnit(std::ofstream& file,
     NumericType n(status.getNumeric());
     unsigned char h(status.isAlphaHyphen());
     unsigned char p(status.isAlphaPossessive());
-    
+
     Misc::writeOneByteInt(file,s); // enum type StatusType as int
     Misc::writeOneByteInt(file,a); // enum type AlphaCapitalType as int
     Misc::writeOneByteInt(file,r); // enum type AlphaRomanType as int
@@ -740,7 +737,7 @@ writeTransitionUnit(std::ofstream& file,
     SetTransition* t=static_cast<SetTransition*>(transition);
     const std::set<Tword>& words=t->getWords();
     Misc::writeCodedInt(file,words.size());
-    set<Tword>::const_iterator 
+    set<Tword>::const_iterator
       w=words.begin(),
       w_end=words.end();
     for (;w!=w_end; w++) {
@@ -768,8 +765,8 @@ writeTransitionUnit(std::ofstream& file,
     Misc::writeCodedInt(file,entityType.getTypeId());
     break;
   }
-  case T_EPSILON: 
-  case T_STAR: 
+  case T_EPSILON:
+  case T_STAR:
     // nothing to do
     break;
   default: {
@@ -807,7 +804,7 @@ writeConstraint(std::ofstream& file,
 {
   // write id of constraint function
   Misc::writeCodedInt(file,m_constraintFunctionMap[c.m_functionAddr]);
-  
+
   Misc::writeCodedInt(file,c.m_index);
   Misc::writeOneByteInt(file,c.m_action);
   file.write((char *) &(c.m_negative), sizeof(bool));
@@ -816,7 +813,7 @@ writeConstraint(std::ofstream& file,
 void AutomatonWriter::
 writeRegisteredConstraints(std::ofstream& file)
 {
-  const std::multimap<std::string,ConstraintFunction*>& 
+  const std::multimap<std::string,ConstraintFunction*>&
     registered=
     ConstraintFunctionManager::single().
     getRegisteredFunctions();

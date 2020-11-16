@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -93,7 +93,7 @@ void DefaultProperties::init(
     LERROR << "no param 'charChart' in DefaultProperties group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  
+
   try
   {
     skipUnmarkStatus=unitConfiguration.getListsValueAtKey("skipUnmarkStatus");
@@ -102,7 +102,7 @@ void DefaultProperties::init(
   {
     // empty display
   }
-  //m_skipUnmarkStatus is a set of tokenization status that don't need desaccentuation like t_dot_number. We keep the dot. 
+  //m_skipUnmarkStatus is a set of tokenization status that don't need desaccentuation like t_dot_number. We keep the dot.
   for( std::deque<std::string>::iterator src = skipUnmarkStatus.begin() ; src != skipUnmarkStatus.end() ; src++ )
   {
     m_skipUnmarkStatus.insert(Common::Misc::utf8stdstring2limastring(*src));
@@ -152,14 +152,15 @@ LimaStatusCode DefaultProperties::process(
           if(m_skipUnmarkStatus.find(currentToken->status().defaultKey())==m_skipUnmarkStatus.end())
           {
             LimaString unmarked = m_charChart->unmark(currentToken->stringForm());
-            if (! unmarked.isEmpty()) {
+            if (! unmarked.isEmpty())
+            {
                 str=unmarked;
             }
           }
           elem.lemma= Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[str];
           elem.normalizedForm=elem.lemma;
           elem.type=UNKNOWN_WORD;
-          
+
           for (std::vector<LinguisticCode>::const_iterator codeItr=it->second.begin();
                codeItr!=it->second.end();
                codeItr++)
@@ -170,7 +171,7 @@ LimaStatusCode DefaultProperties::process(
         }
         else
         {
-          LWARN << "No default property for " 
+          LWARN << "No default property for "
             << Common::Misc::limastring2utf8stdstring(currentToken->stringForm()) << ". Status : "
             << Common::Misc::limastring2utf8stdstring(currentToken->status().defaultKey());
         }
@@ -195,16 +196,18 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
   string line;
   string type;
   LinguisticCode props;
-  while (fin.good() && !fin.eof()) {
+  while (fin.good() && !fin.eof())
+  {
     line = Lima::Common::Misc::readLine(fin);
-    if (line.size()>0) {
+    if (line.size()>0)
+    {
       istringstream is(line);
       is >> type;
       is >> props;
 #ifdef DEBUG_LP
       LDEBUG << "read default " << type << " => " << props;
 #endif
-      if (props == LinguisticCode(0))
+      if (props == L_NONE)
       {
         throw LimaException("Error: props == 0");
       }

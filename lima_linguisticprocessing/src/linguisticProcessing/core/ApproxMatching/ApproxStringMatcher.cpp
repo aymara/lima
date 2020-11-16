@@ -131,8 +131,6 @@ bool SolutionCompare::operator() (const Solution& s1, const Solution& s2) const 
 
 ApproxStringMatcher::ApproxStringMatcher() :
     m_language(0),
-    m_neCode(0),
-    m_neMicroCode(0),
     m_lexicon(0),
     m_sp(0),
     m_nbMaxNumError(0),

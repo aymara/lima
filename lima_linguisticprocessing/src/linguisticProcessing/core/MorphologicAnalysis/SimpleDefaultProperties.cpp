@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -92,7 +92,7 @@ void SimpleDefaultProperties::init(
   {
     MORPHOLOGINIT;
     LWARN << "SimpleDefaultCateogries: no default properties defined !";
-    m_defaultProperties.push_back(static_cast<LinguisticCode>(0));
+    m_defaultProperties.push_back(L_NONE);
   }
   try
   {

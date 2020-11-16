@@ -94,11 +94,11 @@ void writeWordSet(std::ofstream& file,const std::set<LimaString>& wordSet)
 // Part-of-speech type
 void readTpos(std::ifstream& file, Tpos& p)
 {
-  p=Misc::readCodedInt(file);
+  p = LinguisticCode::decodeFromBinary(file);
 }
-void writeTpos(std::ofstream& file,const Tpos& p)
+void writeTpos(std::ofstream& file, const Tpos& p)
 {
-  Misc::writeCodedInt(file,p);
+  LinguisticCode::encodeToBinary(file, p);
 }
 
 bool compareTpos(const Tpos& pos,  const LinguisticCode& lingProperty,
@@ -109,13 +109,6 @@ bool compareTpos(const Tpos& pos,  const LinguisticCode& lingProperty,
            (microAccessor.empty(pos) &&
             macroAccessor.equal(lingProperty,pos)));
 }
-
-/*
-std::ostream& operator << (std::ostream& os, const Tpos& p)
-{
-  return os << p;
-}
-*/
 
 } // end namespace
 } // end namespace

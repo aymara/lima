@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -212,7 +212,7 @@ int run(int argc, char** argv)
            valItr!=symbol2code.end();
            valItr++)
       {
-        fout << propItr->first << ":" << valItr->first << ":" << valItr->second << endl;
+        fout << propItr->first << ":" << valItr->first << ":" << valItr->second.toString() << endl;
       }
       fout << endl;
     }
@@ -227,7 +227,7 @@ int run(int argc, char** argv)
            argItr!=param->args.end();
            argItr++)
       {
-        LinguisticCode prop(atoi(argItr->c_str()));
+        LinguisticCode prop = LinguisticCode::fromString(*argItr);
         decode(propcodemanager,prop);
       }
     }
@@ -238,8 +238,9 @@ int run(int argc, char** argv)
       while (fin.good() && !fin.eof())
       {
         line = Lima::Common::Misc::readLine(fin);
-        if (line.size()>0) {
-          LinguisticCode prop(atoi(line.c_str()));
+        if (line.size()>0)
+        {
+          LinguisticCode prop = LinguisticCode::fromString(line);
           decode(propcodemanager,prop);
         }
       }
@@ -259,11 +260,10 @@ int run(int argc, char** argv)
       exit(0);
     }
 
-    LinguisticCode p1(atoi(param->args[0].c_str()));
-    LinguisticCode p2(atoi(param->args[1].c_str()));
+    LinguisticCode p1 = LinguisticCode::fromString(param->args[0]);
+    LinguisticCode p2 = LinguisticCode::fromString(param->args[1]);
 
     check(propcodemanager,p1,p2);
-
   }
   return 0;
 }
@@ -271,7 +271,7 @@ int run(int argc, char** argv)
 void decode(const Lima::Common::PropertyCode::PropertyCodeManager& propcodemanager, LinguisticCode prop)
 {
   const std::map<std::string,PropertyManager>& managers=propcodemanager.getPropertyManagers();
-  cout << "** decode " << dec << prop << " (" << hex << prop << ")" << endl;
+  cout << "** decode " << prop.toString() << " (" << prop.toHexString() << ")" << endl;
   for (std::map<std::string,PropertyManager>::const_iterator manItr=managers.begin();
        manItr!=managers.end();
        manItr++)
@@ -294,8 +294,6 @@ void encode(const PropertyCodeManager& propcodemanager,vector<string>& args)
        argItr!=args.end();
        argItr++)
   {
-    //uint64_t index=argItr->find("=");
-    //uint64_t index=argItr->find("=");
     std::vector<std::string>::size_type index=argItr->find("=");
     if (index != string::npos)
     {
@@ -303,32 +301,37 @@ void encode(const PropertyCodeManager& propcodemanager,vector<string>& args)
       string valName=argItr->substr(index+1);
       const PropertyManager& propMan=propcodemanager.getPropertyManager(propName);
       LinguisticCode value=propMan.getPropertyValue(valName);
-      cout << propName << " : " << valName << " => " << dec << value << " (" << hex << value << ")" << endl;
+      cout << propName << " : " << valName << " => "
+           << value.toString() << " (" << value.toHexString() << ")" << endl;
       propValues[propName]=valName;
     }
   }
   LinguisticCode coded=propcodemanager.encode(propValues);
-  cout << "result = " << dec << coded << " (" << hex << coded << ")" << endl;
+  cout << "result = " << coded.toString() << " (" << coded.toHexString() << ")" << endl;
 }
 
 void check(const Lima::Common::PropertyCode::PropertyCodeManager& propcodemanager, LinguisticCode p1, LinguisticCode p2)
 {
   const std::map<std::string,PropertyManager>& managers=propcodemanager.getPropertyManagers();
 
-  cout << "** check " << dec << p1 << " (" << hex << p1 << ") / " << dec << p2 << " (" << hex << p2 << ")" << endl;
+  cout << "** check " << p1.toString() << " (" << p1.toHexString() << ") / "
+       << p2.toString() << " (" << p2.toHexString() << ")" << endl;
   for (std::map<std::string,PropertyManager>::const_iterator manItr=managers.begin();
        manItr!=managers.end();
        manItr++)
   {
     if (manItr->second.getPropertyAccessor().equal(p1,p2))
     {
-      cout << "same " << manItr->first << " ( mask is " << hex << manItr->second.getMask() << " ) value = " << manItr->second.getPropertySymbolicValue(p1) << endl;
+      cout << "same " << manItr->first << " ( mask is " << manItr->second.getMask().toHexString()
+           << " ) value = " << manItr->second.getPropertySymbolicValue(p1) << endl;
     }
     else
     {
-      cout << "different " << manItr->first << " ( mask is " << hex << manItr->second.getMask() << " ) "
-      << "p1 = " << manItr->second.getPropertySymbolicValue(p1) << " ( " << manItr->second.getPropertyAccessor().readValue(p1) << " ) "
-      << "p2 = " << manItr->second.getPropertySymbolicValue(p2) << " ( " << manItr->second.getPropertyAccessor().readValue(p2) << " ) " << endl;
+      cout << "different " << manItr->first << " ( mask is " << manItr->second.getMask().toHexString() << " ) "
+      << "p1 = " << manItr->second.getPropertySymbolicValue(p1)
+      << " ( " << manItr->second.getPropertyAccessor().readValue(p1).toHexString() << " ) "
+      << "p2 = " << manItr->second.getPropertySymbolicValue(p2)
+      << " ( " << manItr->second.getPropertyAccessor().readValue(p2).toHexString() << " ) " << endl;
     }
   }
   cout << endl;

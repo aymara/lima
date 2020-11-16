@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -47,7 +47,6 @@ Rule::Rule():
   m_left(),
   m_right(),
   m_type(),
-  m_lingProp(0),
   m_normalizedForm(),
   m_numberOfConstraints(0),
   m_contextual(true),
@@ -96,7 +95,7 @@ void Rule::reinit() {
   m_left.reinit();
   m_right.reinit();
   m_type=Common::MediaticData::EntityType();
-  m_lingProp=0;
+  m_lingProp=L_NONE;
   m_normalizedForm.clear();
   m_numberOfConstraints=0;
   m_contextual=true;
@@ -132,7 +131,7 @@ void Rule::init()
   m_left=Automaton();
   m_right=Automaton();
   m_type=Common::MediaticData::EntityType();
-  m_lingProp=0;
+  m_lingProp=L_NONE;
   m_normalizedForm.clear();
   m_numberOfConstraints=0;
   m_contextual=true;
@@ -349,7 +348,7 @@ ostream& operator << (ostream& os, const Rule& r) {
   os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties().toString() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;

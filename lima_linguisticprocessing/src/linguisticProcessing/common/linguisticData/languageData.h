@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -37,7 +37,7 @@
 
 namespace Lima
 {
-  
+
 namespace Common
 {
   namespace PropertyCode {
@@ -50,7 +50,7 @@ namespace MediaticData
 {
 #define LANGUAGEDATA_CLASSID "LanguageData"
 
-#define ID_NONE_1 static_cast<LinguisticCode>(0)
+#define ID_NONE_1 L_NONE
 #define SYMBOLIC_NONE_1 "NONE_1"
 
 /** syntactic chains type */
@@ -89,7 +89,7 @@ public:
     XMLConfigurationFiles::XMLConfigurationFileParser& conf) override;
 
   const PropertyCode::PropertyCodeManager& getPropertyCodeManager() const;
-  
+
   /** @return the codes corresponding to NamedEntities categories */
   const std::vector<std::set<LinguisticCode> >& getMicrosForNENormalization() const;
 
@@ -98,18 +98,18 @@ public:
 
   /** @return true if the given micro-category numerical value is an empty micro category ; false elsewhere */
   bool isAnEmptyMicroCategory(LinguisticCode id) const ;
-  
+
   bool isAConjugatedVerb(LinguisticCode id) const;
-  
+
   bool isAPropositionIntroductor(LinguisticCode id) const;
-  
+
   bool isTypeARelationForChain(ChainsType, uint64_t) const;
 
   LinguisticCode compoundTense(LinguisticCode mode, LinguisticCode auxTense) const;
   LinguisticCode compoundTense(std::string& mode, std::string& auxTense) const;
-  
+
   std::set< LinguisticCode >&  getNounPhraseHeadMicroCategories();
-  
+
   const std::set< LinguisticCode >&  getNounPhraseHeadMicroCategories() const;
   const std::set< LinguisticCode >&  getDefiniteMicroCategories() const;
   const std::set< LinguisticCode >&  getConjugatedVerbs() const;
@@ -133,20 +133,20 @@ public:
   // not a const reference because the result object is built
   // inside the function
   EntityNames getEntityNames(const std::string& entity) const;
-  
+
   const std::string& getSyntacticRelationName(SyntacticRelationId id) const;
   SyntacticRelationId getSyntacticRelationId(const std::string& name) const;
-  
+
   /** \name Codes mapping
    *  Mapping between internal LIMA codes and Language code. */
   /**@{*/
   /**
-   * The return map contains a mapping between current LIMA internal codes and 
-   * language codes. For example for Universal Dependencies, LIMA TIME is 
+   * The return map contains a mapping between current LIMA internal codes and
+   * language codes. For example for Universal Dependencies, LIMA TIME is
    * associated to Tense. */
   const std::map<QString, QString>& getLimaToLanguageCodeMapping() const;
-  /** 
-   * Access to an element of the code mapping. Return the parameter itself if 
+  /**
+   * Access to an element of the code mapping. Return the parameter itself if
    * the mapping does not contain it.
    */
   QString getLimaToLanguageCodeMappingValue(const QString& code) const;

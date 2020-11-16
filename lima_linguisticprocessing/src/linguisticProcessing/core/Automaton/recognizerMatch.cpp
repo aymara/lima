@@ -91,7 +91,7 @@ void RecognizerMatch::reinit() {
   // clear entity properties
   m_head=0;
   m_type=Common::MediaticData::EntityType();
-  m_linguisticProperties=0;
+  m_linguisticProperties=L_NONE;
 }
 
 // position of first element of the match

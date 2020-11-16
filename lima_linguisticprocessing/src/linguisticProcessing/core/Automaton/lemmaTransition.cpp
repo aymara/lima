@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -44,10 +44,10 @@ namespace Automaton {
 LemmaTransition::LemmaTransition():
 TransitionUnit(),
 m_lemma(),
-m_pos() 
+m_pos()
 {}
 
-LemmaTransition::LemmaTransition(const Tword s, 
+LemmaTransition::LemmaTransition(const Tword s,
                                  const Tpos p,
                                  const Common::PropertyCode::PropertyAccessor* macroAccessor,
                                  const Common::PropertyCode::PropertyAccessor* microAccessor,
@@ -102,7 +102,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
         const LinguisticAnalysisStructure::Token* /*token*/,
         const LinguisticAnalysisStructure::MorphoSyntacticData* data) const
 {
-  MorphoSyntacticData::const_iterator  
+  MorphoSyntacticData::const_iterator
     it=data->begin(),
     it_end=data->end();
   for (; it!=it_end; it++) {
@@ -128,7 +128,7 @@ std::string LemmaTransition::printValue() const {
 /*  const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(0);
   LimaString s = sp[(StringsPoolIndex)m_lemma];
   oss << s << "|$" << m_pos;*/
-  oss << "lemmaT'" << m_lemma << "'$" << m_pos;
+  oss << "lemmaT'" << m_lemma << "'$" << m_pos.toString();
   return oss.str();
 }
 

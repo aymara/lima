@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -44,7 +44,6 @@ namespace Automaton {
 EntityProperties::EntityProperties():
   m_head(0),
   m_type(),
-  m_linguisticProperties(0),
   m_features(),
   m_contextual(true)
 {}
@@ -54,26 +53,32 @@ EntityProperties::EntityProperties(const EntityProperties& p)
   copy(p);
 }
 
-EntityProperties& EntityProperties::operator = (const EntityProperties& p) {
-  if (this != &p) {
+EntityProperties& EntityProperties::operator = (const EntityProperties& p)
+{
+  if (this != &p)
+  {
     copy(p);
   }
   return (*this);
 }
 
-bool EntityProperties::operator== (const EntityProperties& p) {
+bool EntityProperties::operator== (const EntityProperties& p)
+{
   return (m_head == p.m_head &&
           m_type == p.m_type &&
           m_linguisticProperties == p.m_linguisticProperties &&
-          m_features == p.m_features && 
+          m_features == p.m_features &&
           m_contextual == p.m_contextual);
 }
 
-void EntityProperties::copy(const EntityProperties& p) {
-  if (p.getHead() != 0) {
+void EntityProperties::copy(const EntityProperties& p)
+{
+  if (p.getHead() != 0)
+  {
     m_head = p.getHead();
   }
-  else {
+  else
+  {
     m_head = 0;
   }
   m_type=p.m_type;
@@ -86,20 +91,24 @@ void EntityProperties::copy(const EntityProperties& p) {
 /***********************************************************************/
 // destructor
 /***********************************************************************/
-EntityProperties::~EntityProperties() {
+EntityProperties::~EntityProperties()
+{
 }
 
 /***********************************************************************/
 // output
 /***********************************************************************/
-LimaString EntityProperties::str() const {
+LimaString EntityProperties::str() const
+{
   ostringstream oss;
-  if (m_head) {
+  if (m_head)
+  {
     oss << "head=" << m_head << ";";
   }
   oss << "type=[" << m_type << "];";
-  if (m_linguisticProperties) {
-    oss << "lingProp=[" << m_linguisticProperties << "];";
+  if (m_linguisticProperties.toBool())
+  {
+    oss << "lingProp=[" << m_linguisticProperties.toString() << "];";
   }
   oss << "norm=[" << m_features << "]"
       << "contextual=[" << m_contextual << "]";

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSING_COMPOUNDSBOWGENERATION_H
@@ -34,8 +34,6 @@
 #include "linguisticProcessing/common/BagOfWords/BoWRelation.h"
 #include "linguisticProcessing/common/BagOfWords/BoWPredicate.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationGraph.h"
-
-
 
 
 namespace Lima
@@ -80,7 +78,7 @@ namespace Compounds
   * - commonNounCategory
   * - keepAllNamedEntityParts
   * - NEnormalization
-  * - group : the entities group to use to find the enities names (optional, 
+  * - group : the entities group to use to find the enities names (optional,
   *   default is SpecificEntities)
   * @author Gael de Chalendar
   */
@@ -88,7 +86,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT BowGenerator
 {
 public:
   BowGenerator();
-  
+
   virtual ~BowGenerator();
 
   void init(
@@ -96,11 +94,11 @@ public:
     MediaId language)
   ;
 
-  /** 
+  /**
     * @brief Creates the terms reachable from the given annotation vertex.
     * Supposes that all edges pointing to vx are edges to be used in the term
     * Builds terms for vertex vx, possibly extension of vertex tgt. If this is
-    * the case, the edge between vx and tgt is used to build the BoWRelations 
+    * the case, the edge between vx and tgt is used to build the BoWRelations
     * of the returned vector
     */
   std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >, boost::shared_ptr< Common::BagOfWords::BoWToken > > > buildTermFor(
@@ -148,7 +146,7 @@ public:
 private:
 
   boost::shared_ptr< Common::BagOfWords::BoWRelation > createBoWRelationFor(
-    const AnnotationGraphVertex& vx, 
+    const AnnotationGraphVertex& vx,
     const AnnotationGraphVertex& tgt,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const LinguisticGraph& posgraph,
@@ -157,17 +155,17 @@ private:
   class NamedEntityPart
   {
     public:
-      NamedEntityPart(): inflectedForm(), lemma(), category(0), position(0), 
+      NamedEntityPart(): inflectedForm(), lemma(), position(0),
       length(0) {}
-      NamedEntityPart(const LimaString& fl, const LimaString& l, 
-                      const uint64_t cat, const uint64_t pos, 
+      NamedEntityPart(const LimaString& fl, const LimaString& l,
+                      const LinguisticCode cat, const uint64_t pos,
                       const uint64_t len):
-          inflectedForm(fl), lemma(l), category(cat), position (pos), 
+          inflectedForm(fl), lemma(l), category(cat), position (pos),
           length(len) {}
 
       LimaString inflectedForm;
       LimaString lemma;
-      uint64_t category;
+      LinguisticCode category;
       uint64_t position;
       uint64_t length;
   };
@@ -212,7 +210,7 @@ private:
     std::set<LinguisticGraphVertex>& visited) const;
 
 //   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
-  
+
   QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > createPredicate(const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv,
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     const LinguisticGraph& anagraph,
