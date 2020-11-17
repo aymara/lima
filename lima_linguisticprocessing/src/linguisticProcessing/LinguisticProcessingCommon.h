@@ -79,6 +79,12 @@
    #define LIMA_TGV_EXPORT    __declspec(dllimport)
 #endif
 
+#ifdef LIMA_LP_HELPERS_EXPORTING
+   #define LIMA_LP_HELPERS_EXPORT    __declspec(dllexport)
+#else
+   #define LIMA_LP_HELPERS_EXPORT    __declspec(dllimport)
+#endif
+
 
 #else // Not WIN32
 
@@ -91,6 +97,7 @@
 #define LIMA_LINGUISTICDATA_EXPORT
 #define LIMA_LINEARTEXTREPRESENTATION_EXPORT
 #define LIMA_TGV_EXPORT
+#define LIMA_LP_HELPERS_EXPORT
 
 #endif
 
