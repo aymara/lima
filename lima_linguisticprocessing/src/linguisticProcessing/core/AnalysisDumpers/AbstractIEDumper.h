@@ -104,7 +104,8 @@ protected:
   // @todo: pass it as argument to all the internal functions where needed
   mutable OffsetMapping* m_offsetMapping;
   bool m_outputGroups; // ouptut full entity types with the groups
-
+  int m_posOffset; // offset on token positions (default is -1, meaning tokens start at 1)
+  
   //member private members
   const SemanticAnalysis::SemanticRelationAnnotation*
     getSemanticRelationAnnotation(LinguisticGraphVertex v,

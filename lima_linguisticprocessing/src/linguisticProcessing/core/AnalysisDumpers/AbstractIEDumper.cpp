@@ -51,7 +51,8 @@ m_all_attributes(false),
 m_templateDefinitions(),
 m_templateNames(),
 m_offsetMapping(nullptr),
-m_outputGroups(false)
+m_outputGroups(false),
+m_posOffset(-1)
 {
   DUMPERLOGINIT;
   LDEBUG << "AbstractIEDumper::AbstractIEDumper()";
@@ -163,6 +164,13 @@ void AbstractIEDumper::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
+  
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("posOffset");
+    m_posOffset=std::stoi(str);
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
+
 }
 
 LimaStatusCode AbstractIEDumper::process(
@@ -433,7 +441,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
         LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
         std::uint64_t position= vToken->position()+offset;
         std::uint64_t length= vToken->length();
-        string stringForm = originalText.mid( position-1,length).toUtf8().data();
+        string stringForm = originalText.mid( position+m_posOffset,length).toUtf8().data();
 
         if (addEventMentionAsEntity() && templateMention.compare(typeName)==0)
         {
@@ -528,7 +536,7 @@ computePositions(std::vector<pair<uint64_t,uint64_t> >& positions,
                  uint64_t len) const
 {
   // if string contains \n, have to set several position intervals around these characters (brat-style)
-  positions.push_back(make_pair(pos-1,pos+len-1));
+  positions.push_back(make_pair(pos+m_posOffset,pos+len+m_posOffset));
   string::size_type prev(0),i=stringForm.indexOf("\n");
   vector<unsigned int> toErase;
   while (i!=string::npos) {
@@ -607,7 +615,7 @@ outputEntity(std::ostream& out,
     std::uint64_t pos=offset+annot->getPosition();
     std::uint64_t len=annot->getLength();
     //string stringForm=originalText.mid( pos-1,len).toUtf8().data();
-    auto stringForm=originalText.mid( pos-1,len);
+    auto stringForm=originalText.mid( pos+m_posOffset,len);
     std::vector<pair<uint64_t,uint64_t> > positions;
 //     cerr << "computePositions("<< stringForm.toUtf8().data() << ") " << pos << ":" << len << " -> ";
     computePositions(positions,stringForm,pos,len);
