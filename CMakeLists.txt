@@ -58,6 +58,10 @@ endif()
 
 message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
+if(WIN32)
+add_compile_definitions(QT_NO_FLOAT16_OPERATORS)
+endif()
+
 # use openmp
 find_package(OpenMP)
 if(OPENMP_FOUND)
