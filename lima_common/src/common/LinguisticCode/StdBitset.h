@@ -38,7 +38,7 @@ class LinguisticCode
   std::bitset<LC_WIDTH> base;
 
   static std::hash<std::bitset<LC_WIDTH>> hash_fn;
-  static const char alphabet[];
+  LIMA_COMMON_EXPORT static const char alphabet[];
 
   template <size_t N> // N - bits per character
   inline std::string toString_() const
@@ -274,7 +274,7 @@ public:
   friend inline bool operator<(const LinguisticCode& lhs, const LinguisticCode& rhs);
   friend inline bool operator>(const LinguisticCode& lhs, const LinguisticCode& rhs);
 
-  static const LinguisticCode ZERO;
+  LIMA_COMMON_EXPORT static const LinguisticCode ZERO;
 };
 
 inline LinguisticCode operator&(const LinguisticCode& lhs, const LinguisticCode& rhs) noexcept

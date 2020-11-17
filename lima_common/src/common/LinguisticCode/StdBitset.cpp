@@ -22,9 +22,9 @@
 namespace Lima
 {
 std::hash<std::bitset<LC_WIDTH>> LinguisticCode::hash_fn;
-const char LinguisticCode::alphabet[] = "0123456789ABCDEF";
+LIMA_COMMON_EXPORT const char LinguisticCode::alphabet[] = "0123456789ABCDEF";
 static const std::string odds = "13579";
-const LinguisticCode LinguisticCode::ZERO;
+LIMA_COMMON_EXPORT const LinguisticCode LinguisticCode::ZERO;
 
 LIMA_COMMON_EXPORT std::string LinguisticCode::toDecString() const
 {
