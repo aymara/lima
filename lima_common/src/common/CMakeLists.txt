@@ -69,7 +69,12 @@ configure_file (
 install(FILES
     LimaCommon.h
     ${CMAKE_CURRENT_BINARY_DIR}/LimaVersion.h
-    LinguisticCode/StdBitset.h
   DESTINATION include/common
+  COMPONENT devel
+)
+
+install(FILES
+    LinguisticCode/StdBitset.h
+  DESTINATION include/common/LinguisticCode
   COMPONENT devel
 )
