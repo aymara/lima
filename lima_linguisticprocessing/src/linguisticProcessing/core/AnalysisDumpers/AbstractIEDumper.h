@@ -89,13 +89,15 @@ public:
    */
 
   // virtual function to indicate if event mention must be printed separately as an entity: to be redefined in child classes if needed
+  // deprecated: always false, even for Brat
   virtual bool addEventMentionAsEntity() const { return false; }
 
 protected:
   MediaId m_language;
   std::string m_graph;
   bool m_followGraph;
-  std::string m_domain;
+  std::set< std::string > m_domains; // list of domains to output
+  std::set< std::string > m_ignore;  // list of entity types to ignore in the output
   std::deque< std::string > m_attributes;
   bool m_all_attributes;
   std::map<std::string,EventAnalysis::EventTemplateDefinitionResource*> m_templateDefinitions;

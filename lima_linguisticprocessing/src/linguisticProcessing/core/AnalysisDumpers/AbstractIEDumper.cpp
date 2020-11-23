@@ -45,7 +45,8 @@ AbstractTextualAnalysisDumper(),
 m_language(0),
 m_graph("PosGraph"),
 m_followGraph(false),
-m_domain(""),
+m_domains(),
+m_ignore(),
 m_attributes(),
 m_all_attributes(false),
 m_templateDefinitions(),
@@ -87,16 +88,41 @@ void AbstractIEDumper::init(
 
   try
   {
+    // single domain
     string val=unitConfiguration.getParamsValueAtKey("domain");
-    m_domain=val;
+    m_domains.insert(val);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    m_domain="";
+    m_domains=set<string>();
     DUMPERLOGINIT;
     LDEBUG << "no parameter 'domain' in AbstractIEDumper: entities from all domains will be printed";
-  } // all domains are printed
+  } // if empty set, all domains are printed
 
+  try
+  {
+    deque< string > vals=unitConfiguration.getListsValueAtKey("domains");
+    for (const auto& v: vals) {
+      m_domains.insert(v);
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
+    LDEBUG << "no list 'domains' in AbstractIEDumper";
+  } // if empty set, all domains are printed
+
+  try
+  {
+    deque< string > vals=unitConfiguration.getListsValueAtKey("ignore");
+    for (const auto& v: vals) {
+      m_ignore.insert(v);
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
+    LDEBUG << "no list 'ignore' in AbstractIEDumper: all entity types of authorized domains are printed";
+  }
+  
   try
   {
     string val=unitConfiguration.getParamsValueAtKey("outputAllAttributes");
@@ -496,12 +522,12 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
       std::vector<pair<uint64_t,uint64_t> > positions;
       LimaString eventMentionString=Lima::Common::Misc::utf8stdstring2limastring(e.eventMentionString);
       computePositions(positions,eventMentionString,e.eventMentionPosition,e.eventMentionLength);
-      if (m_outputGroups && !m_domain.empty()) {
-        outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
-      }
-      else {
-        outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
-      }
+      // if (m_outputGroups && !m_domain.empty()) {
+      //   outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
+      // }
+      // else {
+      outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
+      // }
       idEntity++;
     }
   }
@@ -630,7 +656,11 @@ outputEntity(std::ostream& out,
     if (posG!=std::string::npos && ! m_outputGroups){
       entityType = entityType.substr(posG+1);
     }
-
+    if (m_ignore.find(entityType)!=m_ignore.end()) {
+      //LDEBUG << "AbstractIEDumper: ignored entity type" << entityType;
+      return false;
+    }
+    
     // back to the original offset if text has been expanded
     // do this before inserting in mapEntities to find real duplicates
     adjustPosition(pos);
@@ -651,7 +681,7 @@ outputEntity(std::ostream& out,
 
     std::size_t index = mapEntities.size()+1;
 
-    if (! m_domain.empty() && domainType!=m_domain)
+    if (! m_domains.empty() && m_domains.find(domainType)!=m_domains.end())
     {
       // entity is not in considered domain: do not print it (nor store it in the map)
       return false;
