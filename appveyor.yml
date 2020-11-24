@@ -117,7 +117,6 @@ deploy:
   force_update: true
   on:
     branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only
 
 #on_success:
          #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
