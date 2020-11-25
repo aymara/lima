@@ -21,18 +21,29 @@ env:
 
 matrix:
   include:
+      # Ubuntu 20.04 LTS EOL 04/2025
       - os: linux
         env: DISTRIB=travis-ubuntu20.04
       - os: linux
         env: DISTRIB=travis-ubuntu20.04 USE_TENSORFLOW=true
+
+      # Ubuntu 18.04 LTS EOL 04/2023
       - os: linux
         env: DISTRIB=travis-ubuntu18.04
       - os: linux
         env: DISTRIB=travis-ubuntu18.04 USE_TENSORFLOW=true
+
+      # Ubuntu 16.04 LTS EOL 04/2021
       - os: linux
         env: DISTRIB=travis-ubuntu16.04
+
+      # Debian 9 “Stretch” EOL 06/2022
       - os: linux
-        env: DISTRIB=debian9.4
+        env: DISTRIB=debian9.13
+
+      # Debian 10 “Buster” EOL 06/2024
+      - os: linux
+        env: DISTRIB=debian10.6
 
 before_script:
   - echo TRAVIS_BRANCH=$TRAVIS_BRANCH
@@ -52,9 +63,12 @@ after_success:
 - docker run --name travis-ubuntu16.04 -t -d travis-ubuntu16.04
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages $HOME
 - docker stop travis-ubuntu16.04
-- docker run --name debian9.4 -t -d debian9.4
+- docker run --name debian9.13 -t -d debian9.13
 - docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
-- docker stop debian9.4
+- docker stop debian10.6
+- docker run --name debian10.6 -t -d debian10.6
+- docker cp $(docker ps -n 1 -q):/usr/share/apps/lima/packages/ $HOME
+- docker stop debian10.6
 
 before_deploy:
 - git config --local user.name "Gael de Chalendar"
