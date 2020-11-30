@@ -163,7 +163,10 @@ LimaStatusCode SentenceBoundariesFinder::process(
           throw LimaException();
         }
         endSentence = *prevVx.begin();
-        sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+        if (beginSentence != endSentence)
+        {
+          sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+        }
         break;
       }
 #ifdef DEBUG_LP
@@ -173,7 +176,9 @@ LimaStatusCode SentenceBoundariesFinder::process(
       beginSentence=endSentence;
     }
   }
-  else { // apply restriction on values for sentence boundaries
+  else
+  {
+    // apply restriction on values for sentence boundaries
     // cannot set endSentence from beginSentence inside the loop, because we have to continue
     // moving forward even if there is no match (with restricted values)
     LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
