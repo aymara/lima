@@ -156,11 +156,15 @@ LimaStatusCode SentenceBoundariesFinder::process(
       LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
       if (endSentence == lastVx)
       {
-        set<LinguisticGraphVertex> nextVx = getFollowingNodes<set<LinguisticGraphVertex>>(*anagraph, beginSentence);
-        if (nextVx.size() == 1 && *nextVx.begin() == lastVx)
+        set<LinguisticGraphVertex> prevVx = getPrecedingNodes<set<LinguisticGraphVertex>>(*anagraph, lastVx);
+        if (prevVx.size() != 1)
         {
-          break;
+          LERROR << "Many paths lead to the last vertex of the text";
+          throw LimaException();
         }
+        endSentence = *prevVx.begin();
+        sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+        break;
       }
 #ifdef DEBUG_LP
       LDEBUG << "found endSentence at " << endSentence;
