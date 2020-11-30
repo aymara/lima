@@ -651,7 +651,7 @@ void AutomatonString::splitOnChar(const LimaString& str,
 
 
   // skip repeted elements
-  while (str[offset] == c) { offset++; }
+  while (str[offset] == c && offset<offsetEnd) { offset++; }
 
   // split on spaces
   offsetNextChar = findSpecialCharacter(str,c,offset);
@@ -985,7 +985,7 @@ void AutomatonString::parseUnit(const LimaString& str,
     }
     const Gazeteer& gazeteer = *it;
     //if( !gazeteer.hasMultiTermWord() && gazeteer.hasNoCategoryNorTstatus() ) {
-    if( gazeteer.hasNotOnlyWords() ) {
+    if( gazeteer.hasOnlyWords() ) {
 #ifdef DEBUG_LP
       LDEBUG << "AutomatonString: set type(SIMPLE_GAZETEER)";
 #endif

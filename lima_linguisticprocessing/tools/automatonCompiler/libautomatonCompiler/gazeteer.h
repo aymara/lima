@@ -76,13 +76,13 @@ class Gazeteer : public std::vector<LimaString>
                   const vector<Gazeteer>& otherGazeteers,
                   const LimaString& stringBegin=LimaString());
   bool hasMultiTermWord() const { return m_hasMultiTermWord; }
-  bool hasNotOnlyWords() const { return m_hasNotOnlyWords; }
+  bool hasOnlyWords() const { return m_hasOnlyWords; }
   void setHasMultiTermWordFlag() { m_hasMultiTermWord = true; }
 
  private:
   LimaString m_alias;
   bool m_hasMultiTermWord;
-  bool m_hasNotOnlyWords;
+  bool m_hasOnlyWords;
   AutomatonString m_automatonString;
 };
 

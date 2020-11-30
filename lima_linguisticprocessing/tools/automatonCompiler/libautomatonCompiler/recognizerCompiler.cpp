@@ -551,6 +551,9 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 
   // add the trigger to deal with agreement constraints
   LimaString triggerString=gazeteer[0];
+  // triggerString must not contain space (its real value is not important, the important is the 
+  // trigger used to get to the rule in the recognizer)
+  triggerString.remove(QChar(' '));
   if (! keepTrigger) {
     triggerString=CHAR_NOKEEP_OPEN_RE+triggerString+CHAR_NOKEEP_CLOSE_RE;
   }
@@ -575,10 +578,10 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
         << ": multiple trigger (first is "<<Common::Misc::limastring2utf8stdstring(gazeteer[0])<<")";
   int indexRule=reco.addRuleInStorage(r);
 
-  if( (!gazeteer.hasNotOnlyWords()) && gazeteer.hasMultiTermWord() ) {
+  if( (!gazeteer.hasOnlyWords()) && gazeteer.hasMultiTermWord() ) {
     throwError("use of gazetteer with multi-term words and with category or t_status forbidden in trigger: ",m_currentLine);
   }
-  if( gazeteer.hasNotOnlyWords() )
+  if( gazeteer.hasOnlyWords() )
   {
     // const std::vector<LimaString>& gazeteerAsVectorOfString = gazeteer;
     // TransitionUnit* trigger = new GazeteerTransition(gazeteerAsVectorOfString,gazeteerName,keepTrigger); */
