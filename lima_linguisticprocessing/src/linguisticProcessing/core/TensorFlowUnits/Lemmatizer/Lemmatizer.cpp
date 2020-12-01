@@ -79,11 +79,14 @@ namespace Lemmatizer
 
 SimpleFactory<MediaProcessUnit, TensorFlowLemmatizer> tensorflowmorphosyntaxFactory(TENSORFLOWLEMMATIZER_CLASSID);
 
-#define LOG_ERROR_AND_THROW(msg, exc) { \
-                                        TENSORFLOWLEMMATIZERLOGINIT; \
-                                        LERROR << msg; \
-                                        throw exc; \
-                                      }
+// #define LOG_ERROR_AND_THROW(msg, exc) { \
+//                                         TENSORFLOWLEMMATIZERLOGINIT; \
+//                                         QString errorString; \
+//                                         QTextStream qts(&errorString); \
+//                                         qts << __FILE__ << ":" << __LINE__ << ": " << msg ; \
+//                                         LERROR << errorString; \
+//                                         throw exc( errorString ); \
+//                                       }
 
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
   #define LOG_MESSAGE(stream, msg) { stream << msg; }
@@ -351,7 +354,7 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   QString lang_str = MediaticData::single().media(m_language).c_str();
   QString resources_path = MediaticData::single().getResourcesPath().c_str();
 
-  string udlang;
+  std::string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
   if (lang_str != QString("ud") || udlang.find("ud-") == 0)
@@ -370,8 +373,10 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
       }
       else
       {
-        LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::init: Can't parse language id "
-                            << udlang, LimaException());
+        LIMA_EXCEPTION_LOGINIT(
+          TENSORFLOWLEMMATIZERLOGINIT,
+          "TensorFlowLemmatizerPrivate::init: Can't parse language id "
+          << udlang.c_str());
       }
     }
   }
@@ -406,9 +411,10 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   Session* session = 0;
   Status status = NewSession(options, &session);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::init: Can't create TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::init: Can't create TensorFlow session: "
+      << status.ToString().c_str());
   m_session = unique_ptr<Session>(session);
 
   m_model_path = findFileInPaths(resources_path,
@@ -419,23 +425,28 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   // Add the graph to the session
   status = m_session->Create(m_graph_def);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::init: Can't add graph to TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::init: Can't add graph to TensorFlow session: "
+      << status.ToString().c_str());
 }
 
 QJsonObject TensorFlowLemmatizerPrivate::get_json_object(const QJsonObject& root, const QString& child_name)
 {
   QJsonValue value = root.value(child_name);
   if (value.isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::get_json_object can't get value \""
-                        << child_name << "\"", LimaException());
+  {
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::get_json_object can't get value \""
+      << child_name << "\"");
+  }
 
   QJsonObject object = value.toObject();
 
   //if (object.isEmpty())
-  //  LOG_ERROR_AND_THROW("TensorFlowLemmatizer::get_json_object object \""
-  //                      << child_name << "\" is empty", LimaException());
+  //  {LIMA_EXCEPTION_LOGINIT(TENSORFLOWLEMMATIZERLOGINIT, "TensorFlowLemmatizer::get_json_object object \""
+  //                      << child_name << "\" is empty");}
 
   return object;
 }
@@ -444,8 +455,10 @@ QJsonArray TensorFlowLemmatizerPrivate::get_json_array(const QJsonObject& root, 
 {
   QJsonValue value = root.value(child_name);
   if (value.isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::get_json_object can't get value \""
-                        << child_name << "\"", LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::get_json_object can't get value \""
+      << child_name << "\"");
 
   QJsonArray array = value.toArray();
 
@@ -459,28 +472,31 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config can't load config from \""
-                        << config_file_name << "\".",
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT, "TensorFlowLemmatizer::load_config can't load config from \""
+      << config_file_name << "\".");
 
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
   if (data.isNull())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config can't load config from \""
-                        << config_file_name << "\". Invalid Json.",
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config can't load config from \""
+      << config_file_name << "\". Invalid Json.");
   if (!data.isObject())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config can't load config from \""
-                        << config_file_name << "\". Loaded data is not an object",
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config can't load config from \""
+      << config_file_name << "\". Loaded data is not an object");
 
   if (!data.object().value("lemmatize").isUndefined())
   {
     if (!data.object().value("lemmatize").isBool())
     {
-      LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-                          << config_file_name << "\": lemmatize parameter must be bool.",
-                          LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT,
+        "TensorFlowLemmatizer::load_config config file \""
+        << config_file_name << "\": lemmatize parameter must be bool.");
     }
 
     m_lemmatization_required = data.object().value("lemmatize").toBool();
@@ -493,37 +509,43 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
 
   // batch_size
   if (data.object().value("batch_size").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param batch_size.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param batch_size.");
   if (!data.object().value("batch_size").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param batch_size is not a number.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param batch_size is not a number.");
   m_batch_size = data.object().value("batch_size").toInt();
 
   QJsonObject encoder_conf = get_json_object(data.object(), "encoder");
 
   // max_input_len
   if (encoder_conf.value("max_len").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param max_len.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param max_len.");
   if (!encoder_conf.value("max_len").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param max_len is not a number.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param max_len is not a number.");
   m_max_input_len = encoder_conf.value("max_len").toInt();
 
   // ctx_len
   if (encoder_conf.value("ctx_len").isUndefined())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param ctx_len.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param ctx_len.");
   if (!encoder_conf.value("ctx_len").isDouble())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param ctx_len is not a number.",
-      LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param ctx_len is not a number.");
   m_ctx_len = encoder_conf.value("ctx_len").toInt();
 
   // beam_size
@@ -533,17 +555,15 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param beam_size.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param beam_size.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param beam_size.");*/
   }
   else if (!decoder_conf.value("beam_size").isDouble())
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" param beam_size is not a number.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param beam_size is not a number.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param beam_size is not a number.");*/
   }
   else
   {
@@ -571,9 +591,10 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
     {
       if (!feature.value("name_tf").isString())
       {
-        LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-              << config_file_name << "\" param " << f << "/name_tf is not a string.",
-          LimaException());
+        LIMA_EXCEPTION_LOGINIT(
+          TENSORFLOWLEMMATIZERLOGINIT,
+          "TensorFlowLemmatizer::load_config config file \"" << config_file_name
+          << "\" param.c_str() " << f.c_str() << "/name_tf is not a string.");
       }
 
       m_lemmatizer_conf.feature_dicts[f].m_tf_name = feature.value("name_tf").toString().toStdString();
@@ -629,17 +650,15 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param main_alphabet.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param main_alphabet.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param main_alphabet.");*/
   }
   else if (!data.object().value("main_alphabet").isString())
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" param main_alphabet is not a string.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param main_alphabet is not a string.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param main_alphabet is not a string.");*/
   }
   else
   {
@@ -650,17 +669,15 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param special_chars.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" missing param special_chars.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" missing param special_chars.");*/
   }
   else if (!data.object().value("special_chars").isString())
   {
     LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" param special_chars is not a string.");
-    /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
-          << config_file_name << "\" param special_chars is not a string.",
-      LimaException());*/
+    /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
+          << config_file_name << "\" param special_chars is not a string.");*/
   }
   else
   {
@@ -671,8 +688,9 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
 void TensorFlowLemmatizerPrivate::add_linguistic_element(MorphoSyntacticData* msdata, const Token &token) const
 {
   if (msdata == nullptr)
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::add_linguistic_element: msdata == nullptr",
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizerPrivate::add_linguistic_element: msdata == nullptr");
 
   LinguisticElement elem;
   elem.inflectedForm = token.form();
@@ -874,7 +892,9 @@ LimaString TensorFlowLemmatizerPrivate::create_form_key(const LimaString& form,
 
   auto it = features.find("upos");
   if (features.end() == it)
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::create_form_key upos is missing", LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::create_form_key upos is missing");
   key += LimaString::fromStdString(it->second);
 
   for (const auto& kv : m_lemmatizer_conf.feature_dicts)
@@ -957,9 +977,10 @@ void TensorFlowLemmatizerPrivate::lemmatize_with_model(vector<TSentence>& senten
   vector<Tensor> out;
   Status status = m_session->Run(inputs, requested_nodes, {}, &out);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizerPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
+      << status.ToString().c_str());
 
   auto sample_id = out[0].tensor<int, 3>();
 
@@ -1043,9 +1064,10 @@ void TensorFlowLemmatizerPrivate::process_batch(vector<TFormOccurrences*>& forms
   vector<Tensor> out;
   Status status = m_session->Run(inputs, requested_nodes, {}, &out);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizerPrivate::lemmatize: Can't execute \"Run\" in TensorFlow session: "
+      << status.ToString().c_str());
 
   auto sample_id = out[0].tensor<int, 3>();
 
@@ -1177,7 +1199,8 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
     LOG_MESSAGE_WITH_PROLOG(LINFO, "WARNING: unknown feature value for word \"" << token.token->stringForm() << "\".");
     auto it = d.m_c2i.find(L_NONE);
     if (d.m_c2i.end() == it)
-      LOG_ERROR_AND_THROW("ERROR: can\'t find #None LinguisticCode.", LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT, "ERROR: can\'t find #None LinguisticCode.")
     return it->second;
   }
   return it->second;
@@ -1202,7 +1225,8 @@ size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const LinguisticElement
     LOG_MESSAGE_WITH_PROLOG(LINFO, "WARNING: unknown feature value in get_code_for_feature(const LinguisticElement, ...)\".");
     auto it = d.m_c2i.find(L_NONE);
     if (d.m_c2i.end() == it)
-      LOG_ERROR_AND_THROW("ERROR: can\'t find #None LinguisticCode.", LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT, "ERROR: can\'t find #None LinguisticCode.");
     return it->second;
   }
   return it->second;
@@ -1277,7 +1301,9 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const vector<TSentence>
     string name = string("feat_") + kv.first;
     auto feat_it = feat2idx.find(name);
     if (feat2idx.end() == feat_it)
-      LOG_ERROR_AND_THROW("ERROR: something wrong in encode_token_for_lemmatizer_batch.", LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT,
+        "ERROR: something wrong in encode_token_for_lemmatizer_batch.");
     auto t = batch[feat_it->second].second.tensor<int, 1>();
 
     if ("FirstWord" == kv.first)
@@ -1309,6 +1335,7 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const TFormOccurrences*
                                        size_t batch_item_idx,
                                        vector<pair<string, Tensor>>& batch) const
 {
+    LOG_MESSAGE_WITH_PROLOG(LDEBUG, "TensorFlowLemmatizerPrivate::encode_token_for_batch" );
     auto len = batch[0].second.tensor<int, 1>();
     auto input = batch[1].second.tensor<int, 2>();
     auto context = batch[2].second.tensor<int, 2>();
@@ -1350,7 +1377,9 @@ void TensorFlowLemmatizerPrivate::encode_token_for_batch(const TFormOccurrences*
       string name = string("feat_") + kv.first;
       auto feat_it = feat2idx.find(name);
       if (feat2idx.end() == feat_it)
-        LOG_ERROR_AND_THROW("ERROR: something wrong in encode_token_for_lemmatizer_batch.", LimaException());
+        LIMA_EXCEPTION_LOGINIT(
+          TENSORFLOWLEMMATIZERLOGINIT,
+          "ERROR: something wrong in encode_token_for_lemmatizer_batch.");
       auto t = batch[feat_it->second].second.tensor<int, 1>();
 
       if ("FirstWord" == kv.first)
@@ -1516,9 +1545,10 @@ void TensorFlowLemmatizerPrivate::load_graph(const QString& model_path, GraphDef
                                   model_path.toStdString(),
                                   graph_def);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizerPrivate::load_graph error reading binary proto:"
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizerPrivate::load_graph error reading binary proto:"
+      << status.ToString().c_str());
 }
 
 void TensorFlowLemmatizerPrivate::load_cache(const QString& file_name)
@@ -1528,8 +1558,10 @@ void TensorFlowLemmatizerPrivate::load_cache(const QString& file_name)
   QFile file(file_name);
 
   if (!file.open(QIODevice::ReadOnly))
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't load cache from "
-                        << file_name << ".", LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::load_cache can't load cache from "
+      << file_name << ".");
 
   QTextStream in(&file);
   while (!in.atEnd())
@@ -1537,9 +1569,10 @@ void TensorFlowLemmatizerPrivate::load_cache(const QString& file_name)
     QString line = in.readLine();
     QStringList fields = line.split('\t');
     if (fields.size() != 3)
-      LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line "
-                          << line << " from file " << file_name << ".",
-                          LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT,
+        "TensorFlowLemmatizer::load_cache can't parse line "
+        << line << " from file " << file_name << ".");
 
     if (fields[2].size() == 0)
     {
@@ -1554,9 +1587,10 @@ void TensorFlowLemmatizerPrivate::load_cache(const QString& file_name)
     {
       QStringList kv = features[i].split("=");
       if (i > 0 && kv.size() != 2)
-        LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_cache can't parse line "
-                            << line << " from file " << file_name << ".",
-                            LimaException());
+        LIMA_EXCEPTION_LOGINIT(
+          TENSORFLOWLEMMATIZERLOGINIT,
+          "TensorFlowLemmatizer::load_cache can't parse line "
+          << line << " from file " << file_name << ".");
 
       if (0 == i && 1 == kv.size())
         features_map["upos"] = features[i].toStdString();
@@ -1578,8 +1612,10 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
   QFile file(file_name);
 
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    LOG_ERROR_AND_THROW("TensorFlowLemmatizer::save_cache can't save cache from "
-                        << file_name << ".",   LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TENSORFLOWLEMMATIZERLOGINIT,
+      "TensorFlowLemmatizer::save_cache can't save cache from "
+      << file_name << ".");
 
   QTextStream out(&file);
   out.setCodec("UTF-8");

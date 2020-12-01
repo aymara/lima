@@ -82,9 +82,8 @@ void DictionaryData::loadBinaryFile(const std::string& file)
   FILE *dataFile = fopen(file.c_str(), "rb");
   if (dataFile == NULL)
   {
-    std::ostringstream stro (std::ios::in | std::ios::out);
-    stro << "DictionaryData::loadBinaryFile error cannot open data file " << file;
-    throw( Lima::IncompleteResources(stro.str()) );
+    LIMA_EXCEPTION( "DictionaryData::loadBinaryFile error cannot open data file"
+                    << file.c_str() );
   }
   uint64_t readSize = fread(m_data, 1, dataSize, dataFile);        //_dataSize = max
   fclose(dataFile);

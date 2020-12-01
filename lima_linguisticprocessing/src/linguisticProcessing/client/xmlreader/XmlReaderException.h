@@ -1,6 +1,6 @@
 /**
- *   Copyright (C) 2007 by CEA - LIST- LIC2M                               
- *                                             
+ *   Copyright (C) 2007 by CEA - LIST- LIC2M
+ *
  * @file        .h
  * @author      Claire Mouton (Claire.Mouton@cea.fr) \n
  *              Copyright (c) 2007 by CEA
@@ -14,7 +14,8 @@ namespace Lima {
 
       class XMLREADERCLIENT_EXPORT XmlReaderException : public Lima::LimaException  {
             public:
-                XmlReaderException() : Lima::LimaException() {}
+                explicit XmlReaderException(const std::string& mess = "") :
+                  Lima::LimaException(mess) {}
         };
 
     } // XmlReader

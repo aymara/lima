@@ -209,7 +209,7 @@ void DefaultProperties::readDefaultsFromFile(const std::string& filename)
 #endif
       if (props == L_NONE)
       {
-        throw LimaException("Error: props == 0");
+        LIMA_EXCEPTION("Error: props == 0");
       }
       m_defaults[Common::Misc::utf8stdstring2limastring(type)].push_back(props);
     }

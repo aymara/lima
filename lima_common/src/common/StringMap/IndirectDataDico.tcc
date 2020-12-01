@@ -95,12 +95,10 @@ void IndirectDataDico<accessMethod, contentElement>::parseData( const std::strin
   uint32_t readSize = 0;
   if (dataFile == NULL)
   {
-    std::ostringstream stro (std::ios::in | std::ios::out);
-    stro << "IndirectDataDico::parseData error cannot open data file " << dataFileName;
-#ifdef DEBUG_CD
-    LERROR << stro.str();
-#endif
-    throw( Lima::IncompleteResources(stro.str()) );
+    LIMA_EXCEPTION_LOGINIT(
+      STRINGMAPLOGINIT,
+      "IndirectDataDico::parseData error cannot open data file "
+      << dataFileName.c_str());
   }
 
   //    fseek(dataFile, DATA_HEADER_SIZE, SEEK_SET);            // skip header

@@ -139,17 +139,14 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   QFile file(filename.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
-    LERROR << "An error occurred  Error: Cannot open" << filename ;
-    throw std::runtime_error(
-      std::string("PropertyCodeManager::readFromXmlFile Unable to open ")
-                  + filename);
+    LIMA_EXCEPTION("PropertyCodeManager::readFromXmlFile Unable to open "
+                  << filename.c_str());
   }
   if (!parser->parse( QXmlInputSource(&file)))
   {
-    LERROR << "PropertyCodeManager::readFromXmlFile An error occurred  Error:"
-           << parser->errorHandler()->errorString() ;
-    throw XMLException(std::string("Error while parsing " + filename + " : "
-                + parser->errorHandler()->errorString().toUtf8().constData()));
+    LIMA_EXCEPTION_SELECT("Error while parsing " << filename.c_str()
+                          << " : " << parser->errorHandler()->errorString(),
+                          XMLException);
   }
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";

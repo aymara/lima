@@ -256,10 +256,26 @@ BOOST_STRONG_TYPEDEF(char, NoParameters);
 
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
 
+/**
+ * The main LIMA exception class. Throw this exception to signal a problem with
+ * a precise associated message.
+ *
+ * Instead of directly throwing this exception, prefer using one of the
+ * @ref LIMA_EXCEPTION macros to automatically include location information useful
+ * for debugging.
+ */
 class LimaException : public std::exception
 {
 public:
-    LimaException(const std::string& message = "") :
+    explicit LimaException(const char* message = "") :
+        std::exception(), m_reason(message)
+    {
+    }
+    explicit LimaException(const QString& message) :
+        std::exception(), m_reason(message.toStdString())
+    {
+    }
+    explicit LimaException(const std::string& message) :
         std::exception(), m_reason(message)
     {
     }
@@ -270,23 +286,99 @@ public:
         return m_reason.c_str();
     }
 protected:
-  LimaException& operator=(const LimaException&) {return  *this;}
+  LimaException& operator=(const LimaException& e)
+  {
+    m_reason = e.m_reason;
+    return  *this;
+  }
   std::string m_reason;
 };
 
+/**
+ * This macro writes the message @ref X to a previously configured error stream
+ * before throwing a LimaException with the same message
+ */
+#define LIMA_EXCEPTION(X) { \
+    QString errorString; \
+    QTextStream qts(&errorString); \
+    qts << __FILE__ << ":" << __LINE__ << ": " << X ; \
+    LERROR << errorString; \
+    throw LimaException(errorString); \
+}
+
+/**
+ * This macro writes the message @ref X to a previously configured error stream
+ * before throwing a @ref Y exception (@ref Y is an exception class name) with
+ * the same message.
+ */
+#define LIMA_EXCEPTION_SELECT(X,Y) { \
+    QString errorString; \
+    QTextStream qts(&errorString); \
+    qts << __FILE__ << ":" << __LINE__ << ": " << X ; \
+    LERROR << errorString; \
+    throw Y(errorString); \
+}
+
+/**
+ * This macro writes the message @ref Y to the error stream configured by its
+ * first parameter @ref X, before throwing LimaException with the same message.
+ */
+#define LIMA_EXCEPTION_LOGINIT(X,Y) { \
+    X ; \
+    QString errorString; \
+    QTextStream qts(&errorString); \
+    qts << __FILE__ << ":" << __LINE__ << ": " << Y ; \
+    LERROR << errorString; \
+    throw Lima::LimaException(errorString); \
+}
+
+/**
+ * This macro writes the message @ref Y to the error stream configured by its
+ * first parameter @ref X, before throwing a @ref Z exception (@ref Z is an
+ * exception class name) with the same message.
+ */
+#define LIMA_EXCEPTION_SELECT_LOGINIT(X,Y,Z) { \
+    X ; \
+    QString errorString; \
+    QTextStream qts(&errorString); \
+    qts << __FILE__ << ":" << __LINE__ << ": " << Y ; \
+    LERROR << errorString; \
+    throw Z(errorString); \
+}
+
+/**
+ * Use this exception to signal an error in one of the configuration files
+ */
 class InvalidConfiguration : public LimaException
 {
 public:
-    InvalidConfiguration(const std::string& message = "") :
+    explicit InvalidConfiguration(const char* message = "") :
+        LimaException(std::string(message))
+    {
+    }
+    explicit InvalidConfiguration(const std::string& message) :
         LimaException(message)
     {
     }
+    explicit InvalidConfiguration(const QString& message) :
+        LimaException(message)
+    {
+    }
+    virtual ~InvalidConfiguration() throw() = default;
     InvalidConfiguration(const InvalidConfiguration&) = default;
 
-private:
-  InvalidConfiguration& operator=(const InvalidConfiguration&) {return  *this;}
+protected:
+  InvalidConfiguration& operator=(const InvalidConfiguration& e)
+  {
+    m_reason = e.m_reason;
+    return  *this;
+  }
 };
 
+/**
+ * Use this exception to signal that a media is used which has not been
+ * initialized.
+ */
 class MediaNotInitialized : public LimaException
 {
 public :
@@ -307,7 +399,14 @@ public :
       }
     }
 
-    MediaNotInitialized(const std::string& media) :
+    explicit MediaNotInitialized(const QString& media) :
+        LimaException(media),
+        m_medId(0),
+        m_med(media.toStdString()),
+        m_num(false)
+    {
+    }
+    explicit MediaNotInitialized(const std::string& media) :
         LimaException(media),
         m_medId(0),
         m_med(media),
@@ -335,51 +434,18 @@ private:
   bool m_num;
 };
 
-class LanguageNotInitialized : public LimaException
-{
-public :
-    LanguageNotInitialized(MediaId langId) :
-        LimaException(),
-        m_langId(langId),
-        m_lang(),
-        m_num(true)
-    {
-        if (m_num) {
-            std::ostringstream oo(m_reason);
-            oo << "uninitialized language " << (int)m_langId;
-        } else {
-            m_reason = (std::string("uninitialized language ")+m_lang).c_str();
-        }
-
-    }
-    LanguageNotInitialized(const std::string& language) :
-        LimaException(),
-        m_langId(0),
-        m_lang(language),
-        m_num(false)
-    {
-        if (m_num) {
-            std::ostringstream oo(m_reason);
-            oo << "uninitialized language " << (int)m_langId;
-        } else {
-            m_reason = (std::string("uninitialized language ")+m_lang).c_str();
-        }
-
-    }
-    LanguageNotInitialized(const LanguageNotInitialized&)=default;
-    virtual ~LanguageNotInitialized() throw() {};
-
-private:
-  LanguageNotInitialized& operator=(const LanguageNotInitialized&);
-
-  MediaId m_langId;
-  std::string  m_lang;
-  bool m_num;
-};
-
+/**
+ * Use this exception to signal the used of a wrongly initialized LIMA
+ * dictionary.
+ */
 class AccessByStringNotInitialized : public LimaException
 {
 public :
+    AccessByStringNotInitialized(const QString& reason) :
+        LimaException(reason)
+    {
+        m_reason = std::string("Fsa not initialized because of ") + reason.toStdString();
+    }
     AccessByStringNotInitialized(const std::string& reason) :
         LimaException(reason)
     {
@@ -392,9 +458,16 @@ private:
   AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&);
 };
 
+/**
+ * Use this exception to signal a wrong access to a LIMA dictionary.
+ */
 class AccessByStringOutOfRange : public LimaException
 {
 public :
+    AccessByStringOutOfRange(const QString& reason) : LimaException()
+    {
+      m_reason = std::string("parameter out of range ") + reason.toStdString();
+    }
     AccessByStringOutOfRange(const std::string& reason) : LimaException()
     {
       m_reason = std::string("parameter out of range ") + reason;
@@ -406,24 +479,23 @@ private:
   AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&);
 };
 
-class IncompleteResources : public LimaException
-{
-public :
-    IncompleteResources(const std::string& reason) : LimaException()
-    {
-      m_reason = std::string("incomplete ressources:  ") + reason;
-    }
-    IncompleteResources(const IncompleteResources&)=default;
-    virtual ~IncompleteResources() throw() {}
-
-private:
-  IncompleteResources& operator=(const IncompleteResources&);
-};
-
+/**
+ * Throw this exception when encountering problems with XML files opening or parsing
+ */
 class XMLException : public Lima::LimaException
 {
 public:
-  explicit XMLException(const std::string& message = "") :
+  explicit XMLException(const char* message="") :
+      Lima::LimaException()
+  {
+    m_reason = std::string("XMLException: ") + message;
+  }
+  explicit XMLException(const QString& message) :
+      Lima::LimaException()
+  {
+    m_reason = std::string("XMLException: ") + message.toStdString();
+  }
+  explicit XMLException(const std::string& message) :
       Lima::LimaException()
   {
     m_reason = std::string("XMLException: ") + message;

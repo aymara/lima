@@ -217,8 +217,8 @@ int run(int argc,char** argv)
        it++)
   {
     std::cout << "process tests in " << *it << std::endl;
-    try
-    {
+//     try
+//     {
       QFile file(it->c_str());
       if (!file.open(QIODevice::ReadOnly))
       {
@@ -230,22 +230,22 @@ int run(int argc,char** argv)
         std::cerr << "Error parsing " << *it << " : " << parser.errorHandler()->errorString().toUtf8().constData() << std::endl;
         return 1;
       }
-    }
-    catch (Lima::LimaException& e)
-    {
-      std::cerr << __FILE__ << ", line " << __LINE__ << ": caught LimaException : " << std::endl << e.what() << std::endl;
-        return 1;
-    }
-    catch (std::logic_error& e)
-    {
-      std::cerr << __FILE__ << ", line " << __LINE__ << ": caught logic_error : " << std::endl << e.what() << std::endl;
-        return 1;
-    }
-    catch (std::runtime_error& e)
-    {
-      std::cerr << __FILE__ << ", line " << __LINE__ << ": caught runtime_error : " << std::endl << e.what() << std::endl;
-        return 1;
-    }
+//     }
+//     catch (Lima::LimaException& e)
+//     {
+//       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught LimaException : " << std::endl << e.what() << std::endl;
+//         return 1;
+//     }
+//     catch (std::logic_error& e)
+//     {
+//       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught logic_error : " << std::endl << e.what() << std::endl;
+//         return 1;
+//     }
+//     catch (std::runtime_error& e)
+//     {
+//       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught runtime_error : " << std::endl << e.what() << std::endl;
+//         return 1;
+//     }
 
     TestCasesHandler::TestReport resTotal;
     std::cout << std::endl;

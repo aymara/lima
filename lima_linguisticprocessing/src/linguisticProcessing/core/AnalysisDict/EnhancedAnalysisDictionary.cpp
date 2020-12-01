@@ -52,9 +52,9 @@ SimpleFactory<AbstractResource,EnhancedAnalysisDictionary> enhancedAnalysisDicti
 class EnhancedAnalysisDictionaryPrivate
 {
   friend class EnhancedAnalysisDictionary;
-  
+
   EnhancedAnalysisDictionaryPrivate();
-  
+
   EnhancedAnalysisDictionaryPrivate(
     FsaStringsPool* sp,
     Lima::Common::AbstractAccessByString* access,
@@ -104,10 +104,9 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(const QString& dataFilePa
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary";
   if (!connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString))))
   {
-    LERROR << "Unable to connect resourceFileChanged";
-    throw LimaException("Unable to connect resourceFileChanged");
+    LIMA_EXCEPTION("Unable to connect resourceFileChanged");
   }
-  
+
   if (!dataFilePath.isEmpty())
   {
     resourceFileWatcher().addPath(dataFilePath);
@@ -126,8 +125,7 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
 //   LDEBUG  << "EnhancedAnalysisDictionary::EnhancedAnalysisDictionary" << dataFile.c_str();
   if   (!connect(this,SIGNAL(resourceFileChanged(QString)),this,SLOT(dictionaryFileChanged(QString))))
   {
-    LERROR << "Unable to connect resourceFileChanged";
-    throw LimaException("Unable to connect resourceFileChanged");
+    LIMA_EXCEPTION("Unable to connect resourceFileChanged");
   }
   resourceFileWatcher().addPath(QString::fromUtf8(dataFile.c_str()));
   QWriteLocker locker(&m_d->m_lock);
@@ -155,8 +153,7 @@ void EnhancedAnalysisDictionary::init(
     const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
     if (!connect(aar,SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),this,SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
     {
-      LERROR << "Unable to connect accessFileReloaded";
-      throw LimaException("Unable to connect accessFileReloaded");
+      LIMA_EXCEPTION("Unable to connect accessFileReloaded");
     }
     m_d->m_isMainKeys=aar->isMainKeys();
     m_d->m_access=aar->getAccessByString();
@@ -193,8 +190,8 @@ void EnhancedAnalysisDictionary::slotAccessFileReloaded(Common::AbstractAccessBy
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
 {
   ANALYSISDICTLOGINIT;
-  // Check if the file exists as, when a file is replaced, dictionaryFileChanged can be triggered 
-  // two times, when it is first suppressed and when the new version is available. One should not 
+  // Check if the file exists as, when a file is replaced, dictionaryFileChanged can be triggered
+  // two times, when it is first suppressed and when the new version is available. One should not
   // try to load the missing file
   if (QFileInfo::exists(path))
   {
@@ -245,12 +242,12 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
 //    LDEBUG << "return empty : index out of range";
     return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
   }
-  
+
   StringsPoolIndex strId=wordId;
   if (!m_d->m_isMainKeys) {
     strId = (*m_d->m_sp)[m_d->m_access->getSpelling(wordId)];
   }
- 
+
   unsigned char* p=m_d->m_dicoData->getEntryAddr(wordId);
   uint64_t read=DictionaryData::readCodedInt(p);
   bool final=false;

@@ -138,8 +138,7 @@ ConstraintWithRelationComplement::ConstraintWithRelationComplement(
       if (m_relation == 0)
       {
         SALOGINIT;
-        LERROR << "undefined syntactic relation [" << str << "]";
-        throw LimaException();
+        LIMA_EXCEPTION( "undefined syntactic relation [" << str.c_str() << "]" );
       }
     }
   }
@@ -627,8 +626,7 @@ CreateRelationWithRelated::CreateRelationWithRelated(
   if (i == std::string::npos)
   {
     SAPLOGINIT;
-    LERROR << "Error: CreateRelationWithRelated complement must have two types";
-    throw LimaException();
+    LIMA_EXCEPTION( "Error: CreateRelationWithRelated complement must have two types");
   }
   m_relationToCreate=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(str,i+1));
 
@@ -776,9 +774,7 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   if (complementList.size() != 3)
   {
     SAPLOGINIT;
-    LERROR << "CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements while it is:" << complement;
-    throw LimaException("CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements");
-
+    LIMA_EXCEPTION( "CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements while it is:" << complement );
   }
   m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(complementList[0].toUtf8().constData());
 

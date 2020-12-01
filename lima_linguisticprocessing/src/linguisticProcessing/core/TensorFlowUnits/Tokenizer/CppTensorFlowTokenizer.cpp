@@ -395,9 +395,7 @@ void CppTokenizerPrivate::init(const QString& corpus,
   config.set_use_per_session_threads(false);
   auto status = NewSession(options, &m_session);
   if (!status.ok()) {
-    TOKENIZERLOGINIT;
-    LERROR << status.ToString();
-    throw LimaException();
+    LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, status.ToString() );
   }
 
 //   QString frozenFile = Common::Misc::findFileInPaths(
@@ -412,10 +410,9 @@ void CppTokenizerPrivate::init(const QString& corpus,
   status = m_session->Create(m_graph);
   if (!status.ok())
   {
-    TOKENIZERLOGINIT;
-    LERROR << "CppTokenizerPrivate::init error creating graph:"
-            << status.ToString();
-    throw LimaException();
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppTokenizerPrivate::init error creating graph:" << status.ToString() );
   }
 }
 
@@ -431,9 +428,10 @@ void CppTokenizerPrivate::load_graph(const QString& frozen_graph_filename)
                               &m_graph);
   if (!status.ok())
   {
-    TOKENIZERLOGINIT;
-    LERROR << "CppTokenizerPrivate::load_graph error reading binary proto:" << status.ToString();
-    throw LimaException();
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppTokenizerPrivate::load_graph error reading binary proto:"
+      << status.ToString() );
   }
 }
 
@@ -454,9 +452,10 @@ CppTokenizerPrivate::load_embeddings_dictionary()
   QFile metadata(metadataFile);
   if (!metadata.open(QFile::ReadOnly))
   {
-    TOKENIZERLOGINIT;
-    LERROR << "CppTokenizerPrivate::load_embeddings_dictionary unable to open metadata file" << metadata.fileName();
-    throw LimaException();
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppTokenizerPrivate::load_embeddings_dictionary unable to open metadata file"
+      << metadata.fileName() );
   }
   // dictionary - map of chars(strings) to their codes(integers)
   // reverse_dictionary - maps codes(integers) to chars(strings)

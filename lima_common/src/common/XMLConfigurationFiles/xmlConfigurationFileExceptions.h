@@ -44,14 +44,12 @@ namespace Lima {
       public:
         //! @brief defaut constructor
 
-        //! should not be used since it does not return the error message
-        XMLConfigurationFileException() : LimaException() {}
-
         //! @brief constructor with the error message
-        XMLConfigurationFileException ( const std::string &mess ) : LimaException ( mess ) {}
+        explicit XMLConfigurationFileException ( const std::string &mess = "") : LimaException ( mess ) {}
 
       private:
-        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) {return *this;}
+        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) = delete;
+        XMLConfigurationFileException(const XMLConfigurationFileException&) = delete;
       };
 
       //! @brief return a message when a 'module' is not found

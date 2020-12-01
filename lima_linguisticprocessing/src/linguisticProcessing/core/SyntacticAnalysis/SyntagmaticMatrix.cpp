@@ -76,11 +76,11 @@ void SyntagmDefStruct::init(
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   m_nominalMatrix.language(m_language);
   m_verbalMatrix.language(m_language);
-  
+
   try {
     QString matricesFileName = findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("file").c_str());
     loadFromFile(matricesFileName.toUtf8().constData());
-  
+
   } catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LERROR << "no parameter 'file' in SyntagmDefinitionStructure group for language " << (int) m_language << " !";
@@ -111,8 +111,8 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
 //   parser.setDoNamespaces(false);
 //   parser.setDoSchema(false);
 //   parser.setValidationSchemaFullChecking(false);
-  
-  
+
+
   //
   //  Create the handler object and install it as the document and error
   //  handler for the parser-> Then parse the file and catch any exceptions
@@ -124,14 +124,12 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
   QFile file(fileName.c_str());
   if (!file.open(QFile::ReadOnly))
   {
-    XMLCFGLOGINIT;
-    LERROR << "Error opening " << fileName.c_str();
-    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to open ") + fileName);
+    LIMA_EXCEPTION_SELECT_LOGINIT(XMLCFGLOGINIT, "Error opening " << fileName.c_str(), XMLException);
   }
   if (!parser.parse( QXmlInputSource(&file)))
   {
-    LERROR << "Error parsing " << fileName.c_str();
-    throw XMLException(std::string("SyntagmDefStruct::loadFromFile Unable to parse ") + fileName + " : " + parser.errorHandler()->errorString().toUtf8().constData());
+    LIMA_EXCEPTION_SELECT("SyntagmDefStruct::loadFromFile Unable to parse " << fileName.c_str() << " : " << parser.errorHandler()->errorString(),
+                          XMLException);
   }
 }
 
@@ -252,18 +250,18 @@ bool SyntagmDefStruct::belongsToNominalMatrix(const MorphoSyntacticData* src, co
   SALOGINIT;
   SyntagmaticMatrixFilter::const_iterator it, it_end;
   it = m_nominalMatrix.begin();
-  it_end = m_nominalMatrix.end(); 
+  it_end = m_nominalMatrix.end();
   for (; it != it_end; it++)
   {
     if ( (*it).first == src )
-    { 
+    {
       LDEBUG << "Found a row for " << src << " : " << ((*it).first);
       const SyntagmaticMatrixRow& row = (*it).second;
       SyntagmaticMatrixRow::iterator itRow = row.find(dest);
       LDEBUG << "Searching " << dest << " in " << row;
-      if (itRow != row.end()) 
+      if (itRow != row.end())
       {
-        LDEBUG << "Cell OK found: " << (*itRow); 
+        LDEBUG << "Cell OK found: " << (*itRow);
         return true;
       }
     }
@@ -304,7 +302,7 @@ bool SyntagmDefStruct::belongsToVerbalMatrix(const MorphoSyntacticData* src, con
   auto ends = std::make_pair(m_verbalMatrix.filters().begin(),
                              m_verbalMatrix.filters().end());
 // @todo this equal_range does not work. See why.
-//      std::equal_range(m_verbalMatrix.begin(),m_verbalMatrix.end(), 
+//      std::equal_range(m_verbalMatrix.begin(),m_verbalMatrix.end(),
 //          TokenFilter(src), tf_dwless());
   for (; ends.first != ends.second; (ends.first)++)
   {
@@ -318,7 +316,7 @@ bool SyntagmDefStruct::belongsToVerbalMatrix(const MorphoSyntacticData* src, con
   return false;
 }
 
-/** Used to search a DicoWord inside syntagmatic structure. y is assured to 
+/** Used to search a DicoWord inside syntagmatic structure. y is assured to
 * be constructed from a MorphoSyntacticData */
 bool tf_dwless::operator()(const TokenFilter& x, const TokenFilter& y) const
 {
@@ -329,7 +327,7 @@ bool tf_dwless::operator()(const TokenFilter& x, const TokenFilter& y) const
         std::set< StringsPoolIndex >::const_iterator itx, ity, itx_end, ity_end;
         boost::tie(itx, itx_end) = x.attributesIterators();
         boost::tie(ity, ity_end) = y.attributesIterators();
-/*        for (;ity!=ity_end;ity++) 
+/*        for (;ity!=ity_end;ity++)
         {
           if (x.attributes().find( *ity ) != itx_end)
           {
@@ -381,7 +379,7 @@ bool tf_dwless::operator()(const TokenFilter& x, const TokenFilter& y) const
     return ( categFound );
 }
 
-/** Used to search a DicoWord inside syntagmatic structure. y is assured to 
+/** Used to search a DicoWord inside syntagmatic structure. y is assured to
 * be constructed from a MorphoSyntacticData */
 bool tf_dwless::operator()(const TokenFilter& x, const std::pair<TokenFilter,SyntagmaticMatrixRow>& p) const
 {
@@ -393,7 +391,7 @@ bool tf_dwless::operator()(const TokenFilter& x, const std::pair<TokenFilter,Syn
         std::set< StringsPoolIndex >::const_iterator itx, ity, itx_end, ity_end;
         boost::tie(itx, itx_end) = x.attributesIterators();
         boost::tie(ity, ity_end) = y.attributesIterators();
-/*        for (;ity!=ity_end;ity++) 
+/*        for (;ity!=ity_end;ity++)
         {
           if (x.attributes().find( *ity ) != itx_end)
           {
@@ -445,7 +443,7 @@ bool tf_dwless::operator()(const TokenFilter& x, const std::pair<TokenFilter,Syn
     return ( categFound );
 }
 
-/** Used to search a DicoWord inside syntagmatic structure. y is assured to 
+/** Used to search a DicoWord inside syntagmatic structure. y is assured to
 * be constructed from a MorphoSyntacticData */
 bool tf_dwless::operator()(const std::pair<TokenFilter,SyntagmaticMatrixRow>& p, const TokenFilter& y) const
 {
@@ -456,7 +454,7 @@ bool tf_dwless::operator()(const std::pair<TokenFilter,SyntagmaticMatrixRow>& p,
         std::set< StringsPoolIndex >::const_iterator itx, ity, itx_end, ity_end;
         boost::tie(itx, itx_end) = x.attributesIterators();
         boost::tie(ity, ity_end) = y.attributesIterators();
-/*        for (;ity!=ity_end;ity++) 
+/*        for (;ity!=ity_end;ity++)
         {
           if (x.attributes().find( *ity ) != itx_end)
           {

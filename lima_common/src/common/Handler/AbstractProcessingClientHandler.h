@@ -49,8 +49,8 @@ class AbstractProcessingClientHandler
       if (m_clients.find(clientId)==m_clients.end())
       {
         ABSTRACTPROCESSINGCLIENTLOGINIT;
-        LERROR << "AbstarctProcessingHandler::no Client for clientId" << clientId ;
-        throw LimaException();
+        LIMA_EXCEPTION("AbstarctProcessingHandler::no Client for clientId"
+                       << clientId.c_str());
       }
       return m_clients[clientId];
     }

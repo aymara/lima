@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2007-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,21 +17,17 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       DoubleAccessObjectToIdMap.tcc
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Tue Jan 23 2007
- * copyright   Copyright (C) 2007-2012 by CEA LIST
- * 
  ***********************************************************************/
 
 //**********************************************************************
-// constructors and desctructor 
+// constructors and desctructor
 
 template <typename Object, typename Id>
 DoubleAccessObjectToIdMap<Object,Id>::DoubleAccessObjectToIdMap():
-m_accessMap(),
-m_reverseAccessMap()
+    m_accessMap(),
+    m_reverseAccessMap()
 {
   // keep the id 0 for null object
   m_reverseAccessMap.push_back( static_cast<Object*>(0) );
@@ -41,28 +37,30 @@ template <typename Object, typename Id>
 DoubleAccessObjectToIdMap<Object,Id>::~DoubleAccessObjectToIdMap()
 {
   // delete pointers only in map (pointers in vectors points on same objects)
-  for (typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator it=m_accessMap.begin(),
-         it_end=m_accessMap.end(); it!=it_end; it++) {
-    if ((*it).first!=0) {
+  for (auto it = m_accessMap.begin(), it_end = m_accessMap.end();
+       it!=it_end; it++)
+  {
+    if ((*it).first!=0)
+    {
       delete (*it).first;
     }
   }
 }
 
 //**********************************************************************
-// template member functions 
+// template member functions
 
 template <typename Object, typename Id>
 const Id& DoubleAccessObjectToIdMap<Object,Id>::
 get(const Object& val) const
 {
-  typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::const_iterator it=m_accessMap.find(&val);
-  if (it==m_accessMap.end()) {
-    throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::get(val) parameter not in map.");
+  auto it = m_accessMap.find(&val);
+  if (it == m_accessMap.end())
+  {
+    LDATALOGINIT;
+    LIMA_EXCEPTION("DoubleAccessObjectToIdMap<Object,Id>::get(val) parameter not in map.");
   }
-  else {
-    return (*it).second;
-  }
+  return (*it).second;
 }
 
 template <typename Object, typename Id>
@@ -70,12 +68,12 @@ const Object& DoubleAccessObjectToIdMap<Object,Id>::
 get(const Id& id) const
 {
   size_t i=(size_t) id;
-  if (i >= m_reverseAccessMap.size()) {
-    throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::get(id) parameter not in reverse map.");
+  if (i >= m_reverseAccessMap.size())
+  {
+    LDATALOGINIT;
+    LIMA_EXCEPTION("DoubleAccessObjectToIdMap<Object,Id>::get(id) parameter not in reverse map.");
   }
-  else {
-    return *(m_reverseAccessMap[i]);
-  }
+  return *(m_reverseAccessMap[i]);
 }
 
 template <typename Object, typename Id>
@@ -97,30 +95,35 @@ operator[](const Object& val)
          << val
          << "(" << &val << ")]";
 #endif
-    typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator it=m_accessMap.find(&val);
-  if (it==m_accessMap.end()) {
-    // insert it 
+  auto it = m_accessMap.find(&val);
+  if (it == m_accessMap.end())
+  {
+    // insert it
 #ifdef DEBUG_CD
     LDEBUG << "DoubleAccessObjectToIdMap: new element: insert it";
 #endif
     Id id= static_cast<Id>(m_reverseAccessMap.size());
-    std::pair<typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator, bool>
-      ret=m_accessMap.insert(std::make_pair(new Object(val),id));
-    if (ret.second) {
-      typename DoubleAccessObjectToIdMap<Object,Id>::AccessMap::iterator inserted=ret.first;
+    auto ret = m_accessMap.insert(std::make_pair(new Object(val),id));
+    if (ret.second)
+    {
+      auto inserted = ret.first;
       m_reverseAccessMap.push_back((*inserted).first);
 #ifdef DEBUG_CD
-      LDEBUG << "DoubleAccessObjectToIdMap: new element: return "<< (*inserted).second;
+      LDEBUG << "DoubleAccessObjectToIdMap: new element: return "
+              << (*inserted).second;
 #endif
       return (*inserted).second;
     }
-    else {
-      throw LimaException("DoubleAccessObjectToIdMap<Object,Id>::operator[](val) parameter not in map");
+    else
+    {
+      LDATALOGINIT;
+      LIMA_EXCEPTION("DoubleAccessObjectToIdMap<Object,Id>::operator[](val) parameter not in map");
     }
   }
   else {
 #ifdef DEBUG_CD
-    LDEBUG << "DoubleAccessObjectToIdMap: already inserted element: return "<< (*it).second;
+    LDEBUG << "DoubleAccessObjectToIdMap: already inserted element: return "
+            << (*it).second;
 #endif
     return (*it).second;
   }
@@ -133,66 +136,3 @@ Object& DoubleAccessObjectToIdMap<Object,Id>::operator[](const Id& id)
   return get(id);
 }
 
-// DoubleAccessObjectToIdMap iterator 
- 
-/*template <typename Object, typename Id>
-class DoubleAccessObjectToIdMap<Object,Id>::iterator : 
-public std::pair<DoubleAccessObjectToIdMap<Object,Id>::AccessMap::const_iterator,std::vector<Object*>::const_iterator>
-{
- public:
-  iterator(DoubleAccessObjectToIdMap<Object,Id>::AccessMap::const_iterator it1,
-           std::vector<Object*>::const_iterator it2):
-    std::pair<DoubleAccessObjectToIdMap<Object,Id>::AccessMap::const_iterator,
-              std::vector<Object*>::const_iterator>(it1,it2)
-  {}
-  
-  bool operator==(const DoubleAccessObjectToIdMap::iterator& other) const 
-    { return (first==other.first || second==other.second) }
-  bool operator!=(const DoubleAccessObjectToIdMap::iterator& other) const 
-    { return (first!=other.first && second!=other.second) }
-  
-  iterator& operator++() {   //prefix ++
-    first++;
-    second++;
-    return *this;
-  }
-  
-  iterator operator++(int) { //postfix++
-    iterator it = *this;
-    ++(*this);
-    return it;
-  }
-  
-  const Object& getObject() {
-    return *((*first).first);
-  }
-  
-  const Id& getId() {
-    return (*second);
-  }
-};
-
-template <typename Object, typename Id>
-DoubleAccessObjectToIdMap<Object,Id>::iterator 
-DoubleAccessObjectToIdMap<Object,Id>::find(const Object& val);
-{
-  return DoubleAccessObjectToIdMap<Object,Id>::iterator(m_accessMap.find(&val),
-                                                 m_reverseAccessMap.end());
-}
-
-template <typename Object, typename Id>
-DoubleAccessObjectToIdMap<Object,Id>::iterator 
-DoubleAccessObjectToIdMap<Object,Id>::find(const Id& val);
-{
-  return DoubleAccessObjectToIdMap<Object,Id>::iterator(m_accessMap.end(),
-                                                        m_reverseAccessMap.find(val));
-}
-
-template <typename Object, typename Id>
-DoubleAccessObjectToIdMap<Object,Id>::iterator 
-begin() { return iterator(m_accessMap.begin(),m_reverseAccessMap.begin()); }
-
-template <typename Object, typename Id>
-DoubleAccessObjectToIdMap<Object,Id>::iterator 
-end() { return iterator(m_accessMap.end(),m_reverseAccessMap.end()); }
-*/

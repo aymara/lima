@@ -5,9 +5,9 @@
  * @date       Mon Apr 7 2014
  * copyright   Copyright (C) 2014 by CEA LIST
  * Project     lima_xmlprocessings
- * 
+ *
  * Parser for XML representation of Amose analysed multimedia documents
- * 
+ *
  ***********************************************************************/
 
 #include "MultXmlReader.h"
@@ -23,7 +23,7 @@ class MultXmlReaderPrivate
 {
 friend class MultXmlReader;
 public:
-  MultXmlReaderPrivate(const std::string& filename, std::ostream& output); 
+  MultXmlReaderPrivate(const std::string& filename, std::ostream& output);
   ~MultXmlReaderPrivate();
 
   QXmlSimpleReader* m_parser;
@@ -35,30 +35,26 @@ MultXmlReaderPrivate::MultXmlReaderPrivate(const std::string& filename,
 {
 
   //  Create the handler object and install it as the document and error
-  //  handler for the parser-> Then parse the file and catch any exceptions
-  //  that propogate out
-  //
-  try {
-    MultXmlHandler handler(output);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
-    m_parser->setFeature("http://qt-project.org/xml/features/report-start-end-entity",true);
-    QFile file(filename.c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
-    if (!m_parser->parse( QXmlInputSource(&file)))
-    {
-      throw XMLException();
-    }
-  }
-  catch (const XMLException& e) {
-    BOWLOGINIT;
-    LERROR << "An XML exception occurred: " << e.what() ;
-    throw;
+  //  handler for the parser-> Then parse the file
+  MultXmlHandler handler(output);
+  m_parser->setContentHandler(&handler);
+  m_parser->setErrorHandler(&handler);
+  m_parser->setFeature("http://qt-project.org/xml/features/report-start-end-entity",true);
+  QFile file(filename.c_str());
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    LIMA_EXCEPTION_SELECT_LOGINIT(BOWLOGINIT,
+                                  "Cannot open" << filename.c_str(),
+                                  XMLException);
+  if (!m_parser->parse( QXmlInputSource(&file)))
+  {
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      BOWLOGINIT,
+      "Cannot parse" << filename.c_str() << m_parser->errorHandler()->errorString(),
+      XMLException);
   }
 }
 
-MultXmlReaderPrivate::~MultXmlReaderPrivate() 
+MultXmlReaderPrivate::~MultXmlReaderPrivate()
 {
   //  Delete the parser itself.  Must be done prior to calling Terminate
   delete m_parser;
@@ -66,7 +62,7 @@ MultXmlReaderPrivate::~MultXmlReaderPrivate()
 
 //**********************************************************************
 // reader functions
-//********************************************************************** 
+//**********************************************************************
 MultXmlReader::MultXmlReader(const std::string& filename,
                            std::ostream& output):
 m_d(new MultXmlReaderPrivate(filename,output))

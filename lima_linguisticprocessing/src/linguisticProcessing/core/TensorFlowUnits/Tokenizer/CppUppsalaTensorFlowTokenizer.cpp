@@ -69,12 +69,6 @@ static u32string SPACE = QString::fromUtf8(" ").toStdU32String();
 
 static SimpleFactory<MediaProcessUnit,CppUppsalaTensorFlowTokenizer> cppupsalatokenizerFactory(CPPUPPSALATENSORFLOWTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
-#define LOG_ERROR_AND_THROW(msg, exc) { \
-                                        TOKENIZERLOGINIT; \
-                                        LERROR << msg; \
-                                        throw exc; \
-                                      }
-
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
   #define LOG_MESSAGE(stream, msg) stream << msg;
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) TOKENIZERLOGINIT; LOG_MESSAGE(stream, msg);
@@ -265,8 +259,11 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
       Token *tToken = new Token(form, str, token.start, token.wordText.size());
       if (tToken == nullptr)
-        LOG_ERROR_AND_THROW("CppUppsalaTensorFlowTokenizer::process: Can't allocate memory with \"new Token(...)\"",
-                            MemoryErrorException());
+      {
+        TOKENIZERLOGINIT;
+        LERROR << "CppUppsalaTensorFlowTokenizer::process: Can't allocate memory with \"new Token(...)\"";
+        throw MemoryErrorException();
+      }
 
       if (token.originalText.size() > 0)
       {
@@ -335,8 +332,9 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
       }
       else
       {
-        LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't parse language id "
-                            << udlang, Lima::InvalidConfiguration());
+        LIMA_EXCEPTION_SELECT_LOGINIT(TOKENIZERLOGINIT,
+          "CppUppsalaTokenizerPrivate::init: Can't parse language id " << udlang.c_str(),
+          Lima::InvalidConfiguration);
       }
     }
   }
@@ -348,9 +346,8 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
                                             .arg(lang_str).arg(model_name));
   if (config_file_name.isEmpty())
   {
-    LOG_ERROR_AND_THROW(
-      "CppUppsalaTokenizerPrivate::init: tokenizer config file not found.",
-      LimaException("CppUppsalaTokenizerPrivate::init: tokenizer config file not found."));
+    LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::init: tokenizer config file not found.");
   }
   load_config(config_file_name);
 
@@ -363,9 +360,10 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   Status status = NewSession(options, &session);
   if (!status.ok())
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
+      << status.ToString().c_str());
   }
   m_session = std::unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
@@ -377,9 +375,10 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   status = m_session->Create(m_graph_def);
   if (!status.ok())
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't add graph to TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::init: Can't add graph to TensorFlow session: "
+      << status.ToString().c_str());
   }
 
   vector<Tensor> out;
@@ -387,9 +386,10 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   status = m_session->Run({}, {"CRF/crf"}, {}, &out);
   if (!status.ok())
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::init: Can't execute \"Run\" in TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::init: Can't execute \"Run\" in TensorFlow session: "
+      << status.ToString().c_str());
   }
 
   auto crf = out[0].matrix<float>();
@@ -435,15 +435,17 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 {
   if (config_file_name.isNull() || config_file_name.isEmpty())
   {
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config can't load config from empty or null filename.",
-                        LimaException("CppUppsalaTokenizerPrivate::load_config can't load config from empty or null filename."));
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::load_config can't load config from empty or null filename.");
   }
   QFile file(config_file_name);
 
   if (!file.open(QIODevice::ReadOnly))
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config can't load config from \""
-                        << config_file_name << "\".",
-                        LimaException());
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::load_config can't load config from \""
+      << config_file_name << "\".");
 
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
@@ -461,7 +463,7 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
 
   for (size_t i = 0; i < m_i2t.size(); ++i)
   {
-    string tag = m_i2t[i];
+    std::string tag = m_i2t[i];
     if ("B" == tag)
       m_token_begin = i;
     else if ("I" == tag)
@@ -477,8 +479,10 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
     else if ("U" == tag)
       m_token_end_last = i;
     else
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_config: unknown tag\"" << tag << "\".",
-                          LimaException());
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::load_config: unknown tag\""
+        << tag.c_str() << "\".");
   }
 
   load_ngram_defs(conf.value("ngrams").toArray());
@@ -493,30 +497,25 @@ void CppUppsalaTokenizerPrivate::load_config(const QString& config_file_name)
       QJsonObject obj = (*i).toObject();
 
       if (obj.value("token").isUndefined())
-        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
-              << config_file_name << "\" incorrect transduction rule.",
-          LimaException());
+        LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, "TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule.");
       if (!obj.value("token").isString())
-        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
-              << config_file_name << "\" incorrect transduction rule: no/wrong \"token\".",
-          LimaException());
+        LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, "TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule: no/wrong \"token\".");
       QString token = obj.value("token").toString();
 
       if (obj.value("words").isUndefined())
-        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
-              << config_file_name << "\" incorrect transduction rule.",
-          LimaException());
+        LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, "TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule.");
       if (!obj.value("words").isArray())
-        LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
-              << config_file_name << "\" incorrect transduction rule: no/wrong \"words\".",
-          LimaException());
+        LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, "TensorFlowTokenizer::load_config config file \""
+              << config_file_name << "\" incorrect transduction rule: no/wrong \"words\".");
       vector<QString> words;
       load_string_array(obj.value("words").toArray(), words);
 
       if (m_trrules.find(token) != m_trrules.end())
-          LOG_ERROR_AND_THROW("TensorFlowTokenizer::load_config config file \""
-                << config_file_name << "\" incorrect transduction rule: duplicate items.",
-            LimaException());
+        LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT, "TensorFlowTokenizer::load_config config file \""
+                << config_file_name << "\" incorrect transduction rule: duplicate items.");
 
       m_trrules[token] = words;
     }
@@ -531,9 +530,12 @@ void CppUppsalaTokenizerPrivate::load_graph(const QString& model_path)
                                   model_path.toStdString(),
                                   &m_graph_def);
   if (!status.ok())
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::load_graph error reading binary proto:"
-                        << status.ToString(),
-                        LimaException());
+  {
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::load_graph error reading binary proto:"
+      << status.ToString().c_str());
+  }
 }
 
 TokStatusCode CppUppsalaTokenizerPrivate::encode_text(const u32string& text, vector<vector<unsigned int>>& ngram_idxs)
@@ -699,8 +701,11 @@ void CppUppsalaTokenizerPrivate::tokenize(const QString& text, vector<vector<TPr
 
   vector<vector<unsigned int>> ngram_idxs;
   if (encode_text(wtext, ngram_idxs) != TokStatusCode::SUCCESS)
-    LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while encoding text to ngrams' indices.",
-                        LimaException());
+  {
+    LIMA_EXCEPTION_LOGINIT(
+      TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::tokenize: error while encoding text to ngrams' indices.");
+  }
 
   // Generate batch
   size_t iter_start = 0;
@@ -717,16 +722,22 @@ void CppUppsalaTokenizerPrivate::tokenize(const QString& text, vector<vector<TPr
     size_t old_iter_start = iter_start;
     vector<pair<string, Tensor>> inputs;
     if (generate_batch(ngram_idxs, iter_start, num_batches, overlap, inputs) != TokStatusCode::SUCCESS)
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: error while generating batch.",
-                          LimaException());
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::tokenize: error while generating batch.");
+    }
 
     // Run model
     vector<Tensor> out;
     Status status = m_session->Run(inputs, {"Dense/dropout/Identity"}, {}, &out);
     if (!status.ok())
-      LOG_ERROR_AND_THROW("CppUppsalaTokenizerPrivate::tokenize: Can't execute \"Run\" in TensorFlow session: "
-                          << status.ToString(),
-                          LimaException());
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::tokenize: Can't execute \"Run\" in TensorFlow session: "
+        << status.ToString().c_str());
+    }
 
     auto scores = out[0].tensor<float, 3>();
     for (int64 i = 0; i < out[0].dim_size(0); i++)

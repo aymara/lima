@@ -42,17 +42,14 @@ namespace Automaton {
 class AutomatonCompilerException : public LimaException {
 public:
   AutomatonCompilerException(const std::string& mes):
-    LimaException(),m_msg(mes) {};
+    LimaException(mes) {};
   ~AutomatonCompilerException() throw() {};
-  const char* what() const throw() override { return m_msg.c_str(); } 
-protected:
-  std::string m_msg;
 };
 
 /***********************************************************************/
 // exception thrown by the recognizer compiler
 class RecognizerCompilerException : public AutomatonCompilerException {
-public: 
+public:
   RecognizerCompilerException(const std::string& mes):
     AutomatonCompilerException(mes) {};
   ~RecognizerCompilerException() throw() {};
@@ -68,9 +65,9 @@ public:
 };
 
 /***********************************************************************/
-// exception thrown by automatonCompiler 
+// exception thrown by automatonCompiler
 class AutomatonErrorException : public AutomatonCompilerException {
-public: 
+public:
   AutomatonErrorException(const std::string& mes):
     AutomatonCompilerException(mes){};
   ~AutomatonErrorException() throw() {};
@@ -79,7 +76,7 @@ public:
 /***********************************************************************/
 // exception thrown by RuleCompiler in case of erroneous constraint syntax
 class ConstraintSyntaxException : public AutomatonCompilerException {
-public: 
+public:
   ConstraintSyntaxException(const std::string& mes):
     AutomatonCompilerException(mes){};
   ~ConstraintSyntaxException() throw() {};
@@ -88,7 +85,7 @@ public:
 /***********************************************************************/
 // exception thrown by RecognizerCompiler in case of erroneous type definition
 class TypeDefSyntaxException : public AutomatonCompilerException {
-public: 
+public:
   TypeDefSyntaxException(const std::string& mes):
     AutomatonCompilerException(mes){};
   ~TypeDefSyntaxException() throw() {};

@@ -36,61 +36,54 @@ namespace WordSenseDisambiguation
 class LIMA_WORDSENSEANALYSIS_EXPORT WordSenseUnit
 {
   public :
-      WordSenseUnit();
-      ~WordSenseUnit();
-            
+      WordSenseUnit() = default;
+      ~WordSenseUnit() = default;
+
       WordSenseUnit(uint senseId,
-        uint64_t parentLemmaId, 
-        Mode mode, 
-        std::string& senseTag, 
-        std::set<uint64_t>& sensesMembersIds, 
+        uint64_t parentLemmaId,
+        Mode mode,
+        std::string& senseTag,
+        std::set<uint64_t>& sensesMembersIds,
         int freq=0);
-      
-      WordSenseUnit(const WordSenseUnit& wsu) : 
-      m_parentLemmaId(wsu.m_parentLemmaId),
-      m_mode(wsu.m_mode),
-      m_senseId(wsu.m_senseId),
-      m_senseTag(wsu.m_senseTag),
-      m_senseMembersIds(wsu.m_senseMembersIds),
-      m_freq(wsu.m_freq)
-      {}
-      
-      
-      
+
+      WordSenseUnit(const WordSenseUnit& wsu) = default;
+      WordSenseUnit& operator=(const WordSenseUnit& wsu) = default;
+
+
       friend LIMA_WORDSENSEANALYSIS_EXPORT std::ostream& operator << (std::ostream& os, const WordSenseUnit& wsu);
-     
+
       uint64_t parentLemmaId();
       uint64_t senseId();
       std::string senseTag();
       std::set<uint64_t>& senseMembersIds();
       Mode mode();
-      
+
       uint64_t parentLemmaId() const ;
       uint64_t senseId() const ;
       const std::string& senseTag() const ;
       const std::set<uint64_t>& senseMembersIds() const ;
       Mode mode() const ;
-      
+
       bool operator<(const WordSenseUnit& wsu) const
       {
-  if (m_mode==wsu.mode()) return (m_senseId<wsu.senseId());
-  return m_mode<wsu.mode();
+        if (m_mode==wsu.mode()) return (m_senseId<wsu.senseId());
+        return m_mode<wsu.mode();
       };
-      
+
 //         bool operator==(const WordSenseUnit& wsu) const
 //       {
-//   return (m_mode==wsu.mode() && m_senseId==wsu.senseId());  
+//   return (m_mode==wsu.mode() && m_senseId==wsu.senseId());
 //       };
-      
-      
-      
-  protected :    
+
+
+
+  protected :
     uint64_t m_parentLemmaId;
     Mode m_mode;
     uint64_t m_senseId;
     std::string m_senseTag;
     std::set<uint64_t> m_senseMembersIds;
-    int m_freq; 
+    int m_freq;
 };
 
 inline uint64_t WordSenseUnit::parentLemmaId()
@@ -113,7 +106,7 @@ inline Mode WordSenseUnit::mode()
 {
   return m_mode;
 }
-inline uint64_t WordSenseUnit::parentLemmaId() const 
+inline uint64_t WordSenseUnit::parentLemmaId() const
 {
   return m_parentLemmaId;
 }
@@ -121,15 +114,15 @@ inline uint64_t WordSenseUnit::senseId() const
 {
   return m_senseId;
 }
-inline const std::string& WordSenseUnit::senseTag() const 
+inline const std::string& WordSenseUnit::senseTag() const
 {
   return m_senseTag;
 }
-inline const std::set<uint64_t>& WordSenseUnit::senseMembersIds() const 
+inline const std::set<uint64_t>& WordSenseUnit::senseMembersIds() const
 {
   return m_senseMembersIds;
 }
-inline Mode WordSenseUnit::mode() const 
+inline Mode WordSenseUnit::mode() const
 {
   return m_mode;
 }

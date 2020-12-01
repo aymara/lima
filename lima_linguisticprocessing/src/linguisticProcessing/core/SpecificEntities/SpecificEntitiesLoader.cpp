@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Thu Jun 16 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "SpecificEntitiesLoader.h"
@@ -53,7 +53,7 @@ m_parser(0)
 {
 }
 
-SpecificEntitiesLoader::~SpecificEntitiesLoader() 
+SpecificEntitiesLoader::~SpecificEntitiesLoader()
 {
 }
 
@@ -61,12 +61,12 @@ SpecificEntitiesLoader::~SpecificEntitiesLoader()
 void SpecificEntitiesLoader::
 init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
           Manager* manager)
-  
+
 {
   LOGINIT("LP::SpecificEntities");
 
   m_language=manager->getInitializationParameters().media;
-  
+
   AnalysisLoader::init(unitConfiguration,manager);
   try {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
@@ -87,7 +87,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
     LWARN << "loader: no modex specified in parameter: types in file loaded may not be known";
   }
 
-  //  Create a SAX parser object. 
+  //  Create a SAX parser object.
   m_parser = new QXmlSimpleReader();
 }
 
@@ -109,24 +109,27 @@ process(AnalysisContent& analysis) const
   analysis.setData("RecognizerData",recoData);
   RecognizerResultData* resultData=new RecognizerResultData(m_graph);
   recoData->setResultData(resultData);
-  
+
   try
   {
     SpecificEntitiesLoader::XMLHandler handler(m_language,analysis,graph);
     m_parser->setContentHandler(&handler);
     m_parser->setErrorHandler(&handler);
-    QFile file(getInputFile(analysis));
+    auto filename = getInputFile(analysis);
+    QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
+      LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::SpecificEntities"),
+        "Cannot open file" << filename,
+        Lima::XMLException);
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      throw XMLException();
+      LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::SpecificEntities"),
+        "Error: failed to parse XML input file" << filename << m_parser->errorHandler()->errorString(),
+        Lima::XMLException);
     }
   }
   catch (const XMLException& )
   {
-    LOGINIT("LP::SpecificEntities");
-    LERROR << "Error: failed to parse XML input file";
   }
 
   // remove recognizer data (used only internally to this process unit)
@@ -142,8 +145,8 @@ void SpecificEntitiesLoader::XMLHandler::
 addSpecificEntity(AnalysisContent& analysis,
                   LinguisticAnalysisStructure::AnalysisGraph* anagraph,
                   const std::string& str,
-                  const std::string& type, 
-                  uint64_t position, 
+                  const std::string& type,
+                  uint64_t position,
                   uint64_t length)
 {
   LOGINIT("LP::SpecificEntities");
@@ -159,7 +162,7 @@ addSpecificEntity(AnalysisContent& analysis,
   std::queue<LinguisticGraphVertex> toVisit;
   std::set<LinguisticGraphVertex> visited;
   LinguisticGraphOutEdgeIt outItr,outItrEnd;
- 
+
   // output vertices between begin and end,
   toVisit.push(anagraph->firstVertex());
 
@@ -197,7 +200,7 @@ addSpecificEntity(AnalysisContent& analysis,
     }
 
     // add next vertices
-    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
+    for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
     {
       LinguisticGraphVertex next=target(*outItr,*graph);
       if (visited.find(next)==visited.end())
@@ -216,7 +219,7 @@ addSpecificEntity(AnalysisContent& analysis,
   match.setType(Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(type)));
   // set normalized form similar to string (otherwise, may cause problem when trying to access the created specific entity)
   match.features().setFeature(DEFAULT_ATTRIBUTE,Common::Misc::utf8stdstring2limastring(str));
-  
+
   // create specific entity from RecognizerMatch using default action
   CreateSpecificEntity createEntity(m_language);
   createEntity(match,analysis);

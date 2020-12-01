@@ -120,9 +120,10 @@ void PythonTensorFlowTokenizer::init(
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'path' in TensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'path' in TensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
   QString udCorpus; // The name/id of the Universal Dependencies corpus used for training
@@ -132,9 +133,10 @@ void PythonTensorFlowTokenizer::init(
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'corpus' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'corpus' in PythonTensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
   QString embeddingsPath; // The path to the LIMA python tensorflow-based tokenizer
@@ -144,9 +146,10 @@ void PythonTensorFlowTokenizer::init(
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'embeddings_path' in PythonTensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
   QString modelPath; // The path to the LIMA python tensorflow-based tokenizer
@@ -156,9 +159,10 @@ void PythonTensorFlowTokenizer::init(
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'model_path' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'model_path' in PythonTensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
   int windowSize = -1; // The window size used with the tensorflow-based tokenizer
@@ -168,16 +172,18 @@ void PythonTensorFlowTokenizer::init(
     windowSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("window_size").c_str()).toInt(&success);
     if (!success)
     {
-      TOKENIZERLOGINIT;
-      LERROR << "Param 'window_size' in PythonTensorFlowTokenizer group configuration is not an integer";
-      throw InvalidConfiguration();
+      LIMA_EXCEPTION_SELECT_LOGINIT(
+        TOKENIZERLOGINIT,
+        "Param 'window_size' in PythonTensorFlowTokenizer group configuration is not an integer",
+        InvalidConfiguration);
     }
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'window_size' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'window_size' in PythonTensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
   int batchSize = -1; // The bach size used with the tensorflow-based tokenizer
@@ -187,16 +193,18 @@ void PythonTensorFlowTokenizer::init(
     batchSize = QString::fromUtf8(unitConfiguration.getParamsValueAtKey("batch_size").c_str()).toInt(&success);
     if (!success)
     {
-      TOKENIZERLOGINIT;
-      LERROR << "Param 'batch_size' in PythonTensorFlowTokenizer group configuration is not an integer";
-      throw InvalidConfiguration();
+      LIMA_EXCEPTION_SELECT_LOGINIT(
+        TOKENIZERLOGINIT,
+        "Param 'batch_size' in PythonTensorFlowTokenizer group configuration is not an integer",
+        InvalidConfiguration);
     }
   }
   catch (NoSuchParam& )
   {
-    TOKENIZERLOGINIT;
-    LERROR << "no param 'batch_size' in PythonTensorFlowTokenizer group configuration";
-    throw InvalidConfiguration();
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      TOKENIZERLOGINIT,
+      "no param 'batch_size' in PythonTensorFlowTokenizer group configuration",
+      InvalidConfiguration);
   }
 
 

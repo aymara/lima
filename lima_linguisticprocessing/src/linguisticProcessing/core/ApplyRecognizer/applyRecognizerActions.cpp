@@ -276,13 +276,11 @@ m_propertyCodeManager(0)
 
   if (m_propertyCodeManager==0) {
     APPRLOGINIT;
-    LERROR << "cannot acces property code manager for language " << (int) language;
-    throw LimaException();
+    LIMA_EXCEPTION( "cannot acces property code manager for language " << (int) language );
   }
   if (m_macroAccessor==0) {
     APPRLOGINIT;
-    LERROR << "cannot initialize MACRO property accessor for language " << (int) language;
-    throw LimaException();
+    LIMA_EXCEPTION( "cannot initialize MACRO property accessor for language " << (int) language );
   }
 
 }

@@ -51,11 +51,9 @@ void SimpleDataDico<accessMethod, contentElement, storedSet>::parseData( const s
 
   std::ifstream is(dataFileName.c_str(), std::ios::binary );
   if( is.bad() ) {
-    std::string mess = "SimpleDataDico::parseData: Can't open file " + dataFileName;
-#ifdef DEBUG_CD
-    LERROR << mess;
-#endif
-    throw( Lima::IncompleteResources(mess) );
+    LIMA_EXCEPTION_LOGINIT(
+      STRINGMAPLOGINIT,
+      "SimpleDataDico::parseData: Can't open file " << dataFileName.c_str());
   }
   copy(std::istream_iterator<contentElement>(is), std::istream_iterator<contentElement>(),
     back_inserter(m_data));
@@ -64,14 +62,13 @@ void SimpleDataDico<accessMethod, contentElement, storedSet>::parseData( const s
   LDEBUG << "SimpleDataDico::parseData: read " << dataSize
             << " pieces of data from " << dataFileName;
 #endif
-  if( StringMap<accessMethod, contentElement>::m_accessMethod.getSize() != dataSize ) {
-    std::ostringstream oss;
-    oss << "SimpleDataDico::parseData dataSize = " << dataSize
-        << " != accessSize = " << StringMap<accessMethod, contentElement>::m_accessMethod.getSize();
-#ifdef DEBUG_CD
-    LERROR << oss.str();
-#endif
-    throw( Lima::IncompleteResources(oss.str()) );
+  auto accessSize = StringMap<accessMethod, contentElement>::m_accessMethod.getSize();
+  if( accessSize != dataSize )
+  {
+    LIMA_EXCEPTION_LOGINIT(
+      STRINGMAPLOGINIT,
+      "SimpleDataDico::parseData dataSize = " << dataSize
+        << " != accessSize = " << accessSize);
   }
 }
 

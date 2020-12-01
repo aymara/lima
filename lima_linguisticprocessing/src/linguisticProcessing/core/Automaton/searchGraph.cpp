@@ -141,8 +141,10 @@ LIMA_AUTOMATON_EXPORT std::ostream& output(std::ostream& os, const SearchGraph *
   if (pBackward != NULL)
     output(os, *pBackward, graph);
   else
-    throw LimaException("Unexpected type of LinguisticGraph");
-
+  {
+    AULOGINIT;
+    LIMA_EXCEPTION("Unexpected type of LinguisticGraph");
+  }
   return os;
 }
 #endif

@@ -73,24 +73,23 @@ m_parser()
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  try {
-    BoWXMLHandler handler(output);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
-    QFile file(filename.c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException(QString(QLatin1String("Error opening %1")).arg(filename.c_str()).toUtf8().constData());
-    if (!m_parser->parse( QXmlInputSource(&file)))
-    {
-      throw XMLException(QString(QLatin1String("Error parsing %1: %2"))
-              .arg(filename.c_str(),
-                    m_parser->errorHandler()->errorString()).toUtf8().constData());
-    }
-  }
-  catch (const XMLException& e) {
-    BOWLOGINIT;
-    LERROR << "An XML exception occurred: " << e.what() ;
-    throw;
+  BoWXMLHandler handler(output);
+  m_parser->setContentHandler(&handler);
+  m_parser->setErrorHandler(&handler);
+  QFile file(filename.c_str());
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      BOWLOGINIT,
+      QString(QLatin1String("Error opening %1")).arg(filename.c_str()).toUtf8().constData(),
+      XMLException);
+  if (!m_parser->parse( QXmlInputSource(&file)))
+  {
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      BOWLOGINIT,
+      QString(QLatin1String("Error parsing %1: %2"))
+            .arg(filename.c_str(),
+                  m_parser->errorHandler()->errorString()).toUtf8().constData(),
+      XMLException);
   }
 }
 
