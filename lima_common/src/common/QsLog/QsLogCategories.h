@@ -43,8 +43,9 @@ public:
       return staticCategories;
    }
 
-    bool configure(const QString& fileName);
-    Level levelFor(const QString& category) const;
+  bool configure(const QString& fileName);
+  Level levelFor(const QString& category) const;
+  void connectSignals();
 
 private Q_SLOTS:
   void configureFileChanged ( const QString & path );

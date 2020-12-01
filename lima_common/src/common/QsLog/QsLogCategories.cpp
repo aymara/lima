@@ -51,6 +51,7 @@ public:
    QMap<QString,Level> categories;
 
    LimaFileSystemWatcher m_configFileWatcher;
+   bool m_initialized = false;
 };
 
 Categories::Categories(QObject* parent) :
@@ -59,11 +60,16 @@ Categories::Categories(QObject* parent) :
 {
   const QString category = "FilesReporting";
 #ifdef DEBUG_CD
-  d->categories.insert(category,QsLogging::InfoLevel);
+  d->categories.insert(category, QsLogging::InfoLevel);
 #else
-  d->categories.insert(category,QsLogging::ErrorLevel);
+  d->categories.insert(category, QsLogging::ErrorLevel);
 #endif
-  connect(&d->m_configFileWatcher,SIGNAL(fileChanged(QString)),this,SLOT(configureFileChanged(QString)));
+}
+
+void Categories::connectSignals()
+{
+  connect(&d->m_configFileWatcher, SIGNAL(fileChanged(QString)),
+          this, SLOT(configureFileChanged(QString)));
 }
 
 Categories::~Categories()
@@ -81,6 +87,7 @@ void Categories::configureFileChanged( const QString & path )
 
 bool Categories::configure(const QString& fileName)
 {
+  d->m_initialized = true;
   const QString local_zone("FilesReporting");
   static LogInit logInit(local_zone.toUtf8().constData());
   auto& logger = *(logInit.pLogger);
@@ -158,6 +165,7 @@ bool Categories::configure(const QString& fileName)
 
 Level Categories::levelFor(const QString& category) const
 {
+  if (!d->m_initialized) initQsLog();
 #ifdef DEBUG_CD
   // Do not compile this costly check in release
   if (!d->categories.contains(category))

@@ -58,6 +58,7 @@ int main(int argc, char **argv)
   QCoreApplication app(argc, argv);
   std::cerr << "Amose plugins initialized" << std::endl;
   QsLogging::initQsLog();
+  QsLogging::Categories::instance().connectSignals();
 
   std::string strResourcesPath;
   std::string strLpConfigFile;
