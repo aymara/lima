@@ -377,13 +377,7 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
 
 #ifdef DEBUG_LP
       TFSELOGINIT;
-      ostringstream oss;
-      for(auto itSequenceBegin = wordsRaw.cbegin();
-          itSequenceBegin != wordsRaw.cend(); ++itSequenceBegin)
-      {
-        oss << (*itSequenceBegin).toStdString() << " ";
-      }
-      LDEBUG << "Sentence evaluated:" << oss.str();
+      LDEBUG << "Sentence evaluated:" << wordsRaw;
 #endif
 
       if(wordsRaw.size() == 0)

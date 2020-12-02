@@ -255,10 +255,8 @@ void CoreLinguisticProcessingClient::analyze(
 #endif
   if (status!=SUCCESS_ID)
   {
-    std::stringstream s_mess;
-    s_mess << "analysis failed : receive status " << (int)status << " from pipeline. exit";
-    LERROR << s_mess.str();
-    throw LinguisticProcessingException( s_mess.str() );
+    LIMA_EXCEPTION( "analysis failed : receive status " << (int)status
+                    << " from pipeline. exit" );
   }
 }
 
