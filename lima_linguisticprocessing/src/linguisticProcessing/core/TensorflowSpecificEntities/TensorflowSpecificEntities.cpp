@@ -584,7 +584,12 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
         {
           before = getOnePrecedingNode(*analysisGraph, segmentIt->getFirstVertex());
         }
-        LinguisticGraphVertex after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+
+        LinguisticGraphVertex after = analysisGraph->lastVertex();
+        if (analysisGraph->lastVertex() != segmentIt->getLastVertex())
+        {
+          after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+        }
 
         LinguisticGraphVertex newVertex = analysisGraph->firstVertex();
         if(!createSpecificEntity(entityFound,analysis,newVertex))
