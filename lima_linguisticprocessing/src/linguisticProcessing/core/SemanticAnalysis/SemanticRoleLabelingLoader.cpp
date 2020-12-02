@@ -378,7 +378,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 QStringList ConllHandler::splitSegment(const QString & segment, QRegExp separator)
 {
   QStringList segmentsSplited;
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  segmentsSplited =segment.split(QRegExp(separator), QString::SkipEmptyParts);
+#else
   segmentsSplited =segment.split(QRegExp(separator), Qt::SkipEmptyParts);
+#endif
   return segmentsSplited;
 }
 
