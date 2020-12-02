@@ -280,18 +280,16 @@ public:
     {
     }
     LimaException(const LimaException&) = default;
-    virtual ~LimaException() throw() {}
+    LimaException& operator=(const LimaException& e) = default;
+    virtual ~LimaException() throw() = default;
+
     virtual const char * what () const throw() override
     {
         return m_reason.c_str();
     }
+
 protected:
-  LimaException& operator=(const LimaException& e)
-  {
-    m_reason = e.m_reason;
-    return  *this;
-  }
-  std::string m_reason;
+    std::string m_reason;
 };
 
 /**
@@ -366,13 +364,7 @@ public:
     }
     virtual ~InvalidConfiguration() throw() = default;
     InvalidConfiguration(const InvalidConfiguration&) = default;
-
-protected:
-  InvalidConfiguration& operator=(const InvalidConfiguration& e)
-  {
-    m_reason = e.m_reason;
-    return  *this;
-  }
+    InvalidConfiguration& operator=(const InvalidConfiguration& e) = default;
 };
 
 /**
@@ -425,10 +417,10 @@ public :
     };
 
     MediaNotInitialized(const MediaNotInitialized&)=default;
-    virtual ~MediaNotInitialized() throw() {};
+    MediaNotInitialized& operator=(const MediaNotInitialized&) =default;
+    virtual ~MediaNotInitialized() throw() = default;
 
 private:
-  MediaNotInitialized& operator=(const MediaNotInitialized&) {return  *this;}
   MediaId m_medId;
   std::string  m_med;
   bool m_num;
@@ -454,8 +446,7 @@ public :
     AccessByStringNotInitialized(const AccessByStringNotInitialized&)=default;
     virtual ~AccessByStringNotInitialized() throw() {};
 
-private:
-  AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&);
+  AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) = default;
 };
 
 /**
@@ -475,8 +466,7 @@ public :
     AccessByStringOutOfRange(const AccessByStringOutOfRange&)=default;
     virtual ~AccessByStringOutOfRange() throw() {};
 
-private:
-  AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&);
+  AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) = default;
 };
 
 /**
@@ -501,8 +491,7 @@ public:
     m_reason = std::string("XMLException: ") + message;
   }
   XMLException(const XMLException&)=default;
-private:
-  XMLException& operator=(const XMLException&);
+  XMLException& operator=(const XMLException&)=default;
 };
 
 
