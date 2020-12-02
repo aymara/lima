@@ -152,7 +152,7 @@ bool DocumentReader::initFile ( const std::string& filename )
   // see additional call parseNext() in DocumentsStream::nextdocument
   QFile file(filename.c_str());
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    LIMA_EXCEPTION_SELECT("Cannot open" << filename.c_str(),
+    LIMA_EXCEPTION_SELECT_LOGINIT(DRLOGINIT, "Cannot open" << filename.c_str(),
                           Lima::XMLException);
   if (m_d->m_reader != 0)
     delete m_d->m_reader;
