@@ -174,7 +174,7 @@ public:
   LogInit(char const* x)
   {
     // initialisation thread-safe
-    static QMutex mutex;
+    static QMutex mutex(QMutex::Recursive);
     QMutexLocker locker(&mutex);
     pLogger = &QsLogging::Logger::instance(x);
 #ifndef DEBUG_CD
