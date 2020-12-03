@@ -5,7 +5,7 @@
 
 on:
   push:
-    branches: [ main ]
+    branches: [ github-actions-test ]
 
 jobs:
   build:
