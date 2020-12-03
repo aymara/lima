@@ -681,9 +681,11 @@ outputEntity(std::ostream& out,
 
     std::size_t index = mapEntities.size()+1;
 
-    if (! m_domains.empty() && m_domains.find(domainType)!=m_domains.end())
+    if (! m_domains.empty() && m_domains.find(domainType)==m_domains.end())
     {
       // entity is not in considered domain: do not print it (nor store it in the map)
+      DUMPERLOGINIT;
+      LDEBUG << "AbstractIEDumper: ignore entity of domain" << domainType;
       return false;
     }
 
