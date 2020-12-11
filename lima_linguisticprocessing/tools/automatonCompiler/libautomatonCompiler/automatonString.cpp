@@ -1020,9 +1020,9 @@ void AutomatonString::parseUnit(const LimaString& str,
     }
     if (it==subAutomatons.end()) {
       AUCLOGINIT;
-      LERROR << "unknown class " << str.mid(newBegin+1,newSize-1);
+      LERROR << "unknown subautomaton" << str.mid(newBegin+1,newSize-1);
       ostringstream oss;
-      oss << "unknown class " << Common::Misc::limastring2utf8stdstring(str.mid(newBegin+1,newSize-1));
+      oss << "unknown subautomaton" << Common::Misc::limastring2utf8stdstring(str.mid(newBegin+1,newSize-1));
       throw AutomatonCompilerException(oss.str());
     }
     // copy only type, parts and unit (other are set by modifiers)
