@@ -90,7 +90,9 @@ void AbstractIEDumper::init(
   {
     // single domain
     string val=unitConfiguration.getParamsValueAtKey("domain");
-    m_domains.insert(val);
+    if (! val.empty()) {
+      m_domains.insert(val);
+    }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -734,7 +736,7 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
 
   const SpecificEntityAnnotation* se=0;
 
-  // check only entity found in current graph (not previous graph such as AnalysisGraph)
+  // check only entity found in current graph
 
   std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
@@ -751,6 +753,31 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
       }
     }
   }
+  
+  // special case: if specified graph is posgraph, allows to search in analysis graph 
+  // (entities found before pos-tagging)
+  if (m_graph=="PosGraph") {
+    std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+
+    // note: anaVertices size should be 0 or 1
+    for (const auto& anaVertex : anaVertices)  {
+      
+      std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
+    
+      for (const auto& vx: matches)
+      {
+        if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+        {
+          se = annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+          pointerValue<SpecificEntityAnnotation>();
+          if (se!=0) {
+            return se;
+          }
+        }
+      }
+    }
+  }
+  
   return se;
 
 }
