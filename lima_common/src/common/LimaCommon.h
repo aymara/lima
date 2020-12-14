@@ -184,16 +184,10 @@ public:
   }
   QsLogging::Logger* pLogger;
 };
-#ifndef DEBUG_CD
-#define LOGINIT(X) \
-  static LogInit logInit(X); /*initialisation exécutée une seul fois*/\
-  auto& logger = *(logInit.pLogger);
-#else
 #define LOGINIT(X) \
   static LogInit logInit(X); /*initialisation exécutée une seul fois*/\
   auto& logger = *(logInit.pLogger); \
   logger.setLoggingLevel(QsLogging::Categories::instance().levelFor( X ));
-#endif
 
 //QsLogging::DestinationPtr debugDestination(  QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 //logger.addDestination(debugDestination.get());
