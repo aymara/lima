@@ -16,6 +16,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
+#ifndef LIMA_HELPERS_CONFIGURATION_HELPER_H
+#define LIMA_HELPERS_CONFIGURATION_HELPER_H
+
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 
 #include <string>
 #include <common/XMLConfigurationFiles/groupConfigurationStructure.h>
@@ -25,7 +29,7 @@ namespace Lima
 namespace LinguisticProcessing
 {
 
-class ConfigurationHelper
+class LIMA_LP_HELPERS_EXPORT ConfigurationHelper
 {
 protected:
   ConfigurationHelper(const std::string& processUnitName, const std::string& loggingCategory)
@@ -84,3 +88,4 @@ private:
 
 }
 }
+#endif

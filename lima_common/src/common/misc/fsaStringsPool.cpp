@@ -86,14 +86,12 @@ void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
 
   if (!m_d->m_additionalPool.empty())
   {
-    LERROR << "Can't register main keys if stringspool not empty!" ;
-    LERROR << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] ;
-    throw LimaException("Can't register main keys if stringspool not empty!");
+    LIMA_EXCEPTION( "Can't register main keys if stringspool not empty!" << endl
+                  << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] );
   }
   if (mainKeys == nullptr)
   {
-    LERROR << "Can't register null main keys!" ;
-    throw LimaException("Can't register null main keys!");
+    LIMA_EXCEPTION( "Can't register null main keys!" );
   }
 
   m_d->m_mainKeys=mainKeys;

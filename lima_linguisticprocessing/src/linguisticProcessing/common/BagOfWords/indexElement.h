@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -21,7 +21,7 @@
  * @file       indexElement.h
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Feb  7 2006
- * copyright   Copyright (C) 2006-2012 by CEA LIST
+ * copyright   Copyright (C) 2006-2020 by CEA LIST
  * Project     BagOfWords
  *
  * @brief a class to represent the element to index in the bag of
@@ -60,17 +60,17 @@ class LIMA_BOW_EXPORT IndexElement
 public:
   IndexElement();
   IndexElement(const uint64_t id,
-               const Lima::Common::BagOfWords::BoWType type,
+               const BagOfWords::BoWType type,
                const LimaString& word,
-               const uint64_t cat=0,
+               const LinguisticCode cat,
                const uint64_t position=0,
                const uint64_t length=0,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
+               const MediaticData::EntityType neType=MediaticData::EntityType());
   IndexElement(const uint64_t id,
                const Lima::Common::BagOfWords::BoWType type,
                const std::vector<uint64_t>& structure,
                const std::vector<uint64_t>& relations,
-               const Common::MediaticData::EntityType neType=Common::MediaticData::EntityType());
+               const MediaticData::EntityType neType=MediaticData::EntityType());
   IndexElement(const IndexElement& ie);
   IndexElement& operator=(const IndexElement&);
   ~IndexElement();
@@ -90,7 +90,7 @@ public:
   bool isPredicate() const;
 
   const LimaString& getSimpleTerm() const;
-  uint64_t getCategory() const;
+  LinguisticCode getCategory() const;
   uint64_t getPosition() const;
   uint64_t getLength() const;
   bool isNamedEntity() const;
@@ -105,7 +105,7 @@ public:
 
   void setId(const uint64_t id);
   void setSimpleTerm(const LimaString& t);
-  void setCategory(uint64_t category);
+  void setCategory(LinguisticCode category);
   void setStructure(const std::vector<uint64_t>& s,
                     const std::vector<uint64_t>& r);
   void addInStructure(uint64_t id, uint64_t rel);

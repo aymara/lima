@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -458,7 +458,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
     auto data = *dataItr;
     sort(data->begin(), data->end(), sorter);
     StringsPoolIndex norm(0),curNorm(0);
-    LinguisticCode micro(0),curMicro(0);
+    LinguisticCode micro,curMicro;
     for (auto elemItr = data->cbegin(); elemItr != data->cend(); elemItr++)
     {
       curNorm = elemItr->normalizedForm;
@@ -469,7 +469,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
         micro = curMicro;
 
         // if category is specified, output first data (lemma) compatible with this category
-        if (category == LinguisticCode(0) || category==curMicro)
+        if (category == L_NONE || category==curMicro)
         {
           out << "<w p=\"" << position <<  "\""
               << " inf=\"" << xmlString(ft->stringForm().toStdString()) << "\""
@@ -496,7 +496,7 @@ void SimpleXmlDumper::xmlOutputVertexInfos(
   }
 
   // if category is specified and no matching data is found for this category: use first data
-  if (category != LinguisticCode(0) && !output && data.front()->size()>0 )
+  if (category != L_NONE && !output && data.front()->size()>0 )
   {
     auto norm = data.front()->begin()->normalizedForm;
     out << "<w p=\"" << position <<  "\""

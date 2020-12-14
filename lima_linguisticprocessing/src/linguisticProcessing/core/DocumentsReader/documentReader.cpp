@@ -59,30 +59,6 @@ public:
 //***********************************************************************
 // constructors
 //***********************************************************************
-/*
-DocumentReader::DocumentReader(const std::string &configurationFileName)
-{
-  DRLOGINIT;
-
-  // Initialize the XML4C2 system
-  try
-    {
-    LDEBUG << "DocumentReader: XMLPlatformUtils::Initialize()...";
-    XMLPlatformUtils::Initialize();
-  }
-  catch (const XMLException& e)
-  {
-    handleXercesException(e);
-  }
-
-  // Read parameters in config files
-  XMLConfigurationFileParser configParser(configurationFileName);
-  ModuleConfigurationStructure conf = configParser.getModuleConfiguration("lp-xmlreaderclient");
-
-  init(conf);
-}
-*/
-
 DocumentReaderPrivate::DocumentReaderPrivate ( ModuleConfigurationStructure& conf ) :
     m_reader(0),
     m_parser(0)
@@ -169,35 +145,28 @@ void  DocumentReader::setLinguisticXMLDocHandler ( StructuredXmlDocumentHandler*
 bool DocumentReader::initFile ( const std::string& filename )
 {
 #ifdef DEBUG_LP
-    DRLOGINIT;
-
-    LDEBUG << "DocumentReader::initFile: " << filename;
+  DRLOGINIT;
+  LDEBUG << "DocumentReader::initFile: " << filename;
 #endif
-    try
-    {
-        // First call for progressive parsing
-        // see additional call parseNext() in DocumentsStream::nextdocument
-        QFile file(filename.c_str());
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-          throw Lima::XMLException();
-        if (m_d->m_reader != 0)
-          delete m_d->m_reader;
-        m_d->m_reader = new QXmlStreamReader(&file);
+  // First call for progressive parsing
+  // see additional call parseNext() in DocumentsStream::nextdocument
+  QFile file(filename.c_str());
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    LIMA_EXCEPTION_SELECT_LOGINIT(DRLOGINIT, "Cannot open" << filename.c_str(),
+                          Lima::XMLException);
+  if (m_d->m_reader != 0)
+    delete m_d->m_reader;
+  m_d->m_reader = new QXmlStreamReader(&file);
 #ifdef DEBUG_LP
-        LDEBUG << "DocumentReader: initFile OK";
+  LDEBUG << "DocumentReader: initFile OK";
 #endif
-        m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
-        return true;
-    }
-    catch ( Lima::XMLException &e )
-    {
-        handleXercesException ( e );
-    }
+  m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
+  return true;
 
 #ifdef DEBUG_LP
-    LDEBUG << "DocumentReader: initFile NOT OK";
+  LDEBUG << "DocumentReader: initFile NOT OK";
 #endif
-    return false;
+  return false;
 }
 
 bool DocumentReader::initWithString ( const std::string& text )
@@ -206,24 +175,17 @@ bool DocumentReader::initWithString ( const std::string& text )
     DRLOGINIT;
     LDEBUG << "DocumentReader::initWithString: " << Lima::LimaString::fromUtf8(text.c_str()).left(100) << (text.size()>100?"(...)":"");
 #endif
-    try
-    {
-      QString qtext = QString::fromUtf8(text.c_str());
-      if (m_d->m_reader != 0)
-        delete m_d->m_reader;
-      m_d->m_reader = new QXmlStreamReader(qtext);
-      m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
-      return true;
-    }
-    catch ( Lima::XMLException &e )
-    {
-        handleXercesException ( e );
-    }
+  QString qtext = QString::fromUtf8(text.c_str());
+  if (m_d->m_reader != 0)
+    delete m_d->m_reader;
+  m_d->m_reader = new QXmlStreamReader(qtext);
+  m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
+  return true;
 
 #ifdef DEBUG_LP
-    LDEBUG << "DocumentReader: initWithString NOT OK";
+  LDEBUG << "DocumentReader: initWithString NOT OK";
 #endif
-    return false;
+  return false;
 }
 
 uint64_t DocumentReader::getCurrentOffsetFromXmlReader()
@@ -242,52 +204,51 @@ uint64_t DocumentReader::getCurrentOffsetFromXmlReader()
 bool DocumentReader::readXMLDocument()
 {
 #ifdef DEBUG_LP
+  DRLOGINIT;
+  LDEBUG << "DocumentReader::readXMLDocument";
+#endif
+  // extract an element
+
+  while (!m_d->m_reader->atEnd())
+  {
+#ifdef DEBUG_LP
+    LDEBUG <<"DocumentReader::readXMLDocument:"<<getCurrentOffsetFromXmlReader()
+            << "; tokenType:" << m_d->m_reader->tokenType() << "; tokenString:"
+            << m_d->m_reader->tokenString() << "; name:" << m_d->m_reader->name();
+#endif
+    if (m_d->m_reader->isStartElement())
+    {
+      m_d->m_parser->startElement(m_d->m_reader->namespaceUri().toString(),
+                                  m_d->m_reader->name().toString(),
+                                  m_d->m_reader->qualifiedName().toString(),
+                                  m_d->m_reader->attributes(),
+                                  getCurrentOffsetFromXmlReader() );
+    }
+    else if (m_d->m_reader->isEndElement())
+    {
+      m_d->m_parser->endElement(m_d->m_reader->namespaceUri().toString(),
+                                m_d->m_reader->name().toString(),
+                                m_d->m_reader->qualifiedName().toString(),
+                                getCurrentOffsetFromXmlReader() );
+    }
+    else if (m_d->m_reader->isCharacters())
+    {
+      m_d->m_parser->characters(m_d->m_reader->text().toString(),
+getCurrentOffsetFromXmlReader());
+    }
+    m_d->m_reader->readNext();
+    // do processing
+  }
+  if (m_d->m_reader->hasError())
+  {
+    // do error handling
     DRLOGINIT;
-#endif
-    try
-    {
-        // extract an element
-#ifdef DEBUG_LP
-        LDEBUG << "DocumentReader::readXMLDocument";
-#endif
+    LERROR <<"DocumentReader: readXMLDocument: parse error:" << m_d->m_reader->errorString();
+    return false;
+  }
+  m_d->m_parser->endDocument();
 
-        while (!m_d->m_reader->atEnd())
-        {
-#ifdef DEBUG_LP
-          LDEBUG <<"DocumentReader::readXMLDocument:"<<getCurrentOffsetFromXmlReader() << "; tokenType:" << m_d->m_reader->tokenType() << "; tokenString:" << m_d->m_reader->tokenString() << "; name:" << m_d->m_reader->name();
-#endif
-          if (m_d->m_reader->isStartElement())
-          {
-            m_d->m_parser->startElement ( m_d->m_reader->namespaceUri().toString(), m_d->m_reader->name().toString(), m_d->m_reader->qualifiedName().toString(), m_d->m_reader->attributes(), getCurrentOffsetFromXmlReader() );
-          }
-          else if (m_d->m_reader->isEndElement())
-          {
-            m_d->m_parser->endElement( m_d->m_reader->namespaceUri().toString(), m_d->m_reader->name().toString(), m_d->m_reader->qualifiedName().toString(), getCurrentOffsetFromXmlReader() );
-          }
-          else if (m_d->m_reader->isCharacters())
-          {
-            m_d->m_parser->characters(m_d->m_reader->text().toString(), getCurrentOffsetFromXmlReader());
-          }
-          m_d->m_reader->readNext();
-          // do processing
-        }
-        if (m_d->m_reader->hasError())
-        {
-          // do error handling
-          DRLOGINIT;
-          LERROR <<"DocumentReader: readXMLDocument: parse error:" << m_d->m_reader->errorString();
-          return false;
-        }
-        m_d->m_parser->endDocument();
-    }
-    // Handlers exception sur parseNext()
-    catch ( Lima::XMLException &e )
-    {
-      handleXercesException ( e );
-      return false;
-    }
-
-    return true;
+  return true;
 }
 
 } // namespace DocumentsReader

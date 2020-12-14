@@ -44,27 +44,25 @@ namespace Lima {
       public:
         //! @brief defaut constructor
 
-        //! should not be used since it does not return the error message
-        XMLConfigurationFileException() : LimaException() {}
-
         //! @brief constructor with the error message
-        XMLConfigurationFileException ( const std::string &mess ) : LimaException ( mess ) {}
+        explicit XMLConfigurationFileException ( const std::string &mess = "") : LimaException ( mess ) {}
 
-      private:
-        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) {return *this;}
+        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) = default;
+        XMLConfigurationFileException(const XMLConfigurationFileException&) = default;
       };
 
       //! @brief return a message when a 'module' is not found
-      class NoSuchModule : public XMLConfigurationFileException
+      class LIMA_XMLCONFIGURATIONFILES_EXPORT NoSuchModule : public XMLConfigurationFileException
       {
       public:
         //! @brief constructor (send a message was default)
         //! @param name the <i>module</i> that was not found
-        NoSuchModule ( const std::string &name ) : XMLConfigurationFileException ( "No such module " + name ),moduleName ( name ) {/*std::cout << "No such module " << name << std::endl;*/}
+        explicit NoSuchModule ( const std::string &name ) : XMLConfigurationFileException ( "No such module " + name ), moduleName ( name ) {}
         //! @brief destructor (throw the exception)
-        virtual ~NoSuchModule() throw() {}
+        NoSuchModule& operator=(const NoSuchModule&) = default;
+        NoSuchModule(const NoSuchModule&) = default;
+        virtual ~NoSuchModule() throw() = default;
       private:
-        NoSuchModule& operator=(const NoSuchModule&) {return *this;}
         //! @brief the name of the <i>module</i> that was not found
         const std::string moduleName;
       };
@@ -76,9 +74,10 @@ namespace Lima {
         //! @brief constructor (send a message was default)
         //! @param name the <i>group</i> that was not found
         NoSuchGroup ( const std::string &name ) : XMLConfigurationFileException ( "No such group " + name ),groupName ( name ) {/*std::cout << "No such group " << name << std::endl;*/}
-        virtual ~NoSuchGroup() throw() {}
+        virtual ~NoSuchGroup() throw() = default;
+        NoSuchGroup(const NoSuchGroup&) = default;
+        NoSuchGroup& operator=(const NoSuchGroup&) = default;
       private:
-        NoSuchGroup& operator=(const NoSuchGroup&) {return *this;}
         //! @brief the name of the <i>group</i> that was not found
         const std::string groupName;
       };

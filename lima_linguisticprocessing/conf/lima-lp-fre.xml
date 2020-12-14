@@ -300,8 +300,10 @@
         <!-- minitel 36-15 ... -->
         <entry key="36-\d{1,2} [a-zA-Z]+" value="t_url"/>
         <!-- web adress -->
-        <entry key="((mailto|http|ftp|https):\/\/)?\w[\w\-]+(\.\w[\w\-]+)*(\.\w\w+)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
-        <entry key="((mailto|http|ftp|https):\/\/)?(\.[\w\-]+)+\.(uk|com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)\w[\w\-]*(\.\w[\w\-]*)*(\.\w\w*)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <!--do not allow url without http unless explicit www or explicit extension: don't want to recognize 10.000 as a url)-->
+        <entry key="www.\w[\w\-]*(\.\w[\w\-]*)*(\.\w\w*)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+        <entry key="([\w\-]+)+\.(uk|com|org|edu|fr|es|de|gov)([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
       </map>
     </group>
     <group name="simpleWord" class="SimpleWord">

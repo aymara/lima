@@ -176,7 +176,7 @@ bool MultXmlHandler::startElement(const QString & namespaceURI, const QString & 
 #endif
 
   LimaString lemma;
-  LinguisticCode category = static_cast<LinguisticCode>(0);
+  LinguisticCode category = L_NONE;
   uint64_t position(0);
   uint64_t length(0);
   uint64_t id(0);
@@ -548,7 +548,7 @@ uint64_t MultXmlHandlerPrivate::getTokenAttributes(const QXmlAttributes& attribu
                                   uint64_t& length,
                                   uint64_t& id) const {
   lemma=getStringAttribute(attributes,"lemma");
-  category=getIntAttribute(attributes,"category");
+  category=LinguisticCode::fromUInt(getIntAttribute(attributes,"category"));
   position=getIntAttribute(attributes,"position");
   length=getIntAttribute(attributes,"length");
   id=getIntAttribute(attributes,"id");

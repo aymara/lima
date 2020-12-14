@@ -138,8 +138,7 @@ ConstraintWithRelationComplement::ConstraintWithRelationComplement(
       if (m_relation == 0)
       {
         SALOGINIT;
-        LERROR << "undefined syntactic relation [" << str << "]";
-        throw LimaException();
+        LIMA_EXCEPTION( "undefined syntactic relation [" << str.c_str() << "]" );
       }
     }
   }
@@ -183,7 +182,7 @@ bool SecondUngovernedBy::operator()(
   // n'est pas ordonné.
   // Il faut donc parcourir tous les arcs sortant de dv1, et filtrer
   // ceux entrant dans dv2.
-  //  std::tie(it, it_end) = edge_range(dv1, dv2, *(syntacticData-> dependencyGraph()));
+  //  std::tie(it, it_end) = edge_range(dv1, dv2, *(syntacticData-> dependencyGraph()));
   const DependencyGraph *g = syntacticData-> dependencyGraph();
   std::tie(it, it_end) = out_edges(dv1, *g);
   for (; it != it_end; it++)
@@ -627,8 +626,7 @@ CreateRelationWithRelated::CreateRelationWithRelated(
   if (i == std::string::npos)
   {
     SAPLOGINIT;
-    LERROR << "Error: CreateRelationWithRelated complement must have two types";
-    throw LimaException();
+    LIMA_EXCEPTION( "Error: CreateRelationWithRelated complement must have two types");
   }
   m_relationToCreate=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getSyntacticRelationId(std::string(str,i+1));
 
@@ -764,9 +762,6 @@ bool CreateRelationReverseWithRelated::operator()(
 CreateCompoundTense::CreateCompoundTense(MediaId language,
     const LimaString& complement):
     ConstraintFunction(language,complement),
-    m_macro(0),
-    m_micro(0),
-    m_tense(0),
     m_tempCompType(0)
 {
 #ifdef DEBUG_LP
@@ -779,9 +774,7 @@ CreateCompoundTense::CreateCompoundTense(MediaId language,
   if (complementList.size() != 3)
   {
     SAPLOGINIT;
-    LERROR << "CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements while it is:" << complement;
-    throw LimaException("CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements");
-
+    LIMA_EXCEPTION( "CreateCompoundTense::CreateCompoundTense() complement should be a list of three semicolon separated elements while it is:" << complement );
   }
   m_macro=codeManager.getPropertyManager("MACRO").getPropertyValue(complementList[0].toUtf8().constData());
 
@@ -1250,8 +1243,6 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 CreateEasyCompoundTense::CreateEasyCompoundTense(MediaId language,
     const LimaString& complement):
     ConstraintFunction(language,complement),
-    m_macro(0),
-    m_micro(0),
     m_tempCompType(0)
 {
   const std::string str=

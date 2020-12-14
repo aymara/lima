@@ -43,6 +43,7 @@ LIMA_COMMON_EXPORT void fakeSymbolForWindowsLinking() {}
 
 }
 
+#ifndef USE_STD_BITSET_FOR_LINGUISTIC_CODE
 LIMA_COMMON_EXPORT QDebug& operator<<(QDebug& os, const uint128_t value)
 {
   std::stringstream ss;
@@ -107,5 +108,6 @@ LIMA_COMMON_EXPORT std::istream& operator>>(std::istream& is, uint128_t& value)
 
   return is;
 }
+#endif
 
 }

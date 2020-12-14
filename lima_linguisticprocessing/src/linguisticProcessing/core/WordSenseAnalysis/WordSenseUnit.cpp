@@ -27,12 +27,6 @@ namespace LinguisticProcessing
 {
 namespace WordSenseDisambiguation
 {
-  WordSenseUnit::WordSenseUnit()
-  {
-  }
-  WordSenseUnit::~WordSenseUnit()
-  {
-  }
   WordSenseUnit::WordSenseUnit(uint senseId,
                                uint64_t parentLemmaId,
                                Mode mode,
@@ -48,12 +42,12 @@ namespace WordSenseDisambiguation
      {}
 
   std::ostream& operator << (std::ostream& os, const WordSenseUnit& wsu)
-  { 
+  {
     os <<  wsu.parentLemmaId() << "#"<<wsu.senseId() << "(" << wsu.mode() << "):" << wsu.senseTag() ;
     return os;
   }
 
-  
+
 
 
 }  // namespace WordSenseDisambiguation

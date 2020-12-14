@@ -51,15 +51,12 @@ namespace SyntacticAnalysis
 class LIMA_SYNTACTICANALYSIS_EXPORT SyntagmaticMatrixRow
   {
 public:
-    SyntagmaticMatrixRow() : m_filters(std::set< TokenFilter, tfless >())
-    {
-      //        std::cerr << "Constructing Matrix Row" << std::endl;
-    }
+    SyntagmaticMatrixRow() = default;
+    virtual ~SyntagmaticMatrixRow() = default;
 
-    SyntagmaticMatrixRow(const SyntagmaticMatrixRow& row) : m_filters(std::set< TokenFilter, tfless >(row.m_filters))
-    {}
+    SyntagmaticMatrixRow(const SyntagmaticMatrixRow& row) = default;
+    SyntagmaticMatrixRow& operator=(const SyntagmaticMatrixRow& row) = default;
 
-    virtual ~SyntagmaticMatrixRow() {}
 
     void deleteRow()
     {
@@ -110,9 +107,9 @@ public:
   void deleteMatrix();
 
   SyntagmaticMatrixFilter& filters();
-  
+
   const SyntagmaticMatrixFilter& filters() const;
-  
+
   SyntagmaticMatrixFilter::const_iterator find(const TokenFilter& f) const;
 
   void display() const;

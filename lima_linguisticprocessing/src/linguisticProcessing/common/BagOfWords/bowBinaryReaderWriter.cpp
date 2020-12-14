@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -122,12 +122,10 @@ void BoWBinaryReader::readHeader(std::istream& file)
 {
     Misc::readString(file,m_d->m_version);
     if (m_d->m_version != BOW_VERSION) {
-        std::ostringstream oss;
-        oss << "BoWBinaryReader::readHeader - incompatible version : file is in version " << m_d->m_version
-        << "; current version is " << BOW_VERSION;
         BOWLOGINIT;
-        LERROR << oss.str();
-        throw LimaException(oss.str());
+        LIMA_EXCEPTION("BoWBinaryReader::readHeader - incompatible version : file is in version "
+                        << m_d->m_version.c_str() << "; current version is "
+                        << BOW_VERSION );
     }
     m_d->m_fileType=static_cast<BoWFileType>(Misc::readOneByteInt(file));
 
@@ -345,7 +343,7 @@ void BoWBinaryReaderPrivate::readSimpleToken(std::istream& file,
 #endif
   LinguisticCode category;
   uint64_t position,length;
-  category=static_cast<LinguisticCode>(Misc::readCodedInt(file));
+  category = LinguisticCode::decodeFromBinary(file);
   position=Misc::readCodedInt(file);
   length=Misc::readCodedInt(file);
   token->setLemma(lemma);
@@ -589,8 +587,7 @@ void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const boost::sha
     }
     default: {
         BOWLOGINIT;
-        LERROR << "BoWBinaryWriter: cannot handle BoWType " << token->getType();
-        throw LimaException();
+        LIMA_EXCEPTION( "BoWBinaryWriter: cannot handle BoWType " << token->getType() );
     }
     }
 }
@@ -613,7 +610,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   LDEBUG << "BoWBinaryWriter::writeSimpleToken write infl: " << token->getInflectedForm();
 #endif
   Misc::writeUTF8StringField(file,token->getInflectedForm());
-  Misc::writeCodedInt(file,token->getCategory());
+  LinguisticCode::encodeToBinary(file, token->getCategory());
 
   auto beg = token->getPosition();
   auto end = token->getLength() + beg;

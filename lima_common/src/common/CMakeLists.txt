@@ -1,5 +1,5 @@
-#   Copyright 2002-2013 CEA LIST
-#    
+#   Copyright 2002-2020 CEA LIST
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -31,17 +31,21 @@ add_subdirectory(time)
 
 add_definitions( -DLIMA_COMMON_EXPORTING )
 
-add_library(lima-common SHARED LimaCommon.cpp)
-target_link_libraries(lima-common 
+add_library(lima-common SHARED
+  LimaCommon.cpp
+  LinguisticCode/StdBitset.cpp
+)
+
+target_link_libraries(lima-common
   lima-common-factory
   lima-common-mediaticdata
   lima-common-xmlconfigurationfiles
   lima-common-tools
-  lima-common-datahandler 
-  lima-common-mediaprocessors 
-  lima-common-time 
+  lima-common-datahandler
+  lima-common-mediaprocessors
+  lima-common-time
   lima-common-misc
-  lima-common-data 
+  lima-common-data
 )
 
 ADD_DLL_TO_PATH(lima-common)
@@ -58,13 +62,19 @@ configure_file (
   "LimaVersion.h"
   @ONLY
   )
- 
+
 
 ########### install files ###############
 
-install(FILES 
+install(FILES
     LimaCommon.h
     ${CMAKE_CURRENT_BINARY_DIR}/LimaVersion.h
   DESTINATION include/common
+  COMPONENT devel
+)
+
+install(FILES
+    LinguisticCode/StdBitset.h
+  DESTINATION include/common/LinguisticCode
   COMPONENT devel
 )

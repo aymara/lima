@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -256,7 +256,7 @@ bool CoreferentAnnotation::isN3PPronoun(
   const LinguisticAnalysisStructure::AnalysisGraph* anagraph) const
 {
   MorphoSyntacticData* data = get(vertex_data, *anagraph->getGraph(), m_morphVertex);
-    return(data->firstValue(*personAccessor)!=static_cast<LinguisticCode>(48));
+  return (data->firstValue(*personAccessor)!=LinguisticCode::fromUInt(48));
 }
 
   /** test functions for the salience weighting */
@@ -471,7 +471,7 @@ bool CoreferentAnnotation::isGovernedByMasculineCoordinate(
       if (data1 ==0 || data1->empty()) { return false; };
       for (MorphoSyntacticData::iterator msdataIt = data1->begin(); msdataIt!=data1->end(); msdataIt++)
       {
-        if (genderAccessor->readValue(msdataIt->properties)==1)
+        if (genderAccessor->readValue(msdataIt->properties)==LinguisticCode::fromUInt(1))
           return true;
         else if (CoreferentAnnotation(0, sd->tokenVertexForDepVertex(source(*it2, *(sd->dependencyGraph())))).isGovernedByMasculineCoordinate(sd,genderAccessor,language,anagraph,ac))
           return true;
@@ -487,7 +487,7 @@ bool CoreferentAnnotation::isGovernedByMasculineCoordinate(
     if (data1 ==0 || data1->empty()) { return false; };
     for (MorphoSyntacticData::iterator msdataIt = data1->begin(); msdataIt!=data1->end(); msdataIt++)
     {
-      if (genderAccessor->readValue(msdataIt->properties)==1)
+      if (genderAccessor->readValue(msdataIt->properties)==LinguisticCode::fromUInt(1))
         return true;
       else return CoreferentAnnotation(0, sd->tokenVertexForDepVertex(source(*it, *(sd->dependencyGraph())))).isGovernedByMasculineCoordinate(sd,genderAccessor,language,anagraph,ac);
     }
@@ -517,7 +517,7 @@ bool CoreferentAnnotation::isAgreementCompatibleWith(
     bool isPlural = false;
     for (MorphoSyntacticData::iterator it = data1->begin(); it!=data1->end(); it++)
     {
-      if (numberAccessor->readValue(it->properties)==8)
+      if (numberAccessor->readValue(it->properties)==LinguisticCode::fromUInt(8))
       {
         isPlural = true;
         break;
@@ -526,7 +526,8 @@ bool CoreferentAnnotation::isAgreementCompatibleWith(
     bool isMascPlural = false;
     for (MorphoSyntacticData::iterator it = data1->begin(); it!=data1->end(); it++)
     {
-      if (numberAccessor->readValue(it->properties)==8 && genderAccessor->readValue(it->properties)==1)
+      if (numberAccessor->readValue(it->properties)==LinguisticCode::fromUInt(8)
+          && genderAccessor->readValue(it->properties)==LinguisticCode::fromUInt(1))
       {
         isMascPlural = true;
         break;
@@ -553,7 +554,8 @@ bool CoreferentAnnotation::isAgreementCompatibleWith(
     bool PersonAgreement =
     (data1->firstValue(*personAccessor)==data2->firstValue(*personAccessor) ||
     // anaphora = pronom classifi��la 3e personne, candidate = common NP non-classified
-    (data1->firstValue(*personAccessor)==48 && data2->firstValue(*personAccessor)==0));
+    (data1->firstValue(*personAccessor)==LinguisticCode::fromUInt(48)
+     && data2->firstValue(*personAccessor)==L_NONE));
 //  TimeUtils::logElapsedTime("PA");
 //  TimeUtils::updateCurrentTime();
     return (genderAgreement && NumberAgreement && PersonAgreement);

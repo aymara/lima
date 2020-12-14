@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -27,7 +27,7 @@
  Dictionaries iterators are specified in NA2002.r2129 JYS
 */
 // <dictionaryEntry> ::=  <Len0> <infos>
-// <infos> ::=        <lingInfo> [<accented> [<idiomatic> [<hyphenLingInfo> 
+// <infos> ::=        <lingInfo> [<accented> [<idiomatic> [<hyphenLingInfo>
 //                [<concatenated> [<byDefault> ]]]]]
 // <byDefault> ::=      <LingPropertiesOffset>
 // <concatenated> ::=    <Len3> { <concatenatedEntry> }
@@ -261,7 +261,7 @@ DictionaryEntry& DictionaryEntry::reset()
                                         uint64_t num = getEncodedNumber(ptr);
                                         m_endByDefault = num + ptr;  //<Len7>
                                     }
-                                    m_byDefault = ptr;  
+                                    m_byDefault = ptr;
                                     m_hasDefaultProperty = (m_endByDefault > m_byDefault);
                              }
                         }
@@ -340,13 +340,16 @@ LingInfoEntry DictionaryEntry::nextHyphenLingInfo() {
 */
 ConcatenatedEntry DictionaryEntry::nextConcatenated() {
     if (m_startAddr == NULL) throw EmptyEntryException();
-    if (m_concatenated < m_endConcatenated) {
+    if (m_concatenated < m_endConcatenated)
+    {
         unsigned char *concatenated = m_concatenated;
         nextField(m_concatenated);
         return ConcatenatedEntry(concatenated, m_stringStartAddr);
     }
     else
+    {
         return ConcatenatedEntry();
+    }
 }
 
 /** Gets the next LingPropertyEntry if exists
@@ -355,11 +358,18 @@ ConcatenatedEntry DictionaryEntry::nextConcatenated() {
 */
 LingPropertyEntry DictionaryEntry::nextLingProperty()
 {
-  if (m_startAddr == NULL) throw EmptyEntryException();
-  if (m_byDefault < m_endByDefault)
-    return LingPropertyEntry(static_cast<LinguisticCode>(getEncodedNumber(m_byDefault)));
-  else
-    return LingPropertyEntry();
+    if (m_startAddr == NULL)
+    {
+        throw EmptyEntryException();
+    }
+    if (m_byDefault < m_endByDefault)
+    {
+        return LingPropertyEntry(LinguisticCode::decodeFromBinary(m_byDefault));
+    }
+    else
+    {
+        return LingPropertyEntry();
+    }
 }
 
 } //closing namespace Dictionary

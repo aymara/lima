@@ -1207,20 +1207,21 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
         auto se = annotationData->annotation(vx,
                                              QString::fromUtf8("SpecificEntity"))
           .pointerValue<SpecificEntityAnnotation>();
-         for (const auto& vse : se->vertices())
-         {
-           dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping, neType);
-         }
+        previousNeType = "O";
+        for (const auto& vse : se->vertices())
+        {
+          dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping, neType);
+        }
 #ifdef DEBUG_LP
-          LDEBUG << "ConllDumperPrivate::dumpNamedEntity return after SpecificEntity annotation on PosGraph";
+        LDEBUG << "ConllDumperPrivate::dumpNamedEntity return after SpecificEntity annotation on PosGraph";
 #endif
-         return;
+        return;
       }
     }
     auto anaVertices = annotationData->matches(m_graph.toStdString(), v, "AnalysisGraph");
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumperPrivate::dumpNamedEntity anaVertices for" << v
-            << ":" << matchesS(anaVertices);
+           << ":" << matchesS(anaVertices);
 #endif
 
     assert(anaVertices.size() == 1);
@@ -1239,15 +1240,16 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
               << (*sp)[se->getString()] << ") annotation vertices are"
               << se->vertices();
 #endif
-        // All retrieved lines/tokens have the same netype. Depending on the
-        // output style (CoNLL 2003, CoNLL-U, …), the generated line is different
-        // and the ne-Type includes or not BIO information using in this case the
-        // previousNeType member.
-        for (const auto& vse : se->vertices())
-        {
-          dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType);
-        }
-        previousNeType = neType;
+      // All retrieved lines/tokens have the same netype. Depending on the
+      // output style (CoNLL 2003, CoNLL-U, …), the generated line is different
+      // and the ne-Type includes or not BIO information using in this case the
+      // previousNeType member.
+      previousNeType = "O";
+      for (const auto& vse : se->vertices())
+      {
+        dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType);
+      }
+      previousNeType = neType;
     }
   }
 }

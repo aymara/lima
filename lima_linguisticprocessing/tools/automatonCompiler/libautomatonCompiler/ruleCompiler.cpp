@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -60,7 +60,8 @@ LimaString initRule(Rule& r,
                      const std::vector<SubAutomaton>& subAutomatons,
                      const std::vector<LimaString>& activeEntityGroups,
                      const std::string& filename,
-                     uint64_t lineNumber) {
+                     uint64_t lineNumber)
+{
 
   AUCLOGINIT;
 #ifdef DEBUG_LP
@@ -71,7 +72,8 @@ LimaString initRule(Rule& r,
   // Lima::TimeUtilsController* ctrl6  = new Lima::TimeUtilsController("build RuleString and function inside compiler", true);
   RuleString s(str,language,gazeteers,subAutomatons);
 
-  try {
+  try
+  {
     // copy constraint informations to the rule
     // set the number of constraints
     r.setNumberOfConstraints(s.getNbConstraints());
@@ -79,18 +81,21 @@ LimaString initRule(Rule& r,
 
     // add the actions to the rule
     for (std::vector<Constraint>::const_iterator a=s.getActions().begin();
-         a!=s.getActions().end(); a++) {
+         a!=s.getActions().end(); a++)
+    {
       r.addAction(*a);
     }
     for (std::vector<std::pair<LimaString,Constraint> >::const_iterator a=s.getActionsWithOneArgument().begin();
-         a!=s.getActionsWithOneArgument().end(); a++) {
+         a!=s.getActionsWithOneArgument().end(); a++)
+    {
       r.addAction(a->second,a->first);
     }
 
     //ruleString=s.getString();
   }
-  catch (AutomatonCompilerException& exception) {
-  LERROR << "Error on rule: " << str;
+  catch (AutomatonCompilerException& exception)
+  {
+    LERROR << "Error on rule: " << str;
     throw;
   }
 
@@ -102,7 +107,8 @@ LimaString initRule(Rule& r,
   r.setTrigger(createTransition(s.getTrigger(),language,"trigger",activeEntityGroups));
   // delete ctrl7;
 
-  try {
+  try
+  {
   // Lima::TimeUtilsController* ctrl8  = new Lima::TimeUtilsController("setLeftAutomaton", true);
     r.setLeftAutomaton(AutomatonCompiler::buildAutomaton(s.getLeft(),
                                                          language,gazeteers,
@@ -111,13 +117,15 @@ LimaString initRule(Rule& r,
                                                          r.getActionsWithOneArgument()));
   // delete ctrl8;
   }
-  catch (AutomatonCompilerException& e) {
+  catch (AutomatonCompilerException& e)
+  {
     LERROR << "Error: "<< e.what()
       << " on left part of rule: " << str;
     throw;
   }
 
-  try {
+  try
+  {
     // Lima::TimeUtilsController* ctrl9  = new Lima::TimeUtilsController("setRightAutomaton", true);
     r.setRightAutomaton(AutomatonCompiler::buildAutomaton(s.getRight(),
                                                           language,gazeteers,
@@ -127,33 +135,38 @@ LimaString initRule(Rule& r,
     LDEBUG << "RuleCompiler:initRule: r.rightAutomaton = " << r.rightAutomaton();
     // delete ctrl9;
   }
-  catch (AutomatonCompilerException& e) {
+  catch (AutomatonCompilerException& e)
+  {
     LERROR << "Error: "<< e.what()
       << " on left part of rule: " << str;
     throw;
   }
 
   LimaString& stringType=s.getType();
-  try {
-    if (stringType.indexOf(*STRING_NEGATIVE_TYPE_RULE)==0) {
+  try
+  {
+    if (stringType.indexOf(*STRING_NEGATIVE_TYPE_RULE)==0)
+    {
       setType(r,
-              stringType.mid(
-                          LENGTH_NEGATIVE_TYPE_RULE),
+              stringType.mid(LENGTH_NEGATIVE_TYPE_RULE),
               activeEntityGroups);
       r.setNegative(true);
     }
-    else if (stringType.indexOf(*STRING_ABSOLUTE_TYPE_RULE)==0) {
+    else if (stringType.indexOf(*STRING_ABSOLUTE_TYPE_RULE)==0)
+    {
       setType(r,
               stringType.mid(
                           LENGTH_ABSOLUTE_TYPE_RULE),
               activeEntityGroups);
       r.setContextual(false);
     }
-    else {
+    else
+    {
       setType(r,stringType,activeEntityGroups);
     }
   }
-  catch (UnknownTypeException&) {
+  catch (UnknownTypeException&)
+  {
     LERROR << "Error on rule [" << str << "]";
     throw;
   }
@@ -182,18 +195,22 @@ void setType(Rule& r,
   LimaString str;
   //std::string::size_type i(findSpecialCharacter(s,CHAR_POS_TR,0));
   int i(findSpecialCharacter(s,CHAR_POS_TR,0));
-  if (i != -1) { // there are linguistic properties
-    r.setLinguisticProperties(static_cast<LinguisticCode>(s.mid(i+1).toInt()));
+  if (i != -1)
+  {
+    // there are linguistic properties
+    r.setLinguisticProperties(LinguisticCode::fromString(s.mid(i+1).toStdString()));
     str=s.left(i);
   }
-  else {
-    r.setLinguisticProperties(static_cast<LinguisticCode>(0));
+  else
+  {
+    r.setLinguisticProperties(L_NONE);
     str=s;
   }
 
   Common::MediaticData::EntityType type=
     resolveEntityName(str,activeEntityGroups);
-  if (type.isNull()) {
+  if (type.isNull())
+  {
     std::ostringstream oss;
     oss << "type [" << str.toUtf8().data() << "] not recognized";
     throw UnknownTypeException(oss.str());

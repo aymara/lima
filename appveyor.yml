@@ -115,7 +115,9 @@ deploy:
     secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
   artifact: packages
   force_update: true
-
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: false       # deploy on non tag push only
 
 #on_success:
          #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

@@ -45,13 +45,15 @@ AbstractTextualAnalysisDumper(),
 m_language(0),
 m_graph("PosGraph"),
 m_followGraph(false),
-m_domain(""),
+m_domains(),
+m_ignore(),
 m_attributes(),
 m_all_attributes(false),
 m_templateDefinitions(),
 m_templateNames(),
 m_offsetMapping(nullptr),
-m_outputGroups(false)
+m_outputGroups(false),
+m_posOffset(-1)
 {
   DUMPERLOGINIT;
   LDEBUG << "AbstractIEDumper::AbstractIEDumper()";
@@ -86,16 +88,43 @@ void AbstractIEDumper::init(
 
   try
   {
+    // single domain
     string val=unitConfiguration.getParamsValueAtKey("domain");
-    m_domain=val;
+    if (! val.empty()) {
+      m_domains.insert(val);
+    }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
-    m_domain="";
+    m_domains=set<string>();
     DUMPERLOGINIT;
     LDEBUG << "no parameter 'domain' in AbstractIEDumper: entities from all domains will be printed";
-  } // all domains are printed
+  } // if empty set, all domains are printed
 
+  try
+  {
+    deque< string > vals=unitConfiguration.getListsValueAtKey("domains");
+    for (const auto& v: vals) {
+      m_domains.insert(v);
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
+    LDEBUG << "no list 'domains' in AbstractIEDumper";
+  } // if empty set, all domains are printed
+
+  try
+  {
+    deque< string > vals=unitConfiguration.getListsValueAtKey("ignore");
+    for (const auto& v: vals) {
+      m_ignore.insert(v);
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& )
+  {
+    LDEBUG << "no list 'ignore' in AbstractIEDumper: all entity types of authorized domains are printed";
+  }
+  
   try
   {
     string val=unitConfiguration.getParamsValueAtKey("outputAllAttributes");
@@ -163,6 +192,13 @@ void AbstractIEDumper::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
+  
+  try {
+    std::string str=unitConfiguration.getParamsValueAtKey("posOffset");
+    m_posOffset=std::stoi(str);
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
+
 }
 
 LimaStatusCode AbstractIEDumper::process(
@@ -433,7 +469,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
         LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
         std::uint64_t position= vToken->position()+offset;
         std::uint64_t length= vToken->length();
-        string stringForm = originalText.mid( position-1,length).toUtf8().data();
+        string stringForm = originalText.mid( position+m_posOffset,length).toUtf8().data();
 
         if (addEventMentionAsEntity() && templateMention.compare(typeName)==0)
         {
@@ -488,12 +524,12 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
       std::vector<pair<uint64_t,uint64_t> > positions;
       LimaString eventMentionString=Lima::Common::Misc::utf8stdstring2limastring(e.eventMentionString);
       computePositions(positions,eventMentionString,e.eventMentionPosition,e.eventMentionLength);
-      if (m_outputGroups && !m_domain.empty()) {
-        outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
-      }
-      else {
-        outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
-      }
+      // if (m_outputGroups && !m_domain.empty()) {
+      //   outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
+      // }
+      // else {
+      outputEntityString(out, e.eventMentionId, e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
+      // }
       idEntity++;
     }
   }
@@ -528,7 +564,7 @@ computePositions(std::vector<pair<uint64_t,uint64_t> >& positions,
                  uint64_t len) const
 {
   // if string contains \n, have to set several position intervals around these characters (brat-style)
-  positions.push_back(make_pair(pos-1,pos+len-1));
+  positions.push_back(make_pair(pos+m_posOffset,pos+len+m_posOffset));
   string::size_type prev(0),i=stringForm.indexOf("\n");
   vector<unsigned int> toErase;
   while (i!=string::npos) {
@@ -607,7 +643,7 @@ outputEntity(std::ostream& out,
     std::uint64_t pos=offset+annot->getPosition();
     std::uint64_t len=annot->getLength();
     //string stringForm=originalText.mid( pos-1,len).toUtf8().data();
-    auto stringForm=originalText.mid( pos-1,len);
+    auto stringForm=originalText.mid( pos+m_posOffset,len);
     std::vector<pair<uint64_t,uint64_t> > positions;
 //     cerr << "computePositions("<< stringForm.toUtf8().data() << ") " << pos << ":" << len << " -> ";
     computePositions(positions,stringForm,pos,len);
@@ -622,7 +658,11 @@ outputEntity(std::ostream& out,
     if (posG!=std::string::npos && ! m_outputGroups){
       entityType = entityType.substr(posG+1);
     }
-
+    if (m_ignore.find(entityType)!=m_ignore.end()) {
+      //LDEBUG << "AbstractIEDumper: ignored entity type" << entityType;
+      return false;
+    }
+    
     // back to the original offset if text has been expanded
     // do this before inserting in mapEntities to find real duplicates
     adjustPosition(pos);
@@ -643,9 +683,11 @@ outputEntity(std::ostream& out,
 
     std::size_t index = mapEntities.size()+1;
 
-    if (! m_domain.empty() && domainType!=m_domain)
+    if (! m_domains.empty() && m_domains.find(domainType)==m_domains.end())
     {
       // entity is not in considered domain: do not print it (nor store it in the map)
+      DUMPERLOGINIT;
+      LDEBUG << "AbstractIEDumper: ignore entity of domain" << domainType;
       return false;
     }
 
@@ -694,7 +736,7 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
 
   const SpecificEntityAnnotation* se=0;
 
-  // check only entity found in current graph (not previous graph such as AnalysisGraph)
+  // check only entity found in current graph
 
   std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
@@ -711,6 +753,31 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
       }
     }
   }
+  
+  // special case: if specified graph is posgraph, allows to search in analysis graph 
+  // (entities found before pos-tagging)
+  if (m_graph=="PosGraph") {
+    std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+
+    // note: anaVertices size should be 0 or 1
+    for (const auto& anaVertex : anaVertices)  {
+      
+      std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
+    
+      for (const auto& vx: matches)
+      {
+        if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+        {
+          se = annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+          pointerValue<SpecificEntityAnnotation>();
+          if (se!=0) {
+            return se;
+          }
+        }
+      }
+    }
+  }
+  
   return se;
 
 }

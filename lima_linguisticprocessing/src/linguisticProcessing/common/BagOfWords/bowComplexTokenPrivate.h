@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -59,7 +59,7 @@ public:
   BoWComplexTokenPrivate(const BoWComplexToken&);
 
   BoWComplexTokenPrivate(const Lima::LimaString& lemma,
-                  const uint64_t category,
+                  const LinguisticCode category,
                   const uint64_t position,
                   const uint64_t length);
 
@@ -78,7 +78,7 @@ public:
    * @return
    */
   BoWComplexTokenPrivate(const Lima::LimaString& lemma,
-                  const uint64_t category,
+                  const LinguisticCode category,
                   const uint64_t position,
                   const uint64_t length,
                   std::deque< boost::shared_ptr< BoWToken > >& parts,
@@ -88,7 +88,7 @@ public:
 
   BoWComplexTokenPrivate(const BoWComplexTokenPrivate&);
   BoWComplexTokenPrivate& operator=(const BoWComplexTokenPrivate&);
-  
+
   std::deque<BoWComplexToken::Part> m_parts;  /**< the list of the parts of the
                                 complex token*/
   uint64_t m_head;       /**< the index of the head of the

@@ -942,12 +942,8 @@ EntityType MediaticData::addEntity(EntityGroupId groupId,
   if (static_cast<std::size_t>(groupId)>=m_d->m_entityTypes.size())
   {
     MDATALOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "MediaticData::addEntity unknown entity group id " << groupId
-        << "adding" << entityName;
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+    LIMA_EXCEPTION("MediaticData::addEntity unknown entity group id " << groupId
+        << "adding" << entityName);
   }
   EntityTypeId typeId= m_d->m_entityTypes[groupId]->insert(entityName);
   return EntityType(typeId,groupId);
@@ -990,11 +986,7 @@ EntityType MediaticData::getEntityType(const LimaString& entityName) const
   if (i==-1)
   {
     MDATALOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "MediaticData::getEntityType missing group name in entity name '" << entityName << "'";
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+    LIMA_EXCEPTION( "MediaticData::getEntityType missing group name in entity name '" << entityName << "'" );
   }
   LimaString groupName = entityName.left(i);
   LimaString name = entityName.mid(i+m_d->s_entityTypeNameSeparator.length());
@@ -1022,12 +1014,8 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
   catch(LimaException& e)
   {
     MDATALOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId
-          << "; exception:" << e.what();
-    LWARN << errorString;
-    throw;
+    LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId
+          << "; exception:" << e.what() );
   }
 }
 
@@ -1067,13 +1055,9 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   if (static_cast<size_t>(type.getGroupId())>=m_d->m_entityTypes.size())
   {
     MDATALOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "MediaticData::getEntityName type.getGroupId()="
+    LIMA_EXCEPTION( "MediaticData::getEntityName type.getGroupId()="
         << type.getGroupId()<<" > m_entityTypes.size()="
-        << m_d->m_entityTypes.size() << " for entity type " << type;
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+        << m_d->m_entityTypes.size() << " for entity type " << type );
   }
   try {
     // return m_entityTypes[type.getGroupId()]->get(type.getTypeId());

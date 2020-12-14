@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /**
   *
   * @file       XmlSyntagmaticMatrixFileHandler.cpp
-  * @author     Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
+  * @author     Gael de Chalendar (Gael.de-Chalendar@cea.fr)
 
   *             Copyright (c) 2003 by CEA
   * @date       Created on  Mon Aug 04 2003
@@ -132,8 +132,7 @@ bool XMLSyntagmaticMatrixFileHandler::characters(const     QString&    chars)
         LinguisticCode filterCategory;
         if ( isdigit(str[0]))
         {
-            std::istringstream iss(str);
-            iss >> filterCategory;
+            filterCategory = LinguisticCode::fromString(str);
         }
         else
         {
@@ -335,7 +334,7 @@ bool XMLSyntagmaticMatrixFileHandler::endElement(const QString & namespaceURI, c
       m_currentMatrixLineId = "";
     }
     return true;
-    
+
 }
 
 

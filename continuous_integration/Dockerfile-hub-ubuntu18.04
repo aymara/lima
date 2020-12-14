@@ -66,18 +66,18 @@ ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 
+# install python packages necessary to use the language resources install script
+RUN pip3 install unix_ar requests tqdm
+
+# install English and French UD models
+RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/install_models.py -l english
+RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/install_models.py -l french
+
 # Build
 #
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH="/usr/include/tensorflow-for-lima/" ..
 RUN ninja && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
-
-# install python packages necessary to use the language resources install script
-RUN pip3 install unix_ar requests tqdm
-
-# install English and French UD models
-RUN install_models.py -l english
-RUN install_models.py -l french
 
 WORKDIR /usr/share/apps/lima/tests
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"

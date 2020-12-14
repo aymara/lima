@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -40,7 +40,7 @@ ViterbiCostFunction<Cost,CostFactory>::ViterbiCostFunction(
   m_maximumCost=costFactory.getMaximumCost();
   m_unigramCost=costFactory.getCost(false,false,true,0);
   readBigramMatrixFile(bigramsFile,costFactory);
-  readTrigramMatrixFile(trigramsFile,costFactory);   
+  readTrigramMatrixFile(trigramsFile,costFactory);
   sortData();
 }
 
@@ -61,7 +61,7 @@ void ViterbiCostFunction<Cost,CostFactory>::apply(
 //       }
 //  LDEBUG << "apply cost on " << micro << " " << predData.m_predMicro << " | " << os.str();
   predData.m_cost=m_maximumCost;
-  
+
   typename std::map<LinguisticCode, std::map<LinguisticCode, GramsData> >::const_iterator microItr=m_data.find(micro);
   if (microItr!=m_data.end())
   {
@@ -177,7 +177,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
 {
   PTLOGINIT;
   LINFO << "Loading trigrams matrix file: " << fileName;
-  
+
   std::ifstream ifl;
   // Open the data file TriGramMatrix.dat in read mode
   ifl.open(fileName.c_str());
@@ -188,9 +188,9 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$"); 
+  boost::regex linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
   boost::regex numre("^\\d+$");
-  
+
   std::string lineString;
   size_t linenum(0);
   lineString = Lima::Common::Misc::readLine(ifl);
@@ -203,23 +203,23 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
       LinguisticCode trigram[3];
       std::string strigram[3];
       float proba;
-      
-  
-      std::string::const_iterator start, end; 
-      start = lineString.begin(); 
-      end = lineString.end(); 
-      boost::match_results<std::string::const_iterator> what; 
-  //    boost::match_flag_type flags = boost::match_default; 
-      if (regex_search(start, end, what, linere)) 
-      { 
-        for (unsigned count = 1; count <= 3; count++) 
+
+
+      std::string::const_iterator start, end;
+      start = lineString.begin();
+      end = lineString.end();
+      boost::match_results<std::string::const_iterator> what;
+  //    boost::match_flag_type flags = boost::match_default;
+      if (regex_search(start, end, what, linere))
+      {
+        for (unsigned count = 1; count <= 3; count++)
         {
           std::string elem(what[count].first,what[count].second);
           strigram[count-1] = elem;
           if (boost::regex_match(elem,numre))
-          { // numerical element
-            std::istringstream matchStream(elem);
-            matchStream >> trigram[count-1];
+          {
+            // numerical element
+            trigram[count-1] = LinguisticCode::fromString(elem);
           }
           else
           {
@@ -228,11 +228,11 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
         }
         std::string sproba(what[4].first,what[4].second);
         std::istringstream sprobaStream(sproba);
-        sprobaStream >> proba;      
-      } 
+        sprobaStream >> proba;
+      }
       else throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
 
-    
+
       GramsData& gd=m_data[trigram[2]][trigram[1]];
       CategCostPair cpp;
       cpp.m_cat=trigram[0];
@@ -248,7 +248,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
           }
         }
       }
-      
+
       if (biFreq>0) {
         cpp.m_cost=costFactory.getCost(true,false,false,proba/biFreq);
 //        LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"] proba=" << proba/biFreq;
@@ -257,7 +257,7 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
         cpp.m_cost=costFactory.getCost(true,false,false,proba);
       }
       gd.m_grams.push_back(cpp);
-      
+
       // test si trigram 2 1 existe, si non il faut mettre default � unigram
       {
         bool found=false;
@@ -296,9 +296,9 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$"); 
+  boost::regex linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
   boost::regex numre("^\\d+$");
-  
+
   std::string lineString;
   size_t linenum(0);
   lineString = Lima::Common::Misc::readLine(ifl);
@@ -311,21 +311,21 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
     std::string sbigram[2];
     float proba;
 
-    std::string::const_iterator start, end; 
-    start = lineString.begin(); 
-    end = lineString.end(); 
-    boost::match_results<std::string::const_iterator> what; 
-//    boost::match_flag_type flags = boost::match_default; 
-    if (regex_search(start, end, what, linere)) 
+    std::string::const_iterator start, end;
+    start = lineString.begin();
+    end = lineString.end();
+    boost::match_results<std::string::const_iterator> what;
+//    boost::match_flag_type flags = boost::match_default;
+    if (regex_search(start, end, what, linere))
     {
-      for (unsigned count = 1; count <= 2; count++) 
+      for (unsigned count = 1; count <= 2; count++)
       {
         std::string elem(what[count].first,what[count].second);
         sbigram[count-1] = elem;
         if (boost::regex_match(elem,numre))
-        { // numerical element
-          std::istringstream matchStream(elem);
-          matchStream >> bigram[count-1];
+        {
+          // numerical element
+          bigram[count-1] = LinguisticCode::fromString(elem);
         }
         else
         {
@@ -334,17 +334,17 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
       }
       std::string sproba(what[3].first,what[3].second);
       std::istringstream sprobaStream(sproba);
-      sprobaStream >> proba;      
+      sprobaStream >> proba;
     }
-    else 
+    else
     {
       std::ostringstream oss;
       oss << "invalid bigram line:  '" << lineString << "' " << linenum;
       throw(std::runtime_error(oss.str()));
     }
-    
-//    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"] proba=" << proba;      
-    
+
+//    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"] proba=" << proba;
+
     GramsData& gd=m_data[bigram[1]][bigram[0]];
     gd.m_default=costFactory.getCost(false,true,false,proba);
     m_biFreq[bigram[0]][bigram[1]]=proba;

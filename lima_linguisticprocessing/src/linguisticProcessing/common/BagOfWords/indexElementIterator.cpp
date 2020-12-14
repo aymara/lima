@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2015 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -273,7 +273,7 @@ IndexElement IndexElementIterator::getElement()
           return IndexElement(id,
                               predicate->getType(),
                               predicate->getString(),
-                              0,
+                              L_NONE,
                               predicate->getPosition(),
                               predicate->getLength(),
                               predicate->getPredicateType()

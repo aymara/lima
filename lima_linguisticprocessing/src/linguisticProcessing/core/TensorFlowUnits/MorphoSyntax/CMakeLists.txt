@@ -63,21 +63,21 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
     set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
     set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
       POSITION_INDEPENDENT_CODE True)
-    add_executable(fasttext-bin fastText/src/main.cc)
+    #add_executable(fasttext-bin fastText/src/main.cc)
 
     target_link_libraries(fasttext-shared Threads::Threads)
-    target_link_libraries(fasttext-bin Threads::Threads fasttext-static)
+    #target_link_libraries(fasttext-bin Threads::Threads fasttext-static)
 
-    set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)
+    #set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)
     install (TARGETS fasttext-shared
         LIBRARY DESTINATION lib)
     install (TARGETS fasttext-static
         ARCHIVE DESTINATION lib)
     install (TARGETS fasttext-static_pic
         ARCHIVE DESTINATION lib)
-    install (TARGETS fasttext-bin
-        RUNTIME DESTINATION bin
-    PUBLIC_HEADER DESTINATION include/fasttext-lima)
+    #install (TARGETS fasttext-bin
+    #    RUNTIME DESTINATION bin
+    #PUBLIC_HEADER DESTINATION include/fasttext-lima)
 
     ### END FastText stuff
 

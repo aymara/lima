@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -29,12 +29,12 @@ using namespace Lima::Common::BagOfWords;
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest0_1 )
 {
-  BoWToken bt1(QString::fromUtf8("lemma"), 1, 10, 5);
+  BoWToken bt1(QString::fromUtf8("lemma"), LinguisticCode::fromUInt(1), 10, 5);
   BOOST_REQUIRE( bt1.getLemma() == QString::fromUtf8("lemma") );
 }
 
 BOOST_AUTO_TEST_CASE( BagOfWordsTest0_2 )
 {
-  BoWToken bt1(QString::fromUtf8("démocratique"), 1, 10, 12);
+  BoWToken bt1(QString::fromUtf8("démocratique"), LinguisticCode::fromUInt(1), 10, 12);
   BOOST_REQUIRE( bt1.getLemma() == QString::fromUtf8("démocratique") );
 }

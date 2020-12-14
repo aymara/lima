@@ -173,21 +173,22 @@ LinguisticPropertyIs(MediaId language,
   if (i==string::npos || j==string::npos)
   {
     AULOGINIT;
-    LERROR << "Constraint LinguisticPropertyIs : invalid complement \""
-    << str << "\": three arguments needed";
-    throw LimaException();
+    LIMA_EXCEPTION( "Constraint LinguisticPropertyIs : invalid complement \""
+                    << str.c_str() << "\": three arguments needed");
   }
 
   string propertyString(str,0,i);
   string valueString(str,i+1,j-i-1);
   string lang(str,j+1);
 
-  const Common::PropertyCode::PropertyManager& manager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(lang)).getPropertyCodeManager().getPropertyManager(propertyString);
+  const auto& manager = static_cast<const Common::MediaticData::LanguageData&>(
+    Common::MediaticData::MediaticData::single().mediaData(lang))
+      .getPropertyCodeManager().getPropertyManager(propertyString);
 
   m_propertyAccessor=&(manager.getPropertyAccessor());
   i=0;
   j=valueString.find("|");
-  if (j==string::npos) j=valueString.size();
+  if (j==std::string::npos) j=valueString.size();
   for (;i<valueString.size();)
   {
     //LDEBUG << "read part " << valueString.substr(i,j-i);
@@ -197,7 +198,7 @@ LinguisticPropertyIs(MediaId language,
     {
       //LDEBUG << "found # : " << valueString.substr(i,k-i) << " # " << valueString.substr(k+1,j-k-1);
       value.first=manager.getPropertyValue(valueString.substr(i,k-i));
-      string mtype=valueString.substr(k+1,j-k-1);
+      std::string mtype=valueString.substr(k+1,j-k-1);
       if (mtype == "SIMPLE_WORD") { value.second=SIMPLE_WORD; }
       else if (mtype == "ABBREV_ALTERNATIVE") { value.second=ABBREV_ALTERNATIVE; }
       else if (mtype == "HYPHEN_ALTERNATIVE") { value.second=HYPHEN_ALTERNATIVE; }
@@ -214,9 +215,8 @@ LinguisticPropertyIs(MediaId language,
       else
       {
         AULOGINIT;
-        LERROR << "Constraint LinguisticPropertyIs : invalid morphosyntactic type  \""
-        << mtype << "\" !";
-        throw LimaException();
+        LIMA_EXCEPTION( "Constraint LinguisticPropertyIs : invalid morphosyntactic type  \""
+                          << mtype.c_str() << "\" !");
       }
     } else {
       value.first=manager.getPropertyValue(valueString.substr(i,j-i));

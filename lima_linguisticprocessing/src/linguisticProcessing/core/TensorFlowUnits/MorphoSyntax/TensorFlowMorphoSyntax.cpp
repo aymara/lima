@@ -85,9 +85,7 @@ namespace MorphoSyntax
 SimpleFactory<MediaProcessUnit, TensorFlowMorphoSyntax> tensorflowmorphosyntaxFactory(TENSORFLOWMORPHOSYNTAX_CLASSID);
 
 #define LOG_ERROR_AND_THROW(msg, exc) { \
-                                        TENSORFLOWMORPHOSYNTAXLOGINIT; \
-                                        LERROR << msg; \
-                                        throw exc; \
+                                        LIMA_EXCEPTION_SELECT_LOGINIT(TENSORFLOWMORPHOSYNTAXLOGINIT, msg, exc ); \
                                       }
 
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
@@ -214,7 +212,7 @@ protected:
         for (const auto& kv : m_w2i)
         {
           if (kv.first == "#None")
-            m_c2i[LinguisticCode(0)] = kv.second;
+            m_c2i[L_NONE] = kv.second;
           else
           {
             LinguisticCode code = pm.getPropertyValue(kv.first);
@@ -343,7 +341,7 @@ void TensorFlowMorphoSyntaxPrivate::init(
       else
       {
         LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::init: Can't parse language id "
-                            << udlang, Lima::InvalidConfiguration());
+                            << udlang.c_str(), Lima::InvalidConfiguration);
       }
     }
   }
@@ -369,8 +367,8 @@ void TensorFlowMorphoSyntaxPrivate::init(
   Status status = NewSession(options, &session);
   if (!status.ok())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't create TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+                        << status.ToString().c_str(),
+                        LimaException);
   m_session = unique_ptr<Session>(session);
   m_model_path = findFileInPaths(resources_path,
                                  QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.model")
@@ -381,8 +379,8 @@ void TensorFlowMorphoSyntaxPrivate::init(
   status = m_session->Create(m_graph_def);
   if (!status.ok())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't add graph to TensorFlow session: "
-                        << status.ToString(),
-                        LimaException());
+                        << status.ToString().c_str(),
+                        LimaException);
 
   init_crf();
 
@@ -404,13 +402,13 @@ QJsonObject TensorFlowMorphoSyntaxPrivate::get_json_object(const QJsonObject& ro
   QJsonValue value = root.value(child_name);
   if (value.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::get_json_object can't get value \""
-                        << child_name << "\"", LimaException());
+                        << child_name << "\"", LimaException);
 
   QJsonObject object = value.toObject();
 
   //if (object.isEmpty())
   //  LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::get_json_object object \""
-  //                      << child_name << "\" is empty", LimaException());
+  //                      << child_name << "\" is empty", LimaException);
 
   return object;
 }
@@ -420,7 +418,7 @@ QJsonArray TensorFlowMorphoSyntaxPrivate::get_json_array(const QJsonObject& root
   QJsonValue value = root.value(child_name);
   if (value.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::get_json_object can't get value \""
-                        << child_name << "\"", LimaException());
+                        << child_name << "\"", LimaException);
 
   QJsonArray array = value.toArray();
 
@@ -437,8 +435,8 @@ void TensorFlowMorphoSyntaxPrivate::init_crf()
     status = m_session->Run({}, {out.crf_node_name}, {}, &res);
     if (!status.ok())
       LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't execute \"Run\" in TensorFlow session: "
-                          << status.ToString(),
-                          LimaException());
+                          << status.ToString().c_str(),
+                          LimaException);
 
     auto crf = res[0].matrix<float>();
 
@@ -456,7 +454,7 @@ void TensorFlowMorphoSyntaxPrivate::add_linguistic_element(MorphoSyntacticData* 
 {
   if (msdata == nullptr)
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::add_linguistic_element: msdata == nullptr",
-                        LimaException());
+                        LimaException);
 
   LinguisticElement elem;
   elem.inflectedForm = token.form();
@@ -731,14 +729,14 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
     Status status = m_session->Run(inputs, requested_nodes, {}, &out);
     if (!status.ok())
       LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::analyze: Can't execute \"Run\" in TensorFlow session: "
-                          << status.ToString(),
-                          LimaException());
+                          << status.ToString().c_str(),
+                          LimaException);
 
     // Apply prediction to Lima graphs
     for (const string& feat_name : m_feat_order)
     {
       if (m_seqtag_id2idx.end() == m_seqtag_id2idx.find(feat_name))
-          LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::analyze: unknown feature: " << feat_name, LimaException());
+          LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::analyze: unknown feature: " << feat_name.c_str(), LimaException);
       size_t out_idx = m_seqtag_id2idx.find(feat_name)->second;
       auto scores = out[out_idx].tensor<float, 3>();
       for (int64 p = 0; p < out[out_idx].dim_size(0); p++)
@@ -1044,110 +1042,110 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
   if (!file.open(QIODevice::ReadOnly))
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
                         << config_file_name << "\".",
-                        LimaException());
+                        LimaException);
 
   QByteArray bytes = file.readAll();
   QJsonDocument data = QJsonDocument::fromJson(bytes);
   if (data.isNull())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
                         << config_file_name << "\". Invalid Json.",
-                        LimaException());
+                        LimaException);
   if (!data.isObject())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config can't load config from \""
                         << config_file_name << "\". Loaded data is not an object",
-                        LimaException());
+                        LimaException);
   auto params = data.object().value("conf");
   if (params.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value params.",
-      LimaException());
+      LimaException);
   auto paramsObject = params.toObject();
   if (paramsObject.isEmpty())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" params is not an object.",
-      LimaException());
+      LimaException);
   if (paramsObject.value("maxSeqLen").isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" missing param maxSeqLen.",
-      LimaException());
+      LimaException);
   if (!paramsObject.value("maxSeqLen").isDouble())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" param maxSeqLen is not a number.",
-      LimaException());
+      LimaException);
   m_max_seq_len = paramsObject.value("maxSeqLen").toInt();
 
   if (paramsObject.value("maxWordLen").isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" missing param maxWordLen.",
-      LimaException());
+      LimaException);
   if (!paramsObject.value("maxWordLen").isDouble())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" param maxWordLen is not a number.",
-      LimaException());
+      LimaException);
   m_max_word_len = params.toObject().value("maxWordLen").toInt();
 
   if (paramsObject.value("batchSize").isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" missing param batchSize.",
-      LimaException());
+      LimaException);
   if (!paramsObject.value("batchSize").isDouble())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" param batchSize is not a number.",
-      LimaException());
+      LimaException);
   m_batch_size = params.toObject().value("batchSize").toInt();
 
   auto dicts = data.object().value("dicts");
   if (dicts.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value dicts.",
-      LimaException());
+      LimaException);
   auto dictsObject = dicts.toObject();
   if (dictsObject.isEmpty())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" dicts is not an object.",
-      LimaException());
+      LimaException);
 
   auto c2i = dictsObject.value("c2i");
   if (c2i.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value dicts[\"c2i\"].",
-      LimaException());
+      LimaException);
   auto c2iObject = c2i.toObject();
   if (c2iObject.isEmpty())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" c2i object is empty.",
-      LimaException());
+      LimaException);
   load_string_to_uint_map(c2iObject, m_char2idx);
 
   auto w2i = dictsObject.value("w2i");
   if (w2i.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value dicts[\"w2i\"].",
-      LimaException());
+      LimaException);
   auto w2iObject = w2i.toObject();
   if (w2iObject.isEmpty())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" w2i object is empty.",
-      LimaException());
+      LimaException);
   load_string_to_uint_map(w2iObject, m_word2idx);
 
   auto output = data.object().value("output");
   if (output.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value output.",
-      LimaException());
+      LimaException);
   auto outputObject = output.toObject();
   if (outputObject.isEmpty())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" output object is empty.",
-      LimaException());
+      LimaException);
   load_output_description(outputObject);
 
   auto input = data.object().value("input");
   if (input.isUndefined())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::load_config config file \""
           << config_file_name << "\" has no value input.",
-      LimaException());
+      LimaException);
   auto jso = input.toObject();
   for (auto i = jso.constBegin(); i != jso.constEnd(); ++i)
   {
@@ -1160,7 +1158,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" missing param main_alphabet.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param main_alphabet.",
-      LimaException());*/
+      LimaException);*/
   }
   else if (!data.object().value("main_alphabet").isString())
   {
@@ -1168,7 +1166,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" param main_alphabet is not a string.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param main_alphabet is not a string.",
-      LimaException());*/
+      LimaException);*/
   }
   else
   {
@@ -1181,7 +1179,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" missing param feat_order.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param feat_order.",
-      LimaException());*/
+      LimaException);*/
   }
   else if (!data.object().value("feat_order").isArray())
   {
@@ -1189,7 +1187,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" param feat_order is not an array.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param feat_order is not an array.",
-      LimaException());*/
+      LimaException);*/
   }
   else
   {
@@ -1215,7 +1213,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" missing param feat_deps.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param feat_deps.",
-      LimaException());*/
+      LimaException);*/
   }
   else if (!data.object().value("feat_deps").isObject())
   {
@@ -1223,7 +1221,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
                 << config_file_name << "\" param feat_deps is not an object.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" param feat_deps is not an object.",
-      LimaException());*/
+      LimaException);*/
   }
   else
   {
@@ -1325,8 +1323,8 @@ void TensorFlowMorphoSyntaxPrivate::load_output_description(const QJsonObject& j
     else
     {
       LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::load_output_description unknown output type: \""
-                          << type << "\".",
-                          LimaException());
+                          << type.c_str() << "\".",
+                          LimaException);
     }
   }
 }
@@ -1340,8 +1338,8 @@ void TensorFlowMorphoSyntaxPrivate::load_graph(const QString& model_path, GraphD
                                   graph_def);
   if (!status.ok())
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::load_graph error reading binary proto:"
-                        << status.ToString(),
-                        LimaException());
+                        << status.ToString().c_str(),
+                        LimaException);
 }
 
 bool TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes(const PropertyCodeManager& pcm,
@@ -1361,9 +1359,10 @@ bool TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes(const PropertyCodeMana
     return false;
   }
   if (nullptr == out.accessor)
+  {
     LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes can't find accessor for \""
-                        << feat_name << "\" feature",
-                        LimaException());
+                        << feat_name.c_str() << "\" feature",
+                        LimaException);}
 
   const auto& pm = pcm.getPropertyManager(feat_name);
 
@@ -1371,7 +1370,7 @@ bool TensorFlowMorphoSyntaxPrivate::fill_linguistic_codes(const PropertyCodeMana
   for (size_t i = 0; i < out.i2t.size(); ++i)
   {
     if (out.i2t[i] == "#None")
-      out.i2c[i] = 0;
+      out.i2c[i] = L_NONE;
     else
       out.i2c[i] = pm.getPropertyValue(out.i2t[i]);
   }

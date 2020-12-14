@@ -23,7 +23,7 @@
 
 #ifndef LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSINGEXCEPTION_H
 #define LIMA_LINGUISTICPROCESSING_LINGUISTICPROCESSINGEXCEPTION_H
-  
+
 #include "common/LimaCommon.h"
 #include <string>
 
@@ -32,8 +32,8 @@ namespace LinguisticProcessing {
 
 class LinguisticProcessingException : public LimaException  {
   public:
-    LinguisticProcessingException() : LimaException() {}
-    LinguisticProcessingException(const std::string& mess):LimaException(mess) {};
+    explicit LinguisticProcessingException(const std::string& mess = ""):
+      LimaException(mess) {};
 };
 
 } // LinguisticProcessing

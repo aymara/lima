@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -169,7 +169,7 @@ int run(int argc, char** argv)
        it!=conversionMap.end();
        it++)
   {
-    *out << it->first << ";" << it->second << ";" << endl;
+    *out << it->first << ";" << it->second.toString() << ";" << endl;
   }
   if ((param->outputFile != "") && (out != 0)) {
     delete out;

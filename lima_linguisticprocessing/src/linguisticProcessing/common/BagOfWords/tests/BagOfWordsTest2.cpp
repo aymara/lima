@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -37,7 +37,7 @@ void BagOfWordsTest2::test_indexElementDefaultConstructor()
   QVERIFY(el.getId() == 0);
   QVERIFY(el.getType() == BoWType::BOW_NOTYPE);
   QVERIFY(el.getSimpleTerm() == "");
-  QVERIFY(el.getCategory() == 0);
+  QVERIFY(el.getCategory() == L_NONE);
   QVERIFY(el.getPosition() == 0);
   QVERIFY(el.getLength() == 0);
   QVERIFY(el.getNamedEntityType() == EntityType());
@@ -63,7 +63,7 @@ void BagOfWordsTest2::test_indexElementConstructor1()
   uint64_t id = 1;
   BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
-  uint64_t cat = 0;
+  Lima::LinguisticCode cat;
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
@@ -103,7 +103,7 @@ void BagOfWordsTest2::test_indexElementConstructor2()
   QVERIFY(el.getId() == id);
   QVERIFY(el.getType() == BoWType::BOW_TERM);
   QVERIFY(el.getSimpleTerm().isEmpty());
-  QVERIFY(el.getCategory() == 0);
+  QVERIFY(el.getCategory() == L_NONE);
   QVERIFY(el.getPosition() == 0);
   QVERIFY(el.getLength() == 0);
   QVERIFY(el.getNamedEntityType() == neType);
@@ -122,7 +122,7 @@ void BagOfWordsTest2::test_indexElementCopyConstructor()
   uint64_t id = 1;
   BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
-  uint64_t cat = 0;
+  Lima::LinguisticCode cat;
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
@@ -150,7 +150,7 @@ void BagOfWordsTest2::test_indexElementCopyConstructor()
   QVERIFY(el_copy.getId() == 1);
   QVERIFY(el_copy.getType() == BoWType::BOW_TOKEN);
   QVERIFY(el_copy.getSimpleTerm() == "word");
-  QVERIFY(el_copy.getCategory() == 0);
+  QVERIFY(el_copy.getCategory() == L_NONE);
   QVERIFY(el_copy.getPosition() == 0);
   QVERIFY(el_copy.getLength() == (uint64_t)word.size());
   QVERIFY(el_copy.getNamedEntityType() == neType);
@@ -169,7 +169,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   uint64_t id = 1;
   BoWType type = BoWType::BOW_TOKEN;
   QString word = QString::fromUtf8("word");
-  uint64_t cat = 0;
+  Lima::LinguisticCode cat;
   uint64_t position = 0;
   uint64_t length = (uint64_t)word.size();
   EntityType neType = EntityType();
@@ -178,7 +178,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   uint64_t id2 = 2;
   BoWType type2 = BoWType::BOW_TERM;
   QString word2 = QString::fromUtf8("other");
-  uint64_t cat2 = 1;
+  Lima::LinguisticCode cat2 = Lima::LinguisticCode::fromUInt(1);
   uint64_t position2 = 10;
   uint64_t length2 = (uint64_t)word.size();
   EntityType neType2 = EntityType();
@@ -205,7 +205,7 @@ void BagOfWordsTest2::test_indexElementOperatorAffect()
   QVERIFY(el2.getId() == 1);
   QVERIFY(el2.getType() == BoWType::BOW_TOKEN);
   QVERIFY(el2.getSimpleTerm() == "word");
-  QVERIFY(el2.getCategory() == 0);
+  QVERIFY(el2.getCategory() == L_NONE);
   QVERIFY(el2.getPosition() == 0);
   QVERIFY(el2.getLength() == (uint64_t)word.size());
   QVERIFY(el2.getNamedEntityType() == neType);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
+ *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #include "TextDumper.h"
@@ -240,7 +240,7 @@ void TextDumper::outputVertex(std::ostream& out,
       MorphoSyntacticData* data=*dataItr;
       sort(data->begin(),data->end(),sorter);
       StringsPoolIndex norm(0),curNorm(0);
-      LinguisticCode micro(0),curMicro(0),tense(0),curTense(0);
+      LinguisticCode micro,curMicro,tense,curTense;
       for (MorphoSyntacticData::const_iterator elemItr=data->begin();
            elemItr!=data->end();
              elemItr++)

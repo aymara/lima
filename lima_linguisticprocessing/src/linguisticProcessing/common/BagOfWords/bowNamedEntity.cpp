@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -42,23 +42,23 @@ public:
 // //   BoWNamedEntityPrivate(const BoWNamedEntity&);
 // //   BoWNamedEntityPrivate(const BoWNamedEntity&,
 // //                  const std::map<BoWToken*,BoWToken*>&);
-// 
+//
 //   BoWNamedEntityPrivate(const Lima::LimaString& lemma,
 //                  const Common::MediaticData::EntityType theType,
 //                  const uint64_t position,
 //                  const uint64_t length);
-// 
+//
 //   BoWNamedEntityPrivate(const Lima::LimaString& lemma,
 //                  const LinguisticCode theCategory,
 //                  const Common::MediaticData::EntityType theType,
 //                  const uint64_t position,
 //                  const uint64_t length);
-// 
+//
 //   virtual ~BoWNamedEntityPrivate();
 
   BoWNamedEntityPrivate(const BoWNamedEntityPrivate&);
 //   BoWNamedEntityPrivate& operator=(const BoWNamedEntityPrivate&);
-  
+
   Common::MediaticData::EntityType m_type;
   std::map<std::string, LimaString> m_features;
 
@@ -91,7 +91,7 @@ m_features(bnep.m_features)
 // m_features()
 // {
 // }
-// 
+//
 // BoWNamedEntityPrivate::BoWNamedEntityPrivate(const Lima::LimaString& lemma,
 //                                const LinguisticCode theCategory,
 //                                const Common::MediaticData::EntityType theType,
@@ -102,8 +102,8 @@ m_features(bnep.m_features)
 // m_features()
 // {
 // }
-// 
-// 
+//
+//
 // // BoWNamedEntityPrivate::BoWNamedEntityPrivate(const BoWNamedEntity& ne):
 // // BoWComplexTokenPrivate(ne),
 // // m_type(ne.m_d->m_type),
@@ -117,7 +117,7 @@ m_features(bnep.m_features)
 // // m_features(ne.m_d->m_features)
 // // {
 // // }
-// 
+//
 // BoWNamedEntityPrivate::~BoWNamedEntityPrivate()
 // {
 //   m_features.clear();
@@ -139,7 +139,7 @@ BoWNamedEntity::BoWNamedEntity(const Lima::LimaString& lemma,
     BoWComplexToken(*new BoWNamedEntityPrivate())
 {
   m_d->m_lemma = lemma;
-  m_d->m_category = static_cast<Lima::LinguisticCode>(0);
+  m_d->m_category = L_NONE;
   m_d->m_position = position;
   m_d->m_length = length;
   static_cast<BoWNamedEntityPrivate*>(m_d)->m_type = theType;
@@ -231,14 +231,14 @@ BoWNamedEntity* BoWNamedEntity::clone() const
 //**********************************************************************
 std::string BoWNamedEntity::getFeaturesUTF8String() const {
   std::ostringstream oss;
-  if (! static_cast<BoWNamedEntityPrivate*>(m_d)->m_features.empty()) { 
-    std::map<std::string, LimaString>::const_iterator i=static_cast<BoWNamedEntityPrivate*>(m_d)->m_features.begin();   
-    oss << (*i).first << "=" 
+  if (! static_cast<BoWNamedEntityPrivate*>(m_d)->m_features.empty()) {
+    std::map<std::string, LimaString>::const_iterator i=static_cast<BoWNamedEntityPrivate*>(m_d)->m_features.begin();
+    oss << (*i).first << "="
       << Misc::limastring2utf8stdstring((*i).second);
     i++;
     while (i != static_cast<BoWNamedEntityPrivate*>(m_d)->m_features.end()) {
-      oss << ";" 
-          << (*i).first << "=" 
+      oss << ";"
+          << (*i).first << "="
         << Misc::limastring2utf8stdstring((*i).second);
       i++;
     }

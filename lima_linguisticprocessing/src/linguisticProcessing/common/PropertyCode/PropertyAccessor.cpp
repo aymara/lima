@@ -94,15 +94,14 @@ const std::string& PropertyAccessor::getPropertyName() const
 
 LinguisticCode PropertyAccessor::readValue(const LinguisticCode& code) const
 {
-  return static_cast<LinguisticCode>(code & m_d->m_mask);
+  return code & m_d->m_mask;
 }
 
 void PropertyAccessor::writeValue(
   const LinguisticCode& value,
   LinguisticCode& code) const
 {
-  code = static_cast<LinguisticCode>(
-    ( code & ( ~ m_d->m_mask )) | (value & m_d->m_mask));
+  code = ( code & ( ~ m_d->m_mask ) ) | ( value & m_d->m_mask );
 }
 
 bool PropertyAccessor::equal(const LinguisticCode& l1,

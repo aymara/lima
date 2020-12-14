@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -237,8 +237,7 @@ void EnhancedAnalysisDictionaryEntry::parseLingInfos(
       auto propsEnd = props + read;
       while (props != propsEnd)
       {
-        handler->foundProperties(
-          static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
+        handler->foundProperties(LinguisticCode::decodeFromBinary(props));
       }
       handler->endLingInfos();
     }
@@ -348,8 +347,7 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(
             unsigned char* propsEnd = props + read;
             while (props!=propsEnd)
             {
-              handler->foundProperties(
-                static_cast<LinguisticCode>(DictionaryData::readCodedInt(props)));
+              handler->foundProperties(LinguisticCode::decodeFromBinary(props));
             }
             handler->endLingInfos();
           }

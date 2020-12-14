@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -57,9 +57,9 @@ public:
   /** only for debug */
   friend QDebug& operator << (QDebug& os,
                                     const std::map<BoWToken*,uint64_t>& refMap);
-  
+
   BoWTokenPrivate(const Lima::LimaString& lemma,
-           const uint64_t category,
+           const LinguisticCode category,
            const uint64_t position,
            const uint64_t length);
   BoWTokenPrivate(const Lima::LimaString& str,
@@ -71,8 +71,8 @@ public:
   BoWTokenPrivate(const BoWTokenPrivate& tok);
   BoWTokenPrivate& operator=(const BoWTokenPrivate& tok);
   bool operator==(const BoWTokenPrivate& tok);
-  
-  
+
+
   virtual ~BoWTokenPrivate();
 
   Lima::LimaString m_lemma;
@@ -94,7 +94,6 @@ public:
   void convertSpaces(void);
 
 };
-
 
 
 } // namespace BagOfWords

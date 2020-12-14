@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -101,7 +101,7 @@ protected:
                             const std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& data,
                             const FsaStringsPool& sp,
                             uint64_t offset,
-                            LinguisticCode category=LinguisticCode(0)) const;
+                            LinguisticCode category=L_NONE) const;
 
   bool outputSpecificEntity(std::ostream& out,
                             const SpecificEntities::SpecificEntityAnnotation* se,

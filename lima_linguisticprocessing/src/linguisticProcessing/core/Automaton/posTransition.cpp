@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -42,7 +42,7 @@ namespace Automaton {
 // constructors
 /***********************************************************************/
 PosTransition::PosTransition():TransitionUnit(),m_pos() {}
-PosTransition::PosTransition(const Tpos& p, 
+PosTransition::PosTransition(const Tpos& p,
                               const Common::PropertyCode::PropertyAccessor* macroAccessor,
                               const Common::PropertyCode::PropertyAccessor* microAccessor,
                               bool keep):
@@ -79,7 +79,7 @@ PosTransition& PosTransition::operator = (const PosTransition& t) {
 
 std::string PosTransition::printValue() const {
   ostringstream oss;
-  oss << "posT_$" << m_pos;
+  oss << "posT_$" << m_pos.toString();
   return oss.str();
 }
 
@@ -106,7 +106,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
         const LinguisticAnalysisStructure::Token* /*token*/,
         const LinguisticAnalysisStructure::MorphoSyntacticData* data) const
 {
-  MorphoSyntacticData::const_iterator  
+  MorphoSyntacticData::const_iterator
     it=data->begin(),
     it_end=data->end();
   for (; it!=it_end; it++) {

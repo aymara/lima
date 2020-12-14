@@ -308,7 +308,8 @@ int run(int argc, char** argv)
   Lima::AmosePluginsManager::single();
 //   Lima::AmosePluginsManiager::changeable().loadPlugins(configPath);
 
-  std::cerr << argv[0] << ": configPath = " << configPath << std::endl;
+  LOGINIT("Automaton::Compiler");
+  LDEBUG << argv[0] << ": configPath = " << configPath;
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
   {
     LOGINIT("Automaton::Compiler");

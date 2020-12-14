@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -19,7 +19,7 @@
 /** @brief      Implementation of classes for disambiguation of syntagmatic chains paths.
   *
   * @file       ChainsDisambiguator.cpp
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             Copyright (c) 2004 by CEA
   * @version    $Id$
@@ -178,7 +178,7 @@ void ChainsDisambiguator::computePaths()
         if (currentVertex==0 && nextVertex==1)
           continue;
         const std::set< ChainIdStruct >& nextVertexChains = chainsMap[nextVertex];
-        LinguisticCode nextMicroCateg(0);
+        LinguisticCode nextMicroCateg;
         const MorphoSyntacticData* nextData = dataMap[nextVertex];
         if (nextData == 0 || nextData->empty())
         {
@@ -615,7 +615,7 @@ void ChainsDisambiguator::startWithSeveralChainsOnNewVertex(
   const LinguisticGraph* graph = m_data->graph();
   CVertexDataPropertyMap dataMap = get(vertex_data, *graph);
   const MorphoSyntacticData* nextData = dataMap[nextVertex];
-  LinguisticCode nextMicroCateg(0);
+  LinguisticCode nextMicroCateg;
   if (nextData != 0 && !nextData->empty())
   {
     nextMicroCateg = m_microAccessor->readValue(nextData->begin()->properties);

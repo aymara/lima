@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -88,7 +88,7 @@ LimaStatusCode DummyPosTagger::process(
       MorphoSyntacticData* posdata=new MorphoSyntacticData(*data);
       put(vertex_data,*graph,*it,posdata);
       // select the first empty micro if one, else put the first non empty micro.
-      LinguisticCode micro(0);
+      LinguisticCode micro;
       if (posdata->size()>0)
       {
         for (MorphoSyntacticData::const_iterator dataItr=posdata->begin();
@@ -112,7 +112,7 @@ LimaStatusCode DummyPosTagger::process(
       else
       {
         Token* tok= get(vertex_token,*graph,*it);
-        LWARN << "The MorphoSyntacticData " 
+        LWARN << "The MorphoSyntacticData "
           << Common::Misc::limastring2utf8stdstring(tok->stringForm()) << " is empty !";
       }
     }

@@ -108,9 +108,10 @@ AbstractResource* LinguisticResources::getResource(MediaId lang,const std::strin
   std::map<MediaId,AbstractResource::Manager*>::const_iterator it=m_d->m_resourcesManagers.find(lang);
   if (it==m_d->m_resourcesManagers.end())
   {
-    RESOURCESLOGINIT;
-    LERROR << "In getLanguageResources : language " << (int)lang << " is not initialized !";
-    throw LanguageNotInitialized(lang);
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      RESOURCESLOGINIT,
+      "LinguisticResources::getResource: language " << (int)lang << " is not initialized !",
+      MediaNotInitialized);
   }
   return it->second->getObject(id);
 }

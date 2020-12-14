@@ -54,7 +54,7 @@ Gazeteer::Gazeteer():
 std::vector<LimaString>(0),
 m_alias(),
 m_hasMultiTermWord(false),
-m_hasNotOnlyWords(true),
+m_hasOnlyWords(true),
 m_automatonString()
 {
 }
@@ -63,7 +63,7 @@ Gazeteer::Gazeteer(const Gazeteer& g):
 std::vector<LimaString>(g),
 m_alias(g.m_alias),
 m_hasMultiTermWord(g.m_hasMultiTermWord),
-m_hasNotOnlyWords(g.m_hasNotOnlyWords),
+m_hasOnlyWords(g.m_hasOnlyWords),
 m_automatonString(g.m_automatonString)
 {
 }
@@ -83,7 +83,7 @@ Gazeteer& Gazeteer::operator = (const Gazeteer& g) {
     m_alias = g.alias();
     m_automatonString=g.m_automatonString;
     m_hasMultiTermWord=g.m_hasMultiTermWord;
-    m_hasNotOnlyWords=g.m_hasNotOnlyWords;
+    m_hasOnlyWords=g.m_hasOnlyWords;
   }
   return (*this);
 }
@@ -109,7 +109,7 @@ void Gazeteer::addWord(const LimaString& s, const vector<Gazeteer>& otherGazetee
    || (s.startsWith(CHAR_BEGIN_ENTITY))
   )
   {
-    m_hasNotOnlyWords=false;
+    m_hasOnlyWords=false;
   }
   if( s.contains(CHAR_SEP_RE) )  {
     setHasMultiTermWordFlag();

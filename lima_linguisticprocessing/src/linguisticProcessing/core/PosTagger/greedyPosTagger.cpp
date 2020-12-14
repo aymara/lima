@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -110,7 +110,7 @@ LimaStatusCode GreedyPosTagger::process(
   LINFO << "start greedy posTagging";
 
   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  
+
   AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
 
   // walk on the vertex but don't process a vertex if one
@@ -213,22 +213,22 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
     LERROR << "MorphoSyntacticData of vertex " << vx << " is NULL !";
     return;
   }
-  LDEBUG << "process vertex : " << vx << " : " 
+  LDEBUG << "process vertex : " << vx << " : "
     << Common::Misc::limastring2utf8stdstring(token->stringForm());
 
   MorphoSyntacticData* posdata=new MorphoSyntacticData(*data);
   put(vertex_data,*graph,vx,posdata);
-  
+
   set<LinguisticCode> micros=posdata->allValues(*m_microAccessor);
   LinguisticCode selectedMicro;
 
 
   if (micros.size()==0)
   {
-    LWARN << "Token " 
-      << Common::Misc::limastring2utf8stdstring(token->stringForm()) 
+    LWARN << "Token "
+      << Common::Misc::limastring2utf8stdstring(token->stringForm())
       << " has no possible dicowords ! build a DicoWord with category 0";
-    selectedMicro=0;
+    selectedMicro=L_NONE;
   }
   else if (micros.size()==1)
   {
@@ -242,7 +242,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
     set<LinguisticCode>::iterator dwItr,dwMaxTri,dwMaxBi;
     float maxTri=0;
     float maxBi=0;
-    LinguisticCode cat1(0),cat2(0);
+    LinguisticCode cat1,cat2;
 
     LinguisticGraphInEdgeIt inItr,inItrEnd;
     boost::tie(inItr,inItrEnd)=in_edges(vx,*graph);
@@ -256,7 +256,7 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       }
       else
       {
-        
+
         cat2=m_microAccessor->readValue(m2->begin()->properties);
 
         LinguisticGraphInEdgeIt inItr2,inItr2End;
@@ -341,11 +341,11 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
       }
     }
   }
-  
+
   // filter linguisticelement
   CheckDifferentPropertyPredicate cdpp(m_microAccessor,selectedMicro);
   posdata->erase(remove_if(posdata->begin(),posdata->end(),cdpp),posdata->end());
-  
+
 }
 
 } // PosTagger

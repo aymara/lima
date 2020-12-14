@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Thu Apr  5 2007
  * copyright   Copyright (C) 2007 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "SpecificEntitiesMicros.h"
@@ -41,7 +41,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace SpecificEntities {
 
-SimpleFactory<AbstractResource,SpecificEntitiesMicros> 
+SimpleFactory<AbstractResource,SpecificEntitiesMicros>
 SpecificEntitiesMicrosFactory(SPECIFICENTITIESMICROS_CLASSID);
 
 SpecificEntitiesMicros::SpecificEntitiesMicros():
@@ -49,7 +49,8 @@ m_micros()
 {
 }
 
-SpecificEntitiesMicros::~SpecificEntitiesMicros() {
+SpecificEntitiesMicros::~SpecificEntitiesMicros()
+{
 }
 
 //***********************************************************************
@@ -62,27 +63,32 @@ init(GroupConfigurationStructure& unitConfiguration,
   LDEBUG << "SpecificEntitiesMicros initialization";
 #endif
   MediaId language=manager->getInitializationParameters().language;
-  const PropertyManager& microManager = static_cast<const Common::MediaticData::LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
+  const PropertyManager& microManager = static_cast<const LanguageData&>(MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
 
   const map<string,deque<string> >& entities = unitConfiguration.getLists();
   #ifdef DEBUG_LP
   LDEBUG << "entities.size() " << entities.size();
   #endif
-  
-  for (auto it=entities.begin(), it_end=entities.end(); it!=it_end; it++) {
+
+  for (auto it=entities.begin(), it_end=entities.end(); it!=it_end; it++)
+  {
     LimaString entityName=Common::Misc::utf8stdstring2limastring((*it).first);
 #ifdef DEBUG_LP
     LDEBUG << "Adding categories to entity " << entityName;
 #endif
-    try {
-      EntityType type=static_cast<const Common::MediaticData::MediaticData&>(MediaticData::single()).getEntityType(entityName);
-      for (auto micro=(*it).second.begin(), micro_end=(*it).second.end(); micro!=micro_end; micro++) {
+    try
+    {
+      EntityType type=static_cast<const MediaticData&>(MediaticData::single()).getEntityType(entityName);
+      for (auto micro=(*it).second.begin(), micro_end=(*it).second.end(); micro!=micro_end; micro++)
+      {
         LinguisticCode code = microManager.getPropertyValue(*micro);
-        if (code == 0) {
+        if (code == L_NONE)
+        {
           SELOGINIT;
           LERROR << "SpecificEntitiesMicros::init on entity" << entityName << "," << *micro << "linguistic code is not defined for language" << MediaticData::single().getMediaId(language);
         }
-        else {
+        else
+        {
 #ifdef DEBUG_LP
           LDEBUG << "Adding " << *micro << code << " to EntityType " << type;
 #endif
@@ -90,7 +96,8 @@ init(GroupConfigurationStructure& unitConfiguration,
         }
       }
     }
-    catch (LimaException& e) {
+    catch (LimaException& e)
+    {
       // just a warning (on LERROR)
       SELOGINIT;
       LERROR << entityName << " is not a defined specific entity";
@@ -102,12 +109,13 @@ const set<LinguisticCode>* SpecificEntitiesMicros::
 getMicros(const EntityType& type)
 {
   map<EntityType,set<LinguisticCode> >::const_iterator it=m_micros.find(type);
-  if (it==m_micros.end()) {
+  if (it==m_micros.end())
+  {
     SELOGINIT;
-    LERROR << "no microcategories defined for type " << type << " (" 
-           << Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(type)) 
+    LERROR << "no microcategories defined for type " << type << " ("
+           << Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName(type))
            << ")";
-    throw LimaException( (QString(QLatin1String("no microcategories defined for type %1"))).arg(Common::MediaticData::MediaticData::single().getEntityName(type)).toUtf8().constData() );
+    throw LimaException( (QString(QLatin1String("no microcategories defined for type %1"))).arg(MediaticData::single().getEntityName(type)).toUtf8().constData() );
   }
   return &((*it).second);
 }

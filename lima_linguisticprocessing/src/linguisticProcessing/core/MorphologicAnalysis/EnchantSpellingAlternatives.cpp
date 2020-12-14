@@ -54,13 +54,13 @@ class EnchantSpellingAlternativesPrivate
 public:
   EnchantSpellingAlternativesPrivate() {}
   virtual ~EnchantSpellingAlternativesPrivate() {delete m_enchantDictionary;}
-  
-  
+
+
   void setEnchantSpellingAlternatives(
     LinguisticAnalysisStructure::Token* token,
     LinguisticAnalysisStructure::MorphoSyntacticData* tokenData,
     FsaStringsPool& sp);
-  
+
   AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
   MediaId m_language;
   enchant::Dict* m_enchantDictionary;
@@ -69,7 +69,7 @@ public:
 
 EnchantSpellingAlternatives::EnchantSpellingAlternatives() : m_d(new EnchantSpellingAlternativesPrivate())
 {
-  
+
 }
 
 EnchantSpellingAlternatives::~EnchantSpellingAlternatives()
@@ -89,8 +89,8 @@ void EnchantSpellingAlternatives::init(
   }
   catch (enchant::Exception& e)
   {
-    LERROR << "Cannot get Enchant dictionary for language" << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language);
-    throw LimaException();
+    LIMA_EXCEPTION( "Cannot get Enchant dictionary for language"
+      << Common::MediaticData::MediaticData::changeable().getMediaId(m_d->m_language).c_str() );
   }
   try
   {
@@ -101,7 +101,7 @@ void EnchantSpellingAlternatives::init(
   catch (NoSuchParam& )
   {
     LERROR << "no param 'dictionary' in EnchantSpellingAlternatives group for language " << (int) m_d->m_language;
-    throw InvalidConfiguration();
+    throw InvalidConfiguration("no param 'dictionary' in EnchantSpellingAlternatives group for language ");
   }
 }
 
@@ -111,7 +111,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
   TimeUtils::updateCurrentTime();
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process EnchantSpellingAlternatives";
-  
+
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
@@ -123,7 +123,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
     LDEBUG << "EnchantSpellingAlternatives::process processing vertex " << *it;
     Token* currentToken=tokenMap[*it];
     MorphoSyntacticData* msd=dataMap[*it];
-    
+
     if (currentToken!=0)
     {
       if (msd->empty())
@@ -167,21 +167,21 @@ void EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives(
     {
       DictionaryEntry* entry = new DictionaryEntry(m_dictionary->getEntry(correction));
       MorphoSyntacticDataHandler lingInfosHandler(*tokenData, SPELLING_ALTERNATIVE);
-      
-      
+
+
       if (!entry->isEmpty())
       {
         LINFO << "EnchantSpellingAlternativesPrivate::setEnchantSpellingAlternatives correcting" << tokenStr << "into" << correction;
         // add orthographic alternative to Token;
         StringsPoolIndex idx=sp[correction];
         token->addOrthographicAlternatives(idx);
-        
+
         if (entry->hasLingInfos())
         {
           entry->parseLingInfos(&lingInfosHandler);
         }
-      } 
-      else 
+      }
+      else
       {
         delete entry;
       }

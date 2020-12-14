@@ -202,78 +202,60 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
     m_vocabWords = loadFileWords(fileWords);
     if(m_vocabWords.empty())
     {
-      QString errorString;
-      QTextStream qts(&errorString);
-      qts << "TensorflowSpecificEntitiesPrivate::init empty words vocabulary" << __FILE__ << __LINE__;
-      LERROR << errorString;
-      throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init empty words vocabulary" );
     }
     m_vocabChars = loadFileChars(fileChars);
     if(m_vocabChars.empty())
     {
-      QString errorString;
-      QTextStream qts(&errorString);
-      qts << "TensorflowSpecificEntitiesPrivate::init empty chars vocabulary" << __FILE__ << __LINE__;
-      LERROR << errorString;
-      throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init empty chars vocabulary" );
     }
     m_vocabTags = loadFileTags(fileTags);
     if(m_vocabTags.empty())
     {
-      QString errorString;
-      QTextStream qts(&errorString);
-      qts << "TensorflowSpecificEntitiesPrivate::init empty tags vocabulary" << __FILE__ << __LINE__;
-      LERROR << errorString;
-      throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init empty tags vocabulary" );
     }
   }
   catch(const BadFileException& e)
   {
-    TFSELOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "TensorflowSpecificEntitiesPrivate::init catched BadFileException" << __FILE__ << __LINE__ << e.what();
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "catched BadFileException" << e.what() );
   }
 
   // Initialize a tensorflow session
   m_status.reset(new Status(NewSession(SessionOptions(), &m_session)));
   if (!m_status->ok())
   {
-    TFSELOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "TensorflowSpecificEntitiesPrivate::init error creating tensorflow session"
-        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init error creating tensorflow session"
+        << QString::fromStdString(m_status->ToString() ) );
   }
 
   // Read in the protobuf graph we have exported
   *m_status = ReadBinaryProto(Env::Default(), m_graph, &m_graphDef);
   if (!m_status->ok())
   {
-    TFSELOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "TensorflowSpecificEntitiesPrivate::init error reading tensorflow graph"
-        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init error reading tensorflow graph"
+        << QString::fromStdString(m_status->ToString() ) );
   }
 
   // Add the graph to the session
   *m_status = m_session->Create(m_graphDef);
   if (!m_status->ok())
   {
-    TFSELOGINIT;
-    QString errorString;
-    QTextStream qts(&errorString);
-    qts << "TensorflowSpecificEntitiesPrivate::init error adding graph to tensorflow session"
-        << __FILE__ << __LINE__ << QString::fromStdString(m_status->ToString());
-    LERROR << errorString;
-    throw LimaException(errorString.toStdString());
+      LIMA_EXCEPTION_LOGINIT(
+        TFSELOGINIT,
+        "TensorflowSpecificEntitiesPrivate::init error adding graph to tensorflow session"
+        << QString::fromStdString(m_status->ToString() ) );
   }
 }
 
@@ -395,13 +377,7 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
 
 #ifdef DEBUG_LP
       TFSELOGINIT;
-      ostringstream oss;
-      for(auto itSequenceBegin = wordsRaw.cbegin();
-          itSequenceBegin != wordsRaw.cend(); ++itSequenceBegin)
-      {
-        oss << (*itSequenceBegin).toStdString() << " ";
-      }
-      LDEBUG << "Sentence evaluated:" << oss.str();
+      LDEBUG << "Sentence evaluated:" << wordsRaw;
 #endif
 
       if(wordsRaw.size() == 0)
@@ -608,7 +584,12 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
         {
           before = getOnePrecedingNode(*analysisGraph, segmentIt->getFirstVertex());
         }
-        LinguisticGraphVertex after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+
+        LinguisticGraphVertex after = analysisGraph->lastVertex();
+        if (analysisGraph->lastVertex() != segmentIt->getLastVertex())
+        {
+          after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+        }
 
         LinguisticGraphVertex newVertex = analysisGraph->firstVertex();
         if(!createSpecificEntity(entityFound,analysis,newVertex))

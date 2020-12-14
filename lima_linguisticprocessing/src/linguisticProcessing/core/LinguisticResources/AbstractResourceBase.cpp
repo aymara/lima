@@ -34,12 +34,12 @@ friend  class AbstractResourceBase;
   AbstractResourceBasePrivate() {}
   ~AbstractResourceBasePrivate() {}
   AbstractResourceBasePrivate(const AbstractResourceBasePrivate&) {}
-    
+
   LimaFileSystemWatcher m_resourceFileWatcher;
 };
 
-AbstractResourceBase::AbstractResourceBase( QObject* parent ) : 
-    QObject( parent ), 
+AbstractResourceBase::AbstractResourceBase( QObject* parent ) :
+    QObject( parent ),
     m_d(new AbstractResourceBasePrivate())
 {
   connect(&m_d->m_resourceFileWatcher, &LimaFileSystemWatcher::fileChanged,
@@ -51,8 +51,8 @@ AbstractResourceBase::~AbstractResourceBase()
   delete m_d;
 }
 
-AbstractResourceBase::AbstractResourceBase(const AbstractResourceBase& r) : 
-    QObject(r.parent()), 
+AbstractResourceBase::AbstractResourceBase(const AbstractResourceBase& r) :
+    QObject(r.parent()),
     m_d(new AbstractResourceBasePrivate(*r.m_d))
 {
   connect(&m_d->m_resourceFileWatcher, &LimaFileSystemWatcher::fileChanged,

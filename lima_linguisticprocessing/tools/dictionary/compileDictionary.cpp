@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -237,37 +237,29 @@ int run(int argc, char** argv)
     KeysLogger keysLogger(fout, &charChart, param->reverseKeys);
 
     std::cerr << "parse input file : " << param->input << std::endl;
-    try
+    QXmlSimpleReader parser;
+    //     parser->setValidationScheme(SAXParser::Val_Auto);
+    //     parser->setDoNamespaces(false);
+    //     parser->setDoSchema(false);
+    //     parser->setValidationSchemaFullChecking(false);
+    parser.setContentHandler(&keysLogger);
+    parser.setErrorHandler(&keysLogger);
+    QFile file(param->input.c_str());
+    if (!file.open(QIODevice::ReadOnly))
     {
-      QXmlSimpleReader parser;
-      //     parser->setValidationScheme(SAXParser::Val_Auto);
-      //     parser->setDoNamespaces(false);
-      //     parser->setDoSchema(false);
-      //     parser->setValidationSchemaFullChecking(false);
-      parser.setContentHandler(&keysLogger);
-      parser.setErrorHandler(&keysLogger);
-      QFile file(param->input.c_str());
-      if (!file.open(QIODevice::ReadOnly))
-      {
-        std::cerr << "Error opening " << param->input << std::endl;
-        return 1;
-      }
-      if (!parser.parse( QXmlInputSource(&file)))
-      {
-        std::cerr << "Error parsing " << param->input << " : "
-                  << parser.errorHandler()->errorString().toUtf8().constData()
-                  << std::endl;
-        return EXIT_FAILURE;
-      }
-      else
-      {
-        std::cerr << std::endl;
-      }
+      std::cerr << "Error opening " << param->input << std::endl;
+      return 1;
     }
-    catch (const XMLException& toCatch)
+    if (!parser.parse( QXmlInputSource(&file)))
     {
-      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
-      throw;
+      std::cerr << "Error parsing " << param->input << " : "
+                << parser.errorHandler()->errorString().toUtf8().constData()
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+    else
+    {
+      std::cerr << std::endl;
     }
     fout.close();
   }
@@ -312,32 +304,20 @@ int run(int argc, char** argv)
                                param->reverseKeys);
 
     QXmlSimpleReader parser;
-//     parser->setValidationScheme(SAXParser::Val_Auto);
-//     parser->setDoNamespaces(false);
-//     parser->setDoSchema(false);
-//     parser->setValidationSchemaFullChecking(false);
-    try
+    parser.setContentHandler(&handler);
+    parser.setErrorHandler(&handler);
+    QFile file(param->input.c_str());
+    if (!file.open(QIODevice::ReadOnly))
     {
-      parser.setContentHandler(&handler);
-      parser.setErrorHandler(&handler);
-      QFile file(param->input.c_str());
-      if (!file.open(QIODevice::ReadOnly))
-      {
-        std::cerr << "Error opening " << param->input << std::endl;
-        return 1;
-      }
-      if (!parser.parse( QXmlInputSource(&file)))
-      {
-        std::cerr << "Error parsing " << param->input << " : "
-                  << parser.errorHandler()->errorString().toUtf8().constData()
-                  << std::endl;
-        return EXIT_FAILURE;
-      }
+      std::cerr << "Error opening " << param->input << std::endl;
+      return 1;
     }
-    catch (const XMLException& toCatch)
+    if (!parser.parse( QXmlInputSource(&file)))
     {
-      std::cerr << "An error occurred  Error: " << toCatch.what() << std::endl;
-      throw;
+      std::cerr << "Error parsing " << param->input << " : "
+                << parser.errorHandler()->errorString().toUtf8().constData()
+                << std::endl;
+      return EXIT_FAILURE;
     }
 
     std::cerr << "write data to output file : " << param->output << std::endl;

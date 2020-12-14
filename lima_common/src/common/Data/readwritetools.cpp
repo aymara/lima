@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -22,8 +22,8 @@
  * @author     Besancon Romaric (besanconr@zoe.cea.fr)
  * @date       Fri Nov  7 2003
  * @version    $Id$
- * copyright   Copyright (C) 2003-2012 by CEA LIST
- * 
+ * copyright   Copyright (C) 2003-2020 by CEA LIST
+ *
  ***********************************************************************/
 
 #include "readwritetools.h"
@@ -34,7 +34,6 @@
 namespace Lima {
 namespace Common {
 namespace Misc {
-
 
 uint64_t readCodedInt(std::istream& file) {
   char c = 0x1;
@@ -52,15 +51,17 @@ void writeCodedInt(std::ostream& file, const uint64_t number)
   //std::cerr << "writeCodedInt: input, file at: " << file.tellp() << std::endl;
   std::deque<char> chars;
   uint64_t n(number);
-  
-  do {
+
+  do
+  {
     char c = (n & 0x7F) << 1;
     chars.push_back(c);
     n >>= 7;
   } while (n);
 
   //std::cerr << "writeCodedInt: nb chars to write: " << chars.size() << std::endl;
-  for (std::deque<char>::size_type i=chars.size()-1;i>0;i--) {
+  for (std::deque<char>::size_type i=chars.size()-1;i>0;i--)
+  {
     chars[i] |= 0x1;
     //std::cerr << "writeCodedInt: in for writing nb chars: " << sizeof(char) << std::endl;
     file.put(chars[i]);

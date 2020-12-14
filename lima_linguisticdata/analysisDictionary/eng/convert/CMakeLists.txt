@@ -52,7 +52,7 @@ else()
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
     #COMMAND sort -u -o forms.dic.3 forms.dic.2
-    COMMAND LC_ALL="C" sort -u forms.dic.2 | LC_ALL="C" comm -23 - ${CMAKE_CURRENT_SOURCE_DIR}/to_ignore.dic > forms.dic.3
+    COMMAND sort -L -u forms.dic.2 | comm -23 - ${CMAKE_CURRENT_SOURCE_DIR}/to_ignore.dic > forms.dic.3
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp

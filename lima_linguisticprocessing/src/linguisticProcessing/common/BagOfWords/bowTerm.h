@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -23,7 +23,7 @@
  * copyright Copyright (C) 2003 by CEA LIST
  *
  * @brief
- * 
+ *
  ***********************************************************************/
 
 #ifndef BOWTERM_H
@@ -39,7 +39,7 @@ namespace Common {
 namespace BagOfWords {
 
 class BoWTermPrivate;
-  
+
 /**
   * This is a complex token used to represent a multiword term
   *
@@ -52,15 +52,15 @@ class LIMA_BOW_EXPORT BoWTerm : public BoWComplexToken
   BoWTerm(const BoWTerm&);
 
   BoWTerm(const Lima::LimaString& lemma,
-          const uint64_t category, 
+          const LinguisticCode category,
           const uint64_t position,
           const uint64_t length);
 
-  BoWTerm(const Lima::LimaString& lemma, 
-          const uint64_t category, 
-          const uint64_t position, 
-          const uint64_t length, 
-          std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts, 
+  BoWTerm(const Lima::LimaString& lemma,
+          const LinguisticCode category,
+          const uint64_t position,
+          const uint64_t length,
+          std::deque< boost::shared_ptr< Lima::Common::BagOfWords::BoWToken > >& parts,
           const uint64_t head);
 
   virtual ~BoWTerm();
@@ -82,11 +82,11 @@ protected:
 //**************************************************************
 // inline functions
 //**************************************************************
-// inline BoWTerm* BoWTerm::clone() const 
-// { 
-//   return new BoWTerm(*this); 
+// inline BoWTerm* BoWTerm::clone() const
+// {
+//   return new BoWTerm(*this);
 // }
-// inline BoWTerm* BoWTerm::clone(const std::map<BoWToken*,BoWToken*>& map) const 
+// inline BoWTerm* BoWTerm::clone(const std::map<BoWToken*,BoWToken*>& map) const
 // {
 //   return new BoWTerm(*this,map);
 // }

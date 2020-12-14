@@ -253,23 +253,29 @@ void DynamicLibrariesManager::addSearchPathes(QString searchPathes)
 #endif
 
 #ifdef WIN32
-  QStringList list = searchPathes.replace("\\","/")
-                                    .split(QRegularExpression("[;]"),
-                                          QString::SkipEmptyParts);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  auto list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"),
+                                                   QString::SkipEmptyParts);
 #else
-  QStringList list = searchPathes.replace("\\","/")
-                                    .split(QRegularExpression("[:;]"),
-                                          QString::SkipEmptyParts);
+  auto list = searchPathes.replace("\\","/").split(QRegularExpression("[;]"),
+                                                   Qt::SkipEmptyParts);
+#endif
+#else
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  auto list = searchPathes.replace("\\","/").split(QRegularExpression("[:;]"),
+                                                   QString::SkipEmptyParts);
+#else
+  auto list = searchPathes.replace("\\","/").split(QRegularExpression("[:;]"),
+                                                   Qt::SkipEmptyParts);
+#endif
 #endif
 
-  for(auto it = list.begin(); it!=list.end();++it)
+  for(const auto& searchPath: list)
   {
-    QString searchPath = *it;
 #ifdef DEBUG_CD
-    LINFO << "DynamicLibrariesManager::addSearchPathes() -- "
-          << "adding:" << searchPath.toUtf8().data();
+    LINFO << "DynamicLibrariesManager::addSearchPathes() adding:" << searchPath;
 #endif
-    this->addSearchPath(searchPath.toUtf8().data());
+    this->addSearchPath(searchPath.toStdString());
   }
 }
 

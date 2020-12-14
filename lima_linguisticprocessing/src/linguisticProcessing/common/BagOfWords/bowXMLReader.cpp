@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -73,24 +73,23 @@ m_parser()
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  try {
-    BoWXMLHandler handler(output);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
-    QFile file(filename.c_str());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException(QString(QLatin1String("Error opening %1")).arg(filename.c_str()).toUtf8().constData());
-    if (!m_parser->parse( QXmlInputSource(&file)))
-    {
-      throw XMLException(QString(QLatin1String("Error parsing %1: %2"))
-              .arg(filename.c_str(),
-                    m_parser->errorHandler()->errorString()).toUtf8().constData());
-    }
-  }
-  catch (const XMLException& e) {
-    BOWLOGINIT;
-    LERROR << "An XML exception occurred: " << e.what() ;
-    throw;
+  BoWXMLHandler handler(output);
+  m_parser->setContentHandler(&handler);
+  m_parser->setErrorHandler(&handler);
+  QFile file(filename.c_str());
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      BOWLOGINIT,
+      QString(QLatin1String("Error opening %1")).arg(filename.c_str()).toUtf8().constData(),
+      XMLException);
+  if (!m_parser->parse( QXmlInputSource(&file)))
+  {
+    LIMA_EXCEPTION_SELECT_LOGINIT(
+      BOWLOGINIT,
+      QString(QLatin1String("Error parsing %1: %2"))
+            .arg(filename.c_str(),
+                  m_parser->errorHandler()->errorString()).toUtf8().constData(),
+      XMLException);
   }
 }
 
@@ -168,7 +167,7 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   LDEBUG << "Start Element " << stringName;
 
   LimaString lemma;
-  LinguisticCode category = static_cast<LinguisticCode>(0);
+  LinguisticCode category = L_NONE;
   uint64_t position(0);
   uint64_t length(0);
   uint64_t id(0);
@@ -373,7 +372,7 @@ BoWXMLHandler::getTokenAttributes(const QXmlAttributes& attributes,
                                   uint64_t& length,
                                   uint64_t& id) const {
   lemma=getLimaStringAttribute(attributes,"lemma");
-  category=getIntAttribute(attributes,"category");
+  category=LinguisticCode::fromUInt(getIntAttribute(attributes,"category"));
   position=getIntAttribute(attributes,"position");
   length=getIntAttribute(attributes,"length");
   id=getIntAttribute(attributes,"id");

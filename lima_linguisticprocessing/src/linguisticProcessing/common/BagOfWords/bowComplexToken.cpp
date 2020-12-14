@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2020 CEA LIST
 
     This file is part of LIMA.
 
@@ -62,7 +62,7 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const BoWComplexTokenPrivate& bct
 }
 
 BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
-                                const uint64_t category,
+                                const LinguisticCode category,
                                 const uint64_t position,
                                 const uint64_t length):
   BoWTokenPrivate(lemma, category, position, length),
@@ -72,7 +72,7 @@ BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
 }
 
 BoWComplexTokenPrivate::BoWComplexTokenPrivate(const LimaString& lemma,
-                                 const uint64_t category,
+                                 const LinguisticCode category,
                                  const uint64_t position,
                                  const uint64_t length,
                                  std::deque< boost::shared_ptr< BoWToken > >& parts,
@@ -111,7 +111,7 @@ BoWComplexToken::BoWComplexToken():
 }
 
 BoWComplexToken::BoWComplexToken(const LimaString& lemma,
-                                 const uint64_t category,
+                                 const LinguisticCode category,
                                  const uint64_t position,
                                  const uint64_t length):
     BoWToken(*new BoWComplexTokenPrivate())
@@ -123,7 +123,7 @@ BoWComplexToken::BoWComplexToken(const LimaString& lemma,
 }
 
 BoWComplexToken::BoWComplexToken(const LimaString& lemma,
-                                 const uint64_t category,
+                                 const LinguisticCode category,
                                  const uint64_t position,
                                  const uint64_t length,
                                  std::deque< boost::shared_ptr< BoWToken > >& parts,
@@ -238,21 +238,21 @@ boost::shared_ptr< BoWToken > BoWComplexTokenPrivate::addPart(boost::shared_ptr<
     m_head=m_parts.size()-1;
   }
   uint64_t previousPosition = m_position;
-  
+
   // added the first part
-  if (m_position == 0 && m_length==0) 
+  if (m_position == 0 && m_length==0)
   {
     m_position = tok->getPosition();
     m_length = tok->getLength();
   }
   // adding a part before the previous first part
-  else if (tok->getPosition() < m_position) 
+  else if (tok->getPosition() < m_position)
   {
     m_position = tok->getPosition();
     m_length = previousPosition - tok->getPosition() + m_length;
   }
   // adding a part after the current end
-  else if (tok->getPosition() > (previousPosition + m_length)) 
+  else if (tok->getPosition() > (previousPosition + m_length))
   {
     m_length = tok->getPosition() - previousPosition + tok->getLength();
   }

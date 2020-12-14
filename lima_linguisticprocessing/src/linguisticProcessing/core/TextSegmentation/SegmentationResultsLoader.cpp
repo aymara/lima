@@ -22,7 +22,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Tue Jan 18 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "SegmentationResultsLoader.h"
@@ -35,7 +35,7 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima {
 namespace LinguisticProcessing {
-        
+
   SimpleFactory<MediaProcessUnit,SegmentationResultsLoader> SegmentationResultsLoaderFactory(SEGMENTATIONRESULTSLOADER_CLASSID);
 
 //***********************************************************************
@@ -58,7 +58,7 @@ SegmentationResultsLoader::~SegmentationResultsLoader() {
 //***********************************************************************
 void SegmentationResultsLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
           Manager* manager)
-  
+
 {
   AnalysisLoader::init(unitConfiguration,manager);
   try {
@@ -71,7 +71,7 @@ void SegmentationResultsLoader::init(Common::XMLConfigurationFiles::GroupConfigu
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
 
-  //  Create a SAX parser object. 
+  //  Create a SAX parser object.
   m_parser = new QXmlSimpleReader();
 
 }
@@ -103,24 +103,28 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
     }
   }
 
-  
+
   try
   {
     SegmentationResultsLoader::XMLHandler handler(segmData,graph);
     m_parser->setContentHandler(&handler);
     m_parser->setErrorHandler(&handler);
-    QFile file(getInputFile(analysis));
+    auto filename = getInputFile(analysis);
+    QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      throw XMLException();
+      LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::AnalysisLoader"),
+                                    "Cannot open" << filename,
+                                    XMLException);
     if (!m_parser->parse( QXmlInputSource(&file)))
     {
-      throw XMLException();
+      LIMA_EXCEPTION_SELECT_LOGINIT(
+        LOGINIT("LP::AnalysisLoader"),
+        "Cannot parse" << filename << m_parser->errorHandler()->errorString(),
+        XMLException);
     }
   }
   catch (const XMLException& )
   {
-    LOGINIT("LP::AnalysisLoader");
-    LERROR << "Error: failed to parse XML input file";
     return UNKNOWN_ERROR;
   }
 

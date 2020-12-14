@@ -50,14 +50,14 @@ void BagOfWordsTest3::test_BoWText()
 
   std::stringstream stream;
   {
-    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), Lima::LinguisticCode::fromUInt(1), 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("lemma"));
-    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), Lima::LinguisticCode::fromUInt(1), 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), Lima::LinguisticCode::fromUInt(1), 10, 4));
     bt3->setInflectedForm(QString::fromUtf8("word"));
 
-    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), Lima::LinguisticCode::fromUInt(1), 10, 4));
     bt4->setInflectedForm(QString::fromUtf8("autre"));
 
     bt1Lemma = bt1->getLemma();
@@ -95,14 +95,14 @@ void BagOfWordsTest3::test_BoWText2()
 
   std::stringstream stream;
   {
-    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > bt1(new BoWToken(QString::fromUtf8("lemma"), Lima::LinguisticCode::fromUInt(1), 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("lemma"));
-    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > bt2(new BoWToken(QString::fromUtf8("démocratique"), Lima::LinguisticCode::fromUInt(1), 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("démocratique"));
-    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt3(new BoWToken(QString::fromUtf8("word"), Lima::LinguisticCode::fromUInt(1), 10, 4));
     bt3->setInflectedForm(QString::fromUtf8("word"));
 
-    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), 1, 10, 4));
+    boost::shared_ptr< BoWToken > bt4(new BoWToken(QString::fromUtf8("autre"), Lima::LinguisticCode::fromUInt(1), 10, 4));
     bt4->setInflectedForm(QString::fromUtf8("autre"));
 
     boost::shared_ptr< BoWTerm > term(new BoWTerm);
@@ -117,9 +117,9 @@ void BagOfWordsTest3::test_BoWText2()
     ne->setFeature("surname","John");
     ne->setFeature("name","Doe");
     name = ne->getFeatures().at("name");
-    boost::shared_ptr< BoWToken > btsurname(new BoWToken(QString::fromUtf8("John"), 1, 10, 5));
+    boost::shared_ptr< BoWToken > btsurname(new BoWToken(QString::fromUtf8("John"), Lima::LinguisticCode::fromUInt(1), 10, 5));
     bt1->setInflectedForm(QString::fromUtf8("John"));
-    boost::shared_ptr< BoWToken > btname(new BoWToken(QString::fromUtf8("Doe"), 1, 10, 12));
+    boost::shared_ptr< BoWToken > btname(new BoWToken(QString::fromUtf8("Doe"), Lima::LinguisticCode::fromUInt(1), 10, 12));
     bt2->setInflectedForm(QString::fromUtf8("Doe"));
     ne->addPart(btsurname);
     ne->addPart(btname);

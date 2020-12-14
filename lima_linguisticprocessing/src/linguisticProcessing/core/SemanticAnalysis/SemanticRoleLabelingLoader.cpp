@@ -19,8 +19,8 @@
 /************************************************************************
  *
  * @file       SemanticRoleLabelingLoader.cpp
- * @author     Clémence Filmont 
- * @author     Gael de Chalendar <gael.de-chalendar@cea.fr> 
+ * @author     Clémence Filmont
+ * @author     Gael de Chalendar <gael.de-chalendar@cea.fr>
  * @date       2014
  * copyright   Copyright (C) 2014-2016 by CEA LIST
  ***********************************************************************/
@@ -188,7 +188,7 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
   LimaConllTokenIdMapping* limaConllMapping = static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
 
   QString fileName = getInputFile(analysis);
-  
+
   QFile file(fileName);
 
 
@@ -235,7 +235,7 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
           *verbalClass = m_d->m_model + "." + *verbalClass;
         }
         LimaString verbalClass= verbalClasses.join("|");
-        
+
 
         AnnotationGraphVertex annotPredicateVertex=annotationData->createAnnotationVertex();
         annotationData->addMatching("PosGraph", posGraphPredicateVertex, "annot", annotPredicateVertex);
@@ -378,7 +378,11 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 QStringList ConllHandler::splitSegment(const QString & segment, QRegExp separator)
 {
   QStringList segmentsSplited;
-  segmentsSplited =segment.split(QRegExp(separator),QString::SkipEmptyParts);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  segmentsSplited =segment.split(QRegExp(separator), QString::SkipEmptyParts);
+#else
+  segmentsSplited =segment.split(QRegExp(separator), Qt::SkipEmptyParts);
+#endif
   return segmentsSplited;
 }
 
