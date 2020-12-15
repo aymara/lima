@@ -561,7 +561,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         v = boost::target(*outIter,*posGraph);
       }
     }
-    auto curSentenceText = originalText->mid(pStart, pEnd-pStart+1);
+    auto curSentenceText = originalText->mid(pStart-1, pEnd-pStart+1);
 
     if (m_d->m_format == "CoNLL-U")
     {
