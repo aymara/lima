@@ -29,9 +29,10 @@ Options default values are in parentheses.
 
   -a asan           <(OFF)|ON> compile with adress sanitizer
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
-  -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -j n              <INTEGER> set the compilation to a number of parallel processes.
                     Default 0 => the value is derived from CPUs available.
+  -k packages       <(ON)|OFF> build packages if ON
+  -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
   -p package        <OFF|(ON)> package building selection
   -r resources      <precompiled|(build)> build the linguistic resources or use the
