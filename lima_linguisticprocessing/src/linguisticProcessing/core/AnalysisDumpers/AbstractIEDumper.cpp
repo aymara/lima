@@ -40,6 +40,55 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace AnalysisDumpers {
 
+// a class to hold information about current state of the output,
+// when the output is used in append mode (e.g. when the analysis is done 
+// separately on each paragraph): store the number of elements printed to get ids right
+  
+struct AbstractIEDumper::IEDumperMetaData {
+  uint nbEntities;
+  uint nbAttributes;
+  uint nbRelations;
+  uint nbEvents;
+
+  IEDumperMetaData():
+  nbEntities(0),
+  nbAttributes(0),
+  nbRelations(0),
+  nbEvents(0)
+  {}
+
+  IEDumperMetaData(LinguisticMetaData* metadata):
+  nbEntities(0),
+  nbAttributes(0),
+  nbRelations(0),
+  nbEvents(0)
+  {
+    if (metadata->hasMetaData("IEDumper.nbEntities"))
+      nbEntities=std::stoi(metadata->getMetaData("IEDumper.nbEntities"));
+    if (metadata->hasMetaData("IEDumper.nbAttributes"))
+      nbAttributes=std::stoi(metadata->getMetaData("IEDumper.nbAttributes"));
+    if (metadata->hasMetaData("IEDumper.nbRelations"))
+      nbRelations=std::stoi(metadata->getMetaData("IEDumper.nbRelations"));
+    if (metadata->hasMetaData("IEDumper.nbEvents"))
+      nbEvents=std::stoi(metadata->getMetaData("IEDumper.nbEvents"));
+    
+    //std::cerr << *this << std::endl;
+  }
+  
+  void save(LinguisticMetaData* metadata) {
+    metadata->setMetaData("IEDumper.nbEntities",std::to_string(nbEntities));
+    metadata->setMetaData("IEDumper.nbAttributes",std::to_string(nbAttributes));
+    metadata->setMetaData("IEDumper.nbRelations",std::to_string(nbRelations));
+    metadata->setMetaData("IEDumper.nbEvents",std::to_string(nbEvents));
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, IEDumperMetaData& m) {
+    os << "DumperMetaData: nbEntities="<< m.nbEntities << ",nbRelations=" << m.nbRelations << ",nbEvents="<< m.nbEvents;
+    return os;
+  }
+  
+};
+  
 AbstractIEDumper::AbstractIEDumper() :
 AbstractTextualAnalysisDumper(),
 m_language(0),
@@ -225,6 +274,8 @@ LimaStatusCode AbstractIEDumper::process(
 
   sourceFile=metadata->getMetaData("FileName");
 
+  IEDumperMetaData* dumperMetadata=new IEDumperMetaData(metadata);
+  
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData == 0) {
     DUMPERLOGINIT;
@@ -262,7 +313,7 @@ LimaStatusCode AbstractIEDumper::process(
 
   uint64_t offset(0);
   try {
-    offset=atoi(metadata->getMetaData("StartOffset").c_str());
+    offset=QString::fromStdString(metadata->getMetaData("StartOffset")).toUInt();
   }
   catch (LinguisticProcessingException& ) {
     // do nothing: not set in analyzeText (only in analyzeXmlDocuments)
@@ -324,7 +375,7 @@ LimaStatusCode AbstractIEDumper::process(
       }
       const SpecificEntityAnnotation* annot=getSpecificEntityAnnotation(v,annotationData);
       if (annot != 0) {
-        outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes);
+        outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes,dumperMetadata);
       }
     }
   }
@@ -360,24 +411,34 @@ LimaStatusCode AbstractIEDumper::process(
           continue;
         }
         v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph));
-        outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes);
+        outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes,dumperMetadata);
       }
     }
   }
+  // update number of entities/attributes
+  dumperMetadata->nbEntities+=mapEntities.size();
+  dumperMetadata->nbAttributes+=mapAttributes.size();
+  //std::cerr << *dumperMetadata << std::endl;
   outputEntitiesFooter(out);
 
   outputEventsHeader(out);
   if (eventData!=0) {
-    outputEventData(out,eventData,annotationData,tokenMap,mapEntities,offset, *originalText);
+    uint nbEvents=outputEventData(out,eventData,annotationData,tokenMap,mapEntities,offset, 
+                                  *originalText, dumperMetadata);
+    dumperMetadata->nbEvents+=nbEvents;
   }
   outputEventsFooter(out);
 
   outputRelationsHeader(out);
-  outputSemanticRelations( out, annotationData, tokenMap, mapEntities, offset);
+  uint nbRelations=outputSemanticRelations( out, annotationData, tokenMap, mapEntities, offset, dumperMetadata);
+  dumperMetadata->nbRelations+=nbRelations;
   outputRelationsFooter(out);
 
   outputGlobalFooter(out);
 
+  // save current state for future output
+  dumperMetadata->save(metadata);
+  
   TimeUtils::logElapsedTime("AbstractIEDumper");
   return SUCCESS_ID;
 
@@ -429,16 +490,19 @@ public:
 
 };
 
-void AbstractIEDumper::outputEventData(std::ostream& out,
+uint AbstractIEDumper::outputEventData(std::ostream& out,
                                        const EventAnalysis::EventTemplateData* eventData,
                                        const Common::AnnotationGraphs::AnnotationData* /*annotationData*/,
                                        const VertexTokenPropertyMap& tokenMap,
                                        std::map<std::tuple<std::uint64_t,std::uint64_t,std::string>,std::size_t > mapEntities,
                                        uint64_t offset,
-                                       LimaStringText originalText
+                                       LimaStringText originalText,
+                                       IEDumperMetaData* metadata
   ) const
 {
   DUMPERLOGINIT;
+  //return the number of events 
+  uint nbEvents(0);
   // use a set of EventInfos to remove duplicates
   set<EventInfos> events;
   // use a bufferEvents to possibly have all event mentions as entities before all events
@@ -467,7 +531,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
 
         LinguisticGraphVertex v=(*it1).second.getVertex();
         LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
-        std::uint64_t position= vToken->position()+offset;
+        std::uint64_t position= vToken->position();
         std::uint64_t length= vToken->length();
         string stringForm = originalText.mid( position+m_posOffset,length).toUtf8().data();
 
@@ -483,7 +547,7 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
         else {
 
           // entities in map are stored with original positions
-          adjustPosition(position);
+          adjustPosition(position,offset);
 
           // get corresponding entity
           string entityType=Common::Misc::limastring2utf8stdstring(Common::MediaticData::MediaticData::single().getEntityName((*it1).second.getType()));
@@ -517,8 +581,8 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
     }
   }
   // output event mentions as entities
-  unsigned int idEntity=mapEntities.size()+1;
   if (addEventMentionAsEntity()) {
+    unsigned int idEntity=mapEntities.size()+1+metadata->nbEntities;
     for (auto& e: events) {
       e.eventMentionId=idEntity; // new entity id
       std::vector<pair<uint64_t,uint64_t> > positions;
@@ -549,12 +613,13 @@ void AbstractIEDumper::outputEventData(std::ostream& out,
     }
   }
 
-  unsigned int eventId(1);
+  unsigned int eventId(1+metadata->nbEvents);
   for (const auto& e: events) {
     LDEBUG << "=> output event"<< eventId << "/" << events.size();
     outputEventString(out, eventId, e.eventMentionId, e.eventMentionType, e.eventRoleId, e.eventRoleType);
     eventId++;
   }
+  return events.size();
 }
 
 void AbstractIEDumper::
@@ -615,9 +680,6 @@ computePositions(std::vector<pair<uint64_t,uint64_t> >& positions,
     stringForm.remove(i-shift,1); // must change positions to follow string with removed chars
     shift++;
   }
-
-  // adjust all positions if offset mapping exists
-  adjustPositions(positions);
 }
 
 bool AbstractIEDumper::
@@ -628,7 +690,8 @@ outputEntity(std::ostream& out,
              uint64_t offset,
              LimaStringText originalText,
              std::map<std::tuple<std::uint64_t,std::uint64_t,std::string>,std::size_t>& mapEntities,
-             std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& mapAttributes
+             std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& mapAttributes,
+             IEDumperMetaData* metadata
   ) const
 {
   LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
@@ -640,7 +703,7 @@ outputEntity(std::ostream& out,
   }
   else
   {
-    std::uint64_t pos=offset+annot->getPosition();
+    std::uint64_t pos=annot->getPosition();
     std::uint64_t len=annot->getLength();
     //string stringForm=originalText.mid( pos-1,len).toUtf8().data();
     auto stringForm=originalText.mid( pos+m_posOffset,len);
@@ -665,7 +728,8 @@ outputEntity(std::ostream& out,
     
     // back to the original offset if text has been expanded
     // do this before inserting in mapEntities to find real duplicates
-    adjustPosition(pos);
+    adjustPosition(pos,offset);
+    adjustPositions(positions,offset);
     // if non-contiguous position (especially after adjustment to original positions), need to take real length to check for duplicates
     if (positions.size()>0) {
       len=positions.back().second-pos+1;
@@ -681,7 +745,7 @@ outputEntity(std::ostream& out,
       return false;
     }
 
-    std::size_t index = mapEntities.size()+1;
+    std::size_t index = mapEntities.size()+1 + metadata->nbEntities;
 
     if (! m_domains.empty() && m_domains.find(domainType)==m_domains.end())
     {
@@ -711,7 +775,7 @@ outputEntity(std::ostream& out,
           (entityName=="Numex.NUMEX" && featName == "numvalue") ||
           (entityName=="Numex.NUMEX" && featName == "unit") ) {
         if( m_all_attributes || std::find(m_attributes.begin(), m_attributes.end(), featName) != m_attributes.end() ){
-          std::size_t feat_index = mapAttributes.size()+1;
+          std::size_t feat_index = mapAttributes.size()+1 +metadata->nbAttributes;
           std::string featValue = featureItr->getValueString();
           auto feature = std::make_tuple(index,featName,featValue);
           mapAttributes.insert( std::make_pair(feature, feat_index ) );
@@ -846,16 +910,20 @@ outputSemanticRelationArg(const std::string& /*vertexRole*/,
   return oss.str();
 }
 
-void AbstractIEDumper::
+uint AbstractIEDumper::
 outputSemanticRelations(std::ostream& out,
                         const Common::AnnotationGraphs::AnnotationData* annotationData,
                         const VertexTokenPropertyMap& tokenMap,
                         std::map<std::tuple<std::uint64_t,std::uint64_t,std::string>,std::size_t > mapEntities,
-                        uint64_t offset
+                        uint64_t offset,
+                        IEDumperMetaData* metadata
   ) const
 {
+  // return the number of relations produced in ouptut
+  uint nbRelations(0);
+  
   AnnotationGraphEdgeIt it,it_end;
-  std::uint64_t index=1;
+  std::uint64_t index=1+metadata->nbRelations;
   const AnnotationGraph& annotGraph=annotationData->getGraph();
   boost::tie(it, it_end) = edges(annotGraph);
   for (; it != it_end; it++) {
@@ -884,9 +952,10 @@ outputSemanticRelations(std::ostream& out,
       index += outputRelationString(out, index, annotType,
                            outputSemanticRelationArg("source",source(*it,annotGraph),tokenMap,mapEntities,annotationData,offset),
                            outputSemanticRelationArg("target",target(*it,annotGraph),tokenMap,mapEntities,annotationData,offset));
+      nbRelations++;
     }
   }
-
+  return nbRelations;
 }
 
 const SemanticAnalysis::SemanticRelationAnnotation* AbstractIEDumper::
@@ -917,17 +986,21 @@ getSemanticRelationAnnotation(LinguisticGraphVertex v,
 
 }
 
-void AbstractIEDumper::adjustPosition(std::uint64_t& position) const
+void AbstractIEDumper::adjustPosition(std::uint64_t& position, uint64_t offset) const
 {
   DUMPERLOGINIT;
   std::uint64_t prevPos(position);
   if (m_offsetMapping!=0) {
-    position=m_offsetMapping->getOriginalOffset(position);
+    position=m_offsetMapping->getOriginalOffset(position)+offset;
   }
+  if (offset) {
+    position+=offset;
+  }
+
   LDEBUG << "AbstractIEDumper::adjustPosition" << prevPos << "->" << position;
 }
 
-void AbstractIEDumper::adjustPositions(std::vector<pair<uint64_t,uint64_t> >& positions) const
+void AbstractIEDumper::adjustPositions(std::vector<pair<uint64_t,uint64_t> >& positions, uint64_t offset) const
 {
   DUMPERLOGINIT;
   ostringstream prevPos;
@@ -938,6 +1011,13 @@ void AbstractIEDumper::adjustPositions(std::vector<pair<uint64_t,uint64_t> >& po
       p.second=m_offsetMapping->getOriginalOffset(p.second);
     }
   }
+  if (offset) {
+    for (auto& p: positions) {
+      p.first+=offset;
+      p.second+=offset;
+    }
+  }
+
   ostringstream newPos;
   for (const auto& p: positions) { newPos << "(" << p.first << "," << p.second << ") "; }
   LDEBUG << "AbstractIEDumper::adjustPositions" << prevPos.str() << "->" << newPos.str();

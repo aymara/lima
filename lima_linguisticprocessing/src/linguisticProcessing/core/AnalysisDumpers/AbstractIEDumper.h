@@ -107,7 +107,9 @@ protected:
   mutable OffsetMapping* m_offsetMapping;
   bool m_outputGroups; // ouptut full entity types with the groups
   int m_posOffset; // offset on token positions (default is -1, meaning tokens start at 1)
-  
+
+  struct IEDumperMetaData;
+
   //member private members
   const SemanticAnalysis::SemanticRelationAnnotation*
     getSemanticRelationAnnotation(LinguisticGraphVertex v,
@@ -126,22 +128,25 @@ protected:
                  uint64_t offset,
                  LimaStringText originalText,
                  std::map <std::tuple <uint64_t, uint64_t, std::string >, std::size_t >& mapEntities,
-                 std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& mapAttributes
+                 std::map <std::tuple <std::size_t, std::string , std::string >,  std::size_t >& mapAttributes,
+                 IEDumperMetaData* metadata
       ) const;
 
-  void outputSemanticRelations(std::ostream& out,
+  uint outputSemanticRelations(std::ostream& out,
                                const Common::AnnotationGraphs::AnnotationData* annotationData,
                                const VertexTokenPropertyMap& tokenMap,
                                std::map<std::tuple<std::uint64_t,std::uint64_t,std::string>,std::size_t > mapEntities,
-                               uint64_t offset
+                               uint64_t offset,
+                               IEDumperMetaData* metadata
     ) const;
-  void outputEventData(std::ostream& out,
+  uint outputEventData(std::ostream& out,
                        const EventAnalysis::EventTemplateData* eventData,
                        const Common::AnnotationGraphs::AnnotationData* annotationData,
                        const VertexTokenPropertyMap& tokenMap,
                        std::map<std::tuple<std::uint64_t,std::uint64_t,std::string>,std::size_t > mapEntities,
                        uint64_t offset,
-                       LimaStringText originalText
+                       LimaStringText originalText,
+                       IEDumperMetaData* metadata
     ) const;
   std::string outputSemanticRelationArg(const std::string& vertexRole,
                                         const AnnotationGraphVertex& vertex,
@@ -152,8 +157,8 @@ protected:
 
    void computePositions(std::vector<std::pair<uint64_t,uint64_t> >& positions, LimaString& stringForm, uint64_t pos, uint64_t len) const;
 
-   void adjustPosition(std::uint64_t& position) const;
-   void adjustPositions(std::vector<std::pair<uint64_t,uint64_t> >& positions) const;
+   void adjustPosition(std::uint64_t& position,uint64_t offset=0) const;
+   void adjustPositions(std::vector<std::pair<uint64_t,uint64_t> >& positions,uint64_t offset=0) const;
    
 
 };
