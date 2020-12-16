@@ -247,7 +247,9 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
   for (const auto& sentence: sentencesTokens)
   {
     if (sentence.size() < 1)
+    {
       continue;
+    }
 
     LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
@@ -257,7 +259,7 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
       LOG_MESSAGE(LDEBUG, "      Adding token '" << str << "'");
 
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
-      Token *tToken = new Token(form, str, token.start, token.wordText.size());
+      Token *tToken = new Token(form, str, token.start+1, token.wordText.size());
       if (tToken == nullptr)
       {
         TOKENIZERLOGINIT;
@@ -652,11 +654,15 @@ void CppUppsalaTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& curr
     for (const QString& w : i->second)
     {
       if (n == 0)
+      {
         current_sentence.push_back(TPrimitiveToken(w,
                                                    current_token_offset,
                                                    QString::fromStdU32String(current_token)));
+      }
       else
-          current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+      {
+        current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+      }
     }
   }
 }
