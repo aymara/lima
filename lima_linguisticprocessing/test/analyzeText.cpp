@@ -237,7 +237,7 @@ int run(int argc, char** argv)
    "Sets metadata values, in the format data1:value1,data2:value2,...")
   ("split-mode,s",
    po::value< std::string >(&splitMode)->default_value("none"),
-   "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
+   "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default), 'lines' to split on each line break, and 'para' to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode. If information is to be passed from one analysis to the next (e.g. with BratDumper to have global identifiers on the whole document), a MetaDataDumper must be present at the end of the pipeline.")
   ;
 
   po::positional_options_description p;
