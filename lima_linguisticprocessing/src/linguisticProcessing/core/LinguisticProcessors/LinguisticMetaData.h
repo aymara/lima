@@ -47,7 +47,9 @@ public:
   LinguisticMetaData();
   virtual ~LinguisticMetaData();
 
+  bool hasMetaData(const std::string& id) const ;
   const std::string& getMetaData(const std::string& id) const ;
+  const std::map<std::string,std::string>& getAllMetaData(void) const;
   void setMetaData(const std::string& id,const std::string& value);
   void setMetaData(const std::map<std::string,std::string>& metaDatas);
 
