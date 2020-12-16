@@ -46,6 +46,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/XmlBowDocumentHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/MetaDataHandler.h"
 #include "linguisticProcessing/core/EventAnalysis/EventHandler.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -564,6 +565,47 @@ int run(int argc, char** argv)
 
       }
       qfile.close();
+    }
+    else if (splitMode == "para")
+    {
+      auto contentText = QString::fromUtf8(qfile.readAll().constData());
+      qfile.close();
+      if (contentText.isEmpty())
+      {
+        std::cerr << "file " << file << " has empty input ! " << std::endl;
+        continue;
+      }
+
+      // for paragraph handling, add additional metadata handler to pass information
+      // from one analysis to the next
+      MetaDataHandler* metaDataHandler=new MetaDataHandler();
+      handlers.insert(std::make_pair("metaDataHandler",
+                                     metaDataHandler));
+    
+      QRegExp sep("\n\n\n*");
+      //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
+      //for (const auto& par: paragraphs) {
+      //get positions to set offset
+      int prevpos = 0;
+      int pos = 0;
+      while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
+        QString paragraph=contentText.mid(prevpos,pos-prevpos);
+        //std::cerr << "prevpos=" << prevpos << ", pos=" << pos << ", paragraph=" << paragraph.toStdString() << std::endl;
+        // analyze it with the proper offset
+        metaData["StartOffset"]=std::to_string(prevpos);
+        client->analyze(paragraph,
+                        metaData,
+                        pipeline,
+                        handlers,
+                        inactiveUnits);
+        pos += sep.matchedLength();
+        prevpos=pos;
+        // update metadata
+        const std::map<std::string,std::string>& newMetaData=metaDataHandler->getMetaData();
+        if (newMetaData.size()!=0) {
+          metaData=newMetaData;
+        }
+      }
     }
     else // default == none
     {
