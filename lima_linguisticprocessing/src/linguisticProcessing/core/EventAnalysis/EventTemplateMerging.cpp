@@ -147,12 +147,20 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   uint64_t numTemplate=0;
   for (EventTemplateData::iterator it1=eventData->begin(),it_end=eventData->end();it1!=it_end;it1++)
   {
+    if ((*it1).getType()!=m_templateDefinition->getName()) {
+      continue;
+    }
+    
     map<string,EventTemplateElement>& templateElements1=(*it1).getTemplateElements();
     // begin comparison with next template
     EventTemplateData::iterator it2=it1; 
     uint64_t numOtherTemplate=numTemplate; // only used for debug messages
     for (it2++; it2!=it_end; it2++)
     {
+      if ((*it2).getType()!=m_templateDefinition->getName()) {
+        continue;
+      }
+      
       numOtherTemplate++;
       map<string,EventTemplateElement>& templateElements2=(*it2).getTemplateElements();
       if (templateElements2.empty()) {
