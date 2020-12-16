@@ -30,6 +30,7 @@ SET(lima-lp-linguisticprocessors_LIB_SRCS
    AbstractTextualAnalysisDumper.cpp
    ExternalProcessUnit.cpp
    AnalysisLoader.cpp
+   MetaDataDumper.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-linguisticprocessors)
@@ -61,6 +62,7 @@ install(FILES
     LinguisticMetaData.h
     LinguisticProcessorsExport.h
     StatusLogger.h
+    MetaDataDumper.h
   DESTINATION include/linguisticProcessing/core/LinguisticProcessors
   COMPONENT devel
 )
