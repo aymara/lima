@@ -8,8 +8,19 @@ on:
     branches: [ github-actions-test ]
 
 jobs:
-  build:
-    name: "Checkout and build"
+  ubuntu20:
+    name: "Build on Ubuntu 20.04"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      - name: "Build image"
+        run: docker build --tag travis-ubuntu20.04 --build-arg BRANCH="master" --build-arg USE_TENSORFLOW="false" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
+
+  ubuntu20tf:
+    name: "Build on Ubuntu 20.04 with TensorFlow support"
     runs-on: ubuntu-latest
 
     steps:
