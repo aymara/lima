@@ -1006,17 +1006,17 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     LERROR << errorString;
     throw LimaException(errorString.toStdString());
   }
-  try
-  {
-    EntityTypeId typeId(m_d->m_entityTypes[groupId]->get(entityName));
-    return EntityType(typeId,groupId);
-  }
-  catch(LimaException& e)
+  
+  if (not m_d->m_entityTypes[groupId]->hasValue(entityName))
   {
     MDATALOGINIT;
-    LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId
-          << "; exception:" << e.what() );
+    //LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId); 
+    LDEBUG << "MediaticData::getEntityType no entity type '" << entityName << "' in group id "<<groupId;
+    throw LimaException();
   }
+  
+  EntityTypeId typeId(m_d->m_entityTypes[groupId]->get(entityName));
+  return EntityType(typeId,groupId);
 }
 
 EntityGroupId MediaticData::getEntityGroupId(const LimaString& groupName) const
