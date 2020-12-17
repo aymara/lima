@@ -293,7 +293,7 @@ void MediaticData::init(
 
 bool MediaticData::isValidMedia(const std::string& media)
 {
-  QRegExp rx("(\\b\\w{3})\\b");
+  QRegExp rx("(\\b\\w{3}(\\.(ud)))?\\b");
   QString q_media(media.c_str());
   return rx.exactMatch(q_media );
 }
@@ -536,9 +536,9 @@ void MediaticDataPrivate::initMedias(
         {
           MDATALOGINIT;
           LERROR << "missing definition file for media " << (med_str).c_str()
-                  << ":" << e.what();
-        throw InvalidConfiguration(
-          std::string("Failed to init media ")+(med_str)+": "+e.what());
+                 << ":" << e.what();
+          throw InvalidConfiguration(
+            std::string("Failed to init media ")+(med_str)+": "+e.what());
         }
       }
     }
