@@ -293,7 +293,7 @@ void MediaticData::init(
 
 bool MediaticData::isValidMedia(const std::string& media)
 {
-  QRegExp rx("(\\b\\w{3}(\\.(ud)))?\\b");
+  QRegExp rx("(\\b\\w{3}(\\.(ud))?)\\b");
   QString q_media(media.c_str());
   return rx.exactMatch(q_media );
 }
