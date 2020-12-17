@@ -1006,8 +1006,8 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
     LERROR << errorString;
     throw LimaException(errorString.toStdString());
   }
-  
-  if (not m_d->m_entityTypes[groupId]->hasValue(entityName))
+
+  if (! m_d->m_entityTypes[groupId]->hasValue(entityName))
   {
     MDATALOGINIT;
     //LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId); 
