@@ -175,7 +175,7 @@ int run(int argc, char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  if (QsLogging::initQsLog(configPath) != 0)
+  if (!QsLogging::initQsLog(configPath))
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";

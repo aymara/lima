@@ -29,7 +29,7 @@
 
 namespace QsLogging
 {
-LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configDir = "");
+LIMA_COMMONQSLOG_EXPORT bool initQsLog ( const QString& configString = "" );
 
 class CategoriesImpl; // d pointer
 class LIMA_COMMONQSLOG_EXPORT Categories : public QObject
@@ -43,7 +43,7 @@ public:
       return staticCategories;
    }
 
-  bool configure(const QString& fileName);
+  bool configure(const QString& fileName, bool reload = false);
   Level levelFor(const QString& category) const;
   void connectSignals();
 
@@ -52,9 +52,9 @@ private Q_SLOTS:
 
 private:
    Categories(QObject* parent = 0);
-   Categories(const Categories&);
+   Categories(const Categories&) = delete;
    virtual ~Categories();
-   Categories& operator=(const Categories&);
+   Categories& operator=(const Categories&) = delete;
 
    CategoriesImpl* d;
 };

@@ -297,7 +297,7 @@ int run(int argc, char** argv)
     resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  if (QsLogging::initQsLog(configPath) != 0)
+  if (!QsLogging::initQsLog(configPath))
   {
     std::cerr << "Call to QsLogging::initQsLog(\"" << configPath.toStdString()
               << "\") failed.";

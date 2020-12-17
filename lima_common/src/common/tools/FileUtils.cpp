@@ -69,9 +69,10 @@ uint64_t countLines(QFile& file)
   return result;
 }
 
-QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
+QStringList buildConfigurationDirectoriesList(const QStringList& projects,
+                                              const QStringList& paths)
 {
-//  qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+//   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
   for (auto path = paths.begin(); path != paths.end(); ++path)
   {
@@ -80,9 +81,8 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
       configDirs << *path;
     }
   }
-  for (auto it = projects.begin(); it != projects.end(); ++it)
+  for (const auto& project: projects)
   {
-    QString project = *it;
     QStringList confDirs;
     QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
     if (!projectConf.isEmpty())
@@ -149,7 +149,7 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects, const
     }
   }
 
-//  qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
+//   qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 

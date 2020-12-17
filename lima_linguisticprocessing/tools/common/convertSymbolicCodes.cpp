@@ -132,12 +132,13 @@ int run(int argc, char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  if (QsLogging::initQsLog(configPath) != 0)
-  {
-    LOGINIT("Common::Misc");
-    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
-    return EXIT_FAILURE;
-  }
+  QsLogging::initQsLog(configPath);
+//   if (!QsLogging::initQsLog(configPath))
+//   {
+//     std::cerr << "Call to QsLogging::initQsLog(\"" << configPath.toStdString()
+//               << "\") failed." << std::endl << std::endl;
+//     return EXIT_FAILURE;
+//   }
 
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
