@@ -1010,11 +1010,15 @@ EntityType MediaticData::getEntityType(const EntityGroupId groupId,
   if (! m_d->m_entityTypes[groupId]->hasValue(entityName))
   {
     MDATALOGINIT;
-    //LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId); 
-    LDEBUG << "MediaticData::getEntityType no entity type '" << entityName << "' in group id "<<groupId;
-    throw LimaException();
+    //LIMA_EXCEPTION( "MediaticData::getEntityType Unknown entity type '" << entityName << "' in group id "<<groupId);
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "MediaticData::getEntityType no entity type '" << entityName
+        << "' in group id "<<groupId;
+    LDEBUG << errorString;
+    throw LimaException(errorString.toStdString());
   }
-  
+
   EntityTypeId typeId(m_d->m_entityTypes[groupId]->get(entityName));
   return EntityType(typeId,groupId);
 }
