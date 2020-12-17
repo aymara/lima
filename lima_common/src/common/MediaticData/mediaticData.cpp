@@ -871,7 +871,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 #endif
           }
         }
-        catch(NoSuchList& e)
+        catch(NoSuchList& )
         {
           // no simple list: may be list of items with attributes (to deal with isA relations of entities)
           auto& items = groupConf.getListOfItems("entityList");
@@ -904,14 +904,14 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
   catch(NoSuchModule& e)
   {
     MDATALOGINIT;
-    LWARN << "no module 'entities' in entity types configuration: " << e.what();
+    LWARN << "no module 'entities' in entity types configuration:" << e.what();
   }
   catch(NoSuchGroup& e)
   {
     MDATALOGINIT;
     QString errorString;
     QTextStream qts(&errorString);
-    qts << "missing group in entity types configuration: " << e.what();
+    qts << "missing group in entity types configuration:" << e.what();
     LERROR << errorString;
     throw InvalidConfiguration(errorString.toStdString());
   }
@@ -920,7 +920,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
     MDATALOGINIT;
     QString errorString;
     QTextStream qts(&errorString);
-    qts << "missing list 'entityList' in entity types configuration";
+    qts << "missing list 'entityList' in entity types configuration:" << e.what();
     LERROR << errorString;
     throw InvalidConfiguration(errorString.toStdString());
   }
