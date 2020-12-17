@@ -8,16 +8,16 @@
     <group name="mediaProcessingDefinitionFiles">
       <list name="available">
         <item value="eng" />
-        <item value="eng.ud" />
+        <!--item value="eng.ud" /-->
         <item value="fre" />
-        <item value="fre.ud" />
+        <!--item value="fre.ud" /-->
         <item value="por" />
         <item value="ud" />
       </list>
       <param key="eng" value="lima-lp-eng.xml" />
-      <param key="eng.ud" value="lima-lp-eng.ud.xml" />
+      <!--param key="eng.ud" value="lima-lp-eng.ud.xml" /-->
       <param key="fre" value="lima-lp-fre.xml" />
-      <param key="fre.ud" value="lima-lp-fre.ud.xml" />
+      <!--param key="fre.ud" value="lima-lp-fre.ud.xml" /-->
       <param key="por" value="lima-lp-por.xml" />
       <param key="ud" value="lima-lp-ud.xml" />
     </group>
