@@ -198,10 +198,11 @@ LIMA_COMMONQSLOG_EXPORT int initQsLog(const QString& configString)
     {
       QString configDir = configDirsList.last();
       configDirsList.pop_back();
-      QDir initDir( configDir + "/log4cpp");
+      QDir initDir( configDir + "/log4cpp", "*.properties",
+                    QDir::Unsorted, QDir::Files);
       if (initDir.exists())
       {
-        QStringList entryList = initDir.entryList(QDir::Files);
+        QStringList entryList = initDir.entryList();
         for(QString entry : entryList)
         {
           if (QsLogging::Destinations::instance().configure(configDir + "/log4cpp/" + entry))
