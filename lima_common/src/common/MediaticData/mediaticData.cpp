@@ -44,7 +44,7 @@
 #include <deque>
 
 #include <QSet>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QString>
 #include <QFileInfo>
 
@@ -293,9 +293,9 @@ void MediaticData::init(
 
 bool MediaticData::isValidMedia(const std::string& media)
 {
-  QRegExp rx("(\\b\\w{3}(\\.(ud))?)\\b");
-  QString q_media(media.c_str());
-  return rx.exactMatch(q_media );
+  QRegularExpression re("^[a-z]{3}(\\.ud)?$");
+  QRegularExpressionMatch match = re.match(media.c_str());
+  return match.hasMatch();
 }
 
 void MediaticData::initMedia(const std::string& media)
