@@ -117,7 +117,7 @@ bool Categories::configure(const QString& fileName, bool reload)
     LOGINIT("Logging");
     LDEBUG << "Destinations::configure configuration file: \"" << fileName
             << "\" already configured";
-    return false;
+    return true;
   }
   d->m_configFileWatcher.addPath(fileName);
   d->m_configuredFiles.append(fileName);
