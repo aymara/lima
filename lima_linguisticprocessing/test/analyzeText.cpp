@@ -578,6 +578,8 @@ int run(int argc, char** argv)
 
       // for paragraph handling, add additional metadata handler to pass information
       // from one analysis to the next
+      // use local metadata to modify so that the metadata is reinitialized at each document
+      std::map<std::string,std::string> paraMetaData=metaData;
       MetaDataHandler* metaDataHandler=new MetaDataHandler();
       handlers.insert(std::make_pair("metaDataHandler",
                                      metaDataHandler));
@@ -588,22 +590,33 @@ int run(int argc, char** argv)
       //get positions to set offset
       int prevpos = 0;
       int pos = 0;
+      int numpar = 0;
       while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
+        numpar++;
         QString paragraph=contentText.mid(prevpos,pos-prevpos);
         //std::cerr << "prevpos=" << prevpos << ", pos=" << pos << ", paragraph=" << paragraph.toStdString() << std::endl;
-        // analyze it with the proper offset
-        metaData["StartOffset"]=std::to_string(prevpos);
-        client->analyze(paragraph,
-                        metaData,
-                        pipeline,
-                        handlers,
-                        inactiveUnits);
+        if (! paragraph.isEmpty()) {
+          // analyze it with the proper offset
+          paragraph.append("\n");
+          paraMetaData["StartOffset"]=std::to_string(prevpos);
+          try {
+            client->analyze(paragraph,
+                            paraMetaData,
+                            pipeline,
+                            handlers,
+                            inactiveUnits);
+          }
+          catch (LimaException& e) {
+            std::cerr << "Error on paragraph " << numpar << "[" << paragraph.toStdString() << "]:" << e.what() << std::endl;
+            //allows the process to continue on next paragraph
+          }
+        }
         pos += sep.matchedLength();
         prevpos=pos;
         // update metadata
         const std::map<std::string,std::string>& newMetaData=metaDataHandler->getMetaData();
         if (newMetaData.size()!=0) {
-          metaData=newMetaData;
+          paraMetaData=newMetaData;
         }
       }
     }
