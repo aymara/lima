@@ -74,11 +74,11 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects,
 {
 //   qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
-  for (auto path = paths.begin(); path != paths.end(); ++path)
+  for (const auto& path: paths)
   {
-    if (!path->isEmpty() && QDir(*path).exists())
+    if (!path.isEmpty() && QDir(path).exists())
     {
-      configDirs << *path;
+      configDirs << path;
     }
   }
   for (const auto& project: projects)
