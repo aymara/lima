@@ -464,6 +464,7 @@ Controls1.ApplicationWindow {
                           "por": qsTr("Portuguese"),
                           "rus": qsTr("Russian"),
                           "spa": qsTr("Spanish"),
+                          "ud":  qsTr("Universal Dependencies")
                            // add your languages here
                            // you can list every language here, even if it's not loaded by LIMA
                       }
