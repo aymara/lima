@@ -321,7 +321,6 @@ void MediaticData::initMedia(const std::string& media)
   m_d->initMedias(configuration, meds);
 
   initMediaData(m_d->m_mediasIds[media]);
-
 }
 
 /** @return the string value of the given numerical media ID */
@@ -677,7 +676,8 @@ void MediaticDataPrivate::initConceptTypes(
   LDEBUG << "MediaticDataPrivate::initConceptTypes";
 #endif
 
-  try {
+  try
+  {
     const auto& mapping = configParser.getModuleConfiguration("common")
       .getGroupNamed("SemanticData").getMapAtKey("conceptTypes");
     for (auto it = mapping.cbegin(); it != mapping.cend(); it++)
@@ -930,7 +930,8 @@ EntityGroupId MediaticData::addEntityGroup(const LimaString& groupName)
 {
   EntityGroupId groupId= m_d->m_entityGroups.insert(groupName);
   // insert may have created new element or not
-  if (static_cast<std::size_t>(groupId) >= m_d->m_entityTypes.size()) {
+  if (static_cast<std::size_t>(groupId) >= m_d->m_entityTypes.size())
+  {
     m_d->m_entityTypes.push_back(new MediaticDataPrivate::EntityTypeMap());
   }
   return groupId;
@@ -959,7 +960,7 @@ EntityType MediaticData::addEntity(const LimaString& groupName,
 void MediaticData::addEntityParentLink(const EntityType& child,
                                        const EntityType& parent)
 {
-    m_d->m_entityHierarchy.addParentLink(child,parent);
+  m_d->m_entityHierarchy.addParentLink(child,parent);
 }
 
 bool MediaticData::isEntityAncestor(const EntityType& child,
@@ -997,7 +998,8 @@ EntityType MediaticData::getEntityType(const LimaString& entityName) const
 EntityType MediaticData::getEntityType(const EntityGroupId groupId,
                                        const LimaString& entityName) const
 {
-  if (static_cast<size_t>(groupId)>=m_d->m_entityTypes.size()) {
+  if (static_cast<size_t>(groupId)>=m_d->m_entityTypes.size())
+  {
     MDATALOGINIT;
     QString errorString;
     QTextStream qts(&errorString);
@@ -1063,7 +1065,8 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
         << type.getGroupId()<<" > m_entityTypes.size()="
         << m_d->m_entityTypes.size() << " for entity type " << type );
   }
-  try {
+  try
+  {
     // return m_entityTypes[type.getGroupId()]->get(type.getTypeId());
     return
       m_d->m_entityGroups.get(
