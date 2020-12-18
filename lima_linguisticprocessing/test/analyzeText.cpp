@@ -379,7 +379,7 @@ int run(int argc, char** argv)
 
   if (pipeline.size() == 0)
   {
-    if (langs.size() == 1 && langs.front() == "ud")
+    if (langs.size() == 1 && langs.front().substr(0, 2) == "ud")
     {
       pipeline = "deepud";
     }
