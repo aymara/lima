@@ -482,13 +482,14 @@ int run(int argc, char** argv)
       std::cerr << "No file to analyze." << std::endl;
   }
 
-  uint64_t i=1;
+  uint64_t nfile=0;
   for (const auto&  file : files)
   {
     // display the progress of the analysis
-    std::cerr << "\rAnalyzing "<< i << "/" << files.size()
+    nfile++;
+    std::cerr << "\rAnalyzing "<< nfile << "/" << files.size()
               << " ("  << std::setiosflags(std::ios::fixed)
-              << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
+              << std::setprecision(2) << (nfile*100.0/files.size()) <<"%) '"
               << file << "'" << std::flush;
 
     // set the output files (to 0 if not in list)
@@ -581,8 +582,7 @@ int run(int argc, char** argv)
       // use local metadata to modify so that the metadata is reinitialized at each document
       std::map<std::string,std::string> paraMetaData=metaData;
       MetaDataHandler* metaDataHandler=new MetaDataHandler();
-      handlers.insert(std::make_pair("metaDataHandler",
-                                     metaDataHandler));
+      handlers["metaDataHandler"]=metaDataHandler;
     
       QRegExp sep("\n\n\n*");
       //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
