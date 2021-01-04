@@ -54,6 +54,7 @@
 #include "QJsonHelpers.h"
 #include "TensorFlowHelpers.h"
 #include "Cache.h"
+#include "LangCodeHelpers.h"
 
 #include "TensorFlowMorphoSyntax.h"
 
@@ -324,26 +325,11 @@ void TensorFlowMorphoSyntaxPrivate::init(
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
-  if (lang_str != QString("ud") || udlang.find("ud-") == 0)
+  if (!fix_lang_codes(lang_str, udlang))
   {
-    if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
-    {
-      udlang = udlang.substr(3);
-    }
-    else
-    {
-      // parse lang codes like 'eng.ud'
-      if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
-      {
-        udlang = lang_str.left(3).toStdString();
-        lang_str = "ud";
-      }
-      else
-      {
-        LOG_ERROR_AND_THROW("TensorFlowMorphoSyntaxPrivate::init: Can't parse language id "
-                            << udlang.c_str(), Lima::InvalidConfiguration);
-      }
-    }
+    LIMA_EXCEPTION_SELECT_LOGINIT(TOKENIZERLOGINIT,
+      "TensorFlowMorphoSyntaxPrivate::init: Can't parse language id " << udlang.c_str(),
+      Lima::InvalidConfiguration);
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
@@ -351,6 +337,10 @@ void TensorFlowMorphoSyntaxPrivate::init(
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.conf")
                                             .arg(lang_str).arg(model_name));
+  if (config_file_name.isEmpty())
+  {
+    throw InvalidConfiguration("TensorFlowMorphoSyntaxPrivate::init: config file not found.");
+  }
   load_config(config_file_name);
 
   // Following line requires patched version of TensorFlow.
