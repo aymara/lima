@@ -99,9 +99,13 @@ outputEntityString(ostream& out,
     featureItr!=features_end; featureItr++)
     {
       if (featureItr->getName()=="value") {
-        out << "N" << entityId << "\tReference T" << entityId << " LIMA:1\t" << featureItr->getValueString() << "\n";
-        done=true;
-        break;
+        string valuestr=featureItr->getValueString();
+        // if only whitespaces, do not print it (error in brat format)
+        if (valuestr.find_first_not_of(' ') != std::string::npos) {
+          out << "N" << entityId << "\tReference T" << entityId << " LIMA:1\t" << valuestr << "\n";
+          done=true;
+          break;
+        }
       }
     }
     if (! done) { // backoff to surface form if norm is not found
@@ -180,7 +184,12 @@ outputRelationString(ostream& out,
               << targetArgString;
       continue;
     }
-    out << "R" << (relationId+i) << "\t" <<  rel.toUtf8().constData() << " "
+    // filter group name if present
+    string relstr=rel.toUtf8().constData();
+    if (relstr.find(".")!=string::npos) {
+      relstr=relstr.substr(relstr.find("."));
+    }
+    out << "R" << (relationId+i) << "\t" << relstr  << " "
         << "Arg1:T" << sourceArgString
         << " Arg2:T" << targetArgString << endl;
     i++;
@@ -200,12 +209,17 @@ outputEventString(ostream& out,
   // mention type is now one of the roles
   if (eventMentionId!=0) {
     out << eventMentionType << ":T" << eventMentionId;
+    for (unsigned int i(0), n=eventRoleId.size(); i<n; i++) {
+      out << " " << eventRoleType[i] << ":T" << eventRoleId[i];
+    }
   }
-  if (eventRoleId.size()==0) {out << endl; return; }
-//   out << eventRoleType[0] << ":T" << eventRoleId[0]; // first one without space before
-//   for (unsigned int i(1), n=eventRoleId.size(); i<n; i++) {
-  for (unsigned int i(0), n=eventRoleId.size(); i<n; i++) {
-    out << " " << eventRoleType[i] << ":T" << eventRoleId[i];
+  else {
+    // first event role is the event mention: no space before
+    if (eventRoleId.size()==0) {out << endl; return; }
+    out << eventRoleType[0] << ":T" << eventRoleId[0]; 
+    for (unsigned int i(1), n=eventRoleId.size(); i<n; i++) {
+      out << " " << eventRoleType[i] << ":T" << eventRoleId[i];
+    }
   }
   out << endl;
 }
