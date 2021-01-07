@@ -240,7 +240,7 @@ LimaStatusCode BowDumper::process(
   LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
   writer.writeBoWText(dstream->out(),bowText);
-  
+
   return SUCCESS_ID;
 }
 
@@ -340,14 +340,17 @@ void BowDumper::buildBoWText(
         const auto& annot = annotationData->annotation(
           *it, QString::fromUtf8("SemanticRelation"))
               .value<SemanticRelationAnnotation>();
-        auto predicate = m_bowGenerator->createPredicate(
+        auto predicates = m_bowGenerator->createSemanticRelationPredicate(
                                         lgvs, agvs, agvt, annot,
                                         annotationData,
                                         *anagraph->getGraph(),
                                         *posgraph->getGraph(),
                                         metadata->getStartOffset(), visited,
                                         keepAnyway);
-        bowText.push_back(predicate);
+        for (const auto& predicate: predicates)
+        {
+          bowText.push_back(predicate);
+        }
       }
       catch (const boost::bad_any_cast& e)
       {

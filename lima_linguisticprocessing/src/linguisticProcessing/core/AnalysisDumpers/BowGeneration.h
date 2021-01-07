@@ -67,6 +67,7 @@ namespace AnalysisDumpers
 namespace Compounds
 {
 
+class BowGeneratorPrivate;
 /**
   * Parameters retrived in the configuration file:
   * - useStopList
@@ -84,10 +85,13 @@ namespace Compounds
   */
 class LIMA_ANALYSISDUMPERS_EXPORT BowGenerator
 {
+  friend class BowGeneratorPrivate;
 public:
   BowGenerator();
 
   virtual ~BowGenerator();
+  BowGenerator(const BowGenerator&) = delete;
+  BowGenerator& operator=(const BowGenerator&) = delete;
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -101,7 +105,8 @@ public:
     * the case, the edge between vx and tgt is used to build the BoWRelations
     * of the returned vector
     */
-  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >, boost::shared_ptr< Common::BagOfWords::BoWToken > > > buildTermFor(
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >,
+                          boost::shared_ptr< Common::BagOfWords::BoWToken > > > buildTermFor(
     const AnnotationGraphVertex& vx,
     const AnnotationGraphVertex& tgt,
     const LinguisticGraph& anagraph,
@@ -111,7 +116,8 @@ public:
     const Common::AnnotationGraphs::AnnotationData* annotationData,
     std::set<LinguisticGraphVertex>& visited) const;
 
-  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >, boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > > createAbstractBoWElement(
+  std::vector< std::pair< boost::shared_ptr< Common::BagOfWords::BoWRelation >,
+                          boost::shared_ptr< Common::BagOfWords::AbstractBoWElement > > > createAbstractBoWElement(
     const LinguisticGraphVertex v,
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
@@ -122,15 +128,17 @@ public:
 
   /**
    * Builds a BoWPredicate corresponding to a  semantic relation (an edge in the
-   * annotation graph holding a SemanticRelation annotation
+   * annotation graph holding a SemanticRelation annotation. Note that if several
+   * semantic relations hold between the source and target vertices, then the
+   * annotation type value is the comma-concatenated list of the semantic relations
+   * ids
    *
    * @param lgvs source linguistic graph vertex
    * @param agvs source annotation graph vertex matching lgvs
-   * @param lgvt target linguistic graph vertex
-   * @param agvt target annotation graph vertex matching lgvt
-   * @param age annotation graph edge porting the   semantic relation
+   * @param agvt target annotation graph vertex of the relation
+   * @param annot the semantic relation itself (holding its type)
    */
-  boost::shared_ptr< Common::BagOfWords::BoWPredicate > createPredicate(
+  QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > createSemanticRelationPredicate(
     const LinguisticGraphVertex& lgvs,
     const AnnotationGraphVertex& agvs,
     const AnnotationGraphVertex& agvt,
@@ -144,115 +152,7 @@ public:
 
 
 private:
-
-  boost::shared_ptr< Common::BagOfWords::BoWRelation > createBoWRelationFor(
-    const AnnotationGraphVertex& vx,
-    const AnnotationGraphVertex& tgt,
-    const Common::AnnotationGraphs::AnnotationData* annotationData,
-    const LinguisticGraph& posgraph,
-    const SyntacticAnalysis::SyntacticData* syntacticData) const;
-
-  class NamedEntityPart
-  {
-    public:
-      NamedEntityPart(): inflectedForm(), lemma(), position(0),
-      length(0) {}
-      NamedEntityPart(const LimaString& fl, const LimaString& l,
-                      const LinguisticCode cat, const uint64_t pos,
-                      const uint64_t len):
-          inflectedForm(fl), lemma(l), category(cat), position (pos),
-          length(len) {}
-
-      LimaString inflectedForm;
-      LimaString lemma;
-      LinguisticCode category;
-      uint64_t position;
-      uint64_t length;
-  };
-
-  typedef std::set< std::pair<uint64_t,uint64_t> > TokenPositions;
-
-  MediaId m_language;
-  AnalysisDumpers::StopList* m_stopList;
-  bool m_useStopList;
-  bool m_useEmptyMacro;
-  bool m_useEmptyMicro;
-  LinguisticCode m_properNounCategory;
-  LinguisticCode m_commonNounCategory;
-  bool m_keepAllNamedEntityParts;
-  const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
-
-  // what to assign to the BoWNamedEntity lemma
-  typedef enum {
-    NORMALIZE_NE_INFLECTED, // assign inflected form
-    NORMALIZE_NE_LEMMA,     // assign lemma
-    NORMALIZE_NE_NORMALIZEDFORM, // assign normalized form from NE
-    NORMALIZE_NE_NETYPE // assign type of NE
-  } NENormalization;
-  NENormalization m_NEnormalization;
-
-  boost::shared_ptr< Common::BagOfWords::BoWNamedEntity > createSpecificEntity(
-    const LinguisticGraphVertex& vertex,
-    const AnnotationGraphVertex& v,
-    const Common::AnnotationGraphs::AnnotationData* annotationData,
-    const LinguisticGraph& anagraph,
-    const LinguisticGraph& posgraph,
-    const uint64_t offset,
-    bool frompos = true) const;
-
-  boost::shared_ptr< Common::BagOfWords::BoWToken > createCompoundTense(
-    const AnnotationGraphVertex& v,
-    const Common::AnnotationGraphs::AnnotationData* annotationData,
-    const LinguisticGraph& anagraph,
-    const LinguisticGraph& posgraph,
-    const uint64_t offset,
-    std::set<LinguisticGraphVertex>& visited) const;
-
-//   Common::BagOfWords::BoWPredicate* createPredicate(const Common::MediaticData::EntityType& t, QMultiMap<Common::MediaticData::EntityType, Common::BagOfWords::AbstractBoWElement*> roles) const;
-
-  QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > createPredicate(const LinguisticGraphVertex& lgv, const AnnotationGraphVertex& agv,
-    const Common::AnnotationGraphs::AnnotationData* annotationData,
-    const LinguisticGraph& anagraph,
-    const LinguisticGraph& posgraph,
-    const uint64_t offset,
-    std::set<LinguisticGraphVertex>& visited,
-    bool keepAnyway)const;
-
-    bool checkStopWordInCompound(
-    boost::shared_ptr< Common::BagOfWords::BoWToken>&,
-    uint64_t offset,
-    std::set< std::string >& alreadyStored,
-    Common::BagOfWords::BoWText& bowText) const;
-
-  StringsPoolIndex getNamedEntityNormalization(
-      const AnnotationGraphVertex& v,
-      const Common::AnnotationGraphs::AnnotationData* annotationData) const;
-
-  bool shouldBeKept(const LinguisticAnalysisStructure::LinguisticElement& elem) const;
-
-  /**
-     * create the parts of a named entity (depends on its type,
-     * but may be independant from its components, that can be
-     * erroneously tagged)
-     *
-     * @param v the annotation graph vertex handling the named entity
-     *
-     * @return a list of the parts to consider, composed of an inflected
-     * form, a lemma and a category
-   */
-  std::vector<NamedEntityPart> createNEParts(
-      const AnnotationGraphVertex& v,
-      const Common::AnnotationGraphs::AnnotationData* annotationData,
-      const LinguisticGraph& anagraph,
-      const LinguisticGraph& posgraph,
-      bool frompos = true) const;
-
-  void bowTokenPositions(TokenPositions& res,
-                         const boost::shared_ptr< Common::BagOfWords::BoWToken > tok) const;
-
-  uint64_t computeCompoundLength(const TokenPositions& headTokPositions,
-                                const TokenPositions& extensionPositions) const;
+  BowGeneratorPrivate* m_d;
 };
 
 } // Compounds
