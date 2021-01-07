@@ -228,10 +228,15 @@ outputRelationString(ostream& out,
               << targetArgString;
       continue;
     }
-    
+    // filter group name if present
+    string relstr=rel.toUtf8().constData();
+    if (relstr.find(".")!=string::npos) {
+      relstr=relstr.substr(relstr.find("."));
+    }
+
     if (m_firstRelation) { m_firstRelation=false; out << endl; } else { out << "," << endl; }
     
-    out << "[ \"R" << (relationId+i) << "\", \"" <<  rel.toUtf8().constData() << "\", ["
+    out << "[ \"R" << (relationId+i) << "\", \"" <<  relstr << "\", ["
         << "[\"Arg1\", \"T" << sourceArgString << "\"], "
         << "[\"Arg2\", \"T" << targetArgString << "\"]] ]";
     i++;
