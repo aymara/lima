@@ -1155,11 +1155,11 @@ QList< boost::shared_ptr< BoWPredicate > > BowGenerator::createPredicate(
   LDEBUG << "BowGenerator::createPredicate ling:" << lgv << "; annot:" << agv;
 #endif
   QList< boost::shared_ptr< BoWPredicate > > result;
-
+  
   Token* token = get(vertex_token, posgraph, lgv);
 
   // FIXME handle the ambiguous case when there is several class values for the predicate
-  QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split("|");
+  QStringList predicateIds=annotationData->stringAnnotation(agv,Common::Misc::utf8stdstring2limastring("Predicate")).split(",");
 #ifdef DEBUG_LP
   if (predicateIds.size()>1)
   {
