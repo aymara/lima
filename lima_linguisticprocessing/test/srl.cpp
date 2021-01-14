@@ -24,7 +24,7 @@
 #else
   #include <Python.h>
 #endif#include <iostream>
-#include <QtCore>
+#include <QtCore/QString>
 
 #if PY_MAJOR_VERSION < 3
 #error "Python version must be 3 or more"

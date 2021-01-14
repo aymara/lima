@@ -18,7 +18,7 @@
 */
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtQml>
+#include <QtCore/QUrl>
 
 #include "treemodel.h"
 

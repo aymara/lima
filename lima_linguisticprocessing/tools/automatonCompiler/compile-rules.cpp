@@ -58,6 +58,7 @@
 #include <string.h>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFileInfo>
 
 
 using namespace Lima;

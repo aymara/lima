@@ -58,10 +58,13 @@
 #include <fstream>
 
 #include <boost/program_options.hpp>
+
+#include <QtCore/QCoreApplication>
+#include <QtCore/QFileInfo>
 #include <QtCore/QString>
 #include <QtCore/QStringRef>
-
-#include <QtCore>
+#include <QtCore/QTimer>
+#include <QtCore/QTextStream>
 
 namespace po = boost::program_options;
 
@@ -583,7 +586,7 @@ int run(int argc, char** argv)
       std::map<std::string,std::string> paraMetaData=metaData;
       MetaDataHandler* metaDataHandler=new MetaDataHandler();
       handlers["metaDataHandler"]=metaDataHandler;
-    
+
       QRegExp sep("\n\n\n*");
       //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
       //for (const auto& par: paragraphs) {

@@ -22,7 +22,7 @@
 #include "common/AbstractFactoryPattern/AbstractFactoryPatternExport.h"
 #include "common/AbstractFactoryPattern/Singleton.h"
 
-#include <QtCore>
+#include <QtCore/QString>
 
 namespace Lima
 {

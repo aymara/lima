@@ -36,8 +36,9 @@
 
 #include <boost/foreach.hpp>
 
-#include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QCommandLineParser>
+#include <QtCore/QTimer>
 #include <QDir>
 
 using namespace Lima::LinguisticProcessing;

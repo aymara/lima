@@ -36,7 +36,10 @@
 
 #include <string>
 #include <fstream>
-#include <QtCore>
+#include <QtCore/QDebug>
+#include <QtCore/QFileInfo>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
 using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;

@@ -1,18 +1,18 @@
 /*
  *    Copyright 2002-2013 CEA LIST
- * 
+ *
  *    This file is part of LIMA.
- * 
+ *
  *    LIMA is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
  *    (at your option) any later version.
- * 
+ *
  *    LIMA is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Affero General Public License for more details.
- * 
+ *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
@@ -20,12 +20,12 @@
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
-#include <QtWidgets>
 #include "confeditor.h"
 #include "annotationConfigurationHandler.h"
 #include "kcolorvalueselector.h"
 #include "kcolordialog.h"
 
+#include <QSplitter>
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -47,7 +47,7 @@ m_currentItem(0)
   m_colorPicker = new KColorDialog(this);
   m_colorPicker->setColor( Qt::white );
   splitter->addWidget( m_colorPicker );
-  
+
   QList<int> l;
   l.push_back( 100 );
   l.push_back( 600 );
@@ -95,7 +95,7 @@ void AnnoqtConfEditor::slotOpen()
 {
   if ( maybeSave() )
   {
-    QString fileName = QFileDialog::getOpenFileName( this, 
+    QString fileName = QFileDialog::getOpenFileName( this,
         "Select a Text to Annotate", m_currentDirectory.isEmpty()?QString():m_currentDirectory  );
 
     if ( !fileName.isEmpty() )
@@ -176,7 +176,7 @@ void AnnoqtConfEditor::createActions()
   addItemAction->setShortcut( tr( "Ctrl+E" ) );
   addItemAction->setStatusTip( tr( "Add a new entity type" ) );
   connect( addItemAction, SIGNAL( triggered() ), this, SLOT( slotAddItemAction() ) );
-  
+
   aboutAct = new QAction( tr( "&About" ), this );
   aboutAct->setStatusTip( tr( "Show the application's About box" ) );
   connect( aboutAct, SIGNAL( triggered() ), this, SLOT( slotAbout() ) );
@@ -332,7 +332,7 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
   }
 
 
-  
+
   QApplication::restoreOverrideCursor();
   out << "  </entities>" << endl;
   out << "  <templates>" << endl;

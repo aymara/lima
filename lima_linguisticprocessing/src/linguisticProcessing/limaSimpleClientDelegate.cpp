@@ -34,6 +34,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 #include <boost/algorithm/string/regex.hpp>
+#include <QtCore/QFileInfo>
 #include <QtCore/QTimer>
 #include <QMetaType>
 
