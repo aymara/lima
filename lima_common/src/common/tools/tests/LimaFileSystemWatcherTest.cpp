@@ -23,7 +23,7 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 
 #include <QtCore/QTemporaryFile>
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 using namespace Lima;
 

@@ -3,7 +3,7 @@
 #include "linguisticProcessing/core/TensorflowSpecificEntities/nerUtils.h"
 
 // includes system
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 #include <QRegularExpression>
 #include <QStringList>
 #include <memory>

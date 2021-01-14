@@ -1,7 +1,7 @@
 #ifndef DICTIONARYDATATEST1_H
 #define DICTIONARYDATATEST1_H
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 class DictionaryDataTest1: public QObject
 {

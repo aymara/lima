@@ -1,7 +1,7 @@
 #ifndef BAGOFWORDSTEST3_H
 #define BAGOFWORDSTEST3_H
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 class BagOfWordsTest3: public QObject
 {

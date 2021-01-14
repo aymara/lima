@@ -1,7 +1,7 @@
 #ifndef ENHANCEDANALYSISDICTIONARYTEST1_H
 #define ENHANCEDANALYSISDICTIONARYTEST1_H
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 class EnhancedAnalysisDictionaryTest1: public QObject
 {
