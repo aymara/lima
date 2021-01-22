@@ -121,7 +121,7 @@ def find_lang_code(lang_str):
 
     if lang_str in C2LC['lang2code']:
         return C2LC['lang2code'][lang_str], lang_str
-    elif lang_str in C2LC['code2lang'][lang_str]:
+    elif lang_str in C2LC['code2lang']:
         return lang_str, C2LC['code2lang'][lang_str]
     return None
 
