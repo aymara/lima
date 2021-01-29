@@ -24,6 +24,7 @@
 
 #include <QtCore/QTemporaryFile>
 #include <QtTest/QTest>
+#include <QSignalSpy>
 
 using namespace Lima;
 
