@@ -109,33 +109,25 @@ void LTR_Token::binaryReadFrom(std::istream& is) {
 // -- printing
 // -----------------------------------------------------------------------------
 
-std::ostream& operator<<(std::ostream& os, const LTR_Token& tok) {
-  
-  LTR_Token::size_type alternativesNb = tok.size();
-  LTR_Token::const_iterator itTok = tok.begin();
-  for (LTR_Token::size_type alt = 0; alt < alternativesNb - 1; ++ alt) {
-    os << *(itTok->first);
-    if (itTok->second) os << "*";
-    os << " | ";
-    ++ itTok;
+std::ostream& operator<<(std::ostream& os, const LTR_Token& tok) 
+{
+  bool first=true;
+  for (const auto& t: tok) {
+    if (first) { first=false; } else { os << " | "; }
+    if (t.first==nullptr) { os << "NULL"; } else { os << *(t.first); }
+    if (t.second) os << "*";
   }
-  os << *(itTok->first);
-  if (itTok->second) os << "*";
   return os;
 }
 
-QDebug& operator<<(QDebug& os, const LTR_Token& tok) {
-  
-  LTR_Token::size_type alternativesNb = tok.size();
-  LTR_Token::const_iterator itTok = tok.begin();
-  for (LTR_Token::size_type alt = 0; alt < alternativesNb - 1; ++ alt) {
-    os << *(itTok->first);
-    if (itTok->second) os << "*";
-    os << " | ";
-    ++ itTok;
+QDebug& operator<<(QDebug& os, const LTR_Token& tok) 
+{
+  bool first=true;
+  for (const auto& t: tok) {
+    if (first) { first=false; } else { os << " | "; }
+    if (t.first==nullptr) { os << "NULL"; } else { os << *(t.first); }
+    if (t.second) os << "*";
   }
-  os << *(itTok->first);
-  if (itTok->second) os << "*";
   return os;
 }
 
