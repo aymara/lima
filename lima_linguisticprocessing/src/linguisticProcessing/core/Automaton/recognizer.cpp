@@ -352,10 +352,17 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
         right=*vIt;
       }
+      if (trigger.isHead()) {
+        // if gazetteer trigger is head: assign head to the first word 
+        triggermatch.setHead(position);
+      }
     }
   }
   else {
     triggermatch.addBackVertex(position,trigger.keep(),"trigger");
+    if (trigger.isHead()) {
+      triggermatch.setHead(position);
+    }
     right=position;
   }
 
@@ -468,11 +475,15 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       }
       */
       match->addBack(triggermatch);
+      // check if trigger is head
+      if (triggermatch.getHead() != 0) {
+        match->setHead(triggermatch.getHead());
+      }
+
       match->addBack(rightmatch);
       // remove elements not kept at begin and end of the expression
       match->removeUnkeptAtExtremity();
 
-      // check if trigger is head
       match->setType(currentRule->getType());
       match->setLinguisticProperties(currentRule->getLinguisticProperties());
       match->setContextual(currentRule->contextual());
