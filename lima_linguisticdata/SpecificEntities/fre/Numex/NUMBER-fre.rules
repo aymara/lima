@@ -5,8 +5,7 @@ set defaultAction=>CreateSpecificEntity()
 
 @NumForm=(t_comma_number,t_dot_number,t_integer)
 
-@Number=(
-t_comma_number,t_dot_number,t_integer,
+@NumString=(
 deux,
 trois,
 quatre,
@@ -149,9 +148,151 @@ quatre-vingt-dix-huit,
 quatre-vingt-dix-neuf,
 cent,
 cents,
-mille
+mille,
+DEUX,
+TROIS,
+QUATRE,
+CINQ,
+SIX,
+SEPT,
+HUIT,
+NEUF,
+DIX,
+ONZE,
+DOUZE,
+TREIZE,
+QUATORZE,
+QUINZE,
+SEIZE,
+DIX-SEPT,
+DIX-HUIT,
+DIX-NEUF,
+VINGT,
+VINGTS,
+VINGT-ET-UN,
+VINGT-DEUX,
+VINGT-TROIS,
+VINGT-QUATRE,
+VINGT-CINQ,
+VINGT-SIX,
+VINGT-SEPT,
+VINGT-HUIT,
+VINGT-NEUF,
+TRENTE,
+TRENTE-ET-UN,
+TRENTE-DEUX,
+TRENTE-TROIS,
+TRENTE-QUATRE,
+TRENTE-CINQ,
+TRENTE-SIX,
+TRENTE-SEPT,
+TRENTE-HUIT,
+TRENTE-NEUF,
+QUARANTE,
+QUARANTE-ET-UN,
+QUARANTE-DEUX,
+QUARANTE-TROIS,
+QUARANTE-QUATRE,
+QUARANTE-CINQ,
+QUARANTE-SIX,
+QUARANTE-SEPT,
+QUARANTE-HUIT,
+QUARANTE-NEUF,
+CINQUANTE,
+CINQUANTE-ET-UN,
+CINQUANTE-DEUX,
+CINQUANTE-TROIS,
+CINQUANTE-QUATRE,
+CINQUANTE-CINQ,
+CINQUANTE-SIX,
+CINQUANTE-SEPT,
+CINQUANTE-HUIT,
+CINQUANTE-NEUF,
+SOIXANTE,
+SOIXANTE-ET-UN,
+SOIXANTE-DEUX,
+SOIXANTE-TROIS,
+SOIXANTE-QUATRE,
+SOIXANTE-CINQ,
+SOIXANTE-SIX,
+SOIXANTE-SEPT,
+SOIXANTE-HUIT,
+SOIXANTE-NEUF,
+SEPTANTE,
+SEPTANTE-ET-UN,
+SEPTANTE-DEUX,
+SEPTANTE-TROIS,
+SEPTANTE-QUATRE,
+SEPTANTE-CINQ,
+SEPTANTE-SIX,
+SEPTANTE-SEPT,
+SEPTANTE-HUIT,
+SEPTANTE-NEUF,
+SOIXANTE-DIX,
+SOIXANTE-ET-ONZE,
+SOIXANTE-DOUZE,
+SOIXANTE-TREIZE,
+SOIXANTE-QUATORZE,
+SOIXANTE-QUINZE,
+SOIXANTE-SEIZE,
+SOIXANTE-DIX-SEPT,
+SOIXANTE-DIX-HUIT,
+SOIXANTE-DIX-NEUF,
+HUITANTE,
+HUITANTE-ET-UN,
+HUITANTE-DEUX,
+HUITANTE-TROIS,
+HUITANTE-QUATRE,
+HUITANTE-CINQ,
+HUITANTE-SIX,
+HUITANTE-SEPT,
+HUITANTE-HUIT,
+HUITANTE-NEUF,
+OCTANTE,
+OCTANTE-ET-UN,
+OCTANTE-DEUX,
+OCTANTE-TROIS,
+OCTANTE-QUATRE,
+OCTANTE-CINQ,
+OCTANTE-SIX,
+OCTANTE-SEPT,
+OCTANTE-HUIT,
+OCTANTE-NEUF,
+QUATRE-VINGT,
+QUATRE-VINGTS,
+QUATRE-VINGT-UN,
+QUATRE-VINGT-DEUX,
+QUATRE-VINGT-TROIS,
+QUATRE-VINGT-QUATRE,
+QUATRE-VINGT-CINQ,
+QUATRE-VINGT-SIX,
+QUATRE-VINGT-SEPT,
+QUATRE-VINGT-HUIT,
+QUATRE-VINGT-NEUF,
+NONANTE,
+NONANTE-ET-UN,
+NONANTE-DEUX,
+NONANTE-TROIS,
+NONANTE-QUATRE,
+NONANTE-CINQ,
+NONANTE-SIX,
+NONANTE-SEPT,
+NONANTE-HUIT,
+NONANTE-NEUF,
+QUATRE-VINGT-DIX,
+QUATRE-VINGT-ONZE,
+QUATRE-VINGT-DOUZE,
+QUATRE-VINGT-TREIZE,
+QUATRE-VINGT-QUATORZE,
+QUATRE-VINGT-QUINZE,
+QUATRE-VINGT-SEIZE,
+QUATRE-VINGT-DIX-SEPT,
+QUATRE-VINGT-DIX-HUIT,
+QUATRE-VINGT-DIX-NEUF,
+CENT,
+CENTS,
+MILLE
 )
-
 
 @OrdNumber=(
 billionième,
@@ -202,19 +343,23 @@ LE:::NOT_NUMBER:
 @ChiffreAines=(dizaine,centaine,millier,million,milliard,dizaines,centaines,milliers,millions,milliards,quelque$DET,quelques$DET,plusieurs$DET)
 
 # without units: numbers
-@ChiffreAines:(un|1|une):((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
-@ChiffreAines:@Number?:((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
-@ChiffreAines:@ChiffreAines: de @ChiffreAines:NUMBER:NormalizeNumber()
-@ChiffreAines::de @ChiffreAines:NUMBER:NormalizeNumber()
-@Number::((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
+@ChiffreAines:(un|1|une):((et @NumberAfterConj)|@NumForm|@NumString){0-6}:NUMBER:=>NormalizeNumber()
+@ChiffreAines:(@NumString|@NumForm)?:((et @NumberAfterConj)|@NumForm|@NumString){0-6}:NUMBER:=>NormalizeNumber()
+@ChiffreAines:@ChiffreAines: de @ChiffreAines:NUMBER:=>NormalizeNumber()
+@ChiffreAines::de @ChiffreAines:NUMBER:=>NormalizeNumber()
+
+#@Number::((et @NumberAfterConj)|@Number){0-n}:NUMBER:=>NormalizeNumber()
 
 # In sport scores like "1 - 1", each integer is a number and the - is not a minus sign
 @NumForm:[@NumForm] [(+|-)]::NUMBER:=>NormalizeNumber()
 
 
 @Decimal=(t_comma_number,t_dot_number)
-@SmallDecimalGroup=(t_integer<100)
-@IntegerGroup=(t_integer>99<1000)
+@SmallDecimalGroup=(t_integer<99)
+# integer groups are elements that can be parts of a large number (300 000)    
+# integer group cannot be tested by its value: the discriminative criterion is on the length of the number
+# e.g. "008" is a correct integer group => LengthInInterval
+@IntegerGroup=(t_integer<999)
 @LargeNumber=(t_integer>1000)
 
 ### Numbers in digits
@@ -223,26 +368,48 @@ LE:::NOT_NUMBER:
 # 12 345.6
 # 12 345 678.9
 # but also errors like: 12 345 6.7
-@SmallDecimalGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
+@possibleStart=(t_integer)
+#@SmallDecimalGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 # 123 456.7
-@IntegerGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+#@IntegerGroup:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+# authorize first of the group to be large
+# 1234 567.8
+#@LargeNumber:(+|-)?:@IntegerGroup{0-3} (@Decimal|@IntegerGroup) @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+@possibleStart:(+|-)?:@IntegerGroup{0-3} @IntegerGroup @ChiffreAines? \%?:NUMBER:
++LengthInInterval(right.1,"3,3")
++LengthInInterval(right.2,"3,3")
+=>NormalizeNumber()
+
+@possibleStart:(+|-)?:@IntegerGroup{0-3} @Decimal @ChiffreAines? \%?:NUMBER:
++LengthInInterval(right.1,"3,3")
+=>NormalizeNumber()
+
+# authorize mixed notation 338.967,50 euros
+t_dot_number::, t_integer:NUMBER:=>NormalizeNumber()
+
+@NumForm:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+# allow any list if in string format
+@NumString:(+|-)?:@NumString{0-6} @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
 # 12
-@SmallDecimalGroup:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+#@SmallDecimalGroup:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
 # 12345
 # 1234 millions
-@LargeNumber:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
-
+#@LargeNumber:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
 # 12.3
 # 123.4
 # 12345.6
-@Decimal:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+#@Decimal:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
-@NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
-@Number:(+|-)?:@Number{0-n} @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+# not restrictive enough:  2017 1000 234 is not a number
+#@NumForm:(+|-)?:(@NumForm|@Number)? \%?:NUMBER:=>NormalizeNumber()
+#@Number:(+|-)?:@Number{0-n} @ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
+
+#@Number:(+|-)?:@ChiffreAines? \%?:NUMBER:=>NormalizeNumber()
 
 # @OrdNumber adds noise
 #@OrdNumber:(+|-)?:\%?:NUMBER:=>NormalizeNumber()

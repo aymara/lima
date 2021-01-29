@@ -16,7 +16,7 @@ use ../Location/streetKey.lst
 # adresses
 # Manchester Road
 # On ne garde pas l'entité Location
-<Location>::@streetKey:ODO:
+<LOCATION>::@streetKey:ODO:
 =>AppendEntityFeature(trigger,"name")
 =>AddEntityFeature(right.1,"kind")
 =>NormalizeEntity()
@@ -43,7 +43,7 @@ use ../Location/streetKey.lst
 # Governor of Oklahoma
 #  On garde l'entité Location et on produit 1 entité imbriquée
 # governor::of Oklahoma:PERSON:
-@adminTitle::of <Location>:PERSON:
+@adminTitle::of <LOCATION>:PERSON:
 =>AddEntityFeature(trigger,"title")
 =>AddEntityFeatureAsEntity(right.2,"Location")
 =>NormalizeEntity()

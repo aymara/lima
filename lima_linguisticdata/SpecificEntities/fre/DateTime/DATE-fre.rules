@@ -215,7 +215,8 @@ trente-et-un,
 # 22 sept. 2014
 # 1er avril 1950
 # lundi 18 octobre, 2014 (atteste Wipolo)
-@month:[(le)?] (@numday|t_integer>1<31)?:[(\.? \,?)?] @numyear:DATE:
+
+&@month:[(le)?] (@numday|t_integer>1<31)?:[(\.? \,?)?] @numyear:DATE:
 =>SetEntityFeature(left.2,"numday")
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right,"numyear")
@@ -223,7 +224,7 @@ trente-et-un,
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-@month:(@numday|t_integer>1<31)?:(dernier|suivant)?:DATE:
+&@month:(@numday|t_integer>1<31)?:(dernier|suivant)?:DATE:
 =>SetEntityFeature(left.1,"numday")
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.1,"datemod")
@@ -231,7 +232,7 @@ trente-et-un,
 =<ClearEntityFeatures()
 =>NormalizeRelativeDate()
 
-@month::prochain:DATE:
+&@month::prochain:DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(right.1,"datemod")
 =>NormalizeEntity()
@@ -383,7 +384,15 @@ siècle$NC:<NUMBER>::DATE:
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-(@numday|t_integer>10<31)::/ @nummonth / (@numyear|@numyear4):DATE:
+@numday::/ @nummonth / (@numyear|@numyear4):DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+t_integer>10<31::/ @nummonth / (@numyear|@numyear4):DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.2,"month")
 =>SetEntityFeature(right.4,"numyear")

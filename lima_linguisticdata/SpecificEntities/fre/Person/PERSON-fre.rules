@@ -6,10 +6,11 @@ set defaultAction=>CreateSpecificEntity()
 use firstname.lst,prefirstname.lst
 use title.lst,function_title.lst
 use person.lst
-use ../../eng/Person/wd_firstname.lst
+#use ../../eng/Person/wd_firstname.lst
+use firstname.lst
 use ../../eng/Person/wd_lastname.lst
 
-@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La,Le,d')
+@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La,Le,d\')
 
 #----------------------------------------------------------------------
 # contextual rules for person recognition
@@ -25,7 +26,11 @@ use ../../eng/Person/wd_lastname.lst
 #------------------------------
 # The rule below hangs ConllDumper
 #@Firstname:[(@Title|@FunctionTitle)?]:@Firstname de la ($NP|t_capital|t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
-@Firstname:[(@Title|@FunctionTitle)?]:(@particule? ($NP|t_capital|t_capital_1st)){1-2}:PERSON:=>NormalizePersonName()
+
+# ensure that if several parts follow the firstname, have the same lower/upper case
+@Firstname:[(@Title|@FunctionTitle)?]:(@particule? t_capital){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:(@particule? t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:(@particule? $NP){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
@@ -50,12 +55,17 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 
 # Mme Bernadette Chirac
 [@Title]::@Firstname{1-2} @PersonNamePart:PERSON:=>NormalizePersonName()
+[@Title]::@PersonNamePart @Firstname{1-2}:PERSON:=>NormalizePersonName()
 # [@Title]::@Firstname (@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 # [@Title]::@Firstname (@Initial|t_abbrev)? @particule? @PersonNamePart:PERSON:=>NormalizePersonName()
 # [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 # [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
-[@Title]::(@Initial|t_abbrev)? @PersonNamePart:PERSON:=>NormalizePersonName()
 # [@Title]::(@Initial|t_abbrev)? @particule? @PersonNamePart:PERSON:=>NormalizePersonName()
+
+# compatibility of lower/upper cases
+[@Title]::(@Initial|t_abbrev)? t_capital{1-2}:PERSON:=>NormalizePersonName()
+[@Title]::(@Initial|t_abbrev)? t_capital_1st{1-2}:PERSON:=>NormalizePersonName()
+[@Title]::(@Initial|t_abbrev)? $NP{1-2}:PERSON:=>NormalizePersonName()
 
 @Firstname:(Saint|saint|Sainte|sainte)::PERSON:=>NormalizePersonName()
 @Firstname::le (Grand|grand|Jeune|jeune|Bref|bref|Gros|gros|Bel|bel|Pieux|pieux):PERSON:=>NormalizePersonName()

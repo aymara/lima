@@ -313,13 +313,15 @@ MHz:t_dot_number::COORDINATE:
 # recognition telephone numbers
 #----------------------------------------------------------------------
 #01 69 85 80 02
-t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
-=>SetEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>SetEntityFeature("location_type","phone number")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# deactivated for the moment: problem is some previously found entities have a t_integer type (e.g. "31 décembre"), because it's taken from the first token
+# maybe phone numbers should be recognized by regexMatcher instead
+#t_integer>0<99:t_integer>0<9:t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(left,"name")
+#=>AppendEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
 
 #01-69-85-80-02
 #t_integer>0<99:t_integer>0<9 - : - t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:

@@ -379,7 +379,15 @@ siècle$NC:<NUMBER>::DATE:
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-(@numday|t_integer>10<31)::/ @nummonth / (@numyear|@numyear4):DATE:
+@numday::/ @nummonth / (@numyear|@numyear4):DATE:
+=>SetEntityFeature(trigger,"numday")
+=>SetEntityFeature(right.2,"month")
+=>SetEntityFeature(right.4,"numyear")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeDate()
+
+t_integer>10<31::/ @nummonth / (@numyear|@numyear4):DATE:
 =>SetEntityFeature(trigger,"numday")
 =>SetEntityFeature(right.2,"month")
 =>SetEntityFeature(right.4,"numyear")

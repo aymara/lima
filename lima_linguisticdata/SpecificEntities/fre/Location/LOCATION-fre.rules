@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Location-modex.xml
+using modex Location-modex.xml,Numex-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
@@ -21,7 +21,7 @@ use annonceurFact.lst
 
 include wd_locations.rules
 
-@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,courant$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
+@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
 
 @mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d'Ougarta);
@@ -49,7 +49,9 @@ détecter$V)
 # @Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
 @StreetAdj=(nationale,communale,departementale,départementale)
 @StreetNC=(rue$NC,place$NC)
-
+@StreetInAddress=(rue$NC,place$NC,Rue,Place,rue,place,
+route,Route,chemin,Chemin,avenue,Avenue,boulevard,Boulevard,voie,Voie,
+impasse,Impasse,quai,Quai,venelle,Venelle,Cours)
 
 #Quartier present dans la convention Quaero 
 # pas de liste ???
@@ -64,14 +66,14 @@ T_Ni::@Street? @StreetAdj:LOCATION:
 =<ClearEntityFeatures()
 
 #A10
-AT_Ni>1::(autoroute)?:LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+#AT_Ni>1::(autoroute)?:LOCATION:
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
 
 #la n118
-nT_Ni>1::(autoroute)?:LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+#nT_Ni>1::(autoroute)?:LOCATION:
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
 
 #le triangle de Rocquencourt
 triangle::de Rocquencourt:LOCATION:
@@ -89,21 +91,44 @@ triangle::de Rocquencourt:LOCATION:
 #=<ClearEntityFeatures()
 
 #place de la république
-@Street::@StreetAdj? ,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+@Street::@StreetAdj? ,? (de la|de|du|des|à|aux)? ($NP|t_capital_1st){1-3}:LOCATION:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #idem avec le déclencheur sur rue ou place
-@StreetNC::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+@StreetNC::,? (de la|de|du|des|à|aux)? ($NP|t_capital_1st){1-3}:LOCATION:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #******************************************************************************
 # les adresses
 #
-T_Ni>1::(@Street|StreetNC) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
+
+# code postal (en france) = 5 chiffres: vérifie la longueur, pas la valeur (peut commencer par 0)
+
+# autorise det et prep dans les noms de rues, mais pas en fin
+@LocPart=(t_capital,t_capital_1st,$NP,$DET,$P+D)
+@LocPartFinal=(t_capital,t_capital_1st,$NP)
+
+# CHAMBON FEUGEROLLES (42500), 9 rue Jean Monnet
+# code postal comme trigger
+t_integer:@LocPartFinal{1-3} \(?:\) ,? t_integer ,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal:LOCATION:
++LengthInInterval(trigger,"5,5")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
+# 71 Avenue des Ternes, 75017 PARIS
+t_integer::,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal ((,|—|-)? (t_integer|<Numex.NUMBER>) @LocPartFinal{1-3})? ((CEDEX|Cedex|Cédex) t_integer)?:LOCATION:
++LengthInInterval(right.5.2,"5,5")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+t_integer::,? @StreetInAddress *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
 #la voie est annotée avec loc.odo.
 
 
@@ -129,7 +154,7 @@ T_Ni>1::(@Cities) (@Countries)?:LOCATION:
 Trévaresse:::LOCATION:
 #chaine de collines
 
-Salon:::LOCATION:
+#Salon:::LOCATION:
 # regle dangeureuse ??
 
 Maison:(la|La)?:Blanche:LOCATION:
@@ -253,13 +278,13 @@ MHz:t_dot_number::COORDINATE:
 # recognition telephone numbers
 #----------------------------------------------------------------------
 #01 69 85 80 02
-t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
-=>AppendEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>SetEntityFeature("location_type","phone number")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+#t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+#=>AppendEntityFeature(left,"name")
+#=>AppendEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
 
 #01-69-85-80-02
 t_integer>0<99:t_integer>0<9 -:- t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:

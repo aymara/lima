@@ -18,7 +18,7 @@ use ../Location/annonceurVoie.lst
 # adresses
 # rue (neuve) de la Beauce
 # On ne garde pas l'entité Location
-@Street::$ADJ? (des|du|d'|de $DET?)? <Location>:ODO:
+@Street::$ADJ? (des|du|d'|de $DET?)? <LOCATION>:ODO:
 =>AddEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.1,"name")
 =>AppendEntityFeature(right.2,"name")
@@ -42,7 +42,7 @@ use ../Location/annonceurVoie.lst
 =<ClearEntityFeatures()
 
 # Île de Sumatra
-@AnnonceurLieu:: (du|de $DET?)? <Location>:Location.GEO:
+@AnnonceurLieu:: (du|de $DET?)? <LOCATION>:Location.GEO:
 =>AddEntityFeature(trigger,"kind")
 =>AddEntityFeature(right.2,"name")
 =>NormalizeEntity()
@@ -52,7 +52,7 @@ use ../Location/annonceurVoie.lst
 
 # "député de l'Essonne" ou "maire de Paris"
 #  On garde l'entité Location et on produit 2 entités imbriquées
-@adminTitle::(des|du|d'|de $DET?) <Location>:PERSON:
+@adminTitle::(des|du|d'|de $DET?) <LOCATION>:PERSON:
 =>AddEntityFeature(trigger,"title")
 =>AddEntityFeatureAsEntity(right.2,"Location")
 =>NormalizeEntity()

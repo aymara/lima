@@ -89,9 +89,10 @@ include carMakers.rules
 @carMakers:::ORGANIZATION:
 @organizationCommon:::ORGANIZATION:
 
+#t_acronym:::ORGANIZATION:
+#=>NormalizeEntity()
+#=>AppendEntityFeature(trigger,"name")
+#=<ClearEntityFeatures()
 
-t_acronym:::ORGANIZATION:
-=>NormalizeEntity()
-=>AppendEntityFeature(trigger,"name")
-=<ClearEntityFeatures()
-
+@annonceurOrgPost=(SAS,SARL,S.A.,S.A.S.,S.A.R.L.)
+@annonceurOrgPost:@OrganizationNamePart{1-2}::ORGANIZATION:
