@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -110,7 +110,8 @@ public:
       m_max_input_len(0),
       m_ctx_len(0),
       m_beam_size(0),
-      m_feat_separator(LimaString::fromUtf8("|")) { }
+      m_feat_separator(LimaString::fromUtf8("|")),
+      m_loaded(false) { }
   ~TensorFlowLemmatizerPrivate();
 
   void init(GroupConfigurationStructure&,
@@ -225,8 +226,6 @@ protected:
 
   map<string, string> m_input_node_names;
 
-  QString m_model_path;
-
   unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
@@ -315,6 +314,9 @@ protected:
 
   bool hasCharFromList(const LimaString& str, const LimaString& char_list) const;
   bool hasNoCharsFromList(const LimaString& str, const LimaString& char_list) const;
+
+  function<void()> m_load_fn;
+  bool m_loaded;
 };
 
 TensorFlowLemmatizer::TensorFlowLemmatizer()
@@ -375,48 +377,77 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   {
     throw InvalidConfiguration("TensorFlowLemmatizerPrivate::init: config file not found.");
   }
-  load_config(config_file_name);
 
-  if (!m_lemmatization_required)
-  {
-    return;
-  }
   auto cache_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowLemmatizer/%1/%2.cache")
                                             .arg(lang_str).arg(model_name));
 
   m_cache.set_max_size(2000000);
 
-  if (cache_file_name.size() > 0)
-    load_cache(cache_file_name);
+  auto model_file_name = findFileInPaths(resources_path,
+                                         QString::fromUtf8("/TensorFlowLemmatizer/%1/%2.model")
+                                           .arg(lang_str).arg(model_name));
+  if (model_file_name.isEmpty())
+  {
+    throw InvalidConfiguration("TensorFlowLemmatizerPrivate::init: model file not found.");
+  }
 
-  tensorflow::SessionOptions options;
-  tensorflow::ConfigProto & config = options.config;
-  //config.set_inter_op_parallelism_threads(2);
-  //config.set_intra_op_parallelism_threads(0);
-  config.set_use_per_session_threads(true);
-  config.set_isolate_session_state(true);
-  Session* session = 0;
-  Status status = NewSession(options, &session);
-  if (!status.ok())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::init: Can't create TensorFlow session: "
-      << status.ToString().c_str());
-  m_session = unique_ptr<Session>(session);
+  m_load_fn = [this, config_file_name, model_file_name, cache_file_name]()
+  {
+    if (m_loaded)
+    {
+      return;
+    }
 
-  m_model_path = findFileInPaths(resources_path,
-                                 QString::fromUtf8("/TensorFlowLemmatizer/%1/%2.model")
-                                  .arg(lang_str).arg(model_name));
-  load_graph(m_model_path, &m_graph_def);
+    load_config(config_file_name);
 
-  // Add the graph to the session
-  status = m_session->Create(m_graph_def);
-  if (!status.ok())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::init: Can't add graph to TensorFlow session: "
-      << status.ToString().c_str());
+    if (!m_lemmatization_required)
+    {
+      m_loaded = true;
+      return;
+    }
+
+    if (cache_file_name.size() > 0)
+    {
+      load_cache(cache_file_name);
+    }
+
+    tensorflow::SessionOptions options;
+    tensorflow::ConfigProto & config = options.config;
+    //config.set_inter_op_parallelism_threads(2);
+    //config.set_intra_op_parallelism_threads(0);
+    config.set_use_per_session_threads(true);
+    config.set_isolate_session_state(true);
+    Session* session = 0;
+    Status status = NewSession(options, &session);
+    if (!status.ok())
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT,
+        "TensorFlowLemmatizer::init: Can't create TensorFlow session: "
+        << status.ToString().c_str());
+    }
+    m_session = unique_ptr<Session>(session);
+
+    load_graph(model_file_name, &m_graph_def);
+
+    // Add the graph to the session
+    status = m_session->Create(m_graph_def);
+    if (!status.ok())
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TENSORFLOWLEMMATIZERLOGINIT,
+        "TensorFlowLemmatizer::init: Can't add graph to TensorFlow session: "
+        << status.ToString().c_str());
+    }
+
+    m_loaded = true;
+  };
+
+  if (!isInitLazy())
+  {
+    m_load_fn();
+  }
 }
 
 QJsonObject TensorFlowLemmatizerPrivate::get_json_object(const QJsonObject& root, const QString& child_name)
@@ -696,6 +727,8 @@ LimaStatusCode TensorFlowLemmatizer::process(AnalysisContent& analysis) const
 
 LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
 {
+  m_load_fn();
+
   if (!m_lemmatization_required)
   {
     return SUCCESS_ID;

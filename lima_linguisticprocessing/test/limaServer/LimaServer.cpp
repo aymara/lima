@@ -59,7 +59,6 @@
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
 
-
 #include <qhttpserver.h>
 #include <qhttprequest.h>
 #include <qhttpresponse.h>
@@ -72,49 +71,14 @@
 #include <stdlib.h>
 #include <boost/graph/buffer_concepts.hpp>
 
+#include "../cmd_line_helpers.h"
+
 using namespace Lima;
 using namespace Lima::Common;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::Misc;
 using namespace Lima::LinguisticProcessing;
-
-std::map<std::string, std::string> parse_options_line(const QString& meta, char comma, char colon)
-{
-  std::map<std::string, std::string> opts;
-  std::string s = meta.toStdString();
-
-  size_t start = 0;
-  size_t comma_pos = s.find(comma, 0);
-  do
-  {
-    std::string key, value;
-    size_t colon_pos = s.find(colon, start);
-    if (colon_pos != std::string::npos && colon_pos != comma_pos)
-    {
-      key = s.substr(start, colon_pos - start);
-      size_t value_start = colon_pos + 1;
-      value = s.substr(value_start, comma_pos == std::string::npos ? comma_pos : (comma_pos - value_start));
-    }
-    else
-    {
-      key = s.substr(start, comma_pos == std::string::npos ? comma_pos : (comma_pos - start - 1));
-      value = "";
-    }
-
-    if (key.size() > 0)
-    {
-      if (opts.find(key) == opts.end())
-        opts[key] = value;
-      else
-        opts[key] = opts[key] + "," + value;
-    }
-    start = (comma_pos == std::string::npos) ? comma_pos : comma_pos + 1;
-    comma_pos = s.find(comma, start);
-  } while (start != std::string::npos);
-
-  return opts;
-}
 
 LimaServer::LimaServer( const QString& configPath,
                         const QString& commonConfigFile,
@@ -141,12 +105,13 @@ LimaServer::LimaServer( const QString& configPath,
            << "lpConfigFile=" << lpConfigFile
            << "langs=" << oss.str()
            << "meta=" << meta;
+
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
     configPath.toUtf8().constData(),
     commonConfigFile.toUtf8().constData(),
     langs,
-    parse_options_line(meta, ',', ':'));
+    parse_options_line(meta, ',', ':', {{"lazy-init", "true"}}));
 
   // initialize linguistic processing
   QString fullLpConfigFile = findFileInPaths(configPath, lpConfigFile);

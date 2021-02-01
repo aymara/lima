@@ -31,6 +31,7 @@ ADD_DLL_TO_PATH(lima-lp-helpers)
 
 target_link_libraries(lima-lp-helpers
   lima-common-xmlconfigurationfiles
+  lima-common-mediaticdata
 )
 
 set_target_properties(lima-lp-helpers

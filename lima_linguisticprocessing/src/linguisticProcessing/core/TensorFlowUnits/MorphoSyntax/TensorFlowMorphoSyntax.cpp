@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -104,7 +104,8 @@ class TensorFlowMorphoSyntaxPrivate : public ConfigurationHelper
 public:
   TensorFlowMorphoSyntaxPrivate()
     : ConfigurationHelper("TensorFlowMorphoSyntaxPrivate", THIS_FILE_LOGGING_CATEGORY()),
-      m_stringsPool(nullptr)
+      m_stringsPool(nullptr),
+      m_loaded(false)
   { }
   ~TensorFlowMorphoSyntaxPrivate();
 
@@ -252,13 +253,14 @@ protected:
 
   map<string, string> m_input_node_names;
 
-  QString m_model_path;
-
   unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
   fasttext::FastText m_fasttext;
   LRUCache<StringsPoolIndex, fasttext::Vector> m_fasttext_cache;
+
+  function<void()> m_load_fn;
+  bool m_loaded;
 
   void load_config(const QString& config_file_name);
   void load_graph(const QString& model_path, GraphDef* graph_def);
@@ -314,7 +316,6 @@ void TensorFlowMorphoSyntaxPrivate::init(
   GroupConfigurationStructure& gcs,
   MediaId lang)
 {
-  LIMA_UNUSED(gcs);
   m_language = lang;
   m_stringsPool = &MediaticData::changeable().stringsPool(m_language);
 
@@ -341,50 +342,80 @@ void TensorFlowMorphoSyntaxPrivate::init(
   {
     throw InvalidConfiguration("TensorFlowMorphoSyntaxPrivate::init: config file not found.");
   }
-  load_config(config_file_name);
 
-  // Following line requires patched version of TensorFlow.
-  // It only helps to increase analysis speed and can be commented out.
-  tensorflow::LocalDevice::set_use_global_threadpool(false);
-
-  tensorflow::SessionOptions options;
-  tensorflow::ConfigProto & config = options.config;
-  config.set_inter_op_parallelism_threads(2);
-  config.set_intra_op_parallelism_threads(1);
-  config.set_use_per_session_threads(true);
-  config.set_isolate_session_state(true);
-  Session* session = 0;
-  Status status = NewSession(options, &session);
-  if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't create TensorFlow session: "
-                        << status.ToString().c_str(),
-                        LimaException);
-  m_session = unique_ptr<Session>(session);
-  m_model_path = findFileInPaths(resources_path,
-                                 QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.model")
-                                  .arg(lang_str).arg(model_name));
-  load_graph(m_model_path, &m_graph_def);
-
-  // Add the graph to the session
-  status = m_session->Create(m_graph_def);
-  if (!status.ok())
-    LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't add graph to TensorFlow session: "
-                        << status.ToString().c_str(),
-                        LimaException);
-
-  init_crf();
-
-  m_unk = QString("<<unk>>").toStdU32String();
-  m_eos = QString("<<eos>>").toStdU32String();
+  auto model_file_name = findFileInPaths(resources_path,
+                                         QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.model")
+                                           .arg(lang_str).arg(model_name));
+  if (model_file_name.isEmpty())
+  {
+    throw InvalidConfiguration("TensorFlowMorphoSyntaxPrivate::init: model file not found.");
+  }
 
   QString embeddings_name = embeddings;
   embeddings_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
-  QString embeddings_path = findFileInPaths(resources_path,
-                                            QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2")
-                                             .arg(lang_str).arg(embeddings_name));
+  auto embeddings_file_name = findFileInPaths(resources_path,
+                                              QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2")
+                                                .arg(lang_str).arg(embeddings_name));
+  if (embeddings_file_name.isEmpty())
+  {
+    throw InvalidConfiguration("TensorFlowMorphoSyntaxPrivate::init: embeddings file not found.");
+  }
 
-  m_fasttext.loadModel(embeddings_path.toStdString());
+  m_load_fn = [this, config_file_name, model_file_name, embeddings_file_name]()
+  {
+    if (m_loaded)
+    {
+      return;
+    }
+
+    load_config(config_file_name);
+
+    // Following line requires patched version of TensorFlow.
+    // It only helps to increase analysis speed and can be commented out.
+    tensorflow::LocalDevice::set_use_global_threadpool(false);
+
+    tensorflow::SessionOptions options;
+    tensorflow::ConfigProto & config = options.config;
+    config.set_inter_op_parallelism_threads(2);
+    config.set_intra_op_parallelism_threads(1);
+    config.set_use_per_session_threads(true);
+    config.set_isolate_session_state(true);
+    Session* session = nullptr;
+    Status status = NewSession(options, &session);
+    if (!status.ok())
+    {
+      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't create TensorFlow session: "
+                          << status.ToString().c_str(),
+                          LimaException);
+    }
+    m_session = unique_ptr<Session>(session);
+
+    load_graph(model_file_name, &m_graph_def);
+
+    // Add the graph to the session
+    status = m_session->Create(m_graph_def);
+    if (!status.ok())
+    {
+      LOG_ERROR_AND_THROW("TensorFlowMorphoSyntax::init: Can't add graph to TensorFlow session: "
+                          << status.ToString().c_str(),
+                          LimaException);
+    }
+
+    init_crf();
+
+    m_unk = QString("<<unk>>").toStdU32String();
+    m_eos = QString("<<eos>>").toStdU32String();
+
+    m_fasttext.loadModel(embeddings_file_name.toStdString());
+
+    m_loaded = true;
+  };
+
+  if (!isInitLazy())
+  {
+    m_load_fn();
+  }
 }
 
 QJsonObject TensorFlowMorphoSyntaxPrivate::get_json_object(const QJsonObject& root, const QString& child_name)
@@ -462,6 +493,8 @@ LimaStatusCode TensorFlowMorphoSyntax::process(AnalysisContent& analysis) const
 
 LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 {
+  m_load_fn();
+
   TimeUtils::updateCurrentTime();
 
   LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowMorphoSyntax");
@@ -859,11 +892,14 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
 TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate()
 {
-  auto status = m_session->Close();
-  if (!status.ok())
+  if (m_session.get() != nullptr)
   {
-    LOG_MESSAGE_WITH_PROLOG(LERROR, "TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate(): Error closing session:"
-                            << status.ToString());
+    auto status = m_session->Close();
+    if (!status.ok())
+    {
+      LOG_MESSAGE_WITH_PROLOG(LERROR, "TensorFlowMorphoSyntaxPrivate::~TensorFlowMorphoSyntaxPrivate(): Error closing session:"
+                              << status.ToString());
+    }
   }
 }
 

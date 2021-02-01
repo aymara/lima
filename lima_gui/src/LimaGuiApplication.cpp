@@ -430,7 +430,7 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     // configDir,
     commonConfigFile.toStdString(),
     languages,
-    {{"udlang", ""}}
+    {{"udlang", ""}, {"lazy-init", "true"}}
     );
 
 
