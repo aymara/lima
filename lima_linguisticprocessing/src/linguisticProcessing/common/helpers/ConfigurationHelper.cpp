@@ -128,7 +128,7 @@ int ConfigurationHelper::getIntParameter(
 bool ConfigurationHelper::isInitLazy()
 {
   string lazy_init;
-  MediaticData::MediaticData::single().getOptionValue(string("lazy-init"), lazy_init);
+  Lima::Common::MediaticData::MediaticData::single().getOptionValue(string("lazy-init"), lazy_init);
   if (lazy_init == "true")
   {
     return true;
