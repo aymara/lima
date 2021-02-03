@@ -148,6 +148,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   for (EventTemplateData::iterator it1=eventData->begin(),it_end=eventData->end();it1!=it_end;it1++)
   {
     if ((*it1).getType()!=m_templateDefinition->getName()) {
+      numTemplate++;
       continue;
     }
     
@@ -158,9 +159,10 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
     for (it2++; it2!=it_end; it2++)
     {
       if ((*it2).getType()!=m_templateDefinition->getName()) {
+        numOtherTemplate++;
         continue;
       }
-      
+
       numOtherTemplate++;
       map<string,EventTemplateElement>& templateElements2=(*it2).getTemplateElements();
       if (templateElements2.empty()) {
