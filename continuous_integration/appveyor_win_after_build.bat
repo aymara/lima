@@ -1,6 +1,9 @@
 echo %1
+dir
+pushd c:\b
 cmake --build . --config Release --target install
 cmake --build . --config Release --target package
+popd
 dir C:\d\share\apps\lima\tests
 pushd C:\d\share\apps\lima\tests
 set Path = "c:\\d\\bin;%Path%"
