@@ -58,10 +58,9 @@ for:
       - ps: Invoke-BatchFile "c:\\projects\\lima\\continuous_integration\\appveyor_win_build.bat"
 
     after_build:
-      - pushd c:\b
+      - cd c:\b
       - cmake --build . --config Release --target install
       - cmake --build . --config Release --target package
-      - popd
       - dir C:/d/share/apps/lima/tests
       - pushd C:/d/share/apps/lima/tests
       - set PATH=c:\d\bin;%PATH%
