@@ -62,8 +62,8 @@ for:
       - cmake --build . --config Release --target install
       - cmake --build . --config Release --target package
       - popd
-      - dir C:\d\share\apps\lima\tests
-      - pushd C:\d\share\apps\lima\tests
+      - dir C:/d/share/apps/lima/tests
+      - pushd C:/d/share/apps/lima/tests
       - set PATH=c:\d\bin;%PATH%
       - set LIMA_CONF=C:\d\share\config\lima
       - set LIMA_RESOURCES=C:\d\share\apps\lima\resources
