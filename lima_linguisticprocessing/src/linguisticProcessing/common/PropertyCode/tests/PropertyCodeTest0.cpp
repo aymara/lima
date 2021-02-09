@@ -67,7 +67,7 @@ void PropertyCodeTest0::test_load()
   PropertyCodeManager pcm;
   QVERIFY_EXCEPTION_THROWN(
     pcm.readFromXmlFile("/this/file/does/not/exist"),
-    std::runtime_error
+    Lima::LimaException
   );
 
   QString dataFile = QFINDTESTDATA("code-eng.ud.xml");
