@@ -85,34 +85,20 @@ void Test::loadText()
 void Test::testProcessingWords()
 {
   //Test with an empty vocabulary
-  bool exceptionTrown = false;
-  try
-  {
-    auto textConverted = getProcessingWord("hello",std::map<QString,int>(),
-                                           std::map<QChar,int>(),true,true);
-  }
-  catch (const std::logic_error &e)
-  {
-    LIMA_UNUSED(e);
-    exceptionTrown = true;
-  }
-  QVERIFY(exceptionTrown);
+  QVERIFY_EXCEPTION_THROWN(
+    getProcessingWord("hello",std::map<QString,int>(),
+                      std::map<QChar,int>(),true,true),
+    std::logic_error
+  );
 
   auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
   auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
 
   //Test with an empty string
-  exceptionTrown = false;
-  try
-  {
-    auto textConverted = getProcessingWord("",vocabWords,vocabChars,true,true);
-  }
-  catch (const std::logic_error &e)
-  {
-    LIMA_UNUSED(e);
-    exceptionTrown = true;
-  }
-  QVERIFY(exceptionTrown);
+  QVERIFY_EXCEPTION_THROWN(
+    getProcessingWord("",vocabWords,vocabChars,true,true),
+    std::logic_error
+  );
 
   //Test with an unknown word and allowUnk set to false
   QVERIFY_EXCEPTION_THROWN(getProcessingWord("hello",vocabWords,
