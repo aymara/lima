@@ -181,7 +181,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja -j $j"
-  make_test=""
+  make_test="ninja test"
   make_install="ninja install"
   make_package="ninja package"
   generator="Ninja"
