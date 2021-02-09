@@ -34,7 +34,8 @@ void Test::cleanup()
 
 //Unit testing
 
-void Test::loadTags(){
+void Test::loadTags()
+{
   //Test with a file that doesn't exist
   QVERIFY_EXCEPTION_THROWN(loadFileTags("test.txt"),BadFileException);
 
@@ -44,7 +45,8 @@ void Test::loadTags(){
            "The file has not been loaded successfully into the map.");
 }
 
-void Test::loadChars(){
+void Test::loadChars()
+{
   //Test with a file that doesn't exist
   QVERIFY_EXCEPTION_THROWN(loadFileChars("test.txt"),BadFileException);
 
@@ -54,7 +56,8 @@ void Test::loadChars(){
            "The file has not been loaded successfully into the map.");
 }
 
-void Test::loadWords(){
+void Test::loadWords()
+{
   //Test with a file that doesn't exist
   QVERIFY_EXCEPTION_THROWN(loadFileWords("test.txt"),BadFileException);
 
@@ -64,7 +67,8 @@ void Test::loadWords(){
            "The file has not been loaded into the map.");
 }
 
-void Test::loadText(){
+void Test::loadText()
+{
   QTextStream qtIn;
   QFile inputFile;
 
@@ -78,18 +82,37 @@ void Test::loadText(){
            "The file has not been opened.");
 }
 
-void Test::testProcessingWords(){
+void Test::testProcessingWords()
+{
   //Test with an empty vocabulary
-  auto textConverted = getProcessingWord("hello",std::map<QString,int>(),
-                                         std::map<QChar,int>(),true,true);
-  QVERIFY(std::get<0>(textConverted).size()==0);
+  bool exceptionTrown = false;
+  try
+  {
+    auto textConverted = getProcessingWord("hello",std::map<QString,int>(),
+                                           std::map<QChar,int>(),true,true);
+  }
+  catch (const std::logic_error &e)
+  {
+    LIMA_UNUSED(e);
+    exceptionTrown = true;
+  }
+  QVERIFY(exceptionTrown);
 
   auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
   auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
 
   //Test with an empty string
-  textConverted = getProcessingWord("",vocabWords,vocabChars,true,true);
-  QVERIFY(std::get<0>(textConverted).size()==0);
+  exceptionTrown = false;
+  try
+  {
+    auto textConverted = getProcessingWord("",vocabWords,vocabChars,true,true);
+  }
+  catch (const std::logic_error &e)
+  {
+    LIMA_UNUSED(e);
+    exceptionTrown = true;
+  }
+  QVERIFY(exceptionTrown);
 
   //Test with an unknown word and allowUnk set to false
   QVERIFY_EXCEPTION_THROWN(getProcessingWord("hello",vocabWords,
@@ -100,12 +123,13 @@ void Test::testProcessingWords(){
   //set to true
 
   QString str="hello";
-  textConverted = getProcessingWord(str,vocabWords,vocabChars,true,true);
+  auto textConverted = getProcessingWord(str,vocabWords,vocabChars,true,true);
   QVERIFY2(!std::get<0>(textConverted).empty(),
            "The word has not been converted.");
   //Checks that each character is linked to the good identifier
   QVERIFY(std::get<0>(textConverted).size()==str.size());
-  for(auto i=0;i<std::get<0>(textConverted).size();++i){
+  for(auto i=0;i<std::get<0>(textConverted).size();++i)
+  {
     QVERIFY(std::get<0>(textConverted)[i]==vocabChars[str[i]]);
   }
   //Checks that the word is linked to the good identifier
@@ -119,7 +143,8 @@ void Test::testProcessingWords(){
   //Checks that each character is linked to the good identifier
   //warning : some characters may not be associated to an identifier
   QVERIFY(std::get<0>(textConverted).size()==str.size());
-  for(auto i=0;i<std::get<0>(textConverted).size();++i){
+  for(auto i=0;i<std::get<0>(textConverted).size();++i)
+  {
     QVERIFY(std::get<0>(textConverted)[i]==vocabChars[str[i]]);
   }
   //Checks that the word is linked to the good identifier
@@ -140,13 +165,15 @@ void Test::testProcessingWords(){
   textConvertedUpperCase = getProcessingWord(str,vocabWords,
                                              vocabChars,false,true);
   QVERIFY(std::get<0>(textConvertedUpperCase).size()==str.size());
-  for(auto i=0;i<std::get<0>(textConvertedUpperCase).size();++i){
+  for(auto i=0;i<std::get<0>(textConvertedUpperCase).size();++i)
+  {
     QVERIFY(std::get<0>(textConvertedUpperCase)[i]==vocabChars[str[i]]);
   }
   QVERIFY(std::get<1>(textConvertedUpperCase)==vocabWords["$UNK$"]);
 }
 
-void Test::testGetFeedDict(){
+void Test::testGetFeedDict()
+{
   //Test with empty lists charIds & wordIds
   std::vector<std::pair<std::string,tensorflow::Tensor>> inputs(5);
   std::vector<std::vector<std::vector<int>>> charIds;
@@ -177,7 +204,8 @@ void Test::testGetFeedDict(){
                       std::get<0>(textConverted).size())==NERStatusCode::MISSING_DATA);
 }
 
-void Test::testViterbiDecodeWithoutInputs(){
+void Test::testViterbiDecodeWithoutInputs()
+{
   //Test with empty parameters
   Eigen::MatrixXi test=viterbiDecode(Eigen::MatrixXf(),Eigen::MatrixXf());
   QVERIFY(test.size()==0);
@@ -185,7 +213,8 @@ void Test::testViterbiDecodeWithoutInputs(){
 
 //Test the main function
 
-void Test::testPredictBatch1(){
+void Test::testPredictBatch1()
+{
 //   Initialize a tensorflow session
   tensorflow::Session* session;
   std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
@@ -241,7 +270,8 @@ void Test::testPredictBatch1(){
   delete session;
 }
 
-void Test::testPredictBatch2(){
+void Test::testPredictBatch2()
+{
 //   Initialize a tensorflow session
 
   tensorflow::Session* session;
@@ -275,7 +305,8 @@ void Test::testPredictBatch2(){
   // Transform words into ids and split all the characters and identify them
 
   std::vector<std::pair<std::vector<int>,int>> textConverted(sentencesByBatch[0].size());
-  for(auto it=0;it<sentencesByBatch[0].size();++it){
+  for(auto it=0;it<sentencesByBatch[0].size();++it)
+  {
     textConverted[it]=getProcessingWord(sentencesByBatch[0][it],
                                         vocabWords, vocabChars, true, true);
   }
@@ -307,7 +338,8 @@ void Test::testPredictBatch2(){
   delete session;
 }
 
-void Test::testPredictBatch3(){
+void Test::testPredictBatch3()
+{
 //   Initialize a tensorflow session
   tensorflow::Session* session;
   std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
@@ -349,10 +381,12 @@ void Test::testPredictBatch3(){
   sentencesByBatch.push_back(sentence.split(" "));
 
   // Transform words into ids and split all the characters and identify them
-  for(auto k=0;k<batchSize;++k){
+  for(auto k=0;k<batchSize;++k)
+  {
     textConverted[k].reserve(sentencesByBatch[k].size());
     for(auto it=sentencesByBatch[k].cbegin();
-        it!=sentencesByBatch[k].cend();++it){
+        it!=sentencesByBatch[k].cend();++it)
+    {
       textConverted[k].push_back(getProcessingWord(*it, vocabWords,
                                                    vocabChars, true, true));
     }
@@ -376,8 +410,10 @@ void Test::testPredictBatch3(){
   // Analyze the first sentence's result
   std::vector<QString> lstEntities(result[0].rows());
   unsigned int nbEntities=0;
-  for(auto i=0;i<result[0].rows();++i){
-    if(vocabTags[result[0](i)]!="O"){
+  for(auto i=0;i<result[0].rows();++i)
+  {
+    if(vocabTags[result[0](i)]!="O")
+    {
       lstEntities[nbEntities]=vocabTags[result[0](i)];
       ++nbEntities;
     }
@@ -389,12 +425,14 @@ void Test::testPredictBatch3(){
   QVERIFY(nbEntities==6);
   std::vector<QString> lstCorrectEntities={"I-LOC","I-MISC","I-MISC",
                                             "I-LOC","I-MISC","I-MISC"};
-  for(auto i=0;i<lstCorrectEntities.size();++i){
+  for(auto i=0;i<lstCorrectEntities.size();++i)
+  {
     QVERIFY(lstCorrectEntities[i]==lstEntities[i]);
   }
 
   // Analyze the second sentence's result : any entities have to be found
-  for(auto i=0;i<result[1].rows();++i){
+  for(auto i=0;i<result[1].rows();++i)
+  {
     QVERIFY(vocabTags[result[1](i)]=="O");
   }
 

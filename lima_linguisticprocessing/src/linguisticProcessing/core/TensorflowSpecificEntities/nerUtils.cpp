@@ -9,68 +9,77 @@ using namespace tensorflow;
 
 LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QString,int> loadFileWords(const QString& filepath)
 {
-    QFile file(filepath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-      throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
-    }
-    if(file.size()==0){
-      std::cout<<"The file is empty.";
-      return std::map<QString,int>();
-    }
-    QTextStream in(&file);
-    std::map<QString,int> d;
-    int i=0;
-    while (!in.atEnd()) {
-          QString line = in.readLine();
-          line=line.simplified();
-          d[line]=i;
-          i++;
-    }
-    return d;
+  QFile file(filepath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
+  }
+  if(file.size()==0)
+  {
+    std::cout<<"The file is empty.";
+    return std::map<QString,int>();
+  }
+  QTextStream in(&file);
+  std::map<QString,int> d;
+  int i=0;
+  while (!in.atEnd())
+  {
+    QString line = in.readLine();
+    line=line.simplified();
+    d[line]=i;
+    i++;
+  }
+  return d;
 }
 
 LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<QChar,int> loadFileChars(const QString& filepath)
 {
-    QFile file(filepath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-      throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
-    }
-    if(file.size()==0){
-      std::cout<<"The file is empty.";
-      return std::map<QChar,int>();
-    }
-    QTextStream in(&file);
-    std::map<QChar,int> d;
-    int i=0;
-    while (!in.atEnd()) {
-          QString line = in.readLine();
-          line=line.simplified();
-          d[line[0]]=i;
-          i++;
-    }
-    return d;
+  QFile file(filepath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
+  }
+  if(file.size()==0)
+  {
+    std::cout<<"The file is empty.";
+    return std::map<QChar,int>();
+  }
+  QTextStream in(&file);
+  std::map<QChar,int> d;
+  int i=0;
+  while (!in.atEnd())
+  {
+    QString line = in.readLine();
+    line=line.simplified();
+    d[line[0]]=i;
+    i++;
+  }
+  return d;
 }
 
 LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::map<unsigned int,QString> loadFileTags(const QString& filepath)
 {
-    QFile file(filepath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-      throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
-    }
-    if(file.size()==0){
-      std::cout<<"The file is empty.";
-      return std::map<unsigned int,QString>();
-    }
-    QTextStream in(&file);
-    std::map<unsigned int,QString> d;
-    unsigned int i=0;
-    while (!in.atEnd()) {
-          QString line = in.readLine();
-          line=line.simplified();
-          d[i]=line;
-          i++;
-    }
-    return d;
+  QFile file(filepath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
+  }
+  if(file.size()==0)
+  {
+    std::cout<<"The file is empty.";
+    return std::map<unsigned int,QString>();
+  }
+  QTextStream in(&file);
+  std::map<unsigned int,QString> d;
+  unsigned int i=0;
+  while (!in.atEnd())
+  {
+    QString line = in.readLine();
+    line=line.simplified();
+    d[i]=line;
+    i++;
+  }
+  return d;
 }
 
 LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode loadTextToEvaluate(
@@ -79,10 +88,12 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode loadTextToEvaluate(
   const std::string& filepath)
 {
   file.setFileName(filepath.c_str());
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
       throw BadFileException("The file "+filepath+" doesn't exist.");
   }
-  if(file.size()==0){
+  if(file.size()==0)
+  {
     std::cerr<<"The file is empty.";
     return NERStatusCode::EMPTY_FILE;
   }
@@ -97,10 +108,13 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
   const std::map<QChar,int>& vocabChars,
   bool lowercase, bool allowUnk)
 {
-  if (!vocabWords.empty()  && !vocabChars.empty()){
-    if(wordOriginal.isEmpty()){
+  if (!vocabWords.empty()  && !vocabChars.empty())
+  {
+    if(wordOriginal.isEmpty())
+    {
       throw std::logic_error("There is no word to analyze.");
     }
+
     QString word=wordOriginal;
     int word_id;
     unsigned int chars_found=0;
@@ -109,45 +123,56 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT std::pair<std::vector<int>,int> getProces
 
     //0. get chars' id of word from the vocabChars map
 
-    for(auto it=word.cbegin();it!=word.cend();++it){
+    for(auto it=word.cbegin();it!=word.cend();++it)
+    {
       std::map<QChar,int>::const_iterator found= vocabChars.find(*it);
       //ignore chars out of vocabulary
-      if (found !=vocabChars.cend()){
-          chars_ids.push_back(found->second);
-          ++chars_found;
+      if (found !=vocabChars.cend())
+      {
+        chars_ids.push_back(found->second);
+        ++chars_found;
       }
     }
     chars_ids.resize(chars_found);
 
     //1. preprocess word
-    if (lowercase){
-        word=word.toLower();
+    if (lowercase)
+    {
+      word=word.toLower();
     }
     QString::iterator it = word.begin();
-    while(it != word.end() && (*it).isDigit()){
+    while(it != word.end() && (*it).isDigit())
+    {
       ++it;
     }
-    if(it==word.end()){
+    if(it==word.end())
+    {
       word="$NUM$";
     }
 
     //2. get id of word from the vocabWords map
     std::map<QString,int>::const_iterator found= vocabWords.find(word);
-    if(found!=vocabWords.cend()){
-        word_id=found->second;
+    if(found!=vocabWords.cend())
+    {
+      word_id=found->second;
     }
-    else{
-      if(allowUnk){
-          word_id= vocabWords.find("$UNK$")->second;
+    else
+    {
+      if(allowUnk)
+      {
+        word_id= vocabWords.find("$UNK$")->second;
       }
-      else{
+      else
+      {
         throw UnknownWordClassException("Unknow word is not allowed. Check that your vocabulary is correct");
       }
     }
+
     //3. return a pair {charIds,word_id}
     return make_pair(chars_ids,word_id);
   }
-  else{
+  else
+  {
     throw std::logic_error("The vocabulary of chars or words  doesn't exist.");
   }
 }
@@ -158,19 +183,22 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
   int batchSize,
   std::vector<std::vector< std::vector< int > >>& charIds,
   std::vector<std::vector< int >>& wordIds,
-  std::vector<Eigen::MatrixXi>& result){
-
-  if(wordIds.empty() || charIds.empty() || batchSize==0){
+  std::vector<Eigen::MatrixXi>& result)
+{
+  if(wordIds.empty() || charIds.empty() || batchSize==0)
+  {
     std::cerr<<"There are no sentences to analyze. Check that the vocabulary have been loaded.\n";
     return NERStatusCode::MISSING_DATA;
   }
 
-  if(session==nullptr){
+  if(session==nullptr)
+  {
     std::cerr<<"The session hasn't been initialized.\n";
     return NERStatusCode::MISSING_DATA;
   }
 
-  if(status==nullptr){
+  if(status==nullptr)
+  {
     std::cerr<<"The status hasn't been initialized.\n";
     return NERStatusCode::MISSING_DATA;
   }
@@ -179,8 +207,9 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
 
   //Calculate the size of the longest sentence from the current batch. Mandatory to perform padding.
   int maxSizeSentence=0;
-    for(auto it=wordIds.begin();it!=wordIds.end();++it){
-     maxSizeSentence = std::max(static_cast<int>((*it).size()),maxSizeSentence);
+  for(auto it=wordIds.begin();it!=wordIds.end();++it)
+  {
+    maxSizeSentence = std::max(static_cast<int>((*it).size()),maxSizeSentence);
   }
   //shape = (batch size, max length of sentence in batch)
   Tensor wordIdsT(DT_INT32, TensorShape({batchSize,maxSizeSentence}));
@@ -191,9 +220,11 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
 
   //Calculate the size of the longest word from the current batch. Mandatory to perform padding.
   int maxSizeWord=0;
-  for(auto it=charIds.begin();it!=charIds.end();++it){
-    for(auto it2=(*it).begin();it2!=(*it).end();++it2){
-     maxSizeWord = std::max(static_cast<int>((*it2).size()),maxSizeWord);
+  for(auto it=charIds.begin();it!=charIds.end();++it)
+  {
+    for(auto it2=(*it).begin();it2!=(*it).end();++it2)
+    {
+      maxSizeWord = std::max(static_cast<int>((*it2).size()),maxSizeWord);
     }
   }
   //shape = (batch size, max length of sentence, max length of word)
@@ -208,7 +239,8 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
 
   std::vector<Tensor> outputs(2);
   *status = session->Run(inputs, {"proj/output_node","transitions"}, {}, &outputs);
-  if (!status->ok()) {
+  if (!status->ok())
+  {
     throw std::runtime_error(status->ToString());
   }
 
@@ -228,24 +260,30 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
   //In order to applicate the viterbiDecode algorithm, we have to transform the last outputs in eigen::matrix
   Eigen::MatrixXf transitionParams(outputs[1].dim_size(0),outputs[1].dim_size(1));
 
-  for(auto i=0;i<outputs[1].dim_size(0);++i){
-    for(auto j=0;j<outputs[1].dim_size(1);++j){
+  for(auto i=0;i<outputs[1].dim_size(0);++i)
+  {
+    for(auto j=0;j<outputs[1].dim_size(1);++j)
+    {
       transitionParams(i,j)=oTransParametersCrf(i,j);
     }
   }
 
   //3. Apply viterbiDecode algorithm on each sentence
 
-  for(auto k=0;k<outputs[0].dim_size(0);++k){
+  for(auto k=0;k<outputs[0].dim_size(0);++k)
+  {
     Eigen::MatrixXf logits(oSequencesLength(k),outputs[0].dim_size(2));
-    for(auto i=0;i<oSequencesLength(k);++i){
-      for(auto j=0;j<outputs[0].dim_size(2);++j){
+    for(auto i=0;i<oSequencesLength(k);++i)
+    {
+      for(auto j=0;j<outputs[0].dim_size(2);++j)
+      {
         logits(i,j)=oLogits(k,i,j);
       }
     }
 
     result[result.size()-batchSize+k]=viterbiDecode(logits,transitionParams);
-    if(result[result.size()-batchSize+k].rows()==0){
+    if(result[result.size()-batchSize+k].rows()==0)
+    {
       return NERStatusCode::MISSING_DATA;
     }
   }
@@ -264,17 +302,20 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
   int batchSize,
   int maxSizeSentence, int maxSizeWord)
 {
-  if(wordIds.empty() || charIds.empty()){
+  if(wordIds.empty() || charIds.empty())
+  {
     std::cerr<<"Check that the vocabulary have been loaded.\n";
     return NERStatusCode::MISSING_DATA;
   }
 
-  if(wordIdsT.NumElements()==0 || sequenceLengthsT.NumElements()==0 || charIdsT.NumElements()==0 || wordLengthsT.NumElements()==0 || dropoutT.NumElements()==0){
+  if(wordIdsT.NumElements()==0 || sequenceLengthsT.NumElements()==0 || charIdsT.NumElements()==0 || wordLengthsT.NumElements()==0 || dropoutT.NumElements()==0)
+  {
     std::cerr<<"Tensors have not been initialized.\n";
     return NERStatusCode::MISSING_DATA;
   }
 
-  if(maxSizeSentence==0 || maxSizeWord==0 || batchSize==0){
+  if(maxSizeSentence==0 || maxSizeWord==0 || batchSize==0)
+  {
     std::cerr<<"Sizes have not been initialized.\n";
     return NERStatusCode::MISSING_DATA;
   }
@@ -311,7 +352,8 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
     {
       tWordLengths(i,j)=static_cast<int>(charIds[i][j].size());
       charIds[i][j].resize(maxSizeWord,0);
-      for(auto k=0;k<maxSizeWord;++k){
+      for(auto k=0;k<maxSizeWord;++k)
+      {
         tCharIds(i,j,k)=charIds[i][j][k];
       }
     }
@@ -322,7 +364,8 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
   dropoutT.scalar<float>()() =1.0;
 //   std::cout << dropoutT.DebugString() << "\n";
 
-  inputs = {
+  inputs =
+  {
     {"word_ids"  , wordIdsT } ,
     {"sequence_lengths"  , sequenceLengthsT },
     {"char_ids"  , charIdsT },
@@ -335,12 +378,15 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
 
 LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT Eigen::MatrixXi viterbiDecode(
   const Eigen::MatrixXf& score,
-  const Eigen::MatrixXf& transitionParams){
-  if(score.size()==0){
+  const Eigen::MatrixXf& transitionParams)
+{
+  if(score.size()==0)
+  {
     std::cerr<<"The output is empty. Check the inputs.";
     return Eigen::MatrixXi();
   }
-  if(transitionParams.size()==0){
+  if(transitionParams.size()==0)
+  {
     std::cerr<<"The transition matrix is empty. Check it.";
     return Eigen::MatrixXi();
   }
@@ -353,8 +399,10 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT Eigen::MatrixXi viterbiDecode(
   //2.Viterbi algorithm
   for(auto k=1;k<score.rows();++k)
   {
-    for(auto i=0;i<transitionParams.rows();++i){
-      for(auto j=0;j<transitionParams.cols();++j){
+    for(auto i=0;i<transitionParams.rows();++i)
+    {
+      for(auto j=0;j<transitionParams.cols();++j)
+      {
         v(i,j)=trellis(k-1,i)+transitionParams(i,j);
       }
     }
