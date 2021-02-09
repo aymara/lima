@@ -61,20 +61,20 @@ for:
       - cd c:\b
       - cmake --build . --config Release --target install
       - cmake --build . --config Release --target package
-      - dir C:/d/share/apps/lima/tests
-      - pushd C:/d/share/apps/lima/tests
-      - set PATH=c:/d/bin;%PATH%
-      - set LIMA_CONF=C:/d/share/config/lima
-      - set LIMA_RESOURCES=C:/d/share/apps/lima/resources
+      - ps: ls C:/d/share/apps/lima/tests
+      - ps: pushd C:/d/share/apps/lima/tests
+      - ps: $env:Path = "c:/d/bin;$env:Path"
+      - ps: $env:LIMA_CONF = "C:/d/share/config/lima"
+      - ps: $env:LIMA_RESOURCES = "C:/d/share/apps/lima/resources"
       - tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log
-      - cat tva-eng.log
+      - ps: cat tva-eng.log
       - tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log
-      - cat tva-fre.log
-      - popd
-      - pushd C:/b
-      - echo %APPVEYOR_BUILD_FOLDER%
+      - ps: cat tva-fre.log
+      - ps: popd
+      - ps: pushd C:/b
+      - ps: echo %APPVEYOR_BUILD_FOLDER%
       - copy lima*.exe %APPVEYOR_BUILD_FOLDER%
-      - popd
+      - ps: popd
 
     artifacts:
       - path: lima*.exe
