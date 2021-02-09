@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -62,7 +62,7 @@ void EnhancedAnalysisDictionaryTest1::initTestCase()
 
   std::string commonConfigFile=std::string("lima-common.xml");
 
-  std::deque<std::string> langs({"eng", "eng.ud", "fre", "por"});
+  std::deque<std::string> langs({"eng", "fre", "por"});
 
   QsLogging::initQsLog(configPath);
   // Necessary to initialize factories
@@ -88,16 +88,16 @@ void EnhancedAnalysisDictionaryTest1::testEng()
                "NOUN");
 }
 
-void EnhancedAnalysisDictionaryTest1::testEngUD()
-{
-  testLanguage("eng.ud",
-               "lima-lp-eng.ud.xml",
-               "door",
-               QStringList() << "door",
-               QStringList() << "door",
-               QStringList() << "door",
-               "NOUN");
-}
+//void EnhancedAnalysisDictionaryTest1::testEngUD()
+//{
+//  testLanguage("eng.ud",
+//               "lima-lp-eng.ud.xml",
+//               "door",
+//               QStringList() << "door",
+//               QStringList() << "door",
+//               QStringList() << "door",
+//               "NOUN");
+//}
 
 void EnhancedAnalysisDictionaryTest1::testFre()
 {
