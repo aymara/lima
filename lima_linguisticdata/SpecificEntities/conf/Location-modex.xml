@@ -3,13 +3,13 @@
   <module name="entities">
     <group name="Location">
       <list name="entityList">
-        <item value="CITY"/>
-        <item value="REGION"/>
-        <item value="COUNTRY"/>
-        <item value="BUILDING"/>
+        <item value="LOCATION"/>
+        <item value="CITY" isA="LOCATION"/>
+        <item value="REGION" isA="LOCATION"/>
+        <item value="COUNTRY" isA="LOCATION"/>
+        <item value="BUILDING" isA="LOCATION"/>
         <item value="ODO"/>
         <item value="ADDRESS"/>
-        <item value="LOCATION"/>
         <item value="GEO"/>
         <item value="STATION_TC"/>
         <item value="COORDINATE"/>
