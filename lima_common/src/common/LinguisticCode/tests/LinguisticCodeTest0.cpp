@@ -21,11 +21,35 @@
 #define BOOST_TEST_MODULE LinguisticCodeTest
 #include <boost/test/unit_test.hpp>
 
+#ifdef WIN32
+#include <cstdlib>
+#define USE_OLD_RAND
+#else
 #include <experimental/random>
+#endif
 
 #include "../../LimaCommon.h"
 
 using namespace Lima;
+
+template<class T>
+T rnd()
+{
+#ifdef USE_OLD_RAND
+  return std::rand();
+#else
+  return std::experimental::randint(T(0), std::numeric_limits<T>::max());
+#endif
+}
+
+void rnd_seed()
+{
+#ifdef USE_OLD_RAND
+  std::srand(0);
+#else
+  std::experimental::reseed(0);
+#endif
+}
 
 template<class T>
 bool test_serialization_with_int(size_t iterations)
@@ -33,7 +57,7 @@ bool test_serialization_with_int(size_t iterations)
   size_t i = 0;
   while (i < iterations)
   {
-    T r = std::experimental::randint(T(0), std::numeric_limits<T>::max());
+    T r = rnd<uint64_t>();
     std::stringstream s;
     s << r;
     LinguisticCode lc = LinguisticCode::fromDecString(s.str());
@@ -76,11 +100,11 @@ bool test_lshift_inner(T val)
 template<class T>
 bool test_lshift_rnd(size_t iterations)
 {
-  std::experimental::reseed(0);
+  rnd_seed();
   size_t i = 0;
   while (i < iterations)
   {
-    T r = std::experimental::randint(T(0), std::numeric_limits<T>::max());
+    T r = rnd<uint64_t>();
     if (!test_lshift_inner(r))
     {
       return false;
@@ -125,11 +149,11 @@ bool test_rshift_inner(T val)
 template<class T>
 bool test_rshift_rnd(size_t iterations)
 {
-  std::experimental::reseed(0);
+  rnd_seed();
   size_t i = 0;
   while (i < iterations)
   {
-    T r = std::experimental::randint(T(0), std::numeric_limits<T>::max());
+    T r = rnd<uint64_t>();
     if (!test_rshift_inner(r))
     {
       return false;
@@ -151,7 +175,7 @@ LinguisticCode rand_lc()
   for (size_t i = 0; i < LinguisticCode::size() / ( sizeof(uint64_t) * 8 ); i++)
   {
     lc <<= sizeof(uint64_t) * 8;
-    LinguisticCode r = LinguisticCode::fromUInt(std::experimental::randint(uint64_t(0), std::numeric_limits<uint64_t>::max()));
+    LinguisticCode r = LinguisticCode::fromUInt(rnd<uint64_t>());
     lc |= r;
   }
   return lc;
@@ -159,7 +183,7 @@ LinguisticCode rand_lc()
 
 bool test_string_serialization(size_t iterations)
 {
-  std::experimental::reseed(0);
+  rnd_seed();
   size_t i = 0;
   while (i < iterations)
   {
@@ -179,7 +203,7 @@ bool test_string_serialization(size_t iterations)
 
 bool test_binary_serialization(size_t iterations)
 {
-  std::experimental::reseed(0);
+  rnd_seed();
   size_t i = 0;
   while (i < iterations)
   {
@@ -208,7 +232,7 @@ bool test_binary_serialization(size_t iterations)
 
 BOOST_AUTO_TEST_CASE( LinguisticCodeTest_serialization_with_int )
 {
-  BOOST_REQUIRE( test_serialization_with_int<uint64_t>(100000) );
+  BOOST_REQUIRE( test_serialization_with_int<uint64_t>(1000) );
 }
 
 BOOST_AUTO_TEST_CASE( LinguisticCodeTest_lshift_rnd )
@@ -233,10 +257,10 @@ BOOST_AUTO_TEST_CASE( LinguisticCodeTest_rshift_one )
 
 BOOST_AUTO_TEST_CASE( LinguisticCodeTest_string_serialization )
 {
-  BOOST_REQUIRE( test_string_serialization(10000) );
+  BOOST_REQUIRE( test_string_serialization(1000) );
 }
 
 BOOST_AUTO_TEST_CASE( LinguisticCodeTest_binary_serialization )
 {
-  BOOST_REQUIRE( test_binary_serialization(10000) );
+  BOOST_REQUIRE( test_binary_serialization(1000) );
 }
