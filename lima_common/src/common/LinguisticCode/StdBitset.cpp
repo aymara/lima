@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -108,7 +108,7 @@ LIMA_COMMON_EXPORT LinguisticCode LinguisticCode::fromDecString(const std::strin
     num = new_num;
 
     pos++;
-    if (pos >= LC_WIDTH)
+    if (pos >= LC_WIDTH && num.size() > 0 && num != std::string("0"))
     {
       throw std::overflow_error(std::string("LinguisticCode::fromDecString: input string is too long: ") + str);
     }

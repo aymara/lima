@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -154,6 +154,11 @@ public:
   inline std::string toOctString() const
   {
     return toString_<3>();
+  }
+
+  inline std::string toBinString() const
+  {
+    return toString_<1>();
   }
 
   LIMA_COMMON_EXPORT std::string toDecString() const;
