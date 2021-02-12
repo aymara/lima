@@ -33,6 +33,7 @@
 
 #include "EventAnalysisExport.h"
 #include "EventTemplateStructure.h"
+#include "EventTemplate.h"
 #include "EventTemplateDefinitionResource.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
@@ -59,9 +60,20 @@ public:
 private:
   EventTemplateDefinitionResource* m_templateDefinition;
   std::deque<std::string> m_mandatoryElements;
+  uint64_t m_maxCharCompatibleEvents;
   
   // private member function
   LimaStatusCode mergeEventTemplates(AnalysisContent& analysis) const;
+  bool compatibleTemplates(const EventTemplate& e1, const EventTemplate& e2,
+                           unsigned int numTemplate, unsigned int numOtherTemplate,
+                           std::map<std::string, std::pair<std::string, int> >& matchingElements) const;
+                           
+  // return the template to be removed (either numTemplate or numOtherTemplate)
+  unsigned int mergeTemplates(EventTemplate& e1, EventTemplate& e2,
+                              unsigned int numTemplate, unsigned int numOtherTemplate,
+                              std::map<std::string, std::pair<std::string, int> >& matchingElements) const;
+
+  
 };
 
 } // end namespace

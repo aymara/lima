@@ -58,11 +58,20 @@ LinguisticAnalysisStructure::Token* EventTemplateElement::getToken() const
   return tok;
 }
 
-uint64_t EventTemplateElement::getPosition() const
+uint64_t EventTemplateElement::getPositionBegin() const
 {
   LinguisticAnalysisStructure::Token* tok=getToken();
   if (tok) { 
     return tok->position();
+  }
+  return 0;
+}
+
+uint64_t EventTemplateElement::getPositionEnd() const
+{
+  LinguisticAnalysisStructure::Token* tok=getToken();
+  if (tok) { 
+    return tok->position()+tok->length();
   }
   return 0;
 }
