@@ -58,8 +58,18 @@ endif()
 
 message("CPACK_SYSTEM_NAME is ${CPACK_SYSTEM_NAME}")
 
+# Workaround for MSVC 2017 bug:
+# See details in https://bugreports.qt.io/browse/QTBUG-72073
+# ATTN: add_compile_definitions is available since cmake 3.12
 if(WIN32)
 add_compile_definitions(QT_NO_FLOAT16_OPERATORS)
+endif()
+
+# In Linux singletons don't work as expected in shared libraries.
+# Multiple instances are created instead. "-rdynamic" allows to identify
+# static template members between executable and shared library.
+if(NOT WIN32)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 endif()
 
 # use openmp
