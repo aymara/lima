@@ -261,7 +261,7 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     //linear search on the transitions
 
 #ifdef DEBUG_LP
-   LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
+   //LDEBUG << "Automaton::getMatchingTransitions: search structure not initialized: linear search";
 #endif
 
     matchingTransitions.clear();
@@ -304,6 +304,9 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         matchingTransitions.push_back(newPair);
       }
     }
+#ifdef DEBUG_LP
+  LDEBUG << "Automaton::getMatchingTransitions: found" << matchingTransitions.size() << "matching transisions";
+#endif
     return (!matchingTransitions.empty());
   }
   else {
