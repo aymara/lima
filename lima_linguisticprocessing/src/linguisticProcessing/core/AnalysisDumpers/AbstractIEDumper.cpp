@@ -488,6 +488,16 @@ public:
     return true;
   }
 
+  // for debug
+  friend std::ostream& operator<<(std::ostream& os, const EventInfos e) {
+    os << "id=" << e.eventMentionId << "/type=" << e.eventMentionType 
+       << "/mention=" << e.eventMentionString << "/roles=";
+    for (unsigned int i(0); i<e.eventRoleId.size(); i++) {
+      os << "[" << e.eventRoleType[i] << ":" << e.eventRoleId[i] << "]";
+    }
+    return os;
+  }
+
 };
 
 uint AbstractIEDumper::outputEventData(std::ostream& out,
@@ -500,9 +510,17 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
                                        IEDumperMetaData* metadata
   ) const
 {
+  // output of events is based on the idea of elements of information to extraction: if the elements 
+  // coming from different parts of the text are the same, printing them several times is not relevant
+  // (differs from an annotation task, maybe @todo have a parameter to handle this difference)
+  // Here, the rules for the output of events are:
+  // - equal events are kept only once
+  // - if an event is included in another event, it is not kept
+  // from these rules: most single event mentions (without roles) are not kept: for each different mention, one
+  // could be kept if there is no other event with roles that has the same mention
+  
   DUMPERLOGINIT;
   //return the number of events 
-  uint nbEvents(0);
   // use a set of EventInfos to remove duplicates
   set<EventInfos> events;
   // use a bufferEvents to possibly have all event mentions as entities before all events
@@ -574,7 +592,9 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
           }
         }
       }
-      LDEBUG << "Add event infos" << eventInfos.eventMentionId << "/" << eventInfos.eventMentionPosition << "/" << eventInfos.eventMentionType;
+      ostringstream oss;
+      oss << eventInfos;
+      LDEBUG << "Add event infos" << oss.str();
       events.insert(eventInfos);
       LDEBUG << "=>" << events.size() << "events";
       // use a bufferEvents to have all event mentions as entities before all events
