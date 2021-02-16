@@ -28,9 +28,9 @@ use ../../eng/Person/wd_lastname.lst
 #@Firstname:[(@Title|@FunctionTitle)?]:@Firstname de la ($NP|t_capital|t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
 
 # ensure that if several parts follow the firstname, have the same lower/upper case
-@Firstname:[(@Title|@FunctionTitle)?]:(@particule? t_capital){1-2}:PERSON:=>NormalizePersonName()
-@Firstname:[(@Title|@FunctionTitle)?]:(@particule? t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
-@Firstname:[(@Title|@FunctionTitle)?]:(@particule? $NP){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Firstname? (@particule? t_capital){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Firstname? (@particule? t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Firstname? (@particule? $NP){1-2}:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,N,W,X,Y,Z)
@@ -70,7 +70,7 @@ Barack::Obama:PERSON:=>NormalizePersonName("Barack","Obama")=>NormalizePersonNam
 @Firstname:(Saint|saint|Sainte|sainte)::PERSON:=>NormalizePersonName()
 @Firstname::le (Grand|grand|Jeune|jeune|Bref|bref|Gros|gros|Bel|bel|Pieux|pieux):PERSON:=>NormalizePersonName()
 
-@PersonNamePart:[(@Title|@FunctionTitle)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
+@PersonNamePart:[(@Title|@FunctionTitle @Title?)]:(@PersonNamePart){0-2}:PERSON:=>NormalizePersonName()
 
 @PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 

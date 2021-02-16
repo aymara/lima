@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Location-modex.xml,Numex-modex.xml
+using modex Location-modex.xml,Numex-modex.xml,DateTime-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
@@ -21,10 +21,11 @@ use annonceurFact.lst
 
 include wd_locations.rules
 
-@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
+@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,canal,canaux,chenal,fontaine$NC,puit$NC,Mer)
+# removed source$NC: too ambiguous
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
 
-@mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d'Ougarta);
+@mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d\'Ougarta);
 
 @PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
@@ -107,22 +108,41 @@ triangle::de Rocquencourt:LOCATION:
 # code postal (en france) = 5 chiffres: vérifie la longueur, pas la valeur (peut commencer par 0)
 
 # autorise det et prep dans les noms de rues, mais pas en fin
-@LocPart=(t_capital,t_capital_1st,$NP,$DET,$P+D)
-@LocPartFinal=(t_capital,t_capital_1st,$NP)
+@LocPart=(t_capital,t_capital_1st,$NP,$DET,$PREP)
+# autoriser $NC en fin permet de récupérer des formes sans majuscule ("rue du commerce")
+# mais peut apporter aussi du bruit...
+# autorise dates (rue du 8 mai 1945)
+@LocPartFinal=(t_capital,t_capital_1st,$NP,<DateTime.DATE>)
+@bis=(bis,ter)
+
+# complement: Zone Industrielle, résidence, bâtiment etc.
+@zone=(zone$NC industriel$ADJ,zone$NC $PREP activité$NC,ZI,ZA,ZAC,résidence$NC)
+@bat=(bâtiment$NC,immeuble$NC,Immeuble)
+@letter=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+
+define subautomaton AddressComplement {
+   pattern=(@zone) @LocPart{0-2} @LocPartFinal (@bat (t_integer|letter|@LocPart{0-2} @LocPartFinal))?
+}
 
 # CHAMBON FEUGEROLLES (42500), 9 rue Jean Monnet
 # code postal comme trigger
-t_integer:@LocPartFinal{1-3} \(?:\) ,? t_integer ,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal:LOCATION:
+t_integer:@LocPartFinal{1-3} \(?:\) ,? (%AddressComplement ,?)? t_integer @bis? ,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal (,? %AddressComplement)?:LOCATION:
 +LengthInInterval(trigger,"5,5")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 # 71 Avenue des Ternes, 75017 PARIS
-t_integer::,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal ((,|—|-)? (t_integer|<Numex.NUMBER>) @LocPartFinal{1-3})? ((CEDEX|Cedex|Cédex) t_integer)?:LOCATION:
-+LengthInInterval(right.5.2,"5,5")
+# duplicate the rule to ensure that the city name does not combine several cases (upper/lower)
+t_integer::@bis? ,? (@StreetInAddress) @LocPart{0-3} @LocPartFinal (,? %AddressComplement)? (,|—|-)? (t_integer|<Numex.NUMBER>) t_capital{1-4} ((CEDEX|Cedex|Cédex) t_integer)?:LOCATION:
++LengthInInterval(right.8,"5,5")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+t_integer::@bis? ,? (@StreetInAddress) @LocPart{0-3} @LocPartFinal (,? %AddressComplement)? ((,|—|-)? (t_integer|<Numex.NUMBER>) @LocPart? t_capital_1st{1-2})? ((CEDEX|Cedex|Cédex) t_integer)?:LOCATION:
++LengthInInterval(right.7.2,"5,5")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#+LengthInInterval(right.7.2,"5,5")
 
 t_integer::,? @StreetInAddress *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
 =>NormalizeEntity()
@@ -268,11 +288,11 @@ MHz:t_dot_number::COORDINATE:
 =<ClearEntityFeatures()
 
 #@leguidedannotation
-\@::(*):COORDINATE:
-=>SetEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# \@::(*):COORDINATE:
+# =>SetEntityFeature(trigger,"name")
+# =>AppendEntityFeature(right,"name")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition telephone numbers

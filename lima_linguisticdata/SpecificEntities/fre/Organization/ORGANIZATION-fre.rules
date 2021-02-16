@@ -83,7 +83,7 @@ include carMakers.rules
 <Location.LOCATION>:@locOrg de::ORGANIZATION:
 
 @AnnonceurOrgUnsafe::(de|du|des|d\'|de la|de l\') @OrganizationNamePart:ORGANIZATION:
-@AnnonceurOrgUnsafe::@OrganizationNamePart{1-2}:ORGANIZATION:
+#@AnnonceurOrgUnsafe::@OrganizationNamePart{1-2}:ORGANIZATION:
 
 @organization:::ORGANIZATION:
 @carMakers:::ORGANIZATION:
