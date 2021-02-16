@@ -47,13 +47,13 @@ Controls1.ApplicationWindow {
   property var settingsDialogComponent: Qt.createComponent("qrc:///qml/SettingsDialog.qml")
 
   property int pile: 0
-  
+
   //! Open the select file dialog
   function openSelectFileDialog() {
     file_manager.chooseFile()
   }
 
-  
+
   /*!   This is the function called for the shortcut to start to analyze.
         From the type of the current workview in focus, it select the right
         analysis function.
@@ -88,9 +88,9 @@ Controls1.ApplicationWindow {
       }
     }
   }
-  
+
   // Analysis Functions
-  
+
   //! Launch an analysis of raw text for the current workview.
   //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeText(text) {
@@ -106,7 +106,7 @@ Controls1.ApplicationWindow {
         wv.getResultView().reset()
         var rt = wv.getResultView();
         rt.formatToShow = format_selector.getCurrentItemKey()
-        
+
         console.debug("formattoshow= ", rt.formatToShow)
         console.debug("pipeline= ", pipeline_selector.getCurrentItemKey())
         //textAnalyzer.registerQmlObject("resultView",rt);
@@ -120,7 +120,7 @@ Controls1.ApplicationWindow {
       console.log("Analyzer is not ready yet!");
     }
   }
-  
+
   //! Launch an analysis for a file opened in the application.
   //! It creates and/or makes the resultView visible and sets it back to a loading state.
   function analyzeFile(filename) {
@@ -170,26 +170,26 @@ Controls1.ApplicationWindow {
       console.log("Analyzer is not ready yet!");
     }
   }
-  
+
   // OPENING NEW TABS
-  
+
   //! Open a tab to write and analyze text.
   function openAnalyzeTextTab() {
     var wv = workspace.addWorkTab(qsTr("Analyze text"), "Text", "basics/TextEditor.qml","");
 //       console.log("WTF");
 
    }
-  
+
   //! Open a tab to select a file and analyze it.
   function openAnalyzeFileTab() {
     workspace.addWorkTab(qsTr("Analyze File"), "SelectFile", "AnalyzeFileWidget.qml","");
   }
-  
+
   //! This function was meant to be if there are write/save capabilities for files.
   function confirmCloseFile() {
     confirmCloseFileDialog.open()
   }
-  
+
   //! close the current file.
   function closeFile() {
     textAnalyzer.closeFile()
@@ -210,7 +210,7 @@ Controls1.ApplicationWindow {
       pipeline_selector.currentIndex = workspace.getCurrentWorkView().pipelineIndex
   }
   }
-  
+
   title: qsTr("Lima")
   visible: true
   x: 500
@@ -264,7 +264,7 @@ Controls1.ApplicationWindow {
     ErrorDialog {
       id: errorDialog
     }
-    
+
     Connections {
         target: textAnalyzer
         onError: {
@@ -281,24 +281,24 @@ Controls1.ApplicationWindow {
       }
     }
   }
-  
+
 
   //! An utility Item to handle files inside the application.
   Item {
     id: file_manager
-    
+
     //! Make the select File dialog visible.
     function chooseFile() {
       fm_file_dialog.open()
     }
-    
+
     //! Open multiple files
     function loadFiles(urls) {
       for (var i=0;i<urls.length; i++) {
         openFile(urls[i]);
       }
     }
-    
+
     //! Open a file from url
     function openFile(url) {
       if (textAnalyzer.openFile(url)) {
@@ -331,27 +331,27 @@ Controls1.ApplicationWindow {
       }
 
     }
-    
+
     FileDialog {
       id:fm_file_dialog
-      
+
       onAccepted: {
         file_manager.loadFiles(fileUrls)
       }
     }
   }
-  
+
   // BODY
-  
+
   Rectangle {
     id: body
 
     anchors.fill: parent
     color:"white"
     anchors.margins: 2
-    
+
     Controls1.SplitView {
-      
+
       anchors.fill: parent
       orientation: Qt.Horizontal
 
@@ -359,7 +359,7 @@ Controls1.ApplicationWindow {
         color : "transparent"
         width: 3
       }
-      
+
       Rectangle {
 
         Layout.fillHeight: true
@@ -369,16 +369,16 @@ Controls1.ApplicationWindow {
         border.color: "lightgray"
         anchors.margins: 3
         visible: false
-        
+
         Text {
           text:"filebrowser"
         }
 
 
       }
-      
+
       Controls1.SplitView {
-        
+
         Layout.fillHeight: true
         Layout.fillWidth: true
         anchors.margins: 5
@@ -390,7 +390,7 @@ Controls1.ApplicationWindow {
         }
 
         Controls1.SplitView {
-          
+
           Layout.fillHeight: true
           Layout.fillWidth: true
           Layout.minimumHeight: 500
@@ -454,7 +454,11 @@ Controls1.ApplicationWindow {
 
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().languageIndex : 0
 
+                      property var varLanguages: textAnalyzer.languages
+                      property var varLanguage: textAnalyzer.language
+
                       property var languageDictionnary: {
+                          "<loading>": qsTr("loading ..."),
                           "ara": qsTr("Arabic"),
                           "chi": qsTr("Chinese"),
                           "eng": qsTr("English"),
@@ -538,7 +542,7 @@ Controls1.ApplicationWindow {
                       }
 
                       Component.onCompleted:  {
-                        // load supported languages list from textAnalyzer
+                          // load supported languages list from textAnalyzer
 
                           keys = textAnalyzer.languages
                           model = [];
@@ -549,10 +553,24 @@ Controls1.ApplicationWindow {
                           modelChanged()
                       }
 
+                      onVarLanguagesChanged: {
+                           // load supported languages list from textAnalyzer
+
+                           keys = textAnalyzer.languages
+                           model = [];
+                           for (var i=0;i<keys.length;i++) {
+                               model.push(languageDictionnary[keys[i]]);
+                           }
+
+                           modelChanged()
+                      }
+
                       onSelected: {
                         if (workspace.count()) {
                           workspace.getCurrentWorkView().languageIndex = currentIndex
                         }
+
+                        textAnalyzer.language = textAnalyzer.languages[currentIndex]
                       }
                     }
 
@@ -563,8 +581,8 @@ Controls1.ApplicationWindow {
                       width: 200
                       model: [
                                 qsTr("Text"),
-                                qsTr("CONLL Format"), 
-                                qsTr("Named entities"), 
+                                qsTr("CONLL Format"),
+                                qsTr("Named entities"),
 //                                 qsTr("Graph"),
                              ]
                       keys: ["text","table","NE","graph"]
@@ -584,10 +602,21 @@ Controls1.ApplicationWindow {
                       name: qsTr("Pipeline:")
                       width: 200
 
+                      property var varPipelines: textAnalyzer.pipelines
+                      property var varPipeline: textAnalyzer.pipeline
+
                       currentIndex: workspace.count() ? workspace.getCurrentWorkView().pipelineIndex : 0
 
                       Component.onCompleted:  {
-                        // load supported pipelines list from textAnalyzer
+                          // load available pipelines list from textAnalyzer
+
+                          model = textAnalyzer.pipelines;
+                          keys = textAnalyzer.pipelines;
+                          modelChanged()
+                      }
+
+                      onVarPipelinesChanged: {
+                          // load available pipelines list from textAnalyzer
 
                           model = textAnalyzer.pipelines;
                           keys = textAnalyzer.pipelines;
@@ -626,9 +655,9 @@ Controls1.ApplicationWindow {
             }
 
           }
-          
+
         }
-        
+
         Rectangle {
           id: logView
           Layout.fillWidth: true
@@ -645,7 +674,7 @@ Controls1.ApplicationWindow {
               text: qsTr("This space will in the future display LIMA logs.")
               font.italic: true
               anchors.centerIn: parent
-              Component.onCompleted: 
+              Component.onCompleted:
                 font.pointSize = font.pointSize-2
             }
           }

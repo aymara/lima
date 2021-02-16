@@ -35,6 +35,7 @@
 #include <common/tools/FileUtils.h>
 #include <common/XMLConfigurationFiles/configurationStructure.h>
 #include <linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h>
+#include <common/MediaProcessors/MediaProcessors.h>
 
 #include <deque>
 #include <iostream>
@@ -381,21 +382,24 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
   if (m_options.isSet("language"))
   {
     for(const auto& media: m_options.values("language"))
-            languages.push_back(media.toUtf8().constData());
+    {
+      languages.push_back(media.toUtf8().constData());
+    }
   }
-  for (auto& l : languages)
-  {
-    m_languages << QString(l.c_str());
-  }
-  m_languages.removeDuplicates();
+
+  m_languages << QString("<loading>");
   if (!m_languages.isEmpty())
+  {
     m_language = m_languages[0];
+  }
 
   std::deque<std::string> pipelines;
   if (m_options.isSet("pipeline"))
   {
     for(const auto& pipeline: m_options.values("pipeline"))
+    {
       pipelines.push_back(pipeline.toUtf8().constData());
+    }
   }
   else
   {
@@ -408,13 +412,6 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
       pipelines.push_back((*it).first);
     }
   }
-  for (auto& p : pipelines)
-  {
-    m_pipelines << QString(p.c_str());
-  }
-  if (!m_pipelines.isEmpty())
-    m_pipeline = m_pipelines[0];
-
 
   // initialize common
   LINFO << "Ressources path is " << resourcesPath;
@@ -432,7 +429,6 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     languages,
     {{"udlang", ""}, {"lazy-init", "true"}}
     );
-
 
   // initialize linguistic processing
 
@@ -466,7 +462,55 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
   m_clients["default"] = m_analyzer;
   LINFO << "configureClientFactory DONE";
 
+  // Here we can update UI with actual list of languages and pipelines
+  std::set<MediaId> available_media;
+  MediaProcessors::single().getAvailableMedia(available_media);
+
+  m_languages.clear();
+  for (auto& media_id : available_media)
+  {
+    m_languages << QString(Common::MediaticData::MediaticData::single().media(media_id).c_str());
+  }
+  if (!m_languages.isEmpty())
+  {
+    m_language = m_languages[0];
+  }
+
+  languagesChanged();
+  languageChanged();
+
+  pipelinesChanged();
+  pipelineChanged();
+
   return true;
+}
+
+void LimaGuiApplication::updateAvailablePipelines()
+{
+  MediaId active_media_id;
+  try
+  {
+    active_media_id = Common::MediaticData::MediaticData::single().media(m_language.toStdString());
+  }
+  catch (const MediaNotInitialized &e)
+  {
+    return;
+  }
+
+  std::set<std::string> available_pipelines;
+  MediaProcessors::single().getAvailablePipelinesForMedia(active_media_id, available_pipelines);
+
+  m_pipelines.clear();
+  for (auto& p : available_pipelines)
+  {
+    m_pipelines << QString(p.c_str());
+  }
+  if (!m_pipelines.isEmpty())
+  {
+    m_pipeline = m_pipelines[0];
+  }
+  pipelinesChanged();
+  pipelineChanged();
 }
 
 bool LimaGuiApplication::resetLimaAnalyzer()
@@ -540,12 +584,19 @@ void LimaGuiApplication::setText(const QString& s)
 void LimaGuiApplication::setConsoleOuput(const QString& s)
 { m_consoleOutput = s;}
 
+void LimaGuiApplication::setLanguages(const QStringList& l)
+{
+  m_languages = l;
+  languagesChanged();
+}
+
 void LimaGuiApplication::setLanguage(const QString& s)
 {
   if (m_languages.contains(s))
   {
     m_language = s;
     languageChanged();
+    updateAvailablePipelines();
   }
   else
   {

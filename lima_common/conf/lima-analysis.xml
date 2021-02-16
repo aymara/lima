@@ -252,6 +252,75 @@
         <entry key="eng.ud" value="deepud-pretok"/>
         <entry key="fre.ud" value="deepud-pretok"/>
         <entry key="ud"     value="deepud-pretok"/>
+
+        <entry key="ud-afr" value="deepud-pretok" />
+        <entry key="ud-ara" value="deepud-pretok" />
+        <entry key="ud-bel" value="deepud-pretok" />
+        <entry key="ud-bre" value="deepud-pretok" />
+        <entry key="ud-bul" value="deepud-pretok" />
+        <entry key="ud-cat" value="deepud-pretok" />
+        <entry key="ud-ces" value="deepud-pretok" />
+        <entry key="ud-chu" value="deepud-pretok" />
+        <entry key="ud-cop" value="deepud-pretok" />
+        <entry key="ud-cym" value="deepud-pretok" />
+        <entry key="ud-dan" value="deepud-pretok" />
+        <entry key="ud-deu" value="deepud-pretok" />
+        <entry key="ud-ell" value="deepud-pretok" />
+        <entry key="ud-eng" value="deepud-pretok" />
+        <entry key="ud-est" value="deepud-pretok" />
+        <entry key="ud-eus" value="deepud-pretok" />
+        <entry key="ud-fas" value="deepud-pretok" />
+        <entry key="ud-fin" value="deepud-pretok" />
+        <entry key="ud-fra" value="deepud-pretok" />
+        <entry key="ud-fro" value="deepud-pretok" />
+        <entry key="ud-gla" value="deepud-pretok" />
+        <entry key="ud-gle" value="deepud-pretok" />
+        <entry key="ud-glg" value="deepud-pretok" />
+        <entry key="ud-heb" value="deepud-pretok" />
+        <entry key="ud-hin" value="deepud-pretok" />
+        <entry key="ud-hrv" value="deepud-pretok" />
+        <entry key="ud-hun" value="deepud-pretok" />
+        <entry key="ud-hye" value="deepud-pretok" />
+        <entry key="ud-ind" value="deepud-pretok" />
+        <entry key="ud-ita" value="deepud-pretok" />
+        <entry key="ud-jpn" value="deepud-pretok" />
+        <entry key="ud-kaz" value="deepud-pretok" />
+        <entry key="ud-kmr" value="deepud-pretok" />
+        <entry key="ud-kor" value="deepud-pretok" />
+        <entry key="ud-lat" value="deepud-pretok" />
+        <entry key="ud-lav" value="deepud-pretok" />
+        <entry key="ud-lit" value="deepud-pretok" />
+        <entry key="ud-lzh" value="deepud-pretok" />
+        <entry key="ud-mar" value="deepud-pretok" />
+        <entry key="ud-mlt" value="deepud-pretok" />
+        <entry key="ud-nld" value="deepud-pretok" />
+        <entry key="ud-nno" value="deepud-pretok" />
+        <entry key="ud-nob" value="deepud-pretok" />
+        <entry key="ud-orv" value="deepud-pretok" />
+        <entry key="ud-pcm" value="deepud-pretok" />
+        <entry key="ud-pol" value="deepud-pretok" />
+        <entry key="ud-por" value="deepud-pretok" />
+        <entry key="ud-ron" value="deepud-pretok" />
+        <entry key="ud-rus" value="deepud-pretok" />
+        <entry key="ud-slk" value="deepud-pretok" />
+        <entry key="ud-slv" value="deepud-pretok" />
+        <entry key="ud-sme" value="deepud-pretok" />
+        <entry key="ud-spa" value="deepud-pretok" />
+        <entry key="ud-sqi" value="deepud-pretok" />
+        <entry key="ud-srp" value="deepud-pretok" />
+        <entry key="ud-swe" value="deepud-pretok" />
+        <entry key="ud-tam" value="deepud-pretok" />
+        <entry key="ud-tel" value="deepud-pretok" />
+        <entry key="ud-tha" value="deepud-pretok" />
+        <entry key="ud-tur" value="deepud-pretok" />
+        <entry key="ud-uig" value="deepud-pretok" />
+        <entry key="ud-ukr" value="deepud-pretok" />
+        <entry key="ud-urd" value="deepud-pretok" />
+        <entry key="ud-vie" value="deepud-pretok" />
+        <entry key="ud-wol" value="deepud-pretok" />
+        <entry key="ud-zho-simp" value="deepud-pretok" />
+        <entry key="ud-zho" value="deepud-pretok" />
+
       </map>
       <map name="deepud-tok">
         <entry key="eng.ud" value="deepud-tok"/>

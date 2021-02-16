@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -34,7 +34,6 @@ using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::MediaticData;
 
 namespace Lima {
-
 
 class MediaProcessorsPrivate
 {
@@ -255,6 +254,30 @@ const MediaAnalysisDumper* MediaProcessors::getAnalysisDumperForId (
       return nullptr;
   }
   return medItr->second;
+}
+
+void MediaProcessors::getAvailableMedia ( std::set<MediaId>& ids ) const
+{
+  ids.clear();
+  for ( auto & kv : m_d->m_pipelines )
+  {
+    for ( auto & id2pipeline : kv.second )
+    {
+      ids.insert(id2pipeline.first);
+    }
+  }
+}
+
+void MediaProcessors::getAvailablePipelinesForMedia ( MediaId id, std::set<std::string>& pipelines ) const
+{
+  pipelines.clear();
+  for ( auto & kv : m_d->m_pipelines )
+  {
+    if (kv.second.cend() != kv.second.find(id))
+    {
+      pipelines.insert(kv.first);
+    }
+  }
 }
 
 // two arguments: first is the module to modify, second is the module in which
