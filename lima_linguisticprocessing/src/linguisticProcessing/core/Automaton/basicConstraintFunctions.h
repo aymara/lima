@@ -49,6 +49,7 @@ namespace Automaton {
 #define LinguisticPropertyIsId "LinguisticPropertyIs"
 #define LengthInIntervalId "LengthInInterval"
 #define NumericValueInIntervalId "NumericValueInIntervalId"
+#define NoSpaceWithId "NoSpaceWith"
 
 /**
  * generic agreement constraint function: complement
@@ -144,6 +145,23 @@ private:
   uint64_t m_min;
   uint64_t m_max;
 };
+
+/* check if the considered token has no whitespace separator with the other token
+ * (e.g. '-' is a minus sign if not separated from following number)
+ */
+class LIMA_AUTOMATON_EXPORT NoSpaceWith : public ConstraintFunction
+{
+public:
+  NoSpaceWith(MediaId language,
+                      const LimaString& complement=LimaString());
+  ~NoSpaceWith() {}
+  bool operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                  const LinguisticGraphVertex& v1,
+                  const LinguisticGraphVertex& v2,
+                  AnalysisContent& analysis) const override;
+private:
+};
+
 
 } // end namespace
 } // end namespace
