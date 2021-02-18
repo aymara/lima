@@ -19,13 +19,26 @@ C2LC = { 'lang2code': {}, 'code2lang': {} }
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--lang', type=str, required=True,
+    parser.add_argument('-i', '--info',
+                        help='print list of available languages and exit', action='store_true')
+    parser.add_argument('-l', '--lang', type=str,
                         help='language name or language code (example: \'english\' or \'eng\')')
     parser.add_argument('-d', '--dest', type=str,
                         help='destination directory')
     parser.add_argument('-s', '--select', type=str,
-                        help='select particular models to install: tokenizer, morphosyntax, lemmatizer (comma separated list)')
+                        help='select particular models to install: tokenizer, morphosyntax, lemmatizer (comma-separated list)')
     args = parser.parse_args()
+
+    if args.info is not None and args.info:
+        find_lang_code('eng')
+        for code in C2LC['code2lang']:
+            print('%-10s\t%s' % (code, C2LC['code2lang'][code]))
+        return
+
+    if args.lang is None:
+        sys.stderr.write('ERROR: the following argument is required: -l/--lang\n\n')
+        parser.print_help()
+        sys.exit(-1)
 
     code, lang = find_lang_code(args.lang.lower())
     deb_url = URL_DEB % (code, lang)
