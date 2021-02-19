@@ -69,9 +69,9 @@ private:
                            std::map<std::string, std::pair<std::string, int> >& matchingElements) const;
                            
   // return the template to be removed (either numTemplate or numOtherTemplate)
-  unsigned int mergeTemplates(EventTemplate& e1, EventTemplate& e2,
-                              unsigned int numTemplate, unsigned int numOtherTemplate,
-                              std::map<std::string, std::pair<std::string, int> >& matchingElements) const;
+  bool mergeTemplates(EventTemplate& e1, EventTemplate& e2,
+                      unsigned int numTemplate, unsigned int numOtherTemplate,
+                      unsigned int& templateToRemove) const;
 
   
 };

@@ -46,7 +46,10 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplate
   bool isMainEvent() const { return m_mainEvent; }
   uint64_t getPosBegin() const { return m_posBegin; }
   uint64_t getPosEnd() const { return m_posEnd; }
-  
+
+  LIMA_EVENTANALISYS_EXPORT  friend std::ostream& operator<<(std::ostream& os, const EventTemplate& e);
+  LIMA_EVENTANALISYS_EXPORT  friend QDebug& operator<<(QDebug& os, const EventTemplate& e);
+
  private:
   std::map<std::string,EventTemplateElement> m_template;
   double m_weight;

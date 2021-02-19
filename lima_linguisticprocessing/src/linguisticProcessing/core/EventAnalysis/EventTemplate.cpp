@@ -70,6 +70,22 @@ const EventTemplateElement& EventTemplate::getElement(const std::string& role) c
   return (*it).second;
 }
 
+std::ostream& operator<<(std::ostream& os, const EventTemplate& e)
+{
+  os << e.m_type << "/[" << e.m_posBegin << "-" << e.m_posEnd << "]";
+  for (const auto& elt: e.m_template) {
+    os << "/" << elt.first << ":" << elt.second;
+  }
+  return os;
+}
+QDebug& operator<<(QDebug& os, const EventTemplate& e)
+{
+  std::ostringstream oss;
+  oss << e;
+  os << oss.str();
+  return os;
+}
+
 
 } // end namespace
 } // end namespace

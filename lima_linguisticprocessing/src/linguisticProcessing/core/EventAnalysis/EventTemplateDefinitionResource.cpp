@@ -143,8 +143,8 @@ existsMapping(const std::string& eltName1, const std::string& eltName2) const
       }
     }
   }
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
+  //LOGINIT("LP::EventAnalysis");
+  //LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
   return res;
 }
 
