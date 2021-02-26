@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -67,7 +67,7 @@ void EventTemplateMerging::init(
 
 {
   MediaId language=manager->getInitializationParameters().media;
-  
+
   try {
     std::string templateResource=unitConfiguration.getParamsValueAtKey("eventTemplate");
     AbstractResource* res=LinguisticResources::single().getResource(language,templateResource);
@@ -85,12 +85,12 @@ void EventTemplateMerging::init(
     LERROR << "TemplateMerging: Missing ressource for 'eventTemplate' parameter" << e.what();
     //throw InvalidConfiguration;
   }
-  
+
   try {
     m_mandatoryElements=unitConfiguration.getListsValueAtKey("mandatoryElements");
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
-  
+
   try {
     std::string s=unitConfiguration.getParamsValueAtKey("maxCharCompatibleEvents");
     m_maxCharCompatibleEvents=std::stoul(s);
@@ -117,7 +117,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   // ad hoc strategy for merging event templates
   LOGINIT("LP::EventAnalysis");
   TimeUtils::updateCurrentTime();
-  
+
   // get EventTemplateData
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
@@ -126,7 +126,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   }
 
   // merge templates according to their positions and positions of intermediate entities
-  
+
   /*
   // gather entities by position
   vector<pair<uint64_t, Common::MediaticData::EntityType> > entities;
@@ -139,7 +139,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   for (EventTemplateData::iterator it=eventData->begin(),it_end=eventData->end();it!=it_end;it++)
   {
     map<string,EventTemplateElement>& elts=(*it).getTemplateElements();
-    for (map<string,EventTemplateElement>::const_iterator fill=elts.begin(),fill_end=elts.end(); fill!=fill_end; fill++) 
+    for (map<string,EventTemplateElement>::const_iterator fill=elts.begin(),fill_end=elts.end(); fill!=fill_end; fill++)
     {
       templateElements.push_back(make_pair((*fill).second.getPosition(),make_pair(first,numTemplate)));
     }
@@ -148,7 +148,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
   */
 
   LDEBUG << "TemplateMerging: merge templates of type" << m_templateDefinition->getName();
-  
+
   std::set<uint64_t> toRemove;
   uint64_t numTemplate=0;
   for (EventTemplateData::iterator it1=eventData->begin(),it_end=eventData->end();it1!=it_end;it1++,numTemplate++)
@@ -161,16 +161,16 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
     if (toRemove.find(numTemplate)!=toRemove.end()) {
       continue;
     }
-    
+
     // begin comparison with next template
-    EventTemplateData::iterator it2=it1; 
+    EventTemplateData::iterator it2=it1;
     uint64_t numOtherTemplate=numTemplate; // only used for debug messages
     for (it2++,numOtherTemplate++; it2!=it_end; it2++,numOtherTemplate++)
     {
       if ((*it2).getType()!=m_templateDefinition->getName()) {
         continue;
       }
-      
+
       if (toRemove.find(numOtherTemplate)!=toRemove.end()) {
         continue;
       }
@@ -180,8 +180,8 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
         continue;
       }
 
-      LDEBUG << "TemplateMerging: compare templates" 
-      << numTemplate+1 << "and" << numOtherTemplate+1 << ":\n" 
+      LDEBUG << "TemplateMerging: compare templates"
+      << numTemplate+1 << "and" << numOtherTemplate+1 << ":\n"
       << *it1 << "\n" << *it2;
 
       unsigned int templateToRemove(0);
@@ -203,7 +203,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
 //         //break;
 //       }
 //       else{
-//         //LDEBUG << "TemplateMerging: template" 
+//         //LDEBUG << "TemplateMerging: template"
 //         //<< (numTemplate+1) << " not compatible with template"
 //         //<< (numOtherTemplate+1);
 //       }
@@ -212,7 +212,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
 
   // remove merged templates : get template number in reverse
   for (set<uint64_t>::reverse_iterator it=toRemove.rbegin(),
-    it_end=toRemove.rend(); it!=it_end; it++) 
+    it_end=toRemove.rend(); it!=it_end; it++)
   {
     LDEBUG << "Erase template" << (*it)+1;
     eventData->erase(eventData->begin()+(*it));
@@ -241,7 +241,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
       }
     }
   }
-  
+
   return SUCCESS_ID;
 }
 
@@ -265,34 +265,34 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
     posdiff=e2.getPosBegin()-e1.getPosEnd();
   }
   if (posdiff >m_maxCharCompatibleEvents) {
-    LDEBUG << "TemplateMerging: templates" 
-    << (numTemplate+1) << "and" << (numOtherTemplate+1) 
+    LDEBUG << "TemplateMerging: templates"
+    << (numTemplate+1) << "and" << (numOtherTemplate+1)
     << "not compatible: too much apart ("<< posdiff << "chars)";
     return false;
   }
-  
+
   const map<string,EventTemplateElement>& templateElements1=e1.getTemplateElements();
   const map<string,EventTemplateElement>& templateElements2=e2.getTemplateElements();
 
   for (map<string,EventTemplateElement>::const_iterator fill=templateElements2.begin(),
-    fill_end=templateElements2.end(); fill!=fill_end; fill++) 
+    fill_end=templateElements2.end(); fill!=fill_end; fill++)
   {
     const std::string& role=(*fill).first;
     const EventTemplateElement& elt=(*fill).second;
-    
+
     map<string,EventTemplateElement>::const_iterator found=templateElements1.find(role);
     if (found!=templateElements1.end()) {
       // same role, check value
       if (elt.isSimilar((*found).second)) {
-        LDEBUG << "TemplateMerging: templates" 
-        << (numTemplate+1) << "and" << (numOtherTemplate+1) 
+        LDEBUG << "TemplateMerging: templates"
+        << (numTemplate+1) << "and" << (numOtherTemplate+1)
         << ":" << role << ": compatible value";
         matchingElements[role]=make_pair(role,0);
       }
       else {
         // different values, assume templates of different elements
-        LDEBUG << "TemplateMerging: templates" 
-        << (numTemplate+1) << "and" << (numOtherTemplate+1) 
+        LDEBUG << "TemplateMerging: templates"
+        << (numTemplate+1) << "and" << (numOtherTemplate+1)
         << ":" << role << ": incompatible value";
         return false;
       }
@@ -300,7 +300,7 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
     else { // try to find mapping through constraint
       bool mappingFound=false;
       for (map<string,EventTemplateElement>::const_iterator e=templateElements1.begin(),
-        e_end=templateElements1.end(); e!=e_end; e++) 
+        e_end=templateElements1.end(); e!=e_end; e++)
       {
         int mapping=m_templateDefinition->existsMapping((*e).first,role);
         if (mapping!=0) {
@@ -311,8 +311,8 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
           }
           else {
             // different values, assume templates of different elements
-            LDEBUG << "TemplateMerging: templates" 
-            << (numTemplate+1) << "and" << (numOtherTemplate+1) 
+            LDEBUG << "TemplateMerging: templates"
+            << (numTemplate+1) << "and" << (numOtherTemplate+1)
             << ":" << role << "/" << (*e).first << ": incompatible value";
             return false;
           }
@@ -320,9 +320,9 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
           break;
         }
       }
-      if (not mappingFound) {
-        LDEBUG << "TemplateMerging: templates" 
-        << (numTemplate+1) << "and" << (numOtherTemplate+1) 
+      if (! mappingFound) {
+        LDEBUG << "TemplateMerging: templates"
+        << (numTemplate+1) << "and" << (numOtherTemplate+1)
         << ":" << role << ": not found";
       }
     }
@@ -335,30 +335,30 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
                unsigned int numTemplate, unsigned int numOtherTemplate,
                unsigned int& templateToRemove) const
 {
-  // merge isn't always in the same order: we want to keep elements from the template with the smallest span, 
+  // merge isn't always in the same order: we want to keep elements from the template with the smallest span,
   // to avoid having info from all over the place, even if they are equal (e.g. for brat visualization after extraction)
   // sometimes, info is merged from e1 to e2, sometimes from e1 to e2
   // templateToRemove indicates which (between numTemplate and numOtherTemplate) has been merged into the other
   // and can be removed
-  
+
   // for the moment, reuse the existing compatibleTemplates function
   // (probably not optimal)
-  
+
   LOGINIT("LP::EventAnalysis");
 
   // while comparing templates for compatibility, store matching elements:
-  // map associating a role1 with a pair (role2,mapping) where the other_role is the role that matches 
-  // role1 and the mapping: 0 if equality, otherwise oriented mapping: 1 if mapping elt1 -> elt2, 
+  // map associating a role1 with a pair (role2,mapping) where the other_role is the role that matches
+  // role1 and the mapping: 0 if equality, otherwise oriented mapping: 1 if mapping elt1 -> elt2,
   // -1 if mapping elt2 -> elt1
   map<string,pair<string, int> > matchingElements;
-  
+
   // by default merge 1 into 2
   // use pointers instead of references to reassign them if merge is the other way
   map<string,EventTemplateElement>* sourceElements=&(e1.getTemplateElements());
   map<string,EventTemplateElement>* targetElements=&(e2.getTemplateElements());
- 
-  
-  // heuristic: keep the templates with the most elements 
+
+
+  // heuristic: keep the templates with the most elements
   if (e1.getTemplateElements().size() > e2.getTemplateElements().size()) {
     if (!compatibleTemplates(e2,e1,numOtherTemplate,numTemplate,matchingElements)) {
       return false;
@@ -374,8 +374,8 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
     LDEBUG << "TemplateMerging: merge" << numTemplate+1 << "into" << numOtherTemplate+1;
     templateToRemove=numTemplate;
   }
-  
-  for (const auto& elt1: *sourceElements) 
+
+  for (const auto& elt1: *sourceElements)
   {
     map<string,pair<string,int> >::const_iterator match=matchingElements.find(elt1.first);
     if (match==matchingElements.end()) {
