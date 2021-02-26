@@ -44,8 +44,12 @@ def main():
     deb_url = URL_DEB % (code, lang)
 
     if args.dest is None or len(args.dest) == 0:
-        home_dir = os.path.expanduser('~')
-        target_dir = os.path.join(home_dir, '.lima', 'resources')
+        if 'XDG_DATA_HOME' in os.environ and len(os.environ['XDG_DATA_HOME']) > 0:
+            target_dir_prefix = os.environ['XDG_DATA_HOME']
+        else:
+            home_dir = os.path.expanduser('~')
+            target_dir_prefix = os.path.join(home_dir, '.local', 'share')
+        target_dir = os.path.join(target_dir_prefix, 'lima', 'resources')
     else:
         target_dir = args.dest
 
