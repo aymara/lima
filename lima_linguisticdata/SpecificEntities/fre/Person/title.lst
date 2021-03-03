@@ -1,17 +1,17 @@
 @Title=(
-M.,monsieur,
-Mme,madame,
-Mmes,mesdames,
-Mlle,mademoiselle,
-Me,maître,
-Dr,docteur,
-Pr,professeur,
+M.,monsieur,Monsieur,
+Mme,madame,Madame,
+Mlle,mademoiselle,Mademoiselle,
+Me,maître,Maître,
+Dr,docteur,Docteur
+Pr,professeur,Professeur,
 S.M.,Sa Majesté,
 S.E.,Son Excellence
 )
 
 @TitlePlural=(
-MM,MM.,MM .,messieurs,
+MM,MM.,MM .,messieurs,Messieurs,
+Mmes,mesdames,Mesdames,
 Mlles,mesdemoiselles,
 Mes,maîtres,
 Drs,docteurs,
