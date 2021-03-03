@@ -110,6 +110,10 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       annotationData->annotation(annotVertex, m_entityAnnotation).
       pointerValue<SpecificEntityAnnotation>();
       
+#ifdef DEBUG_LP
+      AULOGINIT;
+      LDEBUG << "EntityTransition: compare entity types " << m_entityType << " and " <<  se->getType();
+#endif
       if (m_entityType == se->getType() || Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType))
       {
         return true;
