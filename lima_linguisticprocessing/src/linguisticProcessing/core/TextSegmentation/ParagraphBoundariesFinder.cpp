@@ -45,7 +45,8 @@ SimpleFactory<MediaProcessUnit,ParagraphBoundariesFinder> paragraphBoundariesFin
 ParagraphBoundariesFinder::ParagraphBoundariesFinder():
 MediaProcessUnit(),
 m_graph("PosGraph"),
-m_paragraphSeparator()
+m_paragraphSeparator(),
+m_dataName("ParagraphBoundaries")
 {
   m_paragraphSeparator=Common::Misc::utf8stdstring2limastring("\n\n");
 }
@@ -73,6 +74,16 @@ void ParagraphBoundariesFinder::init(
 
   try
   {
+    m_dataName=unitConfiguration.getParamsValueAtKey("data");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // optional: keep default
+  }
+
+  
+  try
+  {
     m_paragraphSeparator=Common::Misc::utf8stdstring2limastring(unitConfiguration.getParamsValueAtKey("paragraphSeparator"));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
@@ -97,7 +108,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
     return MISSING_DATA;
   }
   SegmentationData* boundaries=new SegmentationData(m_graph);
-  analysis.setData("ParagraphBoundaries",boundaries);
+  analysis.setData(m_dataName,boundaries);
 
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
   
@@ -139,8 +150,16 @@ LimaStatusCode ParagraphBoundariesFinder::process(
       Token* t = get(vertex_token,*(graph->getGraph()),currentVertex);
       uint64_t position=t->position();
       if (position >= (paragraphPositions[parNum]+1)) {
-        boundaries->add(Segment("paragraph",beginParagraph,currentVertex,graph));
-        beginParagraph=currentVertex;
+        // end vertex is previous vertex
+        LinguisticGraphInEdgeIt inEdge,inEdge_end;
+        boost::tie(inEdge,inEdge_end)=in_edges(currentVertex,*(graph->getGraph()));
+        LinguisticGraphVertex prevVertex=source(*inEdge,*(graph->getGraph()));
+        if (beginParagraph!=prevVertex) {
+          boundaries->add(Segment("paragraph",beginParagraph,prevVertex,graph));
+        }
+        beginParagraph=prevVertex;
+        //boundaries->add(Segment("paragraph",beginParagraph,currentVertex,graph));
+        //beginParagraph=currentVertex;
         parNum++;
         if (parNum >= paragraphPositions.size()) {
           break;
@@ -159,6 +178,11 @@ LimaStatusCode ParagraphBoundariesFinder::process(
         visited.insert(next);
       }
     }
+  }
+  
+  // add last segment as a paragraph
+  if (beginParagraph!=graph->lastVertex()) {
+    boundaries->add(Segment("paragraph",beginParagraph,graph->lastVertex(),graph));
   }
   
   TimeUtils::logElapsedTime("ParagraphBoundariesFinder");
