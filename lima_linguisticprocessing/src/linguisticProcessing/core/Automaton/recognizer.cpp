@@ -693,6 +693,17 @@ uint64_t Recognizer::
   // patch for inifinite loop : avoid begin stopped at first step
   //visited.insert(begin);
 
+  //match may include the last vertex: store following vertices to check on those
+  set<LinguisticGraphVertex> afterTheEnd;
+  if (downstreamBound!=graph.lastVertex()) {
+    LinguisticGraphOutEdgeIt outEdge,outEdge_end;
+    boost::tie (outEdge,outEdge_end)=out_edges(downstreamBound,*(graph.getGraph()));
+    for (; outEdge!=outEdge_end; outEdge++) {
+      LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
+      afterTheEnd.insert(next);
+    }
+  }
+  
   bool lastReached = false;
   while (!toVisit.empty())
   {
@@ -718,7 +729,7 @@ uint64_t Recognizer::
       lastReached = true;
     }
 
-    if (currentVertex != graph.firstVertex()) {
+    if (currentVertex != graph.firstVertex() && currentVertex != begin) {
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
 #endif
@@ -733,6 +744,15 @@ uint64_t Recognizer::
         if (returnAtFirstSuccess)
           return numberOfRecognized;
         if (! testAllVertices) { // restart from end of recognized expression
+          // with useSentenceBounds, may be the case that the last vertex in the sentence/segment 
+          // is in the recognized expression: currentVertex may be outside the scope of the sentence
+          // how to test that ? => check if is a vertex following the downstreamBound
+          if (currentVertex==end || afterTheEnd.find(currentVertex)!=afterTheEnd.end()) {
+#ifdef DEBUG_LP
+          LDEBUG << "success: reached the end, stop";
+#endif
+            break;
+          }
 #ifdef DEBUG_LP
           LDEBUG << "success: continue from vertex " << currentVertex;
 #endif
