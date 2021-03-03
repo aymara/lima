@@ -480,6 +480,9 @@ public:
     if (eventMentionType!=other.eventMentionType) {
       return false;
     }
+    if (eventMentionString!=other.eventMentionString) {
+      return false;
+    }
     for (const auto& role: eventRoleId) {
       if (std::find(other.eventRoleId.begin(), other.eventRoleId.end(), role) == other.eventRoleId.end()) {
         return false;
@@ -496,6 +499,9 @@ public:
       os << "[" << e.eventRoleType[i] << ":" << e.eventRoleId[i] << "]";
     }
     return os;
+  }
+  friend QDebug& operator<<(QDebug& os, const EventInfos e) {
+    ostringstream oss; oss << e; os << oss.str(); return os;
   }
 
 };
@@ -592,9 +598,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
           }
         }
       }
-      ostringstream oss;
-      oss << eventInfos;
-      LDEBUG << "Add event infos" << oss.str();
+      LDEBUG << "Add event infos" << eventInfos;
       events.insert(eventInfos);
       LDEBUG << "=>" << events.size() << "events";
       // use a bufferEvents to have all event mentions as entities before all events
@@ -623,6 +627,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
     bool isIncluded(false);
     for (set<EventInfos>::iterator it2=std::next(it); it2!=events.end(); it2++) {
       if ((*it).isIncluded(*it2)) {
+        LDEBUG << "=> filter event" << *it << "(included in" << *it2 << ")";
         isIncluded=true;
         it=events.erase(it);
         break;
@@ -1008,7 +1013,7 @@ getSemanticRelationAnnotation(LinguisticGraphVertex v,
 
 void AbstractIEDumper::adjustPosition(std::uint64_t& position, uint64_t offset) const
 {
-  DUMPERLOGINIT;
+  //DUMPERLOGINIT;
   std::uint64_t prevPos(position);
   if (m_offsetMapping!=0) {
     position=m_offsetMapping->getOriginalOffset(position)+offset;
@@ -1017,7 +1022,7 @@ void AbstractIEDumper::adjustPosition(std::uint64_t& position, uint64_t offset) 
     position+=offset;
   }
 
-  LDEBUG << "AbstractIEDumper::adjustPosition" << prevPos << "->" << position;
+  //LDEBUG << "AbstractIEDumper::adjustPosition" << prevPos << "->" << position;
 }
 
 void AbstractIEDumper::adjustPositions(std::vector<pair<uint64_t,uint64_t> >& positions, uint64_t offset) const
