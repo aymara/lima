@@ -1,5 +1,6 @@
 LIMA - Libre Multilingual Analyzer
 ==================================
+![LIMA logo](https://raw.githubusercontent.com/aymara/lima/master/pics/lima-logo.png)
 
 **PLEASE DON'T USE THE 'Download ZIP' BUTTON ON THE GITHUB LIMA HOME PAGE (this page when viewed from GitHub) TO DOWNLOAD SOURCE CODE. Use git clone in command line instead. Otherwise build instructions won't work.**
 
