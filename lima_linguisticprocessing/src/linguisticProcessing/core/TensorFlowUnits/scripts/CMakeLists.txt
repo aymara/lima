@@ -19,7 +19,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 ########### install files ###############
 install(
     PROGRAMS
-        install_models.py
+        lima_models.py
     DESTINATION
         bin
     COMPONENT
