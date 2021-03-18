@@ -1206,7 +1206,7 @@ void TensorFlowLemmatizerPrivate::lemmatize(vector<TSentence>& sentences,
     }
   }
 
-  save_cache("lemmatizer.cache");
+  //save_cache("lemmatizer.cache");
 }
 
 size_t TensorFlowLemmatizerPrivate::get_code_for_feature(const TToken &token,
