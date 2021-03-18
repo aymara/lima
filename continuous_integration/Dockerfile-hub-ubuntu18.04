@@ -70,8 +70,8 @@ ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 RUN pip3 install unix_ar requests tqdm
 
 # install English and French UD models
-RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/install_models.py -l english
-RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/install_models.py -l french
+RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/lima_models.py -l english
+RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/lima_models.py -l french
 
 # Build
 #
