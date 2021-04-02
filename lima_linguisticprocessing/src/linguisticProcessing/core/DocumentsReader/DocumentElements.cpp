@@ -15,6 +15,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
+#include "contentDocument.h"
 
 using namespace std;
 using namespace Lima;
@@ -203,7 +204,8 @@ void AbstractStructuredDocumentElementWithProperties::setPropagatedValue(
 
     case STORAGE_DATE: {
       QDate dateValue;
-      // TODO move AbstractDocumentXMLParser::ParseDate()
+      QDate dateIgnore;
+      ContentStructuredDocument::parseDate(data,dateValue,dateIgnore);
       GenericDocumentProperties::setDateValue(property.getId(), dateValue);
       }
       break;

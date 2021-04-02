@@ -94,7 +94,7 @@ GenericDocumentProperties::GenericDocumentProperties(const GenericDocumentProper
     m_d(new GenericDocumentPropertiesPrivate(*p.m_d))
 {
 }
-  
+
 //***********************************************************************
 // destructor
 //***********************************************************************
@@ -136,8 +136,8 @@ void GenericDocumentProperties::setDateIntervalValue(const std::string& propName
 
 
 std::pair<uint64_t, bool>
-GenericDocumentProperties::getIntValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getIntValue(std::string propName) const
+{
   std::map<std::string,uint64_t>::const_iterator pos = m_d->m_intValues.find(propName);
   if( pos == m_d->m_intValues.end() ) {
     return( std::pair<uint64_t, bool>(0,false) );
@@ -148,8 +148,8 @@ GenericDocumentProperties::getIntValue(std::string propName) const
 }
 
 std::pair<std::string, bool>
-GenericDocumentProperties::getStringValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getStringValue(std::string propName) const
+{
   std::map<std::string,std::string>::const_iterator pos = m_d->m_stringValues.find(propName);
   if( pos == m_d->m_stringValues.end() ) {
     return( std::pair<std::string, bool>("",false) );
@@ -160,8 +160,8 @@ GenericDocumentProperties::getStringValue(std::string propName) const
 }
 
 std::pair<QDate, bool>
-GenericDocumentProperties::getDateValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getDateValue(std::string propName) const
+{
   std::map<std::string,QDate>::const_iterator pos = m_d->m_dateValues.find(propName);
   if( pos == m_d->m_dateValues.end() ) {
     return( std::pair<QDate, bool>(QDate(),false) );
@@ -172,8 +172,8 @@ GenericDocumentProperties::getDateValue(std::string propName) const
 }
 
 std::pair<std::pair<QDate,QDate>, bool>
-GenericDocumentProperties::getDateIntervalValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getDateIntervalValue(std::string propName) const
+{
   std::map<std::string,std::pair<QDate,QDate> >::const_iterator pos = m_d->m_dateIntervalValues.find(propName);
   if( pos == m_d->m_dateIntervalValues.end() ) {
     std::pair<QDate,QDate> defaultInterval;
@@ -184,7 +184,7 @@ GenericDocumentProperties::getDateIntervalValue(std::string propName) const
     return( std::pair<std::pair<QDate,QDate>, bool>((*pos).second,true) );
   }
 }
-  
+
 std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getMultipleStringPropValue(std::string propName) const {
   std::map<std::string,std::vector<std::string> >::const_iterator pos = m_d->m_multipleStringValues.find(propName);
   if( pos == m_d->m_multipleStringValues.end() ) {
@@ -238,25 +238,25 @@ std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<s
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.begin()),
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.end()) );
 }
-  
-void GenericDocumentProperties::addStringValue(const std::string& propName, 
-                                               const std::string& val) 
-{ 
+
+void GenericDocumentProperties::addStringValue(const std::string& propName,
+                                               const std::string& val)
+{
   std::map<std::string,std::vector<std::string> >::iterator pos = m_d->m_multipleStringValues.find(propName);
   if( pos == m_d->m_multipleStringValues.end() ) {
     std::vector<std::string> values;
     values.push_back(val);
     m_d->m_multipleStringValues.insert(std::pair<std::string,std::vector<std::string> >(propName,values) );
-  }  
+  }
   else {
     std::vector<std::string>& values = (*pos).second;
     values.push_back(val);
   }
-} 
+}
 
-void GenericDocumentProperties::addWeightedPropValue(const std::string& propName, 
-                                               const std::pair<std::string,float>& val) 
-{ 
+void GenericDocumentProperties::addWeightedPropValue(const std::string& propName,
+                                               const std::pair<std::string,float>& val)
+{
   std::map<std::string,std::vector<std::pair<std::string,float> > >::iterator pos = m_d->m_multipleWeightedPropValues.find(propName);
   if( pos == m_d->m_multipleWeightedPropValues.end() ) {
     std::vector<std::pair<std::string,float> > values;
@@ -267,9 +267,9 @@ void GenericDocumentProperties::addWeightedPropValue(const std::string& propName
     std::vector<std::pair<std::string,float> >& values = (*pos).second;
     values.push_back(val);
   }
-} 
+}
 
-  
+
 //***********************************************************************
 // binary read/write functions
 //***********************************************************************
@@ -336,11 +336,12 @@ void GenericDocumentProperties::read(std::istream& file) {
 
 #ifdef DEBUG_CD
   BOWLOGINIT;
+  LDEBUG << "GenericDocumentProperties::read()";
 #endif
   // read integer properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
-  LDEBUG << "read size " << size;
+  LDEBUG << "read" << size << "int properties";
 #endif
   for (uint32_t i(0); i<size; i++) {
     string name;
@@ -348,15 +349,15 @@ void GenericDocumentProperties::read(std::istream& file) {
     uint64_t val;
     file.read((char*) &val, sizeof(uint64_t));
 #ifdef DEBUG_CD
-    LDEBUG << "read int " << val << " as value of " << name.c_str();
+    LDEBUG << "read int '" << val << "' as value of " << name.c_str();
 #endif
     m_d->m_intValues.insert(std::pair<std::string,uint64_t>(name,val));
   }
-  
+
   // read string properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
-  LDEBUG << "read size " << size;
+  LDEBUG << "read" << size << "string properties";
 #endif
   for (uint32_t i(0); i<size; i++) {
     string name;
@@ -364,7 +365,7 @@ void GenericDocumentProperties::read(std::istream& file) {
     string str;
     Misc::readStringField(file,str);
 #ifdef DEBUG_CD
-    LDEBUG << "read string " << str.c_str() << " as value of " << name.c_str();
+    LDEBUG << "read string '" << str.c_str() << "' as value of " << name.c_str();
 #endif
     m_d->m_stringValues.insert(std::pair<std::string,std::string>(name,str) );
   }
@@ -372,7 +373,7 @@ void GenericDocumentProperties::read(std::istream& file) {
   // read date properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
-  LDEBUG << "read size " << size;
+  LDEBUG << "read" << size << "date properties";
 #endif
   for (uint32_t i(0); i<size; i++) {
     string name;
@@ -380,7 +381,7 @@ void GenericDocumentProperties::read(std::istream& file) {
     QDate d=m_d->readDate(file);
     string strDate=d.toString().toUtf8().data();
 #ifdef DEBUG_CD
-    LDEBUG << "read date " << strDate.c_str() << " as value of " << name.c_str();
+    LDEBUG << "read date '" << strDate.c_str() << "' as value of " << name.c_str();
 #endif
     m_d->m_dateValues.insert(std::pair<std::string,QDate>(name,d));
   }
@@ -388,7 +389,7 @@ void GenericDocumentProperties::read(std::istream& file) {
   // read date interval properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
-  LDEBUG << "read size " << size;
+  LDEBUG << "read" << size << "date-interval properties";
 #endif
   for (uint32_t i(0); i<size; i++) {
     string name;
@@ -398,7 +399,7 @@ void GenericDocumentProperties::read(std::istream& file) {
     string strStartDate=startD.toString().toUtf8().data();
     string strEndDate=endD.toString().toUtf8().data();
 #ifdef DEBUG_CD
-    LDEBUG << "read interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << " as value of " << name.c_str();
+    LDEBUG << "read date-interval [" << strStartDate.c_str() << "," << strEndDate.c_str() << "] as value of " << name.c_str();
 #endif
     std::pair<QDate,QDate> interval(startD,endD);
     m_d->m_dateIntervalValues.insert(std::pair<std::string,std::pair<QDate,QDate> >(name,interval));
@@ -407,7 +408,7 @@ void GenericDocumentProperties::read(std::istream& file) {
   // read multi-valued string properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
-  LDEBUG << "read size " << size;
+  LDEBUG << "read" << size << "multi-valued properties";
 #endif
   for (uint32_t i(0); i<size; i++) {
     string name;
@@ -419,7 +420,7 @@ void GenericDocumentProperties::read(std::istream& file) {
       string str;
       Misc::readStringField(file,str);
 #ifdef DEBUG_CD
-      LDEBUG << "read string " << str.c_str();
+      LDEBUG << "read string '" << str.c_str() <<"' as "<<j<<"/"<<sizeMultipleValues<< " value of" << name.c_str();
 #endif
       val.push_back(str);
     }
@@ -441,81 +442,105 @@ void GenericDocumentProperties::read(std::istream& file) {
       float weight;
       file.read((char*) &weight, sizeof(float));
       val.push_back(std::pair<std::string,float>(str,weight) );
+#ifdef DEBUG_CD
+      LDEBUG << "read weighted-string '" << str.c_str() <<":"<<weight<<"' as "<<j<<"/"<<sizeMultipleValues<< " value of" << name.c_str();
+#endif
     }
     m_d->m_multipleWeightedPropValues.insert(std::pair<std::string,vector<std::pair<std::string,float> > > (name,val) );
   }
 
-//   LDEBUG << "eop";
-
+#ifdef DEBUG_CD
+      LDEBUG << "end of properties";
+#endif
 }
 
 void GenericDocumentProperties::write(std::ostream& file) const {
   std::map <std::string, uint64_t >::size_type size(0);
 
-//   BOWLOGINIT;
-  
+#ifdef DEBUG_CD
+  BOWLOGINIT;
+  LDEBUG << "GenericDocumentProperties::write()";
+#endif
+
   // Write integer properties
   size=m_d->m_intValues.size();
-//   LDEBUG << "GenericDocumentProperties::write write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "int properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,uint64_t>::const_iterator it = m_d->m_intValues.begin() ;
      it != m_d->m_intValues.end() ; it++) {
-//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
-//     LDEBUG << "write int " << (*it).second;
+#ifdef DEBUG_CD
+    LDEBUG << "write int name" << (*it).first.c_str() << "value" << (*it).second;
+#endif
     file.write((char*) &((*it).second), sizeof(uint64_t));
   }
 //  Misc::writeStringField(file,"eoi");
-  
+
   // Write string properties
   size=m_d->m_stringValues.size();
-//   LDEBUG << "write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "string properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::string>::const_iterator it = m_d->m_stringValues.begin() ;
     it != m_d->m_stringValues.end() ; it++) {
-//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
-//   LDEBUG << "write string " << (*it).second.c_str();
+#ifdef DEBUG_CD
+  LDEBUG << "write string name" << (*it).first.c_str() << "value" << (*it).second;
+#endif
     Misc::writeStringField(file,(*it).second);
   }
 //  Misc::writeStringField(file,"eos");
 
   // Write date properties
   size=m_d->m_dateValues.size();
-//   LDEBUG << "write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "date properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,QDate>::const_iterator it = m_d->m_dateValues.begin() ;
      it != m_d->m_dateValues.end() ; it++) {
-//     LDEBUG << "write name " << (*it).first.c_str();
     Misc::writeStringField(file,(*it).first);
-    string strDate=(*it).second.toString().toUtf8().data();
-//     LDEBUG << "write date " << strDate.c_str();
+    //string strDate=(*it).second.toString().toUtf8().data();
+#ifdef DEBUG_CD
+  LDEBUG << "write date name" << (*it).first.c_str() << "value" << (*it).second;
+#endif
     m_d->writeDate(file,(*it).second);
   }
 //  Misc::writeStringField(file,"eod");
 
   // Write date interval properties
   size=m_d->m_dateIntervalValues.size();
-//   LDEBUG << "write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "date-interval properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::pair<QDate,QDate> >::const_iterator it
      = m_d->m_dateIntervalValues.begin() ;  it != m_d->m_dateIntervalValues.end() ; it++) {
     const std::pair<std::string,std::pair<QDate,QDate> >&val=*it;
     Misc::writeStringField(file,val.first);
-    string strStartDate=(val.second).first.toString().toUtf8().data();
-    string strEndDate=(val.second).second.toString().toUtf8().data();
-//   LDEBUG << "write interval [ " << strStartDate.c_str() << "," << strEndDate.c_str();
+    //string strStartDate=(val.second).first.toString().toUtf8().data();
+    //string strEndDate=(val.second).second.toString().toUtf8().data();
+#ifdef DEBUG_CD
+  LDEBUG << "write date-interval name [" << (val.second).first << "," << (val.second).second << "]";
+#endif
     m_d->writeDate(file,(val.second).first);
     m_d->writeDate(file,(val.second).second);
   }
 
   // Write multiple string properties
   size=m_d->m_multipleStringValues.size();
-//   LDEBUG << "write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "multi-valued properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::vector<std::string> >::const_iterator it = m_d->m_multipleStringValues.begin() ;
      it != m_d->m_multipleStringValues.end() ; it++) {
-//     LDEBUG << "write name " << (*it).first.c_str();
+#ifdef DEBUG_CD
+  LDEBUG << "write multi-valued  name" << (*it).first.c_str();;
+#endif
     Misc::writeStringField(file,(*it).first);
     const std::vector<std::string>& vval = (*it).second;
     std::vector<std::string >::size_type sizeMultipleValues=vval.size();
@@ -529,7 +554,9 @@ void GenericDocumentProperties::write(std::ostream& file) const {
 
   // Write multiple weighted properties
   size=m_d->m_multipleWeightedPropValues.size();
-//   LDEBUG << "write size " << size;
+#ifdef DEBUG_CD
+  LDEBUG << "write" << size << "weighted multi-valued properties";
+#endif
   file.write((char*) &size, sizeof(uint32_t));
   for (std::map<std::string,std::vector<std::pair<std::string,float> > >::const_iterator it =
      m_d->m_multipleWeightedPropValues.begin() ;
@@ -546,6 +573,9 @@ void GenericDocumentProperties::write(std::ostream& file) const {
     }
   }
 
+#ifdef DEBUG_CD
+      LDEBUG << "end of properties";
+#endif
 }
 
 //***********************************************************************
@@ -562,105 +592,140 @@ QDebug& operator << (QDebug& os, const GenericDocumentProperties& p) {
 }
 
 void GenericDocumentProperties::print(std::ostream& os) const {
-  
-  for (std::map<std::string,uint64_t>::const_iterator it = m_d->m_intValues.begin() ;
-       it != m_d->m_intValues.end() ; it++) {
-    os << (*it).first << "=" << (*it).second<< ";";
-       }
-       for (std::map<std::string,std::string>::const_iterator it = m_d->m_stringValues.begin() ;
-            it != m_d->m_stringValues.end() ; it++) {
-         os << (*it).first << "=" << (*it).second<< ";";
+
+  for (std::map<std::string, uint64_t>::const_iterator it =
+      m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
+    {
+      os << (*it).first << "=" << (*it).second << ";";
+    }
+  for (std::map<std::string, std::string>::const_iterator it =
+      m_d->m_stringValues.begin (); it != m_d->m_stringValues.end ();
+      it++)
+    {
+      os << (*it).first << "=" << (*it).second << ";";
+    }
+  for (std::map<std::string, QDate>::const_iterator it =
+      m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
+    {
+      os << (*it).first << "="
+          << (*it).second.toString ().toUtf8 ().data () << ";";
+    }
+  for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
+      m_d->m_dateIntervalValues.begin ();
+      it != m_d->m_dateIntervalValues.end (); it++)
+    {
+      os << (*it).first << "=["
+          << ((*it).second).first.toString ().toUtf8 ().data () << ","
+          << ((*it).second).second.toString ().toUtf8 ().data () << "];";
+    }
+  for (std::map<std::string, std::vector<std::string> >::const_iterator it =
+      m_d->m_multipleStringValues.begin ();
+      it != m_d->m_multipleStringValues.end (); it++)
+    {
+      os << (*it).first << "=";
+      const std::vector<std::string>& vval = (*it).second;
+      if (!vval.empty ())
+        {
+          std::vector<std::string>::const_iterator vit = vval.begin ();
+          os << *vit;
+          vit++;
+          for (; vit != vval.end (); vit++)
+            {
+              os << "," << *vit;
             }
-            for (std::map<std::string,QDate>::const_iterator it = m_d->m_dateValues.begin() ;
-                 it != m_d->m_dateValues.end() ; it++) {
-              os << (*it).first << "=" << (*it).second.toString().toUtf8().data() << ";";
-                 }
-                 for (std::map<std::string,std::pair<QDate,QDate> >::const_iterator it = m_d->m_dateIntervalValues.begin() ;
-                      it != m_d->m_dateIntervalValues.end() ; it++) {
-                   os << (*it).first << "=[" << ((*it).second).first.toString().toUtf8().data()
-                   << "," << ((*it).second).second.toString().toUtf8().data() << "];";
-                      }
-                      for (std::map<std::string,std::vector<std::string> >::const_iterator it = m_d->m_multipleStringValues.begin() ;
-                           it != m_d->m_multipleStringValues.end() ; it++) {
-                        os << (*it).first << "=";
-                      const std::vector<std::string>& vval = (*it).second;
-                      if (! vval.empty()) {
-                        std::vector<std::string>::const_iterator vit = vval.begin();
-                        os << *vit;
-                        vit++;
-                        for ( ; vit != vval.end() ; vit++) {
-                          os << "," << *vit;
-                        }
-                      }
-                      os << ";";
-                           }
-                           for (std::map<std::string,std::vector<std::pair<std::string,float> > >::const_iterator it =
-                             m_d->m_multipleWeightedPropValues.begin() ;
-                           it != m_d->m_multipleWeightedPropValues.end() ; it++) {
-                             os << (*it).first << "=";
-                             const std::vector<std::pair<std::string,float> >& vval = (*it).second;
-                             if (! vval.empty()) {
-                               std::vector<std::pair<std::string,float> >::const_iterator vit = vval.begin();
-                               os << "(" << (*vit).first << "," << (*vit).second << ")";
-                               vit++;
-                               for ( ; vit != vval.end() ; vit++) {
-                                 os << ", (" << (*vit).first << "," << (*vit).second << ")";
-                               }
-                             }
-                             os << ";";
-                           }
+        }
+      os << ";";
+    }
+  for (std::map<std::string, std::vector<std::pair<std::string, float> > >::const_iterator it =
+      m_d->m_multipleWeightedPropValues.begin ();
+      it != m_d->m_multipleWeightedPropValues.end (); it++)
+    {
+      os << (*it).first << "=";
+      const std::vector<std::pair<std::string, float> >& vval =
+          (*it).second;
+      if (!vval.empty ())
+        {
+          std::vector<std::pair<std::string, float> >::const_iterator vit =
+              vval.begin ();
+          os << "(" << (*vit).first << "," << (*vit).second << ")";
+          vit++;
+          for (; vit != vval.end (); vit++)
+            {
+              os << ", (" << (*vit).first << "," << (*vit).second << ")";
+            }
+        }
+      os << ";";
+    }
 }
 
-void GenericDocumentProperties::print(QDebug& os) const {
-  
-  for (std::map<std::string,uint64_t>::const_iterator it = m_d->m_intValues.begin() ;
-       it != m_d->m_intValues.end() ; it++) {
-    os << (*it).first << "=" << (*it).second<< ";";
-       }
-       for (std::map<std::string,std::string>::const_iterator it = m_d->m_stringValues.begin() ;
-            it != m_d->m_stringValues.end() ; it++) {
-         os << (*it).first << "=" << (*it).second<< ";";
+void GenericDocumentProperties::print (QDebug& os) const
+{
+
+  for (std::map<std::string, uint64_t>::const_iterator it =
+      m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
+    {
+      os << (*it).first << "=" << (*it).second << ";";
+    }
+  for (std::map<std::string, std::string>::const_iterator it =
+      m_d->m_stringValues.begin (); it != m_d->m_stringValues.end ();
+      it++)
+    {
+      os << (*it).first << "=" << (*it).second << ";";
+    }
+  for (std::map<std::string, QDate>::const_iterator it =
+      m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
+    {
+      os << (*it).first << "="
+          << (*it).second.toString ().toUtf8 ().data () << ";";
+    }
+  for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
+      m_d->m_dateIntervalValues.begin ();
+      it != m_d->m_dateIntervalValues.end (); it++)
+    {
+      os << (*it).first << "=["
+          << ((*it).second).first.toString ().toUtf8 ().data () << ","
+          << ((*it).second).second.toString ().toUtf8 ().data () << "];";
+    }
+  for (std::map<std::string, std::vector<std::string> >::const_iterator it =
+      m_d->m_multipleStringValues.begin ();
+      it != m_d->m_multipleStringValues.end (); it++)
+    {
+      os << (*it).first << "=";
+      const std::vector<std::string>& vval = (*it).second;
+      if (!vval.empty ())
+        {
+          std::vector<std::string>::const_iterator vit = vval.begin ();
+          os << *vit;
+          vit++;
+          for (; vit != vval.end (); vit++)
+            {
+              os << "," << *vit;
             }
-            for (std::map<std::string,QDate>::const_iterator it = m_d->m_dateValues.begin() ;
-                 it != m_d->m_dateValues.end() ; it++) {
-              os << (*it).first << "=" << (*it).second.toString().toUtf8().data() << ";";
-                 }
-                 for (std::map<std::string,std::pair<QDate,QDate> >::const_iterator it = m_d->m_dateIntervalValues.begin() ;
-                      it != m_d->m_dateIntervalValues.end() ; it++) {
-                   os << (*it).first << "=[" << ((*it).second).first.toString().toUtf8().data()
-                   << "," << ((*it).second).second.toString().toUtf8().data() << "];";
-                      }
-                      for (std::map<std::string,std::vector<std::string> >::const_iterator it = m_d->m_multipleStringValues.begin() ;
-                           it != m_d->m_multipleStringValues.end() ; it++) {
-                        os << (*it).first << "=";
-                      const std::vector<std::string>& vval = (*it).second;
-                      if (! vval.empty()) {
-                        std::vector<std::string>::const_iterator vit = vval.begin();
-                        os << *vit;
-                        vit++;
-                        for ( ; vit != vval.end() ; vit++) {
-                          os << "," << *vit;
-                        }
-                      }
-                      os << ";";
-                           }
-                           for (std::map<std::string,std::vector<std::pair<std::string,float> > >::const_iterator it =
-                             m_d->m_multipleWeightedPropValues.begin() ;
-                           it != m_d->m_multipleWeightedPropValues.end() ; it++) {
-                             os << (*it).first << "=";
-                             const std::vector<std::pair<std::string,float> >& vval = (*it).second;
-                             if (! vval.empty()) {
-                               std::vector<std::pair<std::string,float> >::const_iterator vit = vval.begin();
-                               os << "(" << (*vit).first << "," << (*vit).second << ")";
-                               vit++;
-                               for ( ; vit != vval.end() ; vit++) {
-                                 os << ", (" << (*vit).first << "," << (*vit).second << ")";
-                               }
-                             }
-                             os << ";";
-                           }
+        }
+      os << ";";
+    }
+  for (std::map<std::string, std::vector<std::pair<std::string, float> > >::const_iterator it =
+      m_d->m_multipleWeightedPropValues.begin ();
+      it != m_d->m_multipleWeightedPropValues.end (); it++)
+    {
+      os << (*it).first << "=";
+      const std::vector<std::pair<std::string, float> >& vval =
+          (*it).second;
+      if (!vval.empty ())
+        {
+          std::vector<std::pair<std::string, float> >::const_iterator vit =
+              vval.begin ();
+          os << "(" << (*vit).first << "," << (*vit).second << ")";
+          vit++;
+          for (; vit != vval.end (); vit++)
+            {
+              os << ", (" << (*vit).first << "," << (*vit).second << ")";
+            }
+        }
+      os << ";";
+    }
 }
 
-} // end namespace
-} // namespace Common
-} // end namespace
+} // end namespace Misc
+} // end namespace Common
+} // end namespace Lima

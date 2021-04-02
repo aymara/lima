@@ -66,7 +66,8 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushHierarchyChild" << elementName << parserOffset;
   if( propType.getValueCardinality() != CARDINALITY_NONE ) {
-    LDEBUG  << "and with property:" << propType.getId();
+    StorageType storageType = propType.getStorageType();
+    LDEBUG  << "and with property: id=" << propType.getId() << ", storageType=" << Lima::DocumentsReader::storageTypeTag[storageType];
   }
   else {
     LDEBUG  << "and without property";
@@ -74,7 +75,7 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
 #else
   LIMA_UNUSED(propType);
 #endif
-  HierarchyDocumentElement* result;
+  HierarchyDocumentElement* result=nullptr;
   if( empty() ) {
 #ifdef DEBUG_LP
     LDEBUG  << "empty";
@@ -82,7 +83,8 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
     std::map<DocumentPropertyType, std::string> toBePropagated;
     result = new HierarchyDocumentElement(elementName, parserOffset, toBePropagated);
   }
-  else {
+  else
+  {
 #ifdef DEBUG_LP
     LDEBUG  << "not empty";
 #endif
@@ -95,6 +97,11 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
         result = new HierarchyDocumentElement(elementName, parserOffset, hierarchyElement->getPropertyList());
     }
   }
+  if(result == nullptr) {
+      DRLOGINIT;
+      LWARN << "ContentStructuredDocument::pushHierarchyChild: result was not initialized";
+  }
+
   result->GenericDocumentProperties::setIntValue("offBegPrpty", parserOffset);
 
   push_back(result );
@@ -113,7 +120,8 @@ IndexingDocumentElement* ContentStructuredDocument::pushIndexingChild(
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushIndexingChild" << elementName<< parserOffset;
   if( propType.getValueCardinality() != CARDINALITY_NONE ) {
-    LDEBUG  << "and with property:" << propType.getId();
+    StorageType storageType = propType.getStorageType();
+    LDEBUG  << "and with property: id=" << propType.getId() << ", storageType=" << Lima::DocumentsReader::storageTypeTag[storageType];
   }
   else {
     LDEBUG  << "and without property";
@@ -152,7 +160,8 @@ IgnoredDocumentElement* ContentStructuredDocument::pushIgnoredChild(
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::pushIgnoredChild" << elementName<< parserOffset;
   if( propType.getValueCardinality() != CARDINALITY_NONE ) {
-    LDEBUG  << "and with property:" << propType.getId();
+    StorageType storageType = propType.getStorageType();
+    LDEBUG  << "and with property: id=" << propType.getId() << ", storageType=" << Lima::DocumentsReader::storageTypeTag[storageType];
   }
   else {
     LDEBUG  << "and without property";
@@ -181,7 +190,7 @@ DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(cons
 #endif
   DiscardableDocumentElement* result;
   result = new DiscardableDocumentElement(elementName, parserOffset );
-  push_back(result );
+  push_back(result);
   return result;
 }
 
@@ -402,7 +411,7 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "ContentStructuredDocument::setDataToElement" << absElement->getElementName()
-        << property.getId() << property.getStorageType() << property.getValueCardinality() << data;
+        << property.getId() << property.getStorageType() << property.getValueCardinality() << "'" << data << "'";
 #endif
   if(property.getId().empty()) {
     DRLOGINIT;
@@ -425,9 +434,18 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
       QDate dateEnd;
       parseDate(data,dateBegin,dateEnd);
 
-      element->setDateValue("date_begin", dateBegin);
-      element->setDateValue("date_end", dateEnd);
-      element->setDateIntervalValue(property.getId(), make_pair(dateBegin,dateEnd) );
+      element->setDateValue(property.getId(), dateBegin );
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement setDateValue : " << property.getId() << " => "<< dateBegin;
+#endif
+      if(dateBegin != dateEnd) {
+        element->setDateValue("date_begin", dateBegin);
+        element->setDateValue("date_end", dateEnd);
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement setDateIntervalValue : " << property.getId() << " => "<< dateBegin << "-" << dateEnd;
+#endif
+        element->setDateIntervalValue(property.getId(), make_pair(dateBegin,dateEnd) );
+      }
       }
       break;
     case STORAGE_UTF8_STRING:
@@ -455,16 +473,22 @@ void ContentStructuredDocument::parseDate(const string& dateStr,
                                   QDate& dateBegin,
                                   QDate& dateEnd)
 {
+#ifdef DEBUG_LP
+  DRLOGINIT;
+  LDEBUG << "ContentStructuredDocument::parseDate" << dateStr;
+#endif
+
   dateBegin=QDate();
   dateEnd=QDate();
 
-  char sep('/');
+  char sep1('/');
+  char sep2('-');
 
   //uint64_t firstSep,secondSep; portage 32 64
   std::string::size_type firstSep,secondSep;
   try {
-    if ( (firstSep=dateStr.find(sep)) != string::npos ) {
-      if ( (secondSep=dateStr.find(sep,firstSep+1)) != string::npos ) {
+    if ( (firstSep=dateStr.find(sep1)) != string::npos ) {
+      if ( (secondSep=dateStr.find(sep1,firstSep+1)) != string::npos ) {
         // suppose day/month/year
 
         // from_uk_string only defined in recent versions of boost
@@ -490,8 +514,25 @@ void ContentStructuredDocument::parseDate(const string& dateStr,
         dateEnd=dateBegin.addMonths(1).addDays(-1);
       }
     }
+    else if ( (firstSep=dateStr.find(sep2)) != string::npos ) {
+      if ( (secondSep=dateStr.find(sep2,firstSep+1)) != string::npos ) {
+          // suppose year-month-day
+        dateBegin=QDate::fromString(dateStr.c_str(), Qt::ISODate);
+        dateEnd=QDate::fromString(dateStr.c_str(), Qt::ISODate);
+      }
+      else {
+          // one separator : suppose year-month
+          // find end of month
+          string year(dateStr,0,firstSep);
+          string month(dateStr,firstSep+1);
+          unsigned short monthNum=atoi(month.c_str());
+          unsigned short yearNum=atoi(year.c_str());
+          dateBegin=QDate(yearNum,monthNum,1);
+          dateEnd=dateBegin.addMonths(1).addDays(-1);
+      }
+    }
     else if (! dateStr.empty()) {
-      // no separator : suppose year
+      // no separator : suppose year only
       unsigned short yearNum=atoi(dateStr.c_str());
       dateBegin=QDate(yearNum,01,01);
       dateEnd=QDate(yearNum,12,31);
@@ -501,9 +542,12 @@ void ContentStructuredDocument::parseDate(const string& dateStr,
   catch (std::exception& e) {
     DRLOGINIT;
     LWARN << "Warning: " << e.what();
-    LWARN << "Failed parsing of date [" << dateStr << "]";
+//    LWARN << "Failed parsing of date [" << dateStr << "]";
     // do nothing, keep not_a_date_time as default value
   }
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::parseDate" << dateStr << "=>" << dateBegin << "-" << dateEnd;
+#endif
 }
 
 

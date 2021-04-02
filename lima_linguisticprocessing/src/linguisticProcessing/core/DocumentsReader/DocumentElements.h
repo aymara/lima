@@ -30,7 +30,7 @@ typedef enum
     NODE_DISCARDABLE,  /** node inside an indexing node whose content (including its children) is replaced by spaces*/
     NODE_INDEXING,     /** node whose content is analyzed and indexed */
     NODE_HIERARCHY,    /** node that can contain indexing nodes in its hierarchy. It is indexed in the structure index */
-    NODE_PRESENTATION, /** node inside an indexing node whose content which is replaced by spaces but its content is kept */
+    NODE_PRESENTATION, /** node inside an indexing node with content replaced by spaces, but which content is kept */
     NODE_IGNORED,      /** nodes which are not children of hierarchy nodes are ignored */
     NODE_PROPERTY,     /** a property node */
 } FieldType;

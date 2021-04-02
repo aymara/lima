@@ -234,7 +234,7 @@ bool DocumentReader::readXMLDocument()
     else if (m_d->m_reader->isCharacters())
     {
       m_d->m_parser->characters(m_d->m_reader->text().toString(),
-getCurrentOffsetFromXmlReader());
+                                getCurrentOffsetFromXmlReader());
     }
     m_d->m_reader->readNext();
     // do processing
