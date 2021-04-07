@@ -64,7 +64,7 @@ void StructuredDocumentXMLParser::init (
 {
 #ifdef DEBUG_LP
     DRLOGINIT;
-    LDEBUG << "StructuredDocumentXMLParser::init(): readPropertiesMetadata...";
+    LDEBUG << "StructuredDocumentXMLParser::init(): readPropertiesMetadata ...";
 #endif
     readPropertiesMetadata ( unitConfiguration ) ;
 
@@ -167,14 +167,39 @@ void StructuredDocumentXMLParser::readPropertiesMetadata (
             for ( std::deque<QString>::const_iterator it = elementTagSet.begin() ;
                     it != elementTagSet.end() ; it++ )
             {
-                m_elementTag2DocumentPropertyType.insert ( std::make_pair( *it,attr ) );
+                const QString elementTagName = *it;
+                auto ite = m_elementTag2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTag2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTag2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
             // add property to map elementTag->property*
             const std::deque< std::pair<QString,QString> >& elementTagOfPairSet = attr.getAttributeTagNames();
             for ( std::deque< std::pair<QString,QString> >::const_iterator it = elementTagOfPairSet.begin() ;
                     it != elementTagOfPairSet.end() ; it++ )
             {
-                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair ( (*it).first,attr ) );
+                const QString elementTagName = (*it).first;
+                const QString attributeTagName = (*it).second;
+                const auto ite = m_elementTagOfPair2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTagOfPair2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                        DRLOGINIT;
+                        LWARN << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
         }
     }
@@ -199,14 +224,40 @@ void StructuredDocumentXMLParser::readPropertiesMetadata (
             for ( std::deque<QString>::const_iterator it = elementTagSet.begin() ;
                     it != elementTagSet.end() ; it++ )
             {
-                m_elementTag2DocumentPropertyType.insert ( std::make_pair( *it,attr ) );
+                const QString elementTagName = *it;
+                const auto ite = m_elementTag2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTag2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "is used for property" << attr.getId();
+#endif
+
+                m_elementTag2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
-            // add property to map elementTag->property*
+            // add property to map elementTag.attribute -> property*
             const std::deque< std::pair<QString,QString> > elementTagOfPairSet = attr.getAttributeTagNames();
             for ( std::deque< std::pair<QString,QString> >::const_iterator it = elementTagOfPairSet.begin() ;
                     it != elementTagOfPairSet.end() ; it++ )
             {
-                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair ( ( *it ).first,attr ) );
+                const QString elementTagName = (*it).first;
+                const QString attributeTagName = (*it).second;
+                const auto ite = m_elementTagOfPair2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTagOfPair2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
         }
     }

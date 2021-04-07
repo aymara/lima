@@ -433,8 +433,7 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
       QDate dateBegin;
       QDate dateEnd;
       parseDate(data,dateBegin,dateEnd);
-
-      element->setDateValue(property.getId(), dateBegin );
+      element->setDateValue(property.getId(), dateBegin);
 #ifdef DEBUG_LP
   LDEBUG << "ContentStructuredDocument::setDataToElement setDateValue : " << property.getId() << " => "<< dateBegin;
 #endif

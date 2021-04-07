@@ -230,6 +230,7 @@ void AbstractStructuredDocumentElementWithProperties::addProperty(
   DRLOGINIT;
   LDEBUG << "AbstractStructuredDocumentElementWithProperties::addProperty" << getElementName() << propType.getId() << value;
 #endif
+  // insert property if it's not present
   if (m_toBePropagated.find(propType) == m_toBePropagated.end())
   {
     auto result = m_toBePropagated.insert(std::make_pair(propType,value));
@@ -241,6 +242,7 @@ void AbstractStructuredDocumentElementWithProperties::addProperty(
   }
   else
   {
+    // replace property value
 #ifdef DEBUG_LP
     LDEBUG << "AbstractStructuredDocumentElementWithProperties::addProperty replace" << getElementName() << propType.getId() << "value" << m_toBePropagated[propType] << "by" << value;
 #endif

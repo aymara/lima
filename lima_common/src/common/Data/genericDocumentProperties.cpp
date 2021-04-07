@@ -210,31 +210,30 @@ std::pair<WeightedPropMultIter,WeightedPropMultIter> GenericDocumentProperties::
 }
 
 std::pair<GenericDocumentProperties::IntPropertiesIterator,GenericDocumentProperties::IntPropertiesIterator> GenericDocumentProperties::getIntProperties() const {
-  return  std::pair<GenericDocumentProperties::IntPropertiesIterator,GenericDocumentProperties::IntPropertiesIterator>(m_d->m_intValues.begin(),m_d->m_intValues.end());
+  return  std::make_pair(m_d->m_intValues.begin(),m_d->m_intValues.end());
 }
 
 std::pair<GenericDocumentProperties::StringPropertiesIterator,GenericDocumentProperties::StringPropertiesIterator> GenericDocumentProperties::getStringProperties() const {
-  return  std::pair<GenericDocumentProperties::StringPropertiesIterator,GenericDocumentProperties::StringPropertiesIterator>(m_d->m_stringValues.begin(),m_d->m_stringValues.end());
+  return  std::make_pair(m_d->m_stringValues.begin(),m_d->m_stringValues.end());
 }
 
 std::pair<GenericDocumentProperties::DatePropertiesIterator,GenericDocumentProperties::DatePropertiesIterator> GenericDocumentProperties::getDateProperties() const {
-  return  std::pair<GenericDocumentProperties::DatePropertiesIterator,GenericDocumentProperties::DatePropertiesIterator>(m_d->m_dateValues.begin(),m_d->m_dateValues.end());
+  return  std::make_pair(m_d->m_dateValues.begin(),m_d->m_dateValues.end());
 }
 
 std::pair<GenericDocumentProperties::DateIntervalPropertiesIterator,GenericDocumentProperties::DateIntervalPropertiesIterator> GenericDocumentProperties::getDateIntervalProperties() const {
-  return  std::pair<GenericDocumentProperties::DateIntervalPropertiesIterator,GenericDocumentProperties::DateIntervalPropertiesIterator>(m_d->m_dateIntervalValues.begin(),m_d->m_dateIntervalValues.end());
+  return  std::make_pair(m_d->m_dateIntervalValues.begin(),m_d->m_dateIntervalValues.end());
 }
 
 std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<std::string> > GenericDocumentProperties::getStringPropertyNames() const {
-  return std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<std::string> >(
+  return std::make_pair(
     MultiValuedPropertyIterator<std::string>(m_d->m_multipleStringValues.begin()),
     MultiValuedPropertyIterator<std::string>(m_d->m_multipleStringValues.end()) );
 }
 
  std::pair<MultiValuedPropertyIterator<std::pair<std::string,float> >,
            MultiValuedPropertyIterator<std::pair<std::string,float> > > GenericDocumentProperties::getWeightedPropPropertyNames() const {
-  return std::pair<MultiValuedPropertyIterator<std::pair<std::string,float> >,
-                   MultiValuedPropertyIterator<std::pair<std::string,float> > >(
+  return std::make_pair(
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.begin()),
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.end()) );
 }
