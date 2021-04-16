@@ -225,7 +225,8 @@ void TensorflowSpecificEntitiesPrivate::init(XMLConfigurationFiles::GroupConfigu
   {
       LIMA_EXCEPTION_LOGINIT(
         TFSELOGINIT,
-        "catched BadFileException" << e.what() );
+        "catched BadFileException " << e.what() );
+      throw InvalidConfiguration();
   }
 
   // Initialize a tensorflow session
