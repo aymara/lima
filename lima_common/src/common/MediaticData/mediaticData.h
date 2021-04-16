@@ -128,7 +128,11 @@ public:
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-     //get highest ancestor in the hierarchy
+
+    //get highest ancestors in a group
+    std::vector<EntityType> getGroupAncestors(EntityGroupId id) const;
+
+    //get highest ancestor in the hierarchy
     EntityType getEntityAncestor(const EntityType& child) const;
     // get the list of nodes under the given ancestor as child->firstParent tuples
     bool getEntityChildList(const EntityType& parent,

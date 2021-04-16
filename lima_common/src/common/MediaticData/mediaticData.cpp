@@ -980,6 +980,23 @@ bool MediaticData::getEntityChildList(const EntityType& parent,
   return m_d->m_entityHierarchy.getChildren(parent, childList);
 }
 
+std::vector<EntityType> MediaticData::getGroupAncestors(EntityGroupId groupId) const
+{
+  std::vector<EntityType> ancestors;
+  const MediaticDataPrivate::EntityTypeMap::AccessMap& accessMap = m_d->m_entityTypes[groupId]->getAccessMap();
+  for(auto iter = accessMap.begin(), iter_end=accessMap.end(); iter != iter_end; iter++){
+    const LimaString entityName = *(iter->first);
+    int i=entityName.indexOf(m_d->s_entityTypeNameSeparator);
+    if (i>0) continue;
+    const EntityType entityType = getEntityType( groupId, entityName );
+    if ( entityType == this->getEntityAncestor(entityType) ) {
+        ancestors.push_back( entityType );
+    }
+  }
+  return ancestors;
+}
+
+
 // entity types accessors
 EntityType MediaticData::getEntityType(const LimaString& entityName) const
 {
