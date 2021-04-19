@@ -29,7 +29,7 @@ for:
       - docker cp dummy:/src/lima/build/*.deb ./
       - docker rm -f dummy
     artifacts:
-      - path: *.deb
+      - path: "*.deb"
         name: packages
   - matrix:
       only:
