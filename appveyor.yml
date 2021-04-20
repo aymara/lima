@@ -24,6 +24,17 @@ for:
     artifacts:
       - path: "*.deb"
         name: packages
+    deploy:
+      description: '$(LIMA_VERSION_RELEASE)'
+      provider: GitHub
+      tag: $(LIMA_VERSION_RELEASE)
+      auth_token:
+        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
+      artifact: packages
+      force_update: true
+      on:
+        branch: master                 # release from master branch only
+        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
   - matrix:
       only:
         - job_name: Ubuntu 18.04
@@ -39,6 +50,17 @@ for:
     artifacts:
       - path: "*.deb"
         name: packages
+    deploy:
+      description: '$(LIMA_VERSION_RELEASE)'
+      provider: GitHub
+      tag: $(LIMA_VERSION_RELEASE)
+      auth_token:
+        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
+      artifact: packages
+      force_update: true
+      on:
+        branch: master                 # release from master branch only
+        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
   - matrix:
       only:
         - job_name: Visual Studio 2017
