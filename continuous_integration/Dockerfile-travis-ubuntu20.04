@@ -69,7 +69,7 @@ ENV LIMA_DISABLE_FSW_TESTING true
 ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
 ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
-ENV LIMA_RESOURCES LIMA_RESOURCES=/root/.lima/resources/:/usr/share/apps/lima/resources
+ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 
 # Build
 #

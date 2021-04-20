@@ -17,6 +17,13 @@ for:
       - docker
     build_script:
       - docker build --tag travis-ubuntu20.04 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
+      - docker create -ti --name dummy travis-ubuntu20.04 bash
+      - docker cp dummy:/src/lima/build ./
+      - docker rm -f dummy
+      - cp build/*.deb ./
+    artifacts:
+      - path: "*.deb"
+        name: packages
   - matrix:
       only:
         - job_name: Ubuntu 18.04
