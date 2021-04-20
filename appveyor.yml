@@ -26,8 +26,9 @@ for:
       - echo ${PWD}
       - docker build --tag travis-ubuntu18.04 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu18.04 .
       - docker create -ti --name dummy travis-ubuntu18.04 bash
-      - docker cp dummy:/src/lima/build/*.deb ./
+      - docker cp dummy:/src/lima/build ./
       - docker rm -f dummy
+      - cp build/*.deb ./
     artifacts:
       - path: "*.deb"
         name: packages
