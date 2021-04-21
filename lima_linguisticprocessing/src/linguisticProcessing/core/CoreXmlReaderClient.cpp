@@ -238,7 +238,7 @@ void CoreXmlReaderClient::handleProperty(
     if(!property.getId().compare("pipelineProperty"))
         m_docMetaData["pipeline"].append(data);
 
-    // added date and location
+    // added location
     if(!property.getId().compare("locationPrpty")) {
             m_docMetaData["location"] = data;
     }
@@ -332,6 +332,7 @@ void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocu
     element->GenericDocumentProperties::setStringValue("encodPrpty", "UTF8");
     // set date as today
     element->GenericDocumentProperties::setDateValue("indexDatePrpty", QDate::currentDate());
+
 #if 0
     if(!m_docMetaData["type"].empty()) {
         element->GenericDocumentProperties::setStringValue("typPrpty", m_docMetaData["type"]);
@@ -452,7 +453,7 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
         string media = ItrMedia->first;
         string PCfactoryName = ItrMedia->second;
 #ifdef DEBUG_LP
-        LDEBUG << "Media [" << media << "] is analysed by [" << PCfactoryName
+        LDEBUG << "Media [" << media << "] is analyzed by [" << PCfactoryName
                 << "]";
 #endif
         std::shared_ptr< Lima::ProcessingClientFactory >PCfactory = getFactoryFromId(PCfactoryName);

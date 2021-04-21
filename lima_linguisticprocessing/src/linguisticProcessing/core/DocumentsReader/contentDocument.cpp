@@ -444,17 +444,25 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
   LDEBUG << "ContentStructuredDocument::setDataToElement setDateIntervalValue : " << property.getId() << " => "<< dateBegin << "-" << dateEnd;
 #endif
         element->setDateIntervalValue(property.getId(), make_pair(dateBegin,dateEnd) );
-      }
+        }
       }
       break;
-    case STORAGE_UTF8_STRING:
+    case STORAGE_UTF8_STRING: {
       if( property.getValueCardinality() == CARDINALITY_MULTIPLE)
         element->addStringValue(property.getId(), data);
       else
         element->setStringValue(property.getId(), data);
+      }
       break;
     case STORAGE_INTEGER:
       element->setIntValue(property.getId(), atoi(data.c_str()));
+      break;
+    case STORAGE_WEIGHTED_PROPERTY: {
+      std::string val;
+      float score;
+      parseWeightedValue(data, val, score);
+      element->addWeightedPropValue( property.getId(), make_pair(val,score));
+      }
       break;
     default:
       break;
@@ -467,6 +475,42 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
   LDEBUG << "ContentStructuredDocument::setDataToElement" << element->getElementName() <<"field("  << property.getId()  << ")=["<< data <<"]" << element->getStringValue(property.getId()).first << (*element->getPropertyList().find(property)).second;
 #endif
 }
+
+
+void ContentStructuredDocument::parseWeightedValue(const string& weightedValueStr,
+                                  std::string& value,
+                                  float& score)
+{
+#ifdef DEBUG_LP
+  DRLOGINIT;
+  LDEBUG << "ContentStructuredDocument::parseWeightedValue" << weightedValueStr;
+#endif
+
+  char sep1('=');
+  std::string::size_type firstSep;
+
+  try {
+      if ( (firstSep=weightedValueStr.find(sep1)) != string::npos ) {
+          string val(weightedValueStr,0,firstSep);
+          string sco(weightedValueStr,firstSep+1);
+
+          // Try to read the float before.
+          // hence, the in/out variables value and score won't be modified in case of error
+          score = atof(sco.c_str());
+          value = val;
+      }
+  }
+  //catch (boost::bad_lexical_cast& e) {
+  catch (std::exception& e) {
+    DRLOGINIT;
+    LWARN << "Warning: " << e.what();
+  }
+  #ifdef DEBUG_LP
+    LDEBUG << "ContentStructuredDocument::parseWeightedValue" << weightedValueStr << "=>" << value << "-" << score;
+  #endif
+
+}
+
 
 void ContentStructuredDocument::parseDate(const string& dateStr,
                                   QDate& dateBegin,

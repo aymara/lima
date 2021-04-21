@@ -33,6 +33,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -189,7 +190,6 @@ std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getM
   std::map<std::string,std::vector<std::string> >::const_iterator pos = m_d->m_multipleStringValues.find(propName);
   if( pos == m_d->m_multipleStringValues.end() ) {
     return std::pair<StringPropMultIter, StringPropMultIter>(m_d->m_noStringVal.begin(), m_d->m_noStringVal.end());
-//  std::vector<std::pair<std::string,float>> m_noWeightedPropVal;
   }
   else {
     const std::vector<std::string>& val = (*pos).second;
@@ -249,8 +249,17 @@ void GenericDocumentProperties::addStringValue(const std::string& propName,
   }
   else {
     std::vector<std::string>& values = (*pos).second;
-    values.push_back(val);
+    auto iter = std::find(values.begin(), values.end(), val);
+    if (iter == values.end()){
+        values.push_back(val);
+    }
+    // else avoid duplicate entries: Do not append
   }
+}
+
+
+bool mypredicate(const std::pair<std::string,float>& a, const std::pair<std::string,float>& b){
+  return a.first == b.first;
 }
 
 void GenericDocumentProperties::addWeightedPropValue(const std::string& propName,
@@ -264,7 +273,17 @@ void GenericDocumentProperties::addWeightedPropValue(const std::string& propName
   }
   else {
     std::vector<std::pair<std::string,float> >& values = (*pos).second;
-    values.push_back(val);
+
+    const std::pair<std::string,float> needle [1] = { val };
+    auto iter = std::search(values.begin(), values.end(), needle, needle+1, mypredicate);
+    if (iter == values.end()){
+      values.push_back(val);
+    }
+    else // else avoid duplicate entries: Do not append, but overwrite the associated weight
+    {
+      iter->second = val.second;
+    }
+
   }
 }
 
