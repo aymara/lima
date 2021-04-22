@@ -69,7 +69,7 @@ ENV LIMA_DISABLE_FSW_TESTING true
 ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
 ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
-ENV LIMA_RESOURCES LIMA_RESOURCES=/root/.lima/resources/:/usr/share/apps/lima/resources
+ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 
 # Build
 #
@@ -91,6 +91,6 @@ RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install unix_ar requests tqdm ; fi"
 
 # install English and French UD models
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then install_models.py -l english ; fi"
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then install_models.py -l french ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
 

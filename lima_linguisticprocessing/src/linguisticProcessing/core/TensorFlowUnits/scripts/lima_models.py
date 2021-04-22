@@ -13,7 +13,7 @@ import urllib.request
 from tqdm import tqdm
 
 
-URL_DEB = 'https://github.com/aymara/lima-models/releases/download/v0.1.5-beta/lima-deep-models-%s-%s_0.1.5_all.deb'
+URL_DEB = 'https://github.com/aymara/lima-models/releases/download/v0.1.5/lima-deep-models-%s-%s_0.1.5_all.deb'
 URL_C2LC = 'https://raw.githubusercontent.com/aymara/lima-models/master/c2lc.txt'
 C2LC = { 'lang2code': {}, 'code2lang': {} }
 
