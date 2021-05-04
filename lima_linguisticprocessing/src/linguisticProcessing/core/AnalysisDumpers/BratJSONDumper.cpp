@@ -254,19 +254,22 @@ outputEventString(ostream& out,
 {
   if (m_firstEvent) { m_firstEvent=false; out << endl; } else { out << "," << endl; }
   
-    out << "[ \"E" << eventId << "\", ";
+  out << "[ \"E" << eventId << "\", ";
   // mention type is now one of the roles
   if (eventMentionId!=0) {
     //out << eventMentionType << "T" << eventMentionId;
-    out << "\"T" << eventMentionId << "\", [";
+    out << "\"T" << eventMentionId << "\", ";
   }
-  if (eventRoleId.size()==0) {out << endl; return; }
+  // event slots
+  out << "[";
+  if (eventRoleId.size()==0) {out << "]]" << endl; return; }
 //   out << eventRoleType[0] << ":T" << eventRoleId[0]; // first one without space before
 //   for (unsigned int i(1), n=eventRoleId.size(); i<n; i++) {
   for (unsigned int i(0), n=eventRoleId.size(); i<n; i++) {
-    out << "[\"" << eventRoleType[i] << "\", \"" << eventRoleId[i] << "\"";
+    if (i>0) { out << ", "; }
+    out << "[\"" << eventRoleType[i] << "\", \"T" << eventRoleId[i] << "\"]";
   }
-  out << "] ]" << endl;
+  out << " ]]"; // close event slots and global event infos
 }
 
 } // AnalysisDumpers
