@@ -83,29 +83,55 @@ void BratJSONDumper::outputGlobalHeader(std::ostream& os, const std::string& /*s
 }
 void BratJSONDumper::outputGlobalFooter(std::ostream& os) const
 {
-  if (m_attributes.size()) {
-    os << "\"attributes\": [" << endl;
-    for (const auto& a: m_attributes) {
-      os << a << "," << endl;
+  std::string sep(""); // use this trick for proper comma-separated values
+  if (m_entities.size()) {
+    os << "," << endl;
+    os << "\"entities\": [";
+    for (const auto& e: m_entities) {
+      os << sep << endl << e.second;
+      sep=",";
     }
-    os << "]" << endl;
+    os << endl << "]";
+  }
+  if (m_eventTriggers.size()) {
+    sep="";
+    os << "," << endl;
+    os << "\"triggers\": [";
+    for (const auto& e: m_eventTriggers) {
+      os << sep << endl << e;
+      sep=",";
+    }
+    os << endl << "]";
+  }
+  if (m_attributes.size()) {
+    sep="";
+    os << "," << endl;
+    os << "\"attributes\": [";
+    for (const auto& a: m_attributes) {
+      os << sep << endl << a;
+      sep=",";
+    }
+    os << "]";
   }
   if (m_norms.size()) {
-    os << "\"normalizations\": [" << endl;
+    sep="";
+    os << "," << endl;
+    os << "\"normalizations\": [";
     for (const auto& n: m_norms) {
-      os << n << "," << endl;
+      os << sep << endl << n;
+      sep=",";
     }
-    os << "]" << endl;
+    os << "]";
   }
-  os << "}" << endl;
+  os << endl << "}" << endl;
 }
-void BratJSONDumper::outputEntitiesHeader(std::ostream& os) const
+void BratJSONDumper::outputEntitiesHeader(std::ostream& /*os*/) const
 {
-  os << "\"entities\": [";
+  //os << "\"entities\": [";
 }
-void BratJSONDumper::outputEntitiesFooter(std::ostream& os) const
+void BratJSONDumper::outputEntitiesFooter(std::ostream& /*os*/) const
 {
-  os << "]," << endl;
+  //os << "]," << endl;
 }
 void BratJSONDumper::outputRelationsHeader(std::ostream& os) const
 {
@@ -133,24 +159,26 @@ outputEntityString(ostream& out,
                    const vector<pair<uint64_t,uint64_t> >& positions,
                    const Automaton::EntityFeatures& /*entityFeatures*/, bool /*noNorm*/) const
 {
-  if (m_firstEntity) { m_firstEntity=false; out << endl; } else { out << "," << endl; }
+  //if (m_firstEntity) { m_firstEntity=false; out << endl; } else { out << "," << endl; }
+  ostringstream oss;
   
-  out << "[ \"T" << entityId << "\", \"" <<  entityType << "\", ";
+  oss << "[ \"T" << entityId << "\", \"" <<  entityType << "\", ";
   if (positions.size()==0) {
     // use simple positions
     DUMPERLOGINIT;
     LERROR << "BratJSONDumper: no positions given for entity" << entityString;
-    out << "[[0,0]]";
+    oss << "[[0,0]]";
   }
   else {
     vector<pair<uint64_t,uint64_t> >::const_iterator posIt=positions.begin();
-    out << "[ [" << (*posIt).first << "," << (*posIt).second << "]";
+    oss << "[ [" << (*posIt).first << "," << (*posIt).second << "]";
     for (posIt++; posIt!=positions.end(); posIt++) {
-      out << ", [" << (*posIt).first << "," << (*posIt).second << "]";
+      oss << ", [" << (*posIt).first << "," << (*posIt).second << "]";
     }
-    out << " ]";
+    oss << " ]";
   }
-  out << " ]";
+  oss << " ]";
+  m_entities[entityId]=oss.str();
 }
 
 void BratJSONDumper::
@@ -253,12 +281,14 @@ outputEventString(ostream& out,
                   const std::vector<std::string>& eventRoleType) const
 {
   if (m_firstEvent) { m_firstEvent=false; out << endl; } else { out << "," << endl; }
-  
+
   out << "[ \"E" << eventId << "\", ";
   // mention type is now one of the roles
   if (eventMentionId!=0) {
     //out << eventMentionType << "T" << eventMentionId;
     out << "\"T" << eventMentionId << "\", ";
+    m_eventTriggers.push_back(m_entities[eventMentionId]);
+    m_entities.erase(eventMentionId);
   }
   // event slots
   out << "[";
