@@ -77,6 +77,10 @@ private:
   // separately in JSON: store them to print them at the end (could do that with all -> better ?)
   mutable std::vector<std::string> m_attributes;
   mutable std::vector<std::string> m_norms;
+  // event triggers are different from the entities: same format but stored associated with a 'triggers' key
+  // have to wait until the events to choose where to put them, store them until that point
+  mutable std::map<unsigned int,std::string> m_entities;
+  mutable std::vector<std::string> m_eventTriggers;
 };
 
 } // AnalysisDumpers
