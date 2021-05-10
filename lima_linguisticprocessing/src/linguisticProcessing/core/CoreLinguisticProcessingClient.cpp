@@ -221,7 +221,7 @@ void CoreLinguisticProcessingClient::analyze(
   if (pipeline==0)
   {
     LERROR << "can't get pipeline '" << pipelineId << "'";
-    throw LinguisticProcessingException( std::string("can't get pipeline '" + pipelineId + "'") );
+    throw LinguisticProcessingException( std::string("can't get pipeline '" + pipelineId + "' for language '" + lang + "'") );
   }
   InactiveUnitsData* inactiveUnitsData = new InactiveUnitsData();
   for (std::set<std::string>::const_iterator it = inactiveUnits.begin(); it != inactiveUnits.end(); it++)
