@@ -1192,14 +1192,14 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
   const uint64_t offset,
   bool frompos) const
 {
-#ifdef DEBUG_LP
-  DUMPERLOGINIT;
-  LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
-#endif
   if (!annotationData->hasAnnotation(v, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
   {
     return boost::shared_ptr< BoWNamedEntity >();
   }
+#ifdef DEBUG_LP
+  DUMPERLOGINIT;
+  LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
+#endif
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
   const SpecificEntityAnnotation* se =
@@ -1207,7 +1207,7 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
       pointerValue<SpecificEntityAnnotation>();
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowGenerator: specific entity type is " << se->getType();
+  LINFO << "BowGenerator: specific entity type is " << se->getType();
 #endif
 
   std::set< std::string > alreadyStored;
@@ -1223,7 +1223,7 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
     return boost::shared_ptr< BoWNamedEntity >();
   }
 #ifdef DEBUG_LP
-  LDEBUG << "BowGenerator: specific entity type name is " << typeName;
+  LINFO << "BowGenerator: specific entity type name is " << typeName;
 #endif
   // get the macro-category to use for this named entity
   MorphoSyntacticData* data = get(vertex_data, posgraph, vertex);
@@ -1318,10 +1318,10 @@ QList< boost::shared_ptr< BoWPredicate > > BowGeneratorPrivate::createPredicate(
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "BowGenerator::createPredicate ling:" << lgv << "; annot:" << agv;
+  LINFO << "BowGenerator::createPredicate ling:" << lgv << "; annot:" << agv;
 #endif
   QList< boost::shared_ptr< BoWPredicate > > result;
-  
+
   Token* token = get(vertex_token, posgraph, lgv);
 
   // FIXME handle the ambiguous case when there is several class values for the predicate
@@ -1479,8 +1479,8 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "BowGenerator::createPredicate " << lgvs << agvs << agvt
-          << annot.type().c_str();
+  LINFO << "BowGenerator::createSemanticRelationPredicate " << lgvs << ", src:" << agvs << ", trgt:"<< agvt
+          << ", rel:" << annot.type().c_str();
 #endif
   QList< boost::shared_ptr< BoWPredicate > > result;
 
@@ -1516,7 +1516,7 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
       vertices.push_back(agvs);
       vertices.push_back(agvt);
     #ifdef DEBUG_LP
-      LDEBUG << "BowGenerator::createPredicate  The role(s) related to "
+      LDEBUG << "BowGenerator::createSemanticRelationPredicate  The role(s) related to "
               << annot.type() << " is/are ";
     #endif
       QMultiMap<Common::MediaticData::EntityType,
@@ -1538,12 +1538,12 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
             if (posGraphSemRoleVertex == lgvs)
             {
     #ifdef DEBUG_LP
-              LERROR << "BowGenerator::createPredicate role vertex is the same as the trigger vertex. Abort this role.";
+              LERROR << "BowGenerator::createSemanticRelationPredicate role vertex is the same as the trigger vertex. Abort this role.";
     #endif
               continue;
             }
     #ifdef DEBUG_LP
-            LDEBUG << "BowGenerator::createPredicate Calling createAbstractBoWElement on PoS graph vertex"
+            LDEBUG << "BowGenerator::createSemanticRelationPredicate Calling createAbstractBoWElement on PoS graph vertex"
                     << posGraphSemRoleVertex;
     #endif
             auto semRoleTokens = m_d->createAbstractBoWElement(posGraphSemRoleVertex,
@@ -1554,7 +1554,7 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
                                                           visited,
                                                           keepAnyway);
     #ifdef DEBUG_LP
-            LDEBUG << "BowGenerator::createPredicate Created "
+            LDEBUG << "BowGenerator::createSemanticRelationPredicate Created "
                     << semRoleTokens.size() << "token for the role associated to "
                     << annot.type().c_str();
     #endif
@@ -1567,13 +1567,13 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
 #ifdef DEBUG_LP
           else
           {
-            LDEBUG << "BowGenerator::createPredicate Found no matching for the semRole in the annot graph";
+            LDEBUG << "BowGenerator::createSemanticRelationPredicate Found no matching for the semRole in the annot graph";
           }
 #endif
         }
       }
 #ifdef DEBUG_LP
-      LDEBUG << "BowGenerator::createPredicate Created a Predicate for the semantic relation"
+      LDEBUG << "BowGenerator::createSemanticRelationPredicate Created a Predicate for the semantic relation"
               << predicateEntity
               << Common::MediaticData::MediaticData::single().getEntityName(predicateEntity);
 #endif
@@ -1588,18 +1588,19 @@ QList< boost::shared_ptr< Common::BagOfWords::BoWPredicate > > BowGenerator::cre
           {
             auto roleLabel = it.key().isNull() ? QString()
                               : Common::MediaticData::MediaticData::single().getEntityName(it.key());
-            LDEBUG << "BowGenerator::createPredicate Associated "
+            LDEBUG << "BowGenerator::createSemanticRelationPredicate Associated "
                     << QString::fromStdString(outputRoles->getOutputUTF8String())
                     << " to it" << "via the semantic role label "<< roleLabel ;
           }
         }
 #endif
       }
+      result.append(bowP);
     }
     catch (const Lima::LimaException& e)
     {
       DUMPERLOGINIT;
-      LERROR << "BowGenerator::createPredicate Unknown predicate"
+      LERROR << "BowGenerator::createSemanticRelationPredicate Unknown predicate"
               << predicate << ";" << e.what();
       return QList< boost::shared_ptr< BoWPredicate > >();
     }
@@ -1622,7 +1623,7 @@ StringsPoolIndex BowGeneratorPrivate::getNamedEntityNormalization(
   }
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "BowGenerator::getNamedEntityNormalization: m_NEnormalization is " << m_NEnormalization;
+  LINFO << "BowGenerator::getNamedEntityNormalization: m_NEnormalization is " << m_NEnormalization;
 #endif
   StringsPoolIndex normalizedForm(0);
   switch (m_NEnormalization)
@@ -1801,7 +1802,7 @@ boost::shared_ptr< BoWToken > BowGeneratorPrivate::createCompoundTense(
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "BowGenerator: createCompoundTense " << v;
+  LINFO << "BowGenerator: createCompoundTense " << v;
 #endif
   if (!annotationData->hasIntAnnotation(v, Common::Misc::utf8stdstring2limastring("CpdTense")))
   {

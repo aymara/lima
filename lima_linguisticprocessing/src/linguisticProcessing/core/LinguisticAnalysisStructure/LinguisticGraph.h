@@ -105,7 +105,7 @@ typedef VertexChainIdProperty LinguisticVertexProperties;
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::bidirectionalS,
 LinguisticVertexProperties/*,LinguisticEdgeProperties*/> LinguisticGraph;
 
-/** typedefs to simplify the acces to various graphs elements */
+/** typedefs to simplify the access to various graphs elements */
 typedef boost::graph_traits< LinguisticGraph >::edge_descriptor LinguisticGraphEdge;
 typedef LinguisticGraph::edge_iterator LinguisticGraphEdgeIt;
 typedef LinguisticGraph::out_edge_iterator LinguisticGraphOutEdgeIt;

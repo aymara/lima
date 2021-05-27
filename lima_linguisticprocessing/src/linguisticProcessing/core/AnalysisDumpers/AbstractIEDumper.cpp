@@ -41,9 +41,9 @@ namespace LinguisticProcessing {
 namespace AnalysisDumpers {
 
 // a class to hold information about current state of the output,
-// when the output is used in append mode (e.g. when the analysis is done 
+// when the output is used in append mode (e.g. when the analysis is done
 // separately on each paragraph): store the number of elements printed to get ids right
-  
+
 struct AbstractIEDumper::IEDumperMetaData {
   uint nbEntities;
   uint nbAttributes;
@@ -71,24 +71,24 @@ struct AbstractIEDumper::IEDumperMetaData {
       nbRelations=std::stoi(metadata->getMetaData("IEDumper.nbRelations"));
     if (metadata->hasMetaData("IEDumper.nbEvents"))
       nbEvents=std::stoi(metadata->getMetaData("IEDumper.nbEvents"));
-    
+
     //std::cerr << *this << std::endl;
   }
-  
+
   void save(LinguisticMetaData* metadata) {
     metadata->setMetaData("IEDumper.nbEntities",std::to_string(nbEntities));
     metadata->setMetaData("IEDumper.nbAttributes",std::to_string(nbAttributes));
     metadata->setMetaData("IEDumper.nbRelations",std::to_string(nbRelations));
     metadata->setMetaData("IEDumper.nbEvents",std::to_string(nbEvents));
   }
-  
+
   friend std::ostream& operator<<(std::ostream& os, IEDumperMetaData& m) {
     os << "DumperMetaData: nbEntities="<< m.nbEntities << ",nbRelations=" << m.nbRelations << ",nbEvents="<< m.nbEvents;
     return os;
   }
-  
+
 };
-  
+
 AbstractIEDumper::AbstractIEDumper() :
 AbstractTextualAnalysisDumper(),
 m_language(0),
@@ -173,7 +173,7 @@ void AbstractIEDumper::init(
   {
     LDEBUG << "no list 'ignore' in AbstractIEDumper: all entity types of authorized domains are printed";
   }
-  
+
   try
   {
     string val=unitConfiguration.getParamsValueAtKey("outputAllAttributes");
@@ -241,7 +241,7 @@ void AbstractIEDumper::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
-  
+
   try {
     std::string str=unitConfiguration.getParamsValueAtKey("posOffset");
     m_posOffset=std::stoi(str);
@@ -275,7 +275,7 @@ LimaStatusCode AbstractIEDumper::process(
   sourceFile=metadata->getMetaData("FileName");
 
   IEDumperMetaData* dumperMetadata=new IEDumperMetaData(metadata);
-  
+
   AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
   if (annotationData == 0) {
     DUMPERLOGINIT;
@@ -423,7 +423,7 @@ LimaStatusCode AbstractIEDumper::process(
 
   outputEventsHeader(out);
   if (eventData!=0) {
-    uint nbEvents=outputEventData(out,eventData,annotationData,tokenMap,mapEntities,offset, 
+    uint nbEvents=outputEventData(out,eventData,annotationData,tokenMap,mapEntities,offset,
                                   *originalText, dumperMetadata);
     dumperMetadata->nbEvents+=nbEvents;
   }
@@ -438,7 +438,7 @@ LimaStatusCode AbstractIEDumper::process(
 
   // save current state for future output
   dumperMetadata->save(metadata);
-  
+
   TimeUtils::logElapsedTime("AbstractIEDumper");
   return SUCCESS_ID;
 
@@ -493,7 +493,7 @@ public:
 
   // for debug
   friend std::ostream& operator<<(std::ostream& os, const EventInfos e) {
-    os << "id=" << e.eventMentionId << "/type=" << e.eventMentionType 
+    os << "id=" << e.eventMentionId << "/type=" << e.eventMentionType
        << "/mention=" << e.eventMentionString << "/roles=";
     for (unsigned int i(0); i<e.eventRoleId.size(); i++) {
       os << "[" << e.eventRoleType[i] << ":" << e.eventRoleId[i] << "]";
@@ -516,7 +516,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
                                        IEDumperMetaData* metadata
   ) const
 {
-  // output of events is based on the idea of elements of information to extraction: if the elements 
+  // output of events is based on the idea of elements of information to extraction: if the elements
   // coming from different parts of the text are the same, printing them several times is not relevant
   // (differs from an annotation task, maybe @todo have a parameter to handle this difference)
   // Here, the rules for the output of events are:
@@ -524,9 +524,9 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
   // - if an event is included in another event, it is not kept
   // from these rules: most single event mentions (without roles) are not kept: for each different mention, one
   // could be kept if there is no other event with roles that has the same mention
-  
+
   DUMPERLOGINIT;
-  //return the number of events 
+  //return the number of events
   // use a set of EventInfos to remove duplicates
   set<EventInfos> events;
   // use a bufferEvents to possibly have all event mentions as entities before all events
@@ -750,7 +750,7 @@ outputEntity(std::ostream& out,
       //LDEBUG << "AbstractIEDumper: ignored entity type" << entityType;
       return false;
     }
-    
+
     // back to the original offset if text has been expanded
     // do this before inserting in mapEntities to find real duplicates
     adjustPosition(pos,offset);
@@ -842,17 +842,17 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
       }
     }
   }
-  
-  // special case: if specified graph is posgraph, allows to search in analysis graph 
+
+  // special case: if specified graph is posgraph, allows to search in analysis graph
   // (entities found before pos-tagging)
   if (m_graph=="PosGraph") {
     std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
 
     // note: anaVertices size should be 0 or 1
     for (const auto& anaVertex : anaVertices)  {
-      
+
       std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
-    
+
       for (const auto& vx: matches)
       {
         if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
@@ -866,7 +866,7 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
       }
     }
   }
-  
+
   return se;
 
 }
@@ -946,7 +946,7 @@ outputSemanticRelations(std::ostream& out,
 {
   // return the number of relations produced in ouptut
   uint nbRelations(0);
-  
+
   AnnotationGraphEdgeIt it,it_end;
   std::uint64_t index=1+metadata->nbRelations;
   const AnnotationGraph& annotGraph=annotationData->getGraph();
@@ -974,6 +974,8 @@ outputSemanticRelations(std::ostream& out,
           annotType = annotType.substr(posG+1);
       }
       //output
+      DUMPERLOGINIT;
+      LDEBUG << "AbstractIEDumper: add relation (type" << annotType << ", source" << source(*it,annotGraph) << ", target " << target(*it,annotGraph) << "): index=" << index;
       index += outputRelationString(out, index, annotType,
                            outputSemanticRelationArg("source",source(*it,annotGraph),tokenMap,mapEntities,annotationData,offset),
                            outputSemanticRelationArg("target",target(*it,annotGraph),tokenMap,mapEntities,annotationData,offset));
