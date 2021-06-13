@@ -483,6 +483,8 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
     // Gives the tag to language map to the client to allow it to retrieve the language at analysis time
     client->setMapTagMedia(m_mapTagMedia);
     client->setDefaultMedia(m_defaultMedia);
+    client->setDocumentPropertyConfiguration(configuration);
+
     return client;
 }
 

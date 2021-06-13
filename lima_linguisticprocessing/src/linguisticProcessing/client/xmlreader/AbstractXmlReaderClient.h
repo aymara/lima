@@ -16,6 +16,7 @@ namespace Lima {
 }
 namespace Lima
 {
+
 namespace XmlReader
 {
 
@@ -43,7 +44,7 @@ public:
 
     /** deletes the analysis handler with the given id and removes it */
     virtual void releaseAnalysisHandler(const std::string& handlerId) = 0;
-    
+
     void setMapTagMedia(const std::map<std::string, std::string>& Ids) {
         m_mapTagMedia = Ids;
     };
@@ -52,22 +53,38 @@ public:
         m_defaultMedia = media;
     };
 
+    void setDocumentPropertyConfiguration(
+        Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser* configuration);
+
+    typedef std::map<std::string, std::map<std::string,std::string> > DocPropertyConfigs;
+    void getDocumentPropertyConfiguration(
+            DocPropertyConfigs& standardPrprtyConfigs,
+            DocPropertyConfigs& extendedPrprtyConfigs) const
+    {
+      standardPrprtyConfigs = m_standardPrprtyConfigs;
+      extendedPrprtyConfigs = m_extendedPrprtyConfigs;
+    }
+
     Lima::AbstractProcessingClientHandler m_processingClientHandler;
 protected:
+
     // Associates a tag name to a media id. Initialized at creation time by
     // the factory which loads the values from its configuration
     std::map<std::string, std::string> m_mapTagMedia;
-    
+
     // If there is no media associated to the current indexing element and this
     // is set, then this media name will be used
     std::string m_defaultMedia;
+
+    DocPropertyConfigs m_standardPrprtyConfigs;
+    DocPropertyConfigs m_extendedPrprtyConfigs;
 };
 
 /**
-         * A factory for the AbstractXmlReaderClient: contains the
-         * registration of all implemented clients that are linked with the
-         * program. The factory dynamically creates the actual clients from
-         * their names.
+ * A factory for the AbstractXmlReaderClient: contains the
+ * registration of all implemented clients that are linked with the
+ * program. The factory dynamically creates the actual clients from
+ * their names.
  */
 class AbstractXmlReaderClientFactory : public Lima::RegistrableFactory<AbstractXmlReaderClientFactory>
 {

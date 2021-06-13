@@ -5,7 +5,8 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 add_definitions( -DXMLREADERCLIENT_EXPORTING )
 
 set(lima-xp-client_LIB_SRCS
-	XmlReaderClientFactory.cpp
+    XmlReaderClientFactory.cpp
+	AbstractXmlReaderClient.cpp
 )
 
 add_library(lima-xp-client SHARED ${lima-xp-client_LIB_SRCS})
