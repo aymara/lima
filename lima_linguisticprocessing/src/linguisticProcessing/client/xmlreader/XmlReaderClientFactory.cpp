@@ -189,6 +189,6 @@ std::deque<std::string> XmlReaderClientFactory::getRegisteredFactories() const
 
 } // XmlReader
 
-} // FrCeaLic2m
+} // Lima
 
 

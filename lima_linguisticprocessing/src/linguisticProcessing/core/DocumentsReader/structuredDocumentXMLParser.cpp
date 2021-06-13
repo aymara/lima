@@ -34,15 +34,13 @@ namespace Lima {
 namespace DocumentsReader {
 
 
-
-
-
 Lima::SimpleFactory<AbstractReaderResource,
 Lima::DocumentsReader::StructuredDocumentXMLParser>
 structuredDocumentXMLParserFactory ( STRUCTUREDDOCUMENTXMLPARSER_CLASSID );
 
 StructuredDocumentXMLParser::StructuredDocumentXMLParser() :
-        m_currentDocument (), m_fields(), m_addAbsoluteOffsetToTokens(true)
+    m_processor (nullptr), m_currentDocument(), m_elementPointerHasBeenReturned(false),
+    m_fields(), m_addAbsoluteOffsetToTokens(true)
 {
 #ifdef DEBUG_LP
     DRLOGINIT;
@@ -100,7 +98,6 @@ void StructuredDocumentXMLParser::init (
         {
             m_specialCharacterSize[ ( *it ).first[0]]=atoi ( ( *it ).second.c_str() );
         }
-
     }
     catch ( NoSuchMap& e )
     {
@@ -151,7 +148,7 @@ void StructuredDocumentXMLParser::readPropertiesMetadata (
     // Read list of standard properties
     try
     {
-        deque<string> standardPropertyList= groupConf.getListsValueAtKey ( "standard-properties-list" );
+        deque<string> standardPropertyList = groupConf.getListsValueAtKey ( "standard-properties-list" );
         // get list of identifier of attributes from config file
         for ( deque<string>::const_iterator attributeIdentifier = standardPropertyList.begin();
                 attributeIdentifier != standardPropertyList.end(); attributeIdentifier++ )

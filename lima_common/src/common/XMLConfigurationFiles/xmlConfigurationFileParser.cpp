@@ -98,7 +98,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
     //
     //  Create the handler object and install it as the document and error
     //  handler for the parser-> Then parse the file and catch any exceptions
-    //  that propogate out
+    //  that propagate out
     //
     XMLConfigurationFileHandler handler(m_configuration);
     m_parser.setContentHandler(&handler);

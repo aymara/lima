@@ -135,7 +135,7 @@ private:
                           QDate& dateEnd );
 
 
-  // Handler of high level Document events events (startIndexingNode, processText..)
+  // Handler of high level Document events (startIndexingNode, processText..)
   StructuredXmlDocumentHandler* m_processor;
   boost::shared_ptr< ContentStructuredDocument > m_currentDocument;
   bool m_elementPointerHasBeenReturned;

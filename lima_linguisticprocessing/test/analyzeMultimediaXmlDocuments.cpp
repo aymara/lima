@@ -372,8 +372,7 @@ int run(int argc, char** argv)
         }
         else if(useHandler == "multimedia")
         {
-          // for xml dumpers (simpleXmlDumper, fullXmlDumper, etc.),
-          // use xmlSimpleHandler
+          // used with bowDumperXml
           outputFile = fileName + ".mult";
         }
         else
