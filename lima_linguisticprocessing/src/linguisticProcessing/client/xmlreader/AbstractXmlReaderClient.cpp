@@ -21,8 +21,8 @@ namespace XmlReader
 void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
     XMLConfigurationFileParser* configuration)
 {
-  m_standardPrprtyConfigs.clear();
-  m_extendedPrprtyConfigs.clear();
+  m_standardPrprtyInfos.clear();
+  m_extendedPrprtyInfos.clear();
 
   // Read list of declared standard properties
   try
@@ -37,11 +37,10 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
           const std::string docPropertyName = *attributeIdentifier;
           GroupConfigurationStructure& propertyGroupConf = configuration->getModuleGroupConfiguration("lp-structuredXmlreaderclient",
                                                                                      docPropertyName );
-
-          std::map< std::string, std::string > docPropertyConfig;
-          docPropertyConfig["isInternal"] = "false";
+          DocPropertyPublicInfo docPropertyInfo;
+          docPropertyInfo.isInternal = false;
           try {
-              docPropertyConfig["storageType"] = propertyGroupConf.getParamsValueAtKey ( "storageType" );
+              docPropertyInfo.storageType = propertyGroupConf.getParamsValueAtKey ( "storageType" );
           }
           catch ( NoSuchParam& e )
           {
@@ -51,7 +50,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["cardinality"] = propertyGroupConf.getParamsValueAtKey ( "cardinality" );
+              docPropertyInfo.cardinality = propertyGroupConf.getParamsValueAtKey ( "cardinality" );
           }
           catch ( NoSuchParam& e )
           {
@@ -61,7 +60,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["description"] = propertyGroupConf.getParamsValueAtKey ( "description" );
+              docPropertyInfo.description = propertyGroupConf.getParamsValueAtKey ( "description" );
           }
           catch ( NoSuchParam& e )
           {
@@ -71,7 +70,9 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["isInternal"] = propertyGroupConf.getParamsValueAtKey ( "isInternal" );
+              std::string val = propertyGroupConf.getParamsValueAtKey ( "isInternal" );
+              if (val=="true" || val=="yes" || val=="1")
+                docPropertyInfo.isInternal = true;
           }
           catch ( NoSuchParam& e )
           {
@@ -80,7 +81,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
               LDEBUG << "no param 'isInternal' in DocumentPropertyType group for " << docPropertyName;
 #endif
           }
-          m_standardPrprtyConfigs.insert( std::make_pair(docPropertyName , docPropertyConfig ) );
+          m_standardPrprtyInfos.insert( std::make_pair(docPropertyName , docPropertyInfo ) );
       }
   }
   catch ( NoSuchGroup & e )
@@ -107,10 +108,10 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
           const std::string docPropertyName = *attributeIdentifier;
           GroupConfigurationStructure& propertyGroupConf = configuration->getModuleGroupConfiguration("lp-structuredXmlreaderclient",
                                                                                      docPropertyName );
-          std::map< std::string, std::string > docPropertyConfig;
-          docPropertyConfig["isInternal"] = "false";
+          DocPropertyPublicInfo docPropertyInfo;
+          docPropertyInfo.isInternal = false;
           try {
-              docPropertyConfig["storageType"] = propertyGroupConf.getParamsValueAtKey ( "storageType" );
+              docPropertyInfo.storageType = propertyGroupConf.getParamsValueAtKey ( "storageType" );
           }
           catch ( NoSuchParam& e )
           {
@@ -120,7 +121,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["cardinality"] = propertyGroupConf.getParamsValueAtKey ( "cardinality" );
+              docPropertyInfo.cardinality = propertyGroupConf.getParamsValueAtKey ( "cardinality" );
           }
           catch ( NoSuchParam& e )
           {
@@ -130,7 +131,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["description"] = propertyGroupConf.getParamsValueAtKey ( "description" );
+              docPropertyInfo.description = propertyGroupConf.getParamsValueAtKey ( "description" );
           }
           catch ( NoSuchParam& e )
           {
@@ -140,7 +141,9 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
 #endif
           }
           try {
-              docPropertyConfig["isInternal"] = propertyGroupConf.getParamsValueAtKey ( "isInternal" );
+              std::string val = propertyGroupConf.getParamsValueAtKey ( "isInternal" );
+              if (val=="true" || val=="yes" || val=="1")
+                docPropertyInfo.isInternal = true;
           }
           catch ( NoSuchParam& e )
           {
@@ -149,7 +152,7 @@ void AbstractXmlReaderClient::setDocumentPropertyConfiguration(
               LDEBUG << "no param 'isInternal' in DocumentPropertyType group for " << docPropertyName;
 #endif
           }
-          m_extendedPrprtyConfigs.insert( std::make_pair(docPropertyName , docPropertyConfig ) );
+          m_extendedPrprtyInfos.insert( std::make_pair(docPropertyName , docPropertyInfo ) );
       }
     }
     catch ( NoSuchGroup & e )

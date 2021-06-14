@@ -53,16 +53,32 @@ public:
         m_defaultMedia = media;
     };
 
+    //! @brief Store a subset of document property attributes extracted from configuration,
+    //! for the purpose of public exposition (introspection) of the document analysis capacities.
+    struct DocPropertyPublicInfo {
+      std::string storageType;
+      std::string cardinality;
+      std::string description;
+      bool isInternal;
+    };
+    //! @brief Store the association of a document property name and its subset of attributes
+    //! @note Type alias (C++11) is far better than typedef
+    using DocPropertyPublicInfoMap = std::map< std::string, DocPropertyPublicInfo >;
+
+    //! @brief Extract from configuration the subset of document property attributes
+    //! from both standard-properties-list and extended-properties-list.
+    //! See configuration at lp-structuredXmlreaderclient . documentXMLParser
     void setDocumentPropertyConfiguration(
         Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser* configuration);
 
-    typedef std::map<std::string, std::map<std::string,std::string> > DocPropertyConfigs;
+    //! @brief Retrieve the document property attributes for both
+    //!  standard and extended properties-list.
     void getDocumentPropertyConfiguration(
-            DocPropertyConfigs& standardPrprtyConfigs,
-            DocPropertyConfigs& extendedPrprtyConfigs) const
+        DocPropertyPublicInfoMap& standardPrprtyInfos,
+        DocPropertyPublicInfoMap& extendedPrprtyInfos) const
     {
-      standardPrprtyConfigs = m_standardPrprtyConfigs;
-      extendedPrprtyConfigs = m_extendedPrprtyConfigs;
+      standardPrprtyInfos = m_standardPrprtyInfos;
+      extendedPrprtyInfos = m_extendedPrprtyInfos;
     }
 
     Lima::AbstractProcessingClientHandler m_processingClientHandler;
@@ -76,8 +92,11 @@ protected:
     // is set, then this media name will be used
     std::string m_defaultMedia;
 
-    DocPropertyConfigs m_standardPrprtyConfigs;
-    DocPropertyConfigs m_extendedPrprtyConfigs;
+    // Association of a document property name and its subset of attributes for the standard document properties
+    DocPropertyPublicInfoMap m_standardPrprtyInfos;
+
+    // Association of a document property name and its subset of attributes for the extended document properties
+    DocPropertyPublicInfoMap m_extendedPrprtyInfos;
 };
 
 /**
@@ -140,7 +159,8 @@ protected:
 
 };
 
-} // XmlProcessing
-} // FrCeaLic2m
+} // XmlReader
+} // Lima
 
 #endif
+
