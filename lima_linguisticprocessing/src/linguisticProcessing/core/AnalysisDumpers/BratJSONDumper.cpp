@@ -40,7 +40,7 @@ SimpleFactory<MediaProcessUnit,BratJSONDumper> bratJSONDumperFactory(BRATJSONDUM
 
 BratJSONDumper::BratJSONDumper() :
 AbstractIEDumper(),
-m_firstEntity(true),
+// m_firstEntity(true),
 m_firstRelation(true),
 m_firstEvent(true),
 m_attributes(),
@@ -75,7 +75,7 @@ std::string jsonEscape(const std::string& str)  {
     return s;
 }
 
-// headers and footers 
+// headers and footers
 void BratJSONDumper::outputGlobalHeader(std::ostream& os, const std::string& /*sourceFile*/,
                                         const LimaStringText& originalText) const
 {
@@ -150,9 +150,9 @@ void BratJSONDumper::outputEventsFooter(std::ostream& os) const
   os << "]," << endl;
 }
 
-  
+
 void BratJSONDumper::
-outputEntityString(ostream& out,
+outputEntityString(ostream& /*out*/,
                    unsigned int entityId,
                    const std::string& entityType,
                    const std::string& entityString,
@@ -161,7 +161,7 @@ outputEntityString(ostream& out,
 {
   //if (m_firstEntity) { m_firstEntity=false; out << endl; } else { out << "," << endl; }
   ostringstream oss;
-  
+
   oss << "[ \"T" << entityId << "\", \"" <<  entityType << "\", ";
   if (positions.size()==0) {
     // use simple positions
@@ -263,7 +263,7 @@ outputRelationString(ostream& out,
     }
 
     if (m_firstRelation) { m_firstRelation=false; out << endl; } else { out << "," << endl; }
-    
+
     out << "[ \"R" << (relationId+i) << "\", \"" <<  relstr << "\", ["
         << "[\"Arg1\", \"T" << sourceArgString << "\"], "
         << "[\"Arg2\", \"T" << targetArgString << "\"]] ]";

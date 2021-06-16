@@ -441,7 +441,7 @@ int run(int argc,char** argv)
                             param.useIndexIterator);
         break;
       }
-      case BOWFILE_NOTYPE: {
+      case TEXT: {
         if (param.useIterator) {
           BoWTokenIterator it(text);
           while (! it.isAtEnd()) {

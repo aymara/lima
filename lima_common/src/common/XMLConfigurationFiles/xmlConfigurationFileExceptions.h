@@ -47,8 +47,8 @@ namespace Lima {
         //! @brief constructor with the error message
         explicit XMLConfigurationFileException ( const std::string &mess = "") : LimaException ( mess ) {}
 
-        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) = default;
-        XMLConfigurationFileException(const XMLConfigurationFileException&) = default;
+        XMLConfigurationFileException& operator=(const XMLConfigurationFileException&) = delete;
+        XMLConfigurationFileException(const XMLConfigurationFileException&) = delete;
       };
 
       //! @brief return a message when a 'module' is not found
@@ -59,8 +59,8 @@ namespace Lima {
         //! @param name the <i>module</i> that was not found
         explicit NoSuchModule ( const std::string &name ) : XMLConfigurationFileException ( "No such module " + name ), moduleName ( name ) {}
         //! @brief destructor (throw the exception)
-        NoSuchModule& operator=(const NoSuchModule&) = default;
-        NoSuchModule(const NoSuchModule&) = default;
+        NoSuchModule& operator=(const NoSuchModule&) = delete;
+        NoSuchModule(const NoSuchModule&) = delete;
         virtual ~NoSuchModule() throw() = default;
       private:
         //! @brief the name of the <i>module</i> that was not found
@@ -75,8 +75,8 @@ namespace Lima {
         //! @param name the <i>group</i> that was not found
         NoSuchGroup ( const std::string &name ) : XMLConfigurationFileException ( "No such group " + name ),groupName ( name ) {/*std::cout << "No such group " << name << std::endl;*/}
         virtual ~NoSuchGroup() throw() = default;
-        NoSuchGroup(const NoSuchGroup&) = default;
-        NoSuchGroup& operator=(const NoSuchGroup&) = default;
+        NoSuchGroup(const NoSuchGroup&) = delete;
+        NoSuchGroup& operator=(const NoSuchGroup&) = delete;
       private:
         //! @brief the name of the <i>group</i> that was not found
         const std::string groupName;
@@ -89,9 +89,10 @@ namespace Lima {
         //! @brief constructor (send a message was default)
         //! @param name the <i>attribute</i> that was not found
         NoSuchAttribute ( const std::string &name ) : XMLConfigurationFileException ( "No such attribute " + name ),attName ( name ) {/*std::cout << "No such attribute " << name << std::endl;*/}
+        NoSuchAttribute(const NoSuchAttribute&) = delete;
+        NoSuchAttribute& operator=(const NoSuchAttribute&) = delete;
         virtual ~NoSuchAttribute() throw() {}
       private:
-        NoSuchAttribute& operator=(const NoSuchAttribute&) {return *this;}
         //! @brief the name of the <i>attribute</i> that was not found
         const std::string attName;
       };
@@ -103,9 +104,10 @@ namespace Lima {
         //! @brief constructor (send a message was default)
         //! @param name the <i>param</i> that was not found
         NoSuchParam ( const std::string &name ) : XMLConfigurationFileException ( "No such param '" + name + "'" ),paramName ( name ) {/*std::cout << "No such param " << name << std::endl;*/}
+        NoSuchParam(const NoSuchParam&) = delete;
+        NoSuchParam& operator=(const NoSuchParam&) = delete;
         virtual ~NoSuchParam() throw() {}
       private:
-        NoSuchParam& operator=(const NoSuchParam&) {return *this;}
         //! @brief the name of the <i>param</i> that was not found
         const std::string paramName;
       };
@@ -117,9 +119,10 @@ namespace Lima {
         //! @brief constructor (send a message was default)
         //! @param name the <i>list</i> that was not found
         NoSuchList ( const std::string &name ) : XMLConfigurationFileException ( "No such list " + name ),listName ( name ) {/*std::cout << "No such list " << name << std::endl;*/}
+        NoSuchList(const NoSuchList&) = delete;
+        NoSuchList& operator=(const NoSuchList&) = delete;
         virtual ~NoSuchList() throw() {}
       private:
-        NoSuchList& operator=(const NoSuchList&) {return *this;}
         //! @brief the name of the <i>list</i> that was not found
         const std::string listName;
       };
@@ -131,9 +134,10 @@ namespace Lima {
         //! @brief constructor (send a message was default)
         //! @param name the <i>map</i> that was not found
         NoSuchMap ( const std::string &name ) : XMLConfigurationFileException ( "No such map " + name ),mapName ( name ) {/*std::cout << "No such map " << name << std::endl;*/}
+        NoSuchMap(const NoSuchMap&) = delete;
+        NoSuchMap& operator=(const NoSuchMap&) = delete;
         virtual ~NoSuchMap() throw() {}
       private:
-        NoSuchMap& operator=(const NoSuchMap&) {return *this;}
         //! @brief the name of the <i>map</i> that was not found
         const std::string mapName;
       };

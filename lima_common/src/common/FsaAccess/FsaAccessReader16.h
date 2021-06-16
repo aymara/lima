@@ -67,7 +67,7 @@ class FsaAccessReader16;
 template <typename graphType>
 class iterator_context {
 //  friend std::ostream& operator<<(std::ostream& os, const iterator_context<graphType>& t);
-public:  
+public:
   void print(std::ostream& os) const;
   typename boost::graph_traits<graphType>::out_edge_iterator out_edge;
   typename boost::graph_traits<graphType>::out_edge_iterator out_edge_end;
@@ -80,7 +80,7 @@ public:
 template <typename graphType>
 class approx_iterator_context {
 //  friend std::ostream& operator<<(std::ostream& os, const iterator_context<graphType>& t);
-public:  
+public:
   void print(std::ostream& os) const;
   typename boost::graph_traits<graphType>::out_edge_iterator out_edge;
   typename boost::graph_traits<graphType>::out_edge_iterator out_edge_end;
@@ -103,13 +103,14 @@ class fsaReader_superword_iterator16 : public ClonableSuperWordIterator {
       const LimaString &prefix );
    fsaReader_superword_iterator16(const FsaAccessReader16<graphType> & dico,
       const LimaString &prefix);
+   fsaReader_superword_iterator16(const fsaReader_superword_iterator16&) = default;
+   fsaReader_superword_iterator16& operator=(const fsaReader_superword_iterator16&) = delete;
    const LimaString operator*() const override;
    fsaReader_superword_iterator16 &operator++(int) override;
    bool operator==(const AbstractSuperWordIterator& it) const override;
    bool operator!=(const AbstractSuperWordIterator& it) const override;
    virtual ClonableSuperWordIterator* clone() const override;
   private:
-	fsaReader_superword_iterator16<graphType>& operator=(const fsaReader_superword_iterator16<graphType>&) {return *this;}
     typename boost::graph_traits<graphType>::vertex_descriptor m_curr;
     std::deque<iterator_context<graphType> > m_context_stack;
     const FsaAccessReader16<graphType> & m_dico;
@@ -148,7 +149,7 @@ class fsaReader_subword_iterator16 : public ClonableSubWordIterator {
 
 // class iterator for FsaAccessReader::superWords() output
 template <typename graphType>
-class fsaReader_approx_iterator16 : public ClonableApproxWordIterator { 
+class fsaReader_approx_iterator16 : public ClonableApproxWordIterator {
 //  typedef selected_graph_types16::spareGraphType graphType;
   public:
    fsaReader_approx_iterator16(const FsaAccessReader16<graphType> & dico,
@@ -192,12 +193,12 @@ class FsaAccessReader16 : public AbstractAccessByString,
     virtual std::pair<AccessSubWordIterator,AccessSubWordIterator >
       getSubWords(const uint64_t offset,
               const LimaString & word ) const override;
-    
+
     // public optional operation in interface AbstractEnhancedAccess
     LimaString getSpelling(const uint64_t index ) const override;
-    
+
     LimaString getExtent(const LimaString & prefix ) const;
-    
+
     // for IO
     void read ( const std::string & filename );
     void read ( std::istream& is );

@@ -74,7 +74,7 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
 #else
   LIMA_UNUSED(propType);
 #endif
-  HierarchyDocumentElement* result;
+  HierarchyDocumentElement* result = nullptr;
   if( empty() ) {
 #ifdef DEBUG_LP
     LDEBUG  << "empty";
@@ -95,7 +95,8 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
         result = new HierarchyDocumentElement(elementName, parserOffset, hierarchyElement->getPropertyList());
     }
   }
-  result->GenericDocumentProperties::setIntValue("offBegPrpty", parserOffset);
+  if (result)
+    result->GenericDocumentProperties::setIntValue("offBegPrpty", parserOffset);
 
   push_back(result );
 #ifdef DEBUG_LP

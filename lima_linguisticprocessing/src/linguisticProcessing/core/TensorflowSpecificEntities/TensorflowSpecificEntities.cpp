@@ -451,7 +451,7 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
     if(itBatchChars != charIds.cend() || itSqChars != itBatchChars->cend())
     {
       //5. Predict entity
-      vector<Eigen::MatrixXi> result(batchSize);
+      std::vector<Eigen::MatrixXi> result(batchSize);
       if(predictBatch(m_d->m_status, m_d->m_session,
           batchSize, charIds, wordIds, result) == NERStatusCode::MISSING_DATA)
       {
@@ -459,9 +459,9 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
       }
 
       //6. Store results in a map, mapping LinguisticGraphVertex to its entity, following sentence's order
-      for(auto i=0;i<result.size();++i)
+      for(std::size_t i=0; i < result.size(); ++i)
       {
-        for(auto j=0;j<result[i].size();++j)
+        for(std::size_t j=0; j < result[i].size(); ++j)
         {
           LinguisticGraphVertex v = visitedVertex[i][j];
           matchingVertexToEntity[v]=m_d->m_vocabTags[result[i](j)];

@@ -23,17 +23,17 @@ public:
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
             Manager* manager) override;
-  
-  void outputGlobalHeader(std::ostream& os, const std::string& sourceFile="", 
-                          const LimaStringText& originalText=LimaStringText("")) const;
-  void outputGlobalFooter(std::ostream& os) const;
-  void outputEntitiesHeader(std::ostream& os) const;
-  void outputEntitiesFooter(std::ostream& os) const;
-  void outputRelationsHeader(std::ostream& os) const;
-  void outputRelationsFooter(std::ostream& os) const;
-  void outputEventsHeader(std::ostream& os) const;
-  void outputEventsFooter(std::ostream& os) const;
-  
+
+  void outputGlobalHeader(std::ostream& os, const std::string& sourceFile="",
+                          const LimaStringText& originalText=LimaStringText("")) const override;
+  void outputGlobalFooter(std::ostream& os) const override;
+  void outputEntitiesHeader(std::ostream& os) const override;
+  void outputEntitiesFooter(std::ostream& os) const override;
+  void outputRelationsHeader(std::ostream& os) const override;
+  void outputRelationsFooter(std::ostream& os) const override;
+  void outputEventsHeader(std::ostream& os) const override;
+  void outputEventsFooter(std::ostream& os) const override;
+
   void outputEntityString(std::ostream& out,
                           unsigned int entityId,
                           const std::string& entityType,
@@ -70,7 +70,7 @@ public:
 
 private:
   // set members mutable (modified in the inherited const functions)
-  mutable bool m_firstEntity;
+//   mutable bool m_firstEntity;
   mutable bool m_firstRelation;
   mutable bool m_firstEvent;
   // attributes and norms are printed with the entities in AbstractIEDumper: need them to be printed

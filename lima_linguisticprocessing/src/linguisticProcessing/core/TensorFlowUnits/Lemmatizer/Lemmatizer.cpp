@@ -654,7 +654,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   {
     vector<string> dont_lemmatize_pos_names;
     load_string_array(get_json_array(data.object(), "dont_lemmatize"), dont_lemmatize_pos_names);
-    for ( const auto s : dont_lemmatize_pos_names )
+    for ( const auto& s : dont_lemmatize_pos_names )
     {
       m_dont_lemmatize.insert(pm.getPropertyValue(s));
     }

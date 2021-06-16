@@ -144,7 +144,7 @@ void DocumentPropertyType::init (
     try
     {
         QString cardinalityTypeId = QString::fromUtf8(unitConfiguration.getParamsValueAtKey ( "cardinality" ).c_str());
-        for ( int i = 0 ; static_cast<CardinalityType> ( i ) < MAX_STORAGE_TYPE ; i++ )
+        for ( int i = 0 ; i < MAX_STORAGE_TYPE ; i++ )
         {
             CardinalityType cardinalityType = static_cast<CardinalityType> ( i );
             if ( !cardinalityTypeId.compare ( cardinalityTypeTag[cardinalityType] ) )
