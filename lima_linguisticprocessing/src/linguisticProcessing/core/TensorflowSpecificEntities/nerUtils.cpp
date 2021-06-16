@@ -233,7 +233,8 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode predictBatch(
 
   std::vector<std::pair<std::string, Tensor>> inputs(5);
 
-  getFeedDict(inputs, charIds, wordIds, wordIdsT, sequenceLengthsT, charIdsT, wordLengthsT, dropoutT, batchSize, maxSizeSentence, maxSizeWord);
+  getFeedDict(inputs, charIds, wordIds, wordIdsT, sequenceLengthsT, charIdsT,
+              wordLengthsT, dropoutT, batchSize, maxSizeSentence, maxSizeWord);
 
   //2. Run the session, evaluating our "c" operation from the graph
 
@@ -304,13 +305,22 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
 {
   if(wordIds.empty() || charIds.empty())
   {
-    std::cerr<<"Check that the vocabulary have been loaded.\n";
+    std::cerr<<"NERStatusCode getFeedDict vocabulary is empty: "
+              <<wordIds.size() << ", "
+              <<charIds.size() << ", "
+              <<".\n";
     return NERStatusCode::MISSING_DATA;
   }
 
   if(wordIdsT.NumElements()==0 || sequenceLengthsT.NumElements()==0 || charIdsT.NumElements()==0 || wordLengthsT.NumElements()==0 || dropoutT.NumElements()==0)
   {
-    std::cerr<<"Tensors have not been initialized.\n";
+    std::cerr<<"Tensors have not been initialized: "
+              <<wordIdsT.NumElements() << ", "
+              <<sequenceLengthsT.NumElements() << ", "
+              <<charIdsT.NumElements() << ", "
+              <<wordLengthsT.NumElements() << ", "
+              <<dropoutT.NumElements() << ", "
+              <<".\n";
     return NERStatusCode::MISSING_DATA;
   }
 
@@ -322,7 +332,7 @@ LIMA_TENSORFLOWSPECIFICENTITIES_EXPORT NERStatusCode getFeedDict(
 
   //Transfer data to each input tensor
 
-  auto tSequenceLengths=sequenceLengthsT.vec<int>();
+  auto tSequenceLengths = sequenceLengthsT.vec< int >();
   for(auto j=0;j<batchSize;++j)
   {
     tSequenceLengths(j)=static_cast<int>(wordIds[j].size());

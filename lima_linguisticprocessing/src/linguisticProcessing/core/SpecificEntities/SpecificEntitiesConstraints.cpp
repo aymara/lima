@@ -192,7 +192,12 @@ m_language(language)
     LDEBUG << "CreateSpecificEntity: getting entity type "
            <<  Common::Misc::limastring2utf8stdstring(typeName);
 #endif
-    m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
+    try {
+      m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
+    } catch (const LimaException& e) {
+      SELOGINIT;
+      LIMA_EXCEPTION("Unknown entity type" << typeName << e.what());
+    }
   }
 
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
@@ -221,76 +226,6 @@ getPropertyManager("MICRO");
     }
   }
 }
-
-// CreateSpecificEntity::CreateSpecificEntity(MediaId language,
-//                        const LimaString& complement):
-// ConstraintFunction(language,complement),
-// m_language(language)
-// {
-//   SELOGINIT;
-//   m_sp=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
-//
-//   std::string str=Common::Misc::limastring2utf8stdstring(complement);
-//   LDEBUG << "CreateSpecificEntity constructor with complement: " <<  str;
-//   if (! str.empty()) {
-//     //uint64_t i=str.find("group:"); portage 32 64
-//     std::string::size_type i=str.find("group:");
-//     if (i!=std::string::npos) {
-//       //uint64_t j=str.find(","); portage 32 64
-//       std::string::size_type j=str.find(",");
-//       entityGroup=std::string(str,i+6,j-i-6);
-//       LDEBUG << "CreateSpecificEntity: use group " << entityGroup;
-//       if (j==std::string::npos) {
-//  str.clear();
-//       }
-//       else {
-//         str=std::string(str,j+1);
-//       }
-//     }
-//     else LDEBUG << "CreateSpecificEntity: no group specified";
-//   }
-//   if (!str.empty()) {
-//     LimaString typeName;
-//     uint64_t j=str.find(sep);
-//     if (j!=std::string::npos) {
-//       typeName=LimaString(str,0,j);
-//       str=LimaString(str,j+1);
-//     }
-//     else {
-//       typeName=complement;
-//       str.clear();
-//     }
-//     LDEBUG << "CreateSpecificEntity: getting entity type "
-//            <<  Common::Misc::limastring2utf8stdstring(typeName);
-//     m_type=Common::MediaticData::MediaticData::single().getEntityType(typeName);
-//   }
-//
-//   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-//
-//   const Common::PropertyCode::PropertyManager& microManager=
-//       static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyManager("MICRO");
-//
-//   if (!str.empty())
-//   {
-//     //uint64_t currentPos = 0; portage 32 64
-//     std::string::size_type currentPos = 0;
-//     while (currentPos != str.size()+1)
-//     {
-//       std::string::size_type sepPos = str.find(sep, currentPos);
-//
-//       if (sepPos == LimaString::npos)
-//       {
-//         sepPos = str.size();
-//       }
-//       std::string smicro=Common::Misc::limastring2utf8stdstring(LimaString(str, currentPos, sepPos-currentPos));
-//       LinguisticCode micro = microManager.getPropertyValue(smicro);
-//       m_microsToKeep.insert(micro);
-// //       LDEBUG << "Added " << smicro << " / " << micro << " to micros to keep";
-//       currentPos = sepPos+1;
-//     }
-//   }
-// }
-
 
 /** @todo Verifier la Completude du mapping entre graphes morpho, synt et d'annotation */
 bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,

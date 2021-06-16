@@ -410,14 +410,13 @@ resolveGroupName(const LimaString s,
         return foundGroup;
       }
       AUCLOGINIT;
-      LERROR << "resolveGroupName: group " << Common::Misc::limastring2utf8stdstring(s) << " not active";
+      LERROR << "resolveGroupName: group " << s << " not active";
       return foundGroup;
     }
   }
   catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "resolveGroupName: cannot resolve group for "
-             << Common::Misc::limastring2utf8stdstring(s);
+      LERROR << "resolveGroupName: cannot resolve group for " << s;
   }
   return foundGroup;
 }
@@ -430,8 +429,7 @@ resolveEntityName(const LimaString s,
 {
 #ifdef DEBUG_LP
   AUCLOGINIT;
-  LDEBUG << "resolveEntityName: try to resolve entity name "
-         << Common::Misc::limastring2utf8stdstring(s);
+  LDEBUG << "resolveEntityName: try to resolve entity name " << s;
 #endif
 
   // test if word is a known entity name => in this case, entity transition
@@ -444,7 +442,9 @@ resolveEntityName(const LimaString s,
     }
     catch (LimaException& e) {
       AUCLOGINIT;
-      LERROR << "resolveEntityName: unknown entity " << s;
+      LERROR << __FILE__ << ", line" << __LINE__
+              << "resolveEntityName: unknown entity " << s;
+      throw;
     }
   }
   else { // try to find this entity in active groups
@@ -472,8 +472,8 @@ resolveEntityName(const LimaString s,
       catch (LimaException& e) {
         // not in this group: do nothing (continue search)
 #ifdef DEBUG_LP
-        LDEBUG << "resolveEntityName: entity " << Common::Misc::limastring2utf8stdstring(s)
-               << " not in group " << Common::Misc::limastring2utf8stdstring(*it);
+        LDEBUG << "resolveEntityName: entity " << s
+               << " not in group " << *it;
 #endif
       }
     }

@@ -36,13 +36,13 @@ BOOST_AUTO_TEST_CASE( MediaticDataTest )
 {
   QsLogging::initQsLog();
   Lima::AmosePluginsManager::single();
-  
+
   std::string resourcesPath;
   std::string configDir;
   std::string commonConfigFile("lima-common.xml");
   std::deque<std::string> langs;
   langs.push_front("fre");
-  
+
   resourcesPath = std::string (qgetenv("LIMA_RESOURCES").constData()==0?"":qgetenv("LIMA_RESOURCES").constData());
   if (resourcesPath.empty())
   {
@@ -56,14 +56,14 @@ BOOST_AUTO_TEST_CASE( MediaticDataTest )
     configDir = "/usr/share/config/lima";
   }
   std::cerr << "MediaticData0: configDir=" << configDir << std::endl;
-  
+
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath,
     configDir,
     commonConfigFile,
     langs);
-  
+
   // use setter: Create LinguisticProcessing.IDIOM and LinguisticProcessing.SYNTACTIC_RELATION
   LimaString groupName1("LinguisticProcessing");
   Common::MediaticData::EntityGroupId group1 = Common::MediaticData::MediaticData::changeable().addEntityGroup(groupName1);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( MediaticDataTest )
   LimaString entityName12("SYNTACTIC_RELATION");
   Common::MediaticData::EntityType type11 = Common::MediaticData::MediaticData::changeable().addEntity(groupName1,entityName11);
   Common::MediaticData::EntityType type12 = Common::MediaticData::MediaticData::changeable().addEntity(groupName1,entityName12);
-  
+
   // use setter: Create Location.CITYand Location.COUNTRY
   LimaString groupName2("Location");
   Common::MediaticData::EntityGroupId group2 = Common::MediaticData::MediaticData::changeable().addEntityGroup(groupName2);
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE( MediaticDataTest )
   LimaString entityName22("COUNTRY");
   Common::MediaticData::EntityType type21 = Common::MediaticData::MediaticData::changeable().addEntity(groupName2,entityName21);
   Common::MediaticData::EntityType type22 = Common::MediaticData::MediaticData::changeable().addEntity(groupName2,entityName22);
-  
+
   // test getter: get groupId from name
   Lima::Common::MediaticData::EntityGroupId groupId2 = Common::MediaticData::MediaticData::single().getEntityGroupId(groupName2);
   std::cerr << "groupName2 = " << groupName1 << ", groupId2 = " << groupId2 << std::endl;
@@ -87,26 +87,26 @@ BOOST_AUTO_TEST_CASE( MediaticDataTest )
   // test getter: get groupName from groupId
   LimaString groupName22 = Common::MediaticData::MediaticData::single().getEntityGroupName(groupId2);
   BOOST_REQUIRE( groupName2 == groupName22);
-  
+
   // test getter: get groupId from name
   Lima::Common::MediaticData::EntityGroupId groupId1 = Common::MediaticData::MediaticData::single().getEntityGroupId(groupName1);
   std::cerr << "groupName1 = " << groupName1 << ", groupId1 = " << groupId1 << std::endl;
   BOOST_REQUIRE( groupId1 == group1 );
   // test getter: get groupName from groupId
   BOOST_REQUIRE( groupName1 == Common::MediaticData::MediaticData::single().getEntityGroupName(groupId1));
-  
+
   // test getter: get entity name from entity
   LimaString name11 = Common::MediaticData::MediaticData::single().getEntityName(type11);
   LimaString qualifiedEntityName11("LinguisticProcessing.IDIOM");
   std::cerr << "name11 = " << name11 << std::endl;
   BOOST_REQUIRE(name11==qualifiedEntityName11);
-  
+
   // test getter: get entity type from name
   LimaString qualifiedEntityName21("Location.CITY");
   LimaString simpleEntityName21("CITY");
   Lima::Common::MediaticData::EntityType entityType211 = Common::MediaticData::MediaticData::single().getEntityType(qualifiedEntityName21);
   BOOST_REQUIRE(entityType211 == type21);
-  Lima::Common::MediaticData::EntityType entityType212 = Common::MediaticData::MediaticData::single().getEntityType(groupId2, simpleEntityName21);
+  Lima::Common::MediaticData::EntityType entityType212 = Common::MediaticData::MediaticData::single().getEntityType(groupName2, simpleEntityName21);
   BOOST_REQUIRE(entityType211 == type21);
 
  }

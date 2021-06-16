@@ -579,7 +579,9 @@ int run(int argc, char** argv)
                             inactiveUnits);
           }
           catch (LimaException& e) {
-            std::cerr << "Error on paragraph " << numpar << "[" << paragraph.toStdString() << "]:" << e.what() << std::endl;
+            std::cerr << "Error on paragraph " << numpar << "["
+                      << paragraph.toStdString() << "]:" << e.what()
+                      << std::endl;
             //allows the process to continue on next paragraph
           }
         }

@@ -249,7 +249,7 @@ void CoreLinguisticProcessingClient::analyze(
 #ifdef DEBUG_LP
   LDEBUG << "Process pipeline..." ;
 #endif
-  LimaStatusCode status=pipeline->process(analysis);
+  LimaStatusCode status = pipeline->process(analysis);
 #ifdef DEBUG_LP
   LDEBUG << "pipeline process returned status " << (int)status ;
 #endif

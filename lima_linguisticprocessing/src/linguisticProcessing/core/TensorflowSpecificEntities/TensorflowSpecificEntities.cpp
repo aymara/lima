@@ -503,12 +503,13 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
   return SUCCESS_ID;
 }
 
-inline const QString& get_const(const map<LinguisticGraphVertex, QString>& m, LinguisticGraphVertex k)
+inline const QString& get_const(const map<LinguisticGraphVertex, QString>& m,
+                                LinguisticGraphVertex k)
 {
-  map<LinguisticGraphVertex, QString>::const_iterator i = m.find(k);
+  auto i = m.find(k);
   if (m.end() == i)
   {
-    throw logic_error("It is assumed that vertex exists in the map. But it doesn't.");
+    throw std::logic_error("It is assumed that vertex exists in the map. But it doesn't.");
   }
   return i->second;
 }
@@ -525,51 +526,60 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());
 #endif
 
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
+  auto sb = static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
   if (nullptr == sb)
   {
-    throw runtime_error("TensorflowSpecificEntities::updateAnalysisData: no SentenceBounaries available");
+    throw std::runtime_error("TensorflowSpecificEntities::updateAnalysisData: no SentenceBounaries available");
   }
 
-  for (size_t iSeg=0; iSeg<visitedVertex.size(); iSeg++)
+  for (size_t iSeg=0; iSeg < visitedVertex.size(); iSeg++)
   {
-    vector<LinguisticGraphVertex>::const_iterator itVisited=visitedVertex[iSeg].cbegin();
+    auto itVisited = visitedVertex[iSeg].cbegin();
     while(itVisited!=visitedVertex[iSeg].cend())
     {
       if (visitedVertex[iSeg].front() == batch_segments[iSeg]->getFirstVertex())
       {
-        throw runtime_error("TensorflowSpecificEntities: first vertex must be before the segment.");
+        throw std::runtime_error("TensorflowSpecificEntities: first vertex must be before the segment.");
       }
 
       // Look for entities
-      if(get_const(matchingVertexToEntity, *itVisited)!="O")
+      if(get_const(matchingVertexToEntity, *itVisited) != "O")
       {
         // Create a specific object to encapsulate LinguisticGraphVertex which forms the entity
         Automaton::RecognizerMatch entityFound(analysisGraph,*itVisited,true);
         itVisited++;
-        LinguisticGraphVertex entityBegin=entityFound.getBegin();
+        auto entityBegin = entityFound.getBegin();
         // Look for words from the same entity
         // [eng] It doesn't begin by B-XXX but by I-XXX according to CoNLL format.
         // The tag XXX has to be the same between words from the same entity
-        const LimaString& first_tag = get_const(matchingVertexToEntity, entityBegin);
-        while(itVisited!=visitedVertex[iSeg].cend() &&
-              get_const(matchingVertexToEntity,*itVisited)[0]!='B' && get_const(matchingVertexToEntity,*itVisited).endsWith(first_tag.mid(2)))
+        const auto& first_tag = get_const(matchingVertexToEntity, entityBegin);
+        while(itVisited != visitedVertex[iSeg].cend()
+              && get_const(matchingVertexToEntity,*itVisited)[0] != 'B'
+              && get_const(matchingVertexToEntity,*itVisited).endsWith(first_tag.mid(2)))
         {
           entityFound.addBackVertex(*itVisited);
           itVisited++;
         }
 
-        LimaString entTypeName=get_const(matchingVertexToEntity,entityFound.getBegin());
+        auto entTypeName = get_const(matchingVertexToEntity,
+                                     entityFound.getBegin());
         entTypeName.remove(QRegularExpression("^[BI]-"));
-        EntityType seType=Common::MediaticData::MediaticData::single().getEntityType(entTypeName);
+        EntityType seType;
+        try {
+          seType = Common::MediaticData::MediaticData::single().getEntityType(entTypeName);
+        } catch (LimaException& e) {
+          TFSELOGINIT;
+          LIMA_EXCEPTION( "Lima exception while getting entity type "
+                        << entTypeName << ": " << e.what());
+        }
         entityFound.setType(seType);
 #ifdef DEBUG_LP
         TFSELOGINIT;
         auto tokenMap = get(vertex_token, *lingGraph);
         ostringstream oss;
-        for(auto itBeginEntity=entityFound.cbegin();itBeginEntity!=entityFound.cend();++itBeginEntity)
+        for(const auto& beginEntity: entityFound)
         {
-          oss << tokenMap[(*itBeginEntity).m_elem.first]->stringForm()
+          oss << tokenMap[beginEntity.m_elem.first]->stringForm()
               << "  "
               << Common::MediaticData::MediaticData::single().getEntityName(seType)
               << " ; ";
@@ -578,22 +588,24 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
 #endif
         // Update AnalysisGraph
 
-        vector<Segment>::iterator segmentIt = batch_segments[iSeg];
+        auto segmentIt = batch_segments[iSeg];
 
-        LinguisticGraphVertex before = analysisGraph->firstVertex();
+        auto before = analysisGraph->firstVertex();
         if (analysisGraph->firstVertex() != segmentIt->getFirstVertex())
         {
-          before = getOnePrecedingNode(*analysisGraph, segmentIt->getFirstVertex());
+          before = getOnePrecedingNode(*analysisGraph,
+                                       segmentIt->getFirstVertex());
         }
 
-        LinguisticGraphVertex after = analysisGraph->lastVertex();
+        auto after = analysisGraph->lastVertex();
         if (analysisGraph->lastVertex() != segmentIt->getLastVertex())
         {
-          after = getOneFollowingNode(*analysisGraph, segmentIt->getLastVertex());
+          after = getOneFollowingNode(*analysisGraph,
+                                      segmentIt->getLastVertex());
         }
 
-        LinguisticGraphVertex newVertex = analysisGraph->firstVertex();
-        if(!createSpecificEntity(entityFound,analysis,newVertex))
+        auto newVertex = analysisGraph->firstVertex();
+        if(!createSpecificEntity(entityFound, analysis, newVertex))
         {
           TFSELOGINIT;
           LERROR << "Error while creating an entity";
@@ -605,8 +617,9 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
           // new vertex for an entity is created
           if (analysisGraph->firstVertex() != segmentIt->getFirstVertex())
           {
-            LinguisticGraphVertex newFirstVertex = getOneFollowingNode(*analysisGraph, before);
-            if (newFirstVertex != segmentIt->getFirstVertex() && newFirstVertex == newVertex)
+            auto newFirstVertex = getOneFollowingNode(*analysisGraph, before);
+            if (newFirstVertex != segmentIt->getFirstVertex()
+                  && newFirstVertex == newVertex)
             {
               segmentIt->setFirstVertex(newVertex);
               if (segmentIt != sb->getSegments().begin())
@@ -618,8 +631,9 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
             }
           }
 
-          LinguisticGraphVertex newLastVertex = getOnePrecedingNode(*analysisGraph, after);
-          if (newLastVertex != segmentIt->getLastVertex() && newLastVertex == newVertex)
+          auto newLastVertex = getOnePrecedingNode(*analysisGraph, after);
+          if (newLastVertex != segmentIt->getLastVertex()
+              && newLastVertex == newVertex)
           {
             segmentIt->setLastVertex(newVertex);
             auto t = segmentIt;
@@ -653,7 +667,8 @@ bool TensorflowSpecificEntities::createSpecificEntity(
 
 #ifdef DEBUG_LP
   TFSELOGINIT;
-  LDEBUG << "CreateSpecificEntity: create entity of type " << entityFound.getType() << " on vertices " << entityFound;
+  LDEBUG << "CreateSpecificEntity: create entity of type "
+          << entityFound.getType() << " on vertices " << entityFound;
 #endif
 
   auto analysisGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
@@ -683,7 +698,8 @@ bool TensorflowSpecificEntities::createSpecificEntity(
   // Create a specific annotation
   if (annotationData->dumpFunction("SpecificEntity") == 0)
   {
-    annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
+    annotationData->dumpFunction("SpecificEntity",
+                                 new DumpSpecificEntityAnnotation());
   }
 
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());

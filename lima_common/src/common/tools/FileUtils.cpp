@@ -27,6 +27,7 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
 
 namespace Lima {
 namespace Common {
