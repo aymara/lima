@@ -273,7 +273,7 @@ public:
         std::exception(), m_reason(message)
     {
     }
-    LimaException(const LimaException&) = delete;
+    LimaException(const LimaException&) = default;
     LimaException& operator=(const LimaException& e) = delete;
     virtual ~LimaException() throw() = default;
 
@@ -357,7 +357,7 @@ public:
     {
     }
     virtual ~InvalidConfiguration() throw() = default;
-    InvalidConfiguration(const InvalidConfiguration&) = delete;
+    InvalidConfiguration(const InvalidConfiguration&) = default;
     InvalidConfiguration& operator=(const InvalidConfiguration& e) = delete;
 };
 
