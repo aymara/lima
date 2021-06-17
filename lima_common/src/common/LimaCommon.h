@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,7 +26,7 @@
  *             Hervé Le Borgne <herve.le-borgne@cea.fr>
 
  * @date       mar déc 18 2007
- * copyright   Copyright (C) 2003-2020 by CEA LIST
+ * copyright   Copyright (C) 2003-2021 by CEA LIST
  * Project     mm_common
  *
  * @brief      (short description)
@@ -410,7 +410,7 @@ public :
 
     };
 
-    MediaNotInitialized(const MediaNotInitialized&) = delete;
+    MediaNotInitialized(const MediaNotInitialized&) = default;
     MediaNotInitialized& operator=(const MediaNotInitialized&) = delete;
     virtual ~MediaNotInitialized() throw() = default;
 
@@ -437,7 +437,7 @@ public :
     {
         m_reason = std::string("Fsa not initialized because of ") + reason;
     }
-    AccessByStringNotInitialized(const AccessByStringNotInitialized&) = delete;
+    AccessByStringNotInitialized(const AccessByStringNotInitialized&) = default;
     AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) = delete;
     virtual ~AccessByStringNotInitialized() throw() {};
 
@@ -457,7 +457,7 @@ public :
     {
       m_reason = std::string("parameter out of range ") + reason;
     }
-    AccessByStringOutOfRange(const AccessByStringOutOfRange&) = delete;
+    AccessByStringOutOfRange(const AccessByStringOutOfRange&) = default;
     AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) = delete;
     virtual ~AccessByStringOutOfRange() throw() {};
 
@@ -484,7 +484,7 @@ public:
   {
     m_reason = std::string("XMLException: ") + message;
   }
-  XMLException(const XMLException&) = delete;
+  XMLException(const XMLException&) = default;
   XMLException& operator=(const XMLException&) = delete;
 };
 
