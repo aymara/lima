@@ -21,7 +21,7 @@ namespace XmlReader
 {
 
 //! @brief interface publique au client d'analyse de fichier XML
-class AbstractXmlReaderClient: public Lima::AbstractProcessingClient
+class XMLREADERCLIENT_EXPORT AbstractXmlReaderClient: public Lima::AbstractProcessingClient
 {
 public:
 
