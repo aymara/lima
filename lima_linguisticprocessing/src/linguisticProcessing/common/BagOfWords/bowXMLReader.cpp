@@ -250,10 +250,22 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   else if (stringName == "bowNamedEntity") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
     LimaString typeName=getLimaStringAttribute(attributes,"type");
+    Lima::Common::MediaticData::EntityType entityType;
+    try {
+      entityType = MediaticData::MediaticData::single().getEntityType(typeName);
+    } catch (const LimaException& e) {
     // use empty lemma: no need to store lemma for compound
-    boost::shared_ptr< BoWNamedEntity > ne=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
-                                          MediaticData::MediaticData::single().getEntityType(typeName),
-                                          position,length));
+                QString errorString;
+                QTextStream qts(&errorString);
+                qts << __FILE__ << ", line" << __LINE__
+                    << "Unknown entity type" << typeName;
+                LERROR << errorString;
+                throw LimaException(errorString);
+    }
+    boost::shared_ptr< BoWNamedEntity > ne = boost::shared_ptr< BoWNamedEntity >(
+      new BoWNamedEntity(LimaString(),
+                         category, entityType,
+                         position, length));
     m_refMap[id]=ne;
     m_currentComplexToken.push_back(CurrentComplexToken(ne));
   }

@@ -202,7 +202,7 @@ void Test::testViterbiDecodeWithoutInputs()
 void Test::testPredictBatch1()
 {
 //   Initialize a tensorflow session
-  tensorflow::Session* session;
+  tensorflow::Session* session = nullptr;
   std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
                                                        &session)));
   QVERIFY(status->ok());
@@ -252,7 +252,7 @@ void Test::testPredictBatch1()
   QVERIFY(predictBatch(status, session, 1,
                        charIds, wordIds, result)==NERStatusCode::SUCCESS);
   QVERIFY(vocabTags[result[0](0)]=="O");
-  session->Close();
+  QVERIFY(session->Close().ok());
   delete session;
 }
 
@@ -303,7 +303,7 @@ void Test::testPredictBatch2()
   wordIds[0].resize(sentencesByBatch[0].size());
   std::vector<std::vector<std::vector<int>>> charIds(1);
   charIds[0].resize(sentencesByBatch[0].size());
-  for(auto i=0;i<textConverted.size();++i)
+  for(std::size_t i=0;i<textConverted.size();++i)
   {
     charIds[0][i].resize(textConverted[i].first.size());
     charIds[0][i]=textConverted[i].first;
@@ -320,7 +320,7 @@ void Test::testPredictBatch2()
   QVERIFY(vocabTags[result[0](0)]=="O");
   QVERIFY(vocabTags[result[0](1)]=="O");
   QVERIFY(vocabTags[result[0](2)]=="I-LOC");
-  session->Close();
+  QVERIFY(session->Close().ok());
   delete session;
 }
 
@@ -380,7 +380,7 @@ void Test::testPredictBatch3()
     // the order of words
     wordIds[k].resize(sentencesByBatch[k].size());
     charIds[k].resize(sentencesByBatch[k].size());
-    for(auto i=0;i<textConverted[k].size();++i)
+    for(std::size_t i=0;i<textConverted[k].size();++i)
     {
       charIds[k][i].resize(textConverted[k][i].first.size());
       charIds[k][i]=textConverted[k][i].first;
@@ -411,7 +411,7 @@ void Test::testPredictBatch3()
   QVERIFY(nbEntities==6);
   std::vector<QString> lstCorrectEntities={"I-LOC","I-MISC","I-MISC",
                                             "I-LOC","I-MISC","I-MISC"};
-  for(auto i=0;i<lstCorrectEntities.size();++i)
+  for(std::size_t i=0;i<lstCorrectEntities.size();++i)
   {
     QVERIFY(lstCorrectEntities[i]==lstEntities[i]);
   }
@@ -422,5 +422,5 @@ void Test::testPredictBatch3()
     QVERIFY(vocabTags[result[1](i)]=="O");
   }
 
-  session->Close();
+  QVERIFY(session->Close().ok());
 }

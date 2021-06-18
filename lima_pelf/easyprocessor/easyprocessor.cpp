@@ -1,18 +1,18 @@
 /*
  *    Copyright 2004-2014 CEA LIST
- * 
+ *
  *    This file is part of LIMA.
- * 
+ *
  *    LIMA is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
  *    (at your option) any later version.
- * 
+ *
  *    LIMA is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Affero General Public License for more details.
- * 
+ *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
@@ -53,13 +53,13 @@ using namespace Lima;
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
 
-void usage(int argc, char* argv[]); 
+void usage(int argc, char* argv[]);
 
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
   QsLogging::initQsLog();
-  
+
   std::string resourcesPath;
   if (getenv("LIMA_RESOURCES") != 0)
     resourcesPath=std::string(getenv("LIMA_RESOURCES"));
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
   {
     std::cerr << "Environment variable LIMA_RESOURCES must be defined." << std::endl;
     exit(1);
-  } 
+  }
   std::string configDir;
   if (getenv("LIMA_CONF") != 0)
     configDir=std::string(getenv("LIMA_CONF"));
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   {
     std::cerr << "Environment variable LIMA_CONF must be defined." << std::endl;
     exit(1);
-  } 
+  }
   std::string lpConfigFile="lima-analysis.xml";
   std::string commonConfigFile="lima-common.xml";
   std::string easyConfigFile="easyprocessor.conf.xml";
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     MediaticData::single().getMedias());
 
   std::shared_ptr< AbstractProcessingClient > client = std::shared_ptr< AbstractProcessingClient >(LinguisticProcessingClientFactory::single().createClient(clientId));
-  
+
   // read easy configfile
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser easyconfig(QString::fromUtf8(configDir.c_str()) + "/" + easyConfigFile.c_str());
   std::map<std::string,std::string> groupeTypeMapping;
@@ -202,14 +202,14 @@ int main(int argc, char *argv[])
     std::cerr << "No map named 'tgtTag' in easy configuration file" << std::endl;
     exit(-1);
   }
-  
 
-  // create a parser for lic2m results
+
+  // create a parser for lima results
   QXmlSimpleReader parser;
   EasySourceHandler esh;
   parser.setContentHandler(&esh);
   parser.setErrorHandler(&esh);
-  
+
   // process each easy source file
   for (std::deque<std::string>::const_iterator it=files.begin();
        it!=files.end();
@@ -242,15 +242,15 @@ int main(int argc, char *argv[])
     {
       std::cerr << __FILE__ << ", line " << __LINE__ << ": caught runtime_error : " << std::endl << e.what() << std::endl;
     }
-    
+
     std::map<std::string, AbstractAnalysisHandler*> handlers;
-    
-    
+
+
     const std::vector<Enonce>& enonces=esh.getEnonces();
     std::ostringstream xmlfname;
     xmlfname << *it << ".easy.xml";
     std::ofstream xmlOutput(xmlfname.str().c_str());
-    
+
     xmlOutput << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
     xmlOutput << "<!DOCTYPE DOCUMENT SYSTEM \"easy.dtd\">" << std::endl;
     xmlOutput << "<DOCUMENT id=\"lima\" fichier=\"" << *it << "\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 
       //      std::cerr << "analyzing text : " << enonceItr->text << std::endl;
 
-     // Write text on output file for debuging. File removed at the end of 
+     // Write text on output file for debuging. File removed at the end of
      // processing by default
       std::ostringstream txtfname;
       txtfname << enonceItr->id << ".txt";
@@ -286,12 +286,12 @@ int main(int argc, char *argv[])
       }
       catch (const LinguisticProcessingException& e)
       {
-        std::cerr << "Catched LinguisticProcessingException: '" << e.what() 
-            << "' during handling of " << enonceItr->id << " in " << (*it) 
+        std::cerr << "Catched LinguisticProcessingException: '" << e.what()
+            << "' during handling of " << enonceItr->id << " in " << (*it)
             << std::endl;
         continue;
       }
-      
+
       if (removeTempFiles)
       {
         std::ostringstream rmcommand;

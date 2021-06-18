@@ -1422,7 +1422,9 @@ QList< boost::shared_ptr< BoWPredicate > > BowGeneratorPrivate::createPredicate(
         catch (const Lima::LimaException& e)
         {
           DUMPERLOGINIT;
-          LERROR << "BowGenerator::createPredicate Unknown semantic role" << semRole << ";" << e.what();
+          LERROR << "BowGenerator::createPredicate Unknown semantic role"
+                  << semRole << ";" << e.what();
+          throw;
         }
       }
       boost::shared_ptr< BoWPredicate > bowP(new BoWPredicate());

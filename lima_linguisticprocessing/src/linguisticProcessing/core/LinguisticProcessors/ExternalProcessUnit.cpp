@@ -38,7 +38,7 @@
 
 #include <fstream>
 
-//namespace bp = ::boost::process; 
+//namespace bp = ::boost::process;
 
 using namespace std;
 
@@ -156,8 +156,11 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
     outputFilename = fileName + m_outputSuffix;
   }
   commandLine = commandLine.arg(inputFilename, outputFilename);
+  auto args = commandLine.split(" ");
+  auto command = args.front();
+  args.pop_front();
   LDEBUG << "Launching " << commandLine;
-  int processResult = QProcess::execute(commandLine);
+  int processResult = QProcess::execute(command, args);
   switch (processResult) {
     case -2 :
     LERROR << "ExternalProcessUnit: Was not able to start '" << commandLine << "'" ;
@@ -184,7 +187,7 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   else {
     LWARN << "ExternalProcessUnit: no loader defined for the current external process unit";
   }
-  
+
   TimeUtils::logElapsedTime("ExternalProcessUnit");
   return returnCode;
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,7 +26,7 @@
  *             Hervé Le Borgne <herve.le-borgne@cea.fr>
 
  * @date       mar déc 18 2007
- * copyright   Copyright (C) 2003-2020 by CEA LIST
+ * copyright   Copyright (C) 2003-2021 by CEA LIST
  * Project     mm_common
  *
  * @brief      (short description)
@@ -274,7 +274,7 @@ public:
     {
     }
     LimaException(const LimaException&) = default;
-    LimaException& operator=(const LimaException& e) = default;
+    LimaException& operator=(const LimaException& e) = delete;
     virtual ~LimaException() throw() = default;
 
     virtual const char * what () const throw() override
@@ -358,7 +358,7 @@ public:
     }
     virtual ~InvalidConfiguration() throw() = default;
     InvalidConfiguration(const InvalidConfiguration&) = default;
-    InvalidConfiguration& operator=(const InvalidConfiguration& e) = default;
+    InvalidConfiguration& operator=(const InvalidConfiguration& e) = delete;
 };
 
 /**
@@ -410,8 +410,8 @@ public :
 
     };
 
-    MediaNotInitialized(const MediaNotInitialized&)=default;
-    MediaNotInitialized& operator=(const MediaNotInitialized&) =default;
+    MediaNotInitialized(const MediaNotInitialized&) = default;
+    MediaNotInitialized& operator=(const MediaNotInitialized&) = delete;
     virtual ~MediaNotInitialized() throw() = default;
 
 private:
@@ -437,10 +437,10 @@ public :
     {
         m_reason = std::string("Fsa not initialized because of ") + reason;
     }
-    AccessByStringNotInitialized(const AccessByStringNotInitialized&)=default;
+    AccessByStringNotInitialized(const AccessByStringNotInitialized&) = default;
+    AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) = delete;
     virtual ~AccessByStringNotInitialized() throw() {};
 
-  AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) = default;
 };
 
 /**
@@ -457,10 +457,10 @@ public :
     {
       m_reason = std::string("parameter out of range ") + reason;
     }
-    AccessByStringOutOfRange(const AccessByStringOutOfRange&)=default;
+    AccessByStringOutOfRange(const AccessByStringOutOfRange&) = default;
+    AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) = delete;
     virtual ~AccessByStringOutOfRange() throw() {};
 
-  AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) = default;
 };
 
 /**
@@ -484,8 +484,8 @@ public:
   {
     m_reason = std::string("XMLException: ") + message;
   }
-  XMLException(const XMLException&)=default;
-  XMLException& operator=(const XMLException&)=default;
+  XMLException(const XMLException&) = default;
+  XMLException& operator=(const XMLException&) = delete;
 };
 
 

@@ -295,7 +295,7 @@ void CompoundsXmlLogger::outputCompound(
     auto headId = term->getHead();
     auto partIt = term->getParts().cbegin();
     auto partIt_end = term->getParts().cend();
-    for (auto partId = 0; partIt != partIt_end; partIt++, partId++)
+    for (auto partId = uint64_t(0); partIt != partIt_end; partIt++, partId++)
     {
       boost::shared_ptr< BoWToken > partTok = (*partIt).get<1>();
       //        bool head = (*partIt).second;

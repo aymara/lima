@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2004-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,10 +16,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
 #ifndef LIMA_LINGUISTICPROCESSINGCORELINGUISTICPROCESSINGCLIENT_H
 #define LIMA_LINGUISTICPROCESSINGCORELINGUISTICPROCESSINGCLIENT_H
 
@@ -64,7 +60,7 @@ class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessin
 {
 
 public:
-  
+
   void configure(
     Common::XMLConfigurationFiles::XMLConfigurationFileParser& configuration,
     std::deque<std::string> langs,

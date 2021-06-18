@@ -225,7 +225,7 @@ void AbstractIEDumper::init(
         m_templateDefinitions.insert(std::make_pair(templateResource,templateDefinitions));
       }
     }
-    for (const auto t:m_templateDefinitions) {
+    for (const auto& t:m_templateDefinitions) {
       m_templateNames.insert(t.second->getMention());
     }
   }
@@ -540,7 +540,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
       LDEBUG << "templateName:" << templateName;
 
       std::string templateMention="";
-      for(const auto t:m_templateDefinitions)
+      for(const auto& t:m_templateDefinitions)
       {
         if (t.second->getName()==templateName) templateMention=t.second->getMention();
       }
@@ -1016,7 +1016,7 @@ getSemanticRelationAnnotation(LinguisticGraphVertex v,
 void AbstractIEDumper::adjustPosition(std::uint64_t& position, uint64_t offset) const
 {
   //DUMPERLOGINIT;
-  std::uint64_t prevPos(position);
+//   std::uint64_t prevPos(position);
   if (m_offsetMapping!=0) {
     position=m_offsetMapping->getOriginalOffset(position)+offset;
   }
