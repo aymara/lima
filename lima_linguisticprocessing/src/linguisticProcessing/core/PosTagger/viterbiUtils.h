@@ -151,10 +151,10 @@ private:
 
 };
 
-  
+
 } // PosTagger
 } // LinguisticProcessing
-} // FrCeaLic2M
+} // Lima
 
 #include "viterbiUtils.tcc"
 

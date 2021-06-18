@@ -476,9 +476,8 @@ bool StructuredDocumentXMLParser::startElement ( const QString& namespaceURI, co
                   << " as element with attribute " << ( *namesIt ).second;
 #endif
           QString attributeName =  (*namesIt ).second;
-          Lima::LimaString lic2mValue=attributes.value ( attributeName ).toString();
-          std::string utf8Value = Misc::limastring2utf8stdstring ( lic2mValue );
-          m_currentDocument->setDataToLastElement ( propType, utf8Value, m_processor );
+          auto value = attributes.value(attributeName).toString().toStdString();
+          m_currentDocument->setDataToLastElement (propType, value, m_processor);
         }
       }
     }

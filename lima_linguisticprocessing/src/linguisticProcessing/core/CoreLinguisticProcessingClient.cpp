@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2004-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,13 +20,10 @@
 #define _WINSOCKAPI_
 #endif
 
-/***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
- *                                                                         *
- ***************************************************************************/
 #ifndef WIN32
 #include <cstdint> //uint32_t
 #endif
+
 #include "CoreLinguisticProcessingClient.h"
 
 #include "common/MediaticData/mediaticData.h"
