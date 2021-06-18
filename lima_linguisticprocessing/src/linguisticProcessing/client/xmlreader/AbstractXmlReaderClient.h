@@ -6,6 +6,8 @@
 #ifndef ABSTRACTCXMLREADERCLIENT_H
 #define ABSTRACTCXMLREADERCLIENT_H
 
+#include "XmlReaderClient_export.h"
+
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/AbstractFactoryPattern/RegistrableFactory.h"
 #include "common/AbstractProcessingClient/AbstractProcessingClient.h"
