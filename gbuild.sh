@@ -43,6 +43,7 @@ Options default values are in parentheses.
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
   -T                Do not use TensorFlow (default is to use it)
   -P tfsrcpath      <> Path to TensorFlow sources
+  -g gui            <OFF|(ON)> compile with GUI
 EOF
 exit 1
 }
@@ -63,8 +64,9 @@ WITH_PACK="ON"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
+WITH_GUI="ON"
 
-while getopts ":d:m:n:r:v:G:a:p:P:sTj:" o; do
+while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -116,6 +118,11 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:" o; do
             ;;
         T)
             USE_TF=false
+            ;;
+        g)
+            WITH_GUI=${OPTARG}
+            echo "WITH_GUI=$WITH_GUI"
+            [[ "$WITH_GUI" == "ON" || "$WITH_GUI" == "OFF" ]] || usage
             ;;
         *)
             usage
@@ -236,7 +243,7 @@ fi
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
+cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH -DWITH_GUI=$WITH_GUI $source_dir
 
 echo "Running make command:"
 echo "$make_cmd"

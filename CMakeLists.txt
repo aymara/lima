@@ -418,12 +418,17 @@ add_subdirectory(lima_pelf)
 
 # add_subdirectory(lima_annoqt)
 
-if (Qt5Core_FOUND)
-  if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
-    add_subdirectory(lima_gui)
-  else()
-    message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
+if (WITH_GUI)
+  if (Qt5Core_FOUND)
+    if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
+      message("Build with lima_gui")
+      add_subdirectory(lima_gui)
+    else()
+      message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
+    endif()
   endif()
+else()
+  message("Build without lima_gui")
 endif()
 
 
