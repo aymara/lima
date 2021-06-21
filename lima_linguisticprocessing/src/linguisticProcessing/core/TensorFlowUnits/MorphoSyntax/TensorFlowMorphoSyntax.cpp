@@ -1262,7 +1262,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
         {
           vector<string> v;
           load_string_array(i.value().toArray(), v);
-          for ( const auto item : v )
+          for ( const auto& item : v )
           {
             m_feat_deps[upos_idx].insert(item);
           }
