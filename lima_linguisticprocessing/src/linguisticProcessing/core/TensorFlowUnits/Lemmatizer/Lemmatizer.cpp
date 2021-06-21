@@ -387,10 +387,6 @@ void TensorFlowLemmatizerPrivate::init(GroupConfigurationStructure& gcs,
   auto model_file_name = findFileInPaths(resources_path,
                                          QString::fromUtf8("/TensorFlowLemmatizer/%1/%2.model")
                                            .arg(lang_str).arg(model_name));
-  if (model_file_name.isEmpty())
-  {
-    throw InvalidConfiguration("TensorFlowLemmatizerPrivate::init: model file not found.");
-  }
 
   m_load_fn = [this, config_file_name, model_file_name, cache_file_name]()
   {
