@@ -250,9 +250,26 @@ void GenericDocumentProperties::addStringValue(const std::string& propName,
   }
   else {
     std::vector<std::string>& values = (*pos).second;
-    values.push_back(val);
+    auto val_pos = std::find(values.begin(), values.end(), val);
+    if (val_pos==values.end())
+      values.push_back(val);
   }
 }
+
+struct WeightedPropValueMatcher {
+  std::string valName;
+  WeightedPropValueMatcher(const std::string& val) : valName(val) {}
+  bool operator () (const std::pair<std::string,float>& namedValue) {
+    return namedValue.first == valName;
+  }
+  bool operator () (std::vector<std::pair<std::string,float> >::const_iterator namedValueIterator) {
+    return namedValueIterator->first == valName;
+  }
+  bool operator () (std::vector<std::pair<std::string,float> >::iterator namedValueIterator) {
+    return namedValueIterator->first == valName;
+  }
+};
+
 
 void GenericDocumentProperties::addWeightedPropValue(const std::string& propName,
                                                const std::pair<std::string,float>& val)
@@ -265,7 +282,10 @@ void GenericDocumentProperties::addWeightedPropValue(const std::string& propName
   }
   else {
     std::vector<std::pair<std::string,float> >& values = (*pos).second;
-    values.push_back(val);
+    auto val_pos = std::find_if(values.begin(), values.end(), WeightedPropValueMatcher(val.first));
+    if (val_pos==values.end())
+      values.push_back(val);
+
   }
 }
 
