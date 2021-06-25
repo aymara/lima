@@ -39,8 +39,11 @@ Lima::DocumentsReader::StructuredDocumentXMLParser>
 structuredDocumentXMLParserFactory ( STRUCTUREDDOCUMENTXMLPARSER_CLASSID );
 
 StructuredDocumentXMLParser::StructuredDocumentXMLParser() :
-    m_processor (nullptr), m_currentDocument(), m_elementPointerHasBeenReturned(false),
-    m_fields(), m_addAbsoluteOffsetToTokens(true)
+        m_processor(nullptr),
+        m_currentDocument(),
+        m_elementPointerHasBeenReturned(false),
+        m_fields(),
+        m_addAbsoluteOffsetToTokens(true)
 {
 #ifdef DEBUG_LP
     DRLOGINIT;
@@ -58,7 +61,7 @@ void StructuredDocumentXMLParser::init (
 {
 #ifdef DEBUG_LP
     DRLOGINIT;
-    LDEBUG << "StructuredDocumentXMLParser::init(): readPropertiesMetadata...";
+    LDEBUG << "StructuredDocumentXMLParser::init(): readPropertiesMetadata ...";
 #endif
     readPropertiesMetadata ( unitConfiguration ) ;
 
@@ -160,14 +163,39 @@ void StructuredDocumentXMLParser::readPropertiesMetadata (
             for ( std::deque<QString>::const_iterator it = elementTagSet.begin() ;
                     it != elementTagSet.end() ; it++ )
             {
-                m_elementTag2DocumentPropertyType.insert ( std::make_pair( *it,attr ) );
+                const QString elementTagName = *it;
+                auto ite = m_elementTag2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTag2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTag2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
             // add property to map elementTag->property*
             const std::deque< std::pair<QString,QString> >& elementTagOfPairSet = attr.getAttributeTagNames();
             for ( std::deque< std::pair<QString,QString> >::const_iterator it = elementTagOfPairSet.begin() ;
                     it != elementTagOfPairSet.end() ; it++ )
             {
-                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair ( (*it).first,attr ) );
+                const QString elementTagName = (*it).first;
+                const QString attributeTagName = (*it).second;
+                const auto ite = m_elementTagOfPair2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTagOfPair2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                        DRLOGINIT;
+                        LWARN << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
         }
     }
@@ -192,14 +220,40 @@ void StructuredDocumentXMLParser::readPropertiesMetadata (
             for ( std::deque<QString>::const_iterator it = elementTagSet.begin() ;
                     it != elementTagSet.end() ; it++ )
             {
-                m_elementTag2DocumentPropertyType.insert ( std::make_pair( *it,attr ) );
+                const QString elementTagName = *it;
+                const auto ite = m_elementTag2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTag2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "is used for property" << attr.getId();
+#endif
+
+                m_elementTag2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
-            // add property to map elementTag->property*
+            // add property to map elementTag.attribute -> property*
             const std::deque< std::pair<QString,QString> > elementTagOfPairSet = attr.getAttributeTagNames();
             for ( std::deque< std::pair<QString,QString> >::const_iterator it = elementTagOfPairSet.begin() ;
                     it != elementTagOfPairSet.end() ; it++ )
             {
-                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair ( ( *it ).first,attr ) );
+                const QString elementTagName = (*it).first;
+                const QString attributeTagName = (*it).second;
+                const auto ite = m_elementTagOfPair2DocumentPropertyType.find( elementTagName );
+                if( ite != m_elementTagOfPair2DocumentPropertyType.end() ){
+                    if( ite->second.getId() != attr.getId() ) {
+                      DRLOGINIT;
+                      LWARN << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "cannot be used for"<< attr.getId() <<", it is already used for Document Property" << ite->second.getId() << ". Skip";
+                    }
+                    continue;
+                }
+#ifdef DEBUG_LP
+                LDEBUG << "ElementTag" << elementTagName << "AttributeTagName" << attributeTagName << "is used for property" << attr.getId();
+#endif
+                m_elementTagOfPair2DocumentPropertyType.insert ( std::make_pair( elementTagName, attr ) );
             }
         }
     }
@@ -343,7 +397,7 @@ bool StructuredDocumentXMLParser::startElement ( const QString& namespaceURI, co
   if ( isMetaData ( name ) )
   {
 #ifdef DEBUG_LP
-    LDEBUG << "StructuredDocumentXMLParser::startElement: " << name << " is metadata " ;
+    LDEBUG << "StructuredDocumentXMLParser::startElement: " << name << " is metadata" ;
 #endif
     // recupere la propriete liee a ce tag
     propType = getMetaDataFromName ( name );
@@ -471,17 +525,20 @@ bool StructuredDocumentXMLParser::startElement ( const QString& namespaceURI, co
         if ( ! ( *namesIt ).first.compare ( name ) )
         {
           // field contain metadata in attribute
+            QString attributeName =  (*namesIt ).second;
+            Lima::LimaString lic2mValue=attributes.value ( attributeName ).toString();
+            std::string utf8Value = Misc::limastring2utf8stdstring ( lic2mValue );
 #ifdef DEBUG_LP
           LDEBUG << "StructuredDocumentXMLParser::startElement: found " << ( *namesIt ).first
-                  << " as element with attribute " << ( *namesIt ).second;
+                  << " as element with attribute " << ( *namesIt ).second
+                  << " and value " << utf8Value;
 #endif
-          QString attributeName =  (*namesIt ).second;
-          auto value = attributes.value(attributeName).toString().toStdString();
-          m_currentDocument->setDataToLastElement (propType, value, m_processor);
+          m_currentDocument->setDataToLastElement ( propType, utf8Value, m_processor );
         }
       }
     }
   }
+
 #ifdef DEBUG_LP
   LDEBUG << "StructuredDocumentXMLParser::startElement() end";
 #endif
@@ -667,7 +724,7 @@ bool StructuredDocumentXMLParser::isDiscardable ( const QString& elementName ) c
 }
 
 // test si le nom de l'element correspond a
-// un element ayant des attributs dont la valeur deviendra une propriete du document
+// 1) un element ayant des attributs dont la valeur deviendra une propriete du document
 //            (ex <file source="doc0.txt"> ou <document id="d1"> ...</document>
 bool StructuredDocumentXMLParser::hasMetaData ( const QString& elementName ) const
 {
@@ -721,68 +778,6 @@ DocumentPropertyType StructuredDocumentXMLParser::getMetaDataFromName ( const QS
         return DocumentPropertyType();
     }
 }
-
-void StructuredDocumentXMLParser::parseDate ( const string& dateStr,
-        QDate& dateBegin,
-        QDate& dateEnd )
-{
-    dateBegin=QDate (  );
-    dateEnd=QDate (  );
-
-    char sep ( '/' );
-
-    //uint64_t firstSep,secondSep; portage 32 64
-    std::string::size_type firstSep,secondSep;
-    try
-    {
-        if ( ( firstSep=dateStr.find ( sep ) ) != string::npos )
-        {
-            if ( ( secondSep=dateStr.find ( sep,firstSep+1 ) ) != string::npos )
-            {
-                // suppose day/month/year
-
-                // from_uk_string only defined in recent versions of boost
-//         dateBegin=boost::gregorian::from_uk_string(dateStr);
-//         dateEnd=boost::gregorian::from_uk_string(dateStr);
-                // current version knows only year/month/day
-
-                string day ( dateStr,0,firstSep );
-                string month ( dateStr,firstSep+1,secondSep-firstSep );
-                string year ( dateStr,secondSep+1 );
-                string newDateStr=year+'/'+month+'/'+day;
-                dateBegin=QDate::fromString( newDateStr.c_str() );
-                dateEnd=QDate::fromString( newDateStr .c_str());
-            }
-            else
-            {
-                // one separator : suppose month/year
-                // find end of month
-                string month ( dateStr,0,firstSep );
-                string year ( dateStr,firstSep+1 );
-                unsigned short monthNum=atoi ( month.c_str() );
-                unsigned short yearNum=atoi ( year.c_str() );
-                dateBegin=QDate( yearNum, monthNum, 01 );
-                dateEnd=dateBegin.addMonths(1).addDays(-1);
-            }
-        }
-        else if ( ! dateStr.empty() )
-        {
-            // no separator : suppose year
-            unsigned short yearNum=atoi ( dateStr.c_str() );
-            dateBegin=QDate( yearNum,01,01 );
-            dateEnd=QDate( yearNum,12,31 );
-        }
-    }
-    //catch (boost::bad_lexical_cast& e) {
-    catch ( std::exception& e )
-    {
-        DRLOGINIT;
-        LWARN << "Warning: " << e.what();
-        LWARN << "Failed parsing of date [" << dateStr << "]";
-        // do nothing, keep not_a_date_time as default value
-    }
-}
-
 
 
 } // namespace DocumentsReader

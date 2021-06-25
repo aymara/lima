@@ -82,6 +82,10 @@ public:
   static void parseDate(const std::string& dateStr,
                         QDate& dateBegin,
                         QDate& dateEnd);
+
+  static void parseWeightedValue(const std::string& weightedValueStr,
+                                    std::string& value,
+                                    float& score);
 };
 
 } // namespace DocumentsReader

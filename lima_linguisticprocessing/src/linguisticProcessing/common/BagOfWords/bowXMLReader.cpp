@@ -431,27 +431,30 @@ BoWXMLHandler::getStringAttribute(const QXmlAttributes& attributes,
 QDate
 BoWXMLHandler::getDateAttribute(const QXmlAttributes& attributes,
                                   const char* name) const {
-
+  BOWLOGINIT;
   const QString& chars=attributes.value(name);
 
   if (chars==0) {
     ostringstream oss;
     oss << "expected attribute \""<<name<<"\" not found";
+    LERROR << "BoWXMLHandler::getDateAttribute expected attribute \""<<name<<"\" not found";
     throw NoAttributeException(oss.str());
   }
 
   const QString& strDate=chars;
 
   if (strDate == "NotADate") {
-    return QDate();
+      LERROR << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\"";
+      return QDate();
   }
 
   try {
+    LDEBUG << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\" with format \"yyyyMMdd\"";
     return QDate::fromString(strDate,"yyyyMMdd");
   }
   catch (exception& e) {
     BOWLOGINIT;
-    LERROR << "Error trying to read date: " << e.what();
+    LERROR << "BoWXMLHandler::getDateAttribute Error trying to read date: " << e.what();
     return QDate();
   }
 }

@@ -254,12 +254,9 @@ void CoreXmlReaderClient::handleProperty(
     if(!property.getId().compare("pipelineProperty"))
         m_docMetaData["pipeline"].append(data);
 
-    // added date and location
-    if(!property.getId().compare("datePrpty")) {
-        m_docMetaData["date"] = data;
-    }
+    // added location
     if(!property.getId().compare("locationPrpty")) {
-        m_docMetaData["location"] = data;
+            m_docMetaData["location"] = data;
     }
 }
 
@@ -310,7 +307,7 @@ void CoreXmlReaderClient::analyze(
 
     if(!m_documentReader->initWithString(text)) {
         XMLREADERCLIENTLOGINIT;
-        LERROR << "CoreXmlReaderClient::analyze: can't init reader with text ! ";
+        LERROR << "CoreXmlReaderClient::analyze: can't init reader with text !";
         throw XmlReaderException();
     }
 #ifdef DEBUG_LP
@@ -348,11 +345,19 @@ void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocu
 #endif
         element->GenericDocumentProperties::setStringValue("langPrpty", m_mapTagMedia[element->getElementName().toUtf8().constData()]);
     }
-    if(!m_docMetaData["Type"].empty())
-        element->GenericDocumentProperties::setStringValue("typPrpty", m_docMetaData["Type"]);
     element->GenericDocumentProperties::setStringValue("encodPrpty", "UTF8");
     // set date as today
     element->GenericDocumentProperties::setDateValue("indexDatePrpty", QDate::currentDate());
+
+#if 0
+    if(!m_docMetaData["type"].empty()) {
+        element->GenericDocumentProperties::setStringValue("typPrpty", m_docMetaData["type"]);
+#ifdef DEBUG_LP
+        LDEBUG << "CoreXmlReaderClient::startNode() set typPrpty to: " << m_docMetaData["type"];
+#endif
+    }
+#endif
+
 
 #ifdef DEBUG_LP
     LDEBUG << "CoreXmlReaderClient::startNode m_handler::startNode(" << element->getElementName() << ")";
@@ -464,7 +469,7 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
         string media = ItrMedia->first;
         string PCfactoryName = ItrMedia->second;
 #ifdef DEBUG_LP
-        LDEBUG << "Media [" << media << "] is analysed by [" << PCfactoryName
+        LDEBUG << "Media [" << media << "] is analyzed by [" << PCfactoryName
                 << "]";
 #endif
         std::shared_ptr< Lima::ProcessingClientFactory >PCfactory = getFactoryFromId(PCfactoryName);

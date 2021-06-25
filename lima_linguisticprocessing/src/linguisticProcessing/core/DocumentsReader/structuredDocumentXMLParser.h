@@ -129,10 +129,6 @@ private:
   bool isFieldType ( const QString& elementName, const FieldType& type ) const;
   // helper function for debug messages
   static QString fieldTypeString ( const FieldType type );
-  // static function to parse dates
-  static void parseDate ( const std::string& dateStr,
-                          QDate& dateBegin,
-                          QDate& dateEnd );
 
 
   // Handler of high level Document events (startIndexingNode, processText..)

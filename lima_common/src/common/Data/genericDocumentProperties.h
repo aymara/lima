@@ -193,8 +193,8 @@ const std::string& MultiValuedPropertyIterator<ValT>::operator *() const {
 }
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace Misc
+} // end namespace Common
+} // end namespace Lima
 
 #endif

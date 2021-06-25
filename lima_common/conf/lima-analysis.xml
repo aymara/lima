@@ -615,7 +615,7 @@
       <param key="storageType" value="date"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
-        <item value="date"/>
+        <item value="indexDate"/>
       </list>
     </group>
     <group name="typPrpty" class="StandardDocumentPropertyType">
