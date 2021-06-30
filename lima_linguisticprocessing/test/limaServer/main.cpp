@@ -134,15 +134,16 @@ int main(int argc, char **argv)
   {
     throw InvalidConfiguration("loadPlugins method failed.");
   }
-  //   std::cerr << "Amose plugins initialized" << std::endl;
 
 
   // Parse configuration file of lima server
   // options in command line supercede options in configuration file
   // port
-  QString limaServerConfigFile = findFileInPaths(configPath, strLimaServerConfigFile.c_str());
+  QString limaServerConfigFile = findFileInPaths(
+    configPath, strLimaServerConfigFile.c_str());
   qDebug() << "limaServerConfigFile = " << limaServerConfigFile;
-  XMLConfigurationFileParser configLimaServer(limaServerConfigFile.toUtf8().constData());
+  XMLConfigurationFileParser configLimaServer(
+    limaServerConfigFile.toUtf8().constData());
   quint16 port = DEFAULT_PORT;
   std::cout << "main: before, port = " << port << std::endl;
   if (varMap.count("port")) {

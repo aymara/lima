@@ -17,63 +17,35 @@ from os.path import isfile, join
 
 URL_DEB = 'https://github.com/aymara/lima-models/releases/download/v0.1.5/lima-deep-models-%s-%s_0.1.5_all.deb'
 URL_C2LC = 'https://raw.githubusercontent.com/aymara/lima-models/master/c2lc.txt'
-C2LC = { 'lang2code': {}, 'code2lang': {} }
+C2LC = {'lang2code': {}, 'code2lang': {}}
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--info',
-                        help='print list of available languages and exit', action='store_true')
-    parser.add_argument('-l', '--lang', type=str,
-                        help='language name or language code (example: \'english\' or \'eng\')')
-    parser.add_argument('-d', '--dest', type=str,
-                        help='destination directory')
-    parser.add_argument('-s', '--select', type=str,
-                        help='select particular models to install: tokenizer, morphosyntax, lemmatizer (comma-separated list)')
-    parser.add_argument('-f', '--force', action='store_true',
-                        help='force reinstallation of existing files')
-    parser.add_argument('-L', '--list', action='store_true',
-                        help='list installed models')
-    args = parser.parse_args()
 
-    if args.info is not None and args.info:
-        find_lang_code('eng')
-        for code in C2LC['code2lang']:
-            print('%-10s\t%s' % (code, C2LC['code2lang'][code]))
-        return
-
-    if args.dest is None or len(args.dest) == 0:
-        if 'XDG_DATA_HOME' in os.environ and len(os.environ['XDG_DATA_HOME']) > 0:
+def get_target_dir(dest=None):
+    if not dest:
+        if ('XDG_DATA_HOME' in os.environ
+                and len(os.environ['XDG_DATA_HOME']) > 0):
             target_dir_prefix = os.environ['XDG_DATA_HOME']
         else:
             home_dir = os.path.expanduser('~')
             target_dir_prefix = os.path.join(home_dir, '.local', 'share')
-        target_dir = os.path.join(target_dir_prefix, 'lima', 'resources')
+        return os.path.join(target_dir_prefix, 'lima', 'resources')
     else:
-        target_dir = args.dest
+        return dest
 
-    if args.list is not None and args.list:
-        list_installed_models(target_dir)
-        return
 
-    if args.lang is None:
-        sys.stderr.write('ERROR: the following argument is required: -l/--lang\n\n')
-        parser.print_help()
-        sys.exit(-1)
+def install_language(language, dest=None, select=None, force=False):
+    target_dir = get_target_dir(dest)
 
-    if find_lang_code(args.lang.lower()) is not None:
-        code, lang = find_lang_code(args.lang.lower())
-        deb_url = URL_DEB % (code, lang)
-    else:
-        sys.stderr.write('Error: unknown language "%s"\n')
-        sys.exit(-1)
+    code, lang = find_lang_code(language.lower())
+    deb_url = URL_DEB % (code, lang)
 
     prefix_list = ['tokenizer', 'morphosyntax', 'lemmatizer']
-    if args.select is not None:
-        prefix_list = [ x.lower().strip() for x in args.select.split(',') ]
+    if select is not None:
+        prefix_list = [x.lower().strip() for x in args.select.split(',')]
         if 'morphosyntax' in prefix_list:
             prefix_list.append('fasttext')
 
-    if not args.force:
+    if not force:
         new_prefix_list = []
         installed = list_installed_languages(target_dir)
         if 'tokenizer' in prefix_list and code not in installed['tok']:
@@ -95,9 +67,20 @@ def main():
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             download_binary_file(deb_url, tmpdirname)
-            install_model(target_dir, os.path.join(tmpdirname, deb_url.split('/')[-1]), code, prefix_list)
+            install_model(target_dir,
+                          os.path.join(tmpdirname, deb_url.split('/')[-1]),
+                          code,
+                          prefix_list)
+            return True
     else:
         print('All requested models are already installed')
+    return False
+
+def info():
+    find_lang_code('eng')
+    for code in C2LC['code2lang']:
+        print('%-10s\t%s' % (code, C2LC['code2lang'][code]))
+    return
 
 
 def install_model(dir, fn, code, prefix_list):
@@ -114,11 +97,14 @@ def install_model(dir, fn, code, prefix_list):
                     name_prefix, _ = name.split('-')
                     if name_prefix not in prefix_list:
                         continue
-                mo = re.match(r'./usr/share/apps/lima/resources/(TensorFlow[A-Za-z\/\-\.0-9]+)', full_dir)
+                mo = re.match(
+                  r'./usr/share/apps/lima/resources/(TensorFlow[A-Za-z\/\-\.0-9]+)',
+                  full_dir)
                 if mo:
                     subdir = mo.group(1)
                     if subdir is None or len(subdir) == 0:
-                        sys.stderr.write('Error: can\'t parse \'%s\'\n' % full_dir)
+                        print(f'Error: can\'t parse \'{full_dir}\'\n',
+                              file=sys.stderr)
                         sys.exit(1)
                     target_dir = os.path.join(dir, subdir)
                     os.makedirs(target_dir, exist_ok=True)
@@ -129,10 +115,12 @@ def install_model(dir, fn, code, prefix_list):
                                 break
                             f.write(chunk)
                     # LIMA historically uses 'fre' for French.
-                    # This workaround adds symlinks 'fre' -> 'fra' to support this.
-                    if code in [ 'fra' ]:
+                    # This workaround adds symlinks 'fre' -> 'fra' to support
+                    # this.
+                    if code in ['fra']:
                         src_name = os.path.join(target_dir, name)
-                        symlink_name = re.sub(r'-fra.(conf|model|bin)$', r'-fre.\1', name, 1)
+                        symlink_name = re.sub(r'-fra.(conf|model|bin)$',
+                                              r'-fre.\1', name, 1)
                         symlink_name = os.path.join(target_dir, symlink_name)
                         if not os.path.isfile(symlink_name):
                             os.symlink(src_name, symlink_name)
@@ -144,8 +132,9 @@ def download_binary_file(url, dir):
     totalbytes = 0
     response = requests.get(url, stream=True)
     if response.status_code == 200:
-        total_size_in_bytes= int(response.headers.get('content-length', 0))
-        progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
+        total_size_in_bytes = int(response.headers.get('content-length', 0))
+        progress_bar = tqdm(total=total_size_in_bytes, unit='iB',
+                            unit_scale=True)
         with open(local_filename, 'wb') as f:
             for chunk in response.iter_content(chunk_size=chunk_size):
                 progress_bar.update(len(chunk))
@@ -173,14 +162,16 @@ def find_lang_code(lang_str):
     return None
 
 
-def list_installed_models(target_dir):
+def list_installed_models(dest=None):
+    target_dir = get_target_dir(dest)
+
     langs = list_installed_languages(target_dir)
 
     all_installed = []
     for k in langs:
-        for l in langs[k]:
-            if l not in all_installed:
-                all_installed.append(l)
+        for lang in langs[k]:
+            if lang not in all_installed:
+                all_installed.append(lang)
     all_installed.sort()
 
     max_lang_len = 0
@@ -190,26 +181,33 @@ def list_installed_models(target_dir):
             lang = find_lang_code(code)[1]
             max_lang_len = max(len(lang), max_lang_len)
 
-    print('Language %s(id ) \t Tokenizer Lemmatizer Morphosyntax' % (' ' * (max_lang_len - len('Language'))))
+    print(f'Language {" " * (max_lang_len - len("Language"))}(id ) \t '
+          f'Tokenizer Lemmatizer Morphosyntax')
     print('---')
     for code in all_installed:
         lang = 'Unknown'
         if find_lang_code(code) is not None:
             lang = find_lang_code(code)[1]
-        lang = lang + ' ' * (max_lang_len - len(lang))
+        lang = lang + ' ' * (max_lang_len - len(lang) + 1)
         marks = {
-            'tok':  langs['tok'][code] if code in langs['tok']  else '   ---   ',
-            'lemm': langs['lemm'][code] if code in langs['lemm'] else '   ---   ',
-            'ms':   langs['ms'][code] if code in langs['ms']   else '   ---   ',
+            'tok': langs['tok'][code] if code in langs['tok'] else '   ---   ',
+            'lemm': (langs['lemm'][code]
+                     if code in langs['lemm'] else '   ---   '),
+            'ms': langs['ms'][code] if code in langs['ms'] else '   ---   ',
         }
-        print('%s (%s) \t %s %s  %s' % (lang, code, marks['tok'], marks['lemm'], marks['ms']))
+        print(f"{lang} ({code}) \t {marks['tok']} {marks['lemm']}  "
+              f"{marks['ms']}")
 
 
 def list_installed_languages(target_dir):
     langs = {
-        'tok': list_installed_languages_per_module(join(target_dir, 'TensorFlowTokenizer', 'ud'), ['tokenizer']),
-        'lemm': list_installed_languages_per_module(join(target_dir, 'TensorFlowLemmatizer', 'ud'), ['lemmatizer']),
-        'ms': list_installed_languages_per_module(join(target_dir, 'TensorFlowMorphoSyntax', 'ud'), ['morphosyntax', 'fasttext'])
+        'tok': list_installed_languages_per_module(
+          join(target_dir, 'TensorFlowTokenizer', 'ud'), ['tokenizer']),
+        'lemm': list_installed_languages_per_module(
+          join(target_dir, 'TensorFlowLemmatizer', 'ud'), ['lemmatizer']),
+        'ms': list_installed_languages_per_module(
+          join(target_dir, 'TensorFlowMorphoSyntax', 'ud'), ['morphosyntax',
+                                                             'fasttext'])
     }
     return langs
 
@@ -227,23 +225,32 @@ def list_installed_languages_per_module(target_dir, prefix_list):
                 if lang not in d:
                     d[lang] = []
                 if ext in d[lang]:
-                    sys.stderr.write('Error: something wrong with "%s"\n' % f)
+                    print(f'Error: something wrong with "{f}"',
+                          file=sys.stderr)
                 d[lang].append(ext)
 
     r = {}
     for lang in d:
         if lang in r:
-            sys.stderr.write('Error: model for lang "%s" is installed twice?\n' % lang)
+            print(f'Error: model for lang "{lang}" is installed twice?',
+                  file=sys.stderr)
         if 'morphosyntax' in prefix_list:
-            if len(d[lang]) != 3 or 'model' not in d[lang] or 'conf' not in d[lang] or 'bin' not in d[lang]:
-                sys.stderr.write('Error: model (%s) for lang "%s" is installed incorrectly\n' % (','.join(prefix_list), lang))
+            if (len(d[lang]) != 3 or 'model' not in d[lang]
+                    or 'conf' not in d[lang] or 'bin' not in d[lang]):
+                print(f'Error: model ({",".join(prefix_list)}) '
+                      f'for lang "{lang}" is installed incorrectly',
+                      file=sys.stderr)
             else:
                 r[lang] = "installed"
         else:
-            if len(d[lang]) != 2 or 'model' not in d[lang] or 'conf' not in d[lang]:
+            if (len(d[lang]) != 2 or 'model' not in d[lang]
+                    or 'conf' not in d[lang]):
                 if 'lemmatizer' not in prefix_list or 'conf' not in d[lang]:
-                    sys.stderr.write('Error: model (%s) for lang "%s" is installed incorrectly\n' % (','.join(prefix_list), lang))
-                if 'lemmatizer' in prefix_list and 'conf' in d[lang] and 'model' not in d[lang]:
+                    print(f'Error: model ({",".join(prefix_list)}) '
+                          f'for lang "{lang}" is installed incorrectly',
+                          file=sys.stderr)
+                if ('lemmatizer' in prefix_list and 'conf' in d[lang]
+                        and 'model' not in d[lang]):
                     r[lang] = "  empty  "
             else:
                 r[lang] = "installed"
@@ -252,5 +259,40 @@ def list_installed_languages_per_module(target_dir, prefix_list):
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--info',
+                        help='print list of available languages and exit',
+                        action='store_true')
+    parser.add_argument('-l', '--lang', type=str,
+                        help='install model for the given language name or '
+                        'language code (example: \'english\' or \'eng\')')
+    parser.add_argument('-d', '--dest', type=str,
+                        help='destination directory')
+    parser.add_argument('-s', '--select', type=str,
+                        help='select particular models to install: tokenizer, '
+                        'morphosyntax, lemmatizer (comma-separated list)')
+    parser.add_argument('-f', '--force', action='store_true',
+                        help='force reinstallation of existing files')
+    parser.add_argument('-L', '--list', action='store_true',
+                        help='list installed models')
+    args = parser.parse_args()
+
+    dest = get_target_dir(args.dest)
+    if args.info:
+        info()
+        sys.exit(0)
+    elif args.list is not None and args.list:
+        list_installed_models(args.dest)
+        sys.exit(0)
+    elif args.lang is None:
+        print('ERROR: the following argument is required: -l/--lang',
+              end="\n\n", file=sys.stderr)
+        parser.print_help()
+        sys.exit(-1)
+    else:
+        install_language(args.lang, args.dest, args.select, args.force)
+        sys.exit(0)
+    sys.exit(0)
+
+
 
