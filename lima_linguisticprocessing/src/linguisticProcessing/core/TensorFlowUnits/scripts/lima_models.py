@@ -215,7 +215,8 @@ def list_installed_languages(target_dir):
 
 
 def list_installed_languages_per_module(target_dir, prefix_list):
-    t = listdir(target_dir)
+    if not os.path.isdir(target_dir):
+        return {}
     files = [f for f in listdir(target_dir) if isfile(join(target_dir, f))]
     d = {}
     for f in files:
