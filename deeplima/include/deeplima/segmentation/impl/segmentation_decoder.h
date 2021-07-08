@@ -62,6 +62,11 @@ struct token_pos
   {
     return (0 == m_offset) && (0 == m_len) && (nullptr == m_pch);
   }
+
+  inline bool too_long() const
+  {
+    return m_len & (1 << (sizeof(uint16_t) * 8 - 1));
+  }
 };
 
 typedef std::function < void (const std::vector<token_pos>& tokens,
@@ -373,6 +378,17 @@ public:
 
         default:
           throw std::runtime_error("Unknown code in output.");
+      }
+
+      if (m_tokens[pos].too_long())
+      {
+        // This is a workaround to handle garbage in the input data
+        // very long (and meaningless) tokens are artificially splitted
+        // into several parts.
+        // TODO: the same type of handling is required for very long
+        // sequence of spaces: an empty token must be generated
+        // to avoid overflow of token_pos::m_offset field.
+        save_current_token(pos, temp_token_len, start);
       }
 
       *pch += m_len[from]; // next byte
