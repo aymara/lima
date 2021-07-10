@@ -364,6 +364,8 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
+find_package(Torch)
+
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR} REQUIRED)
@@ -431,7 +433,13 @@ else()
   message("Build without lima_gui")
 endif()
 
+add_subdirectory(extern)
 
+if (TORCH_FOUND AND EIGEN_FOUND)
+  message("TORCH_CXX_FLAGS = ${TORCH_CXX_FLAGS}")
+  message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
+  add_subdirectory(deeplima)
+endif()
 
 ########### documentation ###############
 

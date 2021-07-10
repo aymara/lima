@@ -39,7 +39,7 @@ set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost         1.46  REQUIRED COMPONENTS program_options filesystem)
 find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 #find_package(nlohmann_json       REQUIRED PATHS "/usr/lib/cmake/") # see https://github.com/nlohmann/json/issues/1573 TODO:Win
-find_package(Torch               REQUIRED)
+#find_package(Torch               REQUIRED)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
@@ -50,7 +50,6 @@ include_directories(AFTER "extern")
 
 add_subdirectory(libs)
 add_subdirectory(apps)
-add_subdirectory(extern)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   add_subdirectory(tests)

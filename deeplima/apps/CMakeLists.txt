@@ -28,6 +28,10 @@ target_link_libraries(deeplima-train-segm
   train_segmentation
 )
 
+install(TARGETS deeplima-train-segm
+  DESTINATION bin
+  COMPONENT runtime
+)
 
 ############################################################
 # Train NER models
@@ -42,6 +46,11 @@ target_link_libraries(deeplima-train-ner
   conllu
   Boost::program_options
   Boost::filesystem
+)
+
+install(TARGETS deeplima-train-ner
+  DESTINATION bin
+  COMPONENT runtime
 )
 
 ############################################################
@@ -64,6 +73,11 @@ target_link_libraries(deeplima-eigen
   convert_from_torch
   ${TORCH_LIBRARIES}
   fasttext-static
+)
+
+install(TARGETS deeplima-eigen
+  DESTINATION bin
+  COMPONENT runtime
 )
 
 ############################################################
