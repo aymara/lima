@@ -50,27 +50,35 @@ set(SOURCE_FILES
     fastText/src/utils.cc
     fastText/src/vector.cc)
 
-add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
-add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
-add_library(fasttext-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
-set_target_properties(fasttext-shared PROPERTIES OUTPUT_NAME fasttext-lima)
-set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
-set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
+  add_library(fasttext-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
+  set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
+  set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
   POSITION_INDEPENDENT_CODE True)
-#add_executable(fasttext-bin fastText/src/main.cc)
+  install (TARGETS fasttext-static
+      ARCHIVE DESTINATION lib)
+  install (TARGETS fasttext-static_pic
+      ARCHIVE DESTINATION lib)
 
-target_link_libraries(fasttext-shared Threads::Threads)
-#target_link_libraries(fasttext-bin Threads::Threads fasttext-static)
+else()
+  add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
+  set_target_properties(fasttext-shared PROPERTIES OUTPUT_NAME fasttext-lima)
 
-#set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext-lima)
-install (TARGETS fasttext-shared
-    LIBRARY DESTINATION lib)
-install (TARGETS fasttext-static
-    ARCHIVE DESTINATION lib)
-install (TARGETS fasttext-static_pic
-    ARCHIVE DESTINATION lib)
-#install (TARGETS fasttext-bin
-#    RUNTIME DESTINATION bin
+  target_link_libraries(fasttext-shared Threads::Threads)
+
+  install (TARGETS fasttext-shared
+      LIBRARY DESTINATION lib)
+
+
+  add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
+  set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
+
+  install (TARGETS fasttext-static
+      ARCHIVE DESTINATION lib)
+
+endif()
+
 #PUBLIC_HEADER DESTINATION include/fasttext-lima)
 
 ### END FastText stuff
