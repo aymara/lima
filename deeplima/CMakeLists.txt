@@ -44,7 +44,7 @@ find_package(Eigen3        3.3   REQUIRED NO_MODULE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-include_directories(AFTER "include/deeplima")
+include_directories(AFTER "include")
 include_directories(AFTER "libs")
 include_directories(AFTER "extern")
 

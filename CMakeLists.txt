@@ -365,6 +365,7 @@ endif ()
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
 find_package(Torch)
+find_package(ICU 60.0  REQUIRED COMPONENTS uc)
 
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
@@ -438,6 +439,7 @@ add_subdirectory(extern)
 if (TORCH_FOUND AND EIGEN_FOUND)
   message("TORCH_CXX_FLAGS = ${TORCH_CXX_FLAGS}")
   message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
   add_subdirectory(deeplima)
 endif()
 

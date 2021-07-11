@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "eigen_wrp/segmentation_eigen_inference_impl.h"
+#include "deeplima/eigen_wrp/segmentation_eigen_inference_impl.h"
 #include "tasks/segmentation/model/birnn_classifier_for_segmentation.h"
 
 #include "convert_from_torch.h"

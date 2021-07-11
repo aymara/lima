@@ -104,11 +104,11 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#include "segmentation.h"
-#include "ner.h"
-#include "token_sequence_analyzer.h"
-#include "dumper_conllu.h"
-#include "reader_conllu.h"
+#include "deeplima/segmentation.h"
+#include "deeplima/ner.h"
+#include "deeplima/token_sequence_analyzer.h"
+#include "deeplima/dumper_conllu.h"
+#include "deeplima/reader_conllu.h"
 
 using namespace deeplima;
 
@@ -164,7 +164,7 @@ void parse_file(istream& input, const map<string, string>& models_fn, size_t thr
   }
 
   psegm->parse_from_stream([&input]
-                         (const uint8_t* buffer,
+                         (uint8_t* buffer,
                          uint32_t& read,
                          uint32_t max)
   {

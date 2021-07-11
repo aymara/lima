@@ -30,7 +30,7 @@
 #include <iostream>
 #endif
 
-#include "utils/pretty.h"
+#include "deeplima/utils/pretty.h"
 
 #include "char_ngram.h"
 

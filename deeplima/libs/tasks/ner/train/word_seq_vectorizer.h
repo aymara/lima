@@ -26,7 +26,7 @@
 #include "static_graph/dict.h"
 
 #include "nn/birnn_seq_cls/birnn_seq_classifier.h"
-#include "eigen_wrp/word_seq_embd_vectorizer.h"
+#include "deeplima/eigen_wrp/word_seq_embd_vectorizer.h"
 
 namespace deeplima
 {

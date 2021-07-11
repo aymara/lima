@@ -26,7 +26,7 @@
 #include "static_graph/dict_base.h"
 #include "static_graph/dict.h"
 
-#include "fastText_wrp/fastText_wrp.h"
+#include "deeplima/fastText_wrp/fastText_wrp.h"
 
 namespace deeplima
 {

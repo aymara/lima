@@ -26,7 +26,7 @@
 
 #include <unicode/uchar.h>
 
-#include "utils/std_matrix.h"
+#include "deeplima/utils/std_matrix.h"
 
 namespace deeplima
 {

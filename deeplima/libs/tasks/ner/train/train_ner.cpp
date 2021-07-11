@@ -22,15 +22,15 @@
 #include <cctype>
 
 #include "conllu/treebank.h"
-#include "torch_wrp/torch_matrix.h"
+#include "deeplima/torch_wrp/torch_matrix.h"
 #include "static_graph/dict_holder_adapter.h"
 
 #include "word_dict_builder.h"
 #include "word_seq_vectorizer.h"
-#include "feat_extractors.h"
+#include "deeplima/feat_extractors.h"
 
 #include "../model/birnn_classifier_for_ner.h"
-#include "fastText_wrp/fastText_wrp.h"
+#include "deeplima/fastText_wrp/fastText_wrp.h"
 
 #include "train_ner.h"
 

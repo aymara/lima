@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "segmentation/impl/char_ngram.h"
+#include "deeplima/segmentation/impl/char_ngram.h"
 
 namespace deeplima
 {

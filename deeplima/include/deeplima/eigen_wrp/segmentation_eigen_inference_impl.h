@@ -27,7 +27,7 @@
 
 #include "embd_dict.h"
 
-#include "segmentation/impl/char_ngram.h"
+#include "deeplima/segmentation/impl/char_ngram.h"
 #include "birnn_inference_base.h"
 
 namespace deeplima

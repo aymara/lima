@@ -20,9 +20,9 @@
 #ifndef DEEPLIMA_TAGGING_IMPL_H
 #define DEEPLIMA_TAGGING_IMPL_H
 
-#include "token_type.h"
-#include "fastText_wrp/fastText_wrp.h"
-#include "eigen_wrp/embd_dict.h"
+#include "deeplima/token_type.h"
+#include "deeplima/fastText_wrp/fastText_wrp.h"
+#include "deeplima/eigen_wrp/embd_dict.h"
 
 namespace deeplima
 {

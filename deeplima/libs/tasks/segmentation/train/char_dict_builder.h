@@ -27,7 +27,7 @@
 
 #include "static_graph/dict_base.h"
 #include "static_graph/dict.h"
-#include "segmentation/impl/char_ngram.h"
+#include "deeplima/segmentation/impl/char_ngram.h"
 
 namespace deeplima
 {

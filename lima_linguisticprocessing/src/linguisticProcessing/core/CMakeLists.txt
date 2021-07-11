@@ -1,4 +1,4 @@
-# Copyright 2002-2020 CEA LIST
+# Copyright 2002-2021 CEA LIST
 #
 # This file is part of LIMA.
 #
@@ -45,6 +45,10 @@ ENDIF(TRE_FOUND)
 if (TensorFlow_FOUND AND Eigen_FOUND)
   add_subdirectory(TensorflowSpecificEntities)
   add_subdirectory(TensorFlowUnits)
+endif()
+
+if (Eigen_FOUND)
+  add_subdirectory(DeepLimaUnits)
 endif()
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )

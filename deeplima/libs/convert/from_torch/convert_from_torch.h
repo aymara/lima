@@ -23,7 +23,7 @@
 #include <torch/torch.h>
 
 #include "static_graph/dict.h"
-#include "eigen_wrp/embd_dict.h"
+#include "deeplima/eigen_wrp/embd_dict.h"
 
 namespace deeplima
 {

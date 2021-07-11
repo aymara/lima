@@ -24,9 +24,9 @@
 #include <chrono>
 #include <cstdlib>
 
-#include "utils/thread_pool.h"
+#include "deeplima/utils/thread_pool.h"
 
-#include "utils/std_matrix.h"
+#include "deeplima/utils/std_matrix.h"
 
 namespace deeplima
 {

@@ -21,7 +21,7 @@
 #define DEEPLIMA_SRC_STATIC_GRAPH_DICT_HOLDER_ADAPTER_H
 
 #include "dict.h"
-#include "torch_wrp/torch_matrix.h"
+#include "deeplima/torch_wrp/torch_matrix.h"
 
 namespace deeplima
 {

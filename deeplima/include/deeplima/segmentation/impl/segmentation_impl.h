@@ -20,7 +20,7 @@
 #ifndef DEEPLIMA_SEGMENTATION_IMPL_H
 #define DEEPLIMA_SEGMENTATION_IMPL_H
 
-#include "utils/locked_buffer.h"
+#include "deeplima/utils/locked_buffer.h"
 
 namespace deeplima
 {
@@ -30,7 +30,7 @@ namespace segmentation
 class ISegmentation
 {
 public:
-  typedef std::function < bool (const uint8_t* buffer,
+  typedef std::function < bool (uint8_t* buffer,
                                 uint32_t& read,
                                 uint32_t max) > read_callback_t;
 
@@ -109,7 +109,7 @@ public:
         break;
       }
       counter += bytes_read;
-      cerr << "Reading callback: " << bytes_read << " bytes, continue_reading="
+      std::cerr << "Reading callback: " << bytes_read << " bytes, continue_reading="
            << continue_reading << " counter=" << counter
            << endl;
       buff.m_char_aligned_data = (const char*)(buff.m_data);
@@ -191,7 +191,7 @@ public:
 
   virtual ~SegmentationImpl()
   {
-    cerr << "~SimpleTextSegmentation" << endl;
+    std::cerr << "~SimpleTextSegmentation" << endl;
   }
 
 protected:
@@ -275,7 +275,7 @@ protected:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      cerr << "send_next_results: waiting for slot " << slot_idx
+      std::cerr << "send_next_results: waiting for slot " << slot_idx
            << " (lock_count==" << int(lock_count) << ")\n";
       m_buff_set.pretty_print();
       InferenceEngine::pretty_print();
@@ -294,13 +294,13 @@ protected:
     if (0 == m_current_slot_timepoints || m_current_slot_no < 0)
     {
       m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-      cerr << "acquire_slot: got " << m_current_slot_no << " for timepoint " << m_current_timepoint << endl;
+      std::cerr << "acquire_slot: got " << m_current_slot_no << " for timepoint " << m_current_timepoint << endl;
       uint8_t lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
 
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        cerr << "handle_timepoint, waiting for slot " << m_current_slot_no
+        std::cerr << "handle_timepoint, waiting for slot " << m_current_slot_no
              << " lock_count=" << lock_count << endl;
         InferenceEngine::wait_for_slot(m_current_slot_no);
         lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
@@ -327,7 +327,7 @@ protected:
     if (0 == m_current_slot_timepoints)
     {
       InferenceEngine::start_job(m_current_slot_no);
-      cerr << "Slot " << m_current_slot_no << " sent to inference engine" << endl;
+      std::cerr << "Slot " << m_current_slot_no << " sent to inference engine" << endl;
       acquire_slot();
     }
   }

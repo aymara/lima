@@ -34,13 +34,13 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
+#include "linguisticProcessing/common/helpers/DeepTokenizerBase.h"
+#include "linguisticProcessing/common/helpers/LangCodeHelpers.h"
 
 #include "Viterbi.h"
 #include "QJsonHelpers.h"
-#include "LangCodeHelpers.h"
 
 #include "CppUppsalaTensorFlowTokenizer.h"
-#include "DeepTokenizerBase.h"
 #include "tokUtils.h"
 
 

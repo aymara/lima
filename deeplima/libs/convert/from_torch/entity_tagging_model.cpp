@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "eigen_wrp/tagging_eigen_inference_impl.h"
+#include "deeplima/eigen_wrp/tagging_eigen_inference_impl.h"
 #include "tasks/ner/model/birnn_classifier_for_ner.h"
 
 #include "convert_from_torch.h"

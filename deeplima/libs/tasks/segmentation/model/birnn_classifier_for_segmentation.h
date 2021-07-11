@@ -20,7 +20,7 @@
 #ifndef DEEPLIMA_SRC_TRAIN_BIRNN_CLASSIFIER_FOR_SEGMENTATION_H
 #define DEEPLIMA_SRC_TRAIN_BIRNN_CLASSIFIER_FOR_SEGMENTATION_H
 
-#include "segmentation/impl/char_ngram_encoder.h"
+#include "deeplima/segmentation/impl/char_ngram_encoder.h"
 #include "nn/birnn_seq_cls/birnn_seq_classifier.h"
 
 namespace deeplima

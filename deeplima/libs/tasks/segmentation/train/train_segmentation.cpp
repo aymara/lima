@@ -20,10 +20,10 @@
 #include <vector>
 #include <iostream>
 
-#include "segmentation/impl/utf8_reader.h"
-#include "segmentation/impl/segmentation_decoder.h"
+#include "deeplima/segmentation/impl/utf8_reader.h"
+#include "deeplima/segmentation/impl/segmentation_decoder.h"
 
-#include "torch_wrp/torch_matrix.h"
+#include "deeplima/torch_wrp/torch_matrix.h"
 #include "static_graph/dict_holder_adapter.h"
 
 #include "tasks/segmentation/model/birnn_classifier_for_segmentation.h"
@@ -141,7 +141,6 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
                                              dev_doc.get_text().size() + 1, train_ss);
 
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
-  //std::vector<embd_descr_t> embd_descr = { { "char1gram", 4 }, { "char2gram", 6 }, { "char3gram", 8 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
                                            { "scriptchange", 1 } };
   std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( 4 ) };

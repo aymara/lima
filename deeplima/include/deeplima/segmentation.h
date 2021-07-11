@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include "segmentation/impl/utf8_reader.h"
+//#include "segmentation/impl/utf16_reader.h"
 #include "segmentation/impl/char_ngram_encoder.h"
 #include "segmentation/impl/segmentation_decoder.h"
 
@@ -56,6 +57,7 @@ namespace segmentation
 namespace impl
 {
   typedef CharNgramEncoder< Utf8Reader<> > CharNgramEncoderFromUtf8;
+  //typedef CharNgramEncoder< Utf16Reader<> > CharNgramEncoderFromUtf16;
 }
 
 #if DEEPLIMA_INFERENCE_ENGINE == IE_TORCH
@@ -98,10 +100,14 @@ namespace impl
 
   typedef impl::SegmentationImpl< SegmentationClassifier,
                                   impl::CharNgramEncoderFromUtf8,
-                                  impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix> > SegmentationModule;
+                                  impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix> > SegmentationModuleUtf8;
+
+  //typedef impl::SegmentationImpl< SegmentationClassifier,
+  //                                impl::CharNgramEncoderFromUtf16,
+  //                                impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix> > SegmentationModuleUtf16;
 }
 
-typedef impl::SegmentationModule Segmentation;
+typedef impl::SegmentationModuleUtf8 Segmentation;
 
 }
 }

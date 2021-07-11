@@ -25,7 +25,7 @@
 #include <sstream>
 
 #include "static_graph/static_graph.h"
-#include "torch_wrp/torch_matrix.h"
+#include "deeplima/torch_wrp/torch_matrix.h"
 
 namespace deeplima
 {

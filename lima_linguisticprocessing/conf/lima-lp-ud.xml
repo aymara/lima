@@ -22,7 +22,7 @@
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="RnnTokenizer"/>
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
         <item value="conllDumper"/>
@@ -44,6 +44,10 @@
 <!-- ******************************************
   Definition of process units
 *********************************************** -->
+    <group name="RnnTokenizer" class="RnnTokenizer">
+      <param key="model_prefix" value="tokenizer-$udlang"/>
+    </group>
+
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
       <param key="model_prefix" value="tokenizer-$udlang"/>
     </group>

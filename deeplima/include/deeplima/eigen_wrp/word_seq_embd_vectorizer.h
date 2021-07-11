@@ -24,7 +24,7 @@
 #include <memory>
 #include <vector>
 
-#include "fastText_wrp/fastText_wrp.h"
+#include "deeplima/fastText_wrp/fastText_wrp.h"
 
 namespace deeplima
 {
