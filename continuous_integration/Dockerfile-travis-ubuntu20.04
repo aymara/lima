@@ -59,7 +59,7 @@ ARG CACHEBUST=1
 RUN git pull
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
-RUN cd /src/lima/extern && ./download_libtorch.sh
+RUN mkdir /src/lima/extern && cd /src/lima/extern && ./download_libtorch.sh
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
