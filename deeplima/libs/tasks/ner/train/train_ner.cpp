@@ -178,7 +178,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
     embd_feat_descr.push_back({
                                 CoNLLUToTorchMatrix::str_feature,
                                 "lc(form)",
-                                model->get_embd_descr()[0].m_dim,
+                                int(model->get_embd_descr()[0].m_dim),
                                 model->get_dicts()[0]
                               });
   }
@@ -188,7 +188,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
     embd_feat_descr.push_back({
                                 CoNLLUToTorchMatrix::str_feature,
                                 "lc(form)",
-                                params.m_trainable_embeddings_dim,
+                                int(params.m_trainable_embeddings_dim),
                                 dh[0]
                               });
   }
