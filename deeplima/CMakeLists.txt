@@ -46,7 +46,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 include_directories(AFTER "include")
 include_directories(AFTER "libs")
-include_directories(AFTER "extern")
 
 add_subdirectory(libs)
 add_subdirectory(apps)

@@ -366,6 +366,7 @@ message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
 find_package(Torch)
 find_package(ICU 60.0  REQUIRED COMPONENTS uc)
+include_directories(${CMAKE_SOURCE_DIR}/extern)
 
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
