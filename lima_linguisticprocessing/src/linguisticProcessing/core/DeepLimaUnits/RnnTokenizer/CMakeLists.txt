@@ -35,7 +35,6 @@ if (Eigen_FOUND)
         PRIVATE "-DLIMA_RNN_TOKENIZER_EXPORTING"
         PUBLIC
         DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
-
     )
 
     target_link_libraries(lima-lp-rnn-tokenizer
@@ -46,7 +45,8 @@ if (Eigen_FOUND)
         lima-lp-textsegmentation
         lima-common
         ICU::uc
-        convert_from_torch
+        convert_from_torch-shared
+        ${TORCH_LIBRARIES}
     )
 
     set_target_properties(lima-lp-rnn-tokenizer PROPERTIES

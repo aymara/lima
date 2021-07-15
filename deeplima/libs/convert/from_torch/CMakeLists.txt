@@ -36,4 +36,17 @@ target_link_libraries(convert_from_torch
   ${TORCH_LIBRARIES}
 )
 
+add_library(convert_from_torch-shared
+  SHARED
+  ${SOURCE_LIST}
+  ${HEADER_LIST}
+)
+
+target_link_libraries(convert_from_torch-shared
+  PRIVATE
+  birnn_classifier_for_segmentation
+  birnn_classifier_for_ner
+  ${TORCH_LIBRARIES}
+)
+
 
