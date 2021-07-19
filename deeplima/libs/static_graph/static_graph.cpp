@@ -146,6 +146,16 @@ void StaticGraphImpl::pretty_dump(std::ostream &stream) const
   stream << "Total parameters = " << counter << endl;
 }
 
+void StaticGraphImpl::to(torch::Device device, bool non_blocking)
+{
+  for (auto m : m_embedding) m->to(device);
+  for (auto m : m_lstm) m->to(device);
+  for (auto m : m_linear) m->to(device);
+  for (auto m : m_dropout) m->to(device);
+  torch::nn::Module::to(device, non_blocking);
+  std::cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
+}
+
 void StaticGraphImpl::parse_script(const std::string& script)
 {
   std::cerr << script << endl;

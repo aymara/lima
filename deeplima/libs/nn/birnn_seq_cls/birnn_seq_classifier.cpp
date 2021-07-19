@@ -36,7 +36,7 @@ torch::Tensor BiRnnClassifierImpl::predict(const std::string& output_name,
                                            const torch::Device& device)
 {
   map<string, torch::Tensor> current_inputs;
-  split_input(input, current_inputs);
+  split_input(input, current_inputs, device);
 
   auto output_map = forward(current_inputs, { output_name });
   torch::Tensor& output = output_map[output_name];
@@ -65,7 +65,7 @@ void BiRnnClassifierImpl::predict(size_t worker_id,
   const torch::Tensor inputs_slice = inputs.index({ Slice(input_begin, input_end), Slice() });
 
   map<string, torch::Tensor> current_inputs;
-  split_input(inputs_slice, current_inputs);
+  split_input(inputs_slice, current_inputs, device);
 
   auto output_map = forward(current_inputs, set<string>(outputs_names.begin(), outputs_names.end()));
   for (size_t i = 0; i < outputs_names.size(); i++)
@@ -81,7 +81,9 @@ void BiRnnClassifierImpl::predict(size_t worker_id,
   }
 }
 
-void BiRnnClassifierImpl::split_input(const torch::Tensor& src, map<string, torch::Tensor>& dst)
+void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
+                                      map<string, torch::Tensor>& dst,
+                                      const torch::Device& device)
 {
   for (size_t i = 0; i < m_embd_descr.size(); i++)
   {
@@ -94,7 +96,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src, map<string, torc
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), 1 });
+            = src.index({Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), 1 }).to(device);
       }
       else if (m_embd_descr[i].m_type == 0)
       {
@@ -108,7 +110,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src, map<string, torc
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), -1 });
+            = src.index({Slice(), Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), -1 }).to(device);
       }
       else if (m_embd_descr[i].m_type == 0)
       {
@@ -126,7 +128,7 @@ tuple<double, double, int64_t> BiRnnClassifierImpl::evaluate(const std::string& 
                                                                   const torch::Device& device)
 {
   map<string, torch::Tensor> current_inputs;
-  split_input(input.get_tensor(), current_inputs);
+  split_input(input.get_tensor(), current_inputs, device);
 
   auto target = gold.get_tensor().reshape({-1}).to(device);
 
@@ -279,7 +281,7 @@ std::tuple<double, int64_t> BiRnnClassifierImpl::train_batch(size_t batch_size,
                                                              const torch::Device& device)
 {
   map<string, torch::Tensor> current_batch_inputs;
-  split_input(input, current_batch_inputs);
+  split_input(input, current_batch_inputs, device);
 
   auto target = gold.reshape({-1}).to(device);
 

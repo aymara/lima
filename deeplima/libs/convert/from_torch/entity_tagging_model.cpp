@@ -42,7 +42,7 @@ template <class M, class V, class T>
 void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForNerImpl src;
-  torch::load(src, fn);
+  torch::load(src, fn, torch::Device(torch::kCPU));
 
   // dicts and embeddings
   Parent::convert_dicts_and_embeddings(src);

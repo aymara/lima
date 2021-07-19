@@ -112,6 +112,11 @@ public:
     return m_tensor;
   }
 
+  void to(torch::Device& device)
+  {
+    m_tensor.to(device);
+  }
+
 protected:
 
   void create();

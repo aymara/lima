@@ -245,13 +245,25 @@ int train_entity_tagger(const train_params_tagging_t& params)
                                torch::optim::AdamOptions(params.m_learning_rate)
                                .weight_decay(params.m_weight_decay));
 
+  torch::Device device(params.m_device_string);
+
+  train_input.first->to(device);
+  train_input.second->to(device);
+  train_gold->to(device);
+
+  dev_input.first->to(device);
+  dev_input.second->to(device);
+  dev_gold->to(device);
+
+  model->to(device);
+
   model->train(params.m_max_epochs,
                params.m_batch_size,
                params.m_sequence_length,
                "tagging",
               *(train_input.first.get()), *(train_input.second.get()), *(train_gold.get()),
               *(dev_input.first.get()), *(dev_input.second.get()), *(dev_gold.get()),
-              optimizer, params.m_output_model_name);
+              optimizer, params.m_output_model_name, device);
 
 
   return 0;

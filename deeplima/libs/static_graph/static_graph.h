@@ -113,6 +113,8 @@ public:
   virtual void load(torch::serialize::InputArchive& archive);
   virtual void save(torch::serialize::OutputArchive& archive) const;
 
+  virtual void to(torch::Device device, bool non_blocking=false) override;
+
   virtual std::map<std::string, torch::Tensor> forward(
       const std::map<std::string, torch::Tensor>& inputs,
       const std::set<std::string>& outputs

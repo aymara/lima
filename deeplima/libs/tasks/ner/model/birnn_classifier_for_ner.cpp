@@ -240,8 +240,8 @@ tuple<double, int64_t> BiRnnClassifierForNerImpl::train_batch(size_t batch_size,
                                                              const torch::Device& device)
 {
   map<string, torch::Tensor> current_batch_inputs;
-  split_input(trainable_input, current_batch_inputs);
-  current_batch_inputs["raw"] = nontrainable_input;
+  split_input(trainable_input, current_batch_inputs, device);
+  current_batch_inputs["raw"] = nontrainable_input.to(device);
 
   auto target = gold.reshape({-1}).to(device);
 
@@ -271,8 +271,8 @@ tuple<double, double, int64_t> BiRnnClassifierForNerImpl::evaluate(const std::st
                                                                    const torch::Device& device)
 {
   map<string, torch::Tensor> current_inputs;
-  split_input(trainable_input.get_tensor(), current_inputs);
-  current_inputs["raw"] = nontrainable_input.get_tensor().reshape({ 1, nontrainable_input.get_tensor().size(0), -1 }).transpose(0, 1);
+  split_input(trainable_input.get_tensor(), current_inputs, device);
+  current_inputs["raw"] = nontrainable_input.get_tensor().reshape({ 1, nontrainable_input.get_tensor().size(0), -1 }).transpose(0, 1).to(device);
 
   auto target = gold.get_tensor().reshape({-1}).to(device);
 
@@ -313,7 +313,7 @@ void BiRnnClassifierForNerImpl::predict(size_t worker_id,
   const torch::Tensor inputs_slice = inputs.index({ Slice(input_begin, input_end), Slice() });
 
   map<string, torch::Tensor> current_inputs;
-  split_input(inputs_slice, current_inputs);
+  split_input(inputs_slice, current_inputs, device);
 
   auto output_map = forward(current_inputs, set<string>(outputs_names.begin(), outputs_names.end()));
   for (size_t i = 0; i < outputs_names.size(); i++)

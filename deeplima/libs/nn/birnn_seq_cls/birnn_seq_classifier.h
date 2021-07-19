@@ -135,7 +135,9 @@ public:
 
 protected:
 
-  void split_input(const torch::Tensor& src, std::map<std::string, torch::Tensor>& dst);
+  void split_input(const torch::Tensor& src,
+                   std::map<std::string, torch::Tensor>& dst,
+                   const torch::Device& device);
 
   std::tuple<double, double, int64_t> train_epoch(size_t batch_size,
                                                   size_t seq_len,
