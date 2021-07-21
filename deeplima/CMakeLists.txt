@@ -42,6 +42,13 @@ find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 #find_package(Torch               REQUIRED)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
 
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  set(DEEPLIMA_STANDALONE ON)
+  find_package(Torch REQUIRED)
+  add_subdirectory(../extern "${CMAKE_BINARY_DIR}/extern")
+  include_directories(../extern)
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 include_directories(AFTER "include")
