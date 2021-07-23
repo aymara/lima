@@ -108,12 +108,14 @@ public:
     assert(len <= M);
     assert(m_buff_len <= M);
 
-    if (end - *pch < len)
+    size_t available_bytes = end - *pch;
+
+    if (available_bytes < len)
     {
-      assert(m_buff_len + (end - *pch) <= M);
-      memcpy(m_buff + m_buff_len, *pch, end - *pch);
-      m_buff_len += end - *pch;
-      *pch += end - *pch;
+      assert(m_buff_len + available_bytes <= M);
+      memcpy(m_buff + m_buff_len, *pch, available_bytes);
+      m_buff_len += available_bytes;
+      *pch += available_bytes;
       assert(m_buff_len <= M);
       return false;
     }
@@ -126,9 +128,12 @@ public:
     return m_buff_len > 0;
   }
 
-  inline bool start_reading(const char** pch, const char* end, uint8_t len,
-                    /*uint64_t& pos,*/ std::vector<uint8_t>& dst,
-                    token_pos& tmp, bool inside)
+  inline bool start_reading(const char** pch,
+                            const char* end,
+                            uint8_t len,                // length of the current character in bytes
+                            std::vector<uint8_t>& dst,  // destination buffer
+                            token_pos& tmp,
+                            bool inside)
   {
     assert(*pch < end);
     assert(len <= M);
@@ -140,6 +145,9 @@ public:
       return read(pch, end, len);
     }
 
+    // TODO: Don't trust ML model.
+    // This code skips non-space characters
+    // in case of ML errors (wrong X tag).
     if (inside)
     {
       if (dst.size() < tmp.m_len + len + 1)
@@ -158,9 +166,7 @@ public:
       tmp.m_offset += len;
     }
 
-    //*pch += len - m_len;
     m_buff_len = 0;
-    //pos++;
 
     return true;
   }
@@ -233,7 +239,6 @@ public:
     const char* end = *pch + max;
 
     size_t pos = 0;
-    //uint64_t offset = 0;
     size_t temp_token_len = m_tokens[0].m_len;
 
     if (not_empty())
@@ -243,11 +248,15 @@ public:
       {
         *pch += m_len[from] - bytes_stored;
         start += m_len[from] - bytes_stored;
-        temp_token_len += m_len[from];
+        if (m_out.get(from, 0) != segm_tag_t::X)
+        {
+          temp_token_len += m_len[from];
+        }
         from++;
       }
       else
       {
+        // can't read full character (we need more data)
         return from;
       }
     }
@@ -318,7 +327,6 @@ public:
           {
             consome_character(pos, from, *pch);
           }
-          //m_tokens[pos].m_len += m_len[from];
           break;
 
         case segm_tag_t::E_EOS:
@@ -407,6 +415,8 @@ public:
         {
           m_temp_text.resize(m_tokens[0].m_len + 1);
         }
+        assert(0 == pos);
+        assert(m_tokens[pos].m_len >= temp_token_len);
         memcpy(m_temp_text.data() + temp_token_len, start, m_tokens[pos].m_len - temp_token_len);
         m_tokens[pos].m_pch = (const char*)(m_temp_text.data());
       }
