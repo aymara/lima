@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <chrono>
 #include <functional>
 #include <boost/program_options.hpp>
 
@@ -163,6 +164,8 @@ void parse_file(istream& input, const map<string, string>& models_fn, size_t thr
     });
   }
 
+  chrono::steady_clock::time_point parsing_begin = chrono::steady_clock::now();
+
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
                          uint32_t& read,
@@ -173,16 +176,29 @@ void parse_file(istream& input, const map<string, string>& models_fn, size_t thr
     return (bool)input;
   });
 
+  uint64_t token_counter = (nullptr != pdumper ? pdumper->get_token_counter() : 0);
+
+  if (nullptr != panalyzer)
+  {
+    if (0 == token_counter)
+    {
+      token_counter = panalyzer->get_token_counter();
+    }
+
+    cerr << "Waiting for analyzer to stop" << endl;
+    panalyzer->finalize();
+    delete panalyzer;
+    cerr << "Analyzer stopped" << endl;
+  }
+  chrono::steady_clock::time_point parsing_end = chrono::steady_clock::now();
+  float parsing_duration = std::chrono::duration_cast<chrono::milliseconds>(parsing_end - parsing_begin).count();
+  float speed = (float(token_counter) * 1000) / parsing_duration;
+  cerr << "Parsing speed: " << speed << " tokens / sec" << endl;
+
   if (nullptr != psegm)
   {
     cerr << "Deleting psegm" << endl;
     delete psegm;
-  }
-
-  if (nullptr != panalyzer)
-  {
-    panalyzer->finalize();
-    delete panalyzer;
   }
 
   if (nullptr != pdumper)

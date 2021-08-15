@@ -48,7 +48,7 @@ public:
   {
     assert(m_start_time >= 0);
     assert(m_max_time > m_start_time);
-    assert(m_max_feat > 0);
+    //assert(m_max_feat > 0);
     assert(m_max_feat < std::numeric_limits<int64_t>::max());
   }
 
@@ -138,7 +138,7 @@ template<>
 inline torch::Tensor TorchMatrix<int64_t>::create_tensor(int64_t max_time, int64_t max_feat)
 {
   assert(max_time > 0);
-  assert(max_feat > 0);
+  //assert(max_feat > 0);
 
   return torch::zeros({max_time, max_feat}, torch::TensorOptions().dtype(torch::kInt64));
 }

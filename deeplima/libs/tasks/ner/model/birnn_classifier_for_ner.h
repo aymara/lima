@@ -44,12 +44,13 @@ public:
   BiRnnClassifierForNerImpl(DictsHolder&& dicts,
                             const std::vector<nets::embd_descr_t>& embd_descr,
                             const std::vector<nets::rnn_descr_t>& rnn_descr,
-                            const std::string& output_name,
+                            const std::vector<std::string>& output_names,
                             DictsHolder&& classes,
                             const std::string& embd_fn)
-    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, output_name, classes[0]->size()),
+    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, output_names, classes.get_counters()),
       m_workers(0),
-      m_embd_fn(embd_fn)
+      m_embd_fn(embd_fn),
+      m_class_names(output_names)
   {
     m_classes = classes;
   }
@@ -70,7 +71,7 @@ public:
   void train(size_t epochs,
              size_t batch_size,
              size_t seq_len,
-             const std::string& output_name,
+             const std::vector<std::string>& output_names,
              const TorchMatrix<int64_t>& train_trainable_input,
              const TorchMatrix<float>& train_non_trainable_input,
              const TorchMatrix<int64_t>& train_gold,
@@ -81,11 +82,12 @@ public:
              const std::string& model_name,
              const torch::Device& device = torch::Device(torch::kCPU));
 
-  std::tuple<double, double, int64_t> evaluate(const std::string& output_name,
-                                               const TorchMatrix<int64_t>& trainable_input,
-                                               const TorchMatrix<float>& nontrainable_input,
-                                               const TorchMatrix<int64_t>& gold,
-                                               const torch::Device& device = torch::Device(torch::kCPU));
+  void evaluate(const std::vector<std::string>& output_names,
+                const TorchMatrix<int64_t>& trainable_input,
+                const TorchMatrix<float>& nontrainable_input,
+                const TorchMatrix<int64_t>& gold,
+                nets::epoch_stat_t& stat,
+                const torch::Device& device = torch::Device(torch::kCPU));
 
   void predict(size_t worker_id,
                const torch::Tensor& inputs,
@@ -102,6 +104,11 @@ public:
     return m_classes;
   }
 
+  const std::vector<std::string>& get_class_names() const
+  {
+    return m_class_names;
+  }
+
   const std::string& get_embd_fn(size_t idx) const
   {
     assert(0 == idx);
@@ -109,25 +116,28 @@ public:
   }
 
 protected:
-  std::tuple<double, double, int64_t> train_epoch(size_t batch_size,
-                                        size_t seq_len,
-                                        const std::string& output_name,
-                                        const torch::Tensor& trainable_input_batches,
-                                        const torch::Tensor& nontrainable_input_batches,
-                                        const torch::Tensor& gold_batches,
-                                        torch::optim::Optimizer& opt,
-                                        const torch::Device& device);
+  void train_epoch(size_t batch_size,
+                   size_t seq_len,
+                   const std::vector<std::string>& output_names,
+                   const torch::Tensor& trainable_input_batches,
+                   const torch::Tensor& nontrainable_input_batches,
+                   const torch::Tensor& gold_batches,
+                   torch::optim::Optimizer& opt,
+                   nets::epoch_stat_t& stat,
+                   const torch::Device& device);
 
-  std::tuple<double, int64_t> train_batch(size_t batch_size,
-                                           size_t seq_len,
-                                           const std::string& output_name,
-                                           const torch::Tensor& trainable_input,
-                                           const torch::Tensor& nontrainable_input,
-                                           const torch::Tensor& gold,
-                                           torch::optim::Optimizer& opt,
-                                           const torch::Device& device);
+  void train_batch(size_t batch_size,
+                   size_t seq_len,
+                   const std::vector<std::string>& output_names,
+                   const torch::Tensor& trainable_input,
+                   const torch::Tensor& nontrainable_input,
+                   const torch::Tensor& gold,
+                   torch::optim::Optimizer& opt,
+                   nets::epoch_stat_t& stat,
+                   const torch::Device& device);
 
   size_t m_workers;
+  std::vector<std::string> m_class_names;
   DictsHolder m_classes;
   std::string m_embd_fn;
 };

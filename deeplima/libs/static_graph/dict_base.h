@@ -38,6 +38,16 @@ template <class D=std::shared_ptr<DictBase>>
 class DictsHolderImpl : public std::vector<D>
 {
 public:
+  std::vector<uint32_t> get_counters() const
+  {
+    std::vector<uint32_t> v(this->size());
+    for (size_t i = 0; i < this->size(); ++i)
+    {
+      v[i] = (*this)[i]->size();
+    }
+
+    return v;
+  }
 
 };
 

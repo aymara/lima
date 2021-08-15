@@ -40,6 +40,7 @@ struct train_params_tagging_t
   std::string m_dev_set_fn;
 
   std::string m_device_string; // goes directly into Device struct constuctor
+  std::string m_tasks_string;
 
   size_t m_conllu_column_num; // 4 - UPOS, 5 - XPOS
 
@@ -59,11 +60,12 @@ struct train_params_tagging_t
 
   train_params_tagging_t()
     : m_device_string("cpu"),
+      m_tasks_string("upos"),
       m_conllu_column_num(4),
       m_rnn_hidden_dim(64),
-      m_trainable_embeddings_dim(4),
+      m_trainable_embeddings_dim(0),
       m_trainable_embeddings_cutoff_freq(100),
-      m_use_eos(true),
+      m_use_eos(false),
       m_learning_rate(0.001),
       m_weight_decay(0.00001),
       m_max_epochs(100),

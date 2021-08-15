@@ -83,6 +83,11 @@ public:
     return m_impl.get_classes();
   }
 
+  inline const std::vector<std::string>& get_class_names() const
+  {
+    return m_impl.get_class_names();
+  }
+
   inline const std::string& get_embd_fn(size_t idx) const
   {
     return m_impl.get_embd_fn(idx);

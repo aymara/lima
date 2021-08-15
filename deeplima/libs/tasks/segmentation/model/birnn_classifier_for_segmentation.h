@@ -47,7 +47,7 @@ public:
                                      const std::vector<nets::rnn_descr_t>& rnn_descr,
                                      const std::string& output_name,
                                      size_t num_classes)
-    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, output_name, num_classes),
+    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, { output_name }, { num_classes }),
       m_ngram_descr(ngram_descr),
       m_workers(0)
   {

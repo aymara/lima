@@ -79,8 +79,14 @@ public:
         output_begin, output_end);
   }
 
+  const std::vector<std::vector<std::string>>& get_classes() const
+  {
+    return m_classes;
+  }
+
 protected:
   std::vector<impl::ngram_descr_t> m_ngram_gescr;
+  std::vector<std::vector<std::string>> m_classes; // only the size of this structure is used
 
   virtual void convert_from_torch(const std::string& fn);
 };

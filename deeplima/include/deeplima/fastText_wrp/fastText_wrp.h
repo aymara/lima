@@ -76,16 +76,37 @@ public:
   }
 };
 
+class FastTextExt : public fasttext::FastText
+{
+
+};
+
 template <class Matrix, class Idx=uint64_t>
 class FastTextVectorizer : public FeatureVectorizerToMatrix<Matrix, const std::string&, Idx>
 {
 protected:
   fasttext::FastText m_fasttext;
+  Idx m_dim;
+  fasttext::Vector *m_vec;
 public:
 
   FastTextVectorizer(const std::string& fn)
+    : m_dim(0),
+      m_vec(nullptr)
   {
     load(fn);
+    m_dim = m_fasttext.getDimension();
+    assert(m_dim > 0);
+    m_vec = new fasttext::Vector(m_dim);
+    m_vec->zero();
+  }
+
+  virtual ~FastTextVectorizer()
+  {
+    if (nullptr != m_vec)
+    {
+      delete m_vec;
+    }
   }
 
   virtual void load(const std::string& fn)
@@ -95,15 +116,16 @@ public:
 
   virtual Idx dim() const override
   {
-    return m_fasttext.getDimension();
+    return m_dim;
   }
 
   virtual void get(const std::string& value, Matrix& target, Idx time, Idx pos) const override
   {
-    fasttext::Vector vec(m_fasttext.getDimension());
-    m_fasttext.getWordVector(vec, value);
-    for (size_t i = 0; i < vec.size(); i++)
-      target.set(time, pos + i, vec[i]);
+    m_fasttext.getWordVector(*m_vec, value);
+    for (int i = 0; i < m_dim; i++)
+    {
+      target.set(time, pos + i, (*m_vec)[i]);
+    }
   }
 };
 
@@ -113,11 +135,26 @@ class FastTextVectorizer<Eigen::MatrixXf, Eigen::Index>
 {
 protected:
   fasttext::FastText m_fasttext;
+  Eigen::Index m_dim;
+  fasttext::Vector *m_vec;
 public:
 
   FastTextVectorizer(const std::string& fn)
+    : m_dim(0),
+      m_vec(nullptr)
   {
     load(fn);
+    m_dim = m_fasttext.getDimension();
+    assert(m_dim > 0);
+    m_vec = new fasttext::Vector(m_dim);
+  }
+
+  virtual ~FastTextVectorizer()
+  {
+    if (nullptr != m_vec)
+    {
+      delete m_vec;
+    }
   }
 
   virtual void load(const std::string& fn)
@@ -127,18 +164,16 @@ public:
 
   virtual Eigen::Index dim() const override
   {
-    return m_fasttext.getDimension();
+    return m_dim;
   }
 
   virtual void get(const std::string& value, Eigen::MatrixXf& target, Eigen::Index time, Eigen::Index pos) const override
   {
-    int dim = m_fasttext.getDimension();
-    fasttext::Vector vec(dim);
-    m_fasttext.getWordVector(vec, value);
-    auto blk = target.block(pos, time, dim, 1);
-    for (size_t i = 0; i < vec.size(); i++)
+    m_fasttext.getWordVector(*m_vec, value);
+    auto blk = target.block(pos, time, m_dim, 1);
+    for (size_t i = 0; i < m_dim; i++)
     {
-      blk(i, 0) = vec[i];
+      blk(i, 0) = (*m_vec)[i];
     }
   }
 };

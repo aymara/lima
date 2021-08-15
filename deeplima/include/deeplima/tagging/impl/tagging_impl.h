@@ -65,21 +65,25 @@ public:
 
   void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread)
   {
-    auto z = *(this->get_str_dicts().begin());
-    std::shared_ptr<FeatureVectorizerBase<Eigen::Index>> p
-        = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
+    if (this->get_str_dicts().size())
+    {
+      auto z = *(this->get_str_dicts().begin());
+      std::shared_ptr<FeatureVectorizerBase<Eigen::Index>> p
+          = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
+    }
     m_vectorizer.init_features({
-                                 { Vectorizer::str_feature, "lc(form)", p },
-                                 { Vectorizer::str_feature,   "form",
+                                 //{ Vectorizer::str_feature, "lc(form)", p },
+                                 { Vectorizer::str_feature, "form",
                                    std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> >(
                                        new FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>(
-                                          InferenceEngine::get_embd_fn(0))) },
-                                 { Vectorizer::int_feature, "eos",
-                                   std::shared_ptr< DirectDict<typename Matrix::matrix_t, Eigen::Index> >(new DirectDict<typename Matrix::matrix_t, Eigen::Index>(2)) }
+                                          InferenceEngine::get_embd_fn(0))) }
+                                 //,
+                                 //{ Vectorizer::int_feature, "eos",
+                                 //  std::shared_ptr< DirectDict<typename Matrix::matrix_t, Eigen::Index> >(new DirectDict<typename Matrix::matrix_t, Eigen::Index>(2)) }
                                });
 
     InferenceEngine::init(m_vectorizer.dim(),
-                          4, num_buffers, buffer_size_per_thread, threads);
+                          16, num_buffers, buffer_size_per_thread, threads);
 
     m_current_timepoint = InferenceEngine::get_start_timepoint();
   }
@@ -218,7 +222,8 @@ protected:
     {
       // Worker still uses this slot. Waiting...
       cerr << "tagging handle_timepoint, waiting for slot " << slot_no
-           << " lock_count=" << lock_count << endl;
+           << " lock_count=" << int(lock_count) << endl;
+      InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
     }
@@ -248,14 +253,15 @@ public:
     cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << endl;
   }
 
-protected:
-
-  inline void no_more_data()
+  inline void no_more_data(size_t slot_no)
   {
-    if (m_current_slot_timepoints < InferenceEngine::get_slot_size())
+    if (!InferenceEngine::get_slot_started(slot_no))
     {
-      InferenceEngine::set_slot_end(m_current_slot_no, m_current_timepoint);
-      InferenceEngine::start_job(m_current_slot_no, true);
+      while (InferenceEngine::get_lock_count(slot_no) > 1)
+      {
+        InferenceEngine::decrement_lock_count(slot_no);
+      }
+      InferenceEngine::start_job(slot_no, true);
     }
   }
 

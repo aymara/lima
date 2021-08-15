@@ -24,6 +24,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <stdexcept>
 
 namespace deeplima
 {
@@ -177,6 +178,16 @@ public:
   inline const std::string& xpos() const
   {
     return _xpos;
+  }
+
+  inline const std::string& deprel() const
+  {
+    return _deprel;
+  }
+
+  inline const std::map<std::string, std::set<std::string>>& feats() const
+  {
+    return _feats;
   }
 
 protected:

@@ -115,15 +115,71 @@ public:
 
   virtual void to(torch::Device device, bool non_blocking=false) override;
 
-  virtual std::map<std::string, torch::Tensor> forward(
+  template< class InputIt >
+  std::map<std::string, torch::Tensor> forward(
       const std::map<std::string, torch::Tensor>& inputs,
-      const std::set<std::string>& outputs
-      );
-
-  /*std::shared_ptr<DictBase> get_dict(size_t idx)
+      InputIt outputs_begin,
+      InputIt outputs_end
+      )
   {
-    return m_dict[idx];
-  }*/
+    assert(inputs.size() > 0);
+    assert(outputs_begin != outputs_end);
+
+    std::string key = get_exec_plan_key(inputs, outputs_begin, outputs_end);
+    if (m_exec_plans.end() == m_exec_plans.find(key))
+    {
+      prepare_exec_plan(inputs, outputs_begin, outputs_end);
+    }
+
+    const std::vector<size_t> plan = m_exec_plans[key];
+    context_t ctx(m_tensor_name_to_idx.size());
+    for ( const auto& kv : inputs )
+    {
+      if (m_tensor_name_to_idx.end() == m_tensor_name_to_idx.find(kv.first))
+      {
+        throw;
+      }
+      size_t idx = m_tensor_name_to_idx[kv.first];
+      if (idx >= ctx.m_tensors.size())
+      {
+        throw;
+      }
+      ctx.m_tensors[idx] = kv.second;
+    }
+
+    //size_t total_time = 0;
+    for (size_t i = 0; i < plan.size(); i++)
+    {
+      size_t op_idx = plan[i];
+      //chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+      m_ops[op_idx].m_fn(ctx);
+      //chrono::steady_clock::time_point end = chrono::steady_clock::now();
+      //cerr << "\"" << m_ops[op_idx].m_descr << "\" "
+      //     << chrono::duration_cast<chrono::milliseconds>(end - begin).count() << "[ms]" << endl;
+      //total_time += chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+    }
+    //cerr << "Total calculations: " << total_time << "\r";
+
+    std::map<std::string, torch::Tensor> rv;
+    for (auto it = outputs_begin; it != outputs_end; ++it)
+    {
+      const std::string& str = *it;
+      if (m_tensor_name_to_idx.end() == m_tensor_name_to_idx.find(str))
+      {
+        throw;
+      }
+      size_t idx = m_tensor_name_to_idx[str];
+      if (idx >= ctx.m_tensors.size())
+      {
+        throw;
+      }
+      rv[str] = ctx.m_tensors[idx];
+
+      //cout << "Output [" << idx << "].size() == " << ctx.m_tensors[idx].sizes() << endl;
+    }
+
+    return rv;
+  }
 
   virtual void pretty_dump(std::ostream &stream) const;
 
@@ -139,12 +195,106 @@ protected:
   virtual std::vector<std::string> parse_list(std::string& str, char sep);
 
   std::map<std::string, std::vector<size_t>> m_exec_plans;
-  virtual void prepare_exec_plan(const std::map<std::string, torch::Tensor>& inputs,
-                                 const std::set<std::string>& outputs);
-  virtual std::string get_exec_plan_key(const std::map<std::string, torch::Tensor>& inputs,
-                                        const std::set<std::string>& outputs);
 
-  template <class T> T get_option(const std::map<std::string, std::string>& opts, const std::string& name)
+  template< class InputIt >
+  void prepare_exec_plan(
+      const std::map<std::string, torch::Tensor>& inputs,
+      InputIt outputs_begin,
+      InputIt outputs_end
+      )
+  {
+    assert(inputs.size() > 0);
+    assert(outputs_begin != outputs_end);
+
+    std::string key = get_exec_plan_key(inputs, outputs_begin, outputs_end);
+    if (m_exec_plans.end() != m_exec_plans.find(key))
+    {
+      throw;
+    }
+
+    std::set<size_t> given_inputs_idx;
+    for ( const auto& kv : inputs )
+    {
+      size_t in_idx = m_tensor_name_to_idx[kv.first];
+      given_inputs_idx.insert(in_idx);
+    }
+
+    std::vector<size_t> temp;
+    temp.reserve(m_ops.size() * 2);
+
+    std::list<size_t> required;
+    for (auto it = outputs_begin; it != outputs_end; ++it)
+    {
+      const std::string& tensor_name = *it;
+      size_t idx = m_tensor_name_to_idx[tensor_name];
+      required.push_back(idx);
+    }
+
+    while (! required.empty())
+    {
+      size_t out_idx = required.front();
+      required.pop_front();
+      size_t op_idx = m_outidx_to_opidx[out_idx];
+      temp.push_back(op_idx);
+
+      const op_t& op = m_ops[op_idx];
+      for ( size_t in_idx : op.m_inputs )
+      {
+        if (given_inputs_idx.end() == given_inputs_idx.find(in_idx))
+        {
+          required.push_back(in_idx);
+        }
+      }
+    }
+
+    std::set<size_t> planned_ops;
+    std::vector<size_t> plan;
+    plan.reserve(temp.size());
+
+    for (int32_t i = temp.size() - 1; i >= 0; i--)
+    {
+      if (planned_ops.end() != planned_ops.find(temp[i]))
+      {
+        continue;
+      }
+      plan.push_back(temp[i]);
+      planned_ops.insert(temp[i]);
+
+      //cout << m_ops[temp[i]].m_descr << endl;
+    }
+
+    m_exec_plans[key] = plan;
+  }
+
+  template< class InputIt >
+  std::string get_exec_plan_key(
+      const std::map<std::string, torch::Tensor>& inputs,
+      InputIt outputs_begin,
+      InputIt outputs_end
+      )
+  {
+    std::string k;
+    for ( const auto& kv : inputs )
+    {
+      if (k.size() > 0)
+      {
+        k += " ";
+      }
+      k += kv.first;
+    }
+
+    k += " -> ";
+
+    for (auto it = outputs_begin; it != outputs_end; ++it)
+    {
+      k += *it;
+    }
+
+    return k;
+  }
+
+  template <class T>
+  T get_option(const std::map<std::string, std::string>& opts, const std::string& name)
   {
     const auto it = opts.find(name);
     if (opts.cend() == it)

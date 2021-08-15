@@ -159,11 +159,11 @@ public:
     for ( token_buffer_t& b : m_buffers ) b.resize(m_buffer_size);
 
     m_cls.load(model_fn);
-    m_cls.init(2, num_buffers, buffer_size);
+    m_cls.init(1, num_buffers, buffer_size);
 
     for (size_t i = 0; i < m_cls.get_classes().size(); ++i)
     {
-      m_dumper.set_classes(i, m_cls.get_classes()[i]);
+      m_dumper.set_classes(i, m_cls.get_class_names()[i], m_cls.get_classes()[i]);
     }
 
     m_cls.register_handler([this](
@@ -181,15 +181,27 @@ public:
     std::cerr << "~TokenSequenceAnalyzer" << std::endl;
   }
 
+  uint64_t get_token_counter() const
+  {
+    return m_dumper.get_token_counter();
+  }
+
   void finalize()
   {
     if (m_current_timepoint > 0)
     {
-      start_analysis(m_current_buffer, m_current_timepoint);
+      if (m_current_timepoint < m_buffer_size)
+      {
+        cerr << "Starting ..." << endl;
+        start_analysis(m_current_buffer, m_current_timepoint);
+      }
+      else
+      {
+        m_cls.no_more_data(m_current_buffer);
+      }
     }
 
     m_cls.send_all_results();
-
   }
 
   void stop()

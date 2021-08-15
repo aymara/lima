@@ -138,14 +138,14 @@ protected:
   {
     slot_t& slot = *((slot_t*)p);
 
+    //std::cerr << "Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
+
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
                    slot.m_input_begin, slot.m_input_end,
                    slot.m_output_begin, slot.m_output_end,
                    this_ptr->m_output,
                    {"tokens"});
-
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1 + std::rand() % 5));
 
     assert(slot.m_lock_count > 0);
     slot.m_lock_count--;
@@ -242,8 +242,7 @@ public:
     }
 
     // Vector for calculation results
-    size_t outputs = 1;
-    m_output.resize(outputs);
+    m_output.resize(Model::get_classes().size());
     for (auto& v : m_output)
     {
       v.resize(InputVectorizer::size());
@@ -281,6 +280,13 @@ public:
     assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_begin;
+  }
+
+  inline bool get_slot_started(int32_t idx) const
+  {
+    assert(idx >= 0);
+    assert(idx < m_num_slots);
+    return m_slots[idx].m_work_started;
   }
 
   inline uint64_t get_slot_end(int32_t idx) const

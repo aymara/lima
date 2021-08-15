@@ -51,6 +51,7 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
 
   // classes
   convert_classes(src.get_classes(), m_classes);
+  m_class_names = src.get_class_names();
 
   // torch modules
   Parent::m_lstm.reserve(src.get_layers_lstm().size());
@@ -84,7 +85,10 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
   Parent::m_params.push_back(new params_bilstm_dense_argmax_t<M, V>());
   params_bilstm_dense_argmax_t<M, V> *p = static_cast<params_bilstm_dense_argmax_t<M, V>*>(Parent::m_params.back());
   p->bilstm = Parent::m_lstm[0];
-  p->linear.push_back(Parent::m_linear[0]);
+  for (size_t i = 0; i < Parent::m_linear.size(); ++i)
+  {
+    p->linear.push_back(Parent::m_linear[i]);
+  }
   Parent::m_wb.resize(1);
 }
 

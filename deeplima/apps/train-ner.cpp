@@ -50,7 +50,9 @@ int main(int argc, char* argv[])
   ("dev,d",             po::value<string>(&params.m_dev_set_fn),        "File with evaluation data")
   ("maxepoch,m",        po::value<size_t>(&params.m_max_epochs),        "Max epochs")
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
-  ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]");
+  ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
+  ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
+  ;
 
   po::variables_map vm;
 

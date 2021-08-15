@@ -34,17 +34,46 @@ class WordDictBuilderImpl
 {
 public:
 
-  DictsHolder process(const DataSet& src, int32_t min_ipm, const std::string unk_str = "<<UNK>>")
+  FeatExtractor preprocess(const DataSet& src,
+                           const std::string& feat_extractor_init = "")
   {
-    std::vector<std::unordered_map<std::string, uint64_t>> values(FeatExtractor::size());
+    FeatExtractor fe(feat_extractor_init);
+
+    if (fe.needs_preprocessing())
+    {
+      typename DataSet::const_iterator it = src.begin();
+      while (src.end() != it)
+      {
+        fe.preprocess(*it);
+        it++;
+      }
+    }
+
+    return fe;
+  }
+
+  DictsHolder process(const DataSet& src,
+                      int32_t min_ipm,
+                      const std::string unk_str = "<<UNK>>")
+  {
+    FeatExtractor fe;
+    return process(src, fe, min_ipm, unk_str);
+  }
+
+  DictsHolder process(const DataSet& src,
+                      const FeatExtractor& fe,
+                      int32_t min_ipm,
+                      const std::string unk_str = "<<UNK>>")
+  {
+    std::vector<std::map<std::string, uint64_t>> values(fe.size());
     uint64_t total = 0;
 
     typename DataSet::const_iterator it = src.begin();
     while (src.end() != it)
     {
-      for (size_t ifeat = 0; ifeat < FeatExtractor::size(); ifeat++)
+      for (size_t ifeat = 0; ifeat < fe.size(); ifeat++)
       {
-        const std::string& feat_val = FeatExtractor::feat_value(/*src.data(),*/ *it, ifeat);
+        const std::string& feat_val = fe.feat_value(*it, ifeat);
         if (0 == feat_val.size())
         {
           continue;
@@ -62,7 +91,7 @@ public:
       if (unk_str.size() > 0)
       {
         dicts[ifeat] = std::shared_ptr<StringDict>(new StringDict(unk_str,
-                                                   values[ifeat],
+                                                   values[ifeat].begin(), values[ifeat].end(),
                                                    [total, min_ipm](uint64_t c) {
                                                        return ipm(c, total) > min_ipm;
                                                     })
@@ -70,7 +99,8 @@ public:
       }
       else
       {
-        dicts[ifeat] = std::shared_ptr<StringDict>(new StringDict(values[ifeat],
+        dicts[ifeat] = std::shared_ptr<StringDict>(new StringDict(values[ifeat].begin(),
+                                                                  values[ifeat].end(),
                                                    [total, min_ipm](uint64_t c) {
                                                        return ipm(c, total) > min_ipm;
                                                     })

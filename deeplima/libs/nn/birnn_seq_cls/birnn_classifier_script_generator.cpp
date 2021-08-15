@@ -30,11 +30,9 @@ namespace nets
 
 string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& embd_descr,
                                             const std::vector<rnn_descr_t>& rnn_descr,
-                                            const string& output_name,
-                                            size_t num_classes)
+                                            const std::vector<std::string>& output_names,
+                                            const std::vector<uint32_t>& classes)
 {
-  assert(num_classes > 0);
-
   stringstream ss;
 
   ss << "input_dropout = def Dropout prob=0.7" << std::endl;
@@ -62,10 +60,13 @@ string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& emb
 
   ss << std::endl;
 
-  ss << "fc_" << output_name << " = def Linear input_size=" << input_size
-     << " output_size=" << num_classes << std::endl;
+  for (size_t i = 0; i < output_names.size(); ++i)
+  {
+    ss << "fc_" << output_names[i] << " = def Linear input_size=" << input_size
+       << " output_size=" << classes[i] << std::endl;
 
-  ss << std::endl;
+    ss << std::endl;
+  }
 
   for (size_t i = 0; i < embd_descr.size(); i++)
   {
@@ -122,10 +123,14 @@ string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& emb
 
   ss << std::endl;
 
-  ss << output_name << "_raw = forward module=fc_" << output_name
-     << " input=" << last_output_name << std::endl;
+  for (size_t i = 0; i < output_names.size(); ++i)
+  {
+    ss << output_names[i] << "_raw = forward module=fc_" << output_names[i]
+       << " input=" << last_output_name << std::endl;
 
-  ss << output_name << " = log_softmax input=" << output_name << "_raw" << std::endl;
+    ss << output_names[i] << " = log_softmax input=" << output_names[i] << "_raw" << std::endl;
+    ss << endl;
+  }
 
   return ss.str();
 }

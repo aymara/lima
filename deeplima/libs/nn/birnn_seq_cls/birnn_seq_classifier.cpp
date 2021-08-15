@@ -31,29 +31,45 @@ namespace deeplima
 namespace nets
 {
 
-torch::Tensor BiRnnClassifierImpl::predict(const std::string& output_name,
+torch::Tensor BiRnnClassifierImpl::predict(const string& output_name,
+                                           const torch::Tensor& input,
+                                           const torch::Device& device)
+{
+  vector<string> output_names = { output_name };
+  return predict(output_names, input, device);
+}
+
+torch::Tensor BiRnnClassifierImpl::predict(const vector<string>& output_names,
                                            const torch::Tensor& input,
                                            const torch::Device& device)
 {
   map<string, torch::Tensor> current_inputs;
   split_input(input, current_inputs, device);
 
-  auto output_map = forward(current_inputs, { output_name });
-  torch::Tensor& output = output_map[output_name];
-  torch::Tensor o = output.reshape({-1, output.size(2)});
-  torch::Tensor prediction = o.argmax(1);
+  auto output_map = forward(current_inputs, output_names.begin(), output_names.end());
+
+  torch::Tensor prediction = torch::zeros({ input.size(0), long(output_names.size()) },
+                                          torch::TensorOptions().dtype(torch::kInt64));
+  for (size_t i = 0; i < output_names.size(); ++i)
+  {
+    const string& task_name = output_names[i];
+    torch::Tensor& output = output_map[task_name];
+    torch::Tensor o = output.reshape({-1, output.size(2)});
+    prediction.index({ Slice(), Slice(i, i+1) }) = o.argmax(1);
+  }
+
   return prediction;
 }
 
 void BiRnnClassifierImpl::predict(size_t worker_id,
-             const torch::Tensor& inputs,
-             int64_t input_begin,
-             int64_t input_end,
-             int64_t output_begin,
-             int64_t output_end,
-             std::vector<std::vector<uint8_t>>& output,
-             const std::vector<std::string>& outputs_names,
-             const torch::Device& device)
+                                  const torch::Tensor& inputs,
+                                  int64_t input_begin,
+                                  int64_t input_end,
+                                  int64_t output_begin,
+                                  int64_t output_end,
+                                  std::vector<std::vector<uint8_t>>& output,
+                                  const std::vector<std::string>& outputs_names,
+                                  const torch::Device& device)
 {
   assert(output.size() == outputs_names.size());
 
@@ -67,7 +83,7 @@ void BiRnnClassifierImpl::predict(size_t worker_id,
   map<string, torch::Tensor> current_inputs;
   split_input(inputs_slice, current_inputs, device);
 
-  auto output_map = forward(current_inputs, set<string>(outputs_names.begin(), outputs_names.end()));
+  auto output_map = forward(current_inputs, outputs_names.begin(), outputs_names.end());
   for (size_t i = 0; i < outputs_names.size(); i++)
   {
     torch::Tensor& one_task_output = output_map[outputs_names[i]];
@@ -122,35 +138,73 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
   }
 }
 
-tuple<double, double, int64_t> BiRnnClassifierImpl::evaluate(const std::string& output_name,
-                                                                  const TorchMatrix<int64_t>& input,
-                                                                  const TorchMatrix<int64_t>& gold,
-                                                                  const torch::Device& device)
+void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
+                                   const TorchMatrix<int64_t>& input,
+                                   const TorchMatrix<int64_t>& gold,
+                                   epoch_stat_t& stat,
+                                   const torch::Device& device)
 {
   map<string, torch::Tensor> current_inputs;
   split_input(input.get_tensor(), current_inputs, device);
 
-  auto target = gold.get_tensor().reshape({-1}).to(device);
+  auto target = gold.get_tensor().reshape({ -1, long(output_names.size()) }).to(device);
 
+  evaluate(output_names, current_inputs, target, stat, device);
+}
+
+void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
+                                   const map<string, torch::Tensor>& input,
+                                   const torch::Tensor& target,
+                                   epoch_stat_t& stat,
+                                   const torch::Device& device)
+{
   eval();
-  auto output_map = forward(current_inputs, { output_name });
-  torch::Tensor& output = output_map[output_name];
+  auto output_map = forward(input, output_names.begin(), output_names.end());
 
-  torch::Tensor o = output.reshape({-1, output.size(2)});
-  torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, target);
-  double loss_value = loss_tensor.item<double>() ;/// input.get_tensor().size(0);
-  auto prediction = o.argmax(1);
-  int64_t correct_predictions = prediction.eq(target).sum().item<int64_t>();
+  for (size_t i = 0; i < output_names.size(); ++i)
+  {
+    const string& task_name = output_names[i];
+    task_stat_t& task_stat = stat[task_name];
 
-  double accuracy = double(correct_predictions) / input.get_tensor().size(0);
+    torch::Tensor& output = output_map[task_name];
+    torch::Tensor o = output.reshape({-1, output.size(2)});
+    auto this_task_target = target.index({ Slice(), Slice(i, i+1) }).reshape({ -1 });
+    //cerr << o.sizes() << endl;
+    //cerr << this_task_target.sizes() << endl;
 
-  return make_tuple(accuracy, loss_value, correct_predictions);
+    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
+    task_stat.m_loss = loss_tensor.item<double>();
+    auto prediction = o.argmax(1);
+    task_stat.m_correct = prediction.eq(this_task_target).sum().item<int64_t>();
+    task_stat.m_items = this_task_target.size(0);
+    task_stat.m_accuracy = double(task_stat.m_correct) / task_stat.m_items;
+
+    if (o.size(-1) == 2)
+    {
+      //cerr << this_task_target.sizes() << endl;
+      //cerr << prediction.sizes() << endl;
+      //cerr << this_task_target << endl;
+      //cerr << prediction << endl;
+      task_stat.m_num_classes = o.size(-1);
+      double tp = 0, fp = 0, fn = 0;
+      auto gold_positive = prediction.eq(1);
+      auto gold_negative = prediction.eq(0);
+      auto pred_positive = this_task_target.eq(1);
+      auto pred_negative = this_task_target.eq(0);
+      tp = torch::logical_and(gold_positive, pred_positive).count_nonzero().item<int64_t>();
+      fp = torch::logical_and(gold_negative, pred_positive).count_nonzero().item<int64_t>();
+      fn = torch::logical_and(gold_positive, pred_negative).count_nonzero().item<int64_t>();
+      task_stat.m_precision = tp / (prediction.eq(1).sum().item<int64_t>() + 0.00001);
+      task_stat.m_recall = tp / (this_task_target.eq(1).sum().item<int64_t>() + 0.00001);
+      task_stat.m_f1 = (2 * task_stat.m_precision * task_stat.m_recall) / (task_stat.m_precision + task_stat.m_recall + 0.00001);
+    }
+  }
 }
 
 void BiRnnClassifierImpl::train(size_t epochs,
                                 size_t batch_size,
                                 size_t seq_len,
-                                const std::string& output_name,
+                                const vector<string>& output_names,
                                 const TorchMatrix<int64_t>& train_input,
                                 const TorchMatrix<int64_t>& train_gold,
                                 const TorchMatrix<int64_t>& eval_input,
@@ -176,43 +230,42 @@ void BiRnnClassifierImpl::train(size_t epochs,
   double lr_copy = 0;
   for (size_t e = 0; e < epochs; e++)
   {
-    double train_accuracy = 0, train_loss = 0;
-    int64_t train_correct = 0;
+    epoch_stat_t train_stat, eval_stat;
+
     Module::train(true);
-    tie(train_accuracy, train_loss, train_correct) = train_epoch(batch_size,
-                                                                 seq_len,
-                                                                 output_name,
-                                                                 input_batches,
-                                                                 gold_batches,
-                                                                 opt,
-                                                                 device);
+    train_epoch(batch_size, seq_len, output_names, input_batches, gold_batches, opt, train_stat, device);
 
-    double eval_accuracy = 0, eval_loss = 0;
-    int64_t eval_correct = 0;
-    tie(eval_accuracy, eval_loss, eval_correct) = evaluate(output_name, eval_input, eval_gold, device);
+    evaluate(output_names, eval_input, eval_gold, eval_stat, device);
 
-    cout << "EPOCH " << e
-         << " | TRAIN LOSS=" << train_loss << " ACC=" << train_accuracy
-         << " | EVAL LOSS=" << eval_loss << " ACC=" << eval_accuracy
-         << " | LR=" << lr_copy
-         << endl;
-
-    best_eval_loss = min(best_eval_loss, eval_loss);
-    if (eval_accuracy > best_eval_accuracy)
+    cout << "EPOCH " << e << " | LR=" << lr_copy << endl;
+    for (const string& task_name : output_names)
     {
-      best_eval_accuracy = eval_accuracy;
+      const task_stat_t& train = train_stat[task_name];
+      const task_stat_t& eval = eval_stat[task_name];
+      cout << task_name << " ";
+      cout << " | TRAIN LOSS=" << train.m_loss << " ACC=" << train.m_accuracy
+           << " | EVAL LOSS=" << eval.m_loss << " ACC=" << eval.m_accuracy
+           << endl;
+    }
+
+    task_stat_t& main_task_eval = eval_stat[output_names[0]];
+
+    best_eval_loss = min(best_eval_loss, main_task_eval.m_loss);
+    if (main_task_eval.m_accuracy > best_eval_accuracy)
+    {
+      best_eval_accuracy = main_task_eval.m_accuracy;
       if (model_name.size() > 0)
       {
         torch::save(*this, model_name + ".pt");
       }
       count_below_best = 0;
 
-      if (1 == eval_accuracy)
+      if (1 == main_task_eval.m_accuracy)
       {
         return;
       }
     }
-    else if (eval_accuracy < best_eval_accuracy)
+    else if (main_task_eval.m_accuracy < best_eval_accuracy)
     {
       for (auto &group : opt.param_groups())
       {
@@ -228,7 +281,7 @@ void BiRnnClassifierImpl::train(size_t epochs,
         return;
       }
       count_below_best++;
-      if (eval_loss > best_eval_loss && count_below_best > 3)
+      if (main_task_eval.m_loss > best_eval_loss && count_below_best > 3)
       {
         return;
       }
@@ -240,67 +293,85 @@ void BiRnnClassifierImpl::train(size_t epochs,
   }
 }
 
-tuple<double, double, int64_t> BiRnnClassifierImpl::train_epoch(size_t batch_size,
+void BiRnnClassifierImpl::train_epoch(size_t batch_size,
                                       size_t seq_len,
-                                      const string& output_name,
+                                      const vector<string>& output_names,
                                       const torch::Tensor& input_batches,
                                       const torch::Tensor& gold_batches,
                                       torch::optim::Optimizer& opt,
+                                      epoch_stat_t& stat,
                                       const torch::Device& device)
 {
-  double running_loss = 0.0;
-  int64_t num_correct = 0;
-
-  for (size_t b = 0; b < input_batches.size(1); b += batch_size)
+  for (int64_t b = 0; b < input_batches.size(1); b += batch_size)
   {
     int64_t current_batch_size
-        = (b + batch_size > input_batches.size(1)) ? input_batches.size(1) - b : batch_size;
+        = ((b + batch_size) > input_batches.size(1)) ? input_batches.size(1) - b : batch_size;
 
-    double batch_loss = 0;
-    double batch_correct = 0;
-
-    tie(batch_loss, batch_correct) = train_batch(current_batch_size, seq_len, output_name,
+    train_batch(current_batch_size, seq_len, output_names,
                 input_batches.index({Slice(), Slice(b, b + current_batch_size), Slice()}),
                 gold_batches.index({Slice(), Slice(b, b + current_batch_size) }),
-                opt, device);
-    running_loss += batch_loss / current_batch_size;
-    num_correct += batch_correct;
+                opt, stat, device);
   }
-
-  running_loss = running_loss / (input_batches.size(1) / batch_size + 1);
-  double accuracy = double(num_correct) / (input_batches.size(0) * input_batches.size(1));
-  return make_tuple(accuracy, running_loss, num_correct);
 }
 
-std::tuple<double, int64_t> BiRnnClassifierImpl::train_batch(size_t batch_size,
-                                                             size_t seq_len,
-                                                             const string& output_name,
-                                                             const torch::Tensor& input,
-                                                             const torch::Tensor& gold,
-                                                             torch::optim::Optimizer& opt,
-                                                             const torch::Device& device)
+void BiRnnClassifierImpl::train_batch(size_t batch_size,
+                                      size_t seq_len,
+                                      const vector<string>& output_names,
+                                      const torch::Tensor& input,
+                                      const torch::Tensor& gold,
+                                      torch::optim::Optimizer& opt,
+                                      epoch_stat_t& stat,
+                                      const torch::Device& device)
 {
   map<string, torch::Tensor> current_batch_inputs;
   split_input(input, current_batch_inputs, device);
 
   auto target = gold.reshape({-1}).to(device);
 
-  auto output_map = forward(current_batch_inputs, { output_name });
-  auto output = output_map[output_name];
+  train_batch(batch_size, seq_len, output_names, current_batch_inputs, target, opt, stat, device);
+}
 
-  //std::cerr << "output.sizes() == " << output.sizes() << std::endl;
-  auto o = output.reshape({-1, output.size(2)});
-  torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, target);
-  double loss_value = loss_tensor.item<double>();
-  //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
-  auto prediction = o.argmax(1);
-  int64_t correct_predictions = prediction.eq(target).sum().item<int64_t>();
-
+void BiRnnClassifierImpl::train_batch(size_t batch_size,
+                                      size_t seq_len,
+                                      const vector<string>& output_names,
+                                      const map<string, torch::Tensor>& input,
+                                      const torch::Tensor& target,
+                                      torch::optim::Optimizer& opt,
+                                      epoch_stat_t& stat,
+                                      const torch::Device& device)
+{
   opt.zero_grad();
-  loss_tensor.backward();
-  opt.step();
 
-  return std::make_tuple(loss_value, correct_predictions);
+  auto output_map = forward(input, output_names.begin(), output_names.end());
+
+  //torch::Tensor loss_tensor = torch::zeros({ batch_size * seq_len },
+  //                                         torch::TensorOptions().dtype(torch::kFloat64));
+  //cerr << loss_tensor.sizes() << endl;
+
+  for (size_t i = 0; i < output_names.size(); ++i)
+  {
+    const string& task_name = output_names[i];
+    task_stat_t& task_stat = stat[task_name];
+
+    auto output = output_map[task_name];
+
+    //std::cerr << "output.sizes() == " << output.sizes() << std::endl;
+    auto o = output.reshape({ -1, output.size(2) });
+    auto this_task_target = target.index({ Slice(), Slice(i, i+1) }).reshape({ -1 });
+    //cerr << o.sizes() << endl;
+    //cerr << this_task_target.sizes() << endl;
+    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
+    double loss_value = loss_tensor.mean().item<double>();
+    task_stat.m_loss += loss_value;
+    //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
+    auto prediction = o.argmax(1);
+    int64_t correct_predictions = prediction.eq(this_task_target).sum().item<int64_t>();
+    task_stat.m_correct += correct_predictions;
+    task_stat.m_items += this_task_target.size(0);
+
+    loss_tensor.backward({}, true);
+  }
+  opt.step();
 }
 
 void BiRnnClassifierImpl::load(torch::serialize::InputArchive& archive)

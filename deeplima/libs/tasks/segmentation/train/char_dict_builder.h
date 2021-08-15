@@ -71,7 +71,7 @@ public:
       if (m_input_encoder.allow_unk(i))
       {
         dicts[i] = std::shared_ptr<UInt64Dict> (new UInt64Dict(m_unk,
-                                                          temp_dicts[i],
+                                                          temp_dicts[i].begin(), temp_dicts[i].end(),
                                                           [char_counter, min_ipm](uint64_t c){
                                                             return ipm(c, char_counter) > min_ipm;
                                                           })
@@ -79,7 +79,7 @@ public:
       }
       else
       {
-        dicts[i] = std::shared_ptr<UInt64Dict> (new UInt64Dict(temp_dicts[i]));
+        dicts[i] = std::shared_ptr<UInt64Dict> (new UInt64Dict(temp_dicts[i].begin(), temp_dicts[i].end()));
       }
     }
 

@@ -77,6 +77,23 @@ struct rnn_descr_t
     : m_dim(dim) { }
 };
 
+struct task_stat_t
+{
+  uint64_t m_items;
+  uint64_t m_correct;
+  uint32_t m_num_classes;
+  double m_accuracy;
+  double m_loss;
+  double m_precision;
+  double m_recall;
+  double m_f1;
+
+  task_stat_t()
+    : m_items(0), m_correct(0), m_num_classes(0), m_accuracy(0), m_loss(0), m_precision(0), m_recall(0), m_f1(0) { }
+};
+
+typedef std::map<std::string, task_stat_t> epoch_stat_t;
+
 class BiRnnClassifierImpl : public StaticGraphImpl
 {
 public:
@@ -86,10 +103,10 @@ public:
   BiRnnClassifierImpl(DictsHolder&& dicts,
                       const std::vector<embd_descr_t>& embd_descr,
                       const std::vector<rnn_descr_t>& rnn_descr,
-                      const std::string& output_name,
-                      size_t num_classes)
+                      const std::vector<std::string>& output_names,
+                      const std::vector<uint32_t>& classes)
     : StaticGraphImpl(dicts,
-                      generate_script(embd_descr, rnn_descr, output_name, num_classes)),
+                      generate_script(embd_descr, rnn_descr, output_names, classes)),
       m_embd_descr(embd_descr)
   {
   }
@@ -105,7 +122,7 @@ public:
   void train(size_t epochs,
              size_t batch_size,
              size_t seq_len,
-             const std::string& output_name,
+             const std::vector<std::string>& output_names,
              const TorchMatrix<int64_t>& train_input,
              const TorchMatrix<int64_t>& train_gold,
              const TorchMatrix<int64_t>& eval_input,
@@ -114,12 +131,17 @@ public:
              const std::string& model_name = "",
              const torch::Device& device = torch::Device(torch::kCPU));
 
-  std::tuple<double, double, int64_t> evaluate(const std::string& output_name,
-                                               const TorchMatrix<int64_t>& input,
-                                               const TorchMatrix<int64_t>& gold,
-                                               const torch::Device& device = torch::Device(torch::kCPU));
+  void evaluate(const std::vector<std::string>& output_name,
+                const TorchMatrix<int64_t>& input,
+                const TorchMatrix<int64_t>& gold,
+                epoch_stat_t& stat,
+                const torch::Device& device = torch::Device(torch::kCPU));
 
   torch::Tensor predict(const std::string& output_name,
+                        const torch::Tensor& input,
+                        const torch::Device& device = torch::Device(torch::kCPU));
+
+  torch::Tensor predict(const std::vector<std::string>& output_names,
                         const torch::Tensor& input,
                         const torch::Device& device = torch::Device(torch::kCPU));
 
@@ -139,26 +161,43 @@ protected:
                    std::map<std::string, torch::Tensor>& dst,
                    const torch::Device& device);
 
-  std::tuple<double, double, int64_t> train_epoch(size_t batch_size,
-                                                  size_t seq_len,
-                                                  const std::string& output_name,
-                                                  const torch::Tensor& input_batches,
-                                                  const torch::Tensor& gold_batches,
-                                                  torch::optim::Optimizer& opt,
-                                                  const torch::Device& device);
+  void evaluate(const std::vector<std::string>& output_names,
+                const std::map<std::string, torch::Tensor>& input,
+                const torch::Tensor& target,
+                epoch_stat_t& stat,
+                const torch::Device& device);
 
-  std::tuple<double, int64_t> train_batch(size_t batch_size,
-                                          size_t seq_len,
-                                          const std::string& output_name,
-                                          const torch::Tensor& input,
-                                          const torch::Tensor& gold,
-                                          torch::optim::Optimizer& opt,
-                                          const torch::Device& device);
+  void train_epoch(size_t batch_size,
+                   size_t seq_len,
+                   const std::vector<std::string>& output_names,
+                   const torch::Tensor& input_batches,
+                   const torch::Tensor& gold_batches,
+                   torch::optim::Optimizer& opt,
+                   epoch_stat_t& stat,
+                   const torch::Device& device);
+
+  void train_batch(size_t batch_size,
+                   size_t seq_len,
+                   const std::vector<std::string>& output_names,
+                   const torch::Tensor& input,
+                   const torch::Tensor& gold,
+                   torch::optim::Optimizer& opt,
+                   epoch_stat_t& stat,
+                   const torch::Device& device);
+
+  void train_batch(size_t batch_size,
+                   size_t seq_len,
+                   const std::vector<std::string>& output_names,
+                   const std::map<std::string, torch::Tensor>& input,
+                   const torch::Tensor& target,
+                   torch::optim::Optimizer& opt,
+                   epoch_stat_t& stat,
+                   const torch::Device& device);
 
   static std::string generate_script(const std::vector<embd_descr_t>& embd_descr,
                                      const std::vector<rnn_descr_t>& rnn_descr,
-                                     const std::string& output_name,
-                                     size_t num_classes);
+                                     const std::vector<std::string>& output_names,
+                                     const std::vector<uint32_t>& classes);
 
   std::vector<embd_descr_t> m_embd_descr;
 };

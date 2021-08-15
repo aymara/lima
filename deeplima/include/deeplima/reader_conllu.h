@@ -163,7 +163,7 @@ protected:
     token.m_pch = (const char*)memchr(p, '\t', end - p) + 1;
     assert('\n' != *(token.m_pch));
 
-    if ('_' == *token.m_pch)
+    /*if ('_' == *token.m_pch)
     {
       if (m_len > 0)
       {
@@ -179,13 +179,15 @@ protected:
       }
     }
     else
-    {
+    {*/
       token.m_len = (const char*)memchr(token.m_pch, '\t', end - token.m_pch) - token.m_pch;
-    }
+    /*}*/
+
     if (eos)
     {
       token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
     }
+
     return true;
   }
 

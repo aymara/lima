@@ -80,6 +80,11 @@ public:
     return m_impl.get_uint_dicts();
   }
 
+  inline const std::vector<std::vector<std::string>>& get_classes() const
+  {
+    return m_impl.get_classes();
+  }
+
 protected:
 
   M m_impl;

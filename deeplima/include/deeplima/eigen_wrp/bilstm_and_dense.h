@@ -119,12 +119,12 @@ public:
 
     // Forward pass
     s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * zero;
-    step(hidden_size, 0, s, g_u, g_o, g_if, c, output, true);
+    step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
     for (size_t t = 1; t < input.cols(); t++)
     {
       s = temp.col(t).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * output.col(t-1).topRows(hidden_size);
-      step(hidden_size, t, s, g_u, g_o, g_if, c, output, true);
+      step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
     }
 
     // Backward pass
@@ -132,15 +132,15 @@ public:
     c = V::Zero(hidden_size);
     int t = input.cols() - 1;
     s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * zero;
-    step(hidden_size, t, s, g_u, g_o, g_if, c, output, false);
+    step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
 
     for (t = input.cols() - 2; t >= 0; t--)
     {
       s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * output.col(t+1).bottomRows(hidden_size);
-      step(hidden_size, t, s, g_u, g_o, g_if, c, output, false);
+      step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
     }
 
-    // Linear on top of RNN outputs
+    // Linear layer on top of RNN outputs
     for (size_t j = 0; j < final_output.size(); j++)
     {
       M& linear_output = wb->lin_out[j];
@@ -156,6 +156,29 @@ public:
         final_output[j][input_begin+i] = (uint8_t) idx;
       }
     }
+
+    // Linear layer on top of RNN outputs - alternative way to calculate (not faster)
+    /*for (size_t j = 0; j < final_output.size(); j++)
+    {
+      M& linear_output = wb->lin_out[j];
+      linear_output = (linear[j].weight * output).colwise() + linear[j].bias;
+    }
+
+    for (size_t j = 0; j < final_output.size(); j++)
+    {
+      M& linear_output = wb->lin_out[j];
+
+      for (Eigen::Index i = output_begin - input_begin;
+           i < output_end - input_begin; i++)
+      {
+        Eigen::Index idx = 0;
+        typename M::Scalar v = linear_output.col(i).maxCoeff(&idx);
+        assert(idx >= 0);
+        assert(idx < std::numeric_limits<uint8_t>::max());
+        final_output[j][input_begin+i] = (uint8_t) idx;
+      }
+    }*/
+
 
     return 0;
   }
@@ -188,6 +211,46 @@ protected:
     {
       output.col(t).bottomRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
     }
+  }
+
+  inline void step_fw(
+        size_t hidden_size, // [in]     LSTM parameter
+        size_t t,           // [in]     step (position in output)
+        const V& s,         // [in]     result before gating
+        V& g_u,             // [temp]   update gate
+        V& g_o,             // [temp]   output gate
+        V& g_if,            // [temp]   input and forget gates
+        V& c,               // [in/out] cell state
+        M& output           // [out]    matrix of output states
+      )
+  {
+    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
+    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
+    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+
+    c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
+
+    output.col(t).topRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+  }
+
+  inline void step_bw(
+        size_t hidden_size, // [in]     LSTM parameter
+        size_t t,           // [in]     step (position in output)
+        const V& s,         // [in]     result before gating
+        V& g_u,             // [temp]   update gate
+        V& g_o,             // [temp]   output gate
+        V& g_if,            // [temp]   input and forget gates
+        V& c,               // [in/out] cell state
+        M& output           // [out]    matrix of output states
+      )
+  {
+    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
+    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
+    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+
+    c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
+
+    output.col(t).bottomRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
   }
 
   inline static float my_tanh(float x)

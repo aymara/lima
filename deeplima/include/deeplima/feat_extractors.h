@@ -36,6 +36,19 @@ protected:
   }
 
 public:
+  TokenStrFeatExtractor(const std::string& init_string = "")
+  {
+  }
+
+  inline static bool needs_preprocessing()
+  {
+    return false;
+  }
+
+  inline void preprocess(const Token& token)
+  {
+  }
+
   inline static size_t get_feat_id(const std::string& name)
   {
     if (name == "form") return 0;

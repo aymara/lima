@@ -157,6 +157,7 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
         sent_idx += 1;
         assert(m_tokens.size() > 0);
         m_tokens.back().m_flags = (token_t::token_flags_t)(m_tokens.back().m_flags | token_t::sentence_brk);
+        m_words[m_words.size()-1].m_flags = m_tokens[m_tokens.size()-1].m_flags;
       }
       continue;
     }

@@ -53,23 +53,18 @@ public:
     }
   }
 
-  explicit Dict(const std::unordered_map<T, key_t>& candidates)
-  {
-    i2v.reserve(candidates.size());
+  template <class InputIt>
+  explicit Dict(InputIt begin, InputIt end)
+    : Dict(begin, end, [](uint64_t c){ return true; })
+  { }
 
-    for ( const auto& p : candidates )
-    {
-      add(p.first);
-    }
-  }
-
-  template<typename F>
-  Dict(const T& UNK, const std::unordered_map<T, key_t>& candidates, F f)
+  template<class InputIt, typename F>
+  Dict(const T& UNK, InputIt begin, InputIt end, F f)
   {
     size_t count = 1;
-    for ( const auto& p : candidates )
+    for (auto it = begin; it != end; ++it)
     {
-      if (f(p.second))
+      if (f(it->second))
       {
         count++;
       }
@@ -77,33 +72,33 @@ public:
 
     i2v.reserve(count);
     add(UNK);
-    for ( const auto& p : candidates )
+    for (auto it = begin; it != end; ++it)
     {
-      if (f(p.second))
+      if (f(it->second))
       {
-        add(p.first);
+        add(it->first);
       }
     }
   }
 
-  template<typename F>
-  Dict(const std::unordered_map<T, key_t>& candidates, F f)
+  template<class InputIt, typename F>
+  Dict(InputIt begin, InputIt end, F f)
   {
     size_t count = 0;
-    for ( const auto& p : candidates )
+    for (auto it = begin; it != end; ++it)
     {
-      if (f(p.second))
+      if (f(it->second))
       {
         count++;
       }
     }
 
     i2v.reserve(count);
-    for ( const auto& p : candidates )
+    for (auto it = begin; it != end; ++it)
     {
-      if (f(p.second))
+      if (f(it->second))
       {
-        add(p.first);
+        add(it->first);
       }
     }
   }

@@ -155,6 +155,11 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
   p->bilstm = Parent::m_lstm[0];
   p->linear.push_back(Parent::m_linear[0]);
   Parent::m_wb.resize(1);
+
+  for (const auto& l : Parent::m_linear)
+  {
+    m_classes.push_back(vector<string>(l.bias.rows(), ""));
+  }
 }
 
 } // namespace eigen_impl

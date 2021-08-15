@@ -149,7 +149,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
   const double learning_rate = 0.001;
   torch::optim::Adam optimizer(model->parameters(), torch::optim::AdamOptions(learning_rate));
 
-  model->train(300, 4, 256, "tokens",
+  model->train(300, 4, 256, { "tokens" },
               *(train_input.get()), *(train_gold.get()),
               *(dev_input.get()), *(dev_gold.get()),
               optimizer, model_name);

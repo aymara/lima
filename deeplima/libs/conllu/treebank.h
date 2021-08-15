@@ -323,6 +323,21 @@ namespace CoNLLU
       {
         return m_line.upos();
       }
+
+      inline const std::string& xpos() const
+      {
+        return m_line.xpos();
+      }
+
+      inline const std::string& deprel() const
+      {
+        return m_line.deprel();
+      }
+
+      inline const std::map<std::string, std::set<std::string>>& feats() const
+      {
+        return m_line.feats();
+      }
     };
 
     struct iterator_struct

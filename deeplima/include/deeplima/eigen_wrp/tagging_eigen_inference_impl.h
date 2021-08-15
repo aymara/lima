@@ -78,12 +78,18 @@ public:
     return m_classes;
   }
 
+  const std::vector<std::string>& get_class_names() const
+  {
+    return m_class_names;
+  }
+
   inline const std::string& get_embd_fn(size_t idx) const
   {
     return m_embd_fn[idx];
   }
 
 protected:
+  std::vector<std::string> m_class_names;
   std::vector<std::vector<std::string>> m_classes;
   std::vector<std::string> m_embd_fn;
 
