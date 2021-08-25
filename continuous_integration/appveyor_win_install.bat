@@ -20,7 +20,7 @@ set PATH=C:\externals\ninja;%PATH%
 ninja --version
 
 appveyor DownloadFile https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-debug-1.9.0%2Bcpu.zip libtorch.zip
-7z x libtorch.zip -oC:\external\libtorch > nul
+7z x libtorch.zip -oC:\externals\libtorch > nul
 
 rem #ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
 mkdir c:\dependency_treebank
