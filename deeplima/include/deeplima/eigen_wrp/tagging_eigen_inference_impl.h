@@ -53,6 +53,28 @@ public:
     convert_from_torch(fn);
   }
 
+  virtual size_t get_precomputed_dim() const
+  {
+    typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t *p_params =
+      static_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t*>(Parent::m_params[0]);
+
+    const auto& layer = p_params->bilstm;
+    size_t hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
+    return hidden_size;
+  }
+
+  virtual void precompute_inputs(
+      const M& inputs,
+      M& outputs,
+      int64_t input_size
+      )
+  {
+    deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
+        = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
+
+    p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
+  }
+
   virtual void predict(
       size_t worker_id,
       const M& inputs,
@@ -64,7 +86,8 @@ public:
       const std::vector<std::string>& outputs_names
       )
   {
-    deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
+    deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
+        = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
     p_op->execute(Parent::m_wb[0][worker_id],

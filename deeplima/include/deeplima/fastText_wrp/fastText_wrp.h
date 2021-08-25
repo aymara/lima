@@ -176,6 +176,16 @@ public:
       blk(i, 0) = (*m_vec)[i];
     }
   }
+
+  typedef std::function< void (const std::string& word) > word_callback_t;
+  void get_words(word_callback_t fn)
+  {
+    std::shared_ptr<const fasttext::Dictionary> pd = m_fasttext.getDictionary();
+    for (size_t i = 0; i < pd->nwords(); ++i)
+    {
+      fn(pd->getWord(i));
+    }
+  }
 };
 
 }

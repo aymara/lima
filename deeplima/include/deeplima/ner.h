@@ -72,11 +72,30 @@ namespace eigen_impl
 
   template <class TokenVector, class Token>
   class FeaturesVectorizer: public WordSeqEmbdVectorizer<TokenVector,
-                                                   TokenStrFeatExtractor<Token>,
-                                                   TokenUIntFeatExtractor<Token>,
-                                                   eigen_wrp::EigenMatrixXf::matrix_t,
-                                                   Eigen::Index>
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
   {};
+
+  template <class TokenVector, class Token>
+  class FeaturesVectorizerWithCache: public WordSeqEmbdVectorizerWithCache<TokenVector,
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
+  {};
+
+  template <class Model, class TokenVector, class Token>
+  class FeaturesVectorizerWithPrecomputing: public WordSeqEmbdVectorizerWithPrecomputing<
+                                                     Model,
+                                                     TokenVector,
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
+  {};
+
 } // namespace eigen_impl
 
 #else
@@ -93,8 +112,15 @@ namespace impl
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
 
   typedef eigen_impl::Model Model;
+
   template <class TokenVector, class Token>
   class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
+
+  template <class TokenVector, class Token>
+  class FeaturesVectorizerWithCache: public eigen_impl::FeaturesVectorizerWithCache<TokenVector, Token> {};
+
+  template <class Model, class TokenVector, class Token>
+  class FeaturesVectorizerWithPrecomputing: public eigen_impl::FeaturesVectorizerWithPrecomputing<Model, TokenVector, Token> {};
 
   typedef eigen_wrp::EigenMatrixXf BaseMatrix;
 

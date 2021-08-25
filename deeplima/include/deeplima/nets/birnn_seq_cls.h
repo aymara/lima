@@ -142,10 +142,10 @@ protected:
 
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
-                   slot.m_input_begin, slot.m_input_end,
-                   slot.m_output_begin, slot.m_output_end,
-                   this_ptr->m_output,
-                   {"tokens"});
+                      slot.m_input_begin, slot.m_input_end,
+                      slot.m_output_begin, slot.m_output_end,
+                      this_ptr->m_output,
+                      {"tokens"});
 
     assert(slot.m_lock_count > 0);
     slot.m_lock_count--;
@@ -194,7 +194,8 @@ public:
             uint32_t overlap,
             uint32_t num_slots,
             uint32_t slot_len,
-            uint32_t num_threads)
+            uint32_t num_threads,
+            bool precomputed_input=false)
   {
     m_num_slots = num_slots;
     m_overlap = overlap;
@@ -204,7 +205,7 @@ public:
     //InputVectorizer::set_dicts(Model::get_dicts());
     for (size_t i = 0; i < num_threads; i++)
     {
-      Model::init_new_worker(m_slot_len + m_overlap * 2); // skip id - all workers are identical
+      Model::init_new_worker(m_slot_len + m_overlap * 2, precomputed_input); // skip id - all workers are identical
     }
     ThreadPoolParent::init(num_threads);
 

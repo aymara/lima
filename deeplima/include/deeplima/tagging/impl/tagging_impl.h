@@ -23,6 +23,7 @@
 #include "deeplima/token_type.h"
 #include "deeplima/fastText_wrp/fastText_wrp.h"
 #include "deeplima/eigen_wrp/embd_dict.h"
+#include "deeplima/utils/str_index.h"
 
 namespace deeplima
 {
@@ -63,7 +64,7 @@ public:
     InferenceEngine::load(fn);
   }
 
-  void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread)
+  void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
   {
     if (this->get_str_dicts().size())
     {
@@ -71,21 +72,34 @@ public:
       std::shared_ptr<FeatureVectorizerBase<Eigen::Index>> p
           = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
     }
+
+    std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> > sp_fastText
+        = std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> >(
+            new FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>( InferenceEngine::get_embd_fn(0) ));
+
+    sp_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+
     m_vectorizer.init_features({
                                  //{ Vectorizer::str_feature, "lc(form)", p },
-                                 { Vectorizer::str_feature, "form",
-                                   std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> >(
-                                       new FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>(
-                                          InferenceEngine::get_embd_fn(0))) }
+                                 { Vectorizer::str_feature, "form", sp_fastText }
                                  //,
                                  //{ Vectorizer::int_feature, "eos",
                                  //  std::shared_ptr< DirectDict<typename Matrix::matrix_t, Eigen::Index> >(new DirectDict<typename Matrix::matrix_t, Eigen::Index>(2)) }
                                });
 
+    m_vectorizer.set_model(this);
+
     InferenceEngine::init(m_vectorizer.dim(),
-                          16, num_buffers, buffer_size_per_thread, threads);
+                          16, num_buffers, buffer_size_per_thread, threads,
+                          m_vectorizer.is_precomputing());
 
     m_current_timepoint = InferenceEngine::get_start_timepoint();
+
+  }
+
+  void precompute_inputs(const typename Vectorizer::dataset_t& buffer)
+  {
+    m_vectorizer.precompute(buffer);
   }
 
   typedef typename InferenceEngine::OutputMatrix OutputMatrix;

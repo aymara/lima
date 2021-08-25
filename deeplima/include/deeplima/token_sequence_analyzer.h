@@ -141,7 +141,18 @@ class TokenSequenceAnalyzer
     }
   };
 
-  typedef tagging::impl::FeaturesVectorizer<enriched_token_buffer_t, typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+  //typedef tagging::impl::FeaturesVectorizer<
+  //                                    enriched_token_buffer_t,
+  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+
+  //typedef tagging::impl::FeaturesVectorizerWithCache<
+  //                                    enriched_token_buffer_t,
+  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+
+  typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
+                                      tagging::impl::EntityTaggingClassifier,
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
   typedef tagging::impl::TaggingImpl< tagging::impl::EntityTaggingClassifier,
                                       FeaturesVectorizer,
@@ -159,7 +170,17 @@ public:
     for ( token_buffer_t& b : m_buffers ) b.resize(m_buffer_size);
 
     m_cls.load(model_fn);
-    m_cls.init(1, num_buffers, buffer_size);
+    m_cls.init(1, num_buffers, buffer_size, m_stridx);
+
+    {
+      token_buffer_t buff(m_stridx.size());
+      for (uint32_t i = 0; i < buff.size(); ++i)
+      {
+        buff[i].m_form_idx = i;
+      }
+
+      m_cls.precompute_inputs(enriched_token_buffer_t(buff, m_stridx));
+    }
 
     for (size_t i = 0; i < m_cls.get_classes().size(); ++i)
     {
@@ -266,22 +287,6 @@ public:
   }
 
 protected:
-
-  inline bool wait_for_new_job(size_t& job)
-  {
-    std::unique_lock<std::mutex> l(m_mutex_new_job);
-    m_cv_new_job.wait(l, [this](){ return !m_jobs.empty() || m_stop; });
-
-    if (!m_jobs.empty())
-    {
-      job = m_jobs.front();
-      m_jobs.pop();
-
-      return true;
-    }
-
-    return false;
-  }
 
   void process_buffer(size_t buffer_idx)
   {

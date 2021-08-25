@@ -45,10 +45,12 @@ protected:
   {
     workbench_t(uint32_t input_size,
                 uint32_t hidden_size,
-                const std::vector<uint32_t>& output_sizes)
-      : temp(M::Zero(hidden_size * 8, input_size)),
+                const std::vector<uint32_t>& output_sizes,
+                bool precomputed_input=false)
+      : temp(M::Zero(precomputed_input ? 0 : hidden_size * 8, input_size)),
         out(M::Zero(hidden_size * 2, input_size)),
-        zero(V::Zero(hidden_size))
+        zero(V::Zero(hidden_size)),
+        m_precomputed_input(precomputed_input)
     {
       lin_out.resize(output_sizes.size());
       for (size_t i = 0; i < output_sizes.size(); i++)
@@ -63,13 +65,14 @@ protected:
     M out;
     std::vector<M> lin_out;
     const V zero;
+    bool m_precomputed_input;
   };
 
 public:
 
   typedef params_bilstm_dense_argmax_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params) const
+  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params, bool precomputed_input=false) const
   {
     assert(input_size > 0);
     assert(nullptr != params);
@@ -82,7 +85,25 @@ public:
     {
       output_sizes.push_back(p.weight.rows());
     }
-    return new workbench_t(input_size, layer.fw.weight_ih.rows() / 4, output_sizes);
+    return new workbench_t(input_size, layer.fw.weight_ih.rows() / 4, output_sizes, precomputed_input);
+  }
+
+  virtual bool supports_precomputing() const
+  {
+    return true;
+  }
+
+  virtual void precompute_inputs(const param_base_t* params, const M& inputs, M& outputs, int64_t first_column)
+  {
+    assert(nullptr != params);
+    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
+    size_t hidden_size = layer.fw.weight_ih.rows() / 4;
+
+    auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
+    // Top rows - forward pass
+    output_block.topRows(hidden_size * 4) = (layer.fw.weight_ih * inputs).colwise() + layer.fw.bias_ih;
+    // Bottom rows - backward pass
+    output_block.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
   }
 
   virtual size_t execute(Op_Base::workbench_t* pwb,
@@ -112,10 +133,18 @@ public:
 
     V s, g_u, g_o, g_if;
 
-    // Top rows - forward pass
-    temp.topRows(hidden_size * 4) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
-    // Bottom rows - backward pass
-    temp.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
+    if (wb->m_precomputed_input)
+    {
+      // precomputed inputs
+      temp = input;
+    }
+    else
+    {
+      // Top rows - forward pass
+      temp.topRows(hidden_size * 4) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
+      // Bottom rows - backward pass
+      temp.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
+    }
 
     // Forward pass
     s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * zero;

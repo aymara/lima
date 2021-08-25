@@ -45,9 +45,23 @@ public:
     m_impl.load(fn);
   }
 
-  inline size_t init_new_worker(size_t input_len)
+  inline size_t init_new_worker(size_t input_len, bool precomputed_input=false)
   {
-    return m_impl.init_new_worker(input_len);
+    return m_impl.init_new_worker(input_len, precomputed_input);
+  }
+
+  inline size_t get_precomputed_dim() const
+  {
+    return m_impl.get_precomputed_dim();
+  }
+
+  inline void precompute_inputs(
+      const typename M::tensor_t& inputs,
+      typename M::tensor_t& outputs,
+      int64_t input_size
+      )
+  {
+    m_impl.precompute_inputs(inputs, outputs, input_size);
   }
 
   inline void predict(

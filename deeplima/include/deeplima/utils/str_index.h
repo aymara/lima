@@ -75,6 +75,11 @@ public:
     }
   }
 
+  size_t size() const
+  {
+    return m_idx2str.size();
+  }
+
 protected:
   std::unordered_map<string_t, idx_t> m_str2idx;
   std::unordered_map<idx_t, string_t> m_idx2str;

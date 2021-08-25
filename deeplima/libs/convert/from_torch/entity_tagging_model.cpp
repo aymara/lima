@@ -61,8 +61,8 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
     Parent::m_lstm_idx[name] = i;
 
     const nn::LSTM& m = src.get_layers_lstm()[i];
-    Parent::m_lstm.emplace_back(params_bilstm_t<M, V>());
-    params_bilstm_t<M, V>& layer = Parent::m_lstm.back();
+    Parent::m_lstm.emplace_back(typename Parent::params_bilstm_spec_t());
+    typename Parent::params_bilstm_spec_t& layer = Parent::m_lstm.back();
 
     convert_module_from_torch(m, layer);
   }

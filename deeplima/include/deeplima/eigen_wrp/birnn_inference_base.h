@@ -57,7 +57,7 @@ public:
     return m_str_dicts;
   }
 
-  virtual size_t init_new_worker(size_t input_len)
+  virtual size_t init_new_worker(size_t input_len, bool precomputed_input=false)
   {
     assert(m_wb.size() > 0);
     assert(m_ops.size() > 0);
@@ -68,7 +68,7 @@ public:
     {
       assert(m_wb[i].size() == new_worker_idx);
       assert(nullptr != m_params[i]);
-      m_wb[i].push_back(m_ops[i]->create_workbench(input_len, m_params[i]));
+      m_wb[i].push_back(m_ops[i]->create_workbench(input_len, m_params[i], precomputed_input));
     }
 
     return new_worker_idx;
@@ -104,6 +104,12 @@ public:
     }
   }
 
+  virtual void precompute_inputs(
+      const M& inputs,
+      M& outputs,
+      int64_t input_size
+      ) = 0;
+
   virtual void predict(
       size_t worker_id,
       const M& inputs,
@@ -124,7 +130,8 @@ protected:
   uint_dicts_holder_t m_uint_dicts;
   str_dicts_holder_t m_str_dicts;
 
-  std::vector<params_bilstm_t<M, V>> m_lstm;
+  typedef params_bilstm_t<M, V> params_bilstm_spec_t;
+  std::vector<params_bilstm_spec_t> m_lstm;
   std::map<std::string, size_t> m_lstm_idx;
 
   std::vector<params_linear_t<M, V>> m_linear;

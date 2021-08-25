@@ -47,9 +47,9 @@ public:
     m_impl.load(fn);
   }
 
-  inline size_t init_new_worker(size_t input_len)
+  inline size_t init_new_worker(size_t input_len, bool precomputed_input=false)
   {
-    return m_impl.init_new_worker(input_len);
+    return m_impl.init_new_worker(input_len, precomputed_input);
   }
 
   inline void predict(

@@ -59,6 +59,8 @@ struct params_lstm_t : public param_base_t
 template<class M=Eigen::MatrixXf, class V=Eigen::VectorXf>
 struct params_bilstm_t : public param_base_t
 {
+  typedef M matrix_t;
+
   params_lstm_t<M, V> fw;
   params_lstm_t<M, V> bw;
 

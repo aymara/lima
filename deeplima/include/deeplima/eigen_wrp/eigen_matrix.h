@@ -71,6 +71,11 @@ public:
     m_tensor(feat, m_start_time + time) = value;
   }
 
+  inline void set(uint64_t time, EigenMatrix<M>& src, uint64_t src_time)
+  {
+    m_tensor.col(time) = src.m_tensor.col(src_time);
+  }
+
   inline value_t get(uint64_t time, uint64_t feat)
   {
     assert(feat < std::numeric_limits<int64_t>::max());

@@ -413,7 +413,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
   {
     vector<embd_descr_t> embd_descr = vectorizer.get_embd_descr();
     embd_descr.emplace_back("raw", train_input.second->get_tensor().size(1), 0);
-    vector<rnn_descr_t> rnn_descr = { rnn_descr_t(params.m_rnn_hidden_dim) , rnn_descr_t(32) };
+    vector<rnn_descr_t> rnn_descr = { rnn_descr_t(params.m_rnn_hidden_dim) /*, rnn_descr_t(32) */ };
     model = BiRnnClassifierForNer(std::move(dh),
                                   embd_descr,
                                   rnn_descr,

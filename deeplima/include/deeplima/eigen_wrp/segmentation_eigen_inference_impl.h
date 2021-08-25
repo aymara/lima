@@ -58,6 +58,15 @@ public:
     return m_ngram_gescr;
   }
 
+  virtual void precompute_inputs(
+      const M& inputs,
+      M& outputs,
+      int64_t input_size
+      )
+  {
+    throw std::runtime_error("Precomputing isn't supported for segmentation");
+  }
+
   virtual void predict(
       size_t worker_id,
       const M& inputs,
