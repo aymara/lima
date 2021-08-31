@@ -4,9 +4,12 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under GNU/Linux, with access to docker:
+Under GNU/Linux, with a user having the rights to run docker commands and the possibility to install Python packages using `pip`:
 
 ```bash
+# check docker access
+$ docker ps
+# if there is no error here, then proceed with the installation using pip
 $ pip install aymara
 $ python
 >>> import aymara.lima
