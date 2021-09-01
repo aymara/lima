@@ -31,6 +31,8 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <iostream>
+#include <QtCore>
+#include <QtWidgets>
 
 #define VERSION "0.2.3"
 
