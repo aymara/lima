@@ -49,5 +49,10 @@ if (NOT DEEPLIMA_STANDALONE)
     birnn_classifier_for_ner
     ${TORCH_LIBRARIES}
   )
+
+  install(TARGETS convert_from_torch-shared
+    DESTINATION lib
+    COMPONENT runtime
+  )
 endif()
 
