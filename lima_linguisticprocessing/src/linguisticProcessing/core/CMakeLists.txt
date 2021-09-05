@@ -47,7 +47,7 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
   add_subdirectory(TensorFlowUnits)
 endif()
 
-if (Eigen_FOUND)
+if (EIGEN3_FOUND)
   add_subdirectory(DeepLimaUnits)
 endif()
 
