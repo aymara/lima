@@ -22,7 +22,7 @@
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="RnnTokenizer"/>
+        <item value="cpptftokenizer"/>
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
         <item value="conllDumper"/>
@@ -32,6 +32,15 @@
     <group name="deepud-pretok" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="conllureader"/>
+        <item value="tfmorphosyntax"/>
+        <item value="tflemmatizer"/>
+        <item value="conllDumper"/>
+      </list>
+    </group>
+
+    <group name="deepud-future" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="RnnTokenizer"/>
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
         <item value="conllDumper"/>
