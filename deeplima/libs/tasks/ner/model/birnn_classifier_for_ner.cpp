@@ -347,8 +347,8 @@ void BiRnnClassifierForNerImpl::train_batch(size_t batch_size,
 {
   map<string, torch::Tensor> current_batch_inputs;
   split_input(trainable_input, current_batch_inputs, device);
-  torch::Tensor nontrainable_input_with_noise = nontrainable_input.to(device) + (0.05) * torch::randn(nontrainable_input.sizes());
-  current_batch_inputs["raw"] = nontrainable_input_with_noise.to(device);
+  //torch::Tensor nontrainable_input_with_noise = nontrainable_input.to(device) + (0.05) * torch::randn(nontrainable_input.sizes());
+  current_batch_inputs["raw"] = nontrainable_input.to(device);
 
   auto target = gold.reshape({-1, gold.size(2)}).to(device);
 
