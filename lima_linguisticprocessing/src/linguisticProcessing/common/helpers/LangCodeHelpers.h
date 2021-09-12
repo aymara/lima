@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -23,10 +23,6 @@
 namespace Lima
 {
 namespace LinguisticProcessing
-{
-namespace TensorFlowUnits
-{
-namespace Common
 {
 
 // lang_str must indicate annotation model (only ud is supported now)
@@ -72,9 +68,7 @@ bool fix_lang_codes(QString &lang_str, std::string &udlang)
   return true;
 }
 
-}
-}
-}
-}
+} // namespace LinguisticProcessing
+} // namespace Lima
 
 #endif

@@ -1,4 +1,4 @@
-#   Copyright 2002-2019 CEA LIST
+#   Copyright 2002-2021 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -21,7 +21,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
     PythonUppsalaTensorFlowTokenizer.cpp
     PythonTensorFlowTokenizer.cpp
-    DeepTokenizerBase.cpp
     PythonHelpers.cpp
 )
 
@@ -58,7 +57,6 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
     SET(lima-lp-tensorflowtokenizer_LIB_SRCS
         tokUtils.cpp
         CppUppsalaTensorFlowTokenizer.cpp
-        DeepTokenizerBase.cpp
     )
 
     DECLARE_LIMA_PLUGIN(lima-lp-tensorflowtokenizer)

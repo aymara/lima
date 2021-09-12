@@ -1,4 +1,4 @@
-#   Copyright 2002-2020 CEA LIST
+#   Copyright 2002-2021 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -22,6 +22,7 @@ add_definitions(-DLIMA_LP_HELPERS_EXPORTING)
 
 SET(lima-lp-helpers_LIB_SRCS
   ConfigurationHelper.cpp
+  DeepTokenizerBase.cpp
 )
 
 add_library(lima-lp-helpers
@@ -32,6 +33,7 @@ ADD_DLL_TO_PATH(lima-lp-helpers)
 target_link_libraries(lima-lp-helpers
   lima-common-xmlconfigurationfiles
   lima-common-mediaticdata
+  lima-lp-linguisticanalysisstructure
 )
 
 set_target_properties(lima-lp-helpers
@@ -50,6 +52,8 @@ install(
 
 install(FILES
   ConfigurationHelper.h
+  DeepTokenizerBase.h
+  LangCodeHelpers.h
   DESTINATION include/linguisticProcessing/common/helpers
   COMPONENT devel
 )

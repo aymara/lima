@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -27,12 +27,8 @@ namespace Lima
 {
 namespace LinguisticProcessing
 {
-namespace TensorFlowUnits
-{
-namespace Tokenizer
-{
 
-class DeepTokenizerBase
+class LIMA_LP_HELPERS_EXPORT DeepTokenizerBase
 {
 public:
   DeepTokenizerBase() {}
@@ -44,8 +40,6 @@ public:
   virtual void computeDefaultStatus(LinguisticAnalysisStructure::Token& token);
 };
 
-} // namespace Tokenizer
-} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima
 

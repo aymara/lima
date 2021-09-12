@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -30,10 +30,6 @@ using namespace Lima::Common::Misc;
 namespace Lima
 {
 namespace LinguisticProcessing
-{
-namespace TensorFlowUnits
-{
-namespace Tokenizer
 {
 
 // set default key in status according to other elements in status
@@ -270,7 +266,5 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
   token.setStatus(curSettings);
 }
 
-} // namespace Tokenizer
-} // namespace TensorFlowUnits
 } // namespace LinguisticProcessing
 } // namespace Lima

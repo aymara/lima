@@ -41,6 +41,7 @@
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/core/SyntacticAnalysis/SyntacticData.h"
 #include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
+#include "linguisticProcessing/common/helpers/LangCodeHelpers.h"
 
 #include "tensorflow/core/public/session.h"
 #include "tensorflow/core/platform/env.h"
@@ -54,7 +55,6 @@
 #include "QJsonHelpers.h"
 #include "TensorFlowHelpers.h"
 #include "Cache.h"
-#include "LangCodeHelpers.h"
 
 #include "TensorFlowMorphoSyntax.h"
 
