@@ -29,6 +29,7 @@
 #include "common/tools/LimaMainTaskRunner.h"
 
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
+#include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentWriter.h"
@@ -72,7 +73,7 @@ void listunits();
 
 
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -80,23 +81,23 @@ int main(int argc, char **argv)
   try
   {
 #endif
-  QCoreApplication a(argc, argv);
-  QCoreApplication::setApplicationName("analyzeXml");
-  QCoreApplication::setApplicationVersion(LIMA_VERSION);
+    QCoreApplication a(argc, argv);
+    QCoreApplication::setApplicationName("analyzeXml");
+    QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
-  // Task parented to the application so that it
-  // will be deleted by the application.
-  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+    // Task parented to the application so that it
+    // will be deleted by the application.
+    auto task = new LimaMainTaskRunner(argc, argv, run, &a);
 
-  // This will cause the application to exit when
-  // the task signals finished.
-  QObject::connect(task, &LimaMainTaskRunner::finished,
-                    &a, &QCoreApplication::exit);
+    // This will cause the application to exit when
+    // the task signals finished.
+    QObject::connect(task, &LimaMainTaskRunner::finished,
+                     &a, &QCoreApplication::exit);
 
-  // This will run the task from the application event loop.
-  QTimer::singleShot(0, task, SLOT(run()));
+    // This will run the task from the application event loop.
+    QTimer::singleShot(0, task, SLOT(run()));
 
-  return a.exec();
+    return a.exec();
 #ifndef DEBUG_LP
   }
   catch( const InvalidConfiguration& e ) {
@@ -137,6 +138,14 @@ int run(int argc, char** argv)
   auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadLibrary method failed.");
+  }
 
   QString lpConfigFile("lima-analysis.xml");
   QString commonConfigFile("lima-common.xml");
@@ -219,14 +228,6 @@ int run(int argc, char** argv)
 
   parser.process(QCoreApplication::arguments());
 
-  //std::cerr<< configPath.toStdString() << std::endl;
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
 
   XMLREADERCLIENTLOGINIT;
   setlocale(LC_ALL, "");
@@ -311,7 +312,6 @@ int run(int argc, char** argv)
     // Create the client
 
     uint64_t i=1;
-    #pragma omp parallel for
     for(int filesCounter = 0; filesCounter < files.size(); filesCounter++)
     {
       LDEBUG << "Creating client";
@@ -412,7 +412,7 @@ int run(int argc, char** argv)
           // for text dumpers (textDumper,compactFullDumper,DepTripletDumper,
           // etc.), use simpleStreamHandler
           handlerName="simpleStreamHandler";
-          handler=new XmlSimpleHandler();
+          handler = new XmlSimpleHandler();
         }
         else if(useHandler == "xml")
         {
@@ -426,7 +426,7 @@ int run(int argc, char** argv)
           // Attendu par bowDumperXml
           handlerName = "xmlDocumentHandler";
           handler = new Lima::Handler::MultimediaDocumentHandler(shiftFrom);
-          LDEBUG << "run handler "<<handlerName<<"is a MultimediaDocumentHandler"
+          LDEBUG << "run handler"<<handlerName<<"is a MultimediaDocumentHandler"
                   << dynamic_cast<Lima::Handler::MultimediaDocumentHandler*>(handler)->shiftFrom().size()
                   << handler;
         }
@@ -453,13 +453,13 @@ int run(int argc, char** argv)
         client->analyze(text_s, metaData, pipeline.toUtf8().constData());
         client->releaseAnalysisHandler(handlerName);
       }
-      catch(NoSuchMap &e)
+      catch(const NoSuchMap &e)
       {
         cerr << "Analysis failed on file "
               << fileName.toStdString()
               << ": (NoSuchMap) " << e.what() << endl;
       }
-      catch(XMLConfigurationFileException &e)
+      catch(const XMLConfigurationFileException &e)
       {
         cerr << "Analysis failed on file "
               << fileName.toStdString()
@@ -482,34 +482,30 @@ int run(int argc, char** argv)
 void listunits()
 {
     {
-        cout << "Available resources factories : " << endl;
-        deque<string> ids = AbstractResource::Factory::getRegisteredFactories();
-        for(deque<string>::const_iterator it = ids.begin();
-                it != ids.end();
-                it++) {
-            cout << "- " << *it << endl;
-        }
-        cout << endl;
+      std::cout << "Available resources factories : " << std::endl;
+      auto ids = AbstractResource::Factory::getRegisteredFactories();
+      for (const auto& id : ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     {
-        cout << "Available process units factories : " << endl;
-        deque<string> ids = MediaProcessUnit::Factory::getRegisteredFactories();
-        for(deque<string>::const_iterator it = ids.begin();
-                it != ids.end();
-                it++) {
-            cout << "- " << *it << endl;
-        }
-        cout << endl;
+      std::cout << "Available process units factories : " << std::endl;
+      auto ids = MediaProcessUnit::Factory::getRegisteredFactories();
+      for (const auto& id: ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     std::cout << "Available client factories are : " << std::endl;
     {
-//     deque<string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
-//     for (deque<string>::iterator it=ids.begin();
-//          it!=ids.end();
-//          it++)
-//     {
-//       cout << "- " << *it << endl;
-//     }
-//     cout << endl;
+      auto ids = LinguisticProcessingClientFactory::single().getRegisteredFactories();
+      for (const auto& id : ids)
+        {
+          std::cout << "- " << id << std::endl;
+        }
+        std::cout << std::endl;
     }
 }

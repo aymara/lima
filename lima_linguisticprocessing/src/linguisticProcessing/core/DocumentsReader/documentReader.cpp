@@ -239,6 +239,7 @@ bool DocumentReader::readXMLDocument()
     m_d->m_reader->readNext();
     // do processing
   }
+  m_d->m_parser->endDocument();
   if (m_d->m_reader->hasError())
   {
     // do error handling
@@ -246,7 +247,6 @@ bool DocumentReader::readXMLDocument()
     LERROR <<"DocumentReader: readXMLDocument: parse error:" << m_d->m_reader->errorString();
     return false;
   }
-  m_d->m_parser->endDocument();
 
   return true;
 }

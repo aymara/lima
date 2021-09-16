@@ -16,7 +16,7 @@ using namespace Lima::Handler;
 using namespace std;
 
 MultimediaDocumentHandler::MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom) :
-    AbstractXmlDocumentHandler(shiftFrom)
+    AbstractXmlDocumentHandler(shiftFrom), m_out(nullptr)
 {
 #ifdef DEBUG_LP
   HANDLERLOGINIT;
