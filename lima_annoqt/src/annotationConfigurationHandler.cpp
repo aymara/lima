@@ -23,6 +23,7 @@
 #include "annotationConfigurationHandler.h"
 
 #include <QListWidget>
+#include <QMessageBox>
 
 AnnotationConfigurationHandler::AnnotationConfigurationHandler(
   QListWidget *listWidget, QList<QColor>* colors,

@@ -4,22 +4,26 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under GNU/Linux, with access to docker:
+Under GNU/Linux, with a user having the rights to run docker commands and the possibility to install Python packages using `pip`:
 
 ```bash
+# check docker access
+$ docker ps
+# if there is no error here, then proceed with the installation using pip
 $ pip install aymara
 $ python
 >>> import aymara.lima
 >>> l = aymara.lima.Client(host='localhost', port='8080')
->>> sentences = l.analyzeText('Hello, World!', lang='eng', pipeline='deep')
+>>> sentences = l.analyzeText('Hello, World!')
 >>> print(sentences[0][0].lemma)
 hello
 >>> print(sentences.conll())
 # sent_id = 1
 # text = Hello, World!
-1       Hello   hello   PROPN   _       _       2       Dummy   _       Len=5|NE=Person.PERSON|Pos=1|SpaceAfter=No
-2       ,       ,       COMMA   _       _       3       Dummy   _       Len=1|Pos=6
-3       World!  world!  NOUN    _       _       _       _       _       Len=6|NE=Miscellaneous.MISCELLANEOUS|Pos=8
+1       Hello   hello   INTJ    _       _               0       root      _ Len=5|Pos=1|SpaceAfter=No
+2       ,       ,       PUNCT   _       _               1       punct     _ Len=1|Pos=6
+3       World   World   PROPN   _       Number=Sing     1       vocative  _ Len=5|Pos=8|SpaceAfter=No
+4       !       !       PUNCT   _       _               1       punct     _ Len=1|Pos=13
 ```
 
 # Introducing LIMA

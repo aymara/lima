@@ -19,10 +19,18 @@ appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.
 set PATH=C:\externals\ninja;%PATH%
 ninja --version
 
+appveyor DownloadFile https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.9.0%%2Bcpu.zip -FileName libtorch.zip
+7z x libtorch.zip -oC:\projects\lima\extern\
+
+appveyor DownloadFile https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip -FileName eigen.zip
+7z x eigen.zip
+
+appveyor DownloadFile https://github.com/unicode-org/icu/releases/download/release-67-1/icu4c-67_1-Win64-MSVC2017.zip -FileName icu4c.zip
+7z x icu4c.zip -oc:\externals\icu4c\
+
 rem #ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
 mkdir c:\dependency_treebank
 unzip c:\dependency_treebank.zip -d c:\
 cd c:\
 c:\msys64\usr\bin\cat /c/dependency_treebank/wsj_*.dp | c:\msys64\usr\bin\grep -v "^$" > c:\dependency_treebank\nltk-ptb.dp
-
 

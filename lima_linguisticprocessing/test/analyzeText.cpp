@@ -268,9 +268,6 @@ int run(int argc, char** argv)
     }
   }
 
-
-  //   std::cerr << "Amose plugins initialized" << std::endl;
-
   if (vm.count("availableUnits"))
   {
     listunits();

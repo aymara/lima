@@ -65,6 +65,7 @@ SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
 WITH_GUI="ON"
+LIMA_SOURCES=$PWD
 
 while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
     case "${o}" in
@@ -238,12 +239,25 @@ else
   echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
 fi
 
+LIBTORCH_PATH=${LIMA_SOURCES}/extern/libtorch/
+echo "libTorch: " $LIBTORCH_PATH
 
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH -DWITH_GUI=$WITH_GUI $source_dir
+cmake  -G "$generator" \
+    -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
+    -DWITH_ARCH=$WITH_ARCH \
+    -DWITH_ASAN=$WITH_ASAN \
+    -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN \
+    -DCMAKE_BUILD_TYPE:STRING=$cmake_mode \
+    -DLIMA_RESOURCES:PATH="$resources" \
+    -DLIMA_VERSION_RELEASE:STRING="$release" \
+    -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
+    -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
+    -DWITH_GUI=$WITH_GUI $source_dir \
+    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH
 
 echo "Running make command:"
 echo "$make_cmd"

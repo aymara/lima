@@ -192,12 +192,29 @@ operator()(RecognizerMatch& m,
           LDEBUG << "NormalizeNumber: looking at feature " << (*f).getName();
 #endif
           if ((*f).getName()==NUMVALUE_FEATURE_NAME) {
-            double value=boost::any_cast<double>((*f).getValue());
+            try {
+              double value=boost::any_cast<double>((*f).getValue());
 #ifdef DEBUG_LP
-            LDEBUG << "NormalizeNumber: add value " << value;
+              LDEBUG << "NormalizeNumber: add value " << value;
 #endif
-            values.push_back(value);
-            hasNumericValue=true;
+              values.push_back(value);
+              hasNumericValue=true;
+            }
+            catch (boost::bad_any_cast) {
+              // check if it is a string containing a number (may be the case if a setEntityFeature 
+              // has been used explicitely in a rule
+              std::string strval=(*f).getValueString();
+              char *end;
+              double val = std::strtod(strval.c_str(), &end);
+              if (val!=0 or strval=="0") {
+                values.push_back(val);
+                hasNumericValue=true;
+              }
+              else {
+                SELOGINIT;
+                LERROR << "Error: failed to get numeric value for feature" << (*f).getName() << ":" << (*f).getValueString();
+              }
+            }
           }
         }
       }

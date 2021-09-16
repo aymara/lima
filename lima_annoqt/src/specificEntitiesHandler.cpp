@@ -22,6 +22,8 @@
 
 #include "specificEntitiesHandler.h"
 
+#include <QDebug>
+#include <QMessageBox>
 #include <QTextEdit>
 #include <iostream>
 

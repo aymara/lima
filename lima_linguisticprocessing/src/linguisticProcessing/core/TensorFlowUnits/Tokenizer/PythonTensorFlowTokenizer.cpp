@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -18,7 +18,7 @@
 */
 
 #include "PythonTensorFlowTokenizer.h"
-#include "DeepTokenizerBase.h"
+#include "linguisticProcessing/common/helpers/DeepTokenizerBase.h"
 #include "PythonHelpers.h"
 
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"

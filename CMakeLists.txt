@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 project(Lima)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(WITH_GUI ON)
+set(WITH_DEBUG_MESSAGES ON)
+set(WITH_ARCH OFF)
+set(WITH_ASAN OFF)
+set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON)
 
 enable_testing()
 include(GNUInstallDirs)
@@ -83,10 +88,11 @@ else (OPENMP_FOUND)
   message("OpenMP NOT FOUND")
 endif()
 
-
 find_package(TensorFlow)
-find_package(Eigen)
-find_package(Protobuf)
+if (TensorFlow_FOUND)
+  find_package(Eigen)
+  find_package(Protobuf)
+endif()
 
 if (TensorFlow_FOUND)
   message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
@@ -98,6 +104,12 @@ if (Eigen_FOUND)
   message(STATUS "Found Eigen. ${Eigen_INCLUDE_DIRS} ${Eigen_LIBRARIES} ")
 else ()
   message(STATUS "Eigen not found.")
+endif ()
+
+if (Protobuf_FOUND)
+  message(STATUS "Found Protobuf. ${Protobuf_INCLUDE_DIRS} ${Protobuf_LIBRARIES} ")
+else ()
+  message(STATUS "Protobuf not found.")
 endif ()
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
@@ -114,7 +126,6 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
       ${Eigen_LIBRARIES}
       ${TensorFlow_LIBRARIES})
   endif ()
-
 else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
 endif()
@@ -364,6 +375,19 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
+if (NOT TensorFlow_FOUND AND NOT EIGEN_FOUND AND NOT EIGEN3_FOUND)
+  # Here we are looking up for a system-wide installation of Eigen
+  message("Looking up for system-wide Eigen")
+  find_package(Eigen3 3.3 NO_MODULE)
+endif()
+
+message("EIGEN_FOUND: ${EIGEN_FOUND}")
+message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
+
+find_package(Torch)
+find_package(ICU 60.0  REQUIRED COMPONENTS uc)
+include_directories(${CMAKE_SOURCE_DIR}/extern)
+
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR} REQUIRED)
@@ -431,7 +455,14 @@ else()
   message("Build without lima_gui")
 endif()
 
+add_subdirectory(extern)
 
+if (TORCH_FOUND AND (EIGEN_FOUND OR EIGEN3_FOUND))
+  message("TORCH_CXX_FLAGS = ${TORCH_CXX_FLAGS}")
+  message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+  add_subdirectory(deeplima)
+endif()
 
 ########### documentation ###############
 

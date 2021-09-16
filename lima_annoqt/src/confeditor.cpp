@@ -25,11 +25,21 @@
 #include "kcolorvalueselector.h"
 #include "kcolordialog.h"
 
+#include <QMessageBox>
+#include <QApplication>
+#include <QToolBar>
+#include <QStatusBar>
 #include <QSplitter>
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <iostream>
+#include <QAction>
+#include <QDebug>
+#include <QMenu>
+#include <QMenuBar>
+#include <QSettings>
+#include <QTextCodec>
 
 AnnoqtConfEditor::AnnoqtConfEditor() : m_colorNames2EntityTypes(), m_entityTypes2ColorNames(), m_currentColor(QColor(Qt::black)), m_currentAnnotationConfigurationFile(),m_currentDirectory(),
 m_currentItem(0)

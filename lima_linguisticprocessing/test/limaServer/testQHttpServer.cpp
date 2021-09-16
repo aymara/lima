@@ -51,18 +51,14 @@ int main(int argc, char *argv[])
   QCoreApplication app(argc, argv);
   QsLogging::initQsLog();
   std::cerr << "QsLog initialized" << std::endl;
-  // Lima::AmosePluginsManager::single();
-  std::cerr << "Amose plugins initialized" << std::endl;
 
-  // QsLogging::Categories::instance().configure( QString::fromUtf8(qgetenv("LIMA_CONF").isEmpty()?"/usr/share/config/lima":qgetenv("LIMA_CONF").constData())+ "/log4cpp.properties");
-  
   // Declare the supported options.
   boost::program_options::options_description desc("Usage");
   // po::options_description desc("Usage");
-  
+
   po::positional_options_description p;
   p.add("input-file", -1);
-  
+
   // store value of options
   po::variables_map varMap;
   // parse args and set values in store
@@ -70,13 +66,13 @@ int main(int argc, char *argv[])
   po::notify(varMap);
 
 
-  // 
+  //
   if (varMap.count("help")) {
     std::cout << desc << std::endl;
     return 1;
   }
   std::cerr << "option parsed " << std::endl;
-  
+
   // Parse configuration file of lima server
   // options in command line supercede options in configuration file
   // port
@@ -90,7 +86,7 @@ int main(int argc, char *argv[])
   }
   // "Set the LIMA server configuration file to use")
   limaServerConfigFile = "lima-server.xml";
-  
+
 
   std::string fileName(configDir);
   fileName.append("/").append(limaServerConfigFile);
