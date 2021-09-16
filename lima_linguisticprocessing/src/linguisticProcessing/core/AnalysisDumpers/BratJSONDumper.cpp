@@ -40,11 +40,14 @@ SimpleFactory<MediaProcessUnit,BratJSONDumper> bratJSONDumperFactory(BRATJSONDUM
 
 BratJSONDumper::BratJSONDumper() :
 AbstractIEDumper(),
+m_useNormalizedForms(false),
 // m_firstEntity(true),
 m_firstRelation(true),
 m_firstEvent(true),
 m_attributes(),
-m_norms()
+m_norms(),
+m_entities(),
+m_eventTriggers()
 {
   DUMPERLOGINIT;
   LDEBUG << "BratJSONDumper::BratJSONDumper()";
@@ -63,6 +66,14 @@ void BratJSONDumper::init(
   LDEBUG << "BratJSONDumper::init";
   AbstractIEDumper::init(unitConfiguration,manager);
   // here, specific parameters for this dumper if different from AbstractIEDumper ones
+  try
+  {
+    string str=unitConfiguration.getParamsValueAtKey("useNorms");
+    if (str=="yes" || str=="1" || str=="true") {
+      m_useNormalizedForms=true;
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )  { } // optional keep default
 
 }
 
@@ -152,12 +163,12 @@ void BratJSONDumper::outputEventsFooter(std::ostream& os) const
 
 
 void BratJSONDumper::
-outputEntityString(ostream& /*out*/,
+outputEntityString(ostream& out,
                    unsigned int entityId,
                    const std::string& entityType,
                    const std::string& entityString,
                    const vector<pair<uint64_t,uint64_t> >& positions,
-                   const Automaton::EntityFeatures& /*entityFeatures*/, bool /*noNorm*/) const
+                   const Automaton::EntityFeatures& entityFeatures, bool noNorm) const
 {
   //if (m_firstEntity) { m_firstEntity=false; out << endl; } else { out << "," << endl; }
   ostringstream oss;
@@ -179,6 +190,26 @@ outputEntityString(ostream& /*out*/,
   }
   oss << " ]";
   m_entities[entityId]=oss.str();
+  if (m_useNormalizedForms && !noNorm) {
+    bool done(false);
+    for (Automaton::EntityFeatures::const_iterator
+      featureItr=entityFeatures.begin(),features_end=entityFeatures.end();
+    featureItr!=features_end; featureItr++)
+    {
+      if (featureItr->getName()=="value") {
+        string valuestr=featureItr->getValueString();
+        // if only whitespaces, do not print it (error in brat format)
+        if (valuestr.find_first_not_of(' ') != std::string::npos) {
+          outputEntityNorm(out,entityId,valuestr);
+          done=true;
+          break;
+        }
+      }
+    }
+    if (! done) { // backoff to surface form if norm is not found
+      outputEntityNorm(out,entityId,entityString);
+    }
+  }
 }
 
 void BratJSONDumper::
@@ -215,7 +246,7 @@ outputEntityNorm(ostream& /*out*/,
 {
   ostringstream oss;
   // format is id normType target refdb refid reftext;
-  oss << "[ \"N" << entityId << "\", \"Reference\", \"T" << entityId << ", \"X\", \"Y\", \""
+  oss << "[ \"N" << entityId << "\", \"Reference\", \"T" << entityId << "\", \"LIMA\", \"1\", \""
       << entityNorm << "\" ]";
   m_norms.push_back(oss.str());
 }

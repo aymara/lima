@@ -69,6 +69,7 @@ public:
   bool addEventMentionAsEntity() const override { return false; }
 
 private:
+  bool m_useNormalizedForms; //<! output normalized forms in brat format
   // set members mutable (modified in the inherited const functions)
 //   mutable bool m_firstEntity;
   mutable bool m_firstRelation;
