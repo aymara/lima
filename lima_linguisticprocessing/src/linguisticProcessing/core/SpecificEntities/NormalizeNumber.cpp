@@ -201,12 +201,12 @@ operator()(RecognizerMatch& m,
               hasNumericValue=true;
             }
             catch (boost::bad_any_cast) {
-              // check if it is a string containing a number (may be the case if a setEntityFeature 
+              // check if it is a string containing a number (may be the case if a setEntityFeature
               // has been used explicitely in a rule
               std::string strval=(*f).getValueString();
               char *end;
               double val = std::strtod(strval.c_str(), &end);
-              if (val!=0 or strval=="0") {
+              if (val!=0 || strval=="0") {
                 values.push_back(val);
                 hasNumericValue=true;
               }
