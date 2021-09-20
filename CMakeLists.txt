@@ -458,6 +458,7 @@ endif()
 add_subdirectory(extern)
 
 if (TORCH_FOUND AND (EIGEN_FOUND OR EIGEN3_FOUND))
+  message("Torch and Eigen found. deeplima will be built.")
   message("TORCH_CXX_FLAGS = ${TORCH_CXX_FLAGS}")
   message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
