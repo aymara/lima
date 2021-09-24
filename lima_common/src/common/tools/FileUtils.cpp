@@ -188,7 +188,8 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects,
 
   for (const auto& project: projects)
   {
-    buildDirectoriesListForProject(resourcesDirs, project, "_RESOURCES", "/share/apps/");
+    buildDirectoriesListForProject(resourcesDirs, project, "_RESOURCES",
+                                   "/share/apps/", "/resources");
   }
 
   appendNonEmptyDirs(resourcesDirs, paths);
