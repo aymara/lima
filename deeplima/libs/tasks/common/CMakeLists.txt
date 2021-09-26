@@ -15,16 +15,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_library(train_ner
+add_library(train_common
   STATIC
-  train_ner.cpp
+  train_params.cpp
 )
 
-target_link_libraries(train_ner
-  PRIVATE
-  birnn_classifier_for_ner
-  train_common
-  ${TORCH_LIBRARIES}
-  fasttext-static
+target_link_libraries(train_common
 )
 

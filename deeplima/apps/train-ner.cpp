@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
   ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
   ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
+  ("tag",               po::value<vector<string>>(&params.m_tags),      "Tags (plain text)")
   ;
 
   po::variables_map vm;
@@ -64,6 +65,22 @@ int main(int argc, char* argv[])
   catch (const boost::program_options::unknown_option& e)
   {
     cerr << e.what() << endl;
+    return -1;
+  }
+
+  if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
+  {
+    if (ud_path.empty())
+    {
+      cerr << "No training data given: --train / --dev or --corpus parameters are required." << endl;
+      return -1;
+    }
+    params.guess_data_sets(ud_path, corpus);
+  }
+
+  if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
+  {
+    cerr << "Can't find training data." << endl;
     return -1;
   }
 
