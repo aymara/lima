@@ -48,7 +48,7 @@ template <typename Token>
 class UPosFeatExtractor
 {
 public:
-  UPosFeatExtractor(const std::string& init_string)
+  UPosFeatExtractor(const std::string&)
   {
   }
 
@@ -57,7 +57,7 @@ public:
     return false;
   }
 
-  inline void preprocess(const Token& token)
+  inline void preprocess(const Token&)
   {
   }
 
@@ -234,8 +234,10 @@ public:
     }
   }
 
-  inline std::string feat_value(const Token& token, size_t feat_no) const
+  inline std::string feat_value(const Token& token, int feat_no) const
   {
+    assert(feat_no >= 0);
+
     if (-1 != m_upos && m_upos == feat_no)
     {
       return token.upos();
@@ -254,7 +256,7 @@ public:
     }
     else if (m_feats)
     {
-      assert(feat_no < m_idx2feat.size());
+      assert(size_t(feat_no) < m_idx2feat.size());
       const string feat_name = m_idx2feat[feat_no];
       const auto& fv = token.feats();
       auto it = fv.find(feat_name);
@@ -331,12 +333,26 @@ int train_entity_tagger(const train_params_tagging_t& params)
 
   if (params.m_embeddings_fn.size() > 0)
   {
-    shared_ptr<FastTextVectorizerToTorchMatrix> p
-        = shared_ptr<FastTextVectorizerToTorchMatrix>(
-            new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
-          );
-    assert(nullptr != p.get());
-    feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p });
+    try
+    {
+      shared_ptr<FastTextVectorizerToTorchMatrix> p
+          = shared_ptr<FastTextVectorizerToTorchMatrix>(
+              new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
+            );
+      assert(nullptr != p.get());
+      feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p });
+    }
+    catch (const exception& e)
+    {
+      cerr << e.what() << endl;
+      return -1;
+    }
+    catch (...)
+    {
+      cerr << "Something wrong happened while loading \""
+           << params.m_embeddings_fn << "\"" << endl;
+      return -1;
+    }
   }
 
   if (params.m_use_eos)

@@ -107,7 +107,7 @@ public:
     {
       assert(it.second >= 0);
       assert(it.second < std::numeric_limits<I>::max());
-      assert(it.second < m_embd.cols());
+      assert(m_embd.cols() >= 0 && it.second < Dict<value_t>::key_t(m_embd.cols()));
       m_index[value_t(it.first)] = I(it.second);
     }
   }
