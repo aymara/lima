@@ -67,7 +67,7 @@ function(UpdateGitData)
 
     # Get current branch
     execute_process(
-        COMMAND git branch --show-current
+        COMMAND git rev-parse --abbrev-ref HEAD
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         OUTPUT_VARIABLE GIT_BRANCH
         OUTPUT_STRIP_TRAILING_WHITESPACE
