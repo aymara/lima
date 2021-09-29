@@ -46,6 +46,7 @@ target_link_libraries(deeplima-train-ner
   conllu
   Boost::program_options
   Boost::filesystem
+  version
 )
 
 install(TARGETS deeplima-train-ner
