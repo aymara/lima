@@ -643,12 +643,6 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
 
   m->pretty_print(cerr);
   cerr << endl;
-  for ( const auto& t : m->parameters())
-  {
-    cerr << t.sizes() << endl;
-    cerr << "itemsize = " << t.type().typeMeta().itemsize() << endl;
-  }
-  cerr << endl;
 
   register_module(name, m);
 }
