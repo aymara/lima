@@ -51,7 +51,7 @@ struct train_params_t
                  float learning_rate=0.001,
                  float weight_decay=0.00001,
                  size_t max_epochs=100,
-                 size_t max_epochs_without_improvement=4,
+                 size_t max_epochs_without_improvement=10,
                  size_t batch_size=4)
     : m_device_string(device_string),
       m_learning_rate(learning_rate),

@@ -456,13 +456,11 @@ int train_entity_tagger(const train_params_tagging_t& params)
 
   model->to(device);
 
-  model->train(params.m_max_epochs,
-               params.m_batch_size,
-               params.m_sequence_length,
+  model->train(params,
                feat_extractor.feats(),
               *(train_input.first.get()), *(train_input.second.get()), *(train_gold.get()),
               *(dev_input.first.get()), *(dev_input.second.get()), *(dev_gold.get()),
-              optimizer, params.m_output_model_name, device);
+              optimizer, device);
 
 
   return 0;
