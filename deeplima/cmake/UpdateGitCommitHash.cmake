@@ -18,15 +18,15 @@
 set(CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 if (NOT DEEPLIMA_STANDALONE)
-    set(src_prefix "deeplima")
+    set(deeplima_prefix "deeplima")
 endif()
 
 if (NOT DEFINED src_dir)
-    set(src_dir ${CMAKE_SOURCE_DIR}/${src_prefix}/libs/version)
+    set(src_dir ${CMAKE_SOURCE_DIR}/${deeplima_prefix}/libs/version)
 endif ()
 
 if (NOT DEFINED bin_dir)
-    set(bin_dir ${CMAKE_BINARY_DIR}/libs/version/generated)
+    set(bin_dir ${CMAKE_BINARY_DIR}/${deeplima_prefix}/libs/version/generated)
 endif ()
 
 set(SRC_VERSION_CPP "${src_dir}/version.cpp.in")
@@ -119,8 +119,8 @@ function(AddUpdateGitCommitHashTarget)
         BYPRODUCTS ${post_configure_file}
         )
 
-    add_library(version ${CMAKE_BINARY_DIR}/libs/version/generated/version.cpp)
-    target_include_directories(version PUBLIC ${CMAKE_BINARY_DIR}/libs/version/generated)
+    add_library(version ${bin_dir}/version.cpp)
+    target_include_directories(version PUBLIC ${bin_dir})
     add_dependencies(version update_git_commit_hash)
 
     UpdateGitData()
