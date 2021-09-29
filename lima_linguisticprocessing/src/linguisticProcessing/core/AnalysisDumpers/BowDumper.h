@@ -90,7 +90,8 @@ protected:
       Common::BagOfWords::BoWText& bowText,
       AnalysisContent& analysis,
       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-      LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
+      LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+      std::set<LinguisticGraphVertex>& addedEntities) const;
 
   void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -100,9 +101,19 @@ protected:
     const LinguisticGraphVertex begin,
     const LinguisticGraphVertex end,
     const uint64_t offset,
-    Common::BagOfWords::BoWText& bowText) const;
+    Common::BagOfWords::BoWText& bowText,
+    std::set<LinguisticGraphVertex>& addedEntities) const;
 
+    void addAllEntities(
+      const Common::AnnotationGraphs::AnnotationData* annotationData,
+      const std::set<LinguisticGraphVertex>& addedEntities,
+      Common::BagOfWords::BoWText& bowText,
+      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+      LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+      const uint64_t offset=0) const;
+    
   std::string m_graph;
+  bool m_allEntities;
 };
 
 } // AnalysisDumpers

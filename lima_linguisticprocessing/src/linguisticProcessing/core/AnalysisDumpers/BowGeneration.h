@@ -151,6 +151,19 @@ public:
     bool keepAnyway) const;
 
 
+  /* create a specific entity (BoWNamedEntity): make this function public so that
+   * entities can be created even for vertices that are not in the graph anymore 
+   * (to allow BowDumper to dump nested entities)
+   */
+  boost::shared_ptr< Common::BagOfWords::BoWNamedEntity > createSpecificEntity(
+    const LinguisticGraphVertex& vertex,
+    const AnnotationGraphVertex& v,
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const LinguisticGraph& anagraph,
+    const LinguisticGraph& posgraph,
+    const uint64_t offset,
+    bool frompos=false) const;
+
 private:
   BowGeneratorPrivate* m_d;
 };

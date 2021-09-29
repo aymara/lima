@@ -1182,6 +1182,17 @@ uint64_t BowGeneratorPrivate::computeCompoundLength(
   return length;
 }
 
+boost::shared_ptr< BoWNamedEntity > BowGenerator::createSpecificEntity(
+  const LinguisticGraphVertex& vertex,
+  const AnnotationGraphVertex& v,
+  const AnnotationData* annotationData,
+  const LinguisticGraph& anagraph,
+  const LinguisticGraph& posgraph,
+  const uint64_t offset,
+  bool frompos) const
+{
+  return m_d->createSpecificEntity(vertex,v,annotationData,anagraph,posgraph,offset,frompos);
+}
 
 boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
   const LinguisticGraphVertex& vertex,
@@ -1200,6 +1211,7 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
   DUMPERLOGINIT;
   LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
 #endif
+  const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
   const SpecificEntityAnnotation* se =
@@ -1226,7 +1238,7 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
   LINFO << "BowGenerator: specific entity type name is " << typeName;
 #endif
   // get the macro-category to use for this named entity
-  MorphoSyntacticData* data = get(vertex_data, posgraph, vertex);
+  MorphoSyntacticData* data = get(vertex_data, graph, vertex);
   if (data->empty())
   {
     DUMPERLOGINIT;
@@ -1256,7 +1268,7 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
               category,
               offset+(*se).getPosition(),
               (*se).getLength()));
-    Token* token = get(vertex_token, posgraph, vertex);
+    Token* token = get(vertex_token, graph, vertex);
     bowToken->setInflectedForm(token->stringForm());
 
     bowNE->addPart(bowToken);

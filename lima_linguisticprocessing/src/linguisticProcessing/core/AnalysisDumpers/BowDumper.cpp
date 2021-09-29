@@ -84,7 +84,8 @@ BowDumper::BowDumper():
    AbstractTextualAnalysisDumper(),
     m_bowGenerator(new Compounds::BowGenerator()),
     m_handler(),
-    m_graph()
+    m_graph(),
+    m_allEntities(false)
 {
 }
 
@@ -119,6 +120,14 @@ void BowDumper::init(
     throw InvalidConfiguration();
   }
 
+  try
+  {
+    std::string allEntities=unitConfiguration.getParamsValueAtKey("allEntities");
+    if (allEntities=="yes" || allEntities=="1" || allEntities=="true") {
+      m_allEntities=true;
+    }
+  }
+  catch (NoSuchParam& ) { } // ignored: optional parameter
   m_bowGenerator->init(unitConfiguration, language);
 }
 
@@ -184,7 +193,11 @@ LimaStatusCode BowDumper::process(
   // build BoWText from the result of the analysis
   BoWText bowText;
   bowText.lang=metadata->getMetaData("Lang");
-  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph);
+  std::set<LinguisticGraphVertex> addedEntities;
+  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph,addedEntities);
+  if (m_allEntities) {
+    addAllEntities(annotationData,addedEntities,bowText,anagraph,posgraph);
+  }
 
   // Exclude from the shift list XML entities preceding the offset and
   // readjust positions regarding the beginning of the node being analyzed
@@ -250,7 +263,8 @@ void BowDumper::buildBoWText(
     BoWText& bowText,
     AnalysisContent& analysis,
     AnalysisGraph* anagraph,
-    AnalysisGraph* posgraph) const
+    AnalysisGraph* posgraph,
+    std::set<LinguisticGraphVertex>& addedEntities) const
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
@@ -278,7 +292,8 @@ void BowDumper::buildBoWText(
         anagraph->firstVertex(),
         anagraph->lastVertex(),
         metadata->getStartOffset(),
-        bowText);
+        bowText,
+        addedEntities);
 
   }
   else
@@ -300,7 +315,8 @@ void BowDumper::buildBoWText(
                            sentenceBegin,
                            sentenceEnd,
                            metadata->getStartOffset(),
-                           bowText);
+                           bowText,
+                           addedEntities);
 
     }
   }
@@ -372,7 +388,8 @@ void BowDumper::addVerticesToBoWText(
     const LinguisticGraphVertex begin,
     const LinguisticGraphVertex end,
     const uint64_t offset,
-    BoWText& bowText) const
+    BoWText& bowText,
+    std::set<LinguisticGraphVertex>& addedEntities) const
 {
 
 #ifdef DEBUG_LP
@@ -574,8 +591,93 @@ void BowDumper::addVerticesToBoWText(
 //       }
 // #endif
     }
+    addedEntities.insert(visited.begin(),visited.end());
   }
 }
+
+
+void BowDumper::addAllEntities(
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const std::set<LinguisticGraphVertex>& addedEntities,
+    BoWText& bowText,
+    AnalysisGraph* anagraph,
+    AnalysisGraph* posgraph,
+    const uint64_t offset) const
+{
+  //cerr << "addAllEntities" << endl;
+  //cerr << "seen vertices ("<< m_graph << ")=";
+  //std::copy(addedEntities.begin(), addedEntities.end(),std::ostream_iterator<int>(std::cerr, " "));
+  //cerr << endl;
+  
+  // take all annotations
+  AnnotationGraphVertexIt itv, itv_end;
+  boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
+  for (; itv != itv_end; itv++)
+  {
+    //cerr << "look at annotation vertex " << *itv << endl;
+    if (annotationData->hasAnnotation(*itv,Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+    {
+      //cerr << "-> is a specific entity" << endl;
+      // get the id of corresponding vertex: test both posgraph and analysis graph
+      LinguisticGraphVertex v;
+      string graph="PosGraph";
+      bool frompos=true;
+      if (!annotationData->hasIntAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph)))
+      {
+        graph="AnalysisGraph";
+        if (!annotationData->hasIntAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph)))
+        {
+          continue;
+        }
+        frompos=false;
+      }
+      //cerr << "-> comes from graph " << graph << endl;
+      
+      v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph));
+      // vertex has already been visited during the standard bow dumper
+      //cerr << "look at vertex " << v << endl;
+      if (m_graph==graph) { // same graph
+        if (addedEntities.find(v)!=addedEntities.end()) {
+          //cerr << "-> vertex " << v << " already processed" << endl;
+          continue;
+        }
+      }
+      else {
+        // find matches between graphs
+        std::set< AnnotationGraphVertex > anaVertices = annotationData->matches(graph,v,m_graph);
+        if (anaVertices.size()==1) { // note: anaVertices size should be 0 or 1
+          AnnotationGraphVertex anaVertex= *(anaVertices.begin());
+          std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,anaVertex,"annot");
+          bool found(false);
+          for (const auto& vx: matches) {
+            //cerr << "  -> matching annotation " << vx << endl;
+            if (annotationData->hasIntAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph)))
+            {
+              LinguisticGraphVertex matchv = annotationData->intAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph));
+              //cerr << "    -> corresponding vertex " << vx << endl;
+              if (addedEntities.find(matchv)!=addedEntities.end()) {
+                //cerr << "-> vertex " << v << " has corresponding vertex "<< matchv <<" which was already processed" << endl;
+                found=true;
+                continue;
+              }
+            }
+          }
+          if (found) {
+            continue;
+          }
+        }
+      }  
+      // create the bowNamedEntity
+      boost::shared_ptr< Common::BagOfWords::BoWNamedEntity > 
+        ne=m_bowGenerator->createSpecificEntity(v,*itv,annotationData,*(anagraph->getGraph()),*(posgraph->getGraph()),offset,frompos);
+      if (ne) {
+        //cerr << "add new entity" << endl;
+        bowText.push_back(ne);
+      }
+    }
+  }
+}
+
 
 } // AnalysisDumper
 
