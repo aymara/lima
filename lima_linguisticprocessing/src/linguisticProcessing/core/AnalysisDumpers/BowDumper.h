@@ -65,7 +65,7 @@ namespace AnalysisDumpers
 /**
 @author Benoit Mathieu
 */
-class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper 
+class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper
 {
 public:
   BowDumper();
@@ -76,21 +76,20 @@ public:
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) override;
 
-  virtual LimaStatusCode process(
-    AnalysisContent& analysis) const override;
+  virtual LimaStatusCode process(AnalysisContent& analysis) const override;
 
 protected:
   Compounds::BowGenerator* m_bowGenerator;
-  std::string m_handler;
-
-  private:
-    void buildBoWText(
-      const Common::AnnotationGraphs::AnnotationData* annotationData,
-      const SyntacticAnalysis::SyntacticData* syntacticData,
-      Common::BagOfWords::BoWText& bowText,
-      AnalysisContent& analysis,
-      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-      LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
+  std::string m_graph;
+  MediaId m_language;
+private:
+  void buildBoWText(
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const SyntacticAnalysis::SyntacticData* syntacticData,
+    Common::BagOfWords::BoWText& bowText,
+    AnalysisContent& analysis,
+    LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+    LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
 
   void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -102,7 +101,6 @@ protected:
     const uint64_t offset,
     Common::BagOfWords::BoWText& bowText) const;
 
-  std::string m_graph;
 };
 
 } // AnalysisDumpers
