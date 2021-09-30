@@ -135,7 +135,13 @@ void BratJSONDumper::outputGlobalFooter(std::ostream& os) const
     os << "]";
   }
   os << endl << "}" << endl;
+  // clear all stored values 
+  m_attributes.clear();
+  m_norms.clear();
+  m_entities.clear();
+  m_eventTriggers.clear();
 }
+
 void BratJSONDumper::outputEntitiesHeader(std::ostream& /*os*/) const
 {
   //os << "\"entities\": [";

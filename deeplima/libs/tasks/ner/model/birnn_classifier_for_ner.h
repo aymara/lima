@@ -22,6 +22,7 @@
 
 #include "deeplima/segmentation/impl/char_ngram_encoder.h"
 #include "nn/birnn_seq_cls/birnn_seq_classifier.h"
+#include "train_params_tagging.h"
 
 namespace deeplima
 {
@@ -68,9 +69,7 @@ public:
     return m_workers++;
   }
 
-  void train(size_t epochs,
-             size_t batch_size,
-             size_t seq_len,
+  void train(const train_params_tagging_t& params,
              const std::vector<std::string>& output_names,
              const TorchMatrix<int64_t>& train_trainable_input,
              const TorchMatrix<float>& train_non_trainable_input,
@@ -79,7 +78,6 @@ public:
              const TorchMatrix<float>& eval_non_trainable_input,
              const TorchMatrix<int64_t>& eval_gold,
              torch::optim::Optimizer& opt,
-             const std::string& model_name,
              const torch::Device& device = torch::Device(torch::kCPU));
 
   void evaluate(const std::vector<std::string>& output_names,

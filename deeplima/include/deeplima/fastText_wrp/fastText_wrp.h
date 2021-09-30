@@ -111,7 +111,7 @@ public:
 
   virtual void load(const std::string& fn)
   {
-    m_fasttext.loadModel(fn);
+    m_fasttext.loadModel(fn, false);
   }
 
   virtual Idx dim() const override

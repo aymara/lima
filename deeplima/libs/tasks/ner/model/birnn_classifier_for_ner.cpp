@@ -152,9 +152,7 @@ void BiRnnClassifierForNerImpl::save(serialize::OutputArchive& archive) const
   archive.write("embd_fn", list_of_embd_fn);
 }
 
-void BiRnnClassifierForNerImpl::train(size_t epochs,
-                                      size_t batch_size,
-                                      size_t seq_len,
+void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
                                       const std::vector<std::string>& output_names,
                                       const TorchMatrix<int64_t>& train_trainable_input,
                                       const TorchMatrix<float>& train_nontrainable_input,
@@ -163,7 +161,6 @@ void BiRnnClassifierForNerImpl::train(size_t epochs,
                                       const TorchMatrix<float>& eval_nontrainable_input,
                                       const TorchMatrix<int64_t>& eval_gold,
                                       torch::optim::Optimizer& opt,
-                                      const std::string& model_name = "",
                                       const torch::Device& device)
 {
   /*int64_t num_batches = train_trainable_input.size() / seq_len;
@@ -188,16 +185,16 @@ void BiRnnClassifierForNerImpl::train(size_t epochs,
   double best_eval_loss = numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
-  for (size_t e = 1; e < epochs; e++)
+  for (size_t e = 1; e < params.m_max_epochs; e++)
   {
     nets::epoch_stat_t train_stat, eval_stat;
     Module::train(true);
 
     //{
-      int64_t num_batches = (train_trainable_input.size() - e) / seq_len;
+      int64_t num_batches = (train_trainable_input.size() - e) / params.m_sequence_length;
       cerr << "train_trainable_input.size() == " << train_trainable_input.size() << endl;
       int64_t num_features = (int64_t)train_trainable_input.get_max_feat();
-      int64_t seq_len_i64 = (int64_t)seq_len;
+      int64_t seq_len_i64 = (int64_t)params.m_sequence_length;
 
       auto aligned_trainable_input = train_trainable_input.get_tensor().index({ Slice(0 + e, num_batches * seq_len_i64 + e), Slice() });
       auto aligned_nontrainable_input = train_nontrainable_input.get_tensor().index({ Slice(0 + e, num_batches * seq_len_i64 + e), Slice() });
@@ -219,8 +216,8 @@ void BiRnnClassifierForNerImpl::train(size_t epochs,
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
-    train_epoch(batch_size,
-                seq_len,
+    train_epoch(params.m_batch_size,
+                params.m_sequence_length,
                 output_names,
                 trainable_input_batches,
                 nontrainable_input_batches,
@@ -267,9 +264,9 @@ void BiRnnClassifierForNerImpl::train(size_t epochs,
     if (main_task_eval.m_accuracy > best_eval_accuracy)
     {
       best_eval_accuracy = main_task_eval.m_accuracy;
-      if (model_name.size() > 0)
+      if (params.m_output_model_name.size() > 0)
       {
-        torch::save(*this, model_name + ".pt");
+        torch::save(*this, params.m_output_model_name + ".pt");
       }
       count_below_best = 0;
     }
@@ -289,7 +286,7 @@ void BiRnnClassifierForNerImpl::train(size_t epochs,
         return;
       }
       count_below_best++;
-      if (main_task_eval.m_loss > best_eval_loss && count_below_best > 3)
+      if (main_task_eval.m_loss > best_eval_loss && count_below_best > params.m_max_epochs_without_improvement)
       {
         return;
       }
@@ -371,7 +368,7 @@ void BiRnnClassifierForNerImpl::evaluate(const vector<string>& output_names,
   BiRnnClassifierImpl::evaluate(output_names, current_inputs, target, stat, device);
 }
 
-void BiRnnClassifierForNerImpl::predict(size_t worker_id,
+void BiRnnClassifierForNerImpl::predict(size_t /*worker_id*/,
              const torch::Tensor& inputs,
              //const torch::Tensor& trainable_input,
              //const torch::Tensor& nontrainable_input,

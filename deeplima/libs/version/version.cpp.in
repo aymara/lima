@@ -17,24 +17,31 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef DEEPLIMA_LIBS_TASKS_NER_TRAIN_TRAIN_NER_H
-#define DEEPLIMA_LIBS_TASKS_NER_TRAIN_TRAIN_NER_H
+#include "version.h"
 
-#include <string>
-
-#include "tasks/ner/model/train_params_tagging.h"
+using namespace std;
 
 namespace deeplima
 {
-namespace tagging
-{
-namespace train
+namespace version
 {
 
-int train_entity_tagger(const train_params_tagging_t& params);
+namespace impl
+{
+const string str_git_hash = "@GIT_HASH@";
+const string str_git_branch = "@GIT_BRANCH@";
+} // impl
 
-} // namespace train
-} // namespace tagging
-} // namespace deeplima
+const std::string& get_git_commit_hash()
+{
+  return impl::str_git_hash;
+}
 
-#endif
+const std::string& get_git_branch()
+{
+  return impl::str_git_branch;
+}
+
+} // version
+} // deeplima
+

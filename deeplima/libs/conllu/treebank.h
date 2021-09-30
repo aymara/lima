@@ -408,6 +408,8 @@ namespace CoNLLU
     const Annotation* m_data;
   };
 
+  bool parse_ud_file_name(const std::string& fn, std::map<std::string, std::string>& fields);
+
   class Treebank
   {
     struct AnnotatedDocument
@@ -447,7 +449,6 @@ namespace CoNLLU
 
   protected:
     bool load(const std::string& path);
-    bool parse_ud_file_name(const std::string& fn, std::map<std::string, std::string>& fields);
 
     std::map<std::string, AnnotatedDocument> m_parts;
   };

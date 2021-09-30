@@ -112,6 +112,7 @@ public:
 
   virtual void load(torch::serialize::InputArchive& archive);
   virtual void save(torch::serialize::OutputArchive& archive) const;
+  virtual void set_tags(const std::map<std::string, std::string>& tags);
 
   virtual void to(torch::Device device, bool non_blocking=false) override;
 
@@ -341,6 +342,7 @@ protected:
 
   DictsHolder m_dicts;
   std::string m_script;
+  std::map<std::string, std::string> m_tags;
 
   std::vector<torch::nn::Embedding> m_embedding;
   std::vector<torch::nn::LSTM> m_lstm;

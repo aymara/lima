@@ -15,11 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-INCLUDE_DIRECTORIES(AFTER ${CMAKE_CURRENT_SOURCE_DIR})
+#configure_file(version.cpp.in version.cpp @ONLY)
 
-add_subdirectory(conllu)
-add_subdirectory(static_graph)
-add_subdirectory(convert)
-add_subdirectory(nn)
-add_subdirectory(tasks)
-add_subdirectory(version)
+include(../../cmake/UpdateGitCommitHash.cmake)
+AddUpdateGitCommitHashTarget()
+

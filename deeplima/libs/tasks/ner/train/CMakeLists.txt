@@ -23,6 +23,7 @@ add_library(train_ner
 target_link_libraries(train_ner
   PRIVATE
   birnn_classifier_for_ner
+  train_common
   ${TORCH_LIBRARIES}
   fasttext-static
 )

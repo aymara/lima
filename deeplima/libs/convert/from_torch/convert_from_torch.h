@@ -33,8 +33,9 @@ namespace convert_from_torch
 template<class V, class S>
 void copy_vector(const torch::Tensor& src, V& dst)
 {
+  assert(src.size(0) >= 0);
   dst.resize(src.size(0));
-  for (size_t i = 0; i < src.size(0); i++)
+  for (long i = 0; i < src.size(0); i++)
   {
     dst(i) = src[i].item<S>();
   }
@@ -43,11 +44,13 @@ void copy_vector(const torch::Tensor& src, V& dst)
 template<class M, class S>
 void copy_matrix(const torch::Tensor& src, M& dst)
 {
+  assert(src.size(0) >= 0);
+  assert(src.size(1) >= 0);
   dst.resize(src.size(0), src.size(1));
   auto accs = src.accessor<S,2>();
-  for (size_t i = 0; i < src.size(0); i++)
+  for (long i = 0; i < src.size(0); i++)
   {
-    for (size_t j = 0; j < src.size(1); j++)
+    for (long j = 0; j < src.size(1); j++)
     {
       dst(i, j) = accs[i][j];
     }

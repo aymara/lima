@@ -296,7 +296,7 @@ bool Annotation::test_structure() const
   return true;
 }
 
-bool Treebank::parse_ud_file_name(const std::string& fn, map<string, string>& fields)
+bool parse_ud_file_name(const std::string& fn, map<string, string>& fields)
 {
   smatch sm;
   if (regex_match(fn, sm, regex("(\\w+)_(\\w+)-(\\w+)-(\\w+)\\.conllu")))

@@ -28,17 +28,22 @@
 #include "conllu/treebank.h"
 #include "tasks/ner/train/train_ner.h"
 
+#include "version/version.h"
+
 using namespace std;
 namespace po = boost::program_options;
 
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
+  cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+       << "git branch: " << deeplima::version::get_git_branch()
+       << ")" << endl;
 
   string corpus, ud_path;
   deeplima::tagging::train::train_params_tagging_t params;
 
-  po::options_description desc("DeepLima - train tagging");
+  po::options_description desc("deeplima (train tagging model)");
   desc.add_options()
   ("help,h",                                                            "Display this help message")
   ("corpus,c",          po::value<string>(&corpus),                     "Training corpus name")
@@ -52,6 +57,7 @@ int main(int argc, char* argv[])
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
   ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
   ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
+  ("tag",               po::value<vector<string>>(&params.m_tags),      "Tags (plain text)")
   ;
 
   po::variables_map vm;
@@ -64,6 +70,28 @@ int main(int argc, char* argv[])
   catch (const boost::program_options::unknown_option& e)
   {
     cerr << e.what() << endl;
+    return -1;
+  }
+
+  if (vm.count("help")) {
+      cout << desc << endl;
+      return 0;
+  }
+
+  if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
+  {
+    if (ud_path.empty())
+    {
+      cerr << "No training data given: --train / --dev or --corpus parameters are required." << endl << endl;
+      cout << desc << endl;
+      return -1;
+    }
+    params.guess_data_sets(ud_path, corpus);
+  }
+
+  if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
+  {
+    cerr << "Can't find training data." << endl;
     return -1;
   }
 

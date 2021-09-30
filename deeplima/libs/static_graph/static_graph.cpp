@@ -120,13 +120,29 @@ void StaticGraphImpl::save(serialize::OutputArchive& archive) const
 
   for (size_t i = 0; i < m_dicts.size(); i++)
   {
-    std::ostringstream s;
+    ostringstream s;
     s << "dict_" << i;
     archive.write(s.str(), m_dicts[i]->toIValue());
   }
+
+  // Save tags
+  c10::Dict<string, string> temp_tags;
+  for ( const auto &it : m_tags )
+  {
+    temp_tags.insert(it.first, it.second);
+  }
+  archive.write("tags", temp_tags);
 }
 
-void StaticGraphImpl::pretty_dump(std::ostream &stream) const
+void StaticGraphImpl::set_tags(const map<string, string>& tags)
+{
+  for ( const auto &it : tags)
+  {
+    m_tags.insert({ it.first, it.second });
+  }
+}
+
+void StaticGraphImpl::pretty_dump(ostream &stream) const
 {
   size_t counter = 0;
   for ( const auto& m : modules(false) )
@@ -156,9 +172,9 @@ void StaticGraphImpl::to(torch::Device device, bool non_blocking)
   std::cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }
 
-void StaticGraphImpl::parse_script(const std::string& script)
+void StaticGraphImpl::parse_script(const string& script)
 {
-  std::cerr << script << endl;
+  cerr << script << endl;
   stringstream ss(script);
   string line;
 
@@ -626,12 +642,6 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
   m_modules[name] = module_ref_t(module_type_t::lstm, m_lstm.size() - 1);
 
   m->pretty_print(cerr);
-  cerr << endl;
-  for ( const auto& t : m->parameters())
-  {
-    cerr << t.sizes() << endl;
-    cerr << "itemsize = " << t.type().typeMeta().itemsize() << endl;
-  }
   cerr << endl;
 
   register_module(name, m);
