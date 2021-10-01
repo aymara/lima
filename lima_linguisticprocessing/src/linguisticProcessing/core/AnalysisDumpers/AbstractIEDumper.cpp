@@ -386,13 +386,13 @@ LimaStatusCode AbstractIEDumper::process(
     for (; itv != itv_end; itv++)
     {
       //     LDEBUG << "AbstractIEDumper on annotation vertex " << *itv;
-      if (annotationData->hasAnnotation(*itv,Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+      if (annotationData->hasAnnotation(*itv,QString::fromUtf8("SpecificEntity")))
       {
         //       LDEBUG << "    it has SpecificEntityAnnotation";
         const SpecificEntityAnnotation* annot = 0;
         try
         {
-          annot = annotationData->annotation(*itv,Common::Misc::utf8stdstring2limastring("SpecificEntity"))
+          annot = annotationData->annotation(*itv,QString::fromUtf8("SpecificEntity"))
             .pointerValue<SpecificEntityAnnotation>();
         }
         catch (const boost::bad_any_cast& )
@@ -404,13 +404,13 @@ LimaStatusCode AbstractIEDumper::process(
 
         // recuperer l'id du vertex morph cree
         LinguisticGraphVertex v;
-        if (!annotationData->hasIntAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph)))
+        if (!annotationData->hasIntAnnotation(*itv,QString::fromStdString(m_graph)))
         {
           //         DUMPERLOGINIT;
           //         LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it.";
           continue;
         }
-        v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(m_graph));
+        v = annotationData->intAnnotation(*itv,QString::fromStdString(m_graph));
         outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes,dumperMetadata);
       }
     }
@@ -610,7 +610,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
     for (auto& e: events) {
       e.eventMentionId=idEntity; // new entity id
       std::vector<pair<uint64_t,uint64_t> > positions;
-      LimaString eventMentionString=Lima::Common::Misc::utf8stdstring2limastring(e.eventMentionString);
+      LimaString eventMentionString=QString::fromStdString(e.eventMentionString);
       computePositions(positions,eventMentionString,e.eventMentionPosition,e.eventMentionLength);
       // if (m_outputGroups && !m_domain.empty()) {
       //   outputEntityString(out, e.eventMentionId, m_domain+"."+e.eventMentionType, eventMentionString.toUtf8().data(), positions, Automaton::EntityFeatures(), true);
@@ -832,10 +832,10 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+    if (annotationData->hasAnnotation(vx, QString::fromUtf8("SpecificEntity")))
     {
       //BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin);
-      se = annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+      se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
         pointerValue<SpecificEntityAnnotation>();
       if (se!=0) {
         return se;
@@ -855,9 +855,9 @@ getSpecificEntityAnnotation(LinguisticGraphVertex v,
 
       for (const auto& vx: matches)
       {
-        if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+        if (annotationData->hasAnnotation(vx, QString::fromUtf8("SpecificEntity")))
         {
-          se = annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+          se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
           if (se!=0) {
             return se;
@@ -883,13 +883,13 @@ outputSemanticRelationArg(const std::string& /*vertexRole*/,
 
   // get id of the corresponding vertex in analysis graph
   LinguisticGraphVertex v;
-  if (!annotationData->hasIntAnnotation(vertex,Common::Misc::utf8stdstring2limastring(m_graph)))
+  if (!annotationData->hasIntAnnotation(vertex,QString::fromStdString(m_graph)))
   {
     // DUMPERLOGINIT;
     // LDEBUG << *itv << " has no " << m_graph << " annotation. Skeeping it.";
     return "";
   }
-  v = annotationData->intAnnotation(vertex,Common::Misc::utf8stdstring2limastring(m_graph));
+  v = annotationData->intAnnotation(vertex,QString::fromStdString(m_graph));
   LinguisticAnalysisStructure::Token* vToken = tokenMap[v];
   //       LDEBUG << "SemanticRelationsXmlLogger tokenMap[" << v << "] = " << vToken;
   if (vToken == 0)
@@ -906,10 +906,10 @@ outputSemanticRelationArg(const std::string& /*vertexRole*/,
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
-    if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SpecificEntity"))) {
+    if (annotationData->hasAnnotation(*it,QString::fromUtf8("SpecificEntity"))) {
       const SpecificEntityAnnotation* annot = 0;
       try {
-        annot = annotationData->annotation(*it,Common::Misc::utf8stdstring2limastring("SpecificEntity"))
+        annot = annotationData->annotation(*it,QString::fromUtf8("SpecificEntity"))
           .pointerValue<SpecificEntityAnnotation>();
       }
       catch (const boost::bad_any_cast& e) {
@@ -953,13 +953,13 @@ outputSemanticRelations(std::ostream& out,
   boost::tie(it, it_end) = edges(annotGraph);
   for (; it != it_end; it++) {
 
-    if (annotationData->hasAnnotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    if (annotationData->hasAnnotation(*it,QString::fromUtf8("SemanticRelation")))
     {
 
       const SemanticRelationAnnotation* annot = 0;
       try
       {
-        annot = annotationData->annotation(*it,Common::Misc::utf8stdstring2limastring("SemanticRelation"))
+        annot = annotationData->annotation(*it,QString::fromUtf8("SemanticRelation"))
           .pointerValue<SemanticRelationAnnotation>();
       }
       catch (const boost::bad_any_cast& e)
@@ -999,10 +999,10 @@ getSemanticRelationAnnotation(LinguisticGraphVertex v,
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SemanticRelation")))
+    if (annotationData->hasAnnotation(vx, QString::fromUtf8("SemanticRelation")))
     {
       //BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin);
-      sr = annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SemanticRelation")).
+      sr = annotationData->annotation(vx, QString::fromUtf8("SemanticRelation")).
         pointerValue<SemanticRelationAnnotation>();
       if (sr!=0) {
         return sr;

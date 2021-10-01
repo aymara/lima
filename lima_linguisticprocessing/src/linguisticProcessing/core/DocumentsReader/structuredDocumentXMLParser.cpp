@@ -13,6 +13,7 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/Data/strwstrtools.h"
 
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 
 #include <QXmlStreamAttributes>
@@ -577,8 +578,15 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
     LDEBUG << "StructuredDocumentXMLParser::endElement: pop indexing element " << qsname;
     assert(currentElement->size() > 0);
 #endif
+    try {
     m_processor->handle ( *m_currentDocument, currentElement->front()->getText(), m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0, qsname.toUtf8().constData());
- #ifdef DEBUG_LP
+    }
+    catch(const LinguisticProcessing::LinguisticProcessingException& e)
+    {
+        DRLOGINIT;
+        LERROR << "StructuredDocumentXMLParser::endElement: error while handeling indexing element"<< qsname<< "absolute offset:" << currentElement->front()->getOffset();
+    }
+#ifdef DEBUG_LP
    LDEBUG << "StructuredDocumentXMLParser::endElement: pop indexing element handled" << qsname;
 #endif
     m_processor->endIndexing ( *m_currentDocument ); //m_processor = CoreXmlReaderClient

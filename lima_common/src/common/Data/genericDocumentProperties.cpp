@@ -95,7 +95,7 @@ GenericDocumentProperties::GenericDocumentProperties(const GenericDocumentProper
     m_d(new GenericDocumentPropertiesPrivate(*p.m_d))
 {
 }
-  
+
 //***********************************************************************
 // destructor
 //***********************************************************************
@@ -137,8 +137,8 @@ void GenericDocumentProperties::setDateIntervalValue(const std::string& propName
 
 
 std::pair<uint64_t, bool>
-GenericDocumentProperties::getIntValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getIntValue(std::string propName) const
+{
   std::map<std::string,uint64_t>::const_iterator pos = m_d->m_intValues.find(propName);
   if( pos == m_d->m_intValues.end() ) {
     return( std::pair<uint64_t, bool>(0,false) );
@@ -149,8 +149,8 @@ GenericDocumentProperties::getIntValue(std::string propName) const
 }
 
 std::pair<std::string, bool>
-GenericDocumentProperties::getStringValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getStringValue(std::string propName) const
+{
   std::map<std::string,std::string>::const_iterator pos = m_d->m_stringValues.find(propName);
   if( pos == m_d->m_stringValues.end() ) {
     return( std::pair<std::string, bool>("",false) );
@@ -161,8 +161,8 @@ GenericDocumentProperties::getStringValue(std::string propName) const
 }
 
 std::pair<QDate, bool>
-GenericDocumentProperties::getDateValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getDateValue(std::string propName) const
+{
   std::map<std::string,QDate>::const_iterator pos = m_d->m_dateValues.find(propName);
   if( pos == m_d->m_dateValues.end() ) {
     return( std::pair<QDate, bool>(QDate(),false) );
@@ -173,8 +173,8 @@ GenericDocumentProperties::getDateValue(std::string propName) const
 }
 
 std::pair<std::pair<QDate,QDate>, bool>
-GenericDocumentProperties::getDateIntervalValue(std::string propName) const 
-{ 
+GenericDocumentProperties::getDateIntervalValue(std::string propName) const
+{
   std::map<std::string,std::pair<QDate,QDate> >::const_iterator pos = m_d->m_dateIntervalValues.find(propName);
   if( pos == m_d->m_dateIntervalValues.end() ) {
     std::pair<QDate,QDate> defaultInterval;
@@ -185,7 +185,7 @@ GenericDocumentProperties::getDateIntervalValue(std::string propName) const
     return( std::pair<std::pair<QDate,QDate>, bool>((*pos).second,true) );
   }
 }
-  
+
 std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getMultipleStringPropValue(std::string propName) const {
   std::map<std::string,std::vector<std::string> >::const_iterator pos = m_d->m_multipleStringValues.find(propName);
   if( pos == m_d->m_multipleStringValues.end() ) {
@@ -238,16 +238,16 @@ std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<s
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.begin()),
     MultiValuedPropertyIterator<std::pair<std::string,float> >(m_d->m_multipleWeightedPropValues.end()) );
 }
-  
-void GenericDocumentProperties::addStringValue(const std::string& propName, 
-                                               const std::string& val) 
-{ 
+
+void GenericDocumentProperties::addStringValue(const std::string& propName,
+                                               const std::string& val)
+{
   std::map<std::string,std::vector<std::string> >::iterator pos = m_d->m_multipleStringValues.find(propName);
   if( pos == m_d->m_multipleStringValues.end() ) {
     std::vector<std::string> values;
     values.push_back(val);
     m_d->m_multipleStringValues.insert(std::pair<std::string,std::vector<std::string> >(propName,values) );
-  }  
+  }
   else {
     std::vector<std::string>& values = (*pos).second;
     auto iter = std::find(values.begin(), values.end(), val);
@@ -261,11 +261,11 @@ void GenericDocumentProperties::addStringValue(const std::string& propName,
 
 bool mypredicate(const std::pair<std::string,float>& a, const std::pair<std::string,float>& b){
   return a.first == b.first;
-} 
+}
 
-void GenericDocumentProperties::addWeightedPropValue(const std::string& propName, 
-                                               const std::pair<std::string,float>& val) 
-{ 
+void GenericDocumentProperties::addWeightedPropValue(const std::string& propName,
+                                               const std::pair<std::string,float>& val)
+{
   std::map<std::string,std::vector<std::pair<std::string,float> > >::iterator pos = m_d->m_multipleWeightedPropValues.find(propName);
   if( pos == m_d->m_multipleWeightedPropValues.end() ) {
     std::vector<std::pair<std::string,float> > values;
@@ -286,9 +286,9 @@ void GenericDocumentProperties::addWeightedPropValue(const std::string& propName
     }
 
   }
-} 
+}
 
-  
+
 //***********************************************************************
 // binary read/write functions
 //***********************************************************************
@@ -372,7 +372,7 @@ void GenericDocumentProperties::read(std::istream& file) {
 #endif
     m_d->m_intValues.insert(std::pair<std::string,uint64_t>(name,val));
   }
-  
+
   // read string properties
   file.read((char*) &size, sizeof(uint32_t));
 #ifdef DEBUG_CD
@@ -480,7 +480,7 @@ void GenericDocumentProperties::write(std::ostream& file) const {
   BOWLOGINIT;
   LDEBUG << "GenericDocumentProperties::write()";
 #endif
-  
+
   // Write integer properties
   size=m_d->m_intValues.size();
 #ifdef DEBUG_CD
@@ -496,7 +496,7 @@ void GenericDocumentProperties::write(std::ostream& file) const {
     file.write((char*) &((*it).second), sizeof(uint64_t));
   }
 //  Misc::writeStringField(file,"eoi");
-  
+
   // Write string properties
   size=m_d->m_stringValues.size();
 #ifdef DEBUG_CD
@@ -610,8 +610,13 @@ QDebug& operator << (QDebug& os, const GenericDocumentProperties& p) {
   return os;
 }
 
+QTextStream& operator << (QTextStream& os, const GenericDocumentProperties& p) {
+  p.print(os);
+  return os;
+}
+
 void GenericDocumentProperties::print(std::ostream& os) const {
-  
+
   for (std::map<std::string, uint64_t>::const_iterator it =
       m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
     {
@@ -679,7 +684,7 @@ void GenericDocumentProperties::print(std::ostream& os) const {
 
 void GenericDocumentProperties::print (QDebug& os) const
 {
-  
+
   for (std::map<std::string, uint64_t>::const_iterator it =
       m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
     {
@@ -743,6 +748,13 @@ void GenericDocumentProperties::print (QDebug& os) const
         }
       os << ";";
     }
+}
+
+void GenericDocumentProperties::print (QTextStream& qts) const
+{
+  std::ostringstream oss;
+  this->print(oss);
+  qts << QString::fromStdString(oss.str());
 }
 
 } // end namespace Misc

@@ -137,6 +137,8 @@ int main(int argc, char **argv)
 
 int run(int argc, char** argv)
 {
+  LIMA_UNUSED(argc);
+  LIMA_UNUSED(argv);
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
   auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
@@ -266,18 +268,10 @@ int run(int argc, char** argv)
     }
   }
 
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
-
   if (vm.count("availableUnits"))
   {
     listunits();
-    return SUCCESS_ID;
+    return EXIT_SUCCESS;
   }
   if (langs.size()<1)
   {
@@ -716,5 +710,4 @@ void listunits()
         }
         std::cout << std::endl;
     }
-    exit(0);
 }

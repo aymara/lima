@@ -83,7 +83,6 @@ typedef boost::color_traits<boost::default_color_type> Color;
 BowDumper::BowDumper():
    AbstractTextualAnalysisDumper(),
     m_bowGenerator(new Compounds::BowGenerator()),
-    m_handler(),
     m_graph(),
     m_allEntities(false)
 {
@@ -100,7 +99,7 @@ void BowDumper::init(
 {
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 
-  MediaId language = manager->getInitializationParameters().media;
+  m_language = manager->getInitializationParameters().media;
   try
   {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
@@ -111,7 +110,7 @@ void BowDumper::init(
   }
   try
   {
-    m_handler=unitConfiguration.getParamsValueAtKey("handler");
+    m_handlerName=unitConfiguration.getParamsValueAtKey("handler");
   }
   catch (NoSuchParam& )
   {
@@ -128,7 +127,7 @@ void BowDumper::init(
     }
   }
   catch (NoSuchParam& ) { } // ignored: optional parameter
-  m_bowGenerator->init(unitConfiguration, language);
+  m_bowGenerator->init(unitConfiguration, m_language);
 }
 
 LimaStatusCode BowDumper::process(
@@ -147,14 +146,14 @@ LimaStatusCode BowDumper::process(
 
   AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
 
-  AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
+  AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
 
 #ifdef DEBUG_LP
-  LDEBUG << "BowDumper handler will be: " << m_handler << (void*)handler;
+  LDEBUG << "BowDumper handler will be: " << m_handlerName << (void*)handler;
 #endif
   if (handler==0)
   {
-    LERROR << "BowDumper::process: handler " << m_handler << " has not been given to the core client";
+    LERROR << "BowDumper::process: handler " << m_handlerName << " has not been given to the core client";
     return MISSING_DATA;
   }
 
@@ -200,7 +199,7 @@ LimaStatusCode BowDumper::process(
   }
 
   // Exclude from the shift list XML entities preceding the offset and
-  // readjust positions regarding the beginning of the node being analyzed
+  // re-adjust positions regarding the beginning of the node being analyzed
   uint64_t offset = metadata->getStartOffset();
   QMap<uint64_t, uint64_t> localShiftFrom;
   const auto& globalShiftFrom = handler->shiftFrom();
@@ -608,7 +607,7 @@ void BowDumper::addAllEntities(
   //cerr << "seen vertices ("<< m_graph << ")=";
   //std::copy(addedEntities.begin(), addedEntities.end(),std::ostream_iterator<int>(std::cerr, " "));
   //cerr << endl;
-  
+
   // take all annotations
   AnnotationGraphVertexIt itv, itv_end;
   boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
@@ -632,7 +631,7 @@ void BowDumper::addAllEntities(
         frompos=false;
       }
       //cerr << "-> comes from graph " << graph << endl;
-      
+
       v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph));
       // vertex has already been visited during the standard bow dumper
       //cerr << "look at vertex " << v << endl;
@@ -666,9 +665,9 @@ void BowDumper::addAllEntities(
             continue;
           }
         }
-      }  
+      }
       // create the bowNamedEntity
-      boost::shared_ptr< Common::BagOfWords::BoWNamedEntity > 
+      boost::shared_ptr< Common::BagOfWords::BoWNamedEntity >
         ne=m_bowGenerator->createSpecificEntity(v,*itv,annotationData,*(anagraph->getGraph()),*(posgraph->getGraph()),offset,frompos);
       if (ne) {
         //cerr << "add new entity" << endl;

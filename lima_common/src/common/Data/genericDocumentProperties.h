@@ -82,9 +82,11 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
   void write(std::ostream& file) const;
 
   friend LIMA_DATA_EXPORT std::ostream& operator << (std::ostream&, const GenericDocumentProperties&);
+  friend LIMA_DATA_EXPORT QTextStream& operator << (QTextStream&, const GenericDocumentProperties&);
   friend LIMA_DATA_EXPORT QDebug& operator << (QDebug&, const GenericDocumentProperties&);
 
   virtual void print(std::ostream&) const;
+  virtual void print(QTextStream&) const;
   virtual void print(QDebug&) const;
 
   /**
@@ -126,11 +128,11 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
   typedef std::map<std::string,QDate>::const_iterator DatePropertiesIterator;
   std::pair<DatePropertiesIterator,DatePropertiesIterator> getDateProperties() const;
 
-   typedef std::map<std::string,std::pair<QDate,QDate> >::const_iterator DateIntervalPropertiesIterator;
+  typedef std::map<std::string,std::pair<QDate,QDate> >::const_iterator DateIntervalPropertiesIterator;
   std::pair<DateIntervalPropertiesIterator,DateIntervalPropertiesIterator> getDateIntervalProperties() const;
 
   /**
-   *  Read access functions for all "mutiple valued" perties
+   *  Read access functions for all "multiple valued" properties
    *  return an iterator of names
    *  Types may be any of (std::string) or (std::pair<std::string,float)
   **/

@@ -65,7 +65,7 @@ namespace AnalysisDumpers
 /**
 @author Benoit Mathieu
 */
-class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper 
+class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper
 {
 public:
   BowDumper();
@@ -81,17 +81,18 @@ public:
 
 protected:
   Compounds::BowGenerator* m_bowGenerator;
-  std::string m_handler;
+  std::string m_graph;
+  bool m_allEntities;
 
-  private:
-    void buildBoWText(
-      const Common::AnnotationGraphs::AnnotationData* annotationData,
-      const SyntacticAnalysis::SyntacticData* syntacticData,
-      Common::BagOfWords::BoWText& bowText,
-      AnalysisContent& analysis,
-      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-      LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-      std::set<LinguisticGraphVertex>& addedEntities) const;
+private:
+  void buildBoWText(
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const SyntacticAnalysis::SyntacticData* syntacticData,
+    Common::BagOfWords::BoWText& bowText,
+    AnalysisContent& analysis,
+    LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+    LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+    std::set<LinguisticGraphVertex>& addedEntities) const;
 
   void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -111,9 +112,7 @@ protected:
       LinguisticAnalysisStructure::AnalysisGraph* anagraph,
       LinguisticAnalysisStructure::AnalysisGraph* posgraph,
       const uint64_t offset=0) const;
-    
-  std::string m_graph;
-  bool m_allEntities;
+
 };
 
 } // AnalysisDumpers

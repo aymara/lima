@@ -104,7 +104,6 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
       LWARN << "ContentStructuredDocument::pushHierarchyChild: result was not initialized";
   }
 
-
   push_back(result );
 #ifdef DEBUG_LP
   LDEBUG << "ContentStructuredDocument::pushHierarchyChild: end";

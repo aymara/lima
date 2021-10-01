@@ -21,6 +21,7 @@
  */
 #include "CoreXmlReaderClient.h"
 
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "linguisticProcessing/client/xmlreader/XmlReaderException.h"
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 #include "common/MediaticData/mediaticData.h"
@@ -50,7 +51,7 @@ namespace XmlReader
 {
 
 CoreXmlReaderClient::CoreXmlReaderClient(Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser &configuration) :
-/*m_delegate(0),*/m_handler(0)
+/*m_delegate(0),*/m_handler(nullptr)
 {
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
@@ -308,21 +309,23 @@ void CoreXmlReaderClient::analyze(
     if(!m_documentReader->initWithString(text)) {
         XMLREADERCLIENTLOGINIT;
         LERROR << "CoreXmlReaderClient::analyze: can't init reader with text !";
-        throw XmlReaderException();
+        throw XmlReaderException("CoreXmlReaderClient::analyze: can't init reader with text !");
     }
 #ifdef DEBUG_LP
     LDEBUG << "CoreXmlReaderClient::analyze after initWithString";
 #endif
 
-//     try {
+#ifdef DEBUG_LP
+     try {
+#endif
         m_documentReader->readXMLDocument();
-        m_handler->endDocument();
-//     } catch(std::exception &e) {
-//         XMLREADERCLIENTLOGINIT;
-//         LERROR << "Error XMLreader: " << e.what();
-//         throw XmlReaderException();
-//     }
-
+#ifdef DEBUG_LP
+       } catch (const Lima::LinguisticProcessing::LinguisticProcessingException& e) {
+         XMLREADERCLIENTLOGINIT;
+         LERROR << "Error in XMLreader: " << e.what();
+     }
+#endif
+     m_handler->endDocument();
 }
 
 void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocument &contentDocument, bool isIndexing)

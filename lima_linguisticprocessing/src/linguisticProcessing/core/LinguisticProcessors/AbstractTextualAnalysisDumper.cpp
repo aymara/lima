@@ -42,7 +42,7 @@ namespace LinguisticProcessing {
 // constructors and destructors
 AbstractTextualAnalysisDumper::AbstractTextualAnalysisDumper():
 MediaProcessUnit(),
-m_language(),
+m_language(0),
 m_out(0),
 m_handlerName(),
 m_outputFile(),
