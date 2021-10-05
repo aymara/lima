@@ -8,8 +8,6 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Visual Studio 2017
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-  - job_name: Ubuntu 18.04
-    APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
 
 for:
   - matrix:
