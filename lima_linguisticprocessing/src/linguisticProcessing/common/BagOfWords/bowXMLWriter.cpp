@@ -335,9 +335,8 @@ void BoWXMLWriterPrivate::writeBoWTokenList(
   }
   else
   {
-    for (BoWText::const_iterator tok=text->begin();
-        tok!=text->end(); tok++) {
-      writeBoWToken( &**tok);
+    for (const auto& tok: *text) {
+      writeBoWToken( &*tok);
     }
   }
   decIndent();

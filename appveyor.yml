@@ -2,22 +2,22 @@ configuration: Release
 
 environment:
   matrix:
+  - job_name: Debian 10.6
+    APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Ubuntu 20.04
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Visual Studio 2017
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-  - job_name: Ubuntu 18.04
-    APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
 
 for:
   - matrix:
       only:
-        - job_name: Ubuntu 20.04
+        - job_name: Debian 10.6
     services:
       - docker
     build_script:
-      - docker build --tag travis-ubuntu20.04 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
-      - docker create -ti --name dummy travis-ubuntu20.04 bash
+      - docker build --tag debian10.6 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-debian10.6 .
+      - docker create -ti --name dummy debian10.6 bash
       - docker cp dummy:/src/lima/build ./
       - docker rm -f dummy
       - cp build/*.deb ./
@@ -39,13 +39,12 @@ for:
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
   - matrix:
       only:
-        - job_name: Ubuntu 18.04
+        - job_name: Ubuntu 20.04
     services:
       - docker
     build_script:
-      - echo ${PWD}
-      - docker build --tag travis-ubuntu18.04 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu18.04 .
-      - docker create -ti --name dummy travis-ubuntu18.04 bash
+      - docker build --tag travis-ubuntu20.04 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
+      - docker create -ti --name dummy travis-ubuntu20.04 bash
       - docker cp dummy:/src/lima/build ./
       - docker rm -f dummy
       - cp build/*.deb ./
