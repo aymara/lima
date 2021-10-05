@@ -19,9 +19,13 @@ ARG NLTK_PTB_DP_FILE
 # Setup
 RUN apt-get update -y -qq && apt-get install -y apt-utils lsb-release git gcc g++ make curl python-nltk gawk wget python3 ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm
 
+RUN wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb
+
 # Install recent cmake
 WORKDIR /cmake_build
-RUN wget https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
+RUN wget https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh -q
 RUN sh cmake-3.16.4-Linux-x86_64.sh --prefix=/usr --exclude-subdir --skip-license
 RUN cmake --version
 WORKDIR /
@@ -32,7 +36,7 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
-RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
 WORKDIR /svm_light
 RUN tar xzf ../svm_light.tar.gz
 RUN make
@@ -66,7 +70,7 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 
 # Build
 #
-RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON -DWITH_GUI=ON ..
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
 RUN ninja && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
@@ -77,5 +81,5 @@ WORKDIR /usr/share/apps/lima/tests/xmlreader
 RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
 # install github-release to be able to deploy packages
-RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
+RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
 
