@@ -2,7 +2,7 @@ configuration: Release
 
 environment:
   matrix:
-  - job_name: Debian 10.6
+  - job_name: Debian 11
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Ubuntu 20.04
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
@@ -12,12 +12,12 @@ environment:
 for:
   - matrix:
       only:
-        - job_name: Debian 10.6
+        - job_name: Debian 11
     services:
       - docker
     build_script:
-      - docker build --tag debian10.6 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-debian10.6 .
-      - docker create -ti --name dummy debian10.6 bash
+      - docker build --tag debian11 --build-arg JOB_NUMBER=1 --build-arg BRANCH=master --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-debian11 .
+      - docker create -ti --name dummy debian11 bash
       - docker cp dummy:/src/lima/build ./
       - docker rm -f dummy
       - cp build/*.deb ./
