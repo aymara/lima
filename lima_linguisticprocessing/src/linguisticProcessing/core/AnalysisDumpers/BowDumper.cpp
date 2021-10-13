@@ -604,7 +604,8 @@ void BowDumper::addAllEntities(
     const uint64_t offset) const
 {
   //cerr << "addAllEntities" << endl;
-  //cerr << "seen vertices ("<< m_graph << ")=";
+  // output does not depend on m_graph: BoWDumper always relies on PosGraph
+  //cerr << "seen vertices (PosGraph)=";
   //std::copy(addedEntities.begin(), addedEntities.end(),std::ostream_iterator<int>(std::cerr, " "));
   //cerr << endl;
 
@@ -633,35 +634,23 @@ void BowDumper::addAllEntities(
       //cerr << "-> comes from graph " << graph << endl;
 
       v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph));
-      // vertex has already been visited during the standard bow dumper
+      // vertex can have already been visited during the standard bow dumper
       //cerr << "look at vertex " << v << endl;
-      if (m_graph==graph) { // same graph
+      if (graph=="PosGraph") { // v is on PosGraph
         if (addedEntities.find(v)!=addedEntities.end()) {
           //cerr << "-> vertex " << v << " already processed" << endl;
           continue;
         }
       }
-      else {
-        // find matches between graphs
-        std::set< AnnotationGraphVertex > anaVertices = annotationData->matches(graph,v,m_graph);
-        if (anaVertices.size()==1) { // note: anaVertices size should be 0 or 1
-          AnnotationGraphVertex anaVertex= *(anaVertices.begin());
-          std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,anaVertex,"annot");
-          bool found(false);
-          for (const auto& vx: matches) {
-            //cerr << "  -> matching annotation " << vx << endl;
-            if (annotationData->hasIntAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph)))
-            {
-              LinguisticGraphVertex matchv = annotationData->intAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph));
-              //cerr << "    -> corresponding vertex " << vx << endl;
-              if (addedEntities.find(matchv)!=addedEntities.end()) {
-                //cerr << "-> vertex " << v << " has corresponding vertex "<< matchv <<" which was already processed" << endl;
-                found=true;
-                continue;
-              }
-            }
-          }
-          if (found) {
+      else { // v is on AnalysisGraph
+        // find matches between graphs to check if corresponding vertex has been treated in PosGraph
+        std::set< AnnotationGraphVertex > posVertices = annotationData->matches(graph,v,"PosGraph");
+        if (posVertices.size()==1) { // note: size should be 0 or 1
+          AnnotationGraphVertex posVertex= *(posVertices.begin());
+          // do not get fooled by the AnnotationGraphVertex type: posVertex is 
+          // the LinguisticGraphVertex matching v in the PosGraph
+          if (addedEntities.find(posVertex)!=addedEntities.end()) {
+            //cerr << "-> vertex " << v << " has corresponding vertex "<< posVertex <<" which was already processed" << endl;
             continue;
           }
         }

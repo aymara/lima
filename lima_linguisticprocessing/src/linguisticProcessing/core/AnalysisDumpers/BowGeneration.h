@@ -162,7 +162,7 @@ public:
     const LinguisticGraph& anagraph,
     const LinguisticGraph& posgraph,
     const uint64_t offset,
-    bool frompos=false) const;
+    bool frompos) const;
 
 private:
   BowGeneratorPrivate* m_d;
