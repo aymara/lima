@@ -92,7 +92,8 @@ private:
     AnalysisContent& analysis,
     LinguisticAnalysisStructure::AnalysisGraph* anagraph,
     LinguisticAnalysisStructure::AnalysisGraph* posgraph,
-    std::set<LinguisticGraphVertex>& addedEntities) const;
+    std::set<LinguisticGraphVertex>& addedEntities,
+    const uint64_t offset) const;
 
   void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
