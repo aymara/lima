@@ -11,13 +11,11 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
-ARG SOURCE_BRANCH
 ARG GITHUB_TOKEN
-ARG JOB_NUMBER
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
-ARG USE_TENSORFLOW
+ARG USE_TENSORFLOW="true"
 
 RUN apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa && apt-get update && apt-get install -y libtensorflow-for-lima-dev
 
@@ -48,7 +46,7 @@ RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(c
 RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep ubuntu18 | grep '.deb"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
 
 RUN mkdir -p /src/
-RUN git clone --recurse-submodules https://github.com/aymara/lima /src/lima
+RUN git clone --branch=$BRANCH --recurse-submodules https://github.com/aymara/lima /src/lima
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
@@ -84,6 +82,13 @@ RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | te
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
 WORKDIR /usr/share/apps/lima/tests/xmlreader
 RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+
+# install python packages necessary to use the language resources install script
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install unix_ar requests tqdm ; fi"
+
+# install English and French UD models
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
 
 RUN echo $LIMA_RESOURCES
 ENTRYPOINT ["limaserver"]
