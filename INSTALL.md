@@ -3,7 +3,9 @@
 LIMA is mutliplatform. It has been developed under GNU/Linux and ported to MS
 Windows. Its build procedure under Linux is described bellow.
 Build instructions under Windows are still to be written but can be inferred
-from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml).
+from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml). 
+This CI configuration fils contains also pointers to (hopefuly) up to date instructions 
+to build under latest stabel Debian and Ubuntu. Check them if instructions below fail.
 
 LIMA has been occasionally built on MacOS but there is no standard procedure to
 do so.
@@ -26,11 +28,16 @@ Named Entity Recognition and soon parsing too);
 
 Under Ubuntu, most of these dependencies are installed with the following packages:
 ```
-$ sudo apt-get install python-nltk gawk cmake ninja-build qt5-default libqt5xmlpatterns5 \
-libqt5xmlpatterns5-dev qttools5-dev build-essential libboost-all-dev libenchant-dev \
-mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libasan0 qml-module-qt-labs-folderlistmodel \
-libqwt-qt5-dev qtscript5-dev qtxmlpatterns5-dev-tools \
-qml-module-qt-labs-settings qtdeclarative5-dev python3-dev libenchant-dev libtre-dev
+
+$ sudo apt-get clean && sudo apt-get update && sudo apt-get install -y locales unzip bash \
+coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data \
+curl python3-nltk gawk wget python3 python3-pip ninja-build qt5-default qtbase5-dev-tools \
+libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras \
+qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev \
+libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs \
+qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 \
+qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel \
+libicu-dev libeigen3-dev -qq
 ```
 
 qhttpserver can be downloaded and installed from
@@ -60,7 +67,7 @@ Modified sources of TensorFlow are [here](https://github.com/aymara/tensorflow/t
 
 As we were not able to find a Free part of speech tagged English corpus, LIMA
 depends for analyzing English on freely available but not Free data that you
-will have to download and prepare yourself. This data is an extract of the Peen
+will have to download and prepare yourself. This data is an extract of the Penn
 treebank corpus available for fair use in the NLTK data. To install, please
 refer to http://nltk.org/data.html. Under Ubuntu this can be  done like that:
 
@@ -104,7 +111,7 @@ $ source ./setenv-lima.sh -m release
 
 Finally, from the LIMA repository root, run:
 ```bash
-$ ./gbuild.sh -m Release
+$ ./gbuild.sh -m Release -d ON
 ```
 
 By default LIMA is built with neural network-based modules (i.e. with
@@ -116,10 +123,12 @@ $ ./gbuild.sh -m Release -T
 
 This builds LIMA in release mode, assuring the best performance. To report bugs
 for example, you should build LIMA in debug mode. To do so, just omit the
-`-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`.
+`-m Release` option when invoking `setenv-lima.sh` and `gbuild.sh`. You can also use
+the `-h` option of `gbuild.sh` to see the other possibilities (deactivate packages 
+generation, optimize for your computer, etc.)
 
 After the installation of LIMA, if you have built the neural network-based
-modules (the default, see above), you can
+modules (the default, see above), you must
 [install the models](https://github.com/aymara/lima/wiki/DeepLima-beta#install-language-models)
 for one of the 60+ supported languages.
 

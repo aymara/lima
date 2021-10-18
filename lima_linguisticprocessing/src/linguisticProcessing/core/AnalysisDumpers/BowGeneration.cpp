@@ -771,7 +771,10 @@ std::vector< std::pair< boost::shared_ptr< BoWRelation >,
 #endif
       if (annotationData->hasAnnotation(*matchVertex, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
       {
-        boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,*matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
+        // corresponding vertex from analysis graph 
+        LinguisticGraphVertex matchv= annotationData->intAnnotation(*matchVertex,"AnalysisGraph");
+        boost::shared_ptr< BoWToken  > se = createSpecificEntity(matchv,*matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
+        //boost::shared_ptr< BoWToken  > se = createSpecificEntity(v,*matchVertex, annotationData, anagraph, posgraph, offsetBegin, false);
         if (se != 0)
         {
 #ifdef DEBUG_LP

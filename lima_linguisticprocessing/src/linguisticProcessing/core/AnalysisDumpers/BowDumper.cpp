@@ -192,15 +192,15 @@ LimaStatusCode BowDumper::process(
   // build BoWText from the result of the analysis
   BoWText bowText;
   bowText.lang=metadata->getMetaData("Lang");
+  uint64_t offset = metadata->getStartOffset();
   std::set<LinguisticGraphVertex> addedEntities;
-  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph,addedEntities);
+  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph,addedEntities,offset);
   if (m_allEntities) {
-    addAllEntities(annotationData,addedEntities,bowText,anagraph,posgraph);
+    addAllEntities(annotationData,addedEntities,bowText,anagraph,posgraph,offset);
   }
 
   // Exclude from the shift list XML entities preceding the offset and
   // re-adjust positions regarding the beginning of the node being analyzed
-  uint64_t offset = metadata->getStartOffset();
   QMap<uint64_t, uint64_t> localShiftFrom;
   const auto& globalShiftFrom = handler->shiftFrom();
 #ifdef DEBUG_LP
@@ -263,13 +263,12 @@ void BowDumper::buildBoWText(
     AnalysisContent& analysis,
     AnalysisGraph* anagraph,
     AnalysisGraph* posgraph,
-    std::set<LinguisticGraphVertex>& addedEntities) const
+    std::set<LinguisticGraphVertex>& addedEntities,
+    const uint64_t offset) const
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
 #endif
-
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
 
   SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
@@ -290,7 +289,7 @@ void BowDumper::buildBoWText(
         syntacticData,
         anagraph->firstVertex(),
         anagraph->lastVertex(),
-        metadata->getStartOffset(),
+        offset,
         bowText,
         addedEntities);
 
@@ -313,7 +312,7 @@ void BowDumper::buildBoWText(
                            syntacticData,
                            sentenceBegin,
                            sentenceEnd,
-                           metadata->getStartOffset(),
+                           offset,
                            bowText,
                            addedEntities);
 
@@ -360,7 +359,7 @@ void BowDumper::buildBoWText(
                                         annotationData,
                                         *anagraph->getGraph(),
                                         *posgraph->getGraph(),
-                                        metadata->getStartOffset(), visited,
+                                        offset, visited,
                                         keepAnyway);
         for (const auto& predicate: predicates)
         {
@@ -604,7 +603,8 @@ void BowDumper::addAllEntities(
     const uint64_t offset) const
 {
   //cerr << "addAllEntities" << endl;
-  //cerr << "seen vertices ("<< m_graph << ")=";
+  // output does not depend on m_graph: BoWDumper always relies on PosGraph
+  //cerr << "seen vertices (PosGraph)=";
   //std::copy(addedEntities.begin(), addedEntities.end(),std::ostream_iterator<int>(std::cerr, " "));
   //cerr << endl;
 
@@ -633,35 +633,23 @@ void BowDumper::addAllEntities(
       //cerr << "-> comes from graph " << graph << endl;
 
       v = annotationData->intAnnotation(*itv,Common::Misc::utf8stdstring2limastring(graph));
-      // vertex has already been visited during the standard bow dumper
+      // vertex can have already been visited during the standard bow dumper
       //cerr << "look at vertex " << v << endl;
-      if (m_graph==graph) { // same graph
+      if (graph=="PosGraph") { // v is on PosGraph
         if (addedEntities.find(v)!=addedEntities.end()) {
           //cerr << "-> vertex " << v << " already processed" << endl;
           continue;
         }
       }
-      else {
-        // find matches between graphs
-        std::set< AnnotationGraphVertex > anaVertices = annotationData->matches(graph,v,m_graph);
-        if (anaVertices.size()==1) { // note: anaVertices size should be 0 or 1
-          AnnotationGraphVertex anaVertex= *(anaVertices.begin());
-          std::set< AnnotationGraphVertex > matches = annotationData->matches(m_graph,anaVertex,"annot");
-          bool found(false);
-          for (const auto& vx: matches) {
-            //cerr << "  -> matching annotation " << vx << endl;
-            if (annotationData->hasIntAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph)))
-            {
-              LinguisticGraphVertex matchv = annotationData->intAnnotation(vx,Common::Misc::utf8stdstring2limastring(m_graph));
-              //cerr << "    -> corresponding vertex " << vx << endl;
-              if (addedEntities.find(matchv)!=addedEntities.end()) {
-                //cerr << "-> vertex " << v << " has corresponding vertex "<< matchv <<" which was already processed" << endl;
-                found=true;
-                continue;
-              }
-            }
-          }
-          if (found) {
+      else { // v is on AnalysisGraph
+        // find matches between graphs to check if corresponding vertex has been treated in PosGraph
+        std::set< AnnotationGraphVertex > posVertices = annotationData->matches(graph,v,"PosGraph");
+        if (posVertices.size()==1) { // note: size should be 0 or 1
+          AnnotationGraphVertex posVertex= *(posVertices.begin());
+          // do not get fooled by the AnnotationGraphVertex type: posVertex is 
+          // the LinguisticGraphVertex matching v in the PosGraph
+          if (addedEntities.find(posVertex)!=addedEntities.end()) {
+            //cerr << "-> vertex " << v << " has corresponding vertex "<< posVertex <<" which was already processed" << endl;
             continue;
           }
         }
