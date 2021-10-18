@@ -3,7 +3,9 @@
 LIMA is mutliplatform. It has been developed under GNU/Linux and ported to MS
 Windows. Its build procedure under Linux is described bellow.
 Build instructions under Windows are still to be written but can be inferred
-from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml).
+from the [Appveyor CI configuration file](https://github.com/aymara/lima/blob/master/appveyor.yml). 
+This CI configuration fils contains also pointers to (hopefuly) up to date instructions 
+to build under latest stabel Debian and Ubuntu. Check them if instructions below fail.
 
 LIMA has been occasionally built on MacOS but there is no standard procedure to
 do so.
