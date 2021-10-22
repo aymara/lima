@@ -15,12 +15,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-INCLUDE_DIRECTORIES(AFTER ${CMAKE_CURRENT_SOURCE_DIR})
+set(SOURCE_LIST
+  path_resolver.cpp
+)
 
-add_subdirectory(conllu)
-add_subdirectory(static_graph)
-add_subdirectory(convert)
-add_subdirectory(nn)
-add_subdirectory(tasks)
-add_subdirectory(version)
-add_subdirectory(helpers)
+set(HEADER_LIST
+  path_resolver.h
+)
+
+add_library(utils
+  STATIC
+  ${SOURCE_LIST}
+  ${HEADER_LIST}
+)
+
+target_link_libraries(utils
+  PRIVATE
+  Boost::filesystem
+)
+

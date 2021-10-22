@@ -90,15 +90,14 @@ protected:
   fasttext::Vector *m_vec;
 public:
 
-  FastTextVectorizer(const std::string& fn)
+  FastTextVectorizer(const std::string& fn = "")
     : m_dim(0),
       m_vec(nullptr)
   {
-    load(fn);
-    m_dim = m_fasttext.getDimension();
-    assert(m_dim > 0);
-    m_vec = new fasttext::Vector(m_dim);
-    m_vec->zero();
+    if (!fn.empty())
+    {
+      load(fn);
+    }
   }
 
   virtual ~FastTextVectorizer()
@@ -111,7 +110,17 @@ public:
 
   virtual void load(const std::string& fn)
   {
+    if (fn.empty())
+    {
+      throw std::invalid_argument("empty file name in FastTextVectorizer::load()");
+    }
     m_fasttext.loadModel(fn, false);
+
+    m_dim = m_fasttext.getDimension();
+    assert(m_dim > 0);
+    m_vec = new fasttext::Vector(m_dim);
+    assert(nullptr != m_vec);
+    m_vec->zero();
   }
 
   virtual Idx dim() const override
@@ -121,6 +130,9 @@ public:
 
   virtual void get(const std::string& value, Matrix& target, Idx time, Idx pos) const override
   {
+    assert(m_dim > 0);
+    assert(nullptr != m_vec);
+
     m_fasttext.getWordVector(*m_vec, value);
     for (int i = 0; i < m_dim; i++)
     {
@@ -139,14 +151,14 @@ protected:
   fasttext::Vector *m_vec;
 public:
 
-  FastTextVectorizer(const std::string& fn)
+  FastTextVectorizer(const std::string& fn = "")
     : m_dim(0),
       m_vec(nullptr)
   {
-    load(fn);
-    m_dim = m_fasttext.getDimension();
-    assert(m_dim > 0);
-    m_vec = new fasttext::Vector(m_dim);
+    if (!fn.empty())
+    {
+      load(fn);
+    }
   }
 
   virtual ~FastTextVectorizer()
@@ -159,7 +171,17 @@ public:
 
   virtual void load(const std::string& fn)
   {
+    if (fn.empty())
+    {
+      throw std::invalid_argument("empty file name in FastTextVectorizer::load()");
+    }
     m_fasttext.loadModel(fn);
+
+    m_dim = m_fasttext.getDimension();
+    assert(m_dim > 0);
+    m_vec = new fasttext::Vector(m_dim);
+    assert(nullptr != m_vec);
+    m_vec->zero();
   }
 
   virtual Eigen::Index dim() const override
@@ -169,6 +191,9 @@ public:
 
   virtual void get(const std::string& value, Eigen::MatrixXf& target, Eigen::Index time, Eigen::Index pos) const override
   {
+    assert(m_dim > 0);
+    assert(nullptr != m_vec);
+
     m_fasttext.getWordVector(*m_vec, value);
     auto blk = target.block(pos, time, m_dim, 1);
     for (size_t i = 0; i < m_dim; i++)

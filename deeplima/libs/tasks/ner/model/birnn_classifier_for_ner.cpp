@@ -163,6 +163,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
                                       torch::optim::Optimizer& opt,
                                       const torch::Device& device)
 {
+  set_tags(params.m_tags);
   /*int64_t num_batches = train_trainable_input.size() / seq_len;
   cerr << train_trainable_input.size() << endl;
   int64_t num_features = (int64_t)train_trainable_input.get_max_feat();

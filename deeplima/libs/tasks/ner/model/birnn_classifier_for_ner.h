@@ -50,8 +50,8 @@ public:
                             const std::string& embd_fn)
     : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, output_names, classes.get_counters()),
       m_workers(0),
-      m_embd_fn(embd_fn),
-      m_class_names(output_names)
+      m_class_names(output_names),
+      m_embd_fn(embd_fn)
   {
     m_classes = classes;
   }

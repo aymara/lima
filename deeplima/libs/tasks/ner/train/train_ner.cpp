@@ -331,16 +331,16 @@ int train_entity_tagger(const train_params_tagging_t& params)
   // Input features
   vector<CoNLLUToTorchMatrix::feature_descr_t> feat_descr;
 
+  shared_ptr<FastTextVectorizerToTorchMatrix> p_embd;
   if (params.m_embeddings_fn.size() > 0)
   {
     try
     {
-      shared_ptr<FastTextVectorizerToTorchMatrix> p
-          = shared_ptr<FastTextVectorizerToTorchMatrix>(
+      p_embd = shared_ptr<FastTextVectorizerToTorchMatrix>(
               new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
             );
-      assert(nullptr != p.get());
-      feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p });
+      assert(nullptr != p_embd.get());
+      feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
     }
     catch (const exception& e)
     {
@@ -355,6 +355,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
     }
   }
 
+  shared_ptr<DirectDict<TorchMatrix<float>>> p_eos;
   if (params.m_use_eos)
   {
     if (string::npos != params.m_tasks_string.find("eos"))
@@ -362,10 +363,9 @@ int train_entity_tagger(const train_params_tagging_t& params)
       throw std::invalid_argument("Can't use EOS as both input and output");
     }
 
-    shared_ptr<DirectDict<TorchMatrix<float>>> p
-        = shared_ptr<DirectDict<TorchMatrix<float>>>(new DirectDict<TorchMatrix<float>>(2));
-    assert(nullptr != p.get());
-    feat_descr.push_back({ CoNLLUToTorchMatrix::int_feature, "eos", p });
+    p_eos = shared_ptr<DirectDict<TorchMatrix<float>>>(new DirectDict<TorchMatrix<float>>(2));
+    assert(nullptr != p_embd.get());
+    feat_descr.push_back({ CoNLLUToTorchMatrix::int_feature, "eos", p_eos.get() });
   }
 
   vector<CoNLLUToTorchMatrix::embeddable_feature_descr_t> embd_feat_descr;
@@ -435,7 +435,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
                                   rnn_descr,
                                   feat_extractor.feats(),
                                   std::move(tag_dh),
-                                  params.m_embeddings_fn);
+                                  boost::filesystem::path(params.m_embeddings_fn).stem().string());
   }
 
   cerr << model->get_script() << endl;

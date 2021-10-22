@@ -99,6 +99,36 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
 
   parse_script(m_script); // calls "register_module"
 
+  // Load tags
+  c10::IValue v;
+  if (archive.try_read("tags", v))
+  {
+    if (!v.isGenericDict())
+    {
+      throw runtime_error("\"tags\" must be a dict of strings.");
+    }
+
+    c10::Dict<c10::IValue, c10::IValue> d = v.toGenericDict();
+    for ( const auto &it : d )
+    {
+      if (!it.key().isString())
+      {
+        cerr << "ERROR: keys in \"tags\" dict must be strings" << endl;
+      }
+      if (!it.value().isString())
+      {
+        cerr << "ERROR: values in \"tags\" dict must be strings" << endl;
+      }
+
+      if (m_tags.end() != m_tags.find(it.key().toStringRef()))
+      {
+        throw runtime_error("Duplicated tags in the model");
+      }
+
+      m_tags[it.key().toStringRef()] = it.value().toStringRef();
+    }
+  }
+
   torch::nn::Module::load(archive);
 }
 
@@ -131,6 +161,7 @@ void StaticGraphImpl::save(serialize::OutputArchive& archive) const
   {
     temp_tags.insert(it.first, it.second);
   }
+
   archive.write("tags", temp_tags);
 }
 
@@ -512,7 +543,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
   return step;
 }
 
-void StaticGraphImpl::create_arg(const std::vector<std::string>& names, const std::map<std::string, std::string>& opts)
+void StaticGraphImpl::create_arg(const std::vector<std::string>& names, const std::map<std::string, std::string>& /*opts*/)
 {
   for ( const string& name : names )
   {

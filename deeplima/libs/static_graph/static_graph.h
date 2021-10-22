@@ -113,6 +113,14 @@ public:
   virtual void load(torch::serialize::InputArchive& archive);
   virtual void save(torch::serialize::OutputArchive& archive) const;
   virtual void set_tags(const std::map<std::string, std::string>& tags);
+  virtual const std::map<std::string, std::string>& get_tags() const
+  {
+    return m_tags;
+  }
+  virtual bool has_tag(const std::string& key) const
+  {
+    return m_tags.end() != m_tags.find(key);
+  }
 
   virtual void to(torch::Device device, bool non_blocking=false) override;
 

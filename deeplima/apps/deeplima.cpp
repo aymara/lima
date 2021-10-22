@@ -26,28 +26,40 @@
 #include <functional>
 #include <boost/program_options.hpp>
 
+#include "version/version.h"
+#include "helpers/path_resolver.h"
+
 using namespace std;
 namespace po = boost::program_options;
 
-void parse_file(istream& input, const map<string, string>& models_fn, size_t threads, size_t out_fmt=1);
+void parse_file(istream& input,
+                const map<string, string>& models_fn,
+                const deeplima::PathResolver& path_resolver,
+                size_t threads,
+                size_t out_fmt=1);
 
 int main(int argc, char* argv[])
 {
+  setlocale(LC_ALL, "en_US.UTF-8");
+  cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+       << "git branch: " << deeplima::version::get_git_branch()
+       << ")" << endl;
+
   bool arg_tokenize = false, arg_tag = false, arg_entity = false;
   size_t threads = 1;
-  string input_format, output_format, tok_model, upos_model;
+  string input_format, output_format, tok_model, tag_model;
   vector<string> input_files;
 
-  po::options_description desc("DeepLima");
+  po::options_description desc("deeplima (analysis demo)");
   desc.add_options()
   ("help,h",                                                                        "Display this help message")
   ("tokenize",        po::value<bool>(&arg_tokenize)->default_value(true),          "tokenize plain text")
   ("tag",             po::value<bool>(&arg_tag)->default_value(false),              "PoS and features tagging")
   ("entity",          po::value<bool>(&arg_entity)->default_value(false),           "entity tagging")
   ("input-format",    po::value<string>(&input_format)->default_value("plain"),     "Input format: plain|conllu")
-  ("output-format",   po::value<string>(&output_format)->default_value("conllu"), "Output format: conllu|vertical|horizontal")
+  ("output-format",   po::value<string>(&output_format)->default_value("conllu"),   "Output format: conllu|vertical|horizontal")
   ("tok-model",       po::value<string>(&tok_model)->default_value(""),             "Tokenization model")
-  ("upos-model",      po::value<string>(&upos_model)->default_value(""),            "UPOS model")
+  ("tag-model",       po::value<string>(&tag_model)->default_value(""),             "Tagging model")
   ("input-file",      po::value<vector<string>>(&input_files),                      "Input file names")
   ("threads",         po::value<size_t>(&threads),                                  "Max threads to use")
   ;
@@ -68,6 +80,18 @@ int main(int argc, char* argv[])
     return -1;
   }
 
+  if (vm.count("help")) {
+      cout << desc << endl;
+      return 0;
+  }
+
+  if (tok_model.empty() && tag_model.empty())
+  {
+    cerr << "No model is provided: --tok-model or --tag-model parameters are required." << endl << endl;
+    cout << desc << endl;
+    return -1;
+  }
+
   map<string, string> models;
 
   if (tok_model.size() > 0)
@@ -75,9 +99,9 @@ int main(int argc, char* argv[])
     models["tok"] = tok_model;
   }
 
-  if (upos_model.size() > 0)
+  if (tag_model.size() > 0)
   {
-    models["upos"] = upos_model;
+    models["tag"] = tag_model;
   }
 
   size_t out_fmt = 1;
@@ -89,17 +113,19 @@ int main(int argc, char* argv[])
     }
   }
 
+  deeplima::PathResolver path_resolver;
+
   if (vm.count("input-file") > 0)
   {
-    for ( const string fn : input_files )
+    for ( const string& fn : input_files )
     {
       ifstream file(fn, ifstream::binary | ios::in);
-      parse_file(file, models, threads, out_fmt);
+      parse_file(file, models, path_resolver, threads, out_fmt);
     }
   }
   else
   {
-    parse_file(cin, models, threads, out_fmt);
+    parse_file(cin, models, path_resolver, threads, out_fmt);
   }
 
   return 0;
@@ -113,9 +139,13 @@ int main(int argc, char* argv[])
 
 using namespace deeplima;
 
-void parse_file(istream& input, const map<string, string>& models_fn, size_t threads, size_t out_fmt)
+void parse_file(istream& input,
+                const map<string, string>& models_fn,
+                const PathResolver& path_resolver,
+                size_t threads,
+                size_t out_fmt)
 {
-  cerr << "threads = " << threads << std::endl;
+  cerr << "threads = " << threads << endl;
   segmentation::ISegmentation* psegm = nullptr;
 
   if (models_fn.end() != models_fn.find("tok"))
@@ -131,10 +161,10 @@ void parse_file(istream& input, const map<string, string>& models_fn, size_t thr
 
   TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>* panalyzer = nullptr;
   dumper::AbstractDumper* pdumper = nullptr;
-  if (models_fn.end() != models_fn.find("upos"))
+  if (models_fn.end() != models_fn.find("tag"))
   {
     panalyzer
-        = new TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>(models_fn.find("upos")->second, 1024, 8);
+        = new TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>(models_fn.find("tag")->second, path_resolver, 1024, 8);
 
     psegm->register_handler([panalyzer]
                             (const vector<segmentation::token_pos>& tokens,

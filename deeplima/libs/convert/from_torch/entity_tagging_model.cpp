@@ -90,6 +90,14 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
     p->linear.push_back(Parent::m_linear[i]);
   }
   Parent::m_wb.resize(1);
+
+  // tags
+  cerr << "TAGS:" << endl;
+  for ( const auto& it : src.get_tags() )
+  {
+    cerr << "\t" << it.first << " = " << it.second << endl;
+  }
+  cerr << endl;
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)

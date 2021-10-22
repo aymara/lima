@@ -18,6 +18,7 @@
 */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -33,6 +34,8 @@
 using namespace std;
 namespace po = boost::program_options;
 
+string get_datetime_str();
+
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
@@ -42,6 +45,7 @@ int main(int argc, char* argv[])
 
   string corpus, ud_path;
   deeplima::tagging::train::train_params_tagging_t params;
+  vector<string> m_raw_tags;
 
   po::options_description desc("deeplima (train tagging model)");
   desc.add_options()
@@ -57,7 +61,7 @@ int main(int argc, char* argv[])
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
   ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
   ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
-  ("tag",               po::value<vector<string>>(&params.m_tags),      "Tags (plain text)")
+  ("tag",               po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
   ;
 
   po::variables_map vm;
@@ -73,7 +77,8 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  if (vm.count("help")) {
+  if (vm.count("help"))
+  {
       cout << desc << endl;
       return 0;
   }
@@ -95,5 +100,59 @@ int main(int argc, char* argv[])
     return -1;
   }
 
+  params.m_tags["git_commit_hash"] = deeplima::version::get_git_commit_hash();
+  params.m_tags["git_branch"] = deeplima::version::get_git_branch();
+  params.m_tags["training_start_datetime"] = get_datetime_str();
+
+  string cmd_line;
+  for (int i = 0; i < argc; i++)
+  {
+    if (!cmd_line.empty())
+    {
+      cmd_line += " ";
+    }
+    cmd_line += argv[i];
+  }
+  params.m_tags["training_cmd_line"] = cmd_line;
+
+  for ( const string& s : m_raw_tags )
+  {
+    if (s.empty())
+    {
+      continue;
+    }
+
+    string::size_type pos = s.find('=');
+    string k, v;
+    if (string::npos == pos)
+    {
+      k = s;
+    }
+    else
+    {
+      k = s.substr(0, pos);
+      v = s.substr(pos+1);
+    }
+
+    if (params.m_tags.end() != params.m_tags.find(k))
+    {
+      cerr << "Duplicated tags \"" << k << "\"" << endl;
+      return -1;
+    }
+
+    params.m_tags[k] = v;
+  }
+
   return deeplima::tagging::train::train_entity_tagger(params);
 }
+
+string get_datetime_str()
+{
+  time_t t = time(nullptr);
+  tm *ptm = localtime(&t);
+  assert(nullptr != ptm);
+  ostringstream oss;
+  oss << put_time(ptm, "%Y-%m-%d %H-%M-%S");
+  return oss.str();
+}
+

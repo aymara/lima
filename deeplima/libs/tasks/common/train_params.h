@@ -36,7 +36,7 @@ struct train_params_t
   std::string m_input_model_name; // pretrained model
   std::string m_train_set_fn;
   std::string m_dev_set_fn;
-  std::vector<std::string> m_tags;
+  std::map<std::string, std::string> m_tags;
 
   std::string m_device_string; // goes directly into Device struct constuctor
 

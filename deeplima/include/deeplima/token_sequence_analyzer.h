@@ -21,6 +21,7 @@
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
 #include "segmentation.h"
+#include "helpers/path_resolver.h"
 #include "utils/str_index.h"
 #include "token_type.h"
 #include "ner.h"
@@ -159,7 +160,7 @@ class TokenSequenceAnalyzer
                                       Matrix > EntityTaggingModule;
 
 public:
-  TokenSequenceAnalyzer(const std::string& model_fn, size_t buffer_size, size_t num_buffers)
+  TokenSequenceAnalyzer(const std::string& model_fn, const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0)
@@ -169,7 +170,7 @@ public:
     m_buffers.resize(num_buffers);
     for ( token_buffer_t& b : m_buffers ) b.resize(m_buffer_size);
 
-    m_cls.load(model_fn);
+    m_cls.load(model_fn, path_resolver);
     m_cls.init(1, num_buffers, buffer_size, m_stridx);
 
     {
@@ -213,7 +214,7 @@ public:
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        cerr << "Starting ..." << endl;
+        std::cerr << "Starting ..." << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint);
       }
       else

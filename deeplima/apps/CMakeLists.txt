@@ -26,6 +26,7 @@ target_link_libraries(deeplima-train-segm
   Boost::filesystem
   ICU::uc
   train_segmentation
+  version
 )
 
 install(TARGETS deeplima-train-segm
@@ -61,6 +62,11 @@ add_executable(deeplima-eigen
   deeplima.cpp
 )
 
+set_target_properties(deeplima-eigen
+  PROPERTIES
+  OUTPUT_NAME deeplima
+)
+
 target_compile_definitions(deeplima-eigen
   PUBLIC
   DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
@@ -74,6 +80,8 @@ target_link_libraries(deeplima-eigen
   convert_from_torch
   ${TORCH_LIBRARIES}
   fasttext-static
+  version
+  utils
 )
 
 install(TARGETS deeplima-eigen

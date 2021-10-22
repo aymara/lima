@@ -25,6 +25,8 @@
 #include "deeplima/eigen_wrp/embd_dict.h"
 #include "deeplima/utils/str_index.h"
 
+#include "helpers/path_resolver.h"
+
 namespace deeplima
 {
 namespace tagging
@@ -59,13 +61,10 @@ public:
   {
   }
 
-  virtual void load(const std::string& fn)
+  virtual void load(const std::string& fn, const PathResolver& path_resolver)
   {
     InferenceEngine::load(fn);
-  }
 
-  void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
-  {
     if (this->get_str_dicts().size())
     {
       auto z = *(this->get_str_dicts().begin());
@@ -73,18 +72,15 @@ public:
           = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
     }
 
-    std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> > sp_fastText
-        = std::shared_ptr< FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> >(
-            new FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>( InferenceEngine::get_embd_fn(0) ));
+    m_fastText.load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
+  }
 
-    sp_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+  void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
+  {
+    m_fastText.get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
 
     m_vectorizer.init_features({
-                                 //{ Vectorizer::str_feature, "lc(form)", p },
-                                 { Vectorizer::str_feature, "form", sp_fastText }
-                                 //,
-                                 //{ Vectorizer::int_feature, "eos",
-                                 //  std::shared_ptr< DirectDict<typename Matrix::matrix_t, Eigen::Index> >(new DirectDict<typename Matrix::matrix_t, Eigen::Index>(2)) }
+                                 { Vectorizer::str_feature, "form", &m_fastText }
                                });
 
     m_vectorizer.set_model(this);
@@ -94,7 +90,6 @@ public:
                           m_vectorizer.is_precomputing());
 
     m_current_timepoint = InferenceEngine::get_start_timepoint();
-
   }
 
   void precompute_inputs(const typename Vectorizer::dataset_t& buffer)
@@ -113,7 +108,7 @@ public:
 
   virtual ~TaggingImpl()
   {
-    cerr << "~TaggingImpl" << endl;
+    std::cerr << "~TaggingImpl" << std::endl;
   }
 
 protected:
@@ -154,7 +149,7 @@ public:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      cerr << "send_next_results: waiting for slot " << slot_idx
+      std::cerr << "send_next_results: waiting for slot " << slot_idx
            << " (lock_count==" << int(lock_count) << ")\n";
       InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
@@ -191,7 +186,7 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        cerr << "send_next_results: waiting for slot " << slot_idx
+        std::cerr << "send_next_results: waiting for slot " << slot_idx
              << " (lock_count==" << int(lock_count) << ")\n";
         InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
@@ -229,14 +224,14 @@ protected:
   inline void acquire_slot(size_t slot_no)
   {
     // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-    cerr << "tagging acquiring_slot: " << slot_no << endl;
+    std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      cerr << "tagging handle_timepoint, waiting for slot " << slot_no
-           << " lock_count=" << int(lock_count) << endl;
+      std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+           << " lock_count=" << int(lock_count) << std::endl;
       InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
@@ -264,7 +259,7 @@ public:
 
     InferenceEngine::set_slot_end(slot_no, offset + count);
     InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);
-    cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << endl;
+    std::cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << std::endl;
   }
 
   inline void no_more_data(size_t slot_no)
@@ -281,6 +276,7 @@ public:
 
 protected:
   Vectorizer m_vectorizer;
+  FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> m_fastText;
 
   tagging_callback_t m_callback;
 

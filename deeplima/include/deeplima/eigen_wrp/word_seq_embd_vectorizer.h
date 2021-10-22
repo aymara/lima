@@ -60,10 +60,10 @@ public:
 
   struct feature_descr_t : public feature_descr_base_t
   {
-    std::shared_ptr<FeatureVectorizerBase<Idx>> m_vectorizer; // feature extractor
+    FeatureVectorizerBase<Idx>* m_pvectorizer; // feature extractor
 
-    feature_descr_t(feature_type_t type, const std::string& name, std::shared_ptr<FeatureVectorizerBase<Idx>> vectorizer)
-      : feature_descr_base_t(type, name, 0), m_vectorizer(vectorizer) {}
+    feature_descr_t(feature_type_t type, const std::string& name, FeatureVectorizerBase<Idx>* pvectorizer)
+      : feature_descr_base_t(type, name, 0), m_pvectorizer(pvectorizer) {}
   };
 
 protected:
@@ -113,18 +113,16 @@ public:
     {
       if (int_feature == feat_descr.m_type)
       {
-        std::shared_ptr<uint_vectorizer_t> fv
-            = std::dynamic_pointer_cast<uint_vectorizer_t,
-                                        FeatureVectorizerBase<Idx>>(feat_descr.m_vectorizer);
-        assert(nullptr != fv.get());
+        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        assert(nullptr != pfv);
         size_t feat_idx = UIntFeatExtractor::get_feat_id(feat_descr.m_name);
-        m_uint_vectorizers.emplace_back(std::make_pair(fv.get(), feat_idx));
+        m_uint_vectorizers.emplace_back(std::make_pair(pfv, feat_idx));
 
         m_features_pos.push_back(m_features_size);
 
         if (0 == feat_descr.m_dim)
         {
-          m_features_size += feat_descr.m_vectorizer->dim();
+          m_features_size += feat_descr.m_pvectorizer->dim();
         }
         else
         {
@@ -137,18 +135,16 @@ public:
     {
       if (str_feature == feat_descr.m_type)
       {
-        std::shared_ptr<str_vectorizer_t> fv
-            = std::dynamic_pointer_cast<str_vectorizer_t,
-                                        FeatureVectorizerBase<Idx>>(feat_descr.m_vectorizer);
-        assert(nullptr != fv.get());
+        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        assert(nullptr != pfv);
         size_t feat_idx = StrFeatExtractor::get_feat_id(feat_descr.m_name);
-        m_str_vectorizers.emplace_back(std::make_pair(fv.get(), feat_idx));
+        m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_idx));
 
         m_features_pos.push_back(m_features_size);
 
         if (0 == feat_descr.m_dim)
         {
-          m_features_size += feat_descr.m_vectorizer->dim();
+          m_features_size += feat_descr.m_pvectorizer->dim();
         }
         else
         {
