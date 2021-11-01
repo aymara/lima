@@ -1212,7 +1212,8 @@ boost::shared_ptr< BoWNamedEntity > BowGeneratorPrivate::createSpecificEntity(
   }
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LINFO << "BowGenerator: createSpecificEntity ling:" << vertex <<"; annot:"<< v;
+  LINFO << "BowGenerator: createSpecificEntity ling:" << vertex
+        << "; annot:" << v << offset << frompos;
 #endif
   const LinguisticGraph& graph = (frompos?posgraph:anagraph);
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);

@@ -91,7 +91,8 @@ class ConllDumperPrivate
     int& tokenId,
     LinguisticGraphVertex vEndDone,
     std::map<LinguisticGraphVertex,int>& segmentationMapping,
-    const QString& neType = "");
+    const QString& neType,
+    bool first);
 
   /** Dumps an analysis graph vertex @ref v which is inside a specific entity
    * holded by pos graph vertex @ref posGraphVertex
@@ -102,7 +103,8 @@ class ConllDumperPrivate
     LinguisticGraphVertex posGraphVertex,
     int& tokenId,
     LinguisticGraphVertex vEndDone,
-    const QString& parentNeType);
+    const QString& parentNeType,
+    bool first);
 
   /** Gets the named entity type for the PosGraph vertex @ref posGraphVertex
    * if it is a specific entity. Return "_" otherwise
@@ -134,7 +136,8 @@ class ConllDumperPrivate
                        int& tokenId,
                        LinguisticGraphVertex vEndDone,
                        std::map<LinguisticGraphVertex,int>& segmentationMapping,
-                       const QString& neType);
+                       const QString& neType,
+                       bool first);
 
   /**
    * @brief Collect all annotation tokens corresponding to a predicate of the
@@ -618,7 +621,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                               v,
                               tokenId,
                               vEndDone,
-                              segmentationMapping);
+                              segmentationMapping,
+                              "",
+                              false);
 
 
 #ifdef DEBUG_LP
@@ -666,7 +671,8 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
   int& tokenId,
   LinguisticGraphVertex vEndDone,
   std::map<LinguisticGraphVertex,int>& segmentationMapping,
-  const QString& parentNeType)
+  const QString& parentNeType,
+  bool first)
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
@@ -729,7 +735,7 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     // Furthermore, named entities can be recursive...
     if (neType != "_")
     {
-      dumpNamedEntity(dstream, v, tokenId, vEndDone, segmentationMapping, neType);
+      dumpNamedEntity(dstream, v, tokenId, vEndDone, segmentationMapping, neType, first);
     }
     else
     {
@@ -746,7 +752,7 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
       QStringList miscField;
       if (neType != "_")
       {
-        miscField << (QString("NE=") + neType);
+        miscField << (QString("NE=") + (first?"B-":"I-") + neType);
       }
 
       miscField << (QString("Pos=") + QString::number(ft->position()) );
@@ -1178,12 +1184,13 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
                                          int& tokenId,
                                          LinguisticGraphVertex vEndDone,
                                          std::map<LinguisticGraphVertex,int>& segmentationMapping,
-                                         const QString& neType)
+                                         const QString& neType,
+                                         bool first)
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "ConllDumperPrivate::dumpNamedEntity" << v << tokenId << vEndDone
-          << neType;
+          << neType << first;
 #endif
   // Check if the named entity is on AnalysisGraph.
   // If so, then we have to recursively get all analysis graph tokens and
@@ -1208,9 +1215,11 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
                                              QString::fromUtf8("SpecificEntity"))
           .pointerValue<SpecificEntityAnnotation>();
         previousNeType = "O";
+        bool first = true;
         for (const auto& vse : se->vertices())
         {
-          dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping, neType);
+          dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping, neType, first);
+          first = false;
         }
 #ifdef DEBUG_LP
         LDEBUG << "ConllDumperPrivate::dumpNamedEntity return after SpecificEntity annotation on PosGraph";
@@ -1247,7 +1256,7 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
       previousNeType = "O";
       for (const auto& vse : se->vertices())
       {
-        dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType);
+        dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType, first);
       }
       previousNeType = neType;
     }
@@ -1261,7 +1270,8 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
   LinguisticGraphVertex posGraphVertex,
   int& tokenId,
   LinguisticGraphVertex vEndDone,
-  const QString& parentNeType)
+  const QString& parentNeType,
+  bool first)
 {
   LIMA_UNUSED(posGraphVertex);
 #ifdef DEBUG_LP
@@ -1273,7 +1283,7 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     || annotationData == nullptr)
   {
     DUMPERLOGINIT;
-    LERROR << "ConllDumperPrivate::dumpPosGraphVertex missing data";
+    LERROR << "ConllDumperPrivate::dumpAnalysisGraphVertex missing data";
     return MISSING_DATA;
   }
   bool notDone(true);
@@ -1332,7 +1342,7 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     QStringList miscField;
     if (neType != "_")
     {
-      miscField << (QString("NE=") + neType);
+      miscField << (QString("NE=") + (first?"B-":"I-") + neType);
     }
 
     miscField << (QString("Pos=") + QString::number(ft->position()) );

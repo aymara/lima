@@ -215,9 +215,9 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
       return path + "/" + fileName;
     }
   }
-  std::cerr << "WARNING: findFileInPaths no '" << fileName.toUtf8().constData()
-            << "' found in '" << paths.toUtf8().constData()
-            << "' separated by '" << separator.toLatin1() << "'" << std::endl;
+  LOGINIT("FilesReporting");
+  LWARN << "findFileInPaths no '" << fileName << "' found in '" << paths
+            << "' separated by '" << separator << "'";
   return QString();
 }
 

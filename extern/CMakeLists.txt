@@ -22,7 +22,7 @@ find_package(Threads REQUIRED)
 
 set(HEADER_FILES
     fastText/src/args.h
-    fastText/src/autotune.h
+    #    fastText/src/autotune.h
     fastText/src/densematrix.h
     fastText/src/dictionary.h
     fastText/src/fasttext.h
@@ -38,7 +38,7 @@ set(HEADER_FILES
 
 set(SOURCE_FILES
     fastText/src/args.cc
-    fastText/src/autotune.cc
+    #    fastText/src/autotune.cc
     fastText/src/densematrix.cc
     fastText/src/dictionary.cc
     fastText/src/fasttext.cc
