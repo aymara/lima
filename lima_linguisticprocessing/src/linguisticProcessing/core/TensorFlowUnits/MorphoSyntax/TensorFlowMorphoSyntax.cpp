@@ -373,7 +373,8 @@ void TensorFlowMorphoSyntaxPrivate::init(
 
     // Following line requires patched version of TensorFlow.
     // It only helps to increase analysis speed and can be commented out.
-    tensorflow::LocalDevice::set_use_global_threadpool(false);
+    // Commenting out to avoid problems using a non-patched TensorFlow
+//     tensorflow::LocalDevice::set_use_global_threadpool(false);
 
     tensorflow::SessionOptions options;
     tensorflow::ConfigProto & config = options.config;
