@@ -20,8 +20,11 @@ RUN apt-get update -y -qq && apt-get install -y cmake git build-essential pkg-co
 RUN wget -q https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+sourcefiles/tensorflow-for-lima/1.9-ubuntu2~18.10/tensorflow-for-lima_1.9.orig.tar.xz
 RUN tar xf tensorflow-for-lima_1.9.orig.tar.xz
 WORKDIR /tensorflow-for-lima-1.9
+COPY continuous_integration/make-set_use_global_threadpool-public.patch .
+RUN patch -p 1 < make-set_use_global_threadpool-public.patch
+RUN sed -ie 's/-generic//g' debian/rules debian/control
 RUN dpkg-buildpackage
-RUN dpkg -i /libtensorflow-for-lima-generic_1.9-ubuntu0~18.04_amd64.deb
-RUN dpkg --force-all -i /libtensorflow-for-lima-dev_1.9-ubuntu0~18.04_amd64.deb
+RUN dpkg -i /libtensorflow-for-lima_1.9-ubuntu0~18.04_amd64.deb
+RUN dpkg -i /libtensorflow-for-lima-dev_1.9-ubuntu0~18.04_amd64.deb
 RUN rm -Rf /tensorflow-for-lima-1.9
 

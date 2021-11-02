@@ -11,8 +11,9 @@ ARG NLTK_PTB_DP_FILE
 
 # Setup
 RUN apt --fix-broken install
-RUN apt-get update -y -qq && apt-get install -y gawk ninja-build
+RUN apt-get update -y -qq && apt-get install -y gawk ninja-build gettext
 
+WORKDIR /
 RUN wget -q https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz
 RUN tar xf git-2.9.5.tar.xz
 WORKDIR /git-2.9.5
@@ -62,6 +63,7 @@ COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh co
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
+RUN python3 --version
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
 WORKDIR /src/lima
@@ -98,7 +100,7 @@ RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-
 
 # install python packages necessary to use the language resources install script
 RUN apt-get install -y python3-pip -qq
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install unix_ar requests tqdm ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
 
 # install English and French UD models
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
