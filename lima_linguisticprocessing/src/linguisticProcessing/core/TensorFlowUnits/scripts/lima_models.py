@@ -103,7 +103,7 @@ def install_model(dir, fn, code, prefix_list):
                             if mo:
                                 subdir = mo.group(1)
                                 if subdir is None or len(subdir) == 0:
-                                    print(f'Error: can\'t parse \'{full_dir}\'\n',
+                                    print('Error: can\'t parse \'{}\'\n'.format(full_dir),
                                           file=sys.stderr)
                                     sys.exit(1)
                                 target_dir = os.path.join(dir, subdir)
@@ -181,8 +181,7 @@ def list_installed_models(dest=None):
             lang = find_lang_code(code)[1]
             max_lang_len = max(len(lang), max_lang_len)
 
-    print(f'Language {" " * (max_lang_len - len("Language"))}(id ) \t '
-          f'Tokenizer Lemmatizer Morphosyntax')
+    print('Language {}(id ) \t Tokenizer Lemmatizer Morphosyntax'.format(" " * (max_lang_len - len("Language"))))
     print('---')
     for code in all_installed:
         lang = 'Unknown'
@@ -195,8 +194,7 @@ def list_installed_models(dest=None):
                      if code in langs['lemm'] else '   ---   '),
             'ms': langs['ms'][code] if code in langs['ms'] else '   ---   ',
         }
-        print(f"{lang} ({code}) \t {marks['tok']} {marks['lemm']}  "
-              f"{marks['ms']}")
+        print("{} ({}) \t {} {}  {}".format(lang, code, marks['tok'], marks['lemm'], marks['ms']))
 
 
 def list_installed_languages(target_dir):
@@ -225,20 +223,19 @@ def list_installed_languages_per_module(target_dir, prefix_list):
                 if lang not in d:
                     d[lang] = []
                 if ext in d[lang]:
-                    print(f'Error: something wrong with "{f}"',
+                    print('Error: something wrong with "{}"'.format(f),
                           file=sys.stderr)
                 d[lang].append(ext)
 
     r = {}
     for lang in d:
         if lang in r:
-            print(f'Error: model for lang "{lang}" is installed twice?',
+            print('Error: model for lang "{}" is installed twice?'.format(lang),
                   file=sys.stderr)
         if 'morphosyntax' in prefix_list:
             if (len(d[lang]) != 3 or 'model' not in d[lang]
                     or 'conf' not in d[lang] or 'bin' not in d[lang]):
-                print(f'Error: model ({",".join(prefix_list)}) '
-                      f'for lang "{lang}" is installed incorrectly',
+                print('Error: model ({}) for lang "{}" is installed incorrectly'.format(",".join(prefix_list), lang),
                       file=sys.stderr)
             else:
                 r[lang] = "installed"
@@ -246,8 +243,7 @@ def list_installed_languages_per_module(target_dir, prefix_list):
             if (len(d[lang]) != 2 or 'model' not in d[lang]
                     or 'conf' not in d[lang]):
                 if 'lemmatizer' not in prefix_list or 'conf' not in d[lang]:
-                    print(f'Error: model ({",".join(prefix_list)}) '
-                          f'for lang "{lang}" is installed incorrectly',
+                    print('Error: model () for lang "{}" is installed incorrectly'.format({",".join(prefix_list)}, lang),
                           file=sys.stderr)
                 if ('lemmatizer' in prefix_list and 'conf' in d[lang]
                         and 'model' not in d[lang]):
