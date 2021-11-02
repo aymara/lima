@@ -1,0 +1,27 @@
+FROM quay.io/pypa/manylinux_2_24_x86_64
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+RUN locale
+
+ARG BRANCH=master
+ARG USE_TENSORFLOW="true"
+ARG GITHUB_TOKEN
+ARG LIMA_DISABLE_FSW_TESTING
+ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
+ARG NLTK_PTB_DP_FILE
+
+RUN apt-get update -y -qq && apt-get install -y cmake git build-essential pkg-config automake python wget
+RUN wget -q https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+sourcefiles/tensorflow-for-lima/1.9-ubuntu2~18.10/tensorflow-for-lima_1.9.orig.tar.xz
+RUN tar xf tensorflow-for-lima_1.9.orig.tar.xz
+WORKDIR /tensorflow-for-lima-1.9
+RUN dpkg-buildpackage
+RUN dpkg -i /libtensorflow-for-lima-generic_1.9-ubuntu0~18.04_amd64.deb
+RUN dpkg --force-all -i /libtensorflow-for-lima-dev_1.9-ubuntu0~18.04_amd64.deb
+RUN rm -Rf /tensorflow-for-lima-1.9
+
