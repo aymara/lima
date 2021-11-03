@@ -18,36 +18,38 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-import sys
-import re
-import os
-import json
 import argparse
+import json
+import os
+import re
+import sys
 
 
 def get_iso_639_1_code(corpus_path):
     for root, dirs, files in os.walk(corpus_path):
         for file_name in files:
-            mo = re.match('^([^_]+)_([^-]+)-([a-z]+)-([a-z]+)\.conllu', file_name)
+            mo = re.match(r"^([^_]+)_([^-]+)-([a-z]+)-([a-z]+)\.conllu", file_name)
             if mo:
                 code = mo.group(1)
                 if len(code) > 0:
                     return code
     raise
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     lang_list = json.load(open("langlist.json"))
 
-    parser = argparse.ArgumentParser(description='Find Wikipedia URL')
-    parser.add_argument('path', metavar='P', type=str, nargs='+',
-                        help='Path to UD corpus')
+    parser = argparse.ArgumentParser(description="Find Wikipedia URL")
+    parser.add_argument(
+        "path", metavar="P", type=str, nargs="+", help="Path to UD corpus"
+    )
     args = parser.parse_args()
     for path in args.path:
         lang_code = get_iso_639_1_code(path)
         if lang_code not in lang_list:
-            sys.stderr.write("Unknown language: \"%s\"\n" % (lang_code))
+            sys.stderr.write('Unknown language: "%s"\n' % (lang_code))
         else:
-            wdobjects = [ ]
+            wdobjects = []
             if len(lang_list[lang_code].keys()) > 1:
                 sys.stderr(str(lang_list[lang_code]))
                 raise
@@ -56,5 +58,8 @@ if __name__ == '__main__':
                     raise
                 for wdobj in lang_list[lang_code][iso_639_3]:
                     item = lang_list[lang_code][iso_639_3][wdobj]
-                    wmcode = item['wmcode']
-                    print("https://dumps.wikimedia.org/%swiki/latest/%swiki-latest-pages-articles.xml.bz2" % (wmcode, wmcode))
+                    wmcode = item["wmcode"]
+                    print(
+                        f"https://dumps.wikimedia.org/{wmcode}wiki/latest/"
+                        "{wmcode}wiki-latest-pages-articles.xml.bz2"
+                    )
