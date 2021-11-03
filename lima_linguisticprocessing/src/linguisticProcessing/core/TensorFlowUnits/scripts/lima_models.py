@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
+import argparse
 import os
 import re
-import argparse
-import tempfile
-import arpy
+import sys
 import tarfile
-import requests
+import tempfile
 import urllib.request
-from tqdm import tqdm
 from os import listdir
 from os.path import isfile, join
 
+import arpy
+import requests
+from tqdm import tqdm
 
-URL_DEB = "https://github.com/aymara/lima-models/releases/download/v0.1.5/lima-deep-models-%s-%s_0.1.5_all.deb"
+URL_DEB = (
+    "https://github.com/aymara/lima-models/releases/download/v0.1.5/"
+    "lima-deep-models-%s-%s_0.1.5_all.deb"
+)
 URL_C2LC = "https://raw.githubusercontent.com/aymara/lima-models/master/c2lc.txt"
 C2LC = {"lang2code": {}, "code2lang": {}}
 
@@ -100,7 +103,10 @@ def install_model(dir, fn, code, prefix_list):
                                 if name_prefix not in prefix_list:
                                     continue
                             mo = re.match(
-                                r"./usr/share/apps/lima/resources/(TensorFlow[A-Za-z\/\-\.0-9]+)",
+                                (
+                                    r"./usr/share/apps/lima/resources/"
+                                    r"(TensorFlow[A-Za-z\/\-\.0-9]+)"
+                                ),
                                 full_dir,
                             )
                             if mo:
@@ -120,8 +126,8 @@ def install_model(dir, fn, code, prefix_list):
                                             break
                                         f.write(chunk)
                                 # LIMA historically uses 'fre' for French.
-                                # This workaround adds symlinks 'fre' -> 'fra' to support
-                                # this.
+                                # This workaround adds symlinks 'fre' -> 'fra' to
+                                # support this.
                                 if code in ["fra"]:
                                     src_name = os.path.join(target_dir, name)
                                     symlink_name = re.sub(
@@ -269,9 +275,8 @@ def list_installed_languages_per_module(target_dir, prefix_list):
             if len(d[lang]) != 2 or "model" not in d[lang] or "conf" not in d[lang]:
                 if "lemmatizer" not in prefix_list or "conf" not in d[lang]:
                     print(
-                        'Error: model () for lang "{}" is installed incorrectly'.format(
-                            {",".join(prefix_list)}, lang
-                        ),
+                        'Error: model ({}) for lang "{}" is installed '
+                        "incorrectly".format(",".join(prefix_list), lang),
                         file=sys.stderr,
                     )
                 if (
