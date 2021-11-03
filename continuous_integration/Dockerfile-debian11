@@ -89,7 +89,7 @@ RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-
 
 # install python packages necessary to use the language resources install script
 RUN apt-get install -y python3-pip -qq
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install unix_ar requests tqdm ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
 
 # install English and French UD models
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"

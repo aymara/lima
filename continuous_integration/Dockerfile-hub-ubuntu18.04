@@ -65,7 +65,7 @@ ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 
 # install python packages necessary to use the language resources install script
-RUN pip3 install unix_ar requests tqdm
+RUN pip3 install arpy requests tqdm
 
 # install English and French UD models
 RUN /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/TensorFlowUnits/scripts/lima_models.py -l english
@@ -84,7 +84,7 @@ WORKDIR /usr/share/apps/lima/tests/xmlreader
 RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
 # install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install unix_ar requests tqdm ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
 
 # install English and French UD models
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
