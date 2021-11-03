@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+Please keep this file python 3.5 compatible (no f-strings, …). It is used during
+the build of the manylinux_2_24 based docker image which is based on Debian9 with this
+version of python
+"""
+
 import argparse
 import os
 import re
