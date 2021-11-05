@@ -253,6 +253,7 @@ private:
 // read part of structured document from a file, using the document buffer given as argument
 void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& reader)
 {
+  BagOfWords::BoWBlocType bt;
   switch (param.outputFormat)
   {
     case TEXT:
@@ -260,7 +261,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       TextWriterBoWDocumentHandler writer(cout);
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
+        bt = reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       break;
     }
@@ -270,7 +271,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       writer.writeBoWDocumentsHeader();
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
+          bt = reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       writer.writeBoWDocumentsFooter();
       break;
@@ -280,11 +281,17 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       SBoWStatWriter writer;
       while (! fileIn.eof())
       {
-        reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
+          bt = reader.readBoWDocumentBlock(fileIn, *document, writer, param.useIterator, param.useIndexIterator);
       }
       cout << writer << endl;
       break;
     }
+  }
+  if (bt!=BagOfWords::BoWBlocType::END_BLOC)
+  {
+    std::string err_msg = "input file ended prematurely.";
+    std::cerr << err_msg << std::endl;
+    throw LimaException(err_msg);
   }
 }
 
@@ -389,10 +396,11 @@ int run(int argc,char** argv)
 
 
   uint64_t i=1;
+  QStringList error_files;
   for (const auto& inputFile: param.files)
   {
 
-  std::cout << "\rReading file "<< i << "/" << param.files.size()
+    std::cout << "\rReading file "<< i << "/" << param.files.size()
           << " ("  << std::setiosflags(std::ios::fixed)
           << std::setprecision(2) << (i*100.0/param.files.size()) <<"%) '"
           << inputFile.toUtf8().constData() << "'" /*<< std::endl*/
@@ -408,26 +416,23 @@ int run(int argc,char** argv)
     }
 
     BoWBinaryReader reader;
-#ifndef DEBUG_LP
     try
     { // try to read the bowFile, and catch the exception in release mode
-#endif
       // Let the exception rise in debug mode,
       // so we can traceback the exception occuring location in the debugger
       reader.readHeader(fileIn);
-#ifndef DEBUG_LP
     }
     catch (exception& e)
     {
-      cerr << "Error: input file does not seem to be a BowBinary file. Skip" << endl;
+      cerr << "Error: input file does not seem to be a valid BowBinary file. Skip" << std::endl;
       fileIn.close();
       i++;
+      error_files.append(inputFile);
       continue;
     }
-#endif
 
     switch (reader.getFileType())  {
-    case BOWFILE_TEXT: {
+    case BoWFileType::BOWFILE_TEXT: {
 
       LINFO << "ReadBoWFile: file contains a BoWText";
       BoWText text;
@@ -467,7 +472,7 @@ int run(int argc,char** argv)
       fileIn.close();
       break;
     }
-    case BOWFILE_SDOCUMENT:
+    case BoWFileType::BOWFILE_SDOCUMENT:
     {
       LINFO << "ReadBoWFile: file contains a StructuredBoWDocument";
       BoWDocument* document = new BoWDocument();
@@ -475,43 +480,66 @@ int run(int argc,char** argv)
       {
         readSDocuments(fileIn, document, reader);
       }
-      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      catch (const std::exception& e)
+      {
+        std::cerr << "Error: failed to read this bow file, Skip : " << e.what() << std::endl;
+        fileIn.close();
+        ++i;
+        error_files.append(inputFile);
+        continue;
+      }
       fileIn.close();
       delete document;
       break;
     }
   /*
-    case BOWFILE_DOCUMENT: {
+    case BoWFileType::BOWFILE_DOCUMENT: {
       cerr << "ReadBoWFile: file contains a BoWDocument" << endl;
       BoWDocument* document=new BoWDocument();
       try
-        {
+      {
           BoWXMLWriter::getInstance().writeBoWDocumentsHeader(cout);
           readDocuments(fileIn,document);
           BoWXMLWriter::getInstance().writeBoWDocumentsFooter(cout);
-        }
-      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << "Error: failed to read this bow file, Skip : " << e.what() << std::endl;
+        fileIn.close();
+        ++i;
+        error_files.append(inputFile);
+        continue;
+      }
       fileIn.close();
       delete document;
       break;
     }
-    case BOWFILE_DOCUMENTST: {
+    case BoWFileType::BOWFILE_DOCUMENTST: {
       cerr << "ReadBoWFile: file contains a BoWDocumentST" << endl;
       BoWDocument* document=new BoWDocumentST();
-      try {
+      try
+      {
         BoWXMLWriter::getInstance().writeBoWDocumentsHeader(cout);
         readDocuments(fileIn,document);
         BoWXMLWriter::getInstance().writeBoWDocumentsFooter(cout);
       }
-      catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << "Error: failed to read this bow file, Skip : " << e.what() << std::endl;
+        fileIn.close();
+        ++i;
+        error_files.append(inputFile);
+        continue;
+      }
       fileIn.close();
       delete document;
       break;
     }
   */
       default: {
-        cerr << "format of file " << reader.getFileTypeString() << " not managed"
-             << endl;
+        std::cerr << "format of file " << reader.getFileTypeString() << " not managed"
+             << std::endl;
         fileIn.close();
         i++;
         continue;
@@ -520,5 +548,11 @@ int run(int argc,char** argv)
 
     i++;
   } // end of loop on inputFiles
+
+  if (error_files.size()) {
+    std::cerr << std::endl << "Errors on " << error_files.size() << " files: " << std::endl
+        << error_files.join("\n").toStdString() << std::endl;
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }

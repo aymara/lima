@@ -104,19 +104,20 @@ BoWBinaryReader::~BoWBinaryReader()
 std::string BoWBinaryReader::getFileTypeString() const
 {
     switch (m_d->m_fileType) {
-    case BOWFILE_NOTYPE:
+    case BoWFileType::BOWFILE_NOTYPE:
         return "BOWFILE_NOTYPE";
-    case BOWFILE_TEXT:
+    case BoWFileType::BOWFILE_TEXT:
         return "BOWFILE_TEXT";
-    case BOWFILE_DOCUMENT:
+    case BoWFileType::BOWFILE_DOCUMENT:
         return "BOWFILE_DOCUMENT";
-    case BOWFILE_DOCUMENTST:
+    case BoWFileType::BOWFILE_DOCUMENTST:
         return "BOWFILE_DOCUMENTST";
-    case BOWFILE_SDOCUMENT:
+    case BoWFileType::BOWFILE_SDOCUMENT:
         return "BOWFILE_SDOCUMENT";
     }
     return "";
 }
+
 
 void BoWBinaryReader::readHeader(std::istream& file)
 {
@@ -188,21 +189,21 @@ void BoWBinaryReader::readBoWText(std::istream& file,
 #endif
 }
 
-void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
+BoWBlocType BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
                      BoWDocument& document,
                      AbstractBoWDocumentHandler& handler,
                      bool useIterator,
                      bool useIndexIterator)
 {
-    BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
+  BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
 #ifdef DEBUG_LP
-    BOWLOGINIT;
-    LDEBUG << "BoWBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
+  BOWLOGINIT;
+  LDEBUG << "BoWBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
 #endif
-    // new format
-    switch ( blocType )
-    {
-    case HIERARCHY_BLOC:
+  // new format
+  switch ( blocType )
+  {
+    case BoWBlocType::HIERARCHY_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "HIERARCHY_BLOC";
@@ -212,7 +213,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.openSBoWNode(&document, elementName);
         break;
     }
-    case INDEXING_BLOC:
+    case BoWBlocType::INDEXING_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "INDEXING_BLOC";
@@ -222,7 +223,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.openSBoWIndexingNode(&document, elementName);
         break;
     }
-    case BOW_TEXT_BLOC:
+    case BoWBlocType::BOW_TEXT_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "BOW_TEXT_BLOC";
@@ -232,7 +233,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.processSBoWText(&document, useIterator, useIndexIterator);
         break;
     }
-    case NODE_PROPERTIES_BLOC:
+    case BoWBlocType::NODE_PROPERTIES_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "NODE_PROPERTIES_BLOC";
@@ -241,7 +242,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.processProperties(&document, useIterator, useIndexIterator);
         break;
     }
-    case END_BLOC:
+    case BoWBlocType::END_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "END_BLOC";
@@ -249,14 +250,14 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.closeSBoWNode();
         break;
     }
-    case DOCUMENT_PROPERTIES_BLOC:
+    case BoWBlocType::DOCUMENT_PROPERTIES_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
         LDEBUG << "DOCUMENT_PROPERTIES_BLOC";
 #endif
         break;
     }
-    case ST_BLOC:
+    case BoWBlocType::ST_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
         LDEBUG << "ST_BLOC";
@@ -264,7 +265,21 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         break;
     }
     default:;
+  }
+
+  file.peek(); // Try to read next byte to force update end-of-file flag on windows
+  if (file.eof())
+  {
+#ifdef DEBUG_LP
+    BOWLOGINIT;
+    LDEBUG << "BoWBinaryReader::readBoWDocumentBlock EOF reached but last blockType was" << blocType << getBlocTypeString(blocType);
+#endif
+    if(blocType!= BoWBlocType::END_BLOC){
+      BOWLOGINIT;
+      LERROR << "BoWBinaryReader::readBoWDocumentBlock EOF reached but last blockType was not END_BLOC :" << blocType <<  getBlocTypeString(blocType);
     }
+  }
+  return blocType;
 }
 
 boost::shared_ptr< AbstractBoWElement > BoWBinaryReader::readBoWToken(std::istream& file)
@@ -515,7 +530,7 @@ void BoWBinaryWriter::writeHeader(std::ostream& file, BoWFileType type) const
   LDEBUG << "BoWBinaryWriter::writeHeader version=" << BOW_VERSION << " ; type=" << type;
 #endif
   Misc::writeString(file,BOW_VERSION);
-  Misc::writeOneByteInt(file,type);
+  Misc::writeOneByteInt(file,static_cast<unsigned char>(type));
   // write entity types
   MediaticData::MediaticData::single().writeEntityTypes(file);
 #ifdef DEBUG_LP

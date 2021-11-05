@@ -153,30 +153,23 @@ void MultimediaBinaryReader::readBinNum(std::istream& file,
   }
 }
 
-void MultimediaBinaryReader::readMultimediaDocumentBlock(
+Common::BagOfWords::BoWBlocType MultimediaBinaryReader::readMultimediaDocumentBlock(
     std::istream& file,
     BoWDocument& document,
     MultimediaXMLWriter& handler,
     bool useIterator,
     bool useIndexIterator)
 {
-  if (file.eof())
-  {
-    BOWLOGINIT;
-    LERROR << "MultimediaBinaryReader::readMultimediaDocumentBlock EOF reached while reading";
-    return;
-  }
   BoWBlocType blocType = static_cast<BoWBlocType>(Misc::readOneByteInt(file));
 
 #ifdef DEBUG_LP
   BOWLOGINIT;
-  LDEBUG << "MultimediaBinaryReader::readBoWDocumentBlock: read blocType"
-      << (int)blocType;
+  LDEBUG << "MultimediaBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
 #endif
   // new format
   switch ( blocType )
   {
-    case HIERARCHY_BLOC:
+    case BoWBlocType::HIERARCHY_BLOC:
     {
 #ifdef DEBUG_LP
       LDEBUG << "HIERARCHY_BLOC";
@@ -187,7 +180,7 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
 //   m_content_id++;
       break;
     }
-    case INDEXING_BLOC:
+    case BoWBlocType::INDEXING_BLOC:
     {
 #ifdef DEBUG_LP
       LDEBUG << "INDEXING_BLOC";
@@ -198,7 +191,7 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
 //   m_content_id++;
       break;
     }
-    case BIN_NUM_BLOC:
+    case BoWBlocType::BIN_NUM_BLOC:
     {
 #ifdef DEBUG_LP
       LDEBUG << "BIN_NUM_BLOC";
@@ -218,7 +211,7 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
       m_content_id++;
       break;
     }
-    case BOW_TEXT_BLOC:
+    case BoWBlocType::BOW_TEXT_BLOC:
     {
   #ifdef DEBUG_LP
       LDEBUG << "BOW_TEXT_BLOC";
@@ -234,7 +227,7 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
       m_content_id++;
       break;
     }
-    case NODE_PROPERTIES_BLOC:
+    case BoWBlocType::NODE_PROPERTIES_BLOC:
     {
 #ifdef DEBUG_LP
       LDEBUG << "NODE_PROPERTIES_BLOC";
@@ -243,7 +236,7 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
       handler.processProperties(&document, useIterator, useIndexIterator);
       break;
     }
-    case END_BLOC:
+    case BoWBlocType::END_BLOC:
     {
 #ifdef DEBUG_LP
       LDEBUG << "END_BLOC";
@@ -251,14 +244,14 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
       handler.closeSNode();
       break;
     }
-    case DOCUMENT_PROPERTIES_BLOC:
+    case BoWBlocType::DOCUMENT_PROPERTIES_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
       LDEBUG << "DOCUMENT_PROPERTIES_BLOC";
 #endif
       break;
     }
-    case ST_BLOC:
+    case BoWBlocType::ST_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
       LDEBUG << "ST_BLOC";
@@ -267,6 +260,20 @@ void MultimediaBinaryReader::readMultimediaDocumentBlock(
     }
     default:;
   }
+
+  file.peek(); // Try to read next byte to force update end-of-file flag on windows
+  if (file.eof())
+  {
+#ifdef DEBUG_LP
+    BOWLOGINIT;
+    LDEBUG << "MultimediaBinaryReader::readMultimediaDocumentBlock EOF reached but last blockType was" << blocType << getBlocTypeString(blocType);
+#endif
+    if(blocType!= BoWBlocType::END_BLOC){
+      BOWLOGINIT;
+      LERROR << "MultimediaBinaryReader::readMultimediaDocumentBlock EOF reached but last blockType was not END_BLOC : " << blocType << getBlocTypeString(blocType);
+    }
+  }
+  return blocType;
 }
 
 void MultimediaXMLWriter::processSContent( const Common::Misc::GenericDocumentProperties* properties )

@@ -65,6 +65,29 @@ std::istream& operator>>(std::istream& in,BoWBlocType& blocType)
   return in;
 }
 
+std::string getBlocTypeString(BoWBlocType blocType)
+{
+    switch (blocType) {
+    case BoWBlocType::DOCUMENT_PROPERTIES_BLOC:
+        return "DOCUMENT_PROPERTIES_BLOC";
+    case BoWBlocType::BOW_TEXT_BLOC:
+        return "BOW_TEXT_BLOC";
+    case BoWBlocType::BIN_NUM_BLOC:
+        return "BIN_NUM_BLOC";
+    case BoWBlocType::ST_BLOC:
+        return "ST_BLOC";
+    case BoWBlocType::END_BLOC:
+        return "END_BLOC";
+    case BoWBlocType::NODE_PROPERTIES_BLOC:
+        return "NODE_PROPERTIES_BLOC";
+    case BoWBlocType::HIERARCHY_BLOC:
+        return "HIERARCHY_BLOC";
+    case BoWBlocType::INDEXING_BLOC:
+        return "INDEXING_BLOC";
+    }
+    return "";
+}
+
 //***********************************************************************
 // constructors
 //***********************************************************************
@@ -159,11 +182,11 @@ void BoWDocument::read(std::istream& file)
 void BoWDocument::readPart(std::istream& file, AbstractBoWXMLWriter& writer, bool useIterator, std::ostream& os)
 {
   BoWBlocType blocType = readOneByteInt(file);
-  
+
   BOWLOGINIT;
-  LDEBUG << "BoWDocument::readPart: read " 
+  LDEBUG << "BoWDocument::readPart: read "
              << (int)blocType;
-  
+
   // new format
   switch( blocType )
   {
