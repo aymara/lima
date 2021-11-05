@@ -4,6 +4,14 @@
 #include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
 
 namespace Lima {
+
+
+namespace Common {
+namespace BagOfWords {
+  enum BoWBlocType: unsigned char;
+}
+}
+
 namespace Handler {
 
 class MultimediaXMLWriterPrivate;
@@ -41,6 +49,7 @@ private:
   MultimediaXMLWriterPrivate* m_dmult;
 };
 
+
 class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryReader:
     public Common::BagOfWords::BoWBinaryReader
 {
@@ -48,7 +57,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryReader:
   MultimediaBinaryReader();
   ~MultimediaBinaryReader();
 
-  void readMultimediaDocumentBlock(std::istream& file,
+  Common::BagOfWords::BoWBlocType readMultimediaDocumentBlock(std::istream& file,
                                    Common::BagOfWords::BoWDocument& document,
                                    Handler::MultimediaXMLWriter& handler,
                                    bool useIterator,

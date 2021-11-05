@@ -23,10 +23,10 @@
  * @date       Wed Oct  8 2003
  * copyright   Copyright (C) 2003 by CEA LIST
  * Project     BagOfWords
- * 
+ *
  * @brief      bag-of-words representation of a document
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef BOWDOCUMENT_H
@@ -44,7 +44,7 @@ namespace Common
 namespace BagOfWords
 {
 
-typedef enum {
+enum BoWBlocType : unsigned char {
   DOCUMENT_PROPERTIES_BLOC,
   BOW_TEXT_BLOC,
   BIN_NUM_BLOC,
@@ -53,10 +53,13 @@ typedef enum {
   NODE_PROPERTIES_BLOC,
   HIERARCHY_BLOC,
   INDEXING_BLOC
-} BoWBlocType;
+};
 
 LIMA_BOW_EXPORT std::ostream& operator<<(std::ostream& out,const BoWBlocType& blocType);
+LIMA_BOW_EXPORT QDebug& operator<<(QDebug& out,const BoWBlocType& blocType);
 LIMA_BOW_EXPORT std::istream& operator>>(std::istream& in,BoWBlocType& blocType);
+
+std::string getBlocTypeString(BoWBlocType blocType);
 
 /**
 * @brief represent a document as a Bag Of Word, with associated document properties.
@@ -72,7 +75,7 @@ public:
   BoWDocument& operator = (const BoWDocument&);
 
   virtual void clear() override;
-  
+
   virtual void reinit() override;
 
   virtual void setProperties(const Misc::GenericDocumentProperties& properties);
@@ -93,8 +96,8 @@ private:
 };
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace BagOfWords
+} // end namespace Common
+} // end namespace Lima
 
 #endif
