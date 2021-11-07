@@ -61,7 +61,7 @@ torch::Tensor BiRnnClassifierImpl::predict(const vector<string>& output_names,
   return prediction;
 }
 
-void BiRnnClassifierImpl::predict(size_t worker_id,
+void BiRnnClassifierImpl::predict(size_t /*worker_id*/,
                                   const torch::Tensor& inputs,
                                   int64_t input_begin,
                                   int64_t input_end,
@@ -156,7 +156,7 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
                                    const map<string, torch::Tensor>& input,
                                    const torch::Tensor& target,
                                    epoch_stat_t& stat,
-                                   const torch::Device& device)
+                                   const torch::Device& /*device*/)
 {
   eval();
   auto output_map = forward(input, output_names.begin(), output_names.end());
@@ -281,7 +281,7 @@ void BiRnnClassifierImpl::train(size_t epochs,
         return;
       }
       count_below_best++;
-      if (main_task_eval.m_loss > best_eval_loss && count_below_best > 3)
+      if (main_task_eval.m_loss > best_eval_loss && count_below_best > 10)
       {
         return;
       }
@@ -326,19 +326,19 @@ void BiRnnClassifierImpl::train_batch(size_t batch_size,
   map<string, torch::Tensor> current_batch_inputs;
   split_input(input, current_batch_inputs, device);
 
-  auto target = gold.reshape({-1}).to(device);
+  auto target = gold.reshape({-1, 1}).to(device);
 
   train_batch(batch_size, seq_len, output_names, current_batch_inputs, target, opt, stat, device);
 }
 
-void BiRnnClassifierImpl::train_batch(size_t batch_size,
-                                      size_t seq_len,
+void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
+                                      size_t /*seq_len*/,
                                       const vector<string>& output_names,
                                       const map<string, torch::Tensor>& input,
                                       const torch::Tensor& target,
                                       torch::optim::Optimizer& opt,
                                       epoch_stat_t& stat,
-                                      const torch::Device& device)
+                                      const torch::Device& /*device*/)
 {
   opt.zero_grad();
 
