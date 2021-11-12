@@ -113,7 +113,7 @@ template <class M, class V, class T>
 void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForSegmentationImpl src;
-  torch::load(src, fn);
+  torch::load(src, fn, torch::Device(torch::kCPU));
 
   // ngram_descr
   m_ngram_gescr = src.get_ngram_descr();
