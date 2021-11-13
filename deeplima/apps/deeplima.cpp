@@ -41,7 +41,7 @@ void parse_file(istream& input,
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
        << "git branch: " << deeplima::version::get_git_branch()
        << ")" << endl;
 
