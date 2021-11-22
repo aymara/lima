@@ -80,7 +80,7 @@ public:
    void setLoggingLevel(Level newLevel);
    //! The default level is INFO
    Level loggingLevel() const;
-  const QString& zone() const;
+   const QString& zone() const;
 
   //! Returns true if logging level is lower than or equal to FatalLevel
   bool isLoggingEnabled() const;
