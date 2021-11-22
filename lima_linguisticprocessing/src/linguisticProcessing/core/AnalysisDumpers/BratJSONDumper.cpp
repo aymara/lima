@@ -140,6 +140,8 @@ void BratJSONDumper::outputGlobalFooter(std::ostream& os) const
   m_norms.clear();
   m_entities.clear();
   m_eventTriggers.clear();
+  m_firstRelation=true;
+  m_firstEvent=true;
 }
 
 void BratJSONDumper::outputEntitiesHeader(std::ostream& /*os*/) const
