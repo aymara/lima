@@ -210,6 +210,28 @@ std::pair<WeightedPropMultIter,WeightedPropMultIter> GenericDocumentProperties::
   }
 }
 
+bool GenericDocumentProperties::is_empty() const {
+  auto intProperties = getIntProperties();
+  if (intProperties.first != intProperties.second) return false;
+
+  auto stringProperties = getStringProperties();
+  if (stringProperties.first != stringProperties.second) return false;
+
+  auto dateProperties = getDateProperties();
+  if (dateProperties.first != dateProperties.second) return false;
+
+  auto dateIntervalProperties = getDateIntervalProperties();
+  if (dateIntervalProperties.first != dateIntervalProperties.second) return false;
+
+  auto stringPropertyNames = getStringPropertyNames();
+  if (stringPropertyNames.first != stringPropertyNames.second) return false;
+
+  auto weightedPropPropertyNames = getWeightedPropPropertyNames();
+  if (weightedPropPropertyNames.first != weightedPropPropertyNames.second) return false;
+
+  return true;
+}
+
 std::pair<GenericDocumentProperties::IntPropertiesIterator,GenericDocumentProperties::IntPropertiesIterator> GenericDocumentProperties::getIntProperties() const {
   return  std::make_pair(m_d->m_intValues.begin(),m_d->m_intValues.end());
 }
@@ -225,6 +247,7 @@ std::pair<GenericDocumentProperties::DatePropertiesIterator,GenericDocumentPrope
 std::pair<GenericDocumentProperties::DateIntervalPropertiesIterator,GenericDocumentProperties::DateIntervalPropertiesIterator> GenericDocumentProperties::getDateIntervalProperties() const {
   return  std::make_pair(m_d->m_dateIntervalValues.begin(),m_d->m_dateIntervalValues.end());
 }
+
 
 std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<std::string> > GenericDocumentProperties::getStringPropertyNames() const {
   return std::make_pair(

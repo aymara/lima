@@ -88,6 +88,7 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
   virtual void print(std::ostream&) const;
   virtual void print(QTextStream&) const;
   virtual void print(QDebug&) const;
+  virtual bool is_empty() const;
 
   /**
    *  Read access functions for "only once valued" property propName.
