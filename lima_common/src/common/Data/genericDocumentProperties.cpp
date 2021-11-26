@@ -643,19 +643,22 @@ void GenericDocumentProperties::print(std::ostream& os) const {
   for (std::map<std::string, uint64_t>::const_iterator it =
       m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
     {
-      os << (*it).first << "=" << (*it).second << ";";
+      os << (*it).first << "=" << (*it).second;
+      if(it != m_d->m_intValues.end ()) os << ";";
     }
   for (std::map<std::string, std::string>::const_iterator it =
       m_d->m_stringValues.begin (); it != m_d->m_stringValues.end ();
       it++)
     {
-      os << (*it).first << "=" << (*it).second << ";";
+      os << (*it).first << "=" << (*it).second;
+      if(it != m_d->m_stringValues.end ()) os << ";";
     }
   for (std::map<std::string, QDate>::const_iterator it =
       m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
     {
       os << (*it).first << "="
-          << (*it).second.toString ().toUtf8 ().data () << ";";
+          << (*it).second.toString ().toUtf8 ().data();
+      if(it != m_d->m_dateValues.end ()) os << ";";
     }
   for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
       m_d->m_dateIntervalValues.begin ();
@@ -663,7 +666,8 @@ void GenericDocumentProperties::print(std::ostream& os) const {
     {
       os << (*it).first << "=["
           << ((*it).second).first.toString ().toUtf8 ().data () << ","
-          << ((*it).second).second.toString ().toUtf8 ().data () << "];";
+          << ((*it).second).second.toString ().toUtf8 ().data () << "]";
+      if(it != m_d->m_dateIntervalValues.end ()) os << ";";
     }
   for (std::map<std::string, std::vector<std::string> >::const_iterator it =
       m_d->m_multipleStringValues.begin ();
@@ -681,7 +685,7 @@ void GenericDocumentProperties::print(std::ostream& os) const {
               os << "," << *vit;
             }
         }
-      os << ";";
+      if(it != m_d->m_multipleStringValues.end ()) os << ";";
     }
   for (std::map<std::string, std::vector<std::pair<std::string, float> > >::const_iterator it =
       m_d->m_multipleWeightedPropValues.begin ();
@@ -701,7 +705,7 @@ void GenericDocumentProperties::print(std::ostream& os) const {
               os << ", (" << (*vit).first << "," << (*vit).second << ")";
             }
         }
-      os << ";";
+      if(it != m_d->m_multipleWeightedPropValues.end ()) os << ";";
     }
 }
 
@@ -711,27 +715,31 @@ void GenericDocumentProperties::print (QDebug& os) const
   for (std::map<std::string, uint64_t>::const_iterator it =
       m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
     {
-      os << (*it).first << "=" << (*it).second << ";";
+      os << (*it).first << "=" << (*it).second;
+      if(it != m_d->m_intValues.end ()) os << ";";
     }
   for (std::map<std::string, std::string>::const_iterator it =
       m_d->m_stringValues.begin (); it != m_d->m_stringValues.end ();
       it++)
     {
-      os << (*it).first << "=" << (*it).second << ";";
+      os << (*it).first << "=" << (*it).second;
+      if(it != m_d->m_stringValues.end ()) os << ";";
     }
   for (std::map<std::string, QDate>::const_iterator it =
       m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
     {
       os << (*it).first << "="
-          << (*it).second.toString ().toUtf8 ().data () << ";";
+          << (*it).second.toString ().toUtf8 ().data ();
+      if(it != m_d->m_dateValues.end ()) os << ";";
     }
   for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
       m_d->m_dateIntervalValues.begin ();
       it != m_d->m_dateIntervalValues.end (); it++)
     {
       os << (*it).first << "=["
-          << ((*it).second).first.toString ().toUtf8 ().data () << ","
-          << ((*it).second).second.toString ().toUtf8 ().data () << "];";
+          << ((*it).second).first.toString ().toUtf8 ().data() << ","
+          << ((*it).second).second.toString ().toUtf8 ().data();
+      if(it != m_d->m_dateIntervalValues.end ()) os << ";";
     }
   for (std::map<std::string, std::vector<std::string> >::const_iterator it =
       m_d->m_multipleStringValues.begin ();
@@ -749,7 +757,7 @@ void GenericDocumentProperties::print (QDebug& os) const
               os << "," << *vit;
             }
         }
-      os << ";";
+      if(it != m_d->m_multipleStringValues.end ()) os << ";";
     }
   for (std::map<std::string, std::vector<std::pair<std::string, float> > >::const_iterator it =
       m_d->m_multipleWeightedPropValues.begin ();
@@ -769,7 +777,7 @@ void GenericDocumentProperties::print (QDebug& os) const
               os << ", (" << (*vit).first << "," << (*vit).second << ")";
             }
         }
-      os << ";";
+      if(it != m_d->m_multipleWeightedPropValues.end ()) os << ";";
     }
 }
 

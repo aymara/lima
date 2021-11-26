@@ -769,6 +769,6 @@ void BoWBinaryWriterPrivate::writeBoWRelation(std::ostream& file,
 }
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace BagOfWords
+} // end namespace Common
+} // end namespace Lima

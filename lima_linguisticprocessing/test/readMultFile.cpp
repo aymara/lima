@@ -65,6 +65,7 @@ FormatType readFormatType(const std::string& str)
     cerr << "format type " << str << " is not defined";
     QCoreApplication::exit(EXIT_FAILURE);
   }
+  return XML;
 }
 
 struct Param
@@ -267,7 +268,7 @@ void readSDocuments(std::istream& fileIn,
   if (bt!=BagOfWords::BoWBlocType::END_BLOC)
   {
     std::string err_msg = "input file ended prematurely.";
-    std::cerr << err_msg << std::endl;
+    std::cerr << "Error: " << err_msg << std::endl;
     throw LimaException(err_msg);
   }
   writer.writeMultimediaDocumentsFooter();
@@ -423,7 +424,7 @@ int run(int argc,char** argv)
 
 
   if (error_files.size()) {
-      std::cerr << std::endl << "Errors on " << error_files.size() << " files: " << std::endl
+      std::cerr << std::endl << "Errors on " << error_files.size() << " file(s): " << std::endl
         << error_files.join("\n").toStdString() << std::endl;
     return EXIT_FAILURE;
   }

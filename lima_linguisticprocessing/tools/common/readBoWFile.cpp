@@ -290,7 +290,7 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
   if (bt!=BagOfWords::BoWBlocType::END_BLOC)
   {
     std::string err_msg = "input file ended prematurely.";
-    std::cerr << err_msg << std::endl;
+    std::cerr << "Error: " << err_msg << std::endl;
     throw LimaException(err_msg);
   }
 }
@@ -550,7 +550,7 @@ int run(int argc,char** argv)
   } // end of loop on inputFiles
 
   if (error_files.size()) {
-    std::cerr << std::endl << "Errors on " << error_files.size() << " files: " << std::endl
+    std::cerr << std::endl << "Errors on " << error_files.size() << " file(s): " << std::endl
         << error_files.join("\n").toStdString() << std::endl;
     return EXIT_FAILURE;
   }
