@@ -597,7 +597,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         int lastTokenId = tokenId + transducedTokens[tokenId] - 1;
         LimaString tokenForm;
         auto ft = get(vertex_token,*anaGraph,v);
-        if (ft->orthographicAlternatives().size() > 0)
+        if (ft != 0 && ft->orthographicAlternatives().size() > 0)
         {
           StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
           tokenForm = (*m_d->sp)[idx];
