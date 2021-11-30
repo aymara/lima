@@ -20,4 +20,4 @@
 
 ########### next test ###############
 
-add_test(NAME TestXmlReader0 COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/test-positions.pl -language=fre -dataDir=${CMAKE_CURRENT_SOURCE_DIR}/data)
+add_test(NAME TestXmlReader0 COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/test-positions.pl -language=fre -datadir=${CMAKE_CURRENT_SOURCE_DIR}/data)
