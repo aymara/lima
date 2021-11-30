@@ -3,21 +3,27 @@
 # Perl Program created by besancon on Mon Nov  8 2004
 # Version : $Id$ 
 
-# Help mode
-if ($main::h || $main::help) {
+sub usage {
     print <<EOF;
 usage test-positions.pl [-noAnalysis] [-dataDir=<dir>] [-language=<lang>] [files]
   if files are indicated, test only on these, otherwise test on *.xml
   in data dir
 
-  -noAnalysis: do not launch analysis, use existing result
-  -datadir=.. : indicate the directory containing data \(default is 'data'\)
+  -noAnalysis  : do not launch analysis, use existing result
+  -datadir=..  : indicate the directory containing data \(default is 'data'\)
   -language=.. : indicate the language \(default is 'fre'\)
+  -h | -help  : display this help message
 EOF
-    exit 0;
 }
 
 use strict;
+
+
+# Help mode
+if ($main::h || $main::help) {
+    usage();
+    exit 0;
+}
 
 # default value for data dir
 $main::datadir="data" unless $main::datadir;
@@ -33,8 +39,17 @@ if (@ARGV==0) {
 else {
     @files=@ARGV;
 }
-print "test-xmlreader.pl\n";
-print "Input files:\n ".join(" ",@files)."\n";
+
+my $nbFiles=scalar @files;
+if ($nbFiles == 0) {
+    print "No input files provided. Abort\n";
+    usage();
+    exit 1;
+}
+
+print "test-positions.pl\n";
+print "Input files:\n ".join(", ",@files)."\n";
+
 
 my (%RefPositions);
 my $nbErrorsFile=0;
