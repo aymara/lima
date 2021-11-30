@@ -21,6 +21,7 @@ add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
   add_subdirectory(limaServer)
 endif()
+add_subdirectory(test-xmlreader)
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 

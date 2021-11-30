@@ -6,20 +6,22 @@
 # Help mode
 if ($main::h || $main::help) {
     print <<EOF;
-usage test-positions.pl [-noAnalysis] [files]
+usage test-positions.pl [-noAnalysis] [-dataDir=<dir>] [-language=<lang>] [files]
   if files are indicated, test only on these, otherwise test on *.xml
   in data dir
 
   -noAnalysis: do not launch analysis, use existing result
   -datadir=.. : indicate the directory containing data \(default is 'data'\)
+  -language=.. : indicate the language \(default is 'fre'\)
 EOF
-    exit;
+    exit 0;
 }
 
 use strict;
 
 # default value for data dir
 $main::datadir="data" unless $main::datadir;
+$main::language="fre" unless $main::language;
 
 my (@files,$file);
 
@@ -31,8 +33,8 @@ if (@ARGV==0) {
 else {
     @files=@ARGV;
 }
-
-print join(" ",@files)."\n";
+print "test-xmlreader.pl\n";
+print "Input files:\n ".join(" ",@files)."\n";
 
 my (%RefPositions);
 my $nbErrorsFile=0;
@@ -45,21 +47,25 @@ foreach $file (@files) {
     next unless &readRefPositions("$file.pos.ref",\%RefPositions);
     
     if ($main::noAnalysis) {
-        if (! -e "$file.bin") {
+        if (! -e "$file.mult") {
             print STDERR "no existing result for $file: ignored\n";
             next;
         }
     }
     else {
-        system("analyzeMultimediaXmlDocuments --language=fre $file");
+        system("analyzeXml --language=$main::language $file");
     }
 
     my $nbErrors=0;
+    my $nbTested=0;
+    my $nbTest=keys %RefPositions;
     open(FBOW,"readMultFile --output-format=xml $file.mult |");
     while (<FBOW>) {
         if (m%<bowToken id="[^\"]*" lemma="([^\"]*)" category="[^\"]*" position="([^\"]*)" length="([^\"]*)"/>%) {
             my $lemma=$1;
             my $pos=$2;
+            my $len=$3;
+            $nbTested++;
             if (! exists ${$RefPositions{$lemma}}{$pos}) {
                 print "$file:position of \"$lemma\" is $pos, should be ".
                     join(",",sort { $a <=> $b } 
@@ -69,15 +75,20 @@ foreach $file (@files) {
         }
     }
     close(FBOW);
-    if ($nbErrors) {
-        print "$file: $nbErrors errors found\n";
+    if ($nbErrors || $nbTest != $nbTested) {
+        print "$file: FAILED.\t$nbErrors errors found . $nbTested tested positions . $nbTest reference positions\n";
         $nbErrorsFile++;
     }
     else {
-        print "$file: OK\n";
+        print "$file: OK.\tValidated $nbTested/$nbTest positions of bowToken\n";;
     }
 }
 print "Errors in $nbErrorsFile file out of ".(scalar @files)."\n";
+if ($nbErrorsFile) {
+    exit 1;
+}
+exit 0;
+
 
 sub readRefPositions {
     my ($file,$RefPositions)=@_;
