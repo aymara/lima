@@ -1,7 +1,7 @@
 #!/usr/bin/perl -s
 #
 # Perl Program created by besancon on Mon Nov  8 2004
-# Version : $Id$ 
+# Version : $Id$
 
 sub usage {
     print <<EOF;
@@ -32,7 +32,7 @@ $main::language="fre" unless $main::language;
 my (@files,$file);
 
 if (@ARGV==0) {
-    opendir(DIR,$main::datadir);
+    opendir(DIR,$main::datadir) || die("Cannot open dir $main::datadir");
     @files=map {$_=$main::datadir."/".$_;} grep { /.xml$/; } readdir(DIR);
     closedir(DIR);
 }
@@ -60,7 +60,7 @@ foreach $file (@files) {
     }
     undef %RefPositions;
     next unless &readRefPositions("$file.pos.ref",\%RefPositions);
-    
+
     if ($main::noAnalysis) {
         if (! -e "$file.mult") {
             print STDERR "no existing result for $file: ignored\n";
@@ -68,13 +68,17 @@ foreach $file (@files) {
         }
     }
     else {
-        system("analyzeXml --language=$main::language $file");
+        my @args = ("analyzeXml", "--language=$main::language", "$file");
+        system(@args) == 0
+            or die "system @args failed: $?";
     }
 
     my $nbErrors=0;
     my $nbTested=0;
     my $nbTest=keys %RefPositions;
-    open(FBOW,"readMultFile --output-format=xml $file.mult |");
+    open(FBOW,"readMultFile --output-format=xml $file.mult |")
+      or die "Can't execute readMultFile pipe!";
+;
     while (<FBOW>) {
         if (m%<bowToken id="[^\"]*" lemma="([^\"]*)" category="[^\"]*" position="([^\"]*)" length="([^\"]*)"/>%) {
             my $lemma=$1;
@@ -83,7 +87,7 @@ foreach $file (@files) {
             $nbTested++;
             if (! exists ${$RefPositions{$lemma}}{$pos}) {
                 print "$file:position of \"$lemma\" is $pos, should be ".
-                    join(",",sort { $a <=> $b } 
+                    join(",",sort { $a <=> $b }
                          keys %{$RefPositions{$lemma}})."\n";
                 $nbErrors++;
             }
