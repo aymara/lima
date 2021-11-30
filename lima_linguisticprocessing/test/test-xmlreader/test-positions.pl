@@ -16,6 +16,7 @@ usage test-positions.pl [-noAnalysis] [-dataDir=<dir>] [-language=<lang>] [files
 EOF
 }
 
+use autodie qw(:all);
 use strict;
 
 
@@ -53,6 +54,13 @@ print "Input files:\n ".join(", ",@files)."\n";
 
 my (%RefPositions);
 my $nbErrorsFile=0;
+
+if (! $main::noAnalysis) {
+    my @args = ("analyzeXml", "--language=$main::language", join(" ",@files));
+    system(@args) == 0
+        or die "system @args failed: $?";
+}
+
 foreach $file (@files) {
     if (! -e "$file.pos.ref") {
         print STDERR "no reference position file for $file: ignored\n";
@@ -66,11 +74,6 @@ foreach $file (@files) {
             print STDERR "no existing result for $file: ignored\n";
             next;
         }
-    }
-    else {
-        my @args = ("analyzeXml", "--language=$main::language", "$file");
-        system(@args) == 0
-            or die "system @args failed: $?";
     }
 
     my $nbErrors=0;
