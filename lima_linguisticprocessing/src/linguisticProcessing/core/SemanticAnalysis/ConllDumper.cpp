@@ -598,6 +598,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         LimaString tokenForm;
         auto ft = get(vertex_token,*anaGraph,v);
         if (ft == 0) {
+          DUMPERLOGINIT;
           LWARN << "Empty token for vertex" << vertex_token << "in graph" << anaGraphData->getGraphId();
         }
         else if (ft->orthographicAlternatives().size() > 0)
