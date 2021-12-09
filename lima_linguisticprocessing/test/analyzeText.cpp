@@ -108,7 +108,8 @@ int main(int argc, char **argv)
     return a.exec();
 #ifndef DEBUG_LP
   }
-  catch( const InvalidConfiguration& e ) {
+  catch( const InvalidConfiguration& e )
+  {
     std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
     return UNSUPPORTED_LANGUAGE;
   }
@@ -447,6 +448,7 @@ int run(int argc, char** argv)
       std::cerr << "No file to analyze." << std::endl;
   }
 
+
   uint64_t nfile=0;
   for (const auto&  file : files)
   {
@@ -521,14 +523,30 @@ int run(int argc, char** argv)
                     << " (" << percent.toUtf8().constData()
                     << "%) lines. At " << qfile.pos();
         }
-
+#ifndef DEBUG_LP
+        try {
+#endif
         // analyze it
         client->analyze(contentText,
                         metaData,
                         pipeline,
                         handlers,
                         inactiveUnits);
-
+#ifndef DEBUG_LP
+        }
+        catch (const LinguisticProcessingException& e) {
+          std::cerr << "LinguisticProcessing error on line " << lineNum << "["
+                   << contentText.toStdString() << "]:" << e.what()
+                   << std::endl;
+          //allows the process to continue on next line
+        }
+        catch (const LimaException& e) {
+          std::cerr << "Error on line " << lineNum << "["
+                     << contentText.toStdString() << "]:" << e.what()
+                     << std::endl;
+          //allows the process to continue on next line
+        }
+#endif
       }
       qfile.close();
     }
@@ -564,19 +582,30 @@ int run(int argc, char** argv)
           // analyze it with the proper offset
           paragraph.append("\n");
           paraMetaData["StartOffset"]=std::to_string(prevpos);
+#ifndef DEBUG_LP
           try {
+#endif
+            // analyze it
             client->analyze(paragraph,
                             paraMetaData,
                             pipeline,
                             handlers,
                             inactiveUnits);
+#ifndef DEBUG_LP
           }
-          catch (LimaException& e) {
+          catch (const LinguisticProcessingException& e) {
+            std::cerr << "LinguisticProcessing error on paragraph " << numpar << "["
+                     << paragraph.toStdString() << "]:" << e.what()
+                     << std::endl;
+            //allows the process to continue on next paragraph
+          }
+          catch (const LimaException& e) {
             std::cerr << "Error on paragraph " << numpar << "["
                       << paragraph.toStdString() << "]:" << e.what()
                       << std::endl;
             //allows the process to continue on next paragraph
           }
+#endif
         }
         pos += sep.matchedLength();
         prevpos=pos;
@@ -601,8 +630,24 @@ int run(int argc, char** argv)
       TimeUtils::logElapsedTime("ReadInputFile");
       TimeUtils::updateCurrentTime();
 
-      // analyze it
-      client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+#ifndef DEBUG_LP
+      try {
+#endif
+        // analyze it
+        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+#ifndef DEBUG_LP
+      }
+      catch (const LinguisticProcessingException& e) {
+        std::cerr << "LinguisticProcessing error on document " << file << ":" << e.what()
+                 << std::endl;
+        //allows the process to continue on next file
+      }
+      catch (const LimaException& e) {
+        std::cerr << "Error on document " << file << ":" << e.what()
+                  << std::endl;
+        //allows the process to continue to next file
+      }
+#endif
     }
 
     // Close and delete opened output files

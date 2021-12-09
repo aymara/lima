@@ -450,7 +450,23 @@ int run(int argc, char** argv)
 
         // analyze
         metaData["FileName"] = fileName.toUtf8().constData();
+#ifndef DEBUG_LP
+        try {
+#endif
         client->analyze(text_s, metaData, pipeline.toUtf8().constData());
+#ifndef DEBUG_LP
+        }
+        catch (const LinguisticProcessingException& e) {
+          std::cerr << "LinguisticProcessing error on document " << fileName << ":" << e.what()
+                   << std::endl;
+          //allows the process to continue on next file
+        }
+        catch (const LimaException& e) {
+          std::cerr << "Error on document " << fileName << ":" << e.what()
+                    << std::endl;
+          //allows the process to continue to next file
+        }
+#endif
         client->releaseAnalysisHandler(handlerName);
       }
       catch(const NoSuchMap &e)
