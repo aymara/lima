@@ -668,15 +668,17 @@ void StructuredDocumentXMLParser::setCurrentByteOffset ( const unsigned int offs
 }
 
 //**********************************************************************
-bool StructuredDocumentXMLParser::characters ( const QString& ch, unsigned int parserOffset )
+bool StructuredDocumentXMLParser::characters ( const QString& ch,
+                                               unsigned int parserOffset )
 {
     QString value = ch;
 #ifdef DEBUG_LP
     DRLOGINIT;
-    LDEBUG << "StructuredDocumentXMLParser::characters" << value.left(50) << "(...), length=" << value.size() << parserOffset;
+    LDEBUG << "StructuredDocumentXMLParser::characters" << value.left(50)
+            << "(...), length=" << value.size() << parserOffset;
 #endif
 
-    AbstractStructuredDocumentElement* currentElement = m_currentDocument->back();
+    auto currentElement = m_currentDocument->back();
     currentElement->setOffset(parserOffset);
     if ( !value.isEmpty() )
     {
@@ -684,8 +686,9 @@ bool StructuredDocumentXMLParser::characters ( const QString& ch, unsigned int p
         if ( isSpecialCharacter ( firstChar ) )
         {
 #ifdef DEBUG_LP
-            LDEBUG << "StructuredDocumentXMLParser::characters: first char " << firstChar
-            << " is special character: add " << getSpecialCharSize ( firstChar )-1 << " spaces";
+            LDEBUG << "StructuredDocumentXMLParser::characters: first char "
+                    << firstChar << " is special character: add "
+                    << getSpecialCharSize ( firstChar )-1 << " spaces";
 #endif
             Lima::LimaString spaces ( getSpecialCharSize ( firstChar )-1,' ' );
             value.insert ( 1,spaces );
@@ -693,9 +696,9 @@ bool StructuredDocumentXMLParser::characters ( const QString& ch, unsigned int p
         else
         {
 #ifdef DEBUG_LP
-            LDEBUG << "StructuredDocumentXMLParser::characters: first char " << firstChar
-            << "(" << firstChar
-            << ") is not a special character";
+            LDEBUG << "StructuredDocumentXMLParser::characters: first char "
+                    << firstChar << "(" << firstChar
+                    << ") is not a special character";
 #endif
         }
         currentElement->addToCurrentOffset ( value );
