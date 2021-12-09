@@ -37,11 +37,33 @@ else ()
   # Create a file allowing LIMA to find the resource dir
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lima "")
 
+  set(OUTPUT_FILES ${CMAKE_CURRENT_BINARY_DIR}/config-minimale.SVMT
+      ${CMAKE_CURRENT_BINARY_DIR}/lima
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A0.UNK
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A1.UNK
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A2.UNK
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A3.UNK
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.A4.UNK
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.AMBP
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.DICT
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.EXP
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
+      ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
+  )
   if (SHORTEN_POR_CORPUS_FOR_SVMLEARN)
     add_custom_command(
         OUTPUT lima.A0.UNK
         COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt | head -n 100000 > corpus_por.txt
         COMMAND PERL5LIB=$ENV{PERL5LIB} ${SVMT_LEARN} config-minimale.SVMT
+        COMMAND install -d ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/SVMToolModel-por
+        COMMAND install ${OUTPUT_FILES} ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/SVMToolModel-por
         DEPENDS
           config-minimale.SVMT
           ${CMAKE_CURRENT_SOURCE_DIR}/../macmorpho.conll.txt
