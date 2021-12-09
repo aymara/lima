@@ -22,6 +22,8 @@ option(WITH_ASAN "Enable address sanitizer" OFF)
 message("WITH_ASAN=${WITH_ASAN}")
 option(WITH_ARCH "Enable architecture optimizations" OFF)
 message("WITH_ARCH=${WITH_ARCH}")
+option(WITH_DEBUG_MESSAGES "Enable debug messages" OFF)
+message("WITH_DEBUG_MESSAGES=${WITH_DEBUG_MESSAGES}")
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
