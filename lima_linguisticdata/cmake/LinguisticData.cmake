@@ -302,7 +302,7 @@ macro (COMPILE_RULES _lang _dest)
   foreach(_current ${ARGN})
     add_custom_command(
       OUTPUT ${_current}.bin
-      COMMAND install -d ${_dest}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
       COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${_dest}/${_current}.bin
       DEPENDS ${_current} compile-rules
       COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${_dest}/${_current}.bin"
@@ -598,6 +598,7 @@ macro (LIMA_PRETEST_CONFIGENV _lang)
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/default-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
     COMMAND
       ${CMAKE_COMMAND} -E copy
         ${CMAKE_BINARY_DIR}/lima_linguisticdata/rules-idiom/${_lang}/src/idiomaticExpressions-${_lang}.bin
@@ -700,6 +701,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
   endforeach (file ${${_lang}_BIN_RULES_FILES})
 endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
 
+####
 macro (ADD_SA_RULES_DEPENDS _lang)
   set(${_lang}_SA_DEPENDS_FILES)
 
@@ -712,7 +714,8 @@ macro (ADD_SA_RULES_DEPENDS _lang)
   add_custom_command(
     OUTPUT syntanaldepends
     COMMAND touch syntanaldepends
-    COMMAND install ${${_lang}_SA_DEPENDS_FILES} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis
+    COMMAND ${CMAKE_COMMAND} -E copy ${${_lang}_SA_DEPENDS_FILES} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/
     DEPENDS ${${_lang}_SA_DEPENDS_FILES}
     VERBATIM
   )
