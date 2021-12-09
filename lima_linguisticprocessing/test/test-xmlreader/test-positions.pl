@@ -3,6 +3,8 @@
 # Perl Program created by besancon on Mon Nov  8 2004
 # Version : $Id$
 
+print("PATH: "+$ENV{PATH}+"\n");
+
 sub usage {
     print <<EOF;
 usage test-positions.pl [-noAnalysis] [-dataDir=<dir>] [-language=<lang>] [files]
@@ -57,7 +59,7 @@ my $nbErrorsFile=0;
 
 if (! $main::noAnalysis) {
     my @args = ("analyzeXml", "--language=$main::language", join(" ",@files));
-    system(@args) == 0
+    system(join(" ",@args)) == 0
         or die "system @args failed: $?";
 }
 

@@ -401,7 +401,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
   if (!file.good())
   {
     TOKENIZERLOADERLOGINIT;
-    LERROR << "Unable to open" << fileName;
+    LERROR << " CharChart::loadFromFile Unable to open" << fileName;
     return false;
   }
   std::string str;
