@@ -143,7 +143,7 @@ else
     current_timestamp=1
 fi
 current_project=`basename $PWD`
-current_project_name="`head -n1 CMakeLists.txt`"
+current_project_name="$(head -n2 CMakeLists.txt | tail -n1)"
 build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
@@ -262,6 +262,7 @@ cmake  -G "$generator" \
 echo "Running make command:"
 echo "$make_cmd"
 eval $make_cmd && eval $make_test && eval $make_install
+
 result=$?
 if [ $WITH_PACK == "ON" ] ;
 then
@@ -270,12 +271,6 @@ then
 fi
 
 #exit $result
-
-if [ "x$current_project_name" != "xproject(Lima)" ];
-then
-  eval $make_test && eval $make_install
-  result=$?
-fi
 
 if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
 then
