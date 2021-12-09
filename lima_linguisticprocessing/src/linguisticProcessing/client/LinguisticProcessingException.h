@@ -32,9 +32,25 @@ namespace LinguisticProcessing {
 
 class LinguisticProcessingException : public LimaException  {
   public:
-    explicit LinguisticProcessingException(const std::string& mess = ""):
+    explicit LinguisticProcessingException(const char* mess):
+      LimaException(mess) {};
+    explicit LinguisticProcessingException(const std::string& mess):
+      LimaException(mess) {};
+    explicit LinguisticProcessingException(const QString& mess):
       LimaException(mess) {};
 };
+
+/**
+ * This macro writes the message @ref X to a previously configured error stream
+ * before throwing a LinguisticProcessingException with the same message
+ */
+#define LIMA_LP_EXCEPTION(X) { \
+    QString errorString; \
+    QTextStream qts(&errorString); \
+    qts << __FILE__ << ":" << __LINE__ << ": " << X ; \
+    LERROR << errorString; \
+    throw LinguisticProcessingException(errorString); \
+}
 
 } // LinguisticProcessing
 } // Lima

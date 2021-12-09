@@ -200,7 +200,7 @@ operator()(RecognizerMatch& m,
               values.push_back(value);
               hasNumericValue=true;
             }
-            catch (boost::bad_any_cast) {
+            catch (const boost::bad_any_cast& e) {
               // check if it is a string containing a number (may be the case if a setEntityFeature
               // has been used explicitely in a rule
               std::string strval=(*f).getValueString();

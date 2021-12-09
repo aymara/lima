@@ -252,8 +252,8 @@ void CoreLinguisticProcessingClient::analyze(
 #endif
   if (status!=SUCCESS_ID)
   {
-    LIMA_EXCEPTION( "analysis failed : receive status " << (int)status
-                    << " from pipeline. exit" );
+      LIMA_LP_EXCEPTION( "analysis failed : receive status " << (int)status
+                         << " from pipeline." );
   }
 }
 

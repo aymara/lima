@@ -315,12 +315,15 @@ void CoreXmlReaderClient::analyze(
     LDEBUG << "CoreXmlReaderClient::analyze after initWithString";
 #endif
 
-#ifdef DEBUG_LP
+#ifndef DEBUG_LP
      try {
 #endif
         m_documentReader->readXMLDocument();
-#ifdef DEBUG_LP
-       } catch (const Lima::LinguisticProcessing::LinguisticProcessingException& e) {
+#ifndef DEBUG_LP
+     } catch (const Lima::LinguisticProcessing::LinguisticProcessingException& e) {
+         XMLREADERCLIENTLOGINIT;
+         LERROR << "Error in XMLreader: " << e.what();
+     } catch (const Lima::LimaException& e) {
          XMLREADERCLIENTLOGINIT;
          LERROR << "Error in XMLreader: " << e.what();
      }

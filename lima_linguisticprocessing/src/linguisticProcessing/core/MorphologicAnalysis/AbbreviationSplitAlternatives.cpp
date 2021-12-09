@@ -88,7 +88,7 @@ m_charSplitRegexp()
   // default split regexp: split on simple quote or UTF-8 right quotation mark
   LimaString quotes=Common::Misc::utf8stdstring2limastring("['’]");
   m_charSplitRegexp=QRegExp(quotes);
-  
+
 }
 
 AbbreviationSplitAlternatives::~AbbreviationSplitAlternatives()
@@ -143,7 +143,7 @@ void AbbreviationSplitAlternatives::init(
     LERROR << "no list 'abbreviations' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  
+
   FlatTokenizer::CharChart* charChart(0);
   try
   {
@@ -179,7 +179,7 @@ void AbbreviationSplitAlternatives::init(
     LWARN << "use default value : 'true'";
     m_confidentMode=true;
   }
-  
+
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   m_reader=new AlternativesReader(m_confidentMode,true,true,true,charChart,sp);
 
@@ -209,7 +209,7 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
     }
     analysis.setData("AnnotationData",annotationData);
   }
-  
+
   try
   {
 
@@ -220,14 +220,14 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
       MorphoSyntacticData* currentData = dataMap[*it];
       if (currentData == 0) continue;
       Token* currentToken= tokenMap[*it];
-      
+
       /**
       * Le possessif prevaut sur le traitement des formes concatenees (it's).
       * En mode confiance, le 's est systematiquement traite comme un possessif lorsque
       * la forme n'a pas ete trouvee dans le dictionaire. En mode non confiance, on
       * laisse l'ambiguite
       */
-      
+
       bool isSplitted=false;
       if (m_confidentMode)
       {
@@ -238,7 +238,7 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         if (currentToken->status().isAlphaPossessive())
         {
           isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
-        } 
+        }
         // On ne traite la forme comme une abbreviation, uniquement si elle n'a pas ete
         // traitee comme un possessif
         if ((!isSplitted) && currentToken->status().isAlphaConcatAbbrev())
@@ -252,14 +252,14 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         if (currentToken->status().isAlphaPossessive())
         {
           isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
-        } 
+        }
         // On traite la forme comme une abbreviation, meme si elle a ete traitee comme un possessif
         if (currentToken->status().isAlphaConcatAbbrev())
         {
           isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData) || isSplitted;
         }
       }
-      
+
       // si la forme a ete decoupee, alors on supprime le vertex d'origine
       if (isSplitted)
       {
@@ -291,7 +291,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   Token* ftok = tokenMap[splitted];
   const LimaString& ft = ftok->stringForm();
   LDEBUG << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
-  
+
   //int aposPos = ft.indexOf(Common::Misc::utf8stdstring2limastring("'"), 0);
   int aposPos = ft.indexOf(m_charSplitRegexp, 0);
   //LDEBUG << "AbbreviationSplitAlternatives: split chars found at " << aposPos;
@@ -335,11 +335,11 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
     {
       MORPHOLOGINIT;
       LERROR << "AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor : no token forward !";
-      throw LinguisticProcessingException();
+      throw LinguisticProcessingException("AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternativeFor : no token forward !");
     }
     firstToken=*adjItr;
   }
-  
+
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   Token* tokenizerToken = new Token(*(get(vertex_token,*tokGraph,firstToken)));
   MorphoSyntacticData* tokenizerData = new MorphoSyntacticData();
@@ -352,7 +352,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
     &tokDataHandler,
     0,
     &tokDataHandler);
-  
+
   LinguisticGraphVertex beforeVertex = add_vertex(*graph);
   put(vertex_token,*graph,beforeVertex,tokenizerToken);
   put(vertex_data,*graph,beforeVertex,tokenizerData);
@@ -360,13 +360,13 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   AnnotationGraphVertex agv =  annotationData->createAnnotationVertex();
   annotationData->addMatching("AnalysisGraph", beforeVertex, "annot", agv);
   annotationData->annotate(agv, "AnalysisGraph", beforeVertex);
-  
-  
+
+
   // insert the second abreviated word
   StringsPoolIndex abbrevId=sp[abbrev];
   Token* newFT = new Token(abbrevId,abbrev,tokenizerToken->position()+tokenizerToken->length(),abbrev.size(),ftok->status());
   MorphoSyntacticData* newData = new MorphoSyntacticData();
-  
+
   // retrieve ling infos for abbreviated word
   DictionaryEntry entry(m_dictionary->getEntry(newFT->form(),newFT->stringForm()));
   if (!entry.isEmpty())
@@ -402,7 +402,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   AnnotationGraphVertex agvafter =  annotationData->createAnnotationVertex();
   annotationData->addMatching("AnalysisGraph", afterVertex, "annot", agvafter);
   annotationData->annotate(agvafter, "AnalysisGraph", afterVertex);
-  
+
   // links the first newly created vertex to the predecessors of the old vertex
   LinguisticGraphInEdgeIt itie, itie_end;
   boost::tie(itie, itie_end) = in_edges(splitted, *graph);
@@ -434,7 +434,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   Token* ftok = tokenMap[splitted];
   const LimaString& ft = ftok->stringForm();
   LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor " << Common::Misc::limastring2utf8stdstring(ft);
-  
+
   //int aposPos = ft.indexOf(LimaChar('\''), 0);
   int aposPos = ft.indexOf(m_charSplitRegexp, 0);
   if (aposPos==-1 || aposPos==0) return false;
@@ -446,7 +446,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   {
     return false;
   }
-  
+
   // submit first string to Tokenizer
   LimaStringText* possessivedWordText=new LimaStringText(possessivedWord);
   AnalysisContent toTokenize;
@@ -470,7 +470,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
     {
       MORPHOLOGINIT;
       LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor : no token forward !";
-      throw LinguisticProcessingException();
+      throw LinguisticProcessingException("AbbreviationSplitAlternatives::makePossessiveAlternativeFor : no token forward !");
     }
     firstToken=*adjItr;
   }
@@ -494,7 +494,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   AnnotationGraphVertex agvposs =  annotationData->createAnnotationVertex();
   annotationData->addMatching("AnalysisGraph", possessivedVertex, "annot", agvposs);
   annotationData->annotate(agvposs, "AnalysisGraph", possessivedVertex);
-  
+
   // links the newly created vertex to the predecessors of the old vertex
   LinguisticGraphInEdgeIt itie, itie_end;
   boost::tie(itie, itie_end) = in_edges(splitted, *graph);

@@ -326,7 +326,7 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
     {
       MORPHOLOGINIT;
       LERROR << "HypenWordAlternatives : no token forward !";
-      throw LinguisticProcessingException();
+      throw LinguisticProcessingException("HypenWordAlternatives : no token forward !");
     }
     currentVx=*adjItr;
   }
@@ -425,7 +425,7 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
     {
       MORPHOLOGINIT;
       LERROR << "HypenWordAlternatives : no token forward !";
-      throw LinguisticProcessingException();
+      throw LinguisticProcessingException("HypenWordAlternatives : no token forward !");
     }
     currentVx=*adjItr;
     tokenizerToken=tokTokenMap[currentVx];

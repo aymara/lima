@@ -293,7 +293,6 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       // if token is a newline, the SVMToolPosTagger will fail, replace it by
       // Unicode char U+200B ZERO WIDTH SPACE
       if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
-
       token.replace(" ", "_");
       std::ostringstream lineoss("");
       lineoss << token.toStdString() << " (";
@@ -410,7 +409,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     {
       PTLOGINIT;
       LERROR << "Error in SVMTagger result alignement with analysis graph: got '"
-              << elements[0] << "' from SVMTagger and '"
+              << elements[0] << "' with tag '"<< elements[1] <<"' from SVMTagger and '"
               << currentAnaToken->stringForm() << "' from graph";
       return UNKNOWN_ERROR;
     }

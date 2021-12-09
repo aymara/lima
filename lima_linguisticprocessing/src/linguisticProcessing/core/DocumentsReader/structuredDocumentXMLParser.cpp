@@ -578,14 +578,20 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
     LDEBUG << "StructuredDocumentXMLParser::endElement: pop indexing element " << qsname;
     assert(currentElement->size() > 0);
 #endif
+
+#ifndef DEBUG_LP
     try {
-    m_processor->handle ( *m_currentDocument, currentElement->front()->getText(), m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0, qsname.toUtf8().constData());
+#endif
+        m_processor->handle ( *m_currentDocument, currentElement->front()->getText(), m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0, qsname.toUtf8().constData());
+#ifndef DEBUG_LP
     }
     catch(const LinguisticProcessing::LinguisticProcessingException& e)
     {
         DRLOGINIT;
         LERROR << "StructuredDocumentXMLParser::endElement: error while handeling indexing element"<< qsname<< "absolute offset:" << currentElement->front()->getOffset();
     }
+#endif
+
 #ifdef DEBUG_LP
    LDEBUG << "StructuredDocumentXMLParser::endElement: pop indexing element handled" << qsname;
 #endif
