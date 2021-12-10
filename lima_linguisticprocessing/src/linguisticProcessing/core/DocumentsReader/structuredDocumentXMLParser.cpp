@@ -588,7 +588,7 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
     catch(const LinguisticProcessing::LinguisticProcessingException& e)
     {
         DRLOGINIT;
-        LERROR << "StructuredDocumentXMLParser::endElement: error while handeling indexing element"<< qsname<< "absolute offset:" << currentElement->front()->getOffset();
+        LERROR << "StructuredDocumentXMLParser::endElement: error while handling indexing element"<< qsname<< "absolute offset:" << currentElement->front()->getOffset();
     }
 #endif
 
