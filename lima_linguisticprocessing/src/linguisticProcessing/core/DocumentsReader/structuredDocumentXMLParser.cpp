@@ -56,6 +56,11 @@ StructuredDocumentXMLParser::~StructuredDocumentXMLParser()
 {
 }
 
+void StructuredDocumentXMLParser::setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom)
+{
+  m_shiftFrom = shiftFrom;
+}
+
 void StructuredDocumentXMLParser::init (
     Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* )
@@ -668,24 +673,25 @@ void StructuredDocumentXMLParser::setCurrentByteOffset ( const unsigned int offs
 }
 
 //**********************************************************************
-bool StructuredDocumentXMLParser::characters ( const QString& ch,
-                                               unsigned int parserOffset )
+bool StructuredDocumentXMLParser::characters (const QString& ch,
+                                              unsigned int parserOffset)
 {
     QString value = ch;
 #ifdef DEBUG_LP
     DRLOGINIT;
     LDEBUG << "StructuredDocumentXMLParser::characters" << value.left(50)
-            << "(...), length=" << value.size() << parserOffset;
+            << "(...), length=" << value.size() << ", parserOffset=" << parserOffset;
 #endif
-
     auto currentElement = m_currentDocument->back();
     currentElement->setOffset(parserOffset);
     if ( !value.isEmpty() )
     {
         Lima::LimaChar firstChar=value[0];
-        if ( isSpecialCharacter ( firstChar ) )
+        if ( m_shiftFrom->contains(parserOffset) && isSpecialCharacter ( firstChar ) )
         {
 #ifdef DEBUG_LP
+            LDEBUG << "StructuredDocumentXMLParser::characters m_shiftFrom:"
+                    << *m_shiftFrom;
             LDEBUG << "StructuredDocumentXMLParser::characters: first char "
                     << firstChar << " is special character: add "
                     << getSpecialCharSize ( firstChar )-1 << " spaces";

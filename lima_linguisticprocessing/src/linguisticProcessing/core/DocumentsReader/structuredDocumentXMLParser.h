@@ -65,6 +65,8 @@ public:
 
   virtual ~StructuredDocumentXMLParser ( void );
 
+  void setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom);
+
   // -----------------------------------------------------------------------
   //  propagate SAX events as XMLDocHandler events
   // -----------------------------------------------------------------------
@@ -145,6 +147,8 @@ private:
   std::map<Lima::LimaChar,unsigned int> m_specialCharacterSize;
 
   bool m_addAbsoluteOffsetToTokens;
+
+  const QMap< uint64_t,uint64_t >* m_shiftFrom;
 };
 
 } // namespace DocumentsReader

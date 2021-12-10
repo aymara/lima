@@ -134,6 +134,11 @@ DocumentReader::~DocumentReader()
     delete m_d;
 }
 
+void DocumentReader::setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom)
+{
+  m_d->m_parser->setShiftFrom(shiftFrom);
+}
+
 void  DocumentReader::setLinguisticXMLDocHandler ( StructuredXmlDocumentHandler* handler )
 {
     m_d->m_parser->setLinguisticXMLDocHandler ( handler );

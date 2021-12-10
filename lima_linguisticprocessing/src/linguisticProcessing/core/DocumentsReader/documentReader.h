@@ -13,6 +13,8 @@
 
 #include "documentsreader_export.h"
 
+#include <QMap>
+
 #include <string>
 #include <cstdint>
 
@@ -36,7 +38,7 @@ class DOCUMENTSREADER_EXPORT DocumentReader
         //DocumentReader(const std::string &configurationFileName);
         //DocumentReader(Common::XMLConfigurationFiles::XMLConfigurationFileParser&);
         /**
-         * @brief 
+         * @brief
          */
         DocumentReader ( Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure& conf );
 
@@ -68,10 +70,12 @@ class DOCUMENTSREADER_EXPORT DocumentReader
          */
         uint64_t getCurrentOffsetFromXmlReader();
 
+        void setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom);
+
     private:
       DocumentReader ( const DocumentReader& );
       DocumentReader& operator = ( const DocumentReader& );
-      
+
       DocumentReaderPrivate* m_d;
 };
 

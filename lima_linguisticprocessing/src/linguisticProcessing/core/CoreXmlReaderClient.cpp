@@ -61,6 +61,7 @@ CoreXmlReaderClient::CoreXmlReaderClient(Lima::Common::XMLConfigurationFiles::XM
     m_documentReader = new DocumentsReader::DocumentReader(conf);
     m_documentReader->setLinguisticXMLDocHandler(this);
     m_emptyTextChars = utf8stdstring2limastring(" \t\n");
+
 }
 
 CoreXmlReaderClient::~CoreXmlReaderClient()
@@ -273,6 +274,7 @@ void CoreXmlReaderClient::analyze(
     (void) handlers;      // avoid warning
     (void) inactiveUnits; // avoid warning
 
+
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
 
@@ -400,6 +402,7 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
         // lien avec les clients d'analyse
         m_handler = abstractHandler;
         m_handler->setAnalysisClients(m_processingClientHandler.getAnalysisClients());
+        m_documentReader->setShiftFrom(&m_handler->shiftFrom());
         m_mapHandlers.insert(make_pair(handlerId, handler));
     } else {
         XMLREADERCLIENTLOGINIT;
