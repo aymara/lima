@@ -292,9 +292,9 @@ int run(int argc, char** argv)
         LDEBUG << "Configure XML reader client factory" << clientId << "with"
                 << (limaConfDir + "/" + lpConfigFile);
         // initialize the factory of the XMLreader
-        XMLConfigurationFileParser lpconfig((limaConfDir + "/" + lpConfigFile).toUtf8().constData());
+        XMLConfigurationFileParser lpconfig(limaConfDir + "/" + lpConfigFile);
         XmlReaderClientFactory::changeable().configureClientFactory(
-            clientId.toUtf8().constData(),
+            clientId.toStdString(),
             lpconfig,
             medias[0],
             medias,
@@ -339,25 +339,11 @@ int run(int argc, char** argv)
         readStream(file, text_s);
         auto qtext_s = QString::fromUtf8(text_s.c_str());
 
-        QRegExp rx("(&[^;]*;)");
-        int shift = 0;
-        int indexofent = 0;
-
-        QMap< uint64_t,uint64_t > shiftFrom;
-        while ((indexofent = rx.indexIn(qtext_s, indexofent)) != -1)
-        {
-          int indexInResolved = indexofent-shift;
-          shift += rx.cap(1).size()-1;
-          shiftFrom.insert(indexInResolved, shift);
-          LDEBUG << "indexofent:" << indexofent << "; indexInResolved:"
-                  << indexInResolved << "; shift:" << shift;
-          indexofent += rx.matchedLength();
-        }
-
+        auto shiftFrom = std::make_shared<ShiftFrom>(qtext_s);
         if(qtext_s.trimmed().isEmpty())
         {
-            std::cerr << "file " << fileName.toUtf8().constData()
-                      << " has empty input ! " << std::endl;
+            XMLREADERCLIENTLOGINIT;
+            LERROR << "file " << fileName << " has empty input ! ";
             continue;
         }
         text_s = qtext_s.toUtf8().constData();
@@ -392,9 +378,9 @@ int run(int argc, char** argv)
         }
         else
         {
-          std::cerr << "Error: unknown handler type "
-                    << useHandler.toStdString()
-                    << ": must be [bow|txt|xml]" << std::endl;
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "Error: unknown handler type " << useHandler
+                  << ": must be [bow|txt|xml]";
           continue;
         }
 
@@ -427,16 +413,16 @@ int run(int argc, char** argv)
           handlerName = "xmlDocumentHandler";
           handler = new Lima::Handler::MultimediaDocumentHandler(shiftFrom);
           LDEBUG << "run handler"<<handlerName<<"is a MultimediaDocumentHandler"
-                  << dynamic_cast<Lima::Handler::MultimediaDocumentHandler*>(handler)->shiftFrom().size()
+                  << *shiftFrom
                   << handler;
         }
         else
         {
-          std::cerr << "unknown handler" << useHandler.toStdString() << std::endl;
-          throw InvalidConfiguration(std::string("unknown handler") + useHandler.toUtf8().constData());
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "unknown handler" << useHandler;
+          throw InvalidConfiguration(QString("unknown handler ") + useHandler);
         }
-        std::ofstream fout(outputFile.toUtf8().constData(),
-                           std::ofstream::binary);
+        std::ofstream fout(outputFile.toStdString(), std::ofstream::binary);
         if(handler != 0)
         {
           if (dynamic_cast<AbstractXmlDocumentHandler*>(handler) != 0)
@@ -456,14 +442,17 @@ int run(int argc, char** argv)
         client->analyze(text_s, metaData, pipeline.toUtf8().constData());
 #ifndef DEBUG_LP
         }
-        catch (const LinguisticProcessingException& e) {
-          std::cerr << "LinguisticProcessing error on document " << fileName << ":" << e.what()
-                   << std::endl;
+        catch (const LinguisticProcessingException& e)
+        {
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "LinguisticProcessing error on document " << fileName
+                  << ":" << e.what();
           //allows the process to continue on next file
         }
-        catch (const LimaException& e) {
-          std::cerr << "Error on document " << fileName << ":" << e.what()
-                    << std::endl;
+        catch (const LimaException& e)
+        {
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "Error on document " << fileName << ":" << e.what();
           //allows the process to continue to next file
         }
 #endif
@@ -471,26 +460,28 @@ int run(int argc, char** argv)
       }
       catch(const NoSuchMap &e)
       {
-        cerr << "Analysis failed on file "
-              << fileName.toStdString()
-              << ": (NoSuchMap) " << e.what() << endl;
+        XMLREADERCLIENTLOGINIT;
+        LERROR << "Analysis failed on file " << fileName << ": (NoSuchMap) "
+                << e.what();
       }
       catch(const XMLConfigurationFileException &e)
       {
-        cerr << "Analysis failed on file "
-              << fileName.toStdString()
-              << ": (XMLConfigurationFileException) " << e.what() << endl;
+        XMLREADERCLIENTLOGINIT;
+        LERROR << "Analysis failed on file " << fileName
+                << ": (XMLConfigurationFileException) " << e.what();
       }
       ++i;
     }
   }
   catch(InvalidConfiguration &e)
   {
-    cerr << "Invalid configuration" << e.what() << endl;
+    XMLREADERCLIENTLOGINIT;
+    LERROR << "Invalid configuration" << e.what();
   }
 
-  cout << "Total: " << TimeUtils::diffTime(beginTime, TimeUtils::getCurrentTime())
-        << " ms" << endl;
+  std::cout << "Total: " << TimeUtils::diffTime(beginTime,
+                                                TimeUtils::getCurrentTime())
+            << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }

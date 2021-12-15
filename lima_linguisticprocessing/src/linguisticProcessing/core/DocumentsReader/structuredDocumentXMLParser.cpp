@@ -56,8 +56,12 @@ StructuredDocumentXMLParser::~StructuredDocumentXMLParser()
 {
 }
 
-void StructuredDocumentXMLParser::setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom)
+void StructuredDocumentXMLParser::setShiftFrom(std::shared_ptr<const ShiftFrom> shiftFrom)
 {
+#ifdef DEBUG_LP
+    DRLOGINIT;
+    LDEBUG << "StructuredDocumentXMLParser::setShiftFrom";
+#endif
   m_shiftFrom = shiftFrom;
 }
 
@@ -551,7 +555,10 @@ bool StructuredDocumentXMLParser::startElement ( const QString& namespaceURI, co
   return true;
 }
 
-bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, const QString& qsname, const QString& qName , unsigned int parserOffset )
+bool StructuredDocumentXMLParser::endElement(const QString& namespaceURI,
+                                             const QString& qsname,
+                                             const QString& qName ,
+                                             unsigned int parserOffset)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -561,7 +568,8 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
 
   AbstractStructuredDocumentElement* currentElement = m_currentDocument->back();
 #ifdef DEBUG_LP
-  LDEBUG << "StructuredDocumentXMLParser::endElement" << qsname << parserOffset << ". currentElement=" << currentElement->getElementName();
+  LDEBUG << "StructuredDocumentXMLParser::endElement" << qsname << parserOffset
+          << ". currentElement=" << currentElement->getElementName();
 
   assert ( currentElement->getElementName() == qsname );
 #endif
@@ -587,13 +595,16 @@ bool StructuredDocumentXMLParser::endElement ( const QString& namespaceURI, cons
 #ifndef DEBUG_LP
     try {
 #endif
-        m_processor->handle ( *m_currentDocument, currentElement->front()->getText(), m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0, qsname.toUtf8().constData());
+        m_processor->handle(*m_currentDocument, currentElement->front()->getText(),
+                            m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0,
+                            qsname.toUtf8().constData());
 #ifndef DEBUG_LP
     }
     catch(const LinguisticProcessing::LinguisticProcessingException& e)
     {
         DRLOGINIT;
-        LERROR << "StructuredDocumentXMLParser::endElement: error while handling indexing element"<< qsname<< "absolute offset:" << currentElement->front()->getOffset();
+        LERROR << "StructuredDocumentXMLParser::endElement: error while handling indexing element"
+                << qsname<< "absolute offset:" << currentElement->front()->getOffset();
     }
 #endif
 
@@ -690,8 +701,7 @@ bool StructuredDocumentXMLParser::characters (const QString& ch,
         if ( m_shiftFrom->contains(parserOffset) && isSpecialCharacter ( firstChar ) )
         {
 #ifdef DEBUG_LP
-            LDEBUG << "StructuredDocumentXMLParser::characters m_shiftFrom:"
-                    << *m_shiftFrom;
+            LDEBUG << "StructuredDocumentXMLParser::characters m_shiftFrom:";
             LDEBUG << "StructuredDocumentXMLParser::characters: first char "
                     << firstChar << " is special character: add "
                     << getSpecialCharSize ( firstChar )-1 << " spaces";

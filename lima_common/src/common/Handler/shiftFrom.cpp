@@ -61,7 +61,7 @@ const QString& ShiftFrom::xml_noent()
 /**
  * Replace in input the sequences in mapping (shifted by offset)
  *
- * This allowes tu put back interpreted entities that were replaced by
+ * This allows to put back interpreted entities that were replaced by
  * underscores to avoid introducing shifts in the input xml
  */
 QString ShiftFrom::rebuild_text(const QString& input, int offset) const
@@ -90,9 +90,9 @@ int ShiftFrom::correct_offset(int offset, int indexOfToken) const
   qDebug() << "ShiftFrom::correct_offset" << m_d;
   qDebug() << "ShiftFrom::correct_offset" << m_d->m_shiftFrom.keys();
   auto correction = (
-    m_d->m_shiftFrom.lowerBound(offset+indexOfToken)==m_d->m_shiftFrom.begin()
+    m_d->m_shiftFrom.lowerBound(offset+indexOfToken-1)==m_d->m_shiftFrom.begin()
       ?0
-      :(std::get<0>((m_d->m_shiftFrom.lowerBound(offset+indexOfToken)-1).value()))
+      :(std::get<0>((m_d->m_shiftFrom.lowerBound(offset+indexOfToken-1)-1).value()))
                      );
   qDebug() << "correction:" << correction;
   auto correctedOffset = offset + correction;
@@ -165,6 +165,25 @@ void ShiftFromPrivate::build_mapping()
     }
     qDebug() << "xml_noent:" << m_xml_noent;
     qDebug() << "mapping:" << m_mapping;
+}
+
+
+QDebug& operator<<(QDebug& os, const ShiftFrom& sf)
+{
+//     QMap<int, std::tuple<int, QString, QString> > m_shiftFrom;
+  os << "ShiftFrom xml:" << sf.m_d->m_xml << endl;
+  os << "ShiftFrom xml_noent:" << sf.m_d->m_xml_noent << endl;
+  os << "ShiftFrom xml rebuilt:" << sf.rebuild_text(sf.m_d->m_xml_noent, 0) << endl;
+  os << "ShiftFrom shiftFrom: {" ;
+  for (const auto& k: sf.m_d->m_shiftFrom.keys())
+  {
+    os << "{" << k << ":" << "{" << std::get<0>(sf.m_d->m_shiftFrom[k])
+        << "," << std::get<1>(sf.m_d->m_shiftFrom[k])
+        << "," << std::get<2>(sf.m_d->m_shiftFrom[k])
+        << "}" << "}";
+  }
+  os << "}" ;
+  return os;
 }
 
 

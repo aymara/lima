@@ -12,6 +12,7 @@
 
 #include "documentsreader_export.h"
 #include "linguisticProcessing/core/abstractReaderResource.h"
+#include "common/Handler/shiftFrom.h"
 #include "DocumentElements.h"
 
 #include <boost/shared_ptr.hpp>
@@ -65,7 +66,7 @@ public:
 
   virtual ~StructuredDocumentXMLParser ( void );
 
-  void setShiftFrom(const QMap< uint64_t,uint64_t >* shiftFrom);
+  void setShiftFrom(std::shared_ptr<const ShiftFrom> shiftFrom);
 
   // -----------------------------------------------------------------------
   //  propagate SAX events as XMLDocHandler events
@@ -148,7 +149,7 @@ private:
 
   bool m_addAbsoluteOffsetToTokens;
 
-  const QMap< uint64_t,uint64_t >* m_shiftFrom;
+  std::shared_ptr<const ShiftFrom> m_shiftFrom;
 };
 
 } // namespace DocumentsReader

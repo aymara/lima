@@ -31,9 +31,11 @@ using namespace Lima;
 
 void ShiftFromTest::ShiftFromTest0()
 {
+    // 28, 38, 61, 73, 83
     QString xml = "<DOC><TEXT>>uncoded entities&lt; text &lt;word></TEXT><TEXT2> pop&Dagger;hop &amp; tok &#1983;</TEXT2></DOC>";
     qDebug() << xml;
     ShiftFrom sf(xml);
+    qDebug() << "ShiftFromTest0 sf:" << sf;
 
     auto textPosition = xml.indexOf("text");
     qDebug() << "'text' index in string:" << textPosition;
@@ -59,8 +61,19 @@ void ShiftFromTest::ShiftFromTest0()
           qDebug() << "";
           QVERIFY(limaText == ">uncoded entities< text <word>");
 
+          auto indexOfLt1 = limaText.indexOf("<");
+          auto xindexOfLt1 = xml.indexOf("&lt;");
+          qDebug() << "xindexOfLt1:" << xindexOfLt1 << "-" << sf.correct_offset(offset, indexOfLt1);
+          QVERIFY(xindexOfLt1==sf.correct_offset(offset, indexOfLt1));
+
+          auto indexOfLt2 = limaText.indexOf("<", 19);
+          auto xindexOfLt2 = xml.indexOf("&lt;", 32);
+          qDebug() << "xindexOfLt2:" << xindexOfLt2 << "-" << sf.correct_offset(offset, indexOfLt2);
+          QVERIFY(xindexOfLt2==sf.correct_offset(offset, indexOfLt2));
+
           auto indexOfText = limaText.indexOf("text");
           QVERIFY(textPosition==sf.correct_offset(offset, indexOfText));
+
           auto indexOfWord = limaText.indexOf("word");
           QVERIFY(wordPosition=sf.correct_offset(offset, indexOfWord));
 

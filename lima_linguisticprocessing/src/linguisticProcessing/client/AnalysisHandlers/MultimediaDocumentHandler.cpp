@@ -15,12 +15,12 @@ using namespace Lima::Common::BagOfWords;
 using namespace Lima::Handler;
 using namespace std;
 
-MultimediaDocumentHandler::MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom) :
+MultimediaDocumentHandler::MultimediaDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom) :
     AbstractXmlDocumentHandler(shiftFrom), m_out(nullptr)
 {
 #ifdef DEBUG_LP
   HANDLERLOGINIT;
-  LDEBUG << "MultimediaDocumentHandler::MultimediaDocumentHandler" << shiftFrom.size();
+  LDEBUG << "MultimediaDocumentHandler::MultimediaDocumentHandler" ;
 #endif
   set_LastStructureId ( 0 );
   set_lastNodeId ( 1 );
@@ -30,7 +30,7 @@ void MultimediaDocumentHandler::setOut(std::ostream* out)
 {
 #ifdef DEBUG_LP
   HANDLERLOGINIT;
-  LDEBUG << "MultimediaDocumentHandler::setOut " << out << shiftFrom().size();
+  LDEBUG << "MultimediaDocumentHandler::setOut " << out;
 #endif
   m_out = out;
   MultimediaBinaryWriter writer(shiftFrom());

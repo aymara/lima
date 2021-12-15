@@ -37,6 +37,8 @@ class ShiftFromPrivate;
 class LIMA_DATAHANDLER_EXPORT ShiftFrom:
     public QMap<int, std::tuple<int, QString, QString> >
 {
+  friend LIMA_DATAHANDLER_EXPORT QDebug& operator << (QDebug&, const ShiftFrom&)
+  ;
 public:
   ShiftFrom(const QString& xml);
   virtual ~ShiftFrom();
@@ -53,6 +55,7 @@ private:
   ShiftFromPrivate* m_d;
 };
 
+LIMA_DATAHANDLER_EXPORT QDebug& operator<<(QDebug& os, const ShiftFrom& sf);
 
 } // end namespace
 

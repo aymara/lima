@@ -199,53 +199,7 @@ LimaStatusCode BowDumper::process(
     addAllEntities(annotationData,addedEntities,bowText,anagraph,posgraph,offset);
   }
 
-  // Exclude from the shift list XML entities preceding the offset and
-  // re-adjust positions regarding the beginning of the node being analyzed
-  QMap<uint64_t, uint64_t> localShiftFrom;
-  const auto& globalShiftFrom = handler->shiftFrom();
-#ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process offset:" << offset;
-  LDEBUG << "BowDumper::process globalShiftFrom:" << globalShiftFrom;
-#endif
-  if (!globalShiftFrom.isEmpty())
-  {
-    uint64_t diff = 0;
-    // start first loop at second position
-    auto it=globalShiftFrom.constBegin()+1;
-    for (; it!=globalShiftFrom.constEnd(); ++it)
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BowDumper::process it.key():"<<it.key()
-              <<"; (it-1).value():"<<(it-1).value()
-              <<"; offset:"<<offset<<"; diff:"<<diff;
-#endif
-      if (it.key()+(it-1).value() >= offset)
-        break;
-      diff = it.value();
-    }
-#ifdef DEBUG_LP
-    LDEBUG << "BowDumper::process after shiftFrom loop, diff is:" << diff;
-#endif
-    // rewind by one to not miss the first entity and then
-    // continue from where we stoped the shift corrections
-    for (it = it -1; it!=globalShiftFrom.constEnd(); ++it)
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BowDumper::process it.key():"<<it.key()
-              <<"; it.value():"<<it.value()
-              <<"; offset:"<<offset<<"; diff:"<<diff;
-#endif
-      if (it.key()+diff >= offset && it.value() > diff)
-      {
-        // empirical correction but seems to work
-        localShiftFrom.insert(it.key()+diff, it.value()-diff);
-      }
-    }
-  }
-#ifdef DEBUG_LP
-  LDEBUG << "BowDumper::process localShiftFrom:" << localShiftFrom;
-#endif
-  BoWBinaryWriter writer(localShiftFrom);
+  BoWBinaryWriter writer(handler->shiftFrom());
   auto dstream = initialize(analysis);
 
 #ifdef DEBUG_LP
@@ -506,32 +460,6 @@ void BowDumper::addVerticesToBoWText(
       }
       else if (alreadyStoredVertices.find(v) == alreadyStoredVertices.end())
       {
-// Commented out code below was handling a bug causing to dump as a simple term
-// a token member of a compound. As it is better handled by setting a correct
-// annotation to the token, this code is removed
-//         bool isInCompound = false;
-//         DependencyGraphVertex dgv = syntacticData->depVertexForTokenVertex(v);
-//         DependencyGraphOutEdgeIt dgoutItr,dgoutItrEnd;
-//         for (boost::tie(dgoutItr,dgoutItrEnd)=boost::out_edges(dgv,*syntacticData->dependencyGraph());
-//               dgoutItr!=dgoutItrEnd;
-//               dgoutItr++)
-//         {
-//           auto relTypeMap = get(edge_deprel_type, *syntacticData->dependencyGraph());
-//
-//           Common::MediaticData::SyntacticRelationId relType=relTypeMap[*dgoutItr];
-//           std::string relName = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationName(relType);
-//
-//           LDEBUG << "Relation name" << relName;
-//
-//           if (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).isACompoundRel(relName))
-//           {
-//             isInCompound = true;
-//             break;
-//           }
-//         }
-//
-//
-//         if   (!isInCompound)
         {
 // #ifdef DEBUG_LP
 //           LDEBUG << "BowDumper::addVerticesToBoWText" << v << "isn't a compound head";
@@ -646,7 +574,7 @@ void BowDumper::addAllEntities(
         std::set< AnnotationGraphVertex > posVertices = annotationData->matches(graph,v,"PosGraph");
         if (posVertices.size()==1) { // note: size should be 0 or 1
           AnnotationGraphVertex posVertex= *(posVertices.begin());
-          // do not get fooled by the AnnotationGraphVertex type: posVertex is 
+          // do not get fooled by the AnnotationGraphVertex type: posVertex is
           // the LinguisticGraphVertex matching v in the PosGraph
           if (addedEntities.find(posVertex)!=addedEntities.end()) {
             //cerr << "-> vertex " << v << " has corresponding vertex "<< posVertex <<" which was already processed" << endl;

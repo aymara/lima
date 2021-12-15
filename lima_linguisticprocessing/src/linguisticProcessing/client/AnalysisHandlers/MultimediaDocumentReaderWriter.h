@@ -1,5 +1,6 @@
 #include "AnalysisHandlersExport.h"
 
+#include "common/Handler/shiftFrom.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
 
@@ -79,7 +80,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryWriter:
     public Common::BagOfWords::BoWBinaryWriter
 {
  public:
-  MultimediaBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom = QMap< uint64_t, uint64_t >()):
+  MultimediaBinaryWriter(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()):
     Common::BagOfWords::BoWBinaryWriter(shiftFrom) {};
   ~MultimediaBinaryWriter(){};
 

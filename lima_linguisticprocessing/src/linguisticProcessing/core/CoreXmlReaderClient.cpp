@@ -159,7 +159,8 @@ void CoreXmlReaderClient::handle(
   XMLREADERCLIENTLOGINIT;
 #endif
 
-    if(std::string(text.toUtf8().constData()).find_first_not_of(m_emptyTextChars.toUtf8().constData()) == string::npos) {
+    auto rtext = m_handler->shiftFrom()->rebuild_text(text, offset);
+    if(std::string(rtext.toStdString()).find_first_not_of(m_emptyTextChars.toStdString()) == string::npos) {
 #ifdef DEBUG_LP
         LDEBUG << "CoreXmlReaderClient::empty text, not analyzed";
 #endif
@@ -174,9 +175,9 @@ void CoreXmlReaderClient::handle(
 #ifdef DEBUG_LP
     if( logger.loggingLevel() == QsLogging::DebugLevel )
     {
-      LDEBUG << "CoreXmlReaderClient::handle"
-            << "[" << text << "], offset =" << offset
-            << ", tagName =" << tagName << ", element name =" << elementName ;
+      LDEBUG << "CoreXmlReaderClient::handle [" << rtext << "], offset ="
+            << offset << ", tagName =" << tagName << ", element name ="
+            << elementName ;
     }
     else if( logger.loggingLevel() == QsLogging::InfoLevel )
 #endif
@@ -184,7 +185,7 @@ void CoreXmlReaderClient::handle(
       // Chercher les analyses diponibles
       XMLREADERCLIENTLOGINIT;
       LINFO << "CoreXmlReaderClient::handle"
-            << "[" << text.left(50) << "], offset =" << offset
+            << "[" << rtext.left(50) << "], offset =" << offset
             << ", tagName =" << tagName ;
     }
     ostringstream os;
@@ -221,7 +222,7 @@ void CoreXmlReaderClient::handle(
     os2 << offsetIndexingNode;
     m_docMetaData["StartOffsetIndexingNode"] = os2.str();
 
-    auto strText = text.toStdString();
+    auto strText = rtext.toStdString();
 
     m_handler->handleProc(
         tagName,
@@ -308,7 +309,7 @@ void CoreXmlReaderClient::analyze(
     m_handler->set_lastUri(string((*docMetadataPtr) ["filePath"]));
     m_handler->set_lang(string((*docMetadataPtr) ["Lang"]));
 
-    if(!m_documentReader->initWithString(text)) {
+    if(!m_documentReader->initWithString(QString::fromStdString(text))) {
         XMLREADERCLIENTLOGINIT;
         LERROR << "CoreXmlReaderClient::analyze: can't init reader with text !";
         throw XmlReaderException("CoreXmlReaderClient::analyze: can't init reader with text !");
@@ -402,7 +403,7 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
         // lien avec les clients d'analyse
         m_handler = abstractHandler;
         m_handler->setAnalysisClients(m_processingClientHandler.getAnalysisClients());
-        m_documentReader->setShiftFrom(&m_handler->shiftFrom());
+        m_documentReader->setShiftFrom(m_handler->shiftFrom());
         m_mapHandlers.insert(make_pair(handlerId, handler));
     } else {
         XMLREADERCLIENTLOGINIT;

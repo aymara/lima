@@ -41,6 +41,7 @@
 #include <boost/shared_ptr.hpp>
 
 namespace Lima {
+  class ShiftFrom;
 namespace Common {
 namespace BagOfWords {
 
@@ -101,7 +102,7 @@ class BoWBinaryWriterPrivate;
 class LIMA_BOW_EXPORT BoWBinaryWriter
 {
  public:
-  BoWBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom = QMap< uint64_t, uint64_t >());
+  BoWBinaryWriter(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>());
   virtual ~BoWBinaryWriter();
 
   void writeHeader(std::ostream& file,
