@@ -1,0 +1,68 @@
+FROM aymara/tensorflow_for_lima_1_9-manylinux_2_24
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG BRANCH=master
+ARG USE_TENSORFLOW="true"
+ARG GITHUB_TOKEN
+ARG LIMA_DISABLE_FSW_TESTING
+ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
+ARG NLTK_PTB_DP_FILE
+
+# Setup
+RUN apt --fix-broken install
+RUN apt-get update -y -qq && apt-get install -y gawk ninja-build gettext
+
+WORKDIR /
+RUN wget -q https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz
+RUN tar xf git-2.9.5.tar.xz
+WORKDIR /git-2.9.5
+RUN ./configure --prefix=/usr && make -j && make install
+
+WORKDIR /git-lfs
+RUN wget -q https://github.com/git-lfs/git-lfs/releases/download/v3.0.2/git-lfs-linux-amd64-v3.0.2.tar.gz
+RUN tar xf git-lfs-linux-amd64-v3.0.2.tar.gz
+RUN bash install.sh
+
+RUN git lfs install --skip-repo
+
+RUN apt-get update -y -qq && apt-get install -y python3-nltk qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libtre-dev libboost-all-dev gnupg libssl-dev nodejs
+# Not available in manylinux: libenchant-2-dev npm
+
+WORKDIR /
+# Cloning icu ASAP to avoid
+RUN git clone https://github.com/unicode-org/icu.git --depth=1 --branch=release-70-1
+WORKDIR /icu/icu4c/source
+RUN ./runConfigureICU Linux --prefix=/usr --enable-static && make -j && make test && make install
+
+WORKDIR /
+
+# Install recent cmake
+WORKDIR /cmake_build
+RUN wget --no-check-certificate https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh -q
+RUN sh cmake-3.16.4-Linux-x86_64.sh --prefix=/usr --exclude-subdir --skip-license
+RUN cmake --version
+WORKDIR /
+
+# RUN npm install -g json
+
+RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python*/*/nltk/downloader.py
+RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
+RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+
+#RUN wget -q http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
+#WORKDIR /svm_light
+#RUN tar xzf ../svm_light.tar.gz
+#RUN make
+#RUN cp svm_classify svm_learn /usr/bin
+#RUN rm -Rf /svm_light
+
+WORKDIR /
+COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
+#RUN /svmtool.sh $GITHUB_TOKEN
+#RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN
+
+
+WORKDIR /
+RUN rm -Rf /icu /git-2.9.5 /git-lfs /cmake_build /svmtool.sh  /svmtool-cpp.sh /qhttpserver.sh
