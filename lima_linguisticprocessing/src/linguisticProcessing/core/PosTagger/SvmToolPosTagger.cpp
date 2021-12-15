@@ -292,8 +292,16 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       QString token = tok->stringForm();
       // if token is a newline, the SVMToolPosTagger will fail, replace it by
       // Unicode char U+200B ZERO WIDTH SPACE
+      if (token.contains('\n'))
+      {
+        PTLOGINIT;
+        LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
+        LWARN << "Avoiding the problem but the tokenizer should be checked.";
+      }
       if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+      token = token.trimmed();
       token.replace(" ", "_");
+      token.replace("\n", QString::fromUtf8(u8"\u200B"));
       std::ostringstream lineoss("");
       lineoss << token.toStdString() << " (";
       auto morphoData = get(vertex_data,*srcgraph,currentVx);
@@ -389,13 +397,14 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 //     {
 //       continue;
 //     }
-    std::vector<std::string> elements;
-    boost::split(elements, resultLine, boost::is_any_of(" "));
+    auto elements = QString::fromStdString(resultLine).split(" ");
+    elements[0] = elements[0].trimmed();
     if (elements.size() < 2)
     {
       PTLOGINIT;
       LERROR << "Error in SVMTagger result line: did not get 2 elements in '"
               << resultLine << "'";
+      LERROR << "Was tagging '" << oss.str() << "'";
       return UNKNOWN_ERROR;
     }
     auto anaVertex = anaVertices[anaVerticesIndex];
@@ -403,14 +412,22 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     QString token = currentAnaToken->stringForm();
     // if token is a newline, the SVMToolPosTagger will fail, replace it by
     // Unicode char U+200B ZERO WIDTH SPACE
+    if (token.contains('\n'))
+    {
+      PTLOGINIT;
+      LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
+      LWARN << "Avoiding the problem but the tokenizer should be checked.";
+    }
     if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+    token = token.trimmed();
     token.replace(" ", "_");
-    if (token.toStdString() != elements[0])
+    token.replace("\n", QString::fromUtf8(u8"\u200B"));
+    if (token != elements[0])
     {
       PTLOGINIT;
       LERROR << "Error in SVMTagger result alignement with analysis graph: got '"
               << elements[0] << "' with tag '"<< elements[1] <<"' from SVMTagger and '"
-              << currentAnaToken->stringForm() << "' from graph";
+              << token << "' from graph";
       return UNKNOWN_ERROR;
     }
 
@@ -428,7 +445,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       auto posData = new MorphoSyntacticData();
       CheckDifferentPropertyPredicate differentMicro(
           m_d->m_microAccessor,
-          microManager.getPropertyValue(elements[1]));
+          microManager.getPropertyValue(elements[1].toStdString()));
       std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),
                      morphoData->end(),
