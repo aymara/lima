@@ -636,7 +636,7 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is:";
     if (m_shiftFrom.use_count() > 0)
     {
-      qDebug() << "m_shiftFrom.use_count:" << m_shiftFrom.use_count() ;
+//       qDebug() << "m_shiftFrom.use_count:" << m_shiftFrom.use_count() ;
       beg = m_shiftFrom->correct_offset(0, beg);
       end = m_shiftFrom->correct_offset(0, end);
     }
