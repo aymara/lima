@@ -33,23 +33,11 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
-RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
-WORKDIR /svm_light
-RUN tar xzf ../svm_light.tar.gz
-RUN make
-RUN cp svm_classify svm_learn /usr/bin
-RUN rm -Rf /svm_light
-
 WORKDIR /
-RUN curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/SVMTool/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url |grep '.tgz"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN | tar xvz
-WORKDIR /SVMTool-1.3.1
-RUN perl Makefile.PL && make && make install
-
-WORKDIR /
-RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/qhttpserver/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep ubuntu18 | grep '.deb"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
-
-
-RUN TEMP_DEB="$(mktemp)" && curl  -vLJ -H 'Accept: application/octet-stream' $(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest?access_token=$GITHUB_TOKEN | grep browser_download_url | grep ubuntu18 | grep '.deb"' | head -n 1 | cut -d '"' -f 4)?access_token=$GITHUB_TOKEN -o "$TEMP_DEB" && dpkg -i "$TEMP_DEB"
+COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
+RUN /svmtool.sh $GITHUB_TOKEN
+RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN
 
 RUN mkdir -p /src/
 RUN git clone --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
