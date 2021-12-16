@@ -633,13 +633,17 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   auto beg = token->getPosition();
   auto end = token->getLength() + beg;
 
+#ifdef DEBUG_LP
   LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is:";
-    if (m_shiftFrom.use_count() > 0)
-    {
-//       qDebug() << "m_shiftFrom.use_count:" << m_shiftFrom.use_count() ;
-      beg = m_shiftFrom->correct_offset(0, beg);
-      end = m_shiftFrom->correct_offset(0, end);
-    }
+#endif
+  if (m_shiftFrom.use_count() > 0)
+  {
+#ifdef DEBUG_LP
+    LTRACE << "m_shiftFrom.use_count:" << m_shiftFrom.use_count() ;
+#endif
+    beg = m_shiftFrom->correct_offset(0, beg);
+    end = m_shiftFrom->correct_offset(0, end);
+  }
 
 #ifdef DEBUG_LP
     LDEBUG << "BoWBinaryWriter::writeSimpleToken writen begin :" << beg-1;

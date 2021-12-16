@@ -137,8 +137,8 @@ LIMA_COMMONQSLOG_EXPORT QDebug&  operator<< (QDebug&  qd, const std::string& str
 //! in the log output.
 #ifndef QS_LOG_LINE_NUMBERS
    #define QLOG_TRACE() \
-      if( logger.loggingLevel() > QsLogging::TraceLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::TraceLevel, logger.zone()).stream()
+   if( logger.loggingLevel() > QsLogging::TraceLevel ){} \
+     else QsLogging::Logger::Helper(QsLogging::TraceLevel, logger.zone()).stream()
    #define QLOG_DEBUG() \
    if( logger.loggingLevel() > QsLogging::DebugLevel ){} \
      else QsLogging::Logger::Helper(QsLogging::DebugLevel, logger.zone()).stream()
