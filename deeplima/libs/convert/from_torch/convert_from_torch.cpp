@@ -48,11 +48,14 @@ void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnn
         = std::dynamic_pointer_cast<UInt64Dict, DictBase>(src.get_dicts()[i]);
     std::shared_ptr<StringDict> sp_str_dict
         = std::dynamic_pointer_cast<StringDict, DictBase>(src.get_dicts()[i]);
-    if (nullptr == sp_uint64_dict.get() && nullptr != sp_str_dict.get())
+    std::shared_ptr<Char32Dict> sp_char32_dict
+        = std::dynamic_pointer_cast<Char32Dict, DictBase>(src.get_dicts()[i]);
+
+    if (!sp_uint64_dict && !sp_char32_dict && sp_str_dict)
     {
       count_embd_str++;
     }
-    else if (nullptr != sp_uint64_dict.get() && nullptr == sp_str_dict.get())
+    else if ((sp_uint64_dict || sp_char32_dict) && !sp_str_dict)
     {
       count_embd_uint++;
     }
@@ -85,13 +88,18 @@ void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnn
 
     std::shared_ptr<UInt64Dict> sp_uint64_dict = std::dynamic_pointer_cast<UInt64Dict, DictBase>(src.get_dicts()[i]);
     std::shared_ptr<StringDict> sp_str_dict = std::dynamic_pointer_cast<StringDict, DictBase>(src.get_dicts()[i]);
+    std::shared_ptr<Char32Dict> sp_char32_dict = std::dynamic_pointer_cast<Char32Dict, DictBase>(src.get_dicts()[i]);
 
-    assert(!(nullptr == sp_uint64_dict.get() && nullptr == sp_str_dict.get()));
-    if (nullptr != sp_uint64_dict)
+    assert(sp_uint64_dict || sp_char32_dict || sp_str_dict);
+    if (sp_uint64_dict)
     {
       convert_module_from_torch(m, src.get_dicts()[i], m_uint_dicts[i]);
     }
-    else if (nullptr != sp_str_dict)
+    else if (sp_char32_dict)
+    {
+      convert_module_from_torch(m, src.get_dicts()[i], m_uint_dicts[i]);
+    }
+    else if (sp_str_dict)
     {
       convert_module_from_torch(m, src.get_dicts()[i], m_str_dicts[i]);
     }
