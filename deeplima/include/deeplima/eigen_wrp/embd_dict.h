@@ -41,7 +41,8 @@ public:
 
   EmbdDict() {}
 
-  void init(std::shared_ptr<Dict<K>> dict, const M& tensor)
+  template <class T>
+  void init(std::shared_ptr<Dict<T>> dict, const M& tensor)
   {
     m_embd = tensor.transpose();
     m_dim = m_embd.rows();
@@ -50,7 +51,7 @@ public:
       assert(it.second >= 0);
       assert(it.second < std::numeric_limits<I>::max());
       assert(it.second < m_embd.cols());
-      m_index[K(it.first)] = I(it.second);
+      m_index[static_cast<K>(it.first)] = I(it.second);
     }
   }
 
