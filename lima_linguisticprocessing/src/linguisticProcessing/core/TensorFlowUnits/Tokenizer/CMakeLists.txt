@@ -17,6 +17,7 @@
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
+if (PYTHON_LIBRARY_FOUND)
 
 SET(lima-lp-pythontensorflowtokenizer_LIB_SRCS
     PythonUppsalaTensorFlowTokenizer.cpp
@@ -50,7 +51,7 @@ install(
     DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime
 )
-
+endif()
 ########### next target ###############
 
 if (TensorFlow_FOUND AND Eigen_FOUND)
