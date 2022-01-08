@@ -137,6 +137,7 @@ RUN cmake --build build
 RUN cmake --install build
 
 
+
 # Install PySide2 and shiboken2 from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
@@ -157,6 +158,7 @@ ENV LD_LIBRARY_PATH=/opt/qt5/lib:$LD_LIBRARY_PATH
 
 RUN python3.8 setup.py install --cmake=/opt/python/cp38-cp38/bin/cmake --build-type=all
 
+WORKDIR /
 
 
 
@@ -315,6 +317,7 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 COPY --from=manylinux_2_24_with_qt_and_pyside /opt /opt
+COPY --from=manylinux_2_24_with_qt_and_pyside /usr/local /usr/local
 COPY --from=manylinux_2_24_with_icu /usr/local /usr/local
 COPY --from=manylinux_2_24_with_nltk_data /nltk_data /nltk_data
 COPY --from=manylinux_2_24_with_tensorflow_for_lima_1_9 /tensorflow_for_lima /usr/local
