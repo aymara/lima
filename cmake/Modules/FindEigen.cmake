@@ -13,6 +13,7 @@ find_path(Eigen_INCLUDE_DIR
         ${Eigen_DIR}
         ${Eigen_DIR}/unsupported
         ${Eigen_DIR}/Eigen
+        Eigen
         HINTS
         ${Eigen_INSTALL_DIR}
         /usr/local
