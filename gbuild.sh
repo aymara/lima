@@ -20,6 +20,8 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
+echoerr() { printf "\e[31;1m%s\e[0m\n" "$*" >&2; }
+
 usage()
 {
 cat << EOF 1>&2; exit 1;
@@ -161,9 +163,9 @@ if [[ "$j" == "0" ]]; then
   fi
 fi
 if [[ "$j" == "1" ]]; then
-  echo "Linear build"
+  echoerr "Linear build"
 else
-  echo "Parallel build on $j processors"
+  echoerr "Parallel build on $j processors"
 fi
 
 # export VERBOSE=1
@@ -203,6 +205,7 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
   make_test="nmake test"
   make_install="nmake install"
+  make_package=""
   generator="NMake Makefiles"
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
@@ -236,7 +239,7 @@ else
     TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
   fi
 
-  echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
+  echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"
 fi
 
 LIBTORCH_PATH=${LIMA_SOURCES}/extern/libtorch/
@@ -245,7 +248,7 @@ echo "libTorch: " $LIBTORCH_PATH
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
-echo "Launching cmake from $PWD"
+echoerr "Launching cmake from $PWD"
 cmake  -G "$generator" \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
@@ -259,21 +262,36 @@ cmake  -G "$generator" \
     -DWITH_GUI=$WITH_GUI $source_dir \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH
 
-echo "Running make command:"
+echoerr "Running make command:"
 echo "$make_cmd"
-eval $make_cmd && eval $make_test && eval $make_install
-
+eval $make_cmd
 result=$?
-if [ $WITH_PACK == "ON" ] ;
-then
-  $make_package
-  result=$?
-fi
+if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
 
-#exit $result
+echoerr "Running make test:"
+echo "$make_test"
+eval $make_test
+result=$?
+if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+
+echoerr "Running make install:"
+echo "$make_install"
+eval $make_install
+result=$?
+if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+
+if [ $WITH_PACK == "ON" ];
+then
+  echoerr "Running make package:"
+  echo "$make_package"
+  eval $make_package
+  result=$?
+  if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+fi
 
 if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
 then
+  echoerr "Install package:"
   install -d $LIMA_DIST/share/apps/lima/packages
   if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
     install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
@@ -283,6 +301,9 @@ then
   fi
 fi
 
+echoerr "Built LIMA sucessfuly.";
 popd
 
 exit $result
+
+
