@@ -89,7 +89,9 @@ void CoreXmlReaderClient::endHierarchy(const DocumentsReader::ContentStructuredD
     // must be a structured Element
     assert(element);
     // get byte offset before the beginning of the closing tag
-    element->setIntValue("offEndPrpty", element->getOffset());
+    auto offset = m_handler->shiftFrom()->correct_offset(0, element->getOffset());
+    element->setIntValue("offEndPrpty", offset);
+//     element->setIntValue("offEndPrpty", element->getOffset());
 
 
 #ifdef DEBUG_LP
@@ -132,7 +134,9 @@ void CoreXmlReaderClient::endIndexing(
       assert(false);
     }
     // get byte offset before the beginning of the closing tag
-    element->setIntValue("offEndPrpty", element->getOffset());
+    auto offset = m_handler->shiftFrom()->correct_offset(0, element->getOffset());
+    element->setIntValue("offEndPrpty", offset);
+//     element->setIntValue("offEndPrpty", element->getOffset());
 
 
 #ifdef DEBUG_LP

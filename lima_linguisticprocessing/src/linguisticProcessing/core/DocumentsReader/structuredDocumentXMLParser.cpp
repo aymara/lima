@@ -349,12 +349,12 @@ bool StructuredDocumentXMLParser::startDocument(unsigned int parserOffset)
     DRLOGINIT;
     LDEBUG << "StructuredDocumentXMLParser: startDocument()";
 #endif
-
+//     parserOffset = m_shiftFrom->correct_offset(0, parserOffset);
     m_currentDocument = boost::shared_ptr< ContentStructuredDocument >(new ContentStructuredDocument);
     // creation d'un element artificiel = ROOT
     DocumentPropertyType noProperty;
     QString rootName ( "ROOT" );
-    m_currentDocument->pushHierarchyChild ( rootName, parserOffset, noProperty );
+    m_currentDocument->pushHierarchyChild ( rootName, m_shiftFrom->correct_offset(0, parserOffset), noProperty );
     setCurrentByteOffset ( parserOffset );
     return true;
 }
@@ -458,7 +458,8 @@ bool StructuredDocumentXMLParser::startElement ( const QString& namespaceURI, co
 #ifdef DEBUG_LP
       LDEBUG << "StructuredDocumentXMLParser::startElement: " << name << "hierarchy element" ;
 #endif
-      newElement = m_currentDocument->pushHierarchyChild ( name, parserOffset, propType );
+//       parserOffset = m_shiftFrom->correct_offset(0, parserOffset);
+      newElement = m_currentDocument->pushHierarchyChild ( name, m_shiftFrom->correct_offset(0, parserOffset), propType );
       m_processor->startHierarchy ( *m_currentDocument );
     }
     else if ( isIndexing ( name ) )
