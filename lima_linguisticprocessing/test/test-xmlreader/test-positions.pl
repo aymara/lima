@@ -17,7 +17,7 @@ usage test-positions.pl [-noAnalysis] [-dataDir=<dir>] [-language=<lang>] [files
 EOF
 }
 
-use autodie qw(:all);
+#use autodie qw(:all);
 use strict;
 
 
