@@ -3,7 +3,6 @@
 # Perl Program created by besancon on Mon Nov  8 2004
 # Version : $Id$
 
-print("PATH: "+$ENV{PATH}+"\n");
 
 sub usage {
     print <<EOF;
@@ -28,6 +27,9 @@ if ($main::h || $main::help) {
     exit 0;
 }
 
+print STDERR "PATH: $ENV{PATH}\n";
+print STDERR "LD_LIBRARY_PATH: $ENV{LD_LIBRARY_PATH}\n";
+
 # default value for data dir
 $main::datadir="data" unless $main::datadir;
 $main::language="fre" unless $main::language;
@@ -45,13 +47,13 @@ else {
 
 my $nbFiles=scalar @files;
 if ($nbFiles == 0) {
-    print "No input files provided. Abort\n";
+    print STDERR "No input files provided. Abort\n";
     usage();
     exit 1;
 }
 
-print "test-positions.pl\n";
-print "Input files:\n ".join(", ",@files)."\n";
+print STDERR "test-positions.pl\n";
+print STDERR "Input files:\n ".join(", ",@files)."\n";
 
 
 my (%RefPositions);
@@ -91,7 +93,7 @@ foreach $file (@files) {
             my $len=$3;
             $nbTested++;
             if (! exists ${$RefPositions{$lemma}}{$pos}) {
-                print "$file:position of \"$lemma\" is $pos, should be ".
+                print STDERR "$file:position of \"$lemma\" is $pos, should be ".
                     join(",",sort { $a <=> $b }
                          keys %{$RefPositions{$lemma}})."\n";
                 $nbErrors++;
@@ -100,7 +102,7 @@ foreach $file (@files) {
     }
     close(FBOW);
     if ($nbErrors || $nbTest != $nbTested) {
-        print "$file: FAILED.\t$nbErrors errors found . $nbTested tested positions . $nbTest reference positions\n";
+        print STDERR "$file: FAILED.\t$nbErrors errors found . $nbTested tested positions . $nbTest reference positions\n";
         $nbErrorsFile++;
     }
     else {
