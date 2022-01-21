@@ -111,9 +111,9 @@ trente-et-un,
 # @monthAbbrev|@monthAbbrev \.? = Warning, need to use the both annotations.
 @day::\.? ,? (@numday|t_integer>1<31) (@monthAbbrev|@monthAbbrev \.?|@monthNoAbbrev) @numyear?:DATE:
 =>SetEntityFeature(trigger,"day")
-=>SetEntityFeature(right.1,"numday")
-=>SetEntityFeature(right.2,"month")
-=>SetEntityFeature(right.3,"numyear")
+=>SetEntityFeature(right.3,"numday")
+=>SetEntityFeature(right.4,"month")
+=>SetEntityFeature(right.5,"numyear")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
@@ -146,8 +146,17 @@ trente-et-un,
 =<ClearEntityFeatures()
 =>NormalizeRelativeDate("next_day")
 
-# lundi après-midi, lundi dernier, lundi 8
-@dayNoAbbrev::(dernier|@daytime|@numday|t_integer>1<31)?:DATE:
+#
+# lundi 8
+@dayNoAbbrev::(@numday|t_integer>1<31):DATE:
+=>SetEntityFeature(trigger,"day")
+=>SetEntityFeature(right,"numday")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+# lundi après-midi, lundi dernier
+@dayNoAbbrev::(dernier|@daytime)?:DATE:
 =>SetEntityFeature(trigger,"day")
 =>SetEntityFeature(right.1,"datemod")
 =>NormalizeEntity()

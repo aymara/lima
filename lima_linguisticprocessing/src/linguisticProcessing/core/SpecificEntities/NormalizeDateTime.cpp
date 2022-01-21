@@ -342,7 +342,31 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   if (m.features().find(NUMYEAR_FEATURE_NAME) != m.features().end()) {
     year = (*m.features().find(NUMYEAR_FEATURE_NAME)).getValueLimaString().toUShort();
   }
-
+  
+  QDate referenceDate;
+  if (! m_referenceData.getReferenceDate(analysis,referenceDate))
+  {
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
+    // normalize using current date
+    QDate current=QDate::currentDate();
+    if (year==0) {
+      year=current.year();
+    }
+  }
+  else
+  {
+    if (year==0) {
+      year=referenceDate.year();
+    }
+  }
+  QDate newCurrentDate=QDate(year,month,day);
+  m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
+  if (newCurrentDate.isValid())
+  {
+    updateCurrentDate(analysis,newCurrentDate);
+  }
+  return true;
+  
 /////////////////////////////////////////////////////////////////////////////
   for (RecognizerMatch::const_iterator i(m.begin()); i!=m.end(); i++)
   {
@@ -531,7 +555,7 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   //ad hoc correction of year on two digits
   if (year!=0 && year<99)
   {
-    if (year < 10)
+    if (year < 30)
     {
       year+=2000;
       m.features().setFeature(NUMYEAR_FEATURE_NAME, year);
@@ -543,7 +567,7 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
     }
   }
 
-  QDate newCurrentDate;
+  //QDate newCurrentDate;
   try { // catch date conversion exceptions
     if (day==0 && month==0 && year==0)
     {
@@ -778,7 +802,8 @@ operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const
 {
   // use a reference to normalize the relative date
-
+  //cerr << "NormalizeRelativeDate: " << m.getString() << ", features=" << m.features() << endl;
+  
   if (m_resources == 0) {
     // no resources: cannot normalize date
 #ifdef DEBUG_LP
@@ -804,6 +829,7 @@ operator()(RecognizerMatch& m,
   if (m.features().find("day") != m.features().end() && m_resources != 0) {
     day=m_resources->getDayNumber((*m.features().find("day")).getValueLimaString());
   }
+  //cerr << "NormalizeRelativeDate: day="<< day << endl;
   // test if it is a day name
   if (day!=NormalizeDateTimeResources::no_day) {
     if (day == referenceDate.dayOfWeek()) {
@@ -820,7 +846,9 @@ operator()(RecognizerMatch& m,
     }
     else {
       // get previous day according to reference
-      newCurrentDate=referenceDate.addDays(-1);
+      //newCurrentDate=referenceDate.addDays(-1);
+      int diff=(referenceDate.dayOfWeek()-day)%7;
+      newCurrentDate=referenceDate.addDays(-diff);
 //         first_day_of_the_week_before prevDay(day);
 //         newCurrentDate=prevDay.get_date(referenceDate);
       m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
@@ -835,8 +863,9 @@ operator()(RecognizerMatch& m,
       dayOfMonth = m_resources->getDayNumber((*m.features().find(NUMDAY_FEATURE_NAME)).getValueLimaString());
     }
   }
+  //cerr << "dayOfMonth=" << dayOfMonth << endl;
   if (dayOfMonth>31) { dayOfMonth=0; }
-
+  
   unsigned short month(0);
   if (m.features().find("month") != m.features().end()) {
     bool ok = true;
@@ -863,9 +892,11 @@ operator()(RecognizerMatch& m,
     year = (century-1)*100;
   }
 
+  //cerr << "HERE: month="<< month << "," << endl;
   // test if it is a month name
-  if (month!=NormalizeDateTimeResources::no_month) {
+  if (month!=NormalizeDateTimeResources::no_month and month!=0) {
     int refmonth=referenceDate.month();
+    //cerr << "HERE: refmonth="<< refmonth << endl;
     // possible change of year
     if (m_getNext) {
       if (refmonth>month) {
@@ -887,6 +918,14 @@ operator()(RecognizerMatch& m,
       QDate firstDayOfMonth(year,month,1);
       m.features().setFeature(DATE_BEGIN_FEATURE_NAME,firstDayOfMonth);
       m.features().setFeature(DATE_END_FEATURE_NAME,firstDayOfMonth.addMonths(1).addDays(-1));
+    }
+  }
+  else {
+    //cerr << "HERE: dayOfMonth=" << dayOfMonth << endl;
+    // if a day is specified
+    if (dayOfMonth!=0) {
+      newCurrentDate=QDate(year,referenceDate.month(),dayOfMonth);
+      m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
   }
 
