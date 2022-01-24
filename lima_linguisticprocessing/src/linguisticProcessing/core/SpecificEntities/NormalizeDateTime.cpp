@@ -201,6 +201,25 @@ getReferenceLocation(const AnalysisContent& analysis,
 }
 
 //**********************************************************************
+void updateNormalizedForm(RecognizerMatch& m) 
+{
+  // change features so that the DEFAULT_ATTRIBUTE contains the true normalization
+  // 
+  if (m.features().find(DATE_FEATURE_NAME) != m.features().end()) {
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.features().find(DEFAULT_ATTRIBUTE)->getValueLimaString());
+    m.features().setFeature(DEFAULT_ATTRIBUTE,m.features().find(DATE_FEATURE_NAME)->getValueLimaString());
+  }
+  else if (m.features().find(DATE_BEGIN_FEATURE_NAME) != m.features().end()) {
+    m.features().setFeature(DATESTRING_FEATURE_NAME,m.features().find(DEFAULT_ATTRIBUTE)->getValueLimaString());
+    LimaString norm="["
+      +m.features().find(DATE_BEGIN_FEATURE_NAME)->getValueLimaString()+","
+      +m.features().find(DATE_END_FEATURE_NAME)->getValueLimaString()+"]";
+    m.features().setFeature(DEFAULT_ATTRIBUTE,norm);
+  }
+}
+
+
+//**********************************************************************
 NormalizeDate::
 NormalizeDate(MediaId language,
               const LimaString& complement):
@@ -468,8 +487,8 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.getString());
   }
   
+  updateNormalizedForm(m);
   return true;
-
 }
 
 //**********************************************************************
@@ -637,6 +656,7 @@ operator()(RecognizerMatch& m,
   if (newCurrentDate.isValid()) {
     updateCurrentDate(analysis,newCurrentDate);
   }
+  updateNormalizedForm(m);
   return true;
 }
 
