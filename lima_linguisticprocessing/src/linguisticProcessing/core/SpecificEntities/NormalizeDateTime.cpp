@@ -209,13 +209,15 @@ void updateNormalizedForm(RecognizerMatch& m)
     m.features().setFeature(DATESTRING_FEATURE_NAME,m.features().find(DEFAULT_ATTRIBUTE)->getValueLimaString());
     m.features().setFeature(DEFAULT_ATTRIBUTE,m.features().find(DATE_FEATURE_NAME)->getValueLimaString());
   }
-  else if (m.features().find(DATE_BEGIN_FEATURE_NAME) != m.features().end()) {
-    m.features().setFeature(DATESTRING_FEATURE_NAME,m.features().find(DEFAULT_ATTRIBUTE)->getValueLimaString());
-    LimaString norm="["
-      +m.features().find(DATE_BEGIN_FEATURE_NAME)->getValueLimaString()+","
-      +m.features().find(DATE_END_FEATURE_NAME)->getValueLimaString()+"]";
-    m.features().setFeature(DEFAULT_ATTRIBUTE,norm);
-  }
+  // set value only for exact dates: otherwise, the default normalization of years (2014 -> [2014-01-01,2014-12-31])
+  // is a bit too much
+//   else if (m.features().find(DATE_BEGIN_FEATURE_NAME) != m.features().end()) {
+//     m.features().setFeature(DATESTRING_FEATURE_NAME,m.features().find(DEFAULT_ATTRIBUTE)->getValueLimaString());
+//     LimaString norm="["
+//       +m.features().find(DATE_BEGIN_FEATURE_NAME)->getValueLimaString()+","
+//       +m.features().find(DATE_END_FEATURE_NAME)->getValueLimaString()+"]";
+//     m.features().setFeature(DEFAULT_ATTRIBUTE,norm);
+//   }
 }
 
 
