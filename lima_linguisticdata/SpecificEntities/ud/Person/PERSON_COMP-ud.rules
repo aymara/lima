@@ -1,0 +1,299 @@
+set encoding=utf8
+using modex Person-modex-ud.xml
+using modex Location-modex-ud.xml
+using modex Organization-modex-ud.xml
+using groups Person
+using groups Location
+using groups Organization
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of person names
+#----------------------------------------------------------------------
+
+# known identified persons
+
+# Hafez is now in the gazeteer @firstname
+# Hafez::Al-Assad:PERSON:
+# =>SetEntityFeature(trigger,"firstname")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+# Saddam is now in the gazeteer @firstname
+# Saddam::Hussein:PERSON:
+# =>SetEntityFeature(trigger,"firstname")
+# =>SetEntityFeature(right,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:
+=>SetEntityFeature(left.1,"firstname")
+=>SetEntityFeature(left.2,"lastname")
+=>AppendEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Yasser is now in the gazeteer @firstname
+# Arafat:Yasser::PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+# Ariel is now in the gazeteer @firstname
+# Sharon:Ariel::PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+Mobutu::(Sese Seko)?:PERSON:
+=>SetEntityFeature(left,"firstname")
+=>SetEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Yitzhak is in the gazeteer @firstname
+# Yitzhak::Rabin:PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+# Isaac is in the gazeteer @firstname
+# Isaac::Rabin:PERSON:
+# =>SetEntityFeature(left,"firstname")
+# =>SetEntityFeature(trigger,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+Chirac:::PERSON:
+=>SetEntityFeature(left,"firstname")
+=>SetEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Barack is now in the gazeteer @firstname
+# Barack::&Obama:PERSON:
+# =>SetEntityFeature(right,"lastname")
+# =>SetEntityFeature(trigger,"firstname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
+# recognition of person names
+#----------------------------------------------------------------------
+use firstname.lst
+use title.lst,function_title.lst
+use person.lst
+use person_ending.lst
+
+# hack to take initials into account -> should be in tokenizer
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+@PersonNamePart=(t_capital_1st,t_capital,$NP)
+@particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
+
+# generic rule for name with firstname with stop condition
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding? [($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(left,"title")
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# generic rule with firstname without stop condition
+@Firstname:(@Title|@FunctionTitle)?:(@Initial|t_abbrev)? (@particule? @PersonNamePart){1-2} @PersonEnding?:PERSON:
+=>SetEntityFeature(left,"title")
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>AppendEntityFeature(right.2.3,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# what is the role of <Location.LOCATION>???: ask to Romaric
+# John Doo Paris???
+@Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr A.
+# These two rule risk to produce too many erroneous Person
+# is stop condition enough?
+t_abbrev:(@Title|@FunctionTitle):[($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Initial:(@Title|@FunctionTitle):[($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr H Watson
+@Initial:(@Title|@FunctionTitle)?:@particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr H. Watson
+t_abbrev:(@Title|@FunctionTitle)?:@particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr A Jacquin de la Gorce
+@Initial:[(@Title|@FunctionTitle)?]:(@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>AddEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+t_abbrev:[(@Title|@FunctionTitle)?]:(@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>AddEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr Andrew  ???
+@Firstname:(@Title|@FunctionTitle):[($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Mr Andrew B Chang
+@Firstname:(@Title|@FunctionTitle)?:@Initial? @particule? @PersonNamePart [($DET|$PRON|$ADJ|$V)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>SetEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr Andrew B
+@Firstname:(@Title|@FunctionTitle)?:@Initial? (@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(left,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Dr Zhang Liu
+t_capital_1st:@FunctionTitle:t_capital_1st:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>SetEntityFeature(left,"title")
+=>AddEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Zhang A Liu , director
+t_capital_1st:@Initial? t_capital_1st{0-2}:@PersonEnding? , @FunctionTitle:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(left.1,"firstname")
+=>AddEntityFeature(left.2,"lastname")
+=>AddEntityFeature(right.1,"qualifier")
+=>AddEntityFeature(right.3,"title")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# "bla bla", Machin said.
+t_capital_1st::(t_capital_1st|$NP|@Initial){0-2} [(said .)]:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+t_capital_1st:[said]: @PersonNamePart? (t_abbrev|@Initial)? @PersonNamePart?:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(right.1,"lastname")
+=>AddEntityFeature(right.2,"firstname")
+=>AddEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+@Pronouns=(
+I,
+You,
+It,
+He,
+She,
+They,
+We
+)
+
+@Conjunctions=(
+But,
+And,
+For,
+All,
+)
+
+# president Bush
+# take care
+# very productive rule, trigged on t_capital_1st and search backward for left part
+t_capital_1st:(@FunctionTitle|@Title):(t_capital_1st){0-2}:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(left,"title")
+=>AddEntityFeature(right,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[who]:[<Location.LOCATION>] [,]::NOT_PERSON:
+[said]:[<Location.LOCATION>]::NOT_PERSON:
+[who]:[<Organization.ORGANIZATION>] [,]::NOT_PERSON:
+[said]:[<Organization.ORGANIZATION>]::NOT_PERSON:
+[who]:(@Pronouns|@Conjunctions) [,]::NOT_PERSON:
+
+# Doo Xu who
+[who]:t_capital_1st t_capital_1st{0-2} [,]::PERSON:
+=>SetEntityFeature(left.1,"firstname")
+=>AddEntityFeature(left.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[said]:[@Conjunctions?] t_capital_1st t_capital_1st?::PERSON:
+=>SetEntityFeature(left.2,"firstname")
+=>AddEntityFeature(left.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+# [<Location.LOCATION>]:[<Person.PERSON>] [,]::NOT_LOCATION:
+# [<Location.LOCATION>]:(t_capital|t_capital_1st) [,]::LOCATION:N_LOCATION
+
+# [<Organization.ORGANIZATION>]::[\(] t_capital_1st{1-3} [\)]:ORGANIZATION:
+
+#problem with these rules for over detection (org, or nouns such as "Analysts" solutions??)
+#------------------------------
+# a list of known persons
+use person.lst
+
+# @person:::PERSON:=>NormalizePersonName()
+
+# firstnames alone ?
+# @Firstname:::PERSON:=>NormalizePersonName()
+

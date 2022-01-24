@@ -33,10 +33,9 @@ Options default values are in parentheses.
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
   -j n              <INTEGER> set the compilation to a number of parallel processes.
                     Default 0 => the value is derived from CPUs available.
-  -k packages       <(ON)|OFF> build packages if ON
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
-  -p package        <OFF|(ON)> package building selection
+  -p package        <(OFF)|ON> package building selection
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
@@ -62,7 +61,7 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
-WITH_PACK="ON"
+WITH_PACK="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""

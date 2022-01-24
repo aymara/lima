@@ -4,9 +4,7 @@
     <group name="mediaDeclaration">
       <list name="available">
         <item value="eng" />
-<!--         <item value="eng.ud" /> -->
         <item value="fre" />
-<!--         <item value="fre.ud" /> -->
         <item value="por" />
         <item value="ud" />
 
@@ -82,9 +80,7 @@
     </group>
     <group name="mediasIds">
       <param key="eng" value="6"/>
-<!--       <param key="eng.ud" value="8"/> -->
       <param key="fre" value="5"/>
-<!--       <param key="fre.ud" value="9"/> -->
       <param key="por" value="7"/>
 
       <param key="ud" value="100"/>
@@ -159,9 +155,7 @@
     </group>
     <group name="mediaDefinitionFiles">
       <param key="eng" value="lima-common-eng.xml" />
-<!--       <param key="eng.ud" value="lima-common-eng.ud.xml" /> -->
       <param key="fre" value="lima-common-fre.xml" />
-<!--       <param key="fre.ud" value="lima-common-fre.ud.xml" /> -->
       <param key="por" value="lima-common-por.xml" />
       <param key="ud" value="lima-common-ud.xml" />
 
@@ -178,7 +172,7 @@
       <param key="ud-dan" value="lima-common-ud.xml" />
       <param key="ud-deu" value="lima-common-ud.xml" />
       <param key="ud-ell" value="lima-common-ud.xml" />
-      <param key="ud-eng" value="lima-common-ud.xml" />
+      <param key="ud-eng" value="lima-common-ud-eng.xml" />
       <param key="ud-est" value="lima-common-ud.xml" />
       <param key="ud-eus" value="lima-common-ud.xml" />
       <param key="ud-fas" value="lima-common-ud.xml" />

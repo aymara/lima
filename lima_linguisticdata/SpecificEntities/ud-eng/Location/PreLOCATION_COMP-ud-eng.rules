@@ -1,0 +1,49 @@
+set encoding=utf8
+using modex Location-modex-ud.xml
+using modex DateTime-modex-ud.xml
+using modex Person-modex-ud.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+# to bypass errors in analysis
+U.S::.:COUNTRY:U.S.
+=>SetEntityFeature(trigger,right,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+# locations recognized by preceding context
+
+@Capitalized=(t_capital_1st,t_capital)
+
+@Months=(
+January,
+February,
+March,
+April,
+May,
+June,
+July,
+August,
+September,
+November,
+October,
+December
+)
+
+[in]::@Months:NOT_GEO:
+[in]::<DateTime.DATE>:NOT_GEO:
+
+# 20120716, GC:
+# hack to avoid references to people's work as location like in " in Yaffa Ganz' story ".
+# Here, the possessive marker, which is not included in the token is used to avoid the
+# location interpretation
+[in]::(@Capitalized){1-3} ':NOT_GEO:
+
+[in]::t_capital_1st{1-3}:GEO:
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+# a list of known locations: normalize names
+include location.rules
+

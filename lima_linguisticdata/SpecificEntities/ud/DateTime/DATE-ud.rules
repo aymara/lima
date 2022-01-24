@@ -1,0 +1,104 @@
+set encoding=utf8
+using modex DateTime-modex-ud.xml,Numex-modex-ud.xml
+using groups DateTime,Numex
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of dates and times
+#----------------------------------------------------------------------
+
+#------------------------------ DATES ----------
+use days.lst,months.lst,monthAbbrev.lst
+
+@numday=(t_integer>1<31,T_No>1<31)
+
+@timeModifier=(last,next,first,previous)
+
+# date with a precise day
+# Wed 10 July
+# Wed 10 July, 2000
+# Sun, 21 May 2000
+# Wed. July 1st, 2000
+# Wed, July 1, 2000
+# Wed, July 1st, 2000
+@day:(@timeModifier)?:(,)? @numday (of)? (@month|@monthAbbrev .?) (t_integer>1000<3000|t_integer>1<99)?:DATE:=>NormalizeDate()
+
+@day:(@timeModifier)?:(,)? (@month|@monthAbbrev .?) the? @numday (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
+
+@daytime=(morning,afternon,evening)
+
+@day:(@timeModifier)?:(@daytime)?:DATE:=>NormalizeDate()
+
+#------------------------------
+# dates with a precise month (no day)
+# 10th of July, 2000
+# 10 July
+# 10th of July
+@month:(@numday|t_ordinal_integer) of?:(,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
+
+@month::the? (@numday|t_ordinal_integer) (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
+
+# July, 2000
+@month::,? t_integer>1000<3000:DATE:=>NormalizeDate()
+
+# same with abbreviated month names
+# (abbreviations can be followed by a dot)
+@monthAbbrev:(@numday|t_ordinal_integer>1<31) of?:.? (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
+
+@monthAbbrev::.? the? (@numday|t_ordinal_integer>1<31) (,? t_integer>1000<3000)?:DATE:=>NormalizeDate()
+
+@monthAbbrev::.? ,? t_integer>1000<3000:DATE:=>NormalizeDate()
+
+# automn 2000
+@season=(automn,winter,spring,summer)
+
+@season::t_integer>1000<3000:DATE:
+
+# early october
+@modifierDate=(early,late,mid,end)
+
+@month:@modifierDate::DATE:=>NormalizeDate()
+
+# the early 90s
+# the late 80s
+@modifierDate:[the?]:t_integer ('s)?:DATE:=>NormalizeDate()
+
+@Decade=(20s,30s,40s,50s,60s,70s,80s,90s,
+1920s,1930s,1940s,1950s,1960s,1970s,1980s,1990s)
+
+@Decade:@modifierDate?::DATE:
+
+
+# from 1980 to 1981
+# between 1980 and 1981
+#from::t_integer>1200<2100 to t_integer>1200<2100:DATE:=>NormalizeDate()
+#between::t_integer>1200<2100 and t_integer>1200<2100:DATE:=>NormalizeDate()
+
+# in 1979
+# in December
+@in=(in,by,since)
+
+# numbers between 1200 and 2100 are dates
+# unless followed by a unit
+#t_integer>1200<2100::(of)? $NC-NN:NOT_DATE:
+
+t_integer>1200<2100:[@in]::DATE:=>NormalizeDate()
+
+@month:::DATE:=>NormalizeDate()
+
+#------------------------------
+# numeric forms of dates (should be recognized by tokenizer in the future)
+
+# 22-05-68
+# integer - integer - integer
+@numday::- @numday - (t_integer>1000<3000|t_integer<99):DATE:=>NormalizeDate()
+
+# 22/05/68
+# fraction / integer or integer / integer / integer
+t_fraction::/ t_integer:DATE:
+=>NormalizeDate()
+
+@numday::/ t_integer / t_integer:DATE:
+=>NormalizeDate()
+
+t_integer>1900<2100:::DATE:=>NormalizeDate()

@@ -1,0 +1,358 @@
+set encoding=utf8
+using modex Location-modex-ud.xml
+using modex DateTime-modex-ud.xml
+using modex Person-modex-ud.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of web adresses
+#----------------------------------------------------------------------
+
+@WebAddressesEndings=(com,org,net,fr,ch,co,uk,edu)
+
+@fileExtension=(html,htm,jpg)
+
+http::\: / / (* .){1-4} @WebAddressesEndings (/ ~? *){0-n} (/|/ * . @fileExtension)?:URL:
+
+http::\: / / (* .){1-4} * (/ ~? *){0-n} (/|/ * . @fileExtension)?:URL:
+
+www::. (* .){1-4} @WebAddressesEndings (/ ~? *){0-4} (/|/ * . @fileExtension)?:URL:
+
+#town
+Palm:West:Beach:LOCATION:West Palm Beach
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Palm::Beach:LOCATION:Palm Beach
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Wall::Street:NOT_LOCATION:
+
+#Evangelical Lutheran Church in Canada Act 317. => todo problem 
+Church:Evangelical Lutheran::NOT_LOCATION:
+
+#----------------------------------------------------------------------
+# recognition of location names
+#----------------------------------------------------------------------
+
+use cities.lst,states.lst,countriesAndRegions.lst
+use greeklocations.lst
+# contextual rules
+use locationKey.lst,locationPre.lst,streetKey.lst,stateAbbrev.lst
+
+# precise direction
+# 12400 SW 152nd St.
+# 3245 College Ave
+# ( the T_Ni>1 trigger is a trick :
+#   all T_Ni triggers must have less priority than T_Ni>1000<3000 triggers
+#   (more specific) => must be placed after, or be a different trigger,
+#   as specific )
+
+@orientation=(N,S,E,W,NE,NW,SE,SW,N . E,N . W,S . E,S . W )
+
+#12400 SW 152nd Avenue
+#former rule => T_Ni>1::(@orientation .?)? *{1-2} @streetKey:LOCATION:
+T_Ni>1::(@orientation .?)? (*{1-2}) @streetKey:LOCATION:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+# =>todo : Unable to catch the name (right 2) with the former regex. 
+# Very strange regex to cath 152nd ! 
+
+
+T_Ni>1::(@StateAbbrev|US|U.S.) (-?) (T_Ni<999):LOCATION:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#Aux États-Unis, le code postal est le code ZIP. Comprenant 5 chiffres, il se place à la fin d'une ligne commençant par le nom de la ville, précédé du nom ou du sigle de l’État :
+
+## zip codes : five digits
+## FL 33301
+@StateAbbrev::T_Ni>9999<99999:LOCATION:
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+## P.O. Box
+Box:(PO|P.O.|po)?:T_Ni:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+## Mile Markers
+#Jeremy said there's an access road just past mile marker 6.
+mile::marker (T_Ni|T_Nd):LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+
+## highway names
+
+#Interstate 40
+interstate::T_Ni<99:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+Interstate::T_Ni<99:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+
+#convention : A10=name
+I::(-) (T_Ni<99):LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo ?  - 24/02 - cela ne marche toujours pas.  
+
+@StateAbbrev::-? T_Ni<999:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo ?
+
+@StateAbbrev:[,]:.?:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+US::-? T_Ni<999:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo 
+
+
+#----------------------------------
+U.S.::-? T_Ni<999:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+## general contextual location rule
+
+## $NP:@locationPre?:(@locationKey|@streetKey):LOCATION:
+## @Capitalized=(t_capital_1st,T_Amh,$NP)
+@Capitalized=(t_capital_1st,t_capital)
+
+#todo : que se passe-t-il avec cette regle ?
+#@Capitalized:@locationPre? (@Capitalized){0-2}:@locationKey:LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+#=> loc phys ?
+
+#todo = a priori probleme avec ?
+#Jeremy Martinson
+#455 Larkspur Dr.
+#California Springs, CA 92926-4601
+#@Capitalized:@locationPre? (@Capitalized){0-2}:@streetKey:LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+#=> loc odo
+
+## @locationKey:@locationPre? @Capitalized{1-2}::LOCATION:
+@streetKey:@locationPre? (@Capitalized{1-2})::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+
+Park:@Capitalized{1-3}::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo
+
+Church:@Capitalized{1-5}::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo
+
+#Nothing beats an espresso in Place Vendome.
+Place::Vendome:LOCATION:
+=<ClearEntityFeatures()
+
+#For years we lived on Beekman Place.
+Place:@Capitalized?:(@Capitalized|of the Vosges|of the Bastille)?:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc odo
+
+
+#The bedrooms overlook Sloane Square
+@locationKey:[@locationPre?] (@Capitalized{1-3})::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#=> loc ????
+
+
+#todo _ je ne sais pas
+#@Capitalized::[,] [@StateAbbrev]:LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+#=> loc ????
+
+
+#Republic::of @Capitalized:LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+#=> loc loc.adm.nat
+
+#todo y reflechir ....
+#@locationPre::(@City|@State|@CountryOrRegion):LOCATION:
+#=<ClearEntityFeatures()
+#=>NormalizeEntity()
+
+@CityInd=(
+village,
+city,
+town,
+district,
+municipality,
+capital,
+prefect,
+province,
+port,
+island,
+settlement,
+state,
+streets,
+suburb,
+track,
+diocese,
+residents,
+palace,
+republic,
+resort,
+region
+)
+#warning (ald) : exclusion : well,north,east,south,west,in
+
+@CityIndPlur=(
+villages,
+cities,
+towns,
+municipalities,
+capitals,
+prefects,
+provinces,
+ports,
+republics,
+islands,
+settlements,
+states,
+streets,
+suburbs,
+dioceses,
+district)
+
+#the city of Peterborough
+[@CityInd]::[of] t_capital_1st{1-3}:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#loc adm
+#bug
+
+[@CityIndPlur]::[of] t_capital_1st{1-3} [and] t_capital_1st{1-3}:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+include ../Person/firstname.lst
+
+@nearKey=(
+in,
+by,
+close\ to,
+)
+
+[near]::@Capitalized{1-3} [@nearKey] [@Capitalized{1-3}]:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#same rule than the previous rule. 
+[near]::[@Capitalized{1-3}] [@nearKey] @Capitalized{1-3}:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+# todo : error : unable to define two names with the same attribute !!
+
+near::@Capitalized{1-3}:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+#todo : error : unable to catch a name with 2/3 tokens
+
+# redundancies
+# Arkansas state
+# Exeter city
+@State::[(state|State|STATE)]:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+
+@State:[(State|STATE|state)] [of]::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+@City::[(city|City|CITY)]:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+@Greeklocations:::LOCATION:
+
+# southern Afghanistan
+
+@GeographicalPrecision=(
+South,West,East,
+Southern,Western,Northern,Eastern,
+Southwest, Northwest, Southeast, Northeast,
+Southwestern, Northwestern, Southeastern, Northeastern
+)
+
+Ruth::[and] Ruff:LOCATION:
+#??
+
+#------------------------------
+# telephone numbers are locations
+
+T_Ni<999:\(:\) T_Ni<999 - T_Ni<9999:LOCATION:
+
+T_Ni<999::- T_Ni<999 - T_Ni<9999:LOCATION:
+
+1::- T_Ni<999 - T_Ni<999 - T_Ni<9999:LOCATION:
+
+##------------------------------
+## a list of known locations
+
+use miscLocations.lst
+
+@City:::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+@State:::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+@CountryOrRegion:::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+
+@miscLocation:::LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+@locationVerbs=(
+come,
+came,
+travel,
+travelling,
+traveling,
+go,
+went,
+emigrate,
+emigrates,
+landed,
+trip,
+have been,
+has been,
+had been
+)
+
+[@locationVerbs]::[(to|in|from|across)] (@Capitalized{1-3}):LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+#Cap::(de @Capitalized|d\'):LOCATION:
+Cap::(de|d\') @Capitalized:LOCATION:
+=<ClearEntityFeatures()
+=>NormalizeEntity()

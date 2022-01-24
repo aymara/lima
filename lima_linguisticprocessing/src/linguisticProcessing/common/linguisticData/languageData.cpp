@@ -436,7 +436,7 @@ void LanguageDataPrivate::initCompoundTensesDefinitions(
   }
   catch (const NoSuchParam& )
   {
-    LINFO << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language "
+    LDEBUG << "LinguisticProcessors/SyntacticAnalysis/CompoundTensesDefFile parameter not found for language "
           << MediaticData::single().media(m_language) << ".";
     return;
   }

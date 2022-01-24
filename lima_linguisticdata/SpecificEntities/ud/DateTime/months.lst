@@ -1,0 +1,14 @@
+@month=(
+APRIL,April,april,
+AUGUST,August,august,
+DECEMBER,December,december,
+FEBRUARY,February,february,
+JANUARY,January,january,
+JULY,July,july,
+JUNE,June,june,
+MARCH,March,march,
+MAY,May,
+NOVEMBER,November,november,
+OCTOBER,October,october,
+SEPTEMBER,September,september
+)

@@ -18,6 +18,7 @@ find_path(Eigen_INCLUDE_DIR
         ${Eigen_INSTALL_DIR}
         /usr/local
         /usr/local/include
+        ${TensorFlow_INCLUDE_DIR}/Eigen
         )
 
 # set Eigen_FOUND

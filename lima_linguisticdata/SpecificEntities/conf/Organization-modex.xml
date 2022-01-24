@@ -47,12 +47,30 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="OrganizationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/ORGANIZATION-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud.bin"/>
     </group>
     <group name="OrganizationCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud-eng.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud-eng.bin"/>
     </group>
     <group name="OrganizationIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

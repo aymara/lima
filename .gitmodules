@@ -1,6 +1,3 @@
-[submodule "UD_English-EWT"]
-	path = lima_linguisticdata/disambiguisationMatrices/eng.ud/UD_English-EWT
-	url = https://github.com/UniversalDependencies/UD_English-EWT.git
 [submodule "fastText"]
 	path = extern/fastText
 	url = https://github.com/aymara/fastText.git
