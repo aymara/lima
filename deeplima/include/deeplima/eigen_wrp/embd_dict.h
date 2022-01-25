@@ -52,6 +52,7 @@ public:
       assert(it.second < std::numeric_limits<I>::max());
       assert(it.second < m_embd.cols());
       m_index[static_cast<K>(it.first)] = I(it.second);
+      m_reverse_index[static_cast<I>(it.second)] = static_cast<K>(it.first);
     }
   }
 
@@ -69,6 +70,11 @@ public:
     get_static(key, target, timepoint, pos);
   }
 
+  inline void get_direct(const I idx, M& target, I timepoint, I pos) const
+  {
+    target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
+  }
+
   inline void get_static(const K key, M& target, I timepoint, I pos) const
   {
     I idx = lookup(key);
@@ -80,10 +86,17 @@ public:
     return m_embd;
   }
 
+  inline K decode(const I idx) const
+  {
+    auto it = m_reverse_index.find(idx);
+    return it->second;
+  }
+
 protected:
   I m_dim;
   M m_embd;
   std::unordered_map<K, I> m_index;
+  std::unordered_map<I, K> m_reverse_index;
 
   inline I lookup(const K key) const
   {

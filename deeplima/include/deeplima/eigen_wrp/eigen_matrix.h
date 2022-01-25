@@ -94,7 +94,7 @@ public:
     return m_tensor.rows();
   }
 
-  const M& get_tensor() const
+  inline const M& get_tensor() const
   {
     return m_tensor;
   }
