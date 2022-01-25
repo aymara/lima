@@ -56,6 +56,27 @@ install(TARGETS deeplima-train-ner
 )
 
 ############################################################
+# Train lemmatization models
+
+add_executable(deeplima-train-lemmatization
+  train-lemmatization.cpp
+)
+
+target_link_libraries(deeplima-train-lemmatization
+  PRIVATE
+  train_lemmatization
+  conllu
+  Boost::program_options
+  Boost::filesystem
+  version
+)
+
+install(TARGETS deeplima-train-lemmatization
+  DESTINATION bin
+  COMPONENT runtime
+)
+
+############################################################
 # deeplima (with eigen as inference engine)
 
 add_executable(deeplima-eigen
