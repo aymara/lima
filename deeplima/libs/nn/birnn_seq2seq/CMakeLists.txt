@@ -15,6 +15,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_subdirectory(birnn_seq_cls)
-add_subdirectory(birnn_seq2seq)
+set(SOURCE_LIST
+  birnn_seq2seq.cpp
+  birnn_seq2seq_script_generator.cpp
+)
+
+set(HEADER_LIST
+  birnn_seq2seq.h
+)
+
+add_library(torch_birnn_seq2seq
+  STATIC
+  ${SOURCE_LIST}
+  ${HEADER_LIST}
+)
+
+target_link_libraries(torch_birnn_seq2seq
+  PRIVATE
+  torch_birnn_seq_classifier
+  ${TORCH_LIBRARIES}
+)
 
