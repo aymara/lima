@@ -37,6 +37,21 @@ public:
   typedef T value_t;
   typedef typename std::vector<T>::size_type key_t;
 
+  Dict(const std::vector<T>& v1, const std::vector<T>& v2 = {})
+  {
+    i2v.reserve(v1.size() + v2.size());
+
+    for (const T& v : v1)
+    {
+      add(v);
+    }
+
+    for (const T& v : v2)
+    {
+      add(v);
+    }
+  }
+
   Dict(const T& UNK, const std::vector<T>& v1, const std::vector<T>& v2 = {})
   {
     i2v.reserve(v1.size() + v2.size() + 1);
@@ -105,7 +120,7 @@ public:
     }
   }
 
-  /*template<class InputIt, typename F>
+  template<class InputIt, typename F>
   Dict(const T& UNK, const T& EOS, const T& OTHER, InputIt begin, InputIt end, F f)
   {
     size_t count = 3;
@@ -128,7 +143,7 @@ public:
         add(it->first);
       }
     }
-  }*/
+  }
 
   template<class InputIt, typename F>
   Dict(InputIt begin, InputIt end, F f)
