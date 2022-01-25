@@ -63,6 +63,13 @@ public:
     }
   }
 
+  inline idx_t get_idx(const ustring_t& ustr)
+  {
+    assert(m_str2idx.size() == m_idx2str.size());
+    string_t str = m_cvt.to_bytes(ustr);
+    return get_idx(str);
+  }
+
   inline const S& get_str(const idx_t idx) const
   {
     assert(m_str2idx.size() == m_idx2str.size());
