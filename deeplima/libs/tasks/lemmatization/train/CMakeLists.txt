@@ -15,8 +15,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_subdirectory(common)
-add_subdirectory(segmentation)
-add_subdirectory(ner)
-add_subdirectory(lemmatization)
+add_library(train_lemmatization
+  STATIC
+  train_lemmatization.cpp
+)
+
+target_link_libraries(train_lemmatization
+  PRIVATE
+  model_lemmatization
+  train_common
+  ${TORCH_LIBRARIES}
+)
 
