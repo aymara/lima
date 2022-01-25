@@ -383,9 +383,38 @@ unsigned short NormalizeDate::getDefaultYear(AnalysisContent& analysis) const
   QDate referenceDate;
   if (! m_referenceData.getReferenceDate(analysis,referenceDate))
   {
-    return QDate::currentDate().year();
+    //return QDate::currentDate().year();
+    return 0;
   }
   return referenceDate.year();
+}
+
+QString NormalizeDate::getDateSpan(unsigned short year, unsigned short month, unsigned short day) const
+{
+  QString dateSpan = "XXXX";
+  if( year != 0 )
+    dateSpan = QString::number(year);
+  dateSpan.append("-");
+  if( month == 0 )
+  {
+    dateSpan.append("XX-XX");
+  }
+  else
+  {
+    QString monthString = QString(QLatin1String("%1")).arg(month, 2, 10, QLatin1Char('0'));
+    dateSpan.append(monthString);
+    dateSpan.append("-");
+    if( day == 0 )
+    {
+      dateSpan.append("XX");
+    }
+    else
+    {
+      QString dayString = QString(QLatin1String("%1")).arg(day, 2, 10, QLatin1Char('0'));
+      dateSpan.append(dayString);
+    }
+  }
+  return dateSpan;
 }
 
 
@@ -449,6 +478,9 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
       dateEnd=QDate(year_end,month_end,day_end);
     }
   }
+
+  QString dateSpan=getDateSpan(year,month,day);
+  m.features().setFeature(DATE_SPAN_FEATURE_NAME,dateSpan);
   
   // if incomplete information, set interval values
   if (day==0) {
@@ -648,12 +680,15 @@ operator()(RecognizerMatch& m,
       m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
     }
   }
-
+  
   // other cases: maybe a diff (hier,ajourd'hui...)
   if (m_diff != 0) {
     newCurrentDate=referenceDate.addDays(m_diff);
     m.features().setFeature(DATE_FEATURE_NAME,newCurrentDate);
   }
+
+  QString dateSpan=getDateSpan(year,month,day);
+  m.features().setFeature(DATE_SPAN_FEATURE_NAME,dateSpan);
 
   if (newCurrentDate.isValid()) {
     updateCurrentDate(analysis,newCurrentDate);
