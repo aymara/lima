@@ -129,7 +129,7 @@ generation, optimize for your computer, etc.)
 
 After the installation of LIMA, if you have built the neural network-based
 modules (the default, see above), you must
-[install the models](https://github.com/aymara/lima/wiki/DeepLima-beta#install-language-models)
+[install the models](https://github.com/aymara/lima/wiki/UD-pipelines#installation-of-language-models)
 for one of the 60+ supported languages.
 
 ## Build troubleshoutings
