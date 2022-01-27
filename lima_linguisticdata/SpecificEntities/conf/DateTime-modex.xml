@@ -87,18 +87,18 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="DateRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/DATE-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/DATE-ud.bin"/>
     </group>
     <group name="DateCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/DATE_COMP-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/DATE_COMP-ud.bin"/>
     </group>
     <group name="TimeRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/TIME-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/TIME-ud.bin"/>
     </group>
     <group name="TimeCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/TIME_COMP-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/TIME_COMP-ud.bin"/>
     </group>
     <group name="DateTimeIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">
@@ -115,8 +115,52 @@
       </list>
     </group>
     <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
-      <param key="timezoneDatabase" value="SpecificEntities/tz-db-eng.ud.dat"/>
-      <param key="monthsDays" value="SpecificEntities/monthsdays-eng.ud.dat"/>
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-ud.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-ud.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="PROPN"/>
+      </list>
+      <list name="DayMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-ud-eng.bin"/>
+    </group>
+    <group name="DateCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE_COMP-ud-eng.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-ud-eng.bin"/>
+    </group>
+    <group name="TimeCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME_COMP-ud-eng.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="PROPN"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-ud-eng.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-ud-eng.dat"/>
     </group>
     <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
       <list name="microGroups">

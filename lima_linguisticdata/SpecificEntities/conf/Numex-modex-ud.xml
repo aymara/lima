@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="Numex">
+      <list name="entityList">
+        <item value="NUMBER"/>
+        <item value="UNIT"/>
+        <item value="NUMEX"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="NumexModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="NumexRecognition"/>
+      </list>
+    </group>
+    <group name="NumberRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumberRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="UnitRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="UnitRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumexRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumexRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-ud.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-ud.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-ud.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-ud-eng.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-ud-eng.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-ud-eng.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

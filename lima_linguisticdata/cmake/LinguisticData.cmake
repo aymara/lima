@@ -369,6 +369,19 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+
+      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex-ud.xml
+
+
+
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
@@ -417,6 +430,36 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex-ud.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex-ud.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex-ud.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex-ud.xml
+
+
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
@@ -446,6 +489,15 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/SpecificEntities-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/AuthorPosition-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/DateTime-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Event-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Location-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Numex-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Organization-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Person-modex-ud.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Product-modex-ud.xml
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
       ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
@@ -472,6 +524,15 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/FrameNet-modex.xml
     DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/VerbNet-modex.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/SpecificEntities-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/AuthorPosition-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/DateTime-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Event-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Location-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Numex-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Organization-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex-ud.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex-ud.xml
   )
 endmacro (SPECIFICENTITIES_GENERIC_CONFIGENV)
 
@@ -671,7 +732,46 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     compile-rules
   )
 
-endmacro (SPECIFICENTITIES _lang _group)
+endmacro (SPECIFICENTITIES _subtarget _lang _group)
+
+macro (SPECIFICENTITIESUD _subtarget _lang _group)
+  set (COMPILE_RULES_DEBUG_MODE)
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set (COMPILE_RULES_DEBUG_MODE "--debug")
+  endif ()
+  set (BINFILENAMES)
+  foreach(_current ${ARGN})
+    get_filename_component(BINFILENAME ${_current} NAME_WE)
+    set(BINFILENAME ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/${BINFILENAME}.bin)
+    set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
+    add_custom_command(
+      OUTPUT ${BINFILENAME}
+	  COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex-ud.xml
+      DEPENDS lima-lp-specificentities rules-${_lang}-execEnv rules-configEnv ${_current} ${DEPENDENCIES}
+      COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -o${BINFILENAME} ${_current} --modex=${_group}-modex-ud.xml"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      VERBATIM
+    )
+  endforeach(_current ${ARGN})
+
+  add_custom_target(
+    rules-ud-${_group}-${_lang}-${_subtarget}
+    ALL
+    DEPENDS ${BINFILENAMES}
+  )
+
+  install(FILES ${BINFILENAMES} COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SpecificEntities)
+
+  # add the link between the current target and its execution environment dependencies
+  add_dependencies(rules-ud-${_group}-${_lang}-${_subtarget}
+#    specificentitiesconfigenv-${_lang}-all
+#     rules-${_lang}-${_group}-configEnv-${_subtarget}
+    rules-${_lang}-execEnv
+    rules-configEnv
+    compile-rules
+  )
+
+endmacro (SPECIFICENTITIESUD _subtarget _lang _group)
 
 ####################
 # Syntactic analysis

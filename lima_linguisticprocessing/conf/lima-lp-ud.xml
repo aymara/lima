@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
-<module name="entities">
+  <module name="entities">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex.xml/entities"/>
+        <item value="SpecificEntities-modex-ud.xml/entities"/>
         <item value="ApproxNames-modex.xml/entities"/>
       </list>
     </group>
@@ -11,7 +11,7 @@
   <module name="Processors">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex.xml/Processors"/>
+        <item value="SpecificEntities-modex-ud.xml/Processors"/>
         <item value="VerbNet-modex.xml/Processors"/>
         <item value="ApproxNames-modex.xml/Processors"/>
       </list>
@@ -488,14 +488,12 @@
   <module name="Resources">
     <group name="include">
       <list name="includeList">
+        <item value="SpecificEntities-modex-ud.xml/resources-ud"/>
       </list>
     </group>
 
     <group name="FsaStringsPool">
       <param key="mainKeys" value="globalFsaAccess"/>
-    </group>
-    <group name="flatcharchart" class="FlatTokenizerCharChart">
-      <param key="charFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.chars.tok"/>
     </group>
     <group name="mainDictionary" class="EnhancedAnalysisDictionary">
       <param key="accessKeys" value="globalFsaAccess"/>

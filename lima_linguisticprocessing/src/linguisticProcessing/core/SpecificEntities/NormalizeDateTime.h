@@ -100,6 +100,11 @@ protected:
   void updateCurrentDate(AnalysisContent& analysis,
                          const QDate& currentDate) const;
   unsigned short getDayFromString(const LimaString& numdayString) const;
+  unsigned short getDay(Automaton::RecognizerMatch& m, const std::string& featureName) const;
+  unsigned short getMonth(Automaton::RecognizerMatch& m, const std::string& featureName, const std::string& alt="") const;
+  unsigned short getYear(Automaton::RecognizerMatch& m, const std::string& featureName) const;
+  unsigned short getDefaultYear(AnalysisContent& analysis) const;
+
 };
 
 class LIMA_SPECIFICENTITIES_DATETIME_EXPORT NormalizeRelativeDate : public NormalizeDate

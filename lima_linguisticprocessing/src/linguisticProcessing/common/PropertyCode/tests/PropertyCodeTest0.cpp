@@ -70,7 +70,7 @@ void PropertyCodeTest0::test_load()
     Lima::LimaException
   );
 
-  QString dataFile = QFINDTESTDATA("code-eng.ud.xml");
+  QString dataFile = QFINDTESTDATA("code-ud-eng.xml");
 
   pcm.readFromXmlFile(dataFile.toUtf8().constData());
   auto paMicro = pcm.getPropertyAccessor("MICRO");

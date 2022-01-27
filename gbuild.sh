@@ -33,10 +33,9 @@ Options default values are in parentheses.
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
   -j n              <INTEGER> set the compilation to a number of parallel processes.
                     Default 0 => the value is derived from CPUs available.
-  -k packages       <(ON)|OFF> build packages if ON
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
-  -p package        <OFF|(ON)> package building selection
+  -p package        <(OFF)|ON> package building selection
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
@@ -62,7 +61,7 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
-WITH_PACK="ON"
+WITH_PACK="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
@@ -248,7 +247,7 @@ echo "libTorch: " $LIBTORCH_PATH
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
-echoerr "Launching cmake from $PWD"
+echoerr "Launching cmake from $PWD on $source_dir"
 cmake  -G "$generator" \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
@@ -259,11 +258,11 @@ cmake  -G "$generator" \
     -DLIMA_VERSION_RELEASE:STRING="$release" \
     -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
     -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
-    -DWITH_GUI=$WITH_GUI $source_dir \
-    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH
+    -DWITH_GUI=$WITH_GUI \
+    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
+    $source_dir
 result=$?
 if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
-
 
 echoerr "Running make command:"
 echo "$make_cmd"

@@ -298,12 +298,10 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
   }
 
-  for (deque<string>::const_iterator langItr=langToload.begin();
-       langItr!=langToload.end();
-       langItr++)
+  for (const auto& lang: langToload)
   {
-    LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
-    MediaId langid=MediaticData::single().getMediaId(*langItr);
+    LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << lang;
+    MediaId langid=MediaticData::single().getMediaId(lang);
     QString file;
     try
     {
@@ -316,7 +314,7 @@ void CoreLinguisticProcessingClientFactory::configure(
       QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
             "lima-coreclient",
             "mediaProcessingDefinitionFiles",
-            *langItr).c_str());
+            lang).c_str());
       Q_FOREACH(QString confPath, configPaths)
       {
         if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
@@ -328,14 +326,14 @@ void CoreLinguisticProcessingClientFactory::configure(
       if (file.isEmpty())
       {
         LERROR << "no language definition file"<< mediaProcessingDefinitionFile
-                << "for language" << *langItr << "found in config paths"
+                << "for language" << lang << "found in config paths"
                 << configPaths;
         throw InvalidConfiguration("no language definition file for language ");
       }
     }
     catch (NoSuchParam& )
     {
-      LERROR << "no language definition file for language " << *langItr;
+      LERROR << "no language definition file for language " << lang;
       throw InvalidConfiguration("no language definition file for language ");
     }
     XMLConfigurationFileParser langParser(file);
@@ -344,14 +342,14 @@ void CoreLinguisticProcessingClientFactory::configure(
     Common::MediaticData::MediaticData::changeable().initEntityTypes(langParser);
 
     // initialize resources
-    LINFO << "configure resources for language " << *langItr;
+    LINFO << "configure resources for language " << lang;
     try
     {
       ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
       LinguisticResources::changeable().initLanguage(
         langid,
         module,
-        true); // load main keys
+        lang.find("ud-") != 0); // load main keys for non ud languages
     }
     catch (NoSuchModule& )
     {
