@@ -1,10 +1,10 @@
 /************************************************************************
  *
  * @file       readBoWFile.cpp
- * @author     Besancon Romaric (besanconr@zoe.cea.fr)
+ * @author     Besancon Romaric <romaric.besancon@cea.fr>
+ * @author     Gaël de Chalendar <gael.de-chalendar@cea.fr>
  * @date       Thu Oct  9 2003
- * @version    $Id: readBoWFile.cpp 9085 2008-02-26 14:15:55Z de-chalendarg $
- * copyright   Copyright (C) 2003 by CEA LIST (LVIC)
+ * copyright   Copyright (C) 2003-2022 by CEA LIST (LASTI)
  *
  ***********************************************************************/
 

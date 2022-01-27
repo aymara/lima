@@ -247,7 +247,7 @@ echo "libTorch: " $LIBTORCH_PATH
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
-echoerr "Launching cmake from $PWD"
+echoerr "Launching cmake from $PWD on $source_dir"
 cmake  -G "$generator" \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
@@ -258,8 +258,9 @@ cmake  -G "$generator" \
     -DLIMA_VERSION_RELEASE:STRING="$release" \
     -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
     -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
-    -DWITH_GUI=$WITH_GUI $source_dir \
-    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH
+    -DWITH_GUI=$WITH_GUI \
+    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
+    $source_dir
 
 echoerr "Running make command:"
 echo "$make_cmd"

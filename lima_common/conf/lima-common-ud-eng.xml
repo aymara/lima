@@ -73,51 +73,6 @@
     </group>
     <group name="SyntacticRelations">
       <list name="relationList">
-        <item value="ADJPRENSUB"/>
-        <item value="ADJSUB"/>
-        <item value="ADVADJ"/>
-        <item value="ADVADV"/>
-        <item value="ADVADV2"/>
-        <item value="AdvSub"/>
-        <item value="AdvSub2"/>
-        <item value="AdvVerbe"/>
-        <item value="APPOS"/>
-        <item value="ATB_S"/>
-        <item value="CodPrev"/>
-        <item value="COD_V"/>
-        <item value="CoiPrev"/>
-        <item value="COMPADJ"/>
-        <item value="COMPADV"/>
-        <item value="COMPADV2"/>
-        <item value="COMPDUNOM"/>
-        <item value="COMPDUNOM2"/>
-        <item value="COORD1"/>
-        <item value="COORD2"/>
-        <item value="CPLV_V"/>
-        <item value="CPL_V"/>
-        <item value="DetAdj"/>
-        <item value="DETADJ"/>
-        <item value="DetIntSub"/>
-        <item value="DetSubNum"/>
-        <item value="Dummy"/>
-        <item value="JUXT"/>
-        <item value="MOD_A"/>
-        <item value="MOD_N"/>
-        <item value="MOD_V"/>
-        <item value="Neg"/>
-        <item value="PrepInf"/>
-        <item value="Quotes"/>
-        <item value="SUBADJPOST"/>
-        <item value="SUBADJPOST2"/>
-        <item value="SUBSUBJUX"/>
-        <item value="Parent"/>
-        <item value="Pleon"/>
-        <item value="PrepAdv"/>
-        <item value="PrepDetInt"/>
-        <item value="PREPSUB"/>
-        <item value="SujInv"/>
-        <item value="SUJ_V"/>
-
         <!-- Relations from Universal Dependencies 2.0 -->
         <!-- https://universaldependencies.org/u/dep/  -->
         <item value="acl"/>         <!-- UD 2.0: clausal modifier of noun (adjectival clause) -->
@@ -447,12 +402,12 @@
       <list name="VerbalHomoSyntagmaticRelations">
         <item value="PrepInf"/>
       </list>
-      <list name="NounPhraseHeadCategs">	      
+      <list name="NounPhraseHeadCategs">
         <item value="NOUN" />
         <item value="PROPN" />
         <item value="PRON" />
       </list>
-      <list name="DefiniteCategs">	      
+      <list name="DefiniteCategs">
         <item value="DET" />
       </list>
     </group>

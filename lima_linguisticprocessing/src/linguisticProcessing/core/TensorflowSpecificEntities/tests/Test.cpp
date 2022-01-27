@@ -256,171 +256,171 @@ void Test::testPredictBatch1()
   delete session;
 }
 
-void Test::testPredictBatch2()
-{
-//   Initialize a tensorflow session
-
-  tensorflow::Session* session;
-  std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
-                                                       &session)));
-  QVERIFY(status->ok());
-
-//   Read in the protobuf graph we have exported
-
-  tensorflow::GraphDef graphDef;
-  *status = ReadBinaryProto(tensorflow::Env::Default(),
-                            "results/eng_IOB1/output_graph.pb", &graphDef);
-  QVERIFY(status->ok());
-
-//   Add the graph to the session
-
-  *status = session->Create(graphDef);
-  QVERIFY(status->ok());
-
-//   Load vocabulary
-
-  auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
-  auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
-  auto vocabTags= loadFileTags("data/IOB1/eng/tags.txt");
-
-  //Here the size of the batch is equal to 1.
-
-  std::vector<QStringList> sentencesByBatch(1);
-  sentencesByBatch[0]=QStringList({"I","love","Paris"});
-
-  // Transform words into ids and split all the characters and identify them
-
-  std::vector<std::pair<std::vector<int>,int>> textConverted(sentencesByBatch[0].size());
-  for(auto it=0;it<sentencesByBatch[0].size();++it)
-  {
-    textConverted[it]=getProcessingWord(sentencesByBatch[0][it],
-                                        vocabWords, vocabChars, true, true);
-  }
-
-  // Gather ids of words and ids of sequences of characters according to the order of words
-
-  std::vector<std::vector< int >> wordIds(1);
-  wordIds[0].resize(sentencesByBatch[0].size());
-  std::vector<std::vector<std::vector<int>>> charIds(1);
-  charIds[0].resize(sentencesByBatch[0].size());
-  for(std::size_t i=0;i<textConverted.size();++i)
-  {
-    charIds[0][i].resize(textConverted[i].first.size());
-    charIds[0][i]=textConverted[i].first;
-    wordIds[0][i]=textConverted[i].second;
-  }
-  std::vector<Eigen::MatrixXi> result(1);
-
-  //Run the session with the predictBatch function
-
-  QVERIFY(predictBatch(status, session, 1, charIds,
-                       wordIds, result)==NERStatusCode::SUCCESS);
-
-  //Check that the results are correct
-  QVERIFY(vocabTags[result[0](0)]=="O");
-  QVERIFY(vocabTags[result[0](1)]=="O");
-  QVERIFY(vocabTags[result[0](2)]=="I-LOC");
-  QVERIFY(session->Close().ok());
-  delete session;
-}
-
-void Test::testPredictBatch3()
-{
-//   Initialize a tensorflow session
-  tensorflow::Session* session;
-  std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
-                                                       &session)));
-  QVERIFY(status->ok());
-
-//   Read in the protobuf graph we have exported
-  tensorflow::GraphDef graphDef;
-  *status = ReadBinaryProto(tensorflow::Env::Default(),
-                            "results/eng_IOB1/output_graph.pb", &graphDef);
-  QVERIFY(status->ok());
-
-//   Add the graph to the session
-  *status = session->Create(graphDef);
-  QVERIFY(status->ok());
-
-//   Load vocabulary
-  auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
-  auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
-  auto vocabTags= loadFileTags("data/IOB1/eng/tags.txt");
-
-  int batchSize =2;
-
-  std::vector<std::vector<std::pair<std::vector<int>,int>>> textConverted(batchSize);
-  std::vector<std::vector<int>> wordIds(batchSize);
-  std::vector<std::vector<std::vector<int>>> charIds(batchSize);
-  std::vector<QStringList> sentencesByBatch;
-  sentencesByBatch.reserve(batchSize);
-
-//   Analyze one sentence with entities
-  QString sentence("Japan began the defence of their Asian Cup title with a "
-                   "lucky 2-1 win against Syria in a Group C championship "
-                   "match on Friday .");
-  sentencesByBatch.push_back(sentence.split(" "));
-
-//   Analyze one sentence without entities
-  sentence="He added that, \" overhauling the fragile state of our computing "
-           "education \" would require an ambitious, multipronged approach.";
-  sentencesByBatch.push_back(sentence.split(" "));
-
-  // Transform words into ids and split all the characters and identify them
-  for(auto k=0;k<batchSize;++k)
-  {
-    textConverted[k].reserve(sentencesByBatch[k].size());
-    for(auto it=sentencesByBatch[k].cbegin();
-        it!=sentencesByBatch[k].cend();++it)
-    {
-      textConverted[k].push_back(getProcessingWord(*it, vocabWords,
-                                                   vocabChars, true, true));
-    }
-    // Gather ids of words and ids of sequences of characters according to
-    // the order of words
-    wordIds[k].resize(sentencesByBatch[k].size());
-    charIds[k].resize(sentencesByBatch[k].size());
-    for(std::size_t i=0;i<textConverted[k].size();++i)
-    {
-      charIds[k][i].resize(textConverted[k][i].first.size());
-      charIds[k][i]=textConverted[k][i].first;
-      wordIds[k][i]=textConverted[k][i].second;
-    }
-  }
-
-  //Run the session with the predictBatch function
-  std::vector<Eigen::MatrixXi> result(2);
-  QVERIFY(predictBatch(status, session, batchSize, charIds,
-                       wordIds, result)==NERStatusCode::SUCCESS);
-
-  // Analyze the first sentence's result
-  std::vector<QString> lstEntities(result[0].rows());
-  unsigned int nbEntities=0;
-  for(auto i=0;i<result[0].rows();++i)
-  {
-    if(vocabTags[result[0](i)]!="O")
-    {
-      lstEntities[nbEntities]=vocabTags[result[0](i)];
-      ++nbEntities;
-    }
-    std::cout <<sentencesByBatch[0][i].toStdString()<<" "
-        <<vocabTags[result[0](i)].toStdString()<<"\n";
-  }
-  // Check the number of entities and the sequence : six entities have to be
-  // found
-  QVERIFY(nbEntities==6);
-  std::vector<QString> lstCorrectEntities={"I-LOC","I-MISC","I-MISC",
-                                            "I-LOC","I-MISC","I-MISC"};
-  for(std::size_t i=0;i<lstCorrectEntities.size();++i)
-  {
-    QVERIFY(lstCorrectEntities[i]==lstEntities[i]);
-  }
-
-  // Analyze the second sentence's result : any entities have to be found
-  for(auto i=0;i<result[1].rows();++i)
-  {
-    QVERIFY(vocabTags[result[1](i)]=="O");
-  }
-
-  QVERIFY(session->Close().ok());
-}
+// void Test::testPredictBatch2()
+// {
+// //   Initialize a tensorflow session
+//
+//   tensorflow::Session* session;
+//   std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
+//                                                        &session)));
+//   QVERIFY(status->ok());
+//
+// //   Read in the protobuf graph we have exported
+//
+//   tensorflow::GraphDef graphDef;
+//   *status = ReadBinaryProto(tensorflow::Env::Default(),
+//                             "results/eng_IOB1/output_graph.pb", &graphDef);
+//   QVERIFY(status->ok());
+//
+// //   Add the graph to the session
+//
+//   *status = session->Create(graphDef);
+//   QVERIFY(status->ok());
+//
+// //   Load vocabulary
+//
+//   auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
+//   auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
+//   auto vocabTags= loadFileTags("data/IOB1/eng/tags.txt");
+//
+//   //Here the size of the batch is equal to 1.
+//
+//   std::vector<QStringList> sentencesByBatch(1);
+//   sentencesByBatch[0]=QStringList({"I","love","Paris"});
+//
+//   // Transform words into ids and split all the characters and identify them
+//
+//   std::vector<std::pair<std::vector<int>,int>> textConverted(sentencesByBatch[0].size());
+//   for(auto it=0;it<sentencesByBatch[0].size();++it)
+//   {
+//     textConverted[it]=getProcessingWord(sentencesByBatch[0][it],
+//                                         vocabWords, vocabChars, true, true);
+//   }
+//
+//   // Gather ids of words and ids of sequences of characters according to the order of words
+//
+//   std::vector<std::vector< int >> wordIds(1);
+//   wordIds[0].resize(sentencesByBatch[0].size());
+//   std::vector<std::vector<std::vector<int>>> charIds(1);
+//   charIds[0].resize(sentencesByBatch[0].size());
+//   for(std::size_t i=0;i<textConverted.size();++i)
+//   {
+//     charIds[0][i].resize(textConverted[i].first.size());
+//     charIds[0][i]=textConverted[i].first;
+//     wordIds[0][i]=textConverted[i].second;
+//   }
+//   std::vector<Eigen::MatrixXi> result(1);
+//
+//   //Run the session with the predictBatch function
+//
+//   QVERIFY(predictBatch(status, session, 1, charIds,
+//                        wordIds, result)==NERStatusCode::SUCCESS);
+//
+//   //Check that the results are correct
+//   QVERIFY(vocabTags[result[0](0)]=="O");
+//   QVERIFY(vocabTags[result[0](1)]=="O");
+//   QVERIFY(vocabTags[result[0](2)]=="I-LOC");
+//   QVERIFY(session->Close().ok());
+//   delete session;
+// }
+//
+// void Test::testPredictBatch3()
+// {
+// //   Initialize a tensorflow session
+//   tensorflow::Session* session;
+//   std::shared_ptr<tensorflow::Status> status(new tensorflow::Status(NewSession(tensorflow::SessionOptions(),
+//                                                        &session)));
+//   QVERIFY(status->ok());
+//
+// //   Read in the protobuf graph we have exported
+//   tensorflow::GraphDef graphDef;
+//   *status = ReadBinaryProto(tensorflow::Env::Default(),
+//                             "results/eng_IOB1/output_graph.pb", &graphDef);
+//   QVERIFY(status->ok());
+//
+// //   Add the graph to the session
+//   *status = session->Create(graphDef);
+//   QVERIFY(status->ok());
+//
+// //   Load vocabulary
+//   auto vocabWords= loadFileWords("data/IOB1/eng/words.txt");
+//   auto vocabChars= loadFileChars("data/IOB1/eng/chars.txt");
+//   auto vocabTags= loadFileTags("data/IOB1/eng/tags.txt");
+//
+//   int batchSize =2;
+//
+//   std::vector<std::vector<std::pair<std::vector<int>,int>>> textConverted(batchSize);
+//   std::vector<std::vector<int>> wordIds(batchSize);
+//   std::vector<std::vector<std::vector<int>>> charIds(batchSize);
+//   std::vector<QStringList> sentencesByBatch;
+//   sentencesByBatch.reserve(batchSize);
+//
+// //   Analyze one sentence with entities
+//   QString sentence("Japan began the defence of their Asian Cup title with a "
+//                    "lucky 2-1 win against Syria in a Group C championship "
+//                    "match on Friday .");
+//   sentencesByBatch.push_back(sentence.split(" "));
+//
+// //   Analyze one sentence without entities
+//   sentence="He added that, \" overhauling the fragile state of our computing "
+//            "education \" would require an ambitious, multipronged approach.";
+//   sentencesByBatch.push_back(sentence.split(" "));
+//
+//   // Transform words into ids and split all the characters and identify them
+//   for(auto k=0;k<batchSize;++k)
+//   {
+//     textConverted[k].reserve(sentencesByBatch[k].size());
+//     for(auto it=sentencesByBatch[k].cbegin();
+//         it!=sentencesByBatch[k].cend();++it)
+//     {
+//       textConverted[k].push_back(getProcessingWord(*it, vocabWords,
+//                                                    vocabChars, true, true));
+//     }
+//     // Gather ids of words and ids of sequences of characters according to
+//     // the order of words
+//     wordIds[k].resize(sentencesByBatch[k].size());
+//     charIds[k].resize(sentencesByBatch[k].size());
+//     for(std::size_t i=0;i<textConverted[k].size();++i)
+//     {
+//       charIds[k][i].resize(textConverted[k][i].first.size());
+//       charIds[k][i]=textConverted[k][i].first;
+//       wordIds[k][i]=textConverted[k][i].second;
+//     }
+//   }
+//
+//   //Run the session with the predictBatch function
+//   std::vector<Eigen::MatrixXi> result(2);
+//   QVERIFY(predictBatch(status, session, batchSize, charIds,
+//                        wordIds, result)==NERStatusCode::SUCCESS);
+//
+//   // Analyze the first sentence's result
+//   std::vector<QString> lstEntities(result[0].rows());
+//   unsigned int nbEntities=0;
+//   for(auto i=0;i<result[0].rows();++i)
+//   {
+//     if(vocabTags[result[0](i)]!="O")
+//     {
+//       lstEntities[nbEntities]=vocabTags[result[0](i)];
+//       ++nbEntities;
+//     }
+//     std::cout <<sentencesByBatch[0][i].toStdString()<<" "
+//         <<vocabTags[result[0](i)].toStdString()<<"\n";
+//   }
+//   // Check the number of entities and the sequence : six entities have to be
+//   // found
+//   QVERIFY(nbEntities==6);
+//   std::vector<QString> lstCorrectEntities={"I-LOC","I-MISC","I-MISC",
+//                                             "I-LOC","I-MISC","I-MISC"};
+//   for(std::size_t i=0;i<lstCorrectEntities.size();++i)
+//   {
+//     QVERIFY(lstCorrectEntities[i]==lstEntities[i]);
+//   }
+//
+//   // Analyze the second sentence's result : any entities have to be found
+//   for(auto i=0;i<result[1].rows();++i)
+//   {
+//     QVERIFY(vocabTags[result[1](i)]=="O");
+//   }
+//
+//   QVERIFY(session->Close().ok());
+// }

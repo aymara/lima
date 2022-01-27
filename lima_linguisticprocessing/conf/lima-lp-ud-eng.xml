@@ -49,6 +49,17 @@
       </list>
     </group>
 
+    <group name="xml" class="ProcessUnitPipeline" >
+        <list name="processUnitSequence">
+            <item value="cpptftokenizer"/>
+            <item value="tfmorphosyntax"/>
+            <item value="tflemmatizer"/>
+            <item value="SpecificEntitiesModex"/>
+            <item value="specificEntitiesXmlLogger"/>
+            <item value="bowDumperXml"/>
+        </list>
+    </group>
+
     <group name="none" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
@@ -142,16 +153,16 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
+        <entry key="TIMEX" value="NOUN"/>
+        <entry key="NUMEX" value="NOUN"/>
+        <entry key="ORGANIZATION" value="PROPN"/>
+        <entry key="LOCATION" value="PROPN"/>
+        <entry key="PERSON" value="PROPN"/>
+        <entry key="PRODUCT" value="PROPN"/>
+        <entry key="EVENT" value="PROPN"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="PROPN"/>
+      <param key="commonNounCategory" value="NOUN"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
       <list name="selectedDependency">
         <item value="ADJPRENSUB"/>
@@ -248,6 +259,27 @@
 <!-- ******************************************
   Definition of dumpers
 *********************************************** -->
+    <group name="bowDumperXml" class="BowDumper">
+        <param key="handler" value="xmlDocumentHandler"/>
+        <param key="stopList" value="stopList"/>
+        <param key="useStopList" value="true"/>
+        <param key="useEmptyMacro" value="true"/>
+        <param key="useEmptyMicro" value="true"/>
+        <map name="NEmacroCategories">
+            <entry key="DateTime.DATE" value="NOUN"/>
+            <entry key="Numex.NUMBER" value="NOUN"/>
+            <entry key="Numex.UNIT" value="NOUN"/>
+            <entry key="Numex.NUMEX" value="NOUN"/>
+            <entry key="Organization.ORGANIZATION" value="PROPN"/>
+            <entry key="Location.LOCATION" value="PROPN"/>
+            <entry key="Person.PERSON" value="PROPN"/>
+            <entry key="Product.PRODUCT" value="PROPN"/>
+            <entry key="Event.EVENT" value="PROPN"/>
+        </map>
+        <param key="properNounCategory" value="PROPN"/>
+        <param key="commonNounCategory" value="NOUN"/>
+        <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
     <group name="bowDumper" class="BowDumper">
       <param key="handler" value="bowTextWriter"/>
       <param key="stopList" value="stopList"/>
@@ -255,16 +287,16 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
+        <entry key="TIMEX" value="NOUN"/>
+        <entry key="NUMEX" value="NOUN"/>
+        <entry key="ORGANIZATION" value="PROPN"/>
+        <entry key="LOCATION" value="PROPN"/>
+        <entry key="PERSON" value="PROPN"/>
+        <entry key="PRODUCT" value="PROPN"/>
+        <entry key="EVENT" value="PROPN"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="PROPN"/>
+      <param key="commonNounCategory" value="NOUN"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="srl" class="ExternalProcessUnit">
@@ -294,16 +326,16 @@
       <param key="useEmptyMacro" value="false"/>
       <param key="useEmptyMicro" value="false"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
+        <entry key="TIMEX" value="NOUN"/>
+        <entry key="NUMEX" value="NOUN"/>
+        <entry key="ORGANIZATION" value="PROPN"/>
+        <entry key="LOCATION" value="PROPN"/>
+        <entry key="PERSON" value="PROPN"/>
+        <entry key="PRODUCT" value="PROPN"/>
+        <entry key="EVENT" value="PROPN"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="PROPN"/>
+      <param key="commonNounCategory" value="NOUN"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <group name="NullDumper" class="NullDumper"/>
@@ -318,16 +350,16 @@
       <param key="useEmptyMacro" value="false"/>
       <param key="useEmptyMicro" value="false"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
+        <entry key="TIMEX" value="NOUN"/>
+        <entry key="NUMEX" value="NOUN"/>
+        <entry key="ORGANIZATION" value="PROPN"/>
+        <entry key="LOCATION" value="PROPN"/>
+        <entry key="PERSON" value="PROPN"/>
+        <entry key="PRODUCT" value="PROPN"/>
+        <entry key="EVENT" value="PROPN"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="PROPN"/>
+      <param key="commonNounCategory" value="NOUN"/>
       <param key="NEnormalization" value="useNENormalizedForm"/>
     </group>
     <!--group name="compactFullDumper" class="CompactFullDumper">
@@ -336,16 +368,16 @@
       <param key="useEmptyMacro" value="true"/>
       <param key="useEmptyMicro" value="true"/>
       <map name="NEmacroCategories">
-        <entry key="TIMEX" value="NC"/>
-        <entry key="NUMEX" value="NC"/>
-        <entry key="ORGANIZATION" value="NP"/>
-        <entry key="LOCATION" value="NP"/>
-        <entry key="PERSON" value="NP"/>
-        <entry key="PRODUCT" value="NP"/>
-        <entry key="EVENT" value="NP"/>
+        <entry key="TIMEX" value="NOUN"/>
+        <entry key="NUMEX" value="NOUN"/>
+        <entry key="ORGANIZATION" value="PROPN"/>
+        <entry key="LOCATION" value="PROPN"/>
+        <entry key="PERSON" value="PROPN"/>
+        <entry key="PRODUCT" value="PROPN"/>
+        <entry key="EVENT" value="PROPN"/>
       </map>
-      <param key="properNounCategory" value="NP"/>
-      <param key="commonNounCategory" value="NC"/>
+      <param key="properNounCategory" value="PROPN"/>
+      <param key="commonNounCategory" value="NOUN"/>
     </group-->
     <group name="fullXmlDumper" class="FullXmlDumper">
       <param key="handler" value="fullXmlSimpleStreamHandler"/>

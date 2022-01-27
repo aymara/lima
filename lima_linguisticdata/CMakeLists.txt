@@ -16,8 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(LimaLinguisticData)
 
-cmake_minimum_required(VERSION 3.4.0)
-
 if (ENVPATH)
   set(ENV{PATH} "${ENVPATH}:$ENV{PATH}")
 endif()

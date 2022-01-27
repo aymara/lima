@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <modulesConfig>
-<module name="entities">
+  <module name="entities">
     <group name="include">
       <list name="includeList">
         <item value="SpecificEntities-modex-ud.xml/entities"/>

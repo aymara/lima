@@ -295,7 +295,7 @@ void MediaticData::init(
 
 bool MediaticData::isValidMedia(const std::string& media)
 {
-  QRegularExpression re("^[a-z]{3}(\\.ud)?$");
+  QRegularExpression re("^(ud-)?...?$");
   QRegularExpressionMatch match = re.match(media.c_str());
   return match.hasMatch();
 }
@@ -305,7 +305,8 @@ void MediaticData::initMedia(const std::string& media)
   if(!isValidMedia(media))
   {
     MDATALOGINIT;
-    LERROR << "MediaId for string '" << media << "' will not be initialized ! ";
+    LERROR << "MediaId for string '" << media
+            << "' is invalid. It will not be initialized ! ";
     throw MediaNotInitialized(media);
   }
 //  TimeUtils::updateCurrentTime();
