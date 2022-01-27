@@ -261,6 +261,9 @@ cmake  -G "$generator" \
     -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
     -DWITH_GUI=$WITH_GUI $source_dir \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH
+result=$?
+if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
+
 
 echoerr "Running make command:"
 echo "$make_cmd"
@@ -301,7 +304,7 @@ then
   fi
 fi
 
-echoerr "Built LIMA sucessfuly.";
+echoerr "Built LIMA successfully.";
 popd
 
 exit $result
