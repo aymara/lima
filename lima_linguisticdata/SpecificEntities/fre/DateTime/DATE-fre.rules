@@ -153,7 +153,7 @@ trente-et-un,
 =>SetEntityFeature(right,"numday")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-=>NormalizeRelativeDate()
+=>NormalizeDate()
 
 # lundi après-midi, lundi dernier
 @dayNoAbbrev::(dernier|@daytime)?:DATE:
@@ -235,20 +235,28 @@ trente-et-un,
 =<ClearEntityFeatures()
 =>NormalizeDate()
 
-# ignore relative for the moment
-&@month:(@numday|t_integer>1<31)?:(dernier|suivant)?:DATE:
+&@month:(@numday|t_integer>1<31)?:dernier:DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left,"numday")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate()
+
+&@month:(@numday|t_integer>1<31)?:prochain:DATE:
+=>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left,"numday")
+=>SetEntityFeature(right.1,"datemod")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+=>NormalizeRelativeDate("next_month")
+
+&@month:(@numday|t_integer>1<31)?::DATE:
 =>SetEntityFeature(trigger,"month")
 =>SetEntityFeature(left,"numday")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 =>NormalizeDate()
-
-&@month::prochain:DATE:
-=>SetEntityFeature(trigger,"month")
-=>SetEntityFeature(right.1,"datemod")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-=>NormalizeRelativeDate("next_month")
 
 # fin 2003
 
@@ -329,18 +337,18 @@ siècle$NC:<NUMBER>::DATE:
 =>SetEntityFeature(trigger,"month")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-=>NormalizeRelativeDate()
+=>NormalizeDate()
 
 #------------------------------
 # informal dates (to normalize, indicate the difference from the reference)
-#aujourd\'::hui:DATE:
+#aujourd\'hui:::DATE:
 #=>NormalizeRelativeDate("diff_0")
 
 #GC20130730: aujourd\'hui as dates are given category NC while they should remain adverbs.
 # Should find a solution: specific EN type,  ?
 
-#aujourd\'hui:::DATE:
-#=>NormalizeRelativeDate("date_document,diff_0d")
+aujourd\'hui:::DATE:
+=>NormalizeRelativeDate("date_document,diff_0d")
 
 ## ce matin, ce soir etc.
 #@daytime:(ce|cet)::DATE:
