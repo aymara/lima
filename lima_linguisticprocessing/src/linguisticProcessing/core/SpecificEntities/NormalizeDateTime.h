@@ -101,9 +101,11 @@ protected:
                          const QDate& currentDate) const;
   unsigned short getDayFromString(const LimaString& numdayString) const;
   unsigned short getDay(Automaton::RecognizerMatch& m, const std::string& featureName) const;
+  unsigned short getWeekDay(Automaton::RecognizerMatch& m, const std::string& featureName) const;
   unsigned short getMonth(Automaton::RecognizerMatch& m, const std::string& featureName, const std::string& alt="") const;
   unsigned short getYear(Automaton::RecognizerMatch& m, const std::string& featureName) const;
   unsigned short getDefaultYear(AnalysisContent& analysis) const;
+  QString getDateSpan(unsigned short year, unsigned short month, unsigned short day) const;
 
 };
 

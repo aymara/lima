@@ -349,7 +349,7 @@ void CoreLinguisticProcessingClientFactory::configure(
       LinguisticResources::changeable().initLanguage(
         langid,
         module,
-        lang.find("ud-") != 0); // load main keys for non ud languages
+        lang.find("ud-") != 0 && lang != "ud"); // load main keys for non ud languages
     }
     catch (NoSuchModule& )
     {
