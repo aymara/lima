@@ -431,7 +431,7 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   SELOGINIT;
   LDEBUG << "NormalizeDate::operator()"<<m;
 #endif
-  cerr << "NormalizeDate::operator() features="<< m.features() << endl;
+  // cerr << "NormalizeDate::operator() features="<< m.features() << endl;
 
   // assume all information for normalization is in recognized
   // expression: do not use external information
@@ -445,8 +445,8 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
   unsigned short year=getYear(m,NUMYEAR_FEATURE_NAME);
   unsigned short year_end=getYear(m,NUMYEAREND_FEATURE_NAME);
   
-  cerr << "NormalizeDate: day=" << day << ", month=" << month << ", year=" << year 
-       << ", day_end=" << day_end << ", month_end=" << month_end << ", year_end=" << year_end << endl;
+  // cerr << "NormalizeDate: day=" << day << ", month=" << month << ", year=" << year 
+  //      << ", day_end=" << day_end << ", month_end=" << month_end << ", year_end=" << year_end << endl;
   
   // ad hoc single feature for day and month, when 10/10 is a single t_fraction token
   if (day==0 && month==0 && m.features().find(NUMDAYMONTH_FEATURE_NAME) != m.features().end())
@@ -471,11 +471,11 @@ bool NormalizeDate::operator()(RecognizerMatch& m,
 
   if (year==0) {
     year=refyear;
-    cerr << "--set default year to " << year << endl;
+    //cerr << "--set default year to " << year << endl;
   }
   if ( year_end == 0 && (day_end != 0 || month_end != 0) ) {
     year_end=refyear;
-    cerr << "--set default year_end to " << year_end << endl;
+    //cerr << "--set default year_end to " << year_end << endl;
   }
 
   // check if explicit interval
@@ -590,8 +590,8 @@ QDate adjustDate(unsigned short mention, unsigned short ref, const QDate& refDat
   else {
     add=-((modulo-diff)%modulo);
   }
-  cerr << "adjust date: ref="<< ref <<", mentioned="<< mention 
-       <<", diff=" << diff << ", add=" << add << endl;
+  //cerr << "adjust date: ref="<< ref <<", mentioned="<< mention 
+  //     <<", diff=" << diff << ", add=" << add << endl;
   // ad hoc distinction between days and months by the modulo
   if (months) {
     newDate=refDate.addMonths(add);
@@ -607,7 +607,7 @@ operator()(RecognizerMatch& m,
            AnalysisContent& analysis) const
 {
   // use a reference to normalize the relative date
-  cerr << "NormalizeRelativeDate: " << m.getString() << ", features=" << m.features() << endl;
+  //cerr << "NormalizeRelativeDate: " << m.getString() << ", features=" << m.features() << endl;
   
   if (m_resources == 0) {
     // no resources: cannot normalize date
@@ -627,8 +627,8 @@ operator()(RecognizerMatch& m,
   // assume year is never fixed in relative dates (otherwise, is not relative)
   unsigned short year=0;
   
-  cerr << "NormalizeRelativeDate: dayOfWeek="<< dayOfWeek << ", dayOfMonth=" << dayOfMonth 
-       << ", month=" << month << endl;
+  // cerr << "NormalizeRelativeDate: dayOfWeek="<< dayOfWeek << ", dayOfMonth=" << dayOfMonth 
+  //     << ", month=" << month << endl;
        
   // always sets the span
   QString dateSpan=getDateSpan(year,month,dayOfMonth);
