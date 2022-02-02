@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <modulesConfig>
+  <module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
   <module name="Processors">
     <group name="include">
       <list name="includeList">
@@ -107,6 +114,17 @@
     <group name="approxmatcher" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
       </list>
+    </group>
+    <group name="ner-rules-pretok" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="conllureader"/>
+        <item value="SpecificEntitiesModex"/>
+        <item value="sentenceBoundariesLogger"/>
+      </list>
+    </group>
+    <group name="conllureader" class="ConlluReader">
+    </group>
+    <group name="sentenceBoundariesLogger" class="SentenceBoundariesXmlLogger">
     </group>
     <group name="fakeMultiLevel" class="ProcessUnitPipeline">
       <list name="processUnitSequence">

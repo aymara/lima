@@ -7,11 +7,14 @@ use annonceurLieu.lst
 
 @PrecisionGeographique=(Sud,sud,Nord,nord,Est,est,Ouest,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
-@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:ODO:
-=>SetEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.3,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# processed in embedded entities
+#@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:ODO:
+#=>SetEntityFeature(trigger,"kind")
+#=>SetEntityFeature(right.1,"name")
+#=>AppendEntityFeature(right.2,"name")
+#=>AppendEntityFeature(right.3,"name")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
 
 # L'italie du Sud
 #Italie::(des|de la?|du)? @PrecisionGeographique :GEO:

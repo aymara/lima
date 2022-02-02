@@ -37,7 +37,7 @@
           comment="not embeded Person, convert as name of Location "
           left="XPATH#//entities/entity[pos=1]/components/name"
           operator="="
-          right="de la Beauce"/>
+          right="Beauce"/>
   </testcase>
   <!-- test "rue du général de Gaulle"-->
   <testcase id="fre.se.pers.embed.2" type="bloquant">
