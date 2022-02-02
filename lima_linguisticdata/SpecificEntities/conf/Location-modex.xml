@@ -25,6 +25,13 @@
         <item value="PostLocationRecognition"/>
       </list>
     </group>
+    <group name="LocationModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PreLocationRecognitionAfterPos"/>
+        <item value="LocationRecognitionAfterPos"/>
+        <item value="PostLocationRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="LocationModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="PreLocationRecognitionForLimaserver"/>
@@ -45,6 +52,21 @@
     <group name="PostLocationRecognition" class="ApplyRecognizer">
       <param key="automaton" value="PostLocationRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PreLocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="PreLocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="LocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="LocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PostLocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="PreLocationRecognitionForLimaserver" class="ApplyRecognizer">

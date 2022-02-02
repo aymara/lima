@@ -3,7 +3,7 @@
   <module name="entities">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex-ud.xml/entities"/>
+        <item value="SpecificEntities-modex.xml/entities"/>
         <item value="ApproxNames-modex.xml/entities"/>
       </list>
     </group>
@@ -11,7 +11,7 @@
   <module name="Processors">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex-ud.xml/Processors"/>
+        <item value="SpecificEntities-modex.xml/Processors"/>
         <item value="VerbNet-modex.xml/Processors"/>
         <item value="ApproxNames-modex.xml/Processors"/>
       </list>
@@ -488,7 +488,7 @@
   <module name="Resources">
     <group name="include">
       <list name="includeList">
-        <item value="SpecificEntities-modex-ud.xml/resources-ud"/>
+        <item value="SpecificEntities-modex.xml/resources-ud"/>
       </list>
     </group>
 
