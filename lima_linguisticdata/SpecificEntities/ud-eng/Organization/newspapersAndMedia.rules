@@ -87,7 +87,7 @@ use ../Location/cities.lst,../Location/states.lst
 @newspaperPrincipalKey:[(the|The)]::ORGANIZATION:
 @newspaperPrincipalKey:(t_capital_1st|t_capital){1-2}::ORGANIZATION:
 [@newspaperTrigger]:(t_capital_1st|t_capital){1-2}::ORGANIZATION:
-@newspaperSecondaryKey:($NP){1-2}::ORGANIZATION:
+@newspaperSecondaryKey:($PROPN){1-2}::ORGANIZATION:
 
 
 # other generic

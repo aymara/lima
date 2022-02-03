@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex DateTime-modex-ud.xml,Numex-modex-ud.xml
+using modex DateTime-modex.xml,Numex-modex.xml
 using groups DateTime,Numex
 set defaultAction=>CreateSpecificEntity()
 

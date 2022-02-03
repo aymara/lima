@@ -1,7 +1,7 @@
 set encoding=utf8
-using modex Location-modex-ud.xml
-using modex DateTime-modex-ud.xml
-using modex Person-modex-ud.xml
+using modex Location-modex.xml
+using modex DateTime-modex.xml
+using modex Person-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
@@ -124,8 +124,8 @@ U.S.::-? T_Ni<999:LOCATION:
 
 ## general contextual location rule
 
-## $NP:@locationPre?:(@locationKey|@streetKey):LOCATION:
-## @Capitalized=(t_capital_1st,T_Amh,$NP)
+## $PROPN:@locationPre?:(@locationKey|@streetKey):LOCATION:
+## @Capitalized=(t_capital_1st,T_Amh,$PROPN)
 @Capitalized=(t_capital_1st,t_capital)
 
 #todo : que se passe-t-il avec cette regle ?

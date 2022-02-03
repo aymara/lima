@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex DateTime-modex-ud.xml,Numex-modex-ud.xml
+using modex DateTime-modex.xml,Numex-modex.xml
 using groups DateTime,Numex
 set defaultAction=>CreateSpecificEntity()
 
@@ -256,7 +256,7 @@ thirty-first
 
 # numbers between 1200 and 2100 are dates
 # unless followed by a unit
-#t_integer>1200<2100::(of)? $NC-NN:NOT_DATE:
+#t_integer>1200<2100::(of)? $NOUN-NN:NOT_DATE:
 
 t_integer>1200<2100:[@in]::DATE:
 =>SetEntityFeature(trigger,"numyear")

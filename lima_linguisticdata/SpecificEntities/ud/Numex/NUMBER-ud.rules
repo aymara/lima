@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Numex-modex-ud.xml
+using modex Numex-modex.xml
 using groups Numex
 set defaultAction=>CreateSpecificEntity()
 
