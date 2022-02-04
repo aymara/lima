@@ -537,15 +537,6 @@
     <group name="dummyRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-eng-dummy.txt.bin"/>
     </group>
-    <group name="finalizeRules" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-eng-finalize.txt.bin"/>
-    </group>
-    <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-eng.txt.bin"/>
-    </group>
-    <group name="simplifyAutomatonQuotes" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-quotes-rules-eng.txt.bin"/>
-    </group>
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>
     </group>
