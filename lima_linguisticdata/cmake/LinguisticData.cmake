@@ -690,7 +690,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
 
   add_custom_target(
     syntanalrules-${_lang}
-
+    ALL
     DEPENDS
       ${${_lang}_BIN_RULES_FILES}
       ${${_lang}_SA_DEPENDS_FILES}
