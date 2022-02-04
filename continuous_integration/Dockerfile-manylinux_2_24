@@ -208,8 +208,8 @@ WORKDIR /tensorflow
 RUN install -d /tensorflow/tensorflow-build
 WORKDIR /tensorflow/tensorflow-build
 RUN cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX=/tensorflow_for_lima ../tensorflow/contrib/cmake
-RUN make -v -C /tensorflow/tensorflow-build -j 1
-RUN make -C /tensorflow/tensorflow-build install
+RUN make -C /tensorflow/tensorflow-build -j 1
+RUN make -C /tensorflow/tensorflow-build -j 1 install
 
 
 
