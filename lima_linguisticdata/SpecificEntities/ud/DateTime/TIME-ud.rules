@@ -15,7 +15,7 @@ pm,p . m .,p . m.,p.m.,PM,P . M .,P . M.,P M
 # 08:43:08
 t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 
-@Number=($NOMBRE)
+@Number=($NUM)
 
 # ten o'clock
 t_integer::o'clock:TIME:

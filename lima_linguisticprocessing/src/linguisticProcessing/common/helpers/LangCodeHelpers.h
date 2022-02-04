@@ -28,7 +28,7 @@ namespace LinguisticProcessing
 // lang_str must indicate annotation model (only ud is supported now)
 // udlang must indicate the particular language code (afr, fra, eng, ...)
 // This function parses several different representations of the data mentioned above:
-// ud-fra, fra.ud, fra
+// ud-fra, fra
 
 bool fix_lang_codes(QString &lang_str, std::string &udlang)
 {

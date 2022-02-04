@@ -10,7 +10,7 @@ com:$PROPN .::ORGANIZATION:
 =>CreateSpecificEntity()
 
 # list of organizations common to all languages
-include ../../common/companies.rules
+include ../../common/companies-ud.rules
 
 # a list of known organizations
 include organization.rules

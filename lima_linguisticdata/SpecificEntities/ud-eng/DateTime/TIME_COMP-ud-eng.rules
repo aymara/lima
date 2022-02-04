@@ -23,7 +23,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =<ClearEntityFeatures()
 =>NormalizeUTCTime()
 
-@Number=($NOMBRE)
+@Number=($NUM)
 
 # ten o'clock
 <NUMBER>::o'clock:TIME:

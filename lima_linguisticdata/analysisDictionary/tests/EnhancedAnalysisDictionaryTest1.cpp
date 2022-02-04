@@ -88,17 +88,6 @@ void EnhancedAnalysisDictionaryTest1::testEng()
                "NOUN");
 }
 
-//void EnhancedAnalysisDictionaryTest1::testEngUD()
-//{
-//  testLanguage("eng.ud",
-//               "lima-lp-eng.ud.xml",
-//               "door",
-//               QStringList() << "door",
-//               QStringList() << "door",
-//               QStringList() << "door",
-//               "NOUN");
-//}
-
 void EnhancedAnalysisDictionaryTest1::testFre()
 {
   testLanguage("fre",

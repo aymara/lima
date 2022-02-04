@@ -46,7 +46,7 @@ void PropertyCodeTest0::initTestCase()
 //   std::string commonConfigFile=std::string("lima-common.xml");
 //
 //   std::deque<std::string> langs;
-//   langs.push_back("eng.ud");
+//   langs.push_back("ud-eng");
 //
 //   QsLogging::initQsLog(configPath);
 //   // Necessary to initialize factories
