@@ -195,9 +195,12 @@ readHeader(std::ifstream& file)
       AULOGINIT;
       ostringstream oss;
       oss << "language " << language
-          << " is not initialized. Initialized languages are:";
+          << " is not initialized. ";
+#if __cplusplus >= 201703L
+      oss << "Initialized languages are: ";
       for (const auto &[k, v] : Common::MediaticData::MediaticData::single().getMediasIds())
-        oss << k << ", " << std::endl;
+        oss << k << ", ";
+#endif
 
       LERROR << oss.str();
       throw runtime_error(oss.str());
