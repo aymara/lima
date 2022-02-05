@@ -249,7 +249,15 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
                        const LinguisticGraphVertex& limit
                       ) const {
   Token* token = get(vertex_token, *(graph.getGraph()), vertex);
+  if (token == nullptr) {
+    AULOGINIT;
+    LIMA_EXCEPTION("Automaton::getMatchingTransitions no token for vertex " << vertex);
+  }
   MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), vertex);
+  if (token == nullptr) {
+    AULOGINIT;
+    LIMA_EXCEPTION("Automaton::getMatchingTransitions no morphosyntactic data for vertex " << vertex);
+  }
 
 #ifdef DEBUG_LP
   AULOGINIT;
