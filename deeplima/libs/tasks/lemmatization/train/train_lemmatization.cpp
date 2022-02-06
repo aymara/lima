@@ -193,7 +193,7 @@ void vectorize_dataset(const morph_model::morph_model_t& lang_morph_model,
         size_t char_no = 0;
         for (; char_no < lemma.size(); char_no++)
         {
-          char32_t ch = form[char_no];
+          char32_t ch = lemma[char_no];
           gold.set(char_no, sample_no, p_dec_dict->get_idx(ch));
         }
         for (; char_no < max_lemma_len + 1; char_no++)
