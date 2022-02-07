@@ -359,17 +359,18 @@ RUN bash install.sh
 
 RUN git lfs install --skip-repo
 
-#RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
-#WORKDIR /svm_light
-#RUN tar xzf ../svm_light.tar.gz
-#RUN make
-#RUN cp svm_classify svm_learn /usr/bin
-#RUN rm -Rf /svm_light
+WORKDIR /
+RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
+WORKDIR /svm_light
+RUN tar xzf ../svm_light.tar.gz
+RUN make
+RUN cp svm_classify svm_learn /usr/bin
+RUN rm -Rf /svm_light
 
 WORKDIR /
 COPY svmtool.sh  svmtool-cpp.sh qhttpserver.sh /
-#RUN /svmtool.sh $GITHUB_TOKEN
-#RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /svmtool.sh $GITHUB_TOKEN
+RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
 RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
