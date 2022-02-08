@@ -175,12 +175,17 @@ matchPath(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         checkMultiTerms(graph, vertex, limit, searchGraph, analysis, additionalMultiTermList, triggerMatches );
         if( triggerMatches.empty() ) {
 #ifdef DEBUG_LP
-          LDEBUG << "GazeteerTransition::match: trans of type gazeteerTransition selected but no match";
+          LDEBUG << "GazeteerTransition::matchPath from" <<vertex<<": no match";
 #endif
           return false;
         }
         else {
           vertices = triggerMatches.top();
+#ifdef DEBUG_LP
+          ostringstream oss;
+          std::copy(vertices.begin(),vertices.end(),std::ostream_iterator<int>(oss,"-"));
+          LDEBUG << "GazeteerTransition::matchPath from" <<vertex<<": found match with vertices" << oss.str();
+#endif
           return true;
         }
         return false;
@@ -194,38 +199,38 @@ matchPath(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 bool GazeteerTransition::
 buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<LimaString> >& multiTermList ) const
 {
-#ifdef DEBUG_LP
-  AULOGINIT;
-  LDEBUG << "GazeteerTransition::buildNextTermsList(" << firstSimpleTerm << ")";
-#endif
+// #ifdef DEBUG_LP
+//   AULOGINIT;
+//   LDEBUG << "GazeteerTransition::buildNextTermsList(" << firstSimpleTerm << ")";
+// #endif
 
   // Fill list of list of additional simple terms from list of elements
   std::set<LimaString>::const_iterator it = m_wordSet.lower_bound(firstSimpleTerm);
   if( it == m_wordSet.end() ) {
-#ifdef DEBUG_LP
-    LDEBUG << "GazeteerTransition::buildNextTermsList: Error: first term not found";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "GazeteerTransition::buildNextTermsList: Error: first term not found";
+// #endif
     return false;
   }
   for( ; it != m_wordSet.end() ; it++ )
   {
     LimaString element = *it;
-#ifdef DEBUG_LP
-    LDEBUG << "GazeteerTransition::buildNextTermsList: Examining " << element.toStdString();
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "GazeteerTransition::buildNextTermsList: Examining " << element.toStdString();
+// #endif
     // if element does not start with firstSimpleTerm, there no more possible match
     if( !element.startsWith(firstSimpleTerm) ) {
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::buildNextTermsList: stop it!: first term not found";
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::buildNextTermsList: stop it!: first term not found";
+// #endif
       break;
     }
     std::vector<LimaString> multiTerm;
     // if element equals the token, we push a vector with a unique element, and go to the next element
     if( element == firstSimpleTerm ) {
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::buildNextTermsList: push back in multiTermList singleton " << firstSimpleTerm.toStdString();
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::buildNextTermsList: push back in multiTermList singleton " << firstSimpleTerm.toStdString();
+// #endif
       multiTerm.push_back(firstSimpleTerm);
       multiTermList.push_back(multiTerm);
       continue;
@@ -234,46 +239,46 @@ buildNextTermsList( const LimaString& firstSimpleTerm, std::vector<std::vector<L
     // first term is only a prefix and does not match exactly firstSimpleTerm, go to the next element
     int pos(0);
     int index = element.indexOf(' ', pos);
-#ifdef DEBUG_LP
-    LDEBUG << "GazeteerTransition::buildNextTermsList: pos = " << pos << ", index=" << index;
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "GazeteerTransition::buildNextTermsList: pos = " << pos << ", index=" << index;
+// #endif
     if( index != firstSimpleTerm.length() ) {
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::buildNextTermsList: no second term for " << element.toStdString();
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::buildNextTermsList: no second term for " << element.toStdString();
+// #endif
       continue;
     }
     else {
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::buildNextTermsList: push back in multiterm " << firstSimpleTerm.toStdString();
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::buildNextTermsList: push back in multiterm " << firstSimpleTerm.toStdString();
+// #endif
       multiTerm.push_back(firstSimpleTerm);
     }
     // build list of elements following firstSimpleTerm
     for( ; ; ) {
       pos = index+1;
       index = element.indexOf(' ', pos);
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::buildNextTermsList: pos = " << pos << ", index=" << index;
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::buildNextTermsList: pos = " << pos << ", index=" << index;
+// #endif
       if( index == -1 ) {
-#ifdef DEBUG_LP
-        LDEBUG << "GazeteerTransition::buildNextTermsList: push back last term " << element.mid(pos).toStdString();
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "GazeteerTransition::buildNextTermsList: push back last term " << element.mid(pos).toStdString();
+// #endif
         multiTerm.push_back(element.mid(pos));
         break;
       }
       else
       {
-#ifdef DEBUG_LP
-        LDEBUG << "GazeteerTransition::buildNextTermsList: add term " << element.mid(pos,index-pos).toStdString();
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "GazeteerTransition::buildNextTermsList: add term " << element.mid(pos,index-pos).toStdString();
+// #endif
         multiTerm.push_back(element.mid(pos,index-pos));
       }
     }
-#ifdef DEBUG_LP
-    LDEBUG << "GazeteerTransition::buildNextTermsList: push back list of " << multiTerm.size() << " elements";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "GazeteerTransition::buildNextTermsList: push back list of " << multiTerm.size() << " elements";
+// #endif
     multiTermList.push_back(multiTerm);
   }
   return( multiTermList.size() > 0 );
@@ -291,10 +296,10 @@ checkMultiTerms( const AnalysisGraph& graph,
   LIMA_UNUSED(limit)
   LIMA_UNUSED(analysis)
 
-#ifdef DEBUG_LP
-  AULOGINIT;
-  LDEBUG << "GazeteerTransition::checkMultiTerms( from " << position << ")";
-#endif
+// #ifdef DEBUG_LP
+//   AULOGINIT;
+//   LDEBUG << "GazeteerTransition::checkMultiTerms( from " << position << ")";
+// #endif
   // Iteration on multi-terms from gazeteer whose first term matches current token
   std::vector<std::vector<LimaString> >::const_iterator multiTermsIt = additionalMultiTermList.begin();
   const LinguisticGraph* lGraph = graph.getGraph();
@@ -302,10 +307,10 @@ checkMultiTerms( const AnalysisGraph& graph,
     // iterator for simpleterms
     std::vector<LimaString>::const_iterator termsIt = (*multiTermsIt).begin();
     std::vector<LimaString>::const_iterator termsIt_end = (*multiTermsIt).end();
-#ifdef DEBUG_LP
-    LDEBUG << "GazeteerTransition::checkMultiTerms: check multi-term ("
-           << *termsIt << " and " << (*multiTermsIt).size()-1 << " more...)";
-#endif
+// #ifdef DEBUG_LP
+//     LDEBUG << "GazeteerTransition::checkMultiTerms: check multi-term ("
+//            << *termsIt << " and " << (*multiTermsIt).size()-1 << " more...)";
+// #endif
     // For each list of simple Terms, we make a deep first search in the graph
     // searchPos stores a stack of position in the graph to perform the deep first search
     // the completed path is stored in a deque of vertices (initialized with position)
@@ -322,9 +327,9 @@ checkMultiTerms( const AnalysisGraph& graph,
     // case of empty list of simple term
     if(termsIt == termsIt_end ) {
       // Error!
-#ifdef DEBUG_LP
-      LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms is a singleton!";
-#endif
+// #ifdef DEBUG_LP
+//       LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms is a singleton!";
+// #endif
       matches.push(triggerMatch);
       //matches.push(triggerMatch);
     }
@@ -336,17 +341,17 @@ checkMultiTerms( const AnalysisGraph& graph,
         if (nextVertex == lastVertex || nextVertex == firstVertex)
 //          return false;
           break;
-#ifdef DEBUG_LP
-        LDEBUG << "GazeteerTransition::checkMultiTerms: progress one step forward, nextVertex=" << nextVertex;
-        LDEBUG << "GazeteerTransition::checkMultiTerms: test " << *termsIt;
-#endif
+// #ifdef DEBUG_LP
+//         LDEBUG << "GazeteerTransition::checkMultiTerms: progress one step forward, nextVertex=" << nextVertex;
+//         LDEBUG << "GazeteerTransition::checkMultiTerms: test " << *termsIt;
+// #endif
         // test currentVertex
         Token* token = get(vertex_token, *lGraph, nextVertex);
         LimaString form(token->stringForm());
         if( form == *termsIt ) {
-#ifdef DEBUG_LP
-          LDEBUG << "GazeteerTransition::checkMultiTerms: match with " << *termsIt;
-#endif
+// #ifdef DEBUG_LP
+//           LDEBUG << "GazeteerTransition::checkMultiTerms: match with " << *termsIt;
+// #endif
           //  If match, push vertex in triggerMatch and initialize next step
           // Push out_edge is a better if we have to follow the path from the begining ???
           triggerMatch.push_back(nextVertex);
@@ -354,16 +359,16 @@ checkMultiTerms( const AnalysisGraph& graph,
           tempSearchGraph->findNextVertices(lGraph, nextVertex);
           termsIt++;
           if(termsIt == termsIt_end ) {
-#ifdef DEBUG_LP
-            LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms exhausted!";
-#endif
+// #ifdef DEBUG_LP
+//             LDEBUG << "GazeteerTransition::checkMultiTerms: list of simple terms exhausted!";
+// #endif
             // list of Simple term exhausted: success
             // we push the path in the aGraph as a solution of triggerMatch
             // Only if size of solution is greater than previous one !!
             if( matches.empty() || (triggerMatch.size() > matches.top().size()) ) {
-#ifdef DEBUG_LP
-              LDEBUG << "GazeteerTransition::checkMultiTerms: push (in matches) a deque of size " << triggerMatch.size();
-#endif
+// #ifdef DEBUG_LP
+//               LDEBUG << "GazeteerTransition::checkMultiTerms: push (in matches) a deque of size " << triggerMatch.size();
+// #endif
               matches.push(triggerMatch);
             }
             // no need to go forward
