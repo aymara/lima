@@ -34,7 +34,7 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
-RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
 WORKDIR /svm_light
 RUN tar xzf ../svm_light.tar.gz
 RUN make

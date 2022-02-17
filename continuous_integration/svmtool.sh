@@ -7,7 +7,7 @@ set -o pipefail
 set -o nounset
 
 apt install dos2unix
-wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+wget --no-check-certificate https://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
 install -d /svm_light
 pushd /svm_light
 tar xzf ../svm_light.tar.gz

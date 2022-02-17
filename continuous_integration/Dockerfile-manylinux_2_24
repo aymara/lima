@@ -360,7 +360,7 @@ RUN bash install.sh
 RUN git lfs install --skip-repo
 
 WORKDIR /
-RUN wget http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
+RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
 WORKDIR /svm_light
 RUN tar xzf ../svm_light.tar.gz
 RUN make
