@@ -57,11 +57,11 @@
       <list name="processUnitSequence">
         <item value="NumberRecognition"/>
         <item value="UnitRecognition"/>
-        <item value="DateTimeModexForLimaserver"/>
+        <item value="DateTimeModex"/>
         <item value="NumexRecognition"/>
-        <item value="OrganizationModexForLimaserver"/>
+        <item value="OrganizationModex"/>
         <item value="LocationModexForLimaserver"/>
-        <item value="PersonModexForLimaserver"/>
+        <item value="PersonModex"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
         <item value="EmbededModex"/>
