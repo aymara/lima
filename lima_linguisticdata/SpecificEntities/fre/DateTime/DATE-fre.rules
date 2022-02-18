@@ -212,6 +212,7 @@ trente-et-un,
 # otherwise, would need one rule per modifier (début/mi/fin)
 @month:@modifierDate:@numyear?:DATE:
 =>SetEntityFeature(trigger,"month")
+=>SetEntityFeature(left.1,"datemod")
 =>SetEntityFeature(right.1,"year")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
