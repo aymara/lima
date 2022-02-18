@@ -33,12 +33,24 @@
         <item value="UnitRecognition"/>
         <item value="DateTimeModex"/>
         <item value="NumexRecognition"/>
-
         <item value="OrganizationModex"/>
         <item value="PersonModex"/>
         <item value="LocationModex"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
+      </list>
+    </group>
+    <group name="SpecificEntitiesModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognitionAfterPos"/>
+        <item value="UnitRecognitionAfterPos"/>
+        <item value="DateTimeModexAfterPos"/>
+        <item value="NumexRecognitionAfterPos"/>
+        <item value="OrganizationModexAfterPos"/>
+        <item value="PersonModexAfterPos"/>
+        <item value="LocationModexAfterPos"/>
+        <item value="EventModexAfterPos"/>
+        <item value="ProductModexAfterPos"/>
       </list>
     </group>
     <group name="SpecificEntitiesModexForLimaserver" class="ProcessUnitPipeline" >

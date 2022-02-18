@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex DateTime-modex-ud.xml,Numex-modex-ud.xml
+using modex DateTime-modex.xml,Numex-modex.xml
 using groups DateTime,Numex
 set defaultAction=>CreateSpecificEntity()
 
@@ -23,7 +23,7 @@ t_integer<12::\: t_integer<60 (\: t_integer<60)? @AM_PM? @TimeZone?:TIME:
 =<ClearEntityFeatures()
 =>NormalizeUTCTime()
 
-@Number=($NOMBRE)
+@Number=($NUM)
 
 # ten o'clock
 <NUMBER>::o'clock:TIME:

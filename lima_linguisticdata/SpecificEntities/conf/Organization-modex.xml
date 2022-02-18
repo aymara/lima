@@ -13,6 +13,11 @@
         <item value="OrganizationRecognition"/>
       </list>
     </group>
+    <group name="OrganizationModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="OrganizationModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="OrganizationRecognitionForLimaserver"/>
@@ -21,6 +26,11 @@
     <group name="OrganizationRecognition" class="ApplyRecognizer">
       <param key="automaton" value="OrganizationRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="OrganizationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="OrganizationRecognitionForLimaserver" class="ApplyRecognizer">

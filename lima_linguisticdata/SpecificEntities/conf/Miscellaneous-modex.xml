@@ -12,6 +12,10 @@
       <list name="processUnitSequence">
       </list>
     </group>
+    <group name="MiscellaneousModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+      </list>
+    </group>
   </module>
   <module name="resources-eng">
     <group name="MiscellaneousIndexing" class="EntityTypeIndexing">

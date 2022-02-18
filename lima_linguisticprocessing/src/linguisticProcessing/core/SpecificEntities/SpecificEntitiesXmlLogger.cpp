@@ -389,6 +389,8 @@ void SpecificEntitiesXmlLogger::outputEntity(AnnotationData* annotationData,
       }
       out << "</components>"
       << "<normalization>";
+      SELOGINIT;
+      LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: features:" << features;
       for (auto featureItr = features.begin(), features_end=features.end();
            featureItr != features_end; featureItr++)
       {
@@ -418,6 +420,8 @@ void SpecificEntitiesXmlLogger::outputEntity(AnnotationData* annotationData,
           << "</type>" << std::endl;
       out << "  <normalization>" << std::endl;
       const auto& features = annot->getFeatures();
+      SELOGINIT;
+      LDEBUG << "SpecificEntitiesXmlLogger::outputEntity: features:" << features;
       for (auto featureItr = features.begin(), features_end = features.end();
            featureItr != features_end; featureItr++)
       {

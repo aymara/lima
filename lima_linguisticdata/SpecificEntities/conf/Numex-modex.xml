@@ -17,6 +17,13 @@
         <item value="NumexRecognition"/>
       </list>
     </group>
+    <group name="NumexModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognitionAfterPos"/>
+        <item value="UnitRecognitionAfterPos"/>
+        <item value="NumexRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="NumberRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
       <param key="automaton" value="NumberRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
@@ -30,6 +37,21 @@
     <group name="NumexRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
       <param key="automaton" value="NumexRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumberRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumberRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="UnitRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="UnitRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumexRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumexRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
   </module>

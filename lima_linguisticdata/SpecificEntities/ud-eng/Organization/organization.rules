@@ -111,7 +111,7 @@ Congress:Trade Union::ORGANIZATION:Trade Union Congress
 Authority:UK Atomic Energy::ORGANIZATION:UK Atomic Energy Authority
 Nations:United:Organization?:ORGANIZATION:UNO
 United\ Nations:::ORGANIZATION:UNO
-UNO$NP:::ORGANIZATION:UNO
+UNO$PROPN:::ORGANIZATION:UNO
 U.N.O.:::ORGANIZATION:UNO
 Academy:U.S. Naval::ORGANIZATION:U.S. Naval Academy
 White::House:ORGANIZATION:White House

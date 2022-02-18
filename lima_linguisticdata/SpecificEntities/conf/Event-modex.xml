@@ -13,12 +13,17 @@
         <item value="EventRecognition"/>
       </list>
     </group>
+    <group name="EventModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EventRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="EventRecognition" class="ApplyRecognizer">
       <param key="automaton" value="EventRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
-    <group name="EventRecognitionOnPosGraph" class="ApplyRecognizer">
+    <group name="EventRecognitionAfterPos" class="ApplyRecognizer">
       <param key="automaton" value="EventRules"/>
       <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>

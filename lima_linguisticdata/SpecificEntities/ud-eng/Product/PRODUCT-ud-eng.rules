@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Product-modex-ud.xml
+using modex Product-modex.xml
 using groups Product
 set defaultAction=>CreateSpecificEntity()
 
@@ -7,7 +7,7 @@ set defaultAction=>CreateSpecificEntity()
 # recognition of product names
 #----------------------------------------------------------------------
 
-@ProductNamePart=(T_A1,T_Amh,$NP,t_capital,t_capital_1st,t_capital_small)
+@ProductNamePart=(T_A1,T_Amh,$PROPN,t_capital,t_capital_1st,t_capital_small)
 
 
 #various products (composed names or different normalizations)

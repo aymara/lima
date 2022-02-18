@@ -13,9 +13,19 @@
         <item value="ProductRecognition"/>
       </list>
     </group>
+    <group name="ProductModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="ProductRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="ProductRecognition" class="ApplyRecognizer">
       <param key="automaton" value="ProductRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="ProductRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="ProductRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
   </module>

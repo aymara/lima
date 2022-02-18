@@ -15,6 +15,12 @@
         <item value="TimeRecognition"/>
       </list>
     </group>
+    <group name="DateTimeModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="DateRecognitionAfterPos"/>
+        <item value="TimeRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="DateTimeModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="DateRecognitionForLimaserver"/>
@@ -26,6 +32,11 @@
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
+    <group name="DateRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="DateRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
     <group name="DateRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">
       <param key="automaton" value="DateCompRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
@@ -34,6 +45,11 @@
     <group name="TimeRecognition" class="ApplyRecognizer" lib="lima-lp-se-datetime">
       <param key="automaton" value="TimeRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="TimeRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="TimeRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="TimeRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">

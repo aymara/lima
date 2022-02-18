@@ -1,7 +1,7 @@
 set encoding=utf8
-using modex Person-modex-ud.xml
-using modex Location-modex-ud.xml
-using modex Organization-modex-ud.xml
+using modex Person-modex.xml
+using modex Location-modex.xml
+using modex Organization-modex.xml
 using groups Person
 using groups Location
 using groups Organization
@@ -91,7 +91,7 @@ use person_ending.lst
 
 # hack to take initials into account -> should be in tokenizer
 @Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
-@PersonNamePart=(t_capital_1st,t_capital,$NP)
+@PersonNamePart=(t_capital_1st,t_capital,$PROPN)
 @particule=(de,da,le,van,von,el,al,Al,del,Del,De,La)
 
 # generic rule for name with firstname with stop condition
@@ -219,7 +219,7 @@ t_capital_1st:@Initial? t_capital_1st{0-2}:@PersonEnding? , @FunctionTitle:PERSO
 =<ClearEntityFeatures()
 
 # "bla bla", Machin said.
-t_capital_1st::(t_capital_1st|$NP|@Initial){0-2} [(said .)]:PERSON:
+t_capital_1st::(t_capital_1st|$PROPN|@Initial){0-2} [(said .)]:PERSON:
 =>SetEntityFeature(trigger,"lastname")
 =>AddEntityFeature(right.1,"lastname")
 =>NormalizeEntity()

@@ -4,17 +4,16 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under GNU/Linux, with a user having the rights to run docker commands and the possibility to install Python packages using `pip`:
+Under GNU/Linux with python 3.8:
 
 ```bash
-# check docker access
-$ docker ps
-# if there is no error here, then proceed with the installation using pip
+$ pip install --upgrade pip
 $ pip install aymara
+$ lima_models.py -l eng
 $ python
 >>> import aymara.lima
->>> l = aymara.lima.Client(host='localhost', port='8080')
->>> sentences = l.analyzeText('Hello, World!')
+>>> l = aymara.lima.Lima("ud-eng")
+>>> sentences = l.analyzeText('Hello, World!', lang="ud-eng")
 >>> print(sentences[0][0].lemma)
 hello
 >>> print(sentences.conll())

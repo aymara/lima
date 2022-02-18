@@ -1,7 +1,7 @@
 set encoding=utf8
-using modex Person-modex-ud.xml
-using modex Location-modex-ud.xml
-using modex Organization-modex-ud.xml
+using modex Person-modex.xml
+using modex Location-modex.xml
+using modex Organization-modex.xml
 using groups Person
 using groups Location
 using groups Organization
@@ -47,10 +47,10 @@ Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
 
 use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
-#@Firstname:[(@Title|@FunctionTitle)?]:($NP|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
+#@Firstname:[(@Title|@FunctionTitle)?]:($PROPN|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
 
-#$NP:[(@Title|@FunctionTitle)]:$NP{0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
-#$NP:$NP{0-2}:@PersonEnding? , @FunctionTitle:PERSON:=>NormalizePersonName()
+#$PROPN:[(@Title|@FunctionTitle)]:$PROPN{0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
+#$PROPN:$PROPN{0-2}:@PersonEnding? , @FunctionTitle:PERSON:=>NormalizePersonName()
 
 # hack to take initials into account -> should be in tokenizer
 
@@ -60,15 +60,15 @@ use firstname.lst,title.lst,function_title.lst,person_ending.lst
 
 @Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)){1-2}:PERSON:=>NormalizePersonName()
 
 @Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
 
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$NP)){1-2}:PERSON:=>NormalizePersonName()
+@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)){1-2}:PERSON:=>NormalizePersonName()
 
 # @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh)){1-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
@@ -80,13 +80,13 @@ t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st){1-2}:PERSON:=>NormalizeP
 
 # T_A1:[(@Title|@FunctionTitle)]:(T_A1|T_Amh|@Initial){0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
 
-T_A1:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+T_A1:(T_A1|T_Amh|$PROPN|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
-$NP:(T_A1|T_Amh|$NP|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+$PROPN:(T_A1|T_Amh|$PROPN|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
 
 # "bla bla", Machin said.
-T_A1::(T_A1|T_Amh|$NP|@Initial){0-2} [(said .)]:PERSON:
-T_A1:[said]:(T_A1|T_Amh|$NP|@Initial){0-2}:PERSON:
+T_A1::(T_A1|T_Amh|$PROPN|@Initial){0-2} [(said .)]:PERSON:
+T_A1:[said]:(T_A1|T_Amh|$PROPN|@Initial){0-2}:PERSON:
 
 @Pronouns=(
 I,

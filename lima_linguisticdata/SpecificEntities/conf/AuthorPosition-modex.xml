@@ -10,11 +10,24 @@
   <module name="Processors">
     <group name="AuthorsPositionModex" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-	<item value="GoalRecognition"/>
-	<item value="GoalRecognitionLogger"/>
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
+      </list>
+    </group>
+    <group name="AuthorsPositionModexAfterPos" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
       </list>
     </group>
     <group name="GoalRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="GoalRecognitionRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="yes"/>
+      <param key="stopAtFirstSuccess" value="no"/>
+      <param key="storeInData" value="goalRecognitionData"/>
+    </group>
+    <group name="GoalRecognitionAfterPos" class="ApplyRecognizer">
       <param key="automaton" value="GoalRecognitionRules"/>
       <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="yes"/>

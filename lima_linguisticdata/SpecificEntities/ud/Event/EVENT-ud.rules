@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Event-modex-ud.xml
+using modex Event-modex.xml
 using groups Event
 set defaultAction=>CreateSpecificEntity()
 
@@ -43,7 +43,7 @@ Holocaust:::EVENT:
 Niño:el::EVENT:
 
 # festival
-festival:$NP?::EVENT:
+festival:$PROPN?::EVENT:
 
 Golden::Globes:EVENT:Golden Globes
 
@@ -56,5 +56,5 @@ World::Cup:EVENT:
 
 Open:(U.S.|U.S .|French|British)::EVENT:
 
-olympic$ADJ::game$NC:EVENT:Olympic Games
+olympic$ADJ::game$NOUN:EVENT:Olympic Games
 
