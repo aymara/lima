@@ -149,17 +149,12 @@ void buildDirectoriesListForProject(QStringList& target,
     appendFirstOrSecondForProject(target, project, path_prefix, path_postfix);
   }
 
-  // If current project is not lima, try to add a lima config dir for this project
-  if (project != "lima")
-  {
-    appendFirstOrSecondForProject(target, QString("lima"), path_prefix, path_postfix);
-  }
 }
 
 QStringList buildConfigurationDirectoriesList(const QStringList& projects,
                                               const QStringList& paths)
 {
-  // qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+  //qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
 
   QString dataHome = getDataHome();
@@ -173,7 +168,13 @@ QStringList buildConfigurationDirectoriesList(const QStringList& projects,
     buildDirectoriesListForProject(configDirs, project, "_CONF", "/share/config/");
   }
 
-  // qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
+  // If current project is not lima, try to add a lima config dir for this project
+  if (!projects.contains("lima"))
+  {
+    appendFirstOrSecondForProject(configDirs, QString("lima"), "_CONF", "/share/config/");
+  }
+
+  //qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
