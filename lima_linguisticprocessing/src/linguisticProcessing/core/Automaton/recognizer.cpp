@@ -426,24 +426,34 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     // treat the constraints for the trigger with the constraint
     // checklist corresponding to this rule
-    //Token* token=get(vertex_token,*(graph.getGraph()),position);
-//     LDEBUG << "Recognizer: checking trigger constraints: ";
 
-    if (!trigger.checkConstraints(graph,position,analysis,
-                                  constraintCheckList)) {
-      // one unary constraint was not verified
-//       LDEBUG << "one unary constraint on trigger not verified";
+    // what to do with constraints on gazeteer triggers ? 
+    // -> apply them on each vertex : useful for constraints which are actually actions
+    // such as AppendEntityFeature, maybe dangerous for constraints that are actual tests
+    // but suppose gazeteer triggers are not used in this case (mostly in syntactic analysis)
 
-    // apply actions (for actions triggered by failure)
+    //  if (!trigger.checkConstraints(graph,position,analysis,
+    //                                constraintCheckList)) {
+    bool constraintsVerified=true;  
+    for (const auto elt: triggermatch) {
+      if (!trigger.checkConstraints(graph,elt.getVertex(),analysis,
+                                    constraintCheckList)) {
+        // one unary constraint was not verified
+        constraintsVerified=false;
+        break;
+      }
+    }
+    if (! constraintsVerified) {
+      // apply actions (for actions triggered by failure)
       if (!currentRule->negative()) {
         currentRule->executeActions(graph, analysis,
                                     constraintCheckList,
                                     false,
                                     0); // match is not used
-//     LDEBUG << "actionSuccess=" << actionSuccess;
       }
       continue;
     }
+    
 
     leftmatch.reinit();
     rightmatch.reinit();
