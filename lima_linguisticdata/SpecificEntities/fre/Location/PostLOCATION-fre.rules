@@ -5,13 +5,30 @@ set defaultAction=>CreateSpecificEntity()
 
 use annonceurLieu.lst
 
-@PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
+@PrecisionGeographique=(Sud,sud,Nord,nord,Est,est,Ouest,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
-@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:ODO:
+# processed in embedded entities
+#@AnnonceurLieu::$PREP $DET? <Location.LOCATION>:ODO:
+#=>SetEntityFeature(trigger,"kind")
+#=>SetEntityFeature(right.1,"name")
+#=>AppendEntityFeature(right.2,"name")
+#=>AppendEntityFeature(right.3,"name")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
+# L'italie du Sud
+#Italie::(des|de la?|du)? @PrecisionGeographique :GEO:
+<LOCATION>::(de l'?|du)? @PrecisionGeographique :GEO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#<LOCATION>::du @PrecisionGeographique :LOCATION:
-<LOCATION>::(des|de la?|du) @PrecisionGeographique :LOCATION:
+# Le Sud-Liban
+#<Location.COUNTRY>:@PrecisionGeographique::GEO:
+<LOCATION>:@PrecisionGeographique::GEO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(left,"qualifier")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
