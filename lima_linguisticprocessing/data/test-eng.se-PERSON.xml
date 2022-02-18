@@ -75,27 +75,27 @@
     </call-parameters>
     <test id="eng.se.pers.comp.3.1" trace=".se.xml"
           comment="type"
-          left="XPATH#//entities/entity[pos=1]/type"
+          left="XPATH#//entities/entity[pos=11]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="eng.se.pers.comp.3.2" trace=".se.xml"
           comment="value"
-          left="XPATH#//entities/entity[pos=1]/string"
+          left="XPATH#//entities/entity[pos=11]/string"
           operator="="
-          right="president George Bush"/>
+          right="George Bush"/>
     <test id="eng.se.pers.comp.3.3" trace=".se.xml"
           comment="title component"
-          left="XPATH#//entities/entity[pos=1]/components/title"
+          left="XPATH#//entities/entity[pos=11]/components/title"
           operator="="
           right="president"/>
     <test id="eng.se.pers.comp.3.4" trace=".se.xml"
           comment="firstname component"
-          left="XPATH#//entities/entity[pos=1]/components/firstname"
+          left="XPATH#//entities/entity[pos=11]/components/firstname"
           operator="="
           right="George"/>
     <test id="eng.se.pers.comp.3.5" trace=".se.xml"
           comment="personne connue"
-          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          left="XPATH#//entities/entity[pos=11]/components/lastname"
           operator="="
           right="Bush"/>
   </testcase>
@@ -110,17 +110,17 @@
     </call-parameters>
     <test id="eng.se.pers.comp.4.1" trace=".se.xml"
           comment="personne connue"
-          left="XPATH#//entities/entity[pos=1][len=14]/type"
+          left="XPATH#//entities/entity[pos=11][len=4]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="eng.se.pers.comp.4.2" trace=".se.xml"
           comment=""
-          left="XPATH#//entities/entity[pos=1]/components/title"
+          left="XPATH#//entities/entity[pos=11]/components/title"
           operator="="
           right="president"/>
     <test id="eng.se.pers.comp.4.3" trace=".se.xml"
           comment=""
-          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          left="XPATH#//entities/entity[pos=11]/components/lastname"
           operator="="
           right="Bush"/>
   </testcase>
@@ -135,17 +135,17 @@
     </call-parameters>
     <test id="eng.se.pers.comp.5.1" trace=".se.xml"
           comment="personne connue"
-          left="XPATH#//entities/entity[pos=1][len=14]/type"
+          left="XPATH#//entities/entity[pos=11][len=4]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="eng.se.pers.comp.5.2" trace=".se.xml"
           comment=""
-          left="XPATH#//entities/entity[pos=1]/components/title"
+          left="XPATH#//entities/entity[pos=11]/components/title"
           operator="="
           right="president"/>
     <test id="eng.se.pers.comp.5.3" trace=".se.xml"
           comment=""
-          left="XPATH#//entities/entity[pos=1]/components/lastname"
+          left="XPATH#//entities/entity[pos=11]/components/lastname"
           operator="="
           right="Bush"/>
   </testcase>

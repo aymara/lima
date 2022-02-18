@@ -28,7 +28,7 @@
     <expl>generic rule with firstname as trigger, simple case : title firstname lastname = le président Ambroise Monge</expl>
     <test id="fre.se.pers.comp.1.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=4]/type"
+          left="XPATH#//entities/entity[pos=14]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.1.2" trace=".se.xml"
@@ -68,7 +68,7 @@
     <expl>generic rule with firstname as trigger, simple case with stop condition : title firstname lastname = le président Ambroise Monge</expl>
     <test id="fre.se.pers.comp.2.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=4]/type"
+          left="XPATH#//entities/entity[pos=14]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.2.2" trace=".se.xml"
@@ -108,7 +108,7 @@
     <expl>generic rule with firstname as trigger, case with optional particule in lastname : title firstname particule lastname = président Ambroise de Monge</expl>
     <test id="fre.se.pers.comp.3.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=4]/type"
+          left="XPATH#//entities/entity[pos=14]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.3.2" trace=".se.xml"
@@ -201,7 +201,7 @@
           right="t_abbrev"/>
     <test id="fre.se.pers.comp.44.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=4]/type"
+          left="XPATH#//entities/entity[pos=14]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.44.2" trace=".se.xml"
@@ -240,7 +240,7 @@
     <expl>generic rule with firstname as trigger, case with optional second firstname initial : title firstname firstname initial lastname = le président Ambroise G Monge</expl>
     <test id="fre.se.pers.comp.5.1" trace=".se.xml"
           comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=4][len=26]/type"
+          left="XPATH#//entities/entity[pos=14][len=16]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.5.2" trace=".se.xml"
@@ -364,17 +364,17 @@
     <expl>PERSON : titre</expl>
     <test id="fre.se.55.1" trace=".se.xml"
           comment="Person.PERSON."
-          left="XPATH#//entities/entity[pos=18][len=9]/type"
+          left="XPATH#//entities/entity[pos=21][len=6]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.1.3" trace=".se.xml"
           comment="position titre = 4"
-          left="XPATH#//entities/entity[pos=18][len=9]/components/title"
+          left="XPATH#//entities/entity[pos=21]/components/title"
           operator="="
           right="Dr"/>
     <test id="fre.se.pers.comp.1.3" trace=".se.xml"
           comment="position titre = 4"
-          left="XPATH#//entities/entity[pos=18][len=9]/components/lastname"
+          left="XPATH#//entities/entity[pos=21]/components/lastname"
           operator="="
           right="Watson"/>
   </testcase>
@@ -389,27 +389,27 @@
     <expl>PERSON : titre</expl>
     <test id="fre.se.56.1" trace=".se.xml"
           comment="Person.PERSON."
-          left="XPATH#//entities/entity[pos=57][len=21]/type"
+          left="XPATH#//entities/entity[pos=61][len=17]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.56.1" trace=".se.xml"
           comment="string"
-          left="XPATH#//entities/entity[pos=57][len=21]/string"
+          left="XPATH#//entities/entity[pos=61]/string"
           operator="="
-          right="Mme Bernadette Chirac"/>
+          right="Bernadette Chirac"/>
     <test id="fre.se.56.2" trace=".se.xml"
           comment="titre"
-          left="XPATH#//entities/entity[pos=57][len=21]/components/title"
+          left="XPATH#//entities/entity[pos=61]/components/title"
           operator="="
           right="Mme"/>
     <test id="fre.se.56.3" trace=".se.xml"
           comment="titre"
-          left="XPATH#//entities/entity[pos=57][len=21]/components/firstname"
+          left="XPATH#//entities/entity[pos=61]/components/firstname"
           operator="="
           right="Bernadette"/>
     <test id="fre.se.56.4" trace=".se.xml"
           comment="titre"
-          left="XPATH#//entities/entity[pos=57][len=21]/components/lastname"
+          left="XPATH#//entities/entity[pos=61]/components/lastname"
           operator="="
           right="Chirac"/>
   </testcase>  
@@ -424,7 +424,7 @@
     <expl>PERSON : titre avec initiale.</expl>
     <test id="fre.se.61.1" trace=".se.xml"
           comment="Person.PERSON."
-          left="XPATH#//entities/entity[pos=57][len=12]/type"
+          left="XPATH#//entities/entity[pos=61][len=8]/type"
           operator="="
           right="Person.PERSON"/>
   </testcase>  
@@ -453,20 +453,15 @@
     </call-parameters>
     <expl>PERSON : titre</expl>
     <test id="fre.se.pers.comp.8.1" trace=".se.xml"
-          comment="type d'entité = Person.PERSONNE"
-          left="XPATH#//entities/entity[pos=1][len=23]/type"
+          comment="type d'entité = Person.PERSON"
+          left="XPATH#//entities/entity[pos=12][len=12]/type"
           operator="="
           right="Person.PERSON"/>
     <test id="fre.se.pers.comp.8.2" trace=".se.xml"
           comment="titre = Sa Majesté"
           left="XPATH#//entities/entity/components/title[@pos=1]"
           operator="="
-          right="Sa"/>
-    <test id="fre.se.pers.comp.8.3" trace=".se.xml"
-          comment="titre = Sa Majesté"
-          left="XPATH#//entities/entity/components/title[@pos=4]"
-          operator="="
-          right="Majesté"/>
+          right="Sa Majesté"/>
     <test id="fre.se.pers.comp.8.4" trace=".se.xml"
           comment="prénom = Elizabeth"
           left="XPATH#//entities/entity/components/firstname[@pos=12]"
