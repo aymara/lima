@@ -155,7 +155,7 @@ public:
     const V& zero = wb->zero;
 
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
-    V c = V::Zero(hidden_size);
+    V c = fw_c; //V::Zero(hidden_size);
 
     M input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end);
     // TODO: rewrite this!!!
@@ -176,7 +176,7 @@ public:
     }
 
     // Forward pass
-    s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * zero;
+    s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * fw_h; //zero;
     step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
     for (size_t t = 1; t < input.cols(); t++)
@@ -192,8 +192,8 @@ public:
     //t--;
 
     // Backward pass
-    c = V::Zero(hidden_size);
-    s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * zero;
+    c = bw_c; //V::Zero(hidden_size);
+    s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * bw_h; //zero;
     step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
 
     for (t = input.cols() - 2; t >= 0; t--)

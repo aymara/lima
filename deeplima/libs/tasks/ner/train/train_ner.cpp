@@ -31,6 +31,7 @@
 
 #include "../model/birnn_classifier_for_ner.h"
 #include "deeplima/fastText_wrp/fastText_wrp.h"
+#include "deeplima/utils/split_string.h"
 
 #include "train_ner.h"
 
@@ -140,21 +141,6 @@ protected:
   int m_rel;
   bool m_feats;
 
-  inline static vector<string> split(const string &str, char delim)
-  {
-    size_t start;
-    size_t end = 0;
-    vector<string> parts;
-
-    while ((start = str.find_first_not_of(delim, end)) != string::npos)
-    {
-      end = str.find(delim, start);
-      parts.push_back(str.substr(start, end - start));
-    }
-
-    return parts;
-  }
-
   void add_feature(const std::string& name)
   {
     m_feat2idx[name] = m_idx2feat.size();
@@ -169,7 +155,7 @@ public:
       m_rel(-1),
       m_feats(false)
   {
-    for (const std::string& s : split(feats_to_train, ','))
+    for (const std::string& s : utils::split(feats_to_train, ','))
     {
       assert(s.size() > 0);
 

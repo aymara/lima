@@ -181,12 +181,12 @@ public:
     return feats.subvalue(m_masks[feat_mask_id], m_offset[feat_mask_id]);
   }
 
-protected:
   size_t get_upos_id(const std::string& name) const
   {
     return m_upos_dict.get_id(name);
   }
 
+protected:
   size_t add_upos(const std::string& name)
   {
     return m_upos_dict.add_key(name);

@@ -80,6 +80,11 @@ public:
     return m_impl.get_morph_model();
   }
 
+  inline const std::vector<size_t>& get_fixed_upos() const
+  {
+    return m_impl.get_fixed_upos();
+  }
+
 protected:
 
   M m_impl;

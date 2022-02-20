@@ -121,11 +121,19 @@ public:
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
 
-    // Features encoder
-    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_feats
+    // Features encoders
+    // for encoder
+    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_feats_enc
+        = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[5]);
+    Vector encoded_feats_for_encoder;
+    p_linear_feats_enc->execute(Parent::m_wb[5][worker_id], input_feats, Parent::m_params[5], encoded_feats_for_encoder);
+
+    // for decoder
+    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_feats_dec
         = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[3]);
+
     Vector encoded_feats;
-    p_linear_feats->execute(Parent::m_wb[3][worker_id], input_feats, Parent::m_params[3], encoded_feats);
+    p_linear_feats_dec->execute(Parent::m_wb[3][worker_id], input_feats, Parent::m_params[3], encoded_feats);
 
     deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_encoder
         = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
@@ -133,14 +141,27 @@ public:
     deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T> *p_decoder
         = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
 
+    const deeplima::eigen_impl::params_bilstm_t<M, V>& layer
+        = *static_cast<const deeplima::eigen_impl::params_bilstm_t<M, V>*>(Parent::m_params[0]);
+    size_t hidden_size = layer.fw.weight_ih.rows() / 4;
+
     Vector fw_h, fw_c, bw_h, bw_c;
+    if (true)
+    {
+      // layout of encoded_feats_for_encoder:
+      //
+      // encoder_init_state_ = forward module=fc_cat2encoder input=categories_enc_embd
+      // encoder_init_state = reshape input=encoder_init_state_ dims=2,-1,(encoder_input_size / 2)
+      fw_h = encoded_feats_for_encoder.head(hidden_size);
+      fw_c = fw_h;
+      bw_h = encoded_feats_for_encoder.tail(hidden_size);
+      bw_c = bw_h;
+    }
     p_encoder->execute(Parent::m_wb[0][worker_id],
         inputs, Parent::m_params[0],
         0, input_len, fw_h, fw_c, bw_h, bw_c);
 
-    const deeplima::eigen_impl::params_bilstm_t<M, V>& layer
-        = *static_cast<const deeplima::eigen_impl::params_bilstm_t<M, V>*>(Parent::m_params[0]);
-    size_t hidden_size = layer.fw.weight_ih.rows() / 4;
+
     Vector encoder_state(hidden_size * 4 + encoded_feats.rows());
     encoder_state << fw_h, fw_c, bw_h, bw_c, encoded_feats;
 
@@ -179,11 +200,17 @@ public:
     return m_embd_fn[idx];
   }
 
+  const std::vector<size_t>& get_fixed_upos() const
+  {
+    return m_fixed_upos;
+  }
+
 protected:
   std::vector<std::string> m_class_names;
   std::vector<std::vector<std::string>> m_classes;
   std::vector<std::string> m_embd_fn;
   morph_model::morph_model_t m_morph_model;
+  std::vector<size_t> m_fixed_upos;
 
   virtual void convert_from_torch(const std::string& fn);
 };

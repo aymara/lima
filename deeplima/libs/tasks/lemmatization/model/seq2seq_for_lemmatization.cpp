@@ -142,6 +142,9 @@ void Seq2SeqLemmatizerImpl::load(torch::serialize::InputArchive& archive)
   archive.read("morph_model", val);
   string serialized_morph_model = *(val.toString().get());
   m_morph_model = morph_model::morph_model_t(serialized_morph_model);
+
+  archive.read("fixed_upos", val);
+  m_fixed_upos = *(val.toString().get());
 }
 
 void Seq2SeqLemmatizerImpl::save(torch::serialize::OutputArchive& archive) const
@@ -149,6 +152,7 @@ void Seq2SeqLemmatizerImpl::save(torch::serialize::OutputArchive& archive) const
   BiRnnSeq2SeqImpl::save(archive);
   string serialized_morph_model = m_morph_model.to_string();
   archive.write("morph_model", serialized_morph_model);
+  archive.write("fixed_upos", m_fixed_upos);
 }
 
 } // namespace train

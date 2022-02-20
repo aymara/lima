@@ -342,10 +342,17 @@ protected:
     std::u32string target;
     for (size_t i = 0; i < end - offset; ++i)
     {
-      const u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
-      m_lemm.predict(f, classes, i + offset, target);
+      if (m_lemm.is_fixed(classes, i + offset))
+      {
+        lemm_buffer[i] = buffer[i].m_form_idx;
+      }
+      else
+      {
+        const u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
+        m_lemm.predict(f, classes, i + offset, target);
 
-      lemm_buffer[i] = m_stridx.get_idx(target);
+        lemm_buffer[i] = m_stridx.get_idx(target);
+      }
     }
   }
 

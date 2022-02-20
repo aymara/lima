@@ -44,14 +44,16 @@ class LemmatizationImpl: public ILemmatization, public InferenceEngine
 public:
 
   LemmatizationImpl()
-    : m_beam_size(5)
+    : m_beam_size(5),
+      m_upos_idx(-1)
   {}
 
   LemmatizationImpl(
       size_t threads,
       size_t buffer_size_per_thread
     )
-    : m_beam_size(5)
+    : m_beam_size(5),
+      m_upos_idx(-1)
   {
   }
 
@@ -64,6 +66,7 @@ public:
             const std::vector<std::string>& class_names,
             const std::vector<std::vector<std::string>>& class_values)
   {
+    m_upos_idx = -1;
     auto uint_dicts = InferenceEngine::get_uint_dicts();
     decltype(uint_dicts) enc_uint_dict;
     enc_uint_dict.push_back(uint_dicts[0]);
@@ -71,6 +74,11 @@ public:
 
     auto str_dicts = InferenceEngine::get_str_dicts();
     auto lang_morph_model = InferenceEngine::get_morph_model();
+    m_fixed_upos = std::vector<bool>(32, false); // TODO: find the number of possible UPOS values
+    for (auto idx : InferenceEngine::get_fixed_upos())
+    {
+      m_fixed_upos[idx] = true;
+    }
 
     assert(class_names.size() == class_values.size());
     EmbdUInt64FloatHolder enc_feats_dict;
@@ -115,10 +123,26 @@ public:
       enc_feats_dict.push_back(d);
 
       m_feat2cls.push_back(cls_idx);
+      if (cls_idx >= 0 && cls_idx < class_names.size() && class_names[cls_idx] == "upos")
+      {
+        m_upos_idx = cls_idx;
+      }
     }
     m_feat_vectorizer.init(enc_feats_dict, 1, enc_feats_dict.size());
 
+    if (m_upos_idx < 0)
+    {
+      throw std::logic_error("Underlying classifier doesn't provide UPOS.");
+    }
+
     InferenceEngine::init_new_worker(max_input_word_len);
+  }
+
+  bool is_fixed(const StdMatrix<uint8_t>& classes, size_t idx)
+  {
+    assert(m_upos_idx >= 0);
+    auto upos = classes.get(idx, m_upos_idx);
+    return m_fixed_upos[upos];
   }
 
   void predict(const std::u32string& form, const StdMatrix<uint8_t>& classes, size_t idx, std::u32string& target)
@@ -168,6 +192,8 @@ protected:
   Vectorizer m_vectorizer;
   Vectorizer m_feat_vectorizer;
   std::vector<int> m_feat2cls;
+  int m_upos_idx;
+  std::vector<bool> m_fixed_upos;
 };
 
 } // namespace impl

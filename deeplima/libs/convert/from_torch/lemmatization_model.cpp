@@ -22,6 +22,8 @@
 
 #include "convert_from_torch.h"
 
+#include "deeplima/utils/split_string.h"
+
 using namespace std;
 using namespace torch;
 using namespace deeplima::convert_from_torch;
@@ -46,6 +48,12 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   Parent::convert_dicts_and_embeddings(src);
 
   m_morph_model = src.get_morph_model();
+  vector<string> fixed_upos = utils::split(src.get_fixed_upos(), ' ');
+  m_fixed_upos.reserve(fixed_upos.size());
+  for (const string& s : fixed_upos)
+  {
+    m_fixed_upos.push_back(m_morph_model.get_upos_id(s));
+  }
 
   // torch modules
   Parent::m_lstm.reserve(src.get_layers_lstm().size());
@@ -94,10 +102,11 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   *p_fc_c0 = Parent::m_linear[Parent::m_linear_idx["interm_fc_c0"]];
 
   // Linear for features encoder
+  // input to decoder
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
   Parent::m_params.push_back(new params_linear_t<M, V>());
-  params_linear_t<M, V> *p_fc_feats = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
-  *p_fc_feats = Parent::m_linear[Parent::m_linear_idx["fc_cat2decoder"]];
+  params_linear_t<M, V> *p_fc_feats_dec = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  *p_fc_feats_dec = Parent::m_linear[Parent::m_linear_idx["fc_cat2decoder"]];
 
   // Decoder
   Parent::m_ops.push_back(new Op_LSTM_Beam_Decoder<M, V, T>());
@@ -106,7 +115,13 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   p_dec->bilstm = Parent::m_lstm[Parent::m_lstm_idx["decoder_lstm_0"]];
   p_dec->linear.push_back(Parent::m_linear[Parent::m_linear_idx["fc_output"]]);
 
-  Parent::m_wb.resize(5);
+  // input to encoder
+  Parent::m_ops.push_back(new Op_Linear<M, V, T>());
+  Parent::m_params.push_back(new params_linear_t<M, V>());
+  params_linear_t<M, V> *p_fc_feats_enc = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  *p_fc_feats_enc = Parent::m_linear[Parent::m_linear_idx["fc_cat2encoder"]];
+
+  Parent::m_wb.resize(6);
 
   // tags
   cerr << "TAGS:" << endl;

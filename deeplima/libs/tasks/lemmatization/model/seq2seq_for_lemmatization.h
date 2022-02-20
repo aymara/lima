@@ -48,12 +48,14 @@ public:
                         const std::vector<nets::rnn_descr_t>& encoder_rnn_descr,
                         const std::vector<nets::embd_descr_t>& decoder_embd_descr,
                         const std::vector<nets::rnn_descr_t>& decoder_rnn_descr,
-                        const std::vector<nets::embd_descr_t>& cat_embd_descr)
+                        const std::vector<nets::embd_descr_t>& cat_embd_descr,
+                        const std::string& fixed_upos)
     : BiRnnSeq2SeqImpl(std::move(dicts),
                        encoder_embd_descr, encoder_rnn_descr,
                        decoder_embd_descr, decoder_rnn_descr,
                        cat_embd_descr),
-      m_morph_model(lang_morph_model)
+      m_morph_model(lang_morph_model),
+      m_fixed_upos(fixed_upos)
   {
   }
 
@@ -92,9 +94,15 @@ public:
     return m_morph_model;
   }
 
+  const std::string& get_fixed_upos() const
+  {
+    return m_fixed_upos;
+  }
+
 protected:
 
   morph_model::morph_model_t m_morph_model;
+  std::string m_fixed_upos;
 };
 
 inline torch::serialize::OutputArchive& operator<<(

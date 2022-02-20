@@ -124,9 +124,9 @@ string BiRnnSeq2SeqImpl::generate_script(const vector<embd_descr_t>& encoder_emb
 
   ss << std::endl;
 
-  ss << "interm_fc_h0 = def Linear input_size=" << encoder_input_size * 2 + cat_embd_input_dim /*/ 2*/
+  ss << "interm_fc_h0 = def Linear input_size=" << encoder_input_size * 2 + cat_embd_input_dim
      << " output_size=" << decoder_rnn_descr[0].m_dim << std::endl;
-  ss << "interm_fc_c0 = def Linear input_size=" << encoder_input_size * 2 + cat_embd_input_dim /*/ 2*/
+  ss << "interm_fc_c0 = def Linear input_size=" << encoder_input_size * 2 + cat_embd_input_dim
      << " output_size=" << decoder_rnn_descr[0].m_dim << std::endl;
 
   ss << std::endl;
@@ -136,7 +136,14 @@ string BiRnnSeq2SeqImpl::generate_script(const vector<embd_descr_t>& encoder_emb
     ss << "cat_embd_dropout = def Dropout prob=0.7" << std::endl << std::endl;
 
     ss << "fc_cat2decoder = def Linear input_size=" << cat_embd_input_dim
-       << " output_size=" << cat_embd_input_dim /*/ 2*/ << std::endl << std::endl;
+       << " output_size=" << cat_embd_input_dim << std::endl << std::endl;
+
+
+    // present categories as initial state of encoder
+    ss << "cat_embd_2_encoder_dropout = def Dropout prob=0.7" << std::endl << std::endl;
+
+    ss << "fc_cat2encoder = def Linear input_size=" << cat_embd_input_dim
+       << " output_size=" << encoder_input_size << std::endl << std::endl;
   }
 
   // Args definitions
@@ -178,9 +185,17 @@ string BiRnnSeq2SeqImpl::generate_script(const vector<embd_descr_t>& encoder_emb
     }
     ss << " dim=1" << std::endl;
 
+    // for decoder
     ss << "categories_embd = forward module=cat_embd_dropout input=categories_embd_brut" << std::endl;
     ss << std::endl;
     ss << "categories_encoded = forward module=fc_cat2decoder input=categories_embd" << endl;
+
+    // for encoder
+    ss << "categories_enc_embd = forward module=cat_embd_2_encoder_dropout input=categories_embd_brut" << std::endl;
+    ss << std::endl;
+    ss << "encoder_init_state_ = forward module=fc_cat2encoder input=categories_enc_embd" << endl;
+    ss << "encoder_init_state = reshape input=encoder_init_state_ dims=2,-1,"
+       << encoder_input_size / 2 << endl;
   }
 
   ss << std::endl;
@@ -229,7 +244,7 @@ string BiRnnSeq2SeqImpl::generate_script(const vector<embd_descr_t>& encoder_emb
        << ",encoder_rnn_h_" << i
        << ",encoder_rnn_c_" << i
        << " = forward module=encoder_lstm_" << i
-       << " input=" << last_output_name << std::endl;
+       << " input=" << last_output_name << ",encoder_init_state,encoder_init_state" << std::endl;
     std::stringstream t;
     t << "encoder_rnn_out_" << i;
     last_output_name = t.str();
@@ -332,7 +347,6 @@ string BiRnnSeq2SeqImpl::generate_script(const vector<embd_descr_t>& encoder_emb
        << ",decoder_rnn_c_" << i
        << " = forward module=decoder_lstm_" << i
        << " input=" << last_output_name
-       //<< ",encoder_rnn_h_0,encoder_rnn_c_0"
        << ",decoder_h0,decoder_c0" // order: input,h0,c0
        << std::endl;
     std::stringstream t;

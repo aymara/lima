@@ -33,6 +33,8 @@
 #include "tasks/lemmatization/model/seq2seq_for_lemmatization.h"
 
 #include <boost/functional/hash.hpp>
+#include "deeplima/utils/backport.h"
+#include "deeplima/utils/split_string.h"
 
 using namespace std;
 using namespace deeplima::morph_model;
@@ -73,16 +75,17 @@ struct form_morph_hash
   }
 };
 
+typedef unordered_map<form_morph_t, unordered_map<StringIndex::idx_t, size_t>, form_morph_hash> form2lemma_t;
+
 const char32_t START = 0x10FFFE;
 const char32_t EOS = 0x10FFFF; // End of Supplementary Private Use Area-B
 
-DictsHolder build_char_dicts(const unordered_map<form_morph_t, unordered_map<StringIndex::idx_t, size_t>, form_morph_hash>& form2lemma,
-                             StringIndex& str_idx)
+DictsHolder build_char_dicts(const form2lemma_t& form2lemma, StringIndex& str_idx)
 {
   DictsHolder d;
 
-  std::unordered_map<char32_t, uint64_t> temp_encoder_dict;
-  std::unordered_map<char32_t, uint64_t> temp_decoder_dict;
+  unordered_map<char32_t, uint64_t> temp_encoder_dict;
+  unordered_map<char32_t, uint64_t> temp_decoder_dict;
 
   for ( const auto& kv : form2lemma )
   {
@@ -123,8 +126,58 @@ DictsHolder build_char_dicts(const unordered_map<form_morph_t, unordered_map<Str
   return d;
 }
 
+set<morph_model::feat_base_t> find_fixed(const morph_model::morph_model_t& lang_morph_model,
+                const form2lemma_t& form2lemma,
+                /*const*/ StringIndex& str_idx // TODO: str_idx must be const here
+                )
+{
+  set<morph_model::feat_base_t> fixed_upos, non_fixed_upos;
+  for ( const auto& kv : form2lemma )
+  {
+    const form_morph_t& form = kv.first;
+    const unordered_map<StringIndex::idx_t, size_t>& dec_forms = kv.second;
+
+    assert(!dec_forms.empty());
+    if (dec_forms.size() > 1 || kv.first.m_str_id != dec_forms.begin()->first)
+    {
+      morph_model::feat_base_t upos = lang_morph_model.decode_upos(form.m_feats);
+      non_fixed_upos.insert(upos);
+      if (lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(upos)) == "PUNCT"
+          || lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(upos)) == "X"
+          || lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(upos)) == "SYM")
+      {
+        cout << str_idx.get_str(form.m_str_id)
+             << " -> " << str_idx.get_str(dec_forms.begin()->first) << endl;
+      }
+    }
+  }
+
+  for ( const auto& kv : form2lemma )
+  {
+    const form_morph_t& form = kv.first;
+    const unordered_map<StringIndex::idx_t, size_t>& dec_forms = kv.second;
+
+    if (1 == dec_forms.size() && kv.first.m_str_id == dec_forms.begin()->first)
+    {
+      morph_model::feat_base_t upos = lang_morph_model.decode_upos(form.m_feats);
+      if (non_fixed_upos.end() == non_fixed_upos.find(upos))
+      {
+        fixed_upos.insert(upos);
+      }
+    }
+  }
+
+  for ( const auto k : fixed_upos )
+  {
+    cout << "Fixed UPOS: " << lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(k)) << endl;
+  }
+  cout << endl;
+
+  return fixed_upos;
+}
+
 void vectorize_dataset(const morph_model::morph_model_t& lang_morph_model,
-                       const unordered_map<form_morph_t, unordered_map<StringIndex::idx_t, size_t>, form_morph_hash>& form2lemma,
+                       const form2lemma_t& form2lemma,
                        /*const*/ StringIndex& str_idx, // TODO: str_idx must be const here
                        const DictsHolder dh,
                        uint32_t max_len,
@@ -260,7 +313,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
 
   StringIndex str_idx;
 
-  unordered_map<form_morph_t, unordered_map<StringIndex::idx_t, size_t>, form_morph_hash> form2lemma;
+  form2lemma_t form2lemma, dev_form2lemma;
   for (auto it = train_data.words_begin(); it != train_data.words_end(); it++)
   {
     const CoNLLU::CoNLLULine& line = train_data.get_line((*it).m_line_idx);
@@ -286,7 +339,6 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     dh = build_char_dicts(form2lemma, str_idx);
   }
 
-  unordered_map<form_morph_t, unordered_map<StringIndex::idx_t, size_t>, form_morph_hash> dev_form2lemma;
   for (auto it = dev_data.words_begin(); it != dev_data.words_end(); it++)
   {
     const CoNLLU::CoNLLULine& line = dev_data.get_line((*it).m_line_idx);
@@ -310,6 +362,19 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     dev_form2lemma[k][lemma_id] += 1;
   }
 
+  set<morph_model::feat_base_t> fixed_upos = find_fixed(lang_morph_model, form2lemma, str_idx);
+
+  // Remove fixed UPOS
+  auto is_fixed_pos = [&fixed_upos = static_cast<const set<morph_model::feat_base_t>&>(fixed_upos),
+      &lang_morph_model = static_cast<morph_model::morph_model_t&>(lang_morph_model)](form2lemma_t::const_reference v){
+    const form_morph_t& form = v.first;
+    feat_base_t upos = lang_morph_model.decode_upos(form.m_feats);
+    return fixed_upos.end() != fixed_upos.find(upos);
+  };
+
+  cerr << "Fixed tokens removed from train set: " << utils::backport::erase_if(form2lemma, is_fixed_pos) << endl;
+  cerr << "Fixed tokens removed from   dev set: " << utils::backport::erase_if(dev_form2lemma, is_fixed_pos) << endl;
+
   vector<TorchMatrix<int64_t>> train_input_seq, train_gold;
   vector<TorchMatrix<int64_t>> dev_input_seq, dev_gold;
   vector<vector<TorchMatrix<int64_t>>> train_input_cat, dev_input_cat;
@@ -329,10 +394,17 @@ int train_lemmatization(const train_params_lemmatization_t& params)
       const std::vector<std::string>& values = lang_morph_model.get_feat_vec_ref(feat_idx);
       dh.emplace_back(shared_ptr<StringDict>(new StringDict(values)));
     }
+    string str_fixed_upos = utils::join(fixed_upos.begin(),
+                                        fixed_upos.end(),
+                                        [&lang_morph_model = static_cast<morph_model::morph_model_t&>(lang_morph_model)]
+                                        (set<morph_model::feat_base_t>::const_reference v){
+      return lang_morph_model.decode_upos_to_str(v);
+    });
+
     model = Seq2SeqLemmatizer(std::move(dh), lang_morph_model,
                               encoder_embd_descr, encoder_rnn_descr,
                               decoder_embd_descr, decoder_rnn_descr,
-                              cat_embd_descr);
+                              cat_embd_descr, str_fixed_upos);
   }
 
   std::cerr << model->get_script() << std::endl;
@@ -346,7 +418,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
 
   model->train(params, train_input_seq, train_input_cat, train_gold, dev_input_seq, dev_input_cat, dev_gold, optimizer, device);
 
-  return -1;
+  return 0;
 }
 
 } // namespace train
