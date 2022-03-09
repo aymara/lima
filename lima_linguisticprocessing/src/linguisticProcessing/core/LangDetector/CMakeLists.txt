@@ -3,7 +3,7 @@ project(LangDetector)
 include_directories(BEFORE ../../../../../extern)
 
 SET(langdetectorlib_LIB_SRCS langDetector.cpp)
-link_directories(/usr/local/lib)
+link_directories(/usr/local/lib /usr/lib)
 
 add_library(langdetector SHARED ${langdetectorlib_LIB_SRCS})
 
