@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
        << "git branch: " << deeplima::version::get_git_branch()
        << ")" << std::endl;
 
-  bool arg_tokenize = false, arg_tag = false, arg_entity = false;
+//   bool arg_tokenize = false, arg_tag = false, arg_entity = false;
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model;
   std::vector<std::string> input_files;

@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_library(birnn_classifier_for_ner
+add_library(birnn_classifier_for_tag
   STATIC
-  birnn_classifier_for_ner.cpp
+  birnn_classifier_for_tag.cpp
 )
 
-target_link_libraries(birnn_classifier_for_ner
+target_link_libraries(birnn_classifier_for_tag
   PRIVATE
   torch_birnn_seq_classifier
   train_common

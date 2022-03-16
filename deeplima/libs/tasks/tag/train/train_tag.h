@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "tasks/ner/model/train_params_tagging.h"
+#include "tasks/tag/model/train_params_tagging.h"
 
 namespace deeplima
 {

@@ -48,8 +48,8 @@ public:
 
   SegmentationImpl()
     : m_decoder(InferenceEngine::get_output(), m_char_len),
-      m_current_slot_no(-1),
       m_current_slot_timepoints(0),
+      m_current_slot_no(-1),
       m_last_completed_slot(-1),
       m_curr_buff_idx(0)
   {}

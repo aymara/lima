@@ -20,7 +20,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "birnn_classifier_for_ner.h"
+#include "birnn_classifier_for_tag.h"
 #include "static_graph/dict.h"
 
 using namespace std;

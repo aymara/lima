@@ -29,11 +29,11 @@
 #include "word_seq_vectorizer.h"
 #include "deeplima/feat_extractors.h"
 
-#include "../model/birnn_classifier_for_ner.h"
+#include "../model/birnn_classifier_for_tag.h"
 #include "deeplima/fastText_wrp/fastText_wrp.h"
 #include "deeplima/utils/split_string.h"
 
-#include "train_ner.h"
+#include "train_tag.h"
 
 using namespace std;
 using namespace deeplima::nets;

@@ -39,7 +39,8 @@ class EmbdDict : public FeatureVectorizerToMatrix<M, K, I>
 public:
   typedef K value_t;
 
-  EmbdDict() {}
+  EmbdDict() = default;
+  virtual ~EmbdDict() = default;
 
   template <class T>
   void init(std::shared_ptr<Dict<T>> dict, const M& tensor)
