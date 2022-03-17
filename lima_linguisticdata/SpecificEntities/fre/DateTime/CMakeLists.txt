@@ -17,6 +17,4 @@
 set (DEPENDENCIES hours.lst timezone.lst)
 SPECIFICENTITIES(main fre DateTime 
   DATE-fre.rules 
-  DATE_COMP-fre.rules 
-  TIME-fre.rules 
-  TIME_COMP-fre.rules)
+  TIME-fre.rules)
