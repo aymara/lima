@@ -6760,64 +6760,30 @@ Fideuram::Wargny:ORGANIZATION:
 Aurel::Leven:ORGANIZATION:
 
 # from https://github.com/dariusk/corpora/blob/master/data/corporations/nasdaq.json
-check$NC::poindre$NC software$NC technologie$NC ltd$NC \.:ORGANIZATION:Check\ Point\ Software\ Technologies\ Ltd\.
 check::point software technologies ltd \.:ORGANIZATION:Check\ Point\ Software\ Technologies\ Ltd\.
-expeditors$NC::international$ADJ of$NC Washington$NP:ORGANIZATION:Expeditors\ International\ of\ Washington
-Expeditors$NP::international$NC of$NC Washington$NP:ORGANIZATION:Expeditors\ International\ of\ Washington
 Expeditors::International of Washington:ORGANIZATION:Expeditors\ International\ of\ Washington
 expeditors::international of washington:ORGANIZATION:Expeditors\ International\ of\ Washington
-express$ADJ::script$NC holding$NC \ COMPANY$NC:ORGANIZATION:Express\ Scripts\ Holding\ Company
 Express::Scripts Holding Company:ORGANIZATION:Express\ Scripts\ Holding\ Company
 express::scripts holding company:ORGANIZATION:Express\ Scripts\ Holding\ Company
-Twenty$NP::First$NP Century$NP Fox$NP:ORGANIZATION:Twenty\-First\ Century\ Fox
-twenty$NC::First$NP century$NC fox$NC:ORGANIZATION:Twenty\-First\ Century\ Fox
-Wynn$NP::Resorts$NP , Limited$NP:ORGANIZATION:Wynn\ Resorts,\ Limited
-Wynn$NP::resorts$NC , limited$NC:ORGANIZATION:Wynn\ Resorts,\ Limited
 Twenty::First Century Fox:ORGANIZATION:Twenty\-First\ Century\ Fox
 twenty::first century fox:ORGANIZATION:Twenty\-First\ Century\ Fox
-bed$NC::bath$ADJ \& beyond$NC:ORGANIZATION:Bed\ Bath\ \&\ Beyond
 Wynn::Resorts , Limited:ORGANIZATION:Wynn\ Resorts,\ Limited
 wynn::resorts , limited:ORGANIZATION:Wynn\ Resorts,\ Limited
 bed::bath \& beyond:ORGANIZATION:Bed\ Bath\ \&\ Beyond
-Check\ Point\ Software\ Technologies\ Ltd\.$NC::Ltd$NP \.:ORGANIZATION:Check\ Point\ Software\ Technologies\ Ltd\.
 Check\ Point\ Software\ Technologies::Ltd \.:ORGANIZATION:Check\ Point\ Software\ Technologies\ Ltd\.
-Cognizant$NP::Technology$NP solution$NC:ORGANIZATION:Cognizant\ Technology\ Solutions
-cognizant$NC::technology$NC solution$NC:ORGANIZATION:Cognizant\ Technology\ Solutions
-Avago$NP::technologie$NC Limited$NP:ORGANIZATION:Avago\ Technologies\ Limited
-Charles$NC::Robinson$NP worldwide$NC:ORGANIZATION:C\.H\.\ Robinson\ Worldwide
 Cognizant::Technology Solutions:ORGANIZATION:Cognizant\ Technology\ Solutions
-avago$NC::technologie$NC limited$NC:ORGANIZATION:Avago\ Technologies\ Limited
 cognizant::technology solutions:ORGANIZATION:Cognizant\ Technology\ Solutions
-Maxim$NP::integrated$NC products$NC:ORGANIZATION:Maxim\ Integrated\ Products
-automatic$NC::dater$V processing$NC:ORGANIZATION:Automatic\ Data\ Processing
-Tractor$NP::Supply$NP \ COMPANY$NP:ORGANIZATION:Tractor\ Supply\ Company
-tractor$NC::supply$NC \ COMPANY$NP:ORGANIZATION:Tractor\ Supply\ Company
-NXP::semiconductors$NC n\.v$NC:ORGANIZATION:NXP\ Semiconductors\ N\.V\.
 Avago::Technologies Limited:ORGANIZATION:Avago\ Technologies\ Limited
 avago::technologies limited:ORGANIZATION:Avago\ Technologies\ Limited
-Keurig$NP::green$NC Mountain$NP:ORGANIZATION:Keurig\ Green\ Mountain
-Liberty\ plc$NC::global$ADJ plc$NC:ORGANIZATION:Liberty\ Global\ plc
-NXP::Semiconductors$NP N\.V:ORGANIZATION:NXP\ Semiconductors\ N\.V\.
-keurig$NC::green$NC mountain$NC:ORGANIZATION:Keurig\ Green\ Mountain
-the$DIVERS::priceline$NC group$NC:ORGANIZATION:The\ Priceline\ Group
 automatic::data processing:ORGANIZATION:Automatic\ Data\ Processing
 maxim::integrated products:ORGANIZATION:Maxim\ Integrated\ Products
 NXP::Semiconductors N\.V:ORGANIZATION:NXP\ Semiconductors\ N\.V\.
 NXP::semiconductors n\.v:ORGANIZATION:NXP\ Semiconductors\ N\.V\.
 c\.h::robinson worldwide:ORGANIZATION:C\.H\.\ Robinson\ Worldwide
-ô$ADV::Reilly$NP automotive$NC:ORGANIZATION:O'Reilly\ Automotive
-Seagate$NP::Technology$NP \.:ORGANIZATION:Seagate\ Technology\.
-liberty$NC::global$ADJ plc$NC:ORGANIZATION:Liberty\ Global\ plc
-seagate$NC::technology$NC \.:ORGANIZATION:Seagate\ Technology\.
-vodafone$NC::group$NC plc$NC:ORGANIZATION:Vodafone\ Group\ Plc
-O'::Reilly$NP Automotive$NP:ORGANIZATION:O'Reilly\ Automotive
 Tractor::Supply Company:ORGANIZATION:Tractor\ Supply\ Company
 tractor::supply company:ORGANIZATION:Tractor\ Supply\ Company
-whole$NC::food$NC market$NC:ORGANIZATION:Whole\ Foods\ Market
 Keurig::Green Mountain:ORGANIZATION:Keurig\ Green\ Mountain
 keurig::green mountain:ORGANIZATION:Keurig\ Green\ Mountain
-kraft$NC::food$NC group$NC:ORGANIZATION:Kraft\ Foods\ Group
-Sirius$NP::XM holding$NC:ORGANIZATION:Sirius\ XM\ Holdings
 Seagate::Technology \.:ORGANIZATION:Seagate\ Technology\.
 seagate::technology \.:ORGANIZATION:Seagate\ Technology\.
 O'::Reilly Automotive:ORGANIZATION:O'Reilly\ Automotive
@@ -6827,110 +6793,52 @@ Liberty::Global plc:ORGANIZATION:Liberty\ Global\ plc
 Sirius::XM Holdings:ORGANIZATION:Sirius\ XM\ Holdings
 liberty::global plc:ORGANIZATION:Liberty\ Global\ plc
 sirius::XM holdings:ORGANIZATION:Sirius\ XM\ Holdings
-vimpelcom$NC::ltd$NC \.:ORGANIZATION:VimpelCom\ Ltd\.
-vimpelcom$NP::Ltd$NP \.:ORGANIZATION:VimpelCom\ Ltd\.
 vodafone::group plc:ORGANIZATION:Vodafone\ Group\ Plc
 whole::foods market:ORGANIZATION:Whole\ Foods\ Market
 kraft::foods group:ORGANIZATION:Kraft\ Foods\ Group
-Garmin$NP::Ltd$NP \.:ORGANIZATION:Garmin\ Ltd\.
 VimpelCom::Ltd \.:ORGANIZATION:VimpelCom\ Ltd\.
-garmin$NC::ltd$NC \.:ORGANIZATION:Garmin\ Ltd\.
 vimpelcom::ltd \.:ORGANIZATION:VimpelCom\ Ltd\.
 Garmin::Ltd \.:ORGANIZATION:Garmin\ Ltd\.
 garmin::ltd \.:ORGANIZATION:Garmin\ Ltd\.
-Regeneron$NP::Pharmaceuticals$NP:ORGANIZATION:Regeneron\ Pharmaceuticals
-regeneron$NC::pharmaceuticals$NC:ORGANIZATION:Regeneron\ Pharmaceuticals
-C\.H::Robinson\ Worldwide$NC:ORGANIZATION:C\.H\.\ Robinson\ Worldwide
-Discovery$NP::communication$NC:ORGANIZATION:Discovery\ Communications
-Alexion$NP::Pharmaceuticals$NP:ORGANIZATION:Alexion\ Pharmaceuticals
-alexion$NC::pharmaceuticals$NC:ORGANIZATION:Alexion\ Pharmaceuticals
-Activision\ Inc\.$NC::blizzard$NC:ORGANIZATION:Activision\ Blizzard
-marriott$NC::international$ADJ:ORGANIZATION:Marriott\ International
-mondelez$NC::international$ADJ:ORGANIZATION:Mondelez\ International
 C\.H::Robinson\ Worldwide:ORGANIZATION:C\.H\.\ Robinson\ Worldwide
-Mondelez$NP::international$NC:ORGANIZATION:Mondelez\ International
 Regeneron::Pharmaceuticals:ORGANIZATION:Regeneron\ Pharmaceuticals
 regeneron::pharmaceuticals:ORGANIZATION:Regeneron\ Pharmaceuticals
-vertex$NC::Pharmaceuticals$NP:ORGANIZATION:Vertex\ Pharmaceuticals
-vertex$NC::pharmaceuticals$NC:ORGANIZATION:Vertex\ Pharmaceuticals
-Liberty\ plc$NC::interactif$ADJ:ORGANIZATION:Liberty\ Interactive
-charter$NC::communication$NC:ORGANIZATION:Charter\ Communications
 discovery::communications:ORGANIZATION:Discovery\ Communications
 Alexion::Pharmaceuticals:ORGANIZATION:Alexion\ Pharmaceuticals
 alexion::pharmaceuticals:ORGANIZATION:Alexion\ Pharmaceuticals
 Mondelez::International:ORGANIZATION:Mondelez\ International
 Vertex::Pharmaceuticals:ORGANIZATION:Vertex\ Pharmaceuticals
-Vodafone\ Group$NC::Plc$NP:ORGANIZATION:Vodafone\ Group\ Plc
-activision$NC::blizzard$NC:ORGANIZATION:Activision\ Blizzard
 charter::communications:ORGANIZATION:Charter\ Communications
-liberty$NC::interactif$ADJ:ORGANIZATION:Liberty\ Interactive
 marriott::international:ORGANIZATION:Marriott\ International
 mondelez::international:ORGANIZATION:Mondelez\ International
 vertex::pharmaceuticals:ORGANIZATION:Vertex\ Pharmaceuticals
-Akamai$NP::technologie$NC:ORGANIZATION:Akamai\ Technologies
-akamai$NC::technologie$NC:ORGANIZATION:Akamai\ Technologies
-intuitif$ADJ::surgical$NC:ORGANIZATION:Intuitive\ Surgical
-intuitif$NC::Surgical$NP:ORGANIZATION:Intuitive\ Surgical
-Fastenal$NP::\ COMPANY$NP:ORGANIZATION:Fastenal\ Company
-applied$NC::materials$NC:ORGANIZATION:Applied\ Materials
-fastenal$NC::\ COMPANY$NP:ORGANIZATION:Fastenal\ Company
-linear$NC::technology$NC:ORGANIZATION:Linear\ Technology
-micron$NC::technology$NC:ORGANIZATION:Micron\ Technology
-Texas$NP::instrument$NC:ORGANIZATION:Texas\ Instruments
 Activision::Blizzard:ORGANIZATION:Activision\ Blizzard
 Akamai::Technologies:ORGANIZATION:Akamai\ Technologies
 Liberty::Interactive:ORGANIZATION:Liberty\ Interactive
-Monster$NP::Beverage$NP:ORGANIZATION:Monster\ Beverage
-SBA::communication$NC:ORGANIZATION:SBA\ Communications
 Vodafone\ Group::Plc:ORGANIZATION:Vodafone\ Group\ Plc
 activision::blizzard:ORGANIZATION:Activision\ Blizzard
 akamai::technologies:ORGANIZATION:Akamai\ Technologies
-costco$NC::wholesale$NC:ORGANIZATION:Costco\ Wholesale
 liberty::interactive:ORGANIZATION:Liberty\ Interactive
-monster$NC::beverage$NC:ORGANIZATION:Monster\ Beverage
-verisk$NC::analytics$NC:ORGANIZATION:Verisk\ Analytics
-verisk$NP::Analytics$NP:ORGANIZATION:Verisk\ Analytics
-western$NC::digital$ADJ:ORGANIZATION:Western\ Digital
 Intuitive::Surgical:ORGANIZATION:Intuitive\ Surgical
 SBA::Communications:ORGANIZATION:SBA\ Communications
 SBA::communications:ORGANIZATION:SBA\ Communications
 intuitive::surgical:ORGANIZATION:Intuitive\ Surgical
-Biogen\ Inc\.$NC::Idec$NP:ORGANIZATION:Biogen\ Idec
-gilead$NC::science$NC:ORGANIZATION:Gilead\ Sciences
-Analog$NP::Devices$NP:ORGANIZATION:Analog\ Devices
-analog$NC::devices$NC:ORGANIZATION:Analog\ Devices
 applied::materials:ORGANIZATION:Applied\ Materials
 linear::technology:ORGANIZATION:Linear\ Technology
 micron::technology:ORGANIZATION:Micron\ Technology
 texas::instruments:ORGANIZATION:Texas\ Instruments
-citrix$NC::system$NC:ORGANIZATION:Citrix\ Systems
 Fastenal::Company:ORGANIZATION:Fastenal\ Company
 Monster::Beverage:ORGANIZATION:Monster\ Beverage
 Verisk::Analytics:ORGANIZATION:Verisk\ Analytics
 costco::wholesale:ORGANIZATION:Costco\ Wholesale
 fastenal::company:ORGANIZATION:Fastenal\ Company
-liberty$NC::media$NC:ORGANIZATION:Liberty\ Media
 monster::beverage:ORGANIZATION:Monster\ Beverage
-sigma$NC::Aldrich$NP:ORGANIZATION:Sigma\-Aldrich
-sigma$NC::aldrich$NC:ORGANIZATION:Sigma\-Aldrich
 verisk::analytics:ORGANIZATION:Verisk\ Analytics
-Cisco$NP::system$NC:ORGANIZATION:Cisco\ Systems
-adobe$NC::system$NC:ORGANIZATION:Adobe\ Systems
-cisco$NC::system$NC:ORGANIZATION:Cisco\ Systems
 gilead::sciences:ORGANIZATION:Gilead\ Sciences
-henry$NC::schein$NC:ORGANIZATION:Henry\ Schein
-tesla$NC::Motors$NP:ORGANIZATION:Tesla\ Motors
-tesla$NC::motors$NC:ORGANIZATION:Tesla\ Motors
 western::digital:ORGANIZATION:Western\ Digital
 Analog::Devices:ORGANIZATION:Analog\ Devices
 analog::devices:ORGANIZATION:Analog\ Devices
-biogen$NC::idec$NC:ORGANIZATION:Biogen\ Idec
 citrix::systems:ORGANIZATION:Citrix\ Systems
-dollar$NC::Tree$NP:ORGANIZATION:Dollar\ Tree
-dollar$NC::tree$NC:ORGANIZATION:Dollar\ Tree
-DISH::network$NC:ORGANIZATION:DISH\ Network
-Ross$NP::store$NC:ORGANIZATION:Ross\ Stores
-f5$NP::network$NC:ORGANIZATION:F5\ Networks
 Cisco::Systems:ORGANIZATION:Cisco\ Systems
 Sigma::Aldrich:ORGANIZATION:Sigma\-Aldrich
 adobe::systems:ORGANIZATION:Adobe\ Systems
@@ -6939,12 +6847,9 @@ liberty::media:ORGANIZATION:Liberty\ Media
 sigma::aldrich:ORGANIZATION:Sigma\-Aldrich
 DISH::Network:ORGANIZATION:DISH\ Network
 DISH::network:ORGANIZATION:DISH\ Network
-F5::network$NC:ORGANIZATION:F5\ Networks
 Tesla::Motors:ORGANIZATION:Tesla\ Motors
 henry::schein:ORGANIZATION:Henry\ Schein
 tesla::motors:ORGANIZATION:Tesla\ Motors
-KLA::Tencor$NP:ORGANIZATION:KLA\-Tencor
-Yahoo!\ Inc\.$NC::!:ORGANIZATION:Yahoo!
 Biogen::Idec:ORGANIZATION:Biogen\ Idec
 Dollar::Tree:ORGANIZATION:Dollar\ Tree
 F5::Networks:ORGANIZATION:F5\ Networks
@@ -6955,73 +6860,27 @@ ross::stores:ORGANIZATION:Ross\ Stores
 KLA::Tencor:ORGANIZATION:KLA\-Tencor
 Yahoo::!:ORGANIZATION:Yahoo!
 yahoo::!:ORGANIZATION:Yahoo!
-Maxim\ Integrated\ Products\ Inc\.$NC:::ORGANIZATION:Maxim\ Integrated\ Products
-Discovery\ Communications\ Inc\.$NC:::ORGANIZATION:Discovery\ Communications
-Automatic\ Data\ Processing$NC:::ORGANIZATION:Automatic\ Data\ Processing
-Charter\ Communications\ Inc\.$NC:::ORGANIZATION:Charter\ Communications
-Marriott\ International\ Inc\.$NC:::ORGANIZATION:Marriott\ International
 Automatic\ Data\ Processing:::ORGANIZATION:Automatic\ Data\ Processing
 Maxim\ Integrated\ Products:::ORGANIZATION:Maxim\ Integrated\ Products
-Bed\ Bath\ \&\ Beyond\ Inc\.$NC:::ORGANIZATION:Bed\ Bath\ \&\ Beyond
 Discovery\ Communications:::ORGANIZATION:Discovery\ Communications
-Whole\ Foods\ Market\ Inc\.$NC:::ORGANIZATION:Whole\ Foods\ Market
-Linear\ Technology\ Corp\.$NC:::ORGANIZATION:Linear\ Technology
-Applied\ Materials\ Inc\.$NC:::ORGANIZATION:Applied\ Materials
 Charter\ Communications:::ORGANIZATION:Charter\ Communications
 Marriott\ International:::ORGANIZATION:Marriott\ International
-Micron\ Technology\ Inc\.$NC:::ORGANIZATION:Micron\ Technology
-Texas\ Instruments\ Inc\.$NC:::ORGANIZATION:Texas\ Instruments
-Costco\ Wholesale\ Corp\.$NC:::ORGANIZATION:Costco\ Wholesale
-the\ Priceline\ Group$NC:::ORGANIZATION:The\ Priceline\ Group
-Western\ Digital\ Corp\.$NC:::ORGANIZATION:Western\ Digital
 Bed\ Bath\ \&\ Beyond:::ORGANIZATION:Bed\ Bath\ \&\ Beyond
-Gilead\ Sciences\ Inc\.$NC:::ORGANIZATION:Gilead\ Sciences
 The\ Priceline\ Group:::ORGANIZATION:The\ Priceline\ Group
-Citrix\ Systems\ Inc\.$NC:::ORGANIZATION:Citrix\ Systems
 Whole\ Foods\ Market:::ORGANIZATION:Whole\ Foods\ Market
-kraft\ food\ Group$NC:::ORGANIZATION:Kraft\ Foods\ Group
-Liberty\ Media\ Corp\.$NC:::ORGANIZATION:Liberty\ Media
-Adobe\ Systems\ Inc\.$NC:::ORGANIZATION:Adobe\ Systems
 Kraft\ Foods\ Group:::ORGANIZATION:Kraft\ Foods\ Group
 Applied\ Materials:::ORGANIZATION:Applied\ Materials
 Linear\ Technology:::ORGANIZATION:Linear\ Technology
 Micron\ Technology:::ORGANIZATION:Micron\ Technology
 Texas\ Instruments:::ORGANIZATION:Texas\ Instruments
 Costco\ Wholesale:::ORGANIZATION:Costco\ Wholesale
-Ross\ Stores\ Inc\.$NC:::ORGANIZATION:Ross\ Stores
 Gilead\ Sciences:::ORGANIZATION:Gilead\ Sciences
 Western\ Digital:::ORGANIZATION:Western\ Digital
-Apple\ Computer\ Inc\.$NC:::ORGANIZATION:Apple
 Citrix\ Systems:::ORGANIZATION:Citrix\ Systems
-Stericycle\ Inc\.$NC:::ORGANIZATION:Stericycle
-Henry\ Schein$NC:::ORGANIZATION:Henry\ Schein
-Microsoft\ Corp\.$NC:::ORGANIZATION:Microsoft
-Starbucks\ Corp\.$NC:::ORGANIZATION:Starbucks
 Adobe\ Systems:::ORGANIZATION:Adobe\ Systems
 Liberty\ Media:::ORGANIZATION:Liberty\ Media
-Amazon\.com\ Inc\.$NC:::ORGANIZATION:Amazon
-Symantec\ Corp\.$NC:::ORGANIZATION:Symantec
-Autodesk\ Inc\.$NC:::ORGANIZATION:Autodesk
 Henry\ Schein:::ORGANIZATION:Henry\ Schein
-Amazon\.com$NC:::ORGANIZATION:Amazon\.com
-SanDisk\ Corp\.$NC:::ORGANIZATION:SanDisk
-amazon\.com$NC:::ORGANIZATION:Amazon\.com
-tripadvisor$NC:::ORGANIZATION:TripAdvisor
-tripadvisor$NP:::ORGANIZATION:TripAdvisor
-Paychex\ Inc\.$NC:::ORGANIZATION:Paychex
 Ross\ Stores:::ORGANIZATION:Ross\ Stores
-Staples\ Inc\.$NC:::ORGANIZATION:Staples
-Altera\ Corp\.$NC:::ORGANIZATION:Altera
-stericycle$NC:::ORGANIZATION:Stericycle
 Amazon\.com:::ORGANIZATION:Amazon\.com
-Fiserv\ Inc\.$NC:::ORGANIZATION:Fiserv
-Intuit\ Inc\.$NC:::ORGANIZATION:Intuit
-Mattel\ Inc\.$NC:::ORGANIZATION:Mattel
 TripAdvisor:::ORGANIZATION:TripAdvisor
-Viacom\ Inc\.$NC:::ORGANIZATION:Viacom
-Xilinx\ Inc\.$NC:::ORGANIZATION:Xilinx
 amazon\.com:::ORGANIZATION:Amazon\.com
-Intel\ Corp\.$NC:::ORGANIZATION:Intel
-starbucks$NC:::ORGANIZATION:Starbucks
-Amgen\ Inc\.$NC:::ORGANIZATION:Amgen
-eBay\ Inc\.$NC:::ORGANIZATION:eBay

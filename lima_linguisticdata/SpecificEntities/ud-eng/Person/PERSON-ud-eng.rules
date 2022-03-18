@@ -12,123 +12,108 @@ set defaultAction=>CreateSpecificEntity()
 #----------------------------------------------------------------------
 
 # known identified persons
-#Hafez::Al-Assad:PERSON:Hafez Al-Assad
-#Saddam::Hussein?:PERSON:Saddam Hussein
-#Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:Ousama Ben Laden
-#Arafat:Yasser?::PERSON:Yasser Arafat
-#Sharon:Ariel?::PERSON:Ariel Sharon
-#Mobutu::(Sese Seko)?:PERSON:Mobutu
-#Yitzhak::Rabin:PERSON:Yitzhak Rabin
-#Isaac::Rabin:PERSON:Yitzhak Rabin
-#Chirac:::PERSON:Jacques Chirac
-
-Hafez::Al-Assad:PERSON:=>NormalizePersonName("Hafez,Al-Assad")
-
-Saddam::Hussein:PERSON:=>NormalizePersonName("Saddam,Hussein")
-
-Laden:(Oussama|Ousama|Osama|Usama)? (ben|bin|Ben|Bin)::PERSON:=>NormalizePersonName("Oussama,Ben Laden")
-
-Arafat:Yasser::PERSON:=>NormalizePersonName("Yasser,Arafat")
-
-Sharon:Ariel::PERSON:=>NormalizePersonName("Ariel,Sharon")
-
-Mobutu::(Sese Seko)?:PERSON:=>NormalizePersonName(",Mobutu")
-
-Yitzhak::Rabin:PERSON:=>NormalizePersonName("Yitzhak,Rabin")
-
-Isaac::Rabin:PERSON:=>NormalizePersonName("Yitzhak,Rabin")
-
-Chirac:::PERSON:=>NormalizePersonName("Jacques,Chirac")
-
 
 #----------------------------------------------------------------------
 # recognition of person names
 #----------------------------------------------------------------------
-
-use firstname.lst,title.lst,function_title.lst,person_ending.lst
-
-#@Firstname:[(@Title|@FunctionTitle)?]:($PROPN|T_Amh){0-3} @PersonEnding?:PERSON:=>NormalizePersonName()
-
-#$PROPN:[(@Title|@FunctionTitle)]:$PROPN{0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
-#$PROPN:$PROPN{0-2}:@PersonEnding? , @FunctionTitle:PERSON:=>NormalizePersonName()
+use firstname.lst
+use wd_firstname.lst
+use title.lst,function_title.lst
+use person.lst
+use person_ending.lst
+use tussenvoegsel.lst
+use speech_verb.lst
+use wd_lastname.lst
 
 # hack to take initials into account -> should be in tokenizer
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,t_abbrev)
+#@PersonNamePart=(t_capital_1st,t_capital,$PROPN,@WikidataLastname)
+@PersonNamePart=(t_capital_1st,t_capital,t_capital_small,$PROPN)
+@particule=(de,da,le,van,von,el,al,Al,del,Del,De,La,@Tussenvoegsel)
+@AnyFirstname=(@Firstname,@WikidataFirstname)
+@AnyTitle=(@Title,@FunctionTitle)
 
-@Initial=(A.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,V.,W.,X.,Y.,Z.)
+# rules initiated by a title, with stop condition
+[@AnyTitle]::@AnyFirstname? @Initial? (@particule? @PersonNamePart){1-3} @PersonEnding? [($DET|$PRON|$ADJ|$VERB)]:PERSON:
++SetEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Firstname::t_capital_1st{1-2} [<Location.LOCATION>]:PERSON:N_PERSON
+# without stop condition
+[@AnyTitle]::@PersonNamePart? @Initial? (@particule? @PersonNamePart){1-3} @PersonEnding?:PERSON:
++SetEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Initial:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+# rules initiated with a firstname with stop condition
+@AnyFirstname::@Initial? (@particule? @PersonNamePart){1-2} @PersonEnding? [($DET|$PRON|$ADJ|$VERB)]:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
+# generic rule with firstname without stop condition
+@AnyFirstname::@Initial? (@particule? @PersonNamePart){1-2} @PersonEnding?:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>AppendEntityFeature(right.2.3,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Initial:[(@Title|@FunctionTitle)?]:((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)){1-2}:PERSON:=>NormalizePersonName()
+# other contexts: title after the name
+# Zhang A Liu , director
+@PersonNamePart:@Initial? @PersonNamePart{0-2}:@PersonEnding? [,] [@FunctionTitle]:PERSON:
++SetEntityFeature(right.3,"title")
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(left.1,"firstname")
+=>AddEntityFeature(left.2,"lastname")
+=>AddEntityFeature(right.1,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Firstname:[(@Title|@FunctionTitle)]:[($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
-
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)) [($DET|$PRON|$ADJ|$V)]:PERSON:=>NormalizePersonName()
-
-@Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh|$PROPN)){1-2}:PERSON:=>NormalizePersonName()
-
-# @Firstname:[(@Title|@FunctionTitle)?]:@Initial? ((de|da|le|la|de la)? (T_A1|T_Amh)){1-2} @PersonEnding?:PERSON:=>NormalizePersonName()
-
-#[@FunctionTitle]:t_capital_1st::PERSON:N_PERSON
-
-t_capital_1st:[@FunctionTitle]:t_capital_1st:PERSON:
-
-t_capital_1st:[(@Title|@FunctionTitle)]:(t_capital_1st){1-2}:PERSON:=>NormalizePersonName()
-
-# T_A1:[(@Title|@FunctionTitle)]:(T_A1|T_Amh|@Initial){0-2} @PersonEnding?:PERSON:=>NormalizePersonName()
-
-T_A1:(T_A1|T_Amh|$PROPN|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
-
-$PROPN:(T_A1|T_Amh|$PROPN|@Initial){0-2}:@PersonEnding? [(, @FunctionTitle)]:PERSON:=>NormalizePersonName()
+# reported speech: not if org
+<Location.LOCATION>::[@speechVerb]:NOT_PERSON:
+<Organization.ORGANIZATION>::[@speechVerb]:NOT_PERSON:
 
 # "bla bla", Machin said.
-T_A1::(T_A1|T_Amh|$PROPN|@Initial){0-2} [(said .)]:PERSON:
-T_A1:[said]:(T_A1|T_Amh|$PROPN|@Initial){0-2}:PERSON:
+@PersonNamePart::(@PersonNamePart|@Initial){0-2} [(@speechVerb .)]:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AddEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Pronouns=(
-I,
-You,
-It,
-He,
-She,
-They,
-We
-)
+# bla bla, said Machin
+@PersonNamePart:[,] [@speechVerb]:@Initial? (@particule? @PersonNamePart){1-2}:PERSON:
+=>AppendEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-@Conjunctions=(
-But,
-And,
-For,
-All,
-)
-
-t_capital_1st:[(@FunctionTitle|@Title)]:(t_capital_1st){0-2}:PERSON:
+# use of 'who' as a trigger, with some protections
+@Pronouns=(I,You,It,He,She,They,We)
+@Conjunctions=(But,And,For,All)
 
 [who]:[<Location.LOCATION>] [,]::NOT_PERSON:
-[said]:[<Location.LOCATION>]::NOT_PERSON:
 [who]:[<Organization.ORGANIZATION>] [,]::NOT_PERSON:
-[said]:[<Organization.ORGANIZATION>]::NOT_PERSON:
 [who]:(@Pronouns|@Conjunctions) [,]::NOT_PERSON:
-[who]:t_capital_1st{1-3} [,]::PERSON:
-# [said]:[@Conjunctions?] t_capital_1st{1-2}::PERSON:
 
-
-[<Location.LOCATION>]:[<Person.PERSON>] [,]::NOT_LOCATION:
-[<Location.LOCATION>]:(t_capital|t_capital_1st) [,]::LOCATION:N_LOCATION
-
-[<Organization.ORGANIZATION>]::[\(] t_capital_1st{1-3} [\)]:ORGANIZATION:
-
-#problem with these rules for over detection (org, or nouns such as "Analysts" solutions??)
-#------------------------------
-# a list of known persons
-use person.lst
-
-@person:::PERSON:=>NormalizePersonName()
-
-# firstnames alone ?
-#@Firstname:::PERSON:=>NormalizePersonName()
-
-Organization.ORGANIZATION:::ORGANIZATION:
+# Doo Xu who
+[who]:@PersonNamePart @PersonNamePart{0-2} [,]::PERSON:
+=>SetEntityFeature(left.1,"firstname")
+=>AddEntityFeature(left.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()

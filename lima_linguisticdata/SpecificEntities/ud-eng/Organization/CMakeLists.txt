@@ -14,7 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst)
+set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst wd_organization.lst organizationType.lst)
 
 SPECIFICENTITIES(main ud-eng Organization
   ORGANIZATION-ud-eng.rules)
