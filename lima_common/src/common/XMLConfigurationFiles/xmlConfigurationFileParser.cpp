@@ -191,8 +191,8 @@ std::string& XMLConfigurationFileParser::getModuleGroupParamValue(
   }
   catch(NoSuchModule& nsm)
   {
-    std::cerr << nsm.what() << " "
-              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    //std::cerr << nsm.what() << " "
+    //          << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
     LWARN << nsm.what() << " " << m_d->m_configurationFileName;
       //not LERROR because user may want the module to be optional -> no error
       throw NoSuchModule(std::string(m_d->m_configurationFileName.toUtf8().constData())
@@ -201,8 +201,8 @@ std::string& XMLConfigurationFileParser::getModuleGroupParamValue(
   }
   catch(NoSuchGroup& nsg)
   {
-    std::cerr << nsg.what() << " "
-              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    //std::cerr << nsg.what() << " "
+    //          << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
     LWARN << nsg.what() << " " << m_d->m_configurationFileName;
       throw NoSuchGroup(std::string(m_d->m_configurationFileName.toUtf8().constData())
               +":["+moduleName+"]["
@@ -210,8 +210,8 @@ std::string& XMLConfigurationFileParser::getModuleGroupParamValue(
   }
   catch(NoSuchParam& nsp)
   {
-    std::cerr << nsp.what() << " "
-              << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
+    //std::cerr << nsp.what() << " "
+    //          << m_d->m_configurationFileName.toUtf8().constData() << std::endl;
     LWARN << nsp.what() << " " << m_d->m_configurationFileName;
       throw NoSuchParam(std::string(m_d->m_configurationFileName.toUtf8().constData())+":["
               +moduleName+"]["+groupName+"]["+key+"]");
