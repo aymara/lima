@@ -25,4 +25,5 @@ square meter,square-meter,square metre,square-metre,
 square meters,square-meters,square metres,square-metres,
 pound,pounds,watt,watts,mV,°C,oC,°F)
 
+@units::/ @units:UNIT:
 @units:::UNIT:

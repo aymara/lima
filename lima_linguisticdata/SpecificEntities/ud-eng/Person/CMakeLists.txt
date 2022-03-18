@@ -14,9 +14,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst title.lst)
+set (DEPENDENCIES firstname.lst wd_firstname.lst function_title.lst person.lst person_ending.lst title.lst tussenvoegsel.lst speech_verb.lst wd_lastname.lst)
 
 SPECIFICENTITIES(main ud-eng Person
   PERSON-ud-eng.rules
-  PERSON_COMP-ud-eng.rules
   EMBEDED-ud-eng.rules)

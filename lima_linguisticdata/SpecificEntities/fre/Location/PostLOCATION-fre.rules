@@ -17,8 +17,7 @@ use annonceurLieu.lst
 #=<ClearEntityFeatures()
 
 # L'italie du Sud
-#Italie::(des|de la?|du)? @PrecisionGeographique :GEO:
-<LOCATION>::(de l'?|du)? @PrecisionGeographique :GEO:
+<LOCATION>::(de l\'?|du)? @PrecisionGeographique :GEO:
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right.1,"qualifier")
 =>AppendEntityFeature(right.2,"qualifier")

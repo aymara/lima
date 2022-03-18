@@ -26,7 +26,6 @@
       <param key="text" value="le tunnel du Mont-Blanc"/>
       <param key="language" value="fre"/>
       <list key="pipelines">
-        <item value="query"/>
         <item value="indexer"/>
       </list>
     </call-parameters>
@@ -138,7 +137,7 @@
           comment="The entity is restricted to the five letters word 'Paris'."
           left="XPATH#//specific_entities/specific_entity[position=13][length=5]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
 
   <!--==================== tests PERSON ====================-->
@@ -280,12 +279,12 @@
           comment="Location.LOCATION."
           left="XPATH#//specific_entities/specific_entity[position=1][length=5]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
     <test id="fre.se.49.2" trace=".se.xml"
           comment="Location.LOCATION : @PrecisionGeographique"
           left="XPATH#//specific_entities/specific_entity[position=20][length=17]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.GEO"/>
   </testcase>
      <testcase id="fre.se.50" type="bloquant">
     <call-parameters>

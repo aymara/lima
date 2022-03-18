@@ -301,7 +301,7 @@
           comment="nom de ville composé"
           left="XPATH#//specific_entities/specific_entity[position=38][length=11]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <testcase id="eng.se.loc.2" type="bloquant">
     <call-parameters>
@@ -316,7 +316,7 @@
           comment="California"
           left="XPATH#//specific_entities/specific_entity[position=5][length=10]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.REGION"/>
   </testcase>
   <testcase id="eng.se.loc.3" type="bloquant">
     <call-parameters>
@@ -331,7 +331,7 @@
           comment="South San Francisco"
           left="XPATH#//specific_entities/specific_entity[position=63][length=19]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <testcase id="eng.se.loc.4" type="pertinent">
     <call-parameters>
@@ -346,7 +346,7 @@
           comment="Julia Tuttle Causeway"
           left="XPATH#//specific_entities/specific_entity[position=25][length=21]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.ODO"/>
   </testcase>
   <testcase id="eng.se.loc.5" type="bloquant">
     <call-parameters>
@@ -361,7 +361,7 @@
           comment="Miami"
           left="XPATH#//specific_entities/specific_entity[position=55][length=5]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <testcase id="eng.se.loc.6" type="bloquant">
     <call-parameters>
@@ -376,7 +376,7 @@
           comment="Miami Beach"
           left="XPATH#//specific_entities/specific_entity[position=65][length=11]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <testcase id="eng.se.loc.7" type="pertinent">
     <call-parameters>
@@ -391,7 +391,7 @@
           comment="South Chapel"
           left="XPATH#//specific_entities/specific_entity[position=54][length=12]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <testcase id="eng.se.loc.8" type="pertinent">
     <call-parameters>
@@ -406,7 +406,7 @@
           comment="1 Herald Plaza"
           left="XPATH#//specific_entities/specific_entity[position=13][length=14]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.ODO"/>
   </testcase>
   <testcase id="eng.se.loc.9" type="pertinent">
     <call-parameters>
@@ -421,7 +421,7 @@
           comment="phone number"
           left="XPATH#//specific_entities/specific_entity[position=6][length=12]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.COORDINATE"/>
   </testcase>
   <testcase id="eng.se.loc.10" type="pertinent">
     <call-parameters>
@@ -436,7 +436,7 @@
           comment="actionline@herald.com"
           left="XPATH#//specific_entities/specific_entity[position=27][length=21]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.COORDINATE"/>
   </testcase>
   <testcase id="eng.se.loc.11" type="bloquant">
     <call-parameters>
@@ -451,7 +451,7 @@
           comment="annonceur city, not part of span: Manchester"
           left="XPATH#//specific_entities/specific_entity[position=9][length=10]/type"
           operator="="
-          right="Location.LOCATION"/>
+          right="Location.CITY"/>
   </testcase>
   <!--==================== tests PERSON ====================-->
   <testcase id="eng.se.pers.1" type="bloquant">

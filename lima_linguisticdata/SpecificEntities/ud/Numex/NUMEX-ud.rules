@@ -4,9 +4,9 @@ using groups Numex
 set defaultAction=>CreateSpecificEntity()
 
 # currency before number
-$PONCTU-CUR::<NUMBER>:NUMEX:=>NormalizeNumber()
+#$PUNCT-CUR::<NUMBER>:NUMEX:=>NormalizeNumber()
 
-# signs +- only before %
+# signs +- only before % 
 <NUMBER>:(\+|-)?:(-)? (\%|per cent|percent|(of? (metric)? <UNIT>)):NUMEX:=>NormalizeNumber()
 
 

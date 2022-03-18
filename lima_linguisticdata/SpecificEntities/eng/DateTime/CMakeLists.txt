@@ -18,6 +18,4 @@ set (DEPENDENCIES days.lst monthAbbrev.lst months.lst timekey.lst timezone.lst)
 
 SPECIFICENTITIES(main eng DateTime 
   DATE-eng.rules 
-  DATE_COMP-eng.rules 
-  TIME-eng.rules 
-  TIME_COMP-eng.rules)
+  TIME-eng.rules)

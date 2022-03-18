@@ -16,6 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 #set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countriesAndRegions.lst location.rules locationKey.lst locationPre.lst miscLocations.lst stateAbbrev.lst states.lst streetKey.lst)
 
-#SPECIFICENTITIES(main por Location LOCATION-por.rules LOCATION_COMP-por.rules LOCATION_RATP-por.rules)
+#SPECIFICENTITIES(main por Location LOCATION-por.rules LOCATION_RATP-por.rules)
 
-#SPECIFICENTITIES(post por Location PostLOCATION-por.rules PostLOCATION_COMP-por.rules)
+#SPECIFICENTITIES(post por Location PostLOCATION-por.rules)

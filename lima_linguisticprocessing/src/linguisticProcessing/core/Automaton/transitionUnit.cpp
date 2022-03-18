@@ -101,6 +101,7 @@ void TransitionUnit::copyProperties(const TransitionUnit& t) {
 }
 
 bool TransitionUnit::compareProperties(const TransitionUnit& t) const {
+  if (m_id != t.getId()) { return false; }
   if (m_keep != t.keep()) { return false; }
   if (m_negative != t.negative()) { return false; }
   if (m_head != t.head()) { return false; }
