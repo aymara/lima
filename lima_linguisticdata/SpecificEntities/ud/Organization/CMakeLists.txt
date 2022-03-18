@@ -17,5 +17,4 @@
 set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst)
 
 SPECIFICENTITIES(main ud Organization
-  ORGANIZATION-ud.rules
-  ORGANIZATION_COMP-ud.rules)
+  ORGANIZATION-ud.rules)

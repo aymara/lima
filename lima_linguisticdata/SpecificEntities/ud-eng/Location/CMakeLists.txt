@@ -18,11 +18,8 @@ set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countriesAndRegions
 
 SPECIFICENTITIES(main ud-eng Location
   LOCATION-ud-eng.rules
-  LOCATION_COMP-ud-eng.rules
   PreLOCATION-ud-eng.rules
-  PreLOCATION_COMP-ud-eng.rules
   LOCATION_RATP-ud-eng.rules)
 
 SPECIFICENTITIES(post ud-eng Location
-  PostLOCATION-ud-eng.rules
-  PostLOCATION_COMP-ud-eng.rules)
+  PostLOCATION-ud-eng.rules)

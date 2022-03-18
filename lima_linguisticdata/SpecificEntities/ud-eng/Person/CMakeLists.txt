@@ -18,5 +18,4 @@ set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst 
 
 SPECIFICENTITIES(main ud-eng Person
   PERSON-ud-eng.rules
-  PERSON_COMP-ud-eng.rules
   EMBEDED-ud-eng.rules)

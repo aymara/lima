@@ -17,4 +17,4 @@
 
 #set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst)
 
-#SPECIFICENTITIES(main por Organization ORGANIZATION-por.rules ORGANIZATION_COMP-por.rules)
+#SPECIFICENTITIES(main por Organization ORGANIZATION-por.rules)
