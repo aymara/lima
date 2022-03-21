@@ -46,16 +46,9 @@ use ../../eng/Person/person_ending.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-[@AnyTitle]::@Firstname? @Initial? (@particule? t_capital){1-3} @PersonEnding?:PERSON:
-+AppendEntityFeature(trigger,"title")
-=>AddEntityFeature(right.1,"firstname")
-=>AddEntityFeature(right.2,"firstname")
-=>AppendEntityFeature(right.3.1,"lastname")
-=>AppendEntityFeature(right.3.2,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-[@AnyTitle]::@Firstname? @Initial? (@particule? t_capital_1st){1-3} @PersonEnding?:PERSON:
+# cannot be AnyTitle: in "roi de France", "de France" is not a PERSON
+# duplicate the rules: for function titles, do not allow "de" just after the title
+[@Title]::@Firstname? @Initial? (@particule? t_capital){1-3} @PersonEnding?:PERSON:
 +AppendEntityFeature(trigger,"title")
 =>AddEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")
@@ -65,9 +58,39 @@ use ../../eng/Person/person_ending.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+[@Title]::@Firstname? @Initial? (@particule? t_capital_1st){1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital{1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1.1,"firstname")
+=>AddEntityFeature(right.1.2,"firstname")
+=>AppendEntityFeature(right.1.3,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital_1st{1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1.1,"firstname")
+=>AddEntityFeature(right.1.2,"firstname")
+=>AppendEntityFeature(right.1.3,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 
 # other cases
-[@AnyTitle]::@Firstname? @Initial? (@particule? $NP){1-3} @PersonEnding?:PERSON:
+[@Title]::@Firstname? @Initial? (@particule? $NP){1-3} @PersonEnding?:PERSON:
 +AppendEntityFeature(trigger,"title")
 =>AddEntityFeature(right.1,"firstname")
 =>AddEntityFeature(right.2,"firstname")

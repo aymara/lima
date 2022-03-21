@@ -1,11 +1,19 @@
 @miscLocations=(
-Kremlin,
-Saint-Siège,
 Jupiter,
-Mars,
 Mercure,
 Neptune,
 Pluton,
 Saturne,
 Uranus,
-Vénus)
+Vénus,
+Terre,
+Soleil,
+Lune,
+Voie Lactée,
+Kremlin,
+Saint-Siège,
+Empire ottoman,
+Empire romain,
+Gaule,
+Mésopotamie
+)

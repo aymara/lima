@@ -18,6 +18,7 @@ use annonceurVille.lst
 use annonceurVoie.lst
 use annonceurGeo.lst
 use annonceurFact.lst
+use continental_regions.lst
 
 #include wd_locations.rules
 
@@ -26,8 +27,6 @@ use annonceurFact.lst
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
 
 @mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d\'Ougarta);
-
-@PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
 
 # TODO: comment remettre les lemmes de rue et place ou supprimer les entrées avec un espace (route départementale)
 # @Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
@@ -197,38 +196,6 @@ t_integer>1::(@Cities) (@Countries)?:ADDRESS:
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#******************************************************************************
-# Geopolitical entities (loc.admin)
-
-####################################
-@Countries::((du|de l\'|d\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#1.1 + 1.2 => du sud. 
-
-@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):GEO:
-=>AppendEntityFeature(trigger,"name")
-=>AppendEntityFeature(right,"qualifier")
-=>AppendEntityFeature(right.1,"qualifier")
-=>AppendEntityFeature(right.2,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.reg
-
-#à 3 km à l'est de la ville de Paris.
-#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
-@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):GEO:
-=>AppendEntityFeature(trigger,"qualifier")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-# loc.adm.reg
-#loc phys
-# est = dist (imm guide - p7)
-
 ########################### CITY ##############################################
 
 rose:[(la)?] ville::CITY:Toulouse
@@ -236,6 +203,7 @@ rose:[(la)?] ville::CITY:Toulouse
 =>AppendEntityFeature(trigger,"name.nickname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
 
 # repérage des ville grâce à l'annonceur
 # la ville de Hong Kong
@@ -253,6 +221,11 @@ rose:[(la)?] ville::CITY:Toulouse
 
 ########################### Region ##############################################
 @Regions:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@ContinentalRegion:::REGION:
 =>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
@@ -346,7 +319,8 @@ Maison:(la|La)?:Blanche:ODO:
 #lieux physiques aquatiques 
 
 #mer d'Iroise, mer de tranquilité (Lune), mare au diable, etc.
-@aqua::(de la|du|des|d\'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):GEO:
+# pas NC (trop d'ambiguïté): fleuve du monde
+@aqua::(de la|du|des|d\'|au|à|aux)? (@RiversAndSeas|$NP|t_capital_1st):GEO:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
@@ -389,6 +363,14 @@ Trévaresse:::GEO:
 =<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
+
+# various other locations (planets, historical regions...)
+@miscLocations:::LOCATION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
 # recognition of web adresses and ip adresses
 #----------------------------------------------------------------------
 36-15::$NC:COORDINATE:
@@ -413,6 +395,7 @@ MHz:t_dot_number::COORDINATE:
 
 #@leguidedannotation
 \@::(*):COORDINATE:
++NoSpaceWith(trigger,right.1)
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()

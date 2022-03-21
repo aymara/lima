@@ -7,16 +7,19 @@ use organization.lst,carMakers.lst
 use ../../common/organizationCommon.lst
 use annonceurOrg.lst
 use annonceurOrgUnsafe.lst
+use institutions.lst
 
+include organizations.rules
 include wd_organizations.rules
 
 @OrganizationNamePart=(T_A1,T_Amh,$NP,t_capital,t_capital_1st,t_capital_small)
-
 
 # .com companies (unless preceded by a "sur" indicating the web site)
 com:@OrganizationNamePart .::ORGANIZATION:
 
 # known organizations
+
+@Institution:::ORGANIZATION:
 
 include organizations.rules
 
