@@ -58,7 +58,9 @@ if ($#conv_keys < 0) {
 
 open(FIN,$rulesFile) || die "cannot open $rulesFile";
 while (<FIN>) {
-    if (/(.*):(ABS_)?IDIOM\$([^:]*)(.*)/) {
+    #if (/(.*):(ABS_)?IDIOM\$([^:]*)(.*)/) {
+    # category can contain a ":" but normalized form should not
+    if (/(.*):(ABS_)?IDIOM\$(.*)(:.*)/) {
         if (! exists($conv{$3})) {
             #print STDERR "transcodeIdiomatic.pl: can't find conv for \"$3\"\n";
         }
