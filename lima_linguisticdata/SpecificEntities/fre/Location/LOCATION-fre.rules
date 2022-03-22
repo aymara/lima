@@ -7,6 +7,8 @@ set defaultAction=>CreateSpecificEntity()
 # loading of gazeteers
 #----------------------------------------------------------------------
 use regions.lst
+# special france from https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9gions_naturelles_de_France
+use regions_france.lst
 use countries.lst
 use cities.lst
 use riversAndSeas.lst
@@ -225,6 +227,11 @@ rose:[(la)?] ville::CITY:Toulouse
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+@RegionsNaturellesDeFrance:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 @ContinentalRegion:::REGION:
 =>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
@@ -394,8 +401,8 @@ MHz:t_dot_number::COORDINATE:
 =<ClearEntityFeatures()
 
 #@leguidedannotation
-\@::(*):COORDINATE:
-+NoSpaceWith(trigger,right.1)
+\@::*:COORDINATE:
++NoSpaceWith(right.1,trigger)
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()

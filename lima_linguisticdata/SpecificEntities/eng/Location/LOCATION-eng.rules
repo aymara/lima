@@ -13,6 +13,7 @@ use cities.lst
 use states.lst
 use countries.lst
 use regions.lst
+use continental_regions.lst
 
 # contextual rules
 use locationKey.lst
@@ -327,6 +328,12 @@ U.S.::-? t_integer<999:ADDRESS:
 # repérage avec gazetteer seulement
 # Alabama
 @Region:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+# Europe, Africa
+@ContinentalRegion:::REGION:
 =>AppendEntityFeature(trigger,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()

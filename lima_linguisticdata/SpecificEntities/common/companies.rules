@@ -30,7 +30,6 @@ Actes::Sud (S.A.)?:ORGANIZATION:Actes Sud S.A.
 Active:First:(plc)?:ORGANIZATION:First Active plc
 Activision::(Inc.)?:ORGANIZATION:Activision Inc.
 Adamas:Bank:(AG)?:ORGANIZATION:Bank Adamas AG
-Adams:John::ORGANIZATION:John Adams
 Adamson::BSMG:ORGANIZATION:Adamson BSMG
 Adaptec::(Inc.)?:ORGANIZATION:Adaptec Inc.
 Adderley::Terence:ORGANIZATION:Adderley Terence
@@ -673,7 +672,6 @@ Bernard:Terrat::ORGANIZATION:Terrat Bernard
 Berstein:Sanford:(\& Co.)?:ORGANIZATION:Sanford Berstein \& Co.
 Bertelsmann::(AG)?.:ORGANIZATION:Bertelsmann AG.
 Bertelsmann::Music Group:ORGANIZATION:Bertelsmann Music Group
-Besson:Luc::ORGANIZATION:Luc Besson
 Bestan::(Inc.)?:ORGANIZATION:Bestan Inc.
 Best::Buy (Co.)? (Inc.)?:ORGANIZATION:Best Buy Co. Inc.
 Beteiligungs:Aachener und Munchener:(AG)?:ORGANIZATION:Aachener und Munchener Beteiligungs AG

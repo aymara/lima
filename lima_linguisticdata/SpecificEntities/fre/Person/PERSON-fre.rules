@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Person-modex.xml
+using modex Person-modex.xml,Organization-modex.xml
 using groups Person
 set defaultAction=>CreateSpecificEntity()
 
@@ -68,8 +68,10 @@ use ../../eng/Person/person_ending.lst
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+# add a constraint: not an ORGANIZATION (le député UMP)
 [@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital{1-3} @PersonEnding?:PERSON:
 +AppendEntityFeature(trigger,"title")
++!isASpecificEntity(right.2.first,"Organization.ORGANIZATION")
 =>AddEntityFeature(right.1.1,"firstname")
 =>AddEntityFeature(right.1.2,"firstname")
 =>AppendEntityFeature(right.1.3,"lastname")
@@ -80,6 +82,7 @@ use ../../eng/Person/person_ending.lst
 
 [@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital_1st{1-3} @PersonEnding?:PERSON:
 +AppendEntityFeature(trigger,"title")
++!isASpecificEntity(right.2.first,"Organization.ORGANIZATION")
 =>AddEntityFeature(right.1.1,"firstname")
 =>AddEntityFeature(right.1.2,"firstname")
 =>AppendEntityFeature(right.1.3,"lastname")
@@ -158,19 +161,29 @@ use ../../eng/Person/person_ending.lst
 =<ClearEntityFeatures()
 
 # authorize person names starting with initial, without any other trigger 
-# (maybe too noisy ?)
-@Initial::(@particule? @PersonNamePart){1-2}:PERSON:
-=>AddEntityFeature(trigger,"firstname")
-=>AppendEntityFeature(right.1.1,"lastname")
-=>AppendEntityFeature(right.1.2,"lastname")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
+# (maybe too noisy ?) -> X Window
+# @Initial::(@particule? @PersonNamePart){1-2}:PERSON:
+# =>AddEntityFeature(trigger,"firstname")
+# =>AppendEntityFeature(right.1.1,"lastname")
+# =>AppendEntityFeature(right.1.2,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
 
-@PersonNamePart:[(@Title|@FunctionTitle @Title?)]:(@PersonNamePart){0-2}:PERSON:
+#@PersonNamePart:[(@Title|@FunctionTitle @Title?)]:(@PersonNamePart){0-2}:PERSON:
+@PersonNamePart:[@Title]:(@PersonNamePart){0-2}:PERSON:
 =>SetEntityFeature(trigger,"lastname")
 =>AppendEntityFeature(right.1,"lastname")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
+# test for ORG: in "le député UMP", UMP is not a PERSON
+@PersonNamePart:[@FunctionTitle]:(@PersonNamePart){0-2}:PERSON:
++!isASpecificEntity(trigger,"Organization.ORGANIZATION")
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 
 @PersonNamePart:[$PREP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:
 =>AppendEntityFeature(left.2,"lastname")
