@@ -415,11 +415,11 @@ bool NoSpaceWith::operator()(const LinguisticAnalysisStructure::AnalysisGraph& g
     return false;
   }
   
-  if (token1->position() > token2->position()) {
-    return token2->position()==token1->position()+token1->length()+1;
+  if (token2->position() > token1->position()) {
+    return token2->position()==token1->position()+token1->length();
   }
   else {
-    return token1->position()==token2->position()+token2->length()+1;
+    return token1->position()==token2->position()+token2->length();
   }  
 }
 
