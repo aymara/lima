@@ -729,7 +729,10 @@
           operator="="
           right="Pays de la Loire"/>
   </testcase>
-<testcase id="fre.se.location.comp.28" type="bloquant">
+<testcase id="fre.se.location.comp.28" type="informatif">
+    <!--moved from 'bloquant' to 'informatif' : 
+        allow any lowercase noun after generates too much noise 
+        ('mer du monde') -->
     <call-parameters>
       <param key="text" value="Tu connais la mer de la tranquilité ?"/>
       <param key="language" value="fre"/>
