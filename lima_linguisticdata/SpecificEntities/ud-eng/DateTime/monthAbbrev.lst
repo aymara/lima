@@ -1,6 +1,0 @@
-@monthAbbrev=(
-JAN,Jan,jan,FEB,Feb,feb,MAR,Mar,mar,
-APR,Apr,apr,JUN,Jun,jun,JUL,Jul,jul,
-AUG,Aug,aug,SEP,Sep,sep,SEPT,Sept,sept,
-OCT,Oct,oct,NOV,Nov,nov,DEC,Dec,dec
-)
