@@ -14,7 +14,17 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-set (DEPENDENCIES ../../common/organizationCommon.lst newspaperKey.lst newspapersAndMedia.rules organization.lst organizationkey.lst organization.rules AutomobileManu.lst companies.lst wd_organization.lst organizationType.lst)
+execute_process(
+  COMMAND ${PROJECT_SOURCE_DIR}/scripts/copy_rules.py --mapping ../pos_mapping.txt --from eng --to ud ../../eng/Organization
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  RESULT_VARIABLE ret)
+if(ret EQUAL "1")
+    message(FATAL_ERROR "Error in configure: failed to copy rules")
+endif()
+
+file(GLOB LST_FILES *.lst)
+
+set (DEPENDENCIES ${LST_FILES})
 
 SPECIFICENTITIES(main ud Organization
   ORGANIZATION-ud.rules)
