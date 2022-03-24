@@ -14,17 +14,8 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+set (DEPENDENCIES days.lst monthAbbrev.lst months.lst timekey.lst timezone.lst)
 
-# execute_process is at configure stop, not build step
-execute_process(
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/copy_rules.py --mapping ../pos_mapping.txt --from eng --to ud-eng ../../eng/DateTime
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  RESULT_VARIABLE ret)
-if(ret EQUAL "1")
-    message(FATAL_ERROR "Error in configure: failed to copy rules")
-endif()
-
-file(GLOB LST_FILES *.lst)
-
-set (DEPENDENCIES ${LST_FILES})
-SPECIFICENTITIES(main ud-eng DateTime DATE-ud-eng.rules TIME-ud-eng.rules)
+SPECIFICENTITIES(main ud-eng DateTime
+  DATE-ud-eng.rules
+  TIME-ud-eng.rules)
