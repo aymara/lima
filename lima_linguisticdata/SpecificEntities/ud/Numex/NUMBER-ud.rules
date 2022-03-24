@@ -1,0 +1,142 @@
+set encoding=utf8
+using modex Numex-modex.xml
+using groups Numex
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of numbers
+#----------------------------------------------------------------------
+# $NUM is a common POS tag for both numeric and text forms:
+# need to differentiate them to write more focused rules
+#@Number=($NUM)
+
+@NumericForm=(t_comma_number,t_dot_number,t_integer)
+
+@NumberTextForm=(
+one$NUM,
+two$NUM,
+three$NUM,
+four$NUM,
+five$NUM,
+six$NUM,
+seven$NUM,
+eight$NUM,
+nine$NUM,
+ten$NUM,
+eleven$NUM,
+twelve$NUM,
+thirteen$NUM,
+fourteen$NUM,
+fifteen$NUM,
+sixteen$NUM,
+seventeen$NUM,
+eighteen$NUM,
+nineteen$NUM,
+twenty$NUM,
+twenty-one$NUM,
+twenty-two$NUM,
+twenty-three$NUM,
+twenty-four$NUM,
+twenty-five$NUM,
+twenty-six$NUM,
+twenty-seven$NUM,
+twenty-eight$NUM,
+twenty-nine$NUM,
+thirty$NUM,
+thirty-one$NUM,
+thirty-two$NUM,
+thirty-three$NUM,
+thirty-four$NUM,
+thirty-five$NUM,
+thirty-six$NUM,
+thirty-seven$NUM,
+thirty-eight$NUM,
+thirty-nine$NUM,
+forty$NUM,
+forty-one$NUM,
+forty-two$NUM,
+forty-three$NUM,
+forty-four$NUM,
+forty-five$NUM,
+forty-six$NUM,
+forty-seven$NUM,
+forty-eight$NUM,
+forty-nine$NUM,
+fifty
+fifty-one$NUM,
+fifty-two$NUM,
+fifty-three$NUM,
+fifty-four$NUM,
+fifty-five$NUM,
+fifty-six$NUM,
+fifty-seven$NUM,
+fifty-eight$NUM,
+fifty-nine$NUM,
+sixty$NUM,
+sixty-one$NUM,
+sixty-two$NUM,
+sixty-three$NUM,
+sixty-four$NUM,
+sixty-five$NUM,
+sixty-six$NUM,
+sixty-seven$NUM,
+sixty-eight$NUM,
+sixty-nine$NUM,
+seventy$NUM,
+seventy-one$NUM,
+seventy-two$NUM,
+seventy-three$NUM,
+seventy-four$NUM,
+seventy-five$NUM,
+seventy-six$NUM,
+seventy-seven$NUM,
+seventy-eight$NUM,
+seventy-nine$NUM,
+eighty$NUM,
+eighty-one$NUM,
+eighty-two$NUM,
+eighty-three$NUM,
+eighty-four$NUM,
+eighty-five$NUM,
+eighty-six$NUM,
+eighty-seven$NUM,
+eighty-eight$NUM,
+eighty-nine$NUM,
+ninety$NUM,
+ninety-one$NUM,
+ninety-two$NUM,
+ninety-three$NUM,
+ninety-four$NUM,
+ninety-five$NUM,
+ninety-six$NUM,
+ninety-seven$NUM,
+ninety-eight$NUM,
+ninety-nine$NUM,
+)
+
+# these forms can also come after numeric forms (3 million)
+@NumberCompl=(hundred$NUM,thousand$NUM,million$NUM,billion$NUM)
+
+# one is indeed numex
+# one:::NOT_NUMEX:
+
+use ../DateTime/months.lst
+
+I:::NOT_NUMEX:
+# integer followed by a month is not numex
+t_integer::@month:NOT_NUMEX:
+
+# 401(k) and 403(b) are special US account names
+401::\( k \):NOT_NUMEX:
+403::\( b \):NOT_NUMEX:
+
+# Numeric forms with several commas
+t_comma_number::(, t_integer<999){0-2}:NUMBER:=>NormalizeNumber()
+
+# 1 1/2 tablespoon
+t_integer::t_fraction:NUMBER:=>NormalizeNumber()
+
+@NumericForm::@NumberCompl{0-3}:NUMBER:=>NormalizeNumber()
+
+@NumberTextForm::(@NumberTextForm|@NumberCompl|and){0-n}:NUMBER:=>NormalizeNumber()
+

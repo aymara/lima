@@ -14,19 +14,12 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-execute_process(
-  COMMAND ${PROJECT_SOURCE_DIR}/scripts/copy_rules.py --mapping ../pos_mapping.txt --from eng --to ud ../../eng/Location
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  RESULT_VARIABLE ret)
-if(ret EQUAL "1")
-    message(FATAL_ERROR "Error in configure: failed to copy rules")
-endif()
-
-file(GLOB LST_FILES *.lst)
-
-set (DEPENDENCIES ${LST_FILES})
+set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countriesAndRegions.lst location.rules locationKey.lst locationPre.lst miscLocations.lst stateAbbrev.lst states.lst streetKey.lst)
 
 SPECIFICENTITIES(main ud Location 
   LOCATION-ud.rules 
   PreLOCATION-ud.rules 
   LOCATION_RATP-ud.rules)
+
+SPECIFICENTITIES(post ud Location 
+  PostLOCATION-ud.rules)
