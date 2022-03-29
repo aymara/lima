@@ -14,7 +14,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countriesAndRegions.lst location.rules locationKey.lst locationPre.lst miscLocations.lst stateAbbrev.lst states.lst streetKey.lst)
+set (DEPENDENCIES airports.lst cities.lst greeklocations.lst countries.lst location.rules locationKey.lst locationPre.lst miscLocations.lst stateAbbrev.lst states.lst streetKey.lst)
 
 SPECIFICENTITIES(main eng Location 
   LOCATION-eng.rules 

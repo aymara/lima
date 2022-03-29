@@ -11,9 +11,10 @@ set defaultAction=>CreateSpecificEntity()
 
 use cities.lst
 use states.lst
-use countries.lst
 use regions.lst
+use countries.lst
 use continental_regions.lst
+use rivers.lst
 
 # contextual rules
 use locationKey.lst
@@ -213,6 +214,9 @@ I::(-) (t_integer<99):ODO:
 # To be placed with recognition of US adresses???
 #----------------------------------------------------------------------
 
+# exception for AK (Arkansas)
+AK::-? 47:NOT_ADDRESS:
+
 @StateAbbrev::-? t_integer<999:ADDRESS:
 =>SetEntityFeature(right.2,"zip-code")
 =<ClearEntityFeatures()
@@ -266,7 +270,7 @@ U.S.::-? t_integer<999:ADDRESS:
 
 # repérage avec annonceur et gazetteer
 # contre example: Manchester City!!
-@City::(city|City|CITY):CITY:
+@City::(City|CITY):CITY:
 =>AppendEntityFeature(trigger,"name")
 =>SetEntityFeature(right,"kind")
 =<ClearEntityFeatures()
@@ -300,7 +304,8 @@ U.S.::-? t_integer<999:ADDRESS:
 # Lenin Hill
 # Greenwitch Village
 # Manchester City (dommage!)
-@CityInd:t_capital_1st{1-2}::CITY:
+# !!! do not use t_capital_1st: "The town"
+@CityInd:$NP{1-2}::CITY:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(left,"name")
 =<ClearEntityFeatures()
@@ -364,6 +369,10 @@ Wall::Street:NOT_LOCATION:
 # Evangelical Lutheran Church in Canada Act 317.
 Church:@Capitalized{1-5}::NOT_LOCATION:
 
+@River:::GEO:
+=>AppendEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
 
 #Cap::(de @Capitalized|d\'):LOCATION:
 # Cap Canaveral, Cap Cod
@@ -411,7 +420,8 @@ Southwestern, Northwestern, Southeastern, Northeastern
 #=> loc odo
 
 # Charles River, Nappa Valley
-@geoLocationKey:@locationPre? @Capitalized{1-2}::GEO:
+# not capital_1st (The river) : use NP, NC or ADJ (Baltic Sea)
+@geoLocationKey:@locationPre? ($NP|$NC|$ADJ){1-2}::GEO:
 =>SetEntityFeature(trigger,"kind")
 =>SetEntityFeature(left.1,"modifier")
 =>AppendEntityFeature(left.2,"name")
@@ -478,7 +488,7 @@ near::@Capitalized{1-3}:GEO:
 # redundancies
 # Arkansas state
 # Exeter city
-@State::(state|State|STATE):REGION:
+@State::(State|STATE)?:REGION:
 =>AppendEntityFeature(trigger,"name")
 =>SetEntityFeature(right,"kind")
 =<ClearEntityFeatures()
@@ -492,6 +502,13 @@ use miscLocations.lst
 
 @miscLocation:::GEO:
 =>SetEntityFeature(trigger,"name")
+=<ClearEntityFeatures()
+=>NormalizeEntity()
+
+# Roman Empire
+Empire:$ADJ::LOCATION:
+=>AppendEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
 =<ClearEntityFeatures()
 =>NormalizeEntity()
 
