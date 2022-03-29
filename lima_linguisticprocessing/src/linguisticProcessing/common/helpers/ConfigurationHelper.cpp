@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -26,8 +26,9 @@
 #include <string>
 
 using namespace std;
-using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common;
+using namespace Lima::Common::XMLConfigurationFiles;
+using namespace Lima::Common::MediaticData;
 
 namespace Lima
 {
@@ -123,6 +124,18 @@ int ConfigurationHelper::getIntParameter(
   getIntParameter(unitConfiguration, name, value, flags, default_value);
   return value;
 }
+
+bool ConfigurationHelper::isInitLazy()
+{
+  string lazy_init;
+  Lima::Common::MediaticData::MediaticData::single().getOptionValue(string("lazy-init"), lazy_init);
+  if (lazy_init == "true")
+  {
+    return true;
+  }
+  return false;
+}
+
 
 }
 }

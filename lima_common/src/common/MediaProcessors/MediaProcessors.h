@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,7 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
+ *   Copyright (C) 2004-2021 by CEA LIST                                   *
  *                                                                         *
  ***************************************************************************/
 #ifndef LIMA_COMMON_MEDIAPROCESSORSMEDIAPROCESSORS_H
@@ -30,6 +30,7 @@
 
 #include <deque>
 #include <string>
+#include <set>
 
 namespace Lima{
 
@@ -75,6 +76,9 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         void initPipelines (
             Common::XMLConfigurationFiles::GroupConfigurationStructure& confModule,
             const std::deque<std::string>& pipelines );
+
+        void getAvailableMedia ( std::set<MediaId>& ids ) const;
+        void getAvailablePipelinesForMedia ( MediaId id, std::set<std::string>& pipelines ) const;
 
 private:
 

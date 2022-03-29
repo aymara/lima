@@ -16,8 +16,6 @@
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 project(LimaLinguisticData)
 
-cmake_minimum_required(VERSION 3.4.0)
-
 if (ENVPATH)
   set(ENV{PATH} "${ENVPATH}:$ENV{PATH}")
 endif()
@@ -46,10 +44,10 @@ include(CPackComponent)
 configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
 LIMA_GENERIC_CONFIGENV(eng)
-# LIMA_GENERIC_CONFIGENV(eng.ud)
 LIMA_GENERIC_CONFIGENV(fre)
-# LIMA_GENERIC_CONFIGENV_UD(fre.ud)
 LIMA_GENERIC_CONFIGENV(por)
+LIMA_GENERIC_CONFIGENV_UD(ud)
+LIMA_GENERIC_CONFIGENV_UD(ud-eng)
 
 add_custom_target(pretest-execEnv)
 
@@ -63,9 +61,7 @@ add_subdirectory(syntacticAnalysis)
 add_subdirectory(SRLIntegration)
 
 LIMA_PRETEST_CONFIGENV(eng)
-# LIMA_PRETEST_CONFIGENV(eng.ud)
 LIMA_PRETEST_CONFIGENV(fre)
-#LIMA_PRETEST_CONFIGENV(fre.ud)
 LIMA_PRETEST_CONFIGENV(por)
 
 ########### install files ###############

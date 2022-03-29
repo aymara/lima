@@ -28,6 +28,7 @@
 
 #include <sstream>
 #include <vector>
+#include "common/Handler/shiftFrom.h"
 #include "common/Handler/structureHandler.h"
 #include "common/Handler/contentHandler.h"
 #include "common/Handler/AbstractProcessingClientHandler.h"
@@ -48,7 +49,7 @@ class AbstractXmlDocumentHandler :
             public ContentHandler< std::vector<float> >
 {
 public:
-    AbstractXmlDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >()):
+    AbstractXmlDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()):
             StructureHandler(),
             AbstractXmlAnalysisHandler(shiftFrom),
             AbstractProcessingClientHandler(),

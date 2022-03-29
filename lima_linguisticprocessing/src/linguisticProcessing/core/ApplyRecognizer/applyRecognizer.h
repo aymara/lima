@@ -63,6 +63,7 @@ private:
 
   // parameters of the application
   bool m_useSentenceBounds;
+  std::string m_sentenceBoundsData; // name of data containing the boundaries if m_useSentenceBounds
   bool m_updateGraph;
   bool m_resolveOverlappingEntities;
   Automaton::OverlapResolutionStrategy m_overlappingEntitiesStrategy;

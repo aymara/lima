@@ -59,10 +59,13 @@ ConstraintFunctionFactory<LinguisticPropertyIs>
 LinguisticPropertyIsFactory(LinguisticPropertyIsId);
 
 ConstraintFunctionFactory<LengthInInterval>
-    LengthInIntervalFactory(LengthInIntervalId);
+LengthInIntervalFactory(LengthInIntervalId);
 
 ConstraintFunctionFactory<NumericValueInInterval>
 NumericValueInIntervalFactory(NumericValueInIntervalId);
+
+ConstraintFunctionFactory<NoSpaceWith>
+NoSpaceWithFactory(NoSpaceWithId);
 
 //**********************************************************************
 class CheckIfEmptyPredicate
@@ -301,6 +304,8 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   //          << "(" <<  length << ") with interval ["
   //          << min << "-" << max << "]";
 
+  //std::cerr << "testing length(" << token->stringForm().toUtf8().constData()
+  //          << "(" <<  length << ") with interval [" << m_min << "-" << m_max << "]" << endl;
   return (length >= m_min && length <= m_max);
 }
 
@@ -381,6 +386,41 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   else {
     return ( numValue >= m_min && numValue <= m_max);
   }
+}
+
+//***********************************************************************
+NoSpaceWith::NoSpaceWith(MediaId language,
+                         const LimaString& complement):
+ConstraintFunction(language,complement)
+{
+}
+
+bool NoSpaceWith::operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
+                             const LinguisticGraphVertex& v1,
+                             const LinguisticGraphVertex& v2,
+                             AnalysisContent& /*analysis*/) const 
+{
+  Token* token1 = get(vertex_token,*(graph.getGraph()),v1);
+  Token* token2 = get(vertex_token,*(graph.getGraph()),v2);
+  if (token1 == 0)
+  {
+    AULOGINIT;
+    LERROR << "Null token on vertex " << v1;
+    return false;
+  }
+  if (token2 == 0)
+  {
+    AULOGINIT;
+    LERROR << "Null token on vertex " << v2;
+    return false;
+  }
+  
+  if (token2->position() > token1->position()) {
+    return token2->position()==token1->position()+token1->length();
+  }
+  else {
+    return token1->position()==token2->position()+token2->length();
+  }  
 }
 
 } // end namespace

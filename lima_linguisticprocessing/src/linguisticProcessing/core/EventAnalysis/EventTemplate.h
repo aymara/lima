@@ -44,12 +44,20 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplate
   double getWeight() const { return m_weight; }
   const std::string getType() const { return m_type; }
   bool isMainEvent() const { return m_mainEvent; }
+  uint64_t getPosBegin() const { return m_posBegin; }
+  uint64_t getPosEnd() const { return m_posEnd; }
+
+  LIMA_EVENTANALISYS_EXPORT  friend std::ostream& operator<<(std::ostream& os, const EventTemplate& e);
+  LIMA_EVENTANALISYS_EXPORT  friend QDebug& operator<<(QDebug& os, const EventTemplate& e);
 
  private:
   std::map<std::string,EventTemplateElement> m_template;
   double m_weight;
   bool m_mainEvent;
   std::string m_type;
+  // store positions of text span
+  uint64_t m_posBegin;
+  uint64_t m_posEnd;
 };
 
 } // end namespace

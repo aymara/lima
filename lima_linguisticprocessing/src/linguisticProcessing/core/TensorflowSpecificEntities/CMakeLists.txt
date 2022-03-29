@@ -166,6 +166,6 @@ install(FILES
 
 install(FILES
   logTensorflowSpecificEntitiescpp.properties
-  DESTINATION share/config/lima
+  DESTINATION share/config/lima/log4cpp
   COMPONENT runtime
 )

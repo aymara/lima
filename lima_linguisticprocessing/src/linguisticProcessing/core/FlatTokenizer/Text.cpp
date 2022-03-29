@@ -145,14 +145,12 @@ void Text::setGraph(LinguisticGraphVertex position,LinguisticGraph* graph)
   if (adjItr==adjItrEnd)
   {
     TOKENIZERLOGINIT;
-    LERROR << "Tokenizer Text : no token forward !";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("Tokenizer Text : no token forward !");
   }
   m_d->m_lastVx=*adjItr;
   if (++adjItr!=adjItrEnd) {
     TOKENIZERLOGINIT;
-    LERROR << "Tokenizer Text : more than one next token !";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("Tokenizer Text : more than one next token !");
   }
   //remove_edge(m_d->m_currentVx,m_d->m_lastVx,*m_d->m_tTokenGraph);
 }

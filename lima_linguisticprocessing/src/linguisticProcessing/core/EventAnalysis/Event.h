@@ -22,11 +22,11 @@
  * @author   Faiza GARA
  * @date     April 2008
  * copyright Copyright (C) 2007 by CEA LIST
- * version   $Id: 
- * 
- * @brief  
- * 
- * 
+ * version   $Id:
+ *
+ * @brief
+ *
+ *
  ***********************************************************************/
 
 #ifndef EVENT_H
@@ -45,20 +45,20 @@ namespace LinguisticProcessing
 {
 
 namespace EventAnalysis
-{ 
+{
 
 /**
  * This class represents a list of elements, that are pointers on
  * polymmorphic annotations that can be datatype property annotations
  * or object property annotations
- * 
+ *
  **/
 class LIMA_EVENTANALISYS_EXPORT Event : public std::vector< EventParagraph* >
 {
 public:
     Event();
-    ~Event();
-    
+    virtual ~Event();
+
     bool hasFragment() const;
 
     void addParagraph(Paragraph *,bool,bool,Common::AnnotationGraphs::AnnotationData*, std::string graphId,LinguisticGraph* graph);
@@ -66,24 +66,24 @@ public:
     virtual void read(std::istream& file);
     virtual void write(std::ostream& file) const;
     //@}
-    
+
     std::string toString(std::string parentURI,uint64_t index) const;
 
     void compute_entities_weight(std::map<Common::MediaticData::EntityType,unsigned short>,Common::AnnotationGraphs::AnnotationData*, std::string graphId);
     friend LIMA_EVENTANALISYS_EXPORT std::ostream& operator << (std::ostream&, const Event&);
-    
+
     void compute_main_entities();
-    
+
     Common::MediaticData::EntityType getEntityType(LinguisticGraphVertex,Common::AnnotationGraphs::AnnotationData*, std::string graphId) const;
-    
+
     void setDate(std::pair<Common::MediaticData::EntityType,std::pair<std::string,LinguisticGraphVertex> >);
 
     uint64_t  get_weight() const;
     void setWeight(uint64_t w) { m_entities_weight=w; }
-    
+
     void setMain();
     bool getMain() const;
-    
+
     bool has_entity(Common::MediaticData::EntityType) const;
 private:
   std::pair <Common::MediaticData::EntityType,std::pair<std::string,LinguisticGraphVertex> > m_date;
@@ -95,7 +95,7 @@ private:
 // inline functions
 // **********************************************************************
 
-inline void  Event::setMain() 
+inline void  Event::setMain()
 {
   m_main=true;
 }
@@ -114,7 +114,7 @@ inline  void Event::setDate(std::pair<Common::MediaticData::EntityType,std::pair
 inline bool Event::hasFragment() const { return (!empty()); }
 
 
-} 
-} 
+}
+}
 }// namespace Lima
-#endif 
+#endif

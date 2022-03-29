@@ -53,6 +53,7 @@ ApplyRecognizer::ApplyRecognizer():
 MediaProcessUnit(),
 m_recognizers(0),
 m_useSentenceBounds(false),
+m_sentenceBoundsData("SentenceBoundaries"),
 m_updateGraph(false),
 m_resolveOverlappingEntities(false),
 m_overlappingEntitiesStrategy(IGNORE_SMALLEST),
@@ -106,6 +107,18 @@ void ApplyRecognizer::init(
     // optional parameter: keep default value
   }
 
+  try
+  {
+    string sentenceBoundsData=unitConfiguration.getParamsValueAtKey("sentenceBoundsData");
+    if (! sentenceBoundsData.empty()) {
+      m_sentenceBoundsData=sentenceBoundsData;
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // optional parameter: keep default value
+  }
+  
   try {
     m_updateGraph=
       getBooleanParameter(unitConfiguration,"updateGraph");
@@ -294,10 +307,10 @@ processOnEachSentence(AnalysisContent& analysis,
   }
 
   // get sentence bounds
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentenceBoundsData));
   if (nullptr==sb)
   {
-    LERROR << "no sentence bounds defined ! abort";
+    LERROR << "no sentence bounds "<< m_sentenceBoundsData << " defined ! abort";
     return MISSING_DATA;
   }
 
@@ -309,7 +322,7 @@ processOnEachSentence(AnalysisContent& analysis,
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    // LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+    //LDEBUG << "ApplyRecognizer: analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << endl;
 
     seRecognizerResult.clear();
     reco->apply(*anagraph,beginSentence,
@@ -336,7 +349,7 @@ processOnWholeText(AnalysisContent& analysis,
 {
   // APPRLOGINIT;
   // LDEBUG << "apply recognizer on whole text";
-
+  
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
   if (nullptr == anagraph)
   {

@@ -100,24 +100,51 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 
   // find annotationGraphVertex matching the vertex of the current graph
   std::set<AnnotationGraphVertex> matches = annotationData->matches(graph.getGraphId(), v, "annot");
-  if (matches.empty())
+  //
+  if (! matches.empty())
   {
-    AULOGINIT;
-    LERROR << "EntityTransition::compare: No annotation ("<<graph.getGraphId()<<", "<<v<<", \"annot\") available";
-    return false;
-  }
-  AnnotationGraphVertex annotVertex = *(matches.begin());
-
-  if (!annotationData->hasAnnotation(annotVertex, m_entityAnnotation))
-  {
-    return false;
+    AnnotationGraphVertex annotVertex = *(matches.begin());
+    if (annotationData->hasAnnotation(annotVertex, m_entityAnnotation)) 
+    {
+      const SpecificEntityAnnotation* se =
+      annotationData->annotation(annotVertex, m_entityAnnotation).
+      pointerValue<SpecificEntityAnnotation>();
+      
+#ifdef DEBUG_LP
+      AULOGINIT;
+      LDEBUG << "EntityTransition: compare entity types " << m_entityType << " and " <<  se->getType();
+#endif
+      if (m_entityType == se->getType() || Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType))
+      {
+        return true;
+      }
+    }
   }
   
-  const SpecificEntityAnnotation* se =
-    annotationData->annotation(annotVertex, m_entityAnnotation).
-    pointerValue<SpecificEntityAnnotation>();
-
-  return (m_entityType == se->getType() || Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType));
+  // special case, if graph is posgraph, check if vertex corresponds to a specific entity found before pos tagging (i.e. in analysis graph)
+  if (graph.getGraphId()=="PosGraph") {
+    
+    std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
+    // note: anaVertices size should be 0 or 1
+    for (const auto& anaVertex : anaVertices)  {
+      
+      std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
+    
+      for (const auto& vx: matches)
+      {
+        if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
+        {
+          const SpecificEntityAnnotation* se =
+          annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
+          pointerValue<SpecificEntityAnnotation>();
+          
+          return (m_entityType == se->getType() || 
+          Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType));
+        }
+      }
+    }
+  }
+  return false;
 }
 
 } // namespace end

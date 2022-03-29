@@ -89,7 +89,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
   }
   if (! m_type.isNull()) {
     EventTemplateElement elt(v,&graph,m_type);
-    LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role;
+    LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role;
     eventData->addElementInCurrentTemplate(m_role,elt);
   }
   else {

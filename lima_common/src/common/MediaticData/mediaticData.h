@@ -113,6 +113,11 @@ public:
     /// @{ entity types manager
 
     EntityType getEntityType(const LimaString& entityName) const;
+    EntityType getEntityType(const LimaString& groupName,
+                             const LimaString& entityName) const;
+    /// @deprecated This method has always made it very difficult to debug
+    /// errors by obfuscating the group name. It will be made private in a
+    /// future version.
     EntityType getEntityType(EntityGroupId groupId, const LimaString& entityName) const;
     EntityGroupId getEntityGroupId(const LimaString& groupName) const;
 
@@ -122,13 +127,17 @@ public:
     const LimaString& getEntityGroupName(EntityGroupId id) const;
 
     EntityGroupId addEntityGroup(const LimaString& groupName);
-    EntityType addEntity(const LimaString& groupName, const LimaString& entityName);
-    EntityType addEntity(EntityGroupId groupId, const LimaString& entityName);
+    EntityType addEntity(const LimaString& groupName,
+                         const LimaString& entityName);
 
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
     bool isEntityAncestor(const EntityType& child, const EntityType& parent) const;
-     //get highest ancestor in the hierarchy
+
+    //get highest ancestors in a group
+    std::vector<EntityType> getGroupAncestors(EntityGroupId id) const;
+
+    //get highest ancestor in the hierarchy
     EntityType getEntityAncestor(const EntityType& child) const;
     // get the list of nodes under the given ancestor as child->firstParent tuples
     bool getEntityChildList(const EntityType& parent,

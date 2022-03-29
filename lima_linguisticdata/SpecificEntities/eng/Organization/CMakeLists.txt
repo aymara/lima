@@ -32,7 +32,6 @@ set (DEPENDENCIES
   wd_organization.rules
 )
 SPECIFICENTITIES(main eng Organization
-  ORGANIZATION-eng.rules
-  ORGANIZATION_COMP-eng.rules)
+  ORGANIZATION-eng.rules)
 
 

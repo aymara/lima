@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (besanconr@zoe.cea.fr)
  * @date       Wed Dec 17 2003
  * copyright   Copyright (C) 2003 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "applyRecognizer.h"
@@ -62,7 +62,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 
 //**********************************************************************
-// initialization of static members 
+// initialization of static members
 //**********************************************************************
 // hard-coded info about the output of named entities
 const std::vector<std::string>& RecognizerToApply::knownTypes() {
@@ -109,7 +109,7 @@ const std::vector<std::string>& RecognizerToApply::closingTags() {
 bool RecognizerToApply::findType(const std::string& type,
                                  uint64_t& i) {
   for (i=0; i<knownTypes().size(); i++) {
-    if (knownTypes()[i] == type) { 
+    if (knownTypes()[i] == type) {
       return true;
     }
   }
@@ -124,12 +124,12 @@ const std::string& RecognizerToApply::getClosingTag(const uint64_t& i) {
 }
 
 //**********************************************************************
-// generic functions 
+// generic functions
 //**********************************************************************
-void RecognizerToApply::setParameters(const bool listEntities, 
+void RecognizerToApply::setParameters(const bool listEntities,
                                       const std::string& encoding,
                                       const StyleOutput& outputStyle,
-                                      const OutputNormalizationType& 
+                                      const OutputNormalizationType&
                                       normalization,
                                       const bool doPosTagging,
                                       const bool testOnFullToken) {
@@ -141,16 +141,16 @@ void RecognizerToApply::setParameters(const bool listEntities,
   m_testOnFullToken=testOnFullToken;
 }
 
-// the template function can be defined in the .cpp because 
+// the template function can be defined in the .cpp because
 // it is only instanciated in this file
 template<typename ResultType>
-void RecognizerToApply::printResults(const ResultType& result, 
+void RecognizerToApply::printResults(const ResultType& result,
                                      const LimaString& text,
                                      ostream& output) {
-  
+
   Common::MediaticData::LanguageData::EntityNames
     entityNames = Common::LinguisticData::LinguisticData::single().languageData(m_language).getEntityNames("SpecificEntities");
-  
+
   uint64_t offsetLastSuccess(0);
   string tmpString;
   if (m_listEntities) {
@@ -199,7 +199,7 @@ void RecognizerToApply::printResults(const ResultType& result,
                                   result[i+1].positionBegin()-
                                   offsetLastSuccess-1);
           }
-          else { 
+          else {
             tmpString = Misc::limastring2utf8stdstring(
                                      LimaString(text,offsetLastSuccess,
                                                  result[i+1].positionBegin()-
@@ -265,13 +265,13 @@ m_recognizerText(0)
   }
 }
 
-uint64_t RecognizerOnSimpleText::applyToText(LimaString contentText, 
+uint64_t RecognizerOnSimpleText::applyToText(LimaString contentText,
                                                  ostream& output)
 {
   uint64_t nbEntitiesFound(0);
 
   vector<PosMultipleMatch> result;
-  
+
   m_recognizerText->test(contentText,result);
 
   // print the results
@@ -284,9 +284,9 @@ uint64_t RecognizerOnSimpleText::applyToText(LimaString contentText,
 
 //**********************************************************************
 // recognizer on tokenized text
-//********************************************************************** 
+//**********************************************************************
 /*
-bool findTag(const LimaString& line, 
+bool findTag(const LimaString& line,
              const LimaString& tag,
              std::string& value) {
 
@@ -313,7 +313,7 @@ RecognizerOnTokenizedText(Recognizer* reco,
   RecognizerToApply(reco),
   m_tokenizer(0),
   m_language(language) {
-    
+
   try  {
     m_tokenizer=LinguisticProcessors::single().getTokenizer(Common::LinguisticData::LinguisticData::single().language(language));
   }
@@ -322,11 +322,11 @@ RecognizerOnTokenizedText(Recognizer* reco,
   }
 }
 
-uint64_t RecognizerOnTokenizedText::applyToText(LimaString contentText, 
+uint64_t RecognizerOnTokenizedText::applyToText(LimaString contentText,
                                                     ostream& output)
 {
   uint64_t nbEntitiesFound(0);
-  
+
   PhoenixPathIterator analysis;
   try {
     analysis=m_tokenizer->tokenize(contentText);
@@ -335,9 +335,9 @@ uint64_t RecognizerOnTokenizedText::applyToText(LimaString contentText,
     cerr << "exception caught in tokenizer: " << e.what() << endl;
     return 0;
   }
-  
+
   vector<RecognizerMatch> result;
-  
+
   const LinguisticGraph* graph=analysis.getGraph();
   LinguisticGraphVertex beginning=firstVertex(*graph);
 
@@ -346,7 +346,7 @@ uint64_t RecognizerOnTokenizedText::applyToText(LimaString contentText,
   // print the results
   printResults(result,contentText,output);
   nbEntitiesFound=result.size();
-  
+
   return nbEntitiesFound;
 }
 */
@@ -355,7 +355,7 @@ uint64_t RecognizerOnTokenizedText::applyToText(LimaString contentText,
 // recognizer on analyzed text
 //**********************************************************************
 RecognizerOnAnalyzedText::
-RecognizerOnAnalyzedText(Recognizer* reco, 
+RecognizerOnAnalyzedText(Recognizer* reco,
                          MediaId language,
                          const std::string& resourcesPath,
                          const bool dumpXML,
@@ -377,15 +377,15 @@ RecognizerOnAnalyzedText(Recognizer* reco,
   }
 }
 
-uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText, 
+uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText,
                                                    ostream& output)
 {
-/*  cerr << "analyzing text ("<< m_language << ") [" 
+/*  cerr << "analyzing text ("<< m_language << ") ["
         << contentText << "]" << endl;*/
   AULOGINIT;
   //PhoenixPathIterator analysis;
 //   AnalysisContent analysis;
-  
+
   ostringstream error;
   try {
     // create analysis content
@@ -402,7 +402,7 @@ uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText,
     const LinguisticProcessUnitPipeline* pipeline=LinguisticProcessors::single().getPipelineForId(m_language,pipelineId);
     if (pipeline==0) {
       LWARN << "can't get pipeline '" << pipelineId << "'";
-      throw LinguisticProcessingException();
+      throw LinguisticProcessingException(std::string("can't get pipeline ")+pipelineId);
     }
 
     // process pipeline
@@ -410,7 +410,7 @@ uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText,
     LDEBUG << "pipeline process returned status " << (int)status ;
     if (status!=SUCCESS_ID) {
       LWARN << "analysis failed : receive status " << (int)status << " from pipeline. exit";
-      throw LinguisticProcessingException();    
+      throw LinguisticProcessingException("analysis failed : received an error status from pipeline");
     }
 /*      LinguisticProcessing::TextAnalysis textanalysis(
     string("applytext"),

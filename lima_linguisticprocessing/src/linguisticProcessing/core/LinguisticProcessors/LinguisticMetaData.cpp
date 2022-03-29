@@ -38,6 +38,11 @@ LinguisticMetaData::~LinguisticMetaData()
 {
 }
 
+bool LinguisticMetaData::hasMetaData(const std::string& id) const 
+{
+  return (m_metaData.find(id)!=m_metaData.end());
+}
+
 const std::string& LinguisticMetaData::getMetaData(const std::string& id) const 
 {
   std::map<std::string,std::string>::const_iterator it=m_metaData.find(id);
@@ -46,6 +51,10 @@ const std::string& LinguisticMetaData::getMetaData(const std::string& id) const
     throw LinguisticProcessingException( std::string("metadata [" + id + "] not found.") );
   }
   return it->second;
+}
+const std::map<std::string,std::string>& LinguisticMetaData::getAllMetaData(void) const
+{
+  return m_metaData;
 }
 
 void LinguisticMetaData::setMetaData(const std::string& id,const std::string& value)

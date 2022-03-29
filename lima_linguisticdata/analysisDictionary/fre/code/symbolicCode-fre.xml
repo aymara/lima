@@ -672,6 +672,22 @@
   <field key="TIME" value=""/>
   <field key="SYNTAX" value=""/>
 </code>
+<code key="Dv--fsi">
+  <field key="MICRO" value="DET"/>
+  <field key="GENDER" value="FEM"/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
+<code key="Dv--msi">
+  <field key="MICRO" value="DET"/>
+  <field key="GENDER" value="MASC"/>
+  <field key="NUMBER" value="SING"/>
+  <field key="PERSON" value=""/>
+  <field key="TIME" value=""/>
+  <field key="SYNTAX" value=""/>
+</code>
 <code key="De--mpi">
   <field key="MICRO" value="DET"/>
   <field key="GENDER" value="MASC"/>

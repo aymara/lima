@@ -12,6 +12,7 @@
 
 #include "documentsreader_export.h"
 #include "linguisticProcessing/core/abstractReaderResource.h"
+#include "common/Handler/shiftFrom.h"
 #include "DocumentElements.h"
 
 #include <boost/shared_ptr.hpp>
@@ -64,6 +65,8 @@ public:
   StructuredDocumentXMLParser();
 
   virtual ~StructuredDocumentXMLParser ( void );
+
+  void setShiftFrom(std::shared_ptr<const ShiftFrom> shiftFrom);
 
   // -----------------------------------------------------------------------
   //  propagate SAX events as XMLDocHandler events
@@ -129,13 +132,9 @@ private:
   bool isFieldType ( const QString& elementName, const FieldType& type ) const;
   // helper function for debug messages
   static QString fieldTypeString ( const FieldType type );
-  // static function to parse dates
-  static void parseDate ( const std::string& dateStr,
-                          QDate& dateBegin,
-                          QDate& dateEnd );
 
 
-  // Handler of high level Document events events (startIndexingNode, processText..)
+  // Handler of high level Document events (startIndexingNode, processText..)
   StructuredXmlDocumentHandler* m_processor;
   boost::shared_ptr< ContentStructuredDocument > m_currentDocument;
   bool m_elementPointerHasBeenReturned;
@@ -149,6 +148,8 @@ private:
   std::map<Lima::LimaChar,unsigned int> m_specialCharacterSize;
 
   bool m_addAbsoluteOffsetToTokens;
+
+  std::shared_ptr<const ShiftFrom> m_shiftFrom;
 };
 
 } // namespace DocumentsReader

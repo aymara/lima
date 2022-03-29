@@ -140,11 +140,11 @@ void DocumentPropertyType::init (
         LWARN << "no param 'storageSize' in DocumentPropertyType group for " << getId();
     }
 
-    // cardinalit�: valeur obligatoire, optionelle ou multiple
+    // cardinalite: valeur obligatoire, optionelle ou multiple
     try
     {
         QString cardinalityTypeId = QString::fromUtf8(unitConfiguration.getParamsValueAtKey ( "cardinality" ).c_str());
-        for ( int i = 0 ; static_cast<CardinalityType> ( i ) < MAX_STORAGE_TYPE ; i++ )
+        for ( int i = 0 ; i < MAX_STORAGE_TYPE ; i++ )
         {
             CardinalityType cardinalityType = static_cast<CardinalityType> ( i );
             if ( !cardinalityTypeId.compare ( cardinalityTypeTag[cardinalityType] ) )
@@ -177,7 +177,7 @@ void DocumentPropertyType::init (
 #endif
     }
 
-    // liste des noms d'�l�ments + attributs dont la valeur defini la valeur de l'attribut
+    // liste des noms d'elements + attributs dont la valeur defini la valeur de l'attribut
     try
     {
         const std::deque< std::string >& list = unitConfiguration.getListsValueAtKey ( "attributeNames" );
@@ -188,7 +188,7 @@ void DocumentPropertyType::init (
             if ( spaceOffset == std::string::npos )
             {
                 DRLOGINIT;
-                LWARN << "DocumentPropertyType::init(): malformed attributeName for "
+                LWARN << "DocumentPropertyType::init(): ill formed attributeName for "
                 << getId() << ": " << *it;
             }
             else

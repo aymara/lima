@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -34,12 +34,13 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
+#include "linguisticProcessing/common/helpers/DeepTokenizerBase.h"
+#include "linguisticProcessing/common/helpers/LangCodeHelpers.h"
 
 #include "Viterbi.h"
 #include "QJsonHelpers.h"
 
 #include "CppUppsalaTensorFlowTokenizer.h"
-#include "DeepTokenizerBase.h"
 #include "tokUtils.h"
 
 
@@ -126,8 +127,6 @@ protected:
   void load_ngram_defs(const QJsonArray& jsa);
   void load_dicts(const QJsonArray& jsa);
 
-  QString m_model_path;
-
   std::unique_ptr<Session> m_session;
   GraphDef m_graph_def;
 
@@ -175,23 +174,30 @@ protected:
   map<QString, vector<QString>> m_trrules;
 
   vector<vector<float>> m_crf;
+
+  function<void()> m_load_fn;
+  bool m_loaded;
 };
 
 CppUppsalaTokenizerPrivate::CppUppsalaTokenizerPrivate() :
   ConfigurationHelper("CppUppsalaTokenizerPrivate", THIS_FILE_LOGGING_CATEGORY()),
   m_stringsPool(nullptr),
   m_currentVx(0),
-  m_ignoreEOL(false)
+  m_ignoreEOL(false),
+  m_loaded(false)
 {
 }
 
 CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate()
 {
-  auto status = m_session->Close();
-  if (!status.ok())
+  if (m_session.get() != nullptr)
   {
-    LOG_MESSAGE_WITH_PROLOG(LERROR, "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate(): Error closing session:"
-                            << status.ToString());
+    auto status = m_session->Close();
+    if (!status.ok())
+    {
+      LOG_MESSAGE_WITH_PROLOG(LERROR, "CppUppsalaTokenizerPrivate::~CppUppsalaTokenizerPrivate(): Error closing session:"
+                              << status.ToString());
+    }
   }
 }
 
@@ -247,7 +253,9 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
   for (const auto& sentence: sentencesTokens)
   {
     if (sentence.size() < 1)
+    {
       continue;
+    }
 
     LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
@@ -257,7 +265,7 @@ LimaStatusCode CppUppsalaTensorFlowTokenizer::process(AnalysisContent& analysis)
       LOG_MESSAGE(LDEBUG, "      Adding token '" << str << "'");
 
       StringsPoolIndex form=(*m_d->m_stringsPool)[str];
-      Token *tToken = new Token(form, str, token.start, token.wordText.size());
+      Token *tToken = new Token(form, str, token.start+1, token.wordText.size());
       if (tToken == nullptr)
       {
         TOKENIZERLOGINIT;
@@ -310,33 +318,11 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
-  if (lang_str != QString("ud") || udlang.find("ud-") == 0)
+  if (!fix_lang_codes(lang_str, udlang))
   {
-    if (udlang.size() == 0 && lang_str.size() > 0 && lang_str != QString("ud"))
-    {
-      // This block helps to use tokenizer in non-UD pipelines.
-      udlang = lang_str.toStdString();
-      lang_str = "ud";
-    }
-    else if (udlang.size() >= 4 && udlang.find(lang_str.toStdString()) == 0 && udlang[lang_str.size()] == '-')
-    {
-      udlang = udlang.substr(3);
-    }
-    else
-    {
-      // parse lang codes like 'eng.ud'
-      if (udlang.size() == 0 && lang_str.size() >= 4 && lang_str.indexOf(".ud") == lang_str.size() - 3)
-      {
-        udlang = lang_str.left(3).toStdString();
-        lang_str = "ud";
-      }
-      else
-      {
-        LIMA_EXCEPTION_SELECT_LOGINIT(TOKENIZERLOGINIT,
-          "CppUppsalaTokenizerPrivate::init: Can't parse language id " << udlang.c_str(),
-          Lima::InvalidConfiguration);
-      }
-    }
+    LIMA_EXCEPTION_SELECT_LOGINIT(TOKENIZERLOGINIT,
+      "CppUppsalaTokenizerPrivate::init: Can't parse language id " << udlang.c_str(),
+      Lima::InvalidConfiguration);
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
@@ -346,62 +332,83 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
                                             .arg(lang_str).arg(model_name));
   if (config_file_name.isEmpty())
   {
-    LIMA_EXCEPTION_LOGINIT(TOKENIZERLOGINIT,
-      "CppUppsalaTokenizerPrivate::init: tokenizer config file not found.");
-  }
-  load_config(config_file_name);
-
-  tensorflow::SessionOptions options;
-  tensorflow::ConfigProto & config = options.config;
-  config.set_inter_op_parallelism_threads(8);
-  config.set_intra_op_parallelism_threads(8);
-  config.set_use_per_session_threads(false);
-  Session* session = 0;
-  Status status = NewSession(options, &session);
-  if (!status.ok())
-  {
-    LIMA_EXCEPTION_LOGINIT(
-      TOKENIZERLOGINIT,
-      "CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
-      << status.ToString().c_str());
-  }
-  m_session = std::unique_ptr<Session>(session);
-  m_model_path = findFileInPaths(resources_path,
-                                 QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
-                                  .arg(lang_str).arg(model_name));
-  load_graph(m_model_path);
-
-  // Add the graph to the session
-  status = m_session->Create(m_graph_def);
-  if (!status.ok())
-  {
-    LIMA_EXCEPTION_LOGINIT(
-      TOKENIZERLOGINIT,
-      "CppUppsalaTokenizerPrivate::init: Can't add graph to TensorFlow session: "
-      << status.ToString().c_str());
+    throw InvalidConfiguration("CppUppsalaTokenizerPrivate::init: tokenizer config file not found.");
   }
 
-  vector<Tensor> out;
-
-  status = m_session->Run({}, {"CRF/crf"}, {}, &out);
-  if (!status.ok())
+  auto model_file_name = findFileInPaths(resources_path,
+                                         QString::fromUtf8("/TensorFlowTokenizer/%1/%2.model")
+                                           .arg(lang_str).arg(model_name));
+  if (model_file_name.isEmpty())
   {
-    LIMA_EXCEPTION_LOGINIT(
-      TOKENIZERLOGINIT,
-      "CppUppsalaTokenizerPrivate::init: Can't execute \"Run\" in TensorFlow session: "
-      << status.ToString().c_str());
+    throw InvalidConfiguration("CppUppsalaTokenizerPrivate::init: tokenizer model file not found.");
   }
 
-  auto crf = out[0].matrix<float>();
-
-  m_crf.resize(out[0].dim_size(0));
-  for (int64 j = 0; j < out[0].dim_size(0); j++)
+  m_load_fn = [this, config_file_name, model_file_name]()
   {
-    m_crf[j].resize(out[0].dim_size(1));
-    for (int64 k = 0; k < out[0].dim_size(1); k++)
+    if (m_loaded)
     {
-      m_crf[j][k] = crf(j, k);
+      return;
     }
+
+    load_config(config_file_name);
+
+    tensorflow::SessionOptions options;
+    tensorflow::ConfigProto & config = options.config;
+    config.set_inter_op_parallelism_threads(8);
+    config.set_intra_op_parallelism_threads(8);
+    config.set_use_per_session_threads(false);
+    Session* session = 0;
+    Status status = NewSession(options, &session);
+    if (!status.ok())
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::init: Can't create TensorFlow session: "
+        << status.ToString().c_str());
+    }
+    m_session = std::unique_ptr<Session>(session);
+
+    load_graph(model_file_name);
+
+    // Add the graph to the session
+    status = m_session->Create(m_graph_def);
+    if (!status.ok())
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::init: Can't add graph to TensorFlow session: "
+        << status.ToString().c_str());
+    }
+
+    vector<Tensor> out;
+
+    status = m_session->Run({}, {"CRF/crf"}, {}, &out);
+    if (!status.ok())
+    {
+      LIMA_EXCEPTION_LOGINIT(
+        TOKENIZERLOGINIT,
+        "CppUppsalaTokenizerPrivate::init: Can't execute \"Run\" in TensorFlow session: "
+        << status.ToString().c_str());
+    }
+
+    auto crf = out[0].matrix<float>();
+
+    m_crf.resize(out[0].dim_size(0));
+    for (int64 j = 0; j < out[0].dim_size(0); j++)
+    {
+      m_crf[j].resize(out[0].dim_size(1));
+      for (int64 k = 0; k < out[0].dim_size(1); k++)
+      {
+        m_crf[j][k] = crf(j, k);
+      }
+    }
+
+    m_loaded = true;
+  };
+
+  if (!isInitLazy())
+  {
+    m_load_fn();
   }
 }
 
@@ -652,17 +659,23 @@ void CppUppsalaTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& curr
     for (const QString& w : i->second)
     {
       if (n == 0)
+      {
         current_sentence.push_back(TPrimitiveToken(w,
                                                    current_token_offset,
                                                    QString::fromStdU32String(current_token)));
+      }
       else
-          current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+      {
+        current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+      }
     }
   }
 }
 
 void CppUppsalaTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences)
 {
+  m_load_fn();
+
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::tokenize" << text.left(100));
   TimeUtils::updateCurrentTime();
   sentences.clear();

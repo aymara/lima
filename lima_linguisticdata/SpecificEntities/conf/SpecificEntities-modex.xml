@@ -33,7 +33,6 @@
         <item value="UnitRecognition"/>
         <item value="DateTimeModex"/>
         <item value="NumexRecognition"/>
-
         <item value="OrganizationModex"/>
         <item value="PersonModex"/>
         <item value="LocationModex"/>
@@ -41,15 +40,28 @@
         <item value="ProductModex"/>
       </list>
     </group>
+    <group name="SpecificEntitiesModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognitionAfterPos"/>
+        <item value="UnitRecognitionAfterPos"/>
+        <item value="DateTimeModexAfterPos"/>
+        <item value="NumexRecognitionAfterPos"/>
+        <item value="OrganizationModexAfterPos"/>
+        <item value="PersonModexAfterPos"/>
+        <item value="LocationModexAfterPos"/>
+        <item value="EventModexAfterPos"/>
+        <item value="ProductModexAfterPos"/>
+      </list>
+    </group>
     <group name="SpecificEntitiesModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="NumberRecognition"/>
         <item value="UnitRecognition"/>
-        <item value="DateTimeModexForLimaserver"/>
+        <item value="DateTimeModex"/>
         <item value="NumexRecognition"/>
-        <item value="OrganizationModexForLimaserver"/>
-        <item value="LocationModexForLimaserver"/>
-        <item value="PersonModexForLimaserver"/>
+        <item value="OrganizationModex"/>
+        <item value="LocationModex"/>
+        <item value="PersonModex"/>
         <item value="EventModex"/>
         <item value="ProductModex"/>
         <item value="EmbededModex"/>
@@ -70,16 +82,29 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="include">
       <list name="includeList">
-        <item value="Numex-modex.xml/resources-eng.ud"/>
-        <item value="DateTime-modex.xml/resources-eng.ud"/>
-        <item value="Organization-modex.xml/resources-eng.ud"/>
-        <item value="Location-modex.xml/resources-eng.ud"/>
-        <item value="Person-modex.xml/resources-eng.ud"/>
-        <item value="Event-modex.xml/resources-eng.ud"/>
-        <item value="Product-modex.xml/resources-eng.ud"/>
+        <item value="Numex-modex.xml/resources-ud"/>
+        <item value="DateTime-modex.xml/resources-ud"/>
+        <item value="Organization-modex.xml/resources-ud"/>
+        <item value="Location-modex.xml/resources-ud"/>
+        <item value="Person-modex.xml/resources-ud"/>
+        <item value="Event-modex.xml/resources-ud"/>
+        <item value="Product-modex.xml/resources-ud"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-ud-eng"/>
+        <item value="DateTime-modex.xml/resources-ud-eng"/>
+        <item value="Organization-modex.xml/resources-ud-eng"/>
+        <item value="Location-modex.xml/resources-ud-eng"/>
+        <item value="Person-modex.xml/resources-ud-eng"/>
+        <item value="Event-modex.xml/resources-ud-eng"/>
+        <item value="Product-modex.xml/resources-ud-eng"/>
       </list>
     </group>
   </module>

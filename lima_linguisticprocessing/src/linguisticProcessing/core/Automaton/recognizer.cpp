@@ -352,10 +352,17 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
         triggermatch.addBackVertex(*vIt,trigger.keep(),"trigger");
         right=*vIt;
       }
+      if (trigger.isHead()) {
+        // if gazetteer trigger is head: assign head to the first word 
+        triggermatch.setHead(position);
+      }
     }
   }
   else {
     triggermatch.addBackVertex(position,trigger.keep(),"trigger");
+    if (trigger.isHead()) {
+      triggermatch.setHead(position);
+    }
     right=position;
   }
 
@@ -419,24 +426,34 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     // treat the constraints for the trigger with the constraint
     // checklist corresponding to this rule
-    //Token* token=get(vertex_token,*(graph.getGraph()),position);
-//     LDEBUG << "Recognizer: checking trigger constraints: ";
 
-    if (!trigger.checkConstraints(graph,position,analysis,
-                                  constraintCheckList)) {
-      // one unary constraint was not verified
-//       LDEBUG << "one unary constraint on trigger not verified";
+    // what to do with constraints on gazeteer triggers ? 
+    // -> apply them on each vertex : useful for constraints which are actually actions
+    // such as AppendEntityFeature, maybe dangerous for constraints that are actual tests
+    // but suppose gazeteer triggers are not used in this case (mostly in syntactic analysis)
 
-    // apply actions (for actions triggered by failure)
+    //  if (!trigger.checkConstraints(graph,position,analysis,
+    //                                constraintCheckList)) {
+    bool constraintsVerified=true;  
+    for (const auto elt: triggermatch) {
+      if (!trigger.checkConstraints(graph,elt.getVertex(),analysis,
+                                    constraintCheckList)) {
+        // one unary constraint was not verified
+        constraintsVerified=false;
+        break;
+      }
+    }
+    if (! constraintsVerified) {
+      // apply actions (for actions triggered by failure)
       if (!currentRule->negative()) {
         currentRule->executeActions(graph, analysis,
                                     constraintCheckList,
                                     false,
                                     0); // match is not used
-//     LDEBUG << "actionSuccess=" << actionSuccess;
       }
       continue;
     }
+    
 
     leftmatch.reinit();
     rightmatch.reinit();
@@ -468,11 +485,15 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       }
       */
       match->addBack(triggermatch);
+      // check if trigger is head
+      if (triggermatch.getHead() != 0) {
+        match->setHead(triggermatch.getHead());
+      }
+
       match->addBack(rightmatch);
       // remove elements not kept at begin and end of the expression
       match->removeUnkeptAtExtremity();
 
-      // check if trigger is head
       match->setType(currentRule->getType());
       match->setLinguisticProperties(currentRule->getLinguisticProperties());
       match->setContextual(currentRule->contextual());
@@ -682,6 +703,17 @@ uint64_t Recognizer::
   // patch for inifinite loop : avoid begin stopped at first step
   //visited.insert(begin);
 
+  //match may include the last vertex: store following vertices to check on those
+  set<LinguisticGraphVertex> afterTheEnd;
+  if (downstreamBound!=graph.lastVertex()) {
+    LinguisticGraphOutEdgeIt outEdge,outEdge_end;
+    boost::tie (outEdge,outEdge_end)=out_edges(downstreamBound,*(graph.getGraph()));
+    for (; outEdge!=outEdge_end; outEdge++) {
+      LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
+      afterTheEnd.insert(next);
+    }
+  }
+  
   bool lastReached = false;
   while (!toVisit.empty())
   {
@@ -707,7 +739,7 @@ uint64_t Recognizer::
       lastReached = true;
     }
 
-    if (currentVertex != graph.firstVertex()) {
+    if (currentVertex != graph.firstVertex() && currentVertex != begin) {
 #ifdef DEBUG_LP
       LDEBUG << "Recognizer: test on vertex " << currentVertex;
 #endif
@@ -722,6 +754,15 @@ uint64_t Recognizer::
         if (returnAtFirstSuccess)
           return numberOfRecognized;
         if (! testAllVertices) { // restart from end of recognized expression
+          // with useSentenceBounds, may be the case that the last vertex in the sentence/segment 
+          // is in the recognized expression: currentVertex may be outside the scope of the sentence
+          // how to test that ? => check if is a vertex following the downstreamBound
+          if (currentVertex==end || afterTheEnd.find(currentVertex)!=afterTheEnd.end()) {
+#ifdef DEBUG_LP
+          LDEBUG << "success: reached the end, stop";
+#endif
+            break;
+          }
 #ifdef DEBUG_LP
           LDEBUG << "success: continue from vertex " << currentVertex;
 #endif

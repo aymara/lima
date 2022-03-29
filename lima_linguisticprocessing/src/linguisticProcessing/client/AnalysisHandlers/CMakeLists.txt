@@ -38,6 +38,7 @@ SET(lima-lp-analysishandlers_LIB_SRCS
   XmlBowDocumentHandler.cpp
   XmlSimpleHandler.cpp
   XmlSimpleStreamHandler.cpp
+  MetaDataHandler.cpp
 )
 
 add_library(lima-lp-analysishandlers SHARED
@@ -137,6 +138,7 @@ install(FILES
     MultimediaDocumentHandler.h
     XmlBowDocumentHandler.h
     XmlSimpleHandler.h
+    MetaDataHandler.h
 #     StructuredBoWToBoWDocument.h
   DESTINATION include/linguisticProcessing/client/AnalysisHandlers
   COMPONENT devel

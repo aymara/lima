@@ -227,7 +227,7 @@ void CreateAlternative::createBeginAlternative(
     LinguisticGraphEdge newEdge;
     bool ok;
     boost::tie(newEdge, ok) = add_edge(previousVertex, alternativeFirstVertex, graph);
-    if (!ok) throw LinguisticProcessingException();
+    if (!ok) throw LinguisticProcessingException("CreateAlternative::createBeginAlternative() - Failed to add edge");
 //      LDEBUG << "  added initial edge " << newEdge;
   }
 }
@@ -257,7 +257,7 @@ void CreateAlternative::attachEndOfAlternative(
     LinguisticGraphEdge newEdge;
     bool ok;
     boost::tie(newEdge, ok) = add_edge(alternativeLastVertex, nextVertex, graph);
-    if (!ok) throw LinguisticProcessingException();
+    if (!ok) throw LinguisticProcessingException("CreateAlternative::attachEndOfAlternative() - Failed to add edge");
 //      LDEBUG << "  added final edge " << newEdge;
   }
 }

@@ -29,9 +29,9 @@
 
 #include <iostream>
 
-namespace Lima 
+namespace Lima
 {
-  
+
 LimaFileSystemWatcherPrivate::LimaFileSystemWatcherPrivate ( LimaFileSystemWatcher* q, QObject* parent  ) : QObject(parent), q_ptr ( q ), m_pathToDeletedFileMapMutex()
 {
 //   MISCLOGINIT;
@@ -60,14 +60,14 @@ void LimaFileSystemWatcherPrivate::delay( int millisecondsToWait )
 }
 void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path )
 {
-  
+
   std::cerr  << "LimaFileSystemWatcherPrivate::slotDirectoryChanged" << path.toUtf8().constData() << std::endl;
   QMutexLocker locker(&m_pathToDeletedFileMapMutex);
   if (m_pathToDeletedFileMap.contains(path))
   {
     // for each of the files associated to the dir 'path', check if it exists again.
     QList<QString> files = m_pathToDeletedFileMap.values(path);
-    Q_FOREACH(QString file, files)
+    for(auto file : files)
     {
       // file has been recreated: watch it again, remove it from list of deleted and signal the change
       if (QFileInfo::exists(file))
@@ -100,7 +100,7 @@ void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
   {
     std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged removed" << path.toUtf8().constData() << std::endl;
     QMutexLocker locker(&m_pathToDeletedFileMapMutex);
-    // explicitely remove the  file from the watcher, otherwise, even if  it is no longer 
+    // explicitely remove the  file from the watcher, otherwise, even if  it is no longer
     // monitored, it cannot be added again
     m_watcher.removePath(path);
     // get file dir

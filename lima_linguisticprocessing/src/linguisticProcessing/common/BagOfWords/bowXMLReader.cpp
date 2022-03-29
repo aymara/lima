@@ -250,10 +250,22 @@ bool BoWXMLHandler::startElement(const QString & namespaceURI, const QString & n
   else if (stringName == "bowNamedEntity") {
     getTokenAttributes(attributes,lemma,category,position,length,id);
     LimaString typeName=getLimaStringAttribute(attributes,"type");
+    Lima::Common::MediaticData::EntityType entityType;
+    try {
+      entityType = MediaticData::MediaticData::single().getEntityType(typeName);
+    } catch (const LimaException& e) {
     // use empty lemma: no need to store lemma for compound
-    boost::shared_ptr< BoWNamedEntity > ne=boost::shared_ptr< BoWNamedEntity >(new BoWNamedEntity(LimaString(),category,
-                                          MediaticData::MediaticData::single().getEntityType(typeName),
-                                          position,length));
+                QString errorString;
+                QTextStream qts(&errorString);
+                qts << __FILE__ << ", line" << __LINE__
+                    << "Unknown entity type" << typeName;
+                LERROR << errorString;
+                throw LimaException(errorString);
+    }
+    boost::shared_ptr< BoWNamedEntity > ne = boost::shared_ptr< BoWNamedEntity >(
+      new BoWNamedEntity(LimaString(),
+                         category, entityType,
+                         position, length));
     m_refMap[id]=ne;
     m_currentComplexToken.push_back(CurrentComplexToken(ne));
   }
@@ -419,27 +431,30 @@ BoWXMLHandler::getStringAttribute(const QXmlAttributes& attributes,
 QDate
 BoWXMLHandler::getDateAttribute(const QXmlAttributes& attributes,
                                   const char* name) const {
-
+  BOWLOGINIT;
   const QString& chars=attributes.value(name);
 
   if (chars==0) {
     ostringstream oss;
     oss << "expected attribute \""<<name<<"\" not found";
+    LERROR << "BoWXMLHandler::getDateAttribute expected attribute \""<<name<<"\" not found";
     throw NoAttributeException(oss.str());
   }
 
   const QString& strDate=chars;
 
   if (strDate == "NotADate") {
-    return QDate();
+      LERROR << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\"";
+      return QDate();
   }
 
   try {
+    LDEBUG << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\" with format \"yyyyMMdd\"";
     return QDate::fromString(strDate,"yyyyMMdd");
   }
   catch (exception& e) {
     BOWLOGINIT;
-    LERROR << "Error trying to read date: " << e.what();
+    LERROR << "BoWXMLHandler::getDateAttribute Error trying to read date: " << e.what();
     return QDate();
   }
 }

@@ -25,11 +25,11 @@ typedef enum {
 class LIMA_ANALYSISHANDLERS_EXPORT MultimediaDocumentHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
-  MultimediaDocumentHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >());
+    MultimediaDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>());
 
-  ~MultimediaDocumentHandler() {};
+    virtual ~MultimediaDocumentHandler() {};
 
-    void handle ( const char* buf,int length ) override;
+    void handle (const char* buf, int length) override;
 
     void startAnalysis(const std::string& bloc_type) override;
 

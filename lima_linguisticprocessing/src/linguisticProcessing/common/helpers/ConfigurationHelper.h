@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -70,6 +70,8 @@ protected:
       const std::string& name,
       int flags = Flags::REQUIRED,
       int default_value = 0);
+
+  bool isInitLazy();
 
 private:
   std::string m_processUnitName;

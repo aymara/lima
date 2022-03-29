@@ -1,18 +1,18 @@
 /*
  *    Copyright 2002-2013 CEA LIST
- * 
+ *
  *    This file is part of LIMA.
- * 
+ *
  *    LIMA is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
  *    (at your option) any later version.
- * 
+ *
  *    LIMA is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Affero General Public License for more details.
- * 
+ *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
@@ -20,17 +20,19 @@
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
 
-#include <QtWidgets>
 #include "annoqt.h"
 #include "annotationConfigurationHandler.h"
 #include "specificEntitiesHandler.h"
 #include "annotationEditWidget.h"
 
+#include <QSplitter>
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <iostream>
+#include <QtCore>
+#include <QtWidgets>
 
 #define VERSION "0.2.3"
 
@@ -107,7 +109,7 @@ void Annoqt::open()
   qDebug() << "Annoqt::open";
   if ( maybeSave() )
   {
-    QString fileName = QFileDialog::getOpenFileName( this, 
+    QString fileName = QFileDialog::getOpenFileName( this,
         "Select a Text to Annotate", m_currentDirectory.isEmpty()?QString():m_currentDirectory  );
 
     if ( !fileName.isEmpty() )
@@ -234,7 +236,7 @@ void Annoqt::createActions()
   searchNextAction->setShortcut( tr( "F3" ) );
   searchNextAction->setStatusTip( tr( "Search the next occurrence of the last searched text" ) );
   connect( searchNextAction, SIGNAL(triggered()), this, SLOT(slotSearchNext()) );
-  
+
 }
 
 void Annoqt::createMenus()
@@ -256,7 +258,7 @@ void Annoqt::createMenus()
   editMenu->addSeparator();
   editMenu->addAction( searchAction );
   editMenu->addAction( searchNextAction );
-  
+
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu( tr( "&Help" ) );
@@ -401,7 +403,7 @@ bool Annoqt::saveFile( const QString &fileName )
 //   out << m_textEdit->toPlainText();
 
 // std::cerr<<m_textEdit->document()->toHtml("utf-8").toUtf8().data() << std::endl;
-  
+
   Q_FOREACH (SpecificEntity* entity, m_entities)
   {
     QString string = entity->string();
@@ -493,7 +495,7 @@ void Annoqt::slotTypesListItemclicked(QListWidgetItem *item)
 
     SpecificEntity* entity = new SpecificEntity(cursor.selectionStart(), cursor.selectionEnd()-cursor.selectionStart(), m_entityNames2Types[m_colorNames2EntityTypes[colorName]], m_currentEntityString);
     connect( entity, SIGNAL(triggered(SpecificEntity*)), this, SLOT(specificEntityTriggered(SpecificEntity*)));
-    
+
     qDebug() << "Annoqt::slotTypesListItemclicked Adding new entity " << entity->position() << entity->length() << entity->type() << entity->string();
     m_entities.push_back(entity);
     showEntities();
@@ -667,9 +669,9 @@ void Annoqt::slotSearch()
   {
     m_textEdit->undo();
   }
-  
+
   QString searchText = QInputDialog::getText(this, tr("Search Text"), tr("Enter the text to search&nbsp;:"));
-  
+
   if (searchText.isEmpty())
   {
     return;
@@ -689,7 +691,7 @@ void Annoqt::slotSearch()
     modifier.setFontOverline(true);
     modifier.setBackground(QBrush(Qt::black));
     modifier.setForeground(QBrush(Qt::white));
-    
+
     m_lastSearchResult.beginEditBlock();
     m_lastSearchResult.mergeCharFormat(modifier);
     m_lastSearchResult.endEditBlock();
@@ -724,7 +726,7 @@ void Annoqt::slotSearchNext()
     modifier.setFontOverline(true);
     modifier.setBackground(QBrush(Qt::black));
     modifier.setForeground(QBrush(Qt::white));
-    
+
     m_lastSearchResult.beginEditBlock();
     m_lastSearchResult.mergeCharFormat(modifier);
     m_lastSearchResult.endEditBlock();
@@ -778,11 +780,11 @@ void Annoqt::slotGoto()
 {
   qDebug() << "Annoqt::slotGoto";
   bool ok;
-  int offset = QInputDialog::getInt(this, 
+  int offset = QInputDialog::getInt(this,
                                     tr("Jump to input"),
-                                    tr("Go to:"), 
-                                    0, 
-                                    0, 
+                                    tr("Go to:"),
+                                    0,
+                                    0,
                                     m_textEdit->document()->toPlainText().size(),
                                     1,
                                     &ok);
@@ -923,7 +925,7 @@ void Annoqt::specificEntityTriggered(SpecificEntity* se)
   modifier.setFontUnderline(true);
   modifier.setFontOverline(true);
   modifier.setBackground(QBrush(Qt::black));
-  
+
   cursor.beginEditBlock();
   cursor.mergeCharFormat(modifier);
   cursor.endEditBlock();
@@ -943,7 +945,7 @@ void Annoqt::showRecursiveEntity(SpecificEntity* se, QTextCursor& cursor)
     qDebug() << "Annoqt::showRecursiveEntity recursive se without frame";
     cursor.setPosition(se->position());
     cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,se->length());
-    
+
     QColor color(m_entityTypes2ColorNames[se->type()]);
     qDebug() << "color" << color;
     QTextFrameFormat format;

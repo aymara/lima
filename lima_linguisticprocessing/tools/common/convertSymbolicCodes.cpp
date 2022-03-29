@@ -90,6 +90,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 //****************************************************************************
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 
 int run(int aargc, char** aargv);
@@ -132,12 +133,13 @@ int run(int argc, char** argv)
     configDirs = configPath.split(LIMA_PATH_SEPARATOR);
   }
 
-  if (QsLogging::initQsLog(configPath) != 0)
-  {
-    LOGINIT("Common::Misc");
-    LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";
-    return EXIT_FAILURE;
-  }
+  QsLogging::initQsLog(configPath);
+//   if (!QsLogging::initQsLog(configPath))
+//   {
+//     std::cerr << "Call to QsLogging::initQsLog(\"" << configPath.toStdString()
+//               << "\") failed." << std::endl << std::endl;
+//     return EXIT_FAILURE;
+//   }
 
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();

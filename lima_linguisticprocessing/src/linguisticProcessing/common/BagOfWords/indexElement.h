@@ -62,7 +62,7 @@ public:
   IndexElement(const uint64_t id,
                const BagOfWords::BoWType type,
                const LimaString& word,
-               const LinguisticCode cat,
+               const LinguisticCode cat = LinguisticCode::ZERO,
                const uint64_t position=0,
                const uint64_t length=0,
                const MediaticData::EntityType neType=MediaticData::EntityType());

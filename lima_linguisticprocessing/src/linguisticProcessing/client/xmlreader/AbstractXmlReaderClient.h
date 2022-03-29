@@ -1,10 +1,26 @@
-/***************************************************************************
- *   Copyright (C) 2009 by CEA - LIST- LIC2M                               *
- *                                                                         *
- ***************************************************************************/
+/*
+    Copyright 2009-2021 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 
 #ifndef ABSTRACTCXMLREADERCLIENT_H
 #define ABSTRACTCXMLREADERCLIENT_H
+
+#include "XmlReaderClient_export.h"
 
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/AbstractFactoryPattern/RegistrableFactory.h"
@@ -16,11 +32,12 @@ namespace Lima {
 }
 namespace Lima
 {
+
 namespace XmlReader
 {
 
 //! @brief interface publique au client d'analyse de fichier XML
-class AbstractXmlReaderClient: public Lima::AbstractProcessingClient
+class XMLREADERCLIENT_EXPORT AbstractXmlReaderClient: public Lima::AbstractProcessingClient
 {
 public:
 
@@ -43,7 +60,7 @@ public:
 
     /** deletes the analysis handler with the given id and removes it */
     virtual void releaseAnalysisHandler(const std::string& handlerId) = 0;
-    
+
     void setMapTagMedia(const std::map<std::string, std::string>& Ids) {
         m_mapTagMedia = Ids;
     };
@@ -52,22 +69,57 @@ public:
         m_defaultMedia = media;
     };
 
+    //! @brief Store a subset of document property attributes extracted from configuration,
+    //! for the purpose of public exposition (introspection) of the document analysis capacities.
+    struct DocPropertyPublicInfo {
+      std::string storageType;
+      std::string cardinality;
+      std::string description;
+      bool isInternal;
+    };
+    //! @brief Store the association of a document property name and its subset of attributes
+    //! @note Type alias (C++11) is far better than typedef
+    using DocPropertyPublicInfoMap = std::map< std::string, DocPropertyPublicInfo >;
+
+    //! @brief Extract from configuration the subset of document property attributes
+    //! from both standard-properties-list and extended-properties-list.
+    //! See configuration at lp-structuredXmlreaderclient . documentXMLParser
+    void setDocumentPropertyConfiguration(
+        Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser* configuration);
+
+    //! @brief Retrieve the document property attributes for both
+    //!  standard and extended properties-list.
+    void getDocumentPropertyConfiguration(
+        DocPropertyPublicInfoMap& standardPrprtyInfos,
+        DocPropertyPublicInfoMap& extendedPrprtyInfos) const
+    {
+      standardPrprtyInfos = m_standardPrprtyInfos;
+      extendedPrprtyInfos = m_extendedPrprtyInfos;
+    }
+
     Lima::AbstractProcessingClientHandler m_processingClientHandler;
 protected:
+
     // Associates a tag name to a media id. Initialized at creation time by
     // the factory which loads the values from its configuration
     std::map<std::string, std::string> m_mapTagMedia;
-    
+
     // If there is no media associated to the current indexing element and this
     // is set, then this media name will be used
     std::string m_defaultMedia;
+
+    // Association of a document property name and its subset of attributes for the standard document properties
+    DocPropertyPublicInfoMap m_standardPrprtyInfos;
+
+    // Association of a document property name and its subset of attributes for the extended document properties
+    DocPropertyPublicInfoMap m_extendedPrprtyInfos;
 };
 
 /**
-         * A factory for the AbstractXmlReaderClient: contains the
-         * registration of all implemented clients that are linked with the
-         * program. The factory dynamically creates the actual clients from
-         * their names.
+ * A factory for the AbstractXmlReaderClient: contains the
+ * registration of all implemented clients that are linked with the
+ * program. The factory dynamically creates the actual clients from
+ * their names.
  */
 class AbstractXmlReaderClientFactory : public Lima::RegistrableFactory<AbstractXmlReaderClientFactory>
 {
@@ -123,7 +175,8 @@ protected:
 
 };
 
-} // XmlProcessing
-} // FrCeaLic2m
+} // XmlReader
+} // Lima
 
 #endif
+

@@ -20,6 +20,8 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
+echoerr() { printf "\e[31;1m%s\e[0m\n" "$*" >&2; }
+
 usage()
 {
 cat << EOF 1>&2; exit 1;
@@ -29,11 +31,11 @@ Options default values are in parentheses.
 
   -a asan           <(OFF)|ON> compile with adress sanitizer
   -d debug-messages <(OFF)|ON> compile with debug messages on in release mode
-  -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -j n              <INTEGER> set the compilation to a number of parallel processes.
                     Default 0 => the value is derived from CPUs available.
+  -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
-  -p package        <OFF|(ON)> package building selection
+  -p package        <(OFF)|ON> package building selection
   -r resources      <precompiled|(build)> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
@@ -42,6 +44,7 @@ Options default values are in parentheses.
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
   -T                Do not use TensorFlow (default is to use it)
   -P tfsrcpath      <> Path to TensorFlow sources
+  -g gui            <OFF|(ON)> compile with GUI
 EOF
 exit 1
 }
@@ -58,12 +61,14 @@ resources="build"
 CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
-WITH_PACK="ON"
+WITH_PACK="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
+WITH_GUI="ON"
+LIMA_SOURCES=$PWD
 
-while getopts ":d:m:n:r:v:G:a:p:P:sTj:" o; do
+while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -116,6 +121,11 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:" o; do
         T)
             USE_TF=false
             ;;
+        g)
+            WITH_GUI=${OPTARG}
+            echo "WITH_GUI=$WITH_GUI"
+            [[ "$WITH_GUI" == "ON" || "$WITH_GUI" == "OFF" ]] || usage
+            ;;
         *)
             usage
             ;;
@@ -134,7 +144,7 @@ else
     current_timestamp=1
 fi
 current_project=`basename $PWD`
-current_project_name="`head -n1 CMakeLists.txt`"
+current_project_name="$(head -n2 CMakeLists.txt | tail -n1)"
 build_prefix=$LIMA_BUILD_DIR/$current_branch
 source_dir=$PWD
 
@@ -152,9 +162,9 @@ if [[ "$j" == "0" ]]; then
   fi
 fi
 if [[ "$j" == "1" ]]; then
-  echo "Linear build"
+  echoerr "Linear build"
 else
-  echo "Parallel build on $j processors"
+  echoerr "Parallel build on $j processors"
 fi
 
 # export VERBOSE=1
@@ -180,7 +190,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja -j $j"
-  make_test=""
+  make_test="ninja test"
   make_install="ninja install"
   make_package="ninja package"
   generator="Ninja"
@@ -194,6 +204,7 @@ elif [[ $CMAKE_GENERATOR == "NMake" ]]; then
   make_cmd="nmake && exit 0"
   make_test="nmake test"
   make_install="nmake install"
+  make_package=""
   generator="NMake Makefiles"
 elif [[ $CMAKE_GENERATOR == "VS" ]]; then
   make_cmd="""
@@ -227,36 +238,62 @@ else
     TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
   fi
 
-  echo "Path to TensorFlow sources: $TF_SOURCES_PATH"
+  echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"
 fi
 
+LIBTORCH_PATH=${LIMA_SOURCES}/extern/libtorch/
+echo "libTorch: " $LIBTORCH_PATH
 
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
-echo "Launching cmake from $PWD"
-cmake  -G "$generator" -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES -DWITH_ARCH=$WITH_ARCH -DWITH_ASAN=$WITH_ASAN -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN -DCMAKE_BUILD_TYPE:STRING=$cmake_mode -DLIMA_RESOURCES:PATH="$resources" -DLIMA_VERSION_RELEASE:STRING="$release" -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH $source_dir
-
-echo "Running make command:"
-echo "$make_cmd"
-eval $make_cmd && eval $make_test && eval $make_install
+echoerr "Launching cmake from $PWD on $source_dir"
+cmake  -G "$generator" \
+    -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
+    -DWITH_ARCH=$WITH_ARCH \
+    -DWITH_ASAN=$WITH_ASAN \
+    -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=$SHORTEN_POR_CORPUS_FOR_SVMLEARN \
+    -DCMAKE_BUILD_TYPE:STRING=$cmake_mode \
+    -DLIMA_RESOURCES:PATH="$resources" \
+    -DLIMA_VERSION_RELEASE:STRING="$release" \
+    -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
+    -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
+    -DWITH_GUI=$WITH_GUI \
+    -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
+    $source_dir
 result=$?
-if [ $WITH_PACK == "ON" ] ;
-then
-  $make_package
-  result=$?
-fi
+if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
 
-#exit $result
+echoerr "Running make command:"
+echo "$make_cmd"
+eval $make_cmd
+result=$?
+if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
 
-if [ "x$current_project_name" != "xproject(Lima)" ];
+echoerr "Running make test:"
+echo "$make_test"
+eval $make_test
+result=$?
+if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+
+echoerr "Running make install:"
+echo "$make_install"
+eval $make_install
+result=$?
+if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+
+if [ $WITH_PACK == "ON" ];
 then
-  eval $make_test && eval $make_install
+  echoerr "Running make package:"
+  echo "$make_package"
+  eval $make_package
   result=$?
+  if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
 fi
 
 if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
 then
+  echoerr "Install package:"
   install -d $LIMA_DIST/share/apps/lima/packages
   if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
     install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
@@ -266,6 +303,9 @@ then
   fi
 fi
 
+echoerr "Built LIMA successfully.";
 popd
 
 exit $result
+
+

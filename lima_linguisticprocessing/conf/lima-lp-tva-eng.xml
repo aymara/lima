@@ -137,11 +137,14 @@
         <item value="sentenceBoundariesLogger"/>
       </list>
     </group>
+    <group name="sentenceBoundariesLogger" class="SentenceBoundariesXmlLogger">
+    </group>
     <group name="fakeMultiLevel" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
       </list>
     </group>
     <group name="conllureader" class="ConlluReader">
+      <param key="boundaryMicro" value="SENT"/>
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>

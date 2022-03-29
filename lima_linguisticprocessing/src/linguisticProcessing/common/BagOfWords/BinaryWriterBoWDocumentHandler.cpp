@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Mar  7 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "BinaryWriterBoWDocumentHandler.h"
@@ -64,7 +64,7 @@ openSBoWIndexingNode(const Misc::GenericDocumentProperties* /*properties*/,
 }
 
 void BinaryWriterBoWDocumentHandler::
-processSBoWText(const BoWText* boWText, 
+processSBoWText(const BoWText* boWText,
                 bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::BOW_TEXT_BLOC);
@@ -72,7 +72,7 @@ processSBoWText(const BoWText* boWText,
 }
 
 void BinaryWriterBoWDocumentHandler::
-processProperties(const Misc::GenericDocumentProperties* properties, 
+processProperties(const Misc::GenericDocumentProperties* properties,
                   bool /*useIterators*/, bool /*useIndexIterator*/)
 {
   Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::DOCUMENT_PROPERTIES_BLOC);
@@ -83,6 +83,7 @@ void BinaryWriterBoWDocumentHandler::
 closeSBoWNode()
 {
   Common::Misc::writeOneByteInt(m_outputStream,Common::BagOfWords::END_BLOC);
+  m_outputStream.flush();
 }
 
 

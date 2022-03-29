@@ -293,7 +293,7 @@ void AnalysisThread::startAnalysis()
     {
       LIMASERVERLOGINIT;
       LERROR << "AnalysisThread::startAnalysis catch LinguisticProcessingException:"
-              << e.what();
+              << e.what() << metaData;
       if (QString::fromUtf8(e.what()).startsWith("can't get pipeline"))
       {
         m_d->m_response_code = 400;

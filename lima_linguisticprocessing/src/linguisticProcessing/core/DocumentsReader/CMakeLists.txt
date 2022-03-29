@@ -37,6 +37,7 @@ target_link_libraries(lima-xp-documentsreader
   lima-lp-linguisticanalysisstructure
   lima-lp-lineartextrepresentation
   lima-lp-textsegmentation
+  lima-xp-qtsgmlentities
   ${QT_LIBRARIES}
 )
 

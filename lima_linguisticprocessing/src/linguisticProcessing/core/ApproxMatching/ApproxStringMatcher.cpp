@@ -170,12 +170,25 @@ void ApproxStringMatcher::init(
   {
     std::string entityName=unitConfiguration.getParamsValueAtKey("entityName");
     LimaString lsentityName = Lima::Common::Misc::utf8stdstring2limastring(entityName);
-    m_entityType = Common::MediaticData::MediaticData::single().getEntityType(lsentityName);
+    try {
+      m_entityType = Common::MediaticData::MediaticData::single().getEntityType(lsentityName);
+    } catch (const LimaException& e) {
+      QString errorString;
+      QTextStream qts(&errorString);
+      qts << __FILE__ << ", line" << __LINE__ << "Unknown entity type" << lsentityName;
+      LERROR << errorString;
+      throw InvalidConfiguration(errorString.toStdString());
+    }
   }
   catch (NoSuchParam& )
   {
-    LERROR << "no param 'entityGoup' in ApproxStringMatcher group for language " << (int) m_language;
-    throw InvalidConfiguration();
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << __FILE__ << ", line" << __LINE__
+        << "no param 'entityGoup' in ApproxStringMatcher group for language "
+        << (int) m_language;
+    LERROR << errorString;
+    throw InvalidConfiguration(errorString.toStdString());
   }
 
   try

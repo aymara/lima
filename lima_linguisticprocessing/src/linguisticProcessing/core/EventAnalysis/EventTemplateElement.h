@@ -54,7 +54,8 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateElement
    const LinguisticAnalysisStructure::AnalysisGraph* getGraph() const { return m_graph; }
    LinguisticGraphVertex getVertex() const { return m_vertex; }
    LinguisticAnalysisStructure::Token* getToken() const;
-   uint64_t getPosition() const;
+   uint64_t getPositionBegin() const;
+   uint64_t getPositionEnd() const;
 
    //comparison function: do not use equality operator because it's not strict equality
    bool isSimilar(const EventTemplateElement& elt) const;

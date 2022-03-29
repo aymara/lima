@@ -1,5 +1,5 @@
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -29,13 +29,8 @@ set(FRE_RULES_FILES
   rules-fre-pleonasticPronouns.txt
   rules-fre-heterodeps.txt
   rules-fre-heterodeps-specializer.txt
-  simplification-first-rules-fre.txt
-  simplification-quotes-rules-fre.txt
-  simplification-last-rules-fre.txt
-  simplification-rules-fre.txt
   rules-fre-dummy.txt
   rules-compoundTense.txt
-  rules-fre-coord.txt 
 )
 COMPILE_SA_RULES_WRAPPER (fre ${FRE_RULES_FILES})
 

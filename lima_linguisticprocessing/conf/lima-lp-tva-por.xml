@@ -36,10 +36,6 @@
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
-        <!--item value="syntacticAnalyzerSimplifyFirst"/-->
-        <!--item value="syntacticAnalyzerSimplify"/-->
-        <!--item value="syntacticAnalyzerSimplifyCoord"/-->
-        <!--item value="syntacticAnalyzerSimplifyLast"/-->
         <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="syntacticAnalyzerDummy"/-->
@@ -88,9 +84,6 @@
         <item value="sentenceBoundariesFinder"/>
         <!--item value="syntacticAnalyzerChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
-        <!--item value="syntacticAnalyzerSimplifyFirst"/>
-        <item value="syntacticAnalyzerSimplify"/>
-        <item value="syntacticAnalyzerSimplifyLast"/>-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
@@ -220,16 +213,16 @@
      </map>
     </group>
     <group name="wordSenseDisambiguation" class="WordSenseDisambiguation" >
-      <!--param key="mode" value="b_Romanseval_most_frequent"/>     
-      <param key="sensesPath" value="/home/cm218888/opendata/romanseval_data/SenseInventory" /-->      
+      <!--param key="mode" value="b_Romanseval_most_frequent"/>
+      <param key="sensesPath" value="/home/cm218888/opendata/romanseval_data/SenseInventory" /-->
       <param key="mode" value="b_Jaws_most_frequent"/>
-      <param key="sensesPath" value="/home/cm218888/otherdata/jaws-1.0/SenseInventory" />      
+      <param key="sensesPath" value="/home/cm218888/otherdata/jaws-1.0/SenseInventory" />
       <!--param key="mode" value="s_Wsi_mrd"/>
-      <param key="sensesPath" value="/home/cm218888/otherdata/wsi/clustersBin" />      
-      <param key="mapping" value="m_Jaws_senses" />      
+      <param key="sensesPath" value="/home/cm218888/otherdata/wsi/clustersBin" />
+      <param key="mapping" value="m_Jaws_senses" />
       <param key="mappingFile" value="mapping.txt" /-->
       <param key="dictionaryFile" value="/home/cm218888/otherdata/words.ids" />
-      <param key="bestNNDir" value="knnall" />  
+      <param key="bestNNDir" value="knnall" />
       <list name="NounContextList">
         <item value="COD_V"/>
         <!--item value="SUJ_V"/>
@@ -333,7 +326,7 @@
     <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
       <param key="graph" value="PosGraph"/>
       <list name="micros">
-        <item value="PONCTU_FORTE" />  
+        <item value="PONCTU_FORTE" />
       </list>
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
@@ -364,18 +357,6 @@
           <item value="compoundTensesRules"/>
       </list>
       <param key="applySameRuleWhileSuccess" value="true"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyFirst" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonFirst"/>
-    </group>
-    <group name="syntacticAnalyzerSimplify" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomaton"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyCoord" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonCoord"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyLast" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonLast"/>
     </group>
     <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
       <param key="rules" value="heteroSyntagmaticRelationRules"/>
@@ -454,7 +435,7 @@
     </group>
     <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".default.xml"/>
-    </group>    
+    </group>
     <group name="wordSenseXmlLogger" class="WordSenseXmlLogger">
       <param key="outputSuffix" value=".senses.xml"/>
     </group>
@@ -899,18 +880,6 @@
       <param key="rules" value="SyntacticAnalysis/rules-compoundTense.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
     </group>
-    <group name="simplifyAutomatonFirst" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-first-rules-por.txt.bin"/>
-    </group>
-    <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-por.txt.bin"/>
-    </group>
-    <group name="simplifyAutomatonCoord" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-por-coord.bin"/>
-    </group>
-    <group name="simplifyAutomatonLast" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-last-rules-por.txt.bin"/>
-    </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-por-heterodeps.txt.bin"/>
     </group>
@@ -928,8 +897,8 @@
     <group name="bowTextHandler" class="BowTextHandler"/>
     <group name="bowDocumentHandler" class="BowDocumentHandler"/>
     <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
-    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>    
-    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>    
+    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
     <group name="xmlDocumentHandler" class="xmlDocumentHandler"/>
   </module>
 </modulesConfig>

@@ -27,6 +27,7 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
 
 namespace Lima {
 namespace Common {
@@ -69,154 +70,130 @@ uint64_t countLines(QFile& file)
   return result;
 }
 
-QStringList buildConfigurationDirectoriesList(const QStringList& projects, const QStringList& paths)
+// Appends paths from source to target if following conditions are met:
+// - path isn't empty
+// - path isn't appended previously
+// - path exists
+void appendNonEmptyDirs(QStringList& target, const QStringList& source)
 {
-//  qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+  for (const auto& path: source)
+  {
+    if ( !path.isEmpty() && !target.contains(path) && QDir(path).exists() )
+    {
+      target << path;
+    }
+  }
+}
+
+QString getEnvVar(const QString& name)
+{
+  return QString::fromUtf8(qgetenv((name.toUpper()).toStdString().c_str()).constData());
+}
+
+QString getDataHome()
+{
+  QString dataHome = QString::fromUtf8(qgetenv("XDG_DATA_HOME"));
+  if (dataHome.isEmpty())
+  {
+    dataHome = QString::fromUtf8(qgetenv("HOME"));
+    if (!dataHome.isEmpty())
+    {
+      dataHome += "/.local/share/";
+    }
+  }
+  return dataHome;
+}
+
+// Appends path in case it exists. Otherwise appends alt_path
+void appendFirstOrSecond(QStringList& target, const QString& path, const QString& alt_path)
+{
+  if ( QDir( path ).exists() )
+  {
+    appendNonEmptyDirs(target, QStringList(path));
+  }
+  else
+  {
+    appendNonEmptyDirs(target, QStringList(alt_path));
+  }
+}
+
+// Calls appendFirstOrSecond for given project
+void appendFirstOrSecondForProject(QStringList& target,
+                                   const QString& project,
+                                   const QString& path_prefix,
+                                   const QString& path_postfix = QString(""))
+{
+  appendFirstOrSecond(target,
+                      getEnvVar(project + "_DIST") + path_prefix + project + path_postfix,
+                      QString::fromUtf8("/usr/") + path_prefix + project + path_postfix);
+}
+
+void buildDirectoriesListForProject(QStringList& target,
+                                    const QString& project,
+                                    const QString& env_postfix,               // "_CONF" or "_RESOURCES"
+                                    const QString& path_prefix,               // "/share/config/" or "/share/apps"
+                                    const QString& path_postfix = QString("") // "" or "/resources
+                                    )
+{
+  QStringList dirs;
+  QString var = getEnvVar(project + env_postfix);
+  if ( !var.isEmpty() )
+  {
+    dirs << var.split(LIMA_PATH_SEPARATOR);
+  }
+
+  appendNonEmptyDirs(target, dirs);
+
+  if ( dirs.isEmpty() )
+  {
+    appendFirstOrSecondForProject(target, project, path_prefix, path_postfix);
+  }
+
+}
+
+QStringList buildConfigurationDirectoriesList(const QStringList& projects,
+                                              const QStringList& paths)
+{
+  //qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
-  for (auto path = paths.begin(); path != paths.end(); ++path)
-  {
-    if (!path->isEmpty() && QDir(*path).exists())
-    {
-      configDirs << *path;
-    }
-  }
-  for (auto it = projects.begin(); it != projects.end(); ++it)
-  {
-    QString project = *it;
-    QStringList confDirs;
-    QString projectConf = QString::fromUtf8(qgetenv((project.toUpper()+"_CONF").toStdString().c_str()).constData());
-    if (!projectConf.isEmpty())
-      confDirs << projectConf.split(LIMA_PATH_SEPARATOR);
-    for (auto configDir = confDirs.begin(); configDir != confDirs.end(); ++configDir)
-    {
-//       qDebug() << "buildConfigurationDirectoriesList testing given" << *configDir;
-      if (!configDir->isEmpty() && QDir(*configDir).exists())
-      {
-        if (!configDirs.contains(*configDir))
-        {
-          configDirs << *configDir;
-        }
-      }
-    }
-    if (confDirs.isEmpty())
-    {
-      QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/" + project;
-//       qDebug() << "buildConfigurationDirectoriesList testing project dist" << configDir;
-      if (!configDir.isEmpty() && QDir( configDir ).exists() )
-      {
-        if (!configDirs.contains(configDir))
-        {
-          configDirs << configDir;
-        }
-      }
-      else
-      {
-        configDir = QString::fromUtf8("/usr/share/config/") + project;
-//         qDebug() << "buildConfigurationDirectoriesList testing usr" << configDir
-//                   << configDir.isEmpty() << QDir( configDir ).exists();
-        if (!configDir.isEmpty() && QDir( configDir ).exists() )
-        {
-          if (!configDirs.contains(configDir))
-          {
-            configDirs << configDir;
-          }
-        }
-      }
-    }
 
-    // If current project is not lima, try to add a lima config dir for this project
-    if (project != "lima")
-    {
-      QString configDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/config/lima";
-      if (!configDir.isEmpty() && QDir( configDir ).exists())
-      {
-        if (!configDirs.contains(configDir))
-        {
-          configDirs << configDir;
-        }
-      }
-      else
-      {
-        configDir = QString::fromUtf8("/usr/share/config/lima") ;
-        if (!configDir.isEmpty() && QDir( configDir ).exists() )
-        {
-          if (!configDirs.contains(configDir))
-          {
-            configDirs << configDir;
-          }
-        }
-      }
-    }
+  QString dataHome = getDataHome();
+
+  appendNonEmptyDirs(configDirs, QStringList(dataHome + "/lima/config/"));
+
+  appendNonEmptyDirs(configDirs, paths);
+
+  for (const auto& project: projects)
+  {
+    buildDirectoriesListForProject(configDirs, project, "_CONF", "/share/config/");
   }
 
-//  qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
+  // If current project is not lima, try to add a lima config dir for this project
+  if (!projects.contains("lima"))
+  {
+    appendFirstOrSecondForProject(configDirs, QString("lima"), "_CONF", "/share/config/");
+  }
+
+  //qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
-QStringList buildResourcesDirectoriesList(const QStringList& projects, const QStringList& paths)
+QStringList buildResourcesDirectoriesList(const QStringList& projects,
+                                          const QStringList& paths)
 {
-//   qDebug() << "buildResourcesDirectoriesList" << projects << paths;
+  // qDebug() << "buildResourcesDirectoriesList" << projects << paths;
   QStringList resourcesDirs;
-  for (auto it = projects.begin(); it != projects.end(); ++it)
-  {
-    QString project = *it;
-    QStringList resDirs;
-    QString projectRes = QString::fromUtf8(qgetenv((project.toUpper()+"_RESOURCES").toStdString().c_str()).constData());
-    if (!projectRes.isEmpty())
-      resDirs << projectRes.split(LIMA_PATH_SEPARATOR);
-    for (auto resourcesDir = resDirs.begin(); resourcesDir != resDirs.end(); ++resourcesDir)
-    {
-      if (QDir(*resourcesDir).exists())
-      {
-        resourcesDirs << *resourcesDir;
-      }
-    }
-    if (resDirs.isEmpty())
-    {
-      QString resourcesDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/apps/" + project + "/resources";
-      if ( QDir( resourcesDir ).exists() )
-      {
-        resourcesDirs << resourcesDir;
-      }
-      else
-      {
-        resourcesDir = QString::fromUtf8("/usr/share/apps/") + project + "/resources";
-        if ( QDir( resourcesDir ).exists() )
-        {
-          resourcesDirs << resourcesDir;
-        }
-      }
-    }
-    // If current project is not lima, try to add a lima resources dir for this project
-    if (project != "lima")
-    {
-      QString resourcesDir = QString::fromUtf8(qgetenv((project.toUpper()+"_DIST").toStdString().c_str()).constData()) + "/share/apps/lima/resources";
-      if ( QDir( resourcesDir ).exists() )
-      {
-        if (!resourcesDirs.contains(resourcesDir))
-        {
-          resourcesDirs << resourcesDir;
-        }
-      }
-      else
-      {
-        resourcesDir = QString::fromUtf8("/usr/share/apps/lima/resources");
-        if ( QDir( resourcesDir ).exists() )
-        {
-          if (!resourcesDirs.contains(resourcesDir))
-          {
-            resourcesDirs << resourcesDir;
-          }
-        }
-      }
-    }
+  QString dataHome = getDataHome();
 
-  }
-  for (auto path = paths.begin(); path != paths.end(); ++path)
+  appendNonEmptyDirs(resourcesDirs, QStringList(dataHome + "/lima/resources/"));
+
+  for (const auto& project: projects)
   {
-    if (!path->isEmpty() && QDir(*path).exists())
-      resourcesDirs << *path;
+    buildDirectoriesListForProject(resourcesDirs, project, "_RESOURCES",
+                                   "/share/apps/", "/resources");
   }
+
+  appendNonEmptyDirs(resourcesDirs, paths);
 
   LOGINIT("FilesReporting");
   LINFO << "Resources directories are:" << resourcesDirs;
@@ -228,20 +205,20 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
   QStringList pathsList = paths.split(separator);
   Q_FOREACH(QString path, pathsList)
   {
-    if (QFileInfo::exists(path+ "/" + fileName))
+    if (QFileInfo::exists(path + "/" + fileName))
     {
 #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
       {
       LOGINIT("FilesReporting");
-      LDEBUG << "File found:" << path+ "/" + fileName;
+      LDEBUG << "File found:" << path + "/" + fileName;
       }
 #endif
-      return path+ "/" + fileName;
+      return path + "/" + fileName;
     }
   }
-  std::cerr << "WARNING: findFileInPaths no '" << fileName.toUtf8().constData()
-            << "' found in '" << paths.toUtf8().constData()
-            << "' separated by '" << separator.toLatin1() << "'" << std::endl;
+  LOGINIT("FilesReporting");
+  LWARN << "findFileInPaths no '" << fileName << "' found in '" << paths
+            << "' separated by '" << separator << "'";
   return QString();
 }
 

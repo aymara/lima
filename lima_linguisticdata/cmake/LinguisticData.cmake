@@ -294,7 +294,7 @@ endmacro(DISAMBMATRICES _lang)
 ###############
 # Compile rules
 
-macro (COMPILE_RULES _lang)
+macro (COMPILE_RULES _lang _dest)
   set (COMPILE_RULES_DEBUG_MODE)
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
     set (COMPILE_RULES_DEBUG_MODE "--debug")
@@ -302,9 +302,10 @@ macro (COMPILE_RULES _lang)
   foreach(_current ${ARGN})
     add_custom_command(
       OUTPUT ${_current}.bin
-      COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
+      COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${_dest}/${_current}.bin
       DEPENDS ${_current} compile-rules
-      COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${CMAKE_CURRENT_BINARY_DIR}/${_current}.bin"
+      COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} ${COMPILE_RULES_DEBUG_MODE} --language=${_lang} ${_current} -o${_dest}/${_current}.bin"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endforeach()
 endmacro (COMPILE_RULES)
@@ -368,6 +369,7 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_BINARY_DIR}/execEnv/config/Person-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Product-modex.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limacommon.log.properties
       ${CMAKE_BINARY_DIR}/execEnv/config/log4cpp/limalp.log.properties
@@ -416,6 +418,8 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/conf/Miscellaneous-modex.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/Miscellaneous-modex.xml
+
+
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
@@ -490,6 +494,8 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
       ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.tok
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
@@ -497,7 +503,71 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.tok
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.tok
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    DEPENDS
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      ${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.tok
+      ${PROJECT_SOURCE_DIR}/scratch/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok
+    COMMENT "create language specific config env"
+    VERBATIM
+  )
+  add_custom_target(
+    rules-${_lang}-execEnv
+    ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.tok
+    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/tokenizerAutomaton-${_lang}.chars.tok
+
+  )
+endmacro ()
+
+###############
+#
+# LIMA_GENERIC_CONFIGENV_UD
+#
+#
+####################
+macro (LIMA_GENERIC_CONFIGENV_UD _lang)
+  message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV_UD(${_lang})${C_Norm}" )
+
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    COMMAND ${CMAKE_COMMAND} -E copy
+     ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
@@ -510,7 +580,7 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
     DEPENDS
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
       ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
@@ -530,47 +600,6 @@ endmacro ()
 
 ###############
 #
-# LIMA_GENERIC_CONFIGENV_UD
-#
-#
-####################
-macro (LIMA_GENERIC_CONFIGENV_UD _lang)
-  message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV_UD(${_lang})${C_Norm}" )
-
-  add_custom_command(
-    OUTPUT
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-      ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
-    COMMENT "create language specific config env"
-    VERBATIM
-  )
-  add_custom_target(
-    rules-${_lang}-execEnv
-    ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-  )
-endmacro ()
-
-###############
-#
 # LIMA_PRETEST_CONFIGENV
 #
 #
@@ -580,8 +609,19 @@ macro (LIMA_PRETEST_CONFIGENV _lang)
 
   add_custom_command(
     OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/idiomaticExpressions-${_lang}.bin
+      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/default-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoKey-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/rules-idiom/${_lang}/src/idiomaticExpressions-${_lang}.bin
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/idiomaticExpressions-${_lang}.bin
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/convert/default-${_lang}.dat
+        ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/default-${_lang}.dat
     COMMAND
       ${CMAKE_COMMAND} -E copy
         ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
@@ -591,10 +631,10 @@ macro (LIMA_PRETEST_CONFIGENV _lang)
         ${CMAKE_BINARY_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
         ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/dicoDat-${_lang}.dat
     DEPENDS
-      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoKey-${_lang}.dat
-      #${CMAKE_CURRENT_BINARY_DIR}/analysisDictionary/${_lang}/compile/dicoDat-${_lang}.dat
+      dicoxml${_lang}
       compilexmldic${_lang}dico
       rules-${_lang}-execEnv
+      rules-idiom-${_lang}
     COMMENT "copy language specific LinguisticProcessing resources to execEnv"
     VERBATIM
   )
@@ -617,7 +657,7 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
   set (BINFILENAMES)
   foreach(_current ${ARGN})
     get_filename_component(BINFILENAME ${_current} NAME_WE)
-    set(BINFILENAME ${CMAKE_CURRENT_BINARY_DIR}/${BINFILENAME}.bin)
+    set(BINFILENAME ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/${BINFILENAME}.bin)
     set (BINFILENAMES ${BINFILENAMES} ${BINFILENAME})
     add_custom_command(
       OUTPUT ${BINFILENAME}
@@ -646,7 +686,8 @@ macro (SPECIFICENTITIES _subtarget _lang _group)
     compile-rules
   )
 
-endmacro (SPECIFICENTITIES _lang _group)
+endmacro (SPECIFICENTITIES _subtarget _lang _group)
+
 
 ####################
 # Syntactic analysis
@@ -657,7 +698,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
     set (${_lang}_BIN_RULES_FILES ${RULES_FILE}.bin ${${_lang}_BIN_RULES_FILES})
   endforeach(RULES_FILE ${ARGN})
 
-  COMPILE_RULES(${_lang} ${ARGN})
+  COMPILE_RULES(${_lang} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis ${ARGN})
 
   add_custom_target(
     syntanalrules-${_lang}
@@ -671,11 +712,12 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
 
   foreach (file ${${_lang}_BIN_RULES_FILES})
     install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/${file}
+        ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/${file}
       COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
   endforeach (file ${${_lang}_BIN_RULES_FILES})
 endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
 
+####
 macro (ADD_SA_RULES_DEPENDS _lang)
   set(${_lang}_SA_DEPENDS_FILES)
 
@@ -688,6 +730,8 @@ macro (ADD_SA_RULES_DEPENDS _lang)
   add_custom_command(
     OUTPUT syntanaldepends
     COMMAND touch syntanaldepends
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis
+    COMMAND ${CMAKE_COMMAND} -E copy ${${_lang}_SA_DEPENDS_FILES} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/
     DEPENDS ${${_lang}_SA_DEPENDS_FILES}
     VERBATIM
   )

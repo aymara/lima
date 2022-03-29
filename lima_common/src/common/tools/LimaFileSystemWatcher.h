@@ -23,17 +23,17 @@
 #include "common/LimaCommon.h"
 #include <QObject>
 
-namespace Lima 
+namespace Lima
 {
 
 class LimaFileSystemWatcherPrivate;
 
 /**
  * @brief @ref LimaFileSystemWatcher extends QFileSystemWatcher to work on replaced files
- * 
- * QFileSystemWatcher stops monitoring a file when it is suppressed. @@ref LimaFileSystemWatcher 
+ *
+ * QFileSystemWatcher stops monitoring a file when it is suppressed. @@ref LimaFileSystemWatcher
  * watch the deleted file directory to watch again the former when it is created again.
- * 
+ *
  * The public API is a subpart of those of QFileSystemWatcher.
  * @todo Complete the API to implement all the QFileSystemWatcher one
  */

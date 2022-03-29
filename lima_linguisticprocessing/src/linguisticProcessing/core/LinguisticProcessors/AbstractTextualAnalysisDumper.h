@@ -54,7 +54,6 @@ class LIMA_LINGUISTICPROCESSORS_EXPORT AbstractTextualAnalysisDumper : public Me
  protected:
   MediaId m_language;
   std::ostream* m_out;
-
   std::string m_handlerName;      /* < the handler for communication with the client */
 
   // members for file management

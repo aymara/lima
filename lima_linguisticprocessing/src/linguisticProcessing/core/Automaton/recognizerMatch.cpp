@@ -314,10 +314,11 @@ isOverlapping(const RecognizerMatch& otherMatch) const {
 //**********************************************************************
 void RecognizerMatch::addBackVertex(const LinguisticGraphVertex& v,
                                     bool isKept, const LimaString& ruleElementId ) {
-#ifdef DEBUG_LP
-  AULOGINIT;
-  LDEBUG << "RecognizerMatch:addBackVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
-#endif
+// #ifdef DEBUG_LP
+//   AULOGINIT;
+//   LDEBUG << "RecognizerMatch:addBackVertex(v:" << v << ", isKept:" << isKept << ", ruleElmtId:" << ruleElementId << ")";
+//   LDEBUG << "                in match " << *this;
+// #endif
   push_back(MatchElement(v,isKept, ruleElementId));
 }
 
@@ -325,6 +326,10 @@ void RecognizerMatch::popBackVertex() {
   if (empty()) {
     return;
   }
+// #ifdef DEBUG_LP
+//   AULOGINIT;
+//   LDEBUG << "RecognizerMatch:popBackVertex() for match " << *this;
+// #endif
   pop_back();
 }
 

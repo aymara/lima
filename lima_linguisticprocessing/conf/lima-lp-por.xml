@@ -37,11 +37,6 @@
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
-        <!--item value="syntacticAnalyzerSimplifyFirst"/-->
-        <!--item value="syntacticAnalyzerSimplify"/-->
-        <!--item value="syntacticAnalyzerSimplifyCoord"/-->
-        <!--item value="syntacticAnalyzerSimplifyLast"/-->
-        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="syntacticAnalyzerDummy"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
@@ -89,9 +84,6 @@
         <item value="sentenceBoundariesFinder"/>
         <!--item value="syntacticAnalyzerChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
-        <!--<item value="syntacticAnalyzerSimplifyFirst"/>
-        <item value="syntacticAnalyzerSimplify"/>
-        <item value="syntacticAnalyzerSimplifyLast"/>-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <item value="dotDepGraphWriter"/>
         <item value="easyXmlDumper"/>
@@ -386,18 +378,6 @@
           <item value="compoundTensesRules"/>
       </list>
       <param key="applySameRuleWhileSuccess" value="true"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyFirst" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonFirst"/>
-    </group>
-    <group name="syntacticAnalyzerSimplify" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomaton"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyCoord" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonCoord"/>
-    </group>
-    <group name="syntacticAnalyzerSimplifyLast" class="SyntacticAnalyzerSimplify">
-      <param key="simplifyAutomaton" value="simplifyAutomatonLast"/>
     </group>
     <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
       <param key="rules" value="heteroSyntagmaticRelationRules"/>
@@ -920,18 +900,6 @@
     <group name="compoundTensesRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-compoundTense.txt.bin"/>
       <param key="applySameRuleWhileSuccess" value="true"/>
-    </group>
-    <group name="simplifyAutomatonFirst" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-first-rules-por.txt.bin"/>
-    </group>
-    <group name="simplifyAutomaton" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-rules-por.txt.bin"/>
-    </group>
-    <group name="simplifyAutomatonCoord" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/rules-por-coord.bin"/>
-    </group>
-    <group name="simplifyAutomatonLast" class="AutomatonRecognizer">
-      <param key="rules" value="SyntacticAnalysis/simplification-last-rules-por.txt.bin"/>
     </group>
     <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
       <param key="rules" value="SyntacticAnalysis/rules-por-heterodeps.txt.bin"/>

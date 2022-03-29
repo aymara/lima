@@ -20,7 +20,7 @@
  * \file    ConllListModel.cpp
  * \author  Jocelyn Vernay
  * \date    Wed, Sep 06 2017
- * 
+ *
  */
 
 #include "ConllListModel.h"
@@ -28,50 +28,49 @@
 #include "LimaGuiCommon.h"
 
 #include <iostream>
-#include <QtDebug>
 
 
-namespace Lima 
+namespace Lima
 {
-namespace Gui 
-{
-
-ConllRow::ConllRow(const std::string& s, QObject* p) : QObject(p), CONLL_Line(s) 
+namespace Gui
 {
 
-}
-
-ConllListModel::ConllListModel(QObject *p) : QAbstractTableModel(p) 
+ConllRow::ConllRow(const std::string& s, QObject* p) : QObject(p), CONLL_Line(s)
 {
 
 }
 
-ConllListModel::ConllListModel(const QString& content, QObject* p) : QAbstractTableModel(p) 
+ConllListModel::ConllListModel(QObject *p) : QAbstractTableModel(p)
+{
+
+}
+
+ConllListModel::ConllListModel(const QString& content, QObject* p) : QAbstractTableModel(p)
 {
   fromText(content);
 }
 
-ConllListModel::~ConllListModel() 
+ConllListModel::~ConllListModel()
 {
   for (auto& d : m_data) {
     delete d;
   }
 }
 
-void ConllListModel::fromText(const QString& text) 
+void ConllListModel::fromText(const QString& text)
 {
   CONLLLOGINIT;
   LDEBUG << "ConllListModel::fromText" << text;
-  
+
   beginResetModel();
-  for (auto& d : m_data) 
+  for (auto& d : m_data)
   {
     delete d;
   }
   m_data.clear();
   std::vector<std::string> data = into_lines(text.toStdString());
 
-  for (unsigned int i=0; i<data.size(); i++) 
+  for (unsigned int i=0; i<data.size(); i++)
   {
     if (!data[i].empty()) {
       m_data.push_back(new ConllRow(data[i]));
@@ -80,31 +79,31 @@ void ConllListModel::fromText(const QString& text)
   endResetModel();
 }
 
-int ConllListModel::rowCount(const QModelIndex &parent) const 
+int ConllListModel::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
   return m_data.size();
 }
 
-int ConllListModel::columnCount(const QModelIndex &parent) const 
+int ConllListModel::columnCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
   return 3;
 }
 
-QVariant ConllListModel::data(const QModelIndex &index, int rol) const 
+QVariant ConllListModel::data(const QModelIndex &index, int rol) const
 {
   if ( rol > Qt::UserRole)
   {
     return m_data[index.row()]->at(rol - 1 - Qt::UserRole);
   }
-  else 
+  else
   {
     return QVariant();
   }
 }
 
-QHash<int, QByteArray> ConllListModel::roleNames() const 
+QHash<int, QByteArray> ConllListModel::roleNames() const
 {
   QHash<int, QByteArray> rn = QAbstractItemModel::roleNames();
   rn[ID] = "id"; // Those strings are direclty related to the 'TableViewColumn' elements role property

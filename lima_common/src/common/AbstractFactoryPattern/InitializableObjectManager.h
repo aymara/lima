@@ -208,7 +208,7 @@ Object* InitializableObjectManager<Object,InitializationParameters>::createObjec
   {
     std::stringstream s_mess;
     s_mess << "No Object '" << id.c_str() << "' defined in module '" << m_conf.getName().c_str() << "'";
-    std::cerr << s_mess.str().c_str() << std::endl;
+    std::cerr << "InvalidConfiguration: " << s_mess.str().c_str() << std::endl;
     throw InvalidConfiguration( s_mess.str() );
   }
   return obj;

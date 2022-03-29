@@ -17,4 +17,4 @@
 
 #set (DEPENDENCIES firstname.lst function_title.lst person.lst person_ending.lst title.lst)
 
-#SPECIFICENTITIES(main por Person PERSON-por.rules PERSON_COMP-por.rules EMBEDED-por.rules)
+#SPECIFICENTITIES(main por Person PERSON-por.rules EMBEDED-por.rules)

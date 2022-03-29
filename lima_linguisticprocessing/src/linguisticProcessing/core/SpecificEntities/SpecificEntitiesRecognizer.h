@@ -67,6 +67,7 @@ private:
 
   Automaton::Recognizer* m_recognizer;
   bool m_useSentenceBounds;
+  std::string m_sentenceBoundsData; // name of data containing the considered boundaries if m_useSentenceBounds
   bool m_useDicoWords;
   std::string m_graph;
 

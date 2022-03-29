@@ -10,12 +10,25 @@
   <module name="Processors">
     <group name="AuthorsPositionModex" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-	<item value="GoalRecognition"/>
-	<item value="GoalRecognitionLogger"/>  
-      </list> 
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
+      </list>
+    </group>
+    <group name="AuthorsPositionModexAfterPos" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
+      </list>
     </group>
     <group name="GoalRecognition" class="ApplyRecognizer">
-      <param key="automaton" value="GoalRecognitionRules"/> 
+      <param key="automaton" value="GoalRecognitionRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="yes"/>
+      <param key="stopAtFirstSuccess" value="no"/>
+      <param key="storeInData" value="goalRecognitionData"/>
+    </group>
+    <group name="GoalRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="GoalRecognitionRules"/>
       <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="yes"/>
       <param key="stopAtFirstSuccess" value="no"/>
@@ -36,9 +49,19 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="GoalRecognitionRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-ud.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-ud-eng.bin"/>
     </group>
     <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
       <list name="AuthorsPosition.AUTHORS_POSITION">
@@ -49,7 +72,7 @@
   <module name="resources-fre">
     <group name="GoalRecognitionRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/AUTHORS_POSITION-fre.bin"/>
-    </group> 
+    </group>
     <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
       <list name="AuthorsPosition.AUTHORS_POSITION">
         <item value="NC"/>
@@ -59,7 +82,7 @@
   <module name="resources-por">
     <group name="GoalRecognitionRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/AUTHORS_POSITION-por.bin"/>
-    </group> 
+    </group>
     <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
       <list name="AuthorsPosition.AUTHORS_POSITION">
         <item value="N"/>

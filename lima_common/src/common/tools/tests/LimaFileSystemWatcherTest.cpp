@@ -23,7 +23,8 @@
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 
 #include <QtCore/QTemporaryFile>
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
+#include <QSignalSpy>
 
 using namespace Lima;
 

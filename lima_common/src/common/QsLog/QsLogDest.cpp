@@ -54,8 +54,13 @@ public:
    {
    }
    QMap< QString, DestinationPtr > m_destinations;
+   /// Association destination name / file name. Allows to inform of overwrites.
+   QMap< QString, QString > m_destinationSources;
 
    LimaFileSystemWatcher m_configFileWatcher;
+   /// Store the list of configuration files already loaded. Allows to avoid
+   /// reading several times the same file.
+   QStringList m_configuredFiles;
 };
 
 Destinations::Destinations(QObject* parent) :
@@ -80,12 +85,20 @@ void Destinations::configureFileChanged ( const QString & path )
 {
   if (QFile(path).exists())
   {
-    configure(path);
+    configure(path, true);
+  }
+  else
+  {
+    if (d->m_configuredFiles.contains(path))
+    {
+      d->m_configuredFiles.removeAll(path);
+    }
   }
 }
 
 bool Destinations::setDefault()
 {
+//   std::cerr << "Destinations::setDefault" << std::endl;
   d->m_destinations.insert("DefaultOutput",
                             DestinationFactory::MakeDebugOutputDestination());
   return true;
@@ -97,7 +110,7 @@ bool Destinations::removeDefault()
   return true;
 }
 
-bool Destinations::configure(const QString& fileName)
+bool Destinations::configure(const QString& fileName, bool reload)
 {
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
@@ -106,10 +119,20 @@ bool Destinations::configure(const QString& fileName)
   if (!file.open(QIODevice::ReadOnly))
   {
     std::cerr << "Destinations::configure Unable to open qslog configuration file: \""
-              << fileName.toUtf8().data() << "\"" << std::endl;
+              << fileName.toStdString() << "\"" << std::endl;
     return false;
   }
+  if (!reload && d->m_configuredFiles.contains(fileName))
+  {
+    LOGINIT("Logging");
+    LDEBUG << "Destinations::configure configuration file: \""
+              << fileName << "\" already configured";
+    return true;
+  }
+
   d->m_configFileWatcher.addPath(fileName);
+  d->m_configuredFiles.append(fileName);
+  d->m_configuredFiles.removeDuplicates();
 
   bool res = true;
   QTextStream in(&file);
@@ -125,12 +148,23 @@ bool Destinations::configure(const QString& fileName)
         QString value;
         if (elts.size()==2)
           value = elts.at(1).trimmed();
-        if (destination == "DebugOutput") {
+        if (d->m_destinations.contains(destination))
+        {
+          LOGINIT("Logging");
+          LDEBUG << fileName << "overwrites destination definition"
+                << destination << "from"
+                << d->m_destinationSources[destination];
+        }
+        if (destination == "DebugOutput")
+        {
+          d->m_destinationSources.insert(destination, fileName);
           d->m_destinations.insert(destination,
                                    DestinationFactory::MakeDebugOutputDestination());
           d->m_destinations.remove("DefaultOutput");
         }
-        else if (destination == "File") {
+        else if (destination == "File")
+        {
+          d->m_destinationSources.insert(destination, fileName);
           d->m_destinations.insert(destination,
                                    DestinationFactory::MakeFileDestination(value));
         }

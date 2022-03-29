@@ -1,4 +1,4 @@
-#   Copyright 2002-2020 CEA LIST
+#   Copyright 2002-2021 CEA LIST
 #
 #   This file is part of LIMA.
 #
@@ -35,6 +35,8 @@ add_library(lima-common SHARED
   LimaCommon.cpp
   LinguisticCode/StdBitset.cpp
 )
+
+add_subdirectory(LinguisticCode/tests)
 
 target_link_libraries(lima-common
   lima-common-factory

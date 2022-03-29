@@ -1,0 +1,431 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Linguistic_codes>
+  <!-- Lexical features -->
+  <property name="PronType">
+    <value name="Art"/>
+    <value name="Dem"/>
+    <value name="Emp"/>
+    <value name="Exc"/>
+    <value name="Ind"/>
+    <value name="Int"/>
+    <value name="Neg"/>
+    <value name="Prs"/>
+    <value name="Rcp"/>
+    <value name="Rel"/>
+    <value name="Tot"/>
+  </property>
+  <property name="NumType">
+    <value name="Card"/>
+    <value name="Dist"/>
+    <value name="Frac"/>
+    <value name="Mult"/>
+    <value name="Ord"/>
+    <value name="Range"/>
+    <value name="Sets"/>
+  </property>
+  <property name="AdpType">
+    <value name="Prep"/>
+    <value name="Post"/>
+    <value name="Preppron"/>
+    <value name="Voc"/>
+    <value name="Circ"/>
+    <value name="Comprep"/>
+    <value name="Comadp"/>
+  </property>
+  <property name="Strength">
+    <value name="Strong"/>
+    <value name="Weak"/>
+  </property>
+  <property name="PunctType">
+    <value name="Peri"/>
+    <value name="Comm"/>
+    <value name="Brck"/>
+    <value name="Quot"/>
+    <value name="Dash"/>
+    <value name="Hyph"/>
+    <value name="Qest"/>
+    <value name="Colo"/>
+    <value name="Excl"/>
+    <value name="Semi"/>
+    <value name="Ndash"/>
+    <value name="Slsh"/>
+    <value name="Elip"/>
+    <value name="Bull"/>
+  </property>
+  <property name="Subcat">
+    <value name="Tran"/>
+    <value name="Intr"/>
+    <value name="Int"/>
+    <value name="IntInd"/>
+    <value name="Ditran"/>
+    <value name="Prep"/>
+  </property>
+  <property name="PartType">
+    <value name="Inf"/>
+    <value name="Vbp"/>
+    <value name="Sub"/>
+    <value name="Vb"/>
+    <value name="Cop"/>
+    <value name="Cmpl"/>
+    <value name="Int"/>
+    <value name="Disc"/>
+    <value name="Ad"/>
+    <value name="Pat"/>
+    <value name="Neg"/>
+    <value name="Mod"/>
+    <value name="Comp"/>
+    <value name="Gen"/>
+    <value name="Conseq"/>
+    <value name="Voc"/>
+    <value name="Sup"/>
+    <value name="Res"/>
+    <value name="Num"/>
+    <value name="Emp"/>
+    <value name="Deg"/>
+  </property>
+  <property name="VerbType">
+    <value name="Mod"/>
+    <value name="Cop"/>
+    <value name="Quasi"/>
+    <value name="Pas"/>
+    <value name="Aux"/>
+  </property>
+  <property name="Variant">
+    <value name="Short"/>
+    <value name="Long"/>
+    <value name="Bound"/>
+    <value name="Full"/>
+    <value name="Uncontr"/>
+  </property>
+  <property name="Polite">
+    <value name="Form"/>
+    <value name="Infm"/>
+    <value name="Depr"/>
+  </property>
+  <property name="NameType">
+    <value name="Sur"/>
+    <value name="Geo"/>
+    <value name="Giv"/>
+    <value name="Com"/>
+    <value name="Nat"/>
+    <value name="Pro"/>
+    <value name="Prs"/>
+    <value name="Oth"/>
+    <value name="Pat"/>
+    <value name="Hom"/>
+  </property>
+  <property name="AdjType">
+    <value name="Attr"/>
+    <value name="Pred"/>
+  </property>
+  <property name="Form">
+    <value name="Len"/>
+    <value name="Ecl"/>
+    <value name="Adn"/>
+    <value name="Compl"/>
+    <value name="Aux"/>
+    <value name="HPref"/>
+    <value name="VF"/>
+    <value name="Emp"/>
+  </property>
+  <property name="Distance">
+    <value name="Dist"/>
+    <value name="Med"/>
+    <value name="Prox"/>
+  </property>
+  <property name="Mutation">
+    <value name="SM"/>
+    <value name="AM"/>
+    <value name="NM"/>
+  </property>
+  <property name="Deixis">
+    <value name="Prox"/>
+    <value name="Remt"/>
+    <value name="Med"/>
+  </property>
+
+  <property name="Poss">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <property name="Reflex">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <property name="Abbr">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property>
+  <!--property name="Typo">
+    <value name="Yes"/>
+    <value name="No"/>
+  </property-->
+  <!-- Inflectional features -->
+  <!-- Inflectional features: Nominal -->
+  <property name="Gender">
+    <value name="Com"/>
+    <value name="Fem"/>
+    <value name="Masc"/>
+    <value name="Neut"/>
+  </property>
+  <property name="Animacy">
+    <value name="Anim"/>
+    <value name="Hum"/>
+    <value name="Inan"/>
+    <value name="Nhum"/>
+  </property>
+  <property name="Number">
+    <value name="Coll"/>
+    <value name="Count"/>
+    <value name="Dual"/>
+    <value name="Grpa"/>
+    <value name="Grpl"/>
+    <value name="Inv"/>
+    <value name="Pauc"/>
+    <value name="Plur"/>
+    <value name="Ptan"/>
+    <value name="Sing"/>
+    <value name="Tri"/>
+  </property>
+  <property name="Number[psor]">
+    <value name="Sing"/>
+    <value name="Plur"/>
+    <value name="Dual"/>
+  </property>
+  <property name="Number[psed]">
+    <value name="Sing"/>
+  </property>
+  <property name="Number[erg]">
+    <value name="Sing"/>
+    <value name="Plur"/>
+  </property>
+  <property name="Number[abs]">
+    <value name="Sing"/>
+    <value name="Plur"/>
+  </property>
+  <property name="Case">
+    <!--Core-->
+    <value name="Abs"/>
+    <value name="Acc"/>
+    <value name="Erg"/>
+    <value name="Nom"/>
+    <!--Non-core-->
+    <value name="Abe"/>
+    <value name="Ben"/>
+    <value name="Cau"/>
+    <value name="Cmp"/>
+    <value name="Cns"/>
+    <value name="Com"/>
+    <value name="Dat"/>
+    <value name="Dis"/>
+    <value name="Equ"/>
+    <value name="Gen"/>
+    <value name="Ins"/>
+    <value name="Par"/>
+    <value name="Tem"/>
+    <value name="Tra"/>
+    <value name="Voc"/>
+    <!--Local-->
+    <value name="Abl"/>
+    <value name="Add"/>
+    <value name="Ade"/>
+    <value name="All"/>
+    <value name="Del"/>
+    <value name="Ela"/>
+    <value name="Ess"/>
+    <value name="Ill"/>
+    <value name="Ine"/>
+    <value name="Lat"/>
+    <value name="Loc"/>
+    <value name="Per"/>
+    <value name="Sub"/>
+    <value name="Sup"/>
+    <value name="Ter"/>
+  </property>
+  <property name="Definite">
+    <value name="Com"/>
+    <value name="Cons"/>
+    <value name="Def"/>
+    <value name="Ind"/>
+    <value name="Spec"/>
+  </property>
+  <property name="Degree">
+    <value name="Abs"/>
+    <value name="Cmp"/>
+    <value name="Equ"/>
+    <value name="Pos"/>
+    <value name="Sup"/>
+  </property>
+
+  <!-- Inflectional features: Verbal -->
+  <property name="VerbForm">
+    <value name="Conv"/>
+    <value name="Fin"/>
+    <value name="Gdv"/>
+    <value name="Ger"/>
+    <value name="Inf"/>
+    <value name="Part"/>
+    <value name="Sup"/>
+    <value name="Vnoun"/>
+  </property>
+  <property name="Mood">
+    <value name="Adm"/>
+    <value name="Cnd"/>
+    <value name="Des"/>
+    <value name="Imp"/>
+    <value name="Ind"/>
+    <value name="Jus"/>
+    <value name="Nec"/>
+    <value name="Opt"/>
+    <value name="Pot"/>
+    <value name="Prp"/>
+    <value name="Qot"/>
+    <value name="Sub"/>
+  </property>
+  <property name="Tense">
+    <value name="Fut"/>
+    <value name="Imp"/>
+    <value name="Past"/>
+    <value name="Pqp"/>
+    <value name="Pres"/>
+  </property>
+  <property name="Aspect">
+    <value name="Hab"/>
+    <value name="Imp"/>
+    <value name="Iter"/>
+    <value name="Perf"/>
+    <value name="Prog"/>
+    <value name="Prosp"/>
+  </property>
+  <property name="Voice">
+    <value name="Act"/>
+    <value name="Antip"/>
+    <value name="Cau"/>
+    <value name="Dir"/>
+    <value name="Inv"/>
+    <value name="Mid"/>
+    <value name="Pass"/>
+    <value name="Rcp"/>
+  </property>
+  <property name="Evident">
+    <value name="Fh"/>
+    <value name="Nfh"/>
+  </property>
+  <property name="Polarity">
+    <value name="Neg"/>
+    <value name="Pos"/>
+  </property>
+  <property name="Person">
+    <value name="0"/>
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+    <value name="4"/>
+  </property>
+  <property name="Person[psor]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="Person[erg]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="Person[abs]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="HebBinyan">
+    <value name="PAAL"/>
+    <value name="HIFIL"/>
+    <value name="PIEL"/>
+    <value name="NIFAL"/>
+    <value name="HITPAEL"/>
+    <value name="HUFAL"/>
+    <value name="PUAL"/>
+  </property>
+  <property name="NounClass">
+    <value name="Wol1"/>
+    <value name="Wol2"/>
+    <value name="Wol3"/>
+    <value name="Wol4"/>
+    <value name="Wol5"/>
+    <value name="Wol6"/>
+    <value name="Wol7"/>
+    <value name="Wol8"/>
+    <value name="Wol9"/>
+    <value name="Wol10"/>
+    <value name="Wol11"/>
+    <value name="Wol12"/>
+  </property>
+  <property name="MACRO">
+    <value name="ADJ"/>
+    <value name="ADV"/>
+    <value name="AUX"/>
+    <value name="INTJ"/> <!--Was INTERJ-->
+    <value name="NOUN"/> <!--Was NC-->
+    <value name="PROPN"/> <!--Was NP-->
+    <value name="VERB"/> <!--Was V-->
+    <value name="ADP"/> <!--Was PREP-->
+    <value name="CONJ"/> <!--Kept. Two UD values are CCONJ and SCONJ-->
+    <value name="DET"/>
+    <value name="NUM"/>
+    <value name="PART"/>
+    <value name="PRON"/>
+    <value name="PUNCT"/>
+    <value name="DIVERS"/> <!--Kept. Two UD values are SYM and X-->
+  </property>
+
+  <subproperty name="MICRO" parent="MACRO">
+    <subvalues value="ADJ">
+      <value name="ADJ"/>
+    </subvalues>
+    <subvalues value="ADV">
+      <value name="ADV"/>
+    </subvalues>
+    <subvalues value="AUX">
+      <value name="AUX"/>
+    </subvalues>
+    <subvalues value="INTJ">
+      <value name="INTJ"/>
+    </subvalues>
+    <subvalues value="NOUN">
+      <value name="NOUN"/>
+    </subvalues>
+    <subvalues value="PROPN">
+      <value name="PROPN"/>
+    </subvalues>
+    <subvalues value="VERB">
+      <value name="VERB"/>
+    </subvalues>
+    <subvalues value="ADP">
+      <value name="ADP"/>
+    </subvalues>
+    <subvalues value="CONJ">
+      <value name="CCONJ"/>
+      <value name="SCONJ"/>
+    </subvalues>
+    <subvalues value="DET">
+      <value name="DET"/>
+    </subvalues>
+    <subvalues value="NUM">
+      <value name="NUM"/>
+    </subvalues>
+    <subvalues value="PART"> 
+      <value name="PART"/>
+    </subvalues>
+    <subvalues value="PRON">
+      <value name="PRON"/>
+    </subvalues>
+    <subvalues value="PUNCT">
+      <value name="PUNCT"/>
+      <value name="SENT"/>
+    </subvalues>
+    <subvalues value="DIVERS">
+      <value name="SYM"/>
+      <value name="X"/>
+    </subvalues>
+  </subproperty>
+</Linguistic_codes>

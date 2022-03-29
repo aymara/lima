@@ -104,12 +104,17 @@ void MultimediaBinaryStructureReader::readBinNum(istream& file,
 
 void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocumentProperties* prop)
 {
+
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "MultimediaXMLStructureReader::closePropertiesNode()";
+#endif
   int NodeId = -1;
   int StructId = -1;
   int offBegPrpty = -1, offEndPrpty = -1;
   string encodPrpty, langPrpty, srcePrpty;
   string indexDatePrpty;
-  // write values of properties whose type is int
+  // get values of properties whose type is int
   auto beginEnd = prop->getIntProperties();
   for(auto elmtIt = beginEnd.first; elmtIt != beginEnd.second; elmtIt++ )
   {
@@ -123,7 +128,8 @@ void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocume
     else if (elmt.first == "NodeId")
       NodeId = elmt.second ;
   }
-  auto beginEndS = prop->getIntProperties();
+  // get values of properties whose type is string
+  auto beginEndS = prop->getStringProperties();
   for(auto elmtIt = beginEndS.first; elmtIt != beginEndS.second; elmtIt++)
   {
     const auto& elmt = *elmtIt;
@@ -134,12 +140,13 @@ void MultimediaXMLStructureReader::closePropertiesNode(const Misc::GenericDocume
     else if (elmt.first == "srcePrpty")
         srcePrpty=elmt.second ;
   }
+  // get values of properties whose type is date
   auto beginEndD = prop->getDateProperties();
   for(auto elmtIt = beginEndD.first; elmtIt != beginEndD.second; elmtIt++)
   {
     const auto& elmt = *elmtIt;
     if (elmt.first == "indexDatePrpty")
-      indexDatePrpty = elmt.second.toString(Qt::ISODate).toUtf8().data();
+        indexDatePrpty = elmt.second.toString(Qt::ISODate).toUtf8().data();
   }
 
   // openedNodes.pop_back();

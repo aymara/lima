@@ -13,12 +13,17 @@
         <item value="EventRecognition"/>
       </list>
     </group>
+    <group name="EventModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EventRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="EventRecognition" class="ApplyRecognizer">
       <param key="automaton" value="EventRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
-    <group name="EventRecognitionOnPosGraph" class="ApplyRecognizer">
+    <group name="EventRecognitionAfterPos" class="ApplyRecognizer">
       <param key="automaton" value="EventRules"/>
       <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
@@ -39,9 +44,24 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="EventRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/EVENT-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/EVENT-ud.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-ud-eng.bin"/>
     </group>
     <group name="EventIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

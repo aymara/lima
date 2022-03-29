@@ -216,7 +216,13 @@ addSpecificEntity(AnalysisContent& analysis,
   }
 
   // set entity properties
-  match.setType(Common::MediaticData::MediaticData::single().getEntityType(Common::Misc::utf8stdstring2limastring(type)));
+  Common::MediaticData::EntityType entityType;
+  try {
+    entityType = Common::MediaticData::MediaticData::single().getEntityType(QString::fromStdString(type));
+  } catch (const LimaException& e) {
+    LIMA_EXCEPTION("Unknown entity" << QString::fromStdString(type) << e.what());
+  }
+  match.setType(entityType);
   // set normalized form similar to string (otherwise, may cause problem when trying to access the created specific entity)
   match.features().setFeature(DEFAULT_ATTRIBUTE,Common::Misc::utf8stdstring2limastring(str));
 

@@ -169,7 +169,7 @@ int run(int argc, char** argv)
   if (configPath.size() == 0)
     configPath = string("/usr/share/config/lima");
 
-  if (QsLogging::initQsLog(QString::fromUtf8(configPath.c_str())) != 0)
+  if (!QsLogging::initQsLog(QString::fromStdString(configPath)))
   {
     LOGINIT("Common::Misc");
     LERROR << "Call to QsLogging::initQsLog(\"" << configPath << "\") failed.";

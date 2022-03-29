@@ -46,6 +46,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/XmlBowDocumentHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/MetaDataHandler.h"
 #include "linguisticProcessing/core/EventAnalysis/EventHandler.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -57,10 +58,15 @@
 #include <fstream>
 
 #include <boost/program_options.hpp>
+
+#include <QtCore/QCoreApplication>
+#include <QtCore/QFileInfo>
 #include <QtCore/QString>
 #include <QtCore/QStringRef>
+#include <QtCore/QTimer>
+#include <QtCore/QTextStream>
 
-#include <QtCore>
+#include "cmd_line_helpers.h"
 
 namespace po = boost::program_options;
 
@@ -102,7 +108,8 @@ int main(int argc, char **argv)
     return a.exec();
 #ifndef DEBUG_LP
   }
-  catch( const InvalidConfiguration& e ) {
+  catch( const InvalidConfiguration& e )
+  {
     std::cerr << "Catched InvalidConfiguration: " << e.what() << std::endl;
     return UNSUPPORTED_LANGUAGE;
   }
@@ -129,41 +136,10 @@ int main(int argc, char **argv)
 #endif
 }
 
-
-std::map<std::string, std::string> parse_options_line(const std::string& s, char comma, char colon)
-{
-  std::map<std::string, std::string> opts;
-
-  size_t start = 0;
-  size_t comma_pos = s.find(comma, 0);
-  do
-  {
-    std::string key, value;
-    size_t colon_pos = s.find(colon, start);
-    if (colon_pos != std::string::npos && colon_pos != comma_pos)
-    {
-      key = s.substr(start, colon_pos - start);
-      size_t value_start = colon_pos + 1;
-      value = s.substr(value_start, comma_pos == std::string::npos ? comma_pos : (comma_pos - value_start));
-    }
-    else
-    {
-      key = s.substr(start, comma_pos == std::string::npos ? comma_pos : (comma_pos - start - 1));
-      value = "";
-    }
-
-    if (key.size() > 0)
-      opts[key] = value;
-
-    start = (comma_pos == std::string::npos) ? comma_pos : comma_pos + 1;
-    comma_pos = s.find(comma, start);
-  } while (start != std::string::npos);
-
-  return opts;
-}
-
 int run(int argc, char** argv)
 {
+  LIMA_UNUSED(argc);
+  LIMA_UNUSED(argv);
   auto configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
                                                       QStringList());
   auto configPath = configDirs.join(LIMA_PATH_SEPARATOR);
@@ -236,7 +212,7 @@ int run(int argc, char** argv)
    "Sets metadata values, in the format data1:value1,data2:value2,...")
   ("split-mode,s",
    po::value< std::string >(&splitMode)->default_value("none"),
-   "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default) and 'lines' to split on each line break. Later, 'para' will be added to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode.")
+   "Split input files depending on this value and analyze each part independently. Possible values are 'none' (default), 'lines' to split on each line break, and 'para' to split on paragraphs (empty lines). For values different of 'none', dumpers should probably be on append mode. If information is to be passed from one analysis to the next (e.g. with BratDumper to have global identifiers on the whole document), a MetaDataDumper must be present at the end of the pipeline.")
   ;
 
   po::positional_options_description p;
@@ -293,19 +269,10 @@ int run(int argc, char** argv)
     }
   }
 
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
-  //   std::cerr << "Amose plugins initialized" << std::endl;
-
   if (vm.count("availableUnits"))
   {
     listunits();
-    return SUCCESS_ID;
+    return EXIT_SUCCESS;
   }
   if (langs.size()<1)
   {
@@ -372,13 +339,13 @@ int run(int argc, char** argv)
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs,
-    parse_options_line(meta, ',', ':'));
+    parse_options_line(QString::fromStdString(meta), ',', ':'));
 
   langs = Common::MediaticData::MediaticData::changeable().getMedias();
 
   if (pipeline.size() == 0)
   {
-    if (langs.size() == 1 && langs.front() == "ud")
+    if (langs.size() == 1 && langs.front().substr(0, 2) == "ud")
     {
       pipeline = "deepud";
     }
@@ -481,13 +448,15 @@ int run(int argc, char** argv)
       std::cerr << "No file to analyze." << std::endl;
   }
 
-  uint64_t i=1;
+
+  uint64_t nfile=0;
   for (const auto&  file : files)
   {
     // display the progress of the analysis
-    std::cerr << "\rAnalyzing "<< i << "/" << files.size()
+    nfile++;
+    std::cerr << "\rAnalyzing "<< nfile << "/" << files.size()
               << " ("  << std::setiosflags(std::ios::fixed)
-              << std::setprecision(2) << (i*100.0/files.size()) <<"%) '"
+              << std::setprecision(2) << (nfile*100.0/files.size()) <<"%) '"
               << file << "'" << std::flush;
 
     // set the output files (to 0 if not in list)
@@ -554,16 +523,102 @@ int run(int argc, char** argv)
                     << " (" << percent.toUtf8().constData()
                     << "%) lines. At " << qfile.pos();
         }
-
+#ifndef DEBUG_LP
+        try {
+#endif
         // analyze it
         client->analyze(contentText,
                         metaData,
                         pipeline,
                         handlers,
                         inactiveUnits);
-
+#ifndef DEBUG_LP
+        }
+        catch (const LinguisticProcessingException& e) {
+          std::cerr << "LinguisticProcessing error on line " << lineNum << "["
+                   << contentText.toStdString() << "]:" << e.what()
+                   << std::endl;
+          //allows the process to continue on next line
+        }
+        catch (const LimaException& e) {
+          std::cerr << "Error on line " << lineNum << "["
+                     << contentText.toStdString() << "]:" << e.what()
+                     << std::endl;
+          //allows the process to continue on next line
+        }
+#endif
       }
       qfile.close();
+    }
+    else if (splitMode == "para")
+    {
+      auto contentText = QString::fromUtf8(qfile.readAll().constData());
+      qfile.close();
+      if (contentText.isEmpty())
+      {
+        std::cerr << "file " << file << " has empty input ! " << std::endl;
+        continue;
+      }
+
+      // for paragraph handling, add additional metadata handler to pass information
+      // from one analysis to the next
+      // use local metadata to modify so that the metadata is reinitialized at each document
+      std::map<std::string,std::string> paraMetaData=metaData;
+      MetaDataHandler* metaDataHandler=new MetaDataHandler();
+      handlers["metaDataHandler"]=metaDataHandler;
+
+      QRegExp sep("\n\n\n*");
+      //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
+      //for (const auto& par: paragraphs) {
+      //get positions to set offset
+      int prevpos = 0;
+      int pos = 0;
+      int numpar = 0;
+      
+      // cheap trick to analyze the last paragraph without calling the analysis after the while loop
+      contentText+=QString("\n\n");
+      
+      while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
+        numpar++;
+        QString paragraph=contentText.mid(prevpos,pos-prevpos);
+        //std::cerr << "prevpos=" << prevpos << ", pos=" << pos << ", paragraph=" << paragraph.toStdString() << std::endl;
+        if (! paragraph.isEmpty()) {
+          // analyze it with the proper offset
+          paragraph.append("\n");
+          paraMetaData["StartOffset"]=std::to_string(prevpos);
+#ifndef DEBUG_LP
+          try {
+#endif
+            // analyze it
+            client->analyze(paragraph,
+                            paraMetaData,
+                            pipeline,
+                            handlers,
+                            inactiveUnits);
+#ifndef DEBUG_LP
+          }
+          catch (const LinguisticProcessingException& e) {
+            std::cerr << "LinguisticProcessing error on paragraph " << numpar << "["
+                     << paragraph.toStdString() << "]:" << e.what()
+                     << std::endl;
+            //allows the process to continue on next paragraph
+          }
+          catch (const LimaException& e) {
+            std::cerr << "Error on paragraph " << numpar << "["
+                      << paragraph.toStdString() << "]:" << e.what()
+                      << std::endl;
+            //allows the process to continue on next paragraph
+          }
+#endif
+        }
+        pos += sep.matchedLength();
+        prevpos=pos;
+        // update metadata
+        const std::map<std::string,std::string>& newMetaData=metaDataHandler->getMetaData();
+        if (newMetaData.size()!=0) {
+          paraMetaData=newMetaData;
+        }
+      }            
     }
     else // default == none
     {
@@ -579,8 +634,24 @@ int run(int argc, char** argv)
       TimeUtils::logElapsedTime("ReadInputFile");
       TimeUtils::updateCurrentTime();
 
-      // analyze it
-      client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+#ifndef DEBUG_LP
+      try {
+#endif
+        // analyze it
+        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+#ifndef DEBUG_LP
+      }
+      catch (const LinguisticProcessingException& e) {
+        std::cerr << "LinguisticProcessing error on document " << file << ":" << e.what()
+                 << std::endl;
+        //allows the process to continue on next file
+      }
+      catch (const LimaException& e) {
+        std::cerr << "Error on document " << file << ":" << e.what()
+                  << std::endl;
+        //allows the process to continue to next file
+      }
+#endif
     }
 
     // Close and delete opened output files
@@ -688,5 +759,4 @@ void listunits()
         }
         std::cout << std::endl;
     }
-    exit(0);
 }

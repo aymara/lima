@@ -19,8 +19,5 @@ set (DEPENDENCIES annonceurLieu.lst cities.lst greeklocations.lst highways.lst m
 SPECIFICENTITIES(main fre Location
   PreLOCATION-fre.rules
   LOCATION-fre.rules
-  PreLOCATION_COMP-fre.rules
-  LOCATION_COMP-fre.rules
   LOCATION_RATP-fre.rules
-  PostLOCATION-fre.rules
-  PostLOCATION_COMP-fre.rules)
+  PostLOCATION-fre.rules)

@@ -40,7 +40,7 @@ namespace QsLogging
 class LIMA_COMMONQSLOG_EXPORT Destination
 {
 public:
-  virtual ~Destination(){}
+  virtual ~Destination() = default;
   virtual void write(const QString& message, const QString& zone) = 0;
 };
 
@@ -60,7 +60,7 @@ public:
 
   bool setDefault();
   bool removeDefault();
-  bool configure(const QString& fileName);
+  bool configure(const QString& fileName, bool reload = false);
 
   const QMap< QString, DestinationPtr >& destinations() const;
 

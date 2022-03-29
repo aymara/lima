@@ -1,18 +1,18 @@
 /*
  *    Copyright 2002-2013 CEA LIST
- * 
+ *
  *    This file is part of LIMA.
- * 
+ *
  *    LIMA is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
  *    (at your option) any later version.
- * 
+ *
  *    LIMA is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Affero General Public License for more details.
- * 
+ *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
  */
@@ -95,13 +95,13 @@ void BenchmarkingTool::init ()
     connect(pipeline, SIGNAL(resultsChanged()), this, SLOT(updateResultsViews()));
     connect(pipeline, SIGNAL(finishedBenchmarking()), this, SLOT(pipelineFinisehdBenchmarking()));
     resultsView->init(pipeline);
-    
+
     connect(resultsView, SIGNAL(resultsChanged()), this, SLOT(updateResultsViews()));
     connect(resultsView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(updateResultsViewSelection()));
     connect(resultsView->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(slotResultsViewVerticalHeaderSectionClicked(int)));
     connect(resultsView, SIGNAL(compareWithPrevious()), this, SLOT(slotCompareWithPrevious()));;
     connect(resultsView, SIGNAL(compareWithReference()), this, SLOT(slotCompareWithReference()));
-    
+
     connect(resultsView, SIGNAL(viewResult (int)), this, SLOT(viewResult(int)));
     connect(pipelineUnitDisplayCb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateResultsViews()));
     connect(measureDisplayCb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateResultsTableView()));
@@ -149,10 +149,8 @@ void BenchmarkingTool::slotPipelineUnitActivated(const QModelIndex& index)
 
 void BenchmarkingTool::updateErrorsWidget()
 {
-  QString selectedUnitTextPath = pipelineUnitDisplayCb->currentIndex()==0?"":pipelineUnitDisplayCb->currentText();
-//   qDebug() << "BenchmarkingTool::updateErrorsWidget " << pipelineUnitDisplayCb->currentIndex() << selectedUnitTextPath;
-//   if (selectedUnitTextPath.isEmpty()) return;
-  // vider la liste des enonces et le tableau des erreurs
+  QString selectedUnitTextPath = pipelineUnitDisplayCb->currentIndex()==0
+      ? "" : pipelineUnitDisplayCb->currentText();
   errorsTable->clearContents();
   errorsTable->setRowCount(0);
   statementsTree->clear();
@@ -160,92 +158,101 @@ void BenchmarkingTool::updateErrorsWidget()
   m_currentBenchmarkingResult = 0;
   m_previousBenchmarkingResult = 0;
 
-  QMultiMap<QString,QString> errors = utterancesWithErrors(selectedUnitTextPath);
+  auto errors = utterancesWithErrors(selectedUnitTextPath);
 //   qDebug() << "BenchmarkingTool::updateErrorsWidget utterancesWithErrors:" << errors.size();
-  Q_FOREACH (const QString& key, errors.keys().toSet())
+  for (const auto& key: errors.keys().toSet())
   {
-    QList<QString> list = errors.values(key);
+    auto list = errors.values(key);
     qSort(list);
-    Q_FOREACH(const QString& value, list)
+    for(const auto& value: list)
     {
 //       qDebug() << "add child item" << key << value;
-      QTreeWidgetItem * childItem = new QTreeWidgetItem();
+      auto childItem = new QTreeWidgetItem();
       childItem->setText(0,key);
       childItem->setText(1,value);
       //childItem->setText(2,"Text to load...");
       statementsTree->addTopLevelItem(childItem);
     }
   }
-  statementsTree->sortByColumn(0,Qt::AscendingOrder);
+  statementsTree->sortByColumn(0, Qt::AscendingOrder);
 }
 
 void BenchmarkingTool::slotErrorStatementActivated(QTreeWidgetItem* item, int column)
 {
-  qDebug() << "BenchmarkingTool::slotErrorStatementActivated " << item->data(column,Qt::DisplayRole).toString() << " " << column;
-  if (item->data(1,Qt::DisplayRole).toString() == "") return;
+  qDebug() << "BenchmarkingTool::slotErrorStatementActivated "
+            << item->data(column,Qt::DisplayRole).toString() << " " << column;
+  if (item->data(1, Qt::DisplayRole).toString() == "") return;
 
   // vider le tableau des erreurs
   //qDebug() << "clearing errors list";
   errorsTable->clearContents();
   errorsTable->setRowCount(0);
 
-  QString statementId = item->data(1,Qt::DisplayRole).toString();
+  auto statementId = item->data(1,Qt::DisplayRole).toString();
 
   //qDebug() << "BenchmarkingTool::slotErrorStatementActivated " << pipeline->results.size() << " results";
   // obtenir la liste des erreurs pour ce pipeline unit
   // pour chacune, creer si necessaire une entree dans la liste des enonces
   // remplir une ligne de la table
-  QString pipelineName = item->data(0,Qt::DisplayRole).toString();
+  auto pipelineName = item->data(0,Qt::DisplayRole).toString();
 
   if (!m_comparingWithPrevious)
   {
     if (pipeline->results.contains(pipeline->startTime))
     {
-        BenchmarkingResult* benchResult = (pipeline->results)[pipeline->startTime];
-        QMap<PipelineUnit*, EvaluationResultSet*>& puResult = benchResult->resultUnits;
-        qDebug() << "BenchmarkingTool::slotErrorStatementActivated " << puResult.size() << " pu results";
-        Q_FOREACH(PipelineUnit* pipelineUnit, puResult.keys())
+        auto benchResult = (pipeline->results)[pipeline->startTime];
+        auto& puResult = benchResult->resultUnits;
+        qDebug() << "BenchmarkingTool::slotErrorStatementActivated "
+                  << puResult.size() << " pu results";
+        for(auto& pipelineUnit: puResult.keys())
         {
   //           qDebug() << "selectedUnitTextPath: " << selectedUnitTextPath << "; pipelineName: " << pipelineName;
             if (pipelineName != pipelineUnit->name) continue;
-            EvaluationResultSet* resultSet = puResult[pipelineUnit];
-            qDebug() << "BenchmarkingTool::slotErrorStatementActivated result set size: " << resultSet->size();
-            Q_FOREACH(EvaluationResult::DIMENSION_ID dimensionId, resultSet->keys())
+            auto resultSet = puResult[pipelineUnit];
+            qDebug() << "BenchmarkingTool::slotErrorStatementActivated result set size: "
+                      << resultSet->size();
+            for (auto& dimensionId: resultSet->keys())
             {
-                EvaluationResult* dimEvalResult = (*resultSet)[dimensionId];
-                addTypedErrors(statementId,dimensionId,tr("Not found"),dimEvalResult->getRefAbsentFromHyp());
-                addTypedErrors(statementId,dimensionId,tr("Found incorrect"),dimEvalResult->getHypAbsentFromRef());
-                addTypedErrors(statementId,dimensionId,tr("Wrong type"),dimEvalResult->getTypeError());
+                auto dimEvalResult = (*resultSet)[dimensionId];
+                addTypedErrors(statementId,dimensionId,tr("Not found"),
+                               dimEvalResult->getRefAbsentFromHyp());
+                addTypedErrors(statementId,dimensionId,tr("Found incorrect"),
+                               dimEvalResult->getHypAbsentFromRef());
+                addTypedErrors(statementId,dimensionId,tr("Wrong type"),
+                               dimEvalResult->getTypeError());
             }
         }
     }
   }
   else
   {
-    QList<QStringList> errors = getErrors(pipelineName, statementId, m_currentBenchmarkingResult);
+    auto errors = getErrors(pipelineName, statementId,
+                            m_currentBenchmarkingResult);
     qDebug() << "errors" << pipelineName << statementId << ":" << errors;
-    QList<QStringList> previousErrors = getErrors(pipelineName, statementId, m_previousBenchmarkingResult);
-    qDebug() << "previousErrors" << pipelineName << statementId << ":" << previousErrors;
+    auto previousErrors = getErrors(pipelineName, statementId,
+                                    m_previousBenchmarkingResult);
+    qDebug() << "previousErrors" << pipelineName << statementId << ":"
+              << previousErrors;
 
-    Q_FOREACH (const QStringList& list, errors)
+    for (const auto& list: errors)
     {
       if (!previousErrors.contains(list))
       {
-        QString typeText = list[0];
-        QString dimension = list[1];
-        QString name = list[2];
-        addError(typeText,dimension,name);
+        auto typeText = list[0];
+        auto dimension = list[1];
+        auto name = list[2];
+        addError(typeText, dimension, name);
 
       }
     }
-    Q_FOREACH (const QStringList& list, previousErrors)
+    for (const auto& list: previousErrors)
     {
       if (!errors.contains(list))
       {
-        QString typeText = list[0];
-        QString dimension = list[1];
-        QString name = list[2];
-        addError(typeText,dimension,name);
+        auto typeText = list[0];
+        auto dimension = list[1];
+        auto name = list[2];
+        addError(typeText, dimension, name);
       }
     }
   }
@@ -258,11 +265,11 @@ void BenchmarkingTool::slotShowErrorStatementDetails(QTreeWidgetItem* item, int 
 
   QString statementId = item->data(1,Qt::DisplayRole).toString();
   if (statementId=="") return;
-  
+
 //   QMessageBox::information(this,tr("Not yet implemented"),
 //       tr("Will display result analysis and reference for statement of current pipeline unit: ")+statementId,QMessageBox::Close);
 //   return;
-  
+
   // recuperer nom du pipeline unit, nom de l'enonce et chemin de base du pipeline unit
   qDebug() << "BenchmarkingTool::slotShowErrorStatementDetails working dir is: " << pipeline->workingDir;
   QString pipelineUnit = m_currentPipelineUnit.data().toString();
@@ -1162,7 +1169,7 @@ void BenchmarkingTool::updateErrorsWidget(BenchmarkingResult* benchmarkingResult
       }
     }
   }
-  
+
   statementsTree->sortByColumn(0,Qt::AscendingOrder);
 }
 
@@ -1170,7 +1177,7 @@ QList<QStringList> BenchmarkingTool::getErrors(const QString& unit, const QStrin
 {
   qDebug() << "BenchmarkingTool::getErrors" << unit << utteranceId;
   QList<QStringList> result;
-  
+
   QMap<PipelineUnit*, EvaluationResultSet*>& puResult = benchResult->resultUnits;
   qDebug() << "BenchmarkingTool::getErrors" << puResult.size() << " pu results";
   Q_FOREACH(PipelineUnit* pipelineUnit, puResult.keys())

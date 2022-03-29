@@ -24,9 +24,9 @@
  * @version    $Id$
  * copyright   Copyright (C) 2003-2012 by CEA LIST
  * Project     BagOfWords
- * 
+ *
  * @brief      representation of generic properties of a document
- * 
+ *
  *
  ***********************************************************************/
 
@@ -52,12 +52,12 @@ namespace Misc {
 template<typename ValT>
 class MultiValuedPropertyIterator {
 public:
-  MultiValuedPropertyIterator(const typename std::map<std::string, std::vector<ValT> >::const_iterator pos); 
-  MultiValuedPropertyIterator(const MultiValuedPropertyIterator& orig); 
-  MultiValuedPropertyIterator& operator = (const MultiValuedPropertyIterator& orig); 
-  MultiValuedPropertyIterator& operator++(int); 
-  bool operator != (const MultiValuedPropertyIterator& orig ) const; 
-  bool operator == (const MultiValuedPropertyIterator& orig ) const; 
+  MultiValuedPropertyIterator(const typename std::map<std::string, std::vector<ValT> >::const_iterator pos);
+  MultiValuedPropertyIterator(const MultiValuedPropertyIterator& orig);
+  MultiValuedPropertyIterator& operator = (const MultiValuedPropertyIterator& orig);
+  MultiValuedPropertyIterator& operator++(int);
+  bool operator != (const MultiValuedPropertyIterator& orig ) const;
+  bool operator == (const MultiValuedPropertyIterator& orig ) const;
   const std::string& operator *() const;
 private:
   typename std::map<std::string,std::vector<ValT> >::const_iterator m_pos;
@@ -71,36 +71,39 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
 {
   friend class GenericDocumentPropertiesPrivate;
  public:
-  GenericDocumentProperties(); 
+  GenericDocumentProperties();
   GenericDocumentProperties(const GenericDocumentProperties&);
   virtual ~GenericDocumentProperties();
   GenericDocumentProperties& operator = (const GenericDocumentProperties&);
-  
+
   virtual void reinit();
-  
+
   virtual void read(std::istream& file);
   void write(std::ostream& file) const;
 
   friend LIMA_DATA_EXPORT std::ostream& operator << (std::ostream&, const GenericDocumentProperties&);
+  friend LIMA_DATA_EXPORT QTextStream& operator << (QTextStream&, const GenericDocumentProperties&);
   friend LIMA_DATA_EXPORT QDebug& operator << (QDebug&, const GenericDocumentProperties&);
-  
+
   virtual void print(std::ostream&) const;
+  virtual void print(QTextStream&) const;
   virtual void print(QDebug&) const;
-  
-  /** 
+  virtual bool is_empty() const;
+
+  /**
    *  Read access functions for "only once valued" property propName.
    *  If property exists, return a pair (value,true) else return (default value,false)
    *  Types may be any of:
    *  - integer (uint64_t),
    *  - string (std::string),
    *  - date (QDate)
-   *  - period (std::pair<QDate,QDate>) used for approximativ date
+   *  - period (std::pair<QDate,QDate>) used for approximative date
   **/
   std::pair<uint64_t, bool> getIntValue(std::string propName) const;
   std::pair<std::string, bool> getStringValue(std::string propName) const;
   std::pair<QDate, bool> getDateValue(std::string propName) const;
   std::pair<std::pair<QDate,QDate>, bool> getDateIntervalValue(std::string propName) const;
-  
+
   /**
    *  Read access functions for "multiple-valued" property propName
    *  Return a pair of iterator (begin,end) to iterate through values
@@ -110,37 +113,37 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
   **/
   std::pair< StringPropMultIter, StringPropMultIter > getMultipleStringPropValue(std::string propName) const;
   std::pair< WeightedPropMultIter, WeightedPropMultIter > getMultipleWeightedPropValue(std::string propName) const;
-  
-  /** 
+
+  /**
    *  Read access functions for all "only once valued" properties
    *  return an iterator
    *  Types may be any of (uint64_t), (std::string), (QDate) or
-   *   (std::pair<QDate,QDate>) used for approximativ date
+   *   (std::pair<QDate,QDate>) used for approximative date
   **/
   typedef std::map<std::string,uint64_t>::const_iterator IntPropertiesIterator;
   std::pair<IntPropertiesIterator,IntPropertiesIterator> getIntProperties() const;
-  
+
   typedef std::map<std::string,std::string>::const_iterator StringPropertiesIterator;
   std::pair<StringPropertiesIterator,StringPropertiesIterator> getStringProperties() const;
-  
+
   typedef std::map<std::string,QDate>::const_iterator DatePropertiesIterator;
   std::pair<DatePropertiesIterator,DatePropertiesIterator> getDateProperties() const;
-  
-   typedef std::map<std::string,std::pair<QDate,QDate> >::const_iterator DateIntervalPropertiesIterator;
+
+  typedef std::map<std::string,std::pair<QDate,QDate> >::const_iterator DateIntervalPropertiesIterator;
   std::pair<DateIntervalPropertiesIterator,DateIntervalPropertiesIterator> getDateIntervalProperties() const;
- 
-  /** 
-   *  Read access functions for all "mutiple valued" perties
+
+  /**
+   *  Read access functions for all "multiple valued" properties
    *  return an iterator of names
    *  Types may be any of (std::string) or (std::pair<std::string,float)
   **/
   std::pair<MultiValuedPropertyIterator<std::string>,MultiValuedPropertyIterator<std::string> > getStringPropertyNames() const;
-  std::pair<MultiValuedPropertyIterator<std::pair<std::string,float> >,MultiValuedPropertyIterator<std::pair<std::string,float> > > getWeightedPropPropertyNames() const;  
-  void setIntValue(const std::string& propName, const uint64_t& val); 
-  void setStringValue(const std::string& propName, const std::string& val); 
+  std::pair<MultiValuedPropertyIterator<std::pair<std::string,float> >,MultiValuedPropertyIterator<std::pair<std::string,float> > > getWeightedPropPropertyNames() const;
+  void setIntValue(const std::string& propName, const uint64_t& val);
+  void setStringValue(const std::string& propName, const std::string& val);
   void setDateValue(const std::string& propName, const QDate& val);
   void setDateIntervalValue(const std::string& propName, const std::pair<QDate,QDate>& val);
-  
+
   void addStringValue(const std::string& propName, const std::string& str);
   void addWeightedPropValue(const std::string& propName, const std::pair<std::string,float>& str);
 
@@ -193,8 +196,8 @@ const std::string& MultiValuedPropertyIterator<ValT>::operator *() const {
 }
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace Misc
+} // end namespace Common
+} // end namespace Lima
 
 #endif

@@ -1,9 +1,18 @@
 #include "AnalysisHandlersExport.h"
 
+#include "common/Handler/shiftFrom.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
 
 namespace Lima {
+
+
+namespace Common {
+namespace BagOfWords {
+  enum BoWBlocType: unsigned char;
+}
+}
+
 namespace Handler {
 
 class MultimediaXMLWriterPrivate;
@@ -41,6 +50,7 @@ private:
   MultimediaXMLWriterPrivate* m_dmult;
 };
 
+
 class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryReader:
     public Common::BagOfWords::BoWBinaryReader
 {
@@ -48,7 +58,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryReader:
   MultimediaBinaryReader();
   ~MultimediaBinaryReader();
 
-  void readMultimediaDocumentBlock(std::istream& file,
+  Common::BagOfWords::BoWBlocType readMultimediaDocumentBlock(std::istream& file,
                                    Common::BagOfWords::BoWDocument& document,
                                    Handler::MultimediaXMLWriter& handler,
                                    bool useIterator,
@@ -70,7 +80,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT MultimediaBinaryWriter:
     public Common::BagOfWords::BoWBinaryWriter
 {
  public:
-  MultimediaBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom = QMap< uint64_t, uint64_t >()):
+  MultimediaBinaryWriter(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()):
     Common::BagOfWords::BoWBinaryWriter(shiftFrom) {};
   ~MultimediaBinaryWriter(){};
 

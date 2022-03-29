@@ -25,6 +25,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/SBowDocumentWriter.h"
 
 #include "common/Data/strwstrtools.h"
+#include "common/Handler/shiftFrom.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 //#include "linguisticProcessing/client/AnalysisHandlers/BowDocumentHandler.h"
 #include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
@@ -39,6 +40,7 @@
 #include <algorithm>
 // for call to system()
 #include <stdlib.h>
+#include <memory>
 
 using namespace std;
 using namespace Lima::Common::BagOfWords;
@@ -90,18 +92,11 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
   QString qtext_s = QString::fromUtf8(contentText.c_str());
 
   QRegExp rx("(&[^;]*;)");
-  int shift = 0;
-  int indexofent = 0;
+//   int shift = 0;
+//   int indexofent = 0;
 
-  QMap< uint64_t,uint64_t > shiftFrom;
-  while ((indexofent = rx.indexIn(qtext_s, indexofent)) != -1)
-  {
-    int indexInResolved = indexofent-shift;
-    shift += rx.cap(1).size()-1;
-    shiftFrom.insert(indexInResolved, shift);
-    LDEBUG <<"indexofent:"<<indexofent << "; indexInResolved:"<<indexInResolved<<"; shift:"<<shift;
-    indexofent += rx.matchedLength();
-  }
+  auto shiftFrom = std::make_shared<const ShiftFrom>(qtext_s);
+  LDEBUG << "shiftFrom is:" << *shiftFrom;
 
   if(qtext_s.trimmed().isEmpty()) {
       std::cerr << "file " << filename << " has empty input ! " << std::endl;

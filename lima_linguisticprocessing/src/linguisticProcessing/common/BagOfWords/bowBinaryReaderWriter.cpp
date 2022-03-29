@@ -38,6 +38,7 @@
 #include "common/LimaCommon.h"
 #include "common/Data/readwritetools.h"
 #include "common/Data/strwstrtools.h"
+#include "common/Handler/shiftFrom.h"
 #include "common/MediaticData/mediaticData.h"
 
 using namespace Lima::Common::MediaticData;
@@ -104,19 +105,20 @@ BoWBinaryReader::~BoWBinaryReader()
 std::string BoWBinaryReader::getFileTypeString() const
 {
     switch (m_d->m_fileType) {
-    case BOWFILE_NOTYPE:
+    case BoWFileType::BOWFILE_NOTYPE:
         return "BOWFILE_NOTYPE";
-    case BOWFILE_TEXT:
+    case BoWFileType::BOWFILE_TEXT:
         return "BOWFILE_TEXT";
-    case BOWFILE_DOCUMENT:
+    case BoWFileType::BOWFILE_DOCUMENT:
         return "BOWFILE_DOCUMENT";
-    case BOWFILE_DOCUMENTST:
+    case BoWFileType::BOWFILE_DOCUMENTST:
         return "BOWFILE_DOCUMENTST";
-    case BOWFILE_SDOCUMENT:
+    case BoWFileType::BOWFILE_SDOCUMENT:
         return "BOWFILE_SDOCUMENT";
     }
     return "";
 }
+
 
 void BoWBinaryReader::readHeader(std::istream& file)
 {
@@ -188,21 +190,21 @@ void BoWBinaryReader::readBoWText(std::istream& file,
 #endif
 }
 
-void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
+BoWBlocType BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
                      BoWDocument& document,
                      AbstractBoWDocumentHandler& handler,
                      bool useIterator,
                      bool useIndexIterator)
 {
-    BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
+  BoWBlocType blocType = static_cast<BoWBlocType>( Misc::readOneByteInt(file) );
 #ifdef DEBUG_LP
-    BOWLOGINIT;
-    LDEBUG << "BoWBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
+  BOWLOGINIT;
+  LDEBUG << "BoWBinaryReader::readBoWDocumentBlock: read blocType" << blocType;
 #endif
-    // new format
-    switch ( blocType )
-    {
-    case HIERARCHY_BLOC:
+  // new format
+  switch ( blocType )
+  {
+    case BoWBlocType::HIERARCHY_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "HIERARCHY_BLOC";
@@ -212,7 +214,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.openSBoWNode(&document, elementName);
         break;
     }
-    case INDEXING_BLOC:
+    case BoWBlocType::INDEXING_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "INDEXING_BLOC";
@@ -222,7 +224,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.openSBoWIndexingNode(&document, elementName);
         break;
     }
-    case BOW_TEXT_BLOC:
+    case BoWBlocType::BOW_TEXT_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "BOW_TEXT_BLOC";
@@ -232,7 +234,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.processSBoWText(&document, useIterator, useIndexIterator);
         break;
     }
-    case NODE_PROPERTIES_BLOC:
+    case BoWBlocType::NODE_PROPERTIES_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "NODE_PROPERTIES_BLOC";
@@ -241,7 +243,7 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.processProperties(&document, useIterator, useIndexIterator);
         break;
     }
-    case END_BLOC:
+    case BoWBlocType::END_BLOC:
     {
 #ifdef DEBUG_LP
         LDEBUG << "END_BLOC";
@@ -249,14 +251,14 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         handler.closeSBoWNode();
         break;
     }
-    case DOCUMENT_PROPERTIES_BLOC:
+    case BoWBlocType::DOCUMENT_PROPERTIES_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
         LDEBUG << "DOCUMENT_PROPERTIES_BLOC";
 #endif
         break;
     }
-    case ST_BLOC:
+    case BoWBlocType::ST_BLOC:
     { // do nothing ?
 #ifdef DEBUG_LP
         LDEBUG << "ST_BLOC";
@@ -264,7 +266,21 @@ void BoWBinaryReader::readBoWDocumentBlock(std::istream& file,
         break;
     }
     default:;
+  }
+
+  file.peek(); // Try to read next byte to force update end-of-file flag on windows
+  if (file.eof())
+  {
+#ifdef DEBUG_LP
+    BOWLOGINIT;
+    LDEBUG << "BoWBinaryReader::readBoWDocumentBlock EOF reached but last blockType was" << blocType << getBlocTypeString(blocType);
+#endif
+    if(blocType!= BoWBlocType::END_BLOC){
+      BOWLOGINIT;
+      LERROR << "BoWBinaryReader::readBoWDocumentBlock EOF reached but last blockType was not END_BLOC :" << blocType <<  getBlocTypeString(blocType);
     }
+  }
+  return blocType;
 }
 
 boost::shared_ptr< AbstractBoWElement > BoWBinaryReader::readBoWToken(std::istream& file)
@@ -460,7 +476,7 @@ class BoWBinaryWriterPrivate
 {
   friend class BoWBinaryWriter;
 
-  BoWBinaryWriterPrivate(const QMap< uint64_t,uint64_t >& shiftFrom);
+  BoWBinaryWriterPrivate(std::shared_ptr<const ShiftFrom> shiftFrom);
   ~BoWBinaryWriterPrivate();
 
     // private member functions
@@ -477,16 +493,16 @@ class BoWBinaryWriterPrivate
   void writePredicate(std::ostream& file,
                         const boost::shared_ptr< BoWPredicate > predicate) const;
 
-  QMap< uint64_t,uint64_t > m_shiftFrom;
+  std::shared_ptr<const ShiftFrom> m_shiftFrom;
 };
 
-BoWBinaryWriterPrivate::BoWBinaryWriterPrivate(const QMap< uint64_t, uint64_t >& shiftFrom) :
+BoWBinaryWriterPrivate::BoWBinaryWriterPrivate(std::shared_ptr<const ShiftFrom> shiftFrom) :
     m_shiftFrom(shiftFrom)
 {
 #ifdef DEBUG_LP
   BOWLOGINIT;
-  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << shiftFrom.size();
-  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate" << m_shiftFrom.size();
+  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate";
+  LDEBUG << "BoWBinaryWriterPrivate::BoWBinaryWriterPrivate";
 #endif
 }
 
@@ -494,12 +510,12 @@ BoWBinaryWriterPrivate::~BoWBinaryWriterPrivate()
 {}
 
 
-BoWBinaryWriter::BoWBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom) :
+BoWBinaryWriter::BoWBinaryWriter(std::shared_ptr<const ShiftFrom> shiftFrom) :
     m_d(new BoWBinaryWriterPrivate(shiftFrom))
 {
 #ifdef DEBUG_LP
   BOWLOGINIT;
-  LDEBUG << "BoWBinaryWriter::BoWBinaryWriter" << m_d->m_shiftFrom.size();
+  LDEBUG << "BoWBinaryWriter::BoWBinaryWriter";
 #endif
 }
 
@@ -515,7 +531,7 @@ void BoWBinaryWriter::writeHeader(std::ostream& file, BoWFileType type) const
   LDEBUG << "BoWBinaryWriter::writeHeader version=" << BOW_VERSION << " ; type=" << type;
 #endif
   Misc::writeString(file,BOW_VERSION);
-  Misc::writeOneByteInt(file,type);
+  Misc::writeOneByteInt(file,static_cast<unsigned char>(type));
   // write entity types
   MediaticData::MediaticData::single().writeEntityTypes(file);
 #ifdef DEBUG_LP
@@ -557,7 +573,9 @@ void BoWBinaryWriter::writeBoWToken(std::ostream& file,
   m_d->writeBoWToken(file, token);
 }
 
-void BoWBinaryWriterPrivate::writeBoWToken( std::ostream& file, const boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > token ) const
+void BoWBinaryWriterPrivate::writeBoWToken(
+    std::ostream& file,
+    const boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > token ) const
 {
 #ifdef DEBUG_LP
   BOWLOGINIT;
@@ -615,48 +633,22 @@ void BoWBinaryWriterPrivate::writeSimpleToken(std::ostream& file,
   auto beg = token->getPosition();
   auto end = token->getLength() + beg;
 
-  if (m_shiftFrom.empty())
+#ifdef DEBUG_LP
+  LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is:";
+#endif
+  if (m_shiftFrom.use_count() > 0)
   {
 #ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom is empty";
+    LTRACE << "m_shiftFrom.use_count:" << m_shiftFrom.use_count() ;
 #endif
-  }
-  else
-  {
-#ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin" << beg;
-    LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end" << end;
-#endif
-    auto const shiftForBeginIt = m_shiftFrom.lowerBound(beg-1);
-    if (shiftForBeginIt == m_shiftFrom.constBegin())
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: NO shift";
-#endif
-    }
-    else
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from begin: shift by" << (shiftForBeginIt-1).value();
-#endif
-      beg += (shiftForBeginIt-1).value();
-    }
-    auto const shiftForEndIt = m_shiftFrom.lowerBound(end-1);
-    if (shiftForEndIt == m_shiftFrom.constBegin())
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: NO shift";
-#endif
-    }
-    else
-    {
-#ifdef DEBUG_LP
-      LDEBUG << "BoWBinaryWriter::writeSimpleToken shiftFrom from end: shift by" << (shiftForEndIt-1).value();
-#endif
-      end += (shiftForEndIt-1).value();
-    }
+    beg = m_shiftFrom->correct_offset(0, beg);
+    end = m_shiftFrom->correct_offset(0, end);
   }
 
+#ifdef DEBUG_LP
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken writen begin :" << beg-1;
+    LDEBUG << "BoWBinaryWriter::writeSimpleToken writen length:" << end-beg;
+#endif
   Misc::writeCodedInt(file, beg-1);
   Misc::writeCodedInt(file, end-beg);
 }
@@ -754,6 +746,6 @@ void BoWBinaryWriterPrivate::writeBoWRelation(std::ostream& file,
 }
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace BagOfWords
+} // end namespace Common
+} // end namespace Lima

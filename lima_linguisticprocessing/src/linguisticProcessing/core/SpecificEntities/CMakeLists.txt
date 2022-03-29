@@ -26,6 +26,7 @@ SET(lima-lp-specificentities_LIB_SRCS
    MicrosForNormalization.cpp
    SpecificEntitiesMicros.cpp
    SpecificEntitiesLoader.cpp
+   SpecificEntitiesCompletion.cpp
 )
 
 DECLARE_LIMA_PLUGIN(lima-lp-specificentities)
@@ -114,6 +115,7 @@ install(FILES
     NormalizePersonName.h
     NormalizePerson.h
     SpecificEntitiesLoader.h
+    SpecificEntitiesCompletion.h
     SpecificEntitiesExport.h
   DESTINATION include/linguisticProcessing/core/SpecificEntities
   COMPONENT devel

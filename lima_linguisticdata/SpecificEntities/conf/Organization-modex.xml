@@ -13,6 +13,11 @@
         <item value="OrganizationRecognition"/>
       </list>
     </group>
+    <group name="OrganizationModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="OrganizationModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="OrganizationRecognitionForLimaserver"/>
@@ -21,6 +26,11 @@
     <group name="OrganizationRecognition" class="ApplyRecognizer">
       <param key="automaton" value="OrganizationRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="OrganizationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="OrganizationRecognitionForLimaserver" class="ApplyRecognizer">
@@ -47,12 +57,30 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="OrganizationRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/ORGANIZATION-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud.bin"/>
     </group>
     <group name="OrganizationCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud-eng.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud-eng.bin"/>
     </group>
     <group name="OrganizationIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

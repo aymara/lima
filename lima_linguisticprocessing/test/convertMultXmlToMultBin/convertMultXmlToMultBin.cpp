@@ -30,7 +30,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
-#include <QtCore>
+#include <QtCore/QTimer>
 
 
 using namespace Lima;
@@ -129,7 +129,6 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 
 #include "common/tools/LimaMainTaskRunner.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
-#include <QtCore/QTimer>
 
 int run(int aargc,char** aargv);
 

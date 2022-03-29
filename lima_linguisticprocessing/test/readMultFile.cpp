@@ -1,10 +1,10 @@
 /************************************************************************
  *
  * @file       readBoWFile.cpp
- * @author     Besancon Romaric (besanconr@zoe.cea.fr)
+ * @author     Besancon Romaric <romaric.besancon@cea.fr>
+ * @author     Gaël de Chalendar <gael.de-chalendar@cea.fr>
  * @date       Thu Oct  9 2003
- * @version    $Id: readBoWFile.cpp 9085 2008-02-26 14:15:55Z de-chalendarg $
- * copyright   Copyright (C) 2003 by CEA LIST (LVIC)
+ * copyright   Copyright (C) 2003-2022 by CEA LIST (LASTI)
  *
  ***********************************************************************/
 
@@ -63,16 +63,17 @@ FormatType readFormatType(const std::string& str)
   else
   {
     cerr << "format type " << str << " is not defined";
-    exit(1);
+    QCoreApplication::exit(EXIT_FAILURE);
   }
+  return XML;
 }
 
 struct Param
 {
-  QStringList files;           // input file
+  QStringList files;                // input file
   FormatType outputFormat = XML;    // format of the output file
-  bool useIterator = false;           // use BoWTokenIterator to go through BoWText
-  bool useIndexIterator = false;      // use IndexElementIterator to go through BoWText
+  bool useIterator = false;         // use BoWTokenIterator to go through BoWText
+  bool useIndexIterator = false;    // use IndexElementIterator to go through BoWText
   unsigned int maxCompoundSize = 0; // maximum size of compounds (only if useIndexIterator)
   QString resourcesPath;
   QString configPath;
@@ -160,7 +161,7 @@ Param readCommandLineArguments()
   {
     std::cerr << "Cannot set both use-iterator and use-index-iterator options"
               << std::endl;
-    QCoreApplication::exit(1);
+    QCoreApplication::exit(EXIT_FAILURE);
   }
   else if (parser.isSet("use-iterator"))
   {
@@ -172,9 +173,8 @@ Param readCommandLineArguments()
   }
   if (parser.isSet("output-format"))
   {
-    if  (parser.value("output-format")=="text") param.outputFormat = TEXT;
-    else if  (parser.value("output-format")=="xml") param.outputFormat = XML;
-    else if  (parser.value("output-format")=="stat") param.outputFormat = STAT;
+    param.outputFormat = readFormatType( parser.value("output-format").toStdString() );
+
   }
   if (parser.isSet("maxCompoundSize"))
     param.maxCompoundSize = parser.value("maxCompoundSize").toUInt();
@@ -251,18 +251,25 @@ void readSDocuments(std::istream& fileIn,
     {
       std::cerr << "cannot open output file [" << outputFile.toUtf8().constData()
                 << "] for writing." << std::endl;
-      QCoreApplication::exit(1);
+      exit(EXIT_FAILURE);
     }
   }
   MultimediaXMLWriter writer(*output);
   writer.writeMultimediaDocumentsHeader();
+  BagOfWords::BoWBlocType bt;
   while (! fileIn.eof())
   {
-    reader.readMultimediaDocumentBlock(fileIn,
+    bt = reader.readMultimediaDocumentBlock(fileIn,
                                        document,
                                        writer,
                                        useIterator,
                                        useIndexIterator);
+  }
+  if (bt!=BagOfWords::BoWBlocType::END_BLOC)
+  {
+    std::string err_msg = "input file ended prematurely.";
+    std::cerr << "Error: " << err_msg << std::endl;
+    throw LimaException(err_msg);
   }
   writer.writeMultimediaDocumentsFooter();
   if (!outputFile.isEmpty())
@@ -351,6 +358,7 @@ int run(int argc,char** argv)
   // read BoWFile and output documents
 
   uint64_t i=1;
+  QStringList error_files;
   for (const auto& inputFile: param.files)
   {
     if (!param.extension.isEmpty())
@@ -370,23 +378,20 @@ int run(int argc,char** argv)
       continue;
     }
     MultimediaBinaryReader reader;
-#ifndef DEBUG_LP
     try
     { // try to read the multFile, and catch the exception in release mode
-#endif
       // Let the exception rise in debug mode,
       // so we can traceback the exception occuring location in the debugger
       reader.readHeader(fileIn);
-#ifndef DEBUG_LP
     }
-    catch (exception& e)
+    catch (const std::exception& e)
     {
-      cerr << "Error: input file does not seem to be of mult type, Skip : " << e.what() << endl;
+      std::cerr << "Error: input file does not seem to be a valid mult file, Skip : " << e.what() << endl;
       fileIn.close();
       ++i;
+      error_files.append(inputFile);
       continue;
     }
-#endif
 
     QString outputFile;
     if (!param.extension.isEmpty())
@@ -404,10 +409,24 @@ int run(int argc,char** argv)
                      param.useIterator,
                      param.useIndexIterator);
     }
-    catch (exception& e) { cerr << "Error: " << e.what() << endl; }
+    catch (const std::exception& e)
+    {
+      std::cerr << "Error: failed to read this mult file, Skip : " << e.what() << std::endl;
+      fileIn.close();
+      ++i;
+      error_files.append(inputFile);
+      continue;
+    }
+
     fileIn.close();
     ++i;
   }
 
+
+  if (error_files.size()) {
+      std::cerr << std::endl << "Errors on " << error_files.size() << " file(s): " << std::endl
+        << error_files.join("\n").toStdString() << std::endl;
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }

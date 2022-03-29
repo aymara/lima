@@ -23,17 +23,17 @@ public:
 
   void init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
             Manager* manager) override;
-  
-  void outputGlobalHeader(std::ostream& os, const std::string& sourceFile="", 
-                          const LimaStringText& originalText=LimaStringText("")) const;
-  void outputGlobalFooter(std::ostream& os) const;
-  void outputEntitiesHeader(std::ostream& os) const;
-  void outputEntitiesFooter(std::ostream& os) const;
-  void outputRelationsHeader(std::ostream& os) const;
-  void outputRelationsFooter(std::ostream& os) const;
-  void outputEventsHeader(std::ostream& os) const;
-  void outputEventsFooter(std::ostream& os) const;
-  
+
+  void outputGlobalHeader(std::ostream& os, const std::string& sourceFile="",
+                          const LimaStringText& originalText=LimaStringText("")) const override;
+  void outputGlobalFooter(std::ostream& os) const override;
+  void outputEntitiesHeader(std::ostream& os) const override;
+  void outputEntitiesFooter(std::ostream& os) const override;
+  void outputRelationsHeader(std::ostream& os) const override;
+  void outputRelationsFooter(std::ostream& os) const override;
+  void outputEventsHeader(std::ostream& os) const override;
+  void outputEventsFooter(std::ostream& os) const override;
+
   void outputEntityString(std::ostream& out,
                           unsigned int entityId,
                           const std::string& entityType,
@@ -69,14 +69,19 @@ public:
   bool addEventMentionAsEntity() const override { return false; }
 
 private:
+  bool m_useNormalizedForms; //<! output normalized forms in brat format
   // set members mutable (modified in the inherited const functions)
-  mutable bool m_firstEntity;
+//   mutable bool m_firstEntity;
   mutable bool m_firstRelation;
   mutable bool m_firstEvent;
   // attributes and norms are printed with the entities in AbstractIEDumper: need them to be printed
   // separately in JSON: store them to print them at the end (could do that with all -> better ?)
   mutable std::vector<std::string> m_attributes;
   mutable std::vector<std::string> m_norms;
+  // event triggers are different from the entities: same format but stored associated with a 'triggers' key
+  // have to wait until the events to choose where to put them, store them until that point
+  mutable std::map<unsigned int,std::string> m_entities;
+  mutable std::vector<std::string> m_eventTriggers;
 };
 
 } // AnalysisDumpers

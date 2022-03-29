@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2019 CEA LIST
+    Copyright 2004-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -20,13 +20,10 @@
 #define _WINSOCKAPI_
 #endif
 
-/***************************************************************************
- *   Copyright (C) 2004-2019 by CEA LIST                                   *
- *                                                                         *
- ***************************************************************************/
 #ifndef WIN32
 #include <cstdint> //uint32_t
 #endif
+
 #include "CoreLinguisticProcessingClient.h"
 
 #include "common/MediaticData/mediaticData.h"
@@ -221,7 +218,7 @@ void CoreLinguisticProcessingClient::analyze(
   if (pipeline==0)
   {
     LERROR << "can't get pipeline '" << pipelineId << "'";
-    throw LinguisticProcessingException( std::string("can't get pipeline '" + pipelineId + "'") );
+    throw LinguisticProcessingException( std::string("can't get pipeline '" + pipelineId + "' for language '" + lang + "'") );
   }
   InactiveUnitsData* inactiveUnitsData = new InactiveUnitsData();
   for (std::set<std::string>::const_iterator it = inactiveUnits.begin(); it != inactiveUnits.end(); it++)
@@ -249,14 +246,14 @@ void CoreLinguisticProcessingClient::analyze(
 #ifdef DEBUG_LP
   LDEBUG << "Process pipeline..." ;
 #endif
-  LimaStatusCode status=pipeline->process(analysis);
+  LimaStatusCode status = pipeline->process(analysis);
 #ifdef DEBUG_LP
   LDEBUG << "pipeline process returned status " << (int)status ;
 #endif
   if (status!=SUCCESS_ID)
   {
-    LIMA_EXCEPTION( "analysis failed : receive status " << (int)status
-                    << " from pipeline. exit" );
+      LIMA_LP_EXCEPTION( "analysis failed : receive status " << (int)status
+                         << " from pipeline." );
   }
 }
 
@@ -301,12 +298,10 @@ void CoreLinguisticProcessingClientFactory::configure(
     }
   }
 
-  for (deque<string>::const_iterator langItr=langToload.begin();
-       langItr!=langToload.end();
-       langItr++)
+  for (const auto& lang: langToload)
   {
-    LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << *langItr;
-    MediaId langid=MediaticData::single().getMediaId(*langItr);
+    LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << lang;
+    MediaId langid=MediaticData::single().getMediaId(lang);
     QString file;
     try
     {
@@ -319,7 +314,7 @@ void CoreLinguisticProcessingClientFactory::configure(
       QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
             "lima-coreclient",
             "mediaProcessingDefinitionFiles",
-            *langItr).c_str());
+            lang).c_str());
       Q_FOREACH(QString confPath, configPaths)
       {
         if  (QFileInfo::exists(confPath + "/" + mediaProcessingDefinitionFile))
@@ -331,14 +326,14 @@ void CoreLinguisticProcessingClientFactory::configure(
       if (file.isEmpty())
       {
         LERROR << "no language definition file"<< mediaProcessingDefinitionFile
-                << "for language" << *langItr << "found in config paths"
+                << "for language" << lang << "found in config paths"
                 << configPaths;
         throw InvalidConfiguration("no language definition file for language ");
       }
     }
     catch (NoSuchParam& )
     {
-      LERROR << "no language definition file for language " << *langItr;
+      LERROR << "no language definition file for language " << lang;
       throw InvalidConfiguration("no language definition file for language ");
     }
     XMLConfigurationFileParser langParser(file);
@@ -347,14 +342,14 @@ void CoreLinguisticProcessingClientFactory::configure(
     Common::MediaticData::MediaticData::changeable().initEntityTypes(langParser);
 
     // initialize resources
-    LINFO << "configure resources for language " << *langItr;
+    LINFO << "configure resources for language " << lang;
     try
     {
       ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
       LinguisticResources::changeable().initLanguage(
         langid,
         module,
-        true); // load main keys
+        lang.find("ud-") != 0 && lang != "ud"); // load main keys for non ud languages
     }
     catch (NoSuchModule& )
     {

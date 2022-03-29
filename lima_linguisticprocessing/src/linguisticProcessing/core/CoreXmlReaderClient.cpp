@@ -1,10 +1,27 @@
+/*
+    Copyright 2009-2021 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /**
- * @file        CoreXmlReaderClient.cpp
- * @author      CEA LIST
  * @date        April, 2009
  */
 #include "CoreXmlReaderClient.h"
 
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 #include "linguisticProcessing/client/xmlreader/XmlReaderException.h"
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 #include "common/MediaticData/mediaticData.h"
@@ -34,7 +51,7 @@ namespace XmlReader
 {
 
 CoreXmlReaderClient::CoreXmlReaderClient(Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser &configuration) :
-/*m_delegate(0),*/m_handler(0)
+/*m_delegate(0),*/m_handler(nullptr)
 {
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
@@ -44,6 +61,7 @@ CoreXmlReaderClient::CoreXmlReaderClient(Lima::Common::XMLConfigurationFiles::XM
     m_documentReader = new DocumentsReader::DocumentReader(conf);
     m_documentReader->setLinguisticXMLDocHandler(this);
     m_emptyTextChars = utf8stdstring2limastring(" \t\n");
+
 }
 
 CoreXmlReaderClient::~CoreXmlReaderClient()
@@ -71,7 +89,9 @@ void CoreXmlReaderClient::endHierarchy(const DocumentsReader::ContentStructuredD
     // must be a structured Element
     assert(element);
     // get byte offset before the beginning of the closing tag
-    element->setIntValue("offEndPrpty", element->getOffset());
+    auto offset = m_handler->shiftFrom()->correct_offset(0, element->getOffset());
+    element->setIntValue("offEndPrpty", offset);
+//     element->setIntValue("offEndPrpty", element->getOffset());
 
 
 #ifdef DEBUG_LP
@@ -114,7 +134,9 @@ void CoreXmlReaderClient::endIndexing(
       assert(false);
     }
     // get byte offset before the beginning of the closing tag
-    element->setIntValue("offEndPrpty", element->getOffset());
+    auto offset = m_handler->shiftFrom()->correct_offset(0, element->getOffset());
+    element->setIntValue("offEndPrpty", offset);
+//     element->setIntValue("offEndPrpty", element->getOffset());
 
 
 #ifdef DEBUG_LP
@@ -141,7 +163,8 @@ void CoreXmlReaderClient::handle(
   XMLREADERCLIENTLOGINIT;
 #endif
 
-    if(std::string(text.toUtf8().constData()).find_first_not_of(m_emptyTextChars.toUtf8().constData()) == string::npos) {
+    auto rtext = m_handler->shiftFrom()->rebuild_text(text, offset);
+    if(std::string(rtext.toStdString()).find_first_not_of(m_emptyTextChars.toStdString()) == string::npos) {
 #ifdef DEBUG_LP
         LDEBUG << "CoreXmlReaderClient::empty text, not analyzed";
 #endif
@@ -156,9 +179,9 @@ void CoreXmlReaderClient::handle(
 #ifdef DEBUG_LP
     if( logger.loggingLevel() == QsLogging::DebugLevel )
     {
-      LDEBUG << "CoreXmlReaderClient::handle"
-            << "[" << text << "], offset =" << offset
-            << ", tagName =" << tagName << ", element name =" << elementName ;
+      LDEBUG << "CoreXmlReaderClient::handle [" << rtext << "], offset ="
+            << offset << ", tagName =" << tagName << ", element name ="
+            << elementName ;
     }
     else if( logger.loggingLevel() == QsLogging::InfoLevel )
 #endif
@@ -166,7 +189,7 @@ void CoreXmlReaderClient::handle(
       // Chercher les analyses diponibles
       XMLREADERCLIENTLOGINIT;
       LINFO << "CoreXmlReaderClient::handle"
-            << "[" << text.left(50) << "], offset =" << offset
+            << "[" << rtext.left(50) << "], offset =" << offset
             << ", tagName =" << tagName ;
     }
     ostringstream os;
@@ -203,7 +226,7 @@ void CoreXmlReaderClient::handle(
     os2 << offsetIndexingNode;
     m_docMetaData["StartOffsetIndexingNode"] = os2.str();
 
-    auto strText = text.toStdString();
+    auto strText = rtext.toStdString();
 
     m_handler->handleProc(
         tagName,
@@ -238,12 +261,9 @@ void CoreXmlReaderClient::handleProperty(
     if(!property.getId().compare("pipelineProperty"))
         m_docMetaData["pipeline"].append(data);
 
-    // added date and location
-    if(!property.getId().compare("datePrpty")) {
-        m_docMetaData["date"] = data;
-    }
+    // added location
     if(!property.getId().compare("locationPrpty")) {
-        m_docMetaData["location"] = data;
+            m_docMetaData["location"] = data;
     }
 }
 
@@ -258,6 +278,7 @@ void CoreXmlReaderClient::analyze(
 {
     (void) handlers;      // avoid warning
     (void) inactiveUnits; // avoid warning
+
 
 #ifdef DEBUG_LP
     XMLREADERCLIENTLOGINIT;
@@ -292,24 +313,29 @@ void CoreXmlReaderClient::analyze(
     m_handler->set_lastUri(string((*docMetadataPtr) ["filePath"]));
     m_handler->set_lang(string((*docMetadataPtr) ["Lang"]));
 
-    if(!m_documentReader->initWithString(text)) {
+    if(!m_documentReader->initWithString(QString::fromStdString(text))) {
         XMLREADERCLIENTLOGINIT;
-        LERROR << "CoreXmlReaderClient::analyze: can't init reader with text ! ";
-        throw XmlReaderException();
+        LERROR << "CoreXmlReaderClient::analyze: can't init reader with text !";
+        throw XmlReaderException("CoreXmlReaderClient::analyze: can't init reader with text !");
     }
 #ifdef DEBUG_LP
     LDEBUG << "CoreXmlReaderClient::analyze after initWithString";
 #endif
 
-//     try {
+#ifndef DEBUG_LP
+     try {
+#endif
         m_documentReader->readXMLDocument();
-        m_handler->endDocument();
-//     } catch(std::exception &e) {
-//         XMLREADERCLIENTLOGINIT;
-//         LERROR << "Error XMLreader: " << e.what();
-//         throw XmlReaderException();
-//     }
-
+#ifndef DEBUG_LP
+     } catch (const Lima::LinguisticProcessing::LinguisticProcessingException& e) {
+         XMLREADERCLIENTLOGINIT;
+         LERROR << "Error in XMLreader: " << e.what();
+     } catch (const Lima::LimaException& e) {
+         XMLREADERCLIENTLOGINIT;
+         LERROR << "Error in XMLreader: " << e.what();
+     }
+#endif
+     m_handler->endDocument();
 }
 
 void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocument &contentDocument, bool isIndexing)
@@ -332,11 +358,19 @@ void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocu
 #endif
         element->GenericDocumentProperties::setStringValue("langPrpty", m_mapTagMedia[element->getElementName().toUtf8().constData()]);
     }
-    if(!m_docMetaData["Type"].empty())
-        element->GenericDocumentProperties::setStringValue("typPrpty", m_docMetaData["Type"]);
     element->GenericDocumentProperties::setStringValue("encodPrpty", "UTF8");
     // set date as today
     element->GenericDocumentProperties::setDateValue("indexDatePrpty", QDate::currentDate());
+
+#if 0
+    if(!m_docMetaData["type"].empty()) {
+        element->GenericDocumentProperties::setStringValue("typPrpty", m_docMetaData["type"]);
+#ifdef DEBUG_LP
+        LDEBUG << "CoreXmlReaderClient::startNode() set typPrpty to: " << m_docMetaData["type"];
+#endif
+    }
+#endif
+
 
 #ifdef DEBUG_LP
     LDEBUG << "CoreXmlReaderClient::startNode m_handler::startNode(" << element->getElementName() << ")";
@@ -373,6 +407,7 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
         // lien avec les clients d'analyse
         m_handler = abstractHandler;
         m_handler->setAnalysisClients(m_processingClientHandler.getAnalysisClients());
+        m_documentReader->setShiftFrom(m_handler->shiftFrom());
         m_mapHandlers.insert(make_pair(handlerId, handler));
     } else {
         XMLREADERCLIENTLOGINIT;
@@ -448,7 +483,7 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
         string media = ItrMedia->first;
         string PCfactoryName = ItrMedia->second;
 #ifdef DEBUG_LP
-        LDEBUG << "Media [" << media << "] is analysed by [" << PCfactoryName
+        LDEBUG << "Media [" << media << "] is analyzed by [" << PCfactoryName
                 << "]";
 #endif
         std::shared_ptr< Lima::ProcessingClientFactory >PCfactory = getFactoryFromId(PCfactoryName);
@@ -483,8 +518,10 @@ std::shared_ptr< AbstractXmlReaderClient > CoreXmlReaderClientFactory::createCli
     // Gives the tag to language map to the client to allow it to retrieve the language at analysis time
     client->setMapTagMedia(m_mapTagMedia);
     client->setDefaultMedia(m_defaultMedia);
+    client->setDocumentPropertyConfiguration(configuration);
+
     return client;
 }
 
 } // XmlReader
-} // FrCeaLic2m
+} // Lima

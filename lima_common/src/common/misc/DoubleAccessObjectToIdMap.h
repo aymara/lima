@@ -68,6 +68,16 @@ class DoubleAccessObjectToIdMap
   const Id& get(const Object&) const;
   /** @} */
 
+  /** @{
+   * just check the existence of key or value in the access map
+   * 
+   * @return 
+   */
+  bool hasId(const Id&) const;
+  bool hasValue(const Object&) const;
+  /** @} */
+
+  
   /** 
    * insert an object if not already inserted
    */

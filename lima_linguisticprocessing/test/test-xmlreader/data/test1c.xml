@@ -1,0 +1,9 @@
+<DOC>
+<DOCNO>doc001</DOCNO>
+<TITLE>le titre</TITLE>
+<PAS_LU>du texte pas lu</PAS_LU>
+<TEXT>
+&lt; du texte à analyser. Dans un document
+sans balise xml d'entête.
+</TEXT>
+</DOC>

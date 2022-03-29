@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 #   Copyright 2002-2013 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -14,16 +15,15 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 # Converts wolf-0.1.4 from its xml format with WordNet 2.0 IDs
 # to the DebVisDic format with WordNet 3.0 IDs
 
-from lxml import etree
-from lxml.etree import ElementTree, Element
-from collections import defaultdict
 import sys
+
+from lxml import etree
+from lxml.etree import Element
 
 result = {}
 
@@ -35,11 +35,11 @@ for code in codes.findall("code"):
     f = {}
     for field in code.findall("field"):
         f[field.attrib["key"]] = field.attrib["value"]
-    #MICRO,GENDER,NUMBER,PERSON,TIME,SYNTAX;code
+    # MICRO,GENDER,NUMBER,PERSON,TIME,SYNTAX;code
     if "ICRO" in f:
-        resultkey = "{},{},{},{},{},{}".format(f["MICRO"], f["SYNTAX"],
-                                               f["TIME"], f["PERSON"],
-                                               f["GENDER"], f["NUMBER"])
+        resultkey = "{},{},{},{},{},{}".format(
+            f["MICRO"], f["SYNTAX"], f["TIME"], f["PERSON"], f["GENDER"], f["NUMBER"]
+        )
 
         if resultkey in result:
             result[resultkey].append(k)
@@ -50,6 +50,6 @@ for code in codes.findall("code"):
 for resultkey in result:
     print("{};{}".format(resultkey, str.join(",", result[resultkey])))
 
-#print(etree.tostring(extract,encoding="UTF-8",
-  #xml_declaration=True,
-  #pretty_print=True))
+# print(etree.tostring(extract,encoding="UTF-8",
+# xml_declaration=True,
+# pretty_print=True))

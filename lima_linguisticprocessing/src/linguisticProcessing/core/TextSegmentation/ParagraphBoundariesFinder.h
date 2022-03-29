@@ -57,6 +57,7 @@ private:
 //   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   std::string m_graph;
   LimaString m_paragraphSeparator;
+  std::string m_dataName;
 };
 
 }

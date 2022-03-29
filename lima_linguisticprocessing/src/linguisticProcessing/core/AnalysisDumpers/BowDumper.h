@@ -65,7 +65,7 @@ namespace AnalysisDumpers
 /**
 @author Benoit Mathieu
 */
-class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper 
+class LIMA_ANALYSISDUMPERS_EXPORT BowDumper : public AbstractTextualAnalysisDumper
 {
 public:
   BowDumper();
@@ -81,16 +81,19 @@ public:
 
 protected:
   Compounds::BowGenerator* m_bowGenerator;
-  std::string m_handler;
+  std::string m_graph;
+  bool m_allEntities;
 
-  private:
-    void buildBoWText(
-      const Common::AnnotationGraphs::AnnotationData* annotationData,
-      const SyntacticAnalysis::SyntacticData* syntacticData,
-      Common::BagOfWords::BoWText& bowText,
-      AnalysisContent& analysis,
-      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-      LinguisticAnalysisStructure::AnalysisGraph* posgraph) const;
+private:
+  void buildBoWText(
+    const Common::AnnotationGraphs::AnnotationData* annotationData,
+    const SyntacticAnalysis::SyntacticData* syntacticData,
+    Common::BagOfWords::BoWText& bowText,
+    AnalysisContent& analysis,
+    LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+    LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+    std::set<LinguisticGraphVertex>& addedEntities,
+    const uint64_t offset) const;
 
   void addVerticesToBoWText(
     const Common::AnnotationGraphs::AnnotationData* annotationData,
@@ -100,9 +103,17 @@ protected:
     const LinguisticGraphVertex begin,
     const LinguisticGraphVertex end,
     const uint64_t offset,
-    Common::BagOfWords::BoWText& bowText) const;
+    Common::BagOfWords::BoWText& bowText,
+    std::set<LinguisticGraphVertex>& addedEntities) const;
 
-  std::string m_graph;
+    void addAllEntities(
+      const Common::AnnotationGraphs::AnnotationData* annotationData,
+      const std::set<LinguisticGraphVertex>& addedEntities,
+      Common::BagOfWords::BoWText& bowText,
+      LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+      LinguisticAnalysisStructure::AnalysisGraph* posgraph,
+      const uint64_t offset=0) const;
+
 };
 
 } // AnalysisDumpers

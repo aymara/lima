@@ -204,13 +204,20 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
     const LinguisticGraphVertex& vertex,
     const LinguisticGraph& graph,
     LTR_Token* tokenRep,
-    uint64_t offset) const {
+    uint64_t offset) const 
+{
 
-    // get data from the result of the linguistic analysis
+  //LDEBUG << "LTRTextBuilder::updateLTR_TokenFromVertex(" << vertex << ")";
+  // get data from the result of the linguistic analysis
     Token* fullToken = get(vertex_token, graph, vertex);
     MorphoSyntacticData* data = get(vertex_data, graph, vertex);
     const FsaStringsPool& sp = (Common::MediaticData::MediaticData::single().stringsPool(m_language));
 
+    if (data->size()==0) {
+      DUMPERLOGINIT;
+      LERROR << "Empty MorphoSyntacticData for vertex" << vertex << ", token=" << fullToken->stringForm();
+    }
+    
     sort(data->begin(),data->end(),ltNormProperty(m_macroAccessor));
 
     StringsPoolIndex norm(0),lastNorm(0);
@@ -242,8 +249,10 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
                                                   fullToken->position() + offset,
                                                   fullToken->length()));
                 bowToken->setInflectedForm(fullToken->stringForm());
+                //LDEBUG << "--add:" << fullToken->stringForm();
                 tokenRep->push_back(make_pair(bowToken, plainWordFlag));
             }
+            //else { LDEBUG << "--ignored:" << fullToken->stringForm(); }
         }
     }
 }

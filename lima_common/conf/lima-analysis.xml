@@ -8,18 +8,152 @@
     <group name="mediaProcessingDefinitionFiles">
       <list name="available">
         <item value="eng" />
-        <item value="eng.ud" />
         <item value="fre" />
-        <item value="fre.ud" />
         <item value="por" />
         <item value="ud" />
+
+        <!-- Universal Dependencies -->
+        <item value="ud-afr" />
+        <item value="ud-ara" />
+        <item value="ud-bel" />
+        <item value="ud-bre" />
+        <item value="ud-bul" />
+        <item value="ud-cat" />
+        <item value="ud-ces" />
+        <item value="ud-chu" />
+        <item value="ud-cop" />
+        <item value="ud-cym" />
+        <item value="ud-dan" />
+        <item value="ud-deu" />
+        <item value="ud-ell" />
+        <item value="ud-eng" />
+        <item value="ud-est" />
+        <item value="ud-eus" />
+        <item value="ud-fas" />
+        <item value="ud-fin" />
+        <item value="ud-fra" />
+        <item value="ud-fro" />
+        <item value="ud-gla" />
+        <item value="ud-gle" />
+        <item value="ud-glg" />
+        <item value="ud-heb" />
+        <item value="ud-hin" />
+        <item value="ud-hrv" />
+        <item value="ud-hun" />
+        <item value="ud-hye" />
+        <item value="ud-ind" />
+        <item value="ud-ita" />
+        <item value="ud-jpn" />
+        <item value="ud-kaz" />
+        <item value="ud-kmr" />
+        <item value="ud-kor" />
+        <item value="ud-lat" />
+        <item value="ud-lav" />
+        <item value="ud-lit" />
+        <item value="ud-lzh" />
+        <item value="ud-mar" />
+        <item value="ud-mlt" />
+        <item value="ud-nld" />
+        <item value="ud-nno" />
+        <item value="ud-nob" />
+        <item value="ud-orv" />
+        <item value="ud-pcm" />
+        <item value="ud-pol" />
+        <item value="ud-por" />
+        <item value="ud-ron" />
+        <item value="ud-rus" />
+        <item value="ud-slk" />
+        <item value="ud-slv" />
+        <item value="ud-sme" />
+        <item value="ud-spa" />
+        <item value="ud-sqi" />
+        <item value="ud-srp" />
+        <item value="ud-swe" />
+        <item value="ud-tam" />
+        <item value="ud-tel" />
+        <item value="ud-tha" />
+        <item value="ud-tur" />
+        <item value="ud-uig" />
+        <item value="ud-ukr" />
+        <item value="ud-urd" />
+        <item value="ud-vie" />
+        <item value="ud-wol" />
+        <item value="ud-zho" />
+        <item value="ud-zho-simp" />
       </list>
       <param key="eng" value="lima-lp-eng.xml" />
-      <param key="eng.ud" value="lima-lp-eng.ud.xml" />
       <param key="fre" value="lima-lp-fre.xml" />
-      <param key="fre.ud" value="lima-lp-fre.ud.xml" />
       <param key="por" value="lima-lp-por.xml" />
       <param key="ud" value="lima-lp-ud.xml" />
+
+      <param key="ud-afr" value="lima-lp-ud.xml" />
+      <param key="ud-ara" value="lima-lp-ud.xml" />
+      <param key="ud-bel" value="lima-lp-ud.xml" />
+      <param key="ud-bre" value="lima-lp-ud.xml" />
+      <param key="ud-bul" value="lima-lp-ud.xml" />
+      <param key="ud-cat" value="lima-lp-ud.xml" />
+      <param key="ud-ces" value="lima-lp-ud.xml" />
+      <param key="ud-chu" value="lima-lp-ud.xml" />
+      <param key="ud-cop" value="lima-lp-ud.xml" />
+      <param key="ud-cym" value="lima-lp-ud.xml" />
+      <param key="ud-dan" value="lima-lp-ud.xml" />
+      <param key="ud-deu" value="lima-lp-ud.xml" />
+      <param key="ud-ell" value="lima-lp-ud.xml" />
+      <param key="ud-eng" value="lima-lp-ud-eng.xml" />
+      <param key="ud-est" value="lima-lp-ud.xml" />
+      <param key="ud-eus" value="lima-lp-ud.xml" />
+      <param key="ud-fas" value="lima-lp-ud.xml" />
+      <param key="ud-fin" value="lima-lp-ud.xml" />
+      <param key="ud-fra" value="lima-lp-ud.xml" />
+      <param key="ud-fro" value="lima-lp-ud.xml" />
+      <param key="ud-gla" value="lima-lp-ud.xml" />
+      <param key="ud-gle" value="lima-lp-ud.xml" />
+      <param key="ud-glg" value="lima-lp-ud.xml" />
+      <param key="ud-heb" value="lima-lp-ud.xml" />
+      <param key="ud-hin" value="lima-lp-ud.xml" />
+      <param key="ud-hrv" value="lima-lp-ud.xml" />
+      <param key="ud-hun" value="lima-lp-ud.xml" />
+      <param key="ud-hye" value="lima-lp-ud.xml" />
+      <param key="ud-ind" value="lima-lp-ud.xml" />
+      <param key="ud-ita" value="lima-lp-ud.xml" />
+      <param key="ud-jpn" value="lima-lp-ud.xml" />
+      <param key="ud-kaz" value="lima-lp-ud.xml" />
+      <param key="ud-kmr" value="lima-lp-ud.xml" />
+      <param key="ud-kor" value="lima-lp-ud.xml" />
+      <param key="ud-lat" value="lima-lp-ud.xml" />
+      <param key="ud-lav" value="lima-lp-ud.xml" />
+      <param key="ud-lit" value="lima-lp-ud.xml" />
+      <param key="ud-lzh" value="lima-lp-ud.xml" />
+      <param key="ud-mar" value="lima-lp-ud.xml" />
+      <param key="ud-mlt" value="lima-lp-ud.xml" />
+      <param key="ud-nld" value="lima-lp-ud.xml" />
+      <param key="ud-nno" value="lima-lp-ud.xml" />
+      <param key="ud-nob" value="lima-lp-ud.xml" />
+      <param key="ud-orv" value="lima-lp-ud.xml" />
+      <param key="ud-pcm" value="lima-lp-ud.xml" />
+      <param key="ud-pol" value="lima-lp-ud.xml" />
+      <param key="ud-por" value="lima-lp-ud.xml" />
+      <param key="ud-ron" value="lima-lp-ud.xml" />
+      <param key="ud-rus" value="lima-lp-ud.xml" />
+      <param key="ud-slk" value="lima-lp-ud.xml" />
+      <param key="ud-slv" value="lima-lp-ud.xml" />
+      <param key="ud-sme" value="lima-lp-ud.xml" />
+      <param key="ud-spa" value="lima-lp-ud.xml" />
+      <param key="ud-sqi" value="lima-lp-ud.xml" />
+      <param key="ud-srp" value="lima-lp-ud.xml" />
+      <param key="ud-swe" value="lima-lp-ud.xml" />
+      <param key="ud-tam" value="lima-lp-ud.xml" />
+      <param key="ud-tel" value="lima-lp-ud.xml" />
+      <param key="ud-tha" value="lima-lp-ud.xml" />
+      <param key="ud-tur" value="lima-lp-ud.xml" />
+      <param key="ud-uig" value="lima-lp-ud.xml" />
+      <param key="ud-ukr" value="lima-lp-ud.xml" />
+      <param key="ud-urd" value="lima-lp-ud.xml" />
+      <param key="ud-vie" value="lima-lp-ud.xml" />
+      <param key="ud-wol" value="lima-lp-ud.xml" />
+      <param key="ud-zho-simp" value="lima-lp-ud.xml" />
+      <param key="ud-zho" value="lima-lp-ud.xml" />
+
     </group>
     <group name="pipelines">
       <!-- chaque map represente 1 pipeline "general", qui est decline selon les media. -->
@@ -31,65 +165,253 @@
       please use one of the others below -->
       <map name="main">
         <entry key="eng"    value="main"/>
-        <entry key="eng.ud" value="main"/>
         <entry key="fre"    value="main"/>
-        <entry key="fre.ud"    value="main"/>
         <entry key="por"    value="main"/>
+
+        <entry key="ud"     value="deepud"/>
+
+        <entry key="ud-afr" value="deepud" />
+        <entry key="ud-ara" value="deepud" />
+        <entry key="ud-bel" value="deepud" />
+        <entry key="ud-bre" value="deepud" />
+        <entry key="ud-bul" value="deepud" />
+        <entry key="ud-cat" value="deepud" />
+        <entry key="ud-ces" value="deepud" />
+        <entry key="ud-chu" value="deepud" />
+        <entry key="ud-cop" value="deepud" />
+        <entry key="ud-cym" value="deepud" />
+        <entry key="ud-dan" value="deepud" />
+        <entry key="ud-deu" value="deepud" />
+        <entry key="ud-ell" value="deepud" />
+        <entry key="ud-eng" value="deepud" />
+        <entry key="ud-est" value="deepud" />
+        <entry key="ud-eus" value="deepud" />
+        <entry key="ud-fas" value="deepud" />
+        <entry key="ud-fin" value="deepud" />
+        <entry key="ud-fra" value="deepud" />
+        <entry key="ud-fro" value="deepud" />
+        <entry key="ud-gla" value="deepud" />
+        <entry key="ud-gle" value="deepud" />
+        <entry key="ud-glg" value="deepud" />
+        <entry key="ud-heb" value="deepud" />
+        <entry key="ud-hin" value="deepud" />
+        <entry key="ud-hrv" value="deepud" />
+        <entry key="ud-hun" value="deepud" />
+        <entry key="ud-hye" value="deepud" />
+        <entry key="ud-ind" value="deepud" />
+        <entry key="ud-ita" value="deepud" />
+        <entry key="ud-jpn" value="deepud" />
+        <entry key="ud-kaz" value="deepud" />
+        <entry key="ud-kmr" value="deepud" />
+        <entry key="ud-kor" value="deepud" />
+        <entry key="ud-lat" value="deepud" />
+        <entry key="ud-lav" value="deepud" />
+        <entry key="ud-lit" value="deepud" />
+        <entry key="ud-lzh" value="deepud" />
+        <entry key="ud-mar" value="deepud" />
+        <entry key="ud-mlt" value="deepud" />
+        <entry key="ud-nld" value="deepud" />
+        <entry key="ud-nno" value="deepud" />
+        <entry key="ud-nob" value="deepud" />
+        <entry key="ud-orv" value="deepud" />
+        <entry key="ud-pcm" value="deepud" />
+        <entry key="ud-pol" value="deepud" />
+        <entry key="ud-por" value="deepud" />
+        <entry key="ud-ron" value="deepud" />
+        <entry key="ud-rus" value="deepud" />
+        <entry key="ud-slk" value="deepud" />
+        <entry key="ud-slv" value="deepud" />
+        <entry key="ud-sme" value="deepud" />
+        <entry key="ud-spa" value="deepud" />
+        <entry key="ud-sqi" value="deepud" />
+        <entry key="ud-srp" value="deepud" />
+        <entry key="ud-swe" value="deepud" />
+        <entry key="ud-tam" value="deepud" />
+        <entry key="ud-tel" value="deepud" />
+        <entry key="ud-tha" value="deepud" />
+        <entry key="ud-tur" value="deepud" />
+        <entry key="ud-uig" value="deepud" />
+        <entry key="ud-ukr" value="deepud" />
+        <entry key="ud-urd" value="deepud" />
+        <entry key="ud-vie" value="deepud" />
+        <entry key="ud-wol" value="deepud" />
+        <entry key="ud-zho-simp" value="deepud" />
+        <entry key="ud-zho" value="deepud" />
       </map>
       <map name="deepud">
-        <entry key="eng.ud" value="deepud"/>
-        <entry key="fre.ud" value="deepud"/>
         <entry key="ud"     value="deepud"/>
+
+        <entry key="ud-afr" value="deepud" />
+        <entry key="ud-ara" value="deepud" />
+        <entry key="ud-bel" value="deepud" />
+        <entry key="ud-bre" value="deepud" />
+        <entry key="ud-bul" value="deepud" />
+        <entry key="ud-cat" value="deepud" />
+        <entry key="ud-ces" value="deepud" />
+        <entry key="ud-chu" value="deepud" />
+        <entry key="ud-cop" value="deepud" />
+        <entry key="ud-cym" value="deepud" />
+        <entry key="ud-dan" value="deepud" />
+        <entry key="ud-deu" value="deepud" />
+        <entry key="ud-ell" value="deepud" />
+        <entry key="ud-eng" value="deepud" />
+        <entry key="ud-est" value="deepud" />
+        <entry key="ud-eus" value="deepud" />
+        <entry key="ud-fas" value="deepud" />
+        <entry key="ud-fin" value="deepud" />
+        <entry key="ud-fra" value="deepud" />
+        <entry key="ud-fro" value="deepud" />
+        <entry key="ud-gla" value="deepud" />
+        <entry key="ud-gle" value="deepud" />
+        <entry key="ud-glg" value="deepud" />
+        <entry key="ud-heb" value="deepud" />
+        <entry key="ud-hin" value="deepud" />
+        <entry key="ud-hrv" value="deepud" />
+        <entry key="ud-hun" value="deepud" />
+        <entry key="ud-hye" value="deepud" />
+        <entry key="ud-ind" value="deepud" />
+        <entry key="ud-ita" value="deepud" />
+        <entry key="ud-jpn" value="deepud" />
+        <entry key="ud-kaz" value="deepud" />
+        <entry key="ud-kmr" value="deepud" />
+        <entry key="ud-kor" value="deepud" />
+        <entry key="ud-lat" value="deepud" />
+        <entry key="ud-lav" value="deepud" />
+        <entry key="ud-lit" value="deepud" />
+        <entry key="ud-lzh" value="deepud" />
+        <entry key="ud-mar" value="deepud" />
+        <entry key="ud-mlt" value="deepud" />
+        <entry key="ud-nld" value="deepud" />
+        <entry key="ud-nno" value="deepud" />
+        <entry key="ud-nob" value="deepud" />
+        <entry key="ud-orv" value="deepud" />
+        <entry key="ud-pcm" value="deepud" />
+        <entry key="ud-pol" value="deepud" />
+        <entry key="ud-por" value="deepud" />
+        <entry key="ud-ron" value="deepud" />
+        <entry key="ud-rus" value="deepud" />
+        <entry key="ud-slk" value="deepud" />
+        <entry key="ud-slv" value="deepud" />
+        <entry key="ud-sme" value="deepud" />
+        <entry key="ud-spa" value="deepud" />
+        <entry key="ud-sqi" value="deepud" />
+        <entry key="ud-srp" value="deepud" />
+        <entry key="ud-swe" value="deepud" />
+        <entry key="ud-tam" value="deepud" />
+        <entry key="ud-tel" value="deepud" />
+        <entry key="ud-tha" value="deepud" />
+        <entry key="ud-tur" value="deepud" />
+        <entry key="ud-uig" value="deepud" />
+        <entry key="ud-ukr" value="deepud" />
+        <entry key="ud-urd" value="deepud" />
+        <entry key="ud-vie" value="deepud" />
+        <entry key="ud-wol" value="deepud" />
+        <entry key="ud-zho-simp" value="deepud" />
+        <entry key="ud-zho" value="deepud" />
+
       </map>
       <map name="deepud-pretok">
-        <entry key="eng.ud" value="deepud-pretok"/>
-        <entry key="fre.ud" value="deepud-pretok"/>
         <entry key="ud"     value="deepud-pretok"/>
+
+        <entry key="ud-afr" value="deepud-pretok" />
+        <entry key="ud-ara" value="deepud-pretok" />
+        <entry key="ud-bel" value="deepud-pretok" />
+        <entry key="ud-bre" value="deepud-pretok" />
+        <entry key="ud-bul" value="deepud-pretok" />
+        <entry key="ud-cat" value="deepud-pretok" />
+        <entry key="ud-ces" value="deepud-pretok" />
+        <entry key="ud-chu" value="deepud-pretok" />
+        <entry key="ud-cop" value="deepud-pretok" />
+        <entry key="ud-cym" value="deepud-pretok" />
+        <entry key="ud-dan" value="deepud-pretok" />
+        <entry key="ud-deu" value="deepud-pretok" />
+        <entry key="ud-ell" value="deepud-pretok" />
+        <entry key="ud-eng" value="deepud-pretok" />
+        <entry key="ud-est" value="deepud-pretok" />
+        <entry key="ud-eus" value="deepud-pretok" />
+        <entry key="ud-fas" value="deepud-pretok" />
+        <entry key="ud-fin" value="deepud-pretok" />
+        <entry key="ud-fra" value="deepud-pretok" />
+        <entry key="ud-fro" value="deepud-pretok" />
+        <entry key="ud-gla" value="deepud-pretok" />
+        <entry key="ud-gle" value="deepud-pretok" />
+        <entry key="ud-glg" value="deepud-pretok" />
+        <entry key="ud-heb" value="deepud-pretok" />
+        <entry key="ud-hin" value="deepud-pretok" />
+        <entry key="ud-hrv" value="deepud-pretok" />
+        <entry key="ud-hun" value="deepud-pretok" />
+        <entry key="ud-hye" value="deepud-pretok" />
+        <entry key="ud-ind" value="deepud-pretok" />
+        <entry key="ud-ita" value="deepud-pretok" />
+        <entry key="ud-jpn" value="deepud-pretok" />
+        <entry key="ud-kaz" value="deepud-pretok" />
+        <entry key="ud-kmr" value="deepud-pretok" />
+        <entry key="ud-kor" value="deepud-pretok" />
+        <entry key="ud-lat" value="deepud-pretok" />
+        <entry key="ud-lav" value="deepud-pretok" />
+        <entry key="ud-lit" value="deepud-pretok" />
+        <entry key="ud-lzh" value="deepud-pretok" />
+        <entry key="ud-mar" value="deepud-pretok" />
+        <entry key="ud-mlt" value="deepud-pretok" />
+        <entry key="ud-nld" value="deepud-pretok" />
+        <entry key="ud-nno" value="deepud-pretok" />
+        <entry key="ud-nob" value="deepud-pretok" />
+        <entry key="ud-orv" value="deepud-pretok" />
+        <entry key="ud-pcm" value="deepud-pretok" />
+        <entry key="ud-pol" value="deepud-pretok" />
+        <entry key="ud-por" value="deepud-pretok" />
+        <entry key="ud-ron" value="deepud-pretok" />
+        <entry key="ud-rus" value="deepud-pretok" />
+        <entry key="ud-slk" value="deepud-pretok" />
+        <entry key="ud-slv" value="deepud-pretok" />
+        <entry key="ud-sme" value="deepud-pretok" />
+        <entry key="ud-spa" value="deepud-pretok" />
+        <entry key="ud-sqi" value="deepud-pretok" />
+        <entry key="ud-srp" value="deepud-pretok" />
+        <entry key="ud-swe" value="deepud-pretok" />
+        <entry key="ud-tam" value="deepud-pretok" />
+        <entry key="ud-tel" value="deepud-pretok" />
+        <entry key="ud-tha" value="deepud-pretok" />
+        <entry key="ud-tur" value="deepud-pretok" />
+        <entry key="ud-uig" value="deepud-pretok" />
+        <entry key="ud-ukr" value="deepud-pretok" />
+        <entry key="ud-urd" value="deepud-pretok" />
+        <entry key="ud-vie" value="deepud-pretok" />
+        <entry key="ud-wol" value="deepud-pretok" />
+        <entry key="ud-zho-simp" value="deepud-pretok" />
+        <entry key="ud-zho" value="deepud-pretok" />
+
       </map>
       <map name="deepud-tok">
-        <entry key="eng.ud" value="deepud-tok"/>
-        <entry key="fre.ud" value="deepud-tok"/>
         <entry key="ud"     value="deepud-tok"/>
       </map>
       <map name="ner-rules">
-        <entry key="eng.ud" value="ner-rules"/>
         <entry key="eng"    value="ner-rules"/>
-        <entry key="fre.ud" value="ner-rules"/>
         <entry key="fre"    value="ner-rules"/>
         <entry key="ud"     value="ner-rules"/>
       </map>
       <map name="ner-rules-pretok">
-        <entry key="eng.ud" value="ner-rules-pretok"/>
         <entry key="eng"    value="ner-rules-pretok"/>
-        <entry key="fre.ud" value="ner-rules-pretok"/>
         <entry key="fre"    value="ner-rules-pretok"/>
         <entry key="ud"     value="ner-rules-pretok"/>
       </map>
       <map name="ner-fusion">
-        <entry key="eng.ud" value="ner-fusion"/>
         <entry key="eng"    value="ner-fusion"/>
-        <entry key="fre.ud" value="ner-fusion"/>
         <entry key="fre"    value="ner-fusion"/>
         <entry key="ud"     value="ner-fusion"/>
       </map>
       <map name="ner-fusion-pretok">
-        <entry key="eng.ud" value="ner-fusion-pretok"/>
         <entry key="eng"    value="ner-fusion-pretok"/>
-        <entry key="fre.ud" value="ner-fusion-pretok"/>
         <entry key="fre"    value="ner-fusion-pretok"/>
         <entry key="ud"     value="ner-fusion-pretok"/>
       </map>
       <map name="ner-deep">
-        <entry key="eng.ud" value="ner-deep"/>
         <entry key="eng"    value="ner-deep"/>
-        <entry key="fre.ud" value="ner-deep"/>
         <entry key="fre"    value="ner-deep"/>
         <entry key="ud"     value="ner-deep"/>
       </map>
       <map name="ner-deep-pretok">
-        <entry key="eng.ud" value="ner-deep-pretok"/>
         <entry key="eng"    value="ner-deep-pretok"/>
-        <entry key="fre.ud" value="ner-deep-pretok"/>
         <entry key="fre"    value="ner-deep-pretok"/>
         <entry key="ud"     value="ner-deep-pretok"/>
       </map>
@@ -100,9 +422,7 @@
       <!-- The limaserver pipeline is used from the http limaserver -->
       <map name="limaserver">
         <entry key="eng" value="limaserver"/>
-        <entry key="eng.ud" value="limaserver"/>
         <entry key="fre" value="limaserver"/>
-        <entry key="fre.uv" value="limaserver"/>
         <entry key="por" value="limaserver"/>
       </map>
       <map name="approxmatcher">
@@ -116,17 +436,13 @@
       </map>
       <map name="xml">
         <entry key="eng" value="xml"/>
-        <entry key="eng.ud" value="xml"/>
         <entry key="fre" value="xml"/>
-        <entry key="fre.ud" value="xml"/>
         <entry key="por" value="xml"/>
       </map>
       <!-- The none pipeline is an empty one allowing to not do anything. For tests mainly. -->
       <map name="none">
         <entry key="eng" value="none"/>
-        <entry key="eng.ud" value="none"/>
         <entry key="fre" value="none"/>
-        <entry key="fre.ud" value="none"/>
         <entry key="por" value="none"/>
       </map>
     </group>
@@ -137,9 +453,78 @@
            donner au client pour utiliser ce dumper -->
       <map name="bowDumper">
         <entry key="eng" value="bowDumper"/>
-        <entry key="eng.ud" value="bowDumper"/>
         <entry key="fre" value="bowDumper"/>
         <entry key="por" value="bowDumper"/>
+
+        <entry key="ud"     value="bowDumper"/>
+
+        <entry key="ud-afr" value="bowDumper" />
+        <entry key="ud-ara" value="bowDumper" />
+        <entry key="ud-bel" value="bowDumper" />
+        <entry key="ud-bre" value="bowDumper" />
+        <entry key="ud-bul" value="bowDumper" />
+        <entry key="ud-cat" value="bowDumper" />
+        <entry key="ud-ces" value="bowDumper" />
+        <entry key="ud-chu" value="bowDumper" />
+        <entry key="ud-cop" value="bowDumper" />
+        <entry key="ud-cym" value="bowDumper" />
+        <entry key="ud-dan" value="bowDumper" />
+        <entry key="ud-deu" value="bowDumper" />
+        <entry key="ud-ell" value="bowDumper" />
+        <entry key="ud-eng" value="bowDumper" />
+        <entry key="ud-est" value="bowDumper" />
+        <entry key="ud-eus" value="bowDumper" />
+        <entry key="ud-fas" value="bowDumper" />
+        <entry key="ud-fin" value="bowDumper" />
+        <entry key="ud-fra" value="bowDumper" />
+        <entry key="ud-fro" value="bowDumper" />
+        <entry key="ud-gla" value="bowDumper" />
+        <entry key="ud-gle" value="bowDumper" />
+        <entry key="ud-glg" value="bowDumper" />
+        <entry key="ud-heb" value="bowDumper" />
+        <entry key="ud-hin" value="bowDumper" />
+        <entry key="ud-hrv" value="bowDumper" />
+        <entry key="ud-hun" value="bowDumper" />
+        <entry key="ud-hye" value="bowDumper" />
+        <entry key="ud-ind" value="bowDumper" />
+        <entry key="ud-ita" value="bowDumper" />
+        <entry key="ud-jpn" value="bowDumper" />
+        <entry key="ud-kaz" value="bowDumper" />
+        <entry key="ud-kmr" value="bowDumper" />
+        <entry key="ud-kor" value="bowDumper" />
+        <entry key="ud-lat" value="bowDumper" />
+        <entry key="ud-lav" value="bowDumper" />
+        <entry key="ud-lit" value="bowDumper" />
+        <entry key="ud-lzh" value="bowDumper" />
+        <entry key="ud-mar" value="bowDumper" />
+        <entry key="ud-mlt" value="bowDumper" />
+        <entry key="ud-nld" value="bowDumper" />
+        <entry key="ud-nno" value="bowDumper" />
+        <entry key="ud-nob" value="bowDumper" />
+        <entry key="ud-orv" value="bowDumper" />
+        <entry key="ud-pcm" value="bowDumper" />
+        <entry key="ud-pol" value="bowDumper" />
+        <entry key="ud-por" value="bowDumper" />
+        <entry key="ud-ron" value="bowDumper" />
+        <entry key="ud-rus" value="bowDumper" />
+        <entry key="ud-slk" value="bowDumper" />
+        <entry key="ud-slv" value="bowDumper" />
+        <entry key="ud-sme" value="bowDumper" />
+        <entry key="ud-spa" value="bowDumper" />
+        <entry key="ud-sqi" value="bowDumper" />
+        <entry key="ud-srp" value="bowDumper" />
+        <entry key="ud-swe" value="bowDumper" />
+        <entry key="ud-tam" value="bowDumper" />
+        <entry key="ud-tel" value="bowDumper" />
+        <entry key="ud-tha" value="bowDumper" />
+        <entry key="ud-tur" value="bowDumper" />
+        <entry key="ud-uig" value="bowDumper" />
+        <entry key="ud-ukr" value="bowDumper" />
+        <entry key="ud-urd" value="bowDumper" />
+        <entry key="ud-vie" value="bowDumper" />
+        <entry key="ud-wol" value="bowDumper" />
+        <entry key="ud-zho-simp" value="bowDumper" />
+        <entry key="ud-zho" value="bowDumper" />
       </map>
     </group>
   </module>
@@ -339,7 +724,7 @@
       <param key="storageType" value="date"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
-        <item value="date"/>
+        <item value="indexDate"/>
       </list>
     </group>
     <group name="typPrpty" class="StandardDocumentPropertyType">

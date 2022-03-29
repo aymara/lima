@@ -22,6 +22,8 @@ option(WITH_ASAN "Enable address sanitizer" OFF)
 message("WITH_ASAN=${WITH_ASAN}")
 option(WITH_ARCH "Enable architecture optimizations" OFF)
 message("WITH_ARCH=${WITH_ARCH}")
+option(WITH_DEBUG_MESSAGES "Enable debug messages" OFF)
+message("WITH_DEBUG_MESSAGES=${WITH_DEBUG_MESSAGES}")
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -38,7 +40,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
     # factories, thus their symbols must be known even if not used by the binary
-    set(CMAKE_EXE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
+    set(CMAKE_EXE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed -static-libgcc -static-libstdc++")
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
     set(CMAKE_MODULE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
 

@@ -15,12 +15,12 @@
     comment="Apres analyse morphologique, verifier que le mot Birds a la propriete NC "
     left="XPATH#//data_structure/vertex[token/position=1]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="NN" />
+    right="NC" />
   <test id="eng.disamb.1.2" trace=".default.xml"
     comment="Apres analyse morphologique, verifier que le mot feather a la propriete NC "
     left="XPATH#//data_structure/vertex[token/position=12]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="NN" />
+    right="NC" />
   <test id="eng.disamb.1.3" trace=".disambiguated.xml"
     comment="Apres le PosTagger, verifier qu'il n'y a aucune succession prep verbe"
     left="XPATH#//vertices/vertex[macro='v']/pred/@id"
@@ -41,12 +41,12 @@
     comment="anchorage a une possibilite nom commun"
     left="XPATH#//data_structure/vertex[token/position=58]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="NN"/>
+    right="NC"/>
   <test id="eng.disamb.2.2" trace=".disambiguated.xml"
     comment="anchorage est etiquetté nom commun"
     left="XPATH#//vertices/vertex[@position=58]/macro"
     operator="="
-    right="NN"/>
+    right="NC"/>
 </testcase>
 <testcase id="eng.disamb.3" type="pertinent">
   <call-parameters>
@@ -62,12 +62,12 @@
     comment="anchorage a une possibilite nom propre"
     left="XPATH#//data_structure/vertex[token/position=19]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="NNP"/>
+    right="NP"/>
   <test id="eng.disamb.3.2" trace=".disambiguated.xml"
     comment="anchorage est etiquetté nom propre"
     left="XPATH#//vertices/vertex[@position=19]/macro"
     operator="="
-    right="NNP"/>
+    right="NP"/>
 </testcase>
 <testcase id="eng.disamb.4" type="pertinent">
   <call-parameters>
@@ -83,12 +83,12 @@
     comment="anchorage a une possibilite nom propre"
     left="XPATH#//data_structure/vertex[token/position=1]/data//property/p[@prop='MACRO']/@val"
     operator="contains"
-    right="NNP"/>
+    right="NP"/>
   <test id="eng.disamb.4.2" trace=".disambiguated.xml"
     comment="anchorage est etiquetté nom propre"
     left="XPATH#//vertices/vertex[@position=1]/macro"
     operator="="
-    right="NNP"/>
+    right="NP"/>
 </testcase>
 <testcase id="eng.disamb.5" type="informatif">
   <call-parameters>
@@ -130,7 +130,7 @@
     comment="Candidates : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=1]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.9" type="pertinent">
   <call-parameters>
@@ -256,7 +256,7 @@
     comment="Sunday : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=7]/macro"
     operator="contains"
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.12.b" type="informatif">
   <call-parameters>
@@ -272,7 +272,7 @@
     comment="Sunday : micro-vg : nom jour"
     left="XPATH#//vertices/vertex[@position=7]/micro"
     operator="contains"
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.13" type="pertinent">
   <call-parameters>
@@ -293,7 +293,7 @@
         comment="Sunday November 21, 2004 : macro-vg : temporel"
     left="XPATH#//vertices/vertex[@position=4]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.14.a" type="obsolete">
   <call-parameters>
@@ -314,7 +314,7 @@
     comment="November : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=11]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.14.b" type="obsolete">
   <call-parameters>
@@ -330,7 +330,7 @@
     comment="November : micro-vg : nom mois"
     left="XPATH#//vertices/vertex[@position=11]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.15.a" type="pertinent">
   <call-parameters>
@@ -367,7 +367,7 @@
     comment="been : micro-vg : copulative verb participe passé"
     left="XPATH#//vertices/vertex[@position=17]/micro"
     operator="="
-    right="VBN" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.16" type="pertinent">
   <call-parameters>
@@ -483,7 +483,7 @@
     comment="prime : micro-vg : adj num ord epithete prenn"
     left="XPATH#//vertices/vertex[@position=5]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.21.a" type="pertinent">
   <call-parameters>
@@ -525,7 +525,7 @@
     comment="ES lastThursday : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=9]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.22.b" type="informatif">
   <call-parameters>
@@ -541,7 +541,7 @@
     comment="ES last Thursday : micro-vg : nom temporel"
     left="XPATH#//vertices/vertex[@position=9]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.23.a" type="pertinent">
   <call-parameters>
@@ -578,7 +578,7 @@
     comment="was : micro-vg : verbe copule subjonctif"
     left="XPATH#//vertices/vertex[@position=4]/micro"
     operator="="
-    right="VBD" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.24.a" type="pertinent">
   <call-parameters>
@@ -636,7 +636,7 @@
     comment="inpendance : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=23]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.25.b" type="informatif">
   <call-parameters>
@@ -652,7 +652,7 @@
     comment="inpendance: micro-vg : Mot inconnu"
     left="XPATH#//vertices/vertex[@position=23]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.26.a" type="pertinent">
   <call-parameters>
@@ -689,7 +689,7 @@
     comment="thought: micro-vg : verbe general passe"
     left="XPATH#//vertices/vertex[@position=24]/micro"
     operator="contains"
-    right="VBD" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.26.c" type="informatif">
   <call-parameters>
@@ -705,7 +705,7 @@
     comment="thought: micro-vg : verbe general passe"
     left="XPATH#//vertices/vertex[@position=28]/micro"
     operator="="
-    right="VBN" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.28.a" type="pertinent">
   <call-parameters>
@@ -726,7 +726,7 @@
     comment="signs : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=8]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.28.b" type="pertinent">
   <call-parameters>
@@ -742,7 +742,7 @@
     comment="signs: micro-vg :nom commun"
     left="XPATH#//vertices/vertex[@position=8]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.32" type="pertinent">
   <call-parameters>
@@ -784,7 +784,7 @@
     comment="square : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=25]/macro"
     operator="contains"
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.34.b" type="informatif">
   <call-parameters>
@@ -800,7 +800,7 @@
     comment="square: micro-vg : Nc gen"
     left="XPATH#//vertices/vertex[@position=25]/micro"
     operator="contains"
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.35.a" type="pertinent">
   <call-parameters>
@@ -837,7 +837,7 @@
     comment="said: micro-vg : verbe principal participe"
     left="XPATH#//vertices/vertex[@position=83]/micro"
     operator="="
-    right="VBN" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.36.a" type="pertinent">
   <call-parameters>
@@ -895,7 +895,7 @@
     comment="sign : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=5]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
 </testcase>
 <testcase id="eng.disamb.37.b" type="informatif">
   <call-parameters>
@@ -911,7 +911,7 @@
     comment="sign: micro-vg : nom commun"
     left="XPATH#//vertices/vertex[@position=5]/micro"
     operator="="
-    right="NC" />
+    right="NOUN" />
 </testcase>
 <testcase id="eng.disamb.38.a" type="pertinent">
   <call-parameters>
@@ -948,7 +948,7 @@
     comment="lancé: micro-vg : verbe copule indicatif"
     left="XPATH#//vertices/vertex[@position=10]/micro"
     operator="="
-    right="VBD" />
+    right="VERB" />
 </testcase>
 <testcase id="eng.disamb.39" type="pertinent">
   <call-parameters>
@@ -969,7 +969,7 @@
     comment="est : macro-vg : np"
     left="XPATH#//vertices/vertex[@position=1]/macro"
     operator="contains"
-    right="NNP" />
+    right="NP" />
 </testcase>
 <testcase id="eng.disamb.40" type="pertinent">
   <call-parameters>
@@ -990,7 +990,7 @@
     comment="WALESA : macro-vg : np"
     left="XPATH#//vertices/vertex[@position=6]/macro"
     operator="contains"
-    right="NNP" />
+    right="NP" />
 </testcase>
  <testcase id="eng.disamb.43" type="pertinent">
   <call-parameters>
@@ -1074,7 +1074,7 @@
     comment="leaders : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=18]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
  </testcase>
  <testcase id="eng.disamb.49" type="pertinent">
   <call-parameters>
@@ -1095,7 +1095,7 @@
     comment="dirigeants : macro-vg : adj"
     left="XPATH#//vertices/vertex[@position=9]/macro"
     operator="contains"
-    right="NN" />
+    right="NC" />
  </testcase>
  <testcase id="eng.disamb.50" type="pertinent">
   <call-parameters>
@@ -1158,7 +1158,7 @@
     comment="mineur : macro-vg : nc"
     left="XPATH#//vertices/vertex[@position=3]/macro"
     operator="="
-    right="NN" />
+    right="NC" />
  </testcase>
   <testcase id="eng.disamb.53" type="pertinent">
   <call-parameters>
@@ -1179,7 +1179,7 @@
     comment="venu : macro-vg : !=nc"
     left="XPATH#//vertices/vertex[@position=18]/micro"
     operator="contains"
-    right="VBN" />
+    right="VERB" />
  </testcase>
 <testcase id="eng.disamb.54" type="pertinent">
   <call-parameters>

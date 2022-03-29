@@ -23,10 +23,10 @@
  * @date       Tue Mar 20 2007
  * copyright   Copyright (C) 2007 by CEA LIST
  * Project     Common
- * 
+ *
  * @brief      reader writer of bow in binary format
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef BOWBINARYREADERWRITER_H
@@ -41,6 +41,7 @@
 #include <boost/shared_ptr.hpp>
 
 namespace Lima {
+  class ShiftFrom;
 namespace Common {
 namespace BagOfWords {
 
@@ -52,33 +53,34 @@ class BoWToken;
 class BoWRelation;
 class BoWNamedEntity;
 class BoWPredicate;
+enum BoWBlocType: unsigned char;
 // reader/writer are kept independent from BoW (instead of having
 // read/write functions in each BoW element) because it is easier
 // to handle common mappings (pointers, entity types etc).
 
-typedef enum {
+enum BoWFileType : unsigned char {
   BOWFILE_NOTYPE,
   BOWFILE_TEXT,
   BOWFILE_DOCUMENT,
   BOWFILE_DOCUMENTST,
   BOWFILE_SDOCUMENT
-} BoWFileType;
+};
 
 // reader and writer are not symmetrical : writer simply write infos;
-// reader must handle mappings 
+// reader must handle mappings
 class BoWBinaryReaderPrivate;
 class LIMA_BOW_EXPORT BoWBinaryReader
 {
  public:
-  BoWBinaryReader(); 
+  BoWBinaryReader();
   virtual ~BoWBinaryReader();
-  
+
   void readHeader(std::istream& file);
   void readBoWText(std::istream& file,
                    BoWText& bowText);
-  void readBoWDocumentBlock(std::istream& file,
+  BoWBlocType readBoWDocumentBlock(std::istream& file,
                        BoWDocument& document,
-                       AbstractBoWDocumentHandler& handler, 
+                       AbstractBoWDocumentHandler& handler,
                        bool useIterator,
                        bool useIndexIterator);
   boost::shared_ptr< Lima::Common::BagOfWords::AbstractBoWElement > readBoWToken(std::istream& file);
@@ -100,10 +102,10 @@ class BoWBinaryWriterPrivate;
 class LIMA_BOW_EXPORT BoWBinaryWriter
 {
  public:
-  BoWBinaryWriter(const QMap< uint64_t, uint64_t >& shiftFrom = QMap< uint64_t, uint64_t >()); 
+  BoWBinaryWriter(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>());
   virtual ~BoWBinaryWriter();
-  
-  void writeHeader(std::ostream& file, 
+
+  void writeHeader(std::ostream& file,
                    BoWFileType type) const;
   void writeBoWText(std::ostream& file,
                     const BoWText& bowText) const;

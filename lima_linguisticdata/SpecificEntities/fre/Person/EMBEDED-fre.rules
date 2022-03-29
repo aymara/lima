@@ -12,37 +12,41 @@ use admin_title.lst
 use ../Location/annonceurLieu.lst
 use ../Location/annonceurVoie.lst
 
+@AnyTitle=(@Title,@FunctionTitle)
 
 #====================== Lieux
+@prep=(des,du,d',de,de la,de l')
+# extension for places (île aux Moines), not for people
+@prep_ext=(à la,au,aux,des,du,d',de,de la,de l')
 
 # adresses
 # rue (neuve) de la Beauce
 # On ne garde pas l'entité Location
-@Street::$ADJ? (des|du|d'|de $DET?)? <Location>:ODO:
+@Street::$ADJ? @prep_ext? <LOCATION>:ODO:
 =>AddEntityFeature(trigger,"kind")
-=>AppendEntityFeature(right.1,"name")
+=>AppendEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# rue du général de Gaulle
+# On ne garde pas l'entité Personne
+# les titres ne sont plus dans les personnes: on doit les ajouter
+@Street::@prep_ext? @AnyTitle? <Person.PERSON>:ODO:
+=>AddEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>AppendEntityFeature(right.3,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-# rue du général de Gaulle
-#  On ne garde pas l'entité Personne
-@Street:: (des|du|d'|de $DET?)? <Person.PERSON>:ODO:
-=>AddEntityFeature(trigger,"kind")
-=>AddEntityFeature(right.2,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
 #place de la république
-@Street::(à la|au|aux|des|du|d'|de $DET?)? ($NC|$NP|t_capital_1st){1-3}:ODO:
+@Street::@prep_ext? ($NC|$NP|t_capital_1st){1-3}:ODO:
 =>SetEntityFeature(trigger,"kind")
 =>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 # Île de Sumatra
-@AnnonceurLieu:: (du|de $DET?)? <Location>:Location.GEO:
+@AnnonceurLieu::@prep_ext <LOCATION>:Location.GEO:
 =>AddEntityFeature(trigger,"kind")
 =>AddEntityFeature(right.2,"name")
 =>NormalizeEntity()
@@ -52,7 +56,7 @@ use ../Location/annonceurVoie.lst
 
 # "député de l'Essonne" ou "maire de Paris"
 #  On garde l'entité Location et on produit 2 entités imbriquées
-@adminTitle::(des|du|d'|de $DET?) <Location>:PERSON:
+@adminTitle::@prep <LOCATION>:PERSON:
 =>AddEntityFeature(trigger,"title")
 =>AddEntityFeatureAsEntity(right.2,"Location")
 =>NormalizeEntity()
@@ -61,16 +65,23 @@ use ../Location/annonceurVoie.lst
 @Family=(frère,soeur,femme,mari,époux,épouse,père,mère,grand-père,grand-mère,fils,fille,petit-fils,petite-fille,nièce,neveu,cousin,oncle,tante,cousine)
 #  frère du roi
 #  frère de Nicolas Sarkozy 
-@Family:beau$ADJ?: (du|de|de la|de l')? <Person.PERSON>:PERSON:
+@Family:beau$ADJ?:@prep <Person.PERSON>:PERSON:
 =>AddEntityFeatureAsEntity(left,"family")
 =>AppendEntityFeature(trigger,"family")
 =>AddEntityFeatureAsEntity(right.2,"Person")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+@adminTitle::@prep <Organization.ORGANIZATION>:PERSON:
+=>AddEntityFeature(trigger,"title")
+=>AddEntityFeatureAsEntity(right.2,"Organization")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
 # "député de l'Essonne" ou "maire de Paris"
 #  On garde l'entité Location et on produit 2 entités imbriquées
-@adminTitle::(des|du|d'|de $DET?) <Organization.ORGANIZATION>:PERSON:
+#@adminTitle::(des|du|d'|de $DET?) (<Organization.ORGANIZATION>|<Location.LOCATION>):PERSON:
+@adminTitle::(des|du|d\'|de $DET?) $NC:PERSON:
 =>AddEntityFeature(trigger,"title")
 =>AddEntityFeatureAsEntity(right.2,"Organization")
 =>NormalizeEntity()

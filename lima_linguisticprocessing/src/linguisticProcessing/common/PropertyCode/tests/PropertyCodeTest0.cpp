@@ -46,7 +46,7 @@ void PropertyCodeTest0::initTestCase()
 //   std::string commonConfigFile=std::string("lima-common.xml");
 //
 //   std::deque<std::string> langs;
-//   langs.push_back("eng.ud");
+//   langs.push_back("ud-eng");
 //
 //   QsLogging::initQsLog(configPath);
 //   // Necessary to initialize factories
@@ -67,10 +67,10 @@ void PropertyCodeTest0::test_load()
   PropertyCodeManager pcm;
   QVERIFY_EXCEPTION_THROWN(
     pcm.readFromXmlFile("/this/file/does/not/exist"),
-    std::runtime_error
+    Lima::LimaException
   );
 
-  QString dataFile = QFINDTESTDATA("code-eng.ud.xml");
+  QString dataFile = QFINDTESTDATA("code-ud-eng.xml");
 
   pcm.readFromXmlFile(dataFile.toUtf8().constData());
   auto paMicro = pcm.getPropertyAccessor("MICRO");

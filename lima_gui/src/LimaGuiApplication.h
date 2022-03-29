@@ -20,7 +20,7 @@
  * \file    LimaGuiApplication.h
  * \author  Jocelyn Vernay
  * \date    Wed, Sep 06 2017
- * 
+ *
  */
 
 #ifndef LIMA_GUI_APPLICATION_H
@@ -31,7 +31,7 @@
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 
-#include <QObject> 
+#include <QObject>
 #include <QString>
 
 class QCommandLineParser;
@@ -39,14 +39,14 @@ class QCommandLineParser;
 namespace Lima {
 namespace Gui {
 
-typedef std::shared_ptr< 
+typedef std::shared_ptr<
                         LinguisticProcessing::AbstractLinguisticProcessingClient
                         > LimaClientSharedPtr;
 
 /// \class LimaGuiFile
 /// \brief A simple structure to hold information relative to files
 ///
-struct LimaGuiFile 
+struct LimaGuiFile
 {
   std::string name; ///< name of the file. (<name>.<ext>, without the full path)
   std::string url; ///< path of the file (relative or absolute)
@@ -55,7 +55,7 @@ struct LimaGuiFile
 };
 
 class LimaGuiThread;
-namespace Config 
+namespace Config
 {
   class LimaConfiguration;
 }
@@ -66,10 +66,10 @@ typedef std::shared_ptr<Config::LimaConfiguration> LimaConfigurationSharedPtr;
 /// \class LimaGuiApplication
 /// \brief Main class of Lima Gui.
 ///
-class LimaGuiApplication : public QObject 
+class LimaGuiApplication : public QObject
 {
   Q_OBJECT
-  
+
   /// BUFFER PROPERTIES EXPOSED TO QML
 
   Q_PROPERTY(QString fileContent MEMBER m_fileContent READ fileContent WRITE setFileContent)
@@ -78,7 +78,7 @@ class LimaGuiApplication : public QObject
   Q_PROPERTY(QString fileUrl MEMBER m_fileUrl READ fileUrl WRITE setFileUrl)
   Q_PROPERTY(bool ready MEMBER m_analyzerAvailable READ available WRITE setAnalyzerState NOTIFY readyChanged)
   Q_PROPERTY(QString console MEMBER m_consoleOutput NOTIFY consoleChanged READ consoleOutput WRITE setConsoleOuput)
-  Q_PROPERTY(QStringList languages MEMBER m_languages NOTIFY languagesChanged READ languages)
+  Q_PROPERTY(QStringList languages MEMBER m_languages NOTIFY languagesChanged READ languages WRITE setLanguages)
   Q_PROPERTY(QString language MEMBER m_language NOTIFY languageChanged READ language WRITE setLanguage)
   Q_PROPERTY(QStringList configs MEMBER m_configs NOTIFY configsChanged)
   Q_PROPERTY(QStringList pipelines MEMBER m_pipelines NOTIFY pipelinesChanged READ pipelines)
@@ -90,28 +90,28 @@ public:
   /// \param parent
   ///
   LimaGuiApplication(const QCommandLineParser& options, QObject* parent = 0);
-  
+
   /// \brief open file in application and add a new entry to open_files
   /// \param filepath is the path of the file
   Q_INVOKABLE bool openFile(const QString& filepath);
-  
+
   ///
   /// \brief used when multiple files are selected in the file dialog
   Q_INVOKABLE bool openMultipleFiles(const QStringList& urls);
-  
+
   ///
   /// \brief close file registered in open files, save if modified and requested
   Q_INVOKABLE void closeFile(const QString& filename, bool save = false);
-  
+
   /// \brief search amongst open files for the requested file
   /// \param name : the name of the file
   /// \return a reference on the file if it is open, otherwise nullptr
   LimaGuiFile* getFile(const std::string& name);
-  
+
   /// \brief if the file is open, set buffers file content, name and url to selected file's
   /// \brief opening a file sets is as selected
   Q_INVOKABLE bool selectFile(const QString& filename);
-  
+
   /// ANALYZER METHODS
 
   ///
@@ -127,15 +127,15 @@ public:
   /// analyze raw text
   /// \brief An open file <that was edited but not saved> (it may not even be the case, all open files may be as well treated as text) will be passed to this function instead of analyzeFileFromUrl (then analyzeFile may as well call analyzeText)
   Q_INVOKABLE void analyzeText(const QString& content, QObject* target = 0);
-  
+
   ///
   /// \brief Will analyze a file from its name, assuming it's open
   Q_INVOKABLE void analyzeFile(const QString& filename, QObject* target = 0);
-  
+
   ///
   /// \brief Analyze file directly from an url, without opening the file in the text editor ; (saved file content)
   Q_INVOKABLE void analyzeFileFromUrl(const QString& url, QObject* target = 0);
-  
+
   Q_INVOKABLE void test();
 
   void configure();
@@ -145,21 +145,21 @@ public:
   Q_INVOKABLE QStringList getNamedEntitiesList(const QString& text);
 
   /// INITIALIZING
-  
+
   ///
   /// \brief initialize Lima::m_analyzer
   bool initializeLimaAnalyzer();
-  
+
   ///
   /// \brief for the moment, to reset Lima configuration, we can only reinstantiate m_analyzer
   bool resetLimaAnalyzer();
-  
+
   /// THREADS MANAGEMENT
-  
+
   ///
   /// \brief Sets the output stream for the next analysis. Usually, it will be an AnalysisThread ostream
   void setOut(std::ostream* o) { out = o; }
-  
+
   friend class InitializeThread;
 
   void setTextBuffer(const std::string& str);
@@ -192,6 +192,7 @@ public:
   void setFileUrl(const QString& s);
   void setText(const QString& s);
   void setConsoleOuput(const QString& s);
+  void setLanguages(const QStringList& l);
   void setLanguage(const QString& s);
   void setPipeline(const QString& s);
 
@@ -231,9 +232,9 @@ Q_SIGNALS:
   void pipelineChanged();
 
   void configsChanged();
-  
+
   void error(const QString& error, const QString& details);
-  
+
 private:
   void loadLimaConfigurations();
 
@@ -245,13 +246,14 @@ private:
 
   void setLimaConfiguration(const Config::LimaConfiguration& config);
 
-  
+  void updateAvailablePipelines();
+
   /// BUFFERS
   /// All those members are exposed to QML, as in they can be accessed from there.
   /// Qt requires a special syntax for this (Q_PROPERTY macros), thus we can either
   /// create members for this, like we have done here, or only rely on READ and WRITE
   /// functions like setters and getters. Depends on the behavior of the property.
-  
+
   QString m_fileContent;
   QString m_fileName;
   QString m_fileUrl;
@@ -264,7 +266,7 @@ private:
   QStringList m_formats;
   QStringList m_configs;
   bool m_analyzerAvailable = false;
-  
+
   /// MEMBERS
 
   ///< buffers to access QML objects
@@ -272,13 +274,13 @@ private:
 
   ///< list of open files;
   std::vector<LimaGuiFile> m_openFiles;
-  
+
   ///< LIMA analyzer
   LimaClientSharedPtr m_analyzer;
   LimaConfigurationSharedPtr m_configuration;
 
   std::map<QString, LimaClientSharedPtr> m_clients;
-  
+
   ///< application analysis output stream
   std::ostream* out = &std::cout;
 

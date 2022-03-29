@@ -1,7 +1,7 @@
 #ifndef ENHANCEDANALYSISDICTIONARYTEST1_H
 #define ENHANCEDANALYSISDICTIONARYTEST1_H
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 class EnhancedAnalysisDictionaryTest1: public QObject
 {
@@ -10,7 +10,7 @@ private Q_SLOTS:
   void initTestCase();
 
   void testEng();
-  void testEngUD();
+  //void testEngUD();
   void testFre();
   void testPor();
 

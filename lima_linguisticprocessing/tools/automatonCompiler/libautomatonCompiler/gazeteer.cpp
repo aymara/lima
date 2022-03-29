@@ -111,7 +111,8 @@ void Gazeteer::addWord(const LimaString& s, const vector<Gazeteer>& otherGazetee
   {
     m_hasOnlyWords=false;
   }
-  if( s.contains(CHAR_SEP_RE) )  {
+  //if( s.contains(CHAR_SEP_RE) )  {
+  if (findSpecialCharacter(s,CHAR_SEP_RE)!=-1) { // if spaces are escaped, is not a multi-term
     setHasMultiTermWordFlag();
   }
   if (s.startsWith(CHAR_BEGIN_NAMEGAZ)) {

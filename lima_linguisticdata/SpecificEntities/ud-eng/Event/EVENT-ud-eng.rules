@@ -1,0 +1,80 @@
+set encoding=utf8
+using modex Event-modex.xml
+using groups Event
+set defaultAction=>CreateSpecificEntity()
+
+#----------------------------------------------------------------------
+# recognition of event names
+#----------------------------------------------------------------------
+
+# wars
+War:First World::EVENT:World War One
+
+War:World:I:EVENT:World War One
+
+World\ War\ One:::EVENT:World War One
+
+War:(Second|2nd) World::EVENT:World War Two
+
+War:Second\ World::EVENT:World War Two
+
+War:World:II:EVENT:World War Two
+
+World\ War\ Two:::EVENT:World War Two
+
+WWI:::EVENT:World War One
+
+WWII:::EVENT:World War Two
+
+WWIII:::EVENT:World War Three
+
+War:Cold::EVENT:
+
+War:Gulf::EVENT:
+
+War:Civil::EVENT:
+
+Vietnam::War:EVENT:
+
+Holocaust:::EVENT:
+
+
+# weather
+Niño:el::EVENT:
+
+@period_marker=(daily,weekly,monthly,annual)
+@ordinal=(1st,2nd,3rd,4th,5th,6th,7th,8th,9th,10th,
+          11th,12th,13th,14th,15th,16th,17th,18th,19th,20th,
+          21th,22th,23th,24th,25th,26th,27th,28th,29th,30th,
+          31th,32th,33th,34th,35th,36th,37th,38th,39th,40th,
+          41th,42th,43th,44th,45th,46th,47th,48th,49th,50th,
+          51th,52th,53th,54th,55th,56th,57th,58th,59th,60th,
+          61th,62th,63th,64th,65th,66th,67th,68th,69th,70th,
+          71th,72th,73th,74th,75th,76th,77th,78th,79th,80th,
+          81th,82th,83th,84th,85th,86th,87th,88th,89th,90th,
+          91th,92th,93th,94th,95th,96th,97th,98th,99th,100th,
+          101st,102nd,103rd,104th,105th,106th,107th,108th,109th,110th,
+          111th,112th,113th,114th,115th,116th,117th,118th,119th,120th,
+          121th,122th,123th,124th,125th,126th,127th,128th,129th,130th,
+          131th,132th,133th,134th,135th,136th,137th,138th,139th,140th,
+          141th,142th,143th,144th,145th,146th,147th,148th,149th,150th)
+@evtype=(games,ceremony)
+@ordinal::@period_marker t_capital_1st{1-2} @evtype?:EVENT:
+
+# festival
+festival:$PROPN?::EVENT:
+
+Golden::Globes:EVENT:Golden Globes
+
+Academy::Awards:EVENT:Academy Awards
+
+Grammy::Awards:EVENT:Grammy Awards
+
+# sports
+World::Cup:EVENT:
+
+Open:(U.S.|U.S .|French|British)::EVENT:
+
+olympic$ADJ::game$NOUN:EVENT:Olympic Games
+
+Tour::de t_capital_1st:EVENT:

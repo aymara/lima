@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2004-2021 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,15 +16,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
-
-#include <common/LimaCommon.h>
 
 #ifndef LIMA_CORELINGUISTICPROCESSINGCLIENTEXPORT_H
 #define LIMA_CORELINGUISTICPROCESSINGCLIENTEXPORT_H
+
+#include <common/LimaCommon.h>
 
 #ifdef WIN32
 

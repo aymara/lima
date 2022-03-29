@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Wed Jun 14 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "NormalizeDateTimeResources.h"
@@ -44,7 +44,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace SpecificEntities {
 
-SimpleFactory<AbstractResource,NormalizeDateTimeResources> 
+SimpleFactory<AbstractResource,NormalizeDateTimeResources>
 NormalizeDateTimeResourcesFactory(NORMALIZEDATETIMERESOURCES_CLASSID);
 
 // initialization of static const members
@@ -84,7 +84,7 @@ NormalizeDateTimeResources::~NormalizeDateTimeResources() {
 void NormalizeDateTimeResources::
 init(GroupConfigurationStructure& unitConfiguration,
      Manager* manager)
-   
+
 {
   m_language=manager->getInitializationParameters().language;
   string resourcesPath=Common::MediaticData::MediaticData::single().getResourcesPath();
@@ -100,7 +100,7 @@ init(GroupConfigurationStructure& unitConfiguration,
   }
   catch (NoSuchParam& ) {
     SELOGINIT;
-    LERROR << "No param 'timezoneDatabase' in NormalizeDateTimeResources group for language " 
+    LERROR << "No param 'timezoneDatabase' in NormalizeDateTimeResources group for language "
            << (int)m_language;
     throw InvalidConfiguration();
   }
@@ -112,7 +112,7 @@ init(GroupConfigurationStructure& unitConfiguration,
 //     delete m_timezoneDatabase;
 //     m_timezoneDatabase=0;
   }
-  
+
   // read resources for months and days
   try
   {
@@ -120,21 +120,21 @@ init(GroupConfigurationStructure& unitConfiguration,
     monthsDaysFile = Common::Misc::findFileInPaths(resourcesPath.c_str(), monthsDaysFile.c_str()).toUtf8().constData();
     if (!readMonthDays(monthsDaysFile)) {
       SELOGINIT;
-      LERROR << "Error loading monthsDays resources '" 
+      LERROR << "Error loading monthsDays resources '"
              << monthsDaysFile << "'";
     }
   }
   catch (NoSuchParam& ) {
     SELOGINIT;
-    LERROR << "No param 'monthsDays' in NormalizeDateTimeResources group for language " 
+    LERROR << "No param 'monthsDays' in NormalizeDateTimeResources group for language "
            << (int)m_language;
     throw InvalidConfiguration();
   }
- 
+
 }
 
 bool NormalizeDateTimeResources::
-readMonthDays(const std::string& monthsDaysFile) 
+readMonthDays(const std::string& monthsDaysFile)
 {
 
   m_wordCardinalSeparator[Common::Misc::utf8stdstring2limastring(" ")]=0;
@@ -151,7 +151,7 @@ readMonthDays(const std::string& monthsDaysFile)
       std::vector<std::string> elements;
       split(elements,utf8line,is_any_of(MONTHSDAYS_MAIN_SEP));
       // three elements in line: (month|day|ordinal|cardinal|suffix) num list-of-strings
-      if (elements.size()!=3) { 
+      if (elements.size()!=3) {
         SELOGINIT;
         LWARN << "MonthsDaysResources: cannot parse line " << utf8line;
         continue;
@@ -165,7 +165,7 @@ readMonthDays(const std::string& monthsDaysFile)
       else if (elements[0] == NUMBER_ORDINAL_SUFFIX_ID) { names=&m_numberOrdinalSuffixes; }
       else {
         SELOGINIT;
-        LWARN << "MonthsDaysResources: cannot parse line " << utf8line 
+        LWARN << "MonthsDaysResources: cannot parse line " << utf8line
               << ": first element must be 'm' 'd', 'c', 'w', 'n' or 's'";
         continue;
       }
@@ -188,7 +188,7 @@ readMonthDays(const std::string& monthsDaysFile)
 //   if (m_timezoneDatabase==0) {
 //     SELOGINIT;
 //     LERROR << "No timezone available";
-//     throw(LinguisticProcessingException());
+//     throw(LinguisticProcessingException("No timezone available"));
 //   }
 //   return *m_timezoneDatabase;
 // }
@@ -196,7 +196,7 @@ readMonthDays(const std::string& monthsDaysFile)
 unsigned short NormalizeDateTimeResources::
 getMonthNumber(const LimaString& monthName) const
 {
-  map<LimaString,unsigned short>::const_iterator 
+  map<LimaString,unsigned short>::const_iterator
     it=m_months.find(monthName);
   if (it==m_months.end()) {
     return NormalizeDateTimeResources::no_month;
@@ -207,7 +207,7 @@ getMonthNumber(const LimaString& monthName) const
 unsigned short NormalizeDateTimeResources::
 getDayNumber(const LimaString& dayName) const
 {
-  map<LimaString,unsigned short>::const_iterator 
+  map<LimaString,unsigned short>::const_iterator
     it=m_days.find(dayName);
   if (it==m_days.end()) {
     return NormalizeDateTimeResources::no_day;
@@ -222,7 +222,7 @@ getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const
   unsigned short day(0);
   // trim suffix first, second or th, or (ème, ième, ieme, eme)
   LimaString numberAsString(dayName);
-  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal() numberAsString=" 
+  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal() numberAsString="
          << numberAsString;
   map<LimaString,unsigned short>::const_iterator suffixIt=m_wordOrdinalSuffixes.begin();
   for( ; suffixIt!=m_wordOrdinalSuffixes.end() ; suffixIt++ )
@@ -235,7 +235,7 @@ getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const
       break;
     }
   }
-  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: after trim numberAsString=" 
+  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: after trim numberAsString="
          << numberAsString << ", day=" << day;
   if( numberAsString.isEmpty() )
     return day;
@@ -254,7 +254,7 @@ getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const
       if (index >= 0) {
 	day += (*cardinalIt).second;
 	parsingPosition += word.length();
-	LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found" 
+	LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found"
                << word << ", day=" << day << ", parsingPosition=" << parsingPosition;
 	break;
       }
@@ -270,7 +270,7 @@ getValueFromWordCardinalOrOrdinal(const LimaString& dayName) const
 	int skipIndex = numberAsString.indexOf(separator, parsingPosition, Qt::CaseInsensitive);
 	if (skipIndex == 0) {
 	  parsingPosition += separator.length();
-	  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found" 
+	  LDEBUG << "NormalizeDateTimeResources::getValueFromWordCardinalOrOrdinal: found"
                  << separator << ", day=" << day << ", parsingPosition=" << parsingPosition;
 	  break;
 	}
@@ -298,7 +298,7 @@ getValueFromNumberOrdinal(const LimaString& dayName) const
     bool ok(false);
     // try to convert trimmed string to int
     unsigned short day = numberAsString.toUShort(&ok);
-    if( ok) 
+    if( ok)
       return day;
   }
   return NormalizeDateTimeResources::no_day;

@@ -20,6 +20,7 @@
 #define ABSTRACTXMLANALYSISHANDLER_H
 
 #include <sstream>
+#include "common/Handler/shiftFrom.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "common/Data/genericDocumentProperties.h"
 
@@ -36,12 +37,12 @@ namespace Lima {
 class AbstractXmlAnalysisHandler : public AbstractAnalysisHandler
 {
 public:
-  AbstractXmlAnalysisHandler(const QMap< uint64_t,uint64_t >& shiftFrom = QMap< uint64_t,uint64_t >()) :
+  AbstractXmlAnalysisHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()) :
       m_shiftFrom(shiftFrom)
   {}
 
   virtual ~AbstractXmlAnalysisHandler() {}
-    
+
   /** notify the start of a new document, and give its properties */
   virtual void startDocument(const Common::Misc::GenericDocumentProperties& props) = 0;
 
@@ -50,20 +51,20 @@ public:
 
   /** gives content. Content is a serialized form of the expected resultType */
   virtual void handle(const char* buf,int length) override = 0;
-  
+
   /** notify the start of a new hierarchyNode */
   virtual void startNode( const std::string& elementName, bool forIndexing ) = 0;
-  
+
   /** notify the end of a hierarchyNode */
   virtual void endNode( const Common::Misc::GenericDocumentProperties& props ) = 0;
-  
+
   /** set the output stream. Implementations can be empty if the handler should not write its output to a stream */
   virtual void setOut( std::ostream* out ) = 0;
-  
-  const QMap< uint64_t,uint64_t >& shiftFrom() {return m_shiftFrom;}
-  
+
+  std::shared_ptr<const ShiftFrom> shiftFrom() const {return m_shiftFrom;}
+
 private:
-  QMap< uint64_t,uint64_t > m_shiftFrom;
+  std::shared_ptr<const ShiftFrom> m_shiftFrom;
 };
 
 } // Lima

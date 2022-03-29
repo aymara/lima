@@ -13,6 +13,11 @@
         <item value="PersonRecognition"/>
       </list>
     </group>
+    <group name="PersonModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="PersonModexForLimaserver" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
         <item value="PersonRecognitionForLimaserver"/>
@@ -23,9 +28,19 @@
         <item value="EmbededEntitiesRecognition"/>
       </list>
     </group>
+    <group name="EmbededModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EmbededEntitiesRecognitionAfterPos"/>
+      </list>
+    </group>
     <group name="PersonRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
       <param key="automaton" value="PersonRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PersonRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="PersonRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-person">
@@ -36,6 +51,11 @@
     <group name="EmbededEntitiesRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
       <param key="automaton" value="EmbededCompRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="EmbededEntitiesRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="EmbededCompRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
   </module>
@@ -68,15 +88,44 @@
       </list>
     </group>
   </module>
-  <module name="resources-eng.ud">
+  <module name="resources-ud">
     <group name="PersonRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/PERSON-ud.bin"/>
     </group>
     <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/PERSON_COMP-ud.bin"/>
     </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/EMBEDED-eng-ud.bin"/>
+      <param key="rules" value="SpecificEntities/EMBEDED-ud.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-ud-eng.bin"/>
+    </group>
+    <group name="PersonCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON_COMP-ud-eng.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-ud-eng.bin"/>
     </group>
     <group name="PersonIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

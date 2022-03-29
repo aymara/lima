@@ -4,29 +4,30 @@
 
 import re
 
+
 def loadLefff2LimaCodesDict():
     codes = {}
     # associate Lefff code prefix to pos tag
-    with open('../../../disambiguisationMatrices/fre/code_symbolic2lima.txt',
-              'r') as f:
+    with open("../../../disambiguisationMatrices/fre/code_symbolic2lima.txt", "r") as f:
         for code_line in f:
             code_line = code_line.rstrip()
             if not code_line:
                 continue
-            symb, lima = code_line.split('\t')
+            symb, lima = code_line.split("\t")
             codes[symb] = lima
     return codes
 
 
 def convertSymbolicCodesFromLefffToLima(codes):
-    pclose = re.compile(r'</code>')
+    pclose = re.compile(r"</code>")
     p = re.compile(r'<code key="([^"]+)">')
     stored1 = []
     stored2 = []
     store = False
-    with open('symbolicCode-fre.xml', 'r') as f:
-        with open('symbolicCode-fre-new.xml', 'w',
-                  encoding='utf-8', newline='\n') as of:
+    with open("symbolicCode-fre.xml", "r") as f:
+        with open(
+            "symbolicCode-fre-new.xml", "w", encoding="utf-8", newline="\n"
+        ) as of:
             for code_line in f:
                 code_line = code_line.rstrip()
                 if not code_line:
@@ -48,15 +49,14 @@ def convertSymbolicCodesFromLefffToLima(codes):
                     lefff_code = m.group(1)
                     i = 0
                     while i <= len(lefff_code):
-                        if lefff_code == 'Ff':
-                            print('{}, {}, {}'.format(lefff_code, i, lefff_code[:i]))
+                        if lefff_code == "Ff":
+                            print("{}, {}, {}".format(lefff_code, i, lefff_code[:i]))
                         if lefff_code[:i] in codes:
                             code_line = '<code key="{}:{}">'.format(
-                                codes[lefff_code[:i]],
-                                lefff_code[i:])
+                                codes[lefff_code[:i]], lefff_code[i:]
+                            )
                             stored1.append(code_line)
-                            code_line = '<code key="{}">'.format(
-                                codes[lefff_code[:i]])
+                            code_line = '<code key="{}">'.format(codes[lefff_code[:i]])
                             stored2.append(code_line)
                             break
                         i = i + 1
@@ -73,4 +73,3 @@ def convertSymbolicCodesFromLefffToLima(codes):
 codes = loadLefff2LimaCodesDict()
 print(codes)
 convertSymbolicCodesFromLefffToLima(codes)
-

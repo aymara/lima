@@ -5,6 +5,7 @@
 Parti::des travailleurs:ORGANIZATION:
 Union::communiste:ORGANIZATION:Lutte Ouvrière
 Lutte::Ouvrière:ORGANIZATION:
+Lutte::ouvrière:ORGANIZATION:
 L.O.:::ORGANIZATION:Lutte Ouvrière
 Communiste:Ligue:révolutionnaire:ORGANIZATION:
 L.C.R.:::ORGANIZATION:Ligue Communiste Révolutionnaire
@@ -14,6 +15,7 @@ Convention::pour une Alternative Progressiste:ORGANIZATION:
 Initiative::Républicaine:ORGANIZATION:
 Parti::communiste français?:ORGANIZATION:
 P.C.F.:::ORGANIZATION:Parti Communiste Français
+PCF.:::ORGANIZATION:Parti Communiste Français
 Verts:(Les|les)::ORGANIZATION:
 Convergence::Écologie Solidarité:ORGANIZATION:
 Parti::socialiste:ORGANIZATION:
@@ -29,6 +31,7 @@ M.E.I.:::ORGANIZATION:Mouvement des Écologistes Indépendants
 Génération::Ecologie:ORGANIZATION:
 Union:(nouvelle)?:pour la Démocratie Française:ORGANIZATION:
 U.D.F.:::ORGANIZATION:Union pour la Démocratie Française
+UDF:::ORGANIZATION:Union pour la Démocratie Française
 Force::Démocrate:ORGANIZATION:
 Démocratie::Libérale:ORGANIZATION:
 Rassemblement::Social et Libéral:ORGANIZATION:
@@ -37,6 +40,7 @@ U.M.P.:::ORGANIZATION:Union pour la majorité présidentielle
 UMP:::ORGANIZATION:Union pour la majorité présidentielle
 Rassemblement::pour la République:ORGANIZATION:
 R.P.R.:::ORGANIZATION:Rassemblement pour la République
+RPR:::ORGANIZATION:Rassemblement pour la République
 Chasse::Pêche , Nature et Tradition:ORGANIZATION:
 Centre::National des Indépendants et Paysans:ORGANIZATION:
 Droite::Libérale-Chrétienne:ORGANIZATION:
@@ -58,6 +62,33 @@ Alliance::Royale:ORGANIZATION:
 Action:Nouvelle:Royaliste:ORGANIZATION:
 Fédération::Anarchiste:ORGANIZATION:
 Alternative::Libertaire:ORGANIZATION:
+
+Union::communiste libertaire:ORGANIZATION:
+Parti::ouvrier indépendant:ORGANIZATION:
+Parti::ouvrier indépendant démocratique:ORGANIZATION:
+Nouveau::Parti anticapitaliste:ORGANIZATION:
+France:La:insoumis$ADJ:ORGANIZATION:
+
+Europe::(Écologie|Ecologie) Les Verts:ORGANIZATION:
+EELV:::ORGANIZATION:Europe Écologie Les Verts 
+Génération::écologie:ORGANIZATION:
+
+République:(la|La):en (marche|Marche):ORGANIZATION:
+LREM:::ORGANIZATION:La République en Marche
+Mouvement::démocrate:ORGANIZATION:
+MoDem:::ORGANIZATION:Mouvement démocrate
+Mouvement::radical:ORGANIZATION:
+
+Union::des démocrates et indépendants:ORGANIZATION:
+UDI:::ORGANIZATION:Union des démocrates et indépendants
+
+Républicains:Les::ORGANIZATION:
+LR:::ORGANIZATION:Les Républicains
+Debout::la France:ORGANIZATION:
+Patriotes:Les::ORGANIZATION:
+Rassemblement::national$ADJ:ORGANIZATION:
+RN:::ORGANIZATION:Rassemblement national
+Reconquête:::ORGANIZATION:
 
 # syndicats
 Force::ouvrière:ORGANIZATION:

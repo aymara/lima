@@ -91,7 +91,8 @@ class ConllDumperPrivate
     int& tokenId,
     LinguisticGraphVertex vEndDone,
     std::map<LinguisticGraphVertex,int>& segmentationMapping,
-    const QString& neType = "");
+    const QString& neType,
+    bool first);
 
   /** Dumps an analysis graph vertex @ref v which is inside a specific entity
    * holded by pos graph vertex @ref posGraphVertex
@@ -102,7 +103,9 @@ class ConllDumperPrivate
     LinguisticGraphVertex posGraphVertex,
     int& tokenId,
     LinguisticGraphVertex vEndDone,
-    const QString& parentNeType);
+    const QString& parentNeType,
+    bool first,
+    const Automaton::EntityFeatures& features);
 
   /** Gets the named entity type for the PosGraph vertex @ref posGraphVertex
    * if it is a specific entity. Return "_" otherwise
@@ -159,6 +162,9 @@ class ConllDumperPrivate
     const QStringList& miscField,
     const QString& neType,
     const QString& previousNeType);
+
+  const SpecificEntityAnnotation* getSpecificEntityAnnotation(
+    LinguisticGraphVertex v) const;
 
   QString m_format = "CoNLL-U";
 
@@ -561,7 +567,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         v = boost::target(*outIter,*posGraph);
       }
     }
-    auto curSentenceText = originalText->mid(pStart, pEnd-pStart+1);
+    auto curSentenceText = originalText->mid(pStart-1, pEnd-pStart+1);
 
     if (m_d->m_format == "CoNLL-U")
     {
@@ -594,7 +600,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         int lastTokenId = tokenId + transducedTokens[tokenId] - 1;
         LimaString tokenForm;
         auto ft = get(vertex_token,*anaGraph,v);
-        if (ft->orthographicAlternatives().size() > 0)
+        if (ft == 0) {
+          DUMPERLOGINIT;
+          LWARN << "Empty token for vertex" << vertex_token << "in graph" << anaGraphData->getGraphId();
+        }
+        else if (ft->orthographicAlternatives().size() > 0)
         {
           StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
           tokenForm = (*m_d->sp)[idx];
@@ -618,7 +628,9 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
                               v,
                               tokenId,
                               vEndDone,
-                              segmentationMapping);
+                              segmentationMapping,
+                              "",
+                              false);
 
 
 #ifdef DEBUG_LP
@@ -660,17 +672,41 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
+const SpecificEntityAnnotation* ConllDumperPrivate::getSpecificEntityAnnotation(
+  LinguisticGraphVertex v) const
+{
+  // check only entity found in current graph (not previous graph such as AnalysisGraph)
+
+  for (const auto& vx: annotationData->matches("PosGraph", v, "annot"))
+  {
+    if (annotationData->hasAnnotation(vx, QString::fromUtf8("SpecificEntity")))
+    {
+      //BoWToken* se = createSpecificEntity(v,*it, annotationData, anagraph, posgraph, offsetBegin);
+      auto se = annotationData->annotation(
+        vx,
+        QString::fromUtf8("SpecificEntity")).pointerValue<SpecificEntityAnnotation>();
+      if (se != nullptr)
+      {
+        return se;
+      }
+    }
+  }
+  return nullptr;
+
+}
+
 LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
   std::shared_ptr<DumperStream>& dstream,
   LinguisticGraphVertex v,
   int& tokenId,
   LinguisticGraphVertex vEndDone,
   std::map<LinguisticGraphVertex,int>& segmentationMapping,
-  const QString& parentNeType)
+  const QString& parentNeType,
+  bool first)
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
-  LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex" << v;
+  LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex IN" << v;
 #endif
   if (anaGraph == nullptr || posGraph == nullptr || depGraph == nullptr
     || annotationData == nullptr)
@@ -685,25 +721,22 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
 
   auto ft = get(vertex_token, *posGraph, v);
   auto morphoData = get(vertex_data, *posGraph, v);
-#ifdef DEBUG_LP
-  LDEBUG << "ConllDumper::process PosGraph token" << v;
-#endif
   if( morphoData != 0 && ft != 0
     && ((!morphoData->empty()) || ft->length() > 0) && notDone )
   {
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::process PosGraph nb different LinguisticCode"
+    LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex PosGraph nb different LinguisticCode"
           << morphoData->size();
 #endif
 
     auto micro = getMicro(morphoData);
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::process graphTag:" << micro;
+    LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex graphTag:" << micro;
 #endif
 
     auto feats = getFeats(morphoData);
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::dumpPosGraphVertex feats:" << feats;
+    LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex feats:" << feats;
 #endif
 
     auto inflectedToken = ft->stringForm().toStdString();
@@ -746,7 +779,34 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
       QStringList miscField;
       if (neType != "_")
       {
-        miscField << (QString("NE=") + neType);
+#ifdef DEBUG_LP
+      LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex specific entity type is"
+              << neType;
+#endif
+        miscField << (QString("NE=") + (first?"B-":"I-") + neType);
+        const auto annot = getSpecificEntityAnnotation(v);
+#ifdef DEBUG_LP
+        LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex specific entity annotation is"
+                << annot;
+#endif
+        if (annot != nullptr)
+        {
+          const auto& features = annot->getFeatures();
+          for (const auto& feature: features)
+          {
+            QString featureString;
+            QTextStream qts(&featureString);
+            if(feature.getPosition() == UNDEFPOSITION
+               && !feature.getName().empty()
+               && !feature.getValueString().empty())
+            {
+              qts << "NE-" << QString::fromStdString(feature.getName()) << "=";
+              qts << Common::Misc::transcodeToXmlEntities(
+                QString::fromStdString(feature.getValueString()));
+            }
+            miscField << featureString;
+          }
+        }
       }
 
       miscField << (QString("Pos=") + QString::number(ft->position()) );
@@ -1208,9 +1268,12 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
                                              QString::fromUtf8("SpecificEntity"))
           .pointerValue<SpecificEntityAnnotation>();
         previousNeType = "O";
+        bool first = true;
         for (const auto& vse : se->vertices())
         {
-          dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping, neType);
+          dumpPosGraphVertex(dstream, vse, tokenId, vEndDone,
+                             segmentationMapping, neType, first);
+          first = false;
         }
 #ifdef DEBUG_LP
         LDEBUG << "ConllDumperPrivate::dumpNamedEntity return after SpecificEntity annotation on PosGraph";
@@ -1237,17 +1300,22 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
         .pointerValue<SpecificEntityAnnotation>();
 #ifdef DEBUG_LP
       LDEBUG << "ConllDumperPrivate::dumpNamedEntity anaVertex se ("
-              << (*sp)[se->getString()] << ") annotation vertices are"
-              << se->vertices();
+              << (*sp)[se->getString()]
+              << ") annotation vertices are" << se->vertices()
+              << "and normalized form:" << (*sp)[se->getNormalizedForm()]
+               << "and features:" << se->getFeatures();
 #endif
       // All retrieved lines/tokens have the same netype. Depending on the
       // output style (CoNLL 2003, CoNLL-U, …), the generated line is different
       // and the ne-Type includes or not BIO information using in this case the
       // previousNeType member.
       previousNeType = "O";
+      bool first = true;
       for (const auto& vse : se->vertices())
       {
-        dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType);
+        dumpAnalysisGraphVertex(dstream, vse, v, tokenId, vEndDone, neType,
+                                first, se->getFeatures());
+        first = false;
       }
       previousNeType = neType;
     }
@@ -1261,19 +1329,21 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
   LinguisticGraphVertex posGraphVertex,
   int& tokenId,
   LinguisticGraphVertex vEndDone,
-  const QString& parentNeType)
+  const QString& neType,
+  bool first,
+  const Automaton::EntityFeatures& features)
 {
   LIMA_UNUSED(posGraphVertex);
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
   LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex" << v << posGraphVertex
-          << parentNeType;
+          << neType;
 #endif
   if (anaGraph == nullptr || posGraph == nullptr || depGraph == nullptr
     || annotationData == nullptr)
   {
     DUMPERLOGINIT;
-    LERROR << "ConllDumperPrivate::dumpPosGraphVertex missing data";
+    LERROR << "ConllDumperPrivate::dumpAnalysisGraphVertex missing data";
     return MISSING_DATA;
   }
   bool notDone(true);
@@ -1283,24 +1353,24 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
   auto ft = get(vertex_token, *anaGraph, v);
   auto morphoData = get(vertex_data, *anaGraph, v);
 #ifdef DEBUG_LP
-  LDEBUG << "ConllDumper::process PosGraph token" << v;
+  LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex PosGraph token" << v;
 #endif
   if( morphoData != 0 && ft != 0
     && ((!morphoData->empty()) || ft->length() > 0) && notDone )
   {
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::process PosGraph nb different LinguisticCode"
+    LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex PosGraph nb different LinguisticCode"
           << morphoData->size();
 #endif
 
     auto micro = getMicro(morphoData);
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::dumpAnalysisGraphVertex micro:" << micro;
+    LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex micro:" << micro;
 #endif
 
     auto feats = getFeats(morphoData);
 #ifdef DEBUG_LP
-    LDEBUG << "ConllDumper::dumpAnalysisGraphVertex feats:" << feats;
+    LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex feats:" << feats;
 #endif
 
     auto inflectedToken = ft->stringForm().toStdString();
@@ -1316,11 +1386,6 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     }
     // @TODO Should follow instructions here to output all MWE:
     // https://universaldependencies.org/format.html#words-tokens-and-empty-nodes
-    auto neType = parentNeType;
-//     if (neType.isEmpty())
-//     {
-//       neType = getNeType(v);
-//     }
 
     // TODO Get correct UD dep relation for relations inside the named entity
     // and for the token that must be linked to the outside. For this one, the
@@ -1332,7 +1397,24 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     QStringList miscField;
     if (neType != "_")
     {
-      miscField << (QString("NE=") + neType);
+#ifdef DEBUG_LP
+      LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex specific entity type is" << neType;
+      LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex posGraphVertex is" << posGraphVertex;
+#endif
+      miscField << (QString("NE=") + (first?"B-":"I-") + neType);
+      for (const auto& feature: features)
+      {
+        if(!feature.getName().empty()
+           && !feature.getValueString().empty())
+        {
+          QString featureString;
+          QTextStream qts(&featureString);
+          qts << "NE-" << QString::fromStdString(feature.getName()) << "=";
+          qts << Common::Misc::transcodeToXmlEntities(
+            QString::fromStdString(feature.getValueString()));
+          miscField << featureString;
+        }
+      }
     }
 
     miscField << (QString("Pos=") + QString::number(ft->position()) );

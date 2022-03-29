@@ -55,6 +55,7 @@ SpecificEntitiesRecognizer::SpecificEntitiesRecognizer():
 LinguisticProcessUnit(),
 m_recognizer(0),
 m_useSentenceBounds(true),
+m_sentenceBoundsData("SentenceBounds"),
 m_useDicoWords(false)
 {}
 
@@ -113,6 +114,20 @@ void SpecificEntitiesRecognizer::init(
   {
     // optional parameter: keep default value
   }
+  
+  try
+  {
+    string sentenceBoundsData=unitConfiguration.getParamsValueAtKey("sentenceBoundsData");
+    if (! sentenceBoundsData.empty()) {
+      m_sentenceBoundsData=sentenceBoundsData;
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // optional parameter: keep default value
+  }
+  
+  
   try
   {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");

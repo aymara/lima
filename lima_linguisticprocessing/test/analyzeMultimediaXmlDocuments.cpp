@@ -1,6 +1,21 @@
-/***************************************************************************
- *   Copyright (C) 2004 by CEA - LIST - LIC2M                              *
- ***************************************************************************/
+/*
+    Copyright 2004-2021 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 
 #include "linguisticProcessing/client/xmlreader/AbstractXmlReaderClient.h"
@@ -14,6 +29,7 @@
 #include "common/tools/LimaMainTaskRunner.h"
 
 #include "linguisticProcessing/client/LinguisticProcessingException.h"
+#include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextWriter.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/BowDocumentWriter.h"
@@ -36,9 +52,12 @@
 
 #include <boost/foreach.hpp>
 
-#include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QCommandLineParser>
+#include <QtCore/QTimer>
 #include <QDir>
+
+#include "cmd_line_helpers.h"
 
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
@@ -54,7 +73,7 @@ void listunits();
 
 
 
-int run(int aargc,char** aargv);
+int run(int aargc, char** aargv);
 
 int main(int argc, char **argv)
 {
@@ -62,23 +81,23 @@ int main(int argc, char **argv)
   try
   {
 #endif
-  QCoreApplication a(argc, argv);
-  QCoreApplication::setApplicationName("analyzeXml");
-  QCoreApplication::setApplicationVersion(LIMA_VERSION);
+    QCoreApplication a(argc, argv);
+    QCoreApplication::setApplicationName("analyzeXml");
+    QCoreApplication::setApplicationVersion(LIMA_VERSION);
 
-  // Task parented to the application so that it
-  // will be deleted by the application.
-  LimaMainTaskRunner* task = new LimaMainTaskRunner(argc, argv, run, &a);
+    // Task parented to the application so that it
+    // will be deleted by the application.
+    auto task = new LimaMainTaskRunner(argc, argv, run, &a);
 
-  // This will cause the application to exit when
-  // the task signals finished.
-  QObject::connect(task, &LimaMainTaskRunner::finished,
-                    &a, &QCoreApplication::exit);
+    // This will cause the application to exit when
+    // the task signals finished.
+    QObject::connect(task, &LimaMainTaskRunner::finished,
+                     &a, &QCoreApplication::exit);
 
-  // This will run the task from the application event loop.
-  QTimer::singleShot(0, task, SLOT(run()));
+    // This will run the task from the application event loop.
+    QTimer::singleShot(0, task, SLOT(run()));
 
-  return a.exec();
+    return a.exec();
 #ifndef DEBUG_LP
   }
   catch( const InvalidConfiguration& e ) {
@@ -108,39 +127,6 @@ int main(int argc, char **argv)
 #endif
 }
 
-std::map<std::string, std::string> parse_options_line(const QString& meta, char comma, char colon)
-{
-  std::map<std::string, std::string> opts;
-  std::string s = meta.toStdString();
-
-  size_t start = 0;
-  size_t comma_pos = s.find(comma, 0);
-  do
-  {
-    std::string key, value;
-    size_t colon_pos = s.find(colon, start);
-    if (colon_pos != std::string::npos && colon_pos != comma_pos)
-    {
-      key = s.substr(start, colon_pos - start);
-      size_t value_start = colon_pos + 1;
-      value = s.substr(value_start, comma_pos == std::string::npos ? comma_pos : (comma_pos - value_start));
-    }
-    else
-    {
-      key = s.substr(start, comma_pos == std::string::npos ? comma_pos : (comma_pos - start - 1));
-      value = "";
-    }
-
-    if (key.size() > 0)
-      opts[key] = value;
-
-    start = (comma_pos == std::string::npos) ? comma_pos : comma_pos + 1;
-    comma_pos = s.find(comma, start);
-  } while (start != std::string::npos);
-
-  return opts;
-}
-
 int run(int argc, char** argv)
 {
   LIMA_UNUSED(argc);
@@ -152,6 +138,14 @@ int run(int argc, char** argv)
   auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                      QStringList());
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  {
+    throw InvalidConfiguration("loadLibrary method failed.");
+  }
 
   QString lpConfigFile("lima-analysis.xml");
   QString commonConfigFile("lima-common.xml");
@@ -234,14 +228,6 @@ int run(int argc, char** argv)
 
   parser.process(QCoreApplication::arguments());
 
-  //std::cerr<< configPath.toStdString() << std::endl;
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-  {
-    throw InvalidConfiguration("loadLibrary method failed.");
-  }
 
   XMLREADERCLIENTLOGINIT;
   setlocale(LC_ALL, "");
@@ -306,9 +292,9 @@ int run(int argc, char** argv)
         LDEBUG << "Configure XML reader client factory" << clientId << "with"
                 << (limaConfDir + "/" + lpConfigFile);
         // initialize the factory of the XMLreader
-        XMLConfigurationFileParser lpconfig((limaConfDir + "/" + lpConfigFile).toUtf8().constData());
+        XMLConfigurationFileParser lpconfig(limaConfDir + "/" + lpConfigFile);
         XmlReaderClientFactory::changeable().configureClientFactory(
-            clientId.toUtf8().constData(),
+            clientId.toStdString(),
             lpconfig,
             medias[0],
             medias,
@@ -326,7 +312,6 @@ int run(int argc, char** argv)
     // Create the client
 
     uint64_t i=1;
-    #pragma omp parallel for
     for(int filesCounter = 0; filesCounter < files.size(); filesCounter++)
     {
       LDEBUG << "Creating client";
@@ -354,25 +339,11 @@ int run(int argc, char** argv)
         readStream(file, text_s);
         auto qtext_s = QString::fromUtf8(text_s.c_str());
 
-        QRegExp rx("(&[^;]*;)");
-        int shift = 0;
-        int indexofent = 0;
-
-        QMap< uint64_t,uint64_t > shiftFrom;
-        while ((indexofent = rx.indexIn(qtext_s, indexofent)) != -1)
-        {
-          int indexInResolved = indexofent-shift;
-          shift += rx.cap(1).size()-1;
-          shiftFrom.insert(indexInResolved, shift);
-          LDEBUG << "indexofent:" << indexofent << "; indexInResolved:"
-                  << indexInResolved << "; shift:" << shift;
-          indexofent += rx.matchedLength();
-        }
-
+        auto shiftFrom = std::make_shared<ShiftFrom>(qtext_s);
         if(qtext_s.trimmed().isEmpty())
         {
-            std::cerr << "file " << fileName.toUtf8().constData()
-                      << " has empty input ! " << std::endl;
+            XMLREADERCLIENTLOGINIT;
+            LERROR << "file " << fileName << " has empty input ! ";
             continue;
         }
         text_s = qtext_s.toUtf8().constData();
@@ -402,15 +373,14 @@ int run(int argc, char** argv)
         }
         else if(useHandler == "multimedia")
         {
-          // for xml dumpers (simpleXmlDumper, fullXmlDumper, etc.),
-          // use xmlSimpleHandler
+          // used with bowDumperXml
           outputFile = fileName + ".mult";
         }
         else
         {
-          std::cerr << "Error: unknown handler type "
-                    << useHandler.toStdString()
-                    << ": must be [bow|txt|xml]" << std::endl;
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "Error: unknown handler type " << useHandler
+                  << ": must be [bow|txt|xml]";
           continue;
         }
 
@@ -428,7 +398,7 @@ int run(int argc, char** argv)
           // for text dumpers (textDumper,compactFullDumper,DepTripletDumper,
           // etc.), use simpleStreamHandler
           handlerName="simpleStreamHandler";
-          handler=new XmlSimpleHandler();
+          handler = new XmlSimpleHandler();
         }
         else if(useHandler == "xml")
         {
@@ -442,17 +412,17 @@ int run(int argc, char** argv)
           // Attendu par bowDumperXml
           handlerName = "xmlDocumentHandler";
           handler = new Lima::Handler::MultimediaDocumentHandler(shiftFrom);
-          LDEBUG << "run handler "<<handlerName<<"is a MultimediaDocumentHandler"
-                  << dynamic_cast<Lima::Handler::MultimediaDocumentHandler*>(handler)->shiftFrom().size()
+          LDEBUG << "run handler"<<handlerName<<"is a MultimediaDocumentHandler"
+                  << *shiftFrom
                   << handler;
         }
         else
         {
-          std::cerr << "unknown handler" << useHandler.toStdString() << std::endl;
-          throw InvalidConfiguration(std::string("unknown handler") + useHandler.toUtf8().constData());
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "unknown handler" << useHandler;
+          throw InvalidConfiguration(QString("unknown handler ") + useHandler);
         }
-        std::ofstream fout(outputFile.toUtf8().constData(),
-                           std::ofstream::binary);
+        std::ofstream fout(outputFile.toStdString(), std::ofstream::binary);
         if(handler != 0)
         {
           if (dynamic_cast<AbstractXmlDocumentHandler*>(handler) != 0)
@@ -466,31 +436,52 @@ int run(int argc, char** argv)
 
         // analyze
         metaData["FileName"] = fileName.toUtf8().constData();
+#ifndef DEBUG_LP
+        try {
+#endif
         client->analyze(text_s, metaData, pipeline.toUtf8().constData());
+#ifndef DEBUG_LP
+        }
+        catch (const LinguisticProcessingException& e)
+        {
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "LinguisticProcessing error on document " << fileName
+                  << ":" << e.what();
+          //allows the process to continue on next file
+        }
+        catch (const LimaException& e)
+        {
+          XMLREADERCLIENTLOGINIT;
+          LERROR << "Error on document " << fileName << ":" << e.what();
+          //allows the process to continue to next file
+        }
+#endif
         client->releaseAnalysisHandler(handlerName);
       }
-      catch(NoSuchMap &e)
+      catch(const NoSuchMap &e)
       {
-        cerr << "Analysis failed on file "
-              << fileName.toStdString()
-              << ": (NoSuchMap) " << e.what() << endl;
+        XMLREADERCLIENTLOGINIT;
+        LERROR << "Analysis failed on file " << fileName << ": (NoSuchMap) "
+                << e.what();
       }
-      catch(XMLConfigurationFileException &e)
+      catch(const XMLConfigurationFileException &e)
       {
-        cerr << "Analysis failed on file "
-              << fileName.toStdString()
-              << ": (XMLConfigurationFileException) " << e.what() << endl;
+        XMLREADERCLIENTLOGINIT;
+        LERROR << "Analysis failed on file " << fileName
+                << ": (XMLConfigurationFileException) " << e.what();
       }
       ++i;
     }
   }
   catch(InvalidConfiguration &e)
   {
-    cerr << "Invalid configuration" << e.what() << endl;
+    XMLREADERCLIENTLOGINIT;
+    LERROR << "Invalid configuration" << e.what();
   }
 
-  cout << "Total: " << TimeUtils::diffTime(beginTime, TimeUtils::getCurrentTime())
-        << " ms" << endl;
+  std::cout << "Total: " << TimeUtils::diffTime(beginTime,
+                                                TimeUtils::getCurrentTime())
+            << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -498,34 +489,30 @@ int run(int argc, char** argv)
 void listunits()
 {
     {
-        cout << "Available resources factories : " << endl;
-        deque<string> ids = AbstractResource::Factory::getRegisteredFactories();
-        for(deque<string>::const_iterator it = ids.begin();
-                it != ids.end();
-                it++) {
-            cout << "- " << *it << endl;
-        }
-        cout << endl;
+      std::cout << "Available resources factories : " << std::endl;
+      auto ids = AbstractResource::Factory::getRegisteredFactories();
+      for (const auto& id : ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     {
-        cout << "Available process units factories : " << endl;
-        deque<string> ids = MediaProcessUnit::Factory::getRegisteredFactories();
-        for(deque<string>::const_iterator it = ids.begin();
-                it != ids.end();
-                it++) {
-            cout << "- " << *it << endl;
-        }
-        cout << endl;
+      std::cout << "Available process units factories : " << std::endl;
+      auto ids = MediaProcessUnit::Factory::getRegisteredFactories();
+      for (const auto& id: ids)
+      {
+        std::cout << "- " << id << std::endl;
+      }
+      std::cout << std::endl;
     }
     std::cout << "Available client factories are : " << std::endl;
     {
-//     deque<string> ids=LinguisticProcessingClientFactory::single().getRegisteredFactories();
-//     for (deque<string>::iterator it=ids.begin();
-//          it!=ids.end();
-//          it++)
-//     {
-//       cout << "- " << *it << endl;
-//     }
-//     cout << endl;
+      auto ids = LinguisticProcessingClientFactory::single().getRegisteredFactories();
+      for (const auto& id : ids)
+        {
+          std::cout << "- " << id << std::endl;
+        }
+        std::cout << std::endl;
     }
 }

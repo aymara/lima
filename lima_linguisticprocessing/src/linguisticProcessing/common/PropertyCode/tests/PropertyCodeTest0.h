@@ -1,7 +1,7 @@
 #ifndef PROPERTYCODETEST0_H
 #define PROPERTYCODETEST0_H
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 class PropertyCodeTest0: public QObject
 {

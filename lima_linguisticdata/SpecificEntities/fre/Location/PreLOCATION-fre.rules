@@ -6,28 +6,40 @@ set defaultAction=>CreateSpecificEntity()
 # règles avec normalisation placées avant les autres règles pour que 
 # certaines formes soient bien prises dans les listes (e.g. @Cities)
 
-#******************************
-# regles avec normalisation
+#****************************** regle avec normalisation
+
 # Penmarc'| Penmarch => Penmarc'h
-Penmarc'::h:LOCATION:Penmarc'h
+Penmarc'::h:GEO:Penmarc'h
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
-Penmarch:::LOCATION:Penmarc'h
+
+Penmarch:::GEO:Penmarc'h
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =<ClearEntityFeatures()
 #******************************
 
-# regle avec normalisation
-Loire::Atlantique:LOCATION:Loire-atlantique
+Loire::Atlantique:REGION:Loire-atlantique
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
+Charm::el Cheikh:COUNTRY:Charm el-Cheikh
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
-Plaine:La:(St|Saint) Denis:LOCATION:
+#****************************** regle pour noms composés
+# put them in gazeteer??
+
+Cap::Canaveral:GEO:
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Plaine:La:(St|Saint) Denis:CITY:
 =>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
@@ -35,26 +47,14 @@ Plaine:La:(St|Saint) Denis:LOCATION:
 =<ClearEntityFeatures()
 #quartier
 
-Bolline:La::LOCATION:
+Bolline:La::CITY:
 =>SetEntityFeature(left,"name")
 =>AppendEntityFeature(trigger,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 #quartier
 
-#regle avec normalisation
-Charm::el Cheikh:LOCATION:Charm el-Cheikh
-=>SetEntityFeature(trigger,right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-Cap::Canaveral:LOCATION:
-=>SetEntityFeature(trigger,right,"name")
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-# regle avec normalisation
-PORTO::TORRES:LOCATION:Porto Torres
+PORTO::TORRES:CITY:Porto Torres
 =>SetEntityFeature(trigger,right,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()

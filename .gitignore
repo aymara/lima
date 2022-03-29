@@ -1,3 +1,8 @@
+*.log
+*.mult
+*.tar
+*.gz
+*.zip
 *.dot
 
 # Compiled QML/JS files
@@ -35,3 +40,4 @@ CMakeLists.txt.user
 
 *.s
 .directory
+.idea

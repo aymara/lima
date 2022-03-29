@@ -114,7 +114,7 @@ void AnalysisGraph::createGraph()
 
   if (num_vertices(*m_graph) != 0)
   {
-    throw LinguisticProcessingException();
+    throw LinguisticProcessingException("AnalysisGraph::createGraph() - graph is not empy");
   }
 
   VertexTokenPropertyMap tokenMap = get( vertex_token, *m_graph );
@@ -138,7 +138,7 @@ void AnalysisGraph::createGraph()
   boost::tie(beginEndEdge, b) = add_edge(vertex1, vertex2, *m_graph);
   if (!b)
   {
-    throw LinguisticProcessingException();
+    throw LinguisticProcessingException("AnalysisGraph::createGraph - could not bind beginEndEdge");
   }
 }
 
@@ -149,14 +149,14 @@ void AnalysisGraph::deleteGraph()
   LDEBUG << "deleteGraph";
 #endif
   if (m_graph == 0) return;
-  
-  if (m_deleteTokenWhenDestroyed) 
+
+  if (m_deleteTokenWhenDestroyed)
   {
     LinguisticGraphVertexIt it, it_end;
     VertexTokenPropertyMap tokenMap = get( vertex_token, *m_graph );
-  
+
     std::set<Token*> deletedToken;
-  
+
     boost::tie(it, it_end) = vertices(*m_graph);
     for (; it != it_end; it++)
     {
@@ -170,13 +170,13 @@ void AnalysisGraph::deleteGraph()
       tokenMap[*it] = 0;
     }
   }
-  if (m_deleteDataWhenDestroyed) 
+  if (m_deleteDataWhenDestroyed)
   {
     LinguisticGraphVertexIt it, it_end;
     VertexDataPropertyMap dataMap = get( vertex_data, *m_graph );
-  
+
     std::set<MorphoSyntacticData*> deletedData;
-  
+
     boost::tie(it, it_end) = vertices(*m_graph);
     for (; it != it_end; it++)
     {
@@ -383,7 +383,7 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
       if (msd->begin() != msd->end()) {
         macro=macroAccessor.readValue(msd->begin()->properties);
       }
-      
+
       /*      else if (hyphensPair.first != hyphensPair.second)
             {
               const Token& alt = (*((tok-> getOrthographicAlternatives()).begin()));
@@ -408,11 +408,11 @@ LinguisticGraphVertex AnalysisGraph::nextChainsBreakFrom(
 
 
 void AnalysisGraph::populateAnnotationGraph(
-    AnnotationData* annotData, 
+    AnnotationData* annotData,
     const std::string& src)
 {
   LinguisticGraphVertexIt it, it_end;
-  
+
   boost::tie(it, it_end) = vertices(*m_graph);
   for (; it != it_end; it++)
   {
@@ -423,7 +423,7 @@ void AnalysisGraph::populateAnnotationGraph(
       annotData->annotate(agv, Common::Misc::utf8stdstring2limastring(src), static_cast< uint64_t >(*it));
     }
   }
-  
+
 }
 
 

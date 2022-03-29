@@ -164,16 +164,20 @@ std::ostream& operator<<(std::ostream& os, const LTR_Text& text) {
   LTR_Text::SENTENCE_BOUNDS_T::const_iterator itSb = text.m_sentenceBounds.begin();
   for (LTR_Text::const_iterator itTok = text.begin();
        itTok != text.end(); itTok ++) {
-    os << **itTok << std::endl;
-  if (itSb != text.m_sentenceBounds.end()) {
-    if (tokenCounter == *itSb) {
-      os << "==SB==========" << std::endl;
-      itSb ++;
+    LTR_Token* tok=*itTok;
+    if (tok==nullptr) { os << "NULL" << std::endl; } 
+    else if (tok->size()==0) { os << "EMPTY" << std::endl; }
+    else { os << *tok << std::endl; }
+
+    if (itSb != text.m_sentenceBounds.end()) {
+      if (tokenCounter == *itSb) {
+        os << "==SB==========" << std::endl;
+        itSb ++;
+      }
     }
+    tokenCounter ++;
   }
-  tokenCounter ++;
-       }
-       return os;
+  return os;
 }
 
 QDebug& operator<<(QDebug& os, const LTR_Text& text) {
@@ -182,16 +186,19 @@ QDebug& operator<<(QDebug& os, const LTR_Text& text) {
   LTR_Text::SENTENCE_BOUNDS_T::const_iterator itSb = text.m_sentenceBounds.begin();
   for (LTR_Text::const_iterator itTok = text.begin();
        itTok != text.end(); itTok ++) {
-    os << **itTok ;
-  if (itSb != text.m_sentenceBounds.end()) {
-    if (tokenCounter == *itSb) {
-      os << "==SB==========";
-      itSb ++;
+    if (*itTok==nullptr) { os << "NULL"; } 
+    else if ((*itTok)->size()==0) { os << "EMPTY"; }
+    else { os << **itTok; }
+    
+    if (itSb != text.m_sentenceBounds.end()) {
+      if (tokenCounter == *itSb) {
+        os << "==SB==========";
+        itSb ++;
+      }
     }
+    tokenCounter ++;
   }
-  tokenCounter ++;
-       }
-       return os;
+  return os;
 }
 
 }  // BagOfWords

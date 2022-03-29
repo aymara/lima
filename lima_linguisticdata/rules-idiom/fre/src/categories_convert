@@ -1,49 +1,49 @@
 adjectif	ADJ
-adjectif qualificatif	Afha---
+adjectif qualificatif	ADJ
 adverbe	ADV
 adverbe postv	Rp
 adverbe de négation	Rn
 adverbe élément de négation	Rd
 adverbe entre aux et pp	Rd
 adverbe négatif	Rn
-adverbe modifieur Rm
+adverbe modifieur	Rm
 annp féminin	Ncaf-n
 annp masculin	Ncam-n
 article de quantité	Dk-----
-article général féminin pluriel	Da--fpi
-article général féminin singulier	Da--fsi
-article général masculin pluriel	Da--mpi
-article général masculin singulier	Da--msi
-conjonction de coordination	Cc
-conjonction de subordination	Cs
+article général féminin pluriel	Dv--fpi
+article général féminin singulier	Dv--fsi
+article général masculin pluriel	Dv--mpi
+article général masculin singulier	Dv--msi
+conjonction de coordination	CC
+conjonction de subordination	CS
 début de liste	Sg
 déterminant	DET
 déterminant quantité	Dk-----
 interjection	I
-nom féminin	Ncgf--
-nom féminin pluriel	Ncgfp-
-nom masculin	Ncgm--
-nom masculin pluriel	Ncgmp-
-nom propre féminin	Npgf--
-nom propre féminin pluriel	Npgfp-
-nom propre masculin	Npgm--
-nom propre masculin pluriel	Npgmp-
-ponctuation faible	Fp
-ponctuation forte	Ff
+nom féminin	NC:fs-
+nom féminin pluriel	NC:fp-
+nom masculin	NC:ms-
+nom masculin pluriel	NC:mp-
+nom propre féminin	NPP:fs-
+nom propre féminin pluriel	NPP:fp-
+nom propre masculin	NPP:ms-
+nom propre masculin pluriel	NPP:mp-
+ponctuation faible	PONCT
+ponctuation forte	PONCTU_FORTE
 préposition	P
 préposition partitive	P
 préposition verbale	Sn
 préposition subs	Ss
-préposition article	Da--msc
-préposition article pluriel	Da--mpc
-pronom général	Ppcsa----
-pronom général féminin singulier	Ppcsa--fs
-pronom général masculin singulier	Ppcsa--ms
-pronom indéfini	Pi-------
-pronom indéfini singulier	Pi------s
-pronom négatif	Pn-------
-pronom relatif	Pr
-pronom personnel sujet	Ppcsa3--s
+préposition article	P+D:--msc
+préposition article pluriel	P+D:--mpc
+pronom général	PRO:-------
+pronom général féminin singulier	PRO:-----fs
+pronom général masculin singulier	PRO:-----ms
+pronom indéfini	PRO:-------
+pronom indéfini singulier	PRO:------s
+pronom négatif	PRO:-----ms
+pronom relatif	PROREL
+pronom personnel sujet	PRO:------s
 unité de mesure féminin	Ncuf--
 unité de mesure masculin	Ncum--
 verbe intransitif	V---i---

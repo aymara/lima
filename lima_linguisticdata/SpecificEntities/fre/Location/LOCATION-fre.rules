@@ -1,5 +1,5 @@
 set encoding=utf8
-using modex Location-modex.xml
+using modex Location-modex.xml,Numex-modex.xml,DateTime-modex.xml
 using groups Location
 set defaultAction=>CreateSpecificEntity()
 
@@ -7,6 +7,8 @@ set defaultAction=>CreateSpecificEntity()
 # loading of gazeteers
 #----------------------------------------------------------------------
 use regions.lst
+# special france from https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9gions_naturelles_de_France
+use regions_france.lst
 use countries.lst
 use cities.lst
 use riversAndSeas.lst
@@ -18,38 +20,23 @@ use annonceurVille.lst
 use annonceurVoie.lst
 use annonceurGeo.lst
 use annonceurFact.lst
+use continental_regions.lst
 
-include wd_locations.rules
+#include wd_locations.rules
 
-@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,courant$NC,canal,canaux,chenal,source$NC,fontaine$NC,puit$NC,Mer)
+@aqua=(ru$NC,ruisselet,ruisseau,rivière$NC,fleuve$NC,torrent,rigole$NC,ravine$NC,oued,étang$NC,marais$NC,mare$NC,lac$NC,mer$NC,océan$NC,canal,canaux,chenal,fontaine$NC,puit$NC,Mer)
+# removed source$NC: too ambiguous
 #add Mer (in uppercase) to @aqua because Mer is identifed as $NP.
 
-@mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d'Ougarta);
-
-@PrecisionGeographique=(sud,nord,est,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
-
-@locationVerbs=(
-ressentir$V,
-ressenti$ADJ,
-secouer$V,
-produire$V,
-trembler$V,
-survenir$V,
-frapper$V,
-enregistrer$V,	
-avoir\ lieu$V,	
-trouver$V,	
-toucher$V,	
-situer$V,	
-localiser$V,	
-ébranler$V,	
-détecter$V)
+@mountain=(massif\ central,Pyrénées,Alpes,massif Armoricain,Vosges,Jura,Atlas,Chaînes\ d\'Ougarta);
 
 # TODO: comment remettre les lemmes de rue et place ou supprimer les entrées avec un espace (route départementale)
 # @Street=(rue$NC,route,chemin,avenue,voie,impasse,venelle,autoroute,nationale,départementale,route nationale,route départementale,route communale,place$NC)
 @StreetAdj=(nationale,communale,departementale,départementale)
 @StreetNC=(rue$NC,place$NC)
-
+@StreetInAddress=(rue$NC,place$NC,Rue,Place,rue,place,
+route,Route,chemin,Chemin,avenue,Avenue,boulevard,Boulevard,voie,Voie,
+impasse,Impasse,quai,Quai,venelle,Venelle,Cours)
 
 #Quartier present dans la convention Quaero 
 # pas de liste ???
@@ -59,155 +46,312 @@ détecter$V)
 #******************************************************************************
 # les voies
 #la nationale 118.
-T_Ni::@Street? @StreetAdj:LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#A10
-AT_Ni>1::(autoroute)?:LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-#la n118
-nT_Ni>1::(autoroute)?:LOCATION:
+t_integer::@Street? @StreetAdj:ODO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"kind")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #le triangle de Rocquencourt
-triangle::de Rocquencourt:LOCATION:
+triangle::de Rocquencourt:ODO:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #place de la république
-#@Street::@StreetAdj $NC{1-3}:LOCATION:
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-#place de la république
-#@Street::$NC{1-3}:LOCATION:
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-#place de la république
-@Street::@StreetAdj? ,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+@Street::@StreetAdj? ,? (de la|de|du|des|à|aux)? ($NP|t_capital_1st){1-3}:ODO:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.4,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #idem avec le déclencheur sur rue ou place
-@StreetNC::,? (de la|de|du|des|à|aux)? ($NC|$NP|t_capital_1st){1-3}:LOCATION:
+@StreetNC::,? (de la|de|du|des|à|aux)? ($NP|t_capital_1st){1-3}:ODO:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.4,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
 #******************************************************************************
 # les adresses
 #
-T_Ni>1::(@Street|StreetNC) *{1-3} (escalier (T_Ni>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|T_Ni>1|A|B|C|D|E|F|G))?:LOCATION:
+
+# code postal (en france) = 5 chiffres: vérifie la longueur, pas la valeur (peut commencer par 0)
+
+# autorise det et prep dans les noms de rues, mais pas en fin
+@LocPart=(t_capital,t_capital_1st,$NP,$DET,$PREP)
+# autoriser $NC en fin permet de récupérer des formes sans majuscule ("rue du commerce")
+# mais peut apporter aussi du bruit...
+# autorise dates (rue du 8 mai 1945)
+@LocPartFinal=(t_capital,t_capital_1st,$NP,<DateTime.DATE>)
+@bis=(bis,ter)
+
+# complement: Zone Industrielle, résidence, bâtiment etc.
+@zone=(zone$NC industriel$ADJ,zone$NC $PREP activité$NC,ZI,ZA,ZAC,résidence$NC)
+@bat=(bâtiment$NC,batiment,Batiment,bat,Bat,immeuble$NC,Immeuble,résidence$NC)
+@esc=(escalier$NC)
+@letter=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z)
+
+define subautomaton Zone {
+   pattern=@zone @LocPart{0-2} @LocPartFinal
+}
+define subautomaton Bat {
+   pattern=@bat (t_integer|@letter|@LocPart{0-2} @LocPartFinal)
+}
+define subautomaton Esc {
+   pattern=@esc (t_integer|@letter)
+}
+
+#define subautomaton AddressComplement {
+#   pattern=(@zone) @LocPart{0-2} @LocPartFinal (@bat (t_integer|letter|@LocPart{0-2} @LocPartFinal))?
+#}
+
+# different order for the additional information
+define subautomaton AddressComplement {
+   pattern=(%Zone %Bat? %Esc?|%Zone %Esc? %Bat?|%Bat %Esc?|%Esc %Bat?)
+}
+# actions are a bit complex on the complement to set each piece of information in a different other-address-component
+
+# CHAMBON FEUGEROLLES (42500), 9 rue Jean Monnet
+# code postal comme trigger
+t_integer:@LocPartFinal{1-3} \(?:\) ,? (%AddressComplement ,?)? t_integer @bis? ,? (@StreetInAddress) @LocPart{0-2} @LocPartFinal (,? %AddressComplement)?:ADDRESS:
++LengthInInterval(trigger,"5,5")
+=>SetEntityFeature(trigger,"address-number")
+=>AppendEntityFeature(left.1,"other-address-component")
+=>AddEntityFeature(right.3.1.1.1,"other-address-component")
+=>AppendEntityFeature(right.3.1.1.2,"other-address-component")
+=>AppendEntityFeature(right.3.1.1.3,"other-address-component")
+=>AddEntityFeature(right.3.1.2.1,"other-address-component")
+=>AppendEntityFeature(right.3.1.2.2,"other-address-component")
+=>AddEntityFeature(right.3.1.3.1,"other-address-component")
+=>AppendEntityFeature(right.3.1.3.2,"other-address-component")
+=>AddEntityFeature(right.4,"address-number")
+=>AppendEntityFeature(right.5,"address-number")
+=>AddEntityFeature(right.7,"other-address-component")
+=>AppendEntityFeature(right.8,"other-address-component")
+=>AppendEntityFeature(right.9,"other-address-component")
+=>AddEntityFeature(right.10.2.1.1,"other-address-component")
+=>AppendEntityFeature(right.10.2.1.2,"other-address-component")
+=>AppendEntityFeature(right.10.2.1.3,"other-address-component")
+=>AddEntityFeature(right.10.2.2.1,"other-address-component")
+=>AppendEntityFeature(right.10.2.2.2,"other-address-component")
+=>AddEntityFeature(right.10.2.3.1,"other-address-component")
+=>AppendEntityFeature(right.10.2.3.2,"other-address-component")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-#la voie est annotée avec loc.odo.
 
-
-T_Ni>1::(@Cities) (@Countries)?:LOCATION:
+# 71 Avenue des Ternes, 75017 PARIS
+# duplicate the rule to ensure that the city name does not combine several cases (upper/lower)
+t_integer::@bis? ,? (@StreetInAddress) @LocPart{0-3} @LocPartFinal (,? %AddressComplement)? (,|—|-)? (t_integer|<Numex.NUMBER>) t_capital{1-4} ((CEDEX|Cedex|Cédex) t_integer)?:ADDRESS:
++LengthInInterval(right.8,"5,5")
+=>SetEntityFeature(trigger,"address-number")
+=>AppendEntityFeature(right.1,"address-number")
+=>AppendEntityFeature(right.3,"other-address-component")
+=>AppendEntityFeature(right.4,"other-address-component")
+=>AppendEntityFeature(right.5,"other-address-component")
+=>AddEntityFeature(right.6.2.1.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.1.2,"other-address-component")
+=>AppendEntityFeature(right.6.2.1.3,"other-address-component")
+=>AddEntityFeature(right.6.2.2.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.2.2,"other-address-component")
+=>AddEntityFeature(right.6.2.3.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.3.2,"other-address-component")
+=>AddEntityFeature(right.8,"zip-code")
+=>AppendEntityFeature(right.9,"other-address-component")
+=>AppendEntityFeature(right.10,"zip-code")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
+
+t_integer::@bis? ,? (@StreetInAddress) @LocPart{0-3} @LocPartFinal (,? %AddressComplement)? ((,|—|-)? (t_integer|<Numex.NUMBER>) @LocPart? t_capital_1st{1-2})? ((CEDEX|Cedex|Cédex) t_integer)?:ADDRESS:
++LengthInInterval(right.7.2,"5,5")
+=>SetEntityFeature(trigger,"address-number")
+=>AppendEntityFeature(right.1,"address-number")
+=>AppendEntityFeature(right.3,"other-address-component")
+=>AppendEntityFeature(right.4,"other-address-component")
+=>AppendEntityFeature(right.5,"other-address-component")
+=>AddEntityFeature(right.6.2.1.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.1.2,"other-address-component")
+=>AppendEntityFeature(right.6.2.1.3,"other-address-component")
+=>AddEntityFeature(right.6.2.2.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.2.2,"other-address-component")
+=>AddEntityFeature(right.6.2.3.1,"other-address-component")
+=>AppendEntityFeature(right.6.2.3.2,"other-address-component")
+=>AddEntityFeature(right.7.2,"zip-code")
+=>AddEntityFeature(right.7.3,"other-address-component")
+=>AppendEntityFeature(right.7.4,"other-address-component")
+=>AppendEntityFeature(right.10,"zip-code")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# t_integer::,? @StreetInAddress *{1-3} (escalier (t_integer>1|A|B|C|D|E|F|G))? ((batiment|bâtiment|résidence|bat|bat\.) (t_capital_1st{1-3}|t_integer>1|A|B|C|D|E|F|G))?:ADDRESS:
+# =>SetEntityFeature(trigger,"address-number")
+# =>AppendEntityFeature(right.2,"other-address-component")
+# =>AppendEntityFeature(right.3,"other-address-component")
+# =>AppendEntityFeature(right.4,"other-address-component")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+
+t_integer>1::(@Cities) (@Countries)?:ADDRESS:
+=>SetEntityFeature(trigger,"zip-code")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+########################### CITY ##############################################
+
+rose:[(la)?] ville::CITY:Toulouse
+=>AppendEntityFeature(left.2,"name.nickname")
+=>AppendEntityFeature(trigger,"name.nickname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+# repérage des ville grâce à l'annonceur
+# la ville de Hong Kong
+[@AnnonceurVille]::[($ADJ)?] [(de|du|d\'|de $DET)] (@Regions|@Countries|@Cities|$NP):CITY:
++SetEntityFeature(trigger,"kind")
+=>SetEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Cities:::CITY:
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#loc.adm.town
+
+########################### Region ##############################################
+@Regions:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@RegionsNaturellesDeFrance:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@ContinentalRegion:::REGION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Greeklocations:::LOCATION:
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+########################### Pays ##############################################
+@Countries:::COUNTRY:
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+#****************************** regle avec normalisation
+
+# Penmarc'| Penmarch => Penmarc'h
+Penmarc\'::h:GEO:Penmarc\'h
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+
+Penmarch:::GEO:Penmarc\'h
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=<ClearEntityFeatures()
+
+Loire::Atlantique:REGION:Loire-atlantique
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Charm::el Cheikh:COUNTRY:Charm el-Cheikh
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#****************************** regle pour noms composés
+# put them in gazeteer??
+
+Cap::Canaveral:GEO:
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Plaine:La:(St|Saint) Denis:CITY:
+=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Bolline:La::CITY:
+=>SetEntityFeature(left,"name")
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+#quartier
+
+PORTO::TORRES:CITY:Porto Torres
+=>SetEntityFeature(trigger,right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+###################### Geographical and Buildings ########################################
+
+Elysée:::ODO:Élysée
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Élysée:::ODO:
+=>SetEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+Maison:(la|La)?:Blanche:ODO:
+=>AppendEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+###################### Geographical and Buildings ########################################
 
 #******************************************************************************
 #lieux physiques aquatiques 
 
 #mer d'Iroise, mer de tranquilité (Lune), mare au diable, etc.
-#@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
-@aqua::(de la|du|des|d'|au|à|aux)? (@RiversAndSeas|$NP|$NC|t_capital_1st):LOCATION:
+# pas NC (trop d'ambiguïté): fleuve du monde
+@aqua::(de la|du|des|d\'|au|à|aux)? (@RiversAndSeas|$NP|t_capital_1st):GEO:
+=>SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-@RiversAndSeas:::LOCATION:
-=>NormalizeEntity()
+@RiversAndSeas:::GEO:
+=>AppendEntityFeature(trigger.1,"name")
 =<ClearEntityFeatures()
+#=>NormalizeEntity()
 
 #*****************************************************************************
 
-Trévaresse:::LOCATION:
+
+Trévaresse:::GEO:
 #chaine de collines
 
-Salon:::LOCATION:
-# regle dangeureuse ??
-
-Maison:(la|La)?:Blanche:LOCATION:
+@AnnonceurGeo::(de|du|d\'|de $DET)? t_capital_1st:GEO:
+=>SetEntityFeature(trigger,"kind")
+=>SetEntityFeature(right.2,"name")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-rose:[(la)?] ville::LOCATION:Toulouse :
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-Elysée:::LOCATION:Élysée
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-Élysée:::LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-@Countries::((du|de l\'|d') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#1.1 + 1.2 => du sud. 
-
-@Regions::((du|de l\') @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ)):LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.reg
-
-#à 3 km à l'est de la ville de Paris.
-#annotation IMM : <amount> <val> 100 </val> <unit> kilomètres </unit> </amount> <loc.adm.reg> <qualifier> à l' ouest </qualifier> de <loc.adm.town> <name> Bagdad </name> </loc.adm.town> </loc.adm.reg> 
-@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres|kilimétrer)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? @AnnonceurLieu (de|des|du|d'|de $DET)?)? (@Regions|@Countries|@Cities|$NP|t_capital_1st):LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-# loc.adm.reg
-#loc phys
-# est = dist (imm guide - p7) 
-@AnnonceurLieu::$ADJ? (de|des|du|d'|de $DET)? (@Regions|@Countries|@Cities|$NP|t_capital_1st|t_capital_small):LOCATION: 
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-[ville$NC]::[($ADJ)?] [(de|du|d'|de $DET)] (@Regions|@Countries|@Cities|$NP):LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#si ville loc.adm.town
-
-@Cities:::LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-#loc.adm.town
-
-@Regions:::LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-@Greeklocations:::LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-@Countries:::LOCATION:
-=>NormalizeEntity()
-=<ClearEntityFeatures()
-
-##Ajout le 25/07
-#[@locationVerbs]::[(à|au|le|l'|la|en|dans|entre)?] (t_capital_1st) (et?) (en?) (t_capital_1st)?:LOCATION:
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-#todo ajouter =>SetEntityFeature(right.5,"name") - todo cette regle ne passe pas ! 
-
-#[@locationVerbs]::[(à|au|en|dans)] (@Regions|@Countries|@Cities|t_capital_1st):#LOCATION: 
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-#[@locationVerbs]::[(à|au|en|dans|vers|en direction de|près de|à coté de|proche de|au @PrecisionGeographique de)? (un|une|le[la|les)?] $NP:LOCATION:
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-[habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:LOCATION:
+#[habiter$V]::[(à|au|en|dans|vers|en direction de|près de|à coté de|au @PrecisionGeographique de)? (un|une|le|la|les|l')?] $NP:GEO:
+#=>SetEntityFeature(right.3,"kind") 
 #=>NormalizeEntity()
 #=<ClearEntityFeatures()
 #NP -> noun phrase. j'habite la rue, dans une grotte, vers la superette. 
@@ -218,6 +362,20 @@ Elysée:::LOCATION:Élysée
 # => la plupart des occurrences de Nord, Sud-Est etc ne sont pas étiquetées
 #@PrecisionGeographique::(du pays)?:LOCATION:
 
+# autres lieux: 
+@AnnonceurLieu::$ADJ? (de|des|du|d\'|de $DET)? ($NP|t_capital_1st){1-3}:LOCATION:
++SetEntityFeature(trigger,"kind")
+=>AppendEntityFeature(right.3,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#----------------------------------------------------------------------
+
+# various other locations (planets, historical regions...)
+@miscLocations:::LOCATION:
+=>AppendEntityFeature(trigger,"name")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
 
 #----------------------------------------------------------------------
 # recognition of web adresses and ip adresses
@@ -243,7 +401,8 @@ MHz:t_dot_number::COORDINATE:
 =<ClearEntityFeatures()
 
 #@leguidedannotation
-\@::(*):COORDINATE:
+\@::*:COORDINATE:
++NoSpaceWith(right.1,trigger)
 =>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>NormalizeEntity()
@@ -253,41 +412,37 @@ MHz:t_dot_number::COORDINATE:
 # recognition telephone numbers
 #----------------------------------------------------------------------
 #01 69 85 80 02
-t_integer>0<99:t_integer>0<9: t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
-=>AppendEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
+# deactivated for the moment: problem is some previously found entities have a t_integer type (e.g. "31 décembre"), because it's taken from the first token
+# maybe phone numbers should be recognized by regexMatcher instead
+#t_integer>0<99:t_integer>0<9:t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(left,"name")
+#=>AppendEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
+#01-69-85-80-02
+#t_integer>0<99:t_integer>0<9 - : - t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:
+#=>SetEntityFeature(left,"name")
+#=>AppendEntityFeature(trigger,"name")
+#=>AppendEntityFeature(right,"name")
+#=>SetEntityFeature("location_type","phone number")
+#=>NormalizeEntity()
+#=<ClearEntityFeatures()
+
+#+33 1 23 45 67 89
+\+33::t_integer>0<9 t_integer>0<99 t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
 =>SetEntityFeature("location_type","phone number")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
 
-#01-69-85-80-02
-t_integer>0<99:t_integer>0<9 -:- t_integer>0<99 - t_integer>0<99 - t_integer>0<99:COORDINATE:
-=>AppendEntityFeature(left,"name")
-=>AppendEntityFeature(trigger,"name")
+#+33.1.23.45.67.89
+\+33::t_integer>0<9 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99:COORDINATE:
+=>SetEntityFeature(trigger,"name")
 =>AppendEntityFeature(right,"name")
+=>SetEntityFeature("location_type","phone number")
 =>NormalizeEntity()
 =<ClearEntityFeatures()
-
-#+33 1 23 45 67 89
-#+33::t_integer>0<9 t_integer>0<99 t_integer>0<99 t_integer>0<99 t_integer>0<99:COORDINATE:
-#=>SetEntityFeature(trigger,"name")
-#=>AppendEntityFeature(right,"name")
-#=>SetEntityFeature("location_type","phone number")
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-#+33.1.23.45.67.89
-#+33::t_integer>0<9 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99 \. t_integer>0<99:COORDINATE:
-#=>SetEntityFeature(trigger,"name")
-#=>AppendEntityFeature(right,"name")
-#=>SetEntityFeature("location_type","phone number")
-#=>NormalizeEntity()
-#=<ClearEntityFeatures()
-
-
-
-#mon identifiant skype est jean.dupont
-#todo => car LIMA perd les espaces.
-
-

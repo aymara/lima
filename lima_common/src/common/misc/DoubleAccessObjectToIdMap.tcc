@@ -64,6 +64,22 @@ get(const Object& val) const
 }
 
 template <typename Object, typename Id>
+bool DoubleAccessObjectToIdMap<Object,Id>::
+hasValue(const Object& val) const
+{
+  return (m_accessMap.find(&val) != m_accessMap.end());
+}
+
+template <typename Object, typename Id>
+bool DoubleAccessObjectToIdMap<Object,Id>::
+hasId(const Id& id) const
+{
+  size_t i=(size_t) id;
+  return (i < m_reverseAccessMap.size());
+}
+
+
+template <typename Object, typename Id>
 const Object& DoubleAccessObjectToIdMap<Object,Id>::
 get(const Id& id) const
 {

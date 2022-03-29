@@ -1,10 +1,8 @@
-<DOCSET>
 <DOC>
 <DOCNO>doc1</DOCNO>
-<BODY>>des entités non codées&lt;>
-</BODY>
-<BODY>
+<TEXT>>des entités non codées&lt;>
+</TEXT>
+<TEXT>
 d'autres &gt; choses &amp;
-</BODY>
+</TEXT>
 </DOC>
-</DOCSET>

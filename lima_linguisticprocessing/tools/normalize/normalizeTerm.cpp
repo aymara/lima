@@ -324,6 +324,10 @@ std::multimap<LimaString, std::string> extractNormalization(const LimaString& so
                                                  const BoWText& bowText,
                                                  MediaId lang)
 {
+#ifdef DEBUG_LP
+  LOGINIT("Refo::Compiler");
+  LDEBUG << "extractNormalization" << source;
+#endif
   const Common::PropertyCode::PropertyManager& macroManager =
       static_cast<const Common::MediaticData::LanguageData&>(
         MediaticData::single().mediaData(lang))
@@ -345,20 +349,29 @@ std::multimap<LimaString, std::string> extractNormalization(const LimaString& so
     if ((*bowItr)->getType() != BoWType::BOW_PREDICATE)
     {
       std::pair<int,int> posLen = getStartEnd(static_cast<const BoWToken*>(&**bowItr));
-//       std::cerr << "  - '" << boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma() << "' at " << posLen.first << "," << posLen.second;
+#ifdef DEBUG_LP
+      LDEBUG << "extractNormalization"
+              << boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma()
+              << macroManager.getPropertySymbolicValue(
+                    boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())
+              << "at" << posLen.first << "," << posLen.second;
+#endif
       if ((posLen.first==0) && (posLen.second==source.size()))
       {
         result.insert(std::make_pair(
                         boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getLemma(),
                         macroManager.getPropertySymbolicValue(
                             boost::dynamic_pointer_cast<BoWToken>(*bowItr)->getCategory())));
-//         std::cerr << " keep it !";
+#ifdef DEBUG_LP
+        LDEBUG << "extractNormalization keep it !";
+#endif
       }
-//       else
-//       {
-//         std::cerr << " IGNORE it !";
-//       }
-//       std::cerr << std::endl;
+      else
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "extractNormalization IGNORE it !";
+#endif
+      }
     }
   }
   //   }

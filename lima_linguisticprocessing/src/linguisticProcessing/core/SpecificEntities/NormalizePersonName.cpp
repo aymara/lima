@@ -49,6 +49,29 @@ namespace SpecificEntities {
 Automaton::ConstraintFunctionFactory<NormalizePersonName>
 NormalizePersonNameFactory(NormalizePersonNameId);
 
+// utility function to normalize the case
+LimaString capitalizeWord(const LimaString& str) {
+  // capitalize single word
+  return str.left(1).toUpper()+str.mid(1).toLower();
+}
+
+LimaString capitalize(const LimaString& str) {
+  //capitalize each word, separated by a space or '-'
+  QRegExp sep("[ -]");
+  QString capitalized;
+  int current=0;
+  int i=str.indexOf(sep,current);
+  while (i!=-1) {
+    capitalized+=capitalizeWord(str.mid(current,i-current))+str[i];
+    current=i+1;
+    i=str.indexOf(sep,current);
+  }
+  // last one
+  capitalized+=capitalizeWord(str.mid(current));
+  return capitalized;
+}
+
+
 //**********************************************************************
 NormalizePersonName::
 NormalizePersonName(MediaId language,
@@ -127,7 +150,7 @@ operator()(RecognizerMatch& m,
 
   // modified stored normalized string to inflected form :
   // ensure no normalization is applied to person names
-  m.features().setFeature(DEFAULT_ATTRIBUTE,m.getString());
+  m.features().setFeature(DEFAULT_ATTRIBUTE,capitalize(m.getString()));
 
   LimaString firstname;
   LimaString lastname;
@@ -152,7 +175,7 @@ operator()(RecognizerMatch& m,
   // if firstname and lastname are attributed (for at least two words)
   if (((!firstname.isEmpty()) && (!lastname.isEmpty()))
       || m.size() == 1) {
-    m.features().setFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    m.features().setFeature(FIRSTNAME_FEATURE_NAME,capitalize(firstname));
     RecognizerMatch::const_iterator i(m.begin());
     Token* t = m.getToken(i);
     uint64_t pos = (int64_t)(t->position());
@@ -160,7 +183,7 @@ operator()(RecognizerMatch& m,
     uint64_t len = (int64_t)(t->length());
     (*firstnameFeatureIt).setPosition(pos);
     (*firstnameFeatureIt).setLength(len);
-    m.features().setFeature(LASTNAME_FEATURE_NAME,lastname);
+    m.features().setFeature(LASTNAME_FEATURE_NAME,capitalize(lastname));
     return true;
   }
 
@@ -171,7 +194,7 @@ operator()(RecognizerMatch& m,
     RecognizerMatch::const_iterator i(m.begin());
     Token* t = m.getToken(i);
     firstname = t->stringForm();
-    m.features().setFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    m.features().setFeature(FIRSTNAME_FEATURE_NAME,capitalize(firstname));
     std::vector<EntityFeature>::iterator firstnameFeatureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
     uint64_t pos = (int64_t)(t->position());
     (*firstnameFeatureIt).setPosition(pos);
@@ -180,7 +203,7 @@ operator()(RecognizerMatch& m,
     i++;
     t = m.getToken(i);
     lastname = t->stringForm();
-    m.features().setFeature(LASTNAME_FEATURE_NAME,lastname);
+    m.features().setFeature(LASTNAME_FEATURE_NAME,capitalize(lastname));
     std::vector<EntityFeature>::iterator lastnameFeatureIt = m.features().find(LASTNAME_FEATURE_NAME);
     pos = (int64_t)(t->position());
     (*lastnameFeatureIt).setPosition(pos);
@@ -263,11 +286,11 @@ operator()(RecognizerMatch& m,
     m.features().setFeature(LASTNAME_FEATURE_NAME,m.getNormalizedString(sp));
   } 
   else {
-    m.features().setFeature(FIRSTNAME_FEATURE_NAME,firstname);
+    m.features().setFeature(FIRSTNAME_FEATURE_NAME,capitalize(firstname));
     std::vector<EntityFeature>::iterator featureIt = m.features().find(FIRSTNAME_FEATURE_NAME);
     (*featureIt).setPosition(firstnamePos);
     (*featureIt).setLength(firstnameLen);
-    m.features().setFeature(LASTNAME_FEATURE_NAME,lastname);
+    m.features().setFeature(LASTNAME_FEATURE_NAME,capitalize(lastname));
     featureIt = m.features().find(LASTNAME_FEATURE_NAME);
     (*featureIt).setPosition(lastnamePos);
     (*featureIt).setLength(lastnameLen);

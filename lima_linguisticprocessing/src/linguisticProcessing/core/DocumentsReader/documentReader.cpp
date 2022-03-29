@@ -11,6 +11,7 @@
 #include "documentReader.h"
 #include "common/Data/strwstrtools.h"
 #include "common/Data/LimaString.h"
+#include "common/Handler/shiftFrom.h"
 
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 
@@ -44,6 +45,8 @@ public:
 
   QXmlStreamReader* m_reader;
   StructuredDocumentXMLParser* m_parser;
+
+  std::shared_ptr<ShiftFrom> m_shiftFrom;
 
   //private functions
   //void init(Common::XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
@@ -134,6 +137,11 @@ DocumentReader::~DocumentReader()
     delete m_d;
 }
 
+void DocumentReader::setShiftFrom(std::shared_ptr<const ShiftFrom> shiftFrom)
+{
+  m_d->m_parser->setShiftFrom(shiftFrom);
+}
+
 void  DocumentReader::setLinguisticXMLDocHandler ( StructuredXmlDocumentHandler* handler )
 {
     m_d->m_parser->setLinguisticXMLDocHandler ( handler );
@@ -142,43 +150,33 @@ void  DocumentReader::setLinguisticXMLDocHandler ( StructuredXmlDocumentHandler*
 //***********************************************************************
 // member functions
 //***********************************************************************
-bool DocumentReader::initFile ( const std::string& filename )
+bool DocumentReader::initFile ( const QString& filename )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "DocumentReader::initFile: " << filename;
 #endif
-  // First call for progressive parsing
-  // see additional call parseNext() in DocumentsStream::nextdocument
-  QFile file(filename.c_str());
+  QFile file(filename);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    LIMA_EXCEPTION_SELECT_LOGINIT(DRLOGINIT, "Cannot open" << filename.c_str(),
+    LIMA_EXCEPTION_SELECT_LOGINIT(DRLOGINIT, "Cannot open" << filename,
                           Lima::XMLException);
   if (m_d->m_reader != 0)
     delete m_d->m_reader;
-  m_d->m_reader = new QXmlStreamReader(&file);
-#ifdef DEBUG_LP
-  LDEBUG << "DocumentReader: initFile OK";
-#endif
-  m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
-  return true;
-
-#ifdef DEBUG_LP
-  LDEBUG << "DocumentReader: initFile NOT OK";
-#endif
-  return false;
+  auto content = QString::fromUtf8(file.readAll());
+  return initWithString(content);
 }
 
-bool DocumentReader::initWithString ( const std::string& text )
+
+bool DocumentReader::initWithString ( const QString& text )
 {
 #ifdef DEBUG_LP
     DRLOGINIT;
-    LDEBUG << "DocumentReader::initWithString: " << Lima::LimaString::fromUtf8(text.c_str()).left(100) << (text.size()>100?"(...)":"");
+    LDEBUG << "DocumentReader::initWithString: " << text.left(100) << (text.size()>100?"(...)":"");
 #endif
-  QString qtext = QString::fromUtf8(text.c_str());
   if (m_d->m_reader != 0)
     delete m_d->m_reader;
-  m_d->m_reader = new QXmlStreamReader(qtext);
+  m_d->m_shiftFrom = std::make_shared<ShiftFrom>(text);
+  m_d->m_reader = new QXmlStreamReader(m_d->m_shiftFrom->xml_noent());
   m_d->m_parser->startDocument(getCurrentOffsetFromXmlReader());
   return true;
 
@@ -234,11 +232,12 @@ bool DocumentReader::readXMLDocument()
     else if (m_d->m_reader->isCharacters())
     {
       m_d->m_parser->characters(m_d->m_reader->text().toString(),
-getCurrentOffsetFromXmlReader());
+                                getCurrentOffsetFromXmlReader());
     }
     m_d->m_reader->readNext();
     // do processing
   }
+  m_d->m_parser->endDocument();
   if (m_d->m_reader->hasError())
   {
     // do error handling
@@ -246,7 +245,6 @@ getCurrentOffsetFromXmlReader());
     LERROR <<"DocumentReader: readXMLDocument: parse error:" << m_d->m_reader->errorString();
     return false;
   }
-  m_d->m_parser->endDocument();
 
   return true;
 }

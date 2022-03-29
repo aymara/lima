@@ -22,6 +22,11 @@ install(TARGETS limaserver
   DESTINATION bin
   COMPONENT runtime)
 
+install(PROGRAMS
+  ${CMAKE_CURRENT_SOURCE_DIR}/analyzeText.sh
+  DESTINATION bin
+  COMPONENT runtime)
+
 ########### next target ###############
 
 # SET(testQsLogger_SRCS

@@ -41,14 +41,13 @@ void LinguisticProcessingClientFactory::configureClientFactory(
   LINFO << "LinguisticProcessingClientFactory::configureClientFactory" << id;
   if (id.empty())
   {
-    LERROR << "LinguisticProcessingClientFactory::configureClientFactory Trying to access to factory with empty name!";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("LinguisticProcessingClientFactory::configureClientFactory Trying to access to factory with empty name!");
   }
   std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
     LERROR << "No factory defined for client '" << id << "' !";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("No factory defined for given client");
   }
   std::deque<std::string>::iterator Itrlangs;
 //     for (  Itrlangs=langs.begin();  Itrlangs!=langs.end();Itrlangs++)
@@ -66,14 +65,12 @@ std::shared_ptr< AbstractProcessingClient > LinguisticProcessingClientFactory::c
   LINFO << "Create client '" << id << "'";
   if (id.empty())
   {
-    LERROR << "LinguisticProcessingClientFactory::createClient Trying to create client with empty name!";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("LinguisticProcessingClientFactory::createClient Trying to create client with empty name!");
   }
   const std::shared_ptr<AbstractLinguisticProcessingClientFactory> factory=
     AbstractLinguisticProcessingClientFactory::getFactory(id);
   if (factory==0) {
-    LERROR << "No factory defined for client '" << id << "' !";
-    throw LinguisticProcessingException();
+    LIMA_LP_EXCEPTION("No factory defined for given client");
   }
 
   return factory->createClient();
