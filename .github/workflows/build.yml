@@ -10,16 +10,16 @@ env:
 
 
 jobs:
-  ubuntu20tf:
-    name: "Build on Ubuntu 20.04 with TensorFlow support"
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v2
-
-      - name: "Build image"
-        run: docker build --tag travis-ubuntu20.04 --build-arg BRANCH="master" --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
+#  ubuntu20tf:
+#    name: "Build on Ubuntu 20.04 with TensorFlow support"
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: "Checkout code"
+#        uses: actions/checkout@v2
+#
+#      - name: "Build image"
+#        run: docker build --tag travis-ubuntu20.04 --build-arg BRANCH="master" --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
 
   debian11:
     name: "Build on Debian 11 with TensorFlow support"
@@ -74,8 +74,8 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: .
-          file: continuous_integration/Dockerfile-debian11
+          context: ./continuous_integration
+          file: Dockerfile-debian11
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
