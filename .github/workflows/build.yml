@@ -74,8 +74,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v2
         with:
-          context: "{{defaultContext}}:continuous_integration"
-          file: Dockerfile-debian11
+          file: continuous_integration/Dockerfile-debian11
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
