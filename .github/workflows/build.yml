@@ -1,6 +1,8 @@
 on:
   push:
-    branches: [ master, deeplima-lemmatizer-dev ]
+    branches:
+    - deeplima-lemmatizer-dev
+    - master
 
 env:
   # Use docker.io for Docker Hub if empty
