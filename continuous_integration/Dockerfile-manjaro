@@ -37,10 +37,31 @@ RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
 WORKDIR /
-# COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
-# RUN /svmtool.sh $GITHUB_TOKEN
+RUN pacman -Sy --noconfirm --needed dos2unix wget go
+RUN git clone https://aur.archlinux.org/yay-git.git
+WORKDIR /yay-git
+RUN useradd -ms /bin/bash  yay
+RUN echo "yay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN chown -R yay /yay-git
+USER yay
+RUN yes | makepkg -si
+RUN yes | yay -S debtap
+USER root
+WORKDIR /
+
+COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
+RUN /svmtool.sh $GITHUB_TOKEN
 # RUN /svmtool-cpp.sh $GITHUB_TOKEN
 # RUN /qhttpserver.sh $GITHUB_TOKEN
+RUN install -d /svmtool-cpp
+RUN SVMTOOL_LATEST_RELEASE_JSON=$(curl -s https://api.github.com/repos/aymara/svmtool-cpp/releases/latest?access_token=$GITHUB_TOKEN) && echo "SVMTOOL_LATEST_RELEASE_JSON=$SVMTOOL_LATEST_RELEASE_JSON" && URL=$(echo "$SVMTOOL_LATEST_RELEASE_JSON" | grep browser_download_url | grep debian9 | grep '.deb"' | head -n 1 | cut -d '"' -f 4) && echo "URL=$URL" && curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o /svmtool-cpp/svmtool.deb
+WORKDIR /svmtool-cpp
+RUN debtap -u
+RUN debtap -Q svmtool.deb
+RUN ls /svmtool-cpp
+RUN ls /svmtool-cpp
+RUN sudo pacman --noconfirm -U ./*.zst
 
 RUN mkdir -p /src/
 RUN git clone --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima

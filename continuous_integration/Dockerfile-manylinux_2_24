@@ -101,7 +101,8 @@ RUN apt-get update && \
         va-driver-all \
         lsb-release \
         libssl-dev \
-        gperf
+        gperf \
+        dos2unix
 RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
 RUN install -d /src
 WORKDIR /src
