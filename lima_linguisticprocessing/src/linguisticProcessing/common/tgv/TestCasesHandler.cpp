@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,9 +17,7 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /***************************************************************************
- *   Copyright (C) 2004 by Benoit Mathieu                                  *
- *   mathieub@zoe.cea.fr                                                   *
- *                                                                         *
+ * @author Benoit Mathieu
  ***************************************************************************/
 
 #include "linguisticProcessing/common/tgv/TestCasesHandler.h"
@@ -202,7 +200,8 @@ bool TestCasesHandler::endElement (const QString & namespaceURI, const QString &
     TestCaseError e = m_processor.processTestCase(currentTestCase);
     if (e())
     {
-      std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): " << std::endl << e.what() << std::endl;
+      std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): "
+                << std::endl << e.what() << std::endl;
         if (currentTestCase.type == FATAL_ERROR_TYPE) {
         m_hasFatalError = true;
       }

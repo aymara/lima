@@ -5,15 +5,16 @@
  * @date       Mon Apr 7 2014
  * copyright   Copyright (C) 2014 by CEA LIST
  * Project     lima_xmlprocessings
- * 
+ *
  * Parser for XML representation of Amose analysed multimedia documents
- * 
+ *
  ***********************************************************************/
 
 #ifndef MULTXMLREADER_H
 #define MULTXMLREADER_H
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
+#include "common/Handler/shiftFrom.h"
 #include <QtXml/QXmlSimpleReader>
 
 namespace Lima {
@@ -26,7 +27,7 @@ class MultXmlReaderPrivate;
 class MultXmlReader
 {
 public:
-  MultXmlReader(const std::string& filename, std::ostream& output); 
+  MultXmlReader(const std::string& filename, std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom);
   ~MultXmlReader();
 
 private:

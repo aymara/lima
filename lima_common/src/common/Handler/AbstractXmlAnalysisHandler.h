@@ -37,7 +37,7 @@ namespace Lima {
 class AbstractXmlAnalysisHandler : public AbstractAnalysisHandler
 {
 public:
-  AbstractXmlAnalysisHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()) :
+  AbstractXmlAnalysisHandler(std::shared_ptr<const ShiftFrom> shiftFrom) :
       m_shiftFrom(shiftFrom)
   {}
 

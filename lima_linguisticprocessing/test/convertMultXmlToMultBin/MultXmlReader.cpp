@@ -23,20 +23,20 @@ class MultXmlReaderPrivate
 {
 friend class MultXmlReader;
 public:
-  MultXmlReaderPrivate(const std::string& filename, std::ostream& output);
+  MultXmlReaderPrivate(const std::string& filename, std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom);
   ~MultXmlReaderPrivate();
 
   QXmlSimpleReader* m_parser;
 };
 
 MultXmlReaderPrivate::MultXmlReaderPrivate(const std::string& filename,
-                           std::ostream& output):
+                           std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom):
     m_parser(new QXmlSimpleReader())
 {
 
   //  Create the handler object and install it as the document and error
   //  handler for the parser-> Then parse the file
-  MultXmlHandler handler(output);
+  MultXmlHandler handler(output, shiftFrom);
   m_parser->setContentHandler(&handler);
   m_parser->setErrorHandler(&handler);
   m_parser->setFeature("http://qt-project.org/xml/features/report-start-end-entity",true);
@@ -64,8 +64,8 @@ MultXmlReaderPrivate::~MultXmlReaderPrivate()
 // reader functions
 //**********************************************************************
 MultXmlReader::MultXmlReader(const std::string& filename,
-                           std::ostream& output):
-m_d(new MultXmlReaderPrivate(filename,output))
+                           std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom):
+m_d(new MultXmlReaderPrivate(filename,output, shiftFrom))
 {
 }
 

@@ -25,7 +25,7 @@ typedef enum {
 class LIMA_ANALYSISHANDLERS_EXPORT MultimediaDocumentHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
-    MultimediaDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>());
+    MultimediaDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom);
 
     virtual ~MultimediaDocumentHandler() {};
 

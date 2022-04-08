@@ -8,8 +8,8 @@ using namespace Lima;
 using namespace Lima;
 using namespace std;
 
-XmlSimpleHandler::XmlSimpleHandler() :
-    AbstractXmlDocumentHandler(),
+XmlSimpleHandler::XmlSimpleHandler(std::shared_ptr<const ShiftFrom> shiftFrom) :
+    AbstractXmlDocumentHandler(shiftFrom),
 m_out(0),
 m_buffer(),
 m_indexingNodeStack()

@@ -206,7 +206,8 @@ int run(int argc,char** argv)
   }
 
   // Reader constructor runs the parsing
-  MultXmlReader reader(param.inputFile,fileOut);
+  std::shared_ptr<const ShiftFrom> shiftFrom(new ShiftFrom(""));
+  MultXmlReader reader(param.inputFile,fileOut, shiftFrom);
   return EXIT_SUCCESS;
 }
 

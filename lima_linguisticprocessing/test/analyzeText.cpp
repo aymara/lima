@@ -429,12 +429,6 @@ int run(int argc, char** argv)
     handlers.insert(std::make_pair("ltrTextHandler",
                                    ltrTextHandler));
   }
-  if (dumpers.find("xmlbow") != dumpers.end())
-  {
-    xmlDocumentHandler = new XmlBowDocumentHandler();
-    handlers.insert(std::make_pair("xmlDocumentHandler",
-                                   xmlDocumentHandler));
-  }
 
   std::map<std::string,std::string> metaData;
 
@@ -574,10 +568,10 @@ int run(int argc, char** argv)
       int prevpos = 0;
       int pos = 0;
       int numpar = 0;
-      
+
       // cheap trick to analyze the last paragraph without calling the analysis after the while loop
       contentText+=QString("\n\n");
-      
+
       while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
         numpar++;
         QString paragraph=contentText.mid(prevpos,pos-prevpos);
@@ -618,7 +612,7 @@ int run(int argc, char** argv)
         if (newMetaData.size()!=0) {
           paraMetaData=newMetaData;
         }
-      }            
+      }
     }
     else // default == none
     {

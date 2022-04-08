@@ -391,21 +391,21 @@ int run(int argc, char** argv)
           // for bow documents, use xmlDocumentHandler
           // (attendu par bowDumperXml)
           handlerName = "xmlDocumentHandler";
-          handler = new XmlBowDocumentHandler;
+          handler = new XmlBowDocumentHandler(shiftFrom);
         }
         else if (useHandler=="txt")
         {
           // for text dumpers (textDumper,compactFullDumper,DepTripletDumper,
           // etc.), use simpleStreamHandler
           handlerName="simpleStreamHandler";
-          handler = new XmlSimpleHandler();
+          handler = new XmlSimpleHandler(shiftFrom);
         }
         else if(useHandler == "xml")
         {
           // for xml dumpers (simpleXmlDumper, fullXmlDumper, etc.),
           //use xmlSimpleHandler
           handlerName = "xmlSimpleHandler";
-          handler = new XmlSimpleHandler;
+          handler = new XmlSimpleHandler(shiftFrom);
         }
         else if(useHandler == "multimedia")
         {

@@ -17,7 +17,7 @@ namespace Lima {
 class LIMA_ANALYSISHANDLERS_EXPORT XmlSimpleHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
-    XmlSimpleHandler();
+    XmlSimpleHandler(std::shared_ptr<const ShiftFrom> shiftFrom);
 
     ~XmlSimpleHandler() {};
 

@@ -49,7 +49,7 @@ class AbstractXmlDocumentHandler :
             public ContentHandler< std::vector<float> >
 {
 public:
-    AbstractXmlDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom = std::shared_ptr<const ShiftFrom>()):
+    AbstractXmlDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom):
             StructureHandler(),
             AbstractXmlAnalysisHandler(shiftFrom),
             AbstractProcessingClientHandler(),

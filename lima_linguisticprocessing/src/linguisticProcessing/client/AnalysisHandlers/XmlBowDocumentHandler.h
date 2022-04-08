@@ -18,7 +18,7 @@ namespace Lima {
 class LIMA_ANALYSISHANDLERS_EXPORT XmlBowDocumentHandler : public Lima::AbstractXmlDocumentHandler
 {
 public:
-  XmlBowDocumentHandler();
+  XmlBowDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom);
 
   ~XmlBowDocumentHandler() {};
 

@@ -17,10 +17,10 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
- *   Copyright (C) 2007-2012 by CEA LIST                               
- *                                             
+ *   Copyright (C) 2007-2012 by CEA LIST
+ *
  * @file        .h
- * @author      Claire Mouton (Claire.Mouton@cea.fr) 
+ * @author      Claire Mouton (Claire.Mouton@cea.fr)
 
  *              Copyright (c) 2007 by CEA
  * @date        Created on Apr, 24 2007
@@ -38,14 +38,17 @@
 namespace Lima{
 
 //! @brief defines callback interface
-class LIMA_ANALYSISHANDLERS_EXPORT AbstractTextualAnalysisHandler : 
-    public LinguisticProcessing::AbstractResource, 
+class LIMA_ANALYSISHANDLERS_EXPORT AbstractTextualAnalysisHandler :
+    public LinguisticProcessing::AbstractResource,
     public AbstractXmlAnalysisHandler
 {
   Q_OBJECT
 public:
+   AbstractTextualAnalysisHandler():
+    LinguisticProcessing::AbstractResource(),
+    AbstractXmlAnalysisHandler(std::shared_ptr<const ShiftFrom>()) {}
   virtual ~AbstractTextualAnalysisHandler();
-  
+
   /**
   * @brief initialize with parameters from configuration file.
   * @param unitConfiguration @IN : <group> tag in xml configuration file that

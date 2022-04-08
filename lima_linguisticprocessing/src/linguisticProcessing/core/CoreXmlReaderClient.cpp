@@ -407,6 +407,9 @@ void CoreXmlReaderClient::setAnalysisHandler(const std::string &handlerId, Lima:
         // lien avec les clients d'analyse
         m_handler = abstractHandler;
         m_handler->setAnalysisClients(m_processingClientHandler.getAnalysisClients());
+#ifdef DEBUG_LP
+        LDEBUG << "CoreXmlReaderClient::setAnalysisHandler shiftFrom is " << m_handler->shiftFrom().get();
+#endif
         m_documentReader->setShiftFrom(m_handler->shiftFrom());
         m_mapHandlers.insert(make_pair(handlerId, handler));
     } else {

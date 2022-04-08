@@ -27,8 +27,8 @@ SET(lima-lp-analysishandlers_LIB_SRCS
   BowTextHandler.cpp
   LTRTextHandler.cpp
   BowTextWriter.cpp
-  CompactFullDocumentHandler.cpp
-  FakeHandler.cpp
+  #CompactFullDocumentHandler.cpp
+  #FakeHandler.cpp
   SBowDocumentWriter.cpp
   SimpleStreamHandler.cpp
   StructuredBoWToBoWDocument.cpp
@@ -127,11 +127,11 @@ install(FILES
     BowTextWriter.h
     SBowDocumentWriter.h
     BowDocumentWriter.h
-    CompactFullDocumentHandler.h
+    #CompactFullDocumentHandler.h
     SimpleStreamHandler.h
     BowTextHandler.h
     LTRTextHandler.h
-    FakeHandler.h
+    #FakeHandler.h
     XmlSimpleStreamHandler.h
     MultimediaStructureReaderClasses.h
     MultimediaDocumentReaderWriter.h

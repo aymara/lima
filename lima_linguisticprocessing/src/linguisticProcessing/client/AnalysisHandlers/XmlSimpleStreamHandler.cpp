@@ -5,9 +5,9 @@ using namespace Lima::LinguisticProcessing;
 
 namespace Lima {
 
-XmlSimpleStreamHandler::XmlSimpleStreamHandler():
+XmlSimpleStreamHandler::XmlSimpleStreamHandler(std::shared_ptr<const ShiftFrom> shiftFrom):
 SimpleStreamHandler(),
-AbstractXmlDocumentHandler()
+AbstractXmlDocumentHandler(shiftFrom)
 {}
 
 XmlSimpleStreamHandler::~XmlSimpleStreamHandler()

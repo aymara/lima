@@ -15,7 +15,7 @@ using namespace Lima::Common;
 using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;
 
-XmlBowDocumentHandler::XmlBowDocumentHandler() : AbstractXmlDocumentHandler()
+XmlBowDocumentHandler::XmlBowDocumentHandler(std::shared_ptr<const ShiftFrom> shiftFrom) : AbstractXmlDocumentHandler(shiftFrom)
 {
     set_LastStructureId ( 0 );
     set_lastNodeId ( 1 );

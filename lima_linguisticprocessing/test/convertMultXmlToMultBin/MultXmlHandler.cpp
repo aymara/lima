@@ -47,7 +47,7 @@ class MultXmlHandlerPrivate
 {
 friend class MultXmlHandler;
 public:
-  MultXmlHandlerPrivate(std::ostream& output);
+  MultXmlHandlerPrivate(std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom);
   ~MultXmlHandlerPrivate();
 
   class CurrentComplexToken {
@@ -91,14 +91,14 @@ public:
                        uint64_t& id) const;
 };
 
-MultXmlHandlerPrivate::MultXmlHandlerPrivate(std::ostream& output):
-m_handler(),
-m_outputStream(output),
-m_currentBoWDocument(),
-m_currentBoWText(0),
-m_currentBoWRelation(),
-m_currentComplexToken(),
-m_refMap()
+MultXmlHandlerPrivate::MultXmlHandlerPrivate(std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom):
+    m_handler(shiftFrom),
+    m_outputStream(output),
+    m_currentBoWDocument(),
+    m_currentBoWText(0),
+    m_currentBoWRelation(),
+    m_currentComplexToken(),
+    m_refMap()
 {
   m_handler.setOut(&output);;
 }
@@ -109,8 +109,8 @@ MultXmlHandlerPrivate::~MultXmlHandlerPrivate() {
 //**********************************************************************
 // xerces handler functions
 //**********************************************************************
-MultXmlHandler::MultXmlHandler(std::ostream& output):
-    m_d(new MultXmlHandlerPrivate(output))
+MultXmlHandler::MultXmlHandler(std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom):
+    m_d(new MultXmlHandlerPrivate(output, shiftFrom))
 {
 }
 

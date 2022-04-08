@@ -32,7 +32,7 @@ class LIMA_ANALYSISHANDLERS_EXPORT XmlSimpleStreamHandler :
 {
 public:
 
-    XmlSimpleStreamHandler();
+    XmlSimpleStreamHandler(std::shared_ptr<const ShiftFrom> shiftFrom);
     ~XmlSimpleStreamHandler();
 
     /** notify the start of a new document */

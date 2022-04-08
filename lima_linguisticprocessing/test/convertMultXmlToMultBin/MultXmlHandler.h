@@ -5,10 +5,10 @@
  * @date       Mon Apr 7 2014
  * copyright   Copyright (C) 2014 by CEA LIST
  * Project     lima_xmlprocessings
- * 
- * Handler for parsing XML representation of Amose analysed 
+ *
+ * Handler for parsing XML representation of Amose analysed
  * multimedia documents
- * 
+ *
  ***********************************************************************/
 
 #ifndef MULTXMLHANDLER_H
@@ -19,6 +19,7 @@
 #include "linguisticProcessing/common/BagOfWords/bowComplexToken.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
+#include "common/Handler/shiftFrom.h"
 #include <stack>
 #include <QtXml/QXmlSimpleReader>
 
@@ -32,31 +33,31 @@ class MultXmlHandlerPrivate;
 class MultXmlHandler : public QXmlDefaultHandler
 {
  public:
-  MultXmlHandler(std::ostream& output);
+  MultXmlHandler(std::ostream& output, std::shared_ptr<const ShiftFrom> shiftFrom);
   virtual ~MultXmlHandler();
 
   // -----------------------------------------------------------------------
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
   bool endDocument() override;
-  
+
   bool endElement(const QString & namespaceURI, const QString & name, const QString & qName) override;
-  
+
   bool startDocument() override;
-  
+
   bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes& attributes) override;
-  
+
   bool  startEntity(const QString & name) override;
-  
+
   bool  endEntity(const QString & name) override;
-  
+
   // -----------------------------------------------------------------------
   //  Implementations of the SAX ErrorHandler interface
   // -----------------------------------------------------------------------
   bool warning(const QXmlParseException & exception) override;
   bool error(const QXmlParseException & exception) override;
   bool fatalError(const QXmlParseException & exception) override;
-  
+
 private:
   MultXmlHandlerPrivate* m_d;
 };
