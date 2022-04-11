@@ -36,10 +36,10 @@ namespace Lima
 {
 namespace Common
 {
-namespace TGV 
+namespace TGV
 {
 
-class LIMA_TGV_EXPORT TestCaseError 
+class LIMA_TGV_EXPORT TestCaseError
 {
 public:
   enum ErrorTypes
@@ -50,20 +50,24 @@ public:
     TestCaseFailed
   };
   TestCaseError() : m_type(NoError), m_reason(""), m_conditional(false) {}
-  
+
+  TestCaseError(const TestCase& tc,
+                const std::string& reason,
+                const std::string& pipeline);
+
   TestCaseError(const TestCase& tc, ErrorTypes type,
                 const std::string& reason,
                 const std::string& pipeline,
                 const TestCase::TestUnit& tu);
-                
+
   TestCaseError(const TestCaseError& error) :
       m_type(error.m_type) ,m_reason(error.m_reason), m_conditional(error.m_conditional) {}
-  
+
   virtual ~TestCaseError() {}
   const std::string& what() const {return m_reason;}
   ErrorTypes operator()() {return m_type;}
   bool isConditional() const {return m_conditional;}
-  
+
 protected:
   ErrorTypes m_type;
   std::string m_reason;

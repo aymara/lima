@@ -32,6 +32,19 @@ namespace TGV
 
 
 TestCaseError::TestCaseError(const TestCase& tc,
+                             const std::string& reason,
+                             const std::string& pipeline) :
+    m_type(NoError), m_reason(""), m_conditional(false)
+{
+  std::ostringstream out;
+  out << "TestCase " << tc.id << "  type : " << tc.type << " succeeded ! " << std::endl;
+  out << "  explanation : " << tc.explanation << std::endl;
+  out << "in pipeline : " << pipeline << std::endl;
+  out << reason << std::endl;
+  m_reason = out.str();
+}
+
+TestCaseError::TestCaseError(const TestCase& tc,
                              ErrorTypes type,
                              const std::string& reason,
                              const std::string& pipeline,
@@ -39,7 +52,20 @@ TestCaseError::TestCaseError(const TestCase& tc,
   m_type(type), m_reason(reason), m_conditional(tu.conditional)
 {
   std::ostringstream out;
-  if (type == TestCaseFailed)
+  if (type == NoError)
+  {
+    out << "TestCase " << tc.id << " succeeded ! " << std::endl;
+    out << reason;
+    out << "  explanation : " << tc.explanation << std::endl;
+    out << "in TestUnit " << tu.id << " on trace " << tu.trace << std::endl;
+    out << "  comment : " << tu.comment << std::endl;
+    out << "  left : " << tu.left << std::endl;
+    out << "  operator : " << tu.op << std::endl;
+    out << "  right : " << tu.right << std::endl;
+    out << "  conditional : " << tu.conditional << std::endl;
+    out << "operator '" << tu.op << "' is unknown !" << std::endl;
+  }
+  else if (type == TestCaseFailed)
   {
     out << "  test unit : " << tu.id << std::endl;
     out << "  pipeline : " << pipeline << std::endl;
@@ -95,8 +121,6 @@ TestCaseError::TestCaseError(const TestCase& tc,
     out << "  operator : " << tu.op << std::endl;
     out << "  right : " << tu.right << std::endl;
     out << "  conditional : " << tu.conditional << std::endl;
-    out << m_reason << std::endl;
-    m_reason += out.str();
   }
   m_reason = out.str();
 }

@@ -73,21 +73,19 @@ TestCaseProcessor::~TestCaseProcessor() {
 }
 
 TestCaseError TestCaseProcessor::evalTestCase(
-  const TestCase& testCase, const std::string& pipeName, 
+  const TestCase& testCase, const std::string& pipeName,
   const std::string& textFile, const std::string& traceFilePrefix ) const
 {
   LIMA_UNUSED(textFile);
   TGVLOGINIT;
   // Valid TestUnits
-  for (std::list<TestCase::TestUnit>::const_iterator tuItr=testCase.tests.begin();
-      tuItr!=testCase.tests.end();
-      tuItr++)
+  for (auto tuItr = testCase.tests.cbegin(); tuItr != testCase.tests.cend(); tuItr++)
   {
     std::string traceFile(traceFilePrefix+tuItr->trace);
     QFile sourceDocument;
     sourceDocument.setFileName(traceFile.c_str());
     sourceDocument.open(QIODevice::ReadOnly);
-    
+
     /* Load XML document */
     QXmlQuery theDocument;
     if (!theDocument.setFocus(&sourceDocument)) {
@@ -124,7 +122,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
       right.removeDuplicates();
 
       QSet<QString> sleft;
-      
+
       Q_FOREACH (QString element, left)
       {
         sleft.insert(element);
@@ -134,7 +132,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
       {
         sright.insert(element);
       }
-      
+
       if (tuItr->op=="=")
       {
         if (sleft!=sright)
@@ -143,7 +141,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
           oss << "equality check failed : " << left << " != " << right << std::endl;
           oss << "                        left : " << tuItr->left << std::endl;
           oss << "                        right: " << tuItr->right;
-          
+
           return TestCaseError(testCase, TestCaseError::TestCaseFailed, oss.str(), pipeName, *tuItr);
         }
         else if (left.size()==0)
@@ -215,7 +213,7 @@ TestCaseError TestCaseProcessor::evalTestCase(
           {
             if (l==r)
             {
-              return TestCaseError();
+              return TestCaseError(testCase, TestCaseError::NoError, "", pipeName, *tuItr);
             }
           }
         }
@@ -227,11 +225,11 @@ TestCaseError TestCaseProcessor::evalTestCase(
       }
       else if ((tuItr->op!="exists") && (tuItr->op!="notexists"))
       {
-        return TestCaseError(testCase, TestCaseError::InvalidOperator,(*tuItr).id, pipeName, *tuItr);
+        return TestCaseError(testCase, TestCaseError::InvalidOperator, (*tuItr).id, pipeName, *tuItr);
       }
     }
   }
-  return TestCaseError();
+  return TestCaseError(testCase, "", pipeName);
 }
 
 QStringList TestCaseProcessor::evaluateExpression(
