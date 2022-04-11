@@ -28,7 +28,7 @@
 
 #include "common/LimaCommon.h"
 
-#include <QFile>
+#include <QtCore/QFile>
 
 #include <iostream>
 
