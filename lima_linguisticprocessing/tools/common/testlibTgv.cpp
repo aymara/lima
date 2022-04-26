@@ -38,8 +38,6 @@
 #include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 
-using namespace std;
-
 using namespace Lima::Common::TGV;
 
 
@@ -151,7 +149,7 @@ int run(int argc,char** argv)
   // create TvgTestCaseProcessor
   // TvgTestCaseProcessor tvgTestCaseProcessor(param.workingDir, cerr);
   TvgTestCaseProcessor* tvgTestCaseProcessor(0);
-  tvgTestCaseProcessor = new TvgTestCaseProcessor(param.workingDir, cerr);
+  tvgTestCaseProcessor = new TvgTestCaseProcessor(param.workingDir, std::cerr);
 
   TestCasesHandler tch(*tvgTestCaseProcessor);
 
@@ -162,9 +160,9 @@ int run(int argc,char** argv)
   {
     for( std::vector<std::string>::const_iterator fit = param.files.begin() ;
       fit != param.files.end() ; fit++ ) {
-      string sfile(param.workingDir);
+      std::string sfile(param.workingDir);
       sfile.append("/").append(*fit);
-      cout << "parse " << sfile << endl;
+      std::cout << "parse " << sfile << std::endl;
 
     // cerr << "<?xml version='1.0' encoding='UTF-8'?>\n";
 // cerr << "<testcases>\n";
@@ -182,43 +180,43 @@ int run(int argc,char** argv)
     // cerr << "</testcases>\n";
 
   TestCasesHandler::TestReport resTotal;
-  cout << endl;
-  cout << "=========================================================" << endl;
-  cout << endl;
-  cout << "  TestReport :   " << sfile.c_str() << " " << endl;
-  cout << endl;
-  cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << endl;
-  cout << "---------------------------------------------------------" << endl;
-  for (map<string,TestCasesHandler::TestReport>::const_iterator resItr=tch.m_reportByType.begin();
+  std::cout << std::endl;
+  std::cout << "=========================================================" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  TestReport :   " << sfile.c_str() << " " << std::endl;
+  std::cout << std::endl;
+  std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
+  std::cout << "---------------------------------------------------------" << std::endl;
+  for (std::map<std::string, TestCasesHandler::TestReport>::const_iterator resItr=tch.m_reportByType.begin();
        resItr!=tch.m_reportByType.end();
        resItr++)
   {
-    string label(resItr->first);
+    std::string label(resItr->first);
     label.resize(15,' ');
-    cout << "\t" << label << "\t" << resItr->second.success
+    std::cout << "\t" << label << "\t" << resItr->second.success
          << "\t" << resItr->second.conditional << "\t"
-         << resItr->second.failed << "\t" << resItr->second.nbtests << endl;
+         << resItr->second.failed << "\t" << resItr->second.nbtests << std::endl;
     resTotal.success+=resItr->second.success;
     resTotal.conditional+=resItr->second.conditional;
     resTotal.failed+=resItr->second.failed;
     resTotal.nbtests+=resItr->second.nbtests;
   }
-  cout << "---------------------------------------------------------" << endl;
-  cout << "\ttotal          \t" << resTotal.success
+  std::cout << "---------------------------------------------------------" << std::endl;
+  std::cout << "\ttotal          \t" << resTotal.success
        << "\t" << resTotal.conditional << "\t" << resTotal.failed
-       << "\t" << resTotal.nbtests << endl;
-  cout << "=========================================================" << endl;
-  cout << endl;
+       << "\t" << resTotal.nbtests << std::endl;
+  std::cout << "=========================================================" << std::endl;
+  std::cout <<  std::endl;
   tch.m_reportByType.clear();
     }
   }
   catch (Lima::LimaException& e)
   {
-    cerr << "caught LimaException : " << endl << e.what() << endl;
+    std::cerr << "caught LimaException : " << std::endl << e.what() << std::endl;
   }
-  catch (logic_error& e)
+  catch (std::logic_error& e)
   {
-    cerr << "caught logic_error : " << endl << e.what() << endl;
+    std::cerr << "caught logic_error : " << std::endl << e.what() << std::endl;
   }
 
   if( tvgTestCaseProcessor != 0 )
@@ -244,6 +242,6 @@ void usage(int argc, char *argv[])
   std::cout << "\t--client=<clientId>\tOptional. Default is 'indexerreader-coreclient'"
             << std::endl;
   std::cout << "\twhere files are files to analyze." << std::endl;
-  std::cout << endl;
+  std::cout << std::endl;
   exit(0);
 }

@@ -64,7 +64,7 @@ class TokenSequenceAnalyzer
     const char* form() const
     {
       assert(! end());
-      const string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
+      const std::string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
       return f.c_str();
     }
 

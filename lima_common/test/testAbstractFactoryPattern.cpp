@@ -31,8 +31,6 @@
 
 #include <QtCore/QCoreApplication>
 
-using namespace std;
-
 using namespace Lima;
 
 SimpleFactory<DummyInitializableObject,VeryDummyInitializableObject> veryDummyFactory("VeryDummyInitializableObject");
@@ -72,7 +70,7 @@ int run(int argc, char** argv)
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
 
-  cout << "dummy program, just to instantiate templates from AbstractFactoryPattern" << endl;
+  std::cout << "dummy program, just to instantiate templates from AbstractFactoryPattern" << std::endl;
 
   // build fake moduleconfigurationstructure
   Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf("tata");
@@ -97,29 +95,29 @@ int run(int argc, char** argv)
 
   DummyInitializableObject* mvd=manager.getObject("myVeryDummy");
   if (mvd==0) {
-    cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << endl;
+    std::cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << std::endl;
     return -1;
   }
   VeryDummyInitializableObject* vdvd=dynamic_cast<VeryDummyInitializableObject*>(mvd);
   if (vdvd==0) {
-    cerr << "FAILED : myVeryDummy is not an objet of class VeryDummyInitializableObject !!" << endl;
+    std::cerr << "FAILED : myVeryDummy is not an objet of class VeryDummyInitializableObject !!" << std::endl;
     return -1;
   }
   DummyInitializableObject* ovd=manager.getObject("otherVeryDummy");
   if (ovd==0) {
-    cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << endl;
+    std::cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << std::endl;
     return -1;
   }
   DummyInitializableObject* mvd2=manager.getObject("myVeryDummy");
   if (mvd!=mvd2) {
-    cerr << "FAILED : Getting myVeryDummy has been re-initialized !!" << endl;
+    std::cerr << "FAILED : Getting myVeryDummy has been re-initialized !!" << std::endl;
     return -1;
   }
   DummyInitializableObject* nsd=manager.getObject("myNotSoDummy");
   if (nsd==0) {
-    cerr << "FAILED : Getting myMyNotSoDummy failed !!" << endl;
+    std::cerr << "FAILED : Getting myMyNotSoDummy failed !!" << std::endl;
     return -1;
   }
-  cout << "test is OK. Have a good day, and don't forget to smile ;-)" << endl;
+  std::cout << "test is OK. Have a good day, and don't forget to smile ;-)" << std::endl;
   return 0;
 }
