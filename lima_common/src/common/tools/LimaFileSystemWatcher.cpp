@@ -93,7 +93,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
 
 void  LimaFileSystemWatcherPrivate::slotFileChanged ( const QString & path )
 {
-  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged" << path.toUtf8().constData() << std::endl;
+  std::cerr  << "LimaFileSystemWatcherPrivate::slotFileChanged " << path.toUtf8().constData() << std::endl;
   delay(500);
   // File just disapeared
   if (!QFileInfo::exists(path))
@@ -127,10 +127,14 @@ LimaFileSystemWatcher::LimaFileSystemWatcher( QObject* parent )
 LimaFileSystemWatcher::LimaFileSystemWatcher ( const LimaFileSystemWatcher& other )
     : QObject(other.parent()), m_d ( new LimaFileSystemWatcherPrivate ( this ) )
 {
-  if   (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
+  if (!connect(m_d, SIGNAL(fileChanged(QString)),this,SIGNAL(fileChanged(QString))))
   {
     std::cerr << "LimaFileSystemWatcher::LimaFileSystemWatcher failed to connect fileChanged signal" << std::endl;
   }
+  m_d->m_watcher.removePaths(m_d->m_watcher.directories());
+  m_d->m_watcher.removePaths(m_d->m_watcher.files());
+  m_d->m_watcher.addPaths(other.m_d->m_watcher.directories());
+  m_d->m_watcher.addPaths(other.m_d->m_watcher.files());
 }
 
 LimaFileSystemWatcher::~LimaFileSystemWatcher()
@@ -138,9 +142,10 @@ LimaFileSystemWatcher::~LimaFileSystemWatcher()
   delete m_d;
 }
 
-void  LimaFileSystemWatcher::addPath ( const QString & path )
+void LimaFileSystemWatcher::addPath ( const QString & path )
 {
-  m_d->m_watcher.addPath(path);
+  if(!m_d->m_watcher.files().contains(path))
+    m_d->m_watcher.addPath(path);
 }
 
 void  LimaFileSystemWatcher::removePath ( const QString & path )

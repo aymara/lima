@@ -164,17 +164,16 @@ public:
 
     void addNode ( CONTENT_ID ContentId, const Node& node );
 
-    //! @brief get a content node, given its odentifiers
+    //! @brief get a content node, given its identifiers
     //! @param ContentId content identifier (different for each type)
     //! @return a content node
     Node* getNode ( CONTENT_ID ContentId );
     const Node* getNode ( CONTENT_ID ContentId ) const;
 
-    //! @brief get a content node, given its odentifiers
-    //! @param StructId TODO erreur --> devrait utiliser seulement le StructId de la Structure courante (m_structId)
+    //! @brief get a content node, given its identifiers
     //! @return a content node
-    Node* getFirstNode ( STRUCT_ID StructureId );
-    const Node* getFirstNode ( STRUCT_ID StructureId ) const;
+    Node* getFirstNode ( STRUCT_ID /*unused*/ );
+    const Node* getFirstNode ( STRUCT_ID /*unused*/ ) const;
 
     //! @brief get all nodes of the current structure
     //! @return the set of all nodes of the current structure

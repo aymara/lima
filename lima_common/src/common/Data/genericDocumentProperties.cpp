@@ -108,7 +108,7 @@ GenericDocumentProperties::~GenericDocumentProperties()
 // assignment operator
 //***********************************************************************
 GenericDocumentProperties& GenericDocumentProperties::operator = (const GenericDocumentProperties& p) {
-  if (&p != this ) {
+  if (&p != this) {
     m_d->m_intValues=p.m_d->m_intValues;
     m_d->m_stringValues=p.m_d->m_stringValues;
     m_d->m_dateValues=p.m_d->m_dateValues;
@@ -657,7 +657,7 @@ void GenericDocumentProperties::print(std::ostream& os) const {
       m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
     {
       os << (*it).first << "="
-          << (*it).second.toString ().toUtf8 ().data();
+          << (*it).second.toString (Qt::ISODate).toStdString();
       if(it != m_d->m_dateValues.end ()) os << ";";
     }
   for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
@@ -665,8 +665,8 @@ void GenericDocumentProperties::print(std::ostream& os) const {
       it != m_d->m_dateIntervalValues.end (); it++)
     {
       os << (*it).first << "=["
-          << ((*it).second).first.toString ().toUtf8 ().data () << ","
-          << ((*it).second).second.toString ().toUtf8 ().data () << "]";
+          << ((*it).second).first.toString (Qt::ISODate).toStdString() << ","
+          << ((*it).second).second.toString(Qt::ISODate).toStdString() << "]";
       if(it != m_d->m_dateIntervalValues.end ()) os << ";";
     }
   for (std::map<std::string, std::vector<std::string> >::const_iterator it =
@@ -677,79 +677,7 @@ void GenericDocumentProperties::print(std::ostream& os) const {
       const std::vector<std::string>& vval = (*it).second;
       if (!vval.empty ())
         {
-          std::vector<std::string>::const_iterator vit = vval.begin ();
-          os << *vit;
-          vit++;
-          for (; vit != vval.end (); vit++)
-            {
-              os << "," << *vit;
-            }
-        }
-      if(it != m_d->m_multipleStringValues.end ()) os << ";";
-    }
-  for (std::map<std::string, std::vector<std::pair<std::string, float> > >::const_iterator it =
-      m_d->m_multipleWeightedPropValues.begin ();
-      it != m_d->m_multipleWeightedPropValues.end (); it++)
-    {
-      os << (*it).first << "=";
-      const std::vector<std::pair<std::string, float> >& vval =
-          (*it).second;
-      if (!vval.empty ())
-        {
-          std::vector<std::pair<std::string, float> >::const_iterator vit =
-              vval.begin ();
-          os << "(" << (*vit).first << "," << (*vit).second << ")";
-          vit++;
-          for (; vit != vval.end (); vit++)
-            {
-              os << ", (" << (*vit).first << "," << (*vit).second << ")";
-            }
-        }
-      if(it != m_d->m_multipleWeightedPropValues.end ()) os << ";";
-    }
-}
-
-void GenericDocumentProperties::print (QDebug& os) const
-{
-
-  for (std::map<std::string, uint64_t>::const_iterator it =
-      m_d->m_intValues.begin (); it != m_d->m_intValues.end (); it++)
-    {
-      os << (*it).first << "=" << (*it).second;
-      if(it != m_d->m_intValues.end ()) os << ";";
-    }
-  for (std::map<std::string, std::string>::const_iterator it =
-      m_d->m_stringValues.begin (); it != m_d->m_stringValues.end ();
-      it++)
-    {
-      os << (*it).first << "=" << (*it).second;
-      if(it != m_d->m_stringValues.end ()) os << ";";
-    }
-  for (std::map<std::string, QDate>::const_iterator it =
-      m_d->m_dateValues.begin (); it != m_d->m_dateValues.end (); it++)
-    {
-      os << (*it).first << "="
-          << (*it).second.toString ().toUtf8 ().data ();
-      if(it != m_d->m_dateValues.end ()) os << ";";
-    }
-  for (std::map<std::string, std::pair<QDate, QDate> >::const_iterator it =
-      m_d->m_dateIntervalValues.begin ();
-      it != m_d->m_dateIntervalValues.end (); it++)
-    {
-      os << (*it).first << "=["
-          << ((*it).second).first.toString ().toUtf8 ().data() << ","
-          << ((*it).second).second.toString ().toUtf8 ().data();
-      if(it != m_d->m_dateIntervalValues.end ()) os << ";";
-    }
-  for (std::map<std::string, std::vector<std::string> >::const_iterator it =
-      m_d->m_multipleStringValues.begin ();
-      it != m_d->m_multipleStringValues.end (); it++)
-    {
-      os << (*it).first << "=";
-      const std::vector<std::string>& vval = (*it).second;
-      if (!vval.empty ())
-        {
-          std::vector<std::string>::const_iterator vit = vval.begin ();
+          std::vector<std::string>::const_iterator vit = vval.begin();
           os << *vit;
           vit++;
           for (; vit != vval.end (); vit++)
@@ -787,6 +715,15 @@ void GenericDocumentProperties::print (QTextStream& qts) const
   this->print(oss);
   qts << QString::fromStdString(oss.str());
 }
+
+
+void GenericDocumentProperties::print (QDebug& qts) const
+{
+  std::ostringstream oss;
+  this->print(oss);
+  qts << QString::fromStdString(oss.str());
+}
+
 
 } // end namespace Misc
 } // end namespace Common
