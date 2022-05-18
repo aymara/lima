@@ -5,13 +5,6 @@
 
 set(ENV{LC_ALL} "C")
 
-# [1] Use a dictionary already in LIMA format to avoid the long conversion of
-# the source extensional Lefff. This will have to be changed in the future
-# because it will make difficult to transmit changes and corrections upstream
-# Continuation of [1] above
-#   COMMAND ${PROJECT_SOURCE_DIR}/scripts/convert-lefff-tags-to-lima-std.pl \
-#           ${CMAKE_CURRENT_SOURCE_DIR}/convlefffstd.txt \
-#           ../lefff/lefff-ext-simplified.txt > forms.dic
 file(GLOB dicoFiles ${CMAKE_CURRENT_SOURCE_DIR}/../lefff/*.dic)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
