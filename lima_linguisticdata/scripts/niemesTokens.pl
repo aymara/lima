@@ -1,4 +1,9 @@
 #!/usr/bin/perl -s
+
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # Extrait le second token de chaque ligne avec un blanc comme separateur
 use strict "refs";
 

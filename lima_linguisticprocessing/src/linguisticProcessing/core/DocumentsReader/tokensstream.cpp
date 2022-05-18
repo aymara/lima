@@ -1,11 +1,7 @@
-/***************************************************************************
-                       tokensstream.cpp  -  description
-                             -------------------
-    begin                : lun mar 10 2003
-    last revised         : mar 10, 2003
-    author               : Gael de Chalendar <de-chalendarg@zoe.cea.fr>
-    copyright            : Copyright (C) 2003 by CEA LIST (LVIC)
- ***************************************************************************/
+// Copyright (C) 2003 by CEA LIST (LVIC)
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "tokensstream.h"
 

@@ -1,21 +1,9 @@
 #!/usr/bin/perl -s
 
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 # usage example : ../../scripts/disamb_matrices_prior.pl corpus/corpus_fr_merge.txt matrices/priorUnigramMatrix-fre.dat code_symbolic2lic2m.txt DIVERS_*,NP*,PONCTU_*,CONJ*,NC_MESURE,NC_NUM_CARD
 
@@ -42,7 +30,7 @@ while ($info ne "") {
 }
 close(TABLECONVERT);
 ###
-# programme de comptage des lemmes et leurs catégories
+# programme de comptage des lemmes et leurs catÃ©gories
 ###
 
 print "Loading and sorting corpus prior data (excluding $excludes)from $ARGV[0]\n";

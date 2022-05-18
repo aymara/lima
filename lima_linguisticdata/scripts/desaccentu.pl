@@ -1,31 +1,21 @@
 #!/usr/bin/perl
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 use utf8;
 
 #############
-# Desaccentue les entrées du dictionnaire trié# et sort une table cvs contenant les entrées désaccentuées suivies des entrées accentuées
+# Desaccentue les entrÃ©es du dictionnaire triÃ©# et sort une table cvs contenant les entrÃ©es dÃ©saccentuÃ©es suivies des entrÃ©es accentuÃ©es
 #############
 
 open (SOURCE,"<:utf8","$ARGV[0]") || die ("Impossible d'ouvrir $ARGV[0]");
 open (CIBLE,">:utf8","$ARGV[1]") || die ("Impossible d'ouvrir $ARGV[1]");
 open (CONVERT,"<:utf8","$ARGV[2]") || die ("Impossible d'ouvrir le fichier $ARGV[2] (convaccents.txt)");
 
-#chargement des exclustion de désaccentuation si nécessaire.
+#chargement des exclustion de dÃ©saccentuation si nÃ©cessaire.
 my $exclude;
 if (scalar(@ARGV)>2) {
   open (EXCLUDE,"<:utf8","$ARGV[2]") || die ("Impossible d'ouvrir $ARGV[2]");
@@ -37,7 +27,7 @@ if (scalar(@ARGV)>2) {
 }
 
 
-#chargement dans une table des caractères accentuée et de leurs correspondants désaccentuée
+#chargement dans une table des caractÃšres accentuÃ©e et de leurs correspondants dÃ©saccentuÃ©e
 $infoconvert = <CONVERT>;
 $infoconvert=~ s/\s+$//;
 while ($infoconvert ne "") {
@@ -51,14 +41,14 @@ close (CONVERT);
 #fin du chargement
 
 ############
-# Programme de désaccentuation
+# Programme de dÃ©saccentuation
 ############
 
 $ligne = <SOURCE>;
 $nbrelignes = 1;
 
 while ($ligne ne "") {
-	# print STDERR ("INFO : Nombre de lignes traitées : $nbrelignes\n");
+	# print STDERR ("INFO : Nombre de lignes traitÃ©es : $nbrelignes\n");
     @data = split(/	/,$ligne);
     $entree = $data[0];
     @lettres = split(//,$entree);
@@ -80,4 +70,4 @@ while ($ligne ne "") {
     ++$nbrelignes;
 }
 
-print STDERR ("\nINFO : Désaccentuation terminée\n");
+print STDERR ("\nINFO : DÃ©saccentuation terminÃ©e\n");

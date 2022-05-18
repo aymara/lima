@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 set (PELF_RESOURCES ${CMAKE_INSTALL_PREFIX}/share/apps/pelf/resources)
 
 configure_file(evaluator-easy.sh evaluator-easy.sh)

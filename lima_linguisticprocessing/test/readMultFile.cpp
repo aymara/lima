@@ -1,12 +1,7 @@
-/************************************************************************
- *
- * @file       readBoWFile.cpp
- * @author     Besancon Romaric <romaric.besancon@cea.fr>
- * @author     Gaël de Chalendar <gael.de-chalendar@cea.fr>
- * @date       Thu Oct  9 2003
- * copyright   Copyright (C) 2003-2022 by CEA LIST (LASTI)
- *
- ***********************************************************************/
+// Copyright (C) 2003-2022 by CEA LIST (LASTI)
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "common/LimaVersion.h"
 #include "linguisticProcessing/client/AnalysisHandlers/MultimediaDocumentReaderWriter.h"

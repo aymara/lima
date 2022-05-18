@@ -1,27 +1,16 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 ###############################################
-# Programme de conversion de catégories :
-#convertit dicostd en dicojys (codage multiplicatif des données)
+# Programme de conversion de catÃ©gories :
+#convertit dicostd en dicojys (codage multiplicatif des donnÃ©es)
 ###############################################
 
-print STDERR ("INFO : Début du traitement convertjys\n");
+print STDERR ("INFO : DÃ©but du traitement convertjys\n");
 
 open(SOURCE,"$ARGV[0]") || die("Impossible d'ouvrir le fichier $ARGV[0]\n");
 print STDERR ("INFO : Fichier dicostd.txt ouvert\n");
@@ -38,10 +27,10 @@ print STDERR ("INFO : Fichier error.txt ouvert\n");
 
 # Initialisation du fichier d'erreur
 print ERROR ("----------------------------------\n");
-print ERROR ("Lignes non traitées par convertjys\n\n");
+print ERROR ("Lignes non traitÃ©es par convertjys\n\n");
 # Fin d'initialisation du fichier d'erreur
 
-#chargement dans une table des catégories et de leurs correspondances
+#chargement dans une table des catÃ©gories et de leurs correspondances
 $infotags = <CONVERT>;
 chop($infotags);
 chomp($infotags);
@@ -56,8 +45,8 @@ while (($holder,$record) = each(%tags)) {
 	print ("$holder;$record\n");
 }
 
-print STDERR ("INFO : Fin du chargement des catégories\n");
-#fin du chargement des catégories et de leurs correspondances
+print STDERR ("INFO : Fin du chargement des catÃ©gories\n");
+#fin du chargement des catÃ©gories et de leurs correspondances
 
 $motstraites = 0;
 $motsnontraites = 0;
@@ -67,7 +56,7 @@ while ($ligne ne "") {
 
 	$motstraites++;
 
-	print STDERR ("INFO : Lignes traitées : $motstraites\n");
+	print STDERR ("INFO : Lignes traitÃ©es : $motstraites\n");
 
 	@donnees = split(/	/,$ligne);
 
@@ -79,9 +68,9 @@ while ($ligne ne "") {
 	chomp($normalisation);
 
 
-	# Codage des catégories
+	# Codage des catÃ©gories
 
-	#Fin du codage des catégories
+	#Fin du codage des catÃ©gories
 
 	if ($tags{$info} ne "") {
 		#$codestags = $tags{$info};
@@ -98,5 +87,5 @@ while ($ligne ne "") {
 
 	$ligne = <SOURCE>;
 }
-print STDERR ("\nINFO : Entrées non prises en compte : $motsnontraites\n");
-print STDERR ("INFO : Traitement convertjys terminé\n");
+print STDERR ("\nINFO : EntrÃ©es non prises en compte : $motsnontraites\n");
+print STDERR ("INFO : Traitement convertjys terminÃ©\n");

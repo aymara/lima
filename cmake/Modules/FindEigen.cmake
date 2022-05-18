@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # Finds the required directories to include Eigen. Since Eigen is
 # only header files, there is no library to locate, and therefore
 # no *_LIBRARIES variable is set.

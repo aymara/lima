@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='iso8859-1'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="clustering-coreclient">
     <group name="configuration">

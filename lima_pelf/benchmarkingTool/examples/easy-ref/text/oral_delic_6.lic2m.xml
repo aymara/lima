@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <list>
 <E id="E1"> voilà </E>
 <E id="E2"> alors hein on ne il est il est difficile d'aborder la la question du métier sans parler un petit peu des origines et principalement des origines du service </E>
