@@ -225,7 +225,7 @@ public:
       for (size_t i = 0; i < m_class_names.size(); ++i)
       {
         const std::string& feat_name = m_class_names[i];
-        if (feat_name == "upos" || feat_name == "eos")
+        if (feat_name == "upos" || feat_name == "xpos" || feat_name == "eos")
         {
           continue;
         }
@@ -288,7 +288,8 @@ public:
         continue;
       }
       std::cout << m_next_token_idx << "\t";
-      std::cout << str << "\t_";
+      std::cout << str << "\t";
+      std::cout << iter.lemma();
       if (true)
       {
         std::cout << "\t" << m_classes[0][iter.token_class(0)];

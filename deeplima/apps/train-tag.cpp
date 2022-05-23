@@ -27,7 +27,7 @@
 #include <boost/filesystem.hpp>
 
 #include "conllu/treebank.h"
-#include "tasks/ner/train/train_ner.h"
+#include "tasks/tag/train/train_tag.h"
 
 #include "version/version.h"
 

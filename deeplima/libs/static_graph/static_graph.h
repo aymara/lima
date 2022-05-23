@@ -44,12 +44,16 @@ class StaticGraphImpl : public torch::nn::Module
       forward = 2,
       cat = 3,
       log_softmax = 4,
+      reshape = 5,
+      unbind = 6,
+      unsqueeze = 7,
       max_step_type
     };
 
     step_type_t m_type;
     std::vector<std::string> m_names;
     std::map<std::string, std::string> m_args;
+    std::map<std::string, std::vector<int64_t>> m_iargs;
 
     explicit step_descr_t(step_type_t type = unknown, const std::vector<std::string>& names = {}, const std::map<std::string, std::string>& args = {})
       : m_type(type), m_names(names), m_args(args)
@@ -123,6 +127,23 @@ public:
   }
 
   virtual void to(torch::Device device, bool non_blocking=false) override;
+
+  std::map<std::string, torch::Tensor> forward(
+      const std::map<std::string, torch::Tensor>& inputs,
+      const std::string& output_name
+      )
+  {
+    std::vector<std::string> output_names = { output_name };
+    return forward(inputs, output_names.begin(), output_names.end());
+  }
+
+  std::map<std::string, torch::Tensor> forward(
+      const std::map<std::string, torch::Tensor>& inputs,
+      const std::vector<std::string>& output_names
+      )
+  {
+    return forward(inputs, output_names.begin(), output_names.end());
+  }
 
   template< class InputIt >
   std::map<std::string, torch::Tensor> forward(
@@ -202,6 +223,7 @@ protected:
   virtual step_descr_t parse_script_line(const std::string& line);
   virtual std::map<std::string, std::string> parse_options(std::istringstream& ss);
   virtual std::vector<std::string> parse_list(std::string& str, char sep);
+  virtual std::vector<int64_t> parse_iargs(const std::string& str);
 
   std::map<std::string, std::vector<size_t>> m_exec_plans;
 

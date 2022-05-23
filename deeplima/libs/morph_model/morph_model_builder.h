@@ -17,24 +17,29 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef DEEPLIMA_LIBS_TASKS_NER_TRAIN_TRAIN_NER_H
-#define DEEPLIMA_LIBS_TASKS_NER_TRAIN_TRAIN_NER_H
+#ifndef DEEPLIMA_LIBS_MORPH_MODEL_BUILDER_H
+#define DEEPLIMA_LIBS_MORPH_MODEL_BUILDER_H
 
 #include <string>
+#include <vector>
 
-#include "tasks/ner/model/train_params_tagging.h"
+#include "conllu/treebank.h"
+
+#include "morph_model.h"
 
 namespace deeplima
 {
-namespace tagging
-{
-namespace train
+namespace morph_model
 {
 
-int train_entity_tagger(const train_params_tagging_t& params);
+class morph_model_builder
+{
+public:
+  static morph_model_t build(const CoNLLU::Annotation& annotation1, const CoNLLU::Annotation& annotation2);
+};
 
-} // namespace train
-} // namespace tagging
-} // namespace deeplima
+} // morph_model
+} // deeplima
 
 #endif
+

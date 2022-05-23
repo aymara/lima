@@ -103,3 +103,4 @@ export PATH=$LIMA_DIST/bin:$LIMA_EXTERNALS/bin:$PATH
 # Add the path to LIMA libraries to the libaries search path
 export LD_LIBRARY_PATH=$LIMA_EXTERNALS/lib:$LIMA_DIST/lib:$LD_LIBRARY_PATH
 
+export UD_TREEBANKS=/home/gael/Documents/UniversalDependencies/ud-treebanks-v2.9

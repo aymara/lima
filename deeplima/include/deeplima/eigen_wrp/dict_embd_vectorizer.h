@@ -30,7 +30,6 @@ template <class DH, class D, class Matrix>
 class DictEmbdVectorizer : public Matrix
 {
 public:
-
   DictEmbdVectorizer() {}
 
   // must be called before init

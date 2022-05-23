@@ -11,8 +11,8 @@ namespace deeplima
 
 DEFINE_DICT_CLASS_ID(Dict<wstring>)
 DEFINE_DICT_CLASS_ID(Dict<string>)
-DEFINE_DICT_CLASS_ID(Dict<wchar_t>)
 DEFINE_DICT_CLASS_ID(Dict<uint64_t>)
+DEFINE_DICT_CLASS_ID(Dict<char32_t>)
 
 template <class T>
 c10::IValue Dict<T>::toIValue() const
@@ -130,22 +130,49 @@ c10::IValue Dict<string>::toIValue() const
   return l;
 }
 
-// Dict specialisation for T=wchar_t
+// Dict specialisation for T=char32_t
 
 template <>
-c10::IValue Dict<wchar_t>::toIValue() const
+void Dict<char32_t>::fromIValue(const c10::IValue& v)
 {
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+
+  if (!v.isList())
+  {
+    throw std::runtime_error("Dict expects c10::List object.");
+  }
+
+  const c10::List<c10::IValue>& l = v.toList();
+  for (size_t i = 0; i < l.size(); i++)
+  {
+    if (!l.get(i).isString())
+    {
+      throw std::runtime_error("Dict expects list of strings.");
+    }
+    const std::string& k = l.get(i).toStringRef();
+    //assert((0 == i && 0 == k.size()) || 1 == k.size());
+    std::u32string u32str = converter.from_bytes(k);
+    assert((0 == i && 0 == u32str.size()) || 1 == u32str.size());
+    add(u32str[0]);
+  }
+}
+
+template <>
+c10::IValue Dict<char32_t>::toIValue() const
+{
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 
   c10::List<std::string> l;
   l.reserve(i2v.size());
-  for ( const wchar_t v : i2v )
+  for ( const char32_t v : i2v )
   {
     std::string s = converter.to_bytes(to_wstring(v));
     l.push_back(s);
   }
   return l;
 }
+
+// Dict specialisation for T=uint64_t
 
 template <>
 c10::IValue Dict<uint64_t>::toIValue() const
@@ -159,8 +186,6 @@ c10::IValue Dict<uint64_t>::toIValue() const
   }
   return l;
 }
-
-// Dict specialisation for T=uint64_t
 
 template <>
 void Dict<uint64_t>::fromIValue(const c10::IValue& v)

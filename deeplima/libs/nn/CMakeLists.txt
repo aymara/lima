@@ -16,4 +16,5 @@
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
 add_subdirectory(birnn_seq_cls)
+add_subdirectory(birnn_seq2seq)
 

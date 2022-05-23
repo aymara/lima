@@ -12,7 +12,7 @@ ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 
 # Setup
-RUN apt-get update -y -qq && apt-get install -y apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix
+RUN apt-get update -y -qq && apt-get install -y apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev
 
 RUN wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
@@ -43,6 +43,8 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+WORKDIR /src/lima/extern
+RUN bash download_libtorch.sh
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git pull
@@ -59,10 +61,11 @@ ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
 ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
+ENV LIBTORCH_PATH=/src/lima/extern/libtorch/
 
 # Build
 #
-RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH ..
 RUN ninja
 RUN ninja test
 RUN ninja install

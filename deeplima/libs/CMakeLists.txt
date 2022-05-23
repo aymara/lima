@@ -24,3 +24,5 @@ add_subdirectory(nn)
 add_subdirectory(tasks)
 add_subdirectory(version)
 add_subdirectory(helpers)
+add_subdirectory(morph_model)
+
