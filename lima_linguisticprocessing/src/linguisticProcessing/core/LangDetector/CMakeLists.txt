@@ -1,22 +1,30 @@
-project(LangDetector)
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
-if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 NEW)
-    endif(COMMAND cmake_policy)
+########### next target ###############
 
-include_directories(BEFORE ../../../../../extern)
+SET(lima-lp-langdetector_LIB_SRCS
+        LangDetector.cpp
+        )
 
-SET(langdetectorlib_LIB_SRCS langDetector.cpp)
-link_directories(/usr/local/lib /usr/lib)
+DECLARE_LIMA_PLUGIN(lima-lp-langdetector)
 
-add_library(langdetector SHARED ${langdetectorlib_LIB_SRCS})
+target_compile_definitions(lima-lp-langdetector PRIVATE "-DLIMA_LANGDETECTOR_EXPORTING")
 
-add_executable(LangDetector main.cpp langDetector.cpp langDetector.h)
-target_link_libraries(LangDetector langdetector)
+target_link_libraries(lima-lp-langdetector
+        lima-common-processunitframework
+        lima-lp-linguisticdata
+        lima-lp-linguisticresources
+        lima-lp-annotationgraph
+        lima-lp-linguisticanalysisstructure
+        fasttext
+        )
 
-add_executable(test test.cpp langDetector.cpp langDetector.h)
-target_link_libraries(test langdetector)
+set_target_properties(lima-lp-langdetector PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
-target_link_libraries(langdetector fasttext-lima)
-target_link_libraries(LangDetector fasttext-lima)
-target_link_libraries(test fasttext-lima)
+install(TARGETS lima-lp-langdetector DESTINATION ${LIB_INSTALL_DIR}
+        COMPONENT runtime)
+install(FILES
+        model/lid.176.ftz
+        DESTINATION share/apps/lima/resources/LinguisticProcessings/LangDetector/
+        COMPONENT runtime
+        )
