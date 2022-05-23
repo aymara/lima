@@ -138,7 +138,7 @@ public:
     InferenceEngine::init_new_worker(max_input_word_len);
   }
 
-  bool is_fixed(const StdMatrix<uint8_t>& classes, size_t idx)
+  inline bool is_fixed(const StdMatrix<uint8_t>& classes, size_t idx)
   {
     assert(m_upos_idx >= 0);
     auto upos = classes.get(idx, m_upos_idx);
