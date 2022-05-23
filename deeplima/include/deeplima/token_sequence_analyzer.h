@@ -76,7 +76,7 @@ public:
     const char* lemma() const
     {
       assert(! end());
-      const string& f = m_stridx.get_str(m_lemm_buffer[m_current]);
+      const std::string& f = m_stridx.get_str(m_lemm_buffer[m_current]);
       return f.c_str();
     }
 
@@ -348,7 +348,7 @@ protected:
       }
       else
       {
-        const u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
+        const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
         m_lemm.predict(f, classes, i + offset, target);
 
         lemm_buffer[i] = m_stridx.get_idx(target);

@@ -44,7 +44,6 @@ int main(int argc, char* argv[])
        << "git branch: " << deeplima::version::get_git_branch()
        << ")" << std::endl;
 
-//   bool arg_tokenize = false, arg_tag = false, arg_entity = false;
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model;
   std::vector<std::string> input_files;
@@ -52,9 +51,6 @@ int main(int argc, char* argv[])
   po::options_description desc("deeplima (analysis demo)");
   desc.add_options()
   ("help,h",                                                                             "Display this help message")
-  ("tokenize",        po::value<bool>(&arg_tokenize)->default_value(true),               "tokenize plain text")
-  ("tag",             po::value<bool>(&arg_tag)->default_value(false),                   "PoS and features tagging")
-  ("entity",          po::value<bool>(&arg_entity)->default_value(false),                "entity tagging")
   ("input-format",    po::value<std::string>(&input_format)->default_value("plain"),     "Input format: plain|conllu")
   ("output-format",   po::value<std::string>(&output_format)->default_value("conllu"),   "Output format: conllu|vertical|horizontal")
   ("tok-model",       po::value<std::string>(&tok_model)->default_value(""),             "Tokenization model")
@@ -168,8 +164,8 @@ void parse_file(std::istream& input,
   dumper::AbstractDumper* pdumper = nullptr;
   if (models_fn.end() != models_fn.find("tag"))
   {
-    string lemm_model_fn;
-    map<string, string>::const_iterator it = models_fn.find("lem");
+    std::string lemm_model_fn;
+    std::map<std::string, std::string>::const_iterator it = models_fn.find("lem");
     if (models_fn.end() != it)
     {
       lemm_model_fn = it->second;
