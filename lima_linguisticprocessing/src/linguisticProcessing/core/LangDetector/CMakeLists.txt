@@ -4,6 +4,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 SET(lima-lp-langdetector_LIB_SRCS
         LangDetector.cpp
+        LangDetectorCore.cpp
         )
 
 DECLARE_LIMA_PLUGIN(lima-lp-langdetector)
@@ -16,7 +17,7 @@ target_link_libraries(lima-lp-langdetector
         lima-lp-linguisticresources
         lima-lp-annotationgraph
         lima-lp-linguisticanalysisstructure
-        fasttext
+        fasttext-static
         )
 
 set_target_properties(lima-lp-langdetector PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -28,3 +29,10 @@ install(FILES
         DESTINATION share/apps/lima/resources/LinguisticProcessings/LangDetector/
         COMPONENT runtime
         )
+########### next target ###############
+SET(langdetectorlib_LIB_SRCS langDetector.cpp)
+add_executable(langDetector main.cpp LangDetectorCore.cpp LangDetectorCore.h)
+install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
+        COMPONENT runtime)
+target_link_libraries(langDetector
+        fasttext-static)

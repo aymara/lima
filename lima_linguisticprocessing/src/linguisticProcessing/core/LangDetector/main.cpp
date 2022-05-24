@@ -1,13 +1,15 @@
 #include "fastText/src/fasttext.h"
-#include "langDetector.h"
+#include "LangDetectorCore.h"
 
+using namespace Lima::LinguisticProcessing::LDetector;
 int main(int argc, char *argv[]) {
     if(argc != 2) {
-        cout << "Please execute the program with a sentence. Like this : ./LangDetector \"sentence\"\n";
+        std::cout << "Please execute the program with a sentence. Like this : ./LangDetector \"sentence\"\n";
         return 1;
     }
-    LangDetector* ld = new LangDetector("../model/lid.176.ftz");
-    string label = ld->detectLang(argv[1]);
-    cout << "The detected language is : " << ld->labelToPrintable(label) << "\n";
+    auto ld = std::make_unique<LangDetectorCore>();
+    ld->ftext.loadModel(std::string(std::getenv("LIMA_RESOURCES"))+"/LinguisticProcessings/LangDetector/lid.176.ftz");
+    std::string label = ld->detectLang(std::string(argv[1]));
+    std::cout << "The detected language is : " << LangDetectorCore::labelToPrintable(label) << "\n";
     return 0;
 }
