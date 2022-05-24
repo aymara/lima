@@ -429,6 +429,7 @@
       <param key="charChart" value="flatcharchart"/>
     </group>
     <group name="langdetector" class="LangDetector">
+      <param key="langDetectorModel" value="LinguisticProcessings/LangDetector/lid.176.ftz"/>
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">
@@ -1221,6 +1222,7 @@
     <group name="automatonCompiler" class="AutomatonRecognizer">
       <param key="rules" value=""/>
     </group>
+
     <group name="bowTextWriter" class="BowTextWriter"/>
     <group name="bowTextXmlWriter" class="BowTextXmlWriter"/>
     <group name="bowTextHandler" class="BowTextHandler"/>

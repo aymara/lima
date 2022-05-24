@@ -71,7 +71,7 @@ LangDetector::~LangDetector()
 
 void LangDetector::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration, Manager* manager)
 {
-    QString fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),"LinguisticProcessings/LangDetector/lid.176.ftz");
+    QString fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("langDetectorModel").c_str());
     m_d->ftext.loadModel(fileName.toStdString());
 }
 
