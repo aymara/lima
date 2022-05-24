@@ -18,6 +18,7 @@
 set(SOURCE_LIST
   convert_from_torch.cpp
   entity_tagging_model.cpp
+  lemmatization_model.cpp
 )
 
 set(HEADER_LIST
@@ -32,7 +33,8 @@ add_library(convert_from_torch
 target_link_libraries(convert_from_torch
   PRIVATE
   birnn_classifier_for_segmentation
-  birnn_classifier_for_ner
+  birnn_classifier_for_tag
+  model_lemmatization
   ${TORCH_LIBRARIES}
 )
 
@@ -46,7 +48,8 @@ if (NOT DEEPLIMA_STANDALONE)
   target_link_libraries(convert_from_torch-shared
     PRIVATE
     birnn_classifier_for_segmentation
-    birnn_classifier_for_ner
+    birnn_classifier_for_tag
+    model_lemmatization
     ${TORCH_LIBRARIES}
   )
 

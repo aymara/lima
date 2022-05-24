@@ -25,6 +25,7 @@
 #include "utils/str_index.h"
 #include "token_type.h"
 #include "ner.h"
+#include "lemmatization.h"
 #include "dumper_conllu.h"
 
 namespace deeplima
@@ -33,10 +34,12 @@ namespace deeplima
 template <class Matrix>
 class TokenSequenceAnalyzer
 {
+public:
   class TokenIterator
   {
     const StringIndex& m_stridx;
     const token_buffer_t& m_buffer;
+    const std::vector<StringIndex::idx_t> m_lemm_buffer;
     const StdMatrix<uint8_t>& m_classes;
     size_t m_current;
     size_t m_offset;
@@ -44,8 +47,10 @@ class TokenSequenceAnalyzer
 
   public:
     TokenIterator(const StringIndex& stridx, const token_buffer_t& buffer,
+                  const std::vector<StringIndex::idx_t>& lemm_buffer,
                   const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
-      : m_stridx(stridx), m_buffer(buffer), m_classes(classes), m_current(0), m_offset(offset), m_end(end - offset)
+      : m_stridx(stridx), m_buffer(buffer), m_lemm_buffer(lemm_buffer), m_classes(classes),
+        m_current(0), m_offset(offset), m_end(end - offset)
     {
       assert(end > offset + 1);
     }
@@ -68,6 +73,13 @@ class TokenSequenceAnalyzer
       return f.c_str();
     }
 
+    const char* lemma() const
+    {
+      assert(! end());
+      const std::string& f = m_stridx.get_str(m_lemm_buffer[m_current]);
+      return f.c_str();
+    }
+
     void next()
     {
       m_current++;
@@ -79,6 +91,10 @@ class TokenSequenceAnalyzer
       return val;
     }
   };
+
+  typedef TokenIterator output_iterator_t;
+
+protected:
 
   class enriched_token_t
   {
@@ -159,8 +175,12 @@ class TokenSequenceAnalyzer
                                       FeaturesVectorizer,
                                       Matrix > EntityTaggingModule;
 
+  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
+  typedef lemmatization::impl::LemmatizationImpl< lemmatization::impl::Lemmatizer, EmbdVectorizer, Matrix> LemmatizationModule;
+
 public:
-  TokenSequenceAnalyzer(const std::string& model_fn, const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
+  TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn,
+                        const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0)
@@ -168,10 +188,15 @@ public:
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
+    m_lemm_buffers.resize(num_buffers);
     for ( token_buffer_t& b : m_buffers ) b.resize(m_buffer_size);
+    for ( auto& b : m_lemm_buffers ) b.resize(m_buffer_size);
 
     m_cls.load(model_fn, path_resolver);
     m_cls.init(1, num_buffers, buffer_size, m_stridx);
+
+    m_unk_idx = m_stridx.get_idx("_");
+    for ( auto& b : m_lemm_buffers ) std::fill(b.begin(), b.end(), m_unk_idx);
 
     {
       token_buffer_t buff(m_stridx.size());
@@ -188,14 +213,33 @@ public:
       m_dumper.set_classes(i, m_cls.get_class_names()[i], m_cls.get_classes()[i]);
     }
 
-    m_cls.register_handler([this](
-                           const typename EntityTaggingModule::OutputMatrix& classes,
-                           size_t begin, size_t end, size_t slot_idx){
-      std::cerr << "handler called: " << slot_idx << std::endl;
-      TokenIterator ti(m_stridx, m_buffers[slot_idx], classes, /*slot_idx * m_buffer_size +*/ begin, end);
-      m_dumper(ti);
-      m_buffers[slot_idx].unlock();
-    });
+    if (lemm_model_fn.size() > 0)
+    {
+      m_lemm.load(lemm_model_fn, path_resolver);
+      m_lemm.init(128, m_cls.get_class_names(), m_cls.get_classes());
+
+      m_cls.register_handler([this](
+                             const typename EntityTaggingModule::OutputMatrix& classes,
+                             size_t begin, size_t end, size_t slot_idx){
+        std::cerr << "handler called: " << slot_idx << std::endl;
+        lemmatize(m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
+        TokenIterator ti(m_stridx, m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
+        m_dumper(ti);
+        m_buffers[slot_idx].unlock();
+      });
+    }
+    else
+    {
+      m_cls.register_handler([this](
+                             const typename EntityTaggingModule::OutputMatrix& classes,
+                             size_t begin, size_t end, size_t slot_idx){
+        std::cerr << "handler called: " << slot_idx << std::endl;
+        //lemmatize(m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
+        TokenIterator ti(m_stridx, m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
+        m_dumper(ti);
+        m_buffers[slot_idx].unlock();
+      });
+    }
   }
 
   ~TokenSequenceAnalyzer()
@@ -224,10 +268,6 @@ public:
     }
 
     m_cls.send_all_results();
-  }
-
-  void stop()
-  {
   }
 
   inline void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len)
@@ -295,25 +335,38 @@ protected:
     m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx));
   }
 
+  void lemmatize(const token_buffer_t& buffer,
+                 std::vector<StringIndex::idx_t>& lemm_buffer,
+                 const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
+  {
+    std::u32string target;
+    for (size_t i = 0; i < end - offset; ++i)
+    {
+      if (m_lemm.is_fixed(classes, i + offset))
+      {
+        lemm_buffer[i] = buffer[i].m_form_idx;
+      }
+      else
+      {
+        const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
+        m_lemm.predict(f, classes, i + offset, target);
+
+        lemm_buffer[i] = m_stridx.get_idx(target);
+      }
+    }
+  }
+
   size_t m_buffer_size;
   size_t m_current_buffer;
   size_t m_current_timepoint;
 
-  std::atomic<bool> m_stop;
-  std::queue<size_t> m_jobs;
-
-  std::thread m_worker_thread;
-
-  std::mutex m_mutex_new_job;
-  std::condition_variable m_cv_new_job;
-
-  std::mutex m_mutex_notify;
-  std::condition_variable m_cv_notify;
-
   StringIndex m_stridx;
+  StringIndex::idx_t m_unk_idx;
   std::vector<token_buffer_t> m_buffers;
+  std::vector<std::vector<StringIndex::idx_t>> m_lemm_buffers; // access control is sync with m_buffers
 
   EntityTaggingModule m_cls;
+  LemmatizationModule m_lemm;
 
   // Dumper
   dumper::AnalysisToConllU<TokenIterator> m_dumper;

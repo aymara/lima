@@ -37,6 +37,21 @@ public:
   typedef T value_t;
   typedef typename std::vector<T>::size_type key_t;
 
+  Dict(const std::vector<T>& v1, const std::vector<T>& v2 = {})
+  {
+    i2v.reserve(v1.size() + v2.size());
+
+    for (const T& v : v1)
+    {
+      add(v);
+    }
+
+    for (const T& v : v2)
+    {
+      add(v);
+    }
+  }
+
   Dict(const T& UNK, const std::vector<T>& v1, const std::vector<T>& v2 = {})
   {
     i2v.reserve(v1.size() + v2.size() + 1);
@@ -72,6 +87,55 @@ public:
 
     i2v.reserve(count);
     add(UNK);
+    for (auto it = begin; it != end; ++it)
+    {
+      if (f(it->second))
+      {
+        add(it->first);
+      }
+    }
+  }
+
+  template<class InputIt, typename F>
+  Dict(const T& UNK, const T& EOS, InputIt begin, InputIt end, F f)
+  {
+    size_t count = 2;
+    for (auto it = begin; it != end; ++it)
+    {
+      if (f(it->second))
+      {
+        count++;
+      }
+    }
+
+    i2v.reserve(count);
+    add(UNK);
+    add(EOS);
+    for (auto it = begin; it != end; ++it)
+    {
+      if (f(it->second))
+      {
+        add(it->first);
+      }
+    }
+  }
+
+  template<class InputIt, typename F>
+  Dict(const T& UNK, const T& EOS, const T& OTHER, InputIt begin, InputIt end, F f)
+  {
+    size_t count = 3;
+    for (auto it = begin; it != end; ++it)
+    {
+      if (f(it->second))
+      {
+        count++;
+      }
+    }
+
+    i2v.reserve(count);
+    add(UNK);
+    add(EOS);
+    add(OTHER);
     for (auto it = begin; it != end; ++it)
     {
       if (f(it->second))
@@ -157,10 +221,10 @@ protected:
     return s;
   }
 
-  static inline std::wstring to_wstring(wchar_t ch)
+  static inline std::u32string to_wstring(char32_t ch)
   {
-    wchar_t v[2] = { ch, 0 };
-    return std::wstring(v);
+    char32_t v[2] = { ch, 0 };
+    return std::u32string(v);
   }
 
   static inline void from_wstring(const std::wstring& src, std::wstring& k)
@@ -209,10 +273,10 @@ protected:
   const static std::string m_class_id;
 };
 
-typedef Dict<wchar_t> WcharDict;
 typedef Dict<std::wstring> WstringDict;
 typedef Dict<std::string> StringDict;
 typedef Dict<uint64_t> UInt64Dict;
+typedef Dict<char32_t> Char32Dict;
 
 } // namespace deeplima
 
