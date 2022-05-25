@@ -44,7 +44,7 @@ int run(int , char** ){
         parser.showHelp();
     }
     auto ld = std::make_unique<LangDetectorCore>();
-    ld->ftext.loadModel(resourcesPath.toStdString() + std::string("/LinguisticProcessings/LangDetector/lid.176.ftz"));
+    ld->loadModel(resourcesPath.toStdString() + std::string("/LinguisticProcessings/LangDetector/lid.176.ftz"));
     for (auto & it : files) {
         const QString &fileName = it;
         QFile file(fileName);
