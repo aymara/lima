@@ -118,7 +118,7 @@ void ApplyRecognizer::init(
   {
     // optional parameter: keep default value
   }
-  
+
   try {
     m_updateGraph=
       getBooleanParameter(unitConfiguration,"updateGraph");
@@ -322,7 +322,7 @@ processOnEachSentence(AnalysisContent& analysis,
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    //LDEBUG << "ApplyRecognizer: analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << endl;
+    //LDEBUG << "ApplyRecognizer: analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << Qt::endl;
 
     seRecognizerResult.clear();
     reco->apply(*anagraph,beginSentence,
@@ -349,7 +349,7 @@ processOnWholeText(AnalysisContent& analysis,
 {
   // APPRLOGINIT;
   // LDEBUG << "apply recognizer on whole text";
-  
+
   AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
   if (nullptr == anagraph)
   {

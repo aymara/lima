@@ -130,7 +130,7 @@ m_actionsWithOneArgument()
     // need subAutomatons to deal with named sub-indexes
     treatConstraints(str.mid(next),language,subAutomatons);
   }
-  
+
   //simplify automatonStrings (help building minimal automata)
   m_left.removeUnitSequences();
   m_right.removeUnitSequences();
@@ -140,7 +140,7 @@ m_actionsWithOneArgument()
   LDEBUG << "right=" << Common::Misc::limastring2utf8stdstring(m_right.getStringDebug());
 #endif
 
-//   LDEBUG << "RuleString:init:rule=" << getString() << endl;
+//   LDEBUG << "RuleString:init:rule=" << getString() << Qt::endl;
 }
 
 //***********************************************************************
@@ -393,7 +393,7 @@ addConstraint(const LimaString& constraint,
 #ifdef DEBUG_LP
   LDEBUG << "RuleString::addConstraint constraintName: " << constraintName << "; arguments: " << arguments;
 #endif
-    
+
   if (! arguments.isEmpty()) {
     readConstraintComplement(arguments,
                              complement);
@@ -547,7 +547,7 @@ addUnaryAction(const std::string& constraintName,
     AUCLOGINIT;
     LDEBUG << "RuleString::addUnaryAction " << constraintName << "," << complement << "," << argument;
 #endif
-    
+
     ConstraintAction executeAction(EXECUTE_IF_SUCCESS);
     if (! actionIfSuccess) {
       executeAction=EXECUTE_IF_FAILURE;
@@ -961,7 +961,7 @@ readConstraintArgument(const LimaString& arguments,
 
 // set some RuleElementIdentifier to each transition
 void RuleString::identifyTransition() {
-  
+
   m_trigger.identifyTransition("trigger");
   m_left.identifyTransition("left");
   m_right.identifyTransition("right");

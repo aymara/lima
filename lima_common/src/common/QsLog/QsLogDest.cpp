@@ -221,7 +221,7 @@ void FileDestination::write(const QString& message, const QString& zone)
 {
   if (!zone.isEmpty())
     mOutputStream << " : " << zone << " : ";
-  mOutputStream << message << endl;
+  mOutputStream << message << Qt::endl;
   mOutputStream.flush();
 }
 

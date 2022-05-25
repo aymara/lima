@@ -59,7 +59,7 @@ bool  KeysLogger::startElement ( const QString & , const QString & name, const Q
     if (m_current == 0)
     {
       DICTIONARYLOGINIT;
-      LERROR << "invalid entry !" << endl;
+      LERROR << "invalid entry !";
       return false;
     }
     LimaString currentStr=m_current;
@@ -106,7 +106,7 @@ bool  KeysLogger::startElement ( const QString & , const QString & name, const Q
       m_out << Common::Misc::limastring2utf8stdstring(m_current) << "\n";
     } else {
       DICTIONARYLOGINIT;
-      LERROR << "WARN : no attribute form in tag 'c' !" << endl;
+      LERROR << "WARN : no attribute form in tag 'c' !" ;
       return true;
     }
   }
