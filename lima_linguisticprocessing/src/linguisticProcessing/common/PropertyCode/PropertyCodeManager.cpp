@@ -22,8 +22,8 @@
  ***************************************************************************/
 
 #include "PropertyCodeManager.h"
-#include "XMLPropertyHandler.h"
-#include "SymbolicCodeXMLHandler.h"
+#include "XmlPropertyReader.h"
+#include "SymbolicCodeXmlReader.h"
 
 
 #include <cmath>
@@ -119,7 +119,6 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   LDEBUG << typeid(*this).name()
          << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
-  QScopedPointer< QXmlSimpleReader > parser(new QXmlSimpleReader());
 //   parser->setValidationScheme(SAXParser::Val_Auto);
 //   parser->setDoNamespaces(false);
 //   parser->setDoSchema(false);
@@ -130,22 +129,20 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  XMLPropertyHandler handler;
+    XmlPropertyReader handler;
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing";
 #endif
-  parser->setContentHandler(&handler);
-  parser->setErrorHandler(&handler);
   QFile file(filename.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
     LIMA_EXCEPTION("PropertyCodeManager::readFromXmlFile Unable to open "
                   << filename.c_str());
   }
-  if (!parser->parse( QXmlInputSource(&file)))
+  if (!handler->parse(&file))
   {
     LIMA_EXCEPTION_SELECT("Error while parsing " << filename.c_str()
-                          << " : " << parser->errorHandler()->errorString(),
+                          << " : " << handler.errorString(),
                           XMLException);
   }
 #ifdef DEBUG_LP
@@ -408,7 +405,6 @@ void PropertyCodeManager::convertSymbolicCodes(
   LDEBUG << "convert Symbolic Code file " << symbolicCodeFile;
 #endif
 
-  QScopedPointer< QXmlSimpleReader > parser ( new QXmlSimpleReader() );
 //   parser->setValidationScheme(SAXParser::Val_Auto);
 //   parser->setDoNamespaces(false);
 //   parser->setDoSchema(false);
@@ -419,9 +415,7 @@ void PropertyCodeManager::convertSymbolicCodes(
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  SymbolicCodeXMLHandler handler(*this,conversionTable);
-  parser->setContentHandler(&handler);
-  parser->setErrorHandler(&handler);
+  SymbolicCodeXmlReader handler(*this, conversionTable);
   QFile file(symbolicCodeFile.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -431,16 +425,16 @@ void PropertyCodeManager::convertSymbolicCodes(
       std::string("PropertyCodeManager::convertSymbolicCodes Unable to open ")
                   + symbolicCodeFile);
   }
-  if (!parser->parse( QXmlInputSource(&file)))
+  if (!handler.parse(&file))
   {
     PROPERTYCODELOGINIT;
     LERROR << "PropertyCodeManager::convertSymbolicCodes An error occurred parsing"
            << symbolicCodeFile
            << ". Error: "
-           << parser->errorHandler()->errorString() ;
+           << handler.errorString() ;
     throw XMLException(
       std::string("Error while parsing " + symbolicCodeFile + " : "
-                  + parser->errorHandler()->errorString().toUtf8().constData()));
+                  + handler.errorString().toUtf8().constData()));
   }
 }
 

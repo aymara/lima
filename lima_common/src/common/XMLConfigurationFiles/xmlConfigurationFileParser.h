@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,12 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
-  * @file       xmlConfigurationFileParser.h
-  * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
   * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
-
-  *             copyright (C) 2002-2003 by CEA
   */
 
 #ifndef XMLCONFIGURATIONFILEPARSER_H

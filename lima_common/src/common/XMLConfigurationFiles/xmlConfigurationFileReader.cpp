@@ -29,7 +29,7 @@
 #include "xmlConfigurationFileReader.h"
 #include "xmlConfigurationFileExceptions.h"
 
-using namespace std;
+#include <QXmlStreamReader>
 
 namespace Lima
 {
