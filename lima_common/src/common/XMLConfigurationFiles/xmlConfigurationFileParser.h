@@ -20,7 +20,7 @@
   * @file       xmlConfigurationFileParser.h
   * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -40,7 +40,7 @@ namespace XMLConfigurationFiles {
 class ConfigurationStructure;
 class ModuleConfigurationStructure;
 class GroupConfigurationStructure;
-  
+
 class XMLConfigurationFileParserPrivate;
 /**
   * @brief Parser class for the lima's xml configuration files
@@ -48,9 +48,9 @@ class XMLConfigurationFileParserPrivate;
   */
 class LIMA_XMLCONFIGURATIONFILES_EXPORT XMLConfigurationFileParser
 {
-public: 
+public:
   XMLConfigurationFileParser(const QString &configurationFileName);
-//   /// @deprecated 
+//   /// @deprecated
 //   XMLConfigurationFileParser(const std::string &configurationFileName);
   XMLConfigurationFileParser(const XMLConfigurationFileParser& p);
   ~XMLConfigurationFileParser();

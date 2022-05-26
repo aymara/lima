@@ -23,8 +23,8 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
    configurationStructure.cpp
    groupConfigurationStructure.cpp
    moduleConfigurationStructure.cpp
-   xmlConfigurationFileHandler.cpp
    xmlConfigurationFileParser.cpp
+   xmlConfigurationFileReader.cpp
    itemWithAttributes.cpp
 )
 
