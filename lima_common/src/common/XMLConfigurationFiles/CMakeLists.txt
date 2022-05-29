@@ -42,7 +42,6 @@ install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES
-#     xmlConfigurationFileHandler.h
     configurationStructure.h
     xmlConfigurationFileParser.h
     groupConfigurationStructure.h

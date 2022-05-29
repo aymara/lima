@@ -40,8 +40,6 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
-#include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
-#include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
 #include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
 
 #include <QQueue>

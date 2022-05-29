@@ -139,7 +139,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     LIMA_EXCEPTION("PropertyCodeManager::readFromXmlFile Unable to open "
                   << filename.c_str());
   }
-  if (!handler->parse(&file))
+  if (!handler.parse(&file))
   {
     LIMA_EXCEPTION_SELECT("Error while parsing " << filename.c_str()
                           << " : " << handler.errorString(),
