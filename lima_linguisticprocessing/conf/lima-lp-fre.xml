@@ -21,6 +21,7 @@
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
+        <item value="langdetector"/>
         <!--item value="beginStatusLogger"/-->
         <item value="flattokenizer"/>
         <item value="regexmatcher"/>
@@ -272,6 +273,9 @@
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
+    </group>
+    <group name="langdetector" class="LangDetector">
+      <param key="langDetectorModel" value="LinguisticProcessings/LangDetector/lid.176.ftz"/>
     </group>
     <group name="regexmatcher" class="RegexMatcher">
       <map name="regexes">

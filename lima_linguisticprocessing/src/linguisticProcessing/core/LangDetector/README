@@ -1,0 +1,9 @@
+This goal of this module is to detect the language of a sentence. 
+To use, enter the following commands:
+
+cmake -Bbuild
+cd build
+./LangDetector "sentence"
+
+For example, ./LangDetector "Je suis une phrase" will return: The detected language is : fr
+ 

@@ -20,7 +20,7 @@ echo $i
 MODEL_NAME_PREFIX=${MODEL_NAME_PREFIX}-${i}
 touch ${MODEL_NAME_PREFIX}.pt
 
-build/${BUILD_TYPE}/apps/deeplima-train-ner \
+build/${BUILD_TYPE}/apps/deeplima-train-tag \
     -u ${UD_PATH}/ud-treebanks-v${UD_VERSION} \
     -c ${UD_CORPUS} \
     -e ${EMBD_FILE} \
