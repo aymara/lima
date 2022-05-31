@@ -4,7 +4,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && apt-get update && apt-get install -y locales locales-all
 
-ARG BRANCH=master
 ARG USE_TENSORFLOW="true"
 ARG GITHUB_TOKEN
 ARG LIMA_DISABLE_FSW_TESTING
@@ -42,12 +41,12 @@ RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
 RUN mkdir -p /src/
-RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+COPY . /src/lima
 WORKDIR /src/lima/extern
 RUN bash download_libtorch.sh
 WORKDIR /src/lima
 ARG CACHEBUST=1
-RUN git pull
+RUN git submodule init && git submodule update
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
 RUN mkdir -p /src/lima/build
