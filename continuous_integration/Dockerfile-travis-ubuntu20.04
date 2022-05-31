@@ -41,7 +41,6 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 RUN mkdir -p /src/
 COPY . /src/lima
 WORKDIR /src/lima/extern
-RUN bash download_libtorch.sh
 WORKDIR /src/lima
 ARG CACHEBUST=1
 RUN git submodule init && git submodule update
