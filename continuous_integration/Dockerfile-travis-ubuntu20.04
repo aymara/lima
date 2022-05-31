@@ -39,10 +39,12 @@ RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
 RUN mkdir -p /src/
-RUN git clone --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+COPY . /src/lima
+WORKDIR /src/lima/extern
+RUN bash download_libtorch.sh
 WORKDIR /src/lima
 ARG CACHEBUST=1
-RUN git pull
+RUN git submodule init && git submodule update
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
 RUN install -d /src/lima/extern && cd /src/lima/extern && ./download_libtorch.sh
