@@ -7,9 +7,10 @@
 
 #include <iostream>
 #include <sstream>
-#include "fasttext/fasttext.h"
+#include "fasttext.h"
 
 namespace Lima::LinguisticProcessing::LDetector {
+    class LangDetectorCorePrivate;
 
     class LangDetectorCore
     {
@@ -17,11 +18,13 @@ namespace Lima::LinguisticProcessing::LDetector {
         LangDetectorCore();
         virtual ~LangDetectorCore();
 
-        [[nodiscard]] std::string detectLang(const std::string& sentence) const;
+        void loadModel(std::string modelPath) const;
+
+        [[nodiscard]] std::string detectLang(const std::string& text) const;
         /*Used to convert a language label "__label__lang" to a printable format "lang".*/
         [[nodiscard]] static std::string labelToPrintable(const std::string& label) ;
-
-        fasttext::FastText ftext;
+    private:
+        LangDetectorCorePrivate* m_d;
 
     };
 }
