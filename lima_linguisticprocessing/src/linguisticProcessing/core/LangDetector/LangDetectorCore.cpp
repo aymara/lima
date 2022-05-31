@@ -16,15 +16,21 @@ namespace Lima::LinguisticProcessing::LDetector {
 
     LangDetectorCore::~LangDetectorCore() = default;
 
-    std::string LangDetectorCore::detectLang(const std::string& sentence) const {
+    /*
+     * Detect the language of the text.
+     */
+
+    std::string LangDetectorCore::detectLang(const std::string& text) const {
         std::string lang;
         std::vector<std::pair<fasttext::real, std::string>> prediction;
-        std::stringstream ioss(sentence + std::string("\n"));
+        std::stringstream ioss(text + std::string("\n"));
         m_d->ftext.predictLine(ioss, prediction, 1, 0);
         lang = prediction.front().second;
         return lang;
     }
-
+    /*
+     * Remove the "__label__" part of the language label.
+     */
     std::string LangDetectorCore::labelToPrintable(const std:: string &label) {
         return label.substr(9, std::string::npos);
     }
