@@ -372,7 +372,6 @@ void XmlConfigurationFileReaderPrivate::readMapEntry()
   }
 }
 
-
 QString XmlConfigurationFileReader::errorString() const
 {
   XMLCFGLOGINIT;

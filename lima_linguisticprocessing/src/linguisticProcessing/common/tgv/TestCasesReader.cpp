@@ -502,6 +502,11 @@ QString TestCasesReader::errorString() const
   return errorStr;
 }
 
+void TestCasesReader::clear()
+{
+  m_d->m_reportByType.clear();
+}
+
 } // TGV
 } // Common
 } // Lima

@@ -48,8 +48,6 @@ public:
   bool parse(QIODevice *device);
 
   QString errorString() const;
-//   bool fatalError(const QXmlParseException& e) override;
-//   bool warning(const QXmlParseException& e) override;
 
 private:
   XmlConfigurationFileReaderPrivate* m_d;

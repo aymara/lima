@@ -209,20 +209,20 @@ int run(int argc,char** argv)
 
   TestCasesReader parser(analysisTestCaseProcessor);
 
-  for (const auto& file: files)
+  for (const auto& fileName: files)
   {
-    std::cout << "process tests in " << file << std::endl;
+    std::cout << "process tests in " << fileName << std::endl;
 //     try
 //     {
-      QFile file(it->c_str());
+      QFile file(fileName.c_str());
       if (!file.open(QIODevice::ReadOnly))
       {
-        std::cerr << "Error opening " << file << std::endl;
+        std::cerr << "Error opening " << fileName << std::endl;
         return 1;
       }
       if (!parser.parse(&file))
       {
-        std::cerr << "Error parsing " << file << " : " << parser.errorString().toUtf8().constData() << std::endl;
+        std::cerr << "Error parsing " << fileName << " : " << parser.errorString().toUtf8().constData() << std::endl;
         return 1;
       }
 //     }
@@ -242,11 +242,11 @@ int run(int argc,char** argv)
 //         return 1;
 //     }
 
-    TestCasesHandler::TestReport resTotal;
+    TestCasesReader::TestReport resTotal;
     std::cout << std::endl;
     std::cout << "=========================================================" << std::endl;
     std::cout << std::endl;
-    std::cout << "  TestReport :   " << file << " " << std::endl;
+    std::cout << "  TestReport :   " << fileName << " " << std::endl;
     std::cout << std::endl;
     std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
     std::cout << "---------------------------------------------------------" << std::endl;
@@ -265,12 +265,12 @@ int run(int argc,char** argv)
     std::cout << "\ttotal          \t" << resTotal.success << "\t" << resTotal.conditional << "\t" << resTotal.failed << "\t" << resTotal.nbtests << std::endl;
     std::cout << "=========================================================" << std::endl;
     std::cout << std::endl;
-    tch.m_reportByType.clear();
+    parser.clear();
   }
   delete bowTextWriter;
   delete simpleStreamHandler;
   delete bowTextHandler;
-  return exitCode(tch);
+  return exitCode(parser);
 }
 
 

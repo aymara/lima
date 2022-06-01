@@ -61,6 +61,8 @@ public:
 
   bool hasFatalError() const;
 
+  void clear();
+
 private:
   TestCasesReaderPrivate* m_d;
 };

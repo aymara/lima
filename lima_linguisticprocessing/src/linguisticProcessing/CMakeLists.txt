@@ -47,7 +47,7 @@ target_link_libraries(lima-linguisticprocessing
   lima-lp-syntacticanalysis
   lima-lp-morphologicanalysis
   lima-lp-dictionary
-  lima-lp-easyxmldumper
+  #lima-lp-easyxmldumper
   lima-lp-analysisdumpers
   lima-lp-textsegmentation
   lima-lp-linguisticanalysisstructure

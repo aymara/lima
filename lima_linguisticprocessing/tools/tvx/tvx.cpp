@@ -21,6 +21,7 @@
 #include "common/LimaCommon.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/tools/FileUtils.h"
+#include "common/tgv/TestCasesReader.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 
 #include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
@@ -265,7 +266,7 @@ int run(int ,char** )
       std::cerr << "caught logic_error : " << endl << e.what() << std::endl;
     }
 
-    TestCasesHandler::TestReport resTotal;
+    TestCasesReader::TestReport resTotal;
     std::cout << std::endl;
     std::cout << "=========================================================" << endl;
     std::cout << std::endl;
@@ -273,7 +274,7 @@ int run(int ,char** )
     std::cout << std::endl;
     std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
     std::cout << "---------------------------------------------------------" << std::endl;
-    for (auto resItr = tch.m_reportByType.cbegin(); resItr != tch.m_reportByType.cend(); resItr++)
+    for (auto resItr = xmlparser.reportByType().cbegin(); resItr != xmlparser.reportByType().cend(); resItr++)
     {
       std::string label(resItr->first);
       label.resize(15,' ');
@@ -289,7 +290,7 @@ int run(int ,char** )
           << "\t" << resTotal.failed << "\t" << resTotal.nbtests << std::endl;
     std::cout << "=========================================================" << std::endl;
     std::cout << std::endl;
-    tch.m_reportByType.clear();
+    xmlparser.clear();
   }
-  return exitCode(tch);
+  return exitCode(xmlparser);
 }
