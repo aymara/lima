@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -23,8 +23,6 @@
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 #include "common/misc/AbstractAccessByString.h"
 
-#include <QtXml/QXmlDefaultHandler>
-
 #include <sstream>
 #include <iostream>
 #include <list>
@@ -33,7 +31,7 @@ namespace Lima
 {
 
 class DictionaryCompilerPrivate;
-class DictionaryCompiler : public QXmlDefaultHandler
+class DictionaryCompiler
 {
   friend class DictionaryCompilerPrivate;
 public:
@@ -48,15 +46,9 @@ public:
   DictionaryCompiler(const DictionaryCompiler&) = delete;
   DictionaryCompiler& operator=(const DictionaryCompiler&) = delete;
 
-  bool startElement(const QString & namespaceURI,
-                    const QString & name,
-                    const QString & qName,
-                    const QXmlAttributes & atts) override;
+  bool parse(QIODevice *device);
 
-  bool endElement(const QString& namespaceURI,
-                  const QString& name,
-                  const QString & qName) override;
-
+  QString errorString() const;
   void writeBinaryDictionary(std::ostream& out);
 
 private:

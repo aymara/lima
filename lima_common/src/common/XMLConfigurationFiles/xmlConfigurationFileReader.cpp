@@ -38,7 +38,7 @@ namespace Common
 namespace XMLConfigurationFiles
 {
 
-class LIMA_XMLCONFIGURATIONFILES_EXPORT XmlConfigurationFileReaderPrivate : public QXmlStreamReader
+class LIMA_XMLCONFIGURATIONFILES_EXPORT XmlConfigurationFileReaderPrivate
 {
 public:
   // -----------------------------------------------------------------------
@@ -372,26 +372,6 @@ QString XmlConfigurationFileReader::errorString() const
   LERROR << errorStr;
   return errorStr;
 }
-
-// bool XmlConfigurationFileReader::fatalError(const QXmlParseException& e)
-// {
-//   XMLCFGLOGINIT;
-//   LERROR << "Fatal Error at file " << e.systemId()
-//           << ", line " << e.lineNumber()
-//           << ", char " << e.columnNumber()
-//           << "  Message: " << e.message();
-//   return false;
-// }
-//
-// bool XmlConfigurationFileReader::warning(const QXmlParseException& e)
-// {
-//   XMLCFGLOGINIT;
-//   LWARN << "Warning at file " << e.systemId()
-//         << ", line " << e.lineNumber()
-//         << ", char " << e.columnNumber()
-//         << "  Message: " << e.message();
-//   return true;
-// }
 
 } // closing namespace XMLConfigurationFiles
 } // closing namespace Common

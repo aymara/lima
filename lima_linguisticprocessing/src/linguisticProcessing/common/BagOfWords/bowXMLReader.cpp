@@ -212,7 +212,7 @@ void BoWXmlReaderPrivate::readHierarchy()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readHierarchy" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("hierarchy"));
 
   m_currentBoWText = boost::shared_ptr< BoWText >(new BoWText());
   bool isIndexingNode(false);
@@ -295,7 +295,7 @@ void BoWXmlReaderPrivate::readTokens()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readTokens" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("tokens"));
 
   if (m_currentBoWText != nullptr)
   {
@@ -354,7 +354,7 @@ void BoWXmlReaderPrivate::readBowTerm()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readBowTerm" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowTerm"));
 
   getTokenAttributes(m_reader, lemma, category, position, length, id);
   // use empty lemma: no need to store lemma for compound
@@ -452,7 +452,7 @@ void BoWXmlReaderPrivate::readParts()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readParts" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("parts"));
 
   m_currentComplexToken.back().head = getIntAttribute(m_reader,"head");
   m_currentComplexToken.back().currentPart = 0;
@@ -474,7 +474,7 @@ void BoWXmlReaderPrivate::readBowTokenRef()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readBowTokenRef" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowTokenRef"));
 
   uint64_t refId = getIntAttribute(m_reader,"refId");
   m_currentComplexToken.back().token->addPart(m_refMap[refId]);
@@ -484,7 +484,7 @@ void BoWXmlReaderPrivate::readFeature()
 {
   BOWLOGINIT;
   LTRACE << "BoWXmlReaderPrivate::readFeature" << m_reader.name();
-  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowDocument"));
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("feature"));
 
   auto name = getStringAttribute(m_reader,"name");
   auto value = getQStringAttribute(m_reader,"value");
