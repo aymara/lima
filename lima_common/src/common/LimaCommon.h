@@ -176,7 +176,7 @@ public:
     // initialisation thread-safe
     static QRecursiveMutex mutex;
     QMutexLocker locker(&mutex);
-    pLogger = &QsLogging::Logger::instance(x);
+    pLogger = &QsLogging::Logger::instance(QLatin1String(x));
 #ifndef DEBUG_CD
     QsLogging::Level level = QsLogging::Categories::instance().levelFor(x);
     pLogger->setLoggingLevel(level);

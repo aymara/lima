@@ -27,7 +27,7 @@
   */
 
 #include "SyntagmaticMatrix.h"
-#include "XmlSyntagmaticMatrixFileHandler.h"
+#include "XmlSyntagmaticMatrixFileReader.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 
@@ -106,29 +106,21 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
   //  Create a SAX parser object. Then, according to what we were told on
   //  the command line, set it to validate or not.
   //
-  QXmlSimpleReader parser;
-//   parser.setValidationScheme(SAXParser::Val_Auto);
-//   parser.setDoNamespaces(false);
-//   parser.setDoSchema(false);
-//   parser.setValidationSchemaFullChecking(false);
-
-
   //
   //  Create the handler object and install it as the document and error
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
-  parser.setContentHandler(&handler);
-  parser.setErrorHandler(&handler);
+  XmlSyntagmaticMatrixFileReader handler(*this,m_language);
   QFile file(fileName.c_str());
   if (!file.open(QFile::ReadOnly))
   {
     LIMA_EXCEPTION_SELECT_LOGINIT(XMLCFGLOGINIT, "Error opening " << fileName.c_str(), XMLException);
   }
-  if (!parser.parse( QXmlInputSource(&file)))
+  if (!handler.parse(&file))
   {
-    LIMA_EXCEPTION_SELECT("SyntagmDefStruct::loadFromFile Unable to parse " << fileName.c_str() << " : " << parser.errorHandler()->errorString(),
+    LIMA_EXCEPTION_SELECT("SyntagmDefStruct::loadFromFile Unable to parse " << fileName.c_str() << " : "
+                            << handler.errorString(),
                           XMLException);
   }
 }

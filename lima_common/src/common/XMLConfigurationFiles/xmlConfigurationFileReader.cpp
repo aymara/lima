@@ -114,15 +114,16 @@ bool XmlConfigurationFileReaderPrivate::parse(QIODevice *device)
   XMLCFGLOGINIT;
   LTRACE << "parse";
   m_reader.setDevice(device);
-  if (m_reader.readNextStartElement()) {
-      if (m_reader.name() == QLatin1String("modulesConfig"))
-      {
-          readConfiguration();
-      }
-      else
-      {
-          m_reader.raiseError(QObject::tr("The file is not a LIMA XML configuration file."));
-      }
+  if (m_reader.readNextStartElement())
+  {
+    if (m_reader.name() == QLatin1String("modulesConfig"))
+    {
+      readConfiguration();
+    }
+    else
+    {
+      m_reader.raiseError(QObject::tr("The file is not a LIMA XML configuration file."));
+    }
   }
   return !m_reader.error();
 }
@@ -139,11 +140,12 @@ void XmlConfigurationFileReaderPrivate::readConfiguration()
     LTRACE << "readConfiguration";
     Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("modulesConfig"));
 
-    while (m_reader.readNextStartElement()) {
-        if (m_reader.name() == QLatin1String("module"))
-            readModule();
-        else
-            m_reader.raiseError(QObject::tr("Expected a module but got a %1.").arg(m_reader.name()));
+    while (m_reader.readNextStartElement())
+    {
+      if (m_reader.name() == QLatin1String("module"))
+        readModule();
+      else
+        m_reader.raiseError(QObject::tr("Expected a module but got a %1.").arg(m_reader.name()));
     }
 }
 
@@ -155,20 +157,21 @@ void XmlConfigurationFileReaderPrivate::readConfiguration()
 //   </module>
 void XmlConfigurationFileReaderPrivate::readModule()
 {
-    m_moduleName = m_reader.attributes().value(moduleNameAttribute()).toString();
-    XMLCFGLOGINIT;
-    LTRACE << "XmlConfigurationFileReader::readModule module name is " << m_moduleName;
-    if ((m_configuration.find(m_moduleName.toStdString())) == (m_configuration. end()))
-    {
-      m_configuration.insert(std::make_pair(m_moduleName.toStdString(), ModuleConfigurationStructure(m_moduleName)));
-    }
-    while (m_reader.readNextStartElement()) {
-        if (m_reader.name() == QLatin1String("group"))
-            readGroup();
-        else
-            m_reader.raiseError(QObject::tr("Expected a group in module %1 but got a %2.").arg(m_moduleName).arg(m_reader.name()));
-    }
-    m_moduleName = "";
+  m_moduleName = m_reader.attributes().value(moduleNameAttribute()).toString();
+  XMLCFGLOGINIT;
+  LTRACE << "XmlConfigurationFileReader::readModule module name is " << m_moduleName;
+  if ((m_configuration.find(m_moduleName.toStdString())) == (m_configuration. end()))
+  {
+    m_configuration.insert(std::make_pair(m_moduleName.toStdString(), ModuleConfigurationStructure(m_moduleName)));
+  }
+  while (m_reader.readNextStartElement())
+  {
+    if (m_reader.name() == QLatin1String("group"))
+      readGroup();
+    else
+      m_reader.raiseError(QObject::tr("Expected a group in module %1 but got a %2.").arg(m_moduleName).arg(m_reader.name()));
+  }
+  m_moduleName = "";
 }
 
 //     <group name="mediaDeclaration">
@@ -189,7 +192,8 @@ void XmlConfigurationFileReaderPrivate::readGroup()
     m_configuration.addGroupNamedForModuleNamed(m_groupName, m_moduleName);
     for (const auto& attribute: m_reader.attributes())
     {
-      if (attribute.name() == groupNameAttribute()) {
+      if (attribute.name() == groupNameAttribute())
+      {
         continue;
       }
       auto key = attribute.name();
@@ -197,7 +201,8 @@ void XmlConfigurationFileReaderPrivate::readGroup()
       m_configuration.addAttributeForGroupInModule(key.toString(), value.toString(), m_groupName, m_moduleName);
     }
 
-    while (m_reader.readNextStartElement()) {
+    while (m_reader.readNextStartElement())
+    {
         if (m_reader.name() == QLatin1String("param"))
             readParam();
         else if (m_reader.name() == QLatin1String("list"))
@@ -232,7 +237,8 @@ void XmlConfigurationFileReaderPrivate::readList()
   m_itemWithAttributes=false;
   XMLCFGLOGINIT;
   LTRACE << "XmlConfigurationFileReader::readList" << m_listName;
-  while (m_reader.readNextStartElement()) {
+  while (m_reader.readNextStartElement())
+  {
     if (m_reader.name() == QLatin1String("item"))
       readListItem();
     else
@@ -258,23 +264,27 @@ void XmlConfigurationFileReaderPrivate::readListItem()
       LTRACE << "add simple list "<< m_listName;
       m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
     }
-    else {
+    else
+    {
       LTRACE << "add list of items with attributes"<< m_listName;
       m_configuration.addListOfItemsForModuleAndGroup(m_listName, m_moduleName, m_groupName);
       m_itemWithAttributes=true;
     }
     m_firstItem=false;
   }
-  else if (nbAtt>1 && !m_itemWithAttributes) {
+  else if (nbAtt>1 && !m_itemWithAttributes)
+  {
     // was indeed in list of item with attributes => has to change
     m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
     m_itemWithAttributes=true;
   }
 
-  if (m_itemWithAttributes) {
+  if (m_itemWithAttributes)
+  {
     auto itemName = m_reader.attributes().value(listItemValueAttribute());
     ItemWithAttributes item(itemName.toString());
-    for (const auto& attribute: m_reader.attributes()) {
+    for (const auto& attribute: m_reader.attributes())
+    {
       item.addAttribute(attribute.name().toString(), attribute.value().toString());
     }
     m_configuration.addItemInListOfItemsForModuleAndGroup(item, m_listName, m_moduleName, m_groupName);
@@ -297,7 +307,8 @@ void XmlConfigurationFileReaderPrivate::readMap()
   LTRACE << "map name is " << m_mapName;
   m_firstItem=true;
   m_itemWithAttributes=false;
-  while (m_reader.readNextStartElement()) {
+  while (m_reader.readNextStartElement())
+  {
     if (m_reader.name() == QLatin1String("entry"))
       readMapEntry();
     else

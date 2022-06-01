@@ -218,7 +218,7 @@ void KeysLoggerPrivate::readI()
 
 void KeysLoggerPrivate::readC()
 {
-  BOWLOGINIT;
+  DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readC" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("c"));
 
@@ -240,6 +240,25 @@ void KeysLoggerPrivate::readC()
       else
           m_reader.raiseError(QObject::tr("Expected a p but got a %1.").arg(m_reader.name()));
   }
+}
+
+//     <p v="NC:m--"/>
+void KeysLoggerPrivate::readP()
+{
+  DICTIONARYLOGINIT;
+  LTRACE << "KeysLoggerPrivate::readP" << m_reader.name();
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("p"));
+}
+
+QString KeysLoggerPrivate::errorString() const
+{
+  XMLCFGLOGINIT;
+  auto errorStr = QObject::tr("%1, Line %2, column %3")
+          .arg(m_reader.errorString())
+          .arg(m_reader.lineNumber())
+          .arg(m_reader.columnNumber());
+  LERROR << errorStr;
+  return errorStr;
 }
 
 }

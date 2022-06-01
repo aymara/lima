@@ -38,7 +38,7 @@
 // #include "linguisticProcessing/core/Tokenizer/ParseChar.h"
 // #include "linguisticProcessing/core/Tokenizer/ParseCharClass.h"
 
-// #include "KeysLogger.h"
+#include "KeysLogger.h"
 #include "DictionaryReader.h"
 
 #include <QtXml/QXmlSimpleReader>
@@ -61,6 +61,7 @@ typedef struct
 {
 //   std::string extractKeys;
   std::string charChart;
+  std::string extractKeys;
   std::string fsaKey;
   std::string propertyFile;
   std::string symbolicCodes;

@@ -39,7 +39,7 @@ SET(lima-lp-syntacticanalysis_LIB_SRCS
    SyntacticData.cpp
    SyntagmaticMatrix.cpp
    TokenFilter.cpp
-   XmlSyntagmaticMatrixFileHandler.cpp
+   XmlSyntagmaticMatrixFileReader.cpp
    SelectionalRestrictionsConstraints.cpp
    SelectionalPreferences.cpp
    CoordinationConstraints.cpp

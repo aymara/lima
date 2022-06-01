@@ -87,13 +87,30 @@ public:
                                const std::string& moduleName,
                                const std::string& group);
 
-    void addParamValuePairForModuleAndGroup(const QString &param, const QString &value, const QString &module, const QString & group);
-    void addGroupNamedForModuleNamed(const QString& groupName, const QString& moduleName);
-    void addListNamedForModuleAndGroup(const QString &listName, const QString& moduleName, const QString& group);
-    void addItemInListNamedForModuleAndGroup(const QString& item, const QString &listName, const QString& moduleName, const QString& group);
-    void addMapNamedForModuleAndGroup(const QString &mapName, const QString& moduleName, const QString& group);
-    void addEntryInMapNamedForModuleAndGroup(const QString& entryKey,const QString& entryValue,const QString& mapName,const QString& moduleName,const QString& groupName);
-    void addAttributeForGroupInModule(const QString& attKey,const QString& attValue,const QString& groupName,const QString& moduleName);
+    void addParamValuePairForModuleAndGroup(const QString &param,
+                                            const QString &value,
+                                            const QString &module,
+                                            const QString & group);
+    void addGroupNamedForModuleNamed(const QString& groupName,
+                                     const QString& moduleName);
+    void addListNamedForModuleAndGroup(const QString &listName,
+                                       const QString& moduleName,
+                                       const QString& group);
+    void addItemInListNamedForModuleAndGroup(const QString& item,
+                                             const QString &listName,
+                                             const QString& moduleName,
+                                             const QString& group);
+    void addMapNamedForModuleAndGroup(const QString &mapName,
+                                      const QString& moduleName,
+                                      const QString& group);
+    void addEntryInMapNamedForModuleAndGroup(const QString& entryKey,
+                                             const QString& entryValue,
+                                             const QString& mapName,
+                                             const QString& moduleName,
+                                             const QString& groupName);
+    void addAttributeForGroupInModule(const QString& attKey,const QString& attValue,
+                                      const QString& groupName,
+                                      const QString& moduleName);
 
 
     void addListOfItemsForModuleAndGroup(const QString &listName,
