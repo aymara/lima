@@ -189,8 +189,8 @@ void XmlPropertyReaderPrivate::readSubProperty()
 #endif
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("subproperty"));
   m_subproperties.push_back(XmlPropertyReader::SubPropertyDescription());
-  m_subproperties.back().name = m_reader.attributes().value("name").toUtf8().data();
-  m_subproperties.back().parentName = m_reader.attributes().value("parent").toUtf8().data();
+  m_subproperties.back().name = m_reader.attributes().value("name").toString().toStdString();
+  m_subproperties.back().parentName = m_reader.attributes().value("parent").toString().toStdString();
 #ifdef DEBUG_LP
   LDEBUG << "read subproperty " << m_subproperties.back().name << " of parent property " << m_subproperties.back().parentName;
 #endif
@@ -213,7 +213,7 @@ void XmlPropertyReaderPrivate::readSubValues()
   LTRACE << "XmlPropertyReaderPrivate::readSubValues" << m_reader.name();
 #endif
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("subvalues"));
-  auto value = m_reader.attributes().value("value").toUtf8().data();
+  auto value = m_reader.attributes().value("value").toString().toStdString();
 #ifdef DEBUG_LP
   LDEBUG << "XmlPropertyReaderPrivate::readSubValues" << value;
 #endif

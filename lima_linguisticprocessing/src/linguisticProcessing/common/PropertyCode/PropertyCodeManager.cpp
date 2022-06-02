@@ -111,19 +111,17 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 {
   PROPERTYCODELOGINIT;
 #ifdef DEBUG_LP
-  LDEBUG << typeid(*this).name()
-         << "PropertyCodeManager::readFromXmlFile" << filename;
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
 #endif
 
 #ifdef DEBUG_LP
-  LDEBUG << typeid(*this).name()
-         << "PropertyCodeManager::readFromXmlFile before creating parser";
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
   //
   //  Create the reader object then parse the file and catch any exceptions
   //  that propogate out
   //
-    XmlPropertyReader reader;
+  XmlPropertyReader reader;
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing";
 #endif
@@ -200,7 +198,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   for (const auto& desc: subproperties)
   {
 #ifdef DEBUG_LP
-    LDEBUG << "compute data for subproperty " << desc.name;
+    LDEBUG << "compute data for subproperty " << desc.name << "of" << desc.parentName;
 #endif
     const auto& parentProp = getPropertyManager(desc.parentName);
     LinguisticCode parentmask = parentProp.getMask();
@@ -234,30 +232,29 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
     symbol2code["NONE"] = L_NONE;
-    for (auto subItr = subvalues.cbegin();
-         subItr!=subvalues.cend();
-         subItr++)
+    for (const auto& subvalue: subvalues)
     {
-      LinguisticCode parentValue=parentProp.getPropertyValue(subItr->first);
+      LinguisticCode parentValue=parentProp.getPropertyValue(subvalue.first);
+#ifdef DEBUG_LP
+      LDEBUG << "value of" << subvalue.first << "is" << parentValue;
+#endif
       if (parentValue == L_NONE)
       {
-        LERROR << "parent value " << subItr->first << " of subproperty "
+        LERROR << "parent value " << subvalue.first << " of subproperty "
                << desc.name << " is unknown !";
       }
 #ifdef DEBUG_LP
-      LDEBUG << "compute subvalues of " << subItr->first << " ("
+      LDEBUG << "compute subvalues of " << subvalue.first << " ("
              << parentValue.toHexString() << ")";
 #endif
-      symbol2code.insert(std::make_pair(string(subItr->first)+"-NONE",
+      symbol2code.insert(std::make_pair(string(subvalue.first)+"-NONE",
                                         LinguisticCode(parentValue)));
       uint64_t i = 1;
-      for (auto valItr = subItr->second.cbegin();
-           valItr!=subItr->second.cend();
-           valItr++)
+      for (const auto& value: subvalue.second)
       {
-        symbol2code.insert(std::make_pair(*valItr, (LinguisticCode::fromUInt(i) << usedBits) | parentValue));
+        symbol2code.insert(std::make_pair(value, (LinguisticCode::fromUInt(i) << usedBits) | parentValue));
 #ifdef DEBUG_LP
-        LDEBUG << *valItr << " => " << symbol2code[*valItr].toHexString();
+        LDEBUG << value << " => " << symbol2code[value].toHexString();
 #endif
         i++;
       }
