@@ -120,14 +120,18 @@ void XmlPropertyReaderPrivate::readLinguisticCodes()
   LTRACE << "XmlPropertyReaderPrivate::readLinguisticCodes" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("Linguistic_codes"));
 
-  while (m_reader.readNextStartElement()) {
+  while (m_reader.readNextStartElement())
+  {
       if (m_reader.name() == QLatin1String("property"))
           readProperty();
-      if (m_reader.name() == QLatin1String("subproperty"))
+      else if (m_reader.name() == QLatin1String("subproperty"))
           readSubProperty();
       else
           m_reader.raiseError(QObject::tr("Expected a property or subproperty but got a %1.").arg(m_reader.name()));
   }
+#ifdef DEBUG_LP
+  LTRACE << "XmlPropertyReaderPrivate::readLinguisticCodes OUT";
+#endif
 }
 
 //   <property name="GENDER">
@@ -136,29 +140,39 @@ void XmlPropertyReaderPrivate::readLinguisticCodes()
 //   </property>
 void XmlPropertyReaderPrivate::readProperty()
 {
-  m_properties.push_back(XmlPropertyReader::PropertyDescription());
-  m_properties.back().name = m_reader.attributes().value("name").toUtf8().data();
 #ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
-  LDEBUG << "read property " << m_properties.back().name;
+  LTRACE << "XmlPropertyReaderPrivate::readProperty" << m_reader.name() << m_reader.attributes().value("name");
 #endif
-  while (m_reader.readNextStartElement()) {
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("property"));
+  m_properties.push_back(XmlPropertyReader::PropertyDescription());
+  m_properties.back().name = m_reader.attributes().value("name").toUtf8().data();
+  while (m_reader.readNextStartElement())
+  {
       if (m_reader.name() == QLatin1String("value"))
           readValue();
       else
           m_reader.raiseError(QObject::tr("Expected a value but got a %1.").arg(m_reader.name()));
   }
+#ifdef DEBUG_LP
+  LTRACE << "XmlPropertyReaderPrivate::readProperty OUT";
+#endif
 }
 
 //     <value name="MASC"/>
 void XmlPropertyReaderPrivate::readValue()
 {
-  auto value = m_reader.attributes().value("name").toString();
 #ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
-  LDEBUG << "XmlPropertyReaderPrivate::readValue" << value;
+  LTRACE << "XmlPropertyReaderPrivate::readValue" << m_reader.name() << m_reader.attributes().value("name");
 #endif
-  m_properties.back().values.push_back(value.toStdString());
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("value"));
+  auto value = m_reader.attributes().value("name").toString().toStdString();
+  m_properties.back().values.push_back(value);
+  m_reader.skipCurrentElement();
+#ifdef DEBUG_LP
+  LTRACE << "XmlPropertyReaderPrivate::readValue OUT";
+#endif
 }
 
 //   <subproperty name="MICRO" parent="MACRO">
@@ -169,11 +183,15 @@ void XmlPropertyReaderPrivate::readValue()
 //   </subproperty>
 void XmlPropertyReaderPrivate::readSubProperty()
 {
+#ifdef DEBUG_LP
+  PROPERTYCODELOGINIT;
+  LTRACE << "XmlPropertyReaderPrivate::readSubProperty" << m_reader.name() << m_reader.attributes().value("name");
+#endif
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("subproperty"));
   m_subproperties.push_back(XmlPropertyReader::SubPropertyDescription());
   m_subproperties.back().name = m_reader.attributes().value("name").toUtf8().data();
   m_subproperties.back().parentName = m_reader.attributes().value("parent").toUtf8().data();
 #ifdef DEBUG_LP
-  PROPERTYCODELOGINIT;
   LDEBUG << "read subproperty " << m_subproperties.back().name << " of parent property " << m_subproperties.back().parentName;
 #endif
   while (m_reader.readNextStartElement()) {
@@ -190,9 +208,13 @@ void XmlPropertyReaderPrivate::readSubProperty()
 //     </subvalues>
 void XmlPropertyReaderPrivate::readSubValues()
 {
-  auto value = m_reader.attributes().value("value").toUtf8().data();
 #ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
+  LTRACE << "XmlPropertyReaderPrivate::readSubValues" << m_reader.name();
+#endif
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("subvalues"));
+  auto value = m_reader.attributes().value("value").toUtf8().data();
+#ifdef DEBUG_LP
   LDEBUG << "XmlPropertyReaderPrivate::readSubValues" << value;
 #endif
   m_subproperties.back().values.push_back(make_pair(value, std::vector<std::string>()));
@@ -207,9 +229,14 @@ void XmlPropertyReaderPrivate::readSubValues()
 //       <value name="ADJ"/>
 void XmlPropertyReaderPrivate::readSubValue()
 {
-  auto value = m_reader.attributes().value("name").toString();
 #ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
+  LTRACE << "XmlPropertyReaderPrivate::readSubValue" << m_reader.name();
+#endif
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("value"));
+  auto value = m_reader.attributes().value("name").toString();
+  m_reader.skipCurrentElement();
+#ifdef DEBUG_LP
   LDEBUG << "XmlPropertyReaderPrivate::readSubValue" << value;
 #endif
   m_subproperties.back().values.back().second.push_back(value.toStdString());

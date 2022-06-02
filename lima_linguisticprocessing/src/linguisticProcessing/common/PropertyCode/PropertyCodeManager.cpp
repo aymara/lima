@@ -203,17 +203,15 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 #ifdef DEBUG_LP
   LDEBUG << subproperties.size() << " subproperties read from file";
 #endif
-  for (auto desc = subproperties.cbegin();
-       desc != subproperties.cend();
-       desc++)
+  for (const auto& desc: subproperties)
   {
 #ifdef DEBUG_LP
-    LDEBUG << "compute data for subproperty " << desc->name;
+    LDEBUG << "compute data for subproperty " << desc.name;
 #endif
-    const auto& parentProp = getPropertyManager(desc->parentName);
+    const auto& parentProp = getPropertyManager(desc.parentName);
     LinguisticCode parentmask = parentProp.getMask();
 
-    const auto& subvalues = desc->values;
+    const auto& subvalues = desc.values;
 
     // compute mask
     // use enough bit to code the biggest subvalues set
@@ -250,7 +248,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
       if (parentValue == L_NONE)
       {
         LERROR << "parent value " << subItr->first << " of subproperty "
-               << desc->name << " is unknown !";
+               << desc.name << " is unknown !";
       }
 #ifdef DEBUG_LP
       LDEBUG << "compute subvalues of " << subItr->first << " ("
@@ -270,8 +268,8 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
         i++;
       }
     }
-    m_d->m_propertyManagers.insert(std::make_pair(desc->name,
-                                             PropertyManager(desc->name,
+    m_d->m_propertyManagers.insert(std::make_pair(desc.name,
+                                             PropertyManager(desc.name,
                                                              mask,
                                                              emptynessmask,
                                                              symbol2code)));
