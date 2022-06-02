@@ -130,7 +130,7 @@ void SymbolicCodeXmlReaderPrivate::readCode()
       if (m_reader.name() == QLatin1String("field"))
           readField();
       else
-          m_reader.raiseError(QObject::tr("Expected a code but got a %1.").arg(m_reader.name()));
+          m_reader.raiseError(QObject::tr("Expected a field but got a %1.").arg(m_reader.name()));
   }
   if (m_outputMap.find(m_currentCode.toStdString()) != m_outputMap.end())
   {
@@ -143,17 +143,20 @@ void SymbolicCodeXmlReaderPrivate::readCode()
 //     <field key="MICRO" value=""/>
 void SymbolicCodeXmlReaderPrivate::readField()
 {
+#ifdef DEBUG_LP
   PROPERTYCODELOGINIT;
+  LTRACE << "SymbolicCodeXmlReader::readField" << m_reader.name()
+          << m_reader.attributes().value("key")
+          << m_reader.attributes().value("value");
+#endif
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("field"));
   auto key = m_reader.attributes().value("key").toString();
   auto value = m_reader.attributes().value("value").toString();
-#ifdef DEBUG_LP
-  LDEBUG << "read field key=" << key << " value=" << value;
-#endif
   if (value != "")
   {
     m_currentPropertyValues[key.toStdString()] = value.toStdString();
   }
+  m_reader.skipCurrentElement();
 }
 
 QString SymbolicCodeXmlReader::errorString() const

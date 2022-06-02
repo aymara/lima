@@ -24,7 +24,7 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
         </code>
-  
+
  <code key="Afha---">
   <field key="MICRO" value="ADJ"/>
   <field key="GENDER" value=""/>
@@ -299,8 +299,9 @@
   <field key="PERSON" value=""/>
   <field key="TIME" value=""/>
   <field key="SYNTAX" value="TRANS"/>
- 
-  
+</code>
+
+
   <code key="Pd-----nn">
     <field key="MICRO" value="PRO"/>
     <field key="GENDER" value="GEN_NEUTRE"/>
@@ -309,8 +310,8 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-  
-  
+
+
   <code key="Pdp----nn">
     <field key="MICRO" value="PRO_POSTPOSE"/>
     <field key="GENDER" value="GEN_NEUTRE"/>
@@ -319,7 +320,5 @@
     <field key="TIME" value=""/>
     <field key="SYNTAX" value=""/>
   </code>
-  
-  
-</code>
+
 </codes>

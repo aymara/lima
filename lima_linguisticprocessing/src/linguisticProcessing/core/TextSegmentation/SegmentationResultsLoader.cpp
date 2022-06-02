@@ -183,7 +183,7 @@ void SegmentationResultsLoaderPrivate::readResults()
     }
     else if (m_reader.name() == "position")
     {
-      m_position = m_reader.text().toInt(&ok);
+      m_position = m_reader.readElementText().toInt(&ok);
       if (!ok)
       {
         m_reader.raiseError(QObject::tr("Cannot convert position value %1 to int.").arg(m_reader.text()));
@@ -191,7 +191,7 @@ void SegmentationResultsLoaderPrivate::readResults()
     }
     else if (m_reader.name() == "length")
     {
-      m_length = m_reader.text().toInt(&ok);
+      m_length = m_reader.readElementText().toInt(&ok);
       if (!ok)
       {
         m_reader.raiseError(QObject::tr("Cannot convert length value %1 to int.").arg(m_reader.text()));
@@ -199,7 +199,11 @@ void SegmentationResultsLoaderPrivate::readResults()
     }
     else if (m_reader.name() == "type")
     {
-      m_type = m_reader.text().toString();
+      m_type = m_reader.readElementText();
+    }
+    else
+    {
+      m_reader.skipCurrentElement();
     }
   }
 }

@@ -26,7 +26,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QXmlStreamReader>
 #include <tuple>
 
 namespace Lima {

@@ -362,6 +362,7 @@ void MultXmlReaderPrivate::readProperty()
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("property"));
 
   addProperty(m_reader);
+  m_reader.skipCurrentElement();
 }
 
 //           <tokens>
@@ -422,6 +423,7 @@ void MultXmlReaderPrivate::readBowRelation()
   auto realization = getQStringAttribute(m_reader, "realization");
   auto type = getIntAttribute(m_reader, "type");
   m_currentBoWRelation = boost::shared_ptr< BoWRelation >(new BoWRelation(realization,type));
+  m_reader.skipCurrentElement();
 }
 
 //             <bowToken id="3" lemma="" category="NP" position="280" length="6"/>
@@ -460,6 +462,7 @@ void MultXmlReaderPrivate::readBowToken()
     m_currentComplexToken.back().currentPart++;
     // token has been cloned in complex token
   }
+  m_reader.skipCurrentElement();
 }
 
 
@@ -642,6 +645,7 @@ void MultXmlReaderPrivate::readBowTokenRef()
 
   uint64_t refId = getIntAttribute(m_reader,"refId");
   m_currentComplexToken.back().token->addPart(m_refMap[refId], true);
+  m_reader.skipCurrentElement();
 }
 
 void MultXmlReaderPrivate::readFeature()
@@ -654,6 +658,7 @@ void MultXmlReaderPrivate::readFeature()
   auto value = getQStringAttribute(m_reader,"value");
   boost::dynamic_pointer_cast<BoWNamedEntity>(m_currentComplexToken.back().token)->
     setFeature(name,value);
+  m_reader.skipCurrentElement();
 }
 
 // -----------------------------------------------------------------------

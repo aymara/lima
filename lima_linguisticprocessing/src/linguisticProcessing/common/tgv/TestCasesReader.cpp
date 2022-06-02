@@ -221,17 +221,12 @@ void TestCasesReaderPrivate::readTestcase()
   {
     readExpl();
   }
-  if (!m_reader.readNextStartElement())
+  while (m_reader.readNextStartElement())
   {
-    m_reader.raiseError(QObject::tr("Unexpected end of file: expected a test."));
-  }
-  else if (m_reader.name() != QLatin1String("test"))
-  {
-    m_reader.raiseError(QObject::tr("Expected a test but got a %1.").arg(m_reader.name()));
-  }
-  else
-  {
-    readTest();
+    if (m_reader.name() == QLatin1String("test"))
+        readTest();
+    else
+        m_reader.raiseError(QObject::tr("Expected test but got a %1.").arg(m_reader.name()));
   }
 
   m_reportByType[currentTestCase.type].nbtests++;
@@ -310,6 +305,7 @@ void TestCasesReaderPrivate::readParam()
   currentTestCase.simpleValCallParams.insert(std::pair<std::string, std::string>(key,val) );
   // TODO: read multiValCallParams "pipelines"
   // std::string pipch=m_reader.attributes().value("pipelines");
+  m_reader.skipCurrentElement();
 }
 
 //       <list key="pipelines">
@@ -416,6 +412,7 @@ void TestCasesReaderPrivate::readItem()
     m_reader.raiseError(QObject::tr("Should be in a list or a map when reading an item.").arg(m_reader.name()));
   }
 //    currentTestCase.multiValCallParams.insert(std::pair<std::string, std::string>(key,val) );
+  m_reader.skipCurrentElement();
 
 }
 
@@ -428,6 +425,7 @@ void TestCasesReaderPrivate::readExpl()
   currentTestCase.explanation.append(m_reader.text().toString().toStdString());
 
   m_inExpl=false;
+  m_reader.skipCurrentElement();
 
 }
 
@@ -461,12 +459,13 @@ void TestCasesReaderPrivate::readTest()
           << ", op =" << tu.op
           << ", right =" << tu.right
           << ", conditional =" << tu.conditional;
+  m_reader.skipCurrentElement();
 }
 
 void TestCasesReaderPrivate::readText()
 {
   // For compatibility with old testTva format
-  std::string newTextVal(m_reader.text().toString().toStdString());
+  std::string newTextVal(m_reader.readElementText().toStdString());
 
   SimpleValCallParams::iterator pos = currentTestCase.simpleValCallParams.find("text");
   if( pos == currentTestCase.simpleValCallParams.end() )

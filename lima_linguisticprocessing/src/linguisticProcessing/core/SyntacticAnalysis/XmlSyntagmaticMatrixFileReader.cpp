@@ -183,7 +183,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readChain()
     while (m_reader.readNextStartElement())
     {
       if (m_reader.name() == QLatin1String("filtre"))
-        readChain();
+        readFilter();
       else
         m_reader.raiseError(QObject::tr("Expected a filtre but got a %1.").arg(m_reader.name()));
     }
@@ -235,11 +235,11 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readName()
     LTRACE << "readChain";
     Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("nom"));
 //      <!ELEMENT nom (#PCDATA ) >
-    m_currentFilterName = m_reader.text().toString().toStdString();
+    m_currentFilterName = m_reader.readElementText().toStdString();
 //        std::cerr << "Current filter name is: " << m_currentFilterName << std::endl;
 }
 
-//       <attribut>…</categorie>
+//       <attribut>…</attribut>
 void XmlSyntagmaticMatrixFileReaderPrivate::readAttribute()
 {
     SALOGINIT;
@@ -249,7 +249,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readAttribute()
 //      <!ELEMENT attribut (#PCDATA ) >
 
     m_currentFilterAttributes.insert(Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[
-        m_reader.text().toString()]);
+        m_reader.readElementText()]);
 }
 
 //       <categorie>DETDES</categorie>
@@ -262,16 +262,16 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readCategory()
 //      <!ELEMENT categorie (#PCDATA ) >
 
     LinguisticCode filterCategory;
-    if (m_reader.text()[0].isDigit())
+    auto text = m_reader.readElementText();
+    if (text[0].isDigit())
     {
-        filterCategory = LinguisticCode::fromString(m_reader.text().toString().toStdString());
+        filterCategory = LinguisticCode::fromString(text.toStdString());
     }
     else
     {
         filterCategory = static_cast<const Common::MediaticData::LanguageData&>(
             MediaticData::single().mediaData(m_matrices.language())).getPropertyCodeManager()
-                .getPropertyManager("MICRO").getPropertyValue(m_reader.text()
-                .toString().toStdString());
+                .getPropertyManager("MICRO").getPropertyValue(text.toStdString());
     }
     m_currentFilterCategories.insert(filterCategory);
 //        std::cerr << "Current category is: " << filterCategory << std::endl;
@@ -325,7 +325,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readLine()
     while (m_reader.readNextStartElement())
     {
       if (m_reader.name() == QLatin1String("succ"))
-        readChain();
+        readSucc();
       else
         m_reader.raiseError(QObject::tr("Expected a succ but got a %1.").arg(m_reader.name()));
     }
@@ -360,6 +360,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readSucc()
         m_matrices.nominal().filters().insert(std::make_pair(filter, row));
     else if (m_currentMatrixType == VERBAL)
         m_matrices.verbal().filters().insert(std::make_pair(filter, row));
+  m_reader.skipCurrentElement();
 }
 
 //     <debuts REF="FV1 FV4 FV5 FV6 FV8 FV9 FV11 FV12 FV13 FV14 FV17 FV18 FV19 FV20 FV22 FV23 FV26 FV31 FV34"/>
@@ -392,6 +393,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readBeginnings()
         m_matrices.verbalBegin() = row;
 //            std::cerr << "New debuts is " << m_matrices.verbalBegin() << std::endl;
     }
+  m_reader.skipCurrentElement();
 }
 
 //     <fins REF="FV1 FV2 FV4 FV5 FV6 FV8 FV9 FV10 FV15 FV19 FV21 FV24 FV28 FV29 FV30 FV33"/>
@@ -420,6 +422,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readEndings()
         m_matrices.nominalEnd() = row;
     else if (m_currentMatrixType == VERBAL)
         m_matrices.verbalEnd() = row;
+  m_reader.skipCurrentElement();
 }
 
 QString XmlSyntagmaticMatrixFileReader::errorString() const

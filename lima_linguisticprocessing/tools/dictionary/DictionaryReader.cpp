@@ -100,6 +100,8 @@ class DictionaryCompilerPrivate
   bool parse(QIODevice *device);
   void readDictionary();
   void readEntry();
+  void readConcat();
+  void readC();
   void readI();
   void readP();
 
@@ -375,6 +377,8 @@ void DictionaryCompilerPrivate::readEntry()
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("i"))
           readI();
+      else if (m_reader.name() == QLatin1String("concat"))
+          readConcat();
       else
           m_reader.raiseError(QObject::tr("Expected an i but got a %1.").arg(m_reader.name()));
   }
@@ -437,6 +441,159 @@ void DictionaryCompilerPrivate::readEntry()
   m_currentEntry->concatLength = concatLength;
   m_concatStack.clear();
   m_inDeleteEntry = false;
+}
+
+// <entry k="nouveau-phoenix" desacc="no">
+//   <concat>
+//     <c form="nouveau">
+//       <i l="nouveau">
+//         <p v="ADJ:-fs"/>
+//       </i>
+//     </c>
+//     …
+//   </concat>
+// </entry>
+void DictionaryCompilerPrivate::readConcat()
+{
+  ANALYSISDICTLOGINIT;
+  LTRACE << "DictionaryCompilerPrivate::readConcat" << m_reader.name();
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("concat"));
+
+  if (m_inDeleteEntry)
+  {
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "ERROR : found concat in delete entry " << m_currentKey
+        << " ! data can be inconsistant";
+    LERROR << errorString;
+    throw std::runtime_error(errorString.toStdString());
+  }
+  m_inDeleteConcat = false;
+  m_concatStack.push_back(Concat());
+  auto op = m_reader.attributes().value(S_OP);
+  if (!op.isEmpty())
+  {
+    if (op == S_REPLACE )
+    {
+      m_concatStack.back().del = true;
+    }
+    else if (op == S_DELETE)
+    {
+      m_concatStack.back().del = true;
+      m_inDeleteConcat = true;
+    }
+    else if (op != S_ADD)
+    {
+      LERROR << "ERROR : invalid attribute op=\"" << op << "\" for tag concat ! ignore it" ;
+    }
+  }
+  m_inConcat = true;
+  m_nextComponentPos = 0;
+
+  while (m_reader.readNextStartElement()) {
+      if (m_reader.name() == QLatin1String("c"))
+          readC();
+      else
+          m_reader.raiseError(QObject::tr("Expected an i but got a %1.").arg(m_reader.name()));
+  }
+
+}
+
+//     <c form="nouveau">
+//       <i l="nouveau">
+//         <p v="ADJ:-fs"/>
+//       </i>
+//     </c>
+void DictionaryCompilerPrivate::readC()
+{
+  ANALYSISDICTLOGINIT;
+  LTRACE << "DictionaryCompilerPrivate::readC" << m_reader.name();
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("c"));
+
+  if (m_inDeleteConcat)
+  {
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "ERROR : found component in delete concatenated for entry "
+        << m_currentKey << " ! data can be inconsistant";
+    LERROR << errorString;
+    throw std::runtime_error(errorString.toStdString());
+  }
+  auto form = m_reader.attributes().value(S_FORM);
+  if (form.isEmpty())
+  {
+    LERROR << "ERROR : tag <c> has no attribute 'form' !";
+  }
+  auto formStr = form.toString();
+  //    cerr << "read componant form " << limastring2utf8stdstring(m_currentKey) << endl;
+  auto formStrIndex = getStringIndex(formStr);
+  if (formStrIndex == 0)
+  {
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "ERROR : form '" << formStr
+          << "' not found in access keys ! data will be incorrect";
+    LERROR << errorString;
+    throw std::runtime_error(errorString.toStdString());
+
+//       formStrIndex=1;
+  }
+  if (m_reverseKeys)
+  {
+    std::reverse(formStr.begin(), formStr.end());
+  }
+  auto position = m_currentKey.indexOf(formStr,m_nextComponentPos);
+  if (m_reverseKeys)
+  {
+    // nextComponentPos constraint is a bit more complicated
+    position = m_currentKey.indexOf(formStr,
+                                    m_currentKey.size() - m_nextComponentPos - formStr.size());
+  }
+  if (position == -1)
+  {
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "ERROR : component '" << formStr << "' doesn't match in key '"
+        << m_currentKey << "' ! data will be incorrect";
+    LERROR << errorString;
+    throw std::runtime_error(errorString.toStdString());
+//       position=0;
+  }
+  auto pos = m_reader.attributes().value(S_POS);
+  if (!pos.isEmpty())
+  {
+    position = pos.toInt();
+  }
+  if (m_currentKey.indexOf(formStr, position) != position)
+  {
+    QString errorString;
+    QTextStream qts(&errorString);
+    qts << "ERROR component '" << formStr << "' not found at position "
+        << position << " in key '" << m_currentKey
+        << "' ! data will be incorrect";
+    LERROR << errorString;
+    throw std::runtime_error(errorString.toStdString());
+  }
+  if (m_reverseKeys)
+  {
+    position = m_currentKey.size() - position - formStr.size();
+  }
+  auto& concat = m_concatStack.back();
+  concat.components.push_back(Component());
+  auto& component = concat.components.back();
+  component.form = formStrIndex;
+  component.pos = position;
+  component.len = formStr.size();
+  m_nextComponentPos = component.pos+component.len;
+  //    cerr << "read c form=" << formStrIndex << " pos=" << position << " len=" << formStr.size() << endl;
+
+  while (m_reader.readNextStartElement()) {
+      if (m_reader.name() == QLatin1String("i"))
+          readI();
+      else
+          m_reader.raiseError(QObject::tr("readC: Expected an i but got a %1.").arg(m_reader.name()));
+  }
+
 }
 
 //   <i l="dollar">
@@ -567,153 +724,9 @@ void DictionaryCompilerPrivate::readP()
   {
     LERROR << "Invalid property '" << v << "' for '" << m_currentKey << "', ignore it !";
   }
+  m_reader.skipCurrentElement();
 }
 
-// bool DictionaryCompilerPrivate::startElement(const QString & namespaceURI,
-//                                       const QString & name,
-//                                       const QString & qName,
-//                                       const QXmlAttributes & attributes)
-// {  if (name == S_CONCAT)
-//   {
-//     if (m_inDeleteEntry)
-//     {
-//       QString errorString;
-//       QTextStream qts(&errorString);
-//       qts << "ERROR : found concat in delete entry " << m_currentKey
-//           << " ! data can be inconsistant";
-//       LERROR << errorString;
-//       throw std::runtime_error(errorString.toStdString());
-//     }
-//     m_inDeleteConcat = false;
-//     m_concatStack.push_back(Concat());
-//     auto op = m_reader.attributes().value(S_OP);
-//     if (!op.isEmpty())
-//     {
-//       if (op == S_REPLACE )
-//       {
-//         m_concatStack.back().del = true;
-//       }
-//       else if (op == S_DELETE)
-//       {
-//         m_concatStack.back().del = true;
-//         m_inDeleteConcat = true;
-//       }
-//       else if (op != S_ADD)
-//       {
-//         LERROR << "ERROR : invalid attribute op=\"" << op
-//                 << "\" for tag concat ! ignore it" ;
-//       }
-//     }
-//     m_inConcat = true;
-//     m_nextComponentPos = 0;
-//   }
-//   if (name == S_C)
-//   {
-//     if (m_inDeleteConcat)
-//     {
-//       QString errorString;
-//       QTextStream qts(&errorString);
-//       qts << "ERROR : found component in delete concatenated for entry "
-//           << m_currentKey << " ! data can be inconsistant";
-//       LERROR << errorString;
-//       throw std::runtime_error(errorString.toStdString());
-//     }
-//     auto form = m_reader.attributes().value(S_FORM);
-//     if (form.isEmpty())
-//     {
-//       LERROR << "ERROR : tag <c> has no attribute 'form' !";
-//     }
-//     auto formStr = form;
-//     //    cerr << "read componant form " << limastring2utf8stdstring(m_currentKey) << endl;
-//     auto formStrIndex = getStringIndex(formStr);
-//     if (formStrIndex == 0)
-//     {
-//       QString errorString;
-//       QTextStream qts(&errorString);
-//       qts << "ERROR : form '" << formStr
-//             << "' not found in access keys ! data will be incorrect";
-//       LERROR << errorString;
-//       throw std::runtime_error(errorString.toStdString());
-//
-// //       formStrIndex=1;
-//     }
-//     if (m_reverseKeys)
-//     {
-//       reverse(formStr.begin(), formStr.end());
-//     }
-//     auto position = m_currentKey.indexOf(formStr,m_nextComponentPos);
-//     if (m_reverseKeys)
-//     {
-//       // nextComponentPos constraint is a bit more complicated
-//       position = m_currentKey.indexOf(formStr,
-//                                       m_currentKey.size() - m_nextComponentPos - formStr.size());
-//     }
-//     if (position == -1)
-//     {
-//       QString errorString;
-//       QTextStream qts(&errorString);
-//       qts << "ERROR : component '" << formStr << "' doesn't match in key '"
-//           << m_currentKey << "' ! data will be incorrect";
-//       LERROR << errorString;
-//       throw std::runtime_error(errorString.toStdString());
-// //       position=0;
-//     }
-//     auto pos = m_reader.attributes().value(S_POS);
-//     if (!pos.isEmpty())
-//     {
-//       position = pos.toInt();
-//     }
-//     if (m_currentKey.indexOf(formStr, position) != position)
-//     {
-//       QString errorString;
-//       QTextStream qts(&errorString);
-//       qts << "ERROR component '" << formStr << "' not found at position "
-//           << position << " in key '" << m_currentKey
-//           << "' ! data will be incorrect";
-//       LERROR << errorString;
-//       throw std::runtime_error(errorString.toStdString());
-//    }
-//     if (m_reverseKeys)
-//     {
-//       position = m_currentKey.size() - position - formStr.size();
-//     }
-//     auto& concat = m_concatStack.back();
-//     concat.components.push_back(Component());
-//     auto& component = concat.components.back();
-//     component.form = formStrIndex;
-//     component.pos = position;
-//     component.len = formStr.size();
-//     m_nextComponentPos = component.pos+component.len;
-//     //    cerr << "read c form=" << formStrIndex << " pos=" << position << " len=" << formStr.size() << endl;
-//   }
-//   if (name != S_DICTIONARY)
-//   {
-//     QString errorString;
-//     QTextStream qts(&errorString);
-//     qts << "ERROR : unknown open tag <" << name << "> in input file";
-//     LERROR << errorString;
-//   }
-//   return true;
-//
-// }
-
-// bool DictionaryCompilerPrivate::endElement([[maybe_unused]] const QString& namespaceURI,
-//                                     const QString& name,
-//                                     [[maybe_unused]] const QString & qName)
-// {
-//   //  cerr << "endElement " << name << endl;
-//   if (name == S_CONCAT)
-//   {
-//     m_inConcat = false;
-//     m_inDeleteConcat = false;
-//   }
-//   if ((name != S_P) && (name != S_DICTIONARY))
-//   {
-//     ANALYSISDICTLOGINIT;
-//     LERROR << "ERROR : unknown end tag </" << name << ">";
-//   }
-//   return true;
-// }
 
 void DictionaryCompiler::writeBinaryDictionary(std::ostream& out)
 {

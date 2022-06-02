@@ -189,7 +189,7 @@ bool SpecificEntitiesLoaderPrivate::parse(QIODevice *device)
     }
     else if (m_reader.name() == QLatin1String("position"))
     {
-      m_position = m_reader.text().toInt(&ok);
+      m_position = m_reader.readElementText().toInt(&ok);
       if (!ok)
       {
         m_reader.raiseError(QObject::tr("Cannot convert position value %1 to integer.").arg(m_reader.text()));
@@ -197,7 +197,7 @@ bool SpecificEntitiesLoaderPrivate::parse(QIODevice *device)
     }
     else if (m_reader.name() == QLatin1String("length"))
     {
-      m_length = m_reader.text().toInt(&ok);
+      m_length = m_reader.readElementText().toInt(&ok);
       if (!ok)
       {
         m_reader.raiseError(QObject::tr("Cannot convert position value %1 to integer.").arg(m_reader.text()));
@@ -205,11 +205,15 @@ bool SpecificEntitiesLoaderPrivate::parse(QIODevice *device)
     }
     else if (m_reader.name() == QLatin1String("type"))
     {
-      m_type = m_reader.text().toString().toStdString();
+      m_type = m_reader.readElementText().toStdString();
     }
     else if (m_reader.name() == QLatin1String("string"))
     {
-      m_string = m_reader.text().toString().toStdString();
+      m_string = m_reader.readElementText().toStdString();
+    }
+    else
+    {
+      m_reader.skipCurrentElement();
     }
   }
   return !m_reader.error();

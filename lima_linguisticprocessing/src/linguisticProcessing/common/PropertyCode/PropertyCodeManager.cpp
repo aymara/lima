@@ -119,17 +119,11 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   LDEBUG << typeid(*this).name()
          << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
-//   parser->setValidationScheme(SAXParser::Val_Auto);
-//   parser->setDoNamespaces(false);
-//   parser->setDoSchema(false);
-//   parser->setValidationSchemaFullChecking(false);
-
   //
-  //  Create the handler object and install it as the document and error
-  //  handler for the parser-> Then parse the file and catch any exceptions
+  //  Create the reader object then parse the file and catch any exceptions
   //  that propogate out
   //
-    XmlPropertyReader handler;
+    XmlPropertyReader reader;
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing";
 #endif
@@ -139,10 +133,10 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     LIMA_EXCEPTION("PropertyCodeManager::readFromXmlFile Unable to open "
                   << filename.c_str());
   }
-  if (!handler.parse(&file))
+  if (!reader.parse(&file))
   {
     LIMA_EXCEPTION_SELECT("Error while parsing " << filename.c_str()
-                          << " : " << handler.errorString(),
+                          << " : " << reader.errorString(),
                           XMLException);
   }
 #ifdef DEBUG_LP
@@ -152,7 +146,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   uint8_t usedBits=0;
 
   // compute data for properties
-  const auto& properties = handler.getProperties();
+  const auto& properties = reader.getProperties();
 #ifdef DEBUG_LP
   LDEBUG << properties.size() << " properties read from xmlfile ";
 #endif
@@ -199,7 +193,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
                      PropertyManager(desc->name, mask, mask, symbol2code)));
   }
 
-  const auto& subproperties = handler.getSubProperties();
+  const auto& subproperties = reader.getSubProperties();
 #ifdef DEBUG_LP
   LDEBUG << subproperties.size() << " subproperties read from file";
 #endif
@@ -403,17 +397,11 @@ void PropertyCodeManager::convertSymbolicCodes(
   LDEBUG << "convert Symbolic Code file " << symbolicCodeFile;
 #endif
 
-//   parser->setValidationScheme(SAXParser::Val_Auto);
-//   parser->setDoNamespaces(false);
-//   parser->setDoSchema(false);
-//   parser->setValidationSchemaFullChecking(false);
-
   //
-  //  Create the handler object and install it as the document and error
-  //  handler for the parser-> Then parse the file and catch any exceptions
+  //  Create the reader object then parse the file and catch any exceptions
   //  that propogate out
   //
-  SymbolicCodeXmlReader handler(*this, conversionTable);
+  SymbolicCodeXmlReader reader(*this, conversionTable);
   QFile file(symbolicCodeFile.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -423,16 +411,16 @@ void PropertyCodeManager::convertSymbolicCodes(
       std::string("PropertyCodeManager::convertSymbolicCodes Unable to open ")
                   + symbolicCodeFile);
   }
-  if (!handler.parse(&file))
+  if (!reader.parse(&file))
   {
     PROPERTYCODELOGINIT;
     LERROR << "PropertyCodeManager::convertSymbolicCodes An error occurred parsing"
            << symbolicCodeFile
            << ". Error: "
-           << handler.errorString() ;
+           << reader.errorString() ;
     throw XMLException(
       std::string("Error while parsing " + symbolicCodeFile + " : "
-                  + handler.errorString().toUtf8().constData()));
+                  + reader.errorString().toUtf8().constData()));
   }
 }
 

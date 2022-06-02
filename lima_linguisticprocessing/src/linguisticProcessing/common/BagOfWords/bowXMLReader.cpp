@@ -348,6 +348,7 @@ void BoWXmlReaderPrivate::readBowToken()
     m_currentComplexToken.back().currentPart++;
     // token has been cloned in complex token
   }
+  m_reader.skipCurrentElement();
 }
 
 void BoWXmlReaderPrivate::readBowTerm()
@@ -446,6 +447,7 @@ void BoWXmlReaderPrivate::readBowNamedEntity()
     m_currentComplexToken.back().currentPart++;
     // token has been cloned in addPart => delete it
   }
+  m_reader.skipCurrentElement();
 }
 
 void BoWXmlReaderPrivate::readParts()
@@ -478,6 +480,7 @@ void BoWXmlReaderPrivate::readBowTokenRef()
 
   uint64_t refId = getIntAttribute(m_reader,"refId");
   m_currentComplexToken.back().token->addPart(m_refMap[refId]);
+  m_reader.skipCurrentElement();
 }
 
 void BoWXmlReaderPrivate::readFeature()
@@ -490,6 +493,7 @@ void BoWXmlReaderPrivate::readFeature()
   auto value = getQStringAttribute(m_reader,"value");
   boost::dynamic_pointer_cast<BoWNamedEntity>(m_currentComplexToken.back().token)->
     setFeature(name,value);
+  m_reader.skipCurrentElement();
 }
 
 // -----------------------------------------------------------------------

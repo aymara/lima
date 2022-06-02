@@ -49,6 +49,7 @@ public:
 
   void readDictionary();
   void readEntry();
+  void readConcat();
   void readI();
   void readC();
   void readP();
@@ -182,10 +183,24 @@ void KeysLoggerPrivate::readEntry()
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("i"))
           readI();
-      else if (m_reader.name() == QLatin1String("c"))
+      else if (m_reader.name() == QLatin1String("concat"))
+          readConcat();
+      else
+          m_reader.raiseError(QObject::tr("Expected an i or a concat but got a %1.").arg(m_reader.name()));
+  }
+}
+
+void KeysLoggerPrivate::readConcat()
+{
+  BOWLOGINIT;
+  LTRACE << "KeysLoggerPrivate::readConcat" << m_reader.name();
+  Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("concat"));
+
+  while (m_reader.readNextStartElement()) {
+      if (m_reader.name() == QLatin1String("c"))
           readC();
       else
-          m_reader.raiseError(QObject::tr("Expected an i but got a %1.").arg(m_reader.name()));
+          m_reader.raiseError(QObject::tr("Expected a c but got a %1.").arg(m_reader.name()));
   }
 }
 
@@ -235,10 +250,10 @@ void KeysLoggerPrivate::readC()
     }
 
   while (m_reader.readNextStartElement()) {
-      if (m_reader.name() == QLatin1String("p"))
-          readP();
+      if (m_reader.name() == QLatin1String("i"))
+          readI();
       else
-          m_reader.raiseError(QObject::tr("Expected a p but got a %1.").arg(m_reader.name()));
+          m_reader.raiseError(QObject::tr("Expected an i but got a %1.").arg(m_reader.name()));
   }
 }
 
@@ -248,6 +263,7 @@ void KeysLoggerPrivate::readP()
   DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readP" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("p"));
+  m_reader.skipCurrentElement();
 }
 
 QString KeysLoggerPrivate::errorString() const

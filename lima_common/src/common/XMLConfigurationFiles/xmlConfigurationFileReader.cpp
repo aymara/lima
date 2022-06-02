@@ -206,9 +206,9 @@ void XmlConfigurationFileReaderPrivate::readGroup()
         if (m_reader.name() == QLatin1String("param"))
             readParam();
         else if (m_reader.name() == QLatin1String("list"))
-            readParam();
+            readList();
         else if (m_reader.name() == QLatin1String("map"))
-            readParam();
+            readMap();
         else
             m_reader.raiseError(QObject::tr("Expected a param, a list or a map in group %1, in module %2 but got a %3.").arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
     }
@@ -224,6 +224,7 @@ void XmlConfigurationFileReaderPrivate::readParam()
   XMLCFGLOGINIT;
   LTRACE << "XmlConfigurationFileReader::readParam" << key << value;
   m_configuration.addParamValuePairForModuleAndGroup(key.toString(), value.toString(), m_moduleName, m_groupName);
+  m_reader.skipCurrentElement();
 }
 
 //       <list name="available">
@@ -293,7 +294,7 @@ void XmlConfigurationFileReaderPrivate::readListItem()
     auto value = m_reader.attributes().value(listItemValueAttribute());
     m_configuration.addItemInListNamedForModuleAndGroup(value.toString(), m_listName, m_moduleName, m_groupName);
   }
-
+  m_reader.skipCurrentElement();
 }
 
 //       <map name="conceptTypes">
@@ -370,6 +371,7 @@ void XmlConfigurationFileReaderPrivate::readMapEntry()
     auto value = m_reader.attributes().value(mapEntryValueAttribute());
     m_configuration.addEntryInMapNamedForModuleAndGroup(key.toString(), value.toString(), m_mapName, m_moduleName, m_groupName);
   }
+  m_reader.skipCurrentElement();
 }
 
 QString XmlConfigurationFileReader::errorString() const
