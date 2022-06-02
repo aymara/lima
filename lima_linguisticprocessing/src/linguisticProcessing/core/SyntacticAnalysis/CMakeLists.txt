@@ -83,7 +83,7 @@ install(FILES  SyntacticRelationsLogger.h
     SyntagmaticMatrix.h
     TokenFilter.h
     XmlSyntagmaticMatrixFileExceptions.h
-    XmlSyntagmaticMatrixFileHandler.h
+    XmlSyntagmaticMatrixFileReader.h
   DESTINATION include/linguisticProcessing/core/SyntacticAnalysis
   COMPONENT devel
 )

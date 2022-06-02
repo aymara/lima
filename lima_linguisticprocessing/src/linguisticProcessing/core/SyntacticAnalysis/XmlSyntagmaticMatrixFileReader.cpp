@@ -156,7 +156,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readPrecedenceMatrix()
     {
       if (m_reader.name() == QLatin1String("chaine"))
         readChain();
-      if (m_reader.name() == QLatin1String("matrice"))
+      else if (m_reader.name() == QLatin1String("matrice"))
         readMatrix();
       else
         m_reader.raiseError(QObject::tr("Expected a chaine or matrice but got a %1.").arg(m_reader.name()));
@@ -173,7 +173,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readChain()
 {
     SALOGINIT;
     LTRACE << "readChain";
-    Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("chain"));
+    Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("chaine"));
 
     std::string currentChainType = (m_reader.attributes().value("type")).toUtf8().data();
     if (currentChainType == "nominale") m_currentChainType = NOMINAL;

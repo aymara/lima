@@ -17,13 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /**
-  *
-  * @file        XmlSyntagmaticMatrixFileHandler.h
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
+  * @author      Gael de Chalendar <Gael.de-Chalendar@cea.fr>
   * @date        Created on  : Mon Aug 04 2003
-  *              Copyright   : (c) 2003 by CEA
-  * @version     $Id$
-  *
   */
 
 
