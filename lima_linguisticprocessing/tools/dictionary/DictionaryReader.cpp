@@ -232,8 +232,10 @@ bool DictionaryCompiler::parse(QIODevice *device)
 // …
 bool DictionaryCompilerPrivate::parse(QIODevice *device)
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "parse";
+#endif
   m_reader.setDevice(device);
   if (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("dictionary"))
@@ -258,10 +260,11 @@ bool DictionaryCompilerPrivate::parse(QIODevice *device)
 // …
 void DictionaryCompilerPrivate::readDictionary()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readDictionary" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("dictionary"));
-
+#endif
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("entry"))
           readEntry();
@@ -278,16 +281,18 @@ void DictionaryCompilerPrivate::readDictionary()
 // </entry>
 void DictionaryCompilerPrivate::readEntry()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readEntry" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("entry"));
-
+#endif
   auto k = m_reader.attributes().value(S_K);
   if (k.isEmpty())
   {
     QString errorString;
     QTextStream qts(&errorString);
     qts << "ERROR : no attribute 'k' for entry !";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
   }
@@ -301,6 +306,7 @@ void DictionaryCompilerPrivate::readEntry()
 //     LDEBUG << "index = " << m_currentIndex;
   if (m_currentIndex == 0)
   {
+    ANALYSISDICTLOGINIT;
     LERROR << "ERROR : key '" << m_currentKey
             << "' is not in accessKeys ! ignore it" ;
     m_currentEntry = &m_invalidEntry;
@@ -310,6 +316,7 @@ void DictionaryCompilerPrivate::readEntry()
     m_currentEntry = &m_entries[m_currentIndex];
     if (m_currentEntry->lingInfoPos>0 || m_currentEntry->concatPos>0)
     {
+      ANALYSISDICTLOGINIT
       LERROR << "WARNING : entry " << limastring2utf8stdstring(m_currentKey)
               << " already exists ! replace first";
     }
@@ -332,6 +339,7 @@ void DictionaryCompilerPrivate::readEntry()
     }
     else if (op != S_ADD)
     {
+      ANALYSISDICTLOGINIT;
       LERROR << "ERROR : invalid attribute op=\"" << op << "\" !";
     }
   }
@@ -360,6 +368,7 @@ void DictionaryCompilerPrivate::readEntry()
         }
         else
         {
+          ANALYSISDICTLOGINIT;
           LERROR << "ERROR : invalid attribute desacc=\"" << desacc
                   << "\" ! ignore it";
         }
@@ -455,16 +464,18 @@ void DictionaryCompilerPrivate::readEntry()
 // </entry>
 void DictionaryCompilerPrivate::readConcat()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readConcat" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("concat"));
-
+#endif
   if (m_inDeleteEntry)
   {
     QString errorString;
     QTextStream qts(&errorString);
     qts << "ERROR : found concat in delete entry " << m_currentKey
         << " ! data can be inconsistant";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
   }
@@ -484,6 +495,7 @@ void DictionaryCompilerPrivate::readConcat()
     }
     else if (op != S_ADD)
     {
+      ANALYSISDICTLOGINIT;
       LERROR << "ERROR : invalid attribute op=\"" << op << "\" for tag concat ! ignore it" ;
     }
   }
@@ -506,22 +518,25 @@ void DictionaryCompilerPrivate::readConcat()
 //     </c>
 void DictionaryCompilerPrivate::readC()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readC" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("c"));
-
+#endif
   if (m_inDeleteConcat)
   {
     QString errorString;
     QTextStream qts(&errorString);
     qts << "ERROR : found component in delete concatenated for entry "
         << m_currentKey << " ! data can be inconsistant";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
   }
   auto form = m_reader.attributes().value(S_FORM);
   if (form.isEmpty())
   {
+    ANALYSISDICTLOGINIT;
     LERROR << "ERROR : tag <c> has no attribute 'form' !";
   }
   auto formStr = form.toString();
@@ -533,6 +548,7 @@ void DictionaryCompilerPrivate::readC()
     QTextStream qts(&errorString);
     qts << "ERROR : form '" << formStr
           << "' not found in access keys ! data will be incorrect";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
 
@@ -555,6 +571,7 @@ void DictionaryCompilerPrivate::readC()
     QTextStream qts(&errorString);
     qts << "ERROR : component '" << formStr << "' doesn't match in key '"
         << m_currentKey << "' ! data will be incorrect";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
 //       position=0;
@@ -571,6 +588,7 @@ void DictionaryCompilerPrivate::readC()
     qts << "ERROR component '" << formStr << "' not found at position "
         << position << " in key '" << m_currentKey
         << "' ! data will be incorrect";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
   }
@@ -602,15 +620,17 @@ void DictionaryCompilerPrivate::readC()
 //   </i>
 void DictionaryCompilerPrivate::readI()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readI" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("i"));
-
+#endif
   if (m_inDeleteEntry)
   {
     QString errorString;
     QTextStream qts(&errorString);
     qts << "ERROR : found linginfo in delete entry : " << m_currentKey << " ! entry data will be inconsistant ! ";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     throw std::runtime_error(errorString.toStdString());
   }
@@ -642,6 +662,7 @@ void DictionaryCompilerPrivate::readI()
     }
     else if (op != S_ADD)
     {
+      ANALYSISDICTLOGINIT;
       LERROR << "ERROR : invalid attribute op=\"" << op << "\" !";
     }
   }
@@ -692,16 +713,18 @@ void DictionaryCompilerPrivate::readI()
 //     <p v="NC:m--"/>
 void DictionaryCompilerPrivate::readP()
 {
+#ifdef DEBUG_LP
   ANALYSISDICTLOGINIT;
   LTRACE << "DictionaryCompilerPrivate::readP" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("p"));
-
+#endif
 
   if (m_inDeleteLingInfo)
   {
     QString errorString;
     QTextStream qts(&errorString);
     qts << "ERROR : found property in delete lingInfo for entry " << m_currentKey << " ! data can be inconsistant";
+    ANALYSISDICTLOGINIT;
     LERROR << errorString;
     m_reader.raiseError(QObject::tr("ERROR : found property in delete lingInfo for entry %1 ! data can be inconsistant")
                           .arg(m_currentKey));
@@ -709,6 +732,7 @@ void DictionaryCompilerPrivate::readP()
   auto v = m_reader.attributes().value(S_V);
   if (v.isEmpty())
   {
+    ANALYSISDICTLOGINIT;
     LERROR << "ERROR : tag <p> has no attribute 'v' for '"
             << m_currentKey << "'!";
     m_reader.raiseError(QObject::tr("ERROR : tag <p> has no attribute 'v' for '%1'!").arg(m_currentKey));
@@ -722,6 +746,7 @@ void DictionaryCompilerPrivate::readP()
   }
   else
   {
+    ANALYSISDICTLOGINIT;
     LERROR << "Invalid property '" << v << "' for '" << m_currentKey << "', ignore it !";
   }
   m_reader.skipCurrentElement();

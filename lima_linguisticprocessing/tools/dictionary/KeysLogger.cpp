@@ -114,8 +114,10 @@ KeysLogger::~KeysLogger()
 
 bool KeysLoggerPrivate::parse(QIODevice *device)
 {
-  BOWLOGINIT;
+#ifdef DEBUG_LP
+  DICTIONARYLOGINIT;
   LDEBUG << "KeysLoggerPrivate::parse";
+#endif
   m_reader.setDevice(device);
   if (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("dictionary"))
@@ -132,10 +134,11 @@ bool KeysLoggerPrivate::parse(QIODevice *device)
 
 void KeysLoggerPrivate::readDictionary()
 {
-  BOWLOGINIT;
+#ifdef DEBUG_LP
+  DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readDictionary" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("dictionary"));
-
+#endif
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("entry"))
           readEntry();
@@ -146,10 +149,11 @@ void KeysLoggerPrivate::readDictionary()
 
 void KeysLoggerPrivate::readEntry()
 {
-  BOWLOGINIT;
+#ifdef DEBUG_LP
+  DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readEntry" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("entry"));
-
+#endif
   m_current = m_reader.attributes().value(S_K).toString();
   if (m_current == 0)
   {
@@ -192,10 +196,11 @@ void KeysLoggerPrivate::readEntry()
 
 void KeysLoggerPrivate::readConcat()
 {
-  BOWLOGINIT;
+#ifdef DEBUG_LP
+  DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readConcat" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("concat"));
-
+#endif
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("c"))
           readC();
@@ -206,10 +211,11 @@ void KeysLoggerPrivate::readConcat()
 
 void KeysLoggerPrivate::readI()
 {
-  BOWLOGINIT;
+#ifdef DEBUG_LP
+  DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readI" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("i"));
-
+#endif
   auto l = m_reader.attributes().value(S_L);
   if ((!l.isEmpty()) && (m_reverseKeys || m_current != l))
   {
@@ -233,10 +239,11 @@ void KeysLoggerPrivate::readI()
 
 void KeysLoggerPrivate::readC()
 {
+#ifdef DEBUG_LP
   DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readC" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("c"));
-
+#endif
     m_current = m_reader.attributes().value(S_FORM).toString();
     if (!m_current.isEmpty())
     {
@@ -260,15 +267,17 @@ void KeysLoggerPrivate::readC()
 //     <p v="NC:m--"/>
 void KeysLoggerPrivate::readP()
 {
+#ifdef DEBUG_LP
   DICTIONARYLOGINIT;
   LTRACE << "KeysLoggerPrivate::readP" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("p"));
+#endif
   m_reader.skipCurrentElement();
 }
 
 QString KeysLoggerPrivate::errorString() const
 {
-  XMLCFGLOGINIT;
+  DICTIONARYLOGINIT;
   auto errorStr = QObject::tr("%1, Line %2, column %3")
           .arg(m_reader.errorString())
           .arg(m_reader.lineNumber())
