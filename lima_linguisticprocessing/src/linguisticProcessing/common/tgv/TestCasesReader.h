@@ -28,8 +28,6 @@
 #include "TestCase.h"
 #include "TestCaseProcessor.hpp"
 
-#include <QtXml/QXmlDefaultHandler>
-
 namespace Lima
 {
 namespace Common

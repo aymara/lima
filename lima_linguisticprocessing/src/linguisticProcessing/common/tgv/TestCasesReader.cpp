@@ -63,22 +63,12 @@ public:
   std::map<std::string, TestCasesReader::TestReport> m_reportByType;
 
 
-//   std::string m_reader.attributes().value(const QString& attr, const QXmlAttributes& attrs) const;
-
-  // Liste des parametres possibles et obligatoires dans un TestCase
-  // pour lp: (text, language, pipeline?...)
-  // std::map<std::string,bool> m_simpleValParamTestCaseKeys;
-  // std::map<std::string,bool> m_multiValParamTestCaseKeys;
-
   TestCaseProcessor& m_processor;
   TestCase currentTestCase;
 
   std::string getName(const QString& localName,
                       const QString& qName);
 
-  bool m_inText;
-  bool m_inExpl;
-  bool m_inParam;
   bool m_inList;
   bool m_inMap;
   std::string m_listKey;
@@ -135,7 +125,7 @@ bool TestCasesReader::parse(QIODevice *device)
 // </testcases>
 bool TestCasesReaderPrivate::parse(QIODevice *device)
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LDEBUG << "TestCasesReaderPrivate::parse";
   m_reader.setDevice(device);
   if (m_reader.readNextStartElement()) {
@@ -159,7 +149,7 @@ bool TestCasesReaderPrivate::parse(QIODevice *device)
 // </testcases>
 void TestCasesReaderPrivate::readTestcases()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readCodes" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("testcases"));
 
@@ -185,7 +175,7 @@ void TestCasesReaderPrivate::readTestcases()
 //   </testcase>
 void TestCasesReaderPrivate::readTestcase()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readTestcase" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("testcase"));
 
@@ -197,36 +187,38 @@ void TestCasesReaderPrivate::readTestcase()
   LDEBUG << "TestCasesReaderPrivate::readTestcase: id=" << currentTestCase.id
           << ", type=" << currentTestCase.type;
 
-  if (!m_reader.readNextStartElement())
-  {
-    m_reader.raiseError(QObject::tr("Unexpected end of file: expected a call-parameters."));
-  }
-  else if (m_reader.name() != QLatin1String("call-parameters"))
-  {
-    m_reader.raiseError(QObject::tr("Expected a call-parameters but got a %1.").arg(m_reader.name()));
-  }
-  else
-  {
-    readCallParameters();
-  }
-  if (!m_reader.readNextStartElement())
-  {
-    m_reader.raiseError(QObject::tr("Unexpected end of file: expected a expl."));
-  }
-  else if (m_reader.name() != QLatin1String("expl"))
-  {
-    m_reader.raiseError(QObject::tr("Expected a expl but got a %1.").arg(m_reader.name()));
-  }
-  else
-  {
-    readExpl();
-  }
+  bool hasExpl = false;
+  bool hasCallParameters = false;
+  bool hasTest = false;
   while (m_reader.readNextStartElement())
   {
-    if (m_reader.name() == QLatin1String("test"))
-        readTest();
+    if (m_reader.name() == QLatin1String("call-parameters"))
+    {
+      hasCallParameters = true;
+      readCallParameters();
+    }
+    else if (m_reader.name() == QLatin1String("expl"))
+    {
+      hasExpl = true;
+      readExpl();
+    }
+    else if (m_reader.name() == QLatin1String("test"))
+    {
+      hasTest = true;
+      readTest();
+    }
     else
-        m_reader.raiseError(QObject::tr("Expected test but got a %1.").arg(m_reader.name()));
+        m_reader.raiseError(QObject::tr("Expected a call-parameters, a expl or a test but got a %1.").arg(m_reader.name()));
+  }
+  if (!hasCallParameters)
+    m_reader.raiseError(QObject::tr("Testcase is missing a call-parameters."));
+  if (!hasTest)
+    m_reader.raiseError(QObject::tr("Testcase should have at least one test. None found."));
+  if (!hasExpl)
+  {
+    LINFO << "Test case" << currentTestCase.id << "," << currentTestCase.type << "at line"
+          << m_reader.lineNumber() << ", column" << m_reader.columnNumber()
+          << "has no explanation. This is wrong.";
   }
 
   m_reportByType[currentTestCase.type].nbtests++;
@@ -237,7 +229,8 @@ void TestCasesReaderPrivate::readTestcase()
   {
     std::cout << currentTestCase.id << " (" << currentTestCase.type << ") got error (type: '"<<e()<<"'): "
               << std::endl << e.what() << std::endl;
-      if (currentTestCase.type == FATAL_ERROR_TYPE) {
+    if (currentTestCase.type == FATAL_ERROR_TYPE)
+    {
       m_hasFatalError = true;
     }
     if (e() == TestCaseError::TestCaseFailed)
@@ -275,7 +268,7 @@ void TestCasesReaderPrivate::readTestcase()
 //     </call-parameters>
 void TestCasesReaderPrivate::readCallParameters()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readCallParameters" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("call-parameters"));
 
@@ -290,22 +283,33 @@ void TestCasesReaderPrivate::readCallParameters()
       else
           m_reader.raiseError(QObject::tr("Expected a param, a list or a map but got a %1.").arg(m_reader.name()));
   }
-  m_inParam=false;
+//   LTRACE << "TestCasesReaderPrivate::readCallParameters no more start element";
+
 }
 
 //       <param key="text" value="he was born on 10 April 1950."/>
+// OR    <param key="text">he was born on 10 April 1950.</param>
 void TestCasesReaderPrivate::readParam()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readParam" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("param"));
 
   std::string key = m_reader.attributes().value("key").toString().toStdString();
-  std::string val = m_reader.attributes().value("value").toString().toStdString();
+  std::string val;
+  if (m_reader.attributes().hasAttribute("value"))
+  {
+    val = m_reader.attributes().value("value").toString().toStdString();
+    m_reader.skipCurrentElement();
+  }
+  else
+  {
+    val = m_reader.readElementText().toStdString();
+  }
+  LTRACE << "TestCasesReaderPrivate::readParam key:" << key << "value:" << val;
   currentTestCase.simpleValCallParams.insert(std::pair<std::string, std::string>(key,val) );
   // TODO: read multiValCallParams "pipelines"
   // std::string pipch=m_reader.attributes().value("pipelines");
-  m_reader.skipCurrentElement();
 }
 
 //       <list key="pipelines">
@@ -314,7 +318,7 @@ void TestCasesReaderPrivate::readParam()
 //       </list>
 void TestCasesReaderPrivate::readList()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readList" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("list"));
 
@@ -349,7 +353,7 @@ void TestCasesReaderPrivate::readList()
 //       </map>
 void TestCasesReaderPrivate::readMap()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readMap" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("map"));
 
@@ -380,7 +384,7 @@ void TestCasesReaderPrivate::readMap()
 //         <item value="limaserver"/>
 void TestCasesReaderPrivate::readItem()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readItem" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("item"));
 
@@ -419,12 +423,11 @@ void TestCasesReaderPrivate::readItem()
 //     <expl>rule for complete date with cardinal number</expl>
 void TestCasesReaderPrivate::readExpl()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readExpl" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("expl"));
   currentTestCase.explanation.append(m_reader.text().toString().toStdString());
 
-  m_inExpl=false;
   m_reader.skipCurrentElement();
 
 }
@@ -436,7 +439,7 @@ void TestCasesReaderPrivate::readExpl()
 //           right="DateTime.DATE"/>
 void TestCasesReaderPrivate::readTest()
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   LTRACE << "TestCasesReaderPrivate::readTest" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("test"));
 
@@ -492,7 +495,7 @@ int exitCode(TestCasesReader const & tch)
 
 QString TestCasesReader::errorString() const
 {
-  PROPERTYCODELOGINIT;
+  TGVLOGINIT;
   auto errorStr = QObject::tr("%1, Line %2, column %3")
           .arg(m_d->m_reader.errorString())
           .arg(m_d->m_reader.lineNumber())
