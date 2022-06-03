@@ -131,7 +131,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
-addQt5Modules(Core Gui Qml Quick QuickTest Test Xml XmlPatterns Widgets )
+addQt5Modules(Core Gui Qml Quick QuickTest Test Xml Widgets )
 # include_directories(${Qt5_INCLUDES})
 message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
 
