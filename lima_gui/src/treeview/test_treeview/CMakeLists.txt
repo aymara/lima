@@ -22,13 +22,13 @@ set (test_treeview_SRCS
   treeitem.cpp
   treemodel.cpp
 )
-qt5_add_resources(test_treeview_SRCS qml.qrc)
+qt_add_resources(test_treeview_SRCS qml.qrc)
 
 add_executable(test_treeview 
   ${test_treeview_SRCS}
 )
 target_link_libraries(test_treeview 
-  ${Qt5_LIBRARIES}
+  ${Qt_LIBRARIES}
 )
 
 install(TARGETS test_treeview DESTINATION bin)

@@ -88,7 +88,7 @@ install(TARGETS limasimple-analyze DESTINATION bin
 #     lima-common
 #     lima-linguisticprocessing
 #   ${optionalLibs}
-#   ${Qt5_LIBRARIES}
+#   ${Qt_LIBRARIES}
 #   ${Boost_LIBRARIES}
 # )
 #

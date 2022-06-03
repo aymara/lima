@@ -11,11 +11,11 @@ SET(annoqt_SRCS
            specificEntitiesHandler.cpp
            specificEntity.cpp)
 
-qt5_add_resources(annoqt_QRCS annoqt.qrc)
+qt_add_resources(annoqt_QRCS annoqt.qrc)
 
 add_executable(annoqt ${annoqt_SRCS} ${annoqt_QRCS})
 
-target_link_libraries(annoqt ${Qt5_LIBRARIES})
+target_link_libraries(annoqt ${Qt_LIBRARIES})
 
 
 ########### next target ###############
@@ -32,11 +32,11 @@ SET(annoqtconfeditor_SRCS
            khuesaturationselect.cpp
            kcolordialog.cpp)
 
-qt5_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
+qt_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
 
 add_executable(annoqtconfeditor ${annoqtconfeditor_SRCS} ${annoqtconfeditor_QRCS})
 
-target_link_libraries(annoqtconfeditor ${Qt5_LIBRARIES})
+target_link_libraries(annoqtconfeditor ${Qt_LIBRARIES})
 
 
 

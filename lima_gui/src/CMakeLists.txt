@@ -37,10 +37,10 @@ SET (lima_SRCS
 
 if (Qt5Core_FOUND)
   if (Qt5Core_VERSION VERSION_GREATER 5.7.0)
-    qt5_add_resources(lima_SRCS resources.qrc)
+    qt_add_resources(lima_SRCS resources.qrc)
     set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml)
   else()
-    qt5_add_resources(lima_SRCS resources-old.qrc)
+    qt_add_resources(lima_SRCS resources-old.qrc)
     set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml-old)
   endif()
 endif()
