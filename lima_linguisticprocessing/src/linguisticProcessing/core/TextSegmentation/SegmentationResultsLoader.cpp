@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,18 +17,19 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       SegmentationResultsLoader.cpp
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
+ * @author     Romaric Besancon <romaric.besancon@cea.fr>
  * @date       Tue Jan 18 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- *
  ***********************************************************************/
 
 #include "SegmentationResultsLoader.h"
+#include "SegmentationData.h"
 
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/Data/strwstrtools.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+
+#include <QFile>
+#include <QXmlStreamReader>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -36,23 +37,50 @@ using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 namespace Lima {
 namespace LinguisticProcessing {
 
-  SimpleFactory<MediaProcessUnit,SegmentationResultsLoader> SegmentationResultsLoaderFactory(SEGMENTATIONRESULTSLOADER_CLASSID);
+SimpleFactory<MediaProcessUnit,SegmentationResultsLoader> SegmentationResultsLoaderFactory(SEGMENTATIONRESULTSLOADER_CLASSID);
+
+
+class LIMA_TEXTSEGMENTATION_EXPORT SegmentationResultsLoaderPrivate
+{
+public:
+  SegmentationResultsLoaderPrivate();
+
+  ~SegmentationResultsLoaderPrivate() = default;
+
+  bool parse(QIODevice *device);
+  void readResults();
+
+  QString errorString() const;
+
+  QXmlStreamReader m_reader;
+
+  QString m_graphName;
+  QString m_dataName;
+
+  LinguisticAnalysisStructure::AnalysisGraph* m_graph;
+  SegmentationData* m_data;
+  uint64_t m_position;
+  uint64_t m_length;
+  QString m_type;
+
+};
 
 //***********************************************************************
 // constructors and destructors
 SegmentationResultsLoader::SegmentationResultsLoader():
-AnalysisLoader(),
-m_graph("AnalysisGraph"),
-m_dataName("segmentationData"),
-m_parser(0)
+  m_d(new SegmentationResultsLoaderPrivate())
 {
 }
 
-SegmentationResultsLoader::~SegmentationResultsLoader() {
-  if (m_parser!=0) {
-    delete m_parser;
-    m_parser=0;
-  }
+SegmentationResultsLoader::~SegmentationResultsLoader()
+{
+  delete m_d;
+}
+
+SegmentationResultsLoaderPrivate::SegmentationResultsLoaderPrivate() :
+  m_graphName("AnalysisGraph"),
+  m_dataName("segmentationData")
+{
 }
 
 //***********************************************************************
@@ -61,65 +89,62 @@ void SegmentationResultsLoader::init(Common::XMLConfigurationFiles::GroupConfigu
 
 {
   AnalysisLoader::init(unitConfiguration,manager);
-  try {
-    m_graph=unitConfiguration.getParamsValueAtKey("graph");
+  try
+  {
+    m_d->m_graphName = QString::fromStdString(unitConfiguration.getParamsValueAtKey("graph"));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
 
-  try {
-    m_dataName=unitConfiguration.getParamsValueAtKey("data");
+  try
+  {
+    m_d->m_dataName = QString::fromStdString(unitConfiguration.getParamsValueAtKey("data"));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
-
-  //  Create a SAX parser object.
-  m_parser = new QXmlSimpleReader();
-
 }
 
 LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) const
 {
   // get analysis graph
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
-  if (graph==0)
+  auto graph = static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graphName.toStdString()));
+  if (graph == nullptr)
   {
     LOGINIT("LP::AnalysisLoader");
-    LERROR << "no graph '" << m_graph << "' available !";
+    LERROR << "no graph '" << m_d->m_graphName << "' available !";
     return MISSING_DATA;
   }
 
   // get segmentation data or create new
-  AnalysisData* data=analysis.getData(m_dataName);
-  SegmentationData* segmData=0;
-  if (data==0) {
-    segmData=new SegmentationData;
-    analysis.setData(m_dataName,segmData);
+  auto data = analysis.getData(m_d->m_dataName.toStdString());
+  SegmentationData* segmData = nullptr;
+  if (data == nullptr)
+  {
+    segmData = new SegmentationData();
+    analysis.setData(m_d->m_dataName.toStdString(), segmData);
   }
-  else {
+  else
+  {
     segmData = static_cast<SegmentationData*>(data);
-    if (segmData==0) {
+    if (segmData == nullptr)
+    {
       LOGINIT("LP::AnalysisLoader");
       LERROR << "data "<< data <<" is not an object of class SegmentationData";
       return MISSING_DATA;
     }
   }
 
-
   try
   {
-    SegmentationResultsLoader::XMLHandler handler(segmData,graph);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
     auto filename = getInputFile(analysis);
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
       LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::AnalysisLoader"),
                                     "Cannot open" << filename,
                                     XMLException);
-    if (!m_parser->parse( QXmlInputSource(&file)))
+    if (!m_d->parse(&file))
     {
       LIMA_EXCEPTION_SELECT_LOGINIT(
         LOGINIT("LP::AnalysisLoader"),
-        "Cannot parse" << filename << m_parser->errorHandler()->errorString(),
+        "Cannot parse" << filename << m_d->errorString(),
         XMLException);
     }
   }
@@ -131,99 +156,69 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
   return SUCCESS_ID;
 }
 
-//***********************************************************************
-// xerces XML handler
-SegmentationResultsLoader::XMLHandler::XMLHandler(SegmentationData* s, AnalysisGraph* graph):
-m_graph(graph),
-m_data(s),
-m_position(0),
-m_length(0),
-m_type()
+bool SegmentationResultsLoaderPrivate::parse(QIODevice *device)
 {
-  cout << "SegmentationResultsLoader::XMLHandler constructor" << endl;
+  LOGINIT("LP::AnalysisLoader");
+  LTRACE << "parse";
+  m_reader.setDevice(device);
+  readResults();
+  return !m_reader.error();
 }
 
-SegmentationResultsLoader::XMLHandler::~XMLHandler()
+void SegmentationResultsLoaderPrivate::readResults()
 {
-}
+  LOGINIT("LP::AnalysisLoader");
+  LTRACE << "SegmentationResultsLoaderPrivate::readResults";
 
-bool SegmentationResultsLoader::XMLHandler::endElement(const QString & namespaceURI, const QString & eltName, const QString & qName)
-{
-  LIMA_UNUSED(namespaceURI);
-  LIMA_UNUSED(qName);
-  string name=toString(eltName);
-  if (name=="segment") {
-    LOGINIT("LP::AnalysisLoader");
-    LDEBUG << "SegmentationResultsLoader::XMLHandler add data "  << m_type << "," << m_position << "," << m_length << "," << m_graph;
-    Segment s(m_type);
-    s.setVerticesFromPositions(m_position,m_length,m_graph);
-    m_data->add(s);
+  bool ok;
+  while (m_reader.readNextStartElement())
+  {
+    if (m_reader.name() == QLatin1String("segment"))
+    {
+      LDEBUG << "SegmentationResultsLoader::XMLHandler add data "  << m_type << "," << m_position << ","
+              << m_length << "," << m_graph;
+      Segment s(m_type.toStdString());
+      s.setVerticesFromPositions(m_position, m_length, m_graph);
+      m_data->add(s);
+    }
+    else if (m_reader.name() == "position")
+    {
+      m_position = m_reader.readElementText().toInt(&ok);
+      if (!ok)
+      {
+        m_reader.raiseError(QObject::tr("Cannot convert position value %1 to int.").arg(m_reader.text()));
+      }
+    }
+    else if (m_reader.name() == "length")
+    {
+      m_length = m_reader.readElementText().toInt(&ok);
+      if (!ok)
+      {
+        m_reader.raiseError(QObject::tr("Cannot convert length value %1 to int.").arg(m_reader.text()));
+      }
+    }
+    else if (m_reader.name() == "type")
+    {
+      m_type = m_reader.readElementText();
+    }
+    else
+    {
+      m_reader.skipCurrentElement();
+    }
   }
-  return true;
 }
 
-bool SegmentationResultsLoader::XMLHandler::characters(const QString& chars)
+QString SegmentationResultsLoaderPrivate::errorString() const
 {
-  LOGINIT("LP::AnalysisLoader");
-  LDEBUG << "SegmentationResultsLoader::XMLHandler characters in "  << m_currentElement;
-  if (m_currentElement=="position") {
-    std::string pos=toString(chars);
-    m_position=atoi(pos.c_str());
-  }
-  else if (m_currentElement=="length") {
-    std::string len=toString(chars);
-    m_length=atoi(len.c_str());
-  }
-  else if (m_currentElement=="type") {
-    m_type=toString(chars);
-  }
-  return true;
+  XMLCFGLOGINIT;
+  auto errorStr = QObject::tr("%1, Line %2, column %3")
+          .arg(m_reader.errorString())
+          .arg(m_reader.lineNumber())
+          .arg(m_reader.columnNumber());
+  LERROR << errorStr;
+  return errorStr;
 }
 
-bool SegmentationResultsLoader::XMLHandler::
-startElement(const QString & namespaceURI, const QString & eltName, const QString & qName, const QXmlAttributes & attributes)
-{
-  LIMA_UNUSED(namespaceURI);
-  LIMA_UNUSED(qName);
-  LIMA_UNUSED(attributes);
-  LOGINIT("LP::AnalysisLoader");
-  LDEBUG << "SegmentationResultsLoader::XMLHandler start element "  << toString(eltName);
-  m_currentElement=toString(eltName);
-  return true;
-}
-
-bool SegmentationResultsLoader::XMLHandler::warning(const QXmlParseException & e)
-{
-  LOGINIT("LP::AnalysisLoader");
-  LERROR << "Error at file " << toString(e.systemId())
-         << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber()
-         << "  Message: " << toString(e.message());
-         return true;
-}
-bool SegmentationResultsLoader::XMLHandler::error(const QXmlParseException & e)
-{
-  LOGINIT("LP::AnalysisLoader");
-  LERROR << "Fatal error at file " << toString(e.systemId())
-         << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber()
-         << "  Message: " << toString(e.message());
-         return false;
-}
-bool SegmentationResultsLoader::XMLHandler::fatalError(const QXmlParseException & e)
-{
-  LOGINIT("LP::AnalysisLoader");
-  LWARN << "Warning at file " << toString(e.systemId())
-        << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber()
-        << "  Message: " << toString(e.message());
-        return false;
-}
-
-std::string SegmentationResultsLoader::XMLHandler::toString(const LimaString& xercesString)
-{
-  return Common::Misc::limastring2utf8stdstring(xercesString);
-}
 
 } // end namespace
 } // end namespace

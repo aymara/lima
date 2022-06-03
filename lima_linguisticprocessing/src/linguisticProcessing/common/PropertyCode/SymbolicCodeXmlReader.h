@@ -17,44 +17,33 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef BOWXMLREADER_H
-#define BOWXMLREADER_H
+#ifndef SYMBOLICCODEXMLREADER_H
+#define SYMBOLICCODEXMLREADER_H
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
-#include "bowToken.h"
-#include "bowComplexToken.h"
-#include "bowText.h"
-#include "bowDocument.h"
-#include <stack>
+#include "linguisticProcessing/common/PropertyCode/PropertyCodeManager.h"
 
-#include <QtCore/QDate>
+#include <string>
+#include <map>
 
-namespace Lima {
-namespace Common {
-namespace BagOfWords {
 
-class BoWXmlReaderPrivate;
-/**
- * @brief      XML input/output for BoW elements
- * @author     Besancon Romaric <romaric.besancon@cea.fr>
- * @date       Wed May  5 2004
- **/
-class LIMA_BOW_EXPORT BoWXmlReader
+class SymbolicCodeXmlReaderPrivate;
+class LIMA_PROPERTYCODE_EXPORT SymbolicCodeXmlReader
 {
- public:
-  BoWXmlReader(const std::string& filename,
-               std::ostream& output);
-  virtual ~BoWXmlReader();
-
+public:
   // -----------------------------------------------------------------------
-  // local functions
+  //  Constructors
+  // -----------------------------------------------------------------------
+  SymbolicCodeXmlReader(const Lima::Common::PropertyCode::PropertyCodeManager& pcm,
+                        std::map<std::string,Lima::LinguisticCode>& outputMap);
+  ~SymbolicCodeXmlReader();
 
- private:
-   BoWXmlReaderPrivate* m_d;
+  bool parse(QIODevice *device);
+
+  QString errorString() const;
+
+private:
+  SymbolicCodeXmlReaderPrivate* m_d;
 };
-
-} // end namespace
-} // end namespace
-} // end namespace
 
 #endif

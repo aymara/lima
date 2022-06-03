@@ -112,7 +112,8 @@ LIMA_COMMONTOOLS_EXPORT QStringList buildResourcesDirectoriesList(const QStringL
  * @param separator the character used to split the list of paths. Defaults to semicolon
  * @return the full path of the found file if found. Empty string otherwise.
  */
-LIMA_COMMONTOOLS_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator = LIMA_PATH_SEPARATOR);
+LIMA_COMMONTOOLS_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName,
+                                                const QChar& separator = QLatin1Char(LIMA_PATH_SEPARATOR));
 
 } // end namespace
 } // end namespace

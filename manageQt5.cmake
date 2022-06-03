@@ -23,7 +23,7 @@ set(CMAKE_PREFIX_PATH
 
 # Add definitions and flags
 add_definitions(-DQT_NO_KEYWORDS)
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
+add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -DQT_DEPRECATED_WARNINGS")
 else()

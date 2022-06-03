@@ -25,7 +25,7 @@ SET(lima-lp-specificentities_LIB_SRCS
    NormalizeDateTimeResources.cpp
    MicrosForNormalization.cpp
    SpecificEntitiesMicros.cpp
-   SpecificEntitiesLoader.cpp
+#   SpecificEntitiesLoader.cpp # Not used anywhere. Should it be deprecated?
    SpecificEntitiesCompletion.cpp
 )
 
@@ -114,7 +114,7 @@ install(FILES
     SpecificEntitiesRecognizer.h
     NormalizePersonName.h
     NormalizePerson.h
-    SpecificEntitiesLoader.h
+    #SpecificEntitiesLoader.h # Not used anywhere. Should it be deprecated?
     SpecificEntitiesCompletion.h
     SpecificEntitiesExport.h
   DESTINATION include/linguisticProcessing/core/SpecificEntities

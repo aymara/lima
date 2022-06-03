@@ -24,7 +24,7 @@ SET(lima-lp-tgv_LIB_SRCS
    TestCaseError.cpp
    TestCase.cpp
    TestCaseProcessor.cpp
-   TestCasesHandler.cpp
+   TestCasesReader.cpp
 )
 
 add_library(lima-lp-tgv SHARED ${lima-lp-tgv_LIB_SRCS})

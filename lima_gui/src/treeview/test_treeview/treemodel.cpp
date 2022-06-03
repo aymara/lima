@@ -32,7 +32,7 @@ enum DEPTH {
   _e
 };
 
-#define PUSHITEM(d, c1, c2) content.push_back(std::pair<std::pair<QString, QString>, int>(std::pair<QString, QString>(QString(c1), QString(c2)), d))
+#define PUSHITEM(d, c1, c2) content.push_back(std::pair<std::pair<QString, QString>, int>(std::pair<QString, QString>(QLatin1String(c1), QLatin1String(c2)), d))
 
 TreeModel::TreeModel(QObject* p) : TreeModel(QString(),p)
 {
@@ -44,7 +44,7 @@ TreeModel::TreeModel(const QString &data, QObject *parent)
 {
   Q_UNUSED(data);
 //  load(data);
-  rootItem = new TreeItem(QList<QVariant>() << QString("Title") << QString("Summary"));
+  rootItem = new TreeItem(QList<QVariant>() << QLatin1String("Title") << QLatin1String("Summary"));
 
   std::map<int, TreeItem*> currentParents;
 
@@ -107,9 +107,9 @@ TreeModel::TreeModel(const QString &data, QObject *parent)
 void TreeModel::load(const QString& data)
 {
   QList<QVariant> rootData;
-  rootData << "Title" << "Summary";
+  rootData << QLatin1String("Title") << QLatin1String("Summary");
   rootItem = new TreeItem(rootData);
-  setupModelData(data.split(QString("\n")), rootItem);
+  setupModelData(data.split(QLatin1String("\n")), rootItem);
 }
 
 TreeModel::~TreeModel()
@@ -142,7 +142,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
 }

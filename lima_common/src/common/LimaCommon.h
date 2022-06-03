@@ -35,7 +35,7 @@
 #ifndef LIMA_MMCOMMONS_H
 #define LIMA_MMCOMMONS_H
 
-#include <QtCore/QMutex>
+#include <QtCore/QRecursiveMutex>
 #include <cstdint>
 
 #ifdef WIN32
@@ -174,9 +174,9 @@ public:
   LogInit(char const* x)
   {
     // initialisation thread-safe
-    static QMutex mutex(QMutex::Recursive);
+    static QRecursiveMutex mutex;
     QMutexLocker locker(&mutex);
-    pLogger = &QsLogging::Logger::instance(x);
+    pLogger = &QsLogging::Logger::instance(QLatin1String(x));
 #ifndef DEBUG_CD
     QsLogging::Level level = QsLogging::Categories::instance().levelFor(x);
     pLogger->setLoggingLevel(level);

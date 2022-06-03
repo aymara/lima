@@ -33,9 +33,9 @@ public:
 private:
   MultXmlReaderPrivate* m_d;
 
-  MultXmlReader();
-  MultXmlReader(const MultXmlReader&);
-  MultXmlReader& operator=(const MultXmlReader&);
+  MultXmlReader() = delete;
+  MultXmlReader(const MultXmlReader&) = delete;
+  MultXmlReader& operator=(const MultXmlReader&) = delete;
 };
 
 } // end namespace

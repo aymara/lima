@@ -20,7 +20,7 @@
   * @file       configurationStructure.cpp
   * @brief      originally detectConfigurationStructure.cpp in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -73,6 +73,13 @@ void ConfigurationStructure::addParamValuePairForModuleAndGroup(const string &pa
 //   insert(make_pair(moduleName, moduleGroups));
 }
 
+void ConfigurationStructure::addParamValuePairForModuleAndGroup(const QString& param, const QString& value,
+                                                                const QString& moduleName, const QString& group)
+{
+  addParamValuePairForModuleAndGroup(param.toStdString(), value.toStdString(),
+                                     moduleName.toStdString(), group.toStdString());
+}
+
 void ConfigurationStructure::addListNamedForModuleAndGroup(const string &listName,
     const string &moduleName, const string & groupName)
 
@@ -88,6 +95,13 @@ void ConfigurationStructure::addListNamedForModuleAndGroup(const string &listNam
   moduleGroups.addListNamedForGroup(listName, groupName);
 //   erase(moduleName);
 //   insert(make_pair(moduleName, moduleGroups));
+}
+
+void ConfigurationStructure::addListNamedForModuleAndGroup(const QString& listName, const QString& moduleName,
+                                                           const QString& groupName)
+
+{
+  addListNamedForModuleAndGroup(listName.toStdString(), moduleName.toStdString(), groupName.toStdString());
 }
 
 void ConfigurationStructure::addItemInListNamedForModuleAndGroup(const string& item,
@@ -106,6 +120,13 @@ void ConfigurationStructure::addItemInListNamedForModuleAndGroup(const string& i
 //   insert(make_pair(moduleName, moduleGroups));
 }
 
+void ConfigurationStructure::addItemInListNamedForModuleAndGroup(const QString& item, const QString& listName,
+                                                                 const QString& moduleName, const QString& groupName)
+{
+  addItemInListNamedForModuleAndGroup(item.toStdString(), listName.toStdString(),
+                                      moduleName.toStdString(), groupName.toStdString());
+}
+
 void ConfigurationStructure::addGroupNamedForModuleNamed(const string& groupName,
     const string& moduleName)
 {
@@ -122,6 +143,11 @@ void ConfigurationStructure::addGroupNamedForModuleNamed(const string& groupName
 //   insert(make_pair(moduleName, moduleGroups));
 }
 
+void ConfigurationStructure::addGroupNamedForModuleNamed(const QString& groupName, const QString& moduleName)
+{
+  addGroupNamedForModuleNamed(groupName.toStdString(), moduleName.toStdString());
+}
+
 void ConfigurationStructure::addMapNamedForModuleAndGroup(const std::string &mapName, const std::string& moduleName, const std::string& groupName)
 {
   XMLCFGLOGINIT;
@@ -134,6 +160,12 @@ void ConfigurationStructure::addMapNamedForModuleAndGroup(const std::string &map
   itC->second.addMapInGroup(mapName,groupName);
 }
 
+void ConfigurationStructure::addMapNamedForModuleAndGroup(const QString& mapName, const QString& moduleName,
+                                                          const QString& groupName)
+{
+  addMapNamedForModuleAndGroup(mapName.toStdString(), moduleName.toStdString(), groupName.toStdString());
+}
+
 void ConfigurationStructure::addEntryInMapNamedForModuleAndGroup(const std::string& entryKey,const std::string& entryValue,const std::string& mapName,const std::string& moduleName,const std::string& groupName)
 {
   XMLCFGLOGINIT;
@@ -144,6 +176,15 @@ void ConfigurationStructure::addEntryInMapNamedForModuleAndGroup(const std::stri
     throw NoSuchModule(moduleName+"["+ groupName+"]["+mapName+"]");
   }
   itC->second.addEntryInMapInGroup(entryKey,entryValue,mapName,groupName);
+}
+
+void ConfigurationStructure::addEntryInMapNamedForModuleAndGroup(const QString& entryKey, const QString& entryValue,
+                                                                 const QString& mapName, const QString& moduleName,
+                                                                 const QString& groupName)
+{
+  addEntryInMapNamedForModuleAndGroup(entryKey.toStdString(), entryValue.toStdString(),
+                                      mapName.toStdString(), moduleName.toStdString(),
+                                      groupName.toStdString());
 }
 
 void ConfigurationStructure::addAttributeForGroupInModule(const std::string& attKey,const std::string& attValue,const std::string& groupName,const std::string& moduleName)
@@ -161,8 +202,15 @@ void ConfigurationStructure::addAttributeForGroupInModule(const std::string& att
   itC->second.addAttributeInGroup(attKey,attValue,groupName);
 }
 
+void ConfigurationStructure::addAttributeForGroupInModule(const QString& attKey, const QString& attValue,
+                                                          const QString& groupName,const QString& moduleName)
+{
+  addAttributeForGroupInModule(attKey.toStdString(), attValue.toStdString(),
+                               groupName.toStdString(), moduleName.toStdString());
+}
+
 GroupConfigurationStructure& ConfigurationStructure::
-getGroupConf(const std::string& moduleName, 
+getGroupConf(const std::string& moduleName,
              const std::string& group)
 {
   iterator itC = find(moduleName);
@@ -176,25 +224,25 @@ getGroupConf(const std::string& moduleName,
 }
 
 void ConfigurationStructure::
-addListOfItemsForModuleAndGroup(const std::string &listName, 
-                                const std::string& moduleName, 
+addListOfItemsForModuleAndGroup(const std::string &listName,
+                                const std::string& moduleName,
                                 const std::string& group)
 {
   getGroupConf(moduleName,group).addListOfItems(listName);
 }
 
 void ConfigurationStructure::
-addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item, 
-                                      const std::string &listName, 
-                                      const std::string& moduleName, 
+addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
+                                      const std::string &listName,
+                                      const std::string& moduleName,
                                       const std::string& group)
 {
   getGroupConf(moduleName,group).addItemInListOfItems(listName,item);
 }
 
 void ConfigurationStructure::
-addMapOfItemsForModuleAndGroup(const std::string &mapName, 
-                               const std::string& moduleName, 
+addMapOfItemsForModuleAndGroup(const std::string &mapName,
+                               const std::string& moduleName,
                                const std::string& group)
 {
   getGroupConf(moduleName,group).addMapOfItems(mapName);
@@ -222,19 +270,65 @@ std::ostream& operator<<(std::ostream &os, const ConfigurationStructure& conf)
 
 
 void ConfigurationStructure::
-changeListToListOfItems(const std::string &listName, 
-                        const std::string& moduleName, 
+changeListToListOfItems(const std::string &listName,
+                        const std::string& moduleName,
                         const std::string& group)
 {
   getGroupConf(moduleName,group).changeListToListOfItems(listName);
 }
 
 void ConfigurationStructure::
-changeMapToMapOfItems(const std::string &mapName, 
-                      const std::string& moduleName, 
+changeMapToMapOfItems(const std::string &mapName,
+                      const std::string& moduleName,
                       const std::string& group)
 {
   getGroupConf(moduleName,group).changeMapToMapOfItems(mapName);
+}
+
+void ConfigurationStructure::addListOfItemsForModuleAndGroup(const QString &listName,
+                                      const QString& moduleName,
+                                      const QString& group)
+{
+  addListOfItemsForModuleAndGroup(listName.toStdString(), moduleName.toStdString(), group.toStdString());
+}
+
+void ConfigurationStructure::addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
+                                            const QString &listName,
+                                            const QString& moduleName,
+                                            const QString& group)
+{
+  addItemInListOfItemsForModuleAndGroup(item, listName.toStdString(), moduleName.toStdString(), group.toStdString());
+}
+
+void ConfigurationStructure::addMapOfItemsForModuleAndGroup(const QString &mapName,
+                                    const QString& moduleName,
+                                    const QString& group)
+{
+  addMapOfItemsForModuleAndGroup(mapName.toStdString(), moduleName.toStdString(), group.toStdString());
+}
+
+void ConfigurationStructure::addEntryInMapOfItemsForModuleAndGroup(const QString& entryKey,
+                                            const ItemWithAttributes& entryValue,
+                                            const QString& mapName,
+                                            const QString& moduleName,
+                                            const QString& groupName)
+{
+  addEntryInMapOfItemsForModuleAndGroup(entryKey.toStdString(), entryValue, mapName.toStdString(),
+                                        moduleName.toStdString(), groupName.toStdString());
+}
+
+void ConfigurationStructure::changeListToListOfItems(const QString &listName,
+                              const QString& moduleName,
+                              const QString& group)
+{
+  changeListToListOfItems(listName.toStdString(), moduleName.toStdString(), group.toStdString());
+}
+
+void ConfigurationStructure::changeMapToMapOfItems(const QString &mapName,
+                            const QString& moduleName,
+                            const QString& group)
+{
+  changeMapToMapOfItems(mapName.toStdString(), moduleName.toStdString(), group.toStdString());
 }
 
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -17,12 +17,8 @@
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
 /************************************************************************
- *
- * @file       SpecificEntitiesLoader.cpp
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
+ * @author     Romaric Besancon <romaric.besancon@cea.fr>
  * @date       Thu Jun 16 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- *
  ***********************************************************************/
 
 #include "SpecificEntitiesLoader.h"
@@ -32,9 +28,11 @@
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/Automaton/recognizerMatch.h"
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
+#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include <queue>
 
-using namespace std;
+#include <QXmlStreamReader>
+
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 using namespace Lima::LinguisticProcessing::ApplyRecognizer;
 
@@ -44,87 +42,116 @@ namespace SpecificEntities {
 
 SimpleFactory<MediaProcessUnit,SpecificEntitiesLoader> SpecificEntitiesLoaderFactory(SPECIFICENTITIESLOADER_CLASSID);
 
+class SpecificEntitiesLoaderPrivate
+{
+  friend class SpecificEntitiesLoader;
+ public:
+  SpecificEntitiesLoaderPrivate();
+  ~SpecificEntitiesLoaderPrivate() = default;
+
+  bool parse(QIODevice *device);
+
+  QString errorString() const;
+
+  QXmlStreamReader m_reader;
+  MediaId m_language;
+  QString m_graphName;
+
+//   AnalysisContent& m_analysis;
+  LinguisticAnalysisStructure::AnalysisGraph* m_graph;
+  uint64_t m_position;
+  uint64_t m_length;
+  std::string m_type;
+  std::string m_string;
+  std::string m_currentElement;
+
+  // private member functions
+  std::string toString(const QString& xercesString);
+
+  void addSpecificEntity(AnalysisContent& analysis,
+                          LinguisticAnalysisStructure::AnalysisGraph* graph,
+                          const std::string& str,
+                          const std::string& type,
+                          uint64_t position,
+                          uint64_t length);
+};
+
 //***********************************************************************
 // constructors and destructors
 SpecificEntitiesLoader::SpecificEntitiesLoader():
-m_language(0),
-m_graph("AnalysisGraph"),
-m_parser(0)
+  m_d(new SpecificEntitiesLoaderPrivate())
 {
 }
 
-SpecificEntitiesLoader::~SpecificEntitiesLoader()
+SpecificEntitiesLoaderPrivate::SpecificEntitiesLoaderPrivate():
+  m_language(0),
+  m_graphName("AnalysisGraph")
 {
 }
 
 //***********************************************************************
-void SpecificEntitiesLoader::
-init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+void SpecificEntitiesLoader::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
           Manager* manager)
 
 {
   LOGINIT("LP::SpecificEntities");
 
-  m_language=manager->getInitializationParameters().media;
+  m_d->m_language=manager->getInitializationParameters().media;
 
   AnalysisLoader::init(unitConfiguration,manager);
   try {
-    m_graph=unitConfiguration.getParamsValueAtKey("graph");
+    m_d->m_graphName = QString::fromStdString(unitConfiguration.getParamsValueAtKey("graph"));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {} // keep default value
 
   try {
     // may need to initialize a modex, to know about the entities in external file
-    deque<string> modex=unitConfiguration.getListsValueAtKey("modex");
-    for (deque<string>::const_iterator it=modex.begin(),it_end=modex.end();it!=it_end;it++) {
-      LDEBUG << "loader: initialize modex " << *it;
-      QString filename = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getConfigPath().c_str(),(*it).c_str());
-      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename.toUtf8().constData());
+    auto& modexes = unitConfiguration.getListsValueAtKey("modex");
+    for (const auto& modex: modexes)
+    {
+      LDEBUG << "loader: initialize modex " << modex;
+      QString filename = Common::Misc::findFileInPaths(
+        QString::fromStdString(Common::MediaticData::MediaticData::single().getConfigPath()),
+        QString::fromStdString(modex));
+      Common::XMLConfigurationFiles::XMLConfigurationFileParser parser(filename);
       Common::MediaticData::MediaticData::changeable().initEntityTypes(parser);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {
     LWARN << "loader: no modex specified in parameter: types in file loaded may not be known";
   }
-
-  //  Create a SAX parser object.
-  m_parser = new QXmlSimpleReader();
 }
 
-LimaStatusCode SpecificEntitiesLoader::
-process(AnalysisContent& analysis) const
+LimaStatusCode SpecificEntitiesLoader::process(AnalysisContent& analysis) const
 {
   // get analysis graph
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
-  if (graph==0)
+  auto graph = static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graphName.toStdString()));
+  if (graph == nullptr)
   {
     LOGINIT("LP::SpecificEntities");
-    LERROR << "no graph '" << m_graph << "' available !";
+    LERROR << "no graph '" << m_d->m_graphName << "' available !";
     return MISSING_DATA;
   }
 
   //create a RecognizerData (such as in ApplyRecognizer) to be able to use
   //CreateSpecificEntity actions
-  RecognizerData* recoData=new RecognizerData;
-  analysis.setData("RecognizerData",recoData);
-  RecognizerResultData* resultData=new RecognizerResultData(m_graph);
+  auto recoData = new RecognizerData();
+  analysis.setData("RecognizerData", recoData);
+  auto resultData = new RecognizerResultData(m_d->m_graphName.toStdString());
   recoData->setResultData(resultData);
 
   try
   {
-    SpecificEntitiesLoader::XMLHandler handler(m_language,analysis,graph);
-    m_parser->setContentHandler(&handler);
-    m_parser->setErrorHandler(&handler);
     auto filename = getInputFile(analysis);
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
       LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::SpecificEntities"),
         "Cannot open file" << filename,
         Lima::XMLException);
-    if (!m_parser->parse( QXmlInputSource(&file)))
+    if (!m_d->parse(&file))
     {
       LIMA_EXCEPTION_SELECT_LOGINIT(LOGINIT("LP::SpecificEntities"),
-        "Error: failed to parse XML input file" << filename << m_parser->errorHandler()->errorString(),
+        "Error: failed to parse XML input file" << filename << m_d->m_reader.errorString(),
         Lima::XMLException);
     }
   }
@@ -140,14 +167,67 @@ process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
+bool SpecificEntitiesLoaderPrivate::parse(QIODevice *device)
+{
+  LOGINIT("LP::SpecificEntities");
+  LTRACE << "parse";
+  m_reader.setDevice(device);
+  while (m_reader.readNextStartElement())
+  {
+    bool ok;
+    if (m_reader.name() == QLatin1String("specific_entity"))
+    {
+      if (m_type != "")
+      {
+        LDEBUG << "SpecificEntitiesLoaderPrivate add SE "  << m_type << "," << m_position << "," << m_length << "," << m_graph;
+        addSpecificEntity(m_analysis, m_graph, m_string, m_type, m_position, m_length);
+      }
+      m_string="";
+      m_type="";
+      m_position=0;
+      m_length=0;
+    }
+    else if (m_reader.name() == QLatin1String("position"))
+    {
+      m_position = m_reader.readElementText().toInt(&ok);
+      if (!ok)
+      {
+        m_reader.raiseError(QObject::tr("Cannot convert position value %1 to integer.").arg(m_reader.text()));
+      }
+    }
+    else if (m_reader.name() == QLatin1String("length"))
+    {
+      m_length = m_reader.readElementText().toInt(&ok);
+      if (!ok)
+      {
+        m_reader.raiseError(QObject::tr("Cannot convert position value %1 to integer.").arg(m_reader.text()));
+      }
+    }
+    else if (m_reader.name() == QLatin1String("type"))
+    {
+      m_type = m_reader.readElementText().toStdString();
+    }
+    else if (m_reader.name() == QLatin1String("string"))
+    {
+      m_string = m_reader.readElementText().toStdString();
+    }
+    else
+    {
+      m_reader.skipCurrentElement();
+    }
+  }
+  return !m_reader.error();
+}
+
+
 //***********************************************************************
-void SpecificEntitiesLoader::XMLHandler::
-addSpecificEntity(AnalysisContent& analysis,
-                  LinguisticAnalysisStructure::AnalysisGraph* anagraph,
-                  const std::string& str,
-                  const std::string& type,
-                  uint64_t position,
-                  uint64_t length)
+void SpecificEntitiesLoaderPrivate::addSpecificEntity(
+    AnalysisContent& analysis,
+    LinguisticAnalysisStructure::AnalysisGraph* anagraph,
+    const std::string& str,
+    const std::string& type,
+    uint64_t position,
+    uint64_t length)
 {
   LOGINIT("LP::SpecificEntities");
   LDEBUG << "loader: add entity " << str << "," << type << ",[" << position << "," << length << "]";
@@ -231,115 +311,17 @@ addSpecificEntity(AnalysisContent& analysis,
   createEntity(match,analysis);
 }
 
-//***********************************************************************
-// xerces XML handler
-SpecificEntitiesLoader::XMLHandler::XMLHandler(MediaId language, AnalysisContent& analysis, AnalysisGraph* graph):
-m_language(language),
-m_analysis(analysis),
-m_graph(graph),
-m_position(0),
-m_length(0),
-m_type(),
-m_string(),
-m_currentElement()
+QString SpecificEntitiesLoaderPrivate::errorString() const
 {
   LOGINIT("LP::SpecificEntities");
-  LDEBUG << "SpecificEntitiesLoader::XMLHandler constructor";
+  auto errorStr = QObject::tr("%1, Line %2, column %3")
+          .arg(m_reader.errorString())
+          .arg(m_reader.lineNumber())
+          .arg(m_reader.columnNumber());
+  LERROR << errorStr;
+  return errorStr;
 }
 
-SpecificEntitiesLoader::XMLHandler::~XMLHandler()
-{
-}
-
-bool SpecificEntitiesLoader::XMLHandler::endElement(const QString & namespaceURI, const QString & eltName, const QString & qName)
-{
-  LIMA_UNUSED(namespaceURI);
-  LIMA_UNUSED(qName);
-  //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler end element "  << toString(eltName);
-  string name=toString(eltName);
-  if (name=="specific_entity") {
-    LOGINIT("LP::SpecificEntities");
-    LDEBUG << "SpecificEntitiesLoader::XMLHandler add SE "  << m_type << "," << m_position << "," << m_length << "," << m_graph;
-    addSpecificEntity(m_analysis, m_graph, m_string, m_type, m_position, m_length);
-  }
-  // no more current element
-  m_currentElement="";
-  return true;
-}
-
-bool SpecificEntitiesLoader::XMLHandler::characters(const QString& chars)
-{
-  //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler characters in "  << m_currentElement;
-  if (m_currentElement=="position") {
-    std::string pos=toString(chars);
-    m_position=atoi(pos.c_str());
-  }
-  else if (m_currentElement=="length") {
-    std::string len=toString(chars);
-    m_length=atoi(len.c_str());
-  }
-  else if (m_currentElement=="type") {
-    m_type=toString(chars);
-  }
-  else if (m_currentElement=="string") {
-    m_string=toString(chars);
-  }
-  return true;
-}
-
-bool SpecificEntitiesLoader::XMLHandler::
-startElement(const QString & namespaceURI, const QString & eltName, const QString & qName, const QXmlAttributes & attributes)
-{
-  LIMA_UNUSED(namespaceURI);
-  LIMA_UNUSED(qName);
-  LIMA_UNUSED(attributes);
-  //LOGINIT("LP::SpecificEntities");
-  //LDEBUG << "SpecificEntitiesLoader::XMLHandler start element "  << toString(eltName);
-  m_currentElement=toString(eltName);
-
-  if (m_currentElement=="specific_entity") { // clear stored values
-    m_string="";
-    m_type="";
-    m_position=0;
-    m_length=0;
-  }
-  return true;
-}
-
-bool SpecificEntitiesLoader::XMLHandler::warning(const QXmlParseException& e)
-{
-  LOGINIT("LP::SpecificEntities");
-  LERROR << "Error at file " << toString(e.systemId())
-         << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber()
-         << "  Message: " << toString(e.message());
-         return true;
-}
-bool SpecificEntitiesLoader::XMLHandler::error(const QXmlParseException& e)
-{
-  LOGINIT("LP::SpecificEntities");
-  LERROR << "Fatal error at file " << toString(e.systemId())
-         << ", line " << e.lineNumber()
-         << ", char " << e.columnNumber()
-         << "  Message: " << toString(e.message());
-         return false;
-}
-bool SpecificEntitiesLoader::XMLHandler::fatalError(const QXmlParseException& e)
-{
-  LOGINIT("LP::SpecificEntities");
-  LWARN << "Warning at file " << toString(e.systemId())
-        << ", line " << e.lineNumber()
-        << ", char " << e.columnNumber()
-        << "  Message: " << toString(e.message());
-        return false;
-}
-
-std::string SpecificEntitiesLoader::XMLHandler::toString(const QString& xercesString)
-{
-  return Common::Misc::limastring2utf8stdstring(xercesString);
-}
 
 } // end namespace
 } // end namespace

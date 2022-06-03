@@ -23,8 +23,8 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
    configurationStructure.cpp
    groupConfigurationStructure.cpp
    moduleConfigurationStructure.cpp
-   xmlConfigurationFileHandler.cpp
    xmlConfigurationFileParser.cpp
+   xmlConfigurationFileReader.cpp
    itemWithAttributes.cpp
 )
 
@@ -42,7 +42,6 @@ install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES
-#     xmlConfigurationFileHandler.h
     configurationStructure.h
     xmlConfigurationFileParser.h
     groupConfigurationStructure.h

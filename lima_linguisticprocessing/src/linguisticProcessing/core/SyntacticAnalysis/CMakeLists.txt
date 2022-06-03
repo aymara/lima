@@ -39,7 +39,7 @@ SET(lima-lp-syntacticanalysis_LIB_SRCS
    SyntacticData.cpp
    SyntagmaticMatrix.cpp
    TokenFilter.cpp
-   XmlSyntagmaticMatrixFileHandler.cpp
+   XmlSyntagmaticMatrixFileReader.cpp
    SelectionalRestrictionsConstraints.cpp
    SelectionalPreferences.cpp
    CoordinationConstraints.cpp
@@ -83,7 +83,7 @@ install(FILES  SyntacticRelationsLogger.h
     SyntagmaticMatrix.h
     TokenFilter.h
     XmlSyntagmaticMatrixFileExceptions.h
-    XmlSyntagmaticMatrixFileHandler.h
+    XmlSyntagmaticMatrixFileReader.h
   DESTINATION include/linguisticProcessing/core/SyntacticAnalysis
   COMPONENT devel
 )

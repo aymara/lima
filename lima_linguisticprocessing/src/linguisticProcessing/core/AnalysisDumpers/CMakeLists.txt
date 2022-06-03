@@ -14,11 +14,11 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-add_subdirectory(EasyXmlDumper)
+#add_subdirectory(EasyXmlDumper)
 
 add_definitions(-DLIMA_ANALYSISDUMPERS_EXPORTING)
 
-include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/linguisticProcessing/core/AnalysisDumpers/EasyXmlDumperProcessor )
+#include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/linguisticProcessing/core/AnalysisDumpers/EasyXmlDumperProcessor )
 
 
 ########### next target ###############

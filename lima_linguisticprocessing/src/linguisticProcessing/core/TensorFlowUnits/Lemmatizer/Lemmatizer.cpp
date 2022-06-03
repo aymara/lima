@@ -1649,7 +1649,7 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
   {
     LimaString v;
     m_cache.get(k, v);
-    out << k << "\t" << v << endl;
+    out << k << "\t" << v << Qt::endl;
   }
 
   file.close();

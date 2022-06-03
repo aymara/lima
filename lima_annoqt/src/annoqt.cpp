@@ -396,9 +396,9 @@ bool Annoqt::saveFile( const QString &fileName )
 
   QTextStream out( &file );
 
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << endl;
-  out << "<specific_entities>" << endl;
-//   out << "<entities docid=\"\" offsetNode=\"0\">" << endl;
+  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << Qt::endl;
+  out << "<specific_entities>" << Qt::endl;
+//   out << "<entities docid=\"\" offsetNode=\"0\">" << Qt::endl;
   QApplication::setOverrideCursor( Qt::WaitCursor );
 //   out << m_textEdit->toPlainText();
 
@@ -418,16 +418,16 @@ bool Annoqt::saveFile( const QString &fileName )
     QRegExp rxapos("'");
     string.replace(rxapos, "&apos;");
     out <<"  <specific_entity>"<<endl
-        <<"    <string>" << string << "</string>"<<endl
-        <<"    <position>" << entity->position()+1 << "</position>"<<endl
-        <<"    <length>" << entity->length() << "</length>"<<endl
-        <<"    <type>" << m_entityTypes2Names[entity->type()] << "</type>"<<endl
-        <<"</specific_entity>" << endl;
+        <<"    <string>" << string << "</string>"<<Qt::endl
+        <<"    <position>" << entity->position()+1 << "</position>"<<Qt::endl
+        <<"    <length>" << entity->length() << "</length>"<<Qt::endl
+        <<"    <type>" << m_entityTypes2Names[entity->type()] << "</type>"<<Qt::endl
+        <<"</specific_entity>" << Qt::endl;
   }
 
   QApplication::restoreOverrideCursor();
-//   out << "</entities>" << endl;
-  out << "</specific_entities>" << endl;
+//   out << "</entities>" << Qt::endl;
+  out << "</specific_entities>" << Qt::endl;
 
   statusBar()->showMessage( tr( "File saved" ), 2000 );
   m_textEdit->document()->setModified( false );

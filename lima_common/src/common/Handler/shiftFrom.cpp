@@ -26,7 +26,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QXmlStreamReader>
 #include <tuple>
 
 namespace Lima {
@@ -171,9 +170,9 @@ void ShiftFromPrivate::build_mapping()
 QDebug& operator<<(QDebug& os, const ShiftFrom& sf)
 {
 //     QMap<int, std::tuple<int, QString, QString> > m_shiftFrom;
-  os << "ShiftFrom xml:" << sf.m_d->m_xml << endl;
-  os << "ShiftFrom xml_noent:" << sf.m_d->m_xml_noent << endl;
-  os << "ShiftFrom xml rebuilt:" << sf.rebuild_text(sf.m_d->m_xml_noent, 0) << endl;
+  os << "ShiftFrom xml:" << sf.m_d->m_xml << Qt::endl;
+  os << "ShiftFrom xml_noent:" << sf.m_d->m_xml_noent << Qt::endl;
+  os << "ShiftFrom xml rebuilt:" << sf.rebuild_text(sf.m_d->m_xml_noent, 0) << Qt::endl;
   os << "ShiftFrom shiftFrom: {" ;
   for (const auto& k: sf.m_d->m_shiftFrom.keys())
   {

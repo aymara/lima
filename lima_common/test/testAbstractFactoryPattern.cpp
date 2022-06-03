@@ -73,19 +73,19 @@ int run(int argc, char** argv)
   std::cout << "dummy program, just to instantiate templates from AbstractFactoryPattern" << std::endl;
 
   // build fake moduleconfigurationstructure
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf("tata");
+  Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf(QLatin1String("tata"));
   {
-    modconf.addGroupNamed("myVeryDummy");
+    modconf.addGroupNamed(QLatin1String("myVeryDummy"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myVeryDummy");
     groupConf.addAttribute("class","VeryDummyInitializableObject");
   }
   {
-    modconf.addGroupNamed("otherVeryDummy");
+    modconf.addGroupNamed(QLatin1String("otherVeryDummy"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("otherVeryDummy");
     groupConf.addAttribute("class","VeryDummyInitializableObject");
   }
   {
-    modconf.addGroupNamed("myNotSoDummy");
+    modconf.addGroupNamed(QLatin1String("myNotSoDummy"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myNotSoDummy");
     groupConf.addAttribute("class","NotSoDummyInitializableObject");
   }
