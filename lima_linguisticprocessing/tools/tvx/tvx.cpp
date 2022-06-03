@@ -100,7 +100,7 @@ int run(int ,char** )
   parser.addVersionOption();
   parser.addPositionalArgument("files", QCoreApplication::translate("main", "File(s) to analyze."), "[file...]");
   QCommandLineOption progressOption(
-      QStringList() << "p" << "Progress",
+      QStringList() << "P" << "Progress",
       QCoreApplication::translate("main", "Show progress. "));
   parser.addOption(progressOption);
   QCommandLineOption lpConfigFileOption(
