@@ -260,17 +260,19 @@ QStringList TestCaseProcessorPrivate::evaluateExpression(
     LDEBUG << "TestCaseProcessor::evaluateExpression setQuery("<<xpath<<");";
     auto xnodes = node.select_nodes(xpath.toUtf8().data());
     LDEBUG << "TestCaseProcessor::evaluateExpression nb nodes selected:" << xnodes.size();
-    if (!xnodes.empty() && xnodes.first().attribute())
+    for (const auto& node: xnodes)
     {
-      LDEBUG << "TestCaseProcessor::evaluateExpression result is an attribute with value:" << xnodes.first().attribute().value();
-      results.push_back(QString::fromUtf8(xnodes.first().attribute().value()));
+      if (node.attribute())
+      {
+        LDEBUG << "TestCaseProcessor::evaluateExpression result is an attribute with value:" << node.attribute().value();
+        results.push_back(QString::fromUtf8(node.attribute().value()));
+      }
+      else if (node.node())
+      {
+        LDEBUG << "TestCaseProcessor::evaluateExpression result is a node with text:" << node.node().text().as_string();
+        results.push_back(QString::fromUtf8(node.node().text().as_string()));
+      }
     }
-    else if (!xnodes.empty() && xnodes.first().node())
-    {
-      LDEBUG << "TestCaseProcessor::evaluateExpression result is a node with text:" << xnodes.first().node().text().as_string();
-      results.push_back(QString::fromUtf8(xnodes.first().node().text().as_string()));
-    }
-
     LDEBUG << "TestCaseProcessor::evaluateExpression evaluates to " << results;
   }
   else if (expr.substr(0,4)=="SET#")
