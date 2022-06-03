@@ -97,15 +97,19 @@ TestCaseError TestCaseProcessor::evalTestCase(
     /* Load XML document */
     pugi::xml_document doc;
 
+    LTRACE << "TestCaseProcessor::evalTestCase load trace file" << traceFile;
     pugi::xml_parse_result result = doc.load_file(traceFile.c_str());
+
     if (!result)
     {
-      LERROR << "Error: Unable to parse file " << traceFile << ":" << result.description();
-      return TestCaseError(testCase, TestCaseError::TestCaseFailed,"No output file to evaluate !", pipeName, test);
+      LERROR << "Error: Unable to parse output file " << traceFile << ":" << result.description();
+      return TestCaseError(testCase, TestCaseError::TestCaseFailed,
+                           "Error: Unable to parse output file  !", pipeName, test);
     }
 
     // OK, let's evaluate the expression...
     // Check unary operators before evaluate se right member
+    LTRACE << "TestCaseProcessor::evalTestCase test:" << test.left << test.op << test.right;
     if (test.op=="notexists")
     {
       if (m_d->existsExpression(test.left, doc))
@@ -252,12 +256,19 @@ QStringList TestCaseProcessorPrivate::evaluateExpression(
   if (expr.substr(0,6)=="XPATH#")
   {
     /* Evaluate xpath expression */
-    QString xpath = QString::fromUtf8(expr.substr(6).c_str())+"/string()";
+    QString xpath = QString::fromUtf8(expr.substr(6).c_str());//+"/string()";
     LDEBUG << "TestCaseProcessor::evaluateExpression setQuery("<<xpath<<");";
-    auto xnode = node.select_node(xpath.toUtf8().data());
-    if (xnode.attribute())
+    auto xnodes = node.select_nodes(xpath.toUtf8().data());
+    LDEBUG << "TestCaseProcessor::evaluateExpression nb nodes selected:" << xnodes.size();
+    if (!xnodes.empty() && xnodes.first().attribute())
     {
-      results.push_back(QString::fromUtf8(xnode.attribute().value()));
+      LDEBUG << "TestCaseProcessor::evaluateExpression result is an attribute with value:" << xnodes.first().attribute().value();
+      results.push_back(QString::fromUtf8(xnodes.first().attribute().value()));
+    }
+    else if (!xnodes.empty() && xnodes.first().node())
+    {
+      LDEBUG << "TestCaseProcessor::evaluateExpression result is a node with text:" << xnodes.first().node().text().as_string();
+      results.push_back(QString::fromUtf8(xnodes.first().node().text().as_string()));
     }
 
     LDEBUG << "TestCaseProcessor::evaluateExpression evaluates to " << results;
