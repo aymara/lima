@@ -21,7 +21,7 @@
 *********************************************** -->
     <group name="main" class="ProcessUnitPipeline" >
       <list name="processUnitSequence">
-        <item value="langdetector"/>
+        <!--item value="langdetector"/-->
         <!--item value="beginStatusLogger"/-->
         <item value="flattokenizer"/>
         <item value="regexmatcher"/>

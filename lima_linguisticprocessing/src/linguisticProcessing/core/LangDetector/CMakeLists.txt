@@ -1,4 +1,5 @@
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/extern/fastText/src)
 
 ########### next target ###############
 
@@ -35,4 +36,7 @@ add_executable(langDetector main.cpp LangDetectorCore.cpp LangDetectorCore.h)
 install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
         COMPONENT runtime)
 target_link_libraries(langDetector
+        ${QT_LIBRARIES}
+        lima-lp-linguisticresources
+        lima-common-misc
         fasttext-static)
