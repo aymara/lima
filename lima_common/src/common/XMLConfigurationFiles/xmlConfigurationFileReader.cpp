@@ -246,6 +246,11 @@ void XmlConfigurationFileReaderPrivate::readList()
       m_reader.raiseError(QObject::tr("Expected a list item in list %1 in group %2, in module %3 but got a %4.")
         .arg(m_listName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
   }
+  if (m_firstItem)
+  {
+    LTRACE << "XmlConfigurationFileReader::readList add empty list "<< m_listName;
+    m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
+  }
   m_listName = "";
 }
 
@@ -305,7 +310,7 @@ void XmlConfigurationFileReaderPrivate::readMap()
 {
   m_mapName = m_reader.attributes().value(mapNameAttribute()).toString();
   XMLCFGLOGINIT;
-  LTRACE << "map name is " << m_mapName;
+  LTRACE << " XmlConfigurationFileReaderPrivate::readMap" << m_mapName;
   m_firstItem=true;
   m_itemWithAttributes=false;
   while (m_reader.readNextStartElement())
@@ -315,6 +320,11 @@ void XmlConfigurationFileReaderPrivate::readMap()
     else
       m_reader.raiseError(QObject::tr("Expected a map entry in map %1 in group %2, in module %3 but got a %4.")
         .arg(m_mapName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
+  }
+  if (m_firstItem)
+  {
+    LTRACE << "XmlConfigurationFileReaderPrivate::readMap add empty map"<< m_mapName;
+    m_configuration.addMapNamedForModuleAndGroup(m_mapName, m_moduleName, m_groupName);
   }
   m_mapName = "";
 }
