@@ -47,7 +47,11 @@ macro(addQtModules)
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "")
     # Use find_package to get includes and libraries directories
-    find_package(Qt6 REQUIRED COMPONENTS ${_MODULES})
+    find_package(Qt6 COMPONENTS ${_MODULES})
+    if (NOT Qt6_FOUND)
+        message("Qt6 not found. Falling back to Qt5.")
+        find_package(Qt5 5.15 REQUIRED COMPONENTS ${_MODULES})
+    endif()
     #qt_standard_project_setup()
 
     message("Found Qt ${QtCore_VERSION}")
