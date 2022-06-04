@@ -452,7 +452,7 @@ void TestCasesReaderPrivate::readTest()
   tu.left = m_reader.attributes().value("left").toString().toStdString();
   tu.op = m_reader.attributes().value("operator").toString().toStdString();
   tu.right = m_reader.attributes().value("right").toString().toStdString();
-  tu.conditional = (m_reader.attributes().value("conditional")=="yes");
+  tu.conditional = (m_reader.attributes().value("conditional").toString()=="yes");
   currentTestCase.tests.push_back(tu);
   LDEBUG << "TestCasesReader::startElement: push testUnit"
           << ", id =" << tu.id

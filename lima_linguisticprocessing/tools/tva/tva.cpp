@@ -42,7 +42,6 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
-#include <QtXml/QXmlSimpleReader>
 // #ifdef WIN32
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 // #endif

@@ -14,7 +14,7 @@ target_link_libraries(limaserver
   lima-common
   lima-linguisticprocessing
   ${QHTTPSERVERCPP_LIBRARY}
-  ${Qt5_LIBRARIES}
+  ${Qt_LIBRARIES}
   ${Boost_LIBRARIES}
 )
 
@@ -38,17 +38,17 @@ install(PROGRAMS
 # target_link_libraries(testQHttpServer
 #     lima-common
 #     ${QHTTPSERVER_NAMES}
-#     ${Qt5_LIBRARIES}
+#     ${Qt_LIBRARIES}
 #     ${Boost_LIBRARIES})
 
 # install(TARGETS testQHttpServer DESTINATION bin)
 
 ########### next target ###############
-# if (NOT Qt5DBus_FOUND)
+# if (NOT QtDBus_FOUND)
 #   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 # else ()
 #
-#   qt5_generate_dbus_interface(
+#   qt_generate_dbus_interface(
 #     LimaDBusServer.h
 #     fr.cea.limadbusserver.xml
 #     OPTIONS -a -M
@@ -61,10 +61,10 @@ install(PROGRAMS
 #     ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
 #   )
 #
-#   qt5_add_dbus_adaptor(limadbusserver_SRCS
+#   qt_add_dbus_adaptor(limadbusserver_SRCS
 #       ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
 #       LimaDBusServer.h LimaDBusServer)
-#   # qt5_add_resources(limadbusserver limaserver.qrc)
+#   # qt_add_resources(limadbusserver limaserver.qrc)
 #
 #   add_executable(limadbusserver ${limadbusserver_SRCS})
 #
@@ -72,7 +72,7 @@ install(PROGRAMS
 #     lima-common
 #     lima-linguisticprocessing
 #     ${Boost_LIBRARIES}
-#     ${Qt5_LIBRARIES}
+#     ${Qt_LIBRARIES}
 #     ${QHTTPSERVERCPP_LIBRARY}
 #   )
 #

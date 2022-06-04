@@ -976,7 +976,7 @@ void RuleString::parseIndex(const LimaString& str,
 {
   int i=str.indexOf(CHAR_CONSTRAINT_INDEX);
   if (i != -1) { // group subindex indicated
-    index=str.leftRef(i).toInt();
+    index=str.left(i).toInt();
     subindex=str.mid(i+1);
   }
   else {

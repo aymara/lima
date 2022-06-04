@@ -41,8 +41,7 @@
 #include "KeysLogger.h"
 #include "DictionaryReader.h"
 
-#include <QtXml/QXmlSimpleReader>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 using namespace std;
 using namespace Lima;

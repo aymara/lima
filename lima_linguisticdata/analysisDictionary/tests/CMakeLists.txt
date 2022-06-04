@@ -31,7 +31,7 @@ add_executable(EnhancedAnalysisDictionaryTest0
 
 target_link_libraries(EnhancedAnalysisDictionaryTest0
   lima-lp-morphologicanalysis
-  Qt5::Test
+  Qt::Test
 )
 
 add_dependencies(EnhancedAnalysisDictionaryTest0 pretest-execEnv)
@@ -62,7 +62,7 @@ add_executable(EnhancedAnalysisDictionaryTest1
 
 target_link_libraries(EnhancedAnalysisDictionaryTest1
   lima-lp-morphologicanalysis
-  Qt5::Test
+  Qt::Test
 )
 
 add_test(NAME EnhancedAnalysisDictionaryTest1
@@ -91,7 +91,7 @@ add_executable(DictionaryDataTest1
 
 target_link_libraries(DictionaryDataTest1
   lima-lp-morphologicanalysis
-  Qt5::Test
+  Qt::Test
 )
 
 add_test(NAME DictionaryDataTest1

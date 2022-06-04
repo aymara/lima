@@ -25,6 +25,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/MultimediaDocumentHandler.h"
 
 #include <QDate>
+#include <QFile>
 #include <QXmlStreamReader>
 
 using namespace Lima::Common::BagOfWords;

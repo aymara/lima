@@ -26,8 +26,6 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
-#include <QtXml/QXmlDefaultHandler>
-
 #include <string>
 #include <vector>
 #include <map>

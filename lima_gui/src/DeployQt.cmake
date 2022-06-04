@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-find_package(Qt5Core REQUIRED)
+find_package(QtCore REQUIRED)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
-get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+get_target_property(_qmake_executable Qt::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
@@ -58,7 +58,7 @@ function(mywindeployqt)
     install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin)
     install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin)
     install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin)
-    
+
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${_deploy_TARGET} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E

@@ -15,9 +15,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-# It is necessary to define Qt5_INSTALL_DIR in your environment.
+# It is necessary to define Qt_INSTALL_DIR in your environment.
 set(CMAKE_PREFIX_PATH
-  "$ENV{Qt5_INSTALL_DIR}"
+  "$ENV{Qt_INSTALL_DIR}"
   "${CMAKE_PREFIX_PATH}"
 )
 
@@ -35,26 +35,32 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# This macro does the find_package with the required Qt5 modules listed as
-# parameters. Note that the Qt5_INCLUDES variable is not necessary anymore as
-# the inclusion of variables Qt5::Component in the target_link_libraries call
+# This macro does the find_package with the required Qt modules listed as
+# parameters. Note that the Qt_INCLUDES variable is not necessary anymore as
+# the inclusion of variables Qt::Component in the target_link_libraries call
 # now automatically add the necessary include path, compiler settings and
-# several other things. In the same way, the Qt5_LIBRARIES variable now is just
-# a string with the Qt5::Component elements. It can be use in
+# several other things. In the same way, the Qt_LIBRARIES variable now is just
+# a string with the Qt::Component elements. It can be use in
 # target_link_libraries calls to simplify its writing.
-macro(addQt5Modules)
+macro(addQtModules)
   set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "")
     # Use find_package to get includes and libraries directories
-    find_package(Qt5 REQUIRED ${_MODULES})
-    message("Found Qt5 ${Qt5Core_VERSION}")
-    #Add Qt5 include and libraries paths to the sets
+    find_package(Qt6 COMPONENTS ${_MODULES})
+    if (NOT Qt6_FOUND)
+        message("Qt6 not found. Falling back to Qt5.")
+        find_package(Qt5 5.15 REQUIRED COMPONENTS ${_MODULES})
+    endif()
+    #qt_standard_project_setup()
+
+    message("Found Qt ${QtCore_VERSION}")
+    #Add Qt include and libraries paths to the sets
     foreach( _module ${_MODULES})
       message("Adding module ${_module}")
-      set(Qt5_LIBRARIES ${Qt5_LIBRARIES} Qt5::${_module} )
+      set(Qt_LIBRARIES ${Qt_LIBRARIES} Qt::${_module} )
 
-      get_target_property(QtModule_location Qt5::${_module} LOCATION)
+      get_target_property(QtModule_location Qt::${_module} LOCATION)
 
       if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         install(FILES ${QtModule_location}

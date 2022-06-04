@@ -25,6 +25,7 @@
 #include "XmlPropertyReader.h"
 #include "SymbolicCodeXmlReader.h"
 
+#include <QFile>
 
 #include <cmath>
 #include <iostream>

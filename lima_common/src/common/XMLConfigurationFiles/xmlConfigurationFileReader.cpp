@@ -366,11 +366,11 @@ void XmlConfigurationFileReaderPrivate::readMapEntry()
     ItemWithAttributes item(value.toString());
     for (const auto& attribute: m_reader.attributes())
     {
-      auto attName = attribute.name();
-      auto value = attribute.value();
+      auto attName = attribute.name().toString();
+      auto value = attribute.value().toString();
       if (attName != "key" && attName != "value")
       {
-        item.addAttribute(attName.toString(), value.toString());
+        item.addAttribute(attName, value);
       }
     }
     m_configuration.addEntryInMapOfItemsForModuleAndGroup(key.toString(), item, m_mapName, m_moduleName, m_groupName);
