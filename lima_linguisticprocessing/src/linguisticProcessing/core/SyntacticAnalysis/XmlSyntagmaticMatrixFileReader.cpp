@@ -293,7 +293,7 @@ void XmlSyntagmaticMatrixFileReaderPrivate::readMatrix()
     LTRACE << "readChain";
     Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("matrice"));
 
-    auto currentMatrixType = m_reader.attributes().value("type");
+    auto currentMatrixType = m_reader.attributes().value("type").toString();
     if (currentMatrixType == "nominale") m_currentMatrixType = NOMINAL;
     else if (currentMatrixType == "verbale") m_currentMatrixType = VERBAL;
     else m_currentMatrixType = NO_CHAIN_TYPE;

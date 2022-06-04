@@ -87,7 +87,7 @@ m_charSplitRegexp()
 {
   // default split regexp: split on simple quote or UTF-8 right quotation mark
   LimaString quotes=Common::Misc::utf8stdstring2limastring("['’]");
-  m_charSplitRegexp=QRegExp(quotes);
+  m_charSplitRegexp=QRegularExpression(quotes);
 
 }
 
@@ -171,7 +171,7 @@ void AbbreviationSplitAlternatives::init(
   try
   {
     string charSplit=unitConfiguration.getParamsValueAtKey("charSplitRegexp");
-    m_charSplitRegexp=QRegExp(Common::Misc::utf8stdstring2limastring(charSplit));
+    m_charSplitRegexp=QRegularExpression(Common::Misc::utf8stdstring2limastring(charSplit));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

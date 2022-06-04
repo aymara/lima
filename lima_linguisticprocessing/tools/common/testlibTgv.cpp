@@ -35,8 +35,8 @@
 #include "linguisticProcessing/common/tgv/TestCase.h"
 #include "linguisticProcessing/common/tgv/TestCaseError.hpp"
 
-#include <QtXml/QXmlSimpleReader>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
+#include <QFile>
 
 using namespace Lima::Common::TGV;
 

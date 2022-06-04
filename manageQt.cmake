@@ -42,12 +42,14 @@ set(CMAKE_AUTOUIC ON)
 # several other things. In the same way, the Qt_LIBRARIES variable now is just
 # a string with the Qt::Component elements. It can be use in
 # target_link_libraries calls to simplify its writing.
-macro(addQt5Modules)
+macro(addQtModules)
   set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "")
     # Use find_package to get includes and libraries directories
-    find_package(Qt REQUIRED ${_MODULES})
+    find_package(Qt6 REQUIRED COMPONENTS ${_MODULES})
+    #qt_standard_project_setup()
+
     message("Found Qt ${QtCore_VERSION}")
     #Add Qt include and libraries paths to the sets
     foreach( _module ${_MODULES})

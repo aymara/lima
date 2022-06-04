@@ -858,7 +858,7 @@ int AutomatonString::parseModifiersPost(const LimaString& s,
 #ifdef DEBUG_LP
     LDEBUG << "AutomatonString::parseModifiersPost offsets" << offsetOpen << offsetMinus << offsetClose << s.mid(offsetOpen+1,offsetMinus-offsetOpen-1);
 #endif
-    m_minOccurrences=s.midRef(offsetOpen+1,offsetMinus-offsetOpen-1).toInt();
+    m_minOccurrences=s.mid(offsetOpen+1,offsetMinus-offsetOpen-1).toInt();
 
     // max occurrences can be infinite
     LimaString maxString=s.mid(offsetMinus+1,
@@ -930,7 +930,7 @@ bool AutomatonString::parseModifiers(const LimaString& s,
     int offsetClose=last;
     int offsetMinus=rfindSpecialCharacter(s,CHAR_CARDINALITY_UNTIL_RE,
                                                    last);
-    m_minOccurrences=s.midRef(offsetOpen+1, offsetMinus-offsetOpen-1).toInt();
+    m_minOccurrences=s.mid(offsetOpen+1, offsetMinus-offsetOpen-1).toInt();
 
     // max occurrences can be infinite
     LimaString maxString=s.mid(offsetMinus+1,

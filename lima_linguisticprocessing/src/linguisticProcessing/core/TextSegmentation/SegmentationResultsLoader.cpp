@@ -181,7 +181,7 @@ void SegmentationResultsLoaderPrivate::readResults()
       s.setVerticesFromPositions(m_position, m_length, m_graph);
       m_data->add(s);
     }
-    else if (m_reader.name() == "position")
+    else if (m_reader.name().toString() == "position")
     {
       m_position = m_reader.readElementText().toInt(&ok);
       if (!ok)
@@ -189,7 +189,7 @@ void SegmentationResultsLoaderPrivate::readResults()
         m_reader.raiseError(QObject::tr("Cannot convert position value %1 to int.").arg(m_reader.text()));
       }
     }
-    else if (m_reader.name() == "length")
+    else if (m_reader.name().toString() == "length")
     {
       m_length = m_reader.readElementText().toInt(&ok);
       if (!ok)
@@ -197,7 +197,7 @@ void SegmentationResultsLoaderPrivate::readResults()
         m_reader.raiseError(QObject::tr("Cannot convert length value %1 to int.").arg(m_reader.text()));
       }
     }
-    else if (m_reader.name() == "type")
+    else if (m_reader.name().toString() == "type")
     {
       m_type = m_reader.readElementText();
     }

@@ -407,15 +407,15 @@ bool Annoqt::saveFile( const QString &fileName )
   Q_FOREACH (SpecificEntity* entity, m_entities)
   {
     QString string = entity->string();
-    QRegExp rxamp("&(?!amp;)");
+    QRegularExpression rxamp("&(?!amp;)");
     string.replace(rxamp, "&amp;");
-    QRegExp rxgt(">");
+    QRegularExpression rxgt(">");
     string.replace(rxgt, "&gt;");
-    QRegExp rxlt("<");
+    QRegularExpression rxlt("<");
     string.replace(rxlt, "&lt;");
-    QRegExp rxquot("\"");
+    QRegularExpression rxquot("\"");
     string.replace(rxquot, "&quot;");
-    QRegExp rxapos("'");
+    QRegularExpression rxapos("'");
     string.replace(rxapos, "&apos;");
     out <<"  <specific_entity>"<<endl
         <<"    <string>" << string << "</string>"<<Qt::endl

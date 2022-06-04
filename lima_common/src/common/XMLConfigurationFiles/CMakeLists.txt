@@ -34,7 +34,7 @@ ADD_DLL_TO_PATH(lima-common-xmlconfigurationfiles)
 
 target_link_libraries(lima-common-xmlconfigurationfiles
    lima-common-data
-   Qt5::Xml
+   Qt::Xml
 )
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})

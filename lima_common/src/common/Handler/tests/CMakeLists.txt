@@ -26,7 +26,7 @@ add_executable(ShiftFromTest0 ${ShiftFromTest0_SRCS} ${ShiftFromTest0_MOC_OUTFIL
 
 target_link_libraries(ShiftFromTest0
   lima-common-datahandler
-  Qt5::Test
+  Qt::Test
 )
 
 add_test(NAME ShiftFromTest0 COMMAND ShiftFromTest0)

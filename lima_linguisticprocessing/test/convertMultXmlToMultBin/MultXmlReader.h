@@ -15,7 +15,6 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/Handler/shiftFrom.h"
-#include <QtXml/QXmlSimpleReader>
 
 namespace Lima {
 namespace XmlReader {

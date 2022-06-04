@@ -35,7 +35,7 @@ add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS})
 ADD_DLL_TO_PATH(lima-common-tools)
 
 target_link_libraries(lima-common-tools
-  Qt5::Core
+  Qt::Core
 )
 
 set_target_properties(lima-common-tools PROPERTIES

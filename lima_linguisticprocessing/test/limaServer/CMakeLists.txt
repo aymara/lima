@@ -44,7 +44,7 @@ install(PROGRAMS
 # install(TARGETS testQHttpServer DESTINATION bin)
 
 ########### next target ###############
-# if (NOT Qt5DBus_FOUND)
+# if (NOT QtDBus_FOUND)
 #   message(WARNING "QtDbus not found: cannot build Lima Dbus server.")
 # else ()
 #

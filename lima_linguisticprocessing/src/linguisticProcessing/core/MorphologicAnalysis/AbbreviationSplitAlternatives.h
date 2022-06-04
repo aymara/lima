@@ -50,6 +50,8 @@
 #include "linguisticProcessing/core/AnalysisDict/AbstractAnalysisDictionary.h"
 #include "AlternativesReader.h"
 
+#include <QRegularExpression>
+
 namespace Lima {
   namespace Common {
     namespace AnnotationGraphs {
@@ -75,19 +77,19 @@ public:
 
   LimaStatusCode process(
     AnalysisContent& analysis) const override;
-        
+
 protected:
 
 private:
-    
+
     const FlatTokenizer::Tokenizer* m_tokenizer;
     AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
     std::vector<LimaString> m_abbreviations;
     MediaId m_language;
     bool m_confidentMode;
     AlternativesReader* m_reader;
-    QRegExp m_charSplitRegexp;
-    
+    QRegularExpression m_charSplitRegexp;
+
     bool makeConcatenatedAbbreviationSplitAlternativeFor(
         LinguisticGraphVertex splitted,
         LinguisticGraph* graph,

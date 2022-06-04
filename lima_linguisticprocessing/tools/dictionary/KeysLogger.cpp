@@ -155,7 +155,7 @@ void KeysLoggerPrivate::readEntry()
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("entry"));
 #endif
   m_current = m_reader.attributes().value(S_K).toString();
-  if (m_current == 0)
+  if (m_current.isEmpty())
   {
     DICTIONARYLOGINIT;
     LERROR << "invalid entry !";

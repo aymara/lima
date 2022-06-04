@@ -31,7 +31,7 @@
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 
 using namespace std;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -118,7 +118,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   while (i!=-1) {
     paragraphPositions.push_back((uint64_t)i);
     // goto next char that is not a carriage return
-    currentPos=text->indexOf(QRegExp(QString(QLatin1String("[^%1]")).arg(m_paragraphSeparator)),i+1);
+    currentPos=text->indexOf(QRegularExpression(QString(QLatin1String("[^%1]")).arg(m_paragraphSeparator)),i+1);
     i=text->indexOf(m_paragraphSeparator,currentPos);
   }
 

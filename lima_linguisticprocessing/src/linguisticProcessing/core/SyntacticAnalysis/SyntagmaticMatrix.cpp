@@ -31,8 +31,6 @@
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 
-#include <QtXml/QXmlSimpleReader>
-
 #include <string>
 #include <algorithm>
 

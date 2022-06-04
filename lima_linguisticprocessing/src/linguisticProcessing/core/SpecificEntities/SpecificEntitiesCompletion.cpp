@@ -26,6 +26,9 @@
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
+
+#include <QRegularExpression>
+
 #include <queue>
 
 using namespace Lima::Common::AnnotationGraphs;
@@ -307,16 +310,19 @@ findOccurrences(Entities& foundEntities,
                 std::vector<EntityOccurrence>& newEntities) const
 {
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
-  for (const auto& e: foundEntities) {
-    QRegExp rx(e.regex());
-    int pos = 0;
-    while ((pos = rx.indexIn(*text, pos)) != -1) {
-      pair<unsigned int, unsigned int> matchpos(pos+1,pos+1+rx.matchedLength());
+  for (const auto& e: foundEntities)
+  {
+    QRegularExpression re(e.regex());
+    qsizetype pos = 0;
+    QRegularExpressionMatch rx;
+    while ((pos = text->indexOf(re, pos, &rx)) != -1)
+    {
+      pair<unsigned int, unsigned int> matchpos(pos+1, pos+1+rx.capturedLength());
       if (e.occurrences.find(matchpos)==e.occurrences.end()) {
         // found a new occurrence
-        newEntities.push_back(EntityOccurrence(e.entityType,rx.cap(0),e.entityString,matchpos));
+        newEntities.push_back(EntityOccurrence(e.entityType, rx.captured(0), e.entityString, matchpos));
       }
-      pos += rx.matchedLength();
+      pos += rx.capturedLength();
     }
 
   }

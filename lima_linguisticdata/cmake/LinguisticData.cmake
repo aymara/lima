@@ -503,8 +503,8 @@ macro (LIMA_GENERIC_CONFIGENV _lang)
       ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
       ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
@@ -551,52 +551,52 @@ endmacro ()
 #
 #
 ####################
-macro (LIMA_GENERIC_CONFIGENV_UD _lang)
-  message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV_UD(${_lang})${C_Norm}" )
+#macro (LIMA_GENERIC_CONFIGENV_UD _lang)
+  #message( "${C_BoldYellow}LIMA_GENERIC_CONFIGENV_UD(${_lang})${C_Norm}" )
 
-  add_custom_command(
-    OUTPUT
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-      ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-     ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
-     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-    COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
-     ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-    DEPENDS
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
-      ${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
-      ${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
-    COMMENT "create language specific config env"
-    VERBATIM
-  )
-  add_custom_target(
-    rules-${_lang}-execEnv
-    ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
-    DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
-  )
-endmacro ()
+  #add_custom_command(
+    #OUTPUT
+      #${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+      #${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+      #${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+      #${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+      #${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/config
+    #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}
+    #COMMAND ${CMAKE_COMMAND} -E copy
+      #${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      #${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    #COMMAND ${CMAKE_COMMAND} -E copy
+     #${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+     #${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    #COMMAND ${CMAKE_COMMAND} -E copy
+     #${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+     #${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    #COMMAND ${CMAKE_COMMAND} -E copy
+     #${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+     #${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    #COMMAND ${CMAKE_COMMAND} -E copy
+      #${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+      #${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+    #DEPENDS
+      #${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common-${_lang}.xml
+      #${CMAKE_BINARY_DIR}/lima_linguisticprocessing/conf/lima-lp-${_lang}.xml
+      #${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/tz-db-${_lang}.dat
+      #${CMAKE_SOURCE_DIR}/lima_linguisticdata/SpecificEntities/${_lang}/resources/monthsdays-${_lang}.dat
+      #${CMAKE_SOURCE_DIR}/lima_linguisticdata/analysisDictionary/${_lang}/code/code-${_lang}.xml
+    #COMMENT "create language specific config env"
+    #VERBATIM
+  #)
+  #add_custom_target(
+    #rules-${_lang}-execEnv
+    #ALL
+    #DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-common-${_lang}.xml
+    #DEPENDS ${CMAKE_BINARY_DIR}/execEnv/config/lima-lp-${_lang}.xml
+    #DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/tz-db-${_lang}.dat
+    #DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/SpecificEntities/monthsdays-${_lang}.dat
+    #DEPENDS ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/${_lang}/code-${_lang}.xml
+  #)
+#endmacro ()
 
 ###############
 #

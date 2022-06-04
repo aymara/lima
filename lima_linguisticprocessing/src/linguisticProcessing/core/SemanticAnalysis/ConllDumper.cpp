@@ -849,7 +849,7 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
 #endif
-  QMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
+  QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
 
   auto annotationData = static_cast<AnnotationData*>(
     analysis.getData("AnnotationData"));
