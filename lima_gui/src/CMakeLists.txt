@@ -55,10 +55,10 @@ if (WIN32)
     lima-common-xmlconfigurationfiles
     lima-lp-client
     lima-lp-analysishandlers
-    Qt::Gui
-    Qt::Quick
-    Qt::Widgets
-    Qt::WinMain
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::WinMain
   )
   include(DeployQt.cmake)
   mywindeployqt(
@@ -66,7 +66,7 @@ if (WIN32)
     DIRECTORY bin
     QMLDIR ${QMLDIR}
   )
-  get_target_property(_qmake_executable Qt::qmake IMPORTED_LOCATION)
+  get_target_property(_qmake_executable Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
   get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
   install(
     FILES
@@ -86,9 +86,9 @@ else()
     lima-common-xmlconfigurationfiles
     lima-lp-client
     lima-lp-analysishandlers
-    Qt::Gui
-    Qt::Quick
-    Qt::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
   )
 endif()
 

@@ -12,8 +12,8 @@ add_executable(TestModuleNER ${Test_SRCS})
 # Use the Widgets module from Qt 5.
 target_link_libraries(TestModuleNER
   lima-lp-tensorflowspecificentities
-  Qt::Core
-  Qt::Test
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Test
   ${PROJECT_LIBRARIES}
 )
 

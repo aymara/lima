@@ -140,7 +140,7 @@ message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 find_package(Qt6 COMPONENTS DBus)
 if (QtDBus_FOUND)
   addQtModules(DBus)
-  get_target_property(QtDBus_location Qt::DBus LOCATION)
+  get_target_property(QtDBus_location Qt${QT_VERSION_MAJOR}::DBus LOCATION)
 endif()
 
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")

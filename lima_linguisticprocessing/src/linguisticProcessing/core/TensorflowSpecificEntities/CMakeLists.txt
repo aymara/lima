@@ -65,7 +65,7 @@ add_executable(limaTfNer main.cpp)
 
 # Use the Widgets module from Qt 5.
 target_link_libraries(limaTfNer
-  Qt::Core
+  Qt${QT_VERSION_MAJOR}::Core
   ${PROJECT_LIBRARIES}
   ${Boost_LIBRARIES}
   lima-lp-tensorflowspecificentities

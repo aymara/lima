@@ -37,30 +37,27 @@ set(CMAKE_AUTOUIC ON)
 
 # This macro does the find_package with the required Qt modules listed as
 # parameters. Note that the Qt_INCLUDES variable is not necessary anymore as
-# the inclusion of variables Qt::Component in the target_link_libraries call
+# the inclusion of variables Qt${QT_VERSION_MAJOR}::Component in the target_link_libraries call
 # now automatically add the necessary include path, compiler settings and
 # several other things. In the same way, the Qt_LIBRARIES variable now is just
-# a string with the Qt::Component elements. It can be use in
+# a string with the Qt${QT_VERSION_MAJOR}::Component elements. It can be use in
 # target_link_libraries calls to simplify its writing.
 macro(addQtModules)
   set(_MODULES Core ${ARGV})
   #message("MODULES:${_MODULES}")
   if(NOT "${_MODULES}" STREQUAL "")
     # Use find_package to get includes and libraries directories
-    find_package(Qt6 COMPONENTS ${_MODULES})
-    if (NOT Qt6_FOUND)
-        message("Qt6 not found. Falling back to Qt5.")
-        find_package(Qt5 5.12 REQUIRED COMPONENTS ${_MODULES})
-    endif()
-    #qt_standard_project_setup()
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${_MODULES})
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${_MODULES})
 
-    message("Found Qt ${QtCore_VERSION}")
+
+    message("Found Qt ${Qt${QT_VERSION_MAJOR}Core_VERSION}")
     #Add Qt include and libraries paths to the sets
     foreach( _module ${_MODULES})
       message("Adding module ${_module}")
-      set(Qt_LIBRARIES ${Qt_LIBRARIES} Qt::${_module} )
+      set(Qt_LIBRARIES ${Qt_LIBRARIES} Qt${QT_VERSION_MAJOR}::${_module} )
 
-      get_target_property(QtModule_location Qt::${_module} LOCATION)
+      get_target_property(QtModule_location Qt${QT_VERSION_MAJOR}::${_module} LOCATION)
 
       if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         install(FILES ${QtModule_location}
