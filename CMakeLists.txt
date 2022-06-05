@@ -137,7 +137,7 @@ addQtModules(Core Gui Qml Quick QuickTest Test Xml Widgets )
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
-find_package(Qt6 COMPONENTS DBus)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus)
 if (QtDBus_FOUND)
   addQtModules(DBus)
   get_target_property(QtDBus_location Qt${QT_VERSION_MAJOR}::DBus LOCATION)
