@@ -325,9 +325,9 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
 
   QTextStream out( &file );
 
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << Qt::endl;
-  out << "<annotationConfiguration>" << Qt::endl;
-  out << "  <entities>" << Qt::endl;
+  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << QTENDL;
+  out << "<annotationConfiguration>" << QTENDL;
+  out << "  <entities>" << QTENDL;
   QApplication::setOverrideCursor( Qt::WaitCursor );
 
   for (int i = 0; i < m_listWidget->count(); i++)
@@ -338,16 +338,16 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
     {
       out << " recursive=\"true\"";
     }
-    out << "/>" << Qt::endl;
+    out << "/>" << QTENDL;
   }
 
 
 
   QApplication::restoreOverrideCursor();
-  out << "  </entities>" << Qt::endl;
-  out << "  <templates>" << Qt::endl;
-  out << "  </templates>" << Qt::endl;
-  out << "</annotationConfiguration>" << Qt::endl;
+  out << "  </entities>" << QTENDL;
+  out << "  <templates>" << QTENDL;
+  out << "  </templates>" << QTENDL;
+  out << "</annotationConfiguration>" << QTENDL;
 
   statusBar()->showMessage( tr( "File saved" ), 2000 );
   setWindowModified( false );

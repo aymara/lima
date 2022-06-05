@@ -140,7 +140,7 @@ m_actionsWithOneArgument()
   LDEBUG << "right=" << Common::Misc::limastring2utf8stdstring(m_right.getStringDebug());
 #endif
 
-//   LDEBUG << "RuleString:init:rule=" << getString() << Qt::endl;
+//   LDEBUG << "RuleString:init:rule=" << getString() << QTENDL;
 }
 
 //***********************************************************************

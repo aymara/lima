@@ -150,7 +150,7 @@ BoWXmlReaderPrivate::BoWXmlReaderPrivate(const std::string& filename,
   if (!parse(&file))
   {
     BOWLOGINIT;
-    throw XMLException(QLatin1String("Error parsing %1: %2")
+    throw XMLException(QString(QLatin1String("Error parsing %1: %2"))
               .arg(filename.c_str())
               .arg(errorString()).toUtf8().constData());
   }

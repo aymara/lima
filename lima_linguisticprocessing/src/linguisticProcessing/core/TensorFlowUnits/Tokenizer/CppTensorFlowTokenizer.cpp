@@ -644,8 +644,8 @@ std::vector< std::vector< std::pair<QString, int> > > CppTokenizerPrivate::token
     // Print the results
     //"tensorflow/core/framework/tensor_shape.h"
 #ifdef DEBUG_LP
-    LDEBUG << "The results :" << Qt::endl
-              << "  -logits            : "<<outputs[0].DebugString() << Qt::endl
+    LDEBUG << "The results :" << QTENDL
+              << "  -logits            : "<<outputs[0].DebugString() << QTENDL
               << "  -transition matrix : "<<outputs[1].DebugString();
 #endif
     //   Grab all the outputs and convert the nodes to a matrix representation (Eigen::TensorMap<Eigen::Tensor>)

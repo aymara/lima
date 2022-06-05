@@ -177,7 +177,7 @@ public:
   // debug
   friend QDebug& operator<<(QDebug& os, const Entities& ent) {
     for (const auto& e: ent) {
-      os << e << Qt::endl;
+      os << e << QTENDL;
     }
     return os;
   }
@@ -212,7 +212,7 @@ public:
   }
 
   friend QDebug& operator<<(QDebug& os, const std::vector<EntityOccurrence>& occ) {
-    for (const auto& o: occ) { os << o << Qt::endl; };
+    for (const auto& o: occ) { os << o << QTENDL; };
     return os;
   }
 
@@ -246,12 +246,12 @@ LimaStatusCode SpecificEntitiesCompletion::process(
   // gather found entities of the selected types
   Entities foundEntities;
   getEntities(analysis,foundEntities,tokenMap);
-  LDEBUG << "SpecificEntitiesCompletion: found entities" << Qt::endl << foundEntities;
+  LDEBUG << "SpecificEntitiesCompletion: found entities" << QTENDL << foundEntities;
 
   // find entities in text
   std::vector<EntityOccurrence> newEntities;
   findOccurrences(foundEntities,analysis,newEntities);
-  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << Qt::endl << newEntities;
+  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << QTENDL << newEntities;
 
   // report found entities in graph data
   // use existing CreateSpecificEntity function, create RecognizerMatch

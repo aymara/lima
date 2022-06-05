@@ -332,7 +332,7 @@ void KColorCells::dragEnterEvent(QDragEnterEvent *event)
     qDebug() << "KColorCells::dragEnterEvent() acceptDrags="
     << this->dragEnabled()
     << " canDecode=" << KColorMimeData::canDecode(event->mimeData())
-    << Qt::endl;
+    << QTENDL;
     event->setAccepted(this->dragEnabled() && KColorMimeData::canDecode(event->mimeData()));
 }
 
@@ -342,7 +342,7 @@ void KColorCells::dragMoveEvent(QDragMoveEvent *event)
     qDebug() << "KColorCells::dragMoveEvent() acceptDrags="
     << this->dragEnabled()
     << " canDecode=" << KColorMimeData::canDecode(event->mimeData())
-    << Qt::endl;
+    << QTENDL;
     event->setAccepted(this->dragEnabled() && KColorMimeData::canDecode(event->mimeData()));
 }
 

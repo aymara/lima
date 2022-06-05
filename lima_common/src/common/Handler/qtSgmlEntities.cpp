@@ -346,7 +346,7 @@ QString parseEntity(QStringView entity)
                 entity = entity.mid(1);
                 base = 16;
             }
-            uint uc = entity.toUInt(&ok, base);
+            uint uc = entity.toString().toUInt(&ok, base);
             if (ok) {
                 if (uc >= 0x80 && uc < 0x80 + (sizeof(windowsLatin1ExtendedCharacters)/sizeof(windowsLatin1ExtendedCharacters[0])))
                     uc = windowsLatin1ExtendedCharacters[uc - 0x80];

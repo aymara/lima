@@ -39,8 +39,10 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 #include <QtCore/QMutex>
+#define QTENDL endl
 #else
 #include <QtCore/QRecursiveMutex>
+#define QTENDL Qt::endl
 #endif
 
 #include <cstdint>

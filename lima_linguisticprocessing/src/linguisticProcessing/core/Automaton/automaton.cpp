@@ -1391,12 +1391,12 @@ QDebug& operator << (QDebug& os, const Automaton& a) {
   //   os << "deterministic=" << a.isDeterministic() << endl;
 
   for (uint64_t i(0); i<a.numberOfStates(); i++) {
-    if (a.isFinalState(i)) { os << i << " [final]" << Qt::endl; }
+    if (a.isFinalState(i)) { os << i << " [final]" << QTENDL; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
       os << i << " -> " << a.m_transitions[i][j].nextState()
       << " ["
       << *(a.m_transitions[i][j].transitionUnit())
-      << "]" << Qt::endl;
+      << "]" << QTENDL;
     }
   }
 

@@ -446,10 +446,10 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     LIMAGUILOGINIT;
     QString errorMessage;
     QTextStream qts(&errorMessage);
-    qts << e.what() << Qt::endl
-            << "\tconfig file:" << lpConfigFile << Qt::endl
-            << "\tcommon config file:" << commonConfigFile  << Qt::endl
-            << "\tconfig path:" << configPath << Qt::endl
+    qts << e.what() << QTENDL
+            << "\tconfig file:" << lpConfigFile << QTENDL
+            << "\tcommon config file:" << commonConfigFile  << QTENDL
+            << "\tconfig path:" << configPath << QTENDL
             << "\tclient id  :" << clientId;
     LERROR << errorMessage;
     Q_EMIT(error(tr("Invalid configuration"), errorMessage));

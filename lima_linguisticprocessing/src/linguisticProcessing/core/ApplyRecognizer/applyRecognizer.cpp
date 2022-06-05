@@ -322,7 +322,7 @@ processOnEachSentence(AnalysisContent& analysis,
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    //LDEBUG << "ApplyRecognizer: analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << Qt::endl;
+    //LDEBUG << "ApplyRecognizer: analyze sentence from vertex " << beginSentence << " to vertex " << endSentence << QTENDL;
 
     seRecognizerResult.clear();
     reco->apply(*anagraph,beginSentence,

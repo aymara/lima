@@ -211,7 +211,7 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
   QsLogging::Categories::instance();
   QsLogging::Destinations::instance().setDefault();
 
-  bool atLeastOneSuccessfulLoad = false;
+//   bool atLeastOneSuccessfulLoad = false;
   bool atLeastOneDestinationSuccessfulLoad = false;
   QStringList configDirsList;
   if (configString.isEmpty())
@@ -242,10 +242,10 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
 //           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
 //           return false;
 //         }
-        if (QsLogging::Categories::instance().configure(initFileName))
-        {
-          atLeastOneSuccessfulLoad = true;
-        }
+//         if (QsLogging::Categories::instance().configure(initFileName))
+//         {
+//           atLeastOneSuccessfulLoad = true;
+//         }
 //         else
 //         {
 //           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
@@ -269,15 +269,15 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
 //             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\". No destination available" << std::endl;
             return false;
           }
-          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
-          {
-            atLeastOneSuccessfulLoad = true;
-          }
-          else
+          if (!QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
           {
 //             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\". No category loaded" << std::endl;
             return false;
           }
+//           else
+//           {
+//             atLeastOneSuccessfulLoad = true;
+//           }
         }
       }
 
