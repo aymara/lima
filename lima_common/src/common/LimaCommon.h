@@ -35,7 +35,14 @@
 #ifndef LIMA_MMCOMMONS_H
 #define LIMA_MMCOMMONS_H
 
+#include <QtGlobal>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+#include <QtCore/QtMutex>
+#else
 #include <QtCore/QRecursiveMutex>
+#endif
+
 #include <cstdint>
 
 #ifdef WIN32
@@ -174,7 +181,11 @@ public:
   LogInit(char const* x)
   {
     // initialisation thread-safe
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    static QMutex mutex(QMutex::Recursive);
+#else
     static QRecursiveMutex mutex;
+#endif
     QMutexLocker locker(&mutex);
     pLogger = &QsLogging::Logger::instance(QLatin1String(x));
 #ifndef DEBUG_CD
