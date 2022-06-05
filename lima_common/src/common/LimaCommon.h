@@ -38,7 +38,7 @@
 #include <QtGlobal>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-#include <QtCore/QtMutex>
+#include <QtCore/QMutex>
 #else
 #include <QtCore/QRecursiveMutex>
 #endif
