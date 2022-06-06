@@ -100,8 +100,7 @@ bool Categories::configure(const QString& fileName, bool reload)
   static LogInit logInit(local_zone.toUtf8().constData());
   auto& logger = *(logInit.pLogger);
 
-//   std::cerr << "Categories::configure " << fileName.toStdString() << " "
-//             << reload << std::endl;
+//   std::cerr << "Categories::configure " << fileName.toStdString() << " " << reload << std::endl;
 
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
@@ -115,8 +114,7 @@ bool Categories::configure(const QString& fileName, bool reload)
   if (!reload && d->m_configuredFiles.contains(fileName))
   {
     LOGINIT("Logging");
-    LDEBUG << "Destinations::configure configuration file: \"" << fileName
-            << "\" already configured";
+    LDEBUG << "Categories::configure configuration file: \"" << fileName << "\" already configured";
     return true;
   }
   d->m_configFileWatcher.addPath(fileName);
@@ -242,6 +240,7 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
 //           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
 //           return false;
 //         }
+        QsLogging::Categories::instance().configure(initFileName); // return value ignored on will
 //         if (QsLogging::Categories::instance().configure(initFileName))
 //         {
 //           atLeastOneSuccessfulLoad = true;

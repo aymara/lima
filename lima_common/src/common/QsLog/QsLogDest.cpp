@@ -116,6 +116,8 @@ bool Destinations::configure(const QString& fileName, bool reload)
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
 
+//   std::cerr << "Destinations::configure " << fileName.toStdString() << " " << reload << std::endl;
+
   if (!file.open(QIODevice::ReadOnly))
   {
     std::cerr << "Destinations::configure Unable to open qslog configuration file: \""
