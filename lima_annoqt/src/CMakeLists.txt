@@ -11,7 +11,11 @@ SET(annoqt_SRCS
            specificEntitiesHandler.cpp
            specificEntity.cpp)
 
-qt${QT_VERSION_MAJOR}_add_resources(annoqt_QRCS annoqt.qrc)
+if(QtCore_VERSION VERSION_GREATER 5.14.0)
+  qt_add_resources(annoqt_QRCS annoqt.qrc)
+else()
+  qt5_add_resources(annoqt_QRCS annoqt.qrc)
+endif()
 
 add_executable(annoqt ${annoqt_SRCS} ${annoqt_QRCS})
 
@@ -32,7 +36,12 @@ SET(annoqtconfeditor_SRCS
            khuesaturationselect.cpp
            kcolordialog.cpp)
 
-qt_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
+
+if(QtCore_VERSION VERSION_GREATER 5.14.0)
+  qt_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
+else()
+  qt5_add_resources(annoqtconfeditor_QRCS annoqtconfeditor.qrc)
+endif()
 
 add_executable(annoqtconfeditor ${annoqtconfeditor_SRCS} ${annoqtconfeditor_QRCS})
 

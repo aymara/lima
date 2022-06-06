@@ -64,7 +64,7 @@ install(PROGRAMS
 #   qt_add_dbus_adaptor(limadbusserver_SRCS
 #       ${CMAKE_CURRENT_BINARY_DIR}/fr.cea.limadbusserver.xml
 #       LimaDBusServer.h LimaDBusServer)
-#   # qt_add_resources(limadbusserver limaserver.qrc)
+#   # qt5_add_resources(limadbusserver limaserver.qrc)
 #
 #   add_executable(limadbusserver ${limadbusserver_SRCS})
 #

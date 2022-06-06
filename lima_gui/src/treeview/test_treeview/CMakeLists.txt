@@ -1,5 +1,5 @@
 #   Copyright 2017 CEA LIST
-#    
+#
 #   This file is part of LIMA.
 #
 #   LIMA is free software: you can redistribute it and/or modify
@@ -22,12 +22,17 @@ set (test_treeview_SRCS
   treeitem.cpp
   treemodel.cpp
 )
-qt_add_resources(test_treeview_SRCS qml.qrc)
 
-add_executable(test_treeview 
+if(QtCore_VERSION VERSION_GREATER 5.14.0)
+  qt_add_resources(test_treeview_SRCS qml.qrc)
+else()
+  qt5_add_resources(test_treeview_SRCS qml.qrc)
+endif()
+
+add_executable(test_treeview
   ${test_treeview_SRCS}
 )
-target_link_libraries(test_treeview 
+target_link_libraries(test_treeview
   ${Qt_LIBRARIES}
 )
 
