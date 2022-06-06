@@ -11,7 +11,7 @@ SET(annoqt_SRCS
            specificEntitiesHandler.cpp
            specificEntity.cpp)
 
-qt_add_resources(annoqt_QRCS annoqt.qrc)
+qt${QT_VERSION_MAJOR}_add_resources(annoqt_QRCS annoqt.qrc)
 
 add_executable(annoqt ${annoqt_SRCS} ${annoqt_QRCS})
 
