@@ -48,7 +48,7 @@ install(FILES
     TestCase.h
     TestCaseProcessor.hpp
     TestCaseError.hpp
-    TestCasesHandler.h
+    TestCasesReader.h
   DESTINATION include/linguisticProcessing/common/tgv
   COMPONENT devel
 )
