@@ -409,7 +409,7 @@ void BoWXmlReaderPrivate::readBowNamedEntity()
     QString errorString;
     QTextStream qts(&errorString);
     qts << __FILE__ << ", line" << __LINE__
-        << "Unknown entity type" << typeName;
+        << "Unknown entity type" << typeName << this->errorString();
     LERROR << errorString;
     throw LimaException(errorString);
   }
@@ -567,7 +567,9 @@ uint64_t BoWXmlReaderPrivate::getIntAttribute(const QXmlStreamReader& attributes
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to uint64_t";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to uint64_t. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 
@@ -583,7 +585,9 @@ float BoWXmlReaderPrivate::getFloatAttribute(const QXmlStreamReader& attributes,
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to float";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to float. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 
