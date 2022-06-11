@@ -26,12 +26,11 @@
 #include "token_type.h"
 #include "ner.h"
 #include "lemmatization.h"
-#include "dumper_conllu.h"
 
 namespace deeplima
 {
 
-template <class Matrix>
+template <class Matrix=eigen_wrp::EigenMatrixXf>
 class TokenSequenceAnalyzer
 {
 public:
@@ -208,11 +207,6 @@ public:
       m_cls.precompute_inputs(enriched_token_buffer_t(buff, m_stridx));
     }
 
-    for (size_t i = 0; i < m_cls.get_classes().size(); ++i)
-    {
-      m_dumper.set_classes(i, m_cls.get_class_names()[i], m_cls.get_classes()[i]);
-    }
-
     if (lemm_model_fn.size() > 0)
     {
       m_lemm.load(lemm_model_fn, path_resolver);
@@ -222,9 +216,16 @@ public:
                              const typename EntityTaggingModule::OutputMatrix& classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
+
         lemmatize(m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
-        TokenIterator ti(m_stridx, m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
-        m_dumper(ti);
+
+        m_output_callback(m_stridx,
+                          m_buffers[slot_idx],
+                          m_lemm_buffers[slot_idx],
+                          classes,
+                          begin,
+                          end);
+
         m_buffers[slot_idx].unlock();
       });
     }
@@ -234,9 +235,14 @@ public:
                              const typename EntityTaggingModule::OutputMatrix& classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
-        //lemmatize(m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
-        TokenIterator ti(m_stridx, m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
-        m_dumper(ti);
+
+        m_output_callback(m_stridx,
+                          m_buffers[slot_idx],
+                          m_lemm_buffers[slot_idx],
+                          classes,
+                          begin,
+                          end);
+
         m_buffers[slot_idx].unlock();
       });
     }
@@ -247,9 +253,26 @@ public:
     std::cerr << "~TokenSequenceAnalyzer" << std::endl;
   }
 
-  uint64_t get_token_counter() const
+  typedef typename EntityTaggingModule::OutputMatrix OutputMatrix;
+  typedef std::function < void (const StringIndex& stridx,
+                                const token_buffer_t& tokens,
+                                const std::vector<StringIndex::idx_t>& lemmata,
+                                const OutputMatrix& classes,
+                                size_t begin,
+                                size_t end) > output_callback_t;
+
+  void register_handler(const output_callback_t fn) {
+    m_output_callback = fn;
+  }
+
+  const std::vector<std::vector<std::string>>& get_classes() const
   {
-    return m_dumper.get_token_counter();
+    return m_cls.get_classes();
+  }
+
+  const std::vector<std::string>& get_class_names() const
+  {
+    return m_cls.get_class_names();
   }
 
   void finalize()
@@ -368,8 +391,7 @@ protected:
   EntityTaggingModule m_cls;
   LemmatizationModule m_lemm;
 
-  // Dumper
-  dumper::AnalysisToConllU<TokenIterator> m_dumper;
+  output_callback_t m_output_callback;
 };
 
 } // namespace deeplima
