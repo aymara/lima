@@ -324,7 +324,12 @@ macro (IDIOMATICENTITIES _lang)
   add_custom_command(
     OUTPUT idiomaticExpressions-${_lang}.bin
     COMMAND compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules rules-${_lang}-execEnv rules-configEnv compile-rules lima-lp-morphologicanalysis
+    DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/idiomaticExpressions-${_lang}.rules
+      rules-${_lang}-execEnv
+      rules-configEnv
+      compile-rules
+      lima-lp-morphologicanalysis
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "compile-rules --configDir=${LIMA_CONF} --resourcesDir=${LIMA_RESOURCES} --language=${_lang} ${COMPILE_RULES_DEBUG_MODE} -oidiomaticExpressions-${_lang}.bin idiomaticExpressions-${_lang}.rules"
     VERBATIM
@@ -695,7 +700,7 @@ endmacro (SPECIFICENTITIES _subtarget _lang _group)
 macro (COMPILE_SA_RULES_WRAPPER _lang)
   set(${_lang}_BIN_RULES_FILES)
   foreach(RULES_FILE ${ARGN})
-    set (${_lang}_BIN_RULES_FILES ${RULES_FILE}.bin ${${_lang}_BIN_RULES_FILES})
+    set (${_lang}_BIN_RULES_FILES ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/${RULES_FILE}.bin ${${_lang}_BIN_RULES_FILES})
   endforeach(RULES_FILE ${ARGN})
 
   COMPILE_RULES(${_lang} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis ${ARGN})
@@ -712,7 +717,7 @@ macro (COMPILE_SA_RULES_WRAPPER _lang)
 
   foreach (file ${${_lang}_BIN_RULES_FILES})
     install(FILES
-        ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/${file}
+        ${file}
       COMPONENT ${_lang} DESTINATION share/apps/lima/resources/SyntacticAnalysis)
   endforeach (file ${${_lang}_BIN_RULES_FILES})
 endmacro (COMPILE_SA_RULES_WRAPPER  _lang)
@@ -728,8 +733,8 @@ macro (ADD_SA_RULES_DEPENDS _lang)
   message("Execute ADD_SA_RULES_DEPENDS on ${${_lang}_SA_DEPENDS_FILES}")
 
   add_custom_command(
-    OUTPUT syntanaldepends
-    COMMAND touch syntanaldepends
+    OUTPUT syntanaldepends-${_lang}-output
+    COMMAND touch syntanaldepends-${_lang}-output
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis
     COMMAND ${CMAKE_COMMAND} -E copy ${${_lang}_SA_DEPENDS_FILES} ${CMAKE_BINARY_DIR}/execEnv/resources/SyntacticAnalysis/
     DEPENDS ${${_lang}_SA_DEPENDS_FILES}
@@ -739,7 +744,7 @@ macro (ADD_SA_RULES_DEPENDS _lang)
   add_custom_target(
     syntanaldepends-${_lang}
     ALL
-    DEPENDS syntanaldepends
+    DEPENDS syntanaldepends-${_lang}-output
   )
 
   install(FILES ${${_lang}_SA_DEPENDS_FILES}
