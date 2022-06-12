@@ -166,6 +166,10 @@ bool BoWXmlReaderPrivate::parse(QIODevice *device)
       {
           readBowDocument();
       }
+      else if (m_reader.name() == QLatin1String("bowText"))
+      {
+          readBowText();
+      }
       else
       {
           m_reader.raiseError(QObject::tr("The file is not a LIMA BoW XML file."));
