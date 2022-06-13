@@ -311,16 +311,16 @@ static const struct TextHtmlEntity { const char name[9]; quint16 code; } entitie
 };
 Q_STATIC_ASSERT(MAX_ENTITY == sizeof entities / sizeof *entities);
 
-static bool operator<(const QStringRef &entityStr, const TextHtmlEntity &entity)
+static bool operator<(const QStringView &entityStr, const TextHtmlEntity &entity)
 {
     return entityStr < QLatin1String(entity.name);
 }
-static bool operator<(const TextHtmlEntity &entity, const QStringRef &entityStr)
+static bool operator<(const TextHtmlEntity &entity, const QStringView &entityStr)
 {
     return QLatin1String(entity.name) < entityStr;
 }
 
-static QChar resolveEntity(const QStringRef &entity)
+static QChar resolveEntity(const QStringView &entity)
 {
     const TextHtmlEntity *start = &entities[0];
     const TextHtmlEntity *end = &entities[MAX_ENTITY];
@@ -331,7 +331,7 @@ static QChar resolveEntity(const QStringRef &entity)
 }
 
 // parses an entity after "&", and returns it
-QString parseEntity(QStringRef entity)
+QString parseEntity(QStringView entity)
 {
     int entityLen = entity.size();
     if (entityLen) {
@@ -346,7 +346,7 @@ QString parseEntity(QStringRef entity)
                 entity = entity.mid(1);
                 base = 16;
             }
-            uint uc = entity.toUInt(&ok, base);
+            uint uc = entity.toString().toUInt(&ok, base);
             if (ok) {
                 if (uc >= 0x80 && uc < 0x80 + (sizeof(windowsLatin1ExtendedCharacters)/sizeof(windowsLatin1ExtendedCharacters[0])))
                     uc = windowsLatin1ExtendedCharacters[uc - 0x80];

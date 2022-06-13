@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2020 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -889,7 +889,7 @@ void MediaticData::initEntityTypes(XMLConfigurationFileParser& configParser)
 #ifdef DEBUG_CD
             LDEBUG << "initEntityTypes: type is " << ent;
 #endif
-            if (i.hasAttribute("isA"))
+            if (i.hasAttribute(QLatin1String("isA")))
             {
               auto parentName = utf8stdstring2limastring(i.getAttribute("isA"));
               EntityType parent;

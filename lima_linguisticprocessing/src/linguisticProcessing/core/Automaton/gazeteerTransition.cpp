@@ -145,7 +145,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
   /*
   QString pattern(form);
   pattern.append("\\b");
-  QRegExp rx(pattern);
+  QRegularExpression rx(pattern);
   int index = qStringList.indexOf(rx);
   */
 //    return true;

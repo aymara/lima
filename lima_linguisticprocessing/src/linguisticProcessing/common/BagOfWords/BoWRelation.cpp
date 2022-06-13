@@ -45,8 +45,8 @@ namespace Common
 namespace BagOfWords
 {
 
-#define DEFAULT_SEPARATOR L'#'
-#define DEFAULT_COMPOUND_SEPARATOR L'_'
+#define DEFAULT_SEPARATOR QChar{'#'}
+#define DEFAULT_COMPOUND_SEPARATOR QChar{'_'}
 
 //***********************************************************************
 // static members initialization
@@ -151,7 +151,7 @@ void BoWRelation::convertSpaces(void)
 bool BoWRelation::operator==(const BoWRelation& t) const
 {
   return ( (m_type==t.m_type) &&
-           (m_realization==t.m_realization) && 
+           (m_realization==t.m_realization) &&
            (s_type == t.s_type));
 }
 

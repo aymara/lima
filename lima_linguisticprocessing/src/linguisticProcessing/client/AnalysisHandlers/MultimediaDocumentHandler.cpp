@@ -1,3 +1,21 @@
+/*
+    Copyright 2002-2022 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 #include "MultimediaDocumentHandler.h"
 #include "MultimediaDocumentReaderWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
@@ -143,8 +161,10 @@ void MultimediaDocumentHandler::startNode ( const std::string& elementName, bool
 void MultimediaDocumentHandler::endNode ( const Common::Misc::GenericDocumentProperties& props )
 {
   NODE_ID Nid=props.getIntValue ( "NodeId" ).first;
+#ifdef DEBUG_LP
   HANDLERLOGINIT;
   LDEBUG << "MultimediaDocumentHandler::endNode" << this << Nid << m_openedNodes.size();
+#endif
   CONTENT_ID Cid=props.getIntValue ( "ContentId" ).first;
   //ajouter les propriétés
 //   set_LastContentId(get_LastContentId()+1);
@@ -183,7 +203,7 @@ void MultimediaDocumentHandler::endNode ( const Common::Misc::GenericDocumentPro
 #ifdef DEBUG_LP
   LDEBUG << "MultimediaDocumentHandler::endNode write NODE_PROPERTIES_BLOC on" << m_out;
 #endif
-  Misc::writeOneByteInt(*m_out,Common::BagOfWords::NODE_PROPERTIES_BLOC);
+  Misc::writeOneByteInt(*m_out, Common::BagOfWords::NODE_PROPERTIES_BLOC);
   props.write(*m_out);
 #ifdef DEBUG_LP
   LDEBUG << "MultimediaDocumentHandler::endNode write END_BLOC on" << m_out;

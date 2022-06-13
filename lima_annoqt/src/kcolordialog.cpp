@@ -332,7 +332,7 @@ void KColorCells::dragEnterEvent(QDragEnterEvent *event)
     qDebug() << "KColorCells::dragEnterEvent() acceptDrags="
     << this->dragEnabled()
     << " canDecode=" << KColorMimeData::canDecode(event->mimeData())
-    << endl;
+    << QTENDL;
     event->setAccepted(this->dragEnabled() && KColorMimeData::canDecode(event->mimeData()));
 }
 
@@ -342,7 +342,7 @@ void KColorCells::dragMoveEvent(QDragMoveEvent *event)
     qDebug() << "KColorCells::dragMoveEvent() acceptDrags="
     << this->dragEnabled()
     << " canDecode=" << KColorMimeData::canDecode(event->mimeData())
-    << endl;
+    << QTENDL;
     event->setAccepted(this->dragEnabled() && KColorMimeData::canDecode(event->mimeData()));
 }
 
@@ -851,7 +851,7 @@ KColorDialog::KColorDialog(QWidget *parent)
     d->hsSelector = new KHueSaturationSelector(this);
     d->hsSelector->setMinimumSize(256, 256);
     l_ltop->addWidget(d->hsSelector, 8);
-    connect(d->hsSelector, 
+    connect(d->hsSelector,
             SIGNAL(valueChanged(int,int)),
             SLOT(slotHSChanged(int,int)));
 
@@ -1023,14 +1023,14 @@ KColorDialog::KColorDialog(QWidget *parent)
     d->htmlName->setFixedWidth(w);
     l_grid->addWidget(d->htmlName, 1, 2, Qt::AlignLeft);
 
-    connect(d->htmlName, 
+    connect(d->htmlName,
             SIGNAL(textChanged(QString&)),
             SLOT(slotHtmlChanged()));
 
             d->patch = new KColorPatch(this);
     d->patch->setFixedSize(48, 48);
     l_grid->addWidget(d->patch, 0, 0, 2, 1, Qt::AlignHCenter | Qt::AlignVCenter);
-    connect(d->patch, 
+    connect(d->patch,
             SIGNAL(colorChanged(QColor&)),
             SLOT(setColor(QColor&)));
 
@@ -1235,7 +1235,7 @@ void
 KColorDialog::KColorDialogPrivate::slotWriteSettings()
 {
   QSettings settings( "LIMA", "Annotation Configuration Tool" );
-  
+
 //   KConfigGroup group(KGlobal::config(), "Colors");
 
     QString collectionName = table->name();
@@ -1267,11 +1267,11 @@ void KColorDialog::setColor(const QColor &col)
 //     if (theColor.isValid())
 //         dlg.setColor(theColor);
 //     int result = dlg.exec();
-// 
+//
 //     if (result == Accepted) {
 //         theColor = dlg.color();
 //     }
-// 
+//
 //     return result;
 // }
 
@@ -1285,10 +1285,10 @@ void KColorDialog::setColor(const QColor &col)
 //     dlg.setDefaultColor(defaultCol);
 //     dlg.setColor(theColor);
 //     int result = dlg.exec();
-// 
+//
 //     if (result == Accepted)
 //         theColor = dlg.color();
-// 
+//
 //     return result;
 // }
 

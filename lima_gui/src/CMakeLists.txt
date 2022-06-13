@@ -35,35 +35,19 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-if (Qt5Core_FOUND)
-  if (Qt5Core_VERSION VERSION_GREATER 5.7.0)
-    qt5_add_resources(lima_SRCS resources.qrc)
+if (QtCore_FOUND)
+  if (QtCore_VERSION VERSION_GREATER 5.7.0)
+    if(QtCore_VERSION VERSION_GREATER 5.14.0)
+      qt_add_resources(lima_SRCS resources.qrc)
+    else()
+      qt5_add_resources(lima_SRCS resources.qrc)
+    endif()
     set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml)
   else()
     qt5_add_resources(lima_SRCS resources-old.qrc)
     set(QMLDIR ${CMAKE_CURRENT_SOURCE_DIR}/qml-old)
   endif()
 endif()
-
-#set(QTLIBS Qt5::Core Qt5::Test Qt5::Qml Qt5::Quick Qt5::Gui Qt5::Widgets)
-
-# if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
-#   if(Qt5Core_VERSION VERSION_LESS 5.3)
-#     message(WARNING "Cannot use windeployqt in Qt 5.2 and earlier")
-#   else()
-#     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
-#     include(WinDeployQt)
-#     WinDeployQt(
-#       COMPILER_RUNTIME
-#       TARGET lima
-#       QMLDIR ${QMLDIR}
-#       INCLUDE_MODULES ${QTLIBS}
-#     )
-#     install(
-#       DIRECTORY ${PROJECT_BINARY_DIR}/windeployqt/
-#       DESTINATION ${CMAKE_INSTALL_BINDIR})
-#   endif()
-# endif()
 
 if (WIN32)
   add_executable(lima WIN32
@@ -75,10 +59,10 @@ if (WIN32)
     lima-common-xmlconfigurationfiles
     lima-lp-client
     lima-lp-analysishandlers
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
-    Qt5::WinMain
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::WinMain
   )
   include(DeployQt.cmake)
   mywindeployqt(
@@ -86,12 +70,12 @@ if (WIN32)
     DIRECTORY bin
     QMLDIR ${QMLDIR}
   )
-  get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+  get_target_property(_qmake_executable Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
   get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
   install(
     FILES
-      ${_qt_bin_dir}/Qt5QuickTemplates2.dll
-      ${_qt_bin_dir}/Qt5QuickControls2.dll
+      ${_qt_bin_dir}/QtQuickTemplates2.dll
+      ${_qt_bin_dir}/QtQuickControls2.dll
     DESTINATION
       bin
   )
@@ -106,9 +90,9 @@ else()
     lima-common-xmlconfigurationfiles
     lima-lp-client
     lima-lp-analysishandlers
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
   )
 endif()
 

@@ -63,8 +63,8 @@ uint8_t toInt(const BoWType& bt)
 }
 
 
-#define DEFAULT_SEPARATOR L'#'
-#define DEFAULT_COMPOUND_SEPARATOR L'_'
+#define DEFAULT_SEPARATOR QChar{'#'}
+#define DEFAULT_COMPOUND_SEPARATOR QChar{'_'}
 
 //***********************************************************************
 // static members initialization
@@ -131,7 +131,7 @@ BoWTokenPrivate::BoWTokenPrivate(const LimaString& str,
   else
   {
     m_lemma=str.mid(0,i);
-    m_category=LinguisticCode::fromString(str.midRef(i+1).toString().toStdString());
+    m_category=LinguisticCode::fromString(str.mid(i+1).toStdString());
   }
 
 //   BOWLOGINIT;
@@ -258,7 +258,7 @@ BoWToken::BoWToken(const LimaString& str,
   else
   {
     m_d->m_lemma=str.left(i);
-    m_d->m_category=LinguisticCode::fromString(str.midRef(i+1).toString().toStdString());
+    m_d->m_category=LinguisticCode::fromString(str.mid(i+1).toStdString());
   }
 
 //   BOWLOGINIT;

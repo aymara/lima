@@ -360,18 +360,18 @@ ostream& operator << (ostream& os, const Rule& r) {
   return os;
 }
 QDebug& operator << (QDebug& os, const Rule& r) {
-  os << r.getRuleId() << ":" << endl;
-  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
-  os << "left=" << endl << r.leftAutomaton();
-  os << "right=" << endl << r.rightAutomaton();
-  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << endl;
+  os << r.getRuleId() << ":" << QTENDL;
+  os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << QTENDL;
+  os << "left=" << QTENDL << r.leftAutomaton();
+  os << "right=" << QTENDL << r.rightAutomaton();
+  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << QTENDL;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
-    os << *action << endl;
+    os << *action << QTENDL;
   }
   for (std::vector<std::pair<LimaString,Constraint> >::const_iterator action=r.m_actionsWithOneArgument.begin();
     action!=r.m_actionsWithOneArgument.end(); action++) {
-    os << "(" << action->first << ","<< action->second<< ")" << endl;
+    os << "(" << action->first << ","<< action->second<< ")" << QTENDL;
   }
   return os;
 }

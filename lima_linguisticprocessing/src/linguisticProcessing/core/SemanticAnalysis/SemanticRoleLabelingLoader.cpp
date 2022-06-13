@@ -39,7 +39,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include "QStringList"
 #include <QString>
 #include <QFile>
@@ -91,7 +91,7 @@ struct ConllHandler
     * @param separator the separator used to split
     * @return the segment split
     */
-  QStringList splitSegment(const QString & segment, QRegExp separator);
+  QStringList splitSegment(const QString & segment, QRegularExpression separator);
 
   /**
     * @brief get the lima token id matching any conll token one from the same text
@@ -107,8 +107,8 @@ struct ConllHandler
   MediaId m_language;
   AnalysisContent& m_analysis;
   LinguisticAnalysisStructure::AnalysisGraph* m_graph;
-  QRegExp m_descriptorSeparator;
-  QRegExp m_tokenSeparator;
+  QRegularExpression m_descriptorSeparator;
+  QRegularExpression m_tokenSeparator;
   QVector< QPair<LinguisticGraphVertex,QString> > m_verbalClasses;
   QVector < std::vector<std::pair<LinguisticGraphVertex,QString>> >m_semanticRoles;
   int m_verbalClassNb;
@@ -375,13 +375,13 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 
 
 
-QStringList ConllHandler::splitSegment(const QString & segment, QRegExp separator)
+QStringList ConllHandler::splitSegment(const QString & segment, QRegularExpression separator)
 {
   QStringList segmentsSplited;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-  segmentsSplited =segment.split(QRegExp(separator), QString::SkipEmptyParts);
+  segmentsSplited =segment.split(QRegularExpression(separator), QString::SkipEmptyParts);
 #else
-  segmentsSplited =segment.split(QRegExp(separator), Qt::SkipEmptyParts);
+  segmentsSplited =segment.split(QRegularExpression(separator), Qt::SkipEmptyParts);
 #endif
   return segmentsSplited;
 }

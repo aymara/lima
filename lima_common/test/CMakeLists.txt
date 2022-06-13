@@ -51,7 +51,7 @@ SET(testLexicon_SRCS
 
 add_executable(testLexicon ${testLexicon_SRCS})
 
-message("Qt5_LIBRARIES are ${Qt5_LIBRARIES}")
+message("Qt_LIBRARIES are ${Qt_LIBRARIES}")
 
 target_link_libraries(testLexicon
   lima-common-fsaaccess

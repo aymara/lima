@@ -136,8 +136,7 @@ const PropertyAccessor& PropertyManager::getPropertyAccessor() const
   return m_d->m_accessor;
 }
 
-LinguisticCode PropertyManager::getPropertyValue(
-  const std::string& symbolicValue) const
+LinguisticCode PropertyManager::getPropertyValue(const std::string& symbolicValue) const
 {
   auto it = m_d->m_symbol2code.find(symbolicValue);
   if (it == m_d->m_symbol2code.end())
