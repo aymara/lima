@@ -349,6 +349,8 @@
       <list name="micros">
         <item value="PU+FORTE" />
       </list>
+      <list name="values" />
+      <list name="forbid-values" />
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>
