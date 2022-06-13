@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -16,11 +16,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 */
-/***************************************************************************
- *   Copyright (C) 2004 by Benoit Mathieu                                  *
- *   mathieub@zoe.cea.fr                                                   *
- *                                                                         *
- ***************************************************************************/
+/**
+ * @author Benoit Mathieu
+ */
 
 #ifndef LIMA_TGV_TESTCASESHANDLER_H
 #define LIMA_TGV_TESTCASESHANDLER_H

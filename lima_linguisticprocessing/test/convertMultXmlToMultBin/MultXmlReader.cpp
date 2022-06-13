@@ -1,13 +1,25 @@
+/*
+    Copyright 2002-2022 CEA LIST
+
+    This file is part of LIMA.
+
+    LIMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    LIMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+*/
 /************************************************************************
- *
- * @file       MultXmlReader.cpp
  * @author     Gael de Chalendar (gael.de-chalendar@cea.fr)
  * @date       Mon Apr 7 2014
- * copyright   Copyright (C) 2014 by CEA LIST
- * Project     lima_xmlprocessings
- *
  * Parser for XML representation of Amose analysed multimedia documents
- *
  ***********************************************************************/
 
 #include "MultXmlReader.h"
@@ -152,8 +164,10 @@ MultXmlReader::~MultXmlReader()
 
 bool MultXmlReaderPrivate::parse(QIODevice *device)
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LDEBUG << "MultXmlReaderPrivate::parse";
+#endif
   m_reader.setDevice(device);
   if (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("MultimediaDocuments"))
@@ -218,10 +232,11 @@ bool MultXmlReaderPrivate::parse(QIODevice *device)
 // </MultimediaDocuments>
 void MultXmlReaderPrivate::readMultimediaDocuments()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowDocument" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("MultimediaDocuments"));
-
+#endif
   m_currentBoWDocument.clear();
 
   while (m_reader.readNextStartElement()) {
@@ -242,11 +257,11 @@ void MultXmlReaderPrivate::readMultimediaDocuments()
 //         <content type="tokens">
 void MultXmlReaderPrivate::readNode()
 {
-
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readNode" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("node"));
-
+#endif
   auto indexingNode = (getStringAttribute(m_reader, "indexingNode") == "yes");
   auto elementName = getQStringAttribute(m_reader, "elementName");
   m_handler.startNode(elementName.toStdString(), indexingNode);
@@ -290,10 +305,11 @@ void MultXmlReaderPrivate::readNode()
 //         </content>
 void MultXmlReaderPrivate::readContent()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readContent" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("content"));
-
+#endif
   auto contentType = getQStringAttribute(m_reader, "type");
   if (contentType == "tokens")
   {
@@ -308,14 +324,6 @@ void MultXmlReaderPrivate::readContent()
             m_reader.raiseError(QObject::tr("Expected a tokens or a properties but got a %1.").arg(m_reader.name()));
     }
   }
-
-  Common::Misc::writeOneByteInt(m_outputStream, Common::BagOfWords::END_BLOC);
-  if (m_currentBoWText !=0)
-  {
-    BoWBinaryWriter writer;
-    writer.writeBoWText(m_outputStream, *m_currentBoWText);
-    m_currentBoWText = boost::shared_ptr< BoWText >();
-  }
 }
 
 //           <properties>
@@ -324,10 +332,11 @@ void MultXmlReaderPrivate::readContent()
 //           </properties>
 void MultXmlReaderPrivate::readProperties()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
-  LTRACE << "MultXmlReaderPrivate::readProperties" << m_reader.name();
+  LDEBUG << "MultXmlReaderPrivate::readProperties" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("properties"));
-
+#endif
   m_currentProperties.reinit();
   while (m_reader.readNextStartElement()) {
       if (m_reader.name() == QLatin1String("property"))
@@ -336,8 +345,6 @@ void MultXmlReaderPrivate::readProperties()
           m_reader.raiseError(QObject::tr("Expected a property but got a %1.").arg(m_reader.name()));
   }
 
-//     m_outputStream << NODE_PROPERTIES_BLOC;
-//     m_currentProperties.write(m_outputStream);
   // Closing a properties token with a langPrpty property when
   // m_currentBoWText is not null means that we just read this text
   // properties, and particularly its language. We can now set its lang
@@ -345,6 +352,10 @@ void MultXmlReaderPrivate::readProperties()
   auto langPrpty = m_currentProperties.getStringValue("langPrpty");
   if (langPrpty.second && m_currentBoWText != 0)
   {
+#ifdef DEBUG_LP
+    LDEBUG << "MultXmlReaderPrivate::readProperties set current text lang to" << langPrpty.first
+            << "and write the BoW text to stream";
+#endif
     m_currentBoWText->lang = langPrpty.first;
 
     Common::Misc::writeOneByteInt(m_outputStream,BOW_TEXT_BLOC);
@@ -358,10 +369,11 @@ void MultXmlReaderPrivate::readProperties()
 //             <property name="ContentId" type="int" value="1"/>
 void MultXmlReaderPrivate::readProperty()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readProperty" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("property"));
-
+#endif
   addProperty(m_reader);
   m_reader.skipCurrentElement();
 }
@@ -384,16 +396,18 @@ void MultXmlReaderPrivate::readProperty()
 //           </tokens>
 void MultXmlReaderPrivate::readTokens()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readTokens" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("tokens"));
-
+#endif
   if (m_currentBoWText != nullptr)
   {
     m_currentBoWText->clear();
   }
   else
   {
+    BOWLOGINIT;
     LERROR << "<tokens> found whereas no BoWText initialized";
   }
   while (m_reader.readNextStartElement()) {
@@ -409,18 +423,16 @@ void MultXmlReaderPrivate::readTokens()
           m_reader.raiseError(QObject::tr("Expected a bowToken, bowTerm, bowRelation or a bowNamedEntity but got a %1.")
                                 .arg(m_reader.name()));
   }
-  Common::Misc::writeOneByteInt(m_outputStream, Common::BagOfWords::BOW_TEXT_BLOC);
-  //@todo
-  m_currentBoWText->writeBoWText(m_outputStream);
 }
 
 //                 <bowRelation realization="" type="3"/>
 void MultXmlReaderPrivate::readBowRelation()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowRelation" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowRelation"));
-
+#endif
   auto realization = getQStringAttribute(m_reader, "realization");
   auto type = getIntAttribute(m_reader, "type");
   m_currentBoWRelation = boost::shared_ptr< BoWRelation >(new BoWRelation(realization,type));
@@ -430,10 +442,11 @@ void MultXmlReaderPrivate::readBowRelation()
 //             <bowToken id="3" lemma="" category="NP" position="280" length="6"/>
 void MultXmlReaderPrivate::readBowToken()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowToken" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowToken"));
-
+#endif
   getTokenAttributes(m_reader, lemma, category, position, length, id);
   LDEBUG << lemma << category << position << length << id ;
   auto token = boost::shared_ptr< BoWToken >(new BoWToken(lemma,category,position,length));
@@ -448,7 +461,7 @@ void MultXmlReaderPrivate::readBowToken()
     if (m_currentBoWRelation != 0)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "addPart with relation";
+      LDEBUG << "MultXmlReaderPrivate::readBowToken addPart with relation";
 #endif
       m_currentComplexToken.back().token->addPart(m_currentBoWRelation, token, isHead);
       m_currentBoWRelation = boost::shared_ptr< BoWRelation >();
@@ -476,10 +489,11 @@ void MultXmlReaderPrivate::readBowToken()
 //             </bowTerm>
 void MultXmlReaderPrivate::readBowTerm()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowTerm" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowTerm"));
-
+#endif
   getTokenAttributes(m_reader, lemma, category, position, length, id);
   // use empty lemma: no need to store lemma for compound
   auto term = boost::shared_ptr< BoWTerm >(new BoWTerm(QString(), category, position, length));
@@ -500,7 +514,7 @@ void MultXmlReaderPrivate::readBowTerm()
   uint64_t id = m_currentComplexToken.back().currentPart;
   boost::shared_ptr< BoWRelation > relation = (m_relMap.find(token)==m_relMap.end())?boost::shared_ptr< BoWRelation >():(m_relMap[token]);
 #ifdef DEBUG_LP
-  LDEBUG << "id=" << id << "; relation=" << *relation;
+  LDEBUG << "MultXmlReaderPrivate::readBowTerm id=" << id;
 #endif
   m_currentComplexToken.pop_back();
   if (m_currentComplexToken.empty())
@@ -513,7 +527,7 @@ void MultXmlReaderPrivate::readBowTerm()
     if (relation != 0)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "addPart with relation";
+      LDEBUG << "MultXmlReaderPrivate::readBowTerm addPart with relation";
 #endif
       m_currentComplexToken.back().token->addPart(relation,token,isHead);
       m_relMap.erase(token);
@@ -521,7 +535,7 @@ void MultXmlReaderPrivate::readBowTerm()
     else
     {
 #ifdef DEBUG_LP
-      LDEBUG << "addPart without relation";
+      LDEBUG << "MultXmlReaderPrivate::readBowTerm addPart without relation";
 #endif
       m_currentComplexToken.back().token->addPart(token,isHead);
     }
@@ -538,10 +552,11 @@ void MultXmlReaderPrivate::readBowTerm()
 //             </bowNamedEntity>
 void MultXmlReaderPrivate::readBowNamedEntity()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowNamedEntity" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowNamedEntity"));
-
+#endif
   getTokenAttributes(m_reader, lemma, category, position, length, id);
   auto typeName = getQStringAttribute(m_reader, "type");
   Lima::Common::MediaticData::EntityType entityType;
@@ -594,7 +609,7 @@ void MultXmlReaderPrivate::readBowNamedEntity()
     if (relation != 0)
     {
 #ifdef DEBUG_LP
-      LDEBUG << "addPart with relation";
+      LDEBUG << "MultXmlReaderPrivate::readBowNamedEntity addPart with relation";
 #endif
       m_currentComplexToken.back().token->addPart(relation,token,isHead);
       m_relMap.erase(token);
@@ -602,7 +617,7 @@ void MultXmlReaderPrivate::readBowNamedEntity()
     else
     {
 #ifdef DEBUG_LP
-      LDEBUG << "addPart without relation";
+      LDEBUG << "MultXmlReaderPrivate::readBowNamedEntity addPart without relation";
 #endif
       m_currentComplexToken.back().token->addPart(token,isHead);
     }
@@ -616,10 +631,11 @@ void MultXmlReaderPrivate::readBowNamedEntity()
 //               </parts>
 void MultXmlReaderPrivate::readParts()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readParts" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("parts"));
-
+#endif
   m_currentComplexToken.back().head = getIntAttribute(m_reader,"head");
   m_currentComplexToken.back().currentPart = 0;
 
@@ -640,10 +656,11 @@ void MultXmlReaderPrivate::readParts()
 
 void MultXmlReaderPrivate::readBowTokenRef()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readBowTokenRef" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("readBowTokenRef"));
-
+#endif
   uint64_t refId = getIntAttribute(m_reader,"refId");
   m_currentComplexToken.back().token->addPart(m_refMap[refId], true);
   m_reader.skipCurrentElement();
@@ -651,10 +668,11 @@ void MultXmlReaderPrivate::readBowTokenRef()
 
 void MultXmlReaderPrivate::readFeature()
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
   LTRACE << "MultXmlReaderPrivate::readFeature" << m_reader.name();
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("feature"));
-
+#endif
   auto name = getStringAttribute(m_reader,"name");
   auto value = getQStringAttribute(m_reader,"value");
   boost::dynamic_pointer_cast<BoWNamedEntity>(m_currentComplexToken.back().token)->
@@ -667,8 +685,15 @@ void MultXmlReaderPrivate::readFeature()
 // -----------------------------------------------------------------------
 bool MultXmlReaderPrivate::addProperty(const QXmlStreamReader& attributes)
 {
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LTRACE << "MultXmlReaderPrivate::addProperty";
+#endif
   auto propName=getStringAttribute(attributes,"name");
   auto typName=getStringAttribute(attributes,"type");
+#ifdef DEBUG_LP
+  LTRACE << "MultXmlReaderPrivate::addProperty" << propName << typName;
+#endif
   try
   {
     if (typName == "int")
@@ -699,69 +724,6 @@ bool MultXmlReaderPrivate::addProperty(const QXmlStreamReader& attributes)
       auto score = getFloatAttribute(attributes, "weight");
       m_currentProperties.addWeightedPropValue(propName, std::make_pair(val, score));
     }
-/*
-    if (propName == "srcePrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "offBegPrpty") {
-      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value"));
-    }
-    else if (propName == "offEndPrpty") {
-      m_currentProperties.setIntValue(propName, getIntAttribute(attributes,"value"));
-    }
-    else if (propName == "indexDatePrpty") {
-      m_currentProperties.setDateValue(propName, getDateAttribute(attributes,"value"));
-    }
-    else if (propName == "langPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "encodPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "identPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "docintref") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "titlePrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "date_begin") {
-      // ruse!!
-      std::pair<std::pair<QDate,QDate>, bool> creationDateRet =
-         m_currentProperties.getDateIntervalValue(std::string("datePrpty"));
-
-      m_currentProperties.setDateIntervalValue(std::string("datePrpty"),
-                                               make_pair(getDateAttribute(attributes,"value"),
-                                                         creationDateRet.first.second ));
-    }
-    else if (propName == "date_end") {
-      std::pair<std::pair<QDate,QDate>, bool> creationDateRet =
-         m_currentProperties.getDateIntervalValue(std::string("datePrpty"));
-      m_currentProperties.setDateIntervalValue(std::string("datePrpty"),
-                                               make_pair(creationDateRet.first.first,
-                                                         getDateAttribute(attributes,"value")));
-    }
-    else if (propName == "typPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "originPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "locationPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "countryPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "senderPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-    else if (propName == "privacyPrpty") {
-      m_currentProperties.setStringValue(propName, getStringAttribute(attributes,"value"));
-    }
-*/
   }
   catch (std::exception& e)
   {
@@ -796,7 +758,9 @@ uint64_t MultXmlReaderPrivate::getIntAttribute(const QXmlStreamReader& attribute
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to uint64_t";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to uint64_t. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 
@@ -812,7 +776,9 @@ float MultXmlReaderPrivate::getFloatAttribute(const QXmlStreamReader& attributes
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to float";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to float. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 
@@ -826,16 +792,21 @@ std::string MultXmlReaderPrivate::getStringAttribute(const QXmlStreamReader& att
 
 QDate MultXmlReaderPrivate::getDateAttribute(const QXmlStreamReader& attributes, const char* name) const
 {
+#ifdef DEBUG_LP
   BOWLOGINIT;
+#endif
   auto strDate = attributes.attributes().value(name).toString();
 
   if (strDate == "NotADate")
   {
+    BOWLOGINIT;
     LERROR << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\"";
     return QDate();
   }
 
+#ifdef DEBUG_LP
   LDEBUG << "BoWXMLHandler::getDateAttribute read strDate \""<<strDate<<"\" with format \"yyyyMMdd\"";
+#endif
   auto date = QDate::fromString(strDate, "yyyyMMdd");
   if (!date.isValid())
   {
@@ -848,16 +819,20 @@ QDate MultXmlReaderPrivate::getDateAttribute(const QXmlStreamReader& attributes,
 
 QString MultXmlReaderPrivate::getQStringAttribute(const QXmlStreamReader& attributes, const char* name) const
 {
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "MultXmlReaderPrivate::getQStringAttribute" << name << attributes.attributes().value(name);
+#endif
   return attributes.attributes().value(name).toString();
 }
 
 QString MultXmlReaderPrivate::errorString() const
 {
-  PROPERTYCODELOGINIT;
   auto errorStr = QObject::tr("%1, Line %2, column %3")
           .arg(m_reader.errorString())
           .arg(m_reader.lineNumber())
           .arg(m_reader.columnNumber());
+  BOWLOGINIT;
   LERROR << errorStr;
   return errorStr;
 }

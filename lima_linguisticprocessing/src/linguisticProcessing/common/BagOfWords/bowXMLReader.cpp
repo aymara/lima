@@ -166,6 +166,10 @@ bool BoWXmlReaderPrivate::parse(QIODevice *device)
       {
           readBowDocument();
       }
+      else if (m_reader.name() == QLatin1String("bowText"))
+      {
+          readBowText();
+      }
       else
       {
           m_reader.raiseError(QObject::tr("The file is not a LIMA BoW XML file."));
@@ -409,7 +413,7 @@ void BoWXmlReaderPrivate::readBowNamedEntity()
     QString errorString;
     QTextStream qts(&errorString);
     qts << __FILE__ << ", line" << __LINE__
-        << "Unknown entity type" << typeName;
+        << "Unknown entity type" << typeName << this->errorString();
     LERROR << errorString;
     throw LimaException(errorString);
   }
@@ -567,7 +571,9 @@ uint64_t BoWXmlReaderPrivate::getIntAttribute(const QXmlStreamReader& attributes
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to uint64_t";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to uint64_t. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 
@@ -583,7 +589,9 @@ float BoWXmlReaderPrivate::getFloatAttribute(const QXmlStreamReader& attributes,
   if (!ok)
   {
     std::ostringstream oss;
-    oss << "Cannot convert attribute \""<<name<<"\" to float";
+    oss << "Cannot convert attribute \"" << name << "\"=\""
+        << attributes.attributes().value(name).toString().toStdString()
+        << "\" to float. " << errorString().toStdString();
     throw NoAttributeException(oss.str());
   }
 

@@ -57,11 +57,13 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn)
   {
-    uint32_t buffer_size = 1024*16;
+    uint32_t buffer_size = 1024*64;
     char buff[buffer_size];
     char* end = buff + buffer_size;
     bool continue_reading = true;
     uint32_t start_writting = 0;
+    uint32_t reserved_for_lookahead = 1024*2;
+    // longest last token line in UD 2.8 collection.
 
     std::vector<token_pos> tokens(1024);
     size_t token_idx = 0;
@@ -83,15 +85,17 @@ public:
         end = buff + start_writting + bytes_read;
       }
 
-      //while ('\n' != *p && p < end) p++;
+      if (!continue_reading || p >= end - reserved_for_lookahead)
+      {
+        reserved_for_lookahead = 0;
+      }
 
-      while (p < end)
+      while (p < end - reserved_for_lookahead)
       {
         p_eol = (char*)memchr(p, '\n', end - p);
         if (nullptr == p_eol)
         {
           break;
-          //p_eol = end;
         }
 
         if (*p == '\n')
@@ -117,6 +121,15 @@ public:
 
           if (token_idx >= tokens.size())
           {
+            // Lookahead for the possible sentence break
+            if (end - p_eol > 1) {
+              const char* p_after_eol = p_eol + 1;
+              if (*p_after_eol == '\n') {
+                token_pos& token = tokens[tokens.size() - 1];
+                token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+              }
+            }
+
             m_callback(tokens, token_idx);
             token_idx = 0;
             m_next = m_buffer;
@@ -128,12 +141,20 @@ public:
 
       if (token_idx > 0)
       {
+        // Lookahead for the possible sentence break
+        if (p < end && *p == '\n')
+        {
+          p++;
+
+          token_pos& token = tokens[token_idx - 1];
+          token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+        }
         m_callback(tokens, token_idx);
         token_idx = 0;
       }
 
       start_writting = 0;
-      if (p < end /*&& nullptr == p_eol*/)
+      if (p < end)
       {
         start_writting = end - p;
         memcpy(buff, p, start_writting);
@@ -151,7 +172,9 @@ protected:
     token.clear();
     if (*p == '-')
     {
-      const char *start = (const char*)memchr(p, '\t', end - p) + 1;
+      const char *start = (const char*)memchr(p, '\t', end - p);
+      assert(nullptr != start);
+      start += 1;
       assert('\n' != *start);
       m_len = (const char*)memchr(start, '\t', end - start) - start;
       assert(m_len > 0);
