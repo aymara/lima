@@ -18,7 +18,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 ########### next target ###############
 
-if (Eigen3_FOUND)
+if (EIGEN3_FOUND)
     include_directories(AFTER ${CMAKE_SOURCE_DIR}/deeplima/include)
     include_directories(AFTER ${CMAKE_SOURCE_DIR}/deeplima/libs)
     include_directories(AFTER ${CMAKE_SOURCE_DIR}/extern/libtorch/include)
@@ -46,6 +46,8 @@ if (Eigen3_FOUND)
             lima-common
             ICU::uc
             convert_from_torch-shared
+            fasttext-static
+            utils
             ${TORCH_LIBRARIES}
             )
 

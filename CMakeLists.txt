@@ -375,11 +375,9 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
-if (NOT TensorFlow_FOUND AND NOT EIGEN_FOUND AND NOT EIGEN3_FOUND)
   # Here we are looking up for a system-wide installation of Eigen
-  message("Looking up for system-wide Eigen")
-  find_package(Eigen3 3.3 NO_MODULE)
-endif()
+message("Looking up for Eigen3")
+find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")

@@ -110,6 +110,122 @@ namespace impl
   //typedef torch_impl::EmbdVectorizer EmbdVectorizer;
 
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
+    class TokenIterator
+    {
+        const StringIndex& m_stridx;
+        const token_buffer_t& m_buffer;
+        const std::vector<StringIndex::idx_t> m_lemm_buffer;
+        const StdMatrix<uint8_t>& m_classes;
+        size_t m_current;
+        size_t m_offset;
+        size_t m_end;
+
+    public:
+        TokenIterator(const StringIndex& stridx, const token_buffer_t& buffer,
+                      const std::vector<StringIndex::idx_t>& lemm_buffer,
+                      const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
+                : m_stridx(stridx), m_buffer(buffer), m_lemm_buffer(lemm_buffer), m_classes(classes),
+                  m_current(0), m_offset(offset), m_end(end - offset)
+        {
+            assert(end > offset + 1);
+        }
+
+        inline bool end() const
+        {
+            return m_current >= m_end;
+        }
+
+        token_buffer_t::token_t::token_flags_t flags() const
+        {
+            assert(! end());
+            return m_buffer[m_current].m_flags;
+        }
+
+        const char* form() const
+        {
+            assert(! end());
+            const std::string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
+            return f.c_str();
+        }
+
+        const char* lemma() const
+        {
+            assert(! end());
+            const std::string& f = m_stridx.get_str(m_lemm_buffer[m_current]);
+            return f.c_str();
+        }
+
+        void next()
+        {
+            m_current++;
+        }
+
+        uint8_t token_class(size_t cls_idx) const
+        {
+            uint8_t val = m_classes.get(m_current + m_offset, cls_idx);
+            return val;
+        }
+    };
+    class enriched_token_t
+    {
+    protected:
+        const StringIndex& m_stridx;
+        const token_buffer_t::token_t* m_ptoken;
+
+
+    public:
+
+        enriched_token_t(const StringIndex& stridx)
+                : m_stridx(stridx),
+                  m_ptoken(nullptr)
+        { }
+
+        inline token_buffer_t::token_t::token_flags_t flags() const
+        {
+            assert(nullptr != m_ptoken);
+            return m_ptoken->m_flags;
+        }
+
+        inline void set_token(const token_buffer_t::token_t* p)
+        {
+            m_ptoken = p;
+        }
+
+        inline bool eos() const
+        {
+            assert(nullptr != m_ptoken);
+            return flags() & token_buffer_t::token_t::token_flags_t::sentence_brk;
+        }
+
+        inline const std::string& form() const
+        {
+            assert(nullptr != m_ptoken);
+            const std::string& f = m_stridx.get_str(m_ptoken->m_form_idx);
+            return f;
+        }
+    };
+    class enriched_token_buffer_t
+    {
+        const token_buffer_t& m_data;
+        mutable enriched_token_t m_token; // WARNING: only one iterator is supported
+
+    public:
+        typedef enriched_token_t token_t;
+
+        enriched_token_buffer_t(const token_buffer_t& data, const StringIndex& stridx)
+                : m_data(data), m_token(stridx) { }
+
+        inline token_buffer_t::size_type size() const
+        {
+            return m_data.size();
+        }
+
+        inline const enriched_token_t& operator[](size_t idx) const
+        {
+            m_token.set_token(m_data.data() + idx);
+            return m_token;
+        }
+    };
 
   typedef eigen_impl::Model Model;
 
@@ -130,9 +246,9 @@ namespace impl
 
   typedef RnnSequenceClassifier<Model, BaseMatrix> EntityTaggingClassifier;
 
-  //typedef impl::TaggingImpl< EntityTaggingClassifier, int
-  //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
-  //                           FeaturesVectorizer > EntityTaggingModule;
+  typedef impl::TaggingImpl< EntityTaggingClassifier,
+                             FeaturesVectorizer<enriched_token_buffer_t, typename enriched_token_buffer_t::token_t>,
+                             BaseMatrix> EntityTaggingModule;
 
 } // namespace impl
 

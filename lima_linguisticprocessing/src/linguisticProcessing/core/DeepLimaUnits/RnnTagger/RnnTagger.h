@@ -31,6 +31,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger
 class CharChart;
 
 class RnnTaggerPrivate;
+#define RNNTAGGER_CLASSID "RnnTagger"
 
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
 *
