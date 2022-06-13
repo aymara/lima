@@ -22,7 +22,7 @@
  * @author     Besancon Romaric (romaric.besancon@cea.fr)
  * @date       Tue Jun 13 2006
  * copyright   Copyright (C) 2006-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "NormalizePersonName.h"
@@ -31,6 +31,8 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/core/Automaton/constraintFunctionFactory.h"
 #include "common/Data/strwstrtools.h"
+
+#include <QRegularExpression>
 
 using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
@@ -57,7 +59,7 @@ LimaString capitalizeWord(const LimaString& str) {
 
 LimaString capitalize(const LimaString& str) {
   //capitalize each word, separated by a space or '-'
-  QRegExp sep("[ -]");
+  QRegularExpression sep("[ -]");
   QString capitalized;
   int current=0;
   int i=str.indexOf(sep,current);
@@ -97,7 +99,7 @@ m_microAccessor(0)
       LWARN << "-> micros for person name normalization are not initialized";
     }
   }
-  
+
   if (!complement.isEmpty()) {
     //uint64_t i=complement.find(LimaChar(',')); portage 32 64
     int i=complement.indexOf(LimaChar(','));
@@ -108,7 +110,7 @@ m_microAccessor(0)
       m_firstname=complement.left(i);
       m_lastname=complement.mid(i+1);
     }
-  }    
+  }
 }
 
 // function to normalize person names using a simple heuristic on result
@@ -131,7 +133,7 @@ m_microAccessor(0)
  */
 bool NormalizePersonName::
 operator()(RecognizerMatch& m,
-           AnalysisContent& /*unused analysis*/) const 
+           AnalysisContent& /*unused analysis*/) const
 {
   // if firstname or lastname were given as arguments to the action
   if (!m_firstname.isEmpty() || !m_lastname.isEmpty()) {
@@ -230,7 +232,7 @@ operator()(RecognizerMatch& m,
     if (initial) {
       inLastname=1;
       initial=false;
-      if (t->form() == Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[Common::Misc::utf8stdstring2limastring(".")]) 
+      if (t->form() == Common::MediaticData::MediaticData::changeable().stringsPool(m_language)[Common::Misc::utf8stdstring2limastring(".")])
       {
         firstname += t->stringForm();
         continue;
@@ -244,7 +246,7 @@ operator()(RecognizerMatch& m,
       firstname += t->stringForm();
       continue;
     }
-    else if (t->stringForm() == Common::Misc::utf8stdstring2limastring("de") || 
+    else if (t->stringForm() == Common::Misc::utf8stdstring2limastring("de") ||
              t->stringForm() == Common::Misc::utf8stdstring2limastring("De")) {
       inLastname=1;
     }
@@ -262,11 +264,11 @@ operator()(RecognizerMatch& m,
         inLastname=1;
       }
     }
-    
+
     if (inLastname) {
       if (!lastname.isEmpty() &&
-          !(t->stringForm() == Common::Misc::utf8stdstring2limastring("."))) { 
-        lastname += LimaChar(' '); 
+          !(t->stringForm() == Common::Misc::utf8stdstring2limastring("."))) {
+        lastname += LimaChar(' ');
       }
       lastname += t->stringForm();
       lastnamePos = t->position();
@@ -279,12 +281,12 @@ operator()(RecognizerMatch& m,
       firstnameLen = t->length();
     }
   }
-  
+
   if (firstname.isEmpty() && lastname.isEmpty()) {
-    
+
     const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
     m.features().setFeature(LASTNAME_FEATURE_NAME,m.getNormalizedString(sp));
-  } 
+  }
   else {
     m.features().setFeature(FIRSTNAME_FEATURE_NAME,capitalize(firstname));
     std::vector<EntityFeature>::iterator featureIt = m.features().find(FIRSTNAME_FEATURE_NAME);

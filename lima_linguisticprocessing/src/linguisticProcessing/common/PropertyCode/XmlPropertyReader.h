@@ -26,8 +26,6 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 
-#include <QtXml/QXmlDefaultHandler>
-
 #include <string>
 #include <vector>
 #include <map>
@@ -39,26 +37,16 @@ namespace Common
 namespace PropertyCode
 {
 
-class LIMA_PROPERTYCODE_EXPORT XMLPropertyHandler : public QXmlDefaultHandler
+class XmlPropertyReaderPrivate;
+class LIMA_PROPERTYCODE_EXPORT XmlPropertyReader
 {
 public:
   // -----------------------------------------------------------------------
   //  Constructors
   // -----------------------------------------------------------------------
-  XMLPropertyHandler();
-  virtual ~XMLPropertyHandler();
+  XmlPropertyReader();
+  ~XmlPropertyReader();
 
-
-  // -----------------------------------------------------------------------
-  //  Implementations of the SAX DocumentHandler interface
-  // -----------------------------------------------------------------------
-  bool endDocument() override;
-  
-  bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName) override;
-  
-  bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
-  
-  
   struct PropertyDescription
   {
     std::string name;
@@ -72,17 +60,16 @@ public:
     std::vector<std::pair<std::string,std::vector<std::string> > > values;
   };
 
+  bool parse(QIODevice *device);
+
+  QString errorString() const;
+
   const std::vector<PropertyDescription>& getProperties();
   const std::vector<SubPropertyDescription>& getSubProperties();
 
 private:
 
-  std::vector<PropertyDescription> m_properties;
-  std::vector<SubPropertyDescription> m_subproperties;
-
-  enum  PropType {NONE,PROP,SUBPROP};
-  PropType m_currentProp;
-
+  XmlPropertyReaderPrivate* m_d;
 };
 
 } // closing namespace PropertyCode

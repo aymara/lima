@@ -28,6 +28,8 @@
 #include "common/MediaticData/EntityType.h"
 #include "common/misc/fsaStringsPool.h"
 
+#include <QVariant>
+
 namespace Lima {
 namespace LinguisticProcessing {
 namespace SpecificEntities {
@@ -71,15 +73,15 @@ private:
   Common::MediaticData::EntityType m_type;
 };
 
-/** 
- * @brief This action creates a new vertex for given match containing a 
+/**
+ * @brief This action creates a new vertex for given match containing a
  * specific entity's data
  *
  * Algorithm to set the new vertex linguistic properties:
  *   - if a list of micro-categories is given in the complement and the entity
  *     head have one (or more) of these micro categories, then the head micro
  *     categories present in the complement list are kept
- *   - elsewhere, the mapping present in the configuration files between the 
+ *   - elsewhere, the mapping present in the configuration files between the
  *     entity type and a micro-category is used
  */
 class LIMA_SPECIFICENTITIES_EXPORT CreateSpecificEntity : public Automaton::ConstraintFunction
@@ -95,13 +97,13 @@ public:
 
 private:
   bool shouldRemoveInitial(
-    LinguisticGraphVertex src, 
-    LinguisticGraphVertex tgt, 
+    LinguisticGraphVertex src,
+    LinguisticGraphVertex tgt,
     const Automaton::RecognizerMatch& match) const;
 
   bool shouldRemoveFinal(
-    LinguisticGraphVertex src, 
-    LinguisticGraphVertex tgt, 
+    LinguisticGraphVertex src,
+    LinguisticGraphVertex tgt,
     const Automaton::RecognizerMatch& match) const;
 
   void addMicrosToMorphoSyntacticData(
@@ -109,8 +111,8 @@ private:
      const LinguisticAnalysisStructure::MorphoSyntacticData* oldMorphData,
      const std::set<LinguisticCode>& micros,
      LinguisticAnalysisStructure::LinguisticElement& elem) const;
-   
-  
+
+
      MediaId m_language;
   Common::MediaticData::EntityType m_type;
   FsaStringsPool* m_sp;
@@ -119,12 +121,12 @@ private:
 
 };
 
-/** 
- * @brief This action set the value of a feature for an entity during the recognition 
- * of the entity (i.e. during the rule matching process). 
+/**
+ * @brief This action set the value of a feature for an entity during the recognition
+ * of the entity (i.e. during the rule matching process).
  * If a value already exists for the feaure, the new value overwrite the previous one.
- * Unary operator: associate the given 
- * vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * Unary operator: associate the given
+ * vertex to the entity feature specified in the complement. Binary operator: associate the string
  * delimited by the two vertices to the entity feature specified in the complement.
  *
  */
@@ -148,9 +150,9 @@ private:
   QVariant::Type m_featureType;
 };
 
-/** 
+/**
  * @brief This action add a vertex as an embeded entity
- * of the entity (i.e. during the rule matching process). 
+ * of the entity (i.e. during the rule matching process).
  *
  */
 class LIMA_SPECIFICENTITIES_EXPORT AddEntityFeatureAsEntity : public Automaton::ConstraintFunction
@@ -168,12 +170,12 @@ private:
   Common::MediaticData::EntityType m_type;
 };
 
-/** 
- * @brief This action set the value of a feature for an entity during the recognition 
- * of the entity (i.e. during the rule matching process). 
+/**
+ * @brief This action set the value of a feature for an entity during the recognition
+ * of the entity (i.e. during the rule matching process).
  * If a value already exists for the feaure, the new value overwrite the previous one.
- * Unary operator: associate the given 
- * vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * Unary operator: associate the given
+ * vertex to the entity feature specified in the complement. Binary operator: associate the string
  * delimited by the two vertices to the entity feature specified in the complement.
  *
  */
@@ -197,12 +199,12 @@ private:
   QVariant::Type m_featureType;
 };
 
-/** 
- * @brief This action appends a value to the previously set value of a feature for an entity during 
+/**
+ * @brief This action appends a value to the previously set value of a feature for an entity during
  * the recognition  of the entity (i.e. during the rule matching process).
  * Appends performs a concatenatipon when the type of the property is a string.
  * Appends performs an adition when the type of the property is an int.
- * Unary operator: associate the given vertex to the entity feature specified in the complement. Binary operator: associate the string 
+ * Unary operator: associate the given vertex to the entity feature specified in the complement. Binary operator: associate the string
  * delimited by the two vertices to the entity feature specified in the complement.
  *
  */
@@ -224,9 +226,9 @@ private:
   QVariant::Type m_featureType;
 };
 
-/** 
- * @brief This action clears features stored for one entity. 
- * This action needs to be called if rule matching fails (otherwise, features 
+/**
+ * @brief This action clears features stored for one entity.
+ * This action needs to be called if rule matching fails (otherwise, features
  * are accumulated from different matching tests)
  *
  */
@@ -242,10 +244,10 @@ private:
 
 };
 
-/** 
- * @brief This action performs the normalization of an entity according to stored features. 
- * This action uses the features stored by the setEntityFeature() function to perform the 
- * normalization of the entity. 
+/**
+ * @brief This action performs the normalization of an entity according to stored features.
+ * This action uses the features stored by the setEntityFeature() function to perform the
+ * normalization of the entity.
  *
  */
 class LIMA_SPECIFICENTITIES_EXPORT NormalizeEntity : public Automaton::ConstraintFunction
@@ -263,7 +265,7 @@ private:
 
 };
 
-  
+
 }
 }
 }

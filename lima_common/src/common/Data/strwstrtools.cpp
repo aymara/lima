@@ -19,7 +19,7 @@
 /**
   * @file               strwstrtools.cpp
   * @date               begin Sep, 2003
-  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author             Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *                     Copyright (c) 2002,2003-2012 by CEA LIST
   * @version            $Id$
@@ -27,8 +27,6 @@
 
 #include "strwstrtools.h"
 #include "readwritetools.h"
-
-#include <QtCore/QTextCodec>
 
 #include <algorithm>
 #include <string.h>
@@ -39,9 +37,9 @@
 */
 
 /*! @example string.cpp
- 
+
     String functionality example and regression test.
- 
+
     Output:
     \include string.ok
 */
@@ -90,7 +88,7 @@ void writeStream(std::ostream &os,const std::string &src)
 std::string readLine(std::istream & inputFile)
 {
   std::string result;
-  
+
   // read characters, up to '\n', into string
   std::getline( inputFile, result, '\n');
   // discard CR (Carriage return) for Windows
@@ -221,7 +219,7 @@ std::string localestring2utf8string(const std::string &src)
 }
 
 /**
-  * @brief        Convert a latin15 string to a LimaString 
+  * @brief        Convert a latin15 string to a LimaString
   * @ingroup    Misc
   */
 LimaString latin15stdstring2limastring(const std::string &src)
@@ -253,14 +251,14 @@ LimaString setStringSameEndian (const unsigned short *s,
 {
   LimaString result;
   result.resize(count);
-  
+
   if (sizeof(LimaChar)==2)
   {
     result = *(const LimaChar*)s;
   }
   else
     for (uint32_t index=0; index<count; index++)
-      result[index] = (wchar_t)s[index];
+      result[index] = QChar((wchar_t)s[index]);
   return result;
 }
 

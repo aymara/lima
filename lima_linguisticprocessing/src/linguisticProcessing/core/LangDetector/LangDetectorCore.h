@@ -20,7 +20,7 @@ namespace Lima::LinguisticProcessing::LDetector {
 
         void loadModel(std::string modelPath) const;
 
-        [[nodiscard]] std::string detectLang(const std::string& sentence) const;
+        [[nodiscard]] std::string detectLang(const std::string& text) const;
         /*Used to convert a language label "__label__lang" to a printable format "lang".*/
         [[nodiscard]] static std::string labelToPrintable(const std::string& label) ;
     private:

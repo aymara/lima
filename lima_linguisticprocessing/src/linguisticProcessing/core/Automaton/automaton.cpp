@@ -298,11 +298,11 @@ getMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         deque<LinguisticGraphVertex> vertices;
         match = gtrans->matchPath(graph, vertex, limit, searchGraph, analysis, token, vertices, data);
         if( match ) {
-#ifdef DEBUG_LP          
+#ifdef DEBUG_LP
           AULOGINIT;
           ostringstream oss;
           std::copy(vertices.begin(),vertices.end(),std::ostream_iterator<int>(oss,"-"));
-          LDEBUG << "GazeteerTransition returned a match with vertices " << oss.str(); 
+          LDEBUG << "GazeteerTransition returned a match with vertices " << oss.str();
 #endif
           newPair = DFFSPos(vertices,&(*trans));
         }
@@ -860,13 +860,13 @@ bool Automaton::testFromState(const Tstate firstState,
       }
 
       uint64_t depth=backtrackDepth.back();
-      
+
 // #ifdef DEBUG_LP
 //       LDEBUG << "Automaton: backtrack: currentMatch="
 //              << currentMatch << ", next matching for vertex "
 //              << vertex << ", backtrack depth=" << depth;
 // #endif
-      
+
       if (currentMatch.size() < depth) {
         AULOGINIT;
         LWARN << "Automaton: should not be here! "
@@ -1391,12 +1391,12 @@ QDebug& operator << (QDebug& os, const Automaton& a) {
   //   os << "deterministic=" << a.isDeterministic() << endl;
 
   for (uint64_t i(0); i<a.numberOfStates(); i++) {
-    if (a.isFinalState(i)) { os << i << " [final]" << endl; }
+    if (a.isFinalState(i)) { os << i << " [final]" << QTENDL; }
     for (uint64_t j(0); j<a.m_transitions[i].size(); j++) {
       os << i << " -> " << a.m_transitions[i][j].nextState()
       << " ["
       << *(a.m_transitions[i][j].transitionUnit())
-      << "]" << endl;
+      << "]" << QTENDL;
     }
   }
 

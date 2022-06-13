@@ -20,7 +20,7 @@
   * @file       moduleConfigurationStructure.h
   * @brief      originally detectModuleConfigurationStructure.h in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -53,12 +53,13 @@ class LIMA_XMLCONFIGURATIONFILES_EXPORT ModuleConfigurationStructure : public st
 public:
     ModuleConfigurationStructure();
     ModuleConfigurationStructure(const std::string& name);
+    ModuleConfigurationStructure(const QString& name);
     ModuleConfigurationStructure(const ModuleConfigurationStructure& mod);
     ModuleConfigurationStructure& operator=(const ModuleConfigurationStructure& mod);
     virtual ~ModuleConfigurationStructure();
 
     const std::string& getName() const;
-    
+
     GroupConfigurationStructure& getGroupNamed(const std::string& name) ;
     std::string& getParamValueAtKeyOfGroupNamed(const std::string& key, const std::string& name) ;
     std::deque<std::string>& getListValuesAtKeyOfGroupNamed(const std::string& key, const std::string& name) ;
@@ -71,6 +72,14 @@ public:
     void addMapInGroup(const std::string& mapName,const std::string& groupName);
     void addEntryInMapInGroup(const std::string& entryKey,const std::string& entryValue,const std::string& mapName,const std::string& groupName);
     void addAttributeInGroup(const std::string& attKey,const std::string& attValue,const std::string& groupName);
+
+    void addGroupNamed(const QString& group);
+    void addParamValuePairForGroup(const QString& param, const QString& value, const QString& group);
+    void addListNamedForGroup(const QString& listName, const QString& group);
+    void addItemInListNamedForGroup(const QString& item, const QString& listName, const QString& group);
+    void addMapInGroup(const QString& mapName,const QString& groupName);
+    void addEntryInMapInGroup(const QString& entryKey,const QString& entryValue,const QString& mapName,const QString& groupName);
+    void addAttributeInGroup(const QString& attKey,const QString& attValue,const QString& groupName);
 
     void addModule(const ModuleConfigurationStructure& mod);
 

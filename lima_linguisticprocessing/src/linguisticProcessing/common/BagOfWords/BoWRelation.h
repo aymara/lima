@@ -1,5 +1,5 @@
 /*
-    Copyright 2002-2013 CEA LIST
+    Copyright 2002-2022 CEA LIST
 
     This file is part of LIMA.
 
@@ -24,7 +24,7 @@
  *
  * @brief A relation associated used to type the relation between a part
  *        and its enclosing complex token. This will be used primarily to
- *        represent the type of the relation in compounds but could be 
+ *        represent the type of the relation in compounds but could be
  *        later be used as the basis to more structured indexing
  *
  ***********************************************************************/
@@ -44,7 +44,7 @@ namespace Common {
 namespace BagOfWords {
 
 /**
- * the type of the BoWRelation is a numeric value currently (11/2006) taken 
+ * the type of the BoWRelation is a numeric value currently (11/2006) taken
  * from the ConceptType enum but that could be extended to be any property
  * id from an ontology
  */
@@ -55,7 +55,7 @@ LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWRelation&);
 /**
  * @brief This class is used to type the relation between a part
  *        and its enclosing complex token. This will be used primarily to
- *        represent the type of the relation in compounds but could be 
+ *        represent the type of the relation in compounds but could be
  *        later be used as the basis to more structured indexing
  *
  **/
@@ -79,7 +79,7 @@ public:
   uint64_t getType(void)   const {return m_type;};
   uint64_t getSynType(void)   const {return s_type;};
 
-//   void setRealization(const Lima::LimaString& realization)  
+//   void setRealization(const Lima::LimaString& realization)
 //     {m_realization = realization;};
   void setType(uint64_t type)  {m_type = type;};
   void setSynType(uint64_t type)  {s_type = type;};
@@ -109,7 +109,7 @@ public:
 //  friend std::wostream& operator << (std::wostream&, const BoWRelation&);
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWRelation&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWRelation&);
-  
+
   /**
    * for parsing of input stream
    *

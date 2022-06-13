@@ -19,7 +19,7 @@
 
 
 // parses an entity after "&", and returns it
-QTSGMLENTITIES_EXPORT QString parseEntity(QStringRef entity);
+QTSGMLENTITIES_EXPORT QString parseEntity(QStringView entity);
 
 /** END OF CODE FROM Qt */
 

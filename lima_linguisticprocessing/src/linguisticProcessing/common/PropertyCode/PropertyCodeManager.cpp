@@ -22,9 +22,10 @@
  ***************************************************************************/
 
 #include "PropertyCodeManager.h"
-#include "XMLPropertyHandler.h"
-#include "SymbolicCodeXMLHandler.h"
+#include "XmlPropertyReader.h"
+#include "SymbolicCodeXmlReader.h"
 
+#include <QFile>
 
 #include <cmath>
 #include <iostream>
@@ -111,41 +112,30 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
 {
   PROPERTYCODELOGINIT;
 #ifdef DEBUG_LP
-  LDEBUG << typeid(*this).name()
-         << "PropertyCodeManager::readFromXmlFile" << filename;
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile" << filename;
 #endif
 
 #ifdef DEBUG_LP
-  LDEBUG << typeid(*this).name()
-         << "PropertyCodeManager::readFromXmlFile before creating parser";
+  LDEBUG << typeid(*this).name() << "PropertyCodeManager::readFromXmlFile before creating parser";
 #endif
-  QScopedPointer< QXmlSimpleReader > parser(new QXmlSimpleReader());
-//   parser->setValidationScheme(SAXParser::Val_Auto);
-//   parser->setDoNamespaces(false);
-//   parser->setDoSchema(false);
-//   parser->setValidationSchemaFullChecking(false);
-
   //
-  //  Create the handler object and install it as the document and error
-  //  handler for the parser-> Then parse the file and catch any exceptions
+  //  Create the reader object then parse the file and catch any exceptions
   //  that propogate out
   //
-  XMLPropertyHandler handler;
+  XmlPropertyReader reader;
 #ifdef DEBUG_LP
   LDEBUG << "PropertyCodeManager::readFromXmlFile before parsing";
 #endif
-  parser->setContentHandler(&handler);
-  parser->setErrorHandler(&handler);
   QFile file(filename.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
     LIMA_EXCEPTION("PropertyCodeManager::readFromXmlFile Unable to open "
                   << filename.c_str());
   }
-  if (!parser->parse( QXmlInputSource(&file)))
+  if (!reader.parse(&file))
   {
     LIMA_EXCEPTION_SELECT("Error while parsing " << filename.c_str()
-                          << " : " << parser->errorHandler()->errorString(),
+                          << " : " << reader.errorString(),
                           XMLException);
   }
 #ifdef DEBUG_LP
@@ -155,7 +145,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   uint8_t usedBits=0;
 
   // compute data for properties
-  const auto& properties = handler.getProperties();
+  const auto& properties = reader.getProperties();
 #ifdef DEBUG_LP
   LDEBUG << properties.size() << " properties read from xmlfile ";
 #endif
@@ -202,21 +192,19 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
                      PropertyManager(desc->name, mask, mask, symbol2code)));
   }
 
-  const auto& subproperties = handler.getSubProperties();
+  const auto& subproperties = reader.getSubProperties();
 #ifdef DEBUG_LP
   LDEBUG << subproperties.size() << " subproperties read from file";
 #endif
-  for (auto desc = subproperties.cbegin();
-       desc != subproperties.cend();
-       desc++)
+  for (const auto& desc: subproperties)
   {
 #ifdef DEBUG_LP
-    LDEBUG << "compute data for subproperty " << desc->name;
+    LDEBUG << "compute data for subproperty " << desc.name << "of" << desc.parentName;
 #endif
-    const auto& parentProp = getPropertyManager(desc->parentName);
+    const auto& parentProp = getPropertyManager(desc.parentName);
     LinguisticCode parentmask = parentProp.getMask();
 
-    const auto& subvalues = desc->values;
+    const auto& subvalues = desc.values;
 
     // compute mask
     // use enough bit to code the biggest subvalues set
@@ -245,36 +233,35 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     // compute values
     std::map<std::string,LinguisticCode> symbol2code;
     symbol2code["NONE"] = L_NONE;
-    for (auto subItr = subvalues.cbegin();
-         subItr!=subvalues.cend();
-         subItr++)
+    for (const auto& subvalue: subvalues)
     {
-      LinguisticCode parentValue=parentProp.getPropertyValue(subItr->first);
+      LinguisticCode parentValue=parentProp.getPropertyValue(subvalue.first);
+#ifdef DEBUG_LP
+      LDEBUG << "value of" << subvalue.first << "is" << parentValue;
+#endif
       if (parentValue == L_NONE)
       {
-        LERROR << "parent value " << subItr->first << " of subproperty "
-               << desc->name << " is unknown !";
+        LERROR << "parent value " << subvalue.first << " of subproperty "
+               << desc.name << " is unknown !";
       }
 #ifdef DEBUG_LP
-      LDEBUG << "compute subvalues of " << subItr->first << " ("
+      LDEBUG << "compute subvalues of " << subvalue.first << " ("
              << parentValue.toHexString() << ")";
 #endif
-      symbol2code.insert(std::make_pair(string(subItr->first)+"-NONE",
+      symbol2code.insert(std::make_pair(string(subvalue.first)+"-NONE",
                                         LinguisticCode(parentValue)));
       uint64_t i = 1;
-      for (auto valItr = subItr->second.cbegin();
-           valItr!=subItr->second.cend();
-           valItr++)
+      for (const auto& value: subvalue.second)
       {
-        symbol2code.insert(std::make_pair(*valItr, (LinguisticCode::fromUInt(i) << usedBits) | parentValue));
+        symbol2code.insert(std::make_pair(value, (LinguisticCode::fromUInt(i) << usedBits) | parentValue));
 #ifdef DEBUG_LP
-        LDEBUG << *valItr << " => " << symbol2code[*valItr].toHexString();
+        LDEBUG << value << " => " << symbol2code[value].toHexString();
 #endif
         i++;
       }
     }
-    m_d->m_propertyManagers.insert(std::make_pair(desc->name,
-                                             PropertyManager(desc->name,
+    m_d->m_propertyManagers.insert(std::make_pair(desc.name,
+                                             PropertyManager(desc.name,
                                                              mask,
                                                              emptynessmask,
                                                              symbol2code)));
@@ -408,20 +395,11 @@ void PropertyCodeManager::convertSymbolicCodes(
   LDEBUG << "convert Symbolic Code file " << symbolicCodeFile;
 #endif
 
-  QScopedPointer< QXmlSimpleReader > parser ( new QXmlSimpleReader() );
-//   parser->setValidationScheme(SAXParser::Val_Auto);
-//   parser->setDoNamespaces(false);
-//   parser->setDoSchema(false);
-//   parser->setValidationSchemaFullChecking(false);
-
   //
-  //  Create the handler object and install it as the document and error
-  //  handler for the parser-> Then parse the file and catch any exceptions
+  //  Create the reader object then parse the file and catch any exceptions
   //  that propogate out
   //
-  SymbolicCodeXMLHandler handler(*this,conversionTable);
-  parser->setContentHandler(&handler);
-  parser->setErrorHandler(&handler);
+  SymbolicCodeXmlReader reader(*this, conversionTable);
   QFile file(symbolicCodeFile.c_str());
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -431,16 +409,16 @@ void PropertyCodeManager::convertSymbolicCodes(
       std::string("PropertyCodeManager::convertSymbolicCodes Unable to open ")
                   + symbolicCodeFile);
   }
-  if (!parser->parse( QXmlInputSource(&file)))
+  if (!reader.parse(&file))
   {
     PROPERTYCODELOGINIT;
     LERROR << "PropertyCodeManager::convertSymbolicCodes An error occurred parsing"
            << symbolicCodeFile
            << ". Error: "
-           << parser->errorHandler()->errorString() ;
+           << reader.errorString() ;
     throw XMLException(
       std::string("Error while parsing " + symbolicCodeFile + " : "
-                  + parser->errorHandler()->errorString().toUtf8().constData()));
+                  + reader.errorString().toUtf8().constData()));
   }
 }
 

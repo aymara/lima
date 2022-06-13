@@ -47,7 +47,7 @@ EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QStrin
 //     qDebug() << "EvaluationResultSet::findResultsType  typeKey=" << typeKey << "typeName=" << typeName;
     QString resultsRegexpOld = "\\s+p=((0|1)?\\.?\\d+)\\s+r=((0|1)?\\.?\\d+)\\s+f=((0|1)?\\.?\\d+)";
     QString resultsRegexp = "\\s+fc=(\\d+)\\s+fp=(\\d+)\\s+cr=(\\d+)";
-    QRegExp allRelationsRegexp(typeKey+resultsRegexpOld+resultsRegexp);
+    QRegularExpression allRelationsRegexp(typeKey+resultsRegexpOld+resultsRegexp);
 //     qDebug() << "EvaluationResultSet::findResultsType regexp=" << allRelationsRegexp.pattern();
     int allRelationsMatchIndex = allRelationsRegexp.indexIn(cmdOutput);
     EvaluationResult* result = 0;
@@ -70,7 +70,7 @@ EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QStrin
           result->cr = cr;
 
           // Go through the results again in order to store places of individual errors
-          QRegExp resultsGroupsRegexp("(A|F)\\|"+typeName+"\\|([^|]*)\\|([^|]*)\\n");
+          QRegularExpression resultsGroupsRegexp("(A|F)\\|"+typeName+"\\|([^|]*)\\|([^|]*)\\n");
           int resultsGroupsRegexpMatchIndex = 0;
           while((resultsGroupsRegexpMatchIndex = resultsGroupsRegexp.indexIn(cmdOutput, resultsGroupsRegexpMatchIndex)) != -1)
           {

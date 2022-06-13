@@ -2,7 +2,6 @@
 
 SET(convertMultXmlToMultBin_SRCS
    convertMultXmlToMultBin.cpp
-   MultXmlHandler.cpp
    MultXmlReader.cpp
 )
 

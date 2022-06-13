@@ -40,7 +40,7 @@
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 
 #include <vector>
 
@@ -189,20 +189,20 @@ LimaStatusCode RegexMatcher::process(
   std::string text = Common::Misc::limastring2utf8stdstring(*originalText);
   for (auto reit = m_d->m_regexes.begin(); reit != m_d->m_regexes.end(); reit++)
   {
-    QRegExp re(reit.key());
+    QRegularExpression re(reit.key());
     QString& tstatus = reit.value();
 
-    int position = 0;
-    while ((position = re.indexIn(*originalText, position)) != -1)
-    {
-      QString matchedString = originalText->mid(position, re.matchedLength());
+    qsizetype position = 0;
+    QRegularExpressionMatch qmatch;
+    while ((position = originalText->indexOf(re, position, &qmatch)) != -1) {
+      QString matchedString = originalText->mid(position, qmatch.capturedLength());
 #ifdef DEBUG_LP
       LDEBUG << "Matched '" << matchedString << "' at " << position << " as " << tstatus;
 #endif
       RegexMatch match = boost::make_tuple(position+1, matchedString.size(), matchedString, tstatus);
       matches.insert(std::make_pair(position+1, match));
 
-      position += re.matchedLength();
+      position += qmatch.capturedLength();
     }
   }
 #ifdef DEBUG_LP
@@ -236,9 +236,10 @@ LimaStatusCode RegexMatcher::process(
 #endif
       while (v != anagraph->lastVertex() && tokenPosition < currentMatchPosition)
       {
-        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
+        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph);
+             outItr != outItrEnd; outItr++)
         {
-          v=target(*outItr,*graph);
+          v=target(*outItr, *graph);
           break;
         }
         if (v!= anagraph->lastVertex())

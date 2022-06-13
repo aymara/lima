@@ -71,7 +71,7 @@ bool Condition::isFulfilled(const Text& text) const
     int currentIndex = 0;
     for (uint64_t b = 0; b < _before.size(); b++)
     {
-      LimaChar c = 0;
+      LimaChar c;
       if (!(((currentIndex == 0) && _before[b].isRecognized(c))||(_before[b].isRecognized(text[--currentIndex]))))
       {
 #ifdef DEBUG_LP
