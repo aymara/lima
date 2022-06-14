@@ -47,6 +47,8 @@
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
 
+#define DEBUG_THIS_FILE true
+
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common::MediaticData;
@@ -56,20 +58,19 @@ using namespace Lima::Common::AnnotationGraphs;
 using namespace std;
 using namespace deeplima;
 
-#if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
-#define LOG_MESSAGE(stream, msg) stream << msg;
-  #define LOG_MESSAGE_WITH_PROLOG(stream, msg) TAGGERLOGINIT; LOG_MESSAGE(stream, msg);
-#else
-#define LOG_MESSAGE(stream, msg) ;
-#define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
-#endif
-
 
 namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
+    #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
+    #define LOG_MESSAGE(stream, msg) stream << msg;
+    #define LOG_MESSAGE_WITH_PROLOG(stream, msg) PTLOGINIT; LOG_MESSAGE(stream, msg);
+    #else
+        #define LOG_MESSAGE(stream, msg) ;
+    #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
+    #endif
 
     static SimpleFactory<MediaProcessUnit, RnnTagger> rnntaggerFactory(RNNTAGGER_CLASSID); // clazy:exclude=non-pod-global-static
 
-    CONFIGURATIONHELPER_LOGGING_INIT(TOKENIZERLOGINIT);
+    CONFIGURATIONHELPER_LOGGING_INIT(PTLOGINIT);
 
     class RnnTaggerPrivate: public ConfigurationHelper {
     public:
@@ -124,6 +125,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
         auto srcgraph = anagraph->getGraph();
         auto endVx = anagraph->lastVertex();
+        /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
+        /// set to false as the tokens are owned by the anagraph
+        /// @note : tokens newly created later will be owned by their creator and have
+        /// to be deleted by this one
         auto posgraph = new LinguisticAnalysisStructure::AnalysisGraph("PosGraph",
                                                                        m_d->m_language,
                                                                        false,
@@ -155,20 +160,22 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         }
 
         VertexTokenPropertyMap vTokens = get(vertex_token, *srcgraph);
-        m_d->m_currentVx = posgraph->firstVertex();
+        m_d->m_currentVx = anagraph->firstVertex();
         LinguisticGraph* resultgraph=posgraph->getGraph();
         remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
 
         token_buffer_t buffer;
         std::vector< LinguisticGraphVertex > anaVertices;
         while(m_d->m_currentVx != endVx){
-            Token* src = vTokens[m_d->m_currentVx];
-            impl::token_t token;
-            token.m_offset = src->position();
-            token.m_len = src->length();
-            token.m_form_idx = m_d->m_stridx.get_idx(src->stringForm().toUtf8(), src->length());
-            token.m_flags = impl::token_t::token_flags_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
-            buffer.push_back(token);
+            if (m_d->m_currentVx != 0 && vTokens[m_d->m_currentVx] != 0) {
+                Token *src = vTokens[m_d->m_currentVx];
+                impl::token_t token;
+                token.m_offset = src->position();
+                token.m_len = src->length();
+                token.m_form_idx = m_d->m_stridx.get_idx(src->stringForm().toUtf8(), src->length());
+                token.m_flags = impl::token_t::token_flags_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+                buffer.push_back(token);
+            }
             LinguisticGraphOutEdgeIt it, it_end;
             boost::tie(it, it_end) = boost::out_edges(m_d->m_currentVx, *srcgraph);
             if (it != it_end)
@@ -182,6 +189,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             anaVertices.push_back(m_d->m_currentVx);
         }
         m_d->tagger(buffer);
+        LOG_MESSAGE(LDEBUG, "tag size: " << m_d->m_tags.size());
         std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
         LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
 
@@ -229,7 +237,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             anaVerticesIndex++;
         }
         boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnPosTagger postagging done.");
+        LOG_MESSAGE(LDEBUG, "RnnPosTagger postagging done.");
         return SUCCESS_ID;
     }
 
@@ -248,7 +256,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
         if (!fix_lang_codes(lang_str, udlang))
         {
-            LIMA_EXCEPTION_SELECT_LOGINIT(TOKENIZERLOGINIT,
+            LIMA_EXCEPTION_SELECT_LOGINIT(PTLOGINIT,
                                           "RnnTaggerPrivate::init: Can't parse language id " << udlang.c_str(),
                                           Lima::InvalidConfiguration);
         }
@@ -286,7 +294,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
     }
 
     void RnnTaggerPrivate::tagger(token_buffer_t &buffer) {
-
+        buffer.lock();
         m_tag.register_handler([this,&buffer](
                 const typename tagging::impl::EntityTaggingModule::OutputMatrix& classes,
                 size_t begin, size_t end, size_t slot_idx){
@@ -304,6 +312,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
     void RnnTaggerPrivate::insertTags(tagging::impl::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "tags '" << classes[0] << "'");
         while(!ti.end()){
             m_tags.push_back(classes[0][ti.token_class(0)]);
             ti.next();

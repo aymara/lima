@@ -40,6 +40,10 @@
 
 #include "deeplima/segmentation.h"
 
+#include <chrono>
+#include <thread>
+
+
 #define DEBUG_THIS_FILE true
 
 using namespace std;
@@ -157,7 +161,7 @@ void RnnTokenizer::init(
 
 LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 {
-  LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
+  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
 
   auto anagraph = new AnalysisGraph("AnalysisGraph",m_d->m_language,true,true);
@@ -170,6 +174,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   // Execute model on the text
   vector< vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
   m_d->tokenize(*originalText, sentencesTokens);
+    LOG_MESSAGE(LDEBUG, "      Number of token '" << sentencesTokens.size() << "'");
 
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
@@ -214,7 +219,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 
       m_d->computeDefaultStatus(*tToken);
 
-      LOG_MESSAGE(LDEBUG, "      status is " << tToken->status().toString());
+      LOG_MESSAGE(LERROR, "      status is " << tToken->status().toString());
 
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);
@@ -342,8 +347,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitive
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
+      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk || tok.m_len == strlen(tok.m_pch)-1)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();
