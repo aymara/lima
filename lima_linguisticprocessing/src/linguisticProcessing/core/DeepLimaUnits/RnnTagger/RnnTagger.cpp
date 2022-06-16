@@ -42,7 +42,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 
 #include "RnnTagger.h"
-#include "deeplima/ner.h"
+#include "deeplima/token_sequence_analyzer.h"
 #include "deeplima/token_type.h"
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
@@ -77,7 +77,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         RnnTaggerPrivate();
         ~RnnTaggerPrivate() ;
         void init(GroupConfigurationStructure& unitConfiguration);
-        void tagger(token_buffer_t& buffer);
+        void tagger(vector<segmentation::token_pos>& buffer);
         void insertTags(tagging::impl::TokenIterator &ti);
         dumper::AnalysisToConllU<tagging::impl::TokenIterator> m_dumper;
 
@@ -85,7 +85,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         FsaStringsPool* m_stringsPool;
         LinguisticGraphVertex m_currentVx;
         QString m_data;
-        tagging::impl::EntityTaggingModule m_tag;
+        TokenSequenceAnalyzer<>* m_tag;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
@@ -94,7 +94,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         bool m_loaded;
     };
 
-    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_currentVx(0), m_stridx(), m_loaded(false)
+    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_currentVx(0), m_stridx(), m_loaded(false), m_tag()
     {
 
     }
@@ -160,33 +160,42 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         }
 
         VertexTokenPropertyMap vTokens = get(vertex_token, *srcgraph);
-        m_d->m_currentVx = anagraph->firstVertex();
+        auto currentVx = anagraph->firstVertex();
         LinguisticGraph* resultgraph=posgraph->getGraph();
         remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
 
-        token_buffer_t buffer;
+        std::vector<segmentation::token_pos> buffer;
         std::vector< LinguisticGraphVertex > anaVertices;
-        while(m_d->m_currentVx != endVx){
-            if (m_d->m_currentVx != 0 && vTokens[m_d->m_currentVx] != 0) {
-                Token *src = vTokens[m_d->m_currentVx];
-                impl::token_t token;
-                token.m_offset = src->position();
-                token.m_len = src->length();
-                token.m_form_idx = m_d->m_stridx.get_idx(src->stringForm().toUtf8(), src->length());
-                token.m_flags = impl::token_t::token_flags_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
-                buffer.push_back(token);
+        std::vector<std::string> v;
+
+        while(currentVx != endVx){
+            if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+                const auto& src = vTokens[currentVx];
+                v.push_back(src->stringForm().toStdString());
+                buffer.emplace_back();
             }
             LinguisticGraphOutEdgeIt it, it_end;
-            boost::tie(it, it_end) = boost::out_edges(m_d->m_currentVx, *srcgraph);
+            boost::tie(it, it_end) = boost::out_edges(currentVx, *srcgraph);
             if (it != it_end)
             {
-                m_d->m_currentVx = boost::target(*it, *srcgraph);
+                currentVx = boost::target(*it, *srcgraph);
             }
             else
             {
-                m_d->m_currentVx = endVx;
+                currentVx = endVx;
             }
-            anaVertices.push_back(m_d->m_currentVx);
+            anaVertices.push_back(currentVx);
+        }
+        for(unsigned long k=0;k<anaVertices.size();k++){
+            currentVx = anaVertices[k];
+            if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+                const auto& src = vTokens[currentVx];
+                auto& token = buffer[k];
+                token.m_offset = src->position();
+                token.m_len = src->length();
+                token.m_pch = v[k].c_str();
+                token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+            }
         }
         m_d->tagger(buffer);
         LOG_MESSAGE(LDEBUG, "tag size: " << m_d->m_tags.size());
@@ -206,6 +215,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
             if (morphoData!=nullptr)
             {
+                LOG_MESSAGE(LDEBUG, "tag: "<< m_d->m_tags[anaVerticesIndex]);
                 auto posData = new MorphoSyntacticData();
                 CheckDifferentPropertyPredicate differentMicro(
                         m_d->m_microAccessor,
@@ -218,7 +228,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
                 if (posData->empty() || morphoData->empty())
                 {
-                    PTLOGINIT;
+
                     LWARN << "No matching category found for tagger result "
                           << m_d->m_tags[anaVerticesIndex];
                     if (!morphoData->empty())
@@ -277,8 +287,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             {
                 return;
             }
-            m_tag.load(model_file_name.toStdString(),m_pResolver);
-            m_tag.init(1, 1, 16*1024,m_stridx); // threads, buffer size per thread
+            m_tag = new TokenSequenceAnalyzer<>(model_file_name.toStdString(),"",m_pResolver,1024,8);
+
 
             m_loaded = true;
         };
@@ -287,33 +297,32 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         {
             m_load_fn();
         }
-        for (size_t i = 0; i < m_tag.get_classes().size(); ++i)
+        for (size_t i = 0; i < m_tag->get_classes().size(); ++i)
         {
-            m_dumper.set_classes(i, m_tag.get_class_names()[i], m_tag.get_classes()[i]);
+            m_dumper.set_classes(i, m_tag->get_class_names()[i], m_tag->get_classes()[i]);
         }
     }
 
-    void RnnTaggerPrivate::tagger(token_buffer_t &buffer) {
-        buffer.lock();
-        m_tag.register_handler([this,&buffer](
-                const typename tagging::impl::EntityTaggingModule::OutputMatrix& classes,
-                size_t begin, size_t end, size_t slot_idx){
-            std::cerr << "handler called: " << slot_idx << std::endl;
-            tagging::impl::TokenIterator ti(m_stridx, buffer, vector<unsigned int>(), classes, begin, end);
+    void RnnTaggerPrivate::tagger(vector<segmentation::token_pos> &buffer) {
+        m_tag->register_handler([this](const StringIndex& stridx,
+                                               const token_buffer_t& tokens,
+                                               const std::vector<StringIndex::idx_t>& lemmata,
+                                               const deeplima::tagging::impl::EntityTaggingModule::OutputMatrix& classes,
+                                               size_t begin,
+                                               size_t end){
+            tagging::impl::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
             insertTags(ti);
-            buffer.unlock();
         });
-        m_tag.handle_token_buffer(0, tagging::impl::enriched_token_buffer_t(buffer, m_stridx));
-        while (buffer.locked())
-        {
-            m_tag.send_next_results();
-        }
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
+        (*m_tag)(buffer, buffer.size());
+        m_tag->finalize();
     }
 
     void RnnTaggerPrivate::insertTags(tagging::impl::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "tags '" << classes[0] << "'");
         while(!ti.end()){
+            LOG_MESSAGE(LDEBUG, "index: " << ti.token_class(0));
             m_tags.push_back(classes[0][ti.token_class(0)]);
             ti.next();
         }
