@@ -73,8 +73,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         ~RnnTaggerPrivate() ;
         void init(GroupConfigurationStructure& unitConfiguration);
         void tagger(vector<segmentation::token_pos>& buffer);
-        void insertTags(tagging::impl::TokenIterator &ti);
-        dumper::AnalysisToConllU<tagging::impl::TokenIterator> m_dumper;
+        void insertTags(TokenSequenceAnalyzer<>::TokenIterator &ti);
+        dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
 
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
@@ -294,10 +294,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         m_tag->register_handler([this](const StringIndex& stridx,
                                                const token_buffer_t& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
-                                               const deeplima::tagging::impl::EntityTaggingModule::OutputMatrix& classes,
+                                               const TokenSequenceAnalyzer<>::OutputMatrix& classes,
                                                size_t begin,
                                                size_t end){
-            tagging::impl::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
+            TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
             insertTags(ti);
         });
         LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
@@ -305,7 +305,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         m_tag->finalize();
     }
 
-    void RnnTaggerPrivate::insertTags(tagging::impl::TokenIterator &ti) {
+    void RnnTaggerPrivate::insertTags(TokenSequenceAnalyzer<>::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
         while(!ti.end()){
             LOG_MESSAGE_WITH_PROLOG(LDEBUG, "index: " << ti.token_class(0));
