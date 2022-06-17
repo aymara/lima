@@ -40,8 +40,6 @@
 
 #include "deeplima/segmentation.h"
 
-#include <chrono>
-#include <thread>
 
 
 #define DEBUG_THIS_FILE true
@@ -161,7 +159,7 @@ void RnnTokenizer::init(
 
 LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 {
-  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start tokenizer process");
+  LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
 
   auto anagraph = new AnalysisGraph("AnalysisGraph",m_d->m_language,true,true);
@@ -179,7 +177,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
   analysis.setData(m_d->m_data.toStdString(), sb);
-git
+
   remove_edge(anagraph->firstVertex(),
               anagraph->lastVertex(),
               *graph);
