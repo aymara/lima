@@ -538,6 +538,8 @@
       <list name="micros">
         <item value="PONCTU_FORTE" />
       </list>
+      <list name="values" />
+      <list name="forbid-values" />
     </group>
     <group name="sentenceBoundariesUpdater" class="SentenceBoundariesUpdater">
       <param key="graph" value="AnalysisGraph"/>
@@ -549,6 +551,8 @@
       <list name="micros">
         <item value="SENT"/>
       </list>
+      <list name="values" />
+      <list name="forbid-values" />
     </group>
     <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
       <param key="chainMatrix" value="chainMatrix"/>
