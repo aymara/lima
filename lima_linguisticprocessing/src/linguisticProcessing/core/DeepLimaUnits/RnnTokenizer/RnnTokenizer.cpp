@@ -179,7 +179,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
   analysis.setData(m_d->m_data.toStdString(), sb);
-
+git
   remove_edge(anagraph->firstVertex(),
               anagraph->lastVertex(),
               *graph);
@@ -219,7 +219,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 
       m_d->computeDefaultStatus(*tToken);
 
-      LOG_MESSAGE(LERROR, "      status is " << tToken->status().toString());
+      LOG_MESSAGE(LDEBUG, "      status is " << tToken->status().toString());
 
       // Adds on the path
       LinguisticGraphVertex newVx = add_vertex(*graph);

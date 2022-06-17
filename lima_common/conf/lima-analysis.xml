@@ -188,7 +188,7 @@
         <entry key="ud-eus" value="deepud" />
         <entry key="ud-fas" value="deepud" />
         <entry key="ud-fin" value="deepud" />
-        <entry key="ud-fra" value="deepud" />
+        <entry key="ud-fra" value="deepud-tagger-test" />
         <entry key="ud-fro" value="deepud" />
         <entry key="ud-gla" value="deepud" />
         <entry key="ud-gle" value="deepud" />

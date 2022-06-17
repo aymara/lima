@@ -21,22 +21,17 @@
 #include <QtCore/QRegularExpression>
 #include <QDir>
 
-#include "common/misc/Exceptions.h"
-#include "common/Data/strwstrtools.h"
+
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
 
-#include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
-#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "linguisticProcessing/common/helpers/ConfigurationHelper.h"
-#include "linguisticProcessing/common/helpers/DeepTokenizerBase.h"
 #include "linguisticProcessing/common/helpers/LangCodeHelpers.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
-#include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
@@ -83,7 +78,6 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
-        LinguisticGraphVertex m_currentVx;
         QString m_data;
         TokenSequenceAnalyzer<>* m_tag;
         function<void()> m_load_fn;
@@ -94,7 +88,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         bool m_loaded;
     };
 
-    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_currentVx(0), m_stridx(), m_loaded(false), m_tag()
+    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tag()
     {
 
     }
@@ -134,7 +128,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
                                                                        false,
                                                                        true);
         analysis.setData("PosGraph",posgraph);
-        const auto& propertyCodeManager = static_cast<const LanguageData&>(
+        const auto& propertyCodeManager = dynamic_cast<const LanguageData&>(
                 MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
         const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
         /** Creation of an annotation graph if necessary*/
@@ -173,6 +167,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
                 const auto& src = vTokens[currentVx];
                 v.push_back(src->stringForm().toStdString());
                 buffer.emplace_back();
+                anaVertices.push_back(currentVx);
             }
             LinguisticGraphOutEdgeIt it, it_end;
             boost::tie(it, it_end) = boost::out_edges(currentVx, *srcgraph);
@@ -184,8 +179,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             {
                 currentVx = endVx;
             }
-            anaVertices.push_back(currentVx);
         }
+        /**
+         * Construction of the tokens used in the tagger.
+         */
         for(unsigned long k=0;k<anaVertices.size();k++){
             currentVx = anaVertices[k];
             if (currentVx != 0 && vTokens[currentVx] != nullptr) {
@@ -201,10 +198,12 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         LOG_MESSAGE(LDEBUG, "tag size: " << m_d->m_tags.size());
         std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
         LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
-
+        /*
+         * Here we add the part of speech data to the tokens
+         * Adding link beetween the node in the analysis graph and the pos graph.
+         */
         while (anaVerticesIndex < anaVertices.size()){
             auto anaVertex = anaVertices[anaVerticesIndex];
-            auto currentAnaToken = vTokens[anaVertex];
             auto newVx = boost::add_vertex(*resultgraph);
             auto agv =  annotationData->createAnnotationVertex();
             annotationData->addMatching("PosGraph", newVx, "annot", agv);
@@ -217,26 +216,14 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             {
                 LOG_MESSAGE(LDEBUG, "tag: "<< m_d->m_tags[anaVerticesIndex]);
                 auto posData = new MorphoSyntacticData();
+                LOG_MESSAGE(LDEBUG, "coded value: " << microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
                 CheckDifferentPropertyPredicate differentMicro(
                         m_d->m_microAccessor,
                         microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
-                std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
-                remove_copy_if(morphoData->begin(),
-                               morphoData->end(),
-                               backInsertItr,
-                               differentMicro);
+                LinguisticElement le = LinguisticElement();
+                le.properties = microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]);
+                posData->push_back(le);
 
-                if (posData->empty() || morphoData->empty())
-                {
-
-                    LWARN << "No matching category found for tagger result "
-                          << m_d->m_tags[anaVerticesIndex];
-                    if (!morphoData->empty())
-                    {
-                        LWARN << "Taking any one";
-                        posData->push_back(morphoData->front());
-                    }
-                }
                 LOG_MESSAGE(LDEBUG, "      Adding tag '" << m_d->m_tags[anaVerticesIndex] << "'");
                 put(vertex_data,*resultgraph,newVx,posData);
                 put(vertex_token,*resultgraph,newVx,srcToken);
@@ -320,9 +307,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
     void RnnTaggerPrivate::insertTags(tagging::impl::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "tags '" << classes[0] << "'");
         while(!ti.end()){
-            LOG_MESSAGE(LDEBUG, "index: " << ti.token_class(0));
+            LOG_MESSAGE_WITH_PROLOG(LDEBUG, "index: " << ti.token_class(0));
             m_tags.push_back(classes[0][ti.token_class(0)]);
             ti.next();
         }
