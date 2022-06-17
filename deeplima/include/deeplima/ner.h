@@ -43,12 +43,12 @@
 
 namespace deeplima
 {
-    namespace tagging
-    {
+namespace tagging
+{
 
 #if DEEPLIMA_INFERENCE_ENGINE == IE_TORCH
 
-        namespace torch_impl
+namespace torch_impl
 {
   //typedef impl::SegmentationInferenceWrapper<train::BiRnnClassifierForSegmentationImpl> Model;
   //typedef DictVectorizer<DictsHolder, UInt64Dict, TorchMatrix<int64_t>> EmbdVectorizer;
@@ -57,84 +57,84 @@ namespace deeplima
 
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
 
-        namespace eigen_impl
-        {
-            typedef impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTaggingF> Model;
-            typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
-            /*typedef WordSeqEmbdVectorizer<token_buffer_t,
-                                          TokenStrFeatExtractor<token_buffer_t::token_t>,
-                                          TokenUIntFeatExtractor<token_buffer_t::token_t>,
-                                          eigen_wrp::EigenMatrixXf> FeaturesVectorizer;*/
+namespace eigen_impl
+{
+  typedef impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTaggingF> Model;
+  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
+  /*typedef WordSeqEmbdVectorizer<token_buffer_t,
+                                TokenStrFeatExtractor<token_buffer_t::token_t>,
+                                TokenUIntFeatExtractor<token_buffer_t::token_t>,
+                                eigen_wrp::EigenMatrixXf> FeaturesVectorizer;*/
 
-            template <class TokenVector, class Token>
-            class FeaturesVectorizer: public WordSeqEmbdVectorizer<TokenVector,
-                    TokenStrFeatExtractor<Token>,
-                    TokenUIntFeatExtractor<Token>,
-                    eigen_wrp::EigenMatrixXf::matrix_t,
-                    Eigen::Index>
-            {};
+  template <class TokenVector, class Token>
+  class FeaturesVectorizer: public WordSeqEmbdVectorizer<TokenVector,
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
+  {};
 
-            template <class TokenVector, class Token>
-            class FeaturesVectorizerWithCache: public WordSeqEmbdVectorizerWithCache<TokenVector,
-                    TokenStrFeatExtractor<Token>,
-                    TokenUIntFeatExtractor<Token>,
-                    eigen_wrp::EigenMatrixXf::matrix_t,
-                    Eigen::Index>
-            {};
+  template <class TokenVector, class Token>
+  class FeaturesVectorizerWithCache: public WordSeqEmbdVectorizerWithCache<TokenVector,
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
+  {};
 
-            template <class Model, class TokenVector, class Token>
-            class FeaturesVectorizerWithPrecomputing: public WordSeqEmbdVectorizerWithPrecomputing<
-                    Model,
-                    TokenVector,
-                    TokenStrFeatExtractor<Token>,
-                    TokenUIntFeatExtractor<Token>,
-                    eigen_wrp::EigenMatrixXf::matrix_t,
-                    Eigen::Index>
-            {};
+  template <class Model, class TokenVector, class Token>
+  class FeaturesVectorizerWithPrecomputing: public WordSeqEmbdVectorizerWithPrecomputing<
+                                                     Model,
+                                                     TokenVector,
+                                                     TokenStrFeatExtractor<Token>,
+                                                     TokenUIntFeatExtractor<Token>,
+                                                     eigen_wrp::EigenMatrixXf::matrix_t,
+                                                     Eigen::Index>
+  {};
 
-        } // namespace eigen_impl
+} // namespace eigen_impl
 
 #else
 #error Unknown inference engine
 #endif
 
-        namespace impl
-        {
+namespace impl
+{
 #if DEEPLIMA_INFERENCE_ENGINE == IE_TORCH
 
-            //typedef torch_impl::Model Model;
+  //typedef torch_impl::Model Model;
   //typedef torch_impl::EmbdVectorizer EmbdVectorizer;
 
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
 
-            typedef eigen_impl::Model Model;
+  typedef eigen_impl::Model Model;
 
-            template <class TokenVector, class Token>
-            class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
+  template <class TokenVector, class Token>
+  class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
 
-            template <class TokenVector, class Token>
-            class FeaturesVectorizerWithCache: public eigen_impl::FeaturesVectorizerWithCache<TokenVector, Token> {};
+  template <class TokenVector, class Token>
+  class FeaturesVectorizerWithCache: public eigen_impl::FeaturesVectorizerWithCache<TokenVector, Token> {};
 
-            template <class Model, class TokenVector, class Token>
-            class FeaturesVectorizerWithPrecomputing: public eigen_impl::FeaturesVectorizerWithPrecomputing<Model, TokenVector, Token> {};
+  template <class Model, class TokenVector, class Token>
+  class FeaturesVectorizerWithPrecomputing: public eigen_impl::FeaturesVectorizerWithPrecomputing<Model, TokenVector, Token> {};
 
-            typedef eigen_wrp::EigenMatrixXf BaseMatrix;
+  typedef eigen_wrp::EigenMatrixXf BaseMatrix;
 
 #else
 #error Unknown inference engine
 #endif
 
-            typedef RnnSequenceClassifier<Model, BaseMatrix> EntityTaggingClassifier;
+  typedef RnnSequenceClassifier<Model, BaseMatrix> EntityTaggingClassifier;
 
-            //typedef impl::TaggingImpl< EntityTaggingClassifier, int
-            //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
-            //                           FeaturesVectorizer > EntityTaggingModule;
+  //typedef impl::TaggingImpl< EntityTaggingClassifier, int
+  //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
+  //                           FeaturesVectorizer > EntityTaggingModule;
 
-        } // namespace impl
+} // namespace impl
 
 //typedef impl::EntityTaggingModule EntityTagger;
 
-    } // namespace tagging
+} // namespace tagging
 } // namespace deeplima
 
 #endif
