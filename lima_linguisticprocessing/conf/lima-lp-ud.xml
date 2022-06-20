@@ -22,8 +22,10 @@
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
-        <item value="tfmorphosyntax"/>
+        <item value="RnnTokenizer"/>
+        <item value="RnnTagger"/>
+        <!--item value="cpptftokenizer"/-->
+        <!--item value="tfmorphosyntax"/-->
         <item value="tflemmatizer"/>
         <item value="conllDumper"/>
       </list>
