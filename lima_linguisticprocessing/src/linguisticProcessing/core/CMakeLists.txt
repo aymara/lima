@@ -37,7 +37,7 @@ add_subdirectory(TextSegmentation)
 add_subdirectory(WordSenseAnalysis)
 add_subdirectory(DocumentsReader)
 add_subdirectory(ConlluReader)
-#add_subdirectory(LangDetector)
+add_subdirectory(LangDetector)
 
 
 IF(TRE_FOUND)

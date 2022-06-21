@@ -203,6 +203,10 @@ public:
     }
   }
 
+  const std::vector<std::vector<std::string>> &getMClasses() const {
+      return m_classes;
+  }
+
   uint64_t get_token_counter() const
   {
     return m_token_counter;
