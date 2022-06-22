@@ -143,17 +143,28 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
                                            { "scriptchange", 1 } };
-  std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( 4 ) };
+
+  std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( 8 ) };
   BiRnnClassifierForSegmentation model(std::move(dicts), ngram_descr, embd_descr,
                                        rnn_descr, "tokens", train_ss ? 7 : 5);
 
   const double learning_rate = 0.001;
   torch::optim::Adam optimizer(model->parameters(), torch::optim::AdamOptions(learning_rate));
 
+  torch::Device device("cuda");
+
+  train_input->to(device);
+  train_gold->to(device);
+
+  dev_input->to(device);
+  dev_gold->to(device);
+
+  model->to(device);
+
   model->train(300, 4, 256, { "tokens" },
               *(train_input.get()), *(train_gold.get()),
               *(dev_input.get()), *(dev_gold.get()),
-              optimizer, model_name);
+              optimizer, model_name, device);
 
   return 0;
 }
