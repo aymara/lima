@@ -385,8 +385,8 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   {
     vector<embd_descr_t> encoder_embd_descr = { embd_descr_t("enc_chars", params.m_encoder_embd_dim) };
     vector<embd_descr_t> decoder_embd_descr = { embd_descr_t("dec_chars", params.m_decoder_embd_dim) };
-    vector<rnn_descr_t> encoder_rnn_descr = { rnn_descr_t(params.m_encoder_rnn_hidden_dim) /*, rnn_descr_t(32) */ };
-    vector<rnn_descr_t> decoder_rnn_descr = { rnn_descr_t(params.m_decoder_rnn_hidden_dim) /*, rnn_descr_t(32) */ };
+    vector<rnn_descr_t> encoder_rnn_descr = { rnn_descr_t(params.m_encoder_rnn_hidden_dim) };
+    vector<rnn_descr_t> decoder_rnn_descr = { rnn_descr_t(params.m_decoder_rnn_hidden_dim) };
     vector<embd_descr_t> cat_embd_descr;
     for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
     {
