@@ -23,7 +23,7 @@
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
-        <item value="RnnTagger"/>
+        <item value="RnnTokensAnalyzer"/>
         <!--item value="cpptftokenizer"/-->
         <!--item value="tfmorphosyntax"/-->
         <item value="tflemmatizer"/>
@@ -69,6 +69,11 @@
 
     <group name="RnnTagger" class="RnnTagger">
       <param key="model_prefix" value="tagger-$udlang"/>
+    </group>
+
+    <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
+      <param key="tagger_model_prefix" value="tagger-$udlang"/>
+      <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
