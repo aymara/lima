@@ -26,7 +26,7 @@
         <item value="RnnTokensAnalyzer"/>
         <!--item value="cpptftokenizer"/-->
         <!--item value="tfmorphosyntax"/-->
-        <item value="tflemmatizer"/>
+        <!--item value="tflemmatizer"/-->
         <item value="conllDumper"/>
       </list>
     </group>

@@ -83,7 +83,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
-        std::vector<string> m_tags;
+        std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         bool m_loaded;
@@ -196,7 +196,6 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             }
         }
         m_d->analyzer(buffer);
-        LOG_MESSAGE(LDEBUG, "tag size: " << m_d->m_tags.size());
         std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
         LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
         /*
@@ -214,26 +213,34 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             auto srcToken = get(vertex_token,*srcgraph,anaVertex);
 
 
-            LOG_MESSAGE(LDEBUG, "tag: "<< m_d->m_tags[anaVerticesIndex]);
             auto posData = new MorphoSyntacticData();
-            LOG_MESSAGE(LDEBUG, "coded value: " << microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
-            CheckDifferentPropertyPredicate differentMicro(
-                    m_d->m_microAccessor,
-                    microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
-            LinguisticElement leTag = LinguisticElement();
-            leTag.properties = microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]);
-            posData->push_back(leTag);
 
-            LOG_MESSAGE(LDEBUG, "      Adding tag '" << m_d->m_tags[anaVerticesIndex] << "'");
+            LinguisticElement lElement = LinguisticElement();
+            for(const auto& name: m_d->m_tokensAnalyzer->get_class_names()){
+                PropertyManager propertyManager = microManager;
+                if(name=="upos"){
+                    propertyManager = propertyCodeManager.getPropertyManager("MICRO");
+                }
+                else if(name=="xpos")
+                {
+                    propertyManager = propertyCodeManager.getPropertyManager("MACRO");
+                }
+                else{
+                    propertyManager = propertyCodeManager.getPropertyManager(name);
+                }
+                auto value = propertyManager.getPropertyValue(m_d->m_tags[anaVerticesIndex][name]);
+                if(value.toBool()){
+                    LOG_MESSAGE(LDEBUG, "value: " << value);
+                    propertyManager.getPropertyAccessor().writeValue(value,lElement.properties);
+                }
+            }
+            FsaStringsPool* sp = &MediaticData::changeable().stringsPool(m_d->m_language);
+            lElement.lemma = (*sp)[m_d->m_lemmas[anaVerticesIndex]];
+            posData->push_back(lElement);
+
             put(vertex_data,*resultgraph,newVx,posData);
             put(vertex_token,*resultgraph,newVx,srcToken);
 
-            auto lemmaData = new MorphoSyntacticData();
-            LinguisticElement leLemma = LinguisticElement();
-            FsaStringsPool* sp = &MediaticData::changeable().stringsPool(m_d->m_language);
-            leLemma.lemma = (*sp)[m_d->m_lemmas[anaVerticesIndex]];
-            lemmaData->push_back(leLemma);
-            put(vertex_data, *srcgraph, anaVertex,lemmaData);
 
             boost::add_edge(previousPosVertex, newVx, *resultgraph);
 
@@ -255,7 +262,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         QString lang_str = MediaticData::single().media(m_language).c_str();
         QString resources_path = MediaticData::single().getResourcesPath().c_str();
         QString tagger_model_name = tagger_model_prefix;
-        QString lemmatizer_model_name = tagger_model_prefix;
+        QString lemmatizer_model_name = lemmatizer_model_prefix;
         string udlang;
         MediaticData::single().getOptionValue("udlang", udlang);
 
@@ -274,7 +281,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
                                                        .arg(lang_str, tagger_model_name));
         auto lemmatizer_model_file_name = findFileInPaths(resources_path,
                                                       QString::fromUtf8("/RnnLemmatizer/%1/%2.pt")
-                                                              .arg(lang_str, tagger_model_name));
+                                                              .arg(lang_str, lemmatizer_model_name));
         if (tagger_model_file_name.isEmpty())
         {
             throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
@@ -323,9 +330,16 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
+        auto class_names = m_tokensAnalyzer->get_class_names();
+
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "classes: " << class_names);
         while(!ti.end()){
-            LOG_MESSAGE_WITH_PROLOG(LDEBUG, "index: " << ti.token_class(0));
-            m_tags.push_back(classes[0][ti.token_class(0)]);
+            auto tag = std::map<std::string,std::string>();
+            LOG_MESSAGE(LDEBUG, ti.lemma());
+            for(uint cat=0;cat < class_names.size();cat++){
+                tag.insert({class_names[cat],classes[cat][ti.token_class(cat)]});
+            }
+            m_tags.push_back(tag);
             m_lemmas.emplace_back(ti.lemma());
             ti.next();
         }
