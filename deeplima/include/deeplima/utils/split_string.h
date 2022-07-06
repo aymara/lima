@@ -22,6 +22,9 @@
 
 #include <string>
 #include <vector>
+#include <cstdlib>
+#include <stdexcept>
+#include <limits>
 
 namespace deeplima
 {
@@ -41,6 +44,34 @@ inline std::vector<std::string> split(const std::string &str, char delim)
   }
 
   return parts;
+}
+
+inline std::vector<size_t> split_list_of_nums(const std::string &str, char delim)
+{
+  std::vector<std::string> temp = split(str, delim);
+  std::vector<size_t> res;
+  res.reserve(temp.size());
+
+  for (const std::string& s : temp)
+  {
+    char *p_end = nullptr;
+    long int t = strtol(s.c_str(), &p_end, 10);
+    if (p_end != s.data() + s.size())
+    {
+      throw std::range_error("Can't parse \"" + str + "\"");
+    }
+    if (t <= 0)
+    {
+      throw std::range_error("Can't parse \"" + str + "\": value " + std::to_string(t) + " must be > 0");
+    }
+    if (t >= std::numeric_limits<size_t>::max())
+    {
+      throw std::range_error("Can't parse \"" + str + "\": value " + std::to_string(t) + " is too high");
+    }
+    res.push_back(size_t(t));
+  }
+
+  return res;
 }
 
 template< class InputIt, class Pred >
