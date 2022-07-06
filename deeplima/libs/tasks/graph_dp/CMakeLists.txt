@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_subdirectory(common)
-add_subdirectory(segmentation)
-add_subdirectory(tag)
-add_subdirectory(lemmatization)
-add_subdirectory(graph_dp)
+add_subdirectory(model)
+add_subdirectory(train)
 

@@ -15,9 +15,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_subdirectory(common)
-add_subdirectory(segmentation)
-add_subdirectory(tag)
-add_subdirectory(lemmatization)
-add_subdirectory(graph_dp)
+add_library(birnn_and_deep_biaffine_attention
+  STATIC
+  birnn_and_deep_biaffine_attention.cpp
+  birnn_and_deep_biaffine_attention_script_generator.cpp
+)
+
+target_link_libraries(birnn_and_deep_biaffine_attention
+  PRIVATE
+  torch_birnn_seq_classifier
+  train_common
+  ${TORCH_LIBRARIES}
+)
 

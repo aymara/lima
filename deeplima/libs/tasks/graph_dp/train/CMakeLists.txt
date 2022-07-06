@@ -15,9 +15,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with LIMA.  If not, see <https://www.gnu.org/licenses/>
 
-add_subdirectory(common)
-add_subdirectory(segmentation)
-add_subdirectory(tag)
-add_subdirectory(lemmatization)
-add_subdirectory(graph_dp)
+add_library(train_graph_dp
+  STATIC
+  train_graph_dp.cpp
+  conllu_file_iterator.cpp
+)
+
+target_link_libraries(train_graph_dp
+  PRIVATE
+  birnn_and_deep_biaffine_attention
+  train_common
+  ${TORCH_LIBRARIES}
+  fasttext-static
+)
 
