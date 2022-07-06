@@ -377,6 +377,26 @@ void StaticGraphImpl::parse_script(const string& script)
               }
               break;
 
+            case module_type_t::deep_biaffine_attention_decoder:
+              {
+                torch_modules::DeepBiaffineAttentionDecoder& m
+                    = m_deep_biaffine_attention_decoder[module_ref.m_idx];
+                vector<size_t>& inputs = op.m_inputs;
+                vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() != 1 || outputs.size() != 1)
+                {
+                  throw;
+                }
+
+                op.m_fn = [&m, inputs, outputs](context_t& ctx)
+                {
+                  auto out = m->forward(ctx.m_tensors[inputs[0]]);
+                  ctx.m_tensors[outputs[0]] = out;
+                };
+              }
+              break;
+
             default:
               throw;
           }
@@ -481,17 +501,22 @@ void StaticGraphImpl::parse_script(const string& script)
         {
           vector<size_t>& inputs = op.m_inputs;
           vector<size_t>& outputs = op.m_outputs;
+          int64_t dim = 2;
+          if (step.m_iargs.end() != step.m_iargs.find("dim"))
+          {
+            dim = step.m_iargs.find("dim")->second[0];
+          }
 
           if (inputs.size() != 1 || outputs.size() != 1)
           {
             throw;
           }
 
-          op.m_fn = [inputs, outputs](context_t& ctx)
+          op.m_fn = [inputs, outputs, dim](context_t& ctx)
           {
             auto out = ctx.m_tensors[inputs[0]];
             //out = out.reshape({-1, out.size(2)});
-            out = torch::nn::functional::log_softmax(out, 2);
+            out = torch::nn::functional::log_softmax(out, dim);
             ctx.m_tensors[outputs[0]] = out;
           };
         }
@@ -604,6 +629,10 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     {
       create_submodule_Dropout(names_list, opts);
     }
+    else if (cls == "DeepBiaffineAttentionDecoder")
+    {
+      create_submodule_DeepBiaffineAttentionDecoder(names_list, opts);
+    }
     else if (cls == "Arg")
     {
       create_arg(step.m_names, opts);
@@ -630,6 +659,11 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     //
     step.m_type = step_descr_t::log_softmax;
     step.m_args = parse_options(ss);
+    auto it = step.m_args.find("dim");
+    if (step.m_args.end() != it)
+    {
+      step.m_iargs["dim"] = parse_iargs(it->second);
+    }
   }
   else if (type == "reshape")
   {
@@ -812,6 +846,17 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
   m->pretty_print(cerr);
   cerr << endl;
 
+  register_module(name, m);
+}
+
+void StaticGraphImpl::create_submodule_DeepBiaffineAttentionDecoder(const string& name, const map<string, string>& opts)
+{
+  int64_t input_dim = get_option<int64_t>(opts, "input_dim");
+  int64_t hidden_arc_dim = get_option<int64_t>(opts, "hidden_arc_dim");
+
+  torch_modules::DeepBiaffineAttentionDecoder m(input_dim, hidden_arc_dim);
+  m_deep_biaffine_attention_decoder.push_back(m);
+  m_modules[name] = module_ref_t(module_type_t::deep_biaffine_attention_decoder, m_deep_biaffine_attention_decoder.size() - 1);
   register_module(name, m);
 }
 

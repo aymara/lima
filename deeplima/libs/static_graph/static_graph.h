@@ -27,6 +27,7 @@
 #include <torch/serialize/archive.h>
 
 #include "dict_base.h"
+#include "nn/torch_modules/deep_biaffine_attention_decoder.h"
 
 namespace deeplima
 {
@@ -106,6 +107,7 @@ class StaticGraphImpl : public torch::nn::Module
     lstm = 2,
     linear = 3,
     dropout = 4,
+    deep_biaffine_attention_decoder = 5,
     max_module_type
   };
 
@@ -369,6 +371,7 @@ protected:
   virtual void create_submodule_LSTM(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_Linear(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_Dropout(const std::string& name, const std::map<std::string, std::string>& opts);
+  virtual void create_submodule_DeepBiaffineAttentionDecoder(const std::string& name, const std::map<std::string, std::string>& opts);
 
   DictsHolder m_dicts;
   std::string m_script;
@@ -378,6 +381,7 @@ protected:
   std::vector<torch::nn::LSTM> m_lstm;
   std::vector<torch::nn::Linear> m_linear;
   std::vector<torch::nn::Dropout> m_dropout;
+  std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> m_deep_biaffine_attention_decoder;
 
 public:
 
