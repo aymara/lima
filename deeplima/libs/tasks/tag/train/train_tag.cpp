@@ -26,7 +26,7 @@
 #include "static_graph/dict_holder_adapter.h"
 
 #include "word_dict_builder.h"
-#include "word_seq_vectorizer.h"
+#include "nn/common/word_seq_vectorizer.h"
 #include "deeplima/feat_extractors.h"
 
 #include "../model/birnn_classifier_for_tag.h"
@@ -128,149 +128,10 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, const FeatExt
   return out;
 }
 
-template <typename Token>
-class ConlluFeatExtractor
-{
-protected:
-  std::vector<std::string> m_idx2feat;
-  std::unordered_map<std::string, size_t> m_feat2idx;
-  std::unordered_set<std::string> m_prohibited_feats;
-  int m_upos;
-  int m_xpos;
-  int m_eos;
-  int m_rel;
-  bool m_feats;
-
-  void add_feature(const std::string& name)
-  {
-    m_feat2idx[name] = m_idx2feat.size();
-    m_idx2feat.push_back(name);
-  }
-
-public:
-  ConlluFeatExtractor(const std::string& feats_to_train)
-    : m_upos(-1),
-      m_xpos(-1),
-      m_eos(-1),
-      m_rel(-1),
-      m_feats(false)
-  {
-    for (const std::string& s : utils::split(feats_to_train, ','))
-    {
-      assert(s.size() > 0);
-
-      if (s == "upos")
-      {
-        add_feature("upos");
-        m_upos = m_feat2idx["upos"];
-      }
-      else if (s == "xpos")
-      {
-        add_feature("xpos");
-        m_xpos = m_feat2idx["xpos"];
-      }
-      else if (s == "feats")
-      {
-        m_feats = true;
-      }
-      else if (s == "eos")
-      {
-        add_feature("eos");
-        m_eos = m_feat2idx["eos"];
-      }
-      else if (s == "rel")
-      {
-        add_feature("rel");
-        m_rel = m_feat2idx["rel"];
-      }
-      else if (s[0] == '-')
-      {
-        string feat_name = s.substr(1);
-        assert(feat_name.size() > 0);
-        m_prohibited_feats.insert(feat_name);
-      }
-      else
-      {
-        throw std::invalid_argument("Can't parse list of features: \"" + feats_to_train + "\"");
-      }
-    }
-  }
-
-  inline static bool needs_preprocessing()
-  {
-    return true;
-  }
-
-  inline void preprocess(const Token& token)
-  {
-    if (m_feats)
-    {
-      for (const auto& fv : token.feats())
-      {
-        if (m_prohibited_feats.end() != m_prohibited_feats.find(fv.first))
-        {
-          continue;
-        }
-        if (m_feat2idx.end() == m_feat2idx.find(fv.first))
-        {
-          m_feat2idx[fv.first] = m_idx2feat.size();
-          m_idx2feat.push_back(fv.first);
-        }
-      }
-    }
-  }
-
-  inline std::string feat_value(const Token& token, int feat_no) const
-  {
-    assert(feat_no >= 0);
-
-    if (-1 != m_upos && m_upos == feat_no)
-    {
-      return token.upos();
-    }
-    else if (-1 != m_xpos && m_xpos == feat_no)
-    {
-      return token.xpos();
-    }
-    else if (-1 != m_rel && m_rel == feat_no)
-    {
-      return token.deprel();
-    }
-    else if (-1 != m_eos && m_eos == feat_no)
-    {
-      return token.eos() ? "Yes" : "No";
-    }
-    else if (m_feats)
-    {
-      assert(size_t(feat_no) < m_idx2feat.size());
-      const string feat_name = m_idx2feat[feat_no];
-      const auto& fv = token.feats();
-      auto it = fv.find(feat_name);
-      if (fv.end() == it)
-      {
-        return "-";
-      }
-      assert(!it->second.empty());
-      assert(it->second.size() == 1);
-      return *(it->second.begin());
-    }
-
-    throw std::invalid_argument("Unknown feature identifier");
-  }
-
-  inline size_t size() const
-  {
-    return m_idx2feat.size();
-  }
-
-  vector<string> feats() const
-  {
-    return m_idx2feat;
-  }
-};
-
-typedef WordDictBuilderImpl<CoNLLU::WordLevelAdapter, deeplima::TokenStrFeatExtractor<CoNLLU::WordLevelAdapter::token_t>> WordDictBuilderFromCoNLLU;
-typedef WordDictBuilderImpl<CoNLLU::WordLevelAdapter, ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>> TagDictBuilderFromCoNLLU;
+typedef WordDictBuilderImpl<CoNLLU::WordLevelAdapter,
+                            deeplima::TokenStrFeatExtractor<CoNLLU::WordLevelAdapter::token_t>> WordDictBuilderFromCoNLLU;
+typedef WordDictBuilderImpl<CoNLLU::WordLevelAdapter,
+                            ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>> TagDictBuilderFromCoNLLU;
 typedef WordSeqVectorizerImpl<CoNLLU::WordLevelAdapter,
                               deeplima::TokenStrFeatExtractor<CoNLLU::WordLevelAdapter::token_t>,
                               deeplima::TokenUIntFeatExtractor<CoNLLU::WordLevelAdapter::token_t>,

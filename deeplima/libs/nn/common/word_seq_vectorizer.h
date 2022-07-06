@@ -30,9 +30,7 @@
 
 namespace deeplima
 {
-namespace tagging
-{
-namespace train
+namespace nets
 {
 
 template <class DataSet, class StrFeatExtractor, class UIntFeatExtractor, class MatrixInt, class MatrixFloat>
@@ -97,8 +95,27 @@ public:
     std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
     vectorization_t rv(embeddable_features, frozen_features);
 
+    process(src, rv, 0);
+
+    return rv;
+  }
+
+  vectorization_t init_dst(uint64_t len) const
+  {
+    std::shared_ptr<MatrixFloat> frozen_features(new MatrixFloat(len, Parent::m_features_size));
+    std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
+    vectorization_t rv(embeddable_features, frozen_features);
+
+    return rv;
+  }
+
+  void process(const DataSet& src, vectorization_t dst, uint64_t start) const
+  {
+    std::shared_ptr<MatrixInt> embeddable_features = dst.first;
+    std::shared_ptr<MatrixFloat> frozen_features = dst.second;
+
     typename DataSet::const_iterator it = src.begin();
-    uint64_t current_timepoint = 0;
+    uint64_t current_timepoint = start;
     while (src.end() != it)
     {
       while(!(*it).is_word() && src.end() != it)
@@ -117,12 +134,10 @@ public:
 
       it++;
     }
-
-    return rv;
   }
 
   inline void vectorize_timepoint(MatrixFloat& frozen_features, MatrixInt& embeddable_features,
-                                  uint64_t timepoint, const typename DataSet::token_t& token)
+                                  uint64_t timepoint, const typename DataSet::token_t& token) const
   {
     Parent::vectorize_timepoint(frozen_features, timepoint, token);
 
@@ -154,8 +169,7 @@ public:
   }
 };
 
-} // namespace train
-} // namespace tagging
+} // namespace nets
 } // namespace deeplima
 
 #endif

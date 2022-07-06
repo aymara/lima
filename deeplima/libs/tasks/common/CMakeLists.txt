@@ -21,5 +21,7 @@ add_library(train_common
 )
 
 target_link_libraries(train_common
+  conllu
+  Boost::filesystem
 )
 
