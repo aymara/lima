@@ -190,6 +190,11 @@ public:
     return _feats;
   }
 
+  inline const idx_t& head() const
+  {
+    return _head;
+  }
+
   inline bool get_binary_feature(const std::string& feat_name) const
   {
     const auto it = _feats.find(feat_name);

@@ -35,6 +35,33 @@ namespace deeplima
 namespace CoNLLU
 {
 
+size_t Sentence::calc_num_of_words(const Annotation& annot) const
+{
+  size_t counter = 0;
+  size_t idx = m_first_token_line;
+  for (; idx < m_first_token_line + m_num_tokens; idx++)
+  {
+    const CoNLLULine& line = annot.get_line(idx);
+    if (line.is_empty_line())
+    {
+      std::cerr << "empty line" << std::endl;
+    }
+    if (line.is_real_word_line())
+    {
+      counter++;
+    }
+    else
+    {
+      std::cerr << "not a word" << std::endl;
+    }
+  }
+
+  const CoNLLULine& line = annot.get_line(idx);
+  assert(line.is_empty_line()); // double check the structure
+
+  return counter;
+}
+
 bool Treebank::load(const std::string& path)
 {
   for (fs::directory_entry& entry : fs::directory_iterator(path))
@@ -77,6 +104,11 @@ void Annotation::load(const std::string& fn)
     throw invalid_argument(string("Can't open file \"") + fn + "\"");
   }
 
+  load(input);
+}
+
+void Annotation::load(std::istream& input)
+{
   string line;
   size_t num_sentences = 0;
   size_t num_tokens = 0;
@@ -166,6 +198,7 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
     {
       m_sentences.push_back(Sentence());
       m_sentences[sent_idx].m_first_line = i;
+      m_sentences[sent_idx].m_first_word = m_words.size();
     }
     else
     {
