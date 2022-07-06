@@ -17,4 +17,5 @@
 
 add_subdirectory(birnn_seq_cls)
 add_subdirectory(birnn_seq2seq)
+add_subdirectory(torch_modules)
 
