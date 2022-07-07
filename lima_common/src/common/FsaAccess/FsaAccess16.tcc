@@ -349,7 +349,7 @@ Lima::LimaString &prefix ) const{
     U16_NEXT(content, textPos, textLength, label);
     int32_t delta = textPos - textPos0;
     if( FsaAccessHeader::getTrieDirectionForward() )
-      prefix.append( LimaString(content).mid(textPos0).leftRef(delta) );
+      prefix.append( LimaString(content).mid(textPos0).left(delta) );
     else
       prefix.insert( 0, content+textPos0, delta );
     print( os, target(*ei,m_graph), prefix);

@@ -538,7 +538,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 
   // add the trigger to deal with agreement constraints
   LimaString triggerString=gazeteer[0];
-  // triggerString must not contain space (its real value is not important, the important is the 
+  // triggerString must not contain space (its real value is not important, the important is the
   // trigger used to get to the rule in the recognizer)
   triggerString.remove(QChar(' '));
   if (! keepTrigger) {
@@ -856,16 +856,16 @@ expandSubAutomatonsInRule(LimaString& s,
 //   return true;
 // }
 
-LimaString RecognizerCompiler::
-peekConstraints(std::ifstream& file) {
+LimaString RecognizerCompiler::peekConstraints(std::ifstream& file) {
   LimaString s;
   LimaString line;
-  LimaChar c=file.peek();
+  LimaChar c = QChar::fromLatin1(file.peek());
   while ((c==CHAR_BEGIN_CONSTRAINT || c==CHAR_BEGIN_ACTION)
-         && !file.eof()) {
+         && !file.eof())
+  {
     readline(line);
-    s+=line;
-    c=file.peek();
+    s += line;
+    c = QChar::fromLatin1(file.peek());
   }
   return s;
 }

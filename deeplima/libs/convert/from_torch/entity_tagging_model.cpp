@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "deeplima/eigen_wrp/tagging_eigen_inference_impl.h"
-#include "tasks/ner/model/birnn_classifier_for_ner.h"
+#include "tasks/tag/model/birnn_classifier_for_tag.h"
 
 #include "convert_from_torch.h"
 

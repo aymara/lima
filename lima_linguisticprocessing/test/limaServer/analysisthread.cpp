@@ -142,7 +142,7 @@ void AnalysisThread::startAnalysis()
     {
       m_d->m_response_header.insert(std::pair<QString,QString>("Allow",method));
     }
-    m_d->m_response_body=QByteArray("Accepted entry points are: ").append(m_d->m_methods.join(","));
+    m_d->m_response_body=QByteArray("Accepted entry points are: ").append(m_d->m_methods.join(",").toStdString().c_str());
     exitStatus=1;
   }
   if( (m_d->m_request->methodString() != "HTTP_GET") && (m_d->m_request->methodString() != "HTTP_POST") )

@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
   string corpus, ud_path, model;
   bool train_ss;
 
-  po::options_description desc("DeepLima");
+  po::options_description desc("DeepLima Segmentation Trainer");
   desc.add_options()
   ("help,h",                                            "Display this help message")
   ("corpus,c",          po::value<string>(&corpus),     "Training corpus name")
@@ -48,6 +48,25 @@ int main(int argc, char* argv[])
     return -1;
   }
 
+  if (vm.count("help")) {
+      cout << desc << endl;
+      return 0;
+  }
+  if (vm.count("corpus")==0) {
+      std::cerr << "Mandatory parameter missing: corpus" << std::endl;
+      std::cerr << desc << std::endl;
+      return 0;
+  }
+  if (vm.count("ud-path")==0) {
+      std::cerr << "Mandatory parameter missing: ud-path" << std::endl;
+      std::cerr << desc << std::endl;
+      return 0;
+  }
+  if (vm.count("name")==0) {
+      std::cerr << "Mandatory parameter missing: name" << std::endl;
+      std::cerr << desc << std::endl;
+      return 0;
+  }
   train_ss = vm["sentence"].as<bool>();
 
   return train_segmentation_model(ud_path, corpus, model, train_ss);

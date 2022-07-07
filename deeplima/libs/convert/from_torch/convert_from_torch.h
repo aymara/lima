@@ -48,15 +48,25 @@ void convert_module_from_torch(const torch::nn::LSTM& src, eigen_impl::params_bi
 {
   const std::vector<torch::Tensor> v = src->all_weights();
 
-  copy_matrix<M, S>(v[0], dst.fw.weight_ih);
-  copy_matrix<M, S>(v[1], dst.fw.weight_hh);
-  copy_vector<V, S>(v[2], dst.fw.bias_ih);
-  copy_vector<V, S>(v[3], dst.fw.bias_hh);
+  if (v.size() >= 4)
+  {
+    copy_matrix<M, S>(v[0], dst.fw.weight_ih);
+    copy_matrix<M, S>(v[1], dst.fw.weight_hh);
+    copy_vector<V, S>(v[2], dst.fw.bias_ih);
+    copy_vector<V, S>(v[3], dst.fw.bias_hh);
+  }
+  else
+  {
+    throw std::runtime_error("Unexpected set of weights in LSTM. Must be 4 (fw only) or 8 (fw + bw).");
+  }
 
-  copy_matrix<M, S>(v[4], dst.bw.weight_ih);
-  copy_matrix<M, S>(v[5], dst.bw.weight_hh);
-  copy_vector<V, S>(v[6], dst.bw.bias_ih);
-  copy_vector<V, S>(v[7], dst.bw.bias_hh);
+  if (8 == v.size())
+  {
+    copy_matrix<M, S>(v[4], dst.bw.weight_ih);
+    copy_matrix<M, S>(v[5], dst.bw.weight_hh);
+    copy_vector<V, S>(v[6], dst.bw.bias_ih);
+    copy_vector<V, S>(v[7], dst.bw.bias_hh);
+  }
 }
 
 template <class M, class V, class S=float>
@@ -70,17 +80,29 @@ template <class M, class S=float>
 void convert_module_from_torch(const torch::nn::Embedding& src, std::shared_ptr<DictBase> sp_dict, EmbdDict<uint64_t, M>& dst)
 {
   std::shared_ptr<UInt64Dict> sp_uint64_dict = std::dynamic_pointer_cast<UInt64Dict, DictBase>(sp_dict);
-  assert(nullptr != sp_uint64_dict);
+  std::shared_ptr<Char32Dict> sp_char32_dict = std::dynamic_pointer_cast<Char32Dict, DictBase>(sp_dict);
+  assert(sp_uint64_dict || sp_char32_dict);
   M tmp;
   copy_matrix<M, S>(src->weight, tmp);
-  dst.init(sp_uint64_dict, tmp);
+  if (sp_uint64_dict)
+  {
+    dst.init(sp_uint64_dict, tmp);
+  }
+  else if (sp_char32_dict)
+  {
+    dst.init(sp_char32_dict, tmp);
+  }
+  else
+  {
+    throw std::runtime_error("Unknown dict type.");
+  }
 }
 
 template <class M, class S=float>
 void convert_module_from_torch(const torch::nn::Embedding& src, std::shared_ptr<DictBase> sp_dict, EmbdDict<std::string, M>& dst)
 {
   std::shared_ptr<StringDict> sp_str_dict = std::dynamic_pointer_cast<StringDict, DictBase>(sp_dict);
-  assert(nullptr != sp_str_dict);
+  assert(sp_str_dict);
   M tmp;
   copy_matrix<M, S>(src->weight, tmp);
   dst.init(sp_str_dict, tmp);

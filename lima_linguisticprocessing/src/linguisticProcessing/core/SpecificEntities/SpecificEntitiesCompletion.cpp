@@ -12,6 +12,9 @@
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
+
+#include <QRegularExpression>
+
 #include <queue>
 
 using namespace Lima::Common::AnnotationGraphs;
@@ -57,7 +60,7 @@ void SpecificEntitiesCompletion::init(
   {
     LDEBUG << "No param 'entityTypes' in SpecificEntitiesCompletion group: nothing to do";
   }
-  
+
   try
   {
     m_graph=unitConfiguration.getParamsValueAtKey("graph");
@@ -80,7 +83,7 @@ public:
     entityString(e),
     entityNorm(n),
     occurrences() {}
-    
+
   void addOccurrence(unsigned int posBegin, unsigned int posEnd)
   {
     occurrences.insert(make_pair(posBegin,posEnd));
@@ -90,7 +93,7 @@ public:
     // simplest for the moment: string equality
     return entityString;
   }
-  
+
   // comparison operator use equality on string and type (norm may be empty)
   bool operator<(const EntityInfo& other) const {
     if (this->entityType<other.entityType) {
@@ -100,13 +103,13 @@ public:
       return this->entityString<other.entityString;
     }
     return false;
-  }  
+  }
 
   // debug
   friend QDebug& operator<<(QDebug& os, const EntityInfo& ent) {
     os <<  MediaticData::single().getEntityName(ent.entityType).toUtf8().constData()
-    << "/" << ent.entityString.toUtf8().constData() 
-    << "/" << ent.entityNorm.toUtf8().constData() 
+    << "/" << ent.entityString.toUtf8().constData()
+    << "/" << ent.entityNorm.toUtf8().constData()
     << "/";
     for (const auto& occ: ent.occurrences) {
       os << "[" << occ.first << "-" << occ.second << "]";
@@ -119,9 +122,9 @@ class SpecificEntitiesCompletion::Entities: public set<EntityInfo>
 {
 public:
   Entities():set<EntityInfo>() {}
- 
-  void add(LinguisticGraphVertex v, 
-           const SpecificEntityAnnotation* annot, 
+
+  void add(LinguisticGraphVertex v,
+           const SpecificEntityAnnotation* annot,
            const VertexTokenPropertyMap& tokenMap)
   {
     unsigned int posBegin=annot->getPosition();
@@ -160,11 +163,11 @@ public:
   // debug
   friend QDebug& operator<<(QDebug& os, const Entities& ent) {
     for (const auto& e: ent) {
-      os << e << endl;
+      os << e << QTENDL;
     }
     return os;
   }
-  
+
 }; // end of class
 
 
@@ -184,21 +187,21 @@ public:
                    const pair<unsigned int,unsigned int>& p):
     entityType(t),entityString(s),entityNorm(n),posBegin(p.first),posEnd(p.second)
   {}
-  
+
   // debug
   friend QDebug& operator<<(QDebug& os, const EntityOccurrence& occ) {
     os <<  MediaticData::single().getEntityName(occ.entityType).toUtf8().constData()
-    << "/" << occ.entityString.toUtf8().constData() 
-    << "/" << occ.entityNorm.toUtf8().constData() 
+    << "/" << occ.entityString.toUtf8().constData()
+    << "/" << occ.entityNorm.toUtf8().constData()
     << "/[" << occ.posBegin << "-" << occ.posEnd << "]";
     return os;
   }
 
   friend QDebug& operator<<(QDebug& os, const std::vector<EntityOccurrence>& occ) {
-    for (const auto& o: occ) { os << o << endl; };
+    for (const auto& o: occ) { os << o << QTENDL; };
     return os;
   }
-  
+
 };
 
 
@@ -212,7 +215,7 @@ LimaStatusCode SpecificEntitiesCompletion::process(
   // possible implementations:
   // - create dynamic recognizers and apply them
   // - use string matching on the text and report results on the graph
-  // 
+  //
   // use second approach
 
   auto graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph));
@@ -225,17 +228,17 @@ LimaStatusCode SpecificEntitiesCompletion::process(
   const auto& graph = *graphp;
   auto lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
   auto tokenMap = get(vertex_token, *lingGraph);
-  
+
   // gather found entities of the selected types
   Entities foundEntities;
   getEntities(analysis,foundEntities,tokenMap);
-  LDEBUG << "SpecificEntitiesCompletion: found entities" << endl << foundEntities;
-  
+  LDEBUG << "SpecificEntitiesCompletion: found entities" << QTENDL << foundEntities;
+
   // find entities in text
   std::vector<EntityOccurrence> newEntities;
   findOccurrences(foundEntities,analysis,newEntities);
-  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << endl << newEntities;
-  
+  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << QTENDL << newEntities;
+
   // report found entities in graph data
   // use existing CreateSpecificEntity function, create RecognizerMatch
   updateAnalysis(newEntities,analysis);
@@ -252,7 +255,7 @@ void SpecificEntitiesCompletion::getEntities(AnalysisContent& analysis, Entities
     LDEBUG << "SpecificEntitiesCompletion: no annotation data";
     return;
   }
-  
+
   // take all annotations
   AnnotationGraphVertexIt itv, itv_end;
   boost::tie(itv, itv_end) = vertices(annotationData->getGraph());
@@ -293,18 +296,21 @@ findOccurrences(Entities& foundEntities,
                 std::vector<EntityOccurrence>& newEntities) const
 {
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
-  for (const auto& e: foundEntities) {
-    QRegExp rx(e.regex());
-    int pos = 0;
-    while ((pos = rx.indexIn(*text, pos)) != -1) {
-      pair<unsigned int, unsigned int> matchpos(pos+1,pos+1+rx.matchedLength());
+  for (const auto& e: foundEntities)
+  {
+    QRegularExpression re(e.regex());
+    qsizetype pos = 0;
+    QRegularExpressionMatch rx;
+    while ((pos = text->indexOf(re, pos, &rx)) != -1)
+    {
+      pair<unsigned int, unsigned int> matchpos(pos+1, pos+1+rx.capturedLength());
       if (e.occurrences.find(matchpos)==e.occurrences.end()) {
         // found a new occurrence
-        newEntities.push_back(EntityOccurrence(e.entityType,rx.cap(0),e.entityString,matchpos));
+        newEntities.push_back(EntityOccurrence(e.entityType, rx.captured(0), e.entityString, matchpos));
       }
-      pos += rx.matchedLength();
+      pos += rx.capturedLength();
     }
-    
+
   }
 }
 
@@ -317,7 +323,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
   // to the occurrences, build RecognizerMatch objects and use
   // CreateSpecificEntity function
   SELOGINIT;
-  
+
   // needs recognizerdata to make CreateSpecificEntity work
   RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
   if (recoData == 0)
@@ -325,10 +331,10 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
     recoData = new RecognizerData();
     analysis.setData("RecognizerData", recoData);
   }
-  // resultData is mandatory in recognizerData 
+  // resultData is mandatory in recognizerData
   RecognizerResultData* resultData=new RecognizerResultData(m_graph);
   recoData->setResultData(resultData);
-  
+
   // create constraint functions
   map<EntityType,std::unique_ptr<CreateSpecificEntity> > entityCreator;
   for (auto t: m_entityTypes) {
@@ -353,7 +359,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
   try
   {
     toVisit.push(firstVx);
-    
+
     LinguisticGraphOutEdgeIt outItr,outItrEnd;
     while (!toVisit.empty())
     {
@@ -362,8 +368,8 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
       if (v == lastVx) {
         continue;
       }
-      
-      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++) 
+
+      for (boost::tie(outItr,outItrEnd)=out_edges(v,*graph); outItr!=outItrEnd; outItr++)
       {
         LinguisticGraphVertex next=target(*outItr,*graph);
         if (visited.find(next)==visited.end())
@@ -384,7 +390,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
     SELOGINIT;
     LWARN << "Exception in SpecificEntitiesCompletion : " << exc.what();
   }
-  
+
   // effective graph update
   recoData->removeVertices(analysis);
   recoData->clearVerticesToRemove();
@@ -393,10 +399,10 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
   // clean recognizer data (used internally in the process unit)
   recoData->deleteResultData();
   analysis.removeData("RecognizerData");
-  
+
 }
 
-void SpecificEntitiesCompletion::processVertex(LinguisticGraphVertex currentVertex, 
+void SpecificEntitiesCompletion::processVertex(LinguisticGraphVertex currentVertex,
                                                const VertexTokenPropertyMap& tokenMap,
                                                std::vector<EntityOccurrence>& occurrences,
                                                int& currentOccurrence,
@@ -440,7 +446,7 @@ void SpecificEntitiesCompletion::processVertex(LinguisticGraphVertex currentVert
     }
     if (currentOccurrence!=-1 && posEnd==occurrences[currentOccurrence].posEnd) {
       LDEBUG << "--at pos" << pos << ": -> end occurrence" << occurrences[currentOccurrence];
-      // found the end: success ! 
+      // found the end: success !
       // add relevant info
       EntityOccurrence& occ=occurrences[currentOccurrence];
       currentMatch.setType(occ.entityType);

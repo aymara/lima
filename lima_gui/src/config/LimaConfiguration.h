@@ -7,7 +7,7 @@
  * \file    LimaConfiguration.h
  * \author  Jocelyn Vernay
  * \date    Wed, Sep 06 2017
- * 
+ *
  */
 
 #ifndef LIMACONFIGURATION_H
@@ -25,30 +25,26 @@
 // #include <deque>
 
 
-// https://github.com/aymara/lima/wiki/Process-Units#flattokenizer
-
-class QXmlStreamWriter;
-
-namespace Lima 
+namespace Lima
 {
 
-namespace Gui 
+namespace Gui
 {
-  
-namespace Config 
+
+namespace Config
 {
 
 ///
 /// \brief This class figures a custom configuration; name and path
-/// 
+///
 /// The idea was to have a class the configuration gui would instantiate to
 /// create a new configuration. For each language, write the corresponding
 /// config file with the writeFile function.
-class LimaConfiguration : public QObject 
+class LimaConfiguration : public QObject
 {
 Q_OBJECT
 public:
-  LimaConfiguration(const QFileInfo& fileInfo = QFileInfo(), 
+  LimaConfiguration(const QFileInfo& fileInfo = QFileInfo(),
                     QObject* parent = nullptr);
 
   void loadFromFile(const QString& path);
@@ -60,7 +56,7 @@ public:
   void setPath(const QString& p) {m_path = p;}
 
   const Common::XMLConfigurationFiles::ConfigurationStructure& configuration() const;
-  
+
 private:
 
   // for a future more complete configuration with process units

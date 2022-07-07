@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
       param.withoutTemplate = true;
     }
     else if ( (pos = arg.indexOf("--charSize=")) != -1 ){
-      int charSize = (arg.midRef(pos+11)).toInt();
+      int charSize = (arg.mid(pos+11)).toInt();
       switch(charSize) {
         case 1:
           param.charSize = one_byte;
@@ -602,7 +602,7 @@ int main(int argc, char *argv[])
       param.runSpelling = true;
     }
     else if ( (pos = arg.indexOf("--termId=")) != -1 ){
-      param.termId = (arg.midRef(pos+9)).toInt();
+      param.termId = (arg.mid(pos+9)).toInt();
     }
     else if ( arg == "--reverse" ){
       param.trieDirectionForward = false;

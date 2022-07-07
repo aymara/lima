@@ -7,7 +7,7 @@
 #define LIMA_PELF_EVALUATIONRESULTSET_H
 
 #include <QtCore/QtDebug>
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QStringList>
 
 #include "EvaluationResult.h"

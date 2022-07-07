@@ -1,4 +1,4 @@
-// Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -51,7 +51,7 @@ struct Param {
 void readCommandLineArguments(uint64_t argc, char *argv[])
 {
   for(uint64_t i(1); i<argc; i++){
-    string s(argv[i]); 
+    string s(argv[i]);
     if (s=="-h" || s=="--help")
       param.help=true;
     else if (s.find("--output=",0)==0) {
@@ -82,7 +82,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
 
 // read documents in a file, using the document buffer given as argument
 // (can be BoWDocument* or BoWDocumentST*)
-void readAndWriteBoWDocuments(ifstream& fileIn, 
+void readAndWriteBoWDocuments(ifstream& fileIn,
                               ostream& fileOut,
                               BoWDocument* document,
                               BoWBinaryReader& reader) {
@@ -93,7 +93,7 @@ void readAndWriteBoWDocuments(ifstream& fileIn,
   }
 }
 
-void readAndWriteBoWText(ifstream& fileIn, 
+void readAndWriteBoWText(ifstream& fileIn,
                          ostream& fileOut,
                          BoWText* text,
                          BoWBinaryReader& reader) {
@@ -141,7 +141,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   if (argc<1) {    cerr << USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << HELP; exit(0); }
@@ -153,7 +153,7 @@ int run(int argc,char** argv)
   bool firstFile(true);
   BoWFileType type(BOWFILE_NOTYPE);
 
-  for (vector<string>::const_iterator it=param.inputFiles.begin(), 
+  for (vector<string>::const_iterator it=param.inputFiles.begin(),
          it_end=param.inputFiles.end(); it!=it_end; it++) {
 
     ifstream fileIn((*it).c_str(), std::ifstream::binary);
@@ -171,30 +171,30 @@ int run(int argc,char** argv)
       LERROR << "Error: " << e.what() << ": file " << *it << " ignored";
       continue;
     }
-    
+
     if (firstFile) {
       type=reader.getFileType();
       writer.writeHeader(*(param.fileOut),type);
-      LINFO << "catBowFiles: concatenate files of type " 
+      LINFO << "catBowFiles: concatenate files of type "
             << reader.getFileTypeString();
       firstFile=false;
     }
     else if (reader.getFileType() != type) {
       LERROR << "file \"" <<  *it
              << "\" ignored: incompatible file type "
-             << reader.getFileTypeString() 
+             << reader.getFileTypeString()
             ;
       continue;
     }
-    
+
     switch (type) {
     case BOWFILE_TEXT: {
       BoWText* text=new BoWText();
       try {
         readAndWriteBoWText(fileIn,*(param.fileOut),text,reader);
       }
-      catch (exception& e) { 
-        cerr << "Error: " << e.what() << endl; 
+      catch (exception& e) {
+        cerr << "Error: " << e.what() << endl;
       }
       delete text;
       break;
@@ -205,15 +205,15 @@ int run(int argc,char** argv)
         readAndWriteBoWDocuments(fileIn,*(param.fileOut),
                                  document,reader);
       }
-      catch (exception& e) { 
-        cerr << "Error: " << e.what() << endl; 
+      catch (exception& e) {
+        cerr << "Error: " << e.what() << endl;
       }
       fileIn.close();
       delete document;
       break;
     }
     default: {
-      cerr << "format of file " << *it << " (type: '" 
+      cerr << "format of file " << *it << " (type: '"
            << reader.getFileTypeString() << "'"
            << " not managed" << endl;
       continue;

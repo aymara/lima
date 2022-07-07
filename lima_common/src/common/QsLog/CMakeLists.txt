@@ -24,7 +24,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 # add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
 # target_link_libraries(lima-common-qslog
 #   lima-common-qslog
-#   ${Qt5_LIBRARIES}
+#   ${Qt_LIBRARIES}
 # )
 # ADD_DLL_TO_PATH(lima-common-qslog)
 #

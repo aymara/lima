@@ -118,5 +118,8 @@
 #define TENSORFLOWMORPHOSYNTAXLOGINIT LOGINIT("LP::TensorFlowMorphoSyntax");
 #define TENSORFLOWLEMMATIZERLOGINIT LOGINIT("LP::TensorFlowLemmatizer");
 #define SENTENCEBOUNDARIESUPDATERLOGINIT LOGINIT("LP::SentenceBoundariesUpdater");
+#define LANGDETECTORLOGINIT LOGINIT("LP::LangDetector")
+#define LEMMALOGINIT LOGINIT("LP::Lemmatizer")
+
 
 #endif

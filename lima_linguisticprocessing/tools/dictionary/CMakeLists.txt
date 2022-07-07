@@ -46,7 +46,7 @@ install(TARGETS composedDict DESTINATION bin
 SET(compile-dictionary_SRCS
   compileDictionary.cpp
   KeysLogger.cpp
-  DictionaryHandler.cpp
+  DictionaryReader.cpp
 )
 
 add_executable(compile-dictionary ${compile-dictionary_SRCS})
@@ -62,7 +62,8 @@ install(TARGETS compile-dictionary DESTINATION bin
 ########### next target ###############
 
 SET(check-dictionary_SRCS
-  checkDictionary.cpp BasicHandler.cpp
+  checkDictionary.cpp
+  BasicHandler.cpp
 )
 
 add_executable(check-dictionary ${check-dictionary_SRCS})

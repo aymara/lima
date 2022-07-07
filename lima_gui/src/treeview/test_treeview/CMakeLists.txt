@@ -1,4 +1,4 @@
-# Copyright 2017 CEA LIST
+# Copyright 2022 CEA LIST
 # SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
 # SPDX-License-Identifier: MIT
@@ -9,13 +9,18 @@ set (test_treeview_SRCS
   treeitem.cpp
   treemodel.cpp
 )
-qt5_add_resources(test_treeview_SRCS qml.qrc)
 
-add_executable(test_treeview 
+if(QtCore_VERSION VERSION_GREATER 5.14.0)
+  qt_add_resources(test_treeview_SRCS qml.qrc)
+else()
+  qt5_add_resources(test_treeview_SRCS qml.qrc)
+endif()
+
+add_executable(test_treeview
   ${test_treeview_SRCS}
 )
-target_link_libraries(test_treeview 
-  ${Qt5_LIBRARIES}
+target_link_libraries(test_treeview
+  ${Qt_LIBRARIES}
 )
 
 install(TARGETS test_treeview DESTINATION bin)

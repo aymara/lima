@@ -274,27 +274,25 @@ void decode(const Lima::Common::PropertyCode::PropertyCodeManager& propcodemanag
   cout << endl;
 }
 
-void encode(const PropertyCodeManager& propcodemanager,vector<string>& args)
+void encode(const PropertyCodeManager& propcodemanager, std::vector<std::string>& args)
 {
-  map<string,string> propValues;
-  for (vector<string>::const_iterator argItr=args.begin();
-       argItr!=args.end();
-       argItr++)
+  std::map<std::string, std::string> propValues;
+  for (const auto& arg: args)
   {
-    std::vector<std::string>::size_type index=argItr->find("=");
+    auto index = arg.find("=");
     if (index != string::npos)
     {
-      string propName=argItr->substr(0,index);
-      string valName=argItr->substr(index+1);
-      const PropertyManager& propMan=propcodemanager.getPropertyManager(propName);
-      LinguisticCode value=propMan.getPropertyValue(valName);
-      cout << propName << " : " << valName << " => "
-           << value.toString() << " (" << value.toHexString() << ")" << endl;
+      auto propName = arg.substr(0,index);
+      auto valName = arg.substr(index+1);
+      const auto& propMan = propcodemanager.getPropertyManager(propName);
+      auto value = propMan.getPropertyValue(valName);
+      std::cout << propName << " : " << valName << " => "
+                << value.toString() << " (" << value.toHexString() << ")" << std::endl;
       propValues[propName]=valName;
     }
   }
-  LinguisticCode coded=propcodemanager.encode(propValues);
-  cout << "result = " << coded.toString() << " (" << coded.toHexString() << ")" << endl;
+  auto coded = propcodemanager.encode(propValues);
+  std::cout << "result = " << coded.toString() << " (" << coded.toHexString() << ")" << endl;
 }
 
 void check(const Lima::Common::PropertyCode::PropertyCodeManager& propcodemanager, LinguisticCode p1, LinguisticCode p2)

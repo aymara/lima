@@ -142,7 +142,7 @@ void PythonUppsalaTensorFlowTokenizer::init(
   // This allows to find the modules set up in an activated virtualenv
   QString str_program_name;
   QString pathEnv = QString::fromUtf8(qgetenv("PATH").constData());
-  QStringList paths = pathEnv.split(QRegExp("[;:]"));
+  QStringList paths = pathEnv.split(QRegularExpression("[;:]"));
   for (auto it = paths.begin(); it != paths.end(); ++it)
   {
     const auto & path = *it;

@@ -22,10 +22,10 @@
 #endif
 
 #include <iostream>
+#include <QtGlobal>
 #include <QString>
 #include <QStringList>
 #include <QRegularExpression>
-
 using namespace std;
 
 namespace Lima {

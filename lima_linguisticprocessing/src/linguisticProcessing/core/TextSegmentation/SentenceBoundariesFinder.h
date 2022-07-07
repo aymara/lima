@@ -49,6 +49,7 @@ private:
   std::string m_data;
   std::string m_graph;
   std::set<LimaString> m_boundaryValues;
+  std::set<LimaString> m_forbidBoundaryValues;
   std::list<LinguisticCode> m_boundaryMicros;
 };
 

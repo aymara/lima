@@ -147,8 +147,10 @@ void MultimediaDocumentHandler::startNode ( const std::string& elementName, bool
 void MultimediaDocumentHandler::endNode ( const Common::Misc::GenericDocumentProperties& props )
 {
   NODE_ID Nid=props.getIntValue ( "NodeId" ).first;
+#ifdef DEBUG_LP
   HANDLERLOGINIT;
   LDEBUG << "MultimediaDocumentHandler::endNode" << this << Nid << m_openedNodes.size();
+#endif
   CONTENT_ID Cid=props.getIntValue ( "ContentId" ).first;
   //ajouter les propriétés
 //   set_LastContentId(get_LastContentId()+1);
@@ -187,7 +189,7 @@ void MultimediaDocumentHandler::endNode ( const Common::Misc::GenericDocumentPro
 #ifdef DEBUG_LP
   LDEBUG << "MultimediaDocumentHandler::endNode write NODE_PROPERTIES_BLOC on" << m_out;
 #endif
-  Misc::writeOneByteInt(*m_out,Common::BagOfWords::NODE_PROPERTIES_BLOC);
+  Misc::writeOneByteInt(*m_out, Common::BagOfWords::NODE_PROPERTIES_BLOC);
   props.write(*m_out);
 #ifdef DEBUG_LP
   LDEBUG << "MultimediaDocumentHandler::endNode write END_BLOC on" << m_out;

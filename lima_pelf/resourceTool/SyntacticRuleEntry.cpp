@@ -25,7 +25,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
     }
     else
     {
-        QRegExp automatonRegExp("^([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)$");
+        QRegularExpression automatonRegExp("^([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)$");
         if(automatonRegExp.indexIn(s1) != -1)
         {
             factoryLatestSyntacticRule = factoryCurrentSyntacticRule;
@@ -40,7 +40,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
             factoryCurrentSyntacticRule->category = automatonParts[4];
             QString recongnizeElements = automatonParts[1]+":"+automatonParts[2]+":"+automatonParts[3];
             int automatonElementMatchIndex = 0;
-            QRegExp automatonElementRegExp("(\\$|@)[a-zA-Z_-]+");
+            QRegularExpression automatonElementRegExp("(\\$|@)[a-zA-Z_-]+");
             while(automatonElementRegExp.indexIn(recongnizeElements, automatonElementMatchIndex) != -1)
             {
                 QStringList elements = automatonElementRegExp.capturedTexts();
@@ -53,7 +53,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
         else if(factoryCurrentSyntacticRule != 0)
         {
             factoryCurrentSyntacticRule->sourceString += s1;
-            QRegExp creationRegExp("^\\+CreateRelationBetween\\([^,]*,[^,]*,\"([^,]*)\"\\)$");
+            QRegularExpression creationRegExp("^\\+CreateRelationBetween\\([^,]*,[^,]*,\"([^,]*)\"\\)$");
             if(creationRegExp.indexIn(s1) != -1)
             {
                 QStringList elements = creationRegExp.capturedTexts();

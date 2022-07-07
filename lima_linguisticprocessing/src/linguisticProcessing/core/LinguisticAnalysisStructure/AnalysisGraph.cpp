@@ -286,7 +286,7 @@ LinguisticGraphVertex AnalysisGraph::nextMainPathVertex(
 
 /**
   * @brief Finds the next vertex after the input vertex that:
-  *        1. is on a subgraph with no paralel branch ; <br>
+  *        1. is on a subgraph with no parallel branch ; <br>
   *        2. is a punctuation (macro category is "ponctu forte")
   *        This method should be called <b>after</b> the disambiguation such
   *        that the VertexWordProperty is filled.

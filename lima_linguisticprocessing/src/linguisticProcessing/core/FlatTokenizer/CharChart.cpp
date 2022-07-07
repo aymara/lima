@@ -436,7 +436,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
     for (; charIt != charItend; charIt++)
     {
       const charchart_char& ch = *charIt;
-      Char* newChar = lazyGetChar(ch.code);
+      Char* newChar = lazyGetChar(QChar(ch.code));
       if (newChar == 0)
       {
         TOKENIZERLOGINIT;
@@ -460,7 +460,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
     for (; charIt != charItend; charIt++)
     {
       const charchart_char& ch = *charIt;
-      Char* newChar = lazyGetChar(ch.code);
+      Char* newChar = lazyGetChar(QChar(ch.code));
 #ifdef DEBUG_LP
       LDEBUG << "Modifiers for" << newChar->name();
 #endif
@@ -470,18 +470,18 @@ bool CharChart::loadFromFile(const std::string& fileName)
       for (; modIt != modItEnd; modIt++)
       {
 #ifdef DEBUG_LP
-        LDEBUG << "  modifier "<< (*modIt).first <<":" << lazyGetChar((*modIt).second)->name();
+        LDEBUG << "  modifier "<< (*modIt).first <<":" << lazyGetChar(QChar{(*modIt).second})->name();
 #endif
         switch ( (*modIt).first )
         {
           case MIN:
-            newChar->setMin(lazyGetChar((*modIt).second));
+            newChar->setMin(lazyGetChar(QChar{(*modIt).second}));
             break;
           case MAJ:
-            newChar->setMaj(lazyGetChar((*modIt).second));
+            newChar->setMaj(lazyGetChar(QChar{(*modIt).second}));
             break;
           case UNMARK:
-            newChar->setUnmark(lazyGetChar((*modIt).second));
+            newChar->setUnmark(lazyGetChar(QChar{(*modIt).second}));
             break;
           default: ;
         }

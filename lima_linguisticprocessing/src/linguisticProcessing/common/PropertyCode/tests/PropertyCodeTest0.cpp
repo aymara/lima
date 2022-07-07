@@ -22,30 +22,30 @@ using namespace Lima::Common::PropertyCode;
 
 void PropertyCodeTest0::initTestCase()
 {
-//   QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
-//       << "lima",QStringList());
-//   QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
+  QStringList configDirs = buildConfigurationDirectoriesList(QStringList()
+      << "lima",QStringList());
+  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 //
-//   QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
-//       << "lima",QStringList());
-//   QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-//
-//   std::string commonConfigFile=std::string("lima-common.xml");
-//
-//   std::deque<std::string> langs;
-//   langs.push_back("ud-eng");
-//
-//   QsLogging::initQsLog(configPath);
-//   // Necessary to initialize factories
-//   Lima::AmosePluginsManager::single();
-//   Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
-//
-//   // initialize common
-//   Common::MediaticData::MediaticData::changeable().init(
-//       resourcesPath.toUtf8().constData(),
-//       configPath.toUtf8().constData(),
-//       commonConfigFile,
-//       langs);
+  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList()
+      << "lima",QStringList());
+  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
+  std::string commonConfigFile=std::string("lima-common.xml");
+
+  std::deque<std::string> langs;
+  langs.push_back("ud-eng");
+
+  QsLogging::initQsLog(configPath);
+  // Necessary to initialize factories
+  Lima::AmosePluginsManager::single();
+  Lima::AmosePluginsManager::changeable().loadPlugins(configPath);
+
+  // initialize common
+  Common::MediaticData::MediaticData::changeable().init(
+      resourcesPath.toUtf8().constData(),
+      configPath.toUtf8().constData(),
+      commonConfigFile,
+      langs);
 }
 
 void PropertyCodeTest0::test_load()

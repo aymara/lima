@@ -15,8 +15,8 @@ SET(lima-lp-propertycode_LIB_SRCS
    PropertyAccessor.cpp
    PropertyManager.cpp
    PropertyCodeManager.cpp
-   XMLPropertyHandler.cpp
-   SymbolicCodeXMLHandler.cpp
+   XmlPropertyReader.cpp
+   SymbolicCodeXmlReader.cpp
 )
 
 add_library(lima-lp-propertycode SHARED ${lima-lp-propertycode_LIB_SRCS})
@@ -43,7 +43,7 @@ install(FILES
     PropertyManager.h
     PropertyAccessor.h
     SymbolicCodeXMLHandler.h
-    XMLPropertyHandler.h
+    XmlPropertyReader.h
   DESTINATION include/linguisticProcessing/common/PropertyCode
   COMPONENT devel
 )

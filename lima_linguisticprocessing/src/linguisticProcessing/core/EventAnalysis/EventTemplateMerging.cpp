@@ -40,7 +40,9 @@ SimpleFactory<MediaProcessUnit,EventTemplateMerging> EventTemplateMerging(EVENTT
 EventTemplateMerging::EventTemplateMerging():
 m_templateDefinition(0),
 m_mandatoryElements(),
-m_maxCharCompatibleEvents(200)
+m_maxCharCompatibleEvents(200),
+m_useSentenceBounds(false),
+m_sentenceBoundsData("SentenceBoundaries")
 {
 }
 
@@ -83,6 +85,25 @@ void EventTemplateMerging::init(
     m_maxCharCompatibleEvents=std::stoul(s);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) { } // optional: keep default value
+  try {
+    m_useSentenceBounds=
+      unitConfiguration.getBooleanParameter("useSentenceBounds");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
+    // optional parameter: keep default value
+  }
+
+  try
+  {
+    string sentenceBoundsData=unitConfiguration.getParamsValueAtKey("sentenceBoundsData");
+    if (! sentenceBoundsData.empty()) {
+      m_sentenceBoundsData=sentenceBoundsData;
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& )
+  {
+    // optional parameter: keep default value
+  }
 
 }
 
@@ -92,19 +113,6 @@ LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
   LDEBUG << "EventTemplateMerging process";
   TimeUtils::updateCurrentTime();
 
-  LimaStatusCode returnCode=SUCCESS_ID;
-  returnCode=mergeEventTemplates(analysis);
-
-  TimeUtils::logElapsedTime("EventTemplateMerging");
-  return returnCode;
-}
-
-LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analysis) const
-{
-  // ad hoc strategy for merging event templates
-  LOGINIT("LP::EventAnalysis");
-  TimeUtils::updateCurrentTime();
-
   // get EventTemplateData
   EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
@@ -112,40 +120,76 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
     return MISSING_DATA;
   }
 
-  // merge templates according to their positions and positions of intermediate entities
-
-  /*
-  // gather entities by position
-  vector<pair<uint64_t, Common::MediaticData::EntityType> > entities;
-  getEntityPositions();
-  // gather template elements by position
-  vector<pair<uint64_t, pair<std::string, uint64_t> > > templateElements;
-
-  // get template elements
-  uint64_t numTemplate=0;
-  for (EventTemplateData::iterator it=eventData->begin(),it_end=eventData->end();it!=it_end;it++)
-  {
-    map<string,EventTemplateElement>& elts=(*it).getTemplateElements();
-    for (map<string,EventTemplateElement>::const_iterator fill=elts.begin(),fill_end=elts.end(); fill!=fill_end; fill++)
-    {
-      templateElements.push_back(make_pair((*fill).second.getPosition(),make_pair(first,numTemplate)));
-    }
-    numTemplate++;
+  LimaStatusCode returnCode=SUCCESS_ID;
+  if (m_useSentenceBounds) {
+    returnCode=mergeEventTemplatesOnEachSentence(analysis,eventData);
   }
-  */
+  else {
+    returnCode=mergeEventTemplates(eventData,0,0);
+  }
+  
+  cleanEventTemplates(eventData);
+  
+  TimeUtils::logElapsedTime("EventTemplateMerging");
+  return returnCode;
+}
 
+LimaStatusCode EventTemplateMerging::mergeEventTemplatesOnEachSentence(AnalysisContent& analysis, EventTemplateData* eventData) const
+{
+  LOGINIT("LP::EventAnalysis");
+  // get sentence bounds
+  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentenceBoundsData));
+  if (nullptr==sb)
+  {
+    LERROR << "no sentence bounds "<< m_sentenceBoundsData << " defined ! abort";
+    return MISSING_DATA;
+  }
+  LimaStatusCode res(SUCCESS_ID);
+  for (const auto& segment: sb->getSegments()) {
+    res = mergeEventTemplates(eventData,segment.getPosBegin(),segment.getPosEnd());
+    if (res!=SUCCESS_ID) {
+      break;
+    }
+  }
+  return res;
+}
+
+// utility function to check if a template is considered or ignored
+bool EventTemplateMerging::ignoreTemplate(const EventTemplate& event, uint64_t numTemplate,
+                                          uint64_t posBegin, uint64_t posEnd, 
+                                          const std::set<uint64_t>& toRemove) const
+{
+  if (event.getPosEnd()<=posBegin || (posEnd>0 && event.getPosBegin()>=posEnd) ) {
+    return true;
+  }
+  
+  if (event.getType()!=m_templateDefinition->getName()) {
+    return true;
+  }
+
+  // do we keep merging with other templates if this one is to be removed ?
+  if (toRemove.find(numTemplate)!=toRemove.end()) {
+    return true;
+  }
+  
+  return false;  
+}
+
+
+LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* eventData, uint64_t posBegin, uint64_t posEnd) const
+{
+  // ad hoc strategy for merging event templates
+  LOGINIT("LP::EventAnalysis");
+
+  // merge templates according to their positions and positions of intermediate entities
   LDEBUG << "TemplateMerging: merge templates of type" << m_templateDefinition->getName();
-
+  LDEBUG << "nb events =" << eventData->size();
+  
   std::set<uint64_t> toRemove;
   uint64_t numTemplate=0;
   for (EventTemplateData::iterator it1=eventData->begin(),it_end=eventData->end();it1!=it_end;it1++,numTemplate++)
   {
-    if ((*it1).getType()!=m_templateDefinition->getName()) {
-      continue;
-    }
-
-    // do we keep merging with other templates if this one is to be removed ?
-    if (toRemove.find(numTemplate)!=toRemove.end()) {
+    if (ignoreTemplate(*it1,numTemplate,posBegin,posEnd,toRemove)) {
       continue;
     }
 
@@ -154,11 +198,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
     uint64_t numOtherTemplate=numTemplate; // only used for debug messages
     for (it2++,numOtherTemplate++; it2!=it_end; it2++,numOtherTemplate++)
     {
-      if ((*it2).getType()!=m_templateDefinition->getName()) {
-        continue;
-      }
-
-      if (toRemove.find(numOtherTemplate)!=toRemove.end()) {
+      if (ignoreTemplate(*it2,numOtherTemplate,posBegin,posEnd,toRemove)) {
         continue;
       }
 
@@ -205,6 +245,12 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
     eventData->erase(eventData->begin()+(*it));
   }
 
+  return SUCCESS_ID;
+}
+
+void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) const
+{
+  LOGINIT("LP::EventAnalysis");
   // additional step if mandatory elements are specified : keep only templates with mandatory elements
   if (! m_mandatoryElements.empty()) {
     EventTemplateData::iterator it=eventData->begin();
@@ -228,8 +274,6 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(AnalysisContent& analys
       }
     }
   }
-
-  return SUCCESS_ID;
 }
 
 bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const EventTemplate& e2,

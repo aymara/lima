@@ -13,7 +13,7 @@
  * what is specified in the test.
  */
 
-#include "linguisticProcessing/common/tgv/TestCasesHandler.h"
+#include "linguisticProcessing/common/tgv/TestCasesReader.h"
 #include "tools/tvx/ReaderTestCase.h"
 
 
@@ -21,6 +21,7 @@
 #include "common/LimaCommon.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/tools/FileUtils.h"
+#include "common/tgv/TestCasesReader.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 
 #include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
@@ -31,7 +32,6 @@
 
 #include <boost/foreach.hpp>
 
-#include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QDir>
@@ -99,7 +99,7 @@ int run(int ,char** )
   parser.addVersionOption();
   parser.addPositionalArgument("files", QCoreApplication::translate("main", "File(s) to analyze."), "[file...]");
   QCommandLineOption progressOption(
-      QStringList() << "p" << "Progress",
+      QStringList() << "P" << "Progress",
       QCoreApplication::translate("main", "Show progress. "));
   parser.addOption(progressOption);
   QCommandLineOption lpConfigFileOption(
@@ -224,22 +224,18 @@ int run(int ,char** )
   // Create the client
 
   LDEBUG << "Creating client";
-  std::shared_ptr< AbstractXmlReaderClient > client(XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
-  map<string, string> metaData;
+  std::shared_ptr< AbstractXmlReaderClient > client(
+    XmlReaderClientFactory::single().createClient(clientId.toUtf8().constData()));
+  std::map<std::string, std::string> metaData;
   if(!medias.empty())
   {
       metaData["Lang"] = "LanguageNotYetSet";
   }
 
-  std::string swd = std::string(workingDir.toUtf8().constData());
-  ReaderTestCaseProcessor
-    readerTestCaseProcessor(swd, client);
+  auto swd = workingDir.toStdString();
+  ReaderTestCaseProcessor readerTestCaseProcessor(swd, client);
 
-  QXmlSimpleReader xmlparser;
-  TestCasesHandler tch(readerTestCaseProcessor);
-
-  xmlparser.setContentHandler(&tch);
-  xmlparser.setErrorHandler(&tch);
+  TestCasesReader xmlparser(readerTestCaseProcessor);
 
   for (auto it=files.begin(); it!=files.end(); it++)
   {
@@ -253,9 +249,10 @@ int run(int ,char** )
         std::cerr << "Error opening " << it->toUtf8().constData() << std::endl;
         return 1;
       }
-      if (!xmlparser.parse( QXmlInputSource(&file)))
+      if (!xmlparser.parse(&file))
       {
-        std::cerr << "Error parsing " << fileName.toUtf8().constData() << " : " << xmlparser.errorHandler()->errorString().toUtf8().constData() << std::endl;
+        std::cerr << "Error parsing " << fileName.toUtf8().constData() << " : "
+                  << xmlparser.errorString().toUtf8().constData() << std::endl;
         return 1;
       }
     }
@@ -268,31 +265,31 @@ int run(int ,char** )
       std::cerr << "caught logic_error : " << endl << e.what() << std::endl;
     }
 
-    TestCasesHandler::TestReport resTotal;
-    cout << endl;
-    cout << "=========================================================" << endl;
-    cout << endl;
-    cout << "  TestReport :   " << fileName.toUtf8().constData() << " " << endl;
-    cout << endl;
-    cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << endl;
-    cout << "---------------------------------------------------------" << endl;
-    for (map<string,TestCasesHandler::TestReport>::const_iterator resItr=tch.m_reportByType.begin();
-         resItr!=tch.m_reportByType.end();
-         resItr++)
+    TestCasesReader::TestReport resTotal;
+    std::cout << std::endl;
+    std::cout << "=========================================================" << endl;
+    std::cout << std::endl;
+    std::cout << "  TestReport :   " << fileName.toUtf8().constData() << " " << std::endl;
+    std::cout << std::endl;
+    std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
+    std::cout << "---------------------------------------------------------" << std::endl;
+    for (auto resItr = xmlparser.reportByType().cbegin(); resItr != xmlparser.reportByType().cend(); resItr++)
     {
-      string label(resItr->first);
+      std::string label(resItr->first);
       label.resize(15,' ');
-      cout << "\t" << label << "\t" << resItr->second.success << "\t" << resItr->second.conditional << "\t" << resItr->second.failed << "\t" << resItr->second.nbtests << endl;
-      resTotal.success+=resItr->second.success;
-      resTotal.conditional+=resItr->second.conditional;
-      resTotal.failed+=resItr->second.failed;
-      resTotal.nbtests+=resItr->second.nbtests;
+      std::cout << "\t" << label << "\t" << resItr->second.success << "\t" << resItr->second.conditional
+                << "\t" << resItr->second.failed << "\t" << resItr->second.nbtests << endl;
+      resTotal.success += resItr->second.success;
+      resTotal.conditional += resItr->second.conditional;
+      resTotal.failed += resItr->second.failed;
+      resTotal.nbtests += resItr->second.nbtests;
     }
-    cout << "---------------------------------------------------------" << endl;
-    cout << "\ttotal          \t" << resTotal.success << "\t" << resTotal.conditional << "\t" << resTotal.failed << "\t" << resTotal.nbtests << endl;
-    cout << "=========================================================" << endl;
-    cout << endl;
-    tch.m_reportByType.clear();
+    std::cout << "---------------------------------------------------------" << std::endl;
+    std::cout << "\ttotal          \t" << resTotal.success << "\t" << resTotal.conditional
+          << "\t" << resTotal.failed << "\t" << resTotal.nbtests << std::endl;
+    std::cout << "=========================================================" << std::endl;
+    std::cout << std::endl;
+    xmlparser.clear();
   }
-  return exitCode(tch);
+  return exitCode(xmlparser);
 }

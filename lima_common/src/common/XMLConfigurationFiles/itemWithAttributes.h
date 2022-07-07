@@ -11,10 +11,10 @@
  * @version    $Id$
  * copyright   Copyright (C) 2005-2012 by CEA LIST
  * Project     XMLConfigurationFile
- * 
+ *
  * @brief      generic named item with attributes
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef ITEMWITHATTRIBUTES_H
@@ -32,8 +32,9 @@ class ItemWithAttributesPrivate;
 class LIMA_XMLCONFIGURATIONFILES_EXPORT ItemWithAttributes
 {
  public:
-  ItemWithAttributes(); 
+  ItemWithAttributes();
   ItemWithAttributes(const std::string& name);
+  ItemWithAttributes(const QString& name);
   ItemWithAttributes(const ItemWithAttributes& item);
   ItemWithAttributes& operator=(const ItemWithAttributes& item);
   ~ItemWithAttributes();
@@ -45,7 +46,11 @@ class LIMA_XMLCONFIGURATIONFILES_EXPORT ItemWithAttributes
   void addAttribute(const std::string& attributeName,
                     const std::string& value);
   const std::map<std::string,std::string>& getAttributes() const;
-  
+
+  bool hasAttribute(const QString& attributeName) const;
+  void addAttribute(const QString& attributeName,
+                    const QString& value);
+
 private:
   ItemWithAttributesPrivate* m_d;
 };

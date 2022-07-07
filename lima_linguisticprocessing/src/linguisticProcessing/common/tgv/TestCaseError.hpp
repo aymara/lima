@@ -50,7 +50,16 @@ public:
   TestCaseError(const TestCaseError& error) :
       m_type(error.m_type) ,m_reason(error.m_reason), m_conditional(error.m_conditional) {}
 
-  virtual ~TestCaseError() {}
+  TestCaseError& operator=(const TestCaseError& error)
+  {
+      m_type = error.m_type;
+      m_reason = error.m_reason;
+      m_conditional = error.m_conditional;
+      return *this;
+  }
+
+  virtual ~TestCaseError() = default;
+
   const std::string& what() const {return m_reason;}
   ErrorTypes operator()() {return m_type;}
   bool isConditional() const {return m_conditional;}

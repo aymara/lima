@@ -1,29 +1,22 @@
-// Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
 
 /**
-  * @file       xmlConfigurationFileParser.cpp
-  * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
   * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
-
-  *             copyright (C) 2002-2003 by CEA
   */
+
+#include "xmlConfigurationFileParser.h"
 
 #include "common/LimaCommon.h"
 
 #include "xmlConfigurationFileExceptions.h"
-#include "xmlConfigurationFileHandler.h"
-#include "xmlConfigurationFileParser.h"
+#include "xmlConfigurationFileReader.h"
 #include "configurationStructure.h"
 
-#include <QtXml/QXmlSimpleReader>
-
-// ---------------------------------------------------------------------------
-//  Includes
-// ---------------------------------------------------------------------------
+#include <QFile>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -41,55 +34,33 @@ public:
                                   XMLConfigurationFileParser& parser);
 
   XMLConfigurationFileParserPrivate(const QString &configurationFileName);
+  XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& config);
   ~XMLConfigurationFileParserPrivate() = default;
   XMLConfigurationFileParserPrivate() = delete;
-  XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p);
 
   ConfigurationStructure m_configuration;
-  QXmlSimpleReader m_parser;
+  XmlConfigurationFileReader m_parser;
   QString m_configurationFileName;
 };
 
-XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(const XMLConfigurationFileParserPrivate& p)
+XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
+  const XMLConfigurationFileParserPrivate& configuration) :
+    m_configuration(configuration.m_configuration),
+    m_parser(m_configuration),
+    m_configurationFileName(configuration.m_configurationFileName)
 {
-    m_configuration = p.m_configuration;
-    m_configurationFileName = p.m_configurationFileName;
-//     m_parser = p.m_parser; // TODO sale: SAXParser::operator= n'est pas surchargé. Mais peut marcher...
-    XMLConfigurationFileHandler handler(m_configuration);
-    m_parser.setContentHandler(&handler);
-    m_parser.setErrorHandler(&handler);
-    QFile file(m_configurationFileName);
-    if (!file.open(QIODevice::ReadOnly))
-    {
-      XMLCFGLOGINIT;
-      LERROR << "XMLConfigurationFileParser unable to open" << m_configurationFileName;
-      throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ") + m_configurationFileName.toUtf8().constData());
-    }
-    if (!m_parser.parse( QXmlInputSource(&file)))
-    {
-      XMLCFGLOGINIT;
-      LERROR << "XMLConfigurationFileParser unable to parse" << m_configurationFileName << ":" << m_parser.errorHandler()->errorString();
-      throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ") + m_configurationFileName.toUtf8().constData() + " : " + m_parser.errorHandler()->errorString().toUtf8().constData());
-    }
 }
 
 XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
   const QString &configurationFileName) :
-    m_parser(),
+    m_configuration(),
+    m_parser(m_configuration),
     m_configurationFileName(configurationFileName)
 {
     XMLCFGLOGINIT;
     LINFO << "XMLConfigurationFileParser creating parser for: "
           << configurationFileName;
 
-    //
-    //  Create the handler object and install it as the document and error
-    //  handler for the parser-> Then parse the file and catch any exceptions
-    //  that propagate out
-    //
-    XMLConfigurationFileHandler handler(m_configuration);
-    m_parser.setContentHandler(&handler);
-    m_parser.setErrorHandler(&handler);
     QFile file(m_configurationFileName);
     if (!file.open(QFile::ReadOnly))
     {
@@ -98,12 +69,12 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
       throw std::runtime_error(std::string("XMLConfigurationFileParser Unable to open ")
           + m_configurationFileName.toUtf8().constData());
     }
-    if (!m_parser.parse( QXmlInputSource(&file)))
+    if (!m_parser.parse(&file))
     {
       LERROR << "Error parsing " << m_configurationFileName;
       throw XMLException(std::string("XMLConfigurationFileParser Unable to parse ")
           + m_configurationFileName.toUtf8().constData() + " : "
-          + m_parser.errorHandler()->errorString().toUtf8().constData());
+          + m_parser.errorString().toUtf8().constData());
     }
     {
       LOGINIT("FilesReporting");

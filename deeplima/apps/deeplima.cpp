@@ -30,23 +30,20 @@ int main(int argc, char* argv[])
        << "git branch: " << deeplima::version::get_git_branch()
        << ")" << std::endl;
 
-  bool arg_tokenize = false, arg_tag = false, arg_entity = false;
   size_t threads = 1;
-  std::string input_format, output_format, tok_model, tag_model;
+  std::string input_format, output_format, tok_model, tag_model, lem_model;
   std::vector<std::string> input_files;
 
   po::options_description desc("deeplima (analysis demo)");
   desc.add_options()
-  ("help,h",                                                                        "Display this help message")
-  ("tokenize",        po::value<bool>(&arg_tokenize)->default_value(true),          "tokenize plain text")
-  ("tag",             po::value<bool>(&arg_tag)->default_value(false),              "PoS and features tagging")
-  ("entity",          po::value<bool>(&arg_entity)->default_value(false),           "entity tagging")
+  ("help,h",                                                                             "Display this help message")
   ("input-format",    po::value<std::string>(&input_format)->default_value("plain"),     "Input format: plain|conllu")
   ("output-format",   po::value<std::string>(&output_format)->default_value("conllu"),   "Output format: conllu|vertical|horizontal")
   ("tok-model",       po::value<std::string>(&tok_model)->default_value(""),             "Tokenization model")
   ("tag-model",       po::value<std::string>(&tag_model)->default_value(""),             "Tagging model")
-  ("input-file",      po::value<std::vector<std::string>>(&input_files),                      "Input file names")
-  ("threads",         po::value<size_t>(&threads),                                  "Max threads to use")
+  ("lem-model",       po::value<std::string>(&lem_model)->default_value(""),             "Lemmatization model")
+  ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
+  ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ;
 
   po::positional_options_description pos_desc;
@@ -87,6 +84,11 @@ int main(int argc, char* argv[])
   if (tag_model.size() > 0)
   {
     models["tag"] = tag_model;
+  }
+
+  if (lem_model.size() > 0)
+  {
+    models["lem"] = lem_model;
   }
 
   size_t out_fmt = 1;
@@ -144,12 +146,42 @@ void parse_file(std::istream& input,
     psegm = new segmentation::CoNLLUReader();
   }
 
-  TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>* panalyzer = nullptr;
+  TokenSequenceAnalyzer<>* panalyzer = nullptr;
   dumper::AbstractDumper* pdumper = nullptr;
+  dumper::AnalysisToConllU<typename TokenSequenceAnalyzer<>::TokenIterator> conllu_dumper;
   if (models_fn.end() != models_fn.find("tag"))
   {
+    std::string lemm_model_fn;
+    std::map<std::string, std::string>::const_iterator it = models_fn.find("lem");
+    if (models_fn.end() != it)
+    {
+      lemm_model_fn = it->second;
+    }
+
     panalyzer
-        = new TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>(models_fn.find("tag")->second, path_resolver, 1024, 8);
+        = new TokenSequenceAnalyzer<>(models_fn.find("tag")->second,
+                                      lemm_model_fn, path_resolver, 1024, 8);
+
+    for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
+    {
+      conllu_dumper.set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+    }
+
+    panalyzer->register_handler([&conllu_dumper](const StringIndex& stridx,
+                                const token_buffer_t& tokens,
+                                const std::vector<StringIndex::idx_t>& lemmata,
+                                const typename TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                size_t begin,
+                                size_t end)
+    {
+      typename TokenSequenceAnalyzer<>::TokenIterator ti(stridx,
+                                                         tokens,
+                                                         lemmata,
+                                                         classes,
+                                                         begin,
+                                                         end);
+      conllu_dumper(ti);
+    });
 
     psegm->register_handler([panalyzer]
                             (const std::vector<segmentation::token_pos>& tokens,
@@ -197,7 +229,7 @@ void parse_file(std::istream& input,
   {
     if (0 == token_counter)
     {
-      token_counter = panalyzer->get_token_counter();
+      token_counter = conllu_dumper.get_token_counter();
     }
 
     std::cerr << "Waiting for analyzer to stop" << std::endl;

@@ -1,4 +1,4 @@
-// Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -108,96 +108,116 @@ GenericDocumentProperties& GenericDocumentProperties::operator = (const GenericD
 
 void GenericDocumentProperties::setStringValue(const std::string& propName,
                                                const std::string& str)
-{ m_d->m_stringValues[propName]=str; }
+{
+  m_d->m_stringValues[propName]=str;
+}
 
 void GenericDocumentProperties::setIntValue(const std::string& propName,
                                             const uint64_t& val)
-{ m_d->m_intValues[propName]=val; }
+{
+  m_d->m_intValues[propName]=val;
+}
 
 void GenericDocumentProperties::setDateValue(const std::string& propName,
                                              const QDate& val)
-{ m_d->m_dateValues[propName]=val; }
+{
+  m_d->m_dateValues[propName]=val;
+}
 
 void GenericDocumentProperties::setDateIntervalValue(const std::string& propName,
        const std::pair<QDate,QDate>& val)
-{ m_d->m_dateIntervalValues[propName]=val; }
-
-
-std::pair<uint64_t, bool>
-GenericDocumentProperties::getIntValue(std::string propName) const
 {
-  std::map<std::string,uint64_t>::const_iterator pos = m_d->m_intValues.find(propName);
-  if( pos == m_d->m_intValues.end() ) {
+  m_d->m_dateIntervalValues[propName]=val;
+}
+
+
+std::pair<uint64_t, bool> GenericDocumentProperties::getIntValue(std::string propName) const
+{
+  auto pos = m_d->m_intValues.find(propName);
+  if( pos == m_d->m_intValues.end() )
+  {
     return( std::pair<uint64_t, bool>(0,false) );
   }
-  else {
+  else
+  {
     return( std::pair<uint64_t, bool>((*pos).second,true) );
   }
 }
 
-std::pair<std::string, bool>
-GenericDocumentProperties::getStringValue(std::string propName) const
+std::pair<std::string, bool> GenericDocumentProperties::getStringValue(std::string propName) const
 {
-  std::map<std::string,std::string>::const_iterator pos = m_d->m_stringValues.find(propName);
-  if( pos == m_d->m_stringValues.end() ) {
+  auto pos = m_d->m_stringValues.find(propName);
+  if( pos == m_d->m_stringValues.end() )
+  {
     return( std::pair<std::string, bool>("",false) );
   }
-  else {
+  else
+  {
     return( std::pair<std::string, bool>((*pos).second,true) );
   }
 }
 
-std::pair<QDate, bool>
-GenericDocumentProperties::getDateValue(std::string propName) const
+std::pair<QDate, bool> GenericDocumentProperties::getDateValue(std::string propName) const
 {
-  std::map<std::string,QDate>::const_iterator pos = m_d->m_dateValues.find(propName);
-  if( pos == m_d->m_dateValues.end() ) {
+  auto pos = m_d->m_dateValues.find(propName);
+  if( pos == m_d->m_dateValues.end() )
+  {
     return( std::pair<QDate, bool>(QDate(),false) );
   }
-  else {
+  else
+  {
     return( std::pair<QDate, bool>((*pos).second,true) );
   }
 }
 
-std::pair<std::pair<QDate,QDate>, bool>
-GenericDocumentProperties::getDateIntervalValue(std::string propName) const
+std::pair<std::pair<QDate,QDate>, bool> GenericDocumentProperties::getDateIntervalValue(std::string propName) const
 {
-  std::map<std::string,std::pair<QDate,QDate> >::const_iterator pos = m_d->m_dateIntervalValues.find(propName);
-  if( pos == m_d->m_dateIntervalValues.end() ) {
+  auto pos = m_d->m_dateIntervalValues.find(propName);
+  if( pos == m_d->m_dateIntervalValues.end() )
+  {
     std::pair<QDate,QDate> defaultInterval;
 //      (QDate(),QDate());
     return( std::pair<std::pair<QDate,QDate>, bool>(defaultInterval,false) );
   }
-  else {
+  else
+  {
     return( std::pair<std::pair<QDate,QDate>, bool>((*pos).second,true) );
   }
 }
 
-std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getMultipleStringPropValue(std::string propName) const {
-  std::map<std::string,std::vector<std::string> >::const_iterator pos = m_d->m_multipleStringValues.find(propName);
-  if( pos == m_d->m_multipleStringValues.end() ) {
+std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getMultipleStringPropValue(
+    std::string propName) const
+{
+  auto pos = m_d->m_multipleStringValues.find(propName);
+  if( pos == m_d->m_multipleStringValues.end() )
+  {
     return std::pair<StringPropMultIter, StringPropMultIter>(m_d->m_noStringVal.begin(), m_d->m_noStringVal.end());
 //  std::vector<std::pair<std::string,float>> m_noWeightedPropVal;
   }
-  else {
-    const std::vector<std::string>& val = (*pos).second;
+  else
+  {
+    const auto& val = (*pos).second;
     return std::pair<StringPropMultIter, StringPropMultIter>(val.begin(),val.end());
   }
 }
 
-std::pair<WeightedPropMultIter,WeightedPropMultIter> GenericDocumentProperties::getMultipleWeightedPropValue(std::string propName) const {
-  std::map<std::string,std::vector<std::pair<std::string,float> > >::const_iterator pos =
-     m_d->m_multipleWeightedPropValues.find(propName);
-  if( pos == m_d->m_multipleWeightedPropValues.end() ) {
+std::pair<WeightedPropMultIter,WeightedPropMultIter> GenericDocumentProperties::getMultipleWeightedPropValue(
+    std::string propName) const
+{
+  auto pos = m_d->m_multipleWeightedPropValues.find(propName);
+  if( pos == m_d->m_multipleWeightedPropValues.end() )
+  {
     return std::pair<WeightedPropMultIter, WeightedPropMultIter>(m_d->m_noWeightedPropVal.begin(), m_d->m_noWeightedPropVal.end());
   }
-  else {
+  else
+  {
     const std::vector<std::pair<std::string,float> >& val = (*pos).second;
     return std::pair<WeightedPropMultIter, WeightedPropMultIter>(val.begin(),val.end());
   }
 }
 
-bool GenericDocumentProperties::is_empty() const {
+bool GenericDocumentProperties::is_empty() const
+{
   auto intProperties = getIntProperties();
   if (intProperties.first != intProperties.second) return false;
 
@@ -219,11 +239,15 @@ bool GenericDocumentProperties::is_empty() const {
   return true;
 }
 
-std::pair<GenericDocumentProperties::IntPropertiesIterator,GenericDocumentProperties::IntPropertiesIterator> GenericDocumentProperties::getIntProperties() const {
+std::pair<GenericDocumentProperties::IntPropertiesIterator,
+          GenericDocumentProperties::IntPropertiesIterator> GenericDocumentProperties::getIntProperties() const
+{
   return  std::make_pair(m_d->m_intValues.begin(),m_d->m_intValues.end());
 }
 
-std::pair<GenericDocumentProperties::StringPropertiesIterator,GenericDocumentProperties::StringPropertiesIterator> GenericDocumentProperties::getStringProperties() const {
+std::pair<GenericDocumentProperties::StringPropertiesIterator,
+          GenericDocumentProperties::StringPropertiesIterator> GenericDocumentProperties::getStringProperties() const
+{
   return  std::make_pair(m_d->m_stringValues.begin(),m_d->m_stringValues.end());
 }
 

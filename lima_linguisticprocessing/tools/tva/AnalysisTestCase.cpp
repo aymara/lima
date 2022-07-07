@@ -45,7 +45,7 @@ TestCaseError AnalysisTestCaseProcessor::processTestCase(const Lima::Common::TGV
   LDEBUG << "AnalysisTestCaseProcessor::processTestCase(" << testCase.id << ")";
   // write text in file
   const std::string& text = testCase.getParam( "text" );
-  std::string filename(m_workingDirectory+"/test"+testCase.id+".txt");
+  std::string filename(workingDirectory().toStdString()+"/test"+testCase.id+".txt");
   {
     ofstream fout(filename.c_str(), std::ofstream::binary);
     fout << text;

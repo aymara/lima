@@ -84,7 +84,7 @@ LimaChar Text::currentChar() const
 {
   if (m_d->m_curPtr >= m_d->m_text.size())
   {
-    return 0;
+    return QChar();
   }
   return m_d->m_text[m_d->m_curPtr];
 }
@@ -159,7 +159,7 @@ Lima::LimaChar Text::advance()
     LDEBUG << "Trying to move after text end.";
 #endif
     m_d->m_curPtr++;
-    return 0;
+    return QChar();
   }
   if (m_d->m_text.at(m_d->m_curPtr).isHighSurrogate())
   {
@@ -188,14 +188,14 @@ const CharClass* Text::currentClass() const
 #endif
   if (m_d->m_curPtr >= m_d->m_text.size())
   {
-    return m_d->m_charChart->charClass(0);
+    return m_d->m_charChart->charClass(QChar());
   }
   QChar c = m_d->m_text[m_d->m_curPtr];
   if (c.isHighSurrogate())
   {
     if (m_d->m_curPtr+1 >= m_d->m_text.size())
     {
-      return m_d->m_charChart->charClass(0);
+      return m_d->m_charChart->charClass(QChar());
     }
     return m_d->m_charChart->charClass( m_d->m_text[m_d->m_curPtr], m_d->m_text[m_d->m_curPtr+1] );
   }

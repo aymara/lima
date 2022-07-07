@@ -5,5 +5,6 @@
 
 add_subdirectory(common)
 add_subdirectory(segmentation)
-add_subdirectory(ner)
+add_subdirectory(tag)
+add_subdirectory(lemmatization)
 

@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 project(Lima)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(WITH_GUI ON)
@@ -134,16 +136,15 @@ else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
 endif()
 
-include(${CMAKE_SOURCE_DIR}/manageQt5.cmake)
-addQt5Modules(Core Gui Qml Quick QuickTest Test Xml XmlPatterns Widgets )
-# include_directories(${Qt5_INCLUDES})
-message("\n\n\n{Qt5_LIBRARIES}=${Qt5_LIBRARIES} ")
+include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
+addQtModules(Core Gui Qml Quick QuickTest Test Xml Widgets )
+message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
-# Search Qt5 optional components
-find_package(Qt5 COMPONENTS DBus)
-if (Qt5DBus_FOUND)
-  addQt5Modules(DBus)
-  get_target_property(QtDBus_location Qt5::DBus LOCATION)
+# Search Qt optional components
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS DBus)
+if (QtDBus_FOUND)
+  addQtModules(DBus)
+  get_target_property(QtDBus_location Qt${QT_VERSION_MAJOR}::DBus LOCATION)
 endif()
 
 if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND")
@@ -379,11 +380,9 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
-if (NOT TensorFlow_FOUND AND NOT EIGEN_FOUND AND NOT EIGEN3_FOUND)
   # Here we are looking up for a system-wide installation of Eigen
-  message("Looking up for system-wide Eigen")
-  find_package(Eigen3 3.3 NO_MODULE)
-endif()
+message("Looking up for Eigen3")
+find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
@@ -447,13 +446,15 @@ add_subdirectory(lima_pelf)
 # add_subdirectory(lima_annoqt)
 
 if (WITH_GUI)
-  if (Qt5Core_FOUND)
-    if (Qt5Core_VERSION VERSION_GREATER 5.5.0)
+  if (Qt${QT_VERSION_MAJOR}Core_FOUND)
+    if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.5.0)
       message("Build with lima_gui")
       add_subdirectory(lima_gui)
     else()
-      message("Minimum supported Qt5 version for lima_gui is 5.5.0. You have Qt5 ${Qt5Core_VERSION}. lima_gui will no be built.")
+      message("Minimum supported Qt version for lima_gui is 5.5.0. You have Qt ${QtCore_VERSION}. lima_gui will no be built.")
     endif()
+  else()
+    message("QtCore was not found. Build without lima_gui.")
   endif()
 else()
   message("Build without lima_gui")

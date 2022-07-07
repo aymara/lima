@@ -73,7 +73,7 @@ void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
 
   if (!m_d->m_additionalPool.empty())
   {
-    LIMA_EXCEPTION( "Can't register main keys if stringspool not empty!" << endl
+    LIMA_EXCEPTION( "Can't register main keys if stringspool not empty!" << QTENDL
                   << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] );
   }
   if (mainKeys == nullptr)

@@ -16,6 +16,7 @@ class TorchMatrix
 {
 public:
   typedef T value_t;
+  typedef torch::Tensor tensor_t;
 
   TorchMatrix()
     : m_start_time(0),

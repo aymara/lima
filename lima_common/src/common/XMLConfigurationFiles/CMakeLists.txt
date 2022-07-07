@@ -12,8 +12,8 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
    configurationStructure.cpp
    groupConfigurationStructure.cpp
    moduleConfigurationStructure.cpp
-   xmlConfigurationFileHandler.cpp
    xmlConfigurationFileParser.cpp
+   xmlConfigurationFileReader.cpp
    itemWithAttributes.cpp
 )
 
@@ -23,7 +23,7 @@ ADD_DLL_TO_PATH(lima-common-xmlconfigurationfiles)
 
 target_link_libraries(lima-common-xmlconfigurationfiles
    lima-common-data
-   Qt5::Xml
+   Qt${QT_VERSION_MAJOR}::Xml
 )
 
 set_target_properties(lima-common-xmlconfigurationfiles PROPERTIES VERSION ${LIMA_COMMON_LIB_VERSION} SOVERSION ${LIMA_COMMON_LIB_SOVERSION})
@@ -31,7 +31,6 @@ install(TARGETS lima-common-xmlconfigurationfiles DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES
-#     xmlConfigurationFileHandler.h
     configurationStructure.h
     xmlConfigurationFileParser.h
     groupConfigurationStructure.h

@@ -33,7 +33,7 @@ set(pelf-resedit_UIS
 )
 
 # Wrap Qt UIs
-qt5_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
+qt_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -48,6 +48,6 @@ target_link_libraries(pelf-resedit
     lima-linguisticprocessing
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${Qt5_LIBRARIES}
+    ${Qt_LIBRARIES}
 )
 install(TARGETS pelf-resedit DESTINATION bin)

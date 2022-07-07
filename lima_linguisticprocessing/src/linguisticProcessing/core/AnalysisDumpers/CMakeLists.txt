@@ -3,11 +3,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-add_subdirectory(EasyXmlDumper)
-
 add_definitions(-DLIMA_ANALYSISDUMPERS_EXPORTING)
 
-include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/linguisticProcessing/core/AnalysisDumpers/EasyXmlDumperProcessor )
+#include_directories( BEFORE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/linguisticProcessing/core/AnalysisDumpers/EasyXmlDumperProcessor )
 
 
 ########### next target ###############

@@ -16,7 +16,7 @@
 
 namespace QsLogging
 {
-LIMA_COMMONQSLOG_EXPORT bool initQsLog ( const QString& configString = "" );
+LIMA_COMMONQSLOG_EXPORT bool initQsLog ( const QString& configString = QLatin1String("") );
 
 class CategoriesImpl; // d pointer
 class LIMA_COMMONQSLOG_EXPORT Categories : public QObject

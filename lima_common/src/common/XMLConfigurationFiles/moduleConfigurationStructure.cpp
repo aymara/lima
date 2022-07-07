@@ -7,7 +7,7 @@
   * @file       moduleConfigurationStructure.cpp
   * @brief      originally detectModuleConfigurationStructure.h in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -31,7 +31,7 @@ namespace XMLConfigurationFiles
 class ModuleConfigurationStructurePrivate
 {
   friend class ModuleConfigurationStructure;
-  
+
   ModuleConfigurationStructurePrivate(const std::string& name);
   ModuleConfigurationStructurePrivate(const ModuleConfigurationStructurePrivate& mod);
   ModuleConfigurationStructurePrivate& operator=(const ModuleConfigurationStructurePrivate& mod);
@@ -53,7 +53,7 @@ ModuleConfigurationStructurePrivate& ModuleConfigurationStructurePrivate::operat
   m_name = mod.m_name;
   return *this;
 }
-  
+
 ModuleConfigurationStructurePrivate::~ModuleConfigurationStructurePrivate()
 {
 }
@@ -68,6 +68,11 @@ ModuleConfigurationStructure::ModuleConfigurationStructure(const std::string& na
     m_d(new ModuleConfigurationStructurePrivate(name))
 {}
 
+ModuleConfigurationStructure::ModuleConfigurationStructure(const QString& name) :
+    std::map< std::string, GroupConfigurationStructure >(),
+    m_d(new ModuleConfigurationStructurePrivate(name.toStdString()))
+{}
+
 ModuleConfigurationStructure::ModuleConfigurationStructure(const ModuleConfigurationStructure& mod) :
     std::map< std::string, GroupConfigurationStructure >(mod),
     m_d(new ModuleConfigurationStructurePrivate(*mod.m_d))
@@ -76,7 +81,7 @@ ModuleConfigurationStructure::ModuleConfigurationStructure(const ModuleConfigura
   XMLCFGLOGINIT;
   LDEBUG << "ModuleConfigurationStructure::ModuleConfigurationStructure" << this << m_d->m_name;
 #endif
-  
+
 }
 
 ModuleConfigurationStructure& ModuleConfigurationStructure::operator=(const ModuleConfigurationStructure& mod)
@@ -207,13 +212,13 @@ void ModuleConfigurationStructure::addAttributeInGroup(
 
 void ModuleConfigurationStructure::addModule(const ModuleConfigurationStructure& mod)
 {
-  for (auto it = mod.cbegin(), it_end = mod.cend(); it!=it_end; it++) 
+  for (auto it = mod.cbegin(), it_end = mod.cend(); it!=it_end; it++)
   {
-    if (find((*it).first) == end()) 
+    if (find((*it).first) == end())
     {
       insert(*it);
     }
-    else 
+    else
     {
       XMLCFGLOGINIT;
       LWARN << "group " << (*it).first.c_str() << " not added: already exists";
@@ -232,6 +237,44 @@ std::ostream& operator<<(std::ostream &os, const ModuleConfigurationStructure& d
   return os;
 }
 
+
+void ModuleConfigurationStructure::addGroupNamed(const QString& group)
+{
+  addGroupNamed(group.toStdString());
+}
+
+void ModuleConfigurationStructure::addParamValuePairForGroup(const QString& param, const QString& value, const QString& group)
+{
+  addParamValuePairForGroup(param.toStdString(), value.toStdString(), group.toStdString());
+}
+
+void ModuleConfigurationStructure::addListNamedForGroup(const QString& listName, const QString& group)
+{
+  addListNamedForGroup(listName.toStdString(), group.toStdString());
+}
+
+void ModuleConfigurationStructure::addItemInListNamedForGroup(const QString& item, const QString& listName, const QString& group)
+{
+  addItemInListNamedForGroup(item.toStdString(), listName.toStdString(), group.toStdString());
+}
+
+void ModuleConfigurationStructure::addMapInGroup(const QString& mapName,const QString& groupName)
+{
+  addMapInGroup(mapName.toStdString(), groupName.toStdString());
+}
+
+void ModuleConfigurationStructure::addEntryInMapInGroup(const QString& entryKey, const QString& entryValue,
+                                                        const QString& mapName, const QString& groupName)
+{
+  addEntryInMapInGroup(entryKey.toStdString(), entryValue.toStdString(),
+                       mapName.toStdString(), groupName.toStdString());
+}
+
+void ModuleConfigurationStructure::addAttributeInGroup(const QString& attKey, const QString& attValue,
+                                                       const QString& groupName)
+{
+  addAttributeInGroup(attKey.toStdString(), attValue.toStdString(), groupName.toStdString());
+}
 
 } // closing namespace XMLConfigurationFiles
 } // closing namespace Common

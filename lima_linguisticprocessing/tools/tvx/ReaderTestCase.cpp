@@ -20,6 +20,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/MultimediaDocumentReaderWriter.h"
 
 #include <QProcess>
+#include <QRegularExpression>
 
 #include <iostream>
 #include <sstream>
@@ -78,7 +79,7 @@ Lima::Common::TGV::TestCaseError ReaderTestCaseProcessor::processTestCase(const 
 
   QString qtext_s = QString::fromUtf8(contentText.c_str());
 
-  QRegExp rx("(&[^;]*;)");
+  QRegularExpression rx("(&[^;]*;)");
 //   int shift = 0;
 //   int indexofent = 0;
 

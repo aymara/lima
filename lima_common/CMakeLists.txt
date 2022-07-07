@@ -6,7 +6,7 @@
 add_subdirectory(conf)
 add_subdirectory(src)
 add_subdirectory(test)
-add_subdirectory(tools)
+#add_subdirectory(tools)
 
 ########### install files ###############
 

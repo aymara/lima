@@ -105,7 +105,7 @@ add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFIL
 
 target_link_libraries(FileUtilsTest0
    lima-common-misc
-   Qt5::Test
+   Qt${QT_VERSION_MAJOR}::Test
 )
 
 add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0 -v2 -nocrashhandler)

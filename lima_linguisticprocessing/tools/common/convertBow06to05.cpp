@@ -74,7 +74,7 @@ void readDocuments(istream& fileIn, ostream& out)
       Lima::Common::Misc::DocumentProperties props;
       props.read(fileIn);
       props.write(out);
-      blocType = static_cast<BoWBlocType >( readOneByteInt(fileIn));    
+      blocType = static_cast<BoWBlocType >( readOneByteInt(fileIn));
     }
     BoWText text;
     while (blocType==BOW_TEXT_BLOC)
@@ -123,7 +123,7 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   if (argc<1) {    cerr << USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << HELP; exit(1); }
@@ -176,7 +176,7 @@ int run(int argc,char** argv)
       default:
       {
         cerr << "format of file " << header.getTypeString() << " not managed"
-        << endl;
+              << endl;
         exit(1);
       }
   }

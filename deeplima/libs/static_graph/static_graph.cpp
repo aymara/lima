@@ -74,6 +74,10 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
       {
         m_dicts[i] = shared_ptr<StringDict>(new StringDict());
       }
+      else if (dict_type == Char32Dict::class_id())
+      {
+        m_dicts[i] = shared_ptr<Char32Dict>(new Char32Dict());
+      }
       else
       {
         throw runtime_error("Unknown dict type.");
@@ -128,7 +132,7 @@ void StaticGraphImpl::save(serialize::OutputArchive& archive) const
   c10::List<std::string> types_of_dicts;
   for (size_t i = 0; i < m_dicts.size(); i++)
   {
-    //std::cerr << i << "\t" << m_dicts[i]->get_class_id() << std::endl;
+    //cerr << i << "\t" << m_dicts[i]->get_class_id() << std::endl;
     types_of_dicts.push_back(m_dicts[i]->get_class_id());
   }
 
@@ -186,7 +190,7 @@ void StaticGraphImpl::to(torch::Device device, bool non_blocking)
   for (auto m : m_linear) m->to(device);
   for (auto m : m_dropout) m->to(device);
   torch::nn::Module::to(device, non_blocking);
-  std::cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
+  cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }
 
 void StaticGraphImpl::parse_script(const string& script)
@@ -202,7 +206,7 @@ void StaticGraphImpl::parse_script(const string& script)
       continue;
     }
     step_descr_t step = parse_script_line(line);
-    //cout << line << endl;
+    //cerr << line << endl;
 
     if (step.m_type == step_descr_t::def)
     {
@@ -254,15 +258,17 @@ void StaticGraphImpl::parse_script(const string& script)
                 torch::nn::Embedding& m = m_embedding[module_ref.m_idx];
                 vector<size_t>& inputs = op.m_inputs;
                 vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() != 1 || outputs.size() != 1)
+                {
+                  throw;
+                }
+
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
                 {
-                  if (inputs.size() != 1 || outputs.size() != 1)
-                  {
-                    throw;
-                  }
                   auto out = m->forward(ctx.m_tensors[inputs[0]]);
-                  //cout << ctx.m_tensors[inputs[0]] << endl;
-                  //cout << out << endl;
+                  //cerr << ctx.m_tensors[inputs[0]] << endl;
+                  //cerr << out << endl;
                   ctx.m_tensors[outputs[0]] = out;
                 };
               }
@@ -271,26 +277,41 @@ void StaticGraphImpl::parse_script(const string& script)
             case module_type_t::lstm:
               {
                 torch::nn::LSTM& m = m_lstm[module_ref.m_idx];
-                vector<size_t>& inputs = op.m_inputs;
-                vector<size_t>& outputs = op.m_outputs;
+                const vector<size_t>& inputs = op.m_inputs;
+                const vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() < 1)
+                {
+                  throw;
+                }
+
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
                 {
+                  //cerr << ctx.m_tensors[inputs[0]].sizes() << endl;
+                  torch::optional<std::tuple<torch::Tensor, torch::Tensor>> h0_and_c0; // (h0, c0)
                   if (inputs.size() > 1)
                   {
-                    throw;
+                    if (3 == inputs.size())
+                    {
+                      h0_and_c0 = { ctx.m_tensors[inputs[1]], ctx.m_tensors[inputs[2]] };
+                    }
+                    else
+                    {
+                      throw;
+                    }
                   }
-                  auto out = m->forward(ctx.m_tensors[inputs[0]]);
-                  //cout << ctx.m_tensors[inputs[0]] << endl;
+                  auto out = m->forward(ctx.m_tensors[inputs[0]], h0_and_c0);
+                  //cerr << ctx.m_tensors[inputs[0]] << endl;
                   if (outputs.size() > 0)
                   {
                     ctx.m_tensors[outputs[0]] = std::get<0>(out);
-                    //cout << ctx.m_tensors[outputs[0]] << endl;
+                    //cerr << ctx.m_tensors[outputs[0]] << endl;
                     if (outputs.size() > 1)
                     {
                       ctx.m_tensors[outputs[1]] = std::get<0>(std::get<1>(out));
                       if (outputs.size() > 2)
                       {
-                        ctx.m_tensors[outputs[1]] = std::get<1>(std::get<1>(out));
+                        ctx.m_tensors[outputs[2]] = std::get<1>(std::get<1>(out));
                         if (outputs.size() > 3)
                         {
                           throw;
@@ -307,12 +328,14 @@ void StaticGraphImpl::parse_script(const string& script)
                 torch::nn::Linear& m = m_linear[module_ref.m_idx];
                 vector<size_t>& inputs = op.m_inputs;
                 vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() != 1 || outputs.size() != 1)
+                {
+                  throw;
+                }
+
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
                 {
-                  if (inputs.size() != 1 || outputs.size() != 1)
-                  {
-                    throw;
-                  }
                   auto out = m->forward(ctx.m_tensors[inputs[0]]);
                   ctx.m_tensors[outputs[0]] = out;
                 };
@@ -324,15 +347,17 @@ void StaticGraphImpl::parse_script(const string& script)
                 torch::nn::Dropout& m = m_dropout[module_ref.m_idx];
                 vector<size_t>& inputs = op.m_inputs;
                 vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() != 1 || outputs.size() != 1)
+                {
+                  throw;
+                }
+
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
                 {
-                  if (inputs.size() != 1 || outputs.size() != 1)
-                  {
-                    throw;
-                  }
                   auto out = m->forward(ctx.m_tensors[inputs[0]]);
-                  //cout << ctx.m_tensors[inputs[0]] << endl;
-                  //cout << out << endl;
+                  //cerr << ctx.m_tensors[inputs[0]] << endl;
+                  //cerr << out << endl;
                   ctx.m_tensors[outputs[0]] = out;
                 };
               }
@@ -349,20 +374,90 @@ void StaticGraphImpl::parse_script(const string& script)
           vector<size_t>& inputs = op.m_inputs;
           vector<size_t>& outputs = op.m_outputs;
           int64_t dim = atoi(step.m_args["dim"].c_str());
+
+          if (inputs.size() == 0 || outputs.size() != 1)
+          {
+            throw;
+          }
+
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
           {
-            if (inputs.size() == 0 || outputs.size() != 1)
-            {
-              throw;
-            }
             std::vector<torch::Tensor> input_tensors;
             input_tensors.resize(inputs.size());
             for (size_t i = 0; i < inputs.size(); i++)
             {
               input_tensors[i] = ctx.m_tensors[inputs[i]];
-              //std::cerr << input_tensors[i].sizes() << std::endl;
+              //cerr << input_tensors[i].sizes() << std::endl;
             }
             auto out = torch::cat(input_tensors, dim);
+            ctx.m_tensors[outputs[0]] = out;
+          };
+        }
+        break;
+
+      case step_descr_t::reshape:
+        {
+          vector<size_t>& inputs = op.m_inputs;
+          vector<size_t>& outputs = op.m_outputs;
+          const auto shape = step.m_iargs["dims"];
+
+          if (inputs.size() == 0 || outputs.size() != 1)
+          {
+            throw;
+          }
+
+          op.m_fn = [inputs, outputs, shape](context_t& ctx)
+          {
+            //cerr << "reshape arg: " << ctx.m_tensors[inputs[0]].sizes() << endl;
+            auto out = torch::reshape(ctx.m_tensors[inputs[0]], shape);
+            //cerr << "reshape res: " << out.sizes() << endl;
+            ctx.m_tensors[outputs[0]] = out;
+          };
+        }
+        break;
+
+      case step_descr_t::unbind:
+        {
+          vector<size_t>& inputs = op.m_inputs;
+          vector<size_t>& outputs = op.m_outputs;
+          int64_t dim = atoi(step.m_args["dim"].c_str());
+
+          if (inputs.size() != 1)
+          {
+            throw;
+          }
+
+          op.m_fn = [inputs, outputs, dim](context_t& ctx)
+          {
+            //cerr << "unbind arg: " << ctx.m_tensors[inputs[0]].sizes() << endl;
+            auto out = torch::unbind(ctx.m_tensors[inputs[0]], dim);
+            //cerr << "unbind res: " << out.sizes() << endl;
+            if (outputs.size() != out.size())
+            {
+              throw;
+            }
+            for (size_t j = 0; j < out.size(); ++j)
+            {
+              ctx.m_tensors[outputs[j]] = out[j];
+            }
+          };
+        }
+        break;
+
+      case step_descr_t::unsqueeze:
+        {
+          vector<size_t>& inputs = op.m_inputs;
+          vector<size_t>& outputs = op.m_outputs;
+          int64_t dim = atoi(step.m_args["dim"].c_str());
+
+          if (inputs.size() != 1 || outputs.size() != 1)
+          {
+            throw;
+          }
+
+          op.m_fn = [inputs, outputs, dim](context_t& ctx)
+          {
+            auto out = torch::unsqueeze(ctx.m_tensors[inputs[0]], dim);
             ctx.m_tensors[outputs[0]] = out;
           };
         }
@@ -372,12 +467,14 @@ void StaticGraphImpl::parse_script(const string& script)
         {
           vector<size_t>& inputs = op.m_inputs;
           vector<size_t>& outputs = op.m_outputs;
+
+          if (inputs.size() != 1 || outputs.size() != 1)
+          {
+            throw;
+          }
+
           op.m_fn = [inputs, outputs](context_t& ctx)
           {
-            if (inputs.size() != 1 || outputs.size() != 1)
-            {
-              throw;
-            }
             auto out = ctx.m_tensors[inputs[0]];
             //out = out.reshape({-1, out.size(2)});
             out = torch::nn::functional::log_softmax(out, 2);
@@ -513,12 +610,35 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     //
     step.m_type = step_descr_t::forward;
     step.m_args = parse_options(ss);
-
   }
   else if (type == "log_softmax")
   {
     //
     step.m_type = step_descr_t::log_softmax;
+    step.m_args = parse_options(ss);
+  }
+  else if (type == "reshape")
+  {
+    //
+    step.m_type = step_descr_t::reshape;
+    step.m_args = parse_options(ss);
+    auto it = step.m_args.find("dims");
+    if (step.m_args.end() == it)
+    {
+      throw;
+    }
+    step.m_iargs["dims"] = parse_iargs(it->second);
+  }
+  else if (type == "unbind")
+  {
+    // Out1,Out2,... = unbind Input
+    step.m_type = step_descr_t::unbind;
+    step.m_args = parse_options(ss);
+  }
+  else if (type == "unsqueeze")
+  {
+    // Out1,Out2,... = unsqueeze Input
+    step.m_type = step_descr_t::unsqueeze;
     step.m_args = parse_options(ss);
   }
   else
@@ -527,6 +647,23 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
   }
 
   return step;
+}
+
+vector<int64_t> StaticGraphImpl::parse_iargs(const string& str)
+{
+  vector<int64_t> rv;
+  istringstream ss(str);
+
+  for (int64_t i; ss >> i;)
+  {
+    rv.push_back(i);
+    if (ss.peek() == ',')
+    {
+      ss.ignore();
+    }
+  }
+
+  return rv;
 }
 
 void StaticGraphImpl::create_arg(const std::vector<std::string>& names, const std::map<std::string, std::string>& /*opts*/)

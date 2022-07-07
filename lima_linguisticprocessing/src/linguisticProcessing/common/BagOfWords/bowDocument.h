@@ -46,7 +46,7 @@ LIMA_BOW_EXPORT std::ostream& operator<<(std::ostream& out,const BoWBlocType& bl
 LIMA_BOW_EXPORT QDebug& operator<<(QDebug& out,const BoWBlocType& blocType);
 LIMA_BOW_EXPORT std::istream& operator>>(std::istream& in,BoWBlocType& blocType);
 
-std::string getBlocTypeString(BoWBlocType blocType);
+LIMA_BOW_EXPORT std::string getBlocTypeString(BoWBlocType blocType);
 
 /**
 * @brief represent a document as a Bag Of Word, with associated document properties.

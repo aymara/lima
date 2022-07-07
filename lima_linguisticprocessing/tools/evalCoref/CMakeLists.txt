@@ -33,7 +33,7 @@ SET(evalCoref_SRCS
 add_executable(evalCoref ${evalCoref_SRCS})
 
 target_link_libraries(evalCoref
-  Qt5::Core
+  Qt${QT_VERSION_MAJOR}::Core
   Boost::regex
 )
 

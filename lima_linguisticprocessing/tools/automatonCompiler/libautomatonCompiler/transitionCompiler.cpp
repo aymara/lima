@@ -251,18 +251,18 @@ TransitionUnit* createTransition(const LimaString str,
     uint64_t max(NumericTransition::noValue);
     if (s[transitionKeySize] == CHAR_NUM_EQUAL_TR)
     {
-      val=s.midRef(transitionKeySize+1).toULong();
+      val=s.mid(transitionKeySize+1).toULong();
     }
     else if (s[transitionKeySize] == CHAR_NUM_LE_TR)
     {
       //int i(s.find(CHAR_NUM_GE_TR,LENGTH_NUM_NAME_TR+1));
       int i(s.indexOf(CHAR_NUM_GE_TR,transitionKeySize+1));
       if (i==-1) {
-        max=s.midRef(transitionKeySize+1).toULong();
+        max=s.mid(transitionKeySize+1).toULong();
       }
       else {
-        max=s.midRef(transitionKeySize+1, i-transitionKeySize-1).toULong();
-        min=s.midRef(i+1).toULong();
+        max=s.mid(transitionKeySize+1, i-transitionKeySize-1).toULong();
+        min=s.mid(i+1).toULong();
       }
     }
     else if (s[transitionKeySize] == CHAR_NUM_GE_TR)
@@ -270,12 +270,12 @@ TransitionUnit* createTransition(const LimaString str,
       //int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,LENGTH_NUM_NAME_TR+1));
       int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,transitionKeySize+1));
       if (i==-1) {
-        min=s.midRef(transitionKeySize+1).toULong();
+        min=s.mid(transitionKeySize+1).toULong();
       }
       else {
-        min=s.midRef(transitionKeySize+1,
+        min=s.mid(transitionKeySize+1,
                   i-transitionKeySize-1).toULong();
-        max=s.midRef(i+1).toULong();
+        max=s.mid(i+1).toULong();
       }
     }
 
@@ -283,7 +283,7 @@ TransitionUnit* createTransition(const LimaString str,
   }
   // ----------------------------------------------------------------------
   // Part-of-speech transition
-  else if (s[0] == CHAR_POS_TR) {
+  else if (!s.isEmpty() && s[0] == CHAR_POS_TR) {
     Tpos pos=createTpos(Misc::limastring2utf8stdstring(s.mid(1)),language);
     t = new PosTransition(pos,macroAccessor,microAccessor);
   }

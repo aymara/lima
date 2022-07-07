@@ -1,4 +1,4 @@
-// Copyright 2002-2020 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -148,6 +148,10 @@ void BoWXMLWriter::closeSBoWNode() {
 
 void BoWXMLWriter::processSBoWText( const BoWText* boWText, bool useIterator,
                          bool useIndexIterator) {
+#ifdef DEBUG_LP
+  BOWLOGINIT;
+  LDEBUG << "BoWXMLWriter::processSBoWText";
+#endif
   m_d->m_language = Common::MediaticData::MediaticData::single().getMediaId ( boWText->lang );
 
   m_d->writeBoWTokenList(boWText,useIterator,useIndexIterator);

@@ -17,13 +17,13 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 
 #include "linguisticProcessing/common/tgv/TestCase.h"
-#include "linguisticProcessing/common/tgv/TestCasesHandler.h"
+#include "linguisticProcessing/common/tgv/TestCasesReader.h"
 
 #include "linguisticProcessing/common/tgv/TestCase.h"
 #include "linguisticProcessing/common/tgv/TestCaseError.hpp"
 
-#include <QtXml/QXmlSimpleReader>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
+#include <QFile>
 
 using namespace Lima::Common::TGV;
 
@@ -131,24 +131,19 @@ int run(int argc,char** argv)
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
 
-  QXmlSimpleReader parser;
-
   // create TvgTestCaseProcessor
   // TvgTestCaseProcessor tvgTestCaseProcessor(param.workingDir, cerr);
   TvgTestCaseProcessor* tvgTestCaseProcessor(0);
   tvgTestCaseProcessor = new TvgTestCaseProcessor(param.workingDir, std::cerr);
 
-  TestCasesHandler tch(*tvgTestCaseProcessor);
-
-  parser.setContentHandler(&tch);
-  parser.setErrorHandler(&tch);
+  TestCasesReader parser(*tvgTestCaseProcessor);
 
   try
   {
-    for( std::vector<std::string>::const_iterator fit = param.files.begin() ;
-      fit != param.files.end() ; fit++ ) {
+    for(const auto& filename: param.files)
+    {
       std::string sfile(param.workingDir);
-      sfile.append("/").append(*fit);
+      sfile.append("/").append(filename);
       std::cout << "parse " << sfile << std::endl;
 
     // cerr << "<?xml version='1.0' encoding='UTF-8'?>\n";
@@ -159,14 +154,14 @@ int run(int argc,char** argv)
       std::cerr << "Error opening " << sfile << std::endl;
       return 1;
     }
-    if (!parser.parse( QXmlInputSource(&file)))
+    if (!parser.parse(&file))
     {
-      std::cerr << "Error parsing " << sfile << " : " << parser.errorHandler()->errorString().toUtf8().constData() << std::endl;
+      std::cerr << "Error parsing " << sfile << " : " << parser.errorString().toUtf8().constData() << std::endl;
       return 1;
     }
     // cerr << "</testcases>\n";
 
-  TestCasesHandler::TestReport resTotal;
+  TestCasesReader::TestReport resTotal;
   std::cout << std::endl;
   std::cout << "=========================================================" << std::endl;
   std::cout << std::endl;
@@ -174,9 +169,7 @@ int run(int argc,char** argv)
   std::cout << std::endl;
   std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
   std::cout << "---------------------------------------------------------" << std::endl;
-  for (std::map<std::string, TestCasesHandler::TestReport>::const_iterator resItr=tch.m_reportByType.begin();
-       resItr!=tch.m_reportByType.end();
-       resItr++)
+  for (auto resItr = parser.reportByType().cbegin(); resItr != parser.reportByType().cend(); resItr++)
   {
     std::string label(resItr->first);
     label.resize(15,' ');
@@ -194,7 +187,7 @@ int run(int argc,char** argv)
        << "\t" << resTotal.nbtests << std::endl;
   std::cout << "=========================================================" << std::endl;
   std::cout <<  std::endl;
-  tch.m_reportByType.clear();
+//   parser.reportByType().clear();
     }
   }
   catch (Lima::LimaException& e)

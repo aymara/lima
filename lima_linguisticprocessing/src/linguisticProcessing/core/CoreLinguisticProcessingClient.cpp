@@ -26,8 +26,9 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
-#include <QtCore/QDate>
-#include <QtCore/QFileInfo>
+#include <QDate>
+#include <QFileInfo>
+#include <QRegularExpression>
 
 uint64_t t1;
 
@@ -84,8 +85,11 @@ void CoreLinguisticProcessingClient::analyze(
   CORECLIENTLOGINIT;
 
  //if (text.isEmpty())
- static const QRegExp whitespaceOnly("\\s*");
- if (whitespaceOnly.exactMatch(text))
+
+  QString whitespaceOnly("\\s*");
+
+  whitespaceOnly = QRegularExpression::anchoredPattern(whitespaceOnly);
+ if (QRegularExpression(whitespaceOnly).match(text).hasMatch())
  {
    LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
    return;

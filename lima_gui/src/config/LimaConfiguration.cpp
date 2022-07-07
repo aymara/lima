@@ -7,7 +7,7 @@
  * \file    LimaConfiguration.cpp
  * \author  Jocelyn Vernay
  * \date    Wed, Sep 06 2017
- * 
+ *
  */
 
 #include "LimaConfiguration.h"
@@ -30,11 +30,11 @@ using namespace Lima::Common;
 using namespace Lima::Common::XMLConfigurationFiles;
 // using namespace Lima::LinguisticProcessing;
 
-namespace Lima 
+namespace Lima
 {
-namespace Gui 
+namespace Gui
 {
-namespace Config 
+namespace Config
 {
 const char* neutralString(const std::string& str);
 const char* neutralString(const char[]);
@@ -56,7 +56,7 @@ void writeModule(const Lima::Common::XMLConfigurationFiles::ModuleConfigurationS
 void writeFile(const Lima::Common::XMLConfigurationFiles::ConfigurationStructure& cstruct, const std::string& path);
 
 
-LimaConfiguration::LimaConfiguration(const QFileInfo& fileInfo, 
+LimaConfiguration::LimaConfiguration(const QFileInfo& fileInfo,
                                      QObject* parent) :
   QObject(parent),
   m_name(fileInfo.fileName()),
@@ -73,12 +73,12 @@ const Common::XMLConfigurationFiles::ConfigurationStructure& LimaConfiguration::
 
   /// \brief This function was meant to bypass the QString constructor need for
 /// a c_str, for the macro 'XMLWRITE_ATTRIBUTE' and 'XMLWRITE_ELEMENT'
-const char* neutralString(const std::string& str) 
+const char* neutralString(const std::string& str)
 {
   return str.c_str();
 }
 
-const char* neutralString(const char c[]) 
+const char* neutralString(const char c[])
 {
   return c;
 }
@@ -112,7 +112,7 @@ const char* neutralString(const char c[])
 #define XMLWRITE_END_MODULE  XMLWRITE_END
 #define XMLWRITE_END_MAP     XMLWRITE_END
 
-void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml) 
+void writeList(const std::string& name, const std::deque<std::string>& list, QXmlStreamWriter& xml)
 {
   CONFLOGINIT;
   LINFO << "\t\twriting list<" << name << ">:";
@@ -126,7 +126,7 @@ void writeList(const std::string& name, const std::deque<std::string>& list, QXm
   XMLWRITE_END_LIST
 }
 
-void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml) 
+void writeMap(const std::string& name, const std::map<std::string, std::string>& map, QXmlStreamWriter& xml)
 {
 
   CONFLOGINIT;
@@ -141,34 +141,34 @@ void writeMap(const std::string& name, const std::map<std::string, std::string>&
   XMLWRITE_END_MAP
 }
 
-void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xml) 
+void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xml)
 {
   GroupConfigurationStructure group(p_group);
 
   CONFLOGINIT;
   LINFO << "\twriting group<" << group.getName() << ">:";
 
-  XMLWRITE_GROUP XMLWRITE_NAME(group.getName()) 
+  XMLWRITE_GROUP XMLWRITE_NAME(group.getName())
   try
   {
-    XMLWRITE_CLASS(group.getAttribute("class")) 
-  } 
+    XMLWRITE_CLASS(group.getAttribute("class"))
+  }
   catch(std::exception& nsa)
-  { 
-    LERROR << "No class for this group"; 
+  {
+    LERROR << "No class for this group";
   }
 
-      for (auto& pair : group.getParams()) 
+      for (auto& pair : group.getParams())
       {
         XMLWRITE_PARAM XMLWRITE_KEY(pair.first) XMLWRITE_VALUE(pair.second) XMLWRITE_END
       }
 
-      for (auto& pair : group.getLists()) 
+      for (auto& pair : group.getLists())
       {
         writeList(pair.first, pair.second, xml);
       }
 
-      for (auto& pair : group.getMaps()) 
+      for (auto& pair : group.getMaps())
       {
         writeMap(pair.first, pair.second, xml);
       }
@@ -176,7 +176,7 @@ void writeGroup(const GroupConfigurationStructure& p_group, QXmlStreamWriter& xm
   XMLWRITE_END_GROUP
 }
 
-void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml) 
+void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter& xml)
 {
   ModuleConfigurationStructure module(p_module);
 
@@ -192,16 +192,22 @@ void writeModule(const ModuleConfigurationStructure& p_module, QXmlStreamWriter&
   XMLWRITE_END_MODULE
 }
 
-void writeFile(const ConfigurationStructure& cstruct, const std::string& path) 
+void writeFile(const ConfigurationStructure& cstruct, const std::string& path)
 {
-  QString output;
+  QFile file(path.c_str());
+  if (!file.open(QIODevice::WriteOnly))
+  {
+    LIMA_EXCEPTION_LOGINIT(
+            CONFLOGINIT,
+            "writeFile cannot open configuration file " << path.c_str());
+  }
 
   CONFLOGINIT;
   LINFO << "writing file<" << path << ">:";
 
-  QXmlStreamWriter xml(&output);
+  QXmlStreamWriter xml(&file);
 
-  xml.setCodec("UTF-8"); // oddly, qxmlstreamwriter does not write encoding information ...
+//   xml.setCodec("UTF-8"); // oddly, qxmlstreamwriter does not write encoding information ...
   // even though the doc says it should
 
   xml.setAutoFormatting(true); // auto indentation
@@ -210,7 +216,7 @@ void writeFile(const ConfigurationStructure& cstruct, const std::string& path)
 
   XMLWRITE_ELEMENT("modulesConfig");
 
-    for (const auto& pair : cstruct) 
+    for (const auto& pair : cstruct)
     {
       writeModule(pair.second, xml);
     }

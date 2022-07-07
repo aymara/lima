@@ -45,14 +45,14 @@ Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("convert structured-bag-of-
 ));
 
 //****************************************************************************
-// GLOBAL variable -> the command line arguments 
+// GLOBAL variable -> the command line arguments
 struct Param {
   string inputFile;           // input file
   string outputFile;          // output file
   bool help;                  // help mode
   ifstream*  fileIn;          // stored in global for convenience
   ofstream*  fileOut;         // (not a really pretty solution, I guess)
-  BoWXMLReader* reader;
+    BoWXmlReader* reader;
 } param={"",
          "",
          false,
@@ -67,7 +67,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     if (s=="-h" || s=="--help")
       param.help=true;
     else if (s[0]=='-') {
-      cerr << "unrecognized option " <<  s 
+      cerr << "unrecognized option " <<  s
         << endl;
       cerr << *USAGE << endl;
       exit(1);
@@ -117,11 +117,11 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   if (argc<2) {    cerr << *USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << *HELP; exit(1); }
-  
+
   ofstream fileOut(param.outputFile.c_str(), std::ofstream::binary);
   if (! fileOut.good()) {
     cerr << "cannot open output file [" << param.outputFile << "]" << endl;
@@ -129,7 +129,7 @@ int run(int argc,char** argv)
   }
   BoWBinaryWriter writer;
   writer.writeHeader(fileOut,BOWFILE_SDOCUMENT);
-  BoWXMLReader reader(param.inputFile,fileOut);
+  BoWXmlReader reader(param.inputFile, fileOut);
   // @todo
   return EXIT_SUCCESS;
 }

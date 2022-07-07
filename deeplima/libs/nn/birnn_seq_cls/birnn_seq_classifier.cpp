@@ -341,7 +341,6 @@ void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
 
     auto output = output_map[task_name];
 
-    //std::cerr << "output.sizes() == " << output.sizes() << std::endl;
     auto o = output.reshape({ -1, output.size(2) });
     auto this_task_target = target.index({ Slice(), Slice(i, i+1) }).reshape({ -1 });
     //cerr << o.sizes() << endl;

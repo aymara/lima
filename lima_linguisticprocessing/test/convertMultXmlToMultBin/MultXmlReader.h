@@ -1,4 +1,4 @@
-// Copyright (C) 2014 by CEA LIST
+// Copyright (C) 2002-2022 by CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -8,7 +8,6 @@
 
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/Handler/shiftFrom.h"
-#include <QtXml/QXmlSimpleReader>
 
 namespace Lima {
 namespace XmlReader {
@@ -16,6 +15,8 @@ namespace XmlReader {
 class MultXmlReaderPrivate;
 /**
  * @brief Parser for XML representation of Amose analysed multimedia documents
+ * @author     Gael de Chalendar (gael.de-chalendar@cea.fr)
+ * @date       Mon Apr 7 2014
  */
 class MultXmlReader
 {
@@ -26,9 +27,9 @@ public:
 private:
   MultXmlReaderPrivate* m_d;
 
-  MultXmlReader();
-  MultXmlReader(const MultXmlReader&);
-  MultXmlReader& operator=(const MultXmlReader&);
+  MultXmlReader() = delete;
+  MultXmlReader(const MultXmlReader&) = delete;
+  MultXmlReader& operator=(const MultXmlReader&) = delete;
 };
 
 } // end namespace

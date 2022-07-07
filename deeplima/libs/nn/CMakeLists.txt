@@ -4,4 +4,5 @@
 # SPDX-License-Identifier: MIT
 
 add_subdirectory(birnn_seq_cls)
+add_subdirectory(birnn_seq2seq)
 

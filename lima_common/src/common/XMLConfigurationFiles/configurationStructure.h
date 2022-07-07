@@ -7,7 +7,7 @@
   * @file       configurationStructure.h
   * @brief      originally detectConfigurationStructure.h in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -36,7 +36,7 @@ namespace XMLConfigurationFiles {
 
 class LIMA_XMLCONFIGURATIONFILES_EXPORT ConfigurationStructure : public std::map< std::string, ModuleConfigurationStructure >
 {
-public: 
+public:
     ConfigurationStructure();
     ~ConfigurationStructure();
    ConfigurationStructure(const ConfigurationStructure& config);
@@ -51,15 +51,15 @@ public:
     void addAttributeForGroupInModule(const std::string& attKey,const std::string& attValue,const std::string& groupName,const std::string& moduleName);
 
 
-    void addListOfItemsForModuleAndGroup(const std::string &listName, 
-                                         const std::string& moduleName, 
+    void addListOfItemsForModuleAndGroup(const std::string &listName,
+                                         const std::string& moduleName,
                                          const std::string& group);
-    void addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item, 
-                                               const std::string &listName, 
-                                               const std::string& moduleName, 
+    void addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
+                                               const std::string &listName,
+                                               const std::string& moduleName,
                                                const std::string& group);
-    void addMapOfItemsForModuleAndGroup(const std::string &mapName, 
-                                        const std::string& moduleName, 
+    void addMapOfItemsForModuleAndGroup(const std::string &mapName,
+                                        const std::string& moduleName,
                                         const std::string& group);
     void addEntryInMapOfItemsForModuleAndGroup(const std::string& entryKey,
                                                const ItemWithAttributes& entryValue,
@@ -67,18 +67,66 @@ public:
                                                const std::string& moduleName,
                                                const std::string& groupName);
 
-    void changeListToListOfItems(const std::string &listName, 
-                                 const std::string& moduleName, 
+    void changeListToListOfItems(const std::string &listName,
+                                 const std::string& moduleName,
                                  const std::string& group);
-    void changeMapToMapOfItems(const std::string &mapName, 
-                               const std::string& moduleName, 
+    void changeMapToMapOfItems(const std::string &mapName,
+                               const std::string& moduleName,
                                const std::string& group);
 
+    void addParamValuePairForModuleAndGroup(const QString &param,
+                                            const QString &value,
+                                            const QString &module,
+                                            const QString & group);
+    void addGroupNamedForModuleNamed(const QString& groupName,
+                                     const QString& moduleName);
+    void addListNamedForModuleAndGroup(const QString &listName,
+                                       const QString& moduleName,
+                                       const QString& group);
+    void addItemInListNamedForModuleAndGroup(const QString& item,
+                                             const QString &listName,
+                                             const QString& moduleName,
+                                             const QString& group);
+    void addMapNamedForModuleAndGroup(const QString &mapName,
+                                      const QString& moduleName,
+                                      const QString& group);
+    void addEntryInMapNamedForModuleAndGroup(const QString& entryKey,
+                                             const QString& entryValue,
+                                             const QString& mapName,
+                                             const QString& moduleName,
+                                             const QString& groupName);
+    void addAttributeForGroupInModule(const QString& attKey,const QString& attValue,
+                                      const QString& groupName,
+                                      const QString& moduleName);
+
+
+    void addListOfItemsForModuleAndGroup(const QString &listName,
+                                         const QString& moduleName,
+                                         const QString& group);
+    void addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
+                                               const QString &listName,
+                                               const QString& moduleName,
+                                               const QString& group);
+    void addMapOfItemsForModuleAndGroup(const QString &mapName,
+                                        const QString& moduleName,
+                                        const QString& group);
+    void addEntryInMapOfItemsForModuleAndGroup(const QString& entryKey,
+                                               const ItemWithAttributes& entryValue,
+                                               const QString& mapName,
+                                               const QString& moduleName,
+                                               const QString& groupName);
+
+    void changeListToListOfItems(const QString &listName,
+                                 const QString& moduleName,
+                                 const QString& group);
+    void changeMapToMapOfItems(const QString &mapName,
+                               const QString& moduleName,
+                               const QString& group);
 
  private:
-   
-    GroupConfigurationStructure& 
-      getGroupConf(const std::string& moduleName, 
+
+    GroupConfigurationStructure&
+      getGroupConf(const std::string& moduleName,
                    const std::string& group);
 
       friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream &os, const ConfigurationStructure& conf);
@@ -86,7 +134,7 @@ public:
 
 } //closing namespace XMLConfigurationFiles
 } //closing namespace Common
-} //closing namespace Lima 
+} //closing namespace Lima
 
 
 #endif

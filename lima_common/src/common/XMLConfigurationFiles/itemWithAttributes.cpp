@@ -10,7 +10,7 @@
  * @date       Thu Dec  8 2005
  * @version    $Id$
  * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "itemWithAttributes.h"
@@ -23,7 +23,7 @@ namespace XMLConfigurationFiles {
 class ItemWithAttributesPrivate
 {
   friend class ItemWithAttributes;
-  
+
   ItemWithAttributesPrivate();
   ItemWithAttributesPrivate(const std::string& name);
   ItemWithAttributesPrivate(const ItemWithAttributesPrivate& item);
@@ -74,6 +74,11 @@ ItemWithAttributes::ItemWithAttributes(const std::string& name):
 {
 }
 
+ItemWithAttributes::ItemWithAttributes(const QString& name):
+    m_d(new ItemWithAttributesPrivate(name.toStdString()))
+{
+}
+
 ItemWithAttributes::ItemWithAttributes(const ItemWithAttributes& item):
     m_d(new ItemWithAttributesPrivate(*item.m_d))
 {
@@ -101,7 +106,7 @@ const std::map<std::string,std::string>& ItemWithAttributes::getAttributes() con
 const std::string& ItemWithAttributes::
 getAttribute(const std::string& attributeName) const
 {
-  std::map<std::string,std::string>::const_iterator 
+  std::map<std::string,std::string>::const_iterator
     it=m_d->m_attributes.find(attributeName);
   if (it == m_d->m_attributes.end()) {
     throw NoSuchAttribute(m_d->m_name+"["+attributeName+"]");
@@ -112,16 +117,26 @@ getAttribute(const std::string& attributeName) const
 bool ItemWithAttributes::
 hasAttribute(const std::string& attributeName) const
 {
-  std::map<std::string,std::string>::const_iterator 
+  std::map<std::string,std::string>::const_iterator
     it=m_d->m_attributes.find(attributeName);
   return !(it == m_d->m_attributes.end());
 }
 
 void ItemWithAttributes::
 addAttribute(const std::string& attributeName,
-             const std::string& value) 
+             const std::string& value)
 {
   m_d->m_attributes.insert(std::make_pair(attributeName,value));
+}
+
+bool ItemWithAttributes::hasAttribute(const QString& attributeName) const
+{
+  return hasAttribute(attributeName.toStdString());
+}
+
+void ItemWithAttributes::addAttribute(const QString& attributeName, const QString& value)
+{
+  addAttribute(attributeName.toStdString(), value.toStdString());
 }
 
 

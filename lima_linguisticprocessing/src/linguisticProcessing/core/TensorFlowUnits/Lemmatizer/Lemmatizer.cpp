@@ -66,15 +66,6 @@ namespace Lemmatizer
 
 SimpleFactory<MediaProcessUnit, TensorFlowLemmatizer> tensorflowmorphosyntaxFactory(TENSORFLOWLEMMATIZER_CLASSID);
 
-// #define LOG_ERROR_AND_THROW(msg, exc) { \
-//                                         TENSORFLOWLEMMATIZERLOGINIT; \
-//                                         QString errorString; \
-//                                         QTextStream qts(&errorString); \
-//                                         qts << __FILE__ << ":" << __LINE__ << ": " << msg ; \
-//                                         LERROR << errorString; \
-//                                         throw exc( errorString ); \
-//                                       }
-
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
   #define LOG_MESSAGE(stream, msg) { stream << msg; }
   #define LOG_MESSAGE_WITH_PROLOG(stream, msg) TENSORFLOWLEMMATIZERLOGINIT; LOG_MESSAGE(stream, msg);
@@ -1621,7 +1612,6 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
       << file_name << ".");
 
   QTextStream out(&file);
-  out.setCodec("UTF-8");
 
   vector<LimaString> cache_keys;
   cache_keys.reserve(m_cache.size());
@@ -1635,7 +1625,7 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
   {
     LimaString v;
     m_cache.get(k, v);
-    out << k << "\t" << v << endl;
+    out << k << "\t" << v << QTENDL;
   }
 
   file.close();

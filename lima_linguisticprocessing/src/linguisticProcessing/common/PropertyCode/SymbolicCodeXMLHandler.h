@@ -1,4 +1,4 @@
-// Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -35,9 +35,9 @@ public:
   //  Implementations of the SAX DocumentHandler interface
   // -----------------------------------------------------------------------
   bool endElement(const QString & namespaceURI, const QString & name, const QString & qName) override;
-  
+
   bool startElement(const QString & namespaceURI, const QString & name, const QString & qName, const QXmlAttributes & attributes) override;
-  
+
 private:
 
   std::string m_currentCode;

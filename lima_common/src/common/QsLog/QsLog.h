@@ -60,7 +60,7 @@ class LIMA_COMMONQSLOG_EXPORT Logger
 {
   friend class LoggerImpl;
 public:
-   static Logger& instance(const QString& zone="")
+   static Logger& instance(const QString& zone = QLatin1String(""))
    {
       static QMap<QString,Logger*> staticLog;
       QMap<QString,Logger*>::iterator it = staticLog.find(zone);
@@ -122,7 +122,7 @@ public:
 
    Logger& operator=(const Logger&);
 private:
-   Logger(const QString& aZone = "");
+   Logger(const QString& aZone = QLatin1String(""));
    Logger(const Logger&);
    ~Logger();
 

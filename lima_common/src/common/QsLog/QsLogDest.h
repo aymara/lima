@@ -91,7 +91,7 @@ public:
 class LIMA_COMMONQSLOG_EXPORT DebugOutputDestination : public Destination
 {
 public:
-  virtual void write(const QString& message, const QString& zone = "") override;
+  virtual void write(const QString& message, const QString& zone = QLatin1String("")) override;
 };
 
 

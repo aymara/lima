@@ -48,8 +48,8 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
+#include <QRegularExpression>
 #include <QtCore/QString>
-#include <QtCore/QStringRef>
 #include <QtCore/QTimer>
 #include <QtCore/QTextStream>
 
@@ -548,18 +548,20 @@ int run(int argc, char** argv)
       MetaDataHandler* metaDataHandler=new MetaDataHandler();
       handlers["metaDataHandler"]=metaDataHandler;
 
-      QRegExp sep("\n\n\n*");
+      QRegularExpression sep("\n\n\n*");
       //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
       //for (const auto& par: paragraphs) {
       //get positions to set offset
       int prevpos = 0;
-      int pos = 0;
       int numpar = 0;
 
       // cheap trick to analyze the last paragraph without calling the analysis after the while loop
       contentText+=QString("\n\n");
 
-      while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
+      qsizetype pos = 0;
+      QRegularExpressionMatch match;
+      while ((pos = contentText.indexOf(sep, pos, &match)) != -1)
+      {
         numpar++;
         QString paragraph=contentText.mid(prevpos,pos-prevpos);
         //std::cerr << "prevpos=" << prevpos << ", pos=" << pos << ", paragraph=" << paragraph.toStdString() << std::endl;
@@ -592,7 +594,7 @@ int run(int argc, char** argv)
           }
 #endif
         }
-        pos += sep.matchedLength();
+        pos += match.capturedLength();
         prevpos=pos;
         // update metadata
         const std::map<std::string,std::string>& newMetaData=metaDataHandler->getMetaData();

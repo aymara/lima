@@ -76,7 +76,7 @@ install(TARGETS limasimple-analyze DESTINATION bin
 #     lima-common
 #     lima-linguisticprocessing
 #   ${optionalLibs}
-#   ${Qt5_LIBRARIES}
+#   ${Qt_LIBRARIES}
 #   ${Boost_LIBRARIES}
 # )
 #
@@ -125,7 +125,7 @@ target_link_libraries(analyzeXml
   lima-common-data
   lima-common-misc
   lima-common-datahandler
-  lima-lp-easyxmldumper
+  #lima-lp-easyxmldumper
   lima-lp-linguisticdata
   lima-lp-linguisticprocessors
   lima-lp-linguisticresources
@@ -188,7 +188,7 @@ target_link_libraries(readMultFile
   lima-lp-propertycode
   lima-lp-linguisticdata
   lima-lp-misc
-  lima-lp-easyxmldumper
+  #lima-lp-easyxmldumper
   lima-lp-analysisdumpers
   lima-lp-applyrecognizer
   lima-lp-automaton

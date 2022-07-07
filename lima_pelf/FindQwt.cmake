@@ -14,12 +14,18 @@
 #  QWT_ROOT_DIR - root dir (ex. /usr/local)
 
 # Copyright 2010-2013, Julien Schueller
-# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+# All rights reserved.
 #
-# SPDX-License-Identifier: MIT
-
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
 # The views and conclusions contained in the software and documentation are those
-# of the authors and should not be interpreted as representing official policies, 
+# of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project.
 #=============================================================================
 
@@ -27,7 +33,7 @@
 find_path ( QWT_INCLUDE_DIR
   NAMES qwt_plot.h
   HINTS ${QT_INCLUDE_DIR}
-  PATH_SUFFIXES qwt qwt-qt3 qwt-qt4 qwt-qt5
+  PATH_SUFFIXES qwt qwt-qt3 qwt-qt4 qwt-qt5 qwt-qt6
 )
 
 set ( QWT_INCLUDE_DIRS ${QWT_INCLUDE_DIR} )
@@ -61,7 +67,7 @@ endif ()
 
 
 find_library ( QWT_LIBRARY
-  NAMES qwt qwt-qt3 qwt-qt4 qwt-qt5
+  NAMES qwt qwt-qt3 qwt-qt4 qwt-qt5 qwt-qt6
   HINTS ${QT_LIBRARY_DIR}
 )
 
@@ -87,7 +93,7 @@ endif ()
 
 
 mark_as_advanced (
-  QWT_LIBRARY 
+  QWT_LIBRARY
   QWT_LIBRARIES
   QWT_INCLUDE_DIR
   QWT_INCLUDE_DIRS

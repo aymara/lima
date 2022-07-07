@@ -1,4 +1,4 @@
-// Copyright 2002-2020 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -526,16 +526,18 @@ void BoWBinaryWriter::writeHeader(std::ostream& file, BoWFileType type) const
 #endif
 }
 
-void BoWBinaryWriter::writeBoWText(std::ostream& file,
-             const BoWText& bowText) const
+void BoWBinaryWriter::writeBoWText(std::ostream& file, const BoWText& bowText) const
 {
 #ifdef DEBUG_LP
     BOWLOGINIT;
+    LDEBUG << "BoWBinaryWriter::writeBoWText";
+//     Q_ASSERT(!bowText.lang.empty());
 #endif
     Misc::writeCodedInt(file,bowText.size());
     Misc::writeString(file,bowText.lang);
 #ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang on file"<<&file<<" at: " << file.tellp();
+    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang" << bowText.lang
+            << "on file"<<&file<<" at: " << file.tellp();
 #endif
     uint64_t tokenCounter(0);
     // build reverse map to store in file numbers instead of pointers

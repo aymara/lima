@@ -21,6 +21,48 @@ struct params_linear_t : public param_base_t
   V bias;
 };
 
+template<class M, class V, class T>
+class Op_Linear : public Op_Base
+{
+protected:
+  struct workbench_t : public Op_Base::workbench_t
+  {
+    workbench_t()
+    {
+    }
+    virtual ~workbench_t() {}
+  };
+
+public:
+  typedef V Vector;
+  typedef params_linear_t<M, V> params_t;
+
+  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params, bool precomputed_input=false) const
+  {
+    assert(input_size > 0);
+    assert(nullptr != params);
+    const params_linear_t<M, V>& layer = *static_cast<const params_t*>(params);
+
+    return new workbench_t();
+  }
+
+  virtual size_t execute(Op_Base::workbench_t* pwb,
+                         const V& input,
+                         const param_base_t* params,
+                         Vector& output)
+  {
+    assert(nullptr != pwb);
+    assert(nullptr != params);
+    const params_linear_t<M, V>& layer = *static_cast<const params_t*>(params);
+
+    workbench_t* wb = static_cast<workbench_t*>(pwb);
+
+    output = (layer.weight * input).colwise() + layer.bias;
+
+    return 0;
+  }
+};
+
 } // namespace eigen_impl
 } // namespace deeplima
 

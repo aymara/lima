@@ -176,6 +176,30 @@ public:
     return _feats;
   }
 
+  inline bool get_binary_feature(const std::string& feat_name) const
+  {
+    const auto it = _feats.find(feat_name);
+    if (_feats.end() == it)
+    {
+      return false;
+    }
+    if (it->second.end() != it->second.find("Yes") || it->second.end() != it->second.find("yes"))
+    {
+      return true;
+    }
+    return false;
+  }
+
+  inline bool is_foreign() const
+  {
+    return get_binary_feature("Foreign");
+  }
+
+  inline bool is_typo() const
+  {
+    return get_binary_feature("Typo");
+  }
+
 protected:
   virtual void init(const Line& line)
   {

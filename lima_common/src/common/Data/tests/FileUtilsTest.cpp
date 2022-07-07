@@ -32,7 +32,7 @@ void FileUtilsTest::FileUtilsTest0()
     stream.seek(0);
     QVERIFY2( countLines(file) == 1, "file is not empty but has no \\n: 1 line" );
     stream.seek(file.size());
-    stream << endl;
+    stream << QTENDL;
     stream.flush();
     stream.seek(0);
     QVERIFY2( countLines(file) == 1, "file has now one \\n and nothing after it: still one line" );
@@ -57,7 +57,7 @@ void FileUtilsTest::FileUtilsTest1()
   QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
   QTextStream stream(&file);
   // write two lines
-  stream << "auie" << endl << QString::fromUtf8("bépo") << endl << QString::fromUtf8("ctsr") << endl;
+  stream << "auie" << QTENDL << QString::fromUtf8("bépo") << QTENDL << QString::fromUtf8("ctsr") << QTENDL;
   stream.flush();
   stream.seek(0);
   QVERIFY2( countLines(file) == 3, "file has now three \\n and no chars on fourth line: three lines" );
