@@ -36,7 +36,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 
-#include "RnnTagger.h"
+#include "RnnTokensAnalyzer.h"
 #include "deeplima/token_sequence_analyzer.h"
 #include "deeplima/token_type.h"
 #include "deeplima/dumper_conllu.h"
@@ -54,57 +54,58 @@ using namespace std;
 using namespace deeplima;
 
 
-namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
-    #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
-    #define LOG_MESSAGE(stream, msg) stream << msg;
-    #define LOG_MESSAGE_WITH_PROLOG(stream, msg) PTLOGINIT; LOG_MESSAGE(stream, msg);
-    #else
-        #define LOG_MESSAGE(stream, msg) ;
+namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
+#if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
+#define LOG_MESSAGE(stream, msg) stream << msg;
+#define LOG_MESSAGE_WITH_PROLOG(stream, msg) LEMMALOGINIT; LOG_MESSAGE(stream, msg);
+#else
+    #define LOG_MESSAGE(stream, msg) ;
     #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
-    #endif
+#endif
 
-    static SimpleFactory<MediaProcessUnit, RnnTagger> rnntaggerFactory(RNNTAGGER_CLASSID); // clazy:exclude=non-pod-global-static
+    static SimpleFactory<MediaProcessUnit, RnnTokensAnalyzer> RnnTokensAnalyzerFactory(RNNTOKENSANALYZER_CLASSID); // clazy:exclude=non-pod-global-static
 
-    CONFIGURATIONHELPER_LOGGING_INIT(PTLOGINIT);
+    CONFIGURATIONHELPER_LOGGING_INIT(LEMMALOGINIT);
 
-    class RnnTaggerPrivate: public ConfigurationHelper {
+    class RnnTokensAnalyzerPrivate: public ConfigurationHelper {
     public:
-        RnnTaggerPrivate();
-        ~RnnTaggerPrivate() ;
+        RnnTokensAnalyzerPrivate();
+        ~RnnTokensAnalyzerPrivate() ;
         void init(GroupConfigurationStructure& unitConfiguration);
-        void tagger(vector<segmentation::token_pos>& buffer);
-        void insertTags(TokenSequenceAnalyzer<>::TokenIterator &ti);
+        void analyzer(vector<segmentation::token_pos>& buffer);
+        void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
         dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
 
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
         QString m_data;
-        TokenSequenceAnalyzer<>* m_tag;
+        TokenSequenceAnalyzer<>* m_tokensAnalyzer;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
-        std::vector<string> m_tags;
+        std::vector<std::map<std::string,std::string>> m_tags;
+        std::vector<QString> m_lemmas;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         bool m_loaded;
     };
 
-    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tag()
+    RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false)
     {
 
     }
 
-    RnnTaggerPrivate::~RnnTaggerPrivate() = default;
+    RnnTokensAnalyzerPrivate::~RnnTokensAnalyzerPrivate() = default;
 
 
-    RnnTagger::RnnTagger():m_d(new RnnTaggerPrivate()) {
+    RnnTokensAnalyzer::RnnTokensAnalyzer(): m_d(new RnnTokensAnalyzerPrivate()) {
 
     }
 
-    RnnTagger::~RnnTagger() = default;
+    RnnTokensAnalyzer::~RnnTokensAnalyzer() = default;
 
-    void RnnTagger::init(GroupConfigurationStructure &unitConfiguration, Manager *manager)
+    void RnnTokensAnalyzer::init(GroupConfigurationStructure &unitConfiguration, Manager *manager)
     {
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTagger::init");
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokensAnalyzer::init");
 
         m_d->m_language = manager->getInitializationParameters().media;
         m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
@@ -114,7 +115,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
     }
 
     Lima::LimaStatusCode
-    RnnTagger::process(Lima::AnalysisContent &analysis) const {
+    RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis) const {
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
         auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
         auto srcgraph = anagraph->getGraph();
@@ -194,8 +195,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
                 token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
             }
         }
-        m_d->tagger(buffer);
-        LOG_MESSAGE(LDEBUG, "tag size: " << m_d->m_tags.size());
+        m_d->analyzer(buffer);
         std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
         LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
         /*
@@ -209,74 +209,96 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
             annotationData->addMatching("PosGraph", newVx, "annot", agv);
             annotationData->addMatching("AnalysisGraph", anaVertex, "PosGraph", newVx);
             annotationData->annotate(agv, QString::fromUtf8("PosGraph"), newVx);
-            auto morphoData = get(vertex_data,*srcgraph,anaVertex);
+
             auto srcToken = get(vertex_token,*srcgraph,anaVertex);
 
-            if (morphoData!=nullptr)
-            {
-                LOG_MESSAGE(LDEBUG, "tag: "<< m_d->m_tags[anaVerticesIndex]);
-                auto posData = new MorphoSyntacticData();
-                LOG_MESSAGE(LDEBUG, "coded value: " << microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
-                CheckDifferentPropertyPredicate differentMicro(
-                        m_d->m_microAccessor,
-                        microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]));
-                LinguisticElement le = LinguisticElement();
-                le.properties = microManager.getPropertyValue(m_d->m_tags[anaVerticesIndex]);
-                posData->push_back(le);
 
-                LOG_MESSAGE(LDEBUG, "      Adding tag '" << m_d->m_tags[anaVerticesIndex] << "'");
-                put(vertex_data,*resultgraph,newVx,posData);
-                put(vertex_token,*resultgraph,newVx,srcToken);
+            auto posData = new MorphoSyntacticData();
+
+            LinguisticElement lElement = LinguisticElement();
+            for(const auto& name: m_d->m_tokensAnalyzer->get_class_names()){
+                PropertyManager propertyManager = microManager;
+                if(name=="upos"){
+                    propertyManager = propertyCodeManager.getPropertyManager("MICRO");
+                }
+                else if(name=="xpos")
+                {
+                    propertyManager = propertyCodeManager.getPropertyManager("MACRO");
+                }
+                else{
+                    propertyManager = propertyCodeManager.getPropertyManager(name);
+                }
+                auto value = propertyManager.getPropertyValue(m_d->m_tags[anaVerticesIndex][name]);
+                if(value.toBool()){
+                    LOG_MESSAGE(LDEBUG, "value: " << value);
+                    propertyManager.getPropertyAccessor().writeValue(value,lElement.properties);
+                }
             }
+            FsaStringsPool* sp = &MediaticData::changeable().stringsPool(m_d->m_language);
+            lElement.lemma = (*sp)[m_d->m_lemmas[anaVerticesIndex]];
+            posData->push_back(lElement);
+
+            put(vertex_data,*resultgraph,newVx,posData);
+            put(vertex_token,*resultgraph,newVx,srcToken);
+
+
             boost::add_edge(previousPosVertex, newVx, *resultgraph);
 
             previousPosVertex = newVx;
             anaVerticesIndex++;
         }
         boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
-        LOG_MESSAGE(LDEBUG, "RnnPosTagger postagging done.");
+        LOG_MESSAGE(LDEBUG, "RnnPosLemmatizer postagging done.");
         return SUCCESS_ID;
     }
 
-    void RnnTaggerPrivate::init(GroupConfigurationStructure& unitConfiguration)
+    void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfiguration)
     {
         m_data = QString(getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries").c_str());
-        QString model_prefix = getStringParameter(unitConfiguration, "model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
-
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTaggerPrivate::init" << model_prefix);
+        QString tagger_model_prefix = getStringParameter(unitConfiguration, "tagger_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
+        QString lemmatizer_model_prefix = getStringParameter(unitConfiguration, "lemmatizer_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokensAnalyzerPrivate::init tagger model: " << tagger_model_prefix << " lemmatizer model: " << lemmatizer_model_prefix);
 
         QString lang_str = MediaticData::single().media(m_language).c_str();
         QString resources_path = MediaticData::single().getResourcesPath().c_str();
-        QString model_name = model_prefix;
+        QString tagger_model_name = tagger_model_prefix;
+        QString lemmatizer_model_name = lemmatizer_model_prefix;
         string udlang;
         MediaticData::single().getOptionValue("udlang", udlang);
 
         if (!fix_lang_codes(lang_str, udlang))
         {
-            LIMA_EXCEPTION_SELECT_LOGINIT(PTLOGINIT,
-                                          "RnnTaggerPrivate::init: Can't parse language id " << udlang.c_str(),
+            LIMA_EXCEPTION_SELECT_LOGINIT(LEMMALOGINIT,
+                                          "RnnTokensAnalyzerPrivate::init: Can't parse language id " << udlang.c_str(),
                                           Lima::InvalidConfiguration);
         }
 
-        model_name.replace(QString("$udlang"), QString(udlang.c_str()));
+        tagger_model_name.replace(QString("$udlang"), QString(udlang.c_str()));
+        lemmatizer_model_name.replace(QString("$udlang"), QString(udlang.c_str()));
 
-        auto model_file_name = findFileInPaths(resources_path,
-                                               QString::fromUtf8("/RnnTagger/%1/%2.pt")
-                                                       .arg(lang_str, model_name));
-        if (model_file_name.isEmpty())
+        auto tagger_model_file_name = findFileInPaths(resources_path,
+                                                      QString::fromUtf8("/RnnTagger/%1/%2.pt")
+                                                       .arg(lang_str, tagger_model_name));
+        auto lemmatizer_model_file_name = findFileInPaths(resources_path,
+                                                      QString::fromUtf8("/RnnLemmatizer/%1/%2.pt")
+                                                              .arg(lang_str, lemmatizer_model_name));
+        if (tagger_model_file_name.isEmpty())
         {
-            throw InvalidConfiguration("RnnTaggerPrivate::init: tagger model file not found.");
+            throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
+        }
+        if (lemmatizer_model_file_name.isEmpty())
+        {
+            //throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: lemmatizer model file not found.");
+            lemmatizer_model_file_name = "";
         }
 
-        m_load_fn = [this, model_file_name]()
+        m_load_fn = [this, tagger_model_file_name, lemmatizer_model_file_name]()
         {
             if (m_loaded)
             {
                 return;
             }
-            m_tag = new TokenSequenceAnalyzer<>(model_file_name.toStdString(),"",m_pResolver,1024,8);
-
-
+            m_tokensAnalyzer = new TokenSequenceAnalyzer<>(tagger_model_file_name.toStdString(),lemmatizer_model_file_name.toStdString(),m_pResolver,1024,8);
             m_loaded = true;
         };
 
@@ -284,34 +306,41 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         {
             m_load_fn();
         }
-        LOG_MESSAGE(LDEBUG, "classes name: " << m_tag->get_class_names());
-        LOG_MESSAGE(LDEBUG, "classes: " << m_tag->get_classes());
-        for (size_t i = 0; i < m_tag->get_classes().size(); ++i)
+        for (size_t i = 0; i < m_tokensAnalyzer->get_classes().size(); ++i)
         {
-            m_dumper.set_classes(i, m_tag->get_class_names()[i], m_tag->get_classes()[i]);
+            m_dumper.set_classes(i, m_tokensAnalyzer->get_class_names()[i], m_tokensAnalyzer->get_classes()[i]);
         }
+
     }
 
-    void RnnTaggerPrivate::tagger(vector<segmentation::token_pos> &buffer) {
-        m_tag->register_handler([this](const StringIndex& stridx,
-                                               const token_buffer_t& tokens,
-                                               const std::vector<StringIndex::idx_t>& lemmata,
-                                               const TokenSequenceAnalyzer<>::OutputMatrix& classes,
-                                               size_t begin,
-                                               size_t end){
+    void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer) {
+        m_tokensAnalyzer->register_handler([this](const StringIndex& stridx,
+                                                  const token_buffer_t& tokens,
+                                                  const std::vector<StringIndex::idx_t>& lemmata,
+                                                  const TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                                  size_t begin,
+                                                  size_t end){
             TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
-            insertTags(ti);
+            insertTokenInfo(ti);
         });
         LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
-        (*m_tag)(buffer, buffer.size());
-        m_tag->finalize();
+        (*m_tokensAnalyzer)(buffer, buffer.size());
+        m_tokensAnalyzer->finalize();
     }
 
-    void RnnTaggerPrivate::insertTags(TokenSequenceAnalyzer<>::TokenIterator &ti) {
+    void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
+        auto class_names = m_tokensAnalyzer->get_class_names();
+
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "classes: " << class_names);
         while(!ti.end()){
-            LOG_MESSAGE_WITH_PROLOG(LDEBUG, "index: " << ti.token_class(0));
-            m_tags.push_back(classes[0][ti.token_class(0)]);
+            auto tag = std::map<std::string,std::string>();
+            LOG_MESSAGE(LDEBUG, ti.lemma());
+            for(uint cat=0;cat < class_names.size();cat++){
+                tag.insert({class_names[cat],classes[cat][ti.token_class(cat)]});
+            }
+            m_tags.push_back(tag);
+            m_lemmas.emplace_back(ti.lemma());
             ti.next();
         }
     }
