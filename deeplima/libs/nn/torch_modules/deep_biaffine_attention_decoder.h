@@ -44,52 +44,7 @@ public:
     std::cerr << U1.dtype() << std::endl;
   }
 
-  torch::Tensor forward(torch::Tensor input)
-  {
-    int64_t batch_size = input.size(1);
-
-    //std::cerr << "input.sizes() == " << input.sizes() << std::endl;
-    torch::Tensor input_t = input.transpose(0, 1); // to [ batch x len x input_dim ]
-    //std::cerr << "input_t.sizes() == " << input_t.sizes() << std::endl;
-
-#ifdef WITH_ROOTS
-    torch::Tensor roots2 = torch::tile(root2, { batch_size, 1, 1 });
-    torch::Tensor arc_head = torch::cat({ roots2, elu(mlp_head(input_t)) }, 1);
-#else
-    torch::Tensor arc_head = elu(mlp_head(input_t));
-#endif
-    // arc_head = [ batch x len x hidden_dim ]
-    //std::cerr << "arc_head.sizes() == " << arc_head.sizes() << std::endl;
-
-#ifdef WITH_ROOTS
-    torch::Tensor roots = torch::tile(root, { batch_size, 1, 1 });
-    torch::Tensor arc_dep = torch::cat({ roots, elu(mlp_dep(input_t)) }, 1);
-#else
-    torch::Tensor arc_dep = elu(mlp_dep(input_t));
-#endif
-
-    //std::cerr << "arc_dep.sizes() == " << arc_dep.sizes() << std::endl;
-    //std::cerr << "U1.sizes() == " << U1.sizes() << std::endl;
-    torch::Tensor W = torch::matmul(arc_head, U1);
-    //std::cerr << "W.sizes() == " << W.sizes() << std::endl;
-    //std::cerr << "u2.sizes() == " << u2.sizes() << std::endl;
-    torch::Tensor b = torch::matmul(arc_head, torch::tile(u2, { 1, arc_head.size(1) }));
-
-    //std::cerr << "b.sizes() == " << b.sizes() << std::endl;
-    torch::Tensor Wx = torch::matmul(W, arc_dep.transpose(1, 2));
-    //std::cerr << "Wx.sizes() == " << Wx.sizes() << std::endl;
-    torch::Tensor r = torch::add(Wx, b);
-    //std::cerr << "r.sizes() == " << r.sizes() << std::endl;
-
-#ifdef WITH_ROOTS
-    r = r.index({ torch::indexing::Slice(),
-                  torch::indexing::Slice(1, r.size(1)),
-                  torch::indexing::Slice()});
-    std::cerr << "r.sizes() == " << r.sizes() << std::endl;
-#endif
-
-    return r;
-  }
+  torch::Tensor forward(torch::Tensor input);
 
   // see https://nlp.stanford.edu/pubs/dozat2017deep.pdf , page 3
   int64_t m_hidden_arc_dim;
