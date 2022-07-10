@@ -1,23 +1,9 @@
 #!/usr/bin/perl -W
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-#
-# my OUT files: AH
-#use utf8;
+# SPDX-License-Identifier: MIT
 
 my $pwd = shift @ARGV;
 
@@ -183,8 +169,8 @@ sub traitementFichier
       # print FILEOUT (length($vdir[$i]),";",$vdir[$i],";",$j,";",$vinv[$i],";",substr($vdir[$i],$j,1),";\n");
       $leminv=$leminv . substr($lem,$j,1);
     }
-    # transcoder la vg pour macrocatÈgorie et prendre les autres informations
-    # traitement des noms ‡ ne pas flÈchir
+    # transcoder la vg pour macrocat√©gorie et prendre les autres informations
+    # traitement des noms √† ne pas fl√©chir
     #if ($lem=~/-/) {print FILEOUT ($lem,";",$vg,";;;",$lem,";",$norm,";\n");}
     #elsif ($lem=~/[A-Z].*[A-Z]/) {print FILEOUT ($lem,";",$vg,";;;",$lem,";",$norm,";\n");}
     #if ($lem=~/[A-Z]\.*[A-Z]/) {print FILEOUT ($lem,";",$vg,";;;",$lem,";",$norm,";\n");}
@@ -193,18 +179,18 @@ sub traitementFichier
     
     # traitement des verbes 
     # =====================
-    # prÈvoir les verbes pronom : $vg eq "verbe pronominal" || $vg eq "verbe-pronom" || $vg eq "verbe pronominal-pronom"
+    # pr√©voir les verbes pronom : $vg eq "verbe pronominal" || $vg eq "verbe-pronom" || $vg eq "verbe pronominal-pronom"
     
-    # !!! vÈrifier bonne catÈgorie en entrÈe
+    # !!! v√©rifier bonne cat√©gorie en entr√©e
     if ($vg eq "verbe transitif" || 
         $vg eq "verbe intransitif" || 
-        $vg =~/^verbe auxiliaire|^verbe de copule|^verbe modal|^verbe de prÈdication/ || 
-        $vg eq 'verbe d\'Ètat' || 
+        $vg =~/^verbe auxiliaire|^verbe de copule|^verbe modal|^verbe de pr√©dication/ || 
+        $vg eq 'verbe d\'√©tat' || 
         $vg eq "verbe impersonnel" || 
         $vg eq "verbe transitif indirect" || 
         $vg eq "verbe") 
     {
-      # recherche sÈquentielle dans fin; on compare fin au dÈbut du mot miroir du malongueur de fin penser au $
+      # recherche s√©quentielle dans fin; on compare fin au d√©but du mot miroir du malongueur de fin penser au $
       #print FILEOUT ("*",$lem,";",$leminv,";",$nbmodel,"\n");
       
       # +AH: garder les formes avec '+' pour former un infinitif avec "zu" interne: eg. weiter+kommen, inf. weiterzukommen
@@ -217,7 +203,7 @@ sub traitementFichier
           print FILEOUT ("$infzu;$vg;infinitif avec zu;;$lemverbe;$norm;$domaine;\n");
       }
   
-      # + AH: ajouter les formes "verbe dans composition": ‡ partir de l'infinitif des verbes PLEINS
+      # + AH: ajouter les formes "verbe dans composition": √† partir de l'infinitif des verbes PLEINS
       
       if ($vg eq "verbe") 
       {
@@ -240,7 +226,7 @@ sub traitementFichier
         print FILETRACE "Unable to handle $filein line $fileInLineNum : $fileInLine\n";
         next; 
       }
-      # dÈtermination de la partie du lem ‡ conserver
+      # d√©termination de la partie du lem √† conserver
       $llem=length($lem)-1;
       $lverbe=length($verbe)-1;
       while (substr($lem,$llem) eq substr($verbe,$lverbe) && $llem >= 0 && $lverbe >=0) 
@@ -269,19 +255,19 @@ sub traitementFichier
           # 
           if (length($forme[$j]) > 0)
           {
-            #on cherche la partie ‡ conserver du lemme en comparant la longueur mot modËle ‡ celui de fin
-            #la diffÈrence est la longueur ‡ garder.
-            #pour chaque ligne ou le mot modËle est prÈsent on construit la forme en prenant la partie fixe et en ajoutant la forme modËle amputÈe de sa 
+            #on cherche la partie √† conserver du lemme en comparant la longueur mot mod√®le √† celui de fin
+            #la diff√©rence est la longueur √† garder.
+            #pour chaque ligne ou le mot mod√®le est pr√©sent on construit la forme en prenant la partie fixe et en ajoutant la forme mod√®le amput√©e de sa 
             #forme fixe
-            #Ècrire dans le fichier de sortie la forme, la vg , les propriÈtÈs, le lemme  
+            #√©crire dans le fichier de sortie la forme, la vg , les propri√©t√©s, le lemme  
             $forme1=$forme[$j];
-            # traitement des variantes sÈparÈes par "/" ( attention une seule variante possible)
+            # traitement des variantes s√©par√©es par "/" ( attention une seule variante possible)
   
             if ($forme[$j]=~/\//) 
             {
                 @table=split("\/",$forme[$j]); 
     
-                if ($temps[$j] eq "participe passÈ" && $forme1=~/^ge/ ) 
+                if ($temps[$j] eq "participe pass√©" && $forme1=~/^ge/ ) 
                 { 
                   if ( $partnonsep == 1) {$forme_sortie=$particule . $racine . substr($forme1,$lverbe+3);}
                   else {$forme_sortie=$particule . "ge" . $racine . substr($table[0],$lverbe+3);}
@@ -292,7 +278,7 @@ sub traitementFichier
                 $forme1=$table[1];
             }
           
-            if ($temps[$j] eq "participe passÈ" && $forme1=~/^ge/) 
+            if ($temps[$j] eq "participe pass√©" && $forme1=~/^ge/) 
             {
                 if ( $partnonsep == 1) {$forme_sortie=$particule . $racine . substr($forme1,$lverbe+3);}
                 else { $forme_sortie=$particule . "ge" . $racine . substr($forme1,$lverbe+3);}
@@ -312,11 +298,11 @@ sub traitementFichier
     # traitement des adjectifs
     # =====================
     elsif ($vg eq "adjectif qualificatif" || 
-            $vg eq "adjectif numÈral ordinal" || 
-            $vg eq "adjectif participe prÈsent" || 
-            $vg eq "adjectif participe passÈ") 
+            $vg eq "adjectif num√©ral ordinal" || 
+            $vg eq "adjectif participe pr√©sent" || 
+            $vg eq "adjectif participe pass√©") 
     {
-      # recherche sÈquentielle dans fin; on compare fin au dÈbut du mot miroir du malongueur de fin penser au $
+      # recherche s√©quentielle dans fin; on compare fin au d√©but du mot miroir du malongueur de fin penser au $
       #print FILEOUT ("*",$lem,";",$vg,";",$leminv,";",$nbmodel,"\n");
       for ($j=0; $j<$nbmodeladj; $j++) 
       {
@@ -343,13 +329,13 @@ sub traitementFichier
         #print FILETRACE ($lfin,";",$racine,";",$lracine_modele,"\n");
         if (length($formea[$j]) > 0)
         {
-          #on cherche la partie ‡ conserver du lemme en comparant la longueur mot modËle ‡ celui de fin
-          #la diffÈrence est la longueur ‡ garder.
-          #pour chaque ligne ou le mot modËle est prÈsent on construit la forme en prenant la partie fixe et en ajoutant la forme modËle amputÈe de sa 
+          #on cherche la partie √† conserver du lemme en comparant la longueur mot mod√®le √† celui de fin
+          #la diff√©rence est la longueur √† garder.
+          #pour chaque ligne ou le mot mod√®le est pr√©sent on construit la forme en prenant la partie fixe et en ajoutant la forme mod√®le amput√©e de sa 
           #forme fixe
-          #Ècrire dans le fichier de sortie la forme, la vg , les propriÈtÈs, le lemme  
+          #√©crire dans le fichier de sortie la forme, la vg , les propri√©t√©s, le lemme  
           $forme1=$formea[$j];
-          # traitement des variantes sÈparÈes par "/" ( attention une seule variante possible)
+          # traitement des variantes s√©par√©es par "/" ( attention une seule variante possible)
           if ($formea[$j]=~/\//) 
           {
             @table=split("\/",$formea[$j]);
@@ -370,16 +356,16 @@ sub traitementFichier
     # ======================================
     elsif ($vg =~/^nom masculin/ || 
           $vg =~/^nom neutre|^nom commun.*unite de mesure/ || 
-          $vg =~/^nom f[Èe]minin/ || 
+          $vg =~/^nom f[√©e]minin/ || 
           $vg eq "annp masculin" || 
-          $vg eq "annp fÈminin" || 
-          $vg eq "unitÈ de mesure masculin" || 
-          $vg eq "unitÈ de mesure fÈminin" || 
+          $vg eq "annp f√©minin" || 
+          $vg eq "unit√© de mesure masculin" || 
+          $vg eq "unit√© de mesure f√©minin" || 
           $vg eq "nom" || 
           $vg eq "nom adjectif") 
     { 
       #print FILETRACE "<$lem;$vg>\n";
-      # recherche sÈquentielle dans fin; on compare fin au dÈbut du mot miroir du malongueur de fin penser au $
+      # recherche s√©quentielle dans fin; on compare fin au d√©but du mot miroir du malongueur de fin penser au $
       #print FILEOUT ("*",$lem,";",$leminv,";",$nbmodel,"\n");
       # traitement des mots irreguliers
       
@@ -394,7 +380,7 @@ sub traitementFichier
         }
         #print FILEOUT ($j,";",$vmodeln[$j],"\n");
       }
-      # remplacer l'Ètoile par un vrai mot.
+      # remplacer l'√©toile par un vrai mot.
       elsif ($code eq "adj") 
       {
         $code="Abgebrannt"; $j=0;
@@ -428,7 +414,7 @@ sub traitementFichier
         $j=$directn{$vn[$j]};
         #print FILETRACE ($commun,";",$adjectif,";",$j,";\n");
       }
-      #dÈtermination de la partie commune
+      #d√©termination de la partie commune
       $llem=length($lem); $lmod=length($commun);
       while ($llem >0 && $lmod > 0 && substr($lem,$llem-1,1) eq  substr($commun,$lmod-1,1)) 
       {
@@ -452,14 +438,14 @@ sub traitementFichier
         {
           $forme=substr($forme, 0,length($forme)-1);
           $kk=length($lem)-1;
-          # premiËre voyelle
+          # premi√®re voyelle
           while (substr($forme,$kk,1) ne "a" && substr($forme,$kk,1) ne "e" && substr($forme,$kk,1) ne "i" && 
                 substr($forme,$kk,1) ne "o" && substr($forme,$kk,1) ne "u" && $kk >= 0) { $kk--;}
           #est-ce une diphtongue
           
-          if (substr($forme,$kk-1,1)=~/[aouAOU]/) { substr($forme,$kk-1,1)=~tr/aouAOU/‰ˆ¸ƒ÷‹/;}
+          if (substr($forme,$kk-1,1)=~/[aouAOU]/) { substr($forme,$kk-1,1)=~tr/aouAOU/√§√∂√º√Ñ√ñ√ú/;}
           # cas standard
-          elsif ( substr($forme,$kk,1) ne "e" ) { substr($forme,$kk,1)=~tr/aouAOU/‰ˆ¸ƒ÷‹/;}
+          elsif ( substr($forme,$kk,1) ne "e" ) { substr($forme,$kk,1)=~tr/aouAOU/√§√∂√º√Ñ√ñ√ú/;}
           else 
           {
             $kk--;
@@ -470,8 +456,8 @@ sub traitementFichier
             if ( $kk >= 0) 
             { 
               #diphtonque
-              if ($kk>0 && substr($forme,$kk-1,1)=~/[aouAOU]/) { substr($forme,$kk-1,1)=~tr/aouAOU/‰ˆ¸ƒ÷‹/;}
-              else {substr($forme,$kk,1)=~tr/aouAOU/‰ˆ¸ƒ÷‹/;}
+              if ($kk>0 && substr($forme,$kk-1,1)=~/[aouAOU]/) { substr($forme,$kk-1,1)=~tr/aouAOU/√§√∂√º√Ñ√ñ√ú/;}
+              else {substr($forme,$kk,1)=~tr/aouAOU/√§√∂√º√Ñ√ñ√ú/;}
             }
           }
         }
@@ -479,13 +465,13 @@ sub traitementFichier
         
         #print FILETRACE ($lfin,";",$racine,";",$lracine_modele,"\n");
         #if (length($formen[$j]) > 0){
-        #on cherche la partie ‡ conserver du lemme en comparant la longueur mot modËle ‡ celui de fin
-        #la diffÈrence est la longueur ‡ garder.
-        #pour chaque ligne ou le mot modËle est prÈsent on construit la forme en prenant la partie fixe et en ajoutant la forme modËle amputÈe de sa 
+        #on cherche la partie √† conserver du lemme en comparant la longueur mot mod√®le √† celui de fin
+        #la diff√©rence est la longueur √† garder.
+        #pour chaque ligne ou le mot mod√®le est pr√©sent on construit la forme en prenant la partie fixe et en ajoutant la forme mod√®le amput√©e de sa 
         #forme fixe
-        #Ècrire dans le fichier de sortie la forme, la vg , les propriÈtÈs, le lemme  
+        #√©crire dans le fichier de sortie la forme, la vg , les propri√©t√©s, le lemme  
         #$forme1=$formen[$j];
-        # traitement des variantes sÈparÈes par "/" ( attention une seule variante possible)
+        # traitement des variantes s√©par√©es par "/" ( attention une seule variante possible)
         #if ($formen[$j]=~/\//) {
         #@table=split("\/",$formen[$j]);
         
@@ -521,14 +507,14 @@ sub traitementFichier
     # old:
     #  if ($fug eq "O") {print FILEOUT ($forme,";","fug",";;","",";",$lem,";",$norm,";",$domaine,";\n");}
   
-    elsif (($vg=~/fÈminin/ || $vg=~/nom$/) && 
+    elsif (($vg=~/f√©minin/ || $vg=~/nom$/) && 
                 ($lem=~/heit$/ ||
                   $lem=~/keit$/ ||
                   $lem=~/sal$/ ||
                   $lem=~/schaft$/ ||
                   $lem=~/ung$/ ||
                   $lem=~/ion$/ ||
-                  $lem=~/it‰t$/ ||
+                  $lem=~/it√§t$/ ||
                   $lem=~/at$/ ||
                   $lem=~/ut$/ ||
                   $lem=~/fahrt$/ ||
@@ -546,12 +532,12 @@ sub traitementFichier
       # old:
       #  $forme=$lem . "s"; $vg="fug";$gnn=""; print FILEOUT ($forme,";",$vg,";;",$gnn[$j],";",$lem,";",$norm,";",$domaine,";\n");}
     }
-    #mots non flÈchissibles
+    #mots non fl√©chissibles
     else 
     {
         print FILEOUT ($lem,";",$vg,";;;",$lem,";",$norm,";\n");
-        print FILETRACE "Mot non flÈchi dans $filein, ligne $fileInLineNum : $fileInLine\n";
-        #print FILETRACE "  mot non flÈchi: <$lem;$vg>\n";
+        print FILETRACE "Mot non fl√©chi dans $filein, ligne $fileInLineNum : $fileInLine\n";
+        #print FILETRACE "  mot non fl√©chi: <$lem;$vg>\n";
     }
   }
   

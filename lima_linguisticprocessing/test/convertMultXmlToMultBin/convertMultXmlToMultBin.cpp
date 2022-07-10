@@ -1,12 +1,7 @@
-/************************************************************************
- *
- * @file       convertBoWFormat.cpp
- * @author     Besancon Romaric (besanconr@zoe.cea.fr)
- * @date       Thu Oct  9 2003
- * @version    $Id: convertXmlToSBoW.cpp 9080 2008-02-25 18:33:51Z de-chalendarg $
- * copyright   Copyright (C) 2003 by CEA LIST
- *
- ***********************************************************************/
+// Copyright (C) 2003 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "MultXmlReader.h"
 #include "linguisticProcessing/core/XmlProcessingCommon.h"

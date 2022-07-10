@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 cmake_minimum_required(VERSION 3.16)
 project(Lima)
 set(CMAKE_CXX_STANDARD 17)

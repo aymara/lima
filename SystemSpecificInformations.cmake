@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
 
 # define a set of string with may-be useful readable name
 # this file is meant to be included in a CMakeLists.txt

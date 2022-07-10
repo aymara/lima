@@ -1,7 +1,7 @@
-/***************************************************************************
- *   Copyright (C) 2005 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
+// Copyright (C) 2005 by CEA LIST                               *
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMA_LINGUISTICPROCESSING_COMPOUNDS_COMPOUNDTOKENANNOTATION_H
 #define LIMA_LINGUISTICPROCESSING_COMPOUNDS_COMPOUNDTOKENANNOTATION_H

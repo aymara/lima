@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # - Find LimaLP
 
 if ("x${LIB_INSTALL_DIR}" STREQUAL "x")

@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # 
 # Shell script created by Romaric Besancon on Wed Nov 22 2017 
 # Version : $Id$ 

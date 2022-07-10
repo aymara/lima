@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <DOCUMENT fichier="Guide.15.ph2.AV.xml" xmlns:xlink="http://www.w3.org/1999/xlink">
 <E id="E1"> 
 <constituants> 

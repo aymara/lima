@@ -1,9 +1,7 @@
-/** @brief  TensorflowSpecificEntities is the implementation of the module responsible of recognizing specific entities (ORGANIZATION, MISCELLANEAOUS, PERSON and LOCATION).
-  * @author      Victoria Bourgeais <victoria.bourgeais@cea.fr>
-  *
-  *              Copyright (c) 2017 by CEA-LIST
-  *
-  */
+// Copyright (c) 2017 by CEA-LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMA_LINGUISTICPROCESSING_TENSORFLOWSPECIFICENTITIES_TENSORFLOWSPECIFICENTITIES_H
 #define LIMA_LINGUISTICPROCESSING_TENSORFLOWSPECIFICENTITIES_TENSORFLOWSPECIFICENTITIES_H

@@ -1,5 +1,7 @@
 // Copyright (c) 2010, Razvan Petru
-// All rights reserved.
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:

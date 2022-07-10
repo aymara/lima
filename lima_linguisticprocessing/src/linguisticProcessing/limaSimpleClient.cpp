@@ -1,11 +1,7 @@
-/************************************************************************
- *
- * @file       limaSimpleClient.cpp
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Fri Dec 15 2017
- * copyright   Copyright (C) 2017 by CEA - LIST
- * 
- ***********************************************************************/
+// Copyright (C) 2017 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "limaSimpleClient.h"
 #include "limaSimpleClientDelegate.h"

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <list>
 <E id="E1"> on on dit il y a une anecdote qui dit pourquoi Corton-Charlemagne </E>
 <E id="E2"> ben parce que le Charlemagne euh paraît-il ne buvait que des rouges parce qu'il voulait pas il il se tachait sa sa il ne ne buvait que des Blancs pardon euh parce qu'il ne voulait pas se tacher sa sa barbe </E>

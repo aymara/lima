@@ -1,11 +1,8 @@
-/************************************************************************
- *
- * @file       AbstractIEDumper.cpp
- * @author     Faiza Gara, Romaric Besançon (romaric.besancon@cea.fr)
- * @date       Wed Nov 23 2016
- * copyright   Copyright (C) 2016 by CEA - LIST
- *
- ***********************************************************************/
+// Copyright (C) 2016 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "AbstractIEDumper.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 

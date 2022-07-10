@@ -1,7 +1,9 @@
 # - Find the native tre includes and library
 
-# created from FindPNG.cmake (Copyright 2002-2009 Kitware, Inc.)
-# by Olivier Mesnard (CEA LIST)
+# Copyright 2002-2009 Kitware, Inc.)
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
 
 # - Find the native tre includes and library
 #

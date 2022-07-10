@@ -1,16 +1,7 @@
-/************************************************************************
- *
- * @file       documentReaderException.h
- * @author     besancon (besanconr@zoe.cea.fr)
- * @date       Wed Jul  6 2005
- * @version    $Id$
- * copyright   Copyright (C) 2005 by CEA LIST (LVIC)
- * Project     DocumentReader
- *
- * @brief      Exceptions returned by the document reader
- *
- *
- ***********************************************************************/
+// Copyright (C) 2005 by CEA LIST (LVIC)
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DOCUMENTREADEREXCEPTION_H
 #define DOCUMENTREADEREXCEPTION_H

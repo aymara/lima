@@ -1,20 +1,9 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 open(SOURCE,"$ARGV[0]") || die ("impossible d ouvrir le fichier $ARGV[0]");
 open(CIBLE,">$ARGV[1]") || die ("impossible d ouvrir le fichier $ARGV[1]");
@@ -59,14 +48,14 @@ while ($ligne = <SOURCE>){
 	#chop($ligne);
 	chomp($ligne);
 	$nbreLignesTraitees++;
-	@info = split(/	/,$ligne);	# r�up�er les infos dans la ligne
+	@info = split(/	/,$ligne);	# rï¿œupï¿œer les infos dans la ligne
 	$key = $info[0];  $type = $info[1];   $lemme = $info[2];  
 	$categ = $info[4];   $norm = $info[3];   $accentue = $info[5];
-	if ($key eq $oldkey) {		# si la clef courante est �ale �la clef pr��ente
+	if ($key eq $oldkey) {		# si la clef courante est ï¿œale ï¿œla clef prï¿œï¿œente
 	   if ($type eq $oldtype) {&trMemeType;}
 	   else {&trTypeDiff;}
 	}
-	else {				# si la clef courante est diff�ente de la clef pr��ente
+	else {				# si la clef courante est diffï¿œente de la clef prï¿œï¿œente
 	   &Fermer($oldtype);
 	   print CIBLE "<k>$key</k>\n";
 	   $oldtype = 0;  $oldlemme = "";
@@ -79,9 +68,9 @@ while ($ligne = <SOURCE>){
 print CIBLE "</dictionary>\n";
 
 
-#----------------	Fonctions qui traite chaque cas pour les entr�s diff�entes	-----------------#
+#----------------	Fonctions qui traite chaque cas pour les entrï¿œs diffï¿œentes	-----------------#
 
-# fonction qui traite le cas o 2 entr�s ont le m�e type 
+# fonction qui traite le cas o 2 entrï¿œs ont le mï¿œe type 
 sub trMemeType {
 	if ($type == $lingInfos) {
 		&trLingInfos($key, $lemme, $categ, $norm, $oldlemme, $oldnorm);
@@ -102,7 +91,7 @@ sub trMemeType {
 	}
 }
 
-# fonction qui traite le cas o 2 entr�s ont deux types diff�ents
+# fonction qui traite le cas o 2 entrï¿œs ont deux types diffï¿œents
 sub trTypeDiff {
 	if (($oldtype == $lingInfos) || ($oldtype == $motsATirets) || ($oldtype == $concatenation)) {
 		&Fermer($oldtype);
@@ -127,7 +116,7 @@ sub trTypeDiff {
 	}
 }
 
-# fonction qui traite les ouvertures de balises pour chaque ��ent du fichier xml
+# fonction qui traite les ouvertures de balises pour chaque ï¿œï¿œent du fichier xml
 sub Ouvrir {
 	my($subType,$tabulations) = @_;
 	&PrintTabulations($tabulations);
@@ -142,7 +131,7 @@ sub Ouvrir {
 	}
 }
 
-# fonction qui traite les fermetures de balises pour chaque ��ent du fichier xml
+# fonction qui traite les fermetures de balises pour chaque ï¿œï¿œent du fichier xml
 sub Fermer {
         my($subType,$tabulations) = @_;
 	&PrintTabulations($tabulations);
@@ -166,17 +155,17 @@ sub PrintTabulations {
 	}
 }
 
-# fonction qui imprime les ��ents "mots accentu�" dans le fichier source
+# fonction qui imprime les ï¿œï¿œents "mots accentuï¿œ" dans le fichier source
 sub trMotsAccentues {
 	print CIBLE "<a>$accentue</a>\n";
 }
 
-# fonction qui imprime les ��ents "cat�ories par d�aut" dans le fichier source
+# fonction qui imprime les ï¿œï¿œents "catï¿œories par dï¿œaut" dans le fichier source
 sub trCatParDef {
 	print CIBLE "<p>$categ</p>\n";
 }
 
-# fonction qui secharge du traitement des informations linguistiques relatives �chaque entr�
+# fonction qui secharge du traitement des informations linguistiques relatives ï¿œchaque entrï¿œ
 sub trLingInfos {
 	my($subKey, $subLemme, $subCateg, $subNorm, $subOldLemme, $subOldNorm,$tabulations) = @_;
 
@@ -225,7 +214,7 @@ sub trLingInfos {
 	}
 }
  
-# fonction qui traite les ��ents "Mots concat��" 
+# fonction qui traite les ï¿œï¿œents "Mots concatï¿œï¿œ" 
 sub trMotsConcatenes {
 	my($subLigne) = @_;
 	@donnees = split(/	/,$subLigne);

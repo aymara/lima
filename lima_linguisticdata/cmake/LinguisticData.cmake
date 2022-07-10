@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 if(NOT WIN32)
   string(ASCII 27 Esc)
   set(C_Norm        "${Esc}[m")

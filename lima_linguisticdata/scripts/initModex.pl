@@ -1,37 +1,23 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-#
-# Perl Program created by  on Tue Oct 23 2007
-# Version : $Id$ 
+# SPDX-License-Identifier: MIT
 
 # Help mode
 if ($main::h || $main::help) {
     print <<EOF;
-Ce programme initie une architecture de fichiers de règles pour 
-la reconnaissance d\'entités pour un modex particulier.
+Ce programme initie une architecture de fichiers de rÃ¨gles pour 
+la reconnaissance d\'entitÃ©s pour un modex particulier.
 Ce programme n\'initie pas les relations et autres traitements propres,
-ni les ressources spécifiques.
+ni les ressources spÃ©cifiques.
 
 usage initModex.pl [-language=..,..] configFile
 
 configFile contient une description de l\'organisation du 
-modex en éventuellement sous-modex et entités, organisé de la 
-façon suivante:
+modex en Ã©ventuellement sous-modex et entitÃ©s, organisÃ© de la 
+faÃ§on suivante:
 modex: entity1,entity2,...
    submodex_1: entity_3,..
    submodex_2: entity_4,..
