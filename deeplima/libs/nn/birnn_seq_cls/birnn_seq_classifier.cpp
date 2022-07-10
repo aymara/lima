@@ -159,7 +159,7 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
     //cerr << this_task_target.sizes() << endl;
 
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
-    task_stat.m_loss = loss_tensor.item<double>();
+    task_stat.m_loss = loss_tensor.sum().item<double>();
     auto prediction = o.argmax(1);
     task_stat.m_correct = prediction.eq(this_task_target).sum().item<int64_t>();
     task_stat.m_items = this_task_target.size(0);
@@ -346,7 +346,7 @@ void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
-    double loss_value = loss_tensor.mean().item<double>();
+    double loss_value = loss_tensor.sum().item<double>();
     task_stat.m_loss += loss_value;
     //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
     auto prediction = o.argmax(1);

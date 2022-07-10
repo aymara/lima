@@ -60,7 +60,7 @@ public:
       : m_dataset(dataset),
         m_batch_size(0),
         m_current_bucket(0),
-        m_batch_start_offset(0)
+        m_iter_counter(0)
     {
     }
 
@@ -75,7 +75,7 @@ public:
     int64_t m_batch_size;
 
     size_t m_current_bucket;
-    size_t m_batch_start_offset;
+    size_t m_iter_counter;
 
     friend class CoNLLUDataSet;
   };

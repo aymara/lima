@@ -21,6 +21,7 @@
 #include "deeplima/torch_wrp/torch_matrix.h"
 
 #include <iostream>
+#include <random>
 
 using namespace std;
 using namespace torch;
@@ -212,7 +213,7 @@ void CoNLLUDataSet::Iterator::start_epoch()
     throw;
   }
   m_current_bucket = 0;
-  m_batch_start_offset = 0;
+  m_iter_counter = 0;
 }
 
 bool CoNLLUDataSet::Iterator::end()
@@ -248,45 +249,60 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
 
   //std::cerr << gold_bucket.get_tensor().sizes() << std::endl;
 
-  if (0 == m_batch_start_offset &&
-      seq_len * (m_batch_start_offset + batch_size) > gold_bucket.get_tensor().size(0))
+  std::random_device r;
+  std::default_random_engine e1(r());
+  int64_t max_start_offset = ( gold_bucket.get_tensor().size(0) / seq_len ) - batch_size;
+  if (max_start_offset < 0)
+  {
+    max_start_offset = 0;
+  }
+  std::uniform_int_distribution<int> uniform_dist(0, max_start_offset);
+  int64_t batch_start_offset = uniform_dist(e1);
+
+  if (0 == batch_start_offset &&
+      seq_len * (batch_start_offset + batch_size) > gold_bucket.get_tensor().size(0))
   {
     m_current_bucket++;
     return CoNLLUDataSet::Iterator::Batch();
   }
 
+  /*std::cerr << "seq_len = " << seq_len
+            << " iter " << m_iter_counter
+            << " from " << batch_start_offset << " until "
+            << gold_bucket.get_tensor().size(0) / seq_len << std::endl;*/
   const torch::Tensor trainable
-      = input.first->get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                                seq_len * (m_batch_start_offset + batch_size)),
+      = input.first->get_tensor().index({ Slice(seq_len * batch_start_offset,
+                                                seq_len * (batch_start_offset + batch_size)),
                                           Slice() }).reshape({ batch_size, seq_len, -1 }).transpose(0, 1);
   const torch::Tensor frozen
-      = input.second->get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                                 seq_len * (m_batch_start_offset + batch_size)),
+      = input.second->get_tensor().index({ Slice(seq_len * batch_start_offset,
+                                                 seq_len * (batch_start_offset + batch_size)),
                                            Slice() }).reshape({ batch_size, seq_len, -1 }).transpose(0, 1);
 
   //cerr << "trainable.sizes() == " << trainable.sizes() << endl;
   //cerr << "frozen.sizes() == " << frozen.sizes() << endl;
 
   const torch::Tensor gold
-      = gold_bucket.get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                               seq_len * (m_batch_start_offset + batch_size)),
+      = gold_bucket.get_tensor().index({ Slice(seq_len * batch_start_offset,
+                                               seq_len * (batch_start_offset + batch_size)),
                                          Slice() }).reshape({ batch_size, seq_len, -1 });//.transpose(0, 1);
   const CoNLLUDataSet::Iterator::Batch batch(trainable, frozen, gold, 1);
 
   // advance pointers
   if (m_batch_size >= 0)
   {
-    m_batch_start_offset += m_batch_size;
-    if (seq_len * (m_batch_start_offset + m_batch_size) >= gold_bucket.get_tensor().size(0))
+    m_iter_counter++;
+    //std::cerr << gold_bucket.get_tensor().size(0) << std::endl;
+    if (m_iter_counter * m_batch_size > gold_bucket.get_tensor().size(0) / seq_len)
     {
       m_current_bucket++;
-      m_batch_start_offset = 0;
+      m_iter_counter = 0;
     }
   }
   else
   {
     m_current_bucket++;
-    m_batch_start_offset = 0;
+    m_iter_counter = 0;
   }
 
   return batch;

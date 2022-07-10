@@ -80,12 +80,14 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
                 device);
 
     train_stat["arc"].m_accuracy = double(train_stat["arc"].m_correct) / train_stat["arc"].m_items;
+    train_stat["arc"].m_loss /= train_stat["arc"].m_items;
 
     chrono::steady_clock::time_point train_end = chrono::steady_clock::now();
 
     evaluate(output_names, eval_batches.get_iterator(), eval_stat, device);
 
     eval_stat["arc"].m_accuracy = double(eval_stat["arc"].m_correct) / eval_stat["arc"].m_items;
+    eval_stat["arc"].m_loss /= eval_stat["arc"].m_items;
 
     chrono::steady_clock::time_point eval_end = chrono::steady_clock::now();
 
@@ -107,9 +109,9 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
       }
       else
       {
-        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f",
+        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f CORRECT=%d",
                  task_name.c_str(),
-                 train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy);
+                 train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy, eval.m_correct);
       }
       cout << buff << endl;
     }
@@ -190,12 +192,17 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
 
     //std::cerr << "eval batch size == " << batch.trainable_input().size(1) << std::endl;
 
+    epoch_stat_t t;
+
     evaluate(output_names,
              batch.trainable_input(),
              batch.frozen_input(),
              batch.gold(),
-             stat,
+             t,
              device);
+    stat["arc"].m_correct += t["arc"].m_correct;
+    stat["arc"].m_items += t["arc"].m_items;
+    stat["arc"].m_loss += t["arc"].m_loss;
   }
 }
 
