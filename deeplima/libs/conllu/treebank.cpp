@@ -28,17 +28,9 @@ size_t Sentence::calc_num_of_words(const Annotation& annot) const
   for (; idx < m_first_token_line + m_num_tokens; idx++)
   {
     const CoNLLULine& line = annot.get_line(idx);
-    if (line.is_empty_line())
-    {
-      std::cerr << "empty line" << std::endl;
-    }
     if (line.is_real_word_line())
     {
       counter++;
-    }
-    else
-    {
-      std::cerr << "not a word" << std::endl;
     }
   }
 
