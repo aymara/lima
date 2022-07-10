@@ -172,7 +172,7 @@ public:
     return m_features_size;
   }
 
-  inline void vectorize_timepoint(MatrixFloat& target, uint64_t timepoint, const typename DataSet::token_t& token)
+  inline void vectorize_timepoint(MatrixFloat& target, uint64_t timepoint, const typename DataSet::token_t& token) const
   {
     size_t feat_idx = 0;
     for (size_t i = 0; i < m_uint_vectorizers.size(); ++i)
