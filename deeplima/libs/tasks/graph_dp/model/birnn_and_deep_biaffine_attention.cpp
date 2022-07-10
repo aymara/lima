@@ -47,11 +47,11 @@ void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) 
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& params,
-                                      const std::vector<std::string>& output_names,
-                                      const IterableDataSet& train_batches,
-                                      const IterableDataSet& eval_batches,
-                                      torch::optim::Optimizer& opt,
-                                      const torch::Device& device)
+                                              const std::vector<std::string>& output_names,
+                                              const IterableDataSet& train_batches,
+                                              const IterableDataSet& eval_batches,
+                                              torch::optim::Optimizer& opt,
+                                              const torch::Device& device)
 {
   shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
@@ -66,36 +66,26 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
             cout << "LR == " << options.get_lr() << endl;
         }
     }
-    train_iterator->start_epoch();
 
     nets::epoch_stat_t train_stat, eval_stat;
-    Module::train(true);
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
-    while (!train_iterator->end())
-    {
-      const BatchIterator::Batch batch = train_iterator->next_batch();
-      if (batch.empty())
-      {
-        continue;
-      }
-      train_batch(params.m_batch_size,
-                  0,
-                  output_names,
-                  batch.trainable_input,
-                  batch.non_trainable_input,
-                  batch.gold,
-                  opt,
-                  train_stat,
-                  device);
-    }
+    train_epoch(params.m_batch_size,
+                0,
+                output_names,
+                train_iterator,
+                opt,
+                train_stat,
+                device);
 
     train_stat["arc"].m_accuracy = double(train_stat["arc"].m_correct) / train_stat["arc"].m_items;
 
     chrono::steady_clock::time_point train_end = chrono::steady_clock::now();
 
-    //evaluate(output_names, eval_trainable_input, eval_nontrainable_input, eval_gold, eval_stat, device);
+    evaluate(output_names, eval_batches.get_iterator(), eval_stat, device);
+
+    eval_stat["arc"].m_accuracy = double(eval_stat["arc"].m_correct) / eval_stat["arc"].m_items;
 
     chrono::steady_clock::time_point eval_end = chrono::steady_clock::now();
 
@@ -129,15 +119,34 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train_epoch(size_t batch_size,
-                                            size_t seq_len,
-                                            const vector<string>& output_names,
-                                            const torch::Tensor& trainable_input_batches,
-                                            const torch::Tensor& nontrainable_input_batches,
-                                            const torch::Tensor& gold_batches,
-                                            torch::optim::Optimizer& opt,
-                                            epoch_stat_t& stat,
-                                            const torch::Device& device)
+                                                    size_t seq_len,
+                                                    const vector<string>& output_names,
+                                                    shared_ptr<BatchIterator> dataset_iterator,
+                                                    torch::optim::Optimizer& opt,
+                                                    epoch_stat_t& stat,
+                                                    const torch::Device& device)
 {
+  Module::train(true);
+
+  dataset_iterator->start_epoch();
+
+  while (!dataset_iterator->end())
+  {
+    const BatchIterator::Batch batch = dataset_iterator->next_batch();
+    if (batch.empty())
+    {
+      continue;
+    }
+    train_batch(batch.get_batch_size(),
+                0,
+                output_names,
+                batch.trainable_input(),
+                batch.frozen_input(),
+                batch.gold(),
+                opt,
+                stat,
+                device);
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train_batch(size_t batch_size,
@@ -162,12 +171,48 @@ void BiRnnAndDeepBiaffineAttentionImpl::train_batch(size_t batch_size,
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_names,
-                                         const TorchMatrix<int64_t>& trainable_input,
-                                         const TorchMatrix<float>& nontrainable_input,
-                                         const TorchMatrix<int64_t>& gold,
-                                         epoch_stat_t& stat,
-                                         const torch::Device& device)
+                                                 shared_ptr<BatchIterator> dataset_iterator,
+                                                 epoch_stat_t& stat,
+                                                 const torch::Device& device)
 {
+  eval();
+  dataset_iterator->set_batch_size(-1);
+
+  dataset_iterator->start_epoch();
+
+  while (!dataset_iterator->end())
+  {
+    const BatchIterator::Batch batch = dataset_iterator->next_batch();
+    if (batch.empty())
+    {
+      continue;
+    }
+
+    //std::cerr << "eval batch size == " << batch.trainable_input().size(1) << std::endl;
+
+    evaluate(output_names,
+             batch.trainable_input(),
+             batch.frozen_input(),
+             batch.gold(),
+             stat,
+             device);
+  }
+}
+
+void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_names,
+                                                 const torch::Tensor& trainable_input,
+                                                 const torch::Tensor& nontrainable_input,
+                                                 const torch::Tensor& gold,
+                                                 epoch_stat_t& stat,
+                                                 const torch::Device& device)
+{
+  map<string, torch::Tensor> current_inputs;
+  split_input(trainable_input, current_inputs, device);
+  current_inputs["raw"] = nontrainable_input.to(device);
+
+  auto target = gold.reshape({-1, gold.size(-1)}).to(device);
+
+  BiRnnClassifierImpl::evaluate(output_names, current_inputs, target, stat, device);
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::predict(size_t /*worker_id*/,

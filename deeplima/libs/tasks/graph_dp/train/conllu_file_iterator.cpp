@@ -100,7 +100,6 @@ void CoNLLUDataSet::vectorize()
     }
     sent_by_len[len].push_back(i);
   }
-  cerr << "End" << endl;
 
   m_bucket_keys.reserve(sent_by_len.size());
   for (size_t i = 0; i < sent_by_len.size(); i++)
@@ -201,7 +200,7 @@ shared_ptr<BatchIterator> CoNLLUDataSet::get_iterator() const
   return shared_ptr<Iterator>(new Iterator(*this));
 }
 
-void CoNLLUDataSet::Iterator::set_batch_size(size_t batch_size)
+void CoNLLUDataSet::Iterator::set_batch_size(int64_t batch_size)
 {
   m_batch_size = batch_size;
 }
@@ -240,39 +239,51 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
   //cerr << "input.first->get_tensor().sizes() == " << input.first->get_tensor().sizes() << endl;
   //cerr << "input.second->get_tensor().sizes() == " << input.second->get_tensor().sizes() << endl;
 
+  int64_t batch_size = m_batch_size;
+  if (-1 == batch_size)
+  {
+    assert(0 == input.first->get_tensor().size(0) % seq_len);
+    batch_size = input.first->get_tensor().size(0) / seq_len; // batch == full bucket
+  }
+
+  //std::cerr << gold_bucket.get_tensor().sizes() << std::endl;
+
   if (0 == m_batch_start_offset &&
-      seq_len * (m_batch_start_offset + m_batch_size) >= gold_bucket.get_tensor().size(0))
+      seq_len * (m_batch_start_offset + batch_size) > gold_bucket.get_tensor().size(0))
   {
     m_current_bucket++;
     return CoNLLUDataSet::Iterator::Batch();
   }
 
-  const torch::Tensor A
-      = input.second->get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                                seq_len * (m_batch_start_offset + m_batch_size)),
-                                          Slice() });
-
   const torch::Tensor trainable
       = input.first->get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                                seq_len * (m_batch_start_offset + m_batch_size)),
-                                          Slice() }).reshape({ m_batch_size, seq_len, -1 }).transpose(0, 1);
+                                                seq_len * (m_batch_start_offset + batch_size)),
+                                          Slice() }).reshape({ batch_size, seq_len, -1 }).transpose(0, 1);
   const torch::Tensor frozen
       = input.second->get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                                 seq_len * (m_batch_start_offset + m_batch_size)),
-                                           Slice() }).reshape({ m_batch_size, seq_len, -1 }).transpose(0, 1);
+                                                 seq_len * (m_batch_start_offset + batch_size)),
+                                           Slice() }).reshape({ batch_size, seq_len, -1 }).transpose(0, 1);
 
   //cerr << "trainable.sizes() == " << trainable.sizes() << endl;
   //cerr << "frozen.sizes() == " << frozen.sizes() << endl;
 
   const torch::Tensor gold
       = gold_bucket.get_tensor().index({ Slice(seq_len * m_batch_start_offset,
-                                               seq_len * (m_batch_start_offset + m_batch_size)),
-                                         Slice() }).reshape({ m_batch_size, seq_len, -1 });//.transpose(0, 1);
-  const CoNLLUDataSet::Iterator::Batch batch({trainable, frozen, gold});
+                                               seq_len * (m_batch_start_offset + batch_size)),
+                                         Slice() }).reshape({ batch_size, seq_len, -1 });//.transpose(0, 1);
+  const CoNLLUDataSet::Iterator::Batch batch(trainable, frozen, gold, 1);
 
   // advance pointers
-  m_batch_start_offset += m_batch_size;
-  if (seq_len * (m_batch_start_offset + m_batch_size) >= gold_bucket.get_tensor().size(0))
+  if (m_batch_size >= 0)
+  {
+    m_batch_start_offset += m_batch_size;
+    if (seq_len * (m_batch_start_offset + m_batch_size) >= gold_bucket.get_tensor().size(0))
+    {
+      m_current_bucket++;
+      m_batch_start_offset = 0;
+    }
+  }
+  else
   {
     m_current_bucket++;
     m_batch_start_offset = 0;

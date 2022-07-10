@@ -82,9 +82,7 @@ public:
              const torch::Device& device = torch::Device(torch::kCPU));
 
   void evaluate(const std::vector<std::string>& output_names,
-                const TorchMatrix<int64_t>& trainable_input,
-                const TorchMatrix<float>& nontrainable_input,
-                const TorchMatrix<int64_t>& gold,
+                std::shared_ptr<BatchIterator> dataset_iterator,
                 nets::epoch_stat_t& stat,
                 const torch::Device& device = torch::Device(torch::kCPU));
 
@@ -118,9 +116,7 @@ protected:
   void train_epoch(size_t batch_size,
                    size_t seq_len,
                    const std::vector<std::string>& output_names,
-                   const torch::Tensor& trainable_input_batches,
-                   const torch::Tensor& nontrainable_input_batches,
-                   const torch::Tensor& gold_batches,
+                   std::shared_ptr<BatchIterator> train_iterator,
                    torch::optim::Optimizer& opt,
                    nets::epoch_stat_t& stat,
                    const torch::Device& device);
@@ -134,6 +130,13 @@ protected:
                    torch::optim::Optimizer& opt,
                    nets::epoch_stat_t& stat,
                    const torch::Device& device);
+
+  void evaluate(const std::vector<std::string>& output_names,
+                const torch::Tensor& trainable_input,
+                const torch::Tensor& nontrainable_input,
+                const torch::Tensor& gold,
+                nets::epoch_stat_t& stat,
+                const torch::Device& device);
 
   static std::string generate_script(const std::vector<nets::embd_descr_t>& embd_descr,
                                      const std::vector<nets::rnn_descr_t>& rnn_descr,
