@@ -232,13 +232,13 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
   auto it_gold = m_dataset.m_gold_buckets.find(k);
   assert(m_dataset.m_gold_buckets.end() != it_gold);
   const TorchMatrix<int64_t>& gold_bucket = *(it_gold->second);
-  cerr << "gold_bucket.sizes() == " << gold_bucket.get_tensor().sizes() << endl;
-  cerr << "gold_bucket.get_tensor().size(0) == " << gold_bucket.get_tensor().size(0) << endl;
+  //cerr << "gold_bucket.sizes() == " << gold_bucket.get_tensor().sizes() << endl;
+  //cerr << "gold_bucket.get_tensor().size(0) == " << gold_bucket.get_tensor().size(0) << endl;
 
   size_t seq_len = it_input->first;
 
-  cerr << "input.first->get_tensor().sizes() == " << input.first->get_tensor().sizes() << endl;
-  cerr << "input.second->get_tensor().sizes() == " << input.second->get_tensor().sizes() << endl;
+  //cerr << "input.first->get_tensor().sizes() == " << input.first->get_tensor().sizes() << endl;
+  //cerr << "input.second->get_tensor().sizes() == " << input.second->get_tensor().sizes() << endl;
 
   if (0 == m_batch_start_offset &&
       seq_len * (m_batch_start_offset + m_batch_size) >= gold_bucket.get_tensor().size(0))
@@ -261,8 +261,8 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
                                                  seq_len * (m_batch_start_offset + m_batch_size)),
                                            Slice() }).reshape({ m_batch_size, seq_len, -1 }).transpose(0, 1);
 
-  cerr << "trainable.sizes() == " << trainable.sizes() << endl;
-  cerr << "frozen.sizes() == " << frozen.sizes() << endl;
+  //cerr << "trainable.sizes() == " << trainable.sizes() << endl;
+  //cerr << "frozen.sizes() == " << frozen.sizes() << endl;
 
   const torch::Tensor gold
       = gold_bucket.get_tensor().index({ Slice(seq_len * m_batch_start_offset,
