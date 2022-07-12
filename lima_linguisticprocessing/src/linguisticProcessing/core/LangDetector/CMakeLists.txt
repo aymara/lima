@@ -31,12 +31,13 @@ install(FILES
         COMPONENT runtime
         )
 ########### next target ###############
-SET(langdetectorlib_LIB_SRCS langDetector.cpp)
-add_executable(langDetector main.cpp LangDetectorCore.cpp LangDetectorCore.h)
+add_executable(langDetector main.cpp)
 install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
         COMPONENT runtime)
 target_link_libraries(langDetector
-        ${QT_LIBRARIES}
+        lima-lp-langdetector
         lima-lp-linguisticresources
         lima-common-misc
-        fasttext-static)
+        fasttext-static
+        ${QT_LIBRARIES}
+        )
