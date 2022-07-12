@@ -226,7 +226,6 @@ void StringsPoolPrivate::clear(const uint64_t pos)
     m_vecPool.resize(pos);
 }
 
-#ifndef WIN32
 #define MAX_DEPTH 25
 size_t StringsPoolPrivate::HashLimaStringPtr::operator()(const Lima::LimaString* s) const
 {
@@ -249,5 +248,6 @@ bool StringsPoolPrivate::EquaLimaStringPtr::operator()(
 {
     return ((*s1) == (*s2));
 }
-#endif
+
+
 } // closing namespace Lima
