@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-find_package(QtCore REQUIRED)
+#find_package(QtCore REQUIRED)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
