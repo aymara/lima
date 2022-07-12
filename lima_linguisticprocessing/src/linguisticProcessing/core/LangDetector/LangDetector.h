@@ -3,12 +3,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-// NAUTITIA
-//
-// jys 24-JUL-2002
-//
-// Tokenizer is the main program of Tokenizer stuff.
-
 #ifndef LIMA_LINGUISTICPROCESSING_LangDetector_H
 #define LIMA_LINGUISTICPROCESSING_LangDetector_H
 
@@ -41,7 +35,7 @@ class LIMA_LANGDEDECTOR_EXPORT LangDetector : public MediaProcessUnit
 
 public:
   LangDetector();
-  ~LangDetector() override;
+  virtual ~LangDetector() override;
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
