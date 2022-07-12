@@ -80,7 +80,7 @@ for:
       BOOST_ROOT: 'C:\Libraries\boost_1_77_0'
       #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_71_0\lib64-msvc-14.2'
       #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.1'
-      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_77_0\lib64-msvc-16.11'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_77_0\lib64-msvc-14.2'
       LIMA_DISABLE_FSW_TESTING: true
       NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
       NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
