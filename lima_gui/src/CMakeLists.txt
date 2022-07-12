@@ -23,9 +23,9 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-if (QtCore_FOUND)
-  if (QtCore_VERSION VERSION_GREATER 5.7.0)
-    if(QtCore_VERSION VERSION_GREATER 5.14.0)
+if (Qt${QT_VERSION_MAJOR}Core_FOUND)
+  if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.7.0)
+    if(Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.14.0)
       qt_add_resources(lima_SRCS resources.qrc)
     else()
       qt5_add_resources(lima_SRCS resources.qrc)
