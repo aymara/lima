@@ -32,8 +32,6 @@ install(FILES
         )
 ########### next target ###############
 add_executable(langDetector main.cpp)
-install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
-        COMPONENT runtime)
 target_link_libraries(langDetector
         lima-lp-langdetector
         lima-lp-linguisticresources
@@ -41,3 +39,6 @@ target_link_libraries(langDetector
         fasttext-static
         ${QT_LIBRARIES}
         )
+
+install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
+        COMPONENT runtime)

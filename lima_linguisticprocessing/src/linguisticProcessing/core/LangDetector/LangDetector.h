@@ -35,7 +35,7 @@ class LIMA_LANGDEDECTOR_EXPORT LangDetector : public MediaProcessUnit
 
 public:
   LangDetector();
-  virtual ~LangDetector() override;
+  virtual ~LangDetector();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
