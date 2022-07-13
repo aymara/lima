@@ -68,6 +68,21 @@ if (WIN32)
       bin
   )
 
+elseif (APPLE)
+  add_executable(lima
+    ${lima_SRCS}
+  )
+
+  target_link_libraries(lima
+    lima-common-mediaticdata
+    lima-common-xmlconfigurationfiles
+    lima-lp-client
+    lima-lp-analysishandlers
+    Qt5::Gui
+    Qt5::Quick
+    Qt5::Widgets
+  )
+
 else()
   add_executable(lima
     ${lima_SRCS}

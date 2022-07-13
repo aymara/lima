@@ -19,9 +19,6 @@
 #ifndef ABSTRACTBOWDOCUMENTHANDLER_H
 #define ABSTRACTBOWDOCUMENTHANDLER_H
 
-#ifdef __GNUC__
-#include <bits/allocator.h>
-#endif
 #include <string>
 #include <vector>
 

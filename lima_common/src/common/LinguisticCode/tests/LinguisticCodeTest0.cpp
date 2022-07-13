@@ -7,7 +7,7 @@
 #define BOOST_TEST_MODULE LinguisticCodeTest
 #include <boost/test/unit_test.hpp>
 
-#ifdef WIN32
+#if defined WIN32 || defined __APPLE__
 #include <cstdlib>
 #define USE_OLD_RAND
 #else

@@ -30,6 +30,7 @@
 
 #include "common/tools/LimaFileSystemWatcher.h"
 #include "common/tools/FileUtils.h"
+#include "common/LimaCommon.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
