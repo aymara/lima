@@ -30,7 +30,7 @@ class LangDetectorCore;
   * - Preconditions: the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
   * - Effects: the AnalysisContent will contain an AnalysisData of type AnalysisGraph named "AnalysisGraph" which is a linear graph (a string) containing one vertex for each detected token.
   */
-class LIMA_LANGDEDECTOR_EXPORT LangDetector : public MediaProcessUnit
+class LIMA_LANGDETECTOR_EXPORT LangDetector : public MediaProcessUnit
 {
 
 public:
