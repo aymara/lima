@@ -25,7 +25,7 @@ SET(lima-lp-flattokenizer_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-flattokenizer)
 
-target_compile_definitions(lima-lp-flattokenizer PRIVATE "-DLIMA_FLATTOKENIZER_EXPORTING")
+target_compile_definitions(lima-lp-flattokenizer PRIVATE "LIMA_FLATTOKENIZER_EXPORTING")
 
 target_link_libraries(lima-lp-flattokenizer
   lima-common-processunitframework
