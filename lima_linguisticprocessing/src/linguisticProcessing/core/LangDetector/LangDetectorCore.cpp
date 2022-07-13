@@ -35,7 +35,7 @@ namespace Lima::LinguisticProcessing::LDetector {
         return label.substr(9, std::string::npos);
     }
 
-    void LangDetectorCore::loadModel(std::string modelPath) const {
+    void LangDetectorCore::loadModel(const std::string& modelPath) {
         m_d->ftext.loadModel(modelPath);
     }
 }
