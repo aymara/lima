@@ -5,29 +5,35 @@
 #ifndef LIMA_LANGDETECTORCORE_H
 #define LIMA_LANGDETECTORCORE_H
 
+#include "LangDetectorExport.h"
+
 #include <iostream>
 #include <sstream>
 #include "fasttext.h"
 
-namespace Lima::LinguisticProcessing::LDetector {
-    class LangDetectorCorePrivate;
+namespace Lima::LinguisticProcessing::LDetector
+{
 
-    class LangDetectorCore
-    {
-    public:
-        LangDetectorCore();
-        virtual ~LangDetectorCore();
+class LangDetectorCorePrivate;
 
-        void loadModel(const std::string& modelPath);
+class LIMA_LANGDETECTOR_EXPORT LangDetectorCore
+{
+public:
+    LangDetectorCore();
+    virtual ~LangDetectorCore();
 
-        [[nodiscard]] std::string detectLang(const std::string& text) const;
-        /*Used to convert a language label "__label__lang" to a printable format "lang".*/
-        [[nodiscard]] static std::string labelToPrintable(const std::string& label) ;
-    private:
-        LangDetectorCorePrivate* m_d;
+    void loadModel(const std::string& modelPath);
 
-    };
-}
+    [[nodiscard]] std::string detectLang(const std::string& text) const;
+    /*Used to convert a language label "__label__lang" to a printable format "lang".*/
+    [[nodiscard]] static std::string labelToPrintable(const std::string& label) ;
+private:
+    LangDetectorCorePrivate* m_d;
+
+};
+
+
+} // namespace
 
 
 #endif //LIMA_LANGDETECTORCORE_H
