@@ -19,6 +19,9 @@ appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.
 set PATH=C:\externals\ninja;%PATH%
 ninja --version
 
+appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.9.0-lima/tensorflow-1.9.0-raw.zip -FileName tensorflow-1.9.0-raw.zip
+7z x tensorflow-1.9.0-raw.zip -oC:\projects\lima\extern\
+
 appveyor DownloadFile https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.9.0%%2Bcpu.zip -FileName libtorch.zip
 7z x libtorch.zip -oC:\projects\lima\extern\
 
