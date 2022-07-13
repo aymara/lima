@@ -62,8 +62,8 @@ if (WIN32)
   get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
   install(
     FILES
-      ${_qt_bin_dir}/QtQuickTemplates2.dll
-      ${_qt_bin_dir}/QtQuickControls2.dll
+      ${_qt_bin_dir}/Qt${QT_VERSION_MAJOR}QuickTemplates2.dll
+      ${_qt_bin_dir}/Qt${QT_VERSION_MAJOR}QuickControls2.dll
     DESTINATION
       bin
   )
