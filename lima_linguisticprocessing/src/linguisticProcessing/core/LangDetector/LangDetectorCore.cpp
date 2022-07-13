@@ -14,7 +14,9 @@ namespace Lima::LinguisticProcessing::LDetector {
 
     }
 
-    LangDetectorCore::~LangDetectorCore() = default;
+    LangDetectorCore::~LangDetectorCore() {
+        delete m_d;
+    }
 
     /*
      * Detect the language of the text.
