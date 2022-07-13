@@ -35,7 +35,9 @@ install(TARGETS lima-common-tools
   DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
-add_subdirectory(tests)
+IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  add_subdirectory(tests)
+endif ()
 
 ########### install files ###############
 install(FILES
