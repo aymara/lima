@@ -32,6 +32,10 @@ for:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
       #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -61,6 +65,10 @@ for:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
       #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -143,6 +151,10 @@ for:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
       #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -220,6 +232,10 @@ for:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
       #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
