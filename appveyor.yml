@@ -31,7 +31,7 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -39,6 +39,8 @@ for:
       on:
         branch: master                 # release from master branch only
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
+
+
   - matrix:
       only:
         - job_name: Ubuntu 20.04
@@ -58,7 +60,7 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -66,6 +68,8 @@ for:
       on:
         branch: master                 # release from master branch only
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
+
+
   - matrix:
       only:
         - job_name: Visual Studio 2019
@@ -138,7 +142,7 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -147,33 +151,6 @@ for:
         branch: master                 # release from master branch only
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
 
-  - matrix:
-      only:
-        - job_name: Ubuntu 20.04
-    services:
-      - docker
-    build_script:
-      - docker build --tag travis-ubuntu20.04 --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
-      - docker create -ti --name dummy travis-ubuntu20.04 bash
-      - docker cp dummy:/src/lima/build ./
-      - docker rm -f dummy
-      - cp build/*.deb ./
-      - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | grep -Po "[1-9]\d{3}\-[0-1]\d-[0-3]\d +[0-2]\d:[0-6]\d:[0-6]\d" | sed -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
-      - ps: echo $env:LIMA_VERSION_RELEASE
-    artifacts:
-      - path: "*.deb"
-        name: packages
-    deploy:
-      description: '$(LIMA_VERSION_RELEASE)'
-      provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
-      auth_token:
-        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-      artifact: packages
-      force_update: true
-      on:
-        branch: master                 # release from master branch only
-        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
 
   - matrix:
       only:
@@ -242,7 +219,7 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
