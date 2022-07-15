@@ -29,7 +29,7 @@ find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 find_package(Eigen)
 find_package(Eigen3        3.3   NO_MODULE)
 
-if (EIGEN_FOUND AND EIGEN3_FOUND)
+if (EIGEN_FOUND OR EIGEN3_FOUND)
 
   if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     set(DEEPLIMA_STANDALONE ON)
