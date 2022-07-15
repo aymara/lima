@@ -20,13 +20,13 @@ set PATH=C:\externals\ninja;%PATH%
 ninja --version
 
 appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.9.0-lima/tensorflow-1.9.0-raw.zip -FileName tensorflow-1.9.0-raw.zip
-7z x tensorflow-1.9.0-raw.zip -oC:\projects\lima\extern\
+7z x tensorflow-1.9.0-raw.zip -oC:\externals\
 
 appveyor DownloadFile https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.9.0%%2Bcpu.zip -FileName libtorch.zip
 7z x libtorch.zip -oC:\projects\lima\extern\
 
 appveyor DownloadFile https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip -FileName eigen.zip
-7z x eigen.zip
+7z x eigen.zip -oC:\externals\
 
 appveyor DownloadFile https://github.com/unicode-org/icu/releases/download/release-67-1/icu4c-67_1-Win64-MSVC2017.zip -FileName icu4c.zip
 7z x icu4c.zip -oc:\externals\icu4c\
