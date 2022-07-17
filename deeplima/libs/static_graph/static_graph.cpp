@@ -839,8 +839,9 @@ void StaticGraphImpl::create_submodule_DeepBiaffineAttentionDecoder(const string
 {
   int64_t input_dim = get_option<int64_t>(opts, "input_dim");
   int64_t hidden_arc_dim = get_option<int64_t>(opts, "hidden_arc_dim");
+  bool input_includes_root = get_bool_option(opts, "input_includes_root");
 
-  torch_modules::DeepBiaffineAttentionDecoder m(input_dim, hidden_arc_dim);
+  torch_modules::DeepBiaffineAttentionDecoder m(input_dim, hidden_arc_dim, input_includes_root);
   m_deep_biaffine_attention_decoder.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::deep_biaffine_attention_decoder, m_deep_biaffine_attention_decoder.size() - 1);
   register_module(name, m);

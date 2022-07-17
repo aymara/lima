@@ -71,10 +71,10 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
   DictsHolder dh;
 
-  CoNLLUDataSet train_iterator(train_data, params.m_batch_size, { p_embd });
+  CoNLLUDataSet train_iterator(train_data, params.m_batch_size, { p_embd }, params.m_input_includes_root);
   train_iterator.init();
 
-  CoNLLUDataSet dev_iterator(dev_data, params.m_batch_size, { p_embd });
+  CoNLLUDataSet dev_iterator(dev_data, params.m_batch_size, { p_embd }, params.m_input_includes_root);
   dev_iterator.init();
 
   BiRnnAndDeepBiaffineAttention model(nullptr);
@@ -99,7 +99,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   decoder_descr,
                                   utils::split(params.m_tasks_string, ','),
                                   std::move(tag_dh),
-                                  boost::filesystem::path(params.m_embeddings_fn).stem().string());
+                                  boost::filesystem::path(params.m_embeddings_fn).stem().string(),
+                                  params.m_input_includes_root);
   }
 
   cerr << model->get_script() << endl;

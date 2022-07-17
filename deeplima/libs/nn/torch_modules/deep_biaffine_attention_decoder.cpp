@@ -34,21 +34,31 @@ torch::Tensor DeepBiaffineAttentionDecoderImpl::forward(torch::Tensor input)
   torch::Tensor input_t = input.transpose(0, 1); // to [ batch x len x input_dim ]
   //std::cerr << "input_t.sizes() == " << input_t.sizes() << std::endl;
 
-#ifdef WITH_ROOTS
-  torch::Tensor roots2 = torch::tile(root2, { batch_size, 1, 1 });
-  torch::Tensor arc_head = torch::cat({ roots2, elu(mlp_head(input_t)) }, 1);
-#else
-  torch::Tensor arc_head = elu(mlp_head(input_t));
-#endif
+  torch::Tensor arc_head;
+  if (!m_input_includes_root)
+  {
+    torch::Tensor roots2 = torch::tile(root2, { batch_size, 1, 1 });
+    //arc_head = torch::cat({ roots2, elu(mlp_head(input_t)) }, 1);
+    arc_head = elu(torch::cat({ roots2, mlp_head(input_t) }, 1));
+  }
+  else
+  {
+    arc_head = elu(mlp_head(input_t));
+  }
   // arc_head = [ batch x len x hidden_dim ]
   //std::cerr << "arc_head.sizes() == " << arc_head.sizes() << std::endl;
 
-#ifdef WITH_ROOTS
-  torch::Tensor roots = torch::tile(root, { batch_size, 1, 1 });
-  torch::Tensor arc_dep = torch::cat({ roots, elu(mlp_dep(input_t)) }, 1);
-#else
-  torch::Tensor arc_dep = elu(mlp_dep(input_t));
-#endif
+  torch::Tensor arc_dep;
+  if (!m_input_includes_root)
+  {
+    torch::Tensor roots = torch::tile(root, { batch_size, 1, 1 });
+    //arc_dep = torch::cat({ roots, elu(mlp_dep(input_t)) }, 1);
+    arc_dep = elu(torch::cat({ roots, mlp_dep(input_t) }, 1));
+  }
+  else
+  {
+    arc_dep = elu(mlp_dep(input_t));
+  }
 
   //std::cerr << "arc_dep.sizes() == " << arc_dep.sizes() << std::endl;
   //std::cerr << "U1.sizes() == " << U1.sizes() << std::endl;
@@ -63,12 +73,13 @@ torch::Tensor DeepBiaffineAttentionDecoderImpl::forward(torch::Tensor input)
   torch::Tensor r = torch::add(Wx, b);
   //std::cerr << "r.sizes() == " << r.sizes() << std::endl;
 
-#ifdef WITH_ROOTS
-  r = r.index({ torch::indexing::Slice(),
-                torch::indexing::Slice(1, r.size(1)),
-                torch::indexing::Slice()});
-  std::cerr << "r.sizes() == " << r.sizes() << std::endl;
-#endif
+  if (!m_input_includes_root)
+  {
+    r = r.index({ torch::indexing::Slice(),
+                  torch::indexing::Slice(1, r.size(1)),
+                  torch::indexing::Slice()});
+  }
+  //std::cerr << "r.sizes() == " << r.sizes() << std::endl;
 
   return r;
 }

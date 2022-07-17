@@ -32,8 +32,9 @@ namespace torch_modules
 class DeepBiaffineAttentionDecoderImpl : public torch::nn::Module
 {
 public:
-  DeepBiaffineAttentionDecoderImpl(int64_t input_dim, int64_t hidden_arc_dim)
-    : m_hidden_arc_dim(hidden_arc_dim),
+  DeepBiaffineAttentionDecoderImpl(int64_t input_dim, int64_t hidden_arc_dim, bool input_includes_root=false)
+    : m_input_includes_root(input_includes_root),
+      m_hidden_arc_dim(hidden_arc_dim),
       mlp_head(register_module("mlp_head", torch::nn::Linear(input_dim, hidden_arc_dim))),
       mlp_dep(register_module("mlp_dep", torch::nn::Linear(input_dim, hidden_arc_dim))),
       U1(register_parameter("U1", torch::randn({hidden_arc_dim, hidden_arc_dim}))),
@@ -47,11 +48,13 @@ public:
   torch::Tensor forward(torch::Tensor input);
 
   // see https://nlp.stanford.edu/pubs/dozat2017deep.pdf , page 3
+  bool m_input_includes_root;
   int64_t m_hidden_arc_dim;
   torch::nn::Linear mlp_head;
   torch::nn::Linear mlp_dep;
   torch::nn::ELU elu;
-  torch::Tensor U1, u2, root, root2;
+  torch::Tensor U1, u2;
+  torch::Tensor root, root2; // used if input_includes_root == false
 };
 
 TORCH_MODULE(DeepBiaffineAttentionDecoder);

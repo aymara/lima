@@ -119,7 +119,7 @@ void CoNLLUDataSet::vectorize()
 size_t CoNLLUDataSet::vectorize_bucket(size_t len, const vector<size_t>& sents, const CoNLLUToTorchMatrix& vectorizer)
 {
   uint64_t timepoint = 0;
-  uint64_t timepoints_per_sentence = len + 1;
+  uint64_t timepoints_per_sentence = m_add_root ? len + 1 : len;
   uint64_t total_timepoints = timepoints_per_sentence * sents.size();
   m_input_buckets[timepoints_per_sentence] = vectorizer.init_dst(total_timepoints);
   m_gold_buckets[timepoints_per_sentence]
@@ -136,8 +136,13 @@ size_t CoNLLUDataSet::vectorize_bucket(size_t len, const vector<size_t>& sents, 
     const CoNLLU::Sentence& sent = m_annot.get_sentence(sents[i]);
 
     CoNLLU::BoundedWordLevelAdapter adapter(&m_annot, sent.get_first_word_idx(), len);
-    vectorizer.process(root_generator, m_input_buckets[timepoints_per_sentence], timepoint);
-    vectorizer.process(adapter, m_input_buckets[timepoints_per_sentence], timepoint+1);
+
+    if (m_add_root)
+    {
+      vectorizer.process(root_generator, m_input_buckets[timepoints_per_sentence], timepoint);
+    }
+
+    vectorizer.process(adapter, m_input_buckets[timepoints_per_sentence], m_add_root ? timepoint+1 : timepoint);
     vectorize_bucket_gold(adapter, *(m_gold_buckets[timepoints_per_sentence].get()), timepoint);
 
     timepoint += timepoints_per_sentence;
@@ -169,7 +174,7 @@ void CoNLLUDataSet::vectorize_bucket_gold(const CoNLLU::BoundedWordLevelAdapter&
     assert(head.is_real_word());
 
     const CoNLLU::idx_t idx = (*it).idx();
-    if (1 == idx._first)
+    if (m_add_root && 1 == idx._first)
     {
       dst.set(current_timepoint, 0, 0);
       current_timepoint++;

@@ -35,7 +35,8 @@ namespace train
 string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_descr_t>& embd_descr,
                                                           const vector<rnn_descr_t>& rnn_descr,
                                                           const vector<deep_biaffine_attention_descr_t>& decoder_descr,
-                                                          const vector<std::string>& output_names/*,
+                                                          const vector<std::string>& output_names,
+                                                          bool input_includes_root/*,
                                                           const vector<uint32_t>& classes*/)
 {
   stringstream ss;
@@ -67,7 +68,9 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
 
   assert(decoder_descr.size() == 1);
   ss << "decoder_0 = def DeepBiaffineAttentionDecoder input_dim=" << input_size
-     << " hidden_arc_dim=" << decoder_descr[0].m_arc_dim << endl;
+     << " hidden_arc_dim=" << decoder_descr[0].m_arc_dim
+     << " input_includes_root=" << (input_includes_root ? "true" : "false")
+     << endl;
 
   ss << std::endl;
 

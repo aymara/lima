@@ -38,8 +38,9 @@ class CoNLLUDataSet : public IterableDataSet
 {
 public:
 
-  CoNLLUDataSet(const CoNLLU::Annotation& annot, size_t batch_size, std::shared_ptr<FeatureVectorizerBase<>> p_embd)
-    : m_batch_size(batch_size),
+  CoNLLUDataSet(const CoNLLU::Annotation& annot, size_t batch_size, std::shared_ptr<FeatureVectorizerBase<>> p_embd, bool add_root = false)
+    : m_add_root(add_root),
+      m_batch_size(batch_size),
       m_annot(annot),
       m_feat_vectorizers({ p_embd })
   {
@@ -83,6 +84,8 @@ public:
   virtual std::shared_ptr<BatchIterator> get_iterator() const;
 
 private:
+  bool m_add_root;
+
   const size_t m_batch_size;
   const CoNLLU::Annotation& m_annot;
   std::vector<std::shared_ptr<FeatureVectorizerBase<>>> m_feat_vectorizers;
