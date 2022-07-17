@@ -49,6 +49,16 @@ public:
     m_embeddable_size = m_embeddable_features.size();
   }
 
+  WordSeqVectorizerImpl(const std::vector<typename Parent::feature_descr_t>& features,
+                        const std::vector<embeddable_feature_descr_t>& embeddable_features,
+                        const StrFeatExtractor& str_feat_extractor)
+    : Parent(features, str_feat_extractor),
+      m_embeddable_features(embeddable_features),
+      m_embeddable_size(0)
+  {
+    m_embeddable_size = m_embeddable_features.size();
+  }
+
   const std::vector<deeplima::nets::embd_descr_t> get_embd_descr() const
   {
     std::vector<deeplima::nets::embd_descr_t> d;
@@ -140,8 +150,8 @@ public:
         break;
       case Parent::str_feature:
       {
-        size_t ifeat = StrFeatExtractor::get_feat_id(feat_descr.m_name);
-        const std::string& feat_val = StrFeatExtractor::feat_value(/*src.data(),*/ token, ifeat);
+        size_t ifeat = Parent::m_str_feat_extractor.get_feat_id(feat_descr.m_name);
+        const std::string& feat_val = Parent::m_str_feat_extractor.feat_value(token, ifeat);
         std::shared_ptr<StringDict> dict
             = std::dynamic_pointer_cast<StringDict, DictBase>(feat_descr.m_dict);
         uint64_t idx = dict->get_idx(feat_val);

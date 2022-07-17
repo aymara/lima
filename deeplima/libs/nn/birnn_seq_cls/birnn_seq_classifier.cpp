@@ -87,6 +87,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
                                       map<string, torch::Tensor>& dst,
                                       const torch::Device& device)
 {
+  int64_t c = 0;
   for (size_t i = 0; i < m_embd_descr.size(); i++)
   {
     if (dst.end() != dst.find(m_embd_descr[i].m_name))
@@ -98,7 +99,8 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), 1 }).to(device);
+            = src.index({Slice(), Slice(c, c+1) }).reshape({ (int64_t)src.size(0), 1 }).to(device);
+        c++;
       }
       else if (m_embd_descr[i].m_type == 0)
       {
@@ -112,7 +114,8 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), -1 }).to(device);
+            = src.index({Slice(), Slice(), Slice(c, c+1) }).reshape({ (int64_t)src.size(0), -1 }).to(device);
+        c++;
       }
       else if (m_embd_descr[i].m_type == 0)
       {

@@ -62,6 +62,8 @@ protected:
   typedef FeatureVectorizerToMatrix<MatrixFloat, uint64_t, Idx> uint_vectorizer_t;
   typedef FeatureVectorizerToMatrix<MatrixFloat, const std::string&, Idx> str_vectorizer_t;
 
+  const StrFeatExtractor m_str_feat_extractor;
+
   std::vector<std::pair<uint_vectorizer_t*, size_t>> m_uint_vectorizers; // pointer to vectorizer, feat_idx
   std::vector<std::pair<str_vectorizer_t*, size_t>> m_str_vectorizers;
 
@@ -72,6 +74,14 @@ public:
 
   WordSeqEmbdVectorizer(const std::vector<feature_descr_t>& features)
     : m_features_size(0)
+  {
+    init_features(features);
+  }
+
+  WordSeqEmbdVectorizer(const std::vector<feature_descr_t>& features,
+                        const StrFeatExtractor& str_feat_extractor)
+    : m_features_size(0),
+      m_str_feat_extractor(str_feat_extractor)
   {
     init_features(features);
   }
@@ -123,7 +133,7 @@ public:
       {
         str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
-        size_t feat_idx = StrFeatExtractor::get_feat_id(feat_descr.m_name);
+        size_t feat_idx = m_str_feat_extractor.get_feat_id(feat_descr.m_name);
         m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_idx));
 
         m_features_pos.push_back(m_features_size);
@@ -170,7 +180,7 @@ public:
 
     for (size_t i = 0; i < m_str_vectorizers.size(); ++i)
     {
-      const std::string& feat_val = StrFeatExtractor::feat_value(token, m_str_vectorizers[i].second);
+      const std::string& feat_val = m_str_feat_extractor.feat_value(token, m_str_vectorizers[i].second);
       m_str_vectorizers[i].first->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
       feat_idx++;
     }
@@ -398,7 +408,7 @@ public:
 
     for (size_t i = 0; i < Parent::m_str_vectorizers.size(); ++i)
     {
-      const std::string& feat_val = StrFeatExtractor::feat_value(token, Parent::m_str_vectorizers[i].second);
+      const std::string& feat_val = Parent::m_str_feat_extractor.feat_value(token, Parent::m_str_vectorizers[i].second);
       timepoint_features.append_str_feat(feat_val);
       feat_idx++;
     }

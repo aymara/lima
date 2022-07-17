@@ -22,6 +22,7 @@
 #include "nn/common/word_seq_vectorizer.h"
 #include "deeplima/feat_extractors.h"
 #include "deeplima/fastText_wrp/fastText_wrp.h"
+#include "tasks/common/word_dict_builder.h"
 
 #include "train_graph_dp.h"
 #include "conllu_file_iterator.h"
@@ -35,6 +36,9 @@ namespace graph_dp
 {
 namespace train
 {
+
+typedef WordDictBuilderImpl<CoNLLU::WordLevelAdapter,
+                            ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>> TagDictBuilderFromCoNLLU;
 
 typedef FastTextVectorizer<TorchMatrix<float>> FastTextVectorizerToTorchMatrix;
 
@@ -69,12 +73,29 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     }
   }
 
+  TagDictBuilderFromCoNLLU tag_dict_builder;
+  ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t> feat_extractor
+      = tag_dict_builder.preprocess(CoNLLU::WordLevelAdapter(&train_data),
+                                    "*form,upos,feats,-Typo,-Foreign");
+  DictsHolder tag_dh = tag_dict_builder.process(CoNLLU::WordLevelAdapter(&train_data),
+                                                feat_extractor, 0, "");
+
   DictsHolder dh;
 
-  CoNLLUDataSet train_iterator(train_data, params.m_batch_size, { p_embd }, params.m_input_includes_root);
+  CoNLLUDataSet train_iterator(train_data,
+                               params.m_batch_size,
+                               feat_extractor,
+                               tag_dh,
+                               { p_embd },
+                               params.m_input_includes_root);
   train_iterator.init();
 
-  CoNLLUDataSet dev_iterator(dev_data, params.m_batch_size, { p_embd }, params.m_input_includes_root);
+  CoNLLUDataSet dev_iterator(dev_data,
+                             params.m_batch_size,
+                             feat_extractor,
+                             tag_dh,
+                             { p_embd },
+                             params.m_input_includes_root);
   dev_iterator.init();
 
   BiRnnAndDeepBiaffineAttention model(nullptr);
@@ -82,7 +103,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   if (params.m_input_model_name.size() == 0)
   {
     vector<embd_descr_t> embd_descr = train_iterator.get_embd_descr();
-    embd_descr.emplace_back("raw", p_embd->dim(), 0);
+    embd_descr.emplace(embd_descr.begin(), "raw", p_embd->dim(), 0);
     vector<rnn_descr_t> rnn_descr;
     rnn_descr.reserve(params.m_rnn_hidden_dims.size());
     for (size_t d : params.m_rnn_hidden_dims)
@@ -92,8 +113,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
     vector<deep_biaffine_attention_descr_t> decoder_descr = { deep_biaffine_attention_descr_t(128) };
 
-    DictsHolder tag_dh;
-    model = BiRnnAndDeepBiaffineAttention(std::move(dh),
+    model = BiRnnAndDeepBiaffineAttention(std::move(tag_dh),
                                   embd_descr,
                                   rnn_descr,
                                   decoder_descr,

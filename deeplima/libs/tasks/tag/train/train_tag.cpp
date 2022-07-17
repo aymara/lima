@@ -11,7 +11,7 @@
 #include "deeplima/torch_wrp/torch_matrix.h"
 #include "static_graph/dict_holder_adapter.h"
 
-#include "word_dict_builder.h"
+#include "tasks/common/word_dict_builder.h"
 #include "nn/common/word_seq_vectorizer.h"
 #include "deeplima/feat_extractors.h"
 

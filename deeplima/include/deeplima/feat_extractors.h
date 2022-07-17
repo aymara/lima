@@ -62,6 +62,11 @@ public:
     }
   }
 
+  inline bool should_preprocess_feature(int feat_no) const
+  {
+    return true;
+  }
+
   inline static size_t size()
   {
     return 2;
@@ -102,11 +107,14 @@ protected:
   std::vector<std::string> m_idx2feat;
   std::unordered_map<std::string, size_t> m_feat2idx;
   std::unordered_set<std::string> m_prohibited_feats;
-  int m_upos;
-  int m_xpos;
-  int m_eos;
-  int m_rel;
-  bool m_feats;
+  std::unordered_set<int> m_dont_preprocess;
+  int m_form = -1;
+  int m_form_lc = -1;
+  int m_upos = -1;
+  int m_xpos = -1;
+  int m_eos = -1;
+  int m_rel = -1;
+  bool m_feats = false;
 
   void add_feature(const std::string& name)
   {
@@ -115,37 +123,55 @@ protected:
   }
 
 public:
+
+  ConlluFeatExtractor() = default;
+
+  ConlluFeatExtractor(const ConlluFeatExtractor& other) = default;
+
   ConlluFeatExtractor(const std::string& feats_to_train)
-    : m_upos(-1),
-      m_xpos(-1),
-      m_eos(-1),
-      m_rel(-1),
-      m_feats(false)
   {
     for (const std::string& s : utils::split(feats_to_train, ','))
     {
       assert(s.size() > 0);
 
-      if (s == "upos")
+      bool dont_preprocess = false;
+      std::string feat_name = s;
+      if (s[0] == '*')
+      {
+        dont_preprocess = true;
+        feat_name = s.substr(1);
+      }
+
+      if (feat_name == "form")
+      {
+        add_feature(feat_name);
+        m_form = m_feat2idx[feat_name];
+      }
+      else if (feat_name == "lc(form)")
+      {
+        add_feature(feat_name);
+        m_form_lc = m_feat2idx[feat_name];
+      }
+      else if (feat_name == "upos")
       {
         add_feature("upos");
         m_upos = m_feat2idx["upos"];
       }
-      else if (s == "xpos")
+      else if (feat_name == "xpos")
       {
         add_feature("xpos");
         m_xpos = m_feat2idx["xpos"];
       }
-      else if (s == "feats")
+      else if (feat_name == "feats")
       {
         m_feats = true;
       }
-      else if (s == "eos")
+      else if (feat_name == "eos")
       {
         add_feature("eos");
         m_eos = m_feat2idx["eos"];
       }
-      else if (s == "rel")
+      else if (feat_name == "rel")
       {
         add_feature("rel");
         m_rel = m_feat2idx["rel"];
@@ -159,6 +185,11 @@ public:
       else
       {
         throw std::invalid_argument("Can't parse list of features: \"" + feats_to_train + "\"");
+      }
+
+      if (dont_preprocess)
+      {
+        m_dont_preprocess.insert(m_feat2idx[s.substr(1)]);
       }
     }
   }
@@ -187,11 +218,29 @@ public:
     }
   }
 
+  inline size_t get_feat_id(const std::string& name) const
+  {
+    const auto it = m_feat2idx.find(name);
+    if (m_feat2idx.cend() == it)
+    {
+      throw std::runtime_error("Unknown feature name.");
+    }
+    return it->second;
+  }
+
   inline std::string feat_value(const Token& token, int feat_no) const
   {
     assert(feat_no >= 0);
 
-    if (-1 != m_upos && m_upos == feat_no)
+    if (-1 != m_form && m_form == feat_no)
+    {
+      return TokenStrFeatExtractor<Token>::feat_value(token, 0);
+    }
+    else if (-1 != m_form && m_form == feat_no)
+    {
+      return TokenStrFeatExtractor<Token>::feat_value(token, 1);
+    }
+    else if (-1 != m_upos && m_upos == feat_no)
     {
       return token.upos();
     }
@@ -223,6 +272,11 @@ public:
     }
 
     throw std::invalid_argument("Unknown feature identifier");
+  }
+
+  inline bool should_preprocess_feature(int feat_no) const
+  {
+    return m_dont_preprocess.cend() == m_dont_preprocess.find(feat_no);
   }
 
   inline size_t size() const

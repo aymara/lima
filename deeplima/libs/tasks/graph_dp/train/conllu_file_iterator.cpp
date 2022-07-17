@@ -34,6 +34,38 @@ namespace graph_dp
 namespace train
 {
 
+CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
+                             size_t batch_size,
+                             const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& feat_extractor,
+                             const DictsHolder& morph_tag_dh,
+                             shared_ptr<FeatureVectorizerBase<>> p_embd,
+                             bool add_root)
+  : m_add_root(add_root),
+    m_batch_size(batch_size),
+    m_morph_tag_dh(morph_tag_dh),
+    m_annot(annot),
+    m_feat_vectorizers({ p_embd }),
+    m_feat_extractor(feat_extractor)
+{
+  for (auto p_embd : m_feat_vectorizers)
+  {
+    m_feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
+  }
+
+  for (size_t i = 0; i < m_morph_tag_dh.size(); ++i)
+  {
+    if (morph_tag_dh[i]->size() > 0)
+    {
+      m_embd_feat_descr.push_back({
+                                    CoNLLUToTorchMatrix::str_feature,
+                                    m_feat_extractor.feats()[i],
+                                    8,
+                                    morph_tag_dh[i]
+                                  });
+    }
+  }
+}
+
 void CoNLLUDataSet::init()
 {
   //load_embeddings();
@@ -43,7 +75,7 @@ void CoNLLUDataSet::init()
 std::vector<nets::embd_descr_t> CoNLLUDataSet::get_embd_descr()
 {
   assert(m_feat_descr.size() > 0 || m_embd_feat_descr.size() > 0);
-  CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr);
+  CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr, m_feat_extractor);
   return vectorizer.get_embd_descr();
 }
 
@@ -79,7 +111,7 @@ void CoNLLUFileIterator::load_embeddings()
 void CoNLLUDataSet::vectorize()
 {
   assert(m_feat_descr.size() > 0 || m_embd_feat_descr.size() > 0);
-  CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr);
+  CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr, m_feat_extractor);
 
   // sort sentences by length (bucketing)
   vector<vector<size_t>> sent_by_len;

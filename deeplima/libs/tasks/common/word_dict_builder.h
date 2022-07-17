@@ -59,6 +59,11 @@ public:
     {
       for (size_t ifeat = 0; ifeat < fe.size(); ifeat++)
       {
+        if (!fe.should_preprocess_feature(ifeat))
+        {
+          continue;
+        }
+
         const std::string& feat_val = fe.feat_value(*it, ifeat);
         if (0 == feat_val.size())
         {

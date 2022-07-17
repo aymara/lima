@@ -38,17 +38,12 @@ class CoNLLUDataSet : public IterableDataSet
 {
 public:
 
-  CoNLLUDataSet(const CoNLLU::Annotation& annot, size_t batch_size, std::shared_ptr<FeatureVectorizerBase<>> p_embd, bool add_root = false)
-    : m_add_root(add_root),
-      m_batch_size(batch_size),
-      m_annot(annot),
-      m_feat_vectorizers({ p_embd })
-  {
-    for (auto p_embd : m_feat_vectorizers)
-    {
-      m_feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
-    }
-  }
+  CoNLLUDataSet(const CoNLLU::Annotation& annot,
+                size_t batch_size,
+                const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& feat_extractor,
+                const DictsHolder& morph_tag_dh,
+                std::shared_ptr<FeatureVectorizerBase<>> p_embd,
+                bool add_root = false);
 
   void init();
 
@@ -85,17 +80,19 @@ public:
 
 private:
   bool m_add_root;
-
   const size_t m_batch_size;
+  const DictsHolder m_morph_tag_dh;
   const CoNLLU::Annotation& m_annot;
   std::vector<std::shared_ptr<FeatureVectorizerBase<>>> m_feat_vectorizers;
 
   // Input features
   typedef nets::WordSeqVectorizerImpl<CoNLLU::WordLevelAdapter,
-                                      deeplima::TokenStrFeatExtractor<CoNLLU::WordLevelAdapter::token_t>,
+                                      deeplima::ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>,
                                       deeplima::TokenUIntFeatExtractor<CoNLLU::WordLevelAdapter::token_t>,
                                       TorchMatrix<int64_t>,
                                       TorchMatrix<float> > CoNLLUToTorchMatrix;
+
+  const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& m_feat_extractor;
 
   std::vector<CoNLLUToTorchMatrix::feature_descr_t> m_feat_descr;
   std::vector<CoNLLUToTorchMatrix::embeddable_feature_descr_t> m_embd_feat_descr;
