@@ -235,7 +235,7 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
   //cerr << "gold_bucket.sizes() == " << gold_bucket.get_tensor().sizes() << endl;
   //cerr << "gold_bucket.get_tensor().size(0) == " << gold_bucket.get_tensor().size(0) << endl;
 
-  size_t seq_len = it_input->first;
+  int64_t seq_len = it_input->first;
 
   //cerr << "input.first->get_tensor().sizes() == " << input.first->get_tensor().sizes() << endl;
   //cerr << "input.second->get_tensor().sizes() == " << input.second->get_tensor().sizes() << endl;
