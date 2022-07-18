@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 
 include_directories($ENV{LIMA_EXTERNALS}}/include)
-add_subdirectory(testAnnotationGraphs)
+#add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
   add_subdirectory(limaServer)
