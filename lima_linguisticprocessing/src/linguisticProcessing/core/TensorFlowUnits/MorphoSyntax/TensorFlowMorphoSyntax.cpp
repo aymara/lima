@@ -802,7 +802,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
       const DepparseOutput& out_descr = *(m_depparse_outputs.begin());
 
-      for (int64 p = 0; p < arcs_tensor.dimension(0); p++)
+      for (std::ptrdiff_t p = 0; p < arcs_tensor.dimension(0); p++)
       {
         TSentence& sent = sentences[i+p];
         size_t len = sent.token_count;
@@ -815,7 +815,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         //parents.reserve(m_max_seq_len);
         vector<size_t> parents;
         parents.resize(len + 1);
-        arborescence<size_t, float>([&arcs_logits, p](size_t i, size_t j) -> float {
+        arborescence<size_t, float>([&arcs_logits, p](std::ptrdiff_t i, std::ptrdiff_t j) -> float {
                                       return arcs_logits(p, i, j);
                                     },
                                     len + 1,
