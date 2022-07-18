@@ -266,9 +266,9 @@ protected:
                         const string& prefix,
                         size_t id) const;
   size_t fix_tag_for_no_root_link(const DepparseOutput& out_descr,
-                                  size_t pred_tag,
-                                  size_t pos_in_batch,
-                                  size_t word_num,
+                                  std::ptrdiff_t pred_tag,
+                                  std::ptrdiff_t pos_in_batch,
+                                  std::ptrdiff_t word_num,
                                   const TTypes<float, 3>::Tensor& tags_logits) const;
   void fixMissingFeature(const vector<vector<float>>& converted_scores,
                          const string& feat_name,
@@ -669,9 +669,9 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 }
 
 size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOutput& out_descr,
-                                                               size_t pred_tag,
-                                                               size_t pos_in_batch,
-                                                               size_t word_num,
+                                                               std::ptrdiff_t pred_tag,
+                                                               std::ptrdiff_t pos_in_batch,
+                                                               std::ptrdiff_t word_num,
                                                                const TTypes<float, 3>::Tensor& tags_logits) const
 {
   size_t new_pred_tag = pred_tag;
