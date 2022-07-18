@@ -679,7 +679,7 @@ size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOut
   if (pred_tag == out_descr.root_tag_idx || out_descr.i2t[pred_tag] == "ud:_")
   {
     // pred_head != 0 => this isn't a root => we have to change tag
-    size_t a = 0;
+    std::ptrdiff_t a = 0;
     float best_score = tags_logits(pos_in_batch, word_num, a);
     while (a == out_descr.root_tag_idx || a == pred_tag || out_descr.i2t[a] == "ud:_")
     {
