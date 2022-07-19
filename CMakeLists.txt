@@ -405,6 +405,9 @@ find_package(Torch)
 find_package(ICU 60.0 COMPONENTS uc)
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
+# Set the default component name before any call to install
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
+
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
 find_package(LIMACOMMON PATHS ${CMAKE_CURRENT_BINARY_DIR} REQUIRED)
@@ -535,7 +538,6 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 
 # set of commands to define component based packaging
 # notify cpack of component all names
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
 SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
