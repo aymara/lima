@@ -57,7 +57,8 @@ target_link_libraries(tvx
   ${optionalLibs}
 )
 
-install(TARGETS tvx DESTINATION bin)
+install(TARGETS tvx DESTINATION bin
+        COMPONENT runtime)
 
 
 ########### install files ###############

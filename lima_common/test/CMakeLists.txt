@@ -30,7 +30,8 @@ target_link_libraries(testDict16
   lima-common-time
 )
 
-install(TARGETS testDict16 DESTINATION bin)
+install(TARGETS testDict16 DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 

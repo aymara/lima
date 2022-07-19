@@ -66,6 +66,7 @@ if (WIN32)
       ${_qt_bin_dir}/Qt${QT_VERSION_MAJOR}QuickControls2.dll
     DESTINATION
       bin
+  COMPONENT runtime
   )
 
 elseif (APPLE)
@@ -103,5 +104,7 @@ install(TARGETS lima DESTINATION bin
   COMPONENT runtime)
 
 ########### install files ###############
-install(PROGRAMS lima.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(PROGRAMS qml/resources/lima.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)
+install(PROGRAMS lima.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+  COMPONENT runtime)
+install(PROGRAMS qml/resources/lima.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor
+  COMPONENT runtime)

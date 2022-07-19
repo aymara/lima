@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: MIT
 
-install(PROGRAMS launchAnalysis.sh oneShotAnalysis.sh viewer-easy.sh DESTINATION share/apps/pelf/commands/viewer)
+install(PROGRAMS launchAnalysis.sh oneShotAnalysis.sh viewer-easy.sh DESTINATION share/apps/pelf/commands/viewer
+  COMPONENT runtime)

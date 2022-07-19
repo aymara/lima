@@ -37,10 +37,14 @@ function(mywindeployqt)
         list(APPEND _ARGS --qmldir ${_deploy_QMLDIR})
     endif()
 
-    install(DIRECTORY "${_qt_bin_dir}/../qml/Qt" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/Qt" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin
+  COMPONENT runtime)
 
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${_deploy_TARGET} POST_BUILD

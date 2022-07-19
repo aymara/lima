@@ -21,13 +21,16 @@ target_link_libraries(easyprocessor
   Qt5::Xml
 )
 
-install(TARGETS easyprocessor DESTINATION bin)
+install(TARGETS easyprocessor DESTINATION bin
+  COMPONENT runtime)
 
 install(FILES
     easyprocessor.conf.xml
-  DESTINATION share/config/lima)
+  DESTINATION share/config/lima
+  COMPONENT runtime)
 
 install(FILES
     easy.dtd
     passage.dtd
-  DESTINATION share/apps/pelf/resources)
+  DESTINATION share/apps/pelf/resources
+  COMPONENT runtime)

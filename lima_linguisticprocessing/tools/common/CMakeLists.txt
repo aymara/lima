@@ -19,7 +19,8 @@ target_link_libraries(testTgv
   ${optionalLibs}
 )
 
-install(TARGETS testTgv DESTINATION bin)
+install(TARGETS testTgv DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 

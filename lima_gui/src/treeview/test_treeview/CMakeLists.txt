@@ -23,6 +23,7 @@ target_link_libraries(test_treeview
   ${Qt_LIBRARIES}
 )
 
-install(TARGETS test_treeview DESTINATION bin)
+install(TARGETS test_treeview DESTINATION bin
+  COMPONENT runtime)
 
 ########### install files ###############

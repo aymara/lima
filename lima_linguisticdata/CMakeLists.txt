@@ -54,5 +54,6 @@ LIMA_PRETEST_CONFIGENV(fre)
 LIMA_PRETEST_CONFIGENV(por)
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules
+        COMPONENT devel)
 

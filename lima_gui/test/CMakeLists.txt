@@ -9,11 +9,12 @@ set (test_gui_SRCS
   main.cpp
 )
 
-add_executable(test_gui 
+add_executable(test_gui
   ${test_gui_SRCS}
 )
-target_link_libraries(test_gui 
+target_link_libraries(test_gui
   ${Qt_LIBRARIES}
 )
 
-install(TARGETS test_gui DESTINATION bin)
+install(TARGETS test_gui DESTINATION bin
+  COMPONENT runtime)

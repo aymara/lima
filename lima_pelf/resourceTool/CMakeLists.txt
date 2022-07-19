@@ -43,11 +43,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/PelfResourceTool)
 add_executable(pelf-resedit ${pelf-resedit_SRCS} ${pelf-resedit_UIS_H})
-target_link_libraries(pelf-resedit 
+target_link_libraries(pelf-resedit
     lima-common
     lima-linguisticprocessing
     ${optionalLibs}
     ${Boost_LIBRARIES}
     ${Qt_LIBRARIES}
 )
-install(TARGETS pelf-resedit DESTINATION bin)
+install(TARGETS pelf-resedit DESTINATION bin
+  COMPONENT runtime)

@@ -28,7 +28,8 @@ target_link_libraries(lima-xp-client
 )
 
 set_target_properties(lima-xp-client PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
-install(TARGETS lima-xp-client DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-xp-client DESTINATION ${LIB_INSTALL_DIR}
+  COMPONENT runtime)
 
 
 ########### install files ###############
