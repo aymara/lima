@@ -149,7 +149,7 @@ public:
   inline void set(Matrix& target, uint64_t time, uint64_t feat, const typename D::value_t value)
   {
     assert(feat < m_dicts.size());
-    key_t k = m_dicts[feat]->get_idx(value);
+    int k = m_dicts[feat]->get_idx(value);
     target.set(time, feat, k);
   }
 

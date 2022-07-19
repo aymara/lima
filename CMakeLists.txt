@@ -403,6 +403,8 @@ message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
 
 find_package(Torch)
 find_package(ICU 60.0 COMPONENTS uc)
+message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
+include_directories(${ICU_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
 # Set the default component name before any call to install

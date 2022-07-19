@@ -27,6 +27,8 @@ set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost         1.46  REQUIRED COMPONENTS program_options filesystem)
 find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
+include_directories(${EIGEN3_INCLUDE_DIR})
+message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}")
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
   set(DEEPLIMA_STANDALONE ON)
