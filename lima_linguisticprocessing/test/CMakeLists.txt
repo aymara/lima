@@ -46,7 +46,8 @@ target_link_libraries(limasimple-analyze
   Boost::program_options
 )
 
-install(TARGETS limasimple-analyze DESTINATION bin
+install(TARGETS limasimple-analyze
+  DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
@@ -165,7 +166,9 @@ target_link_libraries(analyzeXml
 )
 
 
-install(TARGETS analyzeXml DESTINATION bin)
+install(TARGETS analyzeXml
+  DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -219,7 +222,9 @@ target_link_libraries(readMultFile
   ${Boost_LIBRARIES}
 )
 
-install(TARGETS readMultFile DESTINATION bin)
+install(TARGETS readMultFile
+  DESTINATION bin
+  COMPONENT runtime)
 
 add_subdirectory(convertMultXmlToMultBin)
 
