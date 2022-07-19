@@ -17,6 +17,9 @@ add_library(convert_from_torch
   ${SOURCE_LIST}
   ${HEADER_LIST}
 )
+target_compile_definitions(convert_from_torch
+        PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
+    )
 
 target_link_libraries(convert_from_torch
   PRIVATE
@@ -32,6 +35,9 @@ if (NOT DEEPLIMA_STANDALONE)
     ${SOURCE_LIST}
     ${HEADER_LIST}
   )
+  target_compile_definitions(convert_from_torch-shared
+        PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
+    )
 
   target_link_libraries(convert_from_torch-shared
     PRIVATE
@@ -40,9 +46,9 @@ if (NOT DEEPLIMA_STANDALONE)
     model_lemmatization
     ${TORCH_LIBRARIES}
   )
-
+  ADD_DLL_TO_PATH(convert_from_torch-shared)
   install(TARGETS convert_from_torch-shared
-    DESTINATION lib
+    DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime
   )
 endif()
