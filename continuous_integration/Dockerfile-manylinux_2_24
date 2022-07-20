@@ -1,7 +1,9 @@
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_qt_and_pyside
 
+ARG PYTHON_VERSION=${PYTHON_VERSION}
+ARG PYTHON_SHORT_VERSION=37
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/opt/python/cp38-cp38/bin:${PATH}"
+ENV PATH="/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
 RUN locale-gen en_US.UTF-8
@@ -122,8 +124,8 @@ RUN cp  /etc/default/locale /etc/environment
 RUN locale-gen
 RUN dpkg-reconfigure locales
 
-RUN python3.8 -m pip install scikit-build ninja
-ENV PATH="/opt/python/cp38-cp38/bin:${PATH}"
+RUN python${PYTHON_VERSION} -m pip install scikit-build ninja
+ENV PATH="/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
 RUN cmake --version
 
 ENV PATH=/opt/qt5/5.15.2/gcc_64/bin:$PATH
@@ -145,19 +147,19 @@ WORKDIR /
 RUN git clone https://code.qt.io/cgit/pyside/pyside-setup.git
 WORKDIR /pyside-setup
 RUN git checkout 5.15.2
-RUN install -d /opt/_internal/cpython-3.8.12/lib/x86_64-linux-gnu/
-RUN touch /opt/_internal/cpython-3.8.12/lib/x86_64-linux-gnu/libpython3.8.a
+RUN install -d /opt/_internal/cpython-${PYTHON_VERSION}.12/lib/x86_64-linux-gnu/
+RUN touch /opt/_internal/cpython-${PYTHON_VERSION}.12/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a
 
 RUN apt-get update -y -qq && apt-get install -y libpulse-mainloop-glib0
 
 WORKDIR /pyside-setup
-RUN python3.8 -m pip install cmake
+RUN python${PYTHON_VERSION} -m pip install cmake
 
 ENV QTDIR=/opt/qt5
 ENV PATH=/opt/qt5/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/qt5/lib:$LD_LIBRARY_PATH
 
-RUN python3.8 setup.py install --cmake=/opt/python/cp38-cp38/bin/cmake --build-type=all
+RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin/cmake --build-type=all
 
 WORKDIR /
 
@@ -172,6 +174,9 @@ WORKDIR /
 
 
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_tensorflow_for_lima_1_9
+
+ARG PYTHON_VERSION=${PYTHON_VERSION}
+ARG PYTHON_SHORT_VERSION=37
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -196,8 +201,8 @@ ARG NLTK_PTB_DP_FILE
 RUN apt-get update -y -qq && apt-get install -y git build-essential pkg-config automake wget
 
 
-RUN python3.8 -m pip install cmake ninja
-ENV PATH="/opt/python/cp38-cp38/bin:${PATH}"
+RUN python${PYTHON_VERSION} -m pip install cmake ninja
+ENV PATH="/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 WORKDIR /
 RUN wget -q https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+sourcefiles/tensorflow-for-lima/1.9-ubuntu7~20.10/tensorflow-for-lima_1.9.orig.tar.xz
@@ -223,6 +228,9 @@ RUN make -C /tensorflow/tensorflow-build -j 1 install
 
 
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_icu
+
+ARG PYTHON_VERSION=${PYTHON_VERSION}
+ARG PYTHON_SHORT_VERSION=37
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -270,6 +278,9 @@ RUN rm -rf boost_1_78_0
 
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_nltk_data
 
+ARG PYTHON_VERSION=${PYTHON_VERSION}
+ARG PYTHON_SHORT_VERSION=37
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
@@ -303,6 +314,9 @@ RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_dat
 
 
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS lima-manylinux
+
+ARG PYTHON_VERSION=${PYTHON_VERSION}
+ARG PYTHON_SHORT_VERSION=37
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -394,7 +408,7 @@ ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
 ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /usr/share/apps/lima/resources
-ENV PATH="/opt/python/cp38-cp38/bin:${PATH}"
+ENV PATH="/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 # Build
 #
@@ -412,7 +426,7 @@ RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
 
 # install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3.8 install arpy requests tqdm ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm ; fi"
 
 ## install English and French UD models
 #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
