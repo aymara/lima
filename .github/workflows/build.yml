@@ -9,6 +9,8 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  PYTHON_VERSION: 3.8
+  PYTHON_SHORT_VERSION: 38
 
 
 jobs:
@@ -110,7 +112,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build --tag aymara/lima-manylinux_2_24:latest -f ./Dockerfile-manylinux_2_24 .
+        run: cd ./continuous_integration && docker build --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION}  --tag aymara/lima-manylinux_2_24:latest -f ./Dockerfile-manylinux_2_24 .
 
       - name: "Push image"
         run: docker push aymara/lima-manylinux_2_24:latest
