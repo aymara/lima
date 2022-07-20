@@ -111,6 +111,11 @@ WORKDIR /src
 RUN wget -q https://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
 RUN tar xf qt-everywhere-src-5.15.2.tar.xz
 
+RUN which python${PYTHON_VERSION}
+RUN python${PYTHON_VERSION} --version
+RUN alias python="python${PYTHON_VERSION}"
+RUN ln -s $(which python${PYTHON_VERSION}) /usr/bin/python
+
 WORKDIR /
 COPY build_qt5.sh /
 #RUN apt install -y lsb-release
@@ -125,7 +130,7 @@ RUN locale-gen
 RUN dpkg-reconfigure locales
 
 RUN python${PYTHON_VERSION} -m pip install scikit-build ninja
-ENV PATH="/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
+
 RUN cmake --version
 
 ENV PATH=/opt/qt5/5.15.2/gcc_64/bin:$PATH
