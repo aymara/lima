@@ -38,5 +38,5 @@ For more information, installation instructions and documentation, please refer 
 Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aymara/lima/status.png)](https://drone.io/github.com/aymara/lima/latest)
 -->
 
-[![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/aymara/lima/branch/master?svg=true)](https://ci.appveyor.com/project/kleag/lima)
 ![GitHub Action Workflow status](https://github.com/aymara/lima/actions/workflows/build.yml/badge.svg)
