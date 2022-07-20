@@ -29,6 +29,7 @@ find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
 include_directories(${EIGEN3_INCLUDE_DIR})
 message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}")
+message("Eigen3 root: ${EIGEN3_USE_FILE}")
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
   set(DEEPLIMA_STANDALONE ON)
