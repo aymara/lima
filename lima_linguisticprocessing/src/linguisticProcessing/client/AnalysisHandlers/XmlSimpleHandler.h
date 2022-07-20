@@ -1,10 +1,8 @@
-/******************************************************************************
- * File        : xmlSimpleHandler.cpp
- * Author      : CEA LIST
- * Created on  : janvier 2010
- * Copyright   : (c) 2010 by CEA
- * brief       : Manipulateur de données XML
- ******************************************************************************/
+// Copyright   : (c) 2010 by CEA
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #ifndef XMLSIMPLEHANDLER_H
 #define XMLSIMPLEHANDLER_H
 

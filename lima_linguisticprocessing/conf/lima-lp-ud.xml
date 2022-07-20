@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="entities">
     <group name="include">
@@ -23,10 +30,10 @@
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
-        <item value="RnnTagger"/>
+        <item value="RnnTokensAnalyzer"/>
         <!--item value="cpptftokenizer"/-->
         <!--item value="tfmorphosyntax"/-->
-        <item value="tflemmatizer"/>
+        <!--item value="tflemmatizer"/-->
         <item value="conllDumper"/>
       </list>
     </group>
@@ -69,6 +76,11 @@
 
     <group name="RnnTagger" class="RnnTagger">
       <param key="model_prefix" value="tagger-$udlang"/>
+    </group>
+
+    <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
+      <param key="tagger_model_prefix" value="tagger-$udlang"/>
+      <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">

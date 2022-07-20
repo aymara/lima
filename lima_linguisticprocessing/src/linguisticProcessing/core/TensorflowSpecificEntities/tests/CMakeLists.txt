@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -23,4 +27,5 @@ add_test(
   COMMAND TestModuleNER
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
-install(TARGETS TestModuleNER RUNTIME DESTINATION bin)
+install(TARGETS TestModuleNER RUNTIME DESTINATION bin
+  COMPONENT runtime)

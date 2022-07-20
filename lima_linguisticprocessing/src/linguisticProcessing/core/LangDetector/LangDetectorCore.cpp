@@ -14,7 +14,9 @@ namespace Lima::LinguisticProcessing::LDetector {
 
     }
 
-    LangDetectorCore::~LangDetectorCore() = default;
+    LangDetectorCore::~LangDetectorCore() {
+        delete m_d;
+    }
 
     /*
      * Detect the language of the text.
@@ -35,7 +37,7 @@ namespace Lima::LinguisticProcessing::LDetector {
         return label.substr(9, std::string::npos);
     }
 
-    void LangDetectorCore::loadModel(std::string modelPath) const {
+    void LangDetectorCore::loadModel(const std::string& modelPath) {
         m_d->ftext.loadModel(modelPath);
     }
 }

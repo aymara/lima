@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #ifndef QSLOG_EXPORT_H
 #define QSLOG_EXPORT_H
 

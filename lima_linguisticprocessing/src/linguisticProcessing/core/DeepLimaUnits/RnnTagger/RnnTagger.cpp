@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QRegularExpression>
@@ -284,6 +270,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         {
             m_load_fn();
         }
+        LOG_MESSAGE(LDEBUG, "classes name: " << m_tag->get_class_names());
+        LOG_MESSAGE(LDEBUG, "classes: " << m_tag->get_classes());
         for (size_t i = 0; i < m_tag->get_classes().size(); ++i)
         {
             m_dumper.set_classes(i, m_tag->get_class_names()[i], m_tag->get_classes()[i]);

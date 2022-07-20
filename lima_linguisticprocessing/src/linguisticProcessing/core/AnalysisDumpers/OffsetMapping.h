@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       OffsetMapping.h
- * @author     Romaric Besançon (romaric.besancon@cea.fr)
- * @date       Thu Nov 17 2016
- * copyright   Copyright (C) 2016 by CEA - LIST
- * Project     AMOSE
- * 
- * @brief      This class contains a mapping between the offsets from the original text (before preprocessing) and the offsets after text expansion 
- * 
- * 
- ***********************************************************************/
+// Copyright (C) 2016 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef OFFSETMAPPING_H
 #define OFFSETMAPPING_H

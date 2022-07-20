@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       limaSimpleClient.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Fri Dec 15 2017
- * copyright   Copyright (C) 2017 by CEA - LIST
- * Project     LIMA
- * 
- * @brief      simple wrapper of LIMA analyzer with a limited interface, using default configuration
- * 
- * 
- ***********************************************************************/
+// Copyright (C) 2017 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMASIMPLECLIENT_H
 #define LIMASIMPLECLIENT_H

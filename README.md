@@ -7,6 +7,7 @@ LIMA - Libre Multilingual Analyzer
 Under GNU/Linux with python 3.8:
 
 ```bash
+# Upgrading pip is fundamental in order to obtain the correct LIMA version
 $ pip install --upgrade pip
 $ pip install aymara
 $ lima_models.py -l eng
@@ -27,7 +28,7 @@ hello
 
 # Introducing LIMA
 
-LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://www-list.cea.fr/en), [LASTI laboratory](http://www.kalisteo.fr/en/index.htm) (French acronym for Text and Image Semantic Analysis Laboratory). LIMA is available under a dual licensing model, AGPL and commercial.
+LIMA is a multilingual linguistic analyzer developed by the [CEA LIST](http://www-list.cea.fr/en), [LASTI laboratory](http://www.kalisteo.fr/en/index.htm) (French acronym for Text and Image Semantic Analysis Laboratory). LIMA is Free Software, available under the MIT license.
 
 LIMA has [state of the art performance for more than 60 languages](https://github.com/aymara/lima-models/blob/master/eval.md) thanks to its recent deep learning (neural network) based modules. But it includes also a very powerful rules based mechanism called ModEx allowing to quickly extract information (entities, relations, events…) in new domains where annotated data does not exist.
 
@@ -37,4 +38,5 @@ For more information, installation instructions and documentation, please refer 
 Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aymara/lima/status.png)](https://drone.io/github.com/aymara/lima/latest)
 -->
 
-Appveyor Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
+[![Build status](https://ci.appveyor.com/api/projects/status/tyj7jgks2cxx94w9?svg=true)](https://ci.appveyor.com/project/kleag/lima)
+![GitHub Action Workflow status](https://github.com/aymara/lima/actions/workflows/build.yml/badge.svg)

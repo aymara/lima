@@ -1,19 +1,7 @@
-#   Copyright 2017 CEA LIST
-#    
-#   This file is part of LIMA.
+# Copyright 2017 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 ########### next target ###############
 
@@ -21,11 +9,12 @@ set (test_gui_SRCS
   main.cpp
 )
 
-add_executable(test_gui 
+add_executable(test_gui
   ${test_gui_SRCS}
 )
-target_link_libraries(test_gui 
+target_link_libraries(test_gui
   ${Qt_LIBRARIES}
 )
 
-install(TARGETS test_gui DESTINATION bin)
+install(TARGETS test_gui DESTINATION bin
+  COMPONENT runtime)

@@ -1,22 +1,10 @@
-#   Copyright 2002-2020 CEA LIST
+# Copyright 2002-2020 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 include_directories($ENV{LIMA_EXTERNALS}}/include)
-add_subdirectory(testAnnotationGraphs)
+#add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
   add_subdirectory(limaServer)
@@ -58,7 +46,8 @@ target_link_libraries(limasimple-analyze
   Boost::program_options
 )
 
-install(TARGETS limasimple-analyze DESTINATION bin
+install(TARGETS limasimple-analyze
+  DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
@@ -177,7 +166,9 @@ target_link_libraries(analyzeXml
 )
 
 
-install(TARGETS analyzeXml DESTINATION bin)
+install(TARGETS analyzeXml
+  DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -231,7 +222,9 @@ target_link_libraries(readMultFile
   ${Boost_LIBRARIES}
 )
 
-install(TARGETS readMultFile DESTINATION bin)
+install(TARGETS readMultFile
+  DESTINATION bin
+  COMPONENT runtime)
 
 add_subdirectory(convertMultXmlToMultBin)
 

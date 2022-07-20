@@ -1,23 +1,12 @@
 #!/usr/bin/perl
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
-#  Ce script prend en entrée un dictionnaire au format XML et affiche la liste des entrée pour lesquelles il
-#  existe 2 lemmes différents ou 2 formes normalisées différentes.
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
+#  Ce script prend en entrÃ©e un dictionnaire au format XML et affiche la liste des entrÃ©e pour lesquelles il
+#  existe 2 lemmes diffÃ©rents ou 2 formes normalisÃ©es diffÃ©rentes.
 
 my $current,$lemma,$lemmaFlag,$norm,$normalFlag;
 

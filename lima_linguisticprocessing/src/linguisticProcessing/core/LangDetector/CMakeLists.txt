@@ -10,7 +10,7 @@ SET(lima-lp-langdetector_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-langdetector)
 
-target_compile_definitions(lima-lp-langdetector PRIVATE "-DLIMA_LANGDETECTOR_EXPORTING")
+target_compile_definitions(lima-lp-langdetector PRIVATE "LIMA_LANGDETECTOR_EXPORTING")
 
 target_link_libraries(lima-lp-langdetector
         lima-common-processunitframework
@@ -30,13 +30,17 @@ install(FILES
         DESTINATION share/apps/lima/resources/LinguisticProcessings/LangDetector/
         COMPONENT runtime
         )
+
 ########### next target ###############
-SET(langdetectorlib_LIB_SRCS langDetector.cpp)
-add_executable(langDetector main.cpp LangDetectorCore.cpp LangDetectorCore.h)
-install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
-        COMPONENT runtime)
+
+add_executable(langDetector main.cpp)
 target_link_libraries(langDetector
-        ${QT_LIBRARIES}
+        lima-lp-langdetector
         lima-lp-linguisticresources
         lima-common-misc
-        fasttext-static)
+        fasttext-static
+        ${QT_LIBRARIES}
+        )
+
+install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}
+        COMPONENT runtime)

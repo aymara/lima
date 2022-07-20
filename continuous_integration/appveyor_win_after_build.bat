@@ -18,6 +18,8 @@ pushd C:\b
 echo %1
 copy lima*.exe %1
 rem %APPVEYOR_BUILD_FOLDER%
+lima_models.py -l english
+lima_models.py -l french
 popd
 
 

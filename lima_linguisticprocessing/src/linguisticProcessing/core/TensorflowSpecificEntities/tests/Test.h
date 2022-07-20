@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #ifndef TEST_H
 #define TEST_H
 #include <QObject>

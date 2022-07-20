@@ -1,17 +1,6 @@
-#   This file is part of LIMA.
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 #!/bin/bash
 
 #Fail if anything goes wrong
@@ -158,7 +147,12 @@ if [[ "$j" == "0" ]]; then
   if [[ $CMAKE_GENERATOR == "VS" ]]; then
     j=`WMIC CPU Get NumberOfCores | head -n 2 | tail -n 1 | sed -n "s/\s//gp"`
   elif [[ $CMAKE_GENERATOR == "Unix" || $CMAKE_GENERATOR == "Ninja" ]]; then
-    j=`grep -c ^processor /proc/cpuinfo`
+    if [[ `uname` == "Darwin" ]]; then
+      CORE_COUNT=`sysctl -a | grep core_count | sed -e "s/machdep.cpu.core_count: //"`
+    else
+      CORE_COUNT=`grep -c ^processor /proc/cpuinfo`
+    fi
+    j=$CORE_COUNT
   fi
 fi
 if [[ "$j" == "1" ]]; then
@@ -270,12 +264,14 @@ eval $make_cmd
 result=$?
 if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
 
+if [[ $OSTYPE == ’darwin’* ]] ; 
+then
 echoerr "Running make test:"
 echo "$make_test"
 eval $make_test
 result=$?
 if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
-
+fi
 echoerr "Running make install:"
 echo "$make_install"
 eval $make_install

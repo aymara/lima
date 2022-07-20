@@ -1,15 +1,8 @@
-/****************************************************************************
-**
-** Code below is
-** Copyright (C) 2016 The Qt Company Ltd.
-**
-** It is used and modified by CEA LIST under the terms of the
-**
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 3 as published by the Free Software Foundation
-**
-****************************************************************************/
+// Copyright (C) 2016 The Qt Company Ltd.
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "qtSgmlEntities.h"
 
 static const ushort windowsLatin1ExtendedCharacters[0xA0 - 0x80] = {

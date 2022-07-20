@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 //
 // C++ Implementation: stringspool
 //
@@ -49,66 +36,21 @@ class StringsPoolPrivate
   void clear();
   void clear(const uint64_t pos);
 
-#ifdef WIN32
-#define MAX_DEPTH 25
+  struct HashLimaStringPtr
+  {
+      size_t operator()(const Lima::LimaString* s) const;
+  };
 
-  class LimaStringPtrHasher {
-  public:
-     static const size_t bucket_size = 10; // mean bucket size that the container should try not to exceed
-     static const size_t min_buckets = (1 << 10); // minimum number of buckets, power of 2, >0
-     LimaStringPtrHasher() {
-          // should be default-constructible
-     }
-     size_t operator()(const Lima::LimaString* s) const {
-        const int shift[] = {0,8,16,24};    // 4 shifts to "occupy" 32 bits
-        uint64_t key = 0x55555555;        //0101...
-        uint64_t oneChar;
-        int depth = s->length();
-        if (depth > MAX_DEPTH)
-            depth = MAX_DEPTH;
-        for (int i=0; i<depth; i++) {
-            oneChar = ((uint64_t) ((*s)[i].unicode()) )<<shift[i%4];
-            key^=oneChar;                    // exclusive or
-        }
-        return key;
-     }
+  struct EquaLimaStringPtr
+  {
+      bool operator()(const Lima::LimaString* s1, const Lima::LimaString* s2) const;
+  };
 
-     bool operator()(const Lima::LimaString* left, const Lima::LimaString* right) {
-            // this should implement a total ordering on MyClass, that is
-            // it should return true if "left" precedes "right" in the ordering
-            return *left < *right;
-     }
- };
- typedef stdext::hash_map<
-     const Lima::LimaString*,
-     StringsPoolIndex,
-     LimaStringPtrHasher
- > LimaStringPtrHashMap;
-#else
-    struct HashLimaStringPtr
-    {
-        size_t operator()(const Lima::LimaString* s) const;
-    };
-
-    struct EquaLimaStringPtr
-    {
-        bool operator()(const Lima::LimaString* s1, const Lima::LimaString* s2) const;
-    };
-
-#ifndef NO_STDCPP0X
-    typedef std::unordered_map<
-      const Lima::LimaString*,
-      StringsPoolIndex,
-      HashLimaStringPtr,
-      EquaLimaStringPtr > LimaStringPtrHashMap;
-#else
-    typedef __gnu_cxx::hash_map<
-      const Lima::LimaString*,
-      StringsPoolIndex,
-      HashLimaStringPtr,
-      EquaLimaStringPtr > LimaStringPtrHashMap;
-#endif
-#endif
+  typedef std::unordered_map<
+    const Lima::LimaString*,
+    StringsPoolIndex,
+    HashLimaStringPtr,
+    EquaLimaStringPtr > LimaStringPtrHashMap;
   LimaStringPtrHashMap m_hashPool;
   LimaStringPtrHashMap m_resourcesHashPool;
   std::vector< LimaString* > m_vecPool;
@@ -284,7 +226,6 @@ void StringsPoolPrivate::clear(const uint64_t pos)
     m_vecPool.resize(pos);
 }
 
-#ifndef WIN32
 #define MAX_DEPTH 25
 size_t StringsPoolPrivate::HashLimaStringPtr::operator()(const Lima::LimaString* s) const
 {
@@ -307,5 +248,6 @@ bool StringsPoolPrivate::EquaLimaStringPtr::operator()(
 {
     return ((*s1) == (*s2));
 }
-#endif
+
+
 } // closing namespace Lima
