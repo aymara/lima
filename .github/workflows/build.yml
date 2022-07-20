@@ -110,7 +110,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Build image"
-        run: docker build --tag aymara/lima-manylinux_2_24:latest -f ./continuous_integration/Dockerfile-manylinux_2_24 .ffff
+        run: docker build --tag aymara/lima-manylinux_2_24:latest -f ./continuous_integration/Dockerfile-manylinux_2_24 .
 
       - name: "Push image"
         run: docker push aymara/lima-manylinux_2_24:latest
