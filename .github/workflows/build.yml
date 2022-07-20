@@ -100,3 +100,17 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+
+ manylinux:
+   name: "Build the manylinux-based imaged necessary for lima-python"
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: "Checkout code"
+       uses: actions/checkout@v2
+
+     - name: "Build image"
+       run: docker build --tag aymara/lima-manylinux_2_24:latest -f ./continuous_integration/Dockerfile-manylinux_2_24 .ffff
+
+     - name: "Push image"
+       run: docker push aymara/lima-manylinux_2_24:latest
