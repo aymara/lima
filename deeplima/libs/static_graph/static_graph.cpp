@@ -744,7 +744,7 @@ void StaticGraphImpl::create_submodule_Embedding(const std::string& name, const 
 void StaticGraphImpl::create_submodule_Dropout(const std::string& name, const std::map<std::string, std::string>& opts)
 {
   // Required options. It must throw an exception if they aren't available
-  int64_t prob = get_option<float>(opts, "prob");
+  float prob = get_option<float>(opts, "prob");
 
   torch::nn::Dropout m(prob);
   m_dropout.push_back(m);

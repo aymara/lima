@@ -21,7 +21,7 @@ string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& emb
 {
   stringstream ss;
 
-  ss << "input_dropout = def Dropout prob=0.7" << std::endl;
+  ss << "input_dropout = def Dropout prob=0.3" << std::endl;
 
   size_t rnn_input_size = 0;
   for (size_t i = 0; i < embd_descr.size(); i++)
