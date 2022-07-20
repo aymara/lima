@@ -109,11 +109,8 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v2
 
-      - name: "Move to continuous_integration dir"
-        run: cd ./continuous_integration
-
       - name: "Build image"
-        run: docker build --tag aymara/lima-manylinux_2_24:latest -f ./Dockerfile-manylinux_2_24 .
+        run: cd ./continuous_integration && docker build --tag aymara/lima-manylinux_2_24:latest -f ./Dockerfile-manylinux_2_24 .
 
       - name: "Push image"
         run: docker push aymara/lima-manylinux_2_24:latest
