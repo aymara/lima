@@ -44,7 +44,7 @@ public:
   virtual void parse_from_stream(const read_callback_t fn)
   {
     uint32_t buffer_size = 1024*64;
-    char buff[buffer_size];
+    char buff = *(new char[buffer_size]);
     char* end = buff + buffer_size;
     bool continue_reading = true;
     uint32_t start_writting = 0;
