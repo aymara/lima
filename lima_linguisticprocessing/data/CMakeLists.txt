@@ -13,10 +13,10 @@ IF(TRE_FOUND)
   )
 ENDIF(TRE_FOUND)
 
+    #test-eng.compounds.xml
 install(
   FILES
     test-eng.abbrev.xml
-    test-eng.compounds.xml
     test-eng.default.xml
     test-eng.disambiguated.xml
     test-eng.hyphen.xml
