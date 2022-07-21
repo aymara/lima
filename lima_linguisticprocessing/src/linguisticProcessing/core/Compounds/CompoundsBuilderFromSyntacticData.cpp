@@ -127,7 +127,7 @@ void CompoundsBuilderFromSyntacticDataPrivate::initConceptTypes(
   try
   {
    const auto& mapping= unitConfiguration.getMapAtKey("conceptTypes");
-#if __cplusplus > 201402L // Only available with c++17 extensions : -std=c++1z
+#if __cplusplus >= 201703L // Only available with c++17 extensions : -std=c++1z
     for (const auto& [key, val] : mapping)
     {
 #else
