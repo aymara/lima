@@ -400,6 +400,11 @@ find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
+if(WIN32 AND EIGEN3_FOUND)
+include_directories("${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 root: ${EIGEN3_USE_FILE}")
+endif()
 
 find_package(Torch)
 find_package(ICU 60.0 COMPONENTS uc)
