@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
 *
 * File        : transitionCompiler.cpp
@@ -264,18 +251,18 @@ TransitionUnit* createTransition(const LimaString str,
     uint64_t max(NumericTransition::noValue);
     if (s[transitionKeySize] == CHAR_NUM_EQUAL_TR)
     {
-      val=s.midRef(transitionKeySize+1).toULong();
+      val=s.mid(transitionKeySize+1).toULong();
     }
     else if (s[transitionKeySize] == CHAR_NUM_LE_TR)
     {
       //int i(s.find(CHAR_NUM_GE_TR,LENGTH_NUM_NAME_TR+1));
       int i(s.indexOf(CHAR_NUM_GE_TR,transitionKeySize+1));
       if (i==-1) {
-        max=s.midRef(transitionKeySize+1).toULong();
+        max=s.mid(transitionKeySize+1).toULong();
       }
       else {
-        max=s.midRef(transitionKeySize+1, i-transitionKeySize-1).toULong();
-        min=s.midRef(i+1).toULong();
+        max=s.mid(transitionKeySize+1, i-transitionKeySize-1).toULong();
+        min=s.mid(i+1).toULong();
       }
     }
     else if (s[transitionKeySize] == CHAR_NUM_GE_TR)
@@ -283,12 +270,12 @@ TransitionUnit* createTransition(const LimaString str,
       //int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,LENGTH_NUM_NAME_TR+1));
       int i(findSpecialCharacter(s,CHAR_NUM_LE_TR,transitionKeySize+1));
       if (i==-1) {
-        min=s.midRef(transitionKeySize+1).toULong();
+        min=s.mid(transitionKeySize+1).toULong();
       }
       else {
-        min=s.midRef(transitionKeySize+1,
+        min=s.mid(transitionKeySize+1,
                   i-transitionKeySize-1).toULong();
-        max=s.midRef(i+1).toULong();
+        max=s.mid(i+1).toULong();
       }
     }
 
@@ -296,7 +283,7 @@ TransitionUnit* createTransition(const LimaString str,
   }
   // ----------------------------------------------------------------------
   // Part-of-speech transition
-  else if (s[0] == CHAR_POS_TR) {
+  else if (!s.isEmpty() && s[0] == CHAR_POS_TR) {
     Tpos pos=createTpos(Misc::limastring2utf8stdstring(s.mid(1)),language);
     t = new PosTransition(pos,macroAccessor,microAccessor);
   }

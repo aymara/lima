@@ -1,27 +1,13 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // NAUTITIA
 //
 // jys 2-OCT-2002
 //
-// Binary memory explorer. 
+// Binary memory explorer.
 // BinaryEntry is the base class of other dictionnary structure
 // management class (DictionaryEntry, LingInfoEntry, etc.)
 // BinaryEntry has methods to explore dictionary in memory.
@@ -96,7 +82,7 @@ uint64_t BinaryEntry::getNumber(unsigned char*& ptr,
  {
     if ((count > 4) || (count < 1)) throw InvNumberException();
     uint64_t result = *ptr++;
-    for (uint64_t loop=1; loop<count; loop++) 
+    for (uint64_t loop=1; loop<count; loop++)
   result = result*0x100 + *ptr++;
     return result;
 }
@@ -140,12 +126,12 @@ LimaString BinaryEntry::getUtf8String(unsigned char*& ptr) const {
     LimaString utf16String; utf16String.resize(maxSize);
     int j=0;
     while (ptr < ptrEnd) {
-        LimaChar first = *ptr++ & 0xFF;
-        if (first < 0x80)                   // 7 bits available
-            utf16String[j++] = first;      
-        else if (first < 0xDF)                // 11 bits available
+        QChar first{*ptr++ & 0xFF};
+        if (first < QChar{0x80})                   // 7 bits available
+            utf16String[j++] = first;
+        else if (first < QChar{0xDF})                // 11 bits available
             utf16String[j++] = LimaChar(((first.unicode()<<6)+(*ptr++&0x3F))&0x000007FF);
-        else if (first < 0xEF)                // 16 bits available
+        else if (first < QChar{0xEF})                // 16 bits available
         {
             auto firstOffset = (*ptr++&0x3F)<<6;
             auto secondOffset = (*ptr++&0x3F);

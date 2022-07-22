@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @file       groupConfigurationStructure.h
   * @brief      originally detectGroupConfigurationStructure.h in detectlibraries
@@ -45,6 +32,7 @@ class LIMA_XMLCONFIGURATIONFILES_EXPORT GroupConfigurationStructure {
 public:
     GroupConfigurationStructure();
     GroupConfigurationStructure(const std::string& name);
+    GroupConfigurationStructure(const QString& name);
     GroupConfigurationStructure(const GroupConfigurationStructure& group);
     GroupConfigurationStructure& operator=(const GroupConfigurationStructure& group);
     virtual ~GroupConfigurationStructure();
@@ -78,6 +66,31 @@ public:
     void changeListToListOfItems(const std::string &listName);
     void changeMapToMapOfItems(const std::string &mapName);
 
+//     QString getNameQ();
+//     QString getAttribute(const QString& key);
+//     QString getParamsValueAtKey(const QString& key);
+//     bool getParamsValueAtKey(const QString& key, QString& value);
+//     std::deque< std::string >& getListsValueAtKey(const QString& key);
+//     std::map<std::string, std::string>& getMapAtKey(const QString& key);
+//     void addAttribute(const QString& key,const QString& value);
+//     void addParamValuePair(const QString& key, const QString& value);
+//     void addListNamed(const QString& listName);
+//     void addItemInListNamed(const QString& item, const QString& listName);
+//     void addMap(const QString& mapName);
+//     void addEntryInMap(const QString& mapName,const QString& key,const QString& value);
+//
+//     std::deque<ItemWithAttributes>& getListOfItems(const QString& key);
+//     std::map<std::string, ItemWithAttributes>& getMapOfItems(const QString& key);
+//     void addListOfItems(const QString& listName);
+//     void addItemInListOfItems(const QString& listName,
+//                               const ItemWithAttributes& item);
+//     void addMapOfItems(const QString& mapName);
+//     void addEntryInMapOfItems(const QString& mapName,
+//                               const QString& key,
+//                               const ItemWithAttributes& item);
+//
+//     void changeListToListOfItems(const QString &listName);
+//     void changeMapToMapOfItems(const QString &mapName);
 
     friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
 
@@ -86,6 +99,11 @@ public:
     uint32_t getIntParameter(const std::string& key);
     double getDoubleParameter(const std::string& key);
     std::string getStringParameter(const std::string& key);
+
+//     bool getBooleanParameter(const QString& key);
+//     uint32_t getIntParameter(const QString& key);
+//     double getDoubleParameter(const QString& key);
+//     QString getStringParameter(const QString& key);
 
 private:
   GroupConfigurationStructurePrivate* m_d;

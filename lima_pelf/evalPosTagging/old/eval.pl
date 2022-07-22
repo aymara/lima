@@ -1,5 +1,9 @@
 #! /usr/bin/perl -s
 
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 $posTagger=$ARGV[0];
 $lang=$ARGV[1];
 $fileFilter=$ARGV[2];

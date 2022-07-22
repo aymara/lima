@@ -9,6 +9,8 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  PYTHON_VERSION: 3.8
+  PYTHON_SHORT_VERSION: 38
 
 
 jobs:
@@ -100,3 +102,20 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+
+  # Cannot run this build on each commit to master, it takes to much time (several hours), having to build the
+  # whole qt and llvm, etc.
+
+  #manylinux:
+    #name: "Build the manylinux-based imaged necessary for lima-python"
+    #runs-on: ubuntu-latest
+
+    #steps:
+      #- name: "Checkout code"
+        #uses: actions/checkout@v2
+
+      #- name: "Build image"
+        #run: cd ./continuous_integration && docker build --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION}  --tag aymara/lima-manylinux_2_24:latest -f ./Dockerfile-manylinux_2_24 .
+
+      #- name: "Push image"
+        #run: docker push aymara/lima-manylinux_2_24:latest

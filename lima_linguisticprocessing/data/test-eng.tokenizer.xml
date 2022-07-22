@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <testcases>
 <testcase id="eng.tok.1" type="bloquant">
   <call-parameters>
@@ -888,17 +895,17 @@
     right=","/>
 </testcase>
 <testcase id="eng.tok.52" type="bloquant">
+  <expl>Break sentences on paragraph break.</expl>
   <call-parameters>
-      <param key="text" value="A B
+    <param key="text">A B
 
 
-C D"/>
+C D"</param>
       <param key="language" value="eng"/>
       <list key="pipelines">
         <item value="indexer"/>
       </list>
     </call-parameters>
-  <expl>Break sentences on paragraph break.</expl>
   <test id="eng.tok.52.1" trace=".tokenizer.xml"
     comment="sentence break status is expected on EOL token"
     left="XPATH#//data_structure/vertex/token[position=5]/t_status/t_default"

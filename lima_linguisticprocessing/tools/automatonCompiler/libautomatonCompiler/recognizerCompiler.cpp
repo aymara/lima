@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
 *
 * File        : recognizerCompiler.cpp
@@ -551,7 +538,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
 
   // add the trigger to deal with agreement constraints
   LimaString triggerString=gazeteer[0];
-  // triggerString must not contain space (its real value is not important, the important is the 
+  // triggerString must not contain space (its real value is not important, the important is the
   // trigger used to get to the rule in the recognizer)
   triggerString.remove(QChar(' '));
   if (! keepTrigger) {
@@ -869,16 +856,16 @@ expandSubAutomatonsInRule(LimaString& s,
 //   return true;
 // }
 
-LimaString RecognizerCompiler::
-peekConstraints(std::ifstream& file) {
+LimaString RecognizerCompiler::peekConstraints(std::ifstream& file) {
   LimaString s;
   LimaString line;
-  LimaChar c=file.peek();
+  LimaChar c = QChar::fromLatin1(file.peek());
   while ((c==CHAR_BEGIN_CONSTRAINT || c==CHAR_BEGIN_ACTION)
-         && !file.eof()) {
+         && !file.eof())
+  {
     readline(line);
-    s+=line;
-    c=file.peek();
+    s += line;
+    c = QChar::fromLatin1(file.peek());
   }
   return s;
 }

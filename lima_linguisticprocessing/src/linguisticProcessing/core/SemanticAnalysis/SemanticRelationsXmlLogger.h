@@ -1,16 +1,7 @@
-/************************************************************************
- *
- * @file       SemanticRelationsXmlLogger.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Wed Sep 12 2007
- * copyright   Copyright (C) 2007 by CEA LIST
- * Project     s2lp
- * 
- * @brief xml logger for the semantic relation annotations from the
- * annotation graph
- * 
- * 
- ***********************************************************************/
+// Copyright (C) 2007 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef SEMANTICRELATIONSXMLLOGGERSEMANTICRELATIONSXMLLOGGER_H
 #define SEMANTICRELATIONSXMLLOGGERSEMANTICRELATIONSXMLLOGGER_H

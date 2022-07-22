@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       MultXmlHandler.h
- * @author     Gael de Chalendar (gael.de-chalendar@cea.fr)
- * @date       Mon Apr 7 2014
- * copyright   Copyright (C) 2014 by CEA LIST
- * Project     lima_xmlprocessings
- *
- * Handler for parsing XML representation of Amose analysed
- * multimedia documents
- *
- ***********************************************************************/
+// Copyright (C) 2014 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef MULTXMLHANDLER_H
 #define MULTXMLHANDLER_H

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief      A process unit able to match regex against analysed text
  *
  * @file        RegexMatcher.cpp
@@ -40,7 +27,7 @@
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 
 #include <vector>
 
@@ -189,20 +176,20 @@ LimaStatusCode RegexMatcher::process(
   std::string text = Common::Misc::limastring2utf8stdstring(*originalText);
   for (auto reit = m_d->m_regexes.begin(); reit != m_d->m_regexes.end(); reit++)
   {
-    QRegExp re(reit.key());
+    QRegularExpression re(reit.key());
     QString& tstatus = reit.value();
 
-    int position = 0;
-    while ((position = re.indexIn(*originalText, position)) != -1)
-    {
-      QString matchedString = originalText->mid(position, re.matchedLength());
+    qsizetype position = 0;
+    QRegularExpressionMatch qmatch;
+    while ((position = originalText->indexOf(re, position, &qmatch)) != -1) {
+      QString matchedString = originalText->mid(position, qmatch.capturedLength());
 #ifdef DEBUG_LP
       LDEBUG << "Matched '" << matchedString << "' at " << position << " as " << tstatus;
 #endif
       RegexMatch match = boost::make_tuple(position+1, matchedString.size(), matchedString, tstatus);
       matches.insert(std::make_pair(position+1, match));
 
-      position += re.matchedLength();
+      position += qmatch.capturedLength();
     }
   }
 #ifdef DEBUG_LP
@@ -236,9 +223,10 @@ LimaStatusCode RegexMatcher::process(
 #endif
       while (v != anagraph->lastVertex() && tokenPosition < currentMatchPosition)
       {
-        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr!=outItrEnd; outItr++)
+        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph);
+             outItr != outItrEnd; outItr++)
         {
-          v=target(*outItr,*graph);
+          v=target(*outItr, *graph);
           break;
         }
         if (v!= anagraph->lastVertex())

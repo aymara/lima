@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <fstream>
@@ -160,8 +146,9 @@ void parse_file(std::istream& input,
     psegm = new segmentation::CoNLLUReader();
   }
 
-  TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>* panalyzer = nullptr;
+  TokenSequenceAnalyzer<>* panalyzer = nullptr;
   dumper::AbstractDumper* pdumper = nullptr;
+  dumper::AnalysisToConllU<typename TokenSequenceAnalyzer<>::TokenIterator> conllu_dumper;
   if (models_fn.end() != models_fn.find("tag"))
   {
     std::string lemm_model_fn;
@@ -172,8 +159,29 @@ void parse_file(std::istream& input,
     }
 
     panalyzer
-        = new TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf>(models_fn.find("tag")->second,
-                                                              lemm_model_fn, path_resolver, 1024, 8);
+        = new TokenSequenceAnalyzer<>(models_fn.find("tag")->second,
+                                      lemm_model_fn, path_resolver, 1024, 8);
+
+    for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
+    {
+      conllu_dumper.set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+    }
+
+    panalyzer->register_handler([&conllu_dumper](const StringIndex& stridx,
+                                const token_buffer_t& tokens,
+                                const std::vector<StringIndex::idx_t>& lemmata,
+                                const typename TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                size_t begin,
+                                size_t end)
+    {
+      typename TokenSequenceAnalyzer<>::TokenIterator ti(stridx,
+                                                         tokens,
+                                                         lemmata,
+                                                         classes,
+                                                         begin,
+                                                         end);
+      conllu_dumper(ti);
+    });
 
     psegm->register_handler([panalyzer]
                             (const std::vector<segmentation::token_pos>& tokens,
@@ -221,7 +229,7 @@ void parse_file(std::istream& input,
   {
     if (0 == token_counter)
     {
-      token_counter = panalyzer->get_token_counter();
+      token_counter = conllu_dumper.get_token_counter();
     }
 
     std::cerr << "Waiting for analyzer to stop" << std::endl;

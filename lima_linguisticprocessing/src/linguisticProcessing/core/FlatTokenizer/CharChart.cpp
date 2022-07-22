@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2019 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // NAUTITIA
 //
@@ -450,7 +436,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
     for (; charIt != charItend; charIt++)
     {
       const charchart_char& ch = *charIt;
-      Char* newChar = lazyGetChar(ch.code);
+      Char* newChar = lazyGetChar(QChar(ch.code));
       if (newChar == 0)
       {
         TOKENIZERLOGINIT;
@@ -474,7 +460,7 @@ bool CharChart::loadFromFile(const std::string& fileName)
     for (; charIt != charItend; charIt++)
     {
       const charchart_char& ch = *charIt;
-      Char* newChar = lazyGetChar(ch.code);
+      Char* newChar = lazyGetChar(QChar(ch.code));
 #ifdef DEBUG_LP
       LDEBUG << "Modifiers for" << newChar->name();
 #endif
@@ -484,18 +470,18 @@ bool CharChart::loadFromFile(const std::string& fileName)
       for (; modIt != modItEnd; modIt++)
       {
 #ifdef DEBUG_LP
-        LDEBUG << "  modifier "<< (*modIt).first <<":" << lazyGetChar((*modIt).second)->name();
+        LDEBUG << "  modifier "<< (*modIt).first <<":" << lazyGetChar(QChar{(*modIt).second})->name();
 #endif
         switch ( (*modIt).first )
         {
           case MIN:
-            newChar->setMin(lazyGetChar((*modIt).second));
+            newChar->setMin(lazyGetChar(QChar{(*modIt).second}));
             break;
           case MAJ:
-            newChar->setMaj(lazyGetChar((*modIt).second));
+            newChar->setMaj(lazyGetChar(QChar{(*modIt).second}));
             break;
           case UNMARK:
-            newChar->setUnmark(lazyGetChar((*modIt).second));
+            newChar->setUnmark(lazyGetChar(QChar{(*modIt).second}));
             break;
           default: ;
         }

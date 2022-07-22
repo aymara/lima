@@ -1,23 +1,9 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-#
-# Perl Program created by besancon on Fri Jun 24 2005
-# Version : $Id$ 
+# SPDX-License-Identifier: MIT
 
 # Help mode
 if ($main::h || $main::help) {
@@ -126,8 +112,8 @@ sub addReflexiveVerbRule {
         $trigger.='$V';
 
         # cannot determine if possible pronouns,auxiliaries and adverbs
-        # are before or after $pre (s'en aller => je m'en suis allé,
-        # s'entre-déchirer => je me suis entre-déchiré)
+        # are before or after $pre (s'en aller => je m'en suis allÃ©,
+        # s'entre-dÃ©chirer => je me suis entre-dÃ©chirÃ©)
         # => set both possibilities
         print FRULES
             "$trigger".

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2014 CEA LIST
+// Copyright 2002-2014 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       SemanticRoleLabelingLoader.cpp
@@ -39,7 +26,7 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include "QStringList"
 #include <QString>
 #include <QFile>
@@ -91,7 +78,7 @@ struct ConllHandler
     * @param separator the separator used to split
     * @return the segment split
     */
-  QStringList splitSegment(const QString & segment, QRegExp separator);
+  QStringList splitSegment(const QString & segment, QRegularExpression separator);
 
   /**
     * @brief get the lima token id matching any conll token one from the same text
@@ -107,8 +94,8 @@ struct ConllHandler
   MediaId m_language;
   AnalysisContent& m_analysis;
   LinguisticAnalysisStructure::AnalysisGraph* m_graph;
-  QRegExp m_descriptorSeparator;
-  QRegExp m_tokenSeparator;
+  QRegularExpression m_descriptorSeparator;
+  QRegularExpression m_tokenSeparator;
   QVector< QPair<LinguisticGraphVertex,QString> > m_verbalClasses;
   QVector < std::vector<std::pair<LinguisticGraphVertex,QString>> >m_semanticRoles;
   int m_verbalClassNb;
@@ -375,13 +362,13 @@ bool ConllHandler::extractSemanticInformation(int sentenceI, LimaConllTokenIdMap
 
 
 
-QStringList ConllHandler::splitSegment(const QString & segment, QRegExp separator)
+QStringList ConllHandler::splitSegment(const QString & segment, QRegularExpression separator)
 {
   QStringList segmentsSplited;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-  segmentsSplited =segment.split(QRegExp(separator), QString::SkipEmptyParts);
+  segmentsSplited =segment.split(QRegularExpression(separator), QString::SkipEmptyParts);
 #else
-  segmentsSplited =segment.split(QRegExp(separator), Qt::SkipEmptyParts);
+  segmentsSplited =segment.split(QRegularExpression(separator), Qt::SkipEmptyParts);
 #endif
   return segmentsSplited;
 }

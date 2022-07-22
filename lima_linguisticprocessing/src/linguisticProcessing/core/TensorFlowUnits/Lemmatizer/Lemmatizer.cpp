@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <iterator>
@@ -79,15 +65,6 @@ namespace Lemmatizer
 {
 
 SimpleFactory<MediaProcessUnit, TensorFlowLemmatizer> tensorflowmorphosyntaxFactory(TENSORFLOWLEMMATIZER_CLASSID);
-
-// #define LOG_ERROR_AND_THROW(msg, exc) { \
-//                                         TENSORFLOWLEMMATIZERLOGINIT; \
-//                                         QString errorString; \
-//                                         QTextStream qts(&errorString); \
-//                                         qts << __FILE__ << ":" << __LINE__ << ": " << msg ; \
-//                                         LERROR << errorString; \
-//                                         throw exc( errorString ); \
-//                                       }
 
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
   #define LOG_MESSAGE(stream, msg) { stream << msg; }
@@ -1635,7 +1612,6 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
       << file_name << ".");
 
   QTextStream out(&file);
-  out.setCodec("UTF-8");
 
   vector<LimaString> cache_keys;
   cache_keys.reserve(m_cache.size());
@@ -1649,7 +1625,7 @@ void TensorFlowLemmatizerPrivate::save_cache(const QString& file_name)
   {
     LimaString v;
     m_cache.get(k, v);
-    out << k << "\t" << v << Qt::endl;
+    out << k << "\t" << v << QTENDL;
   }
 
   file.close();

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <testcases>
   <testcase id="fre.sw.1" type="bloquant">
     <call-parameters>
@@ -26,10 +33,10 @@
       </list>
     </call-parameters>
     <expl>test recherche de mot dans le dico : vérification présence nappes, fn : nappe.</expl>
-    <test id="fre.sw.2.1" trace=".simpleword.xml" 
-      comment="Vérification présence nappes --&gt; nappe" 
-      left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm" 
-      operator="contains" 
+    <test id="fre.sw.2.1" trace=".simpleword.xml"
+      comment="Vérification présence nappes --&gt; nappe"
+      left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm"
+      operator="contains"
       right="nappe"/>
   </testcase>
   <testcase id="fre.sw.3" type="bloquant">
@@ -41,10 +48,10 @@
       </list>
     </call-parameters>
     <expl>test recherche de mot dans le dico : vérification présence nappes, fn : napper.</expl>
-    <test id="fre.sw.3.1" trace=".simpleword.xml" 
-      comment="Vérification présence nappes --&gt; napper" 
-      left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm" 
-      operator="contains" 
+    <test id="fre.sw.3.1" trace=".simpleword.xml"
+      comment="Vérification présence nappes --&gt; napper"
+      left="XPATH#//data_structure/vertex[token[position=47][length=6]]/data/simple_word/form/@norm"
+      operator="contains"
       right="napper"/>
   </testcase>
   <testcase id="fre.sw.4" type="bloquant">
@@ -344,6 +351,7 @@
       <list key="pipelines">
         <item value="indexer"/>
       </list>
+    </call-parameters>
     <test id="fre.sw.21.1" trace=".simpleword.xml"
       comment="la démajusculisation doit produire l'alternative 'après' et uniquement celle-ci. Pas 'apres'"
       left="XPATH#//data_structure/vertex/token[position=1]/alternatives/string"
@@ -354,6 +362,5 @@
       left="XPATH#//data_structure/vertex[token/position=1]/data//form/@infl"
       operator="="
       right="après"/>
-    </call-parameters>
   </testcase>
 </testcases>

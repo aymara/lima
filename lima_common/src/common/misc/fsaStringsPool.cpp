@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 //
 // C++ Implementation: stringspool
 //
@@ -86,7 +73,7 @@ void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
 
   if (!m_d->m_additionalPool.empty())
   {
-    LIMA_EXCEPTION( "Can't register main keys if stringspool not empty!" << Qt::endl
+    LIMA_EXCEPTION( "Can't register main keys if stringspool not empty!" << QTENDL
                   << "contains " << m_d->m_additionalPool[static_cast<StringsPoolIndex>(1)] );
   }
   if (mainKeys == nullptr)

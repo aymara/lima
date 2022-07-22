@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <testcases>
   <!--==================== tests ORGANISATION  ====================-->
   <testcase id="eng.se.org.comp.01" type="bloquant">

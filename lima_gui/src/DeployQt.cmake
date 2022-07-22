@@ -1,30 +1,13 @@
-# The MIT License (MIT)
-#
 # Copyright (c) 2017 Nathan Osman
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# SPDX-License-Identifier: MIT
 
-find_package(Qt5Core REQUIRED)
+#find_package(QtCore REQUIRED)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
-get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+get_target_property(_qmake_executable Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
@@ -54,11 +37,15 @@ function(mywindeployqt)
         list(APPEND _ARGS --qmldir ${_deploy_QMLDIR})
     endif()
 
-    install(DIRECTORY "${_qt_bin_dir}/../qml/Qt" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin)
-    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin)
-    
+    install(DIRECTORY "${_qt_bin_dir}/../qml/Qt" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQml" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick" DESTINATION bin
+  COMPONENT runtime)
+    install(DIRECTORY "${_qt_bin_dir}/../qml/QtQuick.2" DESTINATION bin
+  COMPONENT runtime)
+
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${_deploy_TARGET} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E

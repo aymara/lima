@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 add_subdirectory(examples)
 add_subdirectory(commands)
 
@@ -29,7 +33,7 @@ set(pelf-resedit_UIS
 )
 
 # Wrap Qt UIs
-qt5_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
+qt_wrap_ui(pelf-resedit_UIS_H ${pelf-resedit_UIS})
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -39,11 +43,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/PelfResourceTool)
 add_executable(pelf-resedit ${pelf-resedit_SRCS} ${pelf-resedit_UIS_H})
-target_link_libraries(pelf-resedit 
+target_link_libraries(pelf-resedit
     lima-common
     lima-linguisticprocessing
     ${optionalLibs}
     ${Boost_LIBRARIES}
-    ${Qt5_LIBRARIES}
+    ${Qt_LIBRARIES}
 )
-install(TARGETS pelf-resedit DESTINATION bin)
+install(TARGETS pelf-resedit DESTINATION bin
+  COMPONENT runtime)

@@ -1,19 +1,8 @@
-#   Copyright 2002-2020 CEA LIST
+# Copyright 2002-2020 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 project(LimaLinguisticData)
 
 if (ENVPATH)
@@ -46,8 +35,8 @@ configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 LIMA_GENERIC_CONFIGENV(eng)
 LIMA_GENERIC_CONFIGENV(fre)
 LIMA_GENERIC_CONFIGENV(por)
-LIMA_GENERIC_CONFIGENV_UD(ud)
-LIMA_GENERIC_CONFIGENV_UD(ud-eng)
+LIMA_GENERIC_CONFIGENV(ud)
+LIMA_GENERIC_CONFIGENV(ud-eng)
 
 add_custom_target(pretest-execEnv)
 
@@ -65,5 +54,6 @@ LIMA_PRETEST_CONFIGENV(fre)
 LIMA_PRETEST_CONFIGENV(por)
 
 ########### install files ###############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules COMPONENT devel)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules
+        COMPONENT devel)
 

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
                           testFsaDict16.cpp  -  description
                              -------------------
@@ -589,7 +576,7 @@ int main(int argc, char *argv[])
       param.withoutTemplate = true;
     }
     else if ( (pos = arg.indexOf("--charSize=")) != -1 ){
-      int charSize = (arg.midRef(pos+11)).toInt();
+      int charSize = (arg.mid(pos+11)).toInt();
       switch(charSize) {
         case 1:
           param.charSize = one_byte;
@@ -615,7 +602,7 @@ int main(int argc, char *argv[])
       param.runSpelling = true;
     }
     else if ( (pos = arg.indexOf("--termId=")) != -1 ){
-      param.termId = (arg.midRef(pos+9)).toInt();
+      param.termId = (arg.mid(pos+9)).toInt();
     }
     else if ( arg == "--reverse" ){
       param.trieDirectionForward = false;

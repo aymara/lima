@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 echo "I got the analysis! $1 $2 $PWD"
 
 syanot ref/$1.easyref.xml >& /dev/null &

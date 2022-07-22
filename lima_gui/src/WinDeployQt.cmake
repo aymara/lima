@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 #
 # CMake wrapper to call windeployqt in Windows
 #
@@ -31,12 +35,12 @@ function(WinDeployQt)
 
 	foreach(mod ${_deploy_INCLUDE_MODULES})
 		string(TOLOWER ${mod} mod)
-		string(REPLACE "qt5::" "" mod ${mod})
+		string(REPLACE "qt::" "" mod ${mod})
 		list(APPEND _ARGS "--${mod}")
 	endforeach()
 	foreach(mod ${_deploy_EXCLUDE_MODULES})
 		string(TOLOWER ${mod} mod)
-		string(REPLACE "qt5::" "" mod ${mod})
+		string(REPLACE "qt::" "" mod ${mod})
 		list(APPEND _ARGS "--no-${mod}")
 	endforeach()
 

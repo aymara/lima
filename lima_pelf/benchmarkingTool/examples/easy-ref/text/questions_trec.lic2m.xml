@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <list>
 <E id="E1">  À combien s'élève la richesse de Bill Gates ? </E>
 <E id="E5">  À quand remonte la dernière éruption importante du mont Sainte-Hélène ? </E>

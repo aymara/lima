@@ -1,11 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplateStructure.cpp
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Fri Sep  2 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * 
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "EventTemplateStructure.h"
 #include "common/MediaticData/mediaticData.h"

@@ -1,24 +1,14 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 use utf8;
 ###############################################
-# Programme de vérification de la présence des
-# déclencheurs d'expression idiomatiques dans le
+# Programme de vÃ©rification de la prÃ©sence des
+# dÃ©clencheurs d'expression idiomatiques dans le
 # dictionnaire
 ###############################################
 
@@ -27,7 +17,7 @@ open(TRIGGERS,"<:utf8","$ARGV[0]") || die("Impossible d'ouvrir le fichier $ARGV[
 open(OUTPUT,">:utf8",$ARGV[1]) || die("Impossible d'ouvrir le fichier $ARGV[1]\n");
 
 
-#chargement dans une table des catégories et de leurs correspondances
+#chargement dans une table des catÃ©gories et de leurs correspondances
 print ("INFO : Filtrage des triggers\n");
 %written;
 while (<TRIGGERS>) {

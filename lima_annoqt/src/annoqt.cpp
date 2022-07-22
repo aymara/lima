@@ -1,21 +1,8 @@
-/*
- *    Copyright 2002-2013 CEA LIST
- *
- *    This file is part of LIMA.
- *
- *    LIMA is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Affero General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    LIMA is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
- */
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 /***************************************************************************
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
@@ -396,9 +383,9 @@ bool Annoqt::saveFile( const QString &fileName )
 
   QTextStream out( &file );
 
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << Qt::endl;
-  out << "<specific_entities>" << Qt::endl;
-//   out << "<entities docid=\"\" offsetNode=\"0\">" << Qt::endl;
+  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << QTENDL;
+  out << "<specific_entities>" << QTENDL;
+//   out << "<entities docid=\"\" offsetNode=\"0\">" << QTENDL;
   QApplication::setOverrideCursor( Qt::WaitCursor );
 //   out << m_textEdit->toPlainText();
 
@@ -407,27 +394,27 @@ bool Annoqt::saveFile( const QString &fileName )
   Q_FOREACH (SpecificEntity* entity, m_entities)
   {
     QString string = entity->string();
-    QRegExp rxamp("&(?!amp;)");
+    QRegularExpression rxamp("&(?!amp;)");
     string.replace(rxamp, "&amp;");
-    QRegExp rxgt(">");
+    QRegularExpression rxgt(">");
     string.replace(rxgt, "&gt;");
-    QRegExp rxlt("<");
+    QRegularExpression rxlt("<");
     string.replace(rxlt, "&lt;");
-    QRegExp rxquot("\"");
+    QRegularExpression rxquot("\"");
     string.replace(rxquot, "&quot;");
-    QRegExp rxapos("'");
+    QRegularExpression rxapos("'");
     string.replace(rxapos, "&apos;");
     out <<"  <specific_entity>"<<endl
-        <<"    <string>" << string << "</string>"<<Qt::endl
-        <<"    <position>" << entity->position()+1 << "</position>"<<Qt::endl
-        <<"    <length>" << entity->length() << "</length>"<<Qt::endl
-        <<"    <type>" << m_entityTypes2Names[entity->type()] << "</type>"<<Qt::endl
-        <<"</specific_entity>" << Qt::endl;
+        <<"    <string>" << string << "</string>"<<QTENDL
+        <<"    <position>" << entity->position()+1 << "</position>"<<QTENDL
+        <<"    <length>" << entity->length() << "</length>"<<QTENDL
+        <<"    <type>" << m_entityTypes2Names[entity->type()] << "</type>"<<QTENDL
+        <<"</specific_entity>" << QTENDL;
   }
 
   QApplication::restoreOverrideCursor();
-//   out << "</entities>" << Qt::endl;
-  out << "</specific_entities>" << Qt::endl;
+//   out << "</entities>" << QTENDL;
+  out << "</specific_entities>" << QTENDL;
 
   statusBar()->showMessage( tr( "File saved" ), 2000 );
   m_textEdit->document()->setModified( false );

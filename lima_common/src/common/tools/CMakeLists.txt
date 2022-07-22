@@ -1,19 +1,8 @@
-#   Copyright 2002-2020 CEA LIST
+# Copyright 2002-2020 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 add_definitions( -DLIMA_COMMONTOOLS_EXPORTING )
@@ -35,7 +24,7 @@ add_library(lima-common-tools SHARED ${lima-common-tools_LIB_SRCS})
 ADD_DLL_TO_PATH(lima-common-tools)
 
 target_link_libraries(lima-common-tools
-  Qt5::Core
+  Qt${QT_VERSION_MAJOR}::Core
 )
 
 set_target_properties(lima-common-tools PROPERTIES
@@ -46,7 +35,9 @@ install(TARGETS lima-common-tools
   DESTINATION ${LIB_INSTALL_DIR}
   COMPONENT runtime)
 
-add_subdirectory(tests)
+IF(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  add_subdirectory(tests)
+endif ()
 
 ########### install files ###############
 install(FILES

@@ -1,21 +1,8 @@
-/*
-    Copyright 2017 CEA LIST
+// Copyright 2017 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 #include "treeitem.h"
 #include "treemodel.h"
 
@@ -32,7 +19,7 @@ enum DEPTH {
   _e
 };
 
-#define PUSHITEM(d, c1, c2) content.push_back(std::pair<std::pair<QString, QString>, int>(std::pair<QString, QString>(QString(c1), QString(c2)), d))
+#define PUSHITEM(d, c1, c2) content.push_back(std::pair<std::pair<QString, QString>, int>(std::pair<QString, QString>(QLatin1String(c1), QLatin1String(c2)), d))
 
 TreeModel::TreeModel(QObject* p) : TreeModel(QString(),p)
 {
@@ -44,7 +31,7 @@ TreeModel::TreeModel(const QString &data, QObject *parent)
 {
   Q_UNUSED(data);
 //  load(data);
-  rootItem = new TreeItem(QList<QVariant>() << QString("Title") << QString("Summary"));
+  rootItem = new TreeItem(QList<QVariant>() << QLatin1String("Title") << QLatin1String("Summary"));
 
   std::map<int, TreeItem*> currentParents;
 
@@ -107,9 +94,9 @@ TreeModel::TreeModel(const QString &data, QObject *parent)
 void TreeModel::load(const QString& data)
 {
   QList<QVariant> rootData;
-  rootData << "Title" << "Summary";
+  rootData << QLatin1String("Title") << QLatin1String("Summary");
   rootItem = new TreeItem(rootData);
-  setupModelData(data.split(QString("\n")), rootItem);
+  setupModelData(data.split(QLatin1String("\n")), rootItem);
 }
 
 TreeModel::~TreeModel()

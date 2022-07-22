@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       itemWithAttributes.cpp
@@ -23,7 +10,7 @@
  * @date       Thu Dec  8 2005
  * @version    $Id$
  * copyright   Copyright (C) 2005-2012 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "itemWithAttributes.h"
@@ -36,7 +23,7 @@ namespace XMLConfigurationFiles {
 class ItemWithAttributesPrivate
 {
   friend class ItemWithAttributes;
-  
+
   ItemWithAttributesPrivate();
   ItemWithAttributesPrivate(const std::string& name);
   ItemWithAttributesPrivate(const ItemWithAttributesPrivate& item);
@@ -87,6 +74,11 @@ ItemWithAttributes::ItemWithAttributes(const std::string& name):
 {
 }
 
+ItemWithAttributes::ItemWithAttributes(const QString& name):
+    m_d(new ItemWithAttributesPrivate(name.toStdString()))
+{
+}
+
 ItemWithAttributes::ItemWithAttributes(const ItemWithAttributes& item):
     m_d(new ItemWithAttributesPrivate(*item.m_d))
 {
@@ -114,7 +106,7 @@ const std::map<std::string,std::string>& ItemWithAttributes::getAttributes() con
 const std::string& ItemWithAttributes::
 getAttribute(const std::string& attributeName) const
 {
-  std::map<std::string,std::string>::const_iterator 
+  std::map<std::string,std::string>::const_iterator
     it=m_d->m_attributes.find(attributeName);
   if (it == m_d->m_attributes.end()) {
     throw NoSuchAttribute(m_d->m_name+"["+attributeName+"]");
@@ -125,16 +117,26 @@ getAttribute(const std::string& attributeName) const
 bool ItemWithAttributes::
 hasAttribute(const std::string& attributeName) const
 {
-  std::map<std::string,std::string>::const_iterator 
+  std::map<std::string,std::string>::const_iterator
     it=m_d->m_attributes.find(attributeName);
   return !(it == m_d->m_attributes.end());
 }
 
 void ItemWithAttributes::
 addAttribute(const std::string& attributeName,
-             const std::string& value) 
+             const std::string& value)
 {
   m_d->m_attributes.insert(std::make_pair(attributeName,value));
+}
+
+bool ItemWithAttributes::hasAttribute(const QString& attributeName) const
+{
+  return hasAttribute(attributeName.toStdString());
+}
+
+void ItemWithAttributes::addAttribute(const QString& attributeName, const QString& value)
+{
+  addAttribute(attributeName.toStdString(), value.toStdString());
 }
 
 

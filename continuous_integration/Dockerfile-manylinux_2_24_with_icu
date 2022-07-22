@@ -1,0 +1,35 @@
+FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_icu
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+RUN cp  /etc/default/locale /etc/environment
+RUN locale-gen
+RUN dpkg-reconfigure locales
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN apt-get update && \
+    apt-get install -y \
+        wget build-essential pkg-config automake  gawk gettext
+
+WORKDIR /
+# Cloning icu ASAP to avoid
+RUN git clone https://github.com/unicode-org/icu.git --depth=1 --branch=release-70-1
+WORKDIR /icu/icu4c/source
+RUN ./runConfigureICU Linux --prefix=/usr/local --enable-static && make -j && make test && make install
+
+WORKDIR /
+# Download boost, untar, setup install with bootstrap and only do the Program Options library,
+# and then install
+RUN wget -q http://downloads.sourceforge.net/project/boost/boost/1.78.0/boost_1_78_0.tar.gz
+RUN tar xfz boost_1_78_0.tar.gz
+RUN rm boost_1_78_0.tar.gz
+WORKDIR /boost_1_78_0
+RUN ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options,regex,filesystem,system,thread,test
+RUN ./b2 install
+RUN rm -rf boost_1_78_0

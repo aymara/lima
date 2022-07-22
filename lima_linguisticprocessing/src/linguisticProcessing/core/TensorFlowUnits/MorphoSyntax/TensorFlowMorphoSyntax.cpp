@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <iterator>
@@ -280,9 +266,9 @@ protected:
                         const string& prefix,
                         size_t id) const;
   size_t fix_tag_for_no_root_link(const DepparseOutput& out_descr,
-                                  size_t pred_tag,
-                                  size_t pos_in_batch,
-                                  size_t word_num,
+                                  std::ptrdiff_t pred_tag,
+                                  std::ptrdiff_t pos_in_batch,
+                                  std::ptrdiff_t word_num,
                                   const TTypes<float, 3>::Tensor& tags_logits) const;
   void fixMissingFeature(const vector<vector<float>>& converted_scores,
                          const string& feat_name,
@@ -683,9 +669,9 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 }
 
 size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOutput& out_descr,
-                                                               size_t pred_tag,
-                                                               size_t pos_in_batch,
-                                                               size_t word_num,
+                                                               std::ptrdiff_t pred_tag,
+                                                               std::ptrdiff_t pos_in_batch,
+                                                               std::ptrdiff_t word_num,
                                                                const TTypes<float, 3>::Tensor& tags_logits) const
 {
   size_t new_pred_tag = pred_tag;
@@ -693,7 +679,7 @@ size_t TensorFlowMorphoSyntaxPrivate::fix_tag_for_no_root_link(const DepparseOut
   if (pred_tag == out_descr.root_tag_idx || out_descr.i2t[pred_tag] == "ud:_")
   {
     // pred_head != 0 => this isn't a root => we have to change tag
-    size_t a = 0;
+    std::ptrdiff_t a = 0;
     float best_score = tags_logits(pos_in_batch, word_num, a);
     while (a == out_descr.root_tag_idx || a == pred_tag || out_descr.i2t[a] == "ud:_")
     {
@@ -816,7 +802,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
 
       const DepparseOutput& out_descr = *(m_depparse_outputs.begin());
 
-      for (int64 p = 0; p < arcs_tensor.dimension(0); p++)
+      for (std::ptrdiff_t p = 0; p < arcs_tensor.dimension(0); p++)
       {
         TSentence& sent = sentences[i+p];
         size_t len = sent.token_count;
@@ -829,7 +815,7 @@ void TensorFlowMorphoSyntaxPrivate::analyze(vector<TSentence>& sentences,
         //parents.reserve(m_max_seq_len);
         vector<size_t> parents;
         parents.resize(len + 1);
-        arborescence<size_t, float>([&arcs_logits, p](size_t i, size_t j) -> float {
+        arborescence<size_t, float>([&arcs_logits, p](std::ptrdiff_t i, std::ptrdiff_t j) -> float {
                                       return arcs_logits(p, i, j);
                                     },
                                     len + 1,

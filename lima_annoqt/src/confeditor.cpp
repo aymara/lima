@@ -1,21 +1,8 @@
-/*
- *    Copyright 2002-2013 CEA LIST
- *
- *    This file is part of LIMA.
- *
- *    LIMA is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Affero General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    LIMA is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
- */
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 /***************************************************************************
  *   Gael.de-Chalendar@cea.fr   *
  ***************************************************************************/
@@ -325,9 +312,9 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
 
   QTextStream out( &file );
 
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << Qt::endl;
-  out << "<annotationConfiguration>" << Qt::endl;
-  out << "  <entities>" << Qt::endl;
+  out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << QTENDL;
+  out << "<annotationConfiguration>" << QTENDL;
+  out << "  <entities>" << QTENDL;
   QApplication::setOverrideCursor( Qt::WaitCursor );
 
   for (int i = 0; i < m_listWidget->count(); i++)
@@ -338,16 +325,16 @@ bool AnnoqtConfEditor::saveFile( const QString &fileName )
     {
       out << " recursive=\"true\"";
     }
-    out << "/>" << Qt::endl;
+    out << "/>" << QTENDL;
   }
 
 
 
   QApplication::restoreOverrideCursor();
-  out << "  </entities>" << Qt::endl;
-  out << "  <templates>" << Qt::endl;
-  out << "  </templates>" << Qt::endl;
-  out << "</annotationConfiguration>" << Qt::endl;
+  out << "  </entities>" << QTENDL;
+  out << "  <templates>" << QTENDL;
+  out << "  </templates>" << QTENDL;
+  out << "</annotationConfiguration>" << QTENDL;
 
   statusBar()->showMessage( tr( "File saved" ), 2000 );
   setWindowModified( false );

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2020 by CEA LIST
  *
@@ -61,8 +48,8 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
+#include <QRegularExpression>
 #include <QtCore/QString>
-#include <QtCore/QStringRef>
 #include <QtCore/QTimer>
 #include <QtCore/QTextStream>
 
@@ -561,18 +548,20 @@ int run(int argc, char** argv)
       MetaDataHandler* metaDataHandler=new MetaDataHandler();
       handlers["metaDataHandler"]=metaDataHandler;
 
-      QRegExp sep("\n\n\n*");
+      QRegularExpression sep("\n\n\n*");
       //QStringList paragraphs=contentText.split(sep,QString::SkipEmptyParts);
       //for (const auto& par: paragraphs) {
       //get positions to set offset
       int prevpos = 0;
-      int pos = 0;
       int numpar = 0;
 
       // cheap trick to analyze the last paragraph without calling the analysis after the while loop
       contentText+=QString("\n\n");
 
-      while ((pos = sep.indexIn(contentText, prevpos)) != -1) {
+      qsizetype pos = 0;
+      QRegularExpressionMatch match;
+      while ((pos = contentText.indexOf(sep, pos, &match)) != -1)
+      {
         numpar++;
         QString paragraph=contentText.mid(prevpos,pos-prevpos);
         //std::cerr << "prevpos=" << prevpos << ", pos=" << pos << ", paragraph=" << paragraph.toStdString() << std::endl;
@@ -605,7 +594,7 @@ int run(int argc, char** argv)
           }
 #endif
         }
-        pos += sep.matchedLength();
+        pos += match.capturedLength();
         prevpos=pos;
         // update metadata
         const std::map<std::string,std::string>& newMetaData=metaDataHandler->getMetaData();

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  * @file     BoWRelation.h
  * @author   Gael de Chalendar
@@ -24,7 +11,7 @@
  *
  * @brief A relation associated used to type the relation between a part
  *        and its enclosing complex token. This will be used primarily to
- *        represent the type of the relation in compounds but could be 
+ *        represent the type of the relation in compounds but could be
  *        later be used as the basis to more structured indexing
  *
  ***********************************************************************/
@@ -44,7 +31,7 @@ namespace Common {
 namespace BagOfWords {
 
 /**
- * the type of the BoWRelation is a numeric value currently (11/2006) taken 
+ * the type of the BoWRelation is a numeric value currently (11/2006) taken
  * from the ConceptType enum but that could be extended to be any property
  * id from an ontology
  */
@@ -55,7 +42,7 @@ LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWRelation&);
 /**
  * @brief This class is used to type the relation between a part
  *        and its enclosing complex token. This will be used primarily to
- *        represent the type of the relation in compounds but could be 
+ *        represent the type of the relation in compounds but could be
  *        later be used as the basis to more structured indexing
  *
  **/
@@ -79,7 +66,7 @@ public:
   uint64_t getType(void)   const {return m_type;};
   uint64_t getSynType(void)   const {return s_type;};
 
-//   void setRealization(const Lima::LimaString& realization)  
+//   void setRealization(const Lima::LimaString& realization)
 //     {m_realization = realization;};
   void setType(uint64_t type)  {m_type = type;};
   void setSynType(uint64_t type)  {s_type = type;};
@@ -109,7 +96,7 @@ public:
 //  friend std::wostream& operator << (std::wostream&, const BoWRelation&);
   friend LIMA_BOW_EXPORT std::ostream& operator << (std::ostream&, const BoWRelation&);
   friend LIMA_BOW_EXPORT QDebug& operator << (QDebug&, const BoWRelation&);
-  
+
   /**
    * for parsing of input stream
    *

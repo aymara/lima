@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
@@ -41,11 +28,12 @@ namespace LinguisticAnalysisStructure {
 SimpleFactory<MediaProcessUnit,SentenceBoundariesFinder> sentenceBoundariesFinderFactory(SENTENCEBOUNDARIESFINDER_CLASSID);
 
 SentenceBoundariesFinder::SentenceBoundariesFinder() :
-MediaProcessUnit(),
-m_microAccessor(0),
-m_graph(),
-m_boundaryValues(),
-m_boundaryMicros()
+  MediaProcessUnit(),
+  m_microAccessor(0),
+  m_graph(),
+  m_boundaryValues(),
+  m_forbidBoundaryValues(),
+  m_boundaryMicros()
 {}
 
 
@@ -95,6 +83,22 @@ void SentenceBoundariesFinder::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) {} // optional
+
+
+  try
+  {
+    deque<string> exclBoundariesRestrictions=unitConfiguration.getListsValueAtKey("forbid-values");
+    for (deque<string>::const_iterator it=exclBoundariesRestrictions.begin(),it_end=exclBoundariesRestrictions.end();
+    it!=it_end; it++)
+    {
+#ifdef DEBUG_LP
+      LDEBUG << "init(): add filter for forbidden value " << *it;
+#endif
+      m_forbidBoundaryValues.insert(Common::Misc::utf8stdstring2limastring(*it));
+    }
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& ) {} // optional
+
 
   try
   {
@@ -149,7 +153,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
   SegmentationData* sb=new SegmentationData(m_graph);
   analysis.setData(m_data,sb);
 
-  if (m_boundaryValues.empty())
+  if (m_boundaryValues.empty() && m_forbidBoundaryValues.empty())
   {
     while (beginSentence!=lastVx)
     {
@@ -178,7 +182,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
   }
   else
   {
-    // apply restriction on values for sentence boundaries
+    // Apply restriction on values for sentence boundaries
     // cannot set endSentence from beginSentence inside the loop, because we have to continue
     // moving forward even if there is no match (with restricted values)
     LinguisticGraphVertex endSentence=anagraph->nextMainPathVertex(beginSentence,*m_microAccessor,m_boundaryMicros,lastVx);
@@ -188,29 +192,44 @@ LimaStatusCode SentenceBoundariesFinder::process(
 #ifdef DEBUG_LP
       if (t!=0)
       {
-        LDEBUG << "found endSentence at " << endSentence  << "("
+          LDEBUG << "found endSentence at " << endSentence  << "("
                << Common::Misc::limastring2utf8stdstring(t->stringForm()) << ")";
       }
       else
       {
-        LDEBUG << "found endSentence at " << endSentence;
+          LDEBUG << "found endSentence at " << endSentence;
       }
 #endif
-      if (t==0 || m_boundaryValues.find(t->stringForm())!=m_boundaryValues.end())
+
+      if (t==0 || (!m_forbidBoundaryValues.empty() && m_forbidBoundaryValues.find(t->stringForm())!=m_forbidBoundaryValues.end()) )
       {
-        sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
-        beginSentence=endSentence;
+#ifdef DEBUG_LP
+          LDEBUG << " -> not kept (bcz in forbidden values)";
+#endif
+      }
+      else if (t==0 || (!m_boundaryValues.empty() && m_boundaryValues.find(t->stringForm())==m_boundaryValues.end()) )
+      {
+#ifdef DEBUG_LP
+          LDEBUG << " -> not kept (bcz not in restricted values)";
+#endif
       }
       else
       {
 #ifdef DEBUG_LP
-        LDEBUG << " -> not kept (not in restricted values)";
+          LDEBUG << "add sentence " << beginSentence << "-" << endSentence;
 #endif
+          sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+          beginSentence=endSentence;
       }
       endSentence=anagraph->nextMainPathVertex(endSentence,*m_microAccessor,m_boundaryMicros,lastVx);
     }
     // add last sentence (the one ending with lastVx)
-    sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+    if(beginSentence<endSentence) {
+#ifdef DEBUG_LP
+        LDEBUG << "add last sentence " << beginSentence << "-" << endSentence;
+#endif
+      sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+    }
   }
   return SUCCESS_ID;
 }

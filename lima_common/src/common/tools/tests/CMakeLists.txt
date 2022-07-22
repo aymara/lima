@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 ################### tests ########################
 
 ########### next test ###############
@@ -16,7 +20,7 @@ add_executable(LimaFileSystemWatcherTest0
 target_link_libraries(LimaFileSystemWatcherTest0
   lima-common-factory
   lima-common-tools
-  Qt5::Test
+  Qt${QT_VERSION_MAJOR}::Test
 )
 
 add_test(NAME LimaFileSystemWatcherTest0 COMMAND LimaFileSystemWatcherTest0)

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   *
   * @file        SyntagmaticMatrix.cpp
@@ -27,11 +14,9 @@
   */
 
 #include "SyntagmaticMatrix.h"
-#include "XmlSyntagmaticMatrixFileHandler.h"
+#include "XmlSyntagmaticMatrixFileReader.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/tools/FileUtils.h"
-
-#include <QtXml/QXmlSimpleReader>
 
 #include <string>
 #include <algorithm>
@@ -106,29 +91,21 @@ void SyntagmDefStruct::loadFromFile(const std::string& fileName)
   //  Create a SAX parser object. Then, according to what we were told on
   //  the command line, set it to validate or not.
   //
-  QXmlSimpleReader parser;
-//   parser.setValidationScheme(SAXParser::Val_Auto);
-//   parser.setDoNamespaces(false);
-//   parser.setDoSchema(false);
-//   parser.setValidationSchemaFullChecking(false);
-
-
   //
   //  Create the handler object and install it as the document and error
   //  handler for the parser-> Then parse the file and catch any exceptions
   //  that propogate out
   //
-  XMLSyntagmaticMatrixFileHandler handler(*this,m_language);
-  parser.setContentHandler(&handler);
-  parser.setErrorHandler(&handler);
+  XmlSyntagmaticMatrixFileReader handler(*this,m_language);
   QFile file(fileName.c_str());
   if (!file.open(QFile::ReadOnly))
   {
     LIMA_EXCEPTION_SELECT_LOGINIT(XMLCFGLOGINIT, "Error opening " << fileName.c_str(), XMLException);
   }
-  if (!parser.parse( QXmlInputSource(&file)))
+  if (!handler.parse(&file))
   {
-    LIMA_EXCEPTION_SELECT("SyntagmDefStruct::loadFromFile Unable to parse " << fileName.c_str() << " : " << parser.errorHandler()->errorString(),
+    LIMA_EXCEPTION_SELECT("SyntagmDefStruct::loadFromFile Unable to parse " << fileName.c_str() << " : "
+                            << handler.errorString(),
                           XMLException);
   }
 }

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+# Copyright (C) 2020 by CEA - LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-# author     Romaric Besancon (romaric.besancon@cea.fr)
-# date       Wed Feb  5 2020
-# copyright  Copyright (C) 2020 by CEA - LIST
-#
+# SPDX-License-Identifier: MIT
 
 import argparse
 import codecs

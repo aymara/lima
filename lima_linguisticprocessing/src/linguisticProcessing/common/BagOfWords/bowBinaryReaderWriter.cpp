@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       bowBinaryReaderWriter.cpp
@@ -539,16 +526,18 @@ void BoWBinaryWriter::writeHeader(std::ostream& file, BoWFileType type) const
 #endif
 }
 
-void BoWBinaryWriter::writeBoWText(std::ostream& file,
-             const BoWText& bowText) const
+void BoWBinaryWriter::writeBoWText(std::ostream& file, const BoWText& bowText) const
 {
 #ifdef DEBUG_LP
     BOWLOGINIT;
+    LDEBUG << "BoWBinaryWriter::writeBoWText";
+//     Q_ASSERT(!bowText.lang.empty());
 #endif
     Misc::writeCodedInt(file,bowText.size());
     Misc::writeString(file,bowText.lang);
 #ifdef DEBUG_LP
-    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang on file"<<&file<<" at: " << file.tellp();
+    LDEBUG << "BoWBinaryWriter::writeBoWText wrote lang" << bowText.lang
+            << "on file"<<&file<<" at: " << file.tellp();
 #endif
     uint64_t tokenCounter(0);
     // build reverse map to store in file numbers instead of pointers

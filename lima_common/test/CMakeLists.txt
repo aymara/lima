@@ -1,19 +1,8 @@
-#   Copyright 2002-2019 CEA LIST
+# Copyright 2002-2019 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/. ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/common )
 
 ########### next target ###############
@@ -41,7 +30,8 @@ target_link_libraries(testDict16
   lima-common-time
 )
 
-install(TARGETS testDict16 DESTINATION bin)
+install(TARGETS testDict16 DESTINATION bin
+  COMPONENT runtime)
 
 ########### next target ###############
 
@@ -51,7 +41,7 @@ SET(testLexicon_SRCS
 
 add_executable(testLexicon ${testLexicon_SRCS})
 
-message("Qt5_LIBRARIES are ${Qt5_LIBRARIES}")
+message("Qt_LIBRARIES are ${Qt_LIBRARIES}")
 
 target_link_libraries(testLexicon
   lima-common-fsaaccess

@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplateDefinitionResource.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Fri Sep  2 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * Project     LIMA
- * 
- * @brief      Linguistic resource storing the defintion of event templates
- * 
- * 
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef EVENTTEMPLATEDEFINITIONRESOURCE_H
 #define EVENTTEMPLATEDEFINITIONRESOURCE_H

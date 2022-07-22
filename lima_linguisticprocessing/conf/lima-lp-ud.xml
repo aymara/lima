@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="entities">
     <group name="include">
@@ -22,9 +29,11 @@
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
-        <item value="tfmorphosyntax"/>
-        <item value="tflemmatizer"/>
+        <item value="RnnTokenizer"/>
+        <item value="RnnTokensAnalyzer"/>
+        <!--item value="cpptftokenizer"/-->
+        <!--item value="tfmorphosyntax"/-->
+        <!--item value="tflemmatizer"/-->
         <item value="conllDumper"/>
       </list>
     </group>
@@ -47,6 +56,14 @@
       </list>
     </group>
 
+    <group name="deepud-tagger-test" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="RnnTokenizer"/>
+        <item value="RnnTagger"/>
+        <item value="conllDumper"/>
+      </list>
+    </group>
+
     <group name="none" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
@@ -55,6 +72,15 @@
 *********************************************** -->
     <group name="RnnTokenizer" class="RnnTokenizer">
       <param key="model_prefix" value="tokenizer-$udlang"/>
+    </group>
+
+    <group name="RnnTagger" class="RnnTagger">
+      <param key="model_prefix" value="tagger-$udlang"/>
+    </group>
+
+    <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
+      <param key="tagger_model_prefix" value="tagger-$udlang"/>
+      <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
@@ -74,6 +100,40 @@
       <param key="model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <map name="Macros2ConceptTypes">
+        <entry key="NONE_1" value="LatticeDown"/>
+        <entry key="DET" value="Determiner"/>
+        <entry key="PRON" value="Determiner"/>
+        <entry key="ADV" value="SemanticModifier"/>
+        <entry key="ADJ" value="Complementer"/>
+        <entry key="NOUN" value="Complementer"/>
+        <entry key="PROPN" value="Complementer"/>
+      </map>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <list name="CompoundsRels">
+        <item value="advmod"/>        <!-- UD 2.0: adjectival modifier                          -->
+        <item value="amod"/>        <!-- UD 2.0: adjectival modifier                          -->
+        <item value="appos"/>       <!-- UD 2.0: appositional modifier                        -->
+        <item value="compound"/>    <!-- UD 2.0: compound                                     -->
+        <item value="fixed"/>       <!-- UD 2.0: fixed multiword expression                   -->
+        <item value="flat"/>        <!-- UD 2.0: flat multiword expression                    -->
+        <item value="nmod"/>        <!-- UD 2.0: nominal modifier                             -->
+        <item value="nummod"/>      <!-- UD 2.0: numeric modifier                             -->
+
+
+
+        <!-- Uncomment relation names below if you want to build compounds
+        including verbs and verbal dependencies. To be used in conjuction with
+          the syntacticAnalyzerNoChains in mm-lp. -->
+      </list>
+    </group>
 <!-- ******************************************
   Definition of loggers
 *********************************************** -->
@@ -409,71 +469,6 @@
         <!--item value="SUBSUBJUX"/-->
         <item value="SUJ_V"/>
       </list>
-    </group>
-    <group name="easyXmlDumper" class="EasyXmlDumper">
-      <param key="handler" value="simpleStreamHandler"/>
-      <map name="typeMapping">
-        <entry key="COMPDUNOM" value="MOD-N"/>
-        <entry key="ADJPRENSUB" value="MOD-N"/>
-        <entry key="SUBADJPOST" value="MOD-N"/>
-        <entry key="SUBSUBJUX" value="MOD-N"/>
-        <entry key="TEMPCOMP" value="AUX-V"/>
-        <entry key="SujInv" value="SUJ-V"/>
-        <entry key="CodPrev" value="COD-V"/>
-        <entry key="CoiPrev" value="CPL-V"/>
-        <entry key="PronSujVerbe" value="SUJ-V"/>
-        <entry key="ADVADV" value="MOD-R"/>
-        <entry key="ADVADJ" value="MOD-A"/>
-        <entry key="NePas2" value="MOD-V"/>
-        <entry key="AdvVerbe" value="MOD-V"/>
-        <entry key="COMPADJ" value="MOD-A"/>
-        <!--entry key="Neg" value="MOD-V"/-->
-        <!--change '_' to '-' -->
-        <entry key="SUJ_V" value="SUJ-V"/>
-        <entry key="SUJ_V_REL" value="SUJ-V"/>
-        <entry key="COD_V" value="COD-V"/>
-        <entry key="CPL_V" value="CPL-V"/>
-        <entry key="CPLV_V" value="CPL-V"/>
-        <entry key="MOD_V" value="MOD-V"/>
-        <entry key="MOD_N" value="MOD-N"/>
-        <entry key="MOD_A" value="MOD-A"/>
-        <entry key="ATB_S" value="ATB-SO,s-o valeur=sujet"/>
-        <entry key="ATB_O" value="ATB-SO,s-o valeur=objet"/>
-        <entry key="COORD1" value="COORD"/>
-        <entry key="COORD2" value="COORD"/>
-        <entry key="COMPL" value="COMP"/>
-        <entry key="JUXT" value="JUXT"/>
-      </map>
-      <map name="srcTag">
-        <entry key="MOD-N" value="modifieur"/>
-        <entry key="MOD-V" value="modifieur"/>
-        <entry key="SUJ-V" value="sujet"/>
-        <entry key="AUX-V" value="auxiliaire"/>
-        <entry key="COD-V" value="cod"/>
-        <entry key="CPL-V" value="complement"/>
-        <entry key="MOD-R" value="modifieur"/>
-        <entry key="APPOS" value="premier"/>
-        <entry key="JUXT" value="suivant"/>
-        <entry key="ATB-SO" value="attribut"/>
-        <entry key="MOD-A" value="modifieur"/>
-        <entry key="COMP" value="complementeur"/>
-        <entry key="COORD" value="coordonnant"/>
-      </map>
-      <map name="tgtTag">
-        <entry key="MOD-N" value="nom"/>
-        <entry key="MOD-V" value="verbe"/>
-        <entry key="SUJ-V" value="verbe"/>
-        <entry key="AUX-V" value="verbe"/>
-        <entry key="COD-V" value="verbe"/>
-        <entry key="CPL-V" value="verbe"/>
-        <entry key="MOD-R" value="adverbe"/>
-        <entry key="APPOS" value="appose"/>
-        <entry key="JUXT" value="premier"/>
-        <entry key="ATB-SO" value="verbe"/>
-        <entry key="MOD-A" value="adjectif"/>
-        <entry key="COMP" value="verbe"/>
-        <entry key="COORD" value="coord-g"/>
-      </map>
     </group>
     <group name="temporalXmlDumper" class="SimpleXmlDumper">
      <param key="outputFile" value="/tmp/mm-lp.morphoSyntacticalAnalysis.tmp"/>

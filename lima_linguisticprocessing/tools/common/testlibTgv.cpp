@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004 by Benoit Mathieu                                  *
  *   mathieub@zoe.cea.fr                                                   *
@@ -30,13 +17,13 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 
 #include "linguisticProcessing/common/tgv/TestCase.h"
-#include "linguisticProcessing/common/tgv/TestCasesHandler.h"
+#include "linguisticProcessing/common/tgv/TestCasesReader.h"
 
 #include "linguisticProcessing/common/tgv/TestCase.h"
 #include "linguisticProcessing/common/tgv/TestCaseError.hpp"
 
-#include <QtXml/QXmlSimpleReader>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
+#include <QFile>
 
 using namespace Lima::Common::TGV;
 
@@ -144,24 +131,19 @@ int run(int argc,char** argv)
   setlocale(LC_ALL,"fr_FR.UTF-8");
 
 
-  QXmlSimpleReader parser;
-
   // create TvgTestCaseProcessor
   // TvgTestCaseProcessor tvgTestCaseProcessor(param.workingDir, cerr);
   TvgTestCaseProcessor* tvgTestCaseProcessor(0);
   tvgTestCaseProcessor = new TvgTestCaseProcessor(param.workingDir, std::cerr);
 
-  TestCasesHandler tch(*tvgTestCaseProcessor);
-
-  parser.setContentHandler(&tch);
-  parser.setErrorHandler(&tch);
+  TestCasesReader parser(*tvgTestCaseProcessor);
 
   try
   {
-    for( std::vector<std::string>::const_iterator fit = param.files.begin() ;
-      fit != param.files.end() ; fit++ ) {
+    for(const auto& filename: param.files)
+    {
       std::string sfile(param.workingDir);
-      sfile.append("/").append(*fit);
+      sfile.append("/").append(filename);
       std::cout << "parse " << sfile << std::endl;
 
     // cerr << "<?xml version='1.0' encoding='UTF-8'?>\n";
@@ -172,14 +154,14 @@ int run(int argc,char** argv)
       std::cerr << "Error opening " << sfile << std::endl;
       return 1;
     }
-    if (!parser.parse( QXmlInputSource(&file)))
+    if (!parser.parse(&file))
     {
-      std::cerr << "Error parsing " << sfile << " : " << parser.errorHandler()->errorString().toUtf8().constData() << std::endl;
+      std::cerr << "Error parsing " << sfile << " : " << parser.errorString().toUtf8().constData() << std::endl;
       return 1;
     }
     // cerr << "</testcases>\n";
 
-  TestCasesHandler::TestReport resTotal;
+  TestCasesReader::TestReport resTotal;
   std::cout << std::endl;
   std::cout << "=========================================================" << std::endl;
   std::cout << std::endl;
@@ -187,9 +169,7 @@ int run(int argc,char** argv)
   std::cout << std::endl;
   std::cout << "\ttype           \tsuccess\tcond.\tfailed\ttotal" << std::endl;
   std::cout << "---------------------------------------------------------" << std::endl;
-  for (std::map<std::string, TestCasesHandler::TestReport>::const_iterator resItr=tch.m_reportByType.begin();
-       resItr!=tch.m_reportByType.end();
-       resItr++)
+  for (auto resItr = parser.reportByType().cbegin(); resItr != parser.reportByType().cend(); resItr++)
   {
     std::string label(resItr->first);
     label.resize(15,' ');
@@ -207,7 +187,7 @@ int run(int argc,char** argv)
        << "\t" << resTotal.nbtests << std::endl;
   std::cout << "=========================================================" << std::endl;
   std::cout <<  std::endl;
-  tch.m_reportByType.clear();
+//   parser.reportByType().clear();
     }
   }
   catch (Lima::LimaException& e)

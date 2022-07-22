@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @file       groupConfigurationStructure.cpp
   * @brief      originally detectGroupConfigurationStructure.cpp in detectlibraries
@@ -181,36 +168,91 @@ bool GroupConfigurationStructure::getParamsValueAtKey(const string& key, string&
   return true;
 }
 
-bool GroupConfigurationStructure::
-getBooleanParameter(const std::string& key) {
+// QString GroupConfigurationStructure::getNameQ()
+// {
+//   return QString::fromStdString(m_d->m_groupName);
+// }
+//
+//
+// QString GroupConfigurationStructure::getAttribute(const QString& key)
+// {
+//   return QString::fromStdString(getAttribute(key.toStdString()));
+// }
+//
+// QString GroupConfigurationStructure::getParamsValueAtKey(const QString& key)
+// {
+//   return QString::fromStdString(getParamsValueAtKey(key.toStdString()));
+// }
+//
+// bool GroupConfigurationStructure::getParamsValueAtKey(const QString& key, QString& value)
+// {
+//   std::string svalue;
+//   if (!getParamsValueAtKey(key.toStdString(), svalue))
+//   {
+//     return false;
+//   }
+//   value = QString::fromStdString(svalue);
+//   return true;
+// }
+
+bool GroupConfigurationStructure::getBooleanParameter(const std::string& key)
+{
   string& str=getParamsValueAtKey(key);
   if (str=="yes" || str=="true" || str=="1") {
     return true;
   }
   return false;
 }
-uint32_t GroupConfigurationStructure::
-getIntParameter(const std::string& key) {
+
+uint32_t GroupConfigurationStructure::getIntParameter(const std::string& key)
+{
   return atoi(getParamsValueAtKey(key).c_str());
 }
-double GroupConfigurationStructure::
-getDoubleParameter(const std::string& key) {
+
+double GroupConfigurationStructure::getDoubleParameter(const std::string& key)
+{
   return QString::fromUtf8(getParamsValueAtKey(key).c_str()).toDouble();
 }
-std::string GroupConfigurationStructure::
-getStringParameter(const std::string& key) {
+
+std::string GroupConfigurationStructure::getStringParameter(const std::string& key)
+{
   return getParamsValueAtKey(key);
 }
 
-deque<string>& GroupConfigurationStructure::getListsValueAtKey(const string& key)
+// bool GroupConfigurationStructure::getBooleanParameter(const QString& key)
+// {
+//   auto& str = getParamsValueAtKey(key);
+//   if (str=="yes" || str=="true" || str=="1")
+//   {
+//     return true;
+//   }
+//   return false;
+// }
+//
+// uint32_t GroupConfigurationStructure::getIntParameter(const QString& key)
+// {
+//   return getParamsValueAtKey(key).toUInt();
+// }
+//
+// double GroupConfigurationStructure::getDoubleParameter(const QString& key)
+// {
+//   return getParamsValueAtKey(key).toDouble();
+// }
+//
+// QString GroupConfigurationStructure::getStringParameter(const QString& key)
+// {
+//   return getParamsValueAtKey(key);
+// }
+
+std::deque<std::string>& GroupConfigurationStructure::getListsValueAtKey(const std::string& key)
 {
-  MSDS::iterator it = m_d->m_lists.find(key);
+  auto it = m_d->m_lists.find(key);
   if (it == m_d->m_lists.end())
     throw NoSuchList(m_d->m_groupName+"["+key+"]");
   return (*it).second;
 }
 
-std::map<std::string,std::string>& GroupConfigurationStructure::getMapAtKey(const std::string& key)
+std::map<std::string, std::string>& GroupConfigurationStructure::getMapAtKey(const std::string& key)
 {
   MSMSS::iterator it = m_d->m_maps.find(key);
   if (it == m_d->m_maps.end())
@@ -222,6 +264,16 @@ std::map<std::string,std::string>& GroupConfigurationStructure::getMapAtKey(cons
   }
   return it->second;
 }
+
+// std::deque<std::string>& GroupConfigurationStructure::getListsValueAtKey(const QString& key)
+// {
+//   return getListsValueAtKey(key.toStdString());
+// }
+//
+// std::map<std::string, std::string>& GroupConfigurationStructure::getMapAtKey(const QString& key)
+// {
+//   return getMapAtKey(key.toStdString());
+// }
 
 const map<string,string>& GroupConfigurationStructure::getParams()
 { return m_d->m_params;}
@@ -274,8 +326,7 @@ void GroupConfigurationStructure::addEntryInMap(const std::string& mapName,const
   (it->second)[key]=value;
 }
 
-std::deque<ItemWithAttributes>& GroupConfigurationStructure::
-getListOfItems(const std::string& key)
+std::deque<ItemWithAttributes>& GroupConfigurationStructure::getListOfItems(const std::string& key)
 {
   MSDI::iterator it = m_d->m_listsOfItems.find(key);
   if (it == m_d->m_listsOfItems.end())
@@ -283,8 +334,7 @@ getListOfItems(const std::string& key)
   return (*it).second;
 }
 
-std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::
-getMapOfItems(const std::string& key)
+std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::getMapOfItems(const std::string& key)
 {
   MSMSI::iterator it = m_d->m_mapsOfItems.find(key);
   if (it == m_d->m_mapsOfItems.end())
@@ -292,14 +342,12 @@ getMapOfItems(const std::string& key)
   return it->second;
 }
 
-void GroupConfigurationStructure::
-addListOfItems(const std::string& listName)
+void GroupConfigurationStructure::addListOfItems(const std::string& listName)
 {
   m_d->m_listsOfItems[listName]=std::deque<ItemWithAttributes>(0);
 }
 
-void GroupConfigurationStructure::
-addItemInListOfItems(const std::string& key,
+void GroupConfigurationStructure::addItemInListOfItems(const std::string& key,
                      const ItemWithAttributes& item)
 {
   MSDI::iterator it = m_d->m_listsOfItems.find(key);
@@ -308,14 +356,12 @@ addItemInListOfItems(const std::string& key,
   (*it).second.push_back(item);
 }
 
-void GroupConfigurationStructure::
-addMapOfItems(const std::string& mapName)
+void GroupConfigurationStructure::addMapOfItems(const std::string& mapName)
 {
   m_d->m_mapsOfItems[mapName]=std::map<std::string,ItemWithAttributes>();
 }
 
-void GroupConfigurationStructure::
-addEntryInMapOfItems(const std::string& mapName,
+void GroupConfigurationStructure::addEntryInMapOfItems(const std::string& mapName,
                      const std::string& key,
                      const ItemWithAttributes& item)
 {
@@ -325,8 +371,7 @@ addEntryInMapOfItems(const std::string& mapName,
   ((*it).second)[key]=item;
 }
 
-void GroupConfigurationStructure::
-changeListToListOfItems(const std::string &listName)
+void GroupConfigurationStructure::changeListToListOfItems(const std::string &listName)
 {
   MSDS::iterator it = m_d->m_lists.find(listName);
   if (it == m_d->m_lists.end())
@@ -345,8 +390,7 @@ changeListToListOfItems(const std::string &listName)
  m_d-> m_lists.erase(it);
 }
 
-void GroupConfigurationStructure::
-changeMapToMapOfItems(const std::string &mapName)
+void GroupConfigurationStructure::changeMapToMapOfItems(const std::string &mapName)
 {
   MSMSS::iterator it = m_d->m_maps.find(mapName);
   if (it == m_d->m_maps.end())
@@ -365,6 +409,77 @@ changeMapToMapOfItems(const std::string &mapName)
   m_d->m_maps.erase(it);
 }
 
+// void GroupConfigurationStructure::addAttribute(const QString& key,const QString& value)
+// {
+//   addAttribute(key.toStdString(), value.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addParamValuePair(const QString& key, const QString& value)
+// {
+//   addParamValuePair(key.toStdString(), value.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addListNamed(const QString& listName)
+// {
+//   addListNamed(listName.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addItemInListNamed(const QString& item, const QString& listName)
+// {
+//   addItemInListNamed(item.toStdString(), listName.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addMap(const QString& mapName)
+// {
+//   addMap(mapName.toStdString());;
+// }
+//
+// void GroupConfigurationStructure::addEntryInMap(const QString& mapName,const QString& key,const QString& value)
+// {
+//   addEntryInMap(mapName.toStdString(), key.toStdString(), value.toStdString());
+// }
+//
+// std::deque<ItemWithAttributes>& GroupConfigurationStructure::getListOfItems(const QString& key)
+// {
+//   return getListOfItems(key.toStdString());
+// }
+//
+// std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::getMapOfItems(const QString& key)
+// {
+//   return getMapOfItems(key.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addListOfItems(const QString& listName)
+// {
+//   addListOfItems(listName.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addItemInListOfItems(const QString& key, const ItemWithAttributes& item)
+// {
+//   addItemInListOfItems(key.toStdString(), item);
+// }
+//
+// void GroupConfigurationStructure::addMapOfItems(const QString& mapName)
+// {
+//   addMapOfItems(mapName.toStdString());
+// }
+//
+// void GroupConfigurationStructure::addEntryInMapOfItems(const QString& mapName,
+//                                                        const QString& key,
+//                                                        const ItemWithAttributes& item)
+// {
+//   addEntryInMapOfItems(mapName.toStdString(), key.toStdString(), item);
+// }
+//
+// void GroupConfigurationStructure::changeListToListOfItems(const QString &listName)
+// {
+//   changeListToListOfItems(listName.toStdString());
+// }
+//
+// void GroupConfigurationStructure::changeMapToMapOfItems(const QString &mapName)
+// {
+//   changeMapToMapOfItems(mapName.toStdString());
+// }
 
 std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs)
 {

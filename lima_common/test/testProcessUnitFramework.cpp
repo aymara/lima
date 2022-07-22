@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004 by CEA - LIST                                      *
  *                                                                         *
@@ -78,24 +65,24 @@ int run(int argc, char** argv)
   cout << "dummy program, just to instantiate templates from ProcessUnitFramework" << endl;
 
   // build fake moduleconfigurationstructure
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf("carpet");
+  Common::XMLConfigurationFiles::ModuleConfigurationStructure modconf(QLatin1String("carpet"));
   {
-    modconf.addGroupNamed("myDreamer");
+    modconf.addGroupNamed(QLatin1String("myDreamer"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myDreamer");
     groupConf.addAttribute("class","DreamingProcessUnit");
   }
   {
-    modconf.addGroupNamed("otherDreamer");
+    modconf.addGroupNamed(QLatin1String("otherDreamer"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("otherDreamer");
     groupConf.addAttribute("class","DreamingProcessUnit");
   }
   {
-    modconf.addGroupNamed("myZen");
+    modconf.addGroupNamed(QLatin1String("myZen"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myZen");
     groupConf.addAttribute("class","ZenProcessUnit");
   }
   {
-    modconf.addGroupNamed("myPipeline");
+    modconf.addGroupNamed(QLatin1String("myPipeline"));
     Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf=modconf.getGroupNamed("myPipeline");
     groupConf.addAttribute("class","ProcessUnitPipeline");
     groupConf.addListNamed("processUnitSequence");

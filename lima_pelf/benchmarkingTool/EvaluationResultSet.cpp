@@ -1,21 +1,8 @@
-/*
- *    Copyright 2002-2013 CEA LIST
- * 
- *    This file is part of LIMA.
- * 
- *    LIMA is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Affero General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- * 
- *    LIMA is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- * 
- *    You should have received a copy of the GNU Affero General Public License
- *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
- */
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "EvaluationResultSet.h"
 #include <boost/concept_check.hpp>
 using namespace Lima::Pelf;
@@ -47,7 +34,7 @@ EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QStrin
 //     qDebug() << "EvaluationResultSet::findResultsType  typeKey=" << typeKey << "typeName=" << typeName;
     QString resultsRegexpOld = "\\s+p=((0|1)?\\.?\\d+)\\s+r=((0|1)?\\.?\\d+)\\s+f=((0|1)?\\.?\\d+)";
     QString resultsRegexp = "\\s+fc=(\\d+)\\s+fp=(\\d+)\\s+cr=(\\d+)";
-    QRegExp allRelationsRegexp(typeKey+resultsRegexpOld+resultsRegexp);
+    QRegularExpression allRelationsRegexp(typeKey+resultsRegexpOld+resultsRegexp);
 //     qDebug() << "EvaluationResultSet::findResultsType regexp=" << allRelationsRegexp.pattern();
     int allRelationsMatchIndex = allRelationsRegexp.indexIn(cmdOutput);
     EvaluationResult* result = 0;
@@ -70,7 +57,7 @@ EvaluationResult* EvaluationResultSet::findResultsType(QString cmdOutput, QStrin
           result->cr = cr;
 
           // Go through the results again in order to store places of individual errors
-          QRegExp resultsGroupsRegexp("(A|F)\\|"+typeName+"\\|([^|]*)\\|([^|]*)\\n");
+          QRegularExpression resultsGroupsRegexp("(A|F)\\|"+typeName+"\\|([^|]*)\\|([^|]*)\\n");
           int resultsGroupsRegexpMatchIndex = 0;
           while((resultsGroupsRegexpMatchIndex = resultsGroupsRegexp.indexIn(cmdOutput, resultsGroupsRegexpMatchIndex)) != -1)
           {

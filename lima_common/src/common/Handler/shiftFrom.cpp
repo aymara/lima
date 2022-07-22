@@ -1,21 +1,8 @@
-/*
-    Copyright 2021 CEA LIST
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  * @author     Gaël de Chalendar <gael.de-chalendar@cea.fr>
  * @date       Wed Dec 15 2021
@@ -26,7 +13,7 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QXmlStreamReader>
+#include <QRegularExpression>
 #include <tuple>
 
 namespace Lima {
@@ -120,26 +107,27 @@ ShiftFromPrivate::ShiftFromPrivate(const QString& xml):
 // QMap<int, std::tuple<int, QString, QString> > buildShiftFrom(const QString& xml)
 {
 //     qDebug() << "ShiftFromPrivate::ShiftFromPrivate" << m_xml;
-    QRegExp rx("(&([^;]*);)");
+    QRegularExpression rx("(&([^;]*);)");
     int shift = 0;
-    int indexofent = 0;
 
-    while ((indexofent = rx.indexIn(m_xml, indexofent)) != -1)
+    qsizetype indexofent = 0;
+    QRegularExpressionMatch match;
+    while ((indexofent = m_xml.indexOf(rx, indexofent, &match)) != -1)
     {
 //       qDebug() << indexofent;
 //       qDebug() << rx.cap(1);
       int indexInResolved = indexofent-shift;
-      QString entity = rx.cap(1);
-      QString entityString = rx.cap(2);
+      QString entity = match.captured(1);
+      QString entityString = match.captured(2);
 //       qDebug() << entity;
-      QString parsedEntity = parseEntity(&entityString);
+      QString parsedEntity = parseEntity(entityString);
       shift += entity.size()-parsedEntity.size();
 //       qDebug() << parsedEntity;
       m_shiftFrom.insert(indexInResolved, {shift, entity, parsedEntity});
 //       qDebug() << "ShiftFromPrivate::ShiftFromPrivate indexofent:" << indexofent << "; indexInResolved:"
 //               << indexInResolved << "; shift:" << shift;
 
-      indexofent += rx.matchedLength();
+      indexofent += match.capturedLength();
     }
 //     qDebug() << "ShiftFromPrivate::ShiftFromPrivate shiftFrom is:" << m_shiftFrom.keys();
 
@@ -149,15 +137,16 @@ ShiftFromPrivate::ShiftFromPrivate(const QString& xml):
 void ShiftFromPrivate::build_mapping()
 {
 //     qDebug() << m_xml;
-    QRegExp rx("(&([^;]*);)");
+    QRegularExpression rx("(&([^;]*);)");
     m_xml_noent = m_xml;
-    int indexofent = 0;
 
-    while ((indexofent = rx.indexIn(m_xml_noent, indexofent)) != -1)
+    qsizetype indexofent = 0;
+    QRegularExpressionMatch match;
+    while ((indexofent = m_xml_noent.indexOf(rx, indexofent, &match)) != -1)
     {
-      auto entity = rx.cap(1);
-      auto entityString = rx.cap(2);
-      auto parsedEntity = parseEntity(&entityString);
+      auto entity = match.captured(1);
+      auto entityString = match.captured(2);
+      auto parsedEntity = parseEntity(entityString);
       m_xml_noent.replace(indexofent, entity.size(),
                         QString(parsedEntity.size(),'_'));
       m_mapping.insert(indexofent, parsedEntity);
@@ -171,9 +160,9 @@ void ShiftFromPrivate::build_mapping()
 QDebug& operator<<(QDebug& os, const ShiftFrom& sf)
 {
 //     QMap<int, std::tuple<int, QString, QString> > m_shiftFrom;
-  os << "ShiftFrom xml:" << sf.m_d->m_xml << Qt::endl;
-  os << "ShiftFrom xml_noent:" << sf.m_d->m_xml_noent << Qt::endl;
-  os << "ShiftFrom xml rebuilt:" << sf.rebuild_text(sf.m_d->m_xml_noent, 0) << Qt::endl;
+  os << "ShiftFrom xml:" << sf.m_d->m_xml << QTENDL;
+  os << "ShiftFrom xml_noent:" << sf.m_d->m_xml_noent << QTENDL;
+  os << "ShiftFrom xml rebuilt:" << sf.rebuild_text(sf.m_d->m_xml_noent, 0) << QTENDL;
   os << "ShiftFrom shiftFrom: {" ;
   for (const auto& k: sf.m_d->m_shiftFrom.keys())
   {

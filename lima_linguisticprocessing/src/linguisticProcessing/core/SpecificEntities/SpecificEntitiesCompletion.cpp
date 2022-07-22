@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "SpecificEntitiesCompletion.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
@@ -26,6 +12,9 @@
 #include "linguisticProcessing/core/Automaton/recognizerData.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/timeUtilsController.h"
+
+#include <QRegularExpression>
+
 #include <queue>
 
 using namespace Lima::Common::AnnotationGraphs;
@@ -174,7 +163,7 @@ public:
   // debug
   friend QDebug& operator<<(QDebug& os, const Entities& ent) {
     for (const auto& e: ent) {
-      os << e << Qt::endl;
+      os << e << QTENDL;
     }
     return os;
   }
@@ -209,7 +198,7 @@ public:
   }
 
   friend QDebug& operator<<(QDebug& os, const std::vector<EntityOccurrence>& occ) {
-    for (const auto& o: occ) { os << o << Qt::endl; };
+    for (const auto& o: occ) { os << o << QTENDL; };
     return os;
   }
 
@@ -243,12 +232,12 @@ LimaStatusCode SpecificEntitiesCompletion::process(
   // gather found entities of the selected types
   Entities foundEntities;
   getEntities(analysis,foundEntities,tokenMap);
-  LDEBUG << "SpecificEntitiesCompletion: found entities" << Qt::endl << foundEntities;
+  LDEBUG << "SpecificEntitiesCompletion: found entities" << QTENDL << foundEntities;
 
   // find entities in text
   std::vector<EntityOccurrence> newEntities;
   findOccurrences(foundEntities,analysis,newEntities);
-  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << Qt::endl << newEntities;
+  LDEBUG << "SpecificEntitiesCompletion: found new occurrences" << QTENDL << newEntities;
 
   // report found entities in graph data
   // use existing CreateSpecificEntity function, create RecognizerMatch
@@ -307,16 +296,19 @@ findOccurrences(Entities& foundEntities,
                 std::vector<EntityOccurrence>& newEntities) const
 {
   LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
-  for (const auto& e: foundEntities) {
-    QRegExp rx(e.regex());
-    int pos = 0;
-    while ((pos = rx.indexIn(*text, pos)) != -1) {
-      pair<unsigned int, unsigned int> matchpos(pos+1,pos+1+rx.matchedLength());
+  for (const auto& e: foundEntities)
+  {
+    QRegularExpression re(e.regex());
+    qsizetype pos = 0;
+    QRegularExpressionMatch rx;
+    while ((pos = text->indexOf(re, pos, &rx)) != -1)
+    {
+      pair<unsigned int, unsigned int> matchpos(pos+1, pos+1+rx.capturedLength());
       if (e.occurrences.find(matchpos)==e.occurrences.end()) {
         // found a new occurrence
-        newEntities.push_back(EntityOccurrence(e.entityType,rx.cap(0),e.entityString,matchpos));
+        newEntities.push_back(EntityOccurrence(e.entityType, rx.captured(0), e.entityString, matchpos));
       }
-      pos += rx.matchedLength();
+      pos += rx.capturedLength();
     }
 
   }

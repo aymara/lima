@@ -1,20 +1,7 @@
-#   Copyright 2002-2019 CEA LIST
+# Copyright 2002-2019 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-################### tests ########################
+# SPDX-License-Identifier: MIT
 
 ########### next test ###############
 
@@ -118,7 +105,7 @@ add_executable(FileUtilsTest0 ${FileUtilsTest0_SRCS} ${FileUtilsTest0_MOC_OUTFIL
 
 target_link_libraries(FileUtilsTest0
    lima-common-misc
-   Qt5::Test
+   Qt${QT_VERSION_MAJOR}::Test
 )
 
 add_test(NAME FileUtilsTest0 COMMAND FileUtilsTest0 -v2 -nocrashhandler)

@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplate.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Thu Sep  1 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * Project     LIMA
- *
- * @brief      template for event representation
- *
- *
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef EVENTTEMPLATE_H
 #define EVENTTEMPLATE_H

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 #include "QsLogCategories.h"
 #include "common/tools/LimaFileSystemWatcher.h"
 #include "common/tools/FileUtils.h"
@@ -100,8 +87,7 @@ bool Categories::configure(const QString& fileName, bool reload)
   static LogInit logInit(local_zone.toUtf8().constData());
   auto& logger = *(logInit.pLogger);
 
-//   std::cerr << "Categories::configure " << fileName.toStdString() << " "
-//             << reload << std::endl;
+//   std::cerr << "Categories::configure " << fileName.toStdString() << " " << reload << std::endl;
 
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
@@ -115,8 +101,7 @@ bool Categories::configure(const QString& fileName, bool reload)
   if (!reload && d->m_configuredFiles.contains(fileName))
   {
     LOGINIT("Logging");
-    LDEBUG << "Destinations::configure configuration file: \"" << fileName
-            << "\" already configured";
+    LDEBUG << "Categories::configure configuration file: \"" << fileName << "\" already configured";
     return true;
   }
   d->m_configFileWatcher.addPath(fileName);
@@ -211,7 +196,7 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
   QsLogging::Categories::instance();
   QsLogging::Destinations::instance().setDefault();
 
-  bool atLeastOneSuccessfulLoad = false;
+//   bool atLeastOneSuccessfulLoad = false;
   bool atLeastOneDestinationSuccessfulLoad = false;
   QStringList configDirsList;
   if (configString.isEmpty())
@@ -242,10 +227,11 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
 //           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
 //           return false;
 //         }
-        if (QsLogging::Categories::instance().configure(initFileName))
-        {
-          atLeastOneSuccessfulLoad = true;
-        }
+        QsLogging::Categories::instance().configure(initFileName); // return value ignored on will
+//         if (QsLogging::Categories::instance().configure(initFileName))
+//         {
+//           atLeastOneSuccessfulLoad = true;
+//         }
 //         else
 //         {
 //           std::cerr << "Configure Problem \"" << initFileName.toUtf8().constData() << "\"" << std::endl;
@@ -269,15 +255,15 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
 //             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\". No destination available" << std::endl;
             return false;
           }
-          if (QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
-          {
-            atLeastOneSuccessfulLoad = true;
-          }
-          else
+          if (!QsLogging::Categories::instance().configure(configDir + "/log4cpp/" + entry))
           {
 //             std::cerr << "Configure Problem \"" << entry.toUtf8().constData() << "\". No category loaded" << std::endl;
             return false;
           }
+//           else
+//           {
+//             atLeastOneSuccessfulLoad = true;
+//           }
         }
       }
 

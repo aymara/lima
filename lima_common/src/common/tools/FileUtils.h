@@ -1,21 +1,8 @@
-/*
-    Copyright 2015 CEA LIST
+// Copyright 2015 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  * @file       FileUtils.h
  * @author     Gael de Chalendar
@@ -112,7 +99,8 @@ LIMA_COMMONTOOLS_EXPORT QStringList buildResourcesDirectoriesList(const QStringL
  * @param separator the character used to split the list of paths. Defaults to semicolon
  * @return the full path of the found file if found. Empty string otherwise.
  */
-LIMA_COMMONTOOLS_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator = LIMA_PATH_SEPARATOR);
+LIMA_COMMONTOOLS_EXPORT QString findFileInPaths(const QString& paths, const QString& fileName,
+                                                const QChar& separator = QLatin1Char(LIMA_PATH_SEPARATOR));
 
 } // end namespace
 } // end namespace

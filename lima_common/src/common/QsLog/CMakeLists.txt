@@ -1,19 +1,7 @@
-#   Copyright 2002-2019 CEA LIST
+# Copyright 2002-2019 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 # WARNING: should include src BEFORE to prevent to use ${DIST_LIMA} header files
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
@@ -36,7 +24,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 # add_library(lima-common-qslog SHARED ${lima-common-qslog_LIB_SRCS} ${lima-common-qslog_MOC_OUTFILES})
 # target_link_libraries(lima-common-qslog
 #   lima-common-qslog
-#   ${Qt5_LIBRARIES}
+#   ${Qt_LIBRARIES}
 # )
 # ADD_DLL_TO_PATH(lima-common-qslog)
 #
@@ -55,7 +43,8 @@ target_link_libraries(qslogger
   lima-common-tools
 )
 
-install(TARGETS qslogger DESTINATION bin)
+install(TARGETS qslogger DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

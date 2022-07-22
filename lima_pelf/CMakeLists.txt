@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # Define project
 
 # Find required packages
@@ -13,7 +17,7 @@ set(LIMA_PELF_LIB_VERSION ${LIMA_GENERIC_LIB_VERSION})
 set(LIMA_PELF_LIB_SOVERSION ${LIMA_GENERIC_LIB_SOVERSION})
 
 # Go to subdirectories
-add_subdirectory(easyprocessor)
+#add_subdirectory(easyprocessor)
 if (DEFINED ENV{PELF_EVALUATOR} AND DEFINED ENV{PELF_ALIGNER} AND Qwt_FOUND)
   set(PELF_EVALUATOR $ENV{PELF_EVALUATOR})
   set(PELF_ALIGNER $ENV{PELF_ALIGNER})

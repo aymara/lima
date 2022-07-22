@@ -1,12 +1,7 @@
-/************************************************************************
- *
- * @file       documentReader.h
- * @author     Besancon Romaric (besanconr@zoe.cea.fr)
- * @date       Mon Oct 27 2003
- * @version    $Id$
- * copyright   Copyright (C) 2003 by CEA LIST (LVIC)
- * Project     detectlibraries
- ***********************************************************************/
+// Copyright (C) 2003 by CEA LIST (LVIC)
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DOCUMENTREADER_H
 #define DOCUMENTREADER_H

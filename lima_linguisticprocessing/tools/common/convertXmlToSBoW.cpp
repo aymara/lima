@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       convertBoWFormat.cpp
@@ -58,14 +45,14 @@ Q_GLOBAL_STATIC_WITH_ARGS(string, HELP, (std::string("convert structured-bag-of-
 ));
 
 //****************************************************************************
-// GLOBAL variable -> the command line arguments 
+// GLOBAL variable -> the command line arguments
 struct Param {
   string inputFile;           // input file
   string outputFile;          // output file
   bool help;                  // help mode
   ifstream*  fileIn;          // stored in global for convenience
   ofstream*  fileOut;         // (not a really pretty solution, I guess)
-  BoWXMLReader* reader;
+    BoWXmlReader* reader;
 } param={"",
          "",
          false,
@@ -80,7 +67,7 @@ void readCommandLineArguments(uint64_t argc, char *argv[])
     if (s=="-h" || s=="--help")
       param.help=true;
     else if (s[0]=='-') {
-      cerr << "unrecognized option " <<  s 
+      cerr << "unrecognized option " <<  s
         << endl;
       cerr << *USAGE << endl;
       exit(1);
@@ -130,11 +117,11 @@ int run(int argc,char** argv)
   QsLogging::initQsLog();
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  
+
   if (argc<2) {    cerr << *USAGE; exit(1); }
   readCommandLineArguments(argc,argv);
   if (param.help) { cerr << *HELP; exit(1); }
-  
+
   ofstream fileOut(param.outputFile.c_str(), std::ofstream::binary);
   if (! fileOut.good()) {
     cerr << "cannot open output file [" << param.outputFile << "]" << endl;
@@ -142,7 +129,7 @@ int run(int argc,char** argv)
   }
   BoWBinaryWriter writer;
   writer.writeHeader(fileOut,BOWFILE_SDOCUMENT);
-  BoWXMLReader reader(param.inputFile,fileOut);
+  BoWXmlReader reader(param.inputFile, fileOut);
   // @todo
   return EXIT_SUCCESS;
 }

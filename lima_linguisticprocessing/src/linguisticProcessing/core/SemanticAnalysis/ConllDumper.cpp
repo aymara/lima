@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2020 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "ConllDumper.h"
 #include "common/MediaProcessors/DumperStream.h"
@@ -40,8 +26,6 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
-#include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/ConstituantAndRelationExtractor.h"
-#include "linguisticProcessing/core/AnalysisDumpers/EasyXmlDumper/relation.h"
 #include "linguisticProcessing/core/SemanticAnalysis/LimaConllTokenIdMapping.h"
 
 #include <QQueue>
@@ -851,7 +835,7 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
 #endif
-  QMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
+  QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
 
   auto annotationData = static_cast<AnnotationData*>(
     analysis.getData("AnnotationData"));

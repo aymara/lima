@@ -1,7 +1,9 @@
 # - Find the native QHttpServer includes and library
 
-# created from FindPNG.cmake (Copyright 2002-2009 Kitware, Inc.)
-# by Gael de Chalendar (CEA LIST)
+# Copyright 2002-2009 Kitware, Inc.)
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
 
 # - Find the native QHttpServer includes and library
 #

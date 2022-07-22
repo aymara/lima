@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004 by CEA - LIST                                      *
  *                                                                         *
@@ -39,10 +26,9 @@
 // #include "linguisticProcessing/core/Tokenizer/ParseCharClass.h"
 
 #include "KeysLogger.h"
-#include "DictionaryHandler.h"
+#include "DictionaryReader.h"
 
-#include <QtXml/QXmlSimpleReader>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 using namespace std;
 using namespace Lima;
@@ -59,8 +45,9 @@ void usage(int argc, char *argv[]);
 // GLOBAL variable -> the command line arguments
 typedef struct
 {
-  std::string extractKeys;
+//   std::string extractKeys;
   std::string charChart;
+  std::string extractKeys;
   std::string fsaKey;
   std::string propertyFile;
   std::string symbolicCodes;
@@ -234,33 +221,8 @@ int run(int argc, char** argv)
       std::cerr << "can't open file " << param->extractKeys << std::endl;
       exit(-1);
     }
-    KeysLogger keysLogger(fout, &charChart, param->reverseKeys);
-
     std::cerr << "parse input file : " << param->input << std::endl;
-    QXmlSimpleReader parser;
-    //     parser->setValidationScheme(SAXParser::Val_Auto);
-    //     parser->setDoNamespaces(false);
-    //     parser->setDoSchema(false);
-    //     parser->setValidationSchemaFullChecking(false);
-    parser.setContentHandler(&keysLogger);
-    parser.setErrorHandler(&keysLogger);
-    QFile file(param->input.c_str());
-    if (!file.open(QIODevice::ReadOnly))
-    {
-      std::cerr << "Error opening " << param->input << std::endl;
-      return 1;
-    }
-    if (!parser.parse( QXmlInputSource(&file)))
-    {
-      std::cerr << "Error parsing " << param->input << " : "
-                << parser.errorHandler()->errorString().toUtf8().constData()
-                << std::endl;
-      return EXIT_FAILURE;
-    }
-    else
-    {
-      std::cerr << std::endl;
-    }
+    KeysLogger keysLogger(QString::fromStdString(param->input), fout, &charChart, param->reverseKeys);
     fout.close();
   }
   else
@@ -303,19 +265,16 @@ int run(int argc, char** argv)
                                conversionMap,
                                param->reverseKeys);
 
-    QXmlSimpleReader parser;
-    parser.setContentHandler(&handler);
-    parser.setErrorHandler(&handler);
     QFile file(param->input.c_str());
     if (!file.open(QIODevice::ReadOnly))
     {
       std::cerr << "Error opening " << param->input << std::endl;
       return 1;
     }
-    if (!parser.parse( QXmlInputSource(&file)))
+    if (!handler.parse(&file))
     {
       std::cerr << "Error parsing " << param->input << " : "
-                << parser.errorHandler()->errorString().toUtf8().constData()
+                << handler.errorString().toStdString()
                 << std::endl;
       return EXIT_FAILURE;
     }

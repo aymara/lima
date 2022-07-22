@@ -1,21 +1,8 @@
-/*
- *    Copyright 2002-2013 CEA LIST
- * 
- *    This file is part of LIMA.
- * 
- *    LIMA is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Affero General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- * 
- *    LIMA is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- * 
- *    You should have received a copy of the GNU Affero General Public License
- *    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
- */
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "SyntacticRuleEntry.h"
 using namespace Lima::Pelf;
 
@@ -38,7 +25,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
     }
     else
     {
-        QRegExp automatonRegExp("^([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)$");
+        QRegularExpression automatonRegExp("^([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)$");
         if(automatonRegExp.indexIn(s1) != -1)
         {
             factoryLatestSyntacticRule = factoryCurrentSyntacticRule;
@@ -53,7 +40,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
             factoryCurrentSyntacticRule->category = automatonParts[4];
             QString recongnizeElements = automatonParts[1]+":"+automatonParts[2]+":"+automatonParts[3];
             int automatonElementMatchIndex = 0;
-            QRegExp automatonElementRegExp("(\\$|@)[a-zA-Z_-]+");
+            QRegularExpression automatonElementRegExp("(\\$|@)[a-zA-Z_-]+");
             while(automatonElementRegExp.indexIn(recongnizeElements, automatonElementMatchIndex) != -1)
             {
                 QStringList elements = automatonElementRegExp.capturedTexts();
@@ -66,7 +53,7 @@ SyntacticRuleEntry* SyntacticRuleEntry::factory (QString s1, QString s2, int i)
         else if(factoryCurrentSyntacticRule != 0)
         {
             factoryCurrentSyntacticRule->sourceString += s1;
-            QRegExp creationRegExp("^\\+CreateRelationBetween\\([^,]*,[^,]*,\"([^,]*)\"\\)$");
+            QRegularExpression creationRegExp("^\\+CreateRelationBetween\\([^,]*,[^,]*,\"([^,]*)\"\\)$");
             if(creationRegExp.indexIn(s1) != -1)
             {
                 QStringList elements = creationRegExp.capturedTexts();

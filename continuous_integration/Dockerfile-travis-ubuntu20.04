@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 #RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev -qq
 
 # Use clang
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git llvm build-essential clang clang-tidy clang-tools make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev dos2unix -qq
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y -qq locales unzip bash coreutils apt-utils lsb-release git llvm build-essential clang clang-tidy clang-tools make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt5-default qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-dev libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev dos2unix python-is-python3
 
 RUN update-alternatives --set cc /usr/bin/clang
 RUN update-alternatives --set c++ /usr/bin/clang++
@@ -17,7 +17,6 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
-ARG BRANCH=master
 ARG GITHUB_TOKEN
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
@@ -39,14 +38,20 @@ RUN /svmtool.sh $GITHUB_TOKEN
 RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
+
+RUN install -d /src/lima/extern
+COPY ./extern/download_libtorch.sh /src/lima/extern
+WORKDIR /src/lima/extern
+RUN bash ./download_libtorch.sh
+
+
 RUN mkdir -p /src/
-RUN git clone --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
+COPY . /src/lima
+WORKDIR /src/lima/extern
 WORKDIR /src/lima
 ARG CACHEBUST=1
-RUN git pull
+RUN git submodule init && git submodule update
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
-
-RUN install -d /src/lima/extern && cd /src/lima/extern && ./download_libtorch.sh
 
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
@@ -66,11 +71,11 @@ RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/us
 RUN ninja && ninja test && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
-WORKDIR /usr/share/apps/lima/tests
-RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
-RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
-WORKDIR /usr/share/apps/lima/tests/xmlreader
-RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+# WORKDIR /usr/share/apps/lima/tests
+# RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+# RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+# WORKDIR /usr/share/apps/lima/tests/xmlreader
+# RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
 # install github-release to be able to deploy packages
 RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin
@@ -79,7 +84,8 @@ RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7
 # install python packages necessary to use the language resources install script
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
 
-# install English and French UD models
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+# Stop dowloading lima models as appveyor build timeouts
+# # install English and French UD models
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
 

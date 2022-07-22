@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @brief  AbbreviationSplitAlternatives is the module which creates split alternatives
   *         for hyphen word tokens. Each token from the supplied tokens path is processed :
@@ -87,7 +74,7 @@ m_charSplitRegexp()
 {
   // default split regexp: split on simple quote or UTF-8 right quotation mark
   LimaString quotes=Common::Misc::utf8stdstring2limastring("['’]");
-  m_charSplitRegexp=QRegExp(quotes);
+  m_charSplitRegexp=QRegularExpression(quotes);
 
 }
 
@@ -171,7 +158,7 @@ void AbbreviationSplitAlternatives::init(
   try
   {
     string charSplit=unitConfiguration.getParamsValueAtKey("charSplitRegexp");
-    m_charSplitRegexp=QRegExp(Common::Misc::utf8stdstring2limastring(charSplit));
+    m_charSplitRegexp=QRegularExpression(Common::Misc::utf8stdstring2limastring(charSplit));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

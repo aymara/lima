@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // NAUTITIA
 //
@@ -98,7 +84,7 @@ LimaChar Text::currentChar() const
 {
   if (m_d->m_curPtr >= m_d->m_text.size())
   {
-    return 0;
+    return QChar();
   }
   return m_d->m_text[m_d->m_curPtr];
 }
@@ -173,7 +159,7 @@ Lima::LimaChar Text::advance()
     LDEBUG << "Trying to move after text end.";
 #endif
     m_d->m_curPtr++;
-    return 0;
+    return QChar();
   }
   if (m_d->m_text.at(m_d->m_curPtr).isHighSurrogate())
   {
@@ -202,14 +188,14 @@ const CharClass* Text::currentClass() const
 #endif
   if (m_d->m_curPtr >= m_d->m_text.size())
   {
-    return m_d->m_charChart->charClass(0);
+    return m_d->m_charChart->charClass(QChar());
   }
   QChar c = m_d->m_text[m_d->m_curPtr];
   if (c.isHighSurrogate())
   {
     if (m_d->m_curPtr+1 >= m_d->m_text.size())
     {
-      return m_d->m_charChart->charClass(0);
+      return m_d->m_charChart->charClass(QChar());
     }
     return m_d->m_charChart->charClass( m_d->m_text[m_d->m_curPtr], m_d->m_text[m_d->m_curPtr+1] );
   }

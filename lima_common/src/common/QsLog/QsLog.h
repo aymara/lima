@@ -1,5 +1,7 @@
 // Copyright (c) 2010, Razvan Petru
-// All rights reserved.
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -58,7 +60,7 @@ class LIMA_COMMONQSLOG_EXPORT Logger
 {
   friend class LoggerImpl;
 public:
-   static Logger& instance(const QString& zone="")
+   static Logger& instance(const QString& zone = QLatin1String(""))
    {
       static QMap<QString,Logger*> staticLog;
       QMap<QString,Logger*>::iterator it = staticLog.find(zone);
@@ -120,7 +122,7 @@ public:
 
    Logger& operator=(const Logger&);
 private:
-   Logger(const QString& aZone = "");
+   Logger(const QString& aZone = QLatin1String(""));
    Logger(const Logger&);
    ~Logger();
 

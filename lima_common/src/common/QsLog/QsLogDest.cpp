@@ -1,5 +1,7 @@
 // Copyright (c) 2010, Razvan Petru
-// All rights reserved.
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -28,6 +30,7 @@
 
 #include "common/tools/LimaFileSystemWatcher.h"
 #include "common/tools/FileUtils.h"
+#include "common/LimaCommon.h"
 
 #ifdef WIN32
 #pragma warning(disable: 4127)
@@ -115,6 +118,8 @@ bool Destinations::configure(const QString& fileName, bool reload)
   QFile file(fileName);
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
+
+//   std::cerr << "Destinations::configure " << fileName.toStdString() << " " << reload << std::endl;
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -221,7 +226,7 @@ void FileDestination::write(const QString& message, const QString& zone)
 {
   if (!zone.isEmpty())
     mOutputStream << " : " << zone << " : ";
-  mOutputStream << message << Qt::endl;
+  mOutputStream << message << QTENDL;
   mOutputStream.flush();
 }
 

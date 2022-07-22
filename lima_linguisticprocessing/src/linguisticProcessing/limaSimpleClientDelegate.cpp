@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       limaSimpleClientDelegate.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Tue Dec 19 2017
- * copyright   Copyright (C) 2017 by CEA - LIST
- * Project     Lima
- *
- * @brief      Internal implementation of the lima simple client (in separate header because needed by Q_OBJECT)
- *
- *
- ***********************************************************************/
+// Copyright (C) 2017 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "limaSimpleClientDelegate.h"
 

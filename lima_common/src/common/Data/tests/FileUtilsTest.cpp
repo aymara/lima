@@ -1,21 +1,7 @@
-/*
- *     Copyright 2015 CEA LIST
- *
- *     This file is part of LIMA.
- *
- *     LIMA is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     LIMA is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with LIMA.  If not, see <http://www.gnu.org/licenses/>
- */
+// Copyright 2015 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "FileUtilsTest.h"
 #include "common/tools/FileUtils.h"
@@ -46,7 +32,7 @@ void FileUtilsTest::FileUtilsTest0()
     stream.seek(0);
     QVERIFY2( countLines(file) == 1, "file is not empty but has no \\n: 1 line" );
     stream.seek(file.size());
-    stream << Qt::endl;
+    stream << QTENDL;
     stream.flush();
     stream.seek(0);
     QVERIFY2( countLines(file) == 1, "file has now one \\n and nothing after it: still one line" );
@@ -71,7 +57,7 @@ void FileUtilsTest::FileUtilsTest1()
   QVERIFY2( countLines(file) == 0, "Initial temp file is empty" );
   QTextStream stream(&file);
   // write two lines
-  stream << "auie" << Qt::endl << QString::fromUtf8("bépo") << Qt::endl << QString::fromUtf8("ctsr") << Qt::endl;
+  stream << "auie" << QTENDL << QString::fromUtf8("bépo") << QTENDL << QString::fromUtf8("ctsr") << QTENDL;
   stream.flush();
   stream.seek(0);
   QVERIFY2( countLines(file) == 3, "file has now three \\n and no chars on fourth line: three lines" );
