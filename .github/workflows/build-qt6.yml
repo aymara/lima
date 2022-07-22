@@ -20,8 +20,8 @@ env:
 
 jobs:
 
-  manylinux:
-    name: "Build the manylinux-based imaged necessary for lima-python"
+  manylinux_2_24_with_qt:
+    name: "Build the -manylinux_2_24_with_qt-based imaged necessary for lima-python"
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +33,31 @@ jobs:
 
       - name: "Push image"
         run: docker push aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest
+
+  #manylinux_2_24_with_qt_and_pyside:
+    #name: "Build the manylinux_2_24_with_qt_and_pyside-based imaged necessary for lima-python"
+    #runs-on: ubuntu-latest
+
+    #steps:
+      #- name: "Checkout code"
+        #uses: actions/checkout@v2
+
+      #- name: "Build image"
+        #run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_24_with_qt_and_pyside --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+
+      #- name: "Push image"
+        #run: docker push aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+
+  #manylinux_2_24_lima-manylinux:
+    #name: "Build the manylinux_2_24_lima-manylinux-based imaged necessary for lima-python"
+    #runs-on: ubuntu-latest
+
+    #steps:
+      #- name: "Checkout code"
+        #uses: actions/checkout@v2
+
+      #- name: "Build image"
+        #run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_24_lima-manylinux --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/lima-manylinux_2_24-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
+
+      #- name: "Push image"
+        #run: docker push aymara/lima-manylinux_2_24-qt${QT_VERSION}-python${PYTHON_VERSION}:latest

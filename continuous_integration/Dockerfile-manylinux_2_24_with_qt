@@ -126,23 +126,19 @@ WORKDIR /
 
 ENV BUILD_TARGET=/build
 ENV SRC=/src
-ENV QT_BRANCH="${QT_FULL_VERSION}"
-ENV MAKE_CORES="$(expr $(nproc) + 2)"
 
 RUN mkdir -p "$BUILD_TARGET"
 
-RUN echo "Building QT version $QT_BRANCH."
+RUN echo "Building QT version $QT_FULL_VERSION."
 
 # This build process is inspired by
 # https://www.tal.org/tutorials/building-qt-512-raspberry-pi
 ENV SRC_DIR="/src/qt-everywhere-src-${QT_FULL_VERSION}"
 
 WORKDIR $BUILD_TARGET
-# @TODO: Add in the `-opengl es2` flag for Pi 1 - Pi 3.
-# Currently this breaks the QTWebEngine process.
 RUN bash "${SRC_DIR}"/configure \
-    -platform "linux-g++" \
     -confirm-license \
+    -opensource \
     -dbus-linked \
     -no-eglfs \
     -no-evdev \
@@ -156,7 +152,6 @@ RUN bash "${SRC_DIR}"/configure \
     -no-xcb-xlib \
     -nomake examples \
     -nomake tests \
-    -opensource \
     -prefix /opt/qt${QT_VERSION_MAJOR} \
     -qpa eglfs \
     -qt-pcre \
@@ -200,8 +195,5 @@ RUN bash "${SRC_DIR}"/configure \
     -system-libpng \
     -system-zlib
 
-# The RAM consumption is proportional to the amount of cores.
-# On an 8 core box, the build process will require ~16GB of RAM.
-RUN make -j $(expr $(nproc) + 2)
-RUN make install
+RUN ninja && ninja install
 
