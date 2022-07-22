@@ -1,5 +1,6 @@
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+ARG LLVM_VERSION=14.0.6
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
@@ -105,11 +106,19 @@ RUN apt-get update && \
         dos2unix
 
 WORKDIR /
-RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-13.0.0.tar.gz
-RUN tar xf llvmorg-13.0.0.tar.gz
-WORKDIR /llvm-project-llvmorg-13.0.0
-RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_INSTALL_PREFIX=/opt/llvm
+RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION}.tar.gz
+RUN tar xf llvmorg-${LLVM_VERSION}.tar.gz
+WORKDIR /llvm-project-llvmorg-${LLVM_VERSION}
+RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" -DCMAKE_INSTALL_PREFIX=/opt/llvm
 # -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
-RUN cmake --build build
+RUN cmake --build build --parallel
 RUN cmake --install build
+
+ENV CC=/opt/llvm/bin/clang
+ENV CXX=/opt/llvm/bin/clang++
+ENV CXXFLAGS="-std=c++17"
+ENV LLVM_INSTALL_DIR=/opt/llvm
+ENV PATH=/opt/llvm/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
+
 
