@@ -10,109 +10,109 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN locale
 
-# RUN apt-get update && \
-#     apt-get install -y \
-#         wget build-essential pkg-config automake  gawk gettext \
-#         firebird-dev \
-#         freetds-dev \
-#         gstreamer1.0-plugins-base \
-#         gstreamer1.0-plugins-good \
-#         gstreamer1.0-plugins-ugly \
-#         gstreamer1.0-x \
-#         libasound2-dev \
-#         libavcodec-dev \
-#         libavformat-dev \
-#         libavutil-dev \
-#         libbz2-dev \
-#         libcap-dev \
-#         libdbus-1-dev \
-#         libdbus-glib-1-dev \
-#         libdrm-dev \
-#         libegl1-mesa-dev \
-#         libevent-dev \
-#         libfontconfig1-dev \
-#         libfreetype6-dev \
-#         libgbm-dev \
-#         libgcrypt20-dev \
-#         libgles2-mesa-dev \
-#         libglib2.0-dev \
-#         libgst-dev \
-#         libgstreamer-plugins-base1.0-dev \
-#         libgstreamer1.0-dev \
-#         libicu-dev \
-#         libinput-dev \
-#         libiodbc2-dev \
-#         libjpeg62-turbo-dev \
-#         libjsoncpp-dev \
-#         libminizip-dev \
-#         libnss3-dev \
-#         libopus-dev \
-#         libpci-dev \
-#         libpng-dev \
-#         libpng16-16 \
-#         libpq-dev \
-#         libpulse-dev \
-#         librsvg2-common \
-#         libsnappy-dev \
-#         libsqlite0-dev \
-#         libsqlite3-dev \
-#         libsrtp0-dev \
-#         libsrtp2-dev \
-#         libssl-dev \
-#         libssl1.1 \
-#         libswscale-dev \
-#         libsystemd-dev \
-#         libudev-dev \
-#         libvpx-dev \
-#         libwayland-dev \
-#         libwebp-dev \
-#         libx11-dev \
-#         libx11-xcb-dev \
-#         libx11-xcb1 \
-#         libxcb-glx0-dev \
-#         libxcb-icccm4 \
-#         libxcb-icccm4-dev \
-#         libxcb-image0 \
-#         libxcb-image0-dev \
-#         libxcb-keysyms1 \
-#         libxcb-keysyms1-dev \
-#         libxcb-randr0-dev \
-#         libxcb-render-util0 \
-#         libxcb-render-util0-dev \
-#         libxcb-shape0-dev \
-#         libxcb-shm0 \
-#         libxcb-shm0-dev \
-#         libxcb-sync-dev \
-#         libxcb-sync1 \
-#         libxcb-xfixes0-dev \
-#         libxcb-xinerama0 \
-#         libxcb-xinerama0-dev \
-#         libxcb1 \
-#         libxcb1-dev \
-#         libxext-dev \
-#         libxi-dev \
-#         libxkbcommon-dev \
-#         libxrender-dev \
-#         libxslt1-dev \
-#         libxss-dev \
-#         libxtst-dev \
-#         ninja-build \
-#         nodejs \
-#         ruby \
-#         va-driver-all \
-#         lsb-release \
-#         libssl-dev \
-#         gperf \
-#         dos2unix
+RUN apt-get update && \
+    apt-get install -y \
+        wget build-essential pkg-config automake  gawk gettext \
+        firebird-dev \
+        freetds-dev \
+        gstreamer1.0-plugins-base \
+        gstreamer1.0-plugins-good \
+        gstreamer1.0-plugins-ugly \
+        gstreamer1.0-x \
+        libasound2-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libbz2-dev \
+        libcap-dev \
+        libdbus-1-dev \
+        libdbus-glib-1-dev \
+        libdrm-dev \
+        libegl1-mesa-dev \
+        libevent-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libgbm-dev \
+        libgcrypt20-dev \
+        libgles2-mesa-dev \
+        libglib2.0-dev \
+        libgst-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer1.0-dev \
+        libicu-dev \
+        libinput-dev \
+        libiodbc2-dev \
+        libjpeg62-turbo-dev \
+        libjsoncpp-dev \
+        libminizip-dev \
+        libnss3-dev \
+        libopus-dev \
+        libpci-dev \
+        libpng-dev \
+        libpng16-16 \
+        libpq-dev \
+        libpulse-dev \
+        librsvg2-common \
+        libsnappy-dev \
+        libsqlite0-dev \
+        libsqlite3-dev \
+        libsrtp0-dev \
+        libsrtp2-dev \
+        libssl-dev \
+        libssl1.1 \
+        libswscale-dev \
+        libsystemd-dev \
+        libudev-dev \
+        libvpx-dev \
+        libwayland-dev \
+        libwebp-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libx11-xcb1 \
+        libxcb-glx0-dev \
+        libxcb-icccm4 \
+        libxcb-icccm4-dev \
+        libxcb-image0 \
+        libxcb-image0-dev \
+        libxcb-keysyms1 \
+        libxcb-keysyms1-dev \
+        libxcb-randr0-dev \
+        libxcb-render-util0 \
+        libxcb-render-util0-dev \
+        libxcb-shape0-dev \
+        libxcb-shm0 \
+        libxcb-shm0-dev \
+        libxcb-sync-dev \
+        libxcb-sync1 \
+        libxcb-xfixes0-dev \
+        libxcb-xinerama0 \
+        libxcb-xinerama0-dev \
+        libxcb1 \
+        libxcb1-dev \
+        libxext-dev \
+        libxi-dev \
+        libxkbcommon-dev \
+        libxrender-dev \
+        libxslt1-dev \
+        libxss-dev \
+        libxtst-dev \
+        ninja-build \
+        nodejs \
+        ruby \
+        va-driver-all \
+        lsb-release \
+        libssl-dev \
+        gperf \
+        dos2unix
 
 WORKDIR /
-# RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION}.tar.gz
-# RUN tar xf llvmorg-${LLVM_VERSION}.tar.gz
-# WORKDIR /llvm-project-llvmorg-${LLVM_VERSION}
-# RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" -DCMAKE_INSTALL_PREFIX=/opt/llvm
-# # -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
-# RUN cmake --build build --parallel
-# RUN cmake --install build
+RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION}.tar.gz
+RUN tar xf llvmorg-${LLVM_VERSION}.tar.gz
+WORKDIR /llvm-project-llvmorg-${LLVM_VERSION}
+RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" -DCMAKE_INSTALL_PREFIX=/opt/llvm
+# -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
+RUN cmake --build build --parallel
+RUN cmake --install build
 
 ENV CC=/opt/llvm/bin/clang
 ENV CXX=/opt/llvm/bin/clang++
