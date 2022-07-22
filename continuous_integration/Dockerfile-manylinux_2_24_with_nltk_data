@@ -1,0 +1,24 @@
+FROM quay.io/pypa/manylinux_2_24_x86_64
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+RUN cp  /etc/default/locale /etc/environment
+RUN locale-gen
+RUN dpkg-reconfigure locales
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN apt-get update -y -qq && apt-get install -y python3-nltk libtre-dev gnupg libssl-dev nodejs
+# Not available in manylinux: libenchant-2-dev npm
+
+WORKDIR /
+
+RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python*/*/nltk/downloader.py
+RUN python3.5 -m nltk.downloader -d nltk_data dependency_treebank
+RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+
