@@ -18,7 +18,7 @@ namespace eigen_impl
 {
 
 template <class M, class V, class T>
-void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnnClassifierImpl& src)
+DEEPLIMA_CONVERTFROMTORCH_EXPORT void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnnClassifierImpl& src)
 {
   // dicts and embeddings
   const vector<nets::embd_descr_t>& embd_descr = src.get_embd_descr();
@@ -111,7 +111,7 @@ namespace eigen_impl
 template class BiRnnEigenInferenceForSegmentation<Eigen::MatrixXf, Eigen::VectorXf, float>;
 
 template <class M, class V, class T>
-void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::string& fn)
+DEEPLIMA_CONVERTFROMTORCH_EXPORT void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForSegmentationImpl src;
   torch::load(src, fn, torch::Device(torch::kCPU));

@@ -21,7 +21,7 @@ if (EIGEN3_FOUND)
     DECLARE_LIMA_PLUGIN(lima-lp-rnn-lemmatizer)
 
     target_compile_definitions(lima-lp-rnn-lemmatizer
-            PRIVATE "-DLIMA_RNN_LEMMATIZER_EXPORTING"
+            PRIVATE "-DLIMA_RNNLEMMATIZER_EXPORTING"
             PUBLIC
             DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
             )
