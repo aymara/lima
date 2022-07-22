@@ -185,6 +185,7 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtserialport \
     -skip qtspeech \
     -skip qttools \
+    -skip qtdoc \
     -skip qttranslations \
     -skip qtvirtualkeyboard \
     -skip qtwayland \
