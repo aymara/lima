@@ -3,7 +3,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <common/LimaCommon.h>
 
 #ifndef DEEPLIMA_CONVERTFROMTORCHEXPORT_H
 #define DEEPLIMA_CONVERTFROMTORCHEXPORT_H
