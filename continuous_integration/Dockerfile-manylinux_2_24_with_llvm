@@ -109,9 +109,7 @@ WORKDIR /
 RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION}.tar.gz
 RUN tar xf llvmorg-${LLVM_VERSION}.tar.gz
 WORKDIR /llvm-project-llvmorg-${LLVM_VERSION}
-RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;debuginfo-tests;libclc;libcxx;libcxxabi;libunwind;lld;lldb;openmp;parallel-libs;pstl
-
-" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" -DCMAKE_INSTALL_PREFIX=/opt/llvm
+RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;debuginfo-tests;libclc;libcxx;libcxxabi;libunwind;lld;lldb;openmp;parallel-libs;pstl" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" -DCMAKE_INSTALL_PREFIX=/opt/llvm
 # -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
 RUN cmake --build build --parallel
 RUN cmake --install build
