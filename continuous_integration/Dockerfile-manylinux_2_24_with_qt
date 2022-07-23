@@ -140,8 +140,8 @@ RUN mkdir -p "$BUILD_TARGET"
 ENV CC=/opt/llvm/bin/clang
 ENV CXX=/opt/llvm/bin/clang++
 ENV LLVM_USE_LINKER=lld
-ENV CPLUS_INCLUDE_PATH=/opt/llvm/include/c++/v1
-ENV C_INCLUDE_PATH=/opt/llvm/include/clang
+# ENV CPLUS_INCLUDE_PATH=/opt/llvm/include/c++/v1
+# ENV C_INCLUDE_PATH=/opt/llvm/include/clang
 ENV LIBRARY_PATH=/opt/llvm/lib
 ENV LLVM_INSTALL_DIR=/opt/llvm
 ENV PATH=/opt/llvm/bin:$PATH
