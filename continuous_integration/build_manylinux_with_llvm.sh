@@ -8,5 +8,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-docker build -f Dockerfile-manylinux_2_24_with_llvm -t aymara/manylinux_2_24_with_llvm:latest .
-docker push aymara/manylinux_2_24_with_llvm:latest
+source python_env.sh
+docker build -f Dockerfile-manylinux_2_24_with_llvm${LLVM_VERSION} -t aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest .
+docker push aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest

@@ -1,6 +1,7 @@
-FROM quay.io/pypa/manylinux_2_24_x86_64
+ARG GCC_VERSION="10.1.0"
+FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
 
-ARG LLVM_VERSION=14.0.6
+ARG GCC_VERSION="10.1.0"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
