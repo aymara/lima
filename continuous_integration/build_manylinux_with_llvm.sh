@@ -9,5 +9,5 @@ set -o pipefail
 set -o nounset
 
 source python_env.sh
-docker build -f Dockerfile-manylinux_2_24_with_llvm -t aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest .
+docker build --progress=plain -f Dockerfile-manylinux_2_24_with_llvm -t aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest .
 docker push aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest

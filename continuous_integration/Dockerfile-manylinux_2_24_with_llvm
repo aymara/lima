@@ -1,6 +1,7 @@
 ARG GCC_VERSION="10.1.0"
 FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
 
+ARG GCC_VERSION="10.1.0"
 ARG LLVM_VERSION="14.0.6"
 # ENV DEBIAN_FRONTEND=noninteractive
 #
@@ -115,6 +116,10 @@ ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$L
 ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
 ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
 
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+
+RUN echo "Path is ${PATH}"
 RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;libc;libclc;lld;lldb;openmp;pstl" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" -DCMAKE_INSTALL_PREFIX=/opt/llvm
 
 # -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
