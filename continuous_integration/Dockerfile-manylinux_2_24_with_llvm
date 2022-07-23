@@ -105,11 +105,16 @@ ARG LLVM_VERSION="14.0.6"
 #         libssl-dev \
 #         gperf \
 #         dos2unix
-
 WORKDIR /
 RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${LLVM_VERSION}.tar.gz
 RUN tar xf llvmorg-${LLVM_VERSION}.tar.gz
 WORKDIR /llvm-project-llvmorg-${LLVM_VERSION}
+
+ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+
 RUN cmake -S llvm -B build -G Ninja -DLLVM_PARALLEL_LINK_JOBS=1 -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;libc;libclc;lld;lldb;openmp;pstl" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" -DCMAKE_INSTALL_PREFIX=/opt/llvm
 
 # -DLLVM_USE_LINKER=gold -DLLVM_USE_SPLIT_DWARF=ON
