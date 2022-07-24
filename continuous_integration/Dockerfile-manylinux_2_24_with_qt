@@ -145,8 +145,8 @@ ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$L
 ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
 ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
 
-ENV CC=/opt/gcc/gcc
-ENV CXX=/opt/gcc/bin/g++
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 # ENV CC=/opt/llvm/bin/clang
 # ENV CXX=/opt/llvm/bin/clang++
 # ENV LLVM_USE_LINKER=lld
