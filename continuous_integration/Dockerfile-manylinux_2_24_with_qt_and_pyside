@@ -1,5 +1,6 @@
 ARG PYTHON_VERSION=3.8
-FROM aymara/manylinux_2_24_with_qt-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
+ARG QT_VERSION=6.3
+FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
@@ -13,6 +14,14 @@ ARG PYTHON_FULL_VERSION="3.8.13"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
+
+ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
 RUN locale-gen en_US.UTF-8
@@ -139,10 +148,10 @@ RUN cmake --version
 
 
 
-# Install PySide2 and shiboken2 from source as binary installs are broken
+# Install PySide${QT_MAJOR_VERSION} and shiboken${QT_MAJOR_VERSION} from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
-RUN wget -q https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+RUN wget -q https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup
 WORKDIR /pyside-setup
