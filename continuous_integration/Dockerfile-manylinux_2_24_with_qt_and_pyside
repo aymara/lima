@@ -24,6 +24,14 @@ COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
+ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+
 RUN apt-get clean && apt-get update && apt-get install -y locales
 RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale && echo "LANG=en_US.UTF-8" >> /etc/default/locale && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && cp  /etc/default/locale /etc/environment && locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
