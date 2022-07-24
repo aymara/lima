@@ -1,7 +1,9 @@
-ARG LLVM_VERSION="14.0.6"
-FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest
+ARG GCC_VERSION=10.1.0
+# ARG LLVM_VERSION="14.0.6"
+FROM aymara/manylinux_2_24_with_llvm${GCC_VERSION}:latest
 
-ARG LLVM_VERSION="14.0.6"
+ARG GCC_VERSION=10.1.0
+# ARG LLVM_VERSION="14.0.6"
 ARG QT_VERSION="5.15"
 ARG QT_VERSION_MAJOR="5"
 ARG QT_VERSION_MINOR="15"
@@ -14,115 +16,115 @@ ARG PYTHON_SHORT_VERSION="cp38-cp38"
 ARG PYTHON_FULL_VERSION="3.8.13"
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
-# ENV DEBIAN_FRONTEND=noninteractive
-#
-# RUN apt-get clean && apt-get update && apt-get install -y locales
-# RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
-# RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
-# RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-# RUN cp  /etc/default/locale /etc/environment
-# ENV LANG=en_US.UTF-8
-# ENV LANGUAGE=en_US:en
-# ENV LC_ALL=en_US.UTF-8
-# RUN locale-gen
-# RUN dpkg-reconfigure locales
-# RUN locale
-#
-#
-# RUN apt-get update && \
-#     apt-get install -y \
-#         wget build-essential pkg-config automake  gawk gettext \
-#         firebird-dev \
-#         freetds-dev \
-#         gstreamer1.0-plugins-base \
-#         gstreamer1.0-plugins-good \
-#         gstreamer1.0-plugins-ugly \
-#         gstreamer1.0-x \
-#         libasound2-dev \
-#         libavcodec-dev \
-#         libavformat-dev \
-#         libavutil-dev \
-#         libbz2-dev \
-#         libcap-dev \
-#         libdbus-1-dev \
-#         libdbus-glib-1-dev \
-#         libdrm-dev \
-#         libegl1-mesa-dev \
-#         libevent-dev \
-#         libfontconfig1-dev \
-#         libfreetype6-dev \
-#         libgbm-dev \
-#         libgcrypt20-dev \
-#         libgles2-mesa-dev \
-#         libglib2.0-dev \
-#         libgst-dev \
-#         libgstreamer-plugins-base1.0-dev \
-#         libgstreamer1.0-dev \
-#         libicu-dev \
-#         libinput-dev \
-#         libiodbc2-dev \
-#         libjpeg62-turbo-dev \
-#         libjsoncpp-dev \
-#         libminizip-dev \
-#         libnss3-dev \
-#         libopus-dev \
-#         libpci-dev \
-#         libpng-dev \
-#         libpng16-16 \
-#         libpq-dev \
-#         libpulse-dev \
-#         librsvg2-common \
-#         libsnappy-dev \
-#         libsqlite0-dev \
-#         libsqlite3-dev \
-#         libsrtp0-dev \
-#         libsrtp2-dev \
-#         libssl-dev \
-#         libssl1.1 \
-#         libswscale-dev \
-#         libsystemd-dev \
-#         libudev-dev \
-#         libvpx-dev \
-#         libwayland-dev \
-#         libwebp-dev \
-#         libx11-dev \
-#         libx11-xcb-dev \
-#         libx11-xcb1 \
-#         libxcb-glx0-dev \
-#         libxcb-icccm4 \
-#         libxcb-icccm4-dev \
-#         libxcb-image0 \
-#         libxcb-image0-dev \
-#         libxcb-keysyms1 \
-#         libxcb-keysyms1-dev \
-#         libxcb-randr0-dev \
-#         libxcb-render-util0 \
-#         libxcb-render-util0-dev \
-#         libxcb-shape0-dev \
-#         libxcb-shm0 \
-#         libxcb-shm0-dev \
-#         libxcb-sync-dev \
-#         libxcb-sync1 \
-#         libxcb-xfixes0-dev \
-#         libxcb-xinerama0 \
-#         libxcb-xinerama0-dev \
-#         libxcb1 \
-#         libxcb1-dev \
-#         libxext-dev \
-#         libxi-dev \
-#         libxkbcommon-dev \
-#         libxrender-dev \
-#         libxslt1-dev \
-#         libxss-dev \
-#         libxtst-dev \
-#         ninja-build \
-#         nodejs \
-#         ruby \
-#         va-driver-all \
-#         lsb-release \
-#         libssl-dev \
-#         gperf \
-#         dos2unix
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+RUN cp  /etc/default/locale /etc/environment
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+RUN locale-gen
+RUN dpkg-reconfigure locales
+RUN locale
+
+
+RUN apt-get update && \
+    apt-get install -y \
+        wget build-essential pkg-config automake  gawk gettext \
+        firebird-dev \
+        freetds-dev \
+        gstreamer1.0-plugins-base \
+        gstreamer1.0-plugins-good \
+        gstreamer1.0-plugins-ugly \
+        gstreamer1.0-x \
+        libasound2-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libbz2-dev \
+        libcap-dev \
+        libdbus-1-dev \
+        libdbus-glib-1-dev \
+        libdrm-dev \
+        libegl1-mesa-dev \
+        libevent-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libgbm-dev \
+        libgcrypt20-dev \
+        libgles2-mesa-dev \
+        libglib2.0-dev \
+        libgst-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer1.0-dev \
+        libicu-dev \
+        libinput-dev \
+        libiodbc2-dev \
+        libjpeg62-turbo-dev \
+        libjsoncpp-dev \
+        libminizip-dev \
+        libnss3-dev \
+        libopus-dev \
+        libpci-dev \
+        libpng-dev \
+        libpng16-16 \
+        libpq-dev \
+        libpulse-dev \
+        librsvg2-common \
+        libsnappy-dev \
+        libsqlite0-dev \
+        libsqlite3-dev \
+        libsrtp0-dev \
+        libsrtp2-dev \
+        libssl-dev \
+        libssl1.1 \
+        libswscale-dev \
+        libsystemd-dev \
+        libudev-dev \
+        libvpx-dev \
+        libwayland-dev \
+        libwebp-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libx11-xcb1 \
+        libxcb-glx0-dev \
+        libxcb-icccm4 \
+        libxcb-icccm4-dev \
+        libxcb-image0 \
+        libxcb-image0-dev \
+        libxcb-keysyms1 \
+        libxcb-keysyms1-dev \
+        libxcb-randr0-dev \
+        libxcb-render-util0 \
+        libxcb-render-util0-dev \
+        libxcb-shape0-dev \
+        libxcb-shm0 \
+        libxcb-shm0-dev \
+        libxcb-sync-dev \
+        libxcb-sync1 \
+        libxcb-xfixes0-dev \
+        libxcb-xinerama0 \
+        libxcb-xinerama0-dev \
+        libxcb1 \
+        libxcb1-dev \
+        libxext-dev \
+        libxi-dev \
+        libxkbcommon-dev \
+        libxrender-dev \
+        libxslt1-dev \
+        libxss-dev \
+        libxtst-dev \
+        ninja-build \
+        nodejs \
+        ruby \
+        va-driver-all \
+        lsb-release \
+        libssl-dev \
+        gperf \
+        dos2unix
 
 RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
 RUN install -d /src
@@ -137,15 +139,22 @@ ENV SRC=/src
 
 RUN mkdir -p "$BUILD_TARGET"
 
-ENV CC=/opt/llvm/bin/clang
-ENV CXX=/opt/llvm/bin/clang++
-ENV LLVM_USE_LINKER=lld
+ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+
+ENV CC=/opt/gcc/gcc
+ENV CXX=/opt/gcc/bin/g++
+# ENV CC=/opt/llvm/bin/clang
+# ENV CXX=/opt/llvm/bin/clang++
+# ENV LLVM_USE_LINKER=lld
 # ENV CPLUS_INCLUDE_PATH=/opt/llvm/include/c++/v1
 # ENV C_INCLUDE_PATH=/opt/llvm/include/clang
-ENV LIBRARY_PATH=/opt/llvm/lib
-ENV LLVM_INSTALL_DIR=/opt/llvm
-ENV PATH=/opt/llvm/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
+# ENV LIBRARY_PATH=/opt/llvm/lib
+# ENV LLVM_INSTALL_DIR=/opt/llvm
+# ENV PATH=/opt/llvm/bin:$PATH
+# ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
 
 RUN echo "Building QT version $QT_FULL_VERSION."
 
