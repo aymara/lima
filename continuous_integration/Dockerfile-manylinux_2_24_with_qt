@@ -1,6 +1,7 @@
 ARG GCC_VERSION=10.1.0
+FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
 # ARG LLVM_VERSION="14.0.6"
-FROM aymara/manylinux_2_24_with_llvm${GCC_VERSION}:latest
+# FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest
 
 ARG GCC_VERSION=10.1.0
 # ARG LLVM_VERSION="14.0.6"
