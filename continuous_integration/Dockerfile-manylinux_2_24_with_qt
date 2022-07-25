@@ -165,7 +165,7 @@ ENV SRC_DIR="/src/qt-everywhere-src-${QT_FULL_VERSION}"
 
 WORKDIR $BUILD_TARGET
 RUN bash "${SRC_DIR}"/configure \
-    -c++std c++20 \
+    -c++std c++17 \
     -confirm-license \
     -opensource \
     -dbus-linked \
