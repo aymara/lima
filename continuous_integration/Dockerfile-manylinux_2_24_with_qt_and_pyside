@@ -135,7 +135,7 @@ RUN dpkg-reconfigure locales
 # ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
 COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
 ENV PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH
-COPY --from=aymara/aymara_manylinux_2_24_with_qt:latest /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
+COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
 ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
 ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
