@@ -1,8 +1,12 @@
 ARG PYTHON_VERSION=3.8
-FROM aymara/manylinux_2_24_with_qt_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt_and_pyside
+FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
+# FROM aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt_and_pyside
+ARG LLVM_VERSION
+FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest as manylinux_2_24_with_llvm
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+ARG LLVM_VERSION
 ARG QT_VERSION_MAJOR=5
 ARG QT_FULL_VERSION=5.15.2
 ARG PYTHON_VERSION=3.8
@@ -27,8 +31,13 @@ ENV LC_ALL=en_US.UTF-8
 COPY --from=aymara/manylinux_2_24_with_icu:latest /usr/local /usr/local
 COPY --from=aymara/manylinux_2_24_with_nltk_data:latest /nltk_data /nltk_data
 COPY --from=aymara/manylinux_2_24_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
-COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /opt /opt
-COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /usr/local /usr/local
+# COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /opt /opt
+# COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /usr/local /usr/local
+COPY --from=aymara_manylinux_2_24_with_qt /opt /opt
+COPY --from=aymara_manylinux_2_24_with_qt /usr/local /usr/local
+COPY --from=manylinux_2_24_with_llvm /opt/llvm /opt/llvm
+ENV PATH=/opt/llvm/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
 
 ARG BRANCH=master
 ARG USE_TENSORFLOW="true"
@@ -89,7 +98,7 @@ RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-
 
 ENV PATH="/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin:${PATH}"
 # install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm scikit-build pyside6 shiboken6 ; fi"
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
@@ -113,7 +122,7 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 # Build
 #
 RUN python --version
-RUN cmake -G Ninja  -DQt5_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt5 -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON  ..
+RUN cmake -G Ninja  -DQt${QT_VERSION_MAJOR}_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt${QT_VERSION_MAJOR} -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON  ..
 RUN ninja && ninja install && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
@@ -126,5 +135,13 @@ RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.
 ## install English and French UD models
 #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
 #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+
+COPY --from=manylinux_2_24_with_llvm /opt/llvm /opt/llvm
+ENV PATH=/opt/llvm/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
+
+RUN pip install \
+     --index-url=https://download.qt.io/official_releases/QtForPython/ \
+     --trusted-host download.qt.io shiboken6 pyside6 shiboken6_generator
 
 WORKDIR /
