@@ -224,5 +224,6 @@ RUN bash "${SRC_DIR}"/configure \
     -system-libpng \
     -system-zlib
 
-RUN cmake --build . --parallel && cmake --install .
+RUN make -j $(nproc) && make install
+# RUN cmake --build . --parallel && cmake --install .
 
