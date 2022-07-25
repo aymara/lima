@@ -6,6 +6,10 @@ FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest as aymara_manylinux_2
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
+COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
+COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
+
 ARG GCC_VERSION=10.1.0
 ARG QT_VERSION=5.15
 ARG QT_VERSION_MAJOR=5
@@ -21,105 +25,103 @@ ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
 RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 RUN locale
 
-RUN apt-get update && \
-    apt-get install -y \
-        wget build-essential pkg-config automake  gawk gettext \
-        firebird-dev \
-        freetds-dev \
-        gstreamer1.0-plugins-base \
-        gstreamer1.0-plugins-good \
-        gstreamer1.0-plugins-ugly \
-        gstreamer1.0-x \
-        libasound2-dev \
-        libavcodec-dev \
-        libavformat-dev \
-        libavutil-dev \
-        libbz2-dev \
-        libcap-dev \
-        libdbus-1-dev \
-        libdbus-glib-1-dev \
-        libdrm-dev \
-        libegl1-mesa-dev \
-        libevent-dev \
-        libfontconfig1-dev \
-        libfreetype6-dev \
-        libgbm-dev \
-        libgcrypt20-dev \
-        libgles2-mesa-dev \
-        libglib2.0-dev \
-        libgst-dev \
-        libgstreamer-plugins-base1.0-dev \
-        libgstreamer1.0-dev \
-        libicu-dev \
-        libinput-dev \
-        libiodbc2-dev \
-        libjpeg62-turbo-dev \
-        libjsoncpp-dev \
-        libminizip-dev \
-        libnss3-dev \
-        libopus-dev \
-        libpci-dev \
-        libpng-dev \
-        libpng16-16 \
-        libpq-dev \
-        libpulse-dev \
-        librsvg2-common \
-        libsnappy-dev \
-        libsqlite0-dev \
-        libsqlite3-dev \
-        libsrtp0-dev \
-        libsrtp2-dev \
-        libssl-dev \
-        libssl1.1 \
-        libswscale-dev \
-        libsystemd-dev \
-        libudev-dev \
-        libvpx-dev \
-        libwayland-dev \
-        libwebp-dev \
-        libx11-dev \
-        libx11-xcb-dev \
-        libx11-xcb1 \
-        libxcb-glx0-dev \
-        libxcb-icccm4 \
-        libxcb-icccm4-dev \
-        libxcb-image0 \
-        libxcb-image0-dev \
-        libxcb-keysyms1 \
-        libxcb-keysyms1-dev \
-        libxcb-randr0-dev \
-        libxcb-render-util0 \
-        libxcb-render-util0-dev \
-        libxcb-shape0-dev \
-        libxcb-shm0 \
-        libxcb-shm0-dev \
-        libxcb-sync-dev \
-        libxcb-sync1 \
-        libxcb-xfixes0-dev \
-        libxcb-xinerama0 \
-        libxcb-xinerama0-dev \
-        libxcb1 \
-        libxcb1-dev \
-        libxext-dev \
-        libxi-dev \
-        libxkbcommon-dev \
-        libxrender-dev \
-        libxslt1-dev \
-        libxss-dev \
-        libxtst-dev \
-        ninja-build \
-        nodejs \
-        ruby \
-        va-driver-all \
-        lsb-release \
-        libssl-dev \
-        gperf \
-        dos2unix
+# RUN apt-get update && \
+#     apt-get install -y \
+#         wget build-essential pkg-config automake  gawk gettext \
+#         firebird-dev \
+#         freetds-dev \
+#         gstreamer1.0-plugins-base \
+#         gstreamer1.0-plugins-good \
+#         gstreamer1.0-plugins-ugly \
+#         gstreamer1.0-x \
+#         libasound2-dev \
+#         libavcodec-dev \
+#         libavformat-dev \
+#         libavutil-dev \
+#         libbz2-dev \
+#         libcap-dev \
+#         libdbus-1-dev \
+#         libdbus-glib-1-dev \
+#         libdrm-dev \
+#         libegl1-mesa-dev \
+#         libevent-dev \
+#         libfontconfig1-dev \
+#         libfreetype6-dev \
+#         libgbm-dev \
+#         libgcrypt20-dev \
+#         libgles2-mesa-dev \
+#         libglib2.0-dev \
+#         libgst-dev \
+#         libgstreamer-plugins-base1.0-dev \
+#         libgstreamer1.0-dev \
+#         libicu-dev \
+#         libinput-dev \
+#         libiodbc2-dev \
+#         libjpeg62-turbo-dev \
+#         libjsoncpp-dev \
+#         libminizip-dev \
+#         libnss3-dev \
+#         libopus-dev \
+#         libpci-dev \
+#         libpng-dev \
+#         libpng16-16 \
+#         libpq-dev \
+#         libpulse-dev \
+#         librsvg2-common \
+#         libsnappy-dev \
+#         libsqlite0-dev \
+#         libsqlite3-dev \
+#         libsrtp0-dev \
+#         libsrtp2-dev \
+#         libssl-dev \
+#         libssl1.1 \
+#         libswscale-dev \
+#         libsystemd-dev \
+#         libudev-dev \
+#         libvpx-dev \
+#         libwayland-dev \
+#         libwebp-dev \
+#         libx11-dev \
+#         libx11-xcb-dev \
+#         libx11-xcb1 \
+#         libxcb-glx0-dev \
+#         libxcb-icccm4 \
+#         libxcb-icccm4-dev \
+#         libxcb-image0 \
+#         libxcb-image0-dev \
+#         libxcb-keysyms1 \
+#         libxcb-keysyms1-dev \
+#         libxcb-randr0-dev \
+#         libxcb-render-util0 \
+#         libxcb-render-util0-dev \
+#         libxcb-shape0-dev \
+#         libxcb-shm0 \
+#         libxcb-shm0-dev \
+#         libxcb-sync-dev \
+#         libxcb-sync1 \
+#         libxcb-xfixes0-dev \
+#         libxcb-xinerama0 \
+#         libxcb-xinerama0-dev \
+#         libxcb1 \
+#         libxcb1-dev \
+#         libxext-dev \
+#         libxi-dev \
+#         libxkbcommon-dev \
+#         libxrender-dev \
+#         libxslt1-dev \
+#         libxss-dev \
+#         libxtst-dev \
+#         ninja-build \
+#         nodejs \
+#         ruby \
+#         va-driver-all \
+#         lsb-release \
+#         libssl-dev \
+#         gperf \
+#         dos2unix
 
 
 RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
@@ -132,19 +134,22 @@ RUN cp  /etc/default/locale /etc/environment
 RUN locale-gen
 RUN dpkg-reconfigure locales
 
+RUN ls "$AGENT_TOOLSDIRECTORY"
+RUN df -h
 # COPY --from=aymara/manylinux_2_24_with_llvm:latest /opt/llvm /opt/llvm
 # ENV PATH=/opt/llvm/bin:$PATH
 # ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
-COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
-ENV PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH
-COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
-ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
-ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
-ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+ENV PATH=/opt/llvm/bin:/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
+    LD_LIBRARY_PATH=/opt/llvm/lib:/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH \
+    MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
+    INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
 
-ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
-ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+# set the environment variable *LLVM_INSTALL_DIR* to point to the folder containing the *include* and *lib*
+# directories of Clang:
+ENV LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
+
+
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 
 RUN python${PYTHON_VERSION} -m pip install scikit-build
 
@@ -172,14 +177,6 @@ ENV QTDIR=/opt/qt${QT_VERSION_MAJOR}
 # TODO fint the _internal bin path below automatically
 ENV PATH=/opt/qt${QT_VERSION_MAJOR}/bin:/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/qt${QT_VERSION_MAJOR}/lib:$LD_LIBRARY_PATH
-
-COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
-ENV PATH=/opt/llvm/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
-# set the environment variable *LLVM_INSTALL_DIR* to point to the folder containing the *include* and *lib*
-# directories of Clang:
-ENV LLVM_INSTALL_DIR=/opt/llvm
-ENV CLANG_INSTALL_DIR=/opt/llvm
 
 # RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/python/cp${PYTHON_SHORT_VERSION}-cp${PYTHON_SHORT_VERSION}/bin/cmake --build-type=all
 RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin/cmake --build-type=all --standalone --limited-api=yes
