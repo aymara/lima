@@ -9,29 +9,29 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-  PYTHON_VERSION: "3.7"
-  PYTHON_SHORT_VERSION: "cp37-cp37m"
-  PYTHON_WHEEL_VERSION: "cp37-abi3"
-  PYTHON_FULL_VERSION: "3.7.13"
-  QT_VERSION_MAJOR: "5"
-  QT_VERSION_MINOR: "15"
-  QT_VERSION_PATCH: "2"
-  QT_VERSION: "5.15"
-  QT_FULL_VERSION: "5.15.2"
-  LLVM_VERSION: "14.0.6"
-  GCC_VERSION: "10.1.0"
-
-  #PYTHON_VERSION: "3.10"
-  #PYTHON_SHORT_VERSION: "cp310-cp310"
-  #PYTHON_WHEEL_VERSION: "cp310-abi3"
-  #PYTHON_FULL_VERSION: "3.10.5"
-  #QT_VERSION_MAJOR: "6"
-  #QT_VERSION_MINOR: "2"
-  #QT_VERSION_PATCH: "4"
-  #QT_VERSION: "6.2"
-  #QT_FULL_VERSION: "6.2.4"
+  #PYTHON_VERSION: "3.7"
+  #PYTHON_SHORT_VERSION: "cp37-cp37m"
+  #PYTHON_WHEEL_VERSION: "cp37-abi3"
+  #PYTHON_FULL_VERSION: "3.7.13"
+  #QT_VERSION_MAJOR: "5"
+  #QT_VERSION_MINOR: "15"
+  #QT_VERSION_PATCH: "2"
+  #QT_VERSION: "5.15"
+  #QT_FULL_VERSION: "5.15.2"
   #LLVM_VERSION: "14.0.6"
   #GCC_VERSION: "10.1.0"
+
+  PYTHON_VERSION: "3.10"
+  PYTHON_SHORT_VERSION: "cp310-cp310"
+  PYTHON_WHEEL_VERSION: "cp310-abi3"
+  PYTHON_FULL_VERSION: "3.10.5"
+  QT_VERSION_MAJOR: "6"
+  QT_VERSION_MINOR: "2"
+  QT_VERSION_PATCH: "4"
+  QT_VERSION: "6.2"
+  QT_FULL_VERSION: "6.2.4"
+  LLVM_VERSION: "14.0.6"
+  GCC_VERSION: "10.1.0"
 
 jobs:
 
@@ -77,24 +77,24 @@ jobs:
       #- name: "Push image"
         #run: docker push aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest
 
-  manylinux_2_24_with_qt:
-    name: "Build the -manylinux_2_24_with_qt-based imaged necessary for lima-python"
-    #needs: manylinux_2_24_with_gcc
-    runs-on: ubuntu-latest
+  #manylinux_2_24_with_qt:
+    #name: "Build the -manylinux_2_24_with_qt-based imaged necessary for lima-python"
+    ##needs: manylinux_2_24_with_gcc
+    #runs-on: ubuntu-latest
 
-    steps:
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    #steps:
+      #-
+        #name: Login to DockerHub
+        #uses: docker/login-action@v2
+        #with:
+          #username: ${{ secrets.DOCKERHUB_USERNAME }}
+          #password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: "Checkout code"
-        uses: actions/checkout@v2
+      #- name: "Checkout code"
+        #uses: actions/checkout@v2
 
-      - name: "Build image"
-        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_24_with_qt --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
+      #- name: "Build image"
+        #run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_24_with_qt --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
 
       #- name: "Push image"
         #run: docker push aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest
@@ -102,7 +102,7 @@ jobs:
   manylinux_2_24_with_qt_and_pyside:
     name: "Build the manylinux_2_24_with_qt_and_pyside-based imaged necessary for lima-python"
     #needs: manylinux_2_24_with_llvm
-    needs: manylinux_2_24_with_qt
+    #needs: manylinux_2_24_with_qt
     runs-on: ubuntu-latest
 
     steps:

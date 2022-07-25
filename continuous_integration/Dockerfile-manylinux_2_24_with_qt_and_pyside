@@ -17,7 +17,7 @@ ARG PYTHON_SHORT_VERSION="cp38-cp38"
 ARG PYTHON_FULL_VERSION="3.8.13"
 
 COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
-# COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
+COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
 COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -125,19 +125,14 @@ RUN apt-get update -y -qq && apt-get install -y -qq libpulse-mainloop-glib0 wget
         dos2unix
 
 
-ENV PATH=/opt/qt${QT_VERSION_MAJOR}/bin:/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/llvm/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
-    LD_LIBRARY_PATH=/opt/qt${QT_VERSION_MAJOR}/lib:/opt/llvm/lib:$LD_LIBRARY_PATH \
-    LLVM_INSTALL_DIR=/opt/llvm \
-    CLANG_INSTALL_DIR=/opt/llvm \
-    QTDIR=/opt/qt${QT_VERSION_MAJOR}
-# ENV PATH=/opt/llvm/bin:/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
-#     LD_LIBRARY_PATH=/opt/llvm/lib:/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH \
-#     MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
-#     INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
-#     LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
+ENV PATH=/opt/llvm/bin:/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
+    LD_LIBRARY_PATH=/opt/llvm/lib:/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH \
+    MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
+    INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
+    LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
 
 
-# ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 
 RUN python${PYTHON_VERSION} -m pip install scikit-build
 
