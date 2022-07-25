@@ -18,7 +18,7 @@ ARG PYTHON_SHORT_VERSION="cp38-cp38"
 ARG PYTHON_FULL_VERSION="3.8.13"
 
 COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
-# COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
+COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
 COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
 
 ENV DEBIAN_FRONTEND=noninteractive
