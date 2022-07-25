@@ -38,10 +38,10 @@ ENV PATH=/opt/qt${QT_VERSION_MAJOR}/bin:/opt/_internal/cpython-${PYTHON_FULL_VER
     CLANG_INSTALL_DIR=/opt/llvm \
     QTDIR=/opt/qt${QT_VERSION_MAJOR}
 # ENV PATH=/opt/llvm/bin:/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
-    LD_LIBRARY_PATH=/opt/llvm/lib:/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH \
-    MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
-    INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
-    LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
+#     LD_LIBRARY_PATH=/opt/llvm/lib:/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH \
+#     MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
+#     INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
+#     LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
 
 
 # ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
