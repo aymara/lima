@@ -30,7 +30,8 @@ RUN locale
 
 
 RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
-RUN apt-get update -y -qq && apt-get install -y -qq libpulse-mainloop-glib0 wget tar xz-utils
+RUN apt-get update -y -qq && apt-get install -y -qq libpulse-mainloop-glib0 wget tar xz-utils libicu-dev
+
 
 ENV PATH=/opt/qt${QT_VERSION_MAJOR}/bin:/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/llvm/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
     LD_LIBRARY_PATH=/opt/qt${QT_VERSION_MAJOR}/lib:/opt/llvm/lib:$LD_LIBRARY_PATH \
