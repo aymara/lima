@@ -1,9 +1,10 @@
 ARG PYTHON_VERSION=3.8
-ARG QT_VERSION=6.3
+ARG QT_VERSION=5.15.3
 FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+ARG QT_VERSION=5.15
 ARG QT_VERSION_MAJOR=5
 ARG QT_FULL_VERSION=5.15.2
 ARG PYTHON_VERSION="3.8"
@@ -151,7 +152,8 @@ RUN cmake --version
 # Install PySide${QT_MAJOR_VERSION} and shiboken${QT_MAJOR_VERSION} from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
-RUN wget -q https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz"
+RUN wget https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup
 WORKDIR /pyside-setup
