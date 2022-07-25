@@ -79,9 +79,9 @@ elseif (APPLE)
     lima-common-xmlconfigurationfiles
     lima-lp-client
     lima-lp-analysishandlers
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
   )
 
 else()

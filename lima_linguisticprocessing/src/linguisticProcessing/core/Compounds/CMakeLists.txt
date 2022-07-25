@@ -21,7 +21,6 @@ DECLARE_LIMA_PLUGIN(lima-lp-compounds)
 target_compile_definitions(lima-lp-compounds PRIVATE "LIMA_COMPOUNDS_EXPORTING")
 
 target_link_libraries(lima-lp-compounds
-  lima-common
   lima-lp-linguisticprocessors
   lima-lp-linguisticresources
   lima-lp-annotationgraph
@@ -29,21 +28,22 @@ target_link_libraries(lima-lp-compounds
   lima-lp-syntacticanalysis
   lima-lp-bagofwords
   lima-lp-automaton
-  ${Qt5_LIBRARIES}
   lima-lp-propertycode
-   lima-common-tools
-   lima-common-mediaprocessors
-   lima-common-mediaticdata
-   lima-common-time
-   lima-lp-linguisticprocessing-core
-   lima-lp-textsegmentation
-   lima-lp-linguisticdata
-   lima-common-xmlconfigurationfiles
-   lima-common-data
-   lima-common-misc
-   lima-common-processunitframework
-   lima-common-factory
-   lima-lp-morphologicanalysis
+  lima-lp-linguisticprocessing-core
+  lima-lp-linguisticdata
+  lima-lp-morphologicanalysis
+  lima-lp-textsegmentation
+  lima-common
+  lima-common-tools
+  lima-common-mediaprocessors
+  lima-common-mediaticdata
+  lima-common-time
+  lima-common-xmlconfigurationfiles
+  lima-common-data
+  lima-common-misc
+  lima-common-processunitframework
+  lima-common-factory
+  ${Qt_LIBRARIES}
 )
 set_target_properties(lima-lp-compounds PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 
