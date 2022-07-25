@@ -32,7 +32,6 @@
 #define QTENDL Qt::endl
 #endif
 
->>>>>>> master
 #include <cstdint>
 
 #ifdef WIN32
