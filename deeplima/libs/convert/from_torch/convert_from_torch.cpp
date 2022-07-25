@@ -7,7 +7,6 @@
 #include "tasks/segmentation/model/birnn_classifier_for_segmentation.h"
 
 #include "convert_from_torch.h"
-#include "convert_from_torch_export.h"
 
 using namespace std;
 using namespace torch;
@@ -99,7 +98,6 @@ void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnn
     }
   }
 }
-template DEEPLIMA_CONVERTFROMTORCH_EXPORT void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnnClassifierImpl& src);
 
 } // namespace eigen_impl
 
@@ -164,7 +162,6 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
     m_classes.push_back(vector<string>(l.bias.rows(), ""));
   }
 }
-template DEEPLIMA_CONVERTFROMTORCH_EXPORT void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::string& fn);
 
 } // namespace eigen_impl
 } // namespace segmentation

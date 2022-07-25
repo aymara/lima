@@ -37,6 +37,8 @@ if (EIGEN3_FOUND)
             convert_from_torch-shared
             fasttext-static
             utils
+            morph_model
+            static_graph
             ${TORCH_LIBRARIES}
             )
 

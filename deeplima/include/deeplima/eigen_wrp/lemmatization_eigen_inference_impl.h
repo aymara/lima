@@ -23,9 +23,15 @@ namespace lemmatization
 {
 namespace eigen_impl
 {
+  
+#ifdef WIN32
+  #define LEMM_EXPORT __declspec(dllexport)
+#else
+  #define LEMM_EXPORT
+#endif
 
 template <class M, class V, class T>
-class BiRnnSeq2SeqEigenInferenceForLemmatization : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
+class LEMM_EXPORT BiRnnSeq2SeqEigenInferenceForLemmatization : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
 {
 public:
   typedef M Matrix;
