@@ -149,11 +149,11 @@ RUN cmake --version
 
 
 
-# Install PySide${QT_MAJOR_VERSION} and shiboken${QT_MAJOR_VERSION} from source as binary installs are broken
+# Install PySide${QT_VERSION_MAJOR} and shiboken${QT_VERSION_MAJOR} from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
-RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz"
-RUN wget https://download.qt.io/official_releases/QtForPython/pyside${QT_MAJOR_VERSION}/PySide${QT_MAJOR_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz"
+RUN wget https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 RUN mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup
 WORKDIR /pyside-setup
