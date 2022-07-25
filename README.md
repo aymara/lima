@@ -40,3 +40,6 @@ Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aym
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/aymara/lima?branch=master&svg=true)](https://ci.appveyor.com/project/kleag/lima)
 [![GitHub Action Workflow status](https://github.com/aymara/lima/actions/workflows/build.yml/badge.svg)](https://github.com/aymara/lima/actions)
+
+
+[![LIMA Python Downloads](https://static.pepy.tech/personalized-badge/aymara?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=LIMA%20Python%20Downloads)](https://pepy.tech/project/aymara)
