@@ -4,6 +4,7 @@ FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest a
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+ARG GCC_VERSION=10.1.0
 ARG QT_VERSION=5.15
 ARG QT_VERSION_MAJOR=5
 ARG QT_FULL_VERSION=5.15.2
