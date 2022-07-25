@@ -173,8 +173,7 @@ ENV QTDIR=/opt/qt${QT_VERSION_MAJOR}
 ENV PATH=/opt/qt${QT_VERSION_MAJOR}/bin:/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/qt${QT_VERSION_MAJOR}/lib:$LD_LIBRARY_PATH
 
-ARG LLVM_VERSION
-COPY aymara/manylinux_2_24_with_llvm /opt/llvm /opt/llvm
+COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
 ENV PATH=/opt/llvm/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
 # set the environment variable *LLVM_INSTALL_DIR* to point to the folder containing the *include* and *lib*

@@ -20,6 +20,7 @@ export PYTHON_VERSION="3.8"
 # For python 3.9, it is cp39-cp39
 # For python 3.10, it is cp310-cp310
 export PYTHON_SHORT_VERSION="cp38-cp38"
+export PYTHON_WHEEL_VERSION="cp38-abi3"
 # For python 3.7, it is 3.7.13
 # For python 3.8, it is 3.8.13
 # For python 3.9, it is 3.9.13
