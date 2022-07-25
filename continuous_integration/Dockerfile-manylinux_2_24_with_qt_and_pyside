@@ -6,6 +6,10 @@ FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest as aymara_manylinux_2
 
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
+COPY --from=aymara_manylinux_2_24_with_qt /opt/qt${QT_VERSION_MAJOR} /opt/qt${QT_VERSION_MAJOR}
+COPY --from=aymara_manylinux_2_24_with_qt /opt/gcc-${GCC_VERSION} /opt/gcc-${GCC_VERSION}
+COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
+
 ARG GCC_VERSION=10.1.0
 ARG QT_VERSION=5.15
 ARG QT_VERSION_MAJOR=5
