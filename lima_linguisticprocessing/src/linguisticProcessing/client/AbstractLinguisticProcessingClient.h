@@ -11,13 +11,15 @@
 #define LIMA_LINGUISTICPROCESSING_ABSTRACTLINGUISTICANALYZERCLIENT_H
 
 #include "LinguisticProcessingClientExport.h"
-#include "common/Handler/AbstractAnalysisHandler.h"
 #include "LinguisticProcessingException.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
-#include "common/Data/LimaString.h"
 #include "common/AbstractFactoryPattern/RegistrableFactory.h"
 #include "common/AbstractProcessingClient/AbstractProcessingClient.h"
+#include "common/Data/LimaString.h"
+#include "common/Handler/AbstractAnalysisHandler.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 
+#include <memory>
 
 namespace Lima
 {
@@ -55,7 +57,7 @@ public:
     *             functions to convert from UTF8 to/from LimaString
     *             are available in Lima::Common::Misc)
     * @param metaData some metadata used by the analyzer: the
-    *                 minimal metadata required is 
+    *                 minimal metadata required is
     *    - 'FileName' : filename (used to generate file log names)
     *    - 'Lang'     : language as string in a 3-letter format (following
     *                   the ISO 639-2 code): 'fre','eng',...
@@ -71,22 +73,24 @@ public:
     *                 LinguisticProcessingClientFactory.
     *
     */
-  virtual void analyze(const LimaString& text,
-                       const std::map<std::string,std::string>& metaData,
-                       const std::string& pipeline,
-                       const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-                       const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
+  virtual std::shared_ptr<AnalysisContent> analyze(
+                      const QString& text,
+                      const std::map<std::string,std::string>& metaData,
+                      const std::string& pipeline,
+                      const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+                      const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
 
   /**
     * This function is the same as the previous one but takes a text
     * in UTF-8 format
     *
     */
-  virtual void analyze(const std::string& text,
-                       const std::map<std::string,std::string>& metaData,
-                       const std::string& pipeline,
-                       const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-                       const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override = 0;
+  virtual std::shared_ptr<AnalysisContent> analyze(
+                      const std::string& text,
+                      const std::map<std::string,std::string>& metaData,
+                      const std::string& pipeline,
+                      const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+                      const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override = 0;
 };
 
 /**
@@ -126,7 +130,7 @@ public:
     std::deque<std::string> pipelines) override = 0;
 
   /**
-   * This function create a LinguisticProcessing client 
+   * This function create a LinguisticProcessing client
    */
   virtual std::shared_ptr< AbstractProcessingClient > createClient() const override = 0;
 
@@ -136,7 +140,7 @@ public:
   virtual ~AbstractLinguisticProcessingClientFactory() {};
 
 protected:
-  AbstractLinguisticProcessingClientFactory(const std::string& id) : 
+  AbstractLinguisticProcessingClientFactory(const std::string& id) :
     RegistrableFactory<AbstractLinguisticProcessingClientFactory>(id), AbstractProcessingClientFactory(id)
     {};
 
@@ -145,7 +149,7 @@ protected:
 //documentation for Doxygen main page
 /** @mainpage
  *
- * @section sec_principles Principles 
+ * @section sec_principles Principles
  *
  * The LIMA linguistic processing module is designed to work either
  * with a direct load of the dynamic libraries in the program or with
@@ -156,9 +160,9 @@ protected:
  *
  * The same API is also used either for analysis of simple text or for
  * analysis of structured XML documents.
- * 
+ *
  * @section sec_classes Main classes
- *  
+ *
  * AbstractLinguisticProcessingClient is the main class that
  * implements the generic LIMA API. Its main function to launch the
  * analysis on a text is AbstractLinguisticProcessingClient::analyze().
@@ -185,11 +189,11 @@ protected:
  *                    to an explicit configuration). This client uses
  *                    internally a core client to process the parts of
  *                    texts identified
- * 
+ *
  * @section How to call the LIMA analyzer
  *
- * To call the LIMA analyzer, one must indicate 
- * 
+ * To call the LIMA analyzer, one must indicate
+ *
  * - the name of a pipeline to be used, specifying the set of
  * processing units that are to be activated for the text analysis:
  * such pipelines and processing units are configured in the LIMA
@@ -199,7 +203,7 @@ protected:
  * - the handler, adapted to the chosen dumper, and specifying what to
  * do with this output (may be written to a file or stored in memory
  * for further processing...
- * 
+ *
  * The program analyzeText.cpp contains several examples of calls of
  * the LIMA analyze function. Here are some commented examples:
  *
@@ -213,14 +217,14 @@ protected:
  // here, we only configure the only elements that we want to use
  std::deque<std::string> langs(1,"fre");           // the configured languages
  std::deque<std::string> pipelines(1,"main");      // the configured pipelines
- 
+
  // the configuration file lima-analysis.xml containing all the configuration elements
- // for the different languages and pipelines is given as argument to the 
+ // for the different languages and pipelines is given as argument to the
  // client factory
  // Then, an analyzer client is created by the factory: here, we choose a
  // local client that will load the implementation of the analyzer in
  // dynamic libraries
- 
+
  AbstractLinguisticProcessingClient* client(0);
  XMLConfigurationFiles::XMLConfigurationFileParser lpconfig("conf/lima-analysis.xml");
  LinguisticProcessingClientFactory::changeable().configureClientFactory(
@@ -237,7 +241,7 @@ protected:
  map<string,string> metaData;
  metaData["Lang"]="fre"
  metaData["FileName"]="test.txt"
- 
+
  * @endcode
  *
  * @subsection sec_example_1 An example of call to analyze() with simple text output
@@ -256,7 +260,7 @@ protected:
 
  * @endcode
  *
- * @subsection sec_example_2 An example of call to analyze() with BoW output 
+ * @subsection sec_example_2 An example of call to analyze() with BoW output
  *
  * BoW is the LIMA binary format for an extended bag-of-words
  * representation, including compounds. This binary format is readable
@@ -264,8 +268,8 @@ protected:
  * representation of the format).
  *
  * @code
- 
- // for BoW output, we use a specific handler that handles the binary 
+
+ // for BoW output, we use a specific handler that handles the binary
  // format and write it to a file
 
 // ofstream fout("output.bin");
