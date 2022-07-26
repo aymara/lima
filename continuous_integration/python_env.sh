@@ -7,6 +7,7 @@
 export GCC_VERSION="10.1.0"
 export LLVM_VERSION="14.0.6"
 
+export BRANCH="public_analysis_content"
 # QT_VERSION_PATCH >= 2
 # For python > 3.10, QT_VERSION_PATCH >= 6
 export QT_VERSION_MAJOR="5"
