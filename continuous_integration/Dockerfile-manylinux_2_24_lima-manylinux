@@ -1,12 +1,8 @@
 ARG PYTHON_VERSION="3.8"
 FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
 # FROM aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt_and_pyside
-ARG LLVM_VERSION
-FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest as aymara_manylinux_2_24_with_llvm
-
 FROM quay.io/pypa/manylinux_2_24_x86_64
 
-ARG LLVM_VERSION
 ARG QT_VERSION_MAJOR="5"
 ARG QT_FULL_VERSION="5.15.2"
 ARG PYSIDE_VERSION="2"
@@ -36,12 +32,6 @@ COPY --from=aymara/manylinux_2_24_with_tensorflow_for_lima_1_9:latest /tensorflo
 # COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /usr/local /usr/local
 COPY --from=aymara_manylinux_2_24_with_qt /opt /opt
 COPY --from=aymara_manylinux_2_24_with_qt /usr/local /usr/local
-COPY --from=aymara_manylinux_2_24_with_llvm /opt/llvm /opt/llvm
-ENV PATH=/opt/llvm/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
-# set the environment variable *LLVM_INSTALL_DIR* to point to the folder containing the *include* and *lib*
-# directories of Clang:
-ENV LLVM_INSTALL_DIR=/opt/llvm
 
 ARG BRANCH=master
 ARG USE_TENSORFLOW="true"
