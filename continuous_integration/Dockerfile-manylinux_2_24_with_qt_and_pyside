@@ -151,8 +151,9 @@ WORKDIR /pyside-setup
 RUN python${PYTHON_VERSION} -m pip install cmake
 
 
-RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/python/${PYTHON_FULL_VERSION}/bin/cmake --build-type=all --limited-api=yes
+# RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/python/${PYTHON_FULL_VERSION}/bin/cmake --build-type=all --limited-api=yes
 # RUN python${PYTHON_VERSION} setup.py install --qtpaths=/opt/qt${QT_VERSION_MAJOR}/bin/qtpaths --cmake=/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin/cmake --build-type=all --standalone --limited-api=yes
+RUN python${PYTHON_VERSION} setup.py install --cmake=/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin/cmake --build-type=all --standalone --limited-api=yes
 # Qt paths does not exist in PySide2
 # CXXFLAGS='-D_GLIBCXX_USE_CXX11_ABI=0'
 WORKDIR /
