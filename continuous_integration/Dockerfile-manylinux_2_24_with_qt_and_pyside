@@ -10,6 +10,7 @@ ARG GCC_VERSION=10.1.0
 ARG QT_VERSION=5.15
 ARG QT_VERSION_MAJOR=5
 ARG QT_FULL_VERSION=5.15.2
+ARG PYSIDE_VERSION=2
 ARG PYTHON_VERSION="3.8"
 ARG PYTHON_SHORT_VERSION="cp38-cp38"
 # For python 3.7, it is 3.7.13
@@ -140,7 +141,7 @@ RUN python${PYTHON_VERSION} -m pip install scikit-build
 # Install PySide${QT_VERSION_MAJOR} and shiboken${QT_VERSION_MAJOR} from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
-RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 WORKDIR /pyside-setup
 RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/ && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}m.a
 
