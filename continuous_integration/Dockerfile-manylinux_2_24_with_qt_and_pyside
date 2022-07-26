@@ -132,7 +132,8 @@ ENV PATH=/opt/llvm/bin:/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/bi
     LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm
 
 
-ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+# ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+ENV CC=/opt/llvm/bin/clang CXX=/opt/llvm/bin/clang++
 
 RUN python${PYTHON_VERSION} -m pip install scikit-build
 
@@ -142,6 +143,7 @@ WORKDIR /
 RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${QT_VERSION_MAJOR}/PySide${QT_VERSION_MAJOR}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
 WORKDIR /pyside-setup
 RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/ && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}m.a
+
 
 WORKDIR /pyside-setup
 RUN python${PYTHON_VERSION} -m pip install cmake
