@@ -1,7 +1,6 @@
 on:
   push:
     branches:
-    - public_analysis_content
     - master
 
 env:

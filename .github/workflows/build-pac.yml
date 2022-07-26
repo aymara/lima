@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-    - port-to-qt6
+    - public_analysis_content
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -9,10 +9,11 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-  PYTHON_VERSION: "3.7"
-  PYTHON_SHORT_VERSION: "cp37-cp37m"
-  PYTHON_WHEEL_VERSION: "cp37-abi3"
-  PYTHON_FULL_VERSION: "3.7.13"
+  BRANCH: "public_analysis_content"
+  PYTHON_VERSION: "3.9"
+  PYTHON_SHORT_VERSION: "cp39-cp39"
+  PYTHON_WHEEL_VERSION: "cp39-abi3"
+  PYTHON_FULL_VERSION: "3.9.13"
   QT_VERSION_MAJOR: "5"
   QT_VERSION_MINOR: "15"
   QT_VERSION_PATCH: "2"
@@ -122,7 +123,7 @@ jobs:
         run: bash ./free-diskspace.sh
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_24_with_qt_and_pyside --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_24_with_qt_and_pyside --build-arg BRANCH="${BRANCH}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
 
       - name: "Push image"
         run: docker push aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
