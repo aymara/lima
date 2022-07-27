@@ -71,9 +71,15 @@ endif()
 #PUBLIC_HEADER DESTINATION include/fasttext-lima)
 
 ### END FastText stuff
-
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+install(DIRECTORY libtorch/lib/
+  DESTINATION lib
+  FILES_MATCHING PATTERN "*.dll"
+)
+file(COPY libtorch/lib/ DESTINATION ${CMAKE_BINARY_DIR}/execEnv/lib/ FILES_MATCHING PATTERN "*.dll")
+else()
 install(DIRECTORY libtorch/lib/
   DESTINATION lib
   FILES_MATCHING PATTERN "lib*.so*"
 )
-
+endif()

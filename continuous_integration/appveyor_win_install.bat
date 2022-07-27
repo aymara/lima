@@ -24,12 +24,13 @@ appveyor DownloadFile https://github.com/aymara/tensorflow/releases/download/v1.
 
 appveyor DownloadFile https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.9.0%%2Bcpu.zip -FileName libtorch.zip
 7z x libtorch.zip -oC:\projects\lima\extern\
-
+set PATH=C:\projects\lima\extern\tensorflow-1.9.0\bin;%PATH%
 appveyor DownloadFile https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip -FileName eigen.zip
 7z x eigen.zip -oC:\externals\
 
 appveyor DownloadFile https://github.com/unicode-org/icu/releases/download/release-67-1/icu4c-67_1-Win64-MSVC2017.zip -FileName icu4c.zip
 7z x icu4c.zip -oc:\externals\icu4c\
+set PATH=c:\externals\icu4c\bin64;%PATH%
 
 rem #ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
 mkdir c:\dependency_treebank
