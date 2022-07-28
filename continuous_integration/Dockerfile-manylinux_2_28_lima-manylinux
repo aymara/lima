@@ -1,8 +1,8 @@
 ARG PYTHON_VERSION="3.8"
 ARG QT_VERSION="5.15"
-# FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
 FROM aymara/manylinux_2_24_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt_and_pyside
-FROM quay.io/pypa/manylinux_2_24_x86_64
+# FROM aymara/manylinux_2_24_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_24_with_qt
+FROM quay.io/pypa/manylinux_2_28_x86_64
 
 
 ARG GCC_VERSION=10.1.0
@@ -15,22 +15,9 @@ ARG PYTHON_SHORT_VERSION="38"
 # For python 3.8, it is 3.8.12
 ARG PYTHON_FULL_VERSION="3.8.12"
 
-ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get clean && apt-get update && apt-get install -y locales
-RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
-RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-RUN cp  /etc/default/locale /etc/environment
-RUN locale-gen
-RUN dpkg-reconfigure locales
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
-
-COPY --from=aymara/manylinux_2_24_with_icu:latest /usr/local /usr/local
-COPY --from=aymara/manylinux_2_24_with_nltk_data:latest /nltk_data /nltk_data
-COPY --from=aymara/manylinux_2_24_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
+COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
+COPY --from=aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
 COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /opt /opt
 COPY --from=aymara_manylinux_2_24_with_qt_and_pyside /usr/local /usr/local
 # COPY --from=aymara_manylinux_2_24_with_qt /opt /opt
@@ -43,49 +30,32 @@ ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 
-# Setup
-RUN apt --fix-broken install
-RUN apt-get update -y -qq && apt-get install -y \
-        wget build-essential pkg-config automake \
-        gawk \
-        ninja-build \
-        gettext \
-        libpulse0 \
-        libasound2 \
-        libgstreamer1.0 \
-        libpulse-mainloop-glib0 \
-        gstreamer1.0-x \
-        dos2unix
+# To install with yum wget, ninja-build, icu, boost, qt
+# To install with pip pyside
+# RUN apt-get update -y -qq && apt-get install -y git build-essential pkg-config automake wget cmake ninja-build
+RUN yum install -y wget gcc-toolset-10.x86_64 ninja-build libicu-devel.x86_64 boost-devel.x86_64 qt5-devel.noarch
+
+ENV CC=/opt/rh/gcc-toolset-10/root/usr/bin/gcc \
+    CXX=/opt/rh/gcc-toolset-10/root/usr/bin/g++
 
 
-WORKDIR /
-RUN wget -q https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz
-RUN tar xf git-2.9.5.tar.xz
-WORKDIR /git-2.9.5
-RUN ./configure --prefix=/usr && make -j && make install
-
-WORKDIR /git-lfs
-RUN wget -q https://github.com/git-lfs/git-lfs/releases/download/v3.0.2/git-lfs-linux-amd64-v3.0.2.tar.gz
-RUN tar xf git-lfs-linux-amd64-v3.0.2.tar.gz
-RUN bash install.sh
-
-RUN git lfs install --skip-repo
+# WORKDIR /
+# RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
+# WORKDIR /svm_light
+# RUN tar xzf ../svm_light.tar.gz
+# RUN make
+# RUN cp svm_classify svm_learn /usr/bin
+# RUN rm -Rf /svm_light
 
 WORKDIR /
-RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
-WORKDIR /svm_light
-RUN tar xzf ../svm_light.tar.gz
-RUN make
-RUN cp svm_classify svm_learn /usr/bin
-RUN rm -Rf /svm_light
 
-WORKDIR /
-COPY svmtool.sh  svmtool-cpp.sh qhttpserver.sh /
-RUN /svmtool.sh $GITHUB_TOKEN
-RUN /svmtool-cpp.sh $GITHUB_TOKEN
-RUN /qhttpserver.sh $GITHUB_TOKEN
+# Those will have to be compiled for manylinux_2_28 instead of installed with the existing deb package
+# COPY svmtool.sh  svmtool-cpp.sh qhttpserver.sh /
+# RUN /svmtool.sh $GITHUB_TOKEN
+# RUN /svmtool-cpp.sh $GITHUB_TOKEN
+# RUN /qhttpserver.sh $GITHUB_TOKEN
 
-RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
+# RUN apt remove -y libpython3.5-stdlib libpython3.5-minimal
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
@@ -94,14 +64,14 @@ ENV PATH="/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/python/cp${PYTH
 # install python packages necessary to use the language resources install script
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION} ; fi"
 
-ENV QTDIR=/opt/qt${QT_VERSION_MAJOR}
+# ENV QTDIR=/opt/qt${QT_VERSION_MAJOR}
 
-ENV PATH=/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
-    LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:/opt/qt${QT_VERSION_MAJOR}/lib:$LD_LIBRARY_PATH \
-    MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
-    INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
-    LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm \
-    CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+# ENV PATH=/opt/gcc-${GCC_VERSION}/bin:/opt/qt${QT_VERSION_MAJOR}/bin:/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/bin:$PATH \
+#     LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:/opt/qt${QT_VERSION_MAJOR}/lib:$LD_LIBRARY_PATH \
+#     MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH \
+#     INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH \
+#     LLVM_INSTALL_DIR=/opt/llvm CLANG_INSTALL_DIR=/opt/llvm \
+#     CC=/opt/gcc-${GCC_VERSION}/bin/gcc CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
@@ -127,20 +97,21 @@ ENV LIMA_RESOURCES /usr/share/apps/lima/resources
 RUN python --version
 RUN cmake -G Ninja  -DQt${QT_VERSION_MAJOR}_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt${QT_VERSION_MAJOR} -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON  ..
 RUN ninja && ninja install && ninja package
-RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
+# RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.
 
 WORKDIR /usr/share/apps/lima/tests
+ENV LD_LIBRARY_PATH=/usr/lib:${LD_LIBRARY_PATH}
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
 RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
 WORKDIR /usr/share/apps/lima/tests/xmlreader
 RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
-
-## install English and French UD models
-#RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-#RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
-
-# RUN pip install \
-#      --index-url=https://download.qt.io/official_releases/QtForPython/ \
-#      --trusted-host download.qt.io shiboken${PYSIDE_VERSION} pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION}_generator
-
+#
+# ## install English and French UD models
+# #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+# #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+#
+# # RUN pip install \
+# #      --index-url=https://download.qt.io/official_releases/QtForPython/ \
+# #      --trusted-host download.qt.io shiboken${PYSIDE_VERSION} pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION}_generator
+#
 WORKDIR /
