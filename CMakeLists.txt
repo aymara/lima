@@ -164,6 +164,7 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
 else ()
 endif()
 
+
 add_definitions( -DBoost_DEBUG=ON )
 add_definitions( -DBOOST_ALL_NO_LIB )
 add_definitions( -DBOOST_ALL_DYN_LINK )
@@ -410,6 +411,19 @@ find_package(Torch)
 find_package(ICU 60.0 COMPONENTS uc)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(DIRECTORY  ${ICU_INCLUDE_DIR}/../bin64/
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime
+          FILES_MATCHING PATTERN "icu*.dll")
+  FILE(GLOB ICU_LIBRARIES "${ICU_INCLUDE_DIR}/../bin64/icu*.dll")
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${ICU_LIBRARIES})
+      message("icu: ${ICU_LIBRARIES}")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
 # Set the default component name before any call to install

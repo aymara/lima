@@ -48,7 +48,7 @@ if (NOT DEEPLIMA_STANDALONE)
   )
   ADD_DLL_TO_PATH(convert_from_torch-shared)
   install(TARGETS convert_from_torch-shared
-    DESTINATION lib
+    DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime
   )
 endif()
