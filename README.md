@@ -4,12 +4,12 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under GNU/Linux with python >= 3.7 and <= 3.9:
+Under Linux with python >= 3.7 and < 4:
 
 ```bash
 # Upgrading pip is fundamental in order to obtain the correct LIMA version
 $ pip install --upgrade pip
-$ pip install aymara==0.4.0
+$ pip install aymara==0.4.1
 $ lima_models.py -l eng
 $ python
 >>> import aymara.lima
