@@ -13,8 +13,8 @@ $ pip install aymara==0.4.1
 $ lima_models.py -l eng
 $ python
 >>> import aymara.lima
->>> l = aymara.lima.Lima("ud-eng")
->>> sentences = l.analyzeText('Hello, World!', lang="ud-eng")
+>>> nlp = aymara.lima.Lima("ud-eng")
+>>> sentences = nlp('Hello, World!')
 >>> print(sentences[0][0].lemma)
 hello
 >>> print(sentences.conll())
