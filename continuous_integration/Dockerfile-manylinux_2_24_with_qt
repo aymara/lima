@@ -1,7 +1,8 @@
-ARG GCC_VERSION=10.1.0
-FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
+# ARG GCC_VERSION=10.1.0
+# FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
 # ARG LLVM_VERSION="14.0.6"
 # FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest
+FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_qt
 
 ARG GCC_VERSION=10.1.0
 # ARG LLVM_VERSION="14.0.6"
@@ -140,13 +141,13 @@ ENV SRC=/src
 
 RUN mkdir -p "$BUILD_TARGET"
 
-ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
-ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
-ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
-
-ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
-ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+# ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+# ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+# ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+# ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+#
+# ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+# ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
 # ENV CC=/opt/llvm/bin/clang
 # ENV CXX=/opt/llvm/bin/clang++
 # ENV LLVM_USE_LINKER=lld

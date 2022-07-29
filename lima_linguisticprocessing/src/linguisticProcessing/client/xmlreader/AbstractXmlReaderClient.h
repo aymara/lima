@@ -36,11 +36,12 @@ public:
     //! @param pipeline TODO decrire
     //! @param resultType TODO decrire
     //! @param inactiveUnits TODO decrire
-    virtual void analyze(const std::string &content,
-                         const std::map<std::string, std::string>& metaData,
-                         const std::string& pipeline,
-                         const std::map<std::string, Lima::AbstractAnalysisHandler*>& handlers = std::map<std::string, Lima::AbstractAnalysisHandler*>(),
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>())  const override = 0;
+    virtual std::shared_ptr<AnalysisContent> analyze(
+        const std::string &content,
+        const std::map<std::string, std::string>& metaData,
+        const std::string& pipeline,
+        const std::map<std::string, Lima::AbstractAnalysisHandler*>& handlers = std::map<std::string, Lima::AbstractAnalysisHandler*>(),
+        const std::set<std::string>& inactiveUnits = std::set<std::string>())  const override = 0;
 
     virtual void setAnalysisHandler(const std::string& handlerId, Lima::AbstractAnalysisHandler *handler) = 0;
 

@@ -4,17 +4,17 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under GNU/Linux with python >= 3.7 and <= 3.9:
+Under Linux with python >= 3.7 and < 4:
 
 ```bash
 # Upgrading pip is fundamental in order to obtain the correct LIMA version
 $ pip install --upgrade pip
-$ pip install aymara==0.4.0
+$ pip install aymara==0.4.1
 $ lima_models.py -l eng
 $ python
 >>> import aymara.lima
->>> l = aymara.lima.Lima("ud-eng")
->>> sentences = l.analyzeText('Hello, World!', lang="ud-eng")
+>>> nlp = aymara.lima.Lima("ud-eng")
+>>> sentences = nlp('Hello, World!')
 >>> print(sentences[0][0].lemma)
 hello
 >>> print(sentences.conll())
@@ -40,3 +40,6 @@ Drone.io Build Status: [![Drone.io Build Status](https://drone.io/github.com/aym
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/aymara/lima?branch=master&svg=true)](https://ci.appveyor.com/project/kleag/lima)
 [![GitHub Action Workflow status](https://github.com/aymara/lima/actions/workflows/build.yml/badge.svg)](https://github.com/aymara/lima/actions)
+
+
+[![LIMA Python Downloads](https://static.pepy.tech/personalized-badge/aymara?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=LIMA%20Python%20Downloads)](https://pepy.tech/project/aymara)
