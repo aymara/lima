@@ -77,8 +77,10 @@ ENV NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp \
     LIMA_DIST=/opt/lima \
     LIMA_CONF=/opt/lima/share/config/lima \
     LIMA_RESOURCES=/opt/lima/share/apps/lima/resources \
-    PATH=/opt/lima/bin:${PATH} \
-    LD_LIBRARY_PATH=/opt/lima/lib:/opt/lima/lib64:${LD_LIBRARY_PATH}
+    PATH=/opt/lima/bin:/opt/qt6/bin:${PATH} \
+    LD_LIBRARY_PATH=/opt/lima/lib:/opt/lima/lib64:/opt/qt6/lib:${LD_LIBRARY_PATH} \
+    Qt_INSTALL_DIR=/opt/qt6
+
 
 # Build
 #
