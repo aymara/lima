@@ -1,5 +1,11 @@
-FROM quay.io/pypa/manylinux_2_24_x86_64
+# ARG GCC_VERSION=10.1.0
+# FROM aymara/manylinux_2_24_with_gcc${GCC_VERSION}:latest
+# ARG LLVM_VERSION="14.0.6"
+# FROM aymara/manylinux_2_24_with_llvm${LLVM_VERSION}:latest
+FROM quay.io/pypa/manylinux_2_24_x86_64 AS manylinux_2_24_with_qt
 
+ARG GCC_VERSION=10.1.0
+# ARG LLVM_VERSION="14.0.6"
 ARG QT_VERSION="5.15"
 ARG QT_VERSION_MAJOR="5"
 ARG QT_VERSION_MINOR="15"
@@ -15,11 +21,17 @@ ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && apt-get update && apt-get install -y locales
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+RUN echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+RUN echo "LANG=en_US.UTF-8" >> /etc/default/locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+RUN cp  /etc/default/locale /etc/environment
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+RUN locale-gen
+RUN dpkg-reconfigure locales
 RUN locale
+
 
 RUN apt-get update && \
     apt-get install -y \
@@ -126,40 +138,50 @@ WORKDIR /
 
 ENV BUILD_TARGET=/build
 ENV SRC=/src
-ENV QT_BRANCH="${QT_FULL_VERSION}"
-ENV MAKE_CORES="$(expr $(nproc) + 2)"
 
 RUN mkdir -p "$BUILD_TARGET"
 
-RUN echo "Building QT version $QT_BRANCH."
+# ENV PATH=/opt/gcc-${GCC_VERSION}/bin:$PATH
+# ENV LD_LIBRARY_PATH=/opt/gcc-${GCC_VERSION}/lib:/opt/gcc-${GCC_VERSION}/lib64:$LD_LIBRARY_PATH
+# ENV MANPATH=/opt/gcc-${GCC_VERSION}/share/man:$MANPATH
+# ENV INFOPATH=/opt/gcc-${GCC_VERSION}/share/info:$INFOPATH
+#
+# ENV CC=/opt/gcc-${GCC_VERSION}/bin/gcc
+# ENV CXX=/opt/gcc-${GCC_VERSION}/bin/g++
+# ENV CC=/opt/llvm/bin/clang
+# ENV CXX=/opt/llvm/bin/clang++
+# ENV LLVM_USE_LINKER=lld
+# ENV CPLUS_INCLUDE_PATH=/opt/llvm/include/c++/v1
+# ENV C_INCLUDE_PATH=/opt/llvm/include/clang
+# ENV LIBRARY_PATH=/opt/llvm/lib
+# ENV LLVM_INSTALL_DIR=/opt/llvm
+# ENV PATH=/opt/llvm/bin:$PATH
+# ENV LD_LIBRARY_PATH=/opt/llvm/lib:$LD_LIBRARY_PATH
+
+RUN echo "Building QT version $QT_FULL_VERSION."
 
 # This build process is inspired by
 # https://www.tal.org/tutorials/building-qt-512-raspberry-pi
 ENV SRC_DIR="/src/qt-everywhere-src-${QT_FULL_VERSION}"
 
 WORKDIR $BUILD_TARGET
-# @TODO: Add in the `-opengl es2` flag for Pi 1 - Pi 3.
-# Currently this breaks the QTWebEngine process.
 RUN bash "${SRC_DIR}"/configure \
-    -platform "linux-g++" \
+    -c++std c++17 \
     -confirm-license \
+    -opensource \
     -dbus-linked \
     -no-eglfs \
     -no-evdev \
-    -force-pkg-config \
     -no-glib \
     -make libs \
-    -no-compile-examples \
     -no-cups \
     -no-gbm \
     -no-gtk \
     -no-pch \
-    -no-use-gold-linker \
     -no-xcb \
     -no-xcb-xlib \
     -nomake examples \
     -nomake tests \
-    -opensource \
     -prefix /opt/qt${QT_VERSION_MAJOR} \
     -qpa eglfs \
     -qt-pcre \
@@ -188,6 +210,7 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtserialport \
     -skip qtspeech \
     -skip qttools \
+    -skip qtdoc \
     -skip qttranslations \
     -skip qtvirtualkeyboard \
     -skip qtwayland \
@@ -202,8 +225,6 @@ RUN bash "${SRC_DIR}"/configure \
     -system-libpng \
     -system-zlib
 
-# The RAM consumption is proportional to the amount of cores.
-# On an 8 core box, the build process will require ~16GB of RAM.
-RUN make -j $(expr $(nproc) + 2)
-RUN make install
+RUN make -j $(nproc) && make install
+# RUN cmake --build . --parallel && cmake --install .
 

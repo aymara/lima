@@ -18,7 +18,7 @@ target_link_libraries(easyprocessor
   lima-lp-analysishandlers
   lima-lp-client
   ${optionalLibs}
-  Qt5::Xml
+  Qt${QT_VERSION_MAJOR}::Xml
 )
 
 install(TARGETS easyprocessor DESTINATION bin

@@ -10,7 +10,8 @@ set (test_treeview_SRCS
   treemodel.cpp
 )
 
-if(QtCore_VERSION VERSION_GREATER 5.14.0)
+message("Qt${QT_VERSION_MAJOR}Core_VERSION ${Qt${QT_VERSION_MAJOR}Core_VERSION}")
+if(Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.14.0)
   qt_add_resources(test_treeview_SRCS qml.qrc)
 else()
   qt5_add_resources(test_treeview_SRCS qml.qrc)

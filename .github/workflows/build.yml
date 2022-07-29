@@ -1,7 +1,6 @@
 on:
   push:
     branches:
-    - deeplima-lemmatizer-dev
     - master
 
 env:
