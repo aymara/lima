@@ -18,7 +18,7 @@ SET(lima-lp-compounds_LIB_SRCS
 
 DECLARE_LIMA_PLUGIN(lima-lp-compounds)
 
-target_compile_definitions(lima-lp-compounds PRIVATE "LIMA_COMPOUNDS_EXPORTING")
+target_compile_definitions(lima-lp-compounds PRIVATE "-DLIMA_COMPOUNDS_EXPORTING")
 
 target_link_libraries(lima-lp-compounds
   lima-lp-linguisticprocessors
