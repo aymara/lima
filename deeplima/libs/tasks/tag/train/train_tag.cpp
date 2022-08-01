@@ -23,6 +23,7 @@
 
 using namespace std;
 using namespace deeplima::nets;
+using namespace deeplima::vectorizers;
 
 namespace deeplima
 {
@@ -407,18 +408,11 @@ int train_entity_tagger(const train_params_tagging_t& params)
                                   rnn_descr,
                                   feat_extractor.feats(),
                                   std::move(tag_dh),
-                                  boost::filesystem::path(params.m_embeddings_fn).stem().string());
+                                  boost::filesystem::path(params.m_embeddings_fn).stem().string(),
+                                  params);
   }
 
   cerr << model->get_script() << endl;
-
-  torch::optim::Adam optimizer(model->parameters(),
-                               torch::optim::AdamOptions(params.m_learning_rate)
-                               .weight_decay(params.m_weight_decay)
-                               .betas({0.9, 0.9}));
-  /*torch::optim::SGD optimizer(model->parameters(),
-                              torch::optim::SGDOptions(params.m_learning_rate)
-                              .weight_decay(params.m_weight_decay));*/
 
   torch::Device device(params.m_device_string);
 
@@ -432,12 +426,38 @@ int train_entity_tagger(const train_params_tagging_t& params)
 
   model->to(device);
 
-  model->train(params,
-               feat_extractor.feats(),
-              *(train_input.first.get()), *(train_input.second.get()), *(train_gold.get()),
-              *(dev_input.first.get()), *(dev_input.second.get()), *(dev_gold.get()),
-              optimizer, device);
+  double min_perf = 0;
 
+  for (const string& opt_name : utils::split(params.m_optimizers, ','))
+  {
+    shared_ptr<torch::optim::Optimizer> optimizer;
+
+    if (opt_name == "adam")
+    {
+      optimizer = make_shared<torch::optim::Adam>(model->parameters(),
+                                                  torch::optim::AdamOptions(params.m_learning_rate)
+                                                  .weight_decay(params.m_weight_decay)
+                                                  .betas({0.9, 0.9}));
+    }
+    else if (opt_name == "sgd")
+    {
+      optimizer = make_shared<torch::optim::SGD>(model->parameters(),
+                                                 torch::optim::SGDOptions(params.m_learning_rate * 1000)
+                                                 .weight_decay(params.m_weight_decay));
+    }
+    else
+    {
+      throw runtime_error("Unknown optimizer: " + opt_name);
+    }
+
+    model->train(params,
+                 feat_extractor.feats(),
+                *(train_input.first.get()), *(train_input.second.get()), *(train_gold.get()),
+                *(dev_input.first.get()), *(dev_input.second.get()), *(dev_gold.get()),
+                *optimizer, min_perf, device);
+
+    std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
+  }
 
   return 0;
 }

@@ -50,6 +50,8 @@ int main(int argc, char* argv[])
   ("tag",               po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
   ("batch-size,b",      po::value<size_t>(&params.m_batch_size),        "Batch size")
   ("seq-len,s",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
+  ("opt,o",             po::value<string>(&params.m_optimizers),        "Optimizers to use (comma separated list: (adam,sgd)+)")
+  ("input-dropout",     po::value<float>(&params.m_input_dropout_prob), "Input dropout probability")
   ;
 
   po::variables_map vm;

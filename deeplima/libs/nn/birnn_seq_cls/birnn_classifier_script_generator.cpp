@@ -17,11 +17,12 @@ namespace nets
 string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& embd_descr,
                                             const std::vector<rnn_descr_t>& rnn_descr,
                                             const std::vector<std::string>& output_names,
-                                            const std::vector<uint32_t>& classes)
+                                            const std::vector<uint32_t>& classes,
+                                            float input_dropout_prob)
 {
   stringstream ss;
 
-  ss << "input_dropout = def Dropout prob=0.7" << std::endl;
+  ss << "input_dropout = def Dropout prob=" << input_dropout_prob << std::endl;
 
   size_t rnn_input_size = 0;
   for (size_t i = 0; i < embd_descr.size(); i++)
