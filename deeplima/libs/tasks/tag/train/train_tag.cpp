@@ -414,7 +414,11 @@ int train_entity_tagger(const train_params_tagging_t& params)
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
-                               .weight_decay(params.m_weight_decay));
+                               .weight_decay(params.m_weight_decay)
+                               .betas({0.9, 0.9}));
+  /*torch::optim::SGD optimizer(model->parameters(),
+                              torch::optim::SGDOptions(params.m_learning_rate)
+                              .weight_decay(params.m_weight_decay));*/
 
   torch::Device device(params.m_device_string);
 
