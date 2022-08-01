@@ -101,7 +101,7 @@ public:
 
   inline uint8_t parse(const uint8_t* str, int32_t& pos, int32_t len)
   {
-    UChar32 uch = 0;
+    int32_t uch = 0;
     int32_t prev_pos = pos;
     U8_NEXT(str, pos, len, uch);
     if (uch < 0)

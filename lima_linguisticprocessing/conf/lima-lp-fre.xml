@@ -629,6 +629,51 @@ SPDX-License-Identifier: MIT
         <item value="l2rDummyRules"/>
       </list>
     </group>
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <map name="Macros2ConceptTypes">
+        <entry key="NONE_1" value="LatticeDown"/>
+        <entry key="DET" value="Determiner"/>
+        <entry key="PRON" value="Determiner"/>
+        <entry key="ADV" value="SemanticModifier"/>
+        <entry key="ADJ" value="Complementer"/>
+        <entry key="NC" value="Complementer"/>
+        <entry key="NP" value="Complementer"/>
+      </map>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <list name="CompoundsRels">
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADV"/>
+        <item value="COMPADJ"/>
+        <item value="ADJPRENSUB"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="SUBSUBJUX"/>
+        <item value="ADVADJ"/>
+        <!--item value="COORD2"/>
+        <item value="COORD1"/-->
+        <item value="Prefixe"/>
+
+
+        <!-- Uncomment relation names below if you want to build compounds
+        including verbs and verbal dependencies. To be used in conjuction with
+        the syntacticAnalyzerNoChains in mm-lp. -->
+        <!--item value="CodPrev"/>
+        <item value="SUJ_V"/>
+        <item value="COD_V"/>
+        <item value="CPL_V"/>
+        <item value="MOD_V"/>
+        <item value="ATB_S"/>
+        <item value="CoiPrev"/>
+        <item value="CPLV_V"/-->
+
+      </list>
+    </group>
 <!-- ******************************************
   Definition of loggers
 *********************************************** -->

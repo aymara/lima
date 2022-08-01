@@ -7,6 +7,7 @@
 #define LIMA_ABSTRACTPROCESSINGCLIENT_H
 
 #include "common/Handler/AbstractAnalysisHandler.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include <set>
 #include <deque>
@@ -22,18 +23,17 @@ public:
     //! @brief Define the destructor virtual to ensure concrete client destructors to be called
     virtual ~AbstractProcessingClient() {}
 
-    //! @brief analyze an image, given the pipeline and the expected resultType
-    //! @param content path of the file or text to analyze in string format
-    //! @param metaData additive information
-    //! @param pipeline analysis pipeline to use (an analysis pipeline is 
-
-    //!                      a chain of processUnit)
-    //! @param inactiveUnits ??? (un truc pour les texteux)
-    virtual void analyze(const std::string& content,
-                         const std::map<std::string,std::string>& metaData,
-                         const std::string& pipeline,
-                         const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
+    //! @brief analyze a content, given the pipeline and the expected resultType
+    //! @param content path of the file or content to analyze in string format
+    //! @param metaData additional information
+    //! @param pipeline analysis pipeline to use (an analysis pipeline is a chain of processUnit)
+    //! @param inactiveUnits a set of pipeline units to skip during analysis
+    virtual std::shared_ptr<AnalysisContent> analyze(
+      const std::string& content,
+      const std::map<std::string,std::string>& metaData,
+      const std::string& pipeline,
+      const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+      const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
 
 };
 
@@ -75,7 +75,7 @@ public:
     std::deque<std::string> pipelines) = 0;
 
   /**
-   * This function create a LinguisticProcessing client 
+   * This function create a LinguisticProcessing client
    */
   virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
 

@@ -149,7 +149,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick QuickTest Test Xml Widgets )
+addQtModules(Core Gui Qml Quick Test Xml Widgets )
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -163,6 +163,7 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
   message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
 else ()
 endif()
+
 
 add_definitions( -DBoost_DEBUG=ON )
 add_definitions( -DBOOST_ALL_NO_LIB )
@@ -400,9 +401,29 @@ find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
+if(WIN32 AND EIGEN3_FOUND)
+include_directories("${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 root: ${EIGEN3_USE_FILE}")
+endif()
 
 find_package(Torch)
 find_package(ICU 60.0 COMPONENTS uc)
+message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
+include_directories(${ICU_INCLUDE_DIR})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(DIRECTORY  ${ICU_INCLUDE_DIR}/../bin64/
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime
+          FILES_MATCHING PATTERN "icu*.dll")
+  FILE(GLOB ICU_LIBRARIES "${ICU_INCLUDE_DIR}/../bin64/icu*.dll")
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${ICU_LIBRARIES})
+      message("icu: ${ICU_LIBRARIES}")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
 # Set the default component name before any call to install

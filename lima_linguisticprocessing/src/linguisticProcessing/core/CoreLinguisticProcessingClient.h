@@ -9,6 +9,7 @@
 #include "CoreLinguisticProcessingClientExport.h"
 #include "linguisticProcessing/client/AbstractLinguisticProcessingClient.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
 
 #include <list>
 
@@ -28,18 +29,19 @@ public:
 
   virtual ~CoreLinguisticProcessingClient();
 
-  void analyze(const LimaString& texte,
-               const std::map<std::string,std::string>& metaData,
-               const std::string& pipeline,
-               const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-               const std::set<std::string>& inactiveUnits = std::set<std::string>()) const
-   override;
+  std::shared_ptr<AnalysisContent> analyze(
+    const QString& texte,
+    const std::map<std::string,std::string>& metaData,
+    const std::string& pipeline,
+    const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+    const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override;
 
-  void analyze(const std::string& texte,
-               const std::map<std::string,std::string>& metaData,
-               const std::string& pipeline,
-               const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-               const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override
+  std::shared_ptr<AnalysisContent> analyze(
+    const std::string& texte,
+    const std::map<std::string,std::string>& metaData,
+    const std::string& pipeline,
+    const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+    const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override
   ;
 };
 

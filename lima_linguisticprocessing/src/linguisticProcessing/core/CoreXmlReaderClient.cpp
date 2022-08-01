@@ -256,7 +256,7 @@ void CoreXmlReaderClient::handleProperty(
 
 //!@brief analyse effective d'un fichier XML
 //! Fait appel a m_handler (type xmlDocumentHandler)
-void CoreXmlReaderClient::analyze(
+std::shared_ptr<AnalysisContent> CoreXmlReaderClient::analyze(
     const std::string &text,
     const std::map<std::string, std::string>& metaData,
     const std::string &pipeline,
@@ -323,6 +323,7 @@ void CoreXmlReaderClient::analyze(
      }
 #endif
      m_handler->endDocument();
+     return std::make_shared<AnalysisContent>();
 }
 
 void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocument &contentDocument, bool isIndexing)

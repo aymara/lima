@@ -1,5 +1,4 @@
 #include "LangDetectorCore.h"
-#include <QtXml/QXmlSimpleReader>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QDir>

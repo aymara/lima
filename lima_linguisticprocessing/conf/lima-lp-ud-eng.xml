@@ -94,6 +94,40 @@ SPDX-License-Identifier: MIT
       <param key="model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <map name="Macros2ConceptTypes">
+        <entry key="NONE_1" value="LatticeDown"/>
+        <entry key="DET" value="Determiner"/>
+        <entry key="PRON" value="Determiner"/>
+        <entry key="ADV" value="SemanticModifier"/>
+        <entry key="ADJ" value="Complementer"/>
+        <entry key="NOUN" value="Complementer"/>
+        <entry key="PROPN" value="Complementer"/>
+      </map>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <list name="CompoundsRels">
+        <item value="advmod"/>        <!-- UD 2.0: adjectival modifier                          -->
+        <item value="amod"/>        <!-- UD 2.0: adjectival modifier                          -->
+        <item value="appos"/>       <!-- UD 2.0: appositional modifier                        -->
+        <item value="compound"/>    <!-- UD 2.0: compound                                     -->
+        <item value="fixed"/>       <!-- UD 2.0: fixed multiword expression                   -->
+        <item value="flat"/>        <!-- UD 2.0: flat multiword expression                    -->
+        <item value="nmod"/>        <!-- UD 2.0: nominal modifier                             -->
+        <item value="nummod"/>      <!-- UD 2.0: numeric modifier                             -->
+
+
+
+        <!-- Uncomment relation names below if you want to build compounds
+        including verbs and verbal dependencies. To be used in conjuction with
+          the syntacticAnalyzerNoChains in mm-lp. -->
+      </list>
+    </group>
 <!-- ******************************************
   Definition of loggers
 *********************************************** -->

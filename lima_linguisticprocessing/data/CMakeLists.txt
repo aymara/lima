@@ -13,6 +13,7 @@ IF(TRE_FOUND)
   )
 ENDIF(TRE_FOUND)
 
+    #test-eng.compounds.xml
 install(
   FILES
     test-eng.abbrev.xml
@@ -29,6 +30,7 @@ install(
     test-eng.se-ORGANISATION.xml
     test-eng.simpleword.xml
     test-eng.tokenizer.xml
+    test-fre.compounds.xml
     test-fre.default.xml
     test-fre.disambiguated.xml
     test-fre.hyphen.xml
