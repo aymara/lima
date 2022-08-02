@@ -176,7 +176,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build -f Dockerfile-ubuntu22.04 --build-arg BRANCH="${GITHUB_BRANCH}" -t aymara/lima-ubuntu22.04:latest .
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${GITHUB_BRANCH}" -t aymara/lima-ubuntu22.04:latest .
 
       - name: "Push image"
         run: docker push aymara/lima-ubuntu22.04:latest
