@@ -397,6 +397,11 @@ public:
     return m_dropout;
   }
 
+  const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> get_layers_deep_biaffine_attn_decoder() const
+  {
+    return m_deep_biaffine_attention_decoder;
+  }
+
   torch::nn::Embedding get_module_by_name(const std::string& name) const
   {
     const auto it = m_modules.find(name);
