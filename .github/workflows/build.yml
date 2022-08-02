@@ -160,7 +160,7 @@ jobs:
       - name: "Push image"
         run: docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
 
-  ubuntu22.04_lima:
+  ubuntu22_04_lima:
     name: "Build the Ubuntu 22.04 Lima image"
     runs-on: ubuntu-latest
 
