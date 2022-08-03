@@ -560,7 +560,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 
 # set of commands to define component based packaging
 # notify cpack of component all names
-SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
+SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por ud)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
