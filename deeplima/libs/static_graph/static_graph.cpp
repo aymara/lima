@@ -508,6 +508,23 @@ void StaticGraphImpl::parse_script(const string& script)
         }
         break;
 
+      case step_descr_t::sigmoid:
+        {
+          vector<size_t>& inputs = op.m_inputs;
+          vector<size_t>& outputs = op.m_outputs;
+
+          if (inputs.size() != 1 || outputs.size() != 1)
+          {
+            throw;
+          }
+
+          op.m_fn = [inputs, outputs](context_t& ctx)
+          {
+            ctx.m_tensors[outputs[0]] = ctx.m_tensors[inputs[0]].sigmoid();
+          };
+        }
+        break;
+
       default:
         throw;
     }
@@ -650,6 +667,12 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     {
       step.m_iargs["dim"] = parse_iargs(it->second);
     }
+  }
+  else if (type == "sigmoid")
+  {
+    //
+    step.m_type = step_descr_t::sigmoid;
+    step.m_args = parse_options(ss);
   }
   else if (type == "reshape")
   {

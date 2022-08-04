@@ -34,6 +34,7 @@ class StaticGraphImpl : public torch::nn::Module
       reshape = 5,
       unbind = 6,
       unsqueeze = 7,
+      sigmoid = 8,
       max_step_type
     };
 
