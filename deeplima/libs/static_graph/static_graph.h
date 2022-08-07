@@ -398,7 +398,7 @@ public:
     return m_dropout;
   }
 
-  const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> get_layers_deep_biaffine_attn_decoder() const
+  const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder>& get_layers_deep_biaffine_attn_decoder() const
   {
     return m_deep_biaffine_attention_decoder;
   }
@@ -433,6 +433,10 @@ public:
     else if (type == "dropout")
     {
       t = dropout;
+    }
+    else if (type == "deep_biaffine_attention_decoder")
+    {
+      t = deep_biaffine_attention_decoder;
     }
     else
     {

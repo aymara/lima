@@ -189,6 +189,7 @@ void StaticGraphImpl::to(torch::Device device, bool non_blocking)
   for (auto m : m_lstm) m->to(device);
   for (auto m : m_linear) m->to(device);
   for (auto m : m_dropout) m->to(device);
+  for (auto m : m_deep_biaffine_attention_decoder) m->to(device);
   torch::nn::Module::to(device, non_blocking);
   cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }
@@ -500,10 +501,8 @@ void StaticGraphImpl::parse_script(const string& script)
 
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
           {
-            auto out = ctx.m_tensors[inputs[0]];
-            //out = out.reshape({-1, out.size(2)});
-            out = torch::nn::functional::log_softmax(out, dim);
-            ctx.m_tensors[outputs[0]] = out;
+            auto in = ctx.m_tensors[inputs[0]];
+            ctx.m_tensors[outputs[0]] = torch::nn::functional::log_softmax(in, dim);
           };
         }
         break;
