@@ -80,6 +80,9 @@ void EventTemplateMerging::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
 
+  // always add event mention as a mandatory element
+  m_mandatoryElements.push_back(m_templateDefinition->getMention());
+  
   try {
     std::string s=unitConfiguration.getParamsValueAtKey("maxCharCompatibleEvents");
     m_maxCharCompatibleEvents=std::stoul(s);
@@ -160,15 +163,22 @@ bool EventTemplateMerging::ignoreTemplate(const EventTemplate& event, uint64_t n
                                           const std::set<uint64_t>& toRemove) const
 {
   if (event.getPosEnd()<=posBegin || (posEnd>0 && event.getPosBegin()>=posEnd) ) {
+    LOGINIT("LP::EventAnalysis");
+    LDEBUG << "template"<< numTemplate << "ignored: not in the considered segment "
+           <<"["<<event.getPosBegin()<<","<<event.getPosEnd()<<"]";
     return true;
   }
   
-  if (event.getType()!=m_templateDefinition->getName()) {
+  if (event.getType()!=m_templateDefinition->getMention()) {
+    LOGINIT("LP::EventAnalysis");
+    LDEBUG << "template"<< numTemplate << "ignored: not the considered event type ("<<event.getType()<<"/"<<m_templateDefinition->getMention()<<")";
     return true;
   }
 
   // do we keep merging with other templates if this one is to be removed ?
   if (toRemove.find(numTemplate)!=toRemove.end()) {
+    LOGINIT("LP::EventAnalysis");
+    LDEBUG << "template"<< numTemplate << "ignored: already merged";
     return true;
   }
   
@@ -182,7 +192,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
   LOGINIT("LP::EventAnalysis");
 
   // merge templates according to their positions and positions of intermediate entities
-  LDEBUG << "TemplateMerging: merge templates of type" << m_templateDefinition->getName();
+  LDEBUG << "TemplateMerging: merge templates of type" << m_templateDefinition->getName() << "in ["<<posBegin<<","<<posEnd<<"]";
   LDEBUG << "nb events =" << eventData->size();
   
   std::set<uint64_t> toRemove;
@@ -195,20 +205,20 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
 
     // begin comparison with next template
     EventTemplateData::iterator it2=it1;
-    uint64_t numOtherTemplate=numTemplate; // only used for debug messages
+    uint64_t numOtherTemplate=numTemplate; 
     for (it2++,numOtherTemplate++; it2!=it_end; it2++,numOtherTemplate++)
     {
       if (ignoreTemplate(*it2,numOtherTemplate,posBegin,posEnd,toRemove)) {
         continue;
       }
 
-      map<string,EventTemplateElement>& templateElements2=(*it2).getTemplateElements();
+      TemplateElements& templateElements2=(*it2).getTemplateElements();
       if (templateElements2.empty()) {
         continue;
       }
 
       LDEBUG << "TemplateMerging: compare templates"
-      << numTemplate+1 << "and" << numOtherTemplate+1 << ":\n"
+      << numTemplate << "and" << numOtherTemplate << ":\n"
       << *it1 << "\n" << *it2;
 
       unsigned int templateToRemove(0);
@@ -222,18 +232,6 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
           break;
         }
       }
-//       if (compatibleTemplates(*it1,*it2,numTemplate,numOtherTemplate,matchingElements)) {
-//         // plan to remove first template
-//         uint64_t templateToRemove=mergeTemplates(*it1,*it2,numTemplate,numOtherTemplate,matchingElements);
-//         toRemove.insert(templateToRemove);
-//         // do not break, merge with all following compatible events
-//         //break;
-//       }
-//       else{
-//         //LDEBUG << "TemplateMerging: template"
-//         //<< (numTemplate+1) << " not compatible with template"
-//         //<< (numOtherTemplate+1);
-//       }
     }
   }
 
@@ -257,7 +255,7 @@ void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) con
     uint64_t n=1; // only for debug messages
     while (it!=eventData->end()) {
       bool toRemove=false;
-      const std::map<std::string,EventTemplateElement>& elements=(*it).getTemplateElements();
+      const TemplateElements& elements=(*it).getTemplateElements();
       for (deque<string>::const_iterator m=m_mandatoryElements.begin(),m_end=m_mandatoryElements.end();m!=m_end;m++) {
         if (elements.find(*m)==elements.end()) {
           toRemove=true;
@@ -277,8 +275,9 @@ void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) con
 }
 
 bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const EventTemplate& e2,
-                                               unsigned int numTemplate, unsigned int numOtherTemplate,
-                                               map<string,pair<string, int> >& matchingElements) const
+                                               unsigned int numTemplate1, unsigned int numTemplate2,
+                                               TemplateElements& mergedElements) const
+//                                               map<string,pair<string, int> >& matchingElements) const
 {
   // numTemplate and numOtherTemplate are only there for debug messages
 
@@ -297,21 +296,112 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
   }
   if (posdiff >m_maxCharCompatibleEvents) {
     LDEBUG << "TemplateMerging: templates"
-    << (numTemplate+1) << "and" << (numOtherTemplate+1)
+    << numTemplate1 << "and" << numTemplate2
     << "not compatible: too much apart ("<< posdiff << "chars)";
     return false;
   }
 
-  const map<string,EventTemplateElement>& templateElements1=e1.getTemplateElements();
-  const map<string,EventTemplateElement>& templateElements2=e2.getTemplateElements();
+  const TemplateElements& templateElements1=e1.getTemplateElements();
+  const TemplateElements& templateElements2=e2.getTemplateElements();
 
-  for (map<string,EventTemplateElement>::const_iterator fill=templateElements2.begin(),
-    fill_end=templateElements2.end(); fill!=fill_end; fill++)
+  std::vector<EventTemplateElement> merged;
+  // merge template1 in template2: store the roles in template 1 that do correspond to one in template2
+  // (to add the ones that do not, at the end)
+  std::set<std::string> alreadyMerged;
+  
+  // templateElements is a multimap: for each role, each template has a set of values
+  for (TemplateElements::const_iterator elt2=templateElements2.begin(),
+    elt2_end=templateElements2.end(); elt2!=elt2_end; )
   {
-    const std::string& role=(*fill).first;
+    const std::string& role2=(*elt2).first;
+    unsigned int cardinality=m_templateDefinition->getCardinality(role2);
+    // get all values for this role: use pointers to avoid copies
+    vector<const EventTemplateElement*> values2;
+
+    // Advance to next non-duplicate entry.
+    while (elt2 != templateElements2.end() && role2 == (*elt2).first) {
+      values2.push_back(&((*elt2).second));
+      ++elt2;
+    }
+    
+    pair<TemplateElements::const_iterator,TemplateElements::const_iterator> found1=templateElements1.equal_range(role2);
+    if (found1.first!=found1.second) {
+      // the same role exists in other template, check values
+      vector<const EventTemplateElement*> values1;
+      for (TemplateElements::const_iterator it=found1.first,it_end=found1.second;it!=it_end;++it) {
+        values1.push_back(&((*it).second));
+      }
+      if (compatibleValues(values2,values1,cardinality,merged)) {
+        for (const auto& value: merged) {
+          mergedElements.emplace(role2,value);
+        }
+        alreadyMerged.insert(role2);
+      }
+      else {
+        // different values, assume templates of different elements
+        LDEBUG << "TemplateMerging: templates"
+        << numTemplate1 << "and" << numTemplate2
+        << ":" << role2 << ": incompatible values";
+        mergedElements.clear();
+        return false;
+      }
+    }
+    else { // try to find mapping through constraint
+      bool mappingFound=false;
+      for (TemplateElements::const_iterator elt1=templateElements1.begin(),
+        elt1_end=templateElements1.end(); elt1!=elt1_end; )
+      {
+        const std::string& role1=(*elt1).first;
+        int mapping=m_templateDefinition->existsMapping(role1,role2);
+        if (mapping!=0) {
+          mappingFound=true;
+          // compatible role, check values
+          // gather values from other template : advance to next non-duplicate entry
+          vector<const EventTemplateElement*> values1;
+          while (elt1 != templateElements1.end() && role1 == (*elt1).first) {
+            values1.push_back(&((*elt1).second));
+            ++elt1;
+          }
+          if (compatibleValues(values2,values1,cardinality,merged)) {
+            for (const auto& value: merged) {
+              mergedElements.emplace(role2,value);
+            }
+            alreadyMerged.insert(role1);
+          }
+          else {
+            // different values, assume templates of different elements
+            LDEBUG << "TemplateMerging: templates"
+            << numTemplate1 << "and" << numTemplate2
+            << ":" << role2 << "/" << (*elt1).first << ": incompatible values";
+            mergedElements.clear();
+            return false;
+          }
+          // do not search for another match in mapping, take first
+          break;
+        }
+        else {
+          // no mapping: advance to next non-duplicate entry
+          do {
+              elt1++;
+          } while (elt1 != templateElements1.end() && role1== (*elt1).first);
+        }
+      }
+      if (! mappingFound) {
+        LDEBUG << "TemplateMerging: templates"
+        << numTemplate1 << "and" << numTemplate2
+        << ":" << role2 << ": not found in" << numTemplate1;
+        // add it to the merged template
+        for (const auto& v2: values2) {
+          mergedElements.emplace(role2,*v2);
+        }
+      }
+    }
+
+    /*
+    //--begin old code--
     const EventTemplateElement& elt=(*fill).second;
 
-    map<string,EventTemplateElement>::const_iterator found=templateElements1.find(role);
+    TemplateElements::const_iterator found=templateElements1.find(role);
     if (found!=templateElements1.end()) {
       // same role, check value
       if (elt.isSimilar((*found).second)) {
@@ -330,7 +420,7 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
     }
     else { // try to find mapping through constraint
       bool mappingFound=false;
-      for (map<string,EventTemplateElement>::const_iterator e=templateElements1.begin(),
+      for (TemplateElements::const_iterator e=templateElements1.begin(),
         e_end=templateElements1.end(); e!=e_end; e++)
       {
         int mapping=m_templateDefinition->existsMapping((*e).first,role);
@@ -357,13 +447,56 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
         << ":" << role << ": not found";
       }
     }
+    //--end old code--
+    */
+  }
+  // add in mergedElements the one from template1 that were not already merged
+  for (const auto& elt1: templateElements1) {
+    if (alreadyMerged.find(elt1.first)==alreadyMerged.end()) {
+      mergedElements.emplace(elt1.first,elt1.second);
+    }
+  }
+  
+  return true;
+}
+
+bool EventTemplateMerging::compatibleValues(const std::vector<const EventTemplateElement*> values1, 
+                                            const std::vector<const EventTemplateElement*> values2,
+                                            unsigned int cardinality,
+                                            std::vector<EventTemplateElement>& merged) const
+{
+  // a clean way to check compatibility of multiple values could be to use a general assignment problem solution 
+  // (such as Kuhn-Munkres hungarian algorithm)
+  // seems a bit complex to implement: use a simpler greedy method (not optimal, but suppose the cardinality of 
+  // values is generally one anyway)
+  vector<bool> done(values2.size(),false);
+  for (const auto val1: values1) {
+    for (unsigned int i(0),n=values2.size();i<n;i++) {
+      if (done[i]) {
+        continue;
+      }
+      if (val1->isSimilar(*(values2[i]))) {
+        done[i]=true;
+      }
+    }
+    merged.push_back(*val1);
+  }
+  for (unsigned int i(0),n=values2.size();i<n;i++) {
+    if (! done[i]) {
+      if (merged.size()+1>cardinality) {
+        merged.clear();
+        return false;
+      }
+      merged.push_back(*(values2[i]));
+    }
   }
   return true;
 }
 
+
 bool EventTemplateMerging::
 mergeTemplates(EventTemplate& e1, EventTemplate& e2,
-               unsigned int numTemplate, unsigned int numOtherTemplate,
+               unsigned int numTemplate1, unsigned int numTemplate2,
                unsigned int& templateToRemove) const
 {
   // merge isn't always in the same order: we want to keep elements from the template with the smallest span,
@@ -381,31 +514,40 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
   // map associating a role1 with a pair (role2,mapping) where the other_role is the role that matches
   // role1 and the mapping: 0 if equality, otherwise oriented mapping: 1 if mapping elt1 -> elt2,
   // -1 if mapping elt2 -> elt1
-  map<string,pair<string, int> > matchingElements;
+  //map<string,pair<string, int> > matchingElements;
+  
+  // while comparing templates for compatibility, create the merged version of the template
+  // replace the whole template by the merged template (not as efficient as changing each template element, 
+  // but easier to code/maintain)
+  TemplateElements mergedElements;
 
   // by default merge 1 into 2
   // use pointers instead of references to reassign them if merge is the other way
-  map<string,EventTemplateElement>* sourceElements=&(e1.getTemplateElements());
-  map<string,EventTemplateElement>* targetElements=&(e2.getTemplateElements());
-
+  //TemplateElements* sourceElements=&(e1.getTemplateElements());
+  //TemplateElements* targetElements=&(e2.getTemplateElements());
+  EventTemplate* templateToModify=&e2;
 
   // heuristic: keep the templates with the most elements
   if (e1.getTemplateElements().size() > e2.getTemplateElements().size()) {
-    if (!compatibleTemplates(e2,e1,numOtherTemplate,numTemplate,matchingElements)) {
+    if (!compatibleTemplates(e2,e1,numTemplate2,numTemplate1,mergedElements)) {
       return false;
     }
-    sourceElements=&(e2.getTemplateElements());
-    targetElements=&(e1.getTemplateElements());
-    templateToRemove=numOtherTemplate;
+    //     sourceElements=&(e2.getTemplateElements());
+    //     targetElements=&(e1.getTemplateElements());
+    templateToModify=&e1;
+    templateToRemove=numTemplate2;
   }
-  else if (!compatibleTemplates(e1,e2,numTemplate,numOtherTemplate,matchingElements)) {
+  else if (!compatibleTemplates(e1,e2,numTemplate1,numTemplate2,mergedElements)) {
       return false;
   }
   else {
-    LDEBUG << "TemplateMerging: merge" << numTemplate+1 << "into" << numOtherTemplate+1;
-    templateToRemove=numTemplate;
+    LDEBUG << "TemplateMerging: merge" << numTemplate1 << "into" << numTemplate2;
+    templateToRemove=numTemplate1;
   }
 
+  templateToModify->setTemplateElements(mergedElements);
+    
+  /*
   for (const auto& elt1: *sourceElements)
   {
     map<string,pair<string,int> >::const_iterator match=matchingElements.find(elt1.first);
@@ -432,12 +574,13 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
       }
     }
   }
+  */
   // returns the template to remove
-  if (templateToRemove==numTemplate) {
-    LDEBUG << "TemplateMerging: keep template" << numOtherTemplate+1 << e2;
+  if (templateToRemove==numTemplate1) {
+    LDEBUG << "TemplateMerging: keep template" << numTemplate2 << e2;
   }
   else {
-    LDEBUG << "TemplateMerging: keep template"<< numTemplate+1 << e1;
+    LDEBUG << "TemplateMerging: keep template"<< numTemplate1 << e1;
   }
   return true;
 }

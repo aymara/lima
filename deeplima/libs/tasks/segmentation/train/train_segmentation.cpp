@@ -132,7 +132,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
 
   std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( 8 ) };
   BiRnnClassifierForSegmentation model(std::move(dicts), ngram_descr, embd_descr,
-                                       rnn_descr, "tokens", train_ss ? 7 : 5);
+                                       rnn_descr, "tokens", train_ss ? 7 : 5, 0.1);
 
   const double learning_rate = 0.001;
   torch::optim::Adam optimizer(model->parameters(), torch::optim::AdamOptions(learning_rate));

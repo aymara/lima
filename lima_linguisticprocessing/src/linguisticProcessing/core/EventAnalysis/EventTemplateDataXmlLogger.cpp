@@ -115,7 +115,7 @@ void EventTemplateDataXmlLogger::outputEventData(std::ostream& out,
   out << "<events>" << endl;
   for (std::vector<EventTemplate>::const_iterator it= eventData->begin(); it!= eventData->end();it++)
   {
-    const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
+    const TemplateElements& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
       i++;
       out << "  <event id=\"" << i << "\""

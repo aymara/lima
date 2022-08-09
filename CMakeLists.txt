@@ -135,14 +135,15 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
 
   include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${TensorFlow_LIBRARIES}
+    install(FILES ${TensorFlow_LIBRARIES} ${TensorFlow_LIBRARIES_DYN}
       ${Eigen_LIBRARIES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${Eigen_LIBRARIES}
-      ${TensorFlow_LIBRARIES})
+      ${TensorFlow_LIBRARIES}
+      ${TensorFlow_LIBRARIES_DYN})
   endif ()
 else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
@@ -559,7 +560,7 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 
 # set of commands to define component based packaging
 # notify cpack of component all names
-SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
+SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por ud)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)

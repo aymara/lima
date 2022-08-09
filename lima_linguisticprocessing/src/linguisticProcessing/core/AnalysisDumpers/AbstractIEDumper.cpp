@@ -530,7 +530,7 @@ uint AbstractIEDumper::outputEventData(std::ostream& out,
   stringstream bufferEvents;
   for (std::vector<EventTemplate>::const_iterator it= eventData->begin(); it!= eventData->end();it++)
   {
-    const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
+    const TemplateElements& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
 
       const std::string& templateName=it->getType();
