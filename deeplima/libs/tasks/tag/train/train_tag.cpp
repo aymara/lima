@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace deeplima::nets;
-using namespace deeplima::vectorizers;
 
 namespace deeplima
 {
