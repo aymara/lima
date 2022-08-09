@@ -57,7 +57,12 @@ private:
   LimaStatusCode mergeEventTemplates(EventTemplateData* eventData, uint64_t posBegin, uint64_t posEnd) const;
   bool compatibleTemplates(const EventTemplate& e1, const EventTemplate& e2,
                            unsigned int numTemplate, unsigned int numOtherTemplate,
-                           std::map<std::string, std::pair<std::string, int> >& matchingElements) const;
+                           TemplateElements& mergedElements) const;
+                           
+  bool compatibleValues(const std::vector<const EventTemplateElement*> values1, 
+                        const std::vector<const EventTemplateElement*> values2,
+                        unsigned int cardinality,
+                        std::vector<EventTemplateElement>& merged) const;
                            
   // return the template to be removed (either numTemplate or numOtherTemplate)
   bool mergeTemplates(EventTemplate& e1, EventTemplate& e2,
