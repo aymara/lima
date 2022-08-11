@@ -80,8 +80,18 @@ void EventTemplateMerging::init(
   }
   catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
 
-  // always add event mention as a mandatory element
-  m_mandatoryElements.push_back(m_templateDefinition->getMention());
+  bool optionalMention(false);
+  try {
+    // by default, the event mention should be mandatory (it is for brat, for instance): 
+    // add a parameter to specify if the event mention can be optional
+    optionalMention=unitConfiguration.getBooleanParameter("optionalMention");
+  }
+  catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
+
+  if (! optionalMention) {
+    // add event mention as a mandatory element
+    m_mandatoryElements.push_back(m_templateDefinition->getMention());
+  }
   
   try {
     std::string s=unitConfiguration.getParamsValueAtKey("maxCharCompatibleEvents");
@@ -258,12 +268,12 @@ void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) con
       const TemplateElements& elements=(*it).getTemplateElements();
       for (deque<string>::const_iterator m=m_mandatoryElements.begin(),m_end=m_mandatoryElements.end();m!=m_end;m++) {
         if (elements.find(*m)==elements.end()) {
+          LDEBUG << "Erase template" << n << "because it does not contain mandatory element" << *m << ":" << elements;
           toRemove=true;
           break;
         }
       }
       if (toRemove) {
-        LDEBUG << "Erase template" << n << "because it does not contain mandatory elements" ;
         it=eventData->erase(it);
       }
       else {
