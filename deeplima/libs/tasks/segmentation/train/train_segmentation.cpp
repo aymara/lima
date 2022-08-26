@@ -87,7 +87,7 @@ typedef DictionaryBuilderImpl< CharNgramEncoder< Utf8Reader<> > > DictionaryBuil
 typedef CharSeqVectorizerImpl< CharNgramEncoder< Utf8Reader<> >, TorchMatrix<int64_t>,
                                DictHolderAdapter< UInt64Dict, TorchMatrix<int64_t> > > Utf8CharSeqToTorchMatrix;
 
-int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_name, bool train_ss)
+int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation::train::train_params_segmentation_t &params)
 {
   vector<ngram_descr_t> ngram_descr = { { 0,  1, ngram_descr_t::char_ngram },
                                         { 0,  2, ngram_descr_t::char_ngram },
@@ -120,22 +120,24 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
 
   shared_ptr<TorchMatrix<int64_t>> train_gold
       = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"),
-                                             (int64_t)train_char_counter, train_ss);
+                                             (int64_t)train_char_counter, params.train_ss);
 
   shared_ptr<TorchMatrix<int64_t>> dev_gold
       = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"),
-                                             dev_doc.get_text().size() + 1, train_ss);
+                                             dev_doc.get_text().size() + 1, params.train_ss);
 
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
                                            { "scriptchange", 1 } };
 
-  std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( 8 ) };
+  std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( params.m_rnn_hidden_dim ) };
   BiRnnClassifierForSegmentation model(std::move(dicts), ngram_descr, embd_descr,
-                                       rnn_descr, "tokens", train_ss ? 7 : 5, 0.1);
+                                       rnn_descr, "tokens", params.train_ss ? 7 : 5, 0.1);
 
-  const double learning_rate = 0.001;
-  torch::optim::Adam optimizer(model->parameters(), torch::optim::AdamOptions(learning_rate));
+  torch::optim::Adam optimizer(model->parameters(),
+                               torch::optim::AdamOptions(params.m_learning_rate)
+                               .weight_decay(params.m_weight_decay)
+                               .betas({params.m_beta_one, params.m_beta_two}));
 
   torch::Device device("cuda");
 
@@ -147,10 +149,10 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, const string& model_nam
 
   model->to(device);
 
-  model->train(300, 4, 256, { "tokens" },
+  model->train(300, params.m_batch_size, params.m_sequence_length, { "tokens" },
               *(train_input.get()), *(train_gold.get()),
               *(dev_input.get()), *(dev_gold.get()),
-              optimizer, model_name, device);
+              optimizer, params.m_output_model_name, device);
 
   return 0;
 }

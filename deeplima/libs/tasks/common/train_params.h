@@ -28,6 +28,8 @@ struct train_params_t
 
   float m_learning_rate;
   float m_weight_decay;
+  float m_beta_one;
+  float m_beta_two;
 
   float m_input_dropout_prob;
 
@@ -40,12 +42,16 @@ struct train_params_t
   train_params_t(std::string device_string="cpu",
                  float learning_rate=0.001,
                  float weight_decay=0.00001,
+                 float beta_one=0.9,
+                 float beta_two=0.999,
                  size_t max_epochs=100,
                  size_t max_epochs_without_improvement=10,
                  size_t batch_size=4)
     : m_device_string(device_string),
       m_learning_rate(learning_rate),
       m_weight_decay(weight_decay),
+      m_beta_one(beta_one),
+      m_beta_two(beta_two),
       m_input_dropout_prob(0.3),
       m_max_epochs(max_epochs),
       m_max_epochs_without_improvement(max_epochs_without_improvement),
