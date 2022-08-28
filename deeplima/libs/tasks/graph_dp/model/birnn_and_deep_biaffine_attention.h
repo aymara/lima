@@ -56,10 +56,15 @@ public:
                           generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
-      m_class_names(output_names),
+      m_output_class_names(output_names),
       m_embd_fn(embd_fn)
   {
-    m_classes = classes;
+    m_input_classes = classes;
+    m_input_class_names.reserve(embd_descr.size());
+    for ( const auto& d : embd_descr )
+    {
+      m_input_class_names.emplace_back(d.m_name);
+    }
   }
 
   virtual void load(torch::serialize::InputArchive& archive);
@@ -80,6 +85,7 @@ public:
              const IterableDataSet& train_batches,
              const IterableDataSet& eval_batches,
              torch::optim::Optimizer& opt,
+             double& best_eval_accuracy,
              const torch::Device& device = torch::Device(torch::kCPU));
 
   void evaluate(const std::vector<std::string>& output_names,
@@ -99,12 +105,17 @@ public:
 
   const DictsHolder& get_classes() const
   {
-    return m_classes;
+    return m_output_classes;
   }
 
-  const std::vector<std::string>& get_class_names() const
+  const std::vector<std::string>& get_output_class_names() const
   {
-    return m_class_names;
+    return m_output_class_names;
+  }
+
+  const std::vector<std::string>& get_input_class_names() const
+  {
+    return m_input_class_names;
   }
 
   const std::string& get_embd_fn(size_t idx) const
@@ -147,8 +158,10 @@ protected:
                                      const std::vector<uint32_t>& classes*/);
 
   size_t m_workers;
-  std::vector<std::string> m_class_names;
-  DictsHolder m_classes;
+  std::vector<std::string> m_input_class_names;
+  DictsHolder m_input_classes;
+  std::vector<std::string> m_output_class_names;
+  DictsHolder m_output_classes;
   std::string m_embd_fn;
 };
 

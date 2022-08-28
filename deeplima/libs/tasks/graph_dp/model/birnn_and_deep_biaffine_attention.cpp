@@ -36,14 +36,163 @@ namespace graph_dp
 namespace train
 {
 
+#define SERIALIZATION_KEY_TASKS "tasks"
+#define SERIALIZATION_KEY_INPUT_FEATURES "input_features"
+#define SERIALIZATION_KEY_INPUT_FEATURES_NAMES "input_features_names"
+#define SERIALIZATION_KEY_EMBD_FN "embd_fn"
+
 void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
 {
   BiRnnClassifierImpl::load(archive);
+
+  //assert(m_classes.size() == 0);
+
+  c10::IValue v;
+  if (archive.try_read(SERIALIZATION_KEY_TASKS, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("List of tasks must be a list.");
+    }
+
+    const c10::List<c10::IValue>& l = v.toList();
+    m_output_class_names.reserve(l.size());
+
+    for (size_t i = 0; i < l.size(); i++)
+    {
+      if (!l.get(i).isString())
+      {
+        throw std::runtime_error("List of tasks must be a list of strings.");
+      }
+
+      m_output_class_names.push_back(l.get(i).toStringRef());
+    }
+  }
+  else
+  {
+    throw std::runtime_error("Can't load list of tasks.");
+  }
+
+  if (archive.try_read(SERIALIZATION_KEY_INPUT_FEATURES_NAMES, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("List of input feature names must be a list.");
+    }
+
+    const c10::List<c10::IValue>& l = v.toList();
+    m_input_class_names.reserve(l.size());
+
+    for (size_t i = 0; i < l.size(); i++)
+    {
+      if (!l.get(i).isString())
+      {
+        throw std::runtime_error("List of input features names must be a list of strings.");
+      }
+
+      m_input_class_names.push_back(l.get(i).toStringRef());
+    }
+  }
+  else
+  {
+    throw std::runtime_error("Can't load list of input feature names.");
+  }
+
+  if (archive.try_read(SERIALIZATION_KEY_INPUT_FEATURES, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("List of input features must be a list.");
+    }
+
+    const c10::List<c10::IValue>& l = v.toList();
+    m_input_classes.reserve(l.size());
+
+    for (size_t i = 0; i < l.size(); i++)
+    {
+      if (!l.get(i).isList())
+      {
+        throw std::runtime_error("List of input features must be a list of lists of strings.");
+      }
+
+      shared_ptr<StringDict> d = shared_ptr<StringDict>(new StringDict());
+      d->fromIValue(l.get(i));
+      m_input_classes.push_back(d);
+    }
+  }
+  else
+  {
+    throw std::runtime_error("Can't list of input features.");
+  }
+
+  if (archive.try_read(SERIALIZATION_KEY_EMBD_FN, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("embd_fn must be a list.");
+    }
+
+    const c10::List<c10::IValue>& l = v.toList();
+    const c10::IValue& s = l.get(0);
+
+    if (!s.isString())
+    {
+      throw std::runtime_error("embd_fm must be a list of strings.");
+    }
+
+    m_embd_fn = s.toStringRef();
+  }
+  else
+  {
+    throw std::runtime_error("Can't load embd_fn.");
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) const
 {
   BiRnnClassifierImpl::save(archive);
+
+  // Save output class names
+  {
+  c10::List<std::string> list_of_class_names;
+  list_of_class_names.reserve(m_output_class_names.size());
+  for (size_t i = 0; i < m_output_class_names.size(); i++)
+  {
+    list_of_class_names.push_back(m_output_class_names[i]);
+  }
+  archive.write(SERIALIZATION_KEY_TASKS, list_of_class_names);
+  }
+
+  // Save input class names
+  {
+  c10::List<std::string> list_of_class_names;
+  list_of_class_names.reserve(m_input_class_names.size());
+  for (size_t i = 0; i < m_input_class_names.size(); i++)
+  {
+    list_of_class_names.push_back(m_input_class_names[i]);
+  }
+  archive.write(SERIALIZATION_KEY_INPUT_FEATURES_NAMES, list_of_class_names);
+  }
+
+  // Save input classes
+  c10::List<c10::List<std::string>> list_of_classes;
+  for (size_t i = 0; i < m_input_classes.size(); i++)
+  {
+    c10::List<std::string> current_class;
+    shared_ptr<StringDict> d = dynamic_pointer_cast<StringDict, DictBase>(m_input_classes[i]);
+    for (size_t j = 0; j < d->size(); j++)
+    {
+      current_class.push_back(d->get_value(j));
+    }
+    list_of_classes.push_back(current_class);
+  }
+  archive.write(SERIALIZATION_KEY_INPUT_FEATURES, list_of_classes);
+
+  // Save embeddings file names
+  c10::List<std::string> list_of_embd_fn;
+  list_of_embd_fn.reserve(1);
+  list_of_embd_fn.push_back(m_embd_fn);
+  archive.write(SERIALIZATION_KEY_EMBD_FN, list_of_embd_fn);
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& params,
@@ -51,10 +200,15 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
                                               const IterableDataSet& train_batches,
                                               const IterableDataSet& eval_batches,
                                               torch::optim::Optimizer& opt,
+                                              double& best_eval_accuracy,
                                               const torch::Device& device)
 {
   shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
+
+  double best_eval_loss = numeric_limits<double>::max();
+  size_t count_below_best = 0;
+  double lr_copy = 0;
 
   while (true)
   {
@@ -109,15 +263,48 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
       }
       else
       {
-        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f CORRECT=%d",
+        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f CORRECT=%lu",
                  task_name.c_str(),
                  train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy, eval.m_correct);
       }
       cout << buff << endl;
     }
     cout << "TIME: train=" << train_duration << "[ms] eval=" << eval_duration << "[ms]" << endl;
-  }
 
+    task_stat_t& main_task_eval = eval_stat[output_names[0]];
+
+    best_eval_loss = min(best_eval_loss, main_task_eval.m_loss);
+    if (main_task_eval.m_accuracy > best_eval_accuracy)
+    {
+      best_eval_accuracy = main_task_eval.m_accuracy;
+      if (params.m_output_model_name.size() > 0)
+      {
+        torch::save(*this, params.m_output_model_name + ".pt");
+      }
+      count_below_best = 0;
+    }
+    else if (main_task_eval.m_accuracy < best_eval_accuracy)
+    {
+      for (auto &group : opt.param_groups())
+      {
+          if (group.has_options())
+          {
+              auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
+              options.lr(options.lr() * (0.9));
+              lr_copy = options.lr();
+          }
+      }
+      if (lr_copy < 0.0000001)
+      {
+        return;
+      }
+      count_below_best++;
+      if (main_task_eval.m_loss > best_eval_loss && count_below_best > params.m_max_epochs_without_improvement)
+      {
+        return;
+      }
+    }
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train_epoch(size_t batch_size,
