@@ -133,12 +133,35 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
   model->to(device);
 
-  model->train(params, { "arc" },
-               train_iterator, dev_iterator,
-               optimizer, device);
+  double min_perf = 0;
 
-  cerr << "Uhu!" << endl;
+  for (const string& opt_name : utils::split(params.m_optimizers, ','))
+  {
+    shared_ptr<torch::optim::Optimizer> optimizer;
 
+    if (opt_name == "adam")
+    {
+      optimizer = make_shared<torch::optim::Adam>(model->parameters(),
+                                                  torch::optim::AdamOptions(params.m_learning_rate)
+                                                  .weight_decay(params.m_weight_decay));
+    }
+    else if (opt_name == "sgd")
+    {
+      optimizer = make_shared<torch::optim::SGD>(model->parameters(),
+                                                 torch::optim::SGDOptions(params.m_learning_rate * 1000)
+                                                 .weight_decay(params.m_weight_decay));
+    }
+    else
+    {
+      throw runtime_error("Unknown optimizer: " + opt_name);
+    }
+
+    model->train(params, { "arc" },
+                 train_iterator, dev_iterator,
+                 *optimizer, min_perf, device);
+
+    std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
+  }
 
   return -1;
 }
