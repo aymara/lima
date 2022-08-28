@@ -42,6 +42,7 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
   stringstream ss;
 
   ss << "input_dropout = def Dropout prob=0.3" << std::endl;
+  //ss << "decoder_dropout = def Dropout prob=0.1" << std::endl;
 
   size_t rnn_input_size = 0;
   for (size_t i = 0; i < embd_descr.size(); i++)
@@ -136,6 +137,8 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
   }
 
   ss << std::endl;
+
+  //ss << "decoder_input = forward module=decoder_dropout input=" << last_output_name << endl;
 
   ss << "arc_raw = forward module=decoder_0 input=" << last_output_name << endl;
   ss << "arc = log_softmax input=arc_raw dim=2" << endl;
