@@ -103,7 +103,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   if (params.m_input_model_name.size() == 0)
   {
     vector<embd_descr_t> embd_descr = train_iterator.get_embd_descr();
-    embd_descr.emplace(embd_descr.begin(), "raw", p_embd->dim(), 0);
+    embd_descr.emplace(embd_descr.end(), "raw", p_embd->dim(), 0);
     vector<rnn_descr_t> rnn_descr;
     rnn_descr.reserve(params.m_rnn_hidden_dims.size());
     for (size_t d : params.m_rnn_hidden_dims)
@@ -121,6 +121,9 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
                                   params.m_input_includes_root);
+  } else {
+    model = BiRnnAndDeepBiaffineAttention();
+    model->load(params.m_input_model_name);
   }
 
   cerr << model->get_script() << endl;
