@@ -57,29 +57,31 @@ namespace eigen_impl
                                 eigen_wrp::EigenMatrixXf> FeaturesVectorizer;*/
 
   template <class TokenVector, class Token>
-  class FeaturesVectorizer: public WordSeqEmbdVectorizer<TokenVector,
-                                                     TokenStrFeatExtractor<Token>,
-                                                     TokenUIntFeatExtractor<Token>,
-                                                     eigen_wrp::EigenMatrixXf::matrix_t,
-                                                     Eigen::Index>
+  class FeaturesVectorizer:
+      public vectorizers::WordSeqEmbdVectorizer<TokenVector,
+                                                TokenStrFeatExtractor<Token>,
+                                                TokenUIntFeatExtractor<Token>,
+                                                eigen_wrp::EigenMatrixXf::matrix_t,
+                                                Eigen::Index>
   {};
 
   template <class TokenVector, class Token>
-  class FeaturesVectorizerWithCache: public WordSeqEmbdVectorizerWithCache<TokenVector,
-                                                     TokenStrFeatExtractor<Token>,
-                                                     TokenUIntFeatExtractor<Token>,
-                                                     eigen_wrp::EigenMatrixXf::matrix_t,
-                                                     Eigen::Index>
+  class FeaturesVectorizerWithCache:
+      public vectorizers::WordSeqEmbdVectorizerWithCache<TokenVector,
+                                                         TokenStrFeatExtractor<Token>,
+                                                         TokenUIntFeatExtractor<Token>,
+                                                         eigen_wrp::EigenMatrixXf::matrix_t,
+                                                         Eigen::Index>
   {};
 
   template <class Model, class TokenVector, class Token>
-  class FeaturesVectorizerWithPrecomputing: public WordSeqEmbdVectorizerWithPrecomputing<
-                                                     Model,
-                                                     TokenVector,
-                                                     TokenStrFeatExtractor<Token>,
-                                                     TokenUIntFeatExtractor<Token>,
-                                                     eigen_wrp::EigenMatrixXf::matrix_t,
-                                                     Eigen::Index>
+  class FeaturesVectorizerWithPrecomputing:
+      public vectorizers::WordSeqEmbdVectorizerWithPrecomputing<Model,
+                                                                TokenVector,
+                                                                TokenStrFeatExtractor<Token>,
+                                                                TokenUIntFeatExtractor<Token>,
+                                                                eigen_wrp::EigenMatrixXf::matrix_t,
+                                                                Eigen::Index>
   {};
 
 } // namespace eigen_impl

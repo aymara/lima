@@ -20,10 +20,10 @@ namespace nets
 {
 
 template <class DataSet, class StrFeatExtractor, class UIntFeatExtractor, class MatrixInt, class MatrixFloat>
-class WordSeqVectorizerImpl : public tagging::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat>
+class WordSeqVectorizerImpl : public vectorizers::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat>
 {
 public:
-  typedef tagging::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat> Parent;
+  typedef vectorizers::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat> Parent;
 
   struct embeddable_feature_descr_t : public Parent::feature_descr_base_t
   {
