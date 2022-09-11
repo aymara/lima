@@ -101,6 +101,51 @@ public:
 };
 
 template <typename Token>
+class TokenUIntClsFeatExtractor
+{
+  std::vector<std::string> m_idx2feat;
+  std::unordered_map<std::string, int> m_feat2idx;
+  std::vector<uint32_t> m_idx2cls;
+
+public:
+  TokenUIntClsFeatExtractor()
+  {
+  }
+
+  void add_feature(const std::string& name, size_t cls_id)
+  {
+    m_feat2idx[name] = m_idx2feat.size();
+    m_idx2feat.push_back(name);
+    m_idx2cls.push_back(cls_id);
+  }
+
+  inline size_t get_feat_id(const std::string& name) const
+  {
+    const auto it = m_feat2idx.find(name);
+    if (m_feat2idx.cend() == it)
+    {
+      throw std::runtime_error("Unknown feature name.");
+    }
+    return it->second;
+  }
+
+  inline uint64_t feat_value(const Token& token, size_t feat_no) const
+  {
+    if (feat_no < m_idx2cls.size())
+    {
+      return token.cls(m_idx2cls[feat_no]);
+    }
+
+    throw std::runtime_error("Unknown feature id.");
+  }
+
+  inline size_t size() const
+  {
+    return m_idx2feat.size();
+  }
+};
+
+template <typename Token>
 class ConlluFeatExtractor
 {
 protected:
