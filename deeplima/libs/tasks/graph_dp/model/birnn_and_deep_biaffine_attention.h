@@ -72,7 +72,7 @@ public:
 
   void load(const std::string& fn)
   {
-    torch::load(*this, fn);
+    torch::load(*this, fn, torch::Device(torch::kCPU));
   }
 
   size_t init_new_worker(size_t input_len)
