@@ -36,8 +36,8 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
   assert(m_embd_fn[0].size() > 0);
 
   // classes
-  convert_classes(src.get_classes(), m_classes);
-  m_class_names = src.get_class_names();
+  convert_classes(src.get_classes(), Parent::m_output_str_dicts);
+  Parent::m_output_str_dicts_names = src.get_class_names();
 
   // torch modules
   Parent::m_lstm.reserve(src.get_layers_lstm().size());
