@@ -53,12 +53,12 @@ void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnn
 
   if (count_embd_uint > 0)
   {
-    m_uint_dicts.resize(count_embd_uint);
+    m_input_uint_dicts.resize(count_embd_uint);
   }
 
   if (count_embd_str > 0)
   {
-    m_str_dicts.resize(count_embd_str);
+    m_input_str_dicts.resize(count_embd_str);
   }
 
   size_t uint_dict_idx = 0, str_dict_idx = 0;
@@ -80,20 +80,20 @@ void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnn
     assert(sp_uint64_dict || sp_char32_dict || sp_str_dict);
     if (sp_uint64_dict)
     {
-      assert(uint_dict_idx < m_uint_dicts.size());
-      convert_module_from_torch(m, src.get_dicts()[i], m_uint_dicts[uint_dict_idx]);
+      assert(uint_dict_idx < m_input_uint_dicts.size());
+      convert_module_from_torch(m, src.get_dicts()[i], m_input_uint_dicts[uint_dict_idx]);
       uint_dict_idx++;
     }
     else if (sp_char32_dict)
     {
-      assert(uint_dict_idx < m_uint_dicts.size());
-      convert_module_from_torch(m, src.get_dicts()[i], m_uint_dicts[uint_dict_idx]);
+      assert(uint_dict_idx < m_input_uint_dicts.size());
+      convert_module_from_torch(m, src.get_dicts()[i], m_input_uint_dicts[uint_dict_idx]);
       uint_dict_idx++;
     }
     else if (sp_str_dict)
     {
-      assert(str_dict_idx < m_str_dicts.size());
-      convert_module_from_torch(m, src.get_dicts()[i], m_str_dicts[str_dict_idx]);
+      assert(str_dict_idx < m_input_str_dicts.size());
+      convert_module_from_torch(m, src.get_dicts()[i], m_input_str_dicts[str_dict_idx]);
       str_dict_idx++;
     }
   }
@@ -159,7 +159,7 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
 
   for (const auto& l : Parent::m_linear)
   {
-    m_classes.push_back(vector<string>(l.bias.rows(), ""));
+    Parent::m_output_str_dicts_names.push_back("");
   }
 }
 

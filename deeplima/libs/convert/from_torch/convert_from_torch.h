@@ -10,6 +10,7 @@
 
 #include "static_graph/dict.h"
 #include "deeplima/eigen_wrp/embd_dict.h"
+#include "deeplima/eigen_wrp/deep_biaffine_attn_decoder.h"
 
 namespace deeplima
 {
@@ -74,6 +75,20 @@ void convert_module_from_torch(const torch::nn::Linear& src, eigen_impl::params_
 {
   copy_matrix<M, S>(src->weight, dst.weight);
   copy_vector<V, S>(src->bias, dst.bias);
+}
+
+template <class M, class V, class S=float>
+void convert_module_from_torch(const deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder& src,
+                               deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<M, V>& dst)
+{
+  copy_matrix<M, S>(src->U1, dst.m_U1);
+  copy_vector<V, S>(src->u2, dst.m_u2);
+
+  copy_matrix<M, S>(src->mlp_head->weight, dst.m_weight_head);
+  copy_vector<V, S>(src->mlp_head->bias, dst.m_bias_head);
+
+  copy_matrix<M, S>(src->mlp_dep->weight, dst.m_weight_dep);
+  copy_vector<V, S>(src->mlp_dep->bias, dst.m_bias_dep);
 }
 
 template <class M, class S=float>
