@@ -38,22 +38,31 @@ struct token_t
 };
 }
 
-struct token_buffer_t : public std::vector<impl::token_t>
+template <class T=impl::token_t>
+struct token_buffer_t : public std::vector<T>
 {
 protected:
   uint32_t m_lock_count;
 
 public:
-  typedef impl::token_t token_t;
+  typedef std::vector<T> Parent;
+  typedef T token_t;
 
   token_buffer_t()
     : m_lock_count(0) { }
 
   token_buffer_t(size_t size)
-    : m_lock_count(0)
+    : Parent(size),
+      m_lock_count(0)
   {
-    resize(size);
   }
+
+  token_buffer_t(size_t size, const T& val)
+    : Parent(size, val),
+      m_lock_count(0)
+  {
+  }
+
 
   inline bool locked() const
   {
