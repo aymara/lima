@@ -58,6 +58,7 @@ public:
       int64_t output_begin,
       int64_t output_end,
       std::vector<std::vector<uint8_t>>& output,
+      const std::vector<size_t>& lengths,
       const std::vector<std::string>& output_names
       )
   {
@@ -73,19 +74,19 @@ public:
     return m_impl.get_uint_dicts();
   }
 
-  inline const typename M::str_dicts_holder_t& get_str_dicts() const
+  inline const typename M::str_dicts_holder_t& get_input_str_dicts() const
   {
-    return m_impl.get_str_dicts();
+    return m_impl.get_input_str_dicts();
   }
 
-  inline const std::vector<std::vector<std::string>>& get_classes() const
+  inline const std::vector<std::string>& get_output_str_dicts_names() const
   {
-    return m_impl.get_classes();
+    return m_impl.get_output_str_dicts_names();
   }
 
-  inline const std::vector<std::string>& get_class_names() const
+  inline const std::vector<std::vector<std::string>>& get_output_str_dicts() const
   {
-    return m_impl.get_class_names();
+    return m_impl.get_output_str_dicts();
   }
 
   inline const std::string& get_embd_fn(size_t idx) const

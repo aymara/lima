@@ -46,6 +46,7 @@ public:
       int64_t output_begin,
       int64_t output_end,
       std::vector<std::vector<uint8_t>>& output,
+      const std::vector<size_t>& lengths,
       const std::vector<std::string>& output_names
       )
   {
@@ -63,12 +64,12 @@ public:
 
   inline const typename M::dicts_holder_t& get_dicts() const
   {
-    return m_impl.get_uint_dicts();
+    return m_impl.get_input_uint_dicts();
   }
 
-  inline const std::vector<std::vector<std::string>>& get_classes() const
+  inline const std::vector<std::string>& get_output_str_dicts_names() const
   {
-    return m_impl.get_classes();
+    return m_impl.get_output_str_dicts_names();
   }
 
 protected:

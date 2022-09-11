@@ -51,9 +51,9 @@ public:
   {
     InferenceEngine::load(fn);
 
-    if (this->get_str_dicts().size())
+    if (this->get_input_str_dicts().size())
     {
-      auto z = *(this->get_str_dicts().begin());
+      auto z = *(this->get_input_str_dicts().begin());
       std::shared_ptr<FeatureVectorizerBase<Eigen::Index>> p
           = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
     }

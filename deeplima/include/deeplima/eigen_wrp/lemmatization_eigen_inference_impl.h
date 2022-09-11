@@ -160,7 +160,7 @@ public:
     p_linear_h->execute(Parent::m_wb[1][worker_id], encoder_state, Parent::m_params[1], decoder_initial_h);
     p_linear_c->execute(Parent::m_wb[2][worker_id], encoder_state, Parent::m_params[2], decoder_initial_c);
 
-    const EmbdUInt64Float& decoder_embd = Parent::m_uint_dicts[1];
+    const EmbdUInt64Float& decoder_embd = Parent::m_input_uint_dicts[1];
     p_decoder->execute(Parent::m_wb[4][worker_id], decoder_embd,
         decoder_initial_h, decoder_initial_c,
         Parent::m_params[4], 0x10FFFE, 9, output, output_max_len);
