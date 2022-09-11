@@ -24,6 +24,7 @@ class EmbdDict : public FeatureVectorizerToMatrix<M, K, I>
 {
 public:
   typedef K value_t;
+  typedef M tensor_t;
 
   EmbdDict() = default;
   virtual ~EmbdDict() = default;
@@ -68,7 +69,7 @@ public:
     target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
   }
 
-  M& get_tensor()
+  const M& get_tensor() const
   {
     return m_embd;
   }
@@ -133,9 +134,30 @@ public:
     target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
   }
 
-  M& get_tensor()
+  const M& get_tensor() const
   {
     return m_embd;
+  }
+
+  template <class K>
+  std::shared_ptr<Dict<K>> get_int_dict() const
+  {
+    std::vector<value_t> vk;
+    vk.reserve(m_index.size());
+    for ( const auto& it : m_index )
+    {
+      vk.push_back(it.first);
+    }
+    std::sort(vk.begin(), vk.end());
+
+    std::vector<K> vi(m_index.size());
+    for (size_t i = 0; i < vk.size(); ++i)
+    {
+      vi[i] = lookup(vk[i]);
+    }
+
+    std::shared_ptr<Dict<K>> rv = std::make_shared<Dict<K>>(vi);
+    return rv;
   }
 
 protected:
