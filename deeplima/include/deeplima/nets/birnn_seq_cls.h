@@ -17,13 +17,13 @@
 namespace deeplima
 {
 
-template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/ >
+template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out=uint8_t>
 class RnnSequenceClassifier : public InputVectorizer,
-                              public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer> >,
+                              public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> >,
                               public Model
 {
-  typedef RnnSequenceClassifier<Model, InputVectorizer> ThisClass;
-  typedef ThreadPool< RnnSequenceClassifier<Model, InputVectorizer> > ThreadPoolParent;
+  typedef RnnSequenceClassifier<Model, InputVectorizer, Out> ThisClass;
+  typedef ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> > ThreadPoolParent;
   friend ThreadPoolParent;
 
   enum slot_flags_t : uint8_t
@@ -71,7 +71,8 @@ protected:
   uint32_t m_slot_len;
 
   slot_t* m_slots;
-  std::vector<std::vector<uint8_t>> m_output; // external - classifier id, internal - time position
+  std::vector<std::vector<size_t>> m_lengths;
+  std::vector<std::vector<Out>> m_output; // external - classifier id, internal - time position
 
 
   inline int32_t prev_slot(int32_t idx)
@@ -131,6 +132,7 @@ protected:
                       slot.m_input_begin, slot.m_input_end,
                       slot.m_output_begin, slot.m_output_end,
                       this_ptr->m_output,
+                      this_ptr->m_lengths[worker_id],
                       {"tokens"});
 
     assert(slot.m_lock_count > 0);
@@ -149,7 +151,7 @@ protected:
 
 public:
 
-  typedef StdMatrix<uint8_t> OutputMatrix;
+  typedef StdMatrix<Out> OutputMatrix;
 
   const OutputMatrix get_output() const
   {
@@ -228,11 +230,15 @@ public:
       }
     }
 
+    m_lengths.resize(m_num_slots);
+
     // Vector for calculation results
-    m_output.resize(Model::get_classes().size());
+    m_output.resize(Model::get_output_str_dicts_names().size());
+    assert(m_output.size() > 0);
     for (auto& v : m_output)
     {
       v.resize(InputVectorizer::size());
+      assert(v.size() > 0);
     }
   }
 
@@ -342,6 +348,27 @@ public:
     uint32_t rv = timepoint / m_slot_len;
     assert(rv < m_num_slots);
     return rv;
+  }
+
+  inline void set_slot_lengths(int32_t idx, const std::vector<size_t>& lengths)
+  {
+    assert(idx >= 0);
+    assert(idx < m_num_slots);
+    assert(idx < m_lengths.size());
+
+    m_lengths[idx] = lengths;
+  }
+
+  // used in graph-based dependency parser
+  inline void set_slot_begin(int32_t idx, uint64_t slot_begin)
+  {
+    assert(idx >= 0);
+    assert(idx < m_num_slots);
+
+    slot_t& slot = m_slots[idx];
+
+    slot.m_output_begin = slot_begin;
+    slot.m_input_begin = slot_begin;
   }
 
   inline void set_slot_end(int32_t idx, uint64_t slot_end)
