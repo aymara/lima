@@ -6,6 +6,8 @@
 #ifndef DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
+#include <memory>
+
 #include "segmentation.h"
 #include "helpers/path_resolver.h"
 #include "utils/str_index.h"
@@ -23,7 +25,7 @@ public:
   class TokenIterator
   {
     const StringIndex& m_stridx;
-    const token_buffer_t& m_buffer;
+    const token_buffer_t<>& m_buffer;
     const std::vector<StringIndex::idx_t> m_lemm_buffer;
     const StdMatrix<uint8_t>& m_classes;
     size_t m_current;
@@ -31,7 +33,7 @@ public:
     size_t m_end;
 
   public:
-    TokenIterator(const StringIndex& stridx, const token_buffer_t& buffer,
+    TokenIterator(const StringIndex& stridx, const token_buffer_t<>& buffer,
                   const std::vector<StringIndex::idx_t>& lemm_buffer,
                   const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
       : m_stridx(stridx), m_buffer(buffer), m_lemm_buffer(lemm_buffer), m_classes(classes),
@@ -45,32 +47,62 @@ public:
       return m_current >= m_end;
     }
 
-    impl::token_t::token_flags_t flags() const
+    inline impl::token_t::token_flags_t flags() const
     {
       assert(! end());
       return m_buffer[m_current].m_flags;
     }
 
-    const char* form() const
+    inline uint16_t token_offset() const
+    {
+      return m_buffer[m_current].m_offset;
+    }
+
+    inline uint16_t token_len() const
+    {
+      return m_buffer[m_current].m_len;
+    }
+
+    inline uint32_t form_idx() const
+    {
+      return m_buffer[m_current].m_form_idx;
+    }
+
+    inline uint32_t lemma_idx() const
+    {
+      return m_lemm_buffer[m_current];
+    }
+
+    inline const char* form() const
     {
       assert(! end());
       const std::string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
       return f.c_str();
     }
 
-    const char* lemma() const
+    inline const char* lemma() const
     {
       assert(! end());
       const std::string& f = m_stridx.get_str(m_lemm_buffer[m_current]);
       return f.c_str();
     }
 
-    void next()
+    inline void next()
     {
       m_current++;
     }
 
-    const uint8_t token_class(size_t cls_idx) const
+    inline void reset(size_t position = 0)
+    {
+      m_current = position;
+    }
+
+    inline size_t position() const
+    {
+      return m_current;
+    }
+
+    inline const uint8_t token_class(size_t cls_idx) const
     {
       uint8_t val = m_classes.get(m_current + m_offset, cls_idx);
       return val;
@@ -87,9 +119,9 @@ protected:
 
   protected:
     const StringIndex& m_stridx;
-    const token_buffer_t::token_t* m_ptoken;
+    const token_buffer_t<>::token_t* m_ptoken;
 
-    inline void set_token(const token_buffer_t::token_t* p)
+    inline void set_token(const token_buffer_t<>::token_t* p)
     {
       m_ptoken = p;
     }
@@ -100,7 +132,7 @@ protected:
         m_ptoken(nullptr)
     { }
 
-    inline token_buffer_t::token_t::token_flags_t flags() const
+    inline token_buffer_t<>::token_t::token_flags_t flags() const
     {
       assert(nullptr != m_ptoken);
       return m_ptoken->m_flags;
@@ -109,7 +141,7 @@ protected:
     inline bool eos() const
     {
       assert(nullptr != m_ptoken);
-      return flags() & token_buffer_t::token_t::token_flags_t::sentence_brk;
+      return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
     }
 
     inline const std::string& form() const
@@ -122,16 +154,16 @@ protected:
 
   class enriched_token_buffer_t
   {
-    const token_buffer_t& m_data;
+    const token_buffer_t<>& m_data;
     mutable enriched_token_t m_token; // WARNING: only one iterator is supported
 
   public:
     typedef enriched_token_t token_t;
 
-    enriched_token_buffer_t(const token_buffer_t& data, const StringIndex& stridx)
+    enriched_token_buffer_t(const token_buffer_t<>& data, const StringIndex& stridx)
       : m_data(data), m_token(stridx) { }
 
-    inline token_buffer_t::size_type size() const
+    inline token_buffer_t<>::size_type size() const
     {
       return m_data.size();
     }
@@ -168,13 +200,15 @@ public:
                         const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
-      m_current_timepoint(0)
+      m_current_timepoint(0),
+      m_stridx_ptr(std::make_shared<StringIndex>()),
+      m_stridx(*m_stridx_ptr)
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
     m_lemm_buffers.resize(num_buffers);
-    for ( token_buffer_t& b : m_buffers ) b.resize(m_buffer_size);
+    for ( token_buffer_t<>& b : m_buffers ) b.resize(m_buffer_size);
     for ( auto& b : m_lemm_buffers ) b.resize(m_buffer_size);
 
     m_cls.load(model_fn, path_resolver);
@@ -184,7 +218,7 @@ public:
     for ( auto& b : m_lemm_buffers ) std::fill(b.begin(), b.end(), m_unk_idx);
 
     {
-      token_buffer_t buff(m_stridx.size());
+      token_buffer_t<> buff(m_stridx.size());
       for (uint32_t i = 0; i < buff.size(); ++i)
       {
         buff[i].m_form_idx = i;
@@ -196,7 +230,7 @@ public:
     if (lemm_model_fn.size() > 0)
     {
       m_lemm.load(lemm_model_fn, path_resolver);
-      m_lemm.init(128, m_cls.get_class_names(), m_cls.get_classes());
+      m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
                              const typename EntityTaggingModule::OutputMatrix& classes,
@@ -241,7 +275,7 @@ public:
 
   typedef typename EntityTaggingModule::OutputMatrix OutputMatrix;
   typedef std::function < void (const StringIndex& stridx,
-                                const token_buffer_t& tokens,
+                                const token_buffer_t<>& tokens,
                                 const std::vector<StringIndex::idx_t>& lemmata,
                                 const OutputMatrix& classes,
                                 size_t begin,
@@ -253,12 +287,17 @@ public:
 
   const std::vector<std::vector<std::string>>& get_classes() const
   {
-    return m_cls.get_classes();
+    return m_cls.get_output_str_dicts();
   }
 
   const std::vector<std::string>& get_class_names() const
   {
-    return m_cls.get_class_names();
+    return m_cls.get_output_str_dicts_names();
+  }
+
+  std::shared_ptr<StringIndex> get_stridx() const
+  {
+    return m_stridx_ptr;
   }
 
   void finalize()
@@ -314,7 +353,7 @@ public:
   void acquire_buffer()
   {
     size_t next_buffer_idx = (m_current_buffer + 1 < m_buffers.size()) ? (m_current_buffer + 1) : 0;
-    const token_buffer_t& next_buffer = m_buffers[next_buffer_idx];
+    const token_buffer_t<>& next_buffer = m_buffers[next_buffer_idx];
 
     // wait for buffer
     while (next_buffer.locked())
@@ -332,7 +371,7 @@ public:
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 
-    const token_buffer_t& current_buffer = m_buffers[buffer_idx];
+    const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
     m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx), count);
   }
 
@@ -340,11 +379,11 @@ protected:
 
   void process_buffer(size_t buffer_idx)
   {
-    const token_buffer_t& current_buffer = m_buffers[buffer_idx];
+    const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
     m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx));
   }
 
-  void lemmatize(const token_buffer_t& buffer,
+  void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
                  const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
   {
@@ -369,9 +408,10 @@ protected:
   size_t m_current_buffer;
   size_t m_current_timepoint;
 
-  StringIndex m_stridx;
+  std::shared_ptr<StringIndex> m_stridx_ptr;
+  StringIndex& m_stridx;
   StringIndex::idx_t m_unk_idx;
-  std::vector<token_buffer_t> m_buffers;
+  std::vector<token_buffer_t<>> m_buffers;
   std::vector<std::vector<StringIndex::idx_t>> m_lemm_buffers; // access control is sync with m_buffers
 
   EntityTaggingModule m_cls;
