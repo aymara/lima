@@ -377,8 +377,6 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
       continue;
     }
 
-    //std::cerr << "eval batch size == " << batch.trainable_input().size(1) << std::endl;
-
     epoch_stat_t t;
 
     evaluate(output_names,
