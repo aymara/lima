@@ -257,8 +257,8 @@ public:
   virtual size_t execute(Op_Base::workbench_t* pwb,
                          const M& input_matrix,
                          const param_base_t* params,
-                         size_t input_begin,
-                         size_t input_end)
+                         const size_t input_begin,
+                         const size_t input_end)
   {
     assert(nullptr != pwb);
     assert(nullptr != params);
@@ -285,15 +285,15 @@ public:
       {
         if (0 == i)
         {
-          //const M input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end);
+          //const M input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin);
           // Top rows - forward pass
           temp.topLeftCorner(hidden_size * 4, input_end - input_begin)
-              = (layer.fw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end)).colwise()
+              = (layer.fw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin)).colwise()
                 + layer.fw.bias_ih;
 
           // Bottom rows - backward pass
           temp.bottomLeftCorner(hidden_size * 4, input_end - input_begin)
-              = (layer.bw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end)).colwise()
+              = (layer.bw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin)).colwise()
                 + layer.bw.bias_ih;
         }
         else
@@ -311,13 +311,13 @@ public:
       }
 
       // Forward pass
-      forward_pass(hidden_size, layer.fw, temp, s, g_u, g_o, g_if, c, output, zero, input_begin, input_end);
+      forward_pass(hidden_size, layer.fw, temp, s, g_u, g_o, g_if, c, output, zero, 0, input_end - input_begin);
       wb->fw_c[i] = c;
       wb->fw_h[i] = output.col(input_end - input_begin - 1).topRows(hidden_size);
 
       // Backward pass
       c = V::Zero(hidden_size);
-      backward_pass(hidden_size, layer.bw, temp, s, g_u, g_o, g_if, c, output, zero, input_begin, input_end);
+      backward_pass(hidden_size, layer.bw, temp, s, g_u, g_o, g_if, c, output, zero, 0, input_end - input_begin);
       wb->bw_c[i] = c;
       wb->bw_h[i] = output.col(input_begin).bottomRows(hidden_size);
     }

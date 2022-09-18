@@ -57,8 +57,8 @@ public:
   virtual size_t execute(Op_Base::workbench_t* pwb,
                          const M& input_matrix,
                          const param_base_t* params,
-                         size_t input_begin,
-                         size_t input_end,
+                         const size_t input_begin,
+                         const size_t input_end,
                          std::vector<uint32_t>& output)
   {
     assert(nullptr != pwb);
@@ -67,7 +67,7 @@ public:
 
     workbench_t* wb = static_cast<workbench_t*>(pwb);
 
-    const M& input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end);
+    const M input = input_matrix.block(0, 0, input_matrix.rows(), input_end - input_begin);
 
     M arc_head = ((layer.m_weight_head * input).colwise() + layer.m_bias_head).transpose();
     elu_inplace(arc_head);
@@ -82,18 +82,20 @@ public:
 
     M Wx = (arc_head * layer.m_U1) * arc_dep;
 
-    wb->output = Wx + b;
+    M logits = Wx + b;
 
-    for (size_t i = 0; i < wb->output.rows(); ++i)
+    for (size_t i = 0; i < logits.rows(); ++i)
     {
       Eigen::Index idx = 0;
-      typename M::Scalar v = wb->output.row(i).maxCoeff(&idx);
+      typename M::Scalar v = logits.row(i).maxCoeff(&idx);
       assert(idx >= 0);
       assert(idx < std::numeric_limits<uint32_t>::max());
       output[input_begin + i] = (uint32_t) idx;
+      std::cerr << i << "\t" << idx << std::endl;
     }
+    std::cerr << std::endl;
 
-    arborescence<M, uint32_t, typename M::Scalar>(wb->output, output, input_begin);
+    //arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
 
     return 0;
   }
