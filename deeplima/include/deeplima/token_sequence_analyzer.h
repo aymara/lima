@@ -87,6 +87,12 @@ public:
       return f.c_str();
     }
 
+    inline uint32_t head() const
+    {
+      throw;
+      return 0;
+    }
+
     inline void next()
     {
       m_current++;

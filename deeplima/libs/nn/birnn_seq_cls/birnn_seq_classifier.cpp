@@ -123,7 +123,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
         //    = src.index({Slice(), Slice(), Slice(i, i+m_embd_descr[i].m_dim) }).reshape({ (int64_t)src.size(0), m_embd_descr[i].m_dim });
       }
     }
-    //std::cout << dst[m_embd_descr[i].m_name].sizes() << std::endl;
+    //std::cout << "dst[" << m_embd_descr[i].m_name << "]=" << dst[m_embd_descr[i].m_name].sizes() << std::endl;
   }
 }
 

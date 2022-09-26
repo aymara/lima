@@ -154,8 +154,14 @@ protected:
   uint32_t m_next_token_idx;
 };
 
+class DumperBase
+{
+public:
+  virtual uint64_t get_token_counter() const = 0;
+};
+
 template <class I>
-class AnalysisToConllU
+class AnalysisToConllU : public DumperBase
 {
 protected:
   uint64_t m_token_counter;
@@ -193,7 +199,7 @@ public:
       return m_classes;
   }
 
-  uint64_t get_token_counter() const
+  virtual uint64_t get_token_counter() const
   {
     return m_token_counter;
   }
@@ -247,12 +253,17 @@ public:
     return feat_str;
   }
 
-  void operator()(I& iter)
+  void operator()(I& iter, bool hasDeps = false)
   {
     std::string temp;
     while (!iter.end())
     {
       const char* ptoken = iter.form();
+      if (std::string(ptoken) == "<ROOT>")
+      {
+        iter.next();
+        continue;
+      }
       std::ostringstream s;
       if (temp.size() > 0)
       {
@@ -301,7 +312,14 @@ public:
       }
 
       std::cout << "\t";
-      std::cout << m_next_token_idx - 1;
+      if (hasDeps)
+      {
+        std::cout << iter.head();
+      }
+      else
+      {
+        std::cout << m_next_token_idx - 1;
+      }
       std::cout << "\t_\t_\t_" << std::endl;
 
       increment_token_counter();
