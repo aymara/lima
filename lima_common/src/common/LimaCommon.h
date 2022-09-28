@@ -408,7 +408,7 @@ public :
         m_reason = std::string("uninitialized media ")+m_med;
       }
 
-    };
+    }
 
     MediaNotInitialized(const MediaNotInitialized&) = default;
     MediaNotInitialized& operator=(const MediaNotInitialized&) = delete;
@@ -439,7 +439,7 @@ public :
     }
     AccessByStringNotInitialized(const AccessByStringNotInitialized&) = default;
     AccessByStringNotInitialized& operator=(const AccessByStringNotInitialized&) = delete;
-    virtual ~AccessByStringNotInitialized() throw() {};
+    virtual ~AccessByStringNotInitialized() throw() {}
 
 };
 
@@ -459,7 +459,7 @@ public :
     }
     AccessByStringOutOfRange(const AccessByStringOutOfRange&) = default;
     AccessByStringOutOfRange& operator=(const AccessByStringOutOfRange&) = delete;
-    virtual ~AccessByStringOutOfRange() throw() {};
+    virtual ~AccessByStringOutOfRange() throw() {}
 
 };
 
