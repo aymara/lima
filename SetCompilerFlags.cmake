@@ -192,7 +192,7 @@ else ()
 
   install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
     DESTINATION bin
-    COMPONENT Libraries)
+    COMPONENT runtime)
 
 endif ()
 

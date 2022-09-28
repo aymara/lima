@@ -147,6 +147,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
                                       const TorchMatrix<float>& eval_nontrainable_input,
                                       const TorchMatrix<int64_t>& eval_gold,
                                       torch::optim::Optimizer& opt,
+                                      double& best_eval_accuracy,
                                       const torch::Device& device)
 {
   set_tags(params.m_tags);
@@ -168,7 +169,6 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       = aligned_gold.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
   std::cerr << gold_batches.sizes() << std::endl;*/
 
-  double best_eval_accuracy = 0;
   double best_eval_loss = numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;

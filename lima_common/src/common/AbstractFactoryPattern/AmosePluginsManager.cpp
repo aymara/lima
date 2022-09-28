@@ -61,6 +61,8 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
         ABSTRACTFACTORYPATTERNLOGINIT;
         LERROR << "AmosePluginsManager::loadPlugins: cannot open plugins file "
                << pluginsFile.toUtf8().data();
+        std::cerr << "AmosePluginsManager::loadPlugins: cannot open plugins file "
+                  << pluginsFile.toUtf8().data();
         return false;
       }
 
@@ -83,6 +85,9 @@ bool AmosePluginsManager::loadPlugins(const QString& configDirs)
             LERROR << "AmosePluginsManager::loadLibrary(\""
                    << line.toStdString() << "\") failed while handling"
                    << (pluginsDir.path() + "/" + pluginsFile) << ".";
+            std::cerr << "AmosePluginsManager::loadLibrary(\""
+                      << line.toStdString() << "\") failed while handling"
+                      << (pluginsDir.path() + "/" + pluginsFile).toStdString() << ".";
             return false;
           }
           else

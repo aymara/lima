@@ -29,9 +29,13 @@ struct train_params_t
   float m_learning_rate;
   float m_weight_decay;
 
+  float m_input_dropout_prob;
+
   size_t m_max_epochs;
   size_t m_max_epochs_without_improvement;
   size_t m_batch_size;  // sequences per iteration
+
+  std::string m_optimizers;
 
   train_params_t(std::string device_string="cpu",
                  float learning_rate=0.001,
@@ -42,9 +46,11 @@ struct train_params_t
     : m_device_string(device_string),
       m_learning_rate(learning_rate),
       m_weight_decay(weight_decay),
+      m_input_dropout_prob(0.3),
       m_max_epochs(max_epochs),
       m_max_epochs_without_improvement(max_epochs_without_improvement),
-      m_batch_size(batch_size) {}
+      m_batch_size(batch_size),
+      m_optimizers("adam") {}
 
   virtual const std::string& get_train_set_fn() const
   {

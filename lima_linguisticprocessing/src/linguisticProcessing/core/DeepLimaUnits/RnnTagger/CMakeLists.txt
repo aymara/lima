@@ -21,7 +21,7 @@ if (EIGEN3_FOUND)
     DECLARE_LIMA_PLUGIN(lima-lp-rnn-tagger)
 
     target_compile_definitions(lima-lp-rnn-tagger
-            PRIVATE "-DLIMA_RNN_TAGGER_EXPORTING"
+            PRIVATE "-DLIMA_RNNTAGGER_EXPORTING"
             PUBLIC
             DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
             )
@@ -37,6 +37,8 @@ if (EIGEN3_FOUND)
             convert_from_torch-shared
             fasttext-static
             utils
+            morph_model
+            static_graph
             ${TORCH_LIBRARIES}
             )
 

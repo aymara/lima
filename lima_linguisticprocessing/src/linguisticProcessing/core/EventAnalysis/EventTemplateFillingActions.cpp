@@ -74,10 +74,21 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
     eventData = new EventTemplateData();
     analysis.setData("EventTemplateData", eventData);
   }
+  // get the cardinality for the role in the template definition
+  unsigned int cardinality(1);
+  EventTemplateDefinitionData* defData=static_cast<EventTemplateDefinitionData*>(analysis.getData("EventTemplateFillingTemplateDefinition"));
+  if (defData==0) {
+    LDEBUG << "AddTemplateElement: no template definition provided";
+  }
+  else {
+    cardinality=defData->resource->getCardinality(m_role);
+  }
+  // !!!! TODO: add cardinality as argument for addElementInCurrentTemplate !!!
+    
   if (! m_type.isNull()) {
     EventTemplateElement elt(v,&graph,m_type);
-    LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role;
-    eventData->addElementInCurrentTemplate(m_role,elt);
+    LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role << ", cardinality =" << cardinality;
+    eventData->addElementInCurrentTemplate(m_role,elt,cardinality);
   }
   else {
     //get type from specific entity associated to the vertex
@@ -101,8 +112,8 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
         pointerValue<SpecificEntityAnnotation>();
 
         EventTemplateElement elt(v,&graph,se->getType());
-        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role;
-        eventData->addElementInCurrentTemplate(m_role,elt);
+        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role << ", cardinality =" << cardinality;
+        eventData->addElementInCurrentTemplate(m_role,elt,cardinality);
       }
     }
   }

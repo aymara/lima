@@ -48,6 +48,10 @@ int main(int argc, char* argv[])
   ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
   ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
   ("tag",               po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
+  ("batch-size,b",      po::value<size_t>(&params.m_batch_size),        "Batch size")
+  ("seq-len,s",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
+  ("opt,o",             po::value<string>(&params.m_optimizers),        "Optimizers to use (comma separated list: (adam,sgd)+)")
+  ("input-dropout",     po::value<float>(&params.m_input_dropout_prob), "Input dropout probability")
   ;
 
   po::variables_map vm;
@@ -128,6 +132,9 @@ int main(int argc, char* argv[])
 
     params.m_tags[k] = v;
   }
+
+  std::cout << "batch_size=" << params.m_batch_size
+            << " seq_len=" << params.m_sequence_length << std::endl;
 
   return deeplima::tagging::train::train_entity_tagger(params);
 }

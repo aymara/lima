@@ -21,7 +21,7 @@ if (EIGEN3_FOUND)
     DECLARE_LIMA_PLUGIN(lima-lp-rnn-tokenizer)
 
     target_compile_definitions(lima-lp-rnn-tokenizer
-        PRIVATE "-DLIMA_RNN_TOKENIZER_EXPORTING"
+        PRIVATE "-DLIMA_RNNTOKENIZER_EXPORTING"
         PUBLIC
         DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
     )

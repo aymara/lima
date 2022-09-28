@@ -21,6 +21,7 @@
 
 #include "EventAnalysisExport.h"
 #include "EventTemplate.h"
+#include "EventTemplateDefinitionResource.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -36,7 +37,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
   ~EventTemplateData();
   
   void addTemplate();
-  void addElementInCurrentTemplate(const std::string& role, const EventTemplateElement& elt);
+  void addElementInCurrentTemplate(const std::string& role, const EventTemplateElement& elt, unsigned int cardinality);
   void clearCurrentTemplate();
   void setTypeInCurrentTemplate(const std::string&);
 
@@ -49,6 +50,14 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
                         const Common::AnnotationGraphs::AnnotationData* annotationData,
                         const std::string& role,
                         uint64_t eventId)  const;
+};
+
+class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionData : public AnalysisData
+{
+  public:
+    EventTemplateDefinitionData(EventTemplateDefinitionResource* r):resource(r) {}
+    // no destructor to free the pointer : the pointer is on an external resource
+    EventTemplateDefinitionResource* resource;
 };
 
 } // end namespace

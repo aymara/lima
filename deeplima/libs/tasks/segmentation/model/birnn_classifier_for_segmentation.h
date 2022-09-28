@@ -32,8 +32,14 @@ public:
                                      const std::vector<nets::embd_descr_t>& embd_descr,
                                      const std::vector<nets::rnn_descr_t>& rnn_descr,
                                      const std::string& output_name,
-                                     uint32_t num_classes)
-    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, { output_name }, { num_classes }),
+                                     uint32_t num_classes,
+                                     float input_dropout_prob)
+    : BiRnnClassifierImpl(std::move(dicts),
+                          embd_descr,
+                          rnn_descr,
+                          { output_name },
+                          { num_classes },
+                          input_dropout_prob),
       m_ngram_descr(ngram_descr),
       m_workers(0)
   {

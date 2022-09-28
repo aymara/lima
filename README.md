@@ -4,7 +4,9 @@ LIMA - Libre Multilingual Analyzer
 
 # TL;DR
 
-Under Linux with python >= 3.7 and < 4:
+LIMA python bindings are currently available **under Linux only** (x86_64).
+
+Under Linux with python >= 3.7 and < 4, and **upgraded pip**:
 
 ```bash
 # Upgrading pip is fundamental in order to obtain the correct LIMA version

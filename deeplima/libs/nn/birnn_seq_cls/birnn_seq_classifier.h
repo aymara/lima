@@ -45,9 +45,10 @@ public:
                       const std::vector<embd_descr_t>& embd_descr,
                       const std::vector<rnn_descr_t>& rnn_descr,
                       const std::vector<std::string>& output_names,
-                      const std::vector<uint32_t>& classes)
+                      const std::vector<uint32_t>& classes,
+                      float input_dropout_prob)
     : StaticGraphImpl(dicts,
-                      generate_script(embd_descr, rnn_descr, output_names, classes)),
+                      generate_script(embd_descr, rnn_descr, output_names, classes, input_dropout_prob)),
       m_embd_descr(embd_descr)
   {
   }
@@ -146,7 +147,8 @@ protected:
   static std::string generate_script(const std::vector<embd_descr_t>& embd_descr,
                                      const std::vector<rnn_descr_t>& rnn_descr,
                                      const std::vector<std::string>& output_names,
-                                     const std::vector<uint32_t>& classes);
+                                     const std::vector<uint32_t>& classes,
+                                     float input_dropout_prob);
 
   std::vector<embd_descr_t> m_embd_descr;
 };

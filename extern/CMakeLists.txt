@@ -46,9 +46,9 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic-lima
   POSITION_INDEPENDENT_CODE True)
   install (TARGETS fasttext-static
-      ARCHIVE DESTINATION lib)
+      ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
   install (TARGETS fasttext-static_pic
-      ARCHIVE DESTINATION lib)
+      ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 
 else()
   add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
@@ -57,23 +57,35 @@ else()
   target_link_libraries(fasttext-shared Threads::Threads)
 
   install (TARGETS fasttext-shared
-      LIBRARY DESTINATION lib)
+      LIBRARY DESTINATION ${LIB_INSTALL_DIR})
 
 
   add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
   set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext-lima)
 
   install (TARGETS fasttext-static
-      ARCHIVE DESTINATION lib)
+      ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 
 endif()
 
 #PUBLIC_HEADER DESTINATION include/fasttext-lima)
 
 ### END FastText stuff
-
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 install(DIRECTORY libtorch/lib/
-  DESTINATION lib
+  COMPONENT runtime
+  DESTINATION ${LIB_INSTALL_DIR}
+  FILES_MATCHING PATTERN "*.dll"
+)
+file(COPY libtorch/lib/ DESTINATION ${CMAKE_BINARY_DIR}/execEnv/lib/ FILES_MATCHING PATTERN "*.dll")
+FILE(GLOB TORCH_FOUND_LIBRARIES "libtorch/lib/*.dll")
+message("libtorch: ${TORCH_FOUND_LIBRARIES}")
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${TORCH_FOUND_LIBRARIES})
+else()
+install(DIRECTORY libtorch/lib/
+  DESTINATION ${LIB_INSTALL_DIR}
   FILES_MATCHING PATTERN "lib*.so*"
 )
-
+endif()
