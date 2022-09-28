@@ -160,7 +160,6 @@ m_language(language)
 #ifdef DEBUG_LP
   SELOGINIT;
 #endif
-  m_sp=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
 
   LimaString str=complement; // copy for easier parse (modify)
   LimaString sep=Common::Misc::utf8stdstring2limastring(",");
@@ -283,7 +282,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
 //   LDEBUG << "    match is " << match;
 
 //   LDEBUG << "    Creating annotation ";
-  SpecificEntityAnnotation annot(match,*m_sp);
+  SpecificEntityAnnotation annot(match, Common::MediaticData::MediaticData::changeable().stringsPool(m_language));
   std::ostringstream oss;
   annot.dump(oss);
 #ifdef DEBUG_LP
@@ -380,7 +379,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
   }
 
-  const FsaStringsPool& sp=*m_sp;
+  auto& sp = Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   Token* newToken = new Token(
       seFlex,
       sp[seFlex],
