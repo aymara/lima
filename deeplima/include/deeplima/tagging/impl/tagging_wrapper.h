@@ -41,6 +41,10 @@ public:
     return m_impl.get_precomputed_dim();
   }
 
+  virtual void get_classes_from_fn(const std::string& fn, std::vector<std::string>& class_names, std::vector<std::vector<std::string>>& classes){
+      m_impl.convert_classes_from_fn(fn,class_names, classes);
+  }
+
   inline void precompute_inputs(
       const typename M::tensor_t& inputs,
       typename M::tensor_t& outputs,

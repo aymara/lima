@@ -16,6 +16,7 @@
 #include "utils/str_index.h"
 #include "helpers/path_resolver.h"
 #include "graph_dp/impl/graph_dp_impl.h"
+#include "segmentation/impl/segmentation_decoder.h"
 
 #include "graph_dp.h"
 

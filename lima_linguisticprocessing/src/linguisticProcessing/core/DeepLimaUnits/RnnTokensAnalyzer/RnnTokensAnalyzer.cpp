@@ -62,6 +62,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
         dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
 
+        Lima::AnalysisContent* m_analysis;
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
         QString m_data;
@@ -73,6 +74,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         std::vector<QString> m_lemmas;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         bool m_loaded;
+
     };
 
     RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false)
@@ -103,6 +105,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
     Lima::LimaStatusCode
     RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis) const {
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
+        m_d->m_analysis = &analysis;
         auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
         auto srcgraph = anagraph->getGraph();
         auto endVx = anagraph->lastVertex();
@@ -317,7 +320,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
     void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
         auto class_names = m_tokensAnalyzer->get_class_names();
-
+        m_analysis->setData("TokenIterator", reinterpret_cast<AnalysisData *>(&ti));
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "classes: " << class_names);
         while(!ti.end()){
             auto tag = std::map<std::string,std::string>();

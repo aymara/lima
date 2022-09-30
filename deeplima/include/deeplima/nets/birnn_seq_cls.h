@@ -248,6 +248,10 @@ public:
     //InputVectorizer::set_dicts(Model::get_dicts());
   }
 
+  void get_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes){
+      Model::get_classes_from_fn(fn, classes_names, classes);
+  }
+
   virtual ~RnnSequenceClassifier()
   {
     std::cerr << "-> ~RnnSequenceClassifier" << std::endl;

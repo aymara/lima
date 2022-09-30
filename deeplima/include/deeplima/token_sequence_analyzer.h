@@ -274,6 +274,10 @@ public:
     }
   }
 
+    void get_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes){
+       m_cls.get_classes_from_fn(fn, classes_names, classes);
+    }
+
   ~TokenSequenceAnalyzer()
   {
     std::cerr << "~TokenSequenceAnalyzer" << std::endl;

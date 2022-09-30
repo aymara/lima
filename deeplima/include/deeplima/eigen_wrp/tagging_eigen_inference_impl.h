@@ -39,6 +39,8 @@ public:
     convert_from_torch(fn);
   }
 
+  virtual void convert_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes);
+
   virtual size_t get_precomputed_dim() const
   {
     typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t *p_params =
