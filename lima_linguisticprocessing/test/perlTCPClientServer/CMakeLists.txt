@@ -5,5 +5,7 @@
 
 ########### install files ###############
 
-install(FILES  analserverrc analserverrc-eng analserverrc-fre DESTINATION share/config/lima)
-install(FILES  AnalysisClient.pl NonInteractiveAnalysisClient.pl AnalysisServer.pl DESTINATION bin)
+install(FILES  analserverrc analserverrc-eng analserverrc-fre DESTINATION share/config/lima
+  COMPONENT runtime)
+install(FILES  AnalysisClient.pl NonInteractiveAnalysisClient.pl AnalysisServer.pl DESTINATION bin
+  COMPONENT runtime)

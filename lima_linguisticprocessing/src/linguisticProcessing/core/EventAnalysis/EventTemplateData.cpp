@@ -44,9 +44,10 @@ void EventTemplateData::addTemplate()
 }
 
 void EventTemplateData::addElementInCurrentTemplate(const std::string& role, 
-                                                    const EventTemplateElement& elt)
+                                                    const EventTemplateElement& elt,
+                                                    unsigned int cardinality)
 {
-  back().addElement(role,elt);
+  back().addElement(role,elt,cardinality);
 }
 
 void EventTemplateData::clearCurrentTemplate()
@@ -72,7 +73,7 @@ convertToEvents(const AnnotationData* annotationData) const
   int eventNum=1;
   for (std::vector<EventTemplate>::const_iterator it= begin(); it!= end();it++)
   {
-    const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
+    const TemplateElements& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
       // one event per template
       Event* event=new Event();

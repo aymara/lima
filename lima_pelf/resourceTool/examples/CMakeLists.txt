@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: MIT
 
-install(FILES pelf-rt-conf.xml DESTINATION share/config/pelf)
+install(FILES pelf-rt-conf.xml DESTINATION share/config/pelf
+  COMPONENT runtime)

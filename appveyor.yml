@@ -6,8 +6,10 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Ubuntu 20.04
     APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
-  - job_name: Visual Studio 2017
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+  - job_name: Visual Studio 2019
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+  #- job_name: MacOS
+    #APPVEYOR_BUILD_WORKER_IMAGE: macOS
 
 for:
   - matrix:
@@ -29,7 +31,11 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -37,6 +43,8 @@ for:
       on:
         branch: master                 # release from master branch only
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
+
+
   - matrix:
       only:
         - job_name: Ubuntu 20.04
@@ -56,7 +64,11 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages
@@ -64,20 +76,25 @@ for:
       on:
         branch: master                 # release from master branch only
         APPVEYOR_REPO_TAG: false       # deploy on non tag push only
+
+
   - matrix:
       only:
-        - job_name: Visual Studio 2017
+        - job_name: Visual Studio 2019
     environment:
       LIMA_DIST: c:\d
       LIMA_EXTERNALS: c:/d
       LIMA_CONF: 'c:\b\execEnv\config'
       LIMA_RESOURCES: 'c:\b\execEnv\resources'
       #Qt5_INSTALL_DIR: 'C:\Qt\5.15.0\msvc2019_64'
-      Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
+      #Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
+      Qt5_INSTALL_DIR: 'C:\Qt\5.15.2\msvc2019_64'
       #BOOST_ROOT: 'C:\Libraries\boost_1_71_0'
-      BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
+      #BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
+      BOOST_ROOT: 'C:\Libraries\boost_1_77_0'
       #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_71_0\lib64-msvc-14.2'
-      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.1'
+      #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.1'
+      BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_77_0\lib64-msvc-14.2'
       LIMA_DISABLE_FSW_TESTING: true
       NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
       NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
@@ -133,7 +150,92 @@ for:
     deploy:
       description: '$(LIMA_VERSION_RELEASE)'
       provider: GitHub
-      tag: $(LIMA_VERSION_RELEASE)
+      #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
+      auth_token:
+        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
+      artifact: packages
+      force_update: true
+      on:
+        branch: master                 # release from master branch only
+        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
+
+
+  - matrix:
+      only:
+        - job_name: MacOS
+    environment:
+      LIMA_DIST: $HOME/Projets/Lima/Dist/macos.build/debug
+      LIMA_EXTERNALS: $HOME/Projets/Lima/Builds/macos.build/debug
+      LIMA_CONF: '$HOME/Projets/Lima/Builds/macos.build/debug/execEnv/config'
+      LIMA_RESOURCES: '$HOME/Projets/Lima/Builds/macos.build/debug/execEnv/'
+      Qt5_INSTALL_DIR: '$HOME/Qt/5.15.2/clang_64'
+      BOOST_ROOT: '/usr/local/Cellar/boost/1.79.0'
+      BOOST_LIBRARYDIR: '/usr/local/Cellar/boost/1.79.0/lib'
+      LIMA_DISABLE_FSW_TESTING: true
+      NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
+      NLTK_PTB_DP_FILE: 'c:\dependency_treebank\nltk-ptb.dp'
+      GITHUB_OAUTH_TOKEN:
+        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
+      PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8"
+      PYTHON_ARCH: "64"
+      PATH: "%PYTHON%;%PYTHON%\\libs;c:\\b\\execEnv\\lib;%Qt5_INSTALL_DIR%\\bin;%BOOST_LIBRARYDIR%;c:\\msys64\\usr\\bin;%PATH%"
+
+    init:
+      - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+    on_failure:
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+    install:
+      - brew install boost
+      - ps: Install-Module Pscx -Scope CurrentUser -AllowClobber
+      - ps: (new-object net.webclient).DownloadFile('http://www.nltk.org/nltk_data/packages/corpora/dependency_treebank.zip', 'c:\dependency_treebank.zip')
+      - ps: Invoke-BatchFile "c:\\projects\\lima\\continuous_integration\\appveyor_win_install.bat"
+      - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
+      - ps: (New-Object System.Net.WebClient).DownloadFile("https://github.com/aymara/qhttpserver/releases/download/20180703132951-64591f4d/qhttpserver-0.0.20180703132951-64591f4d-win64.exe","c:/projects/lima/qhttpserver.exe")
+
+    build_script:
+      - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | grep -Po "[1-9]\d{3}\-[0-1]\d-[0-3]\d +[0-2]\d:[0-6]\d:[0-6]\d" | sed -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
+      - ps: echo $env:LIMA_VERSION_RELEASE
+      - ps: Invoke-BatchFile "c:\\projects\\lima\\continuous_integration\\appveyor_win_build.bat"
+
+    after_build:
+      - cd c:\b
+      - cmake --build . --config Release --target install
+      - cmake --build . --config Release --target package
+      - ps: ls C:/d/share/apps/lima/tests
+      - ps: pushd C:/d/share/apps/lima/tests
+      - ps: $env:Path = "c:/d/bin;$env:Path"
+      - ps: $env:LIMA_CONF = "C:/d/share/config/lima"
+      - ps: $env:LIMA_RESOURCES = "C:/d/share/apps/lima/resources"
+      - tva --language=eng test-eng.tokenizer.xml test-eng.simpleword.xml test-eng.idiom.xml test-eng.abbrev.xml test-eng.hyphen.xml test-eng.default.xml test-eng.se-PERSON.xml test-eng.se-DATE.xml test-eng.se-EMBEDED.xml test-eng.se-ORGANISATION.xml test-eng.se.xml test-eng.se-LOCATION.xml test-eng.disambiguated.xml test-eng.sa.xml 2>&1 | tee tva-eng.log
+      - echo %errorlevel%
+      - ps: cat tva-eng.log
+      - tva --language=fre test-fre.tokenizer.xml test-fre.simpleword.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.default.xml test-fre.se.xml test-fre.disambiguated.xml test-fre.sa.xml 2>&1 | tee tva-fre.log
+      - ps: cat tva-fre.log
+      - ps: popd
+      - ps: pushd C:/b
+      - ps: echo %APPVEYOR_BUILD_FOLDER%
+      - copy lima*.exe %APPVEYOR_BUILD_FOLDER%
+      - ps: popd
+
+    artifacts:
+      - path: lima*.exe
+        name: packages
+
+    deploy:
+      description: '$(LIMA_VERSION_RELEASE)'
+      provider: GitHub
+      #tag: $(LIMA_VERSION_RELEASE)
+      tag: appveyor_ci
+      draft: true
+      prerelease: true
+      skip_tags: true
       auth_token:
         secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
       artifact: packages

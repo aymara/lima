@@ -3,12 +3,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-// NAUTITIA
-//
-// jys 24-JUL-2002
-//
-// Tokenizer is the main program of Tokenizer stuff.
-
 #ifndef LIMA_LINGUISTICPROCESSING_LangDetector_H
 #define LIMA_LINGUISTICPROCESSING_LangDetector_H
 
@@ -36,12 +30,12 @@ class LangDetectorCore;
   * - Preconditions: the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
   * - Effects: the AnalysisContent will contain an AnalysisData of type AnalysisGraph named "AnalysisGraph" which is a linear graph (a string) containing one vertex for each detected token.
   */
-class LIMA_LANGDEDECTOR_EXPORT LangDetector : public MediaProcessUnit
+class LIMA_LANGDETECTOR_EXPORT LangDetector : public MediaProcessUnit
 {
 
 public:
   LangDetector();
-  ~LangDetector() override;
+  virtual ~LangDetector();
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,

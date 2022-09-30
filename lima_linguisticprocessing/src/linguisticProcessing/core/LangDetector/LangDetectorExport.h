@@ -10,21 +10,21 @@
 
 #include <common/LimaCommon.h>
 
-#ifndef LIMA_LANGDEDECTOREXPORT_H
-#define LIMA_LANGDEDECTOREXPORT_H
+#ifndef LIMA_LANGDETECTOREXPORT_H
+#define LIMA_LANGDETECTOREXPORT_H
 
 #ifdef WIN32
 
-#ifdef LIMA_LANGDEDECTOR_EXPORTING
-   #define LIMA_LANGDEDECTOR_EXPORT    __declspec(dllexport)
+#ifdef LIMA_LANGDETECTOR_EXPORTING
+   #define LIMA_LANGDETECTOR_EXPORT    __declspec(dllexport)
 #else
-   #define LIMA_LANGDEDECTOR_EXPORT    __declspec(dllimport)
+   #define LIMA_LANGDETECTOR_EXPORT    __declspec(dllimport)
 #endif
 
 
 #else // Not WIN32
 
-#define LIMA_LANGDEDECTOR_EXPORT
+#define LIMA_LANGDETECTOR_EXPORT
 
 #endif
 

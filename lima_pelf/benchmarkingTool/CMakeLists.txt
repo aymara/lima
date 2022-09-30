@@ -39,7 +39,7 @@ SET(pelf-bt_RCCS pelf-bt-resources.qrc)
 # Wrap Qt UIs
 qt_wrap_ui(pelf-bench_UIS_H ${pelf-bench_UIS})
 #qt_automoc(${pelf-bench_SRCS})
-if(QtCore_VERSION VERSION_GREATER 5.14.0)
+if(Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.14.0)
     qt_add_resources(pelf-bt_RCC_SRCS ${pelf-bt_RCCS})
 else()
     qt5_add_resources(pelf-bt_RCC_SRCS ${pelf-bt_RCCS})
@@ -51,5 +51,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/PelfBenchmarkingTool)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(pelf-bench ${pelf-bench_SRCS} ${pelf-bench_UIS_H} ${pelf-bt_RCC_SRCS})
 target_link_libraries(pelf-bench ${Qt_LIBRARIES} ${QWT_LIBRARY})
-install(TARGETS pelf-bench DESTINATION bin)
+install(TARGETS pelf-bench DESTINATION bin
+  COMPONENT runtime)
 

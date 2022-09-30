@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article class="techreport">
+  <title>Documentation fonctionnelle de l&#39;extraction des mots composés
+  dans Lima 1.1</title>
+
+  <section>
+    <title>Présentation</title>
+
+    <para>Dans Lima, l&#39;extraction des mots composés (MC) repose
+    entièrement sur les relations de dépendance extraites par l&#39;analyse
+    syntaxique. Un certain nombre de relations, listées dans le fichier de
+    configuration <computeroutput>S2-common-XXX.xml</computeroutput>, sont
+    parcourues pour chercher les mots composés. Ceux-ci sont des structures
+    récursives binaires ayant à chaque niveau de récursion une tête et une
+    expansion. Ainsi, le mot composé &#34;usines marémotrices de production
+    d&#39;électricité&#34; a la structure suivante (l&#39;astérisque
+    définissant la tête du mot composé) :</para>
+
+    <programlisting>(usine* marémotrice)* (production* électricité)</programlisting>
+
+    <para>Actuellement, la normalisation des mots composés consiste juste en
+    la juxtaposition des mots trouvés dans la structure, dans l&#39;ordre du
+    parcours de celle-ci. Par conséquent, si des mots dans cette structure ne
+    sont pas dans l&#39;ordre du texte (nous verrons plus bas pourquoi cela
+    peut arriver), la normalisation produira une structure peu lisible pour
+    l&#39;être humain. Par conséquent, un réordonnement des éléments pourrait
+    être nécessaire au moment de l&#39;affichage dans es interfaces
+    graphiques.</para>
+
+    <para>Ci dessous, nous décrivons l&#39;algorithme d&#39;extraction des
+    mots composés à partir de l&#39;analyse syntaxique et donnons et discutons
+    à titre d&#39;exemple la liste des types de relations actuellement retenue
+    pour l&#39;analyse du français. On se référera aux fichiers de
+    configuration pour les listes associées aux autres langues</para>
+  </section>
+
+  <section>
+    <title>Algorithme d&#39;extraction des mots composés</title>
+
+    <para>Le graphe morphosynaxique est parcouru d&#39;un bout à l&#39;autre.
+    Dès qu&#39;un noeud est source ou cible d&#39;une relation utilisée pour
+    les mots composés (RMC), la recherche d&#39;un MC démarre à partir de ce
+    point. Pour chaque chaîne portée par ce noeud, on collecte les relations
+    de mots composés entrantes et sortantes et ce de fapour trouver façon
+    récursive. On cherche ensuite parmi les relations collectées la tête du
+    mot composé. Il s&#39;agit du seul noeud cible d&#39;une ou plusieurs
+    relations et source d&#39;aucune. A partir de cette tête, on suit toutes
+    les RMC pour construire les extensions. Les mots sources sont ordonnés
+    selon leur proximité dans le texte avec la tete. Cela définit la structure
+    récursive du mot composé. Par exemple, si les relations entre adjectifs
+    prénominaux et noms sont des RMC, la phrase &#34;La jolie petite voiture
+    verte de mon papa&#34; donnera les relations suivantes:</para>
+
+    <para>jolie - ADJPRENSUB -&#62;voiture</para>
+
+    <para>petite - ADJPRENSUB -&#62; voiture</para>
+
+    <para>verte - SUBADJPOST -&#62; voiture</para>
+
+    <para>papa - COMPDUNOM -&#62; voiture</para>
+
+    <para>La recherche arrivant sur le mot &#34;jolie&#34;, trouvera les
+    quatre relations listées avec comme unique cible le mot voiture qui sera
+    donc la tête.</para>
+
+    <para>A partir de &#34;voiture&#34;, on trouve les mots sources de RMC
+    &#34;jolie&#34;, &#34;petite&#34;, &#34;verte&#34; et &#34;papa&#34;. Mis
+    dans l&#39;ordre de proximité avec le mot &#34;voiture&#34;, on
+    obtient&#x00A0;: &#34;petite&#34;, &#34;verte&#34;, &#34;jolie&#34; et
+    &#34;papa&#34;. On obtient par conséquent le mot composé&#x00A0;:</para>
+
+    <programlisting>( ( ( (voiture* petite)* verte)* jolie)* papa)</programlisting>
+
+    <para>On a vu jusque-là la construction des mots composés quand tous les
+    éléments sont syntaxiquement directement liés à la tête, mais ces éléments
+    peuvent être eux-mêmes cibles d&#39;autres RMC. En réalité, quand on suit
+    les RMC à partir d&#39;une tête pour trouver les expansions, on effectue
+    une recherche de mot composé à partir de chaque expansion. Ainsi, si le
+    texte précédent était en fait: &#34;La jolie petite voiture verte de mon
+    gentil papa&#34;, on aurait la relation supplémentaire suivante&#x00A0;:</para>
+
+    <para>gentil - ADJPRENSUB -&#62; papa</para>
+
+    <para>Lors de la recherche des expansions de &#34;voiture&#34;, on trouve
+    &#34;papa&#34;. On constate qu&#39;il s&#39;agit de la cible d&#39;une
+    RMC. Par conséquent, on construit un mot composé à partir de lui:</para>
+
+    <programlisting>(papa* gentil)</programlisting>
+
+    <para>Ainsi, le mot composé finalement construit est&#x00A0;:</para>
+
+    <programlisting>( ( ( (voiture* petite)* verte)* jolie)* (papa* gentil) )</programlisting>
+  </section>
+
+  <section>
+    <title>Liste des relations de dépendances pour le français</title>
+
+    <para>Dans cette section, nous listons les relations de dépendances
+    utilisées dans la construction de mots composés pour chaque langue. Pour
+    une définition précise des relations, merci de consulter la documentation
+    fonctionnelle de l&#39;analyse syntaxique de Lima. <table><title>Table des
+    relations de dépendances utilisées pour la construction des mots composés
+    en français dans Lima 1.1</title><tgroup cols="4"><colspec align="center" /><thead><row><entry>Français</entry><entry>Anglais</entry><entry>Allemand</entry><entry>Espagnol</entry></row></thead><tbody><row><entry>COMPADV</entry><entry>COMPADV</entry><entry>COMP_N-N</entry><entry>COMPADV</entry></row><row><entry>SUBADJPOST</entry><entry>ADJPRENSUB</entry><entry>COMP_AJ-N</entry><entry>SUBADJPOST</entry></row><row><entry>COMPDUNOM</entry><entry>SUBADJPOST</entry><entry>COMP_V-N</entry><entry>COMPDUNOM</entry></row><row><entry>SUBSUBJUX</entry><entry>COMPDUNOM</entry><entry>COMP_AV-N</entry><entry>SUBSUBJUX</entry></row><row><entry>ADVADJ</entry><entry>SUBSUBJUX</entry><entry>COMP_N-ADJ</entry><entry></entry></row><row><entry>ADJPRENSUB</entry><entry></entry><entry>COMP_AJ-ADJ</entry><entry></entry></row><row><entry></entry><entry></entry><entry>COMP_V-ADJ</entry><entry></entry></row><row><entry></entry><entry></entry><entry>COMP_AV-ADJ</entry><entry></entry></row></tbody></tgroup></table></para>
+  </section>
+</article>

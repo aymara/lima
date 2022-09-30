@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: MIT
 
-install(PROGRAMS install.sh install-remote.sh install-remote-and-local.sh DESTINATION share/apps/pelf/commands/synrules)
+install(PROGRAMS install.sh install-remote.sh install-remote-and-local.sh DESTINATION share/apps/pelf/commands/synrules
+  COMPONENT runtime)

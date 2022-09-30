@@ -49,7 +49,7 @@ bool EasySourceHandler::characters(const QString& chars)
   if (m_inEnonce)
   {
     m_currentEnonce.text=chars.toUtf8().constData();
-//    QDebug() << "read text : " << m_currentEnonce.text << endl;
+//    QDebug() << "read text : " << m_currentEnonce.text;
   }
   return true;
 }

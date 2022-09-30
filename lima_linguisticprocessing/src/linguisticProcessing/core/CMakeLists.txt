@@ -7,6 +7,7 @@ add_subdirectory(AnalysisDict)
 add_subdirectory(AnalysisDumpers)
 add_subdirectory(ApplyRecognizer)
 add_subdirectory(Automaton)
+add_subdirectory(Compounds)
 add_subdirectory(CorefSolving)
 add_subdirectory(Dictionary)
 add_subdirectory(EntityTracking)
@@ -90,7 +91,9 @@ target_link_libraries(lima-xp-core
 )
 
 set_target_properties(lima-xp-core PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
-install(TARGETS lima-xp-core DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS lima-xp-core
+        DESTINATION ${LIB_INSTALL_DIR}
+        COMPONENT runtime)
 
 ########### install files ###############
 

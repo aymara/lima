@@ -32,6 +32,7 @@ ${Boost_LIBRARIES}
 ${QT_LIBRARIES}
 ${optionalLibs})
 
-install(TARGETS convertMultXmlToMultBin DESTINATION bin)
+install(TARGETS convertMultXmlToMultBin DESTINATION bin
+  COMPONENT runtime)
 
 

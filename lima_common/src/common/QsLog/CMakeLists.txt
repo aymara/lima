@@ -43,7 +43,8 @@ target_link_libraries(qslogger
   lima-common-tools
 )
 
-install(TARGETS qslogger DESTINATION bin)
+install(TARGETS qslogger DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### install files ###############

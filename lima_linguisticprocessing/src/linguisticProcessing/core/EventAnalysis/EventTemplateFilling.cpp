@@ -89,9 +89,16 @@ LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
     analysis.setData("EventTemplateData", eventData);
   }
 
+  // set a temporary template definition resource that can be accessed 
+  // by the actions called in the ApplyRecognizer
+  analysis.setData("EventTemplateFillingTemplateDefinition", new EventTemplateDefinitionData(m_templateDefinition));
+  
   LimaStatusCode returnCode=SUCCESS_ID;
   returnCode=ApplyRecognizer::process(analysis);
 
+  // remove temporary data
+  analysis.removeData("EventTemplateFillingTemplateDefinition");
+  
   TimeUtils::logElapsedTime("EventTemplateFilling");
   return returnCode;
 }

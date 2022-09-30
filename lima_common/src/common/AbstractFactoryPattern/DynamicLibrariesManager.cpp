@@ -17,6 +17,8 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #include <tchar.h>
+#elif __APPLE__
+//
 #else
 #include <link.h>
 #endif
@@ -88,6 +90,8 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
     } while (Module32Next(hModuleSnap, &me32));
 
     CloseHandle(hModuleSnap);
+#elif __APPLE__
+//
 #else
     std::pair<bool&, const std::string&> data(alreadyLoaded, libName);
 

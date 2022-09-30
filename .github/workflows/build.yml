@@ -1,7 +1,6 @@
 on:
   push:
     branches:
-    - deeplima-lemmatizer-dev
     - master
 
 env:
@@ -9,6 +8,18 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  PYTHON_VERSION: "3.7"
+  PYTHON_SHORT_VERSION: "cp37-cp37m"
+  PYTHON_WHEEL_VERSION: "cp37-abi3"
+  PYTHON_FULL_VERSION: "3.7.13"
+  QT_VERSION_MAJOR: "5"
+  QT_VERSION_MINOR: "15"
+  QT_VERSION_PATCH: "2"
+  QT_VERSION: "5.15"
+  QT_FULL_VERSION: "5.15.2"
+  PYSIDE_VERSION: "2"
+  LLVM_VERSION: "14.0.6"
+  GCC_VERSION: "10.1.0"
 
 
 jobs:
@@ -70,11 +81,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -86,7 +92,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BRANCH=${{ steps.extract_branch.outputs.branch }}
+          build-args: BRANCH=${{ github.ref_name }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
@@ -100,3 +106,72 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+
+  # Cannot run this build on each commit to master, it takes to much time (several hours), having to build the
+  # whole qt and llvm, etc.
+
+  #manylinux_2_28_with_qt_and_pyside:
+    #name: "Build the manylinux_2_28_with_qt_and_pyside image necessary for lima-python"
+    #runs-on: ubuntu-latest
+
+    #steps:
+      #-
+        #name: Login to DockerHub
+        #uses: docker/login-action@v2
+        #with:
+          #username: ${{ secrets.DOCKERHUB_USERNAME }}
+          #password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      #- name: "Checkout code"
+        #uses: actions/checkout@v2
+
+      ##- name: "Free disk space"
+        ##run: bash ./free-diskspace.sh
+
+      #- name: "Build image"
+        #run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg BRANCH="${BRANCH}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+
+      #- name: "Push image"
+        #run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+
+  manylinux_2_28_lima-manylinux:
+    name: "Build the manylinux_2_28_lima-manylinux image necessary for lima-python"
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_lima-manylinux --build-arg BRANCH="${{ github.ref_name }}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
+
+      - name: "Push image"
+        run: docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
+
+  ubuntu22_04_lima:
+    name: "Build the Ubuntu 22.04 Lima image"
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      - name: "Build image"
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" -t aymara/lima-ubuntu22.04:latest .
+
+      - name: "Push image"
+        run: docker push aymara/lima-ubuntu22.04:latest

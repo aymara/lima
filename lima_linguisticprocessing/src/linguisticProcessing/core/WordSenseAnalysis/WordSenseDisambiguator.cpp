@@ -344,10 +344,10 @@ LimaStatusCode WordSenseDisambiguator::process(
   }
 
 
-  /** To be able to dump the content of an annotation, a function pointer with
-    * a precise signature has to be givent to the annotation graph. See
-    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint
-    * function */
+  /**
+   * To be able to dump the content of an annotation, a function pointer with a precise signature has to be givent to
+   * the annotation graph. See @ref{WordSenseAnnotation.h} for the details of the DumpWordSense() function
+   */
   if (annotationData->dumpFunction("WordSense") == 0)
   {
     annotationData->dumpFunction("WordSense", new DumpWordSense());

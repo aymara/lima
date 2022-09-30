@@ -7,7 +7,7 @@ set(SCRIPTS_PATH ${CMAKE_SOURCE_DIR}/../lima_linguisticdata/scripts)
 configure_file(tfcv.py tfcv.py @ONLY)
 
 ########### install files ###############
-install(FILES 
+install(FILES
     aligner.pl
     eval.pl
     launch_eval.sh
@@ -27,11 +27,13 @@ install(FILES
     ExploitResults/src/synthese.tex
     ExploitResults/src/toPDF.sh
   PERMISSIONS OWNER_READ  OWNER_WRITE   OWNER_EXECUTE   GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-  DESTINATION share/apps/lima/scripts)
+  DESTINATION share/apps/lima/scripts
+  COMPONENT runtime)
 
 install(FILES
     conf/config-minimale-eng.SVMT
     conf/config-minimale-fre.SVMT
     conf/config-minimale-por.SVMT
   PERMISSIONS OWNER_READ  OWNER_WRITE   GROUP_READ WORLD_READ
-  DESTINATION share/config/lima)
+  DESTINATION share/config/lima
+  COMPONENT runtime)

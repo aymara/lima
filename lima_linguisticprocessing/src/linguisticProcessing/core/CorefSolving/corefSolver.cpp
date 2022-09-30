@@ -3,19 +3,9 @@
 //
 // SPDX-License-Identifier: MIT
 
-/**
-  *
-  * @file        annotationGraphTestProcessUnit.cpp
-  * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr) 
-
-  *              Copyright (c) 2004 by CEA
-  * @date        Created on Nov, 8 2004
-  *
-  */
- 
 #include "corefSolver.h"
 #include "coreferentAnnotation.h"
- 
+
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "common/Data/strwstrtools.h"
 #include "common/time/traceUtils.h"
@@ -103,25 +93,25 @@ void CorefSolver::init(
   m_definiteCategs = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getDefiniteMicroCategories();
 
   std::map<string, string> tmpMap = unitConfiguration.getMapAtKey("MacroCategories");
-  for (map<string, string>::const_iterator it = tmpMap.begin(); it!=tmpMap.end(); it++) 
+  for (map<string, string>::const_iterator it = tmpMap.begin(); it!=tmpMap.end(); it++)
     m_tagLocalDef.insert(make_pair((*it).first,macroManager.getPropertyValue((*it).second)));
   try {
     deque<string> tmpDeque = unitConfiguration.getListsValueAtKey("LexicalAnaphora");
-    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
+    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++)
     {
       m_reflexiveReciprocal.insert(microManager.getPropertyValue((*it)));
     }
     tmpDeque.clear();
     tmpDeque =
     unitConfiguration.getListsValueAtKey("UndefinitePronouns");
-    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
+    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++)
     {
       m_undefPronouns.insert(microManager.getPropertyValue((*it)));
     }
     tmpDeque.clear();
     tmpDeque =
     unitConfiguration.getListsValueAtKey("PossessivePronouns");
-    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++) 
+    for (deque<string>::const_iterator it = tmpDeque.begin(); it!=tmpDeque.end(); it++)
     {
       m_undefPronouns.insert(microManager.getPropertyValue((*it)));
     }
@@ -136,7 +126,7 @@ void CorefSolver::init(
 
   try {
     m_relLocalDef.insert(make_pair("PrepRelation",unitConfiguration.getListsValueAtKey("PrepRelation")));
-    m_relLocalDef.insert(make_pair("PleonasticRelation",unitConfiguration.getListsValueAtKey("PleonasticRelation"))); 
+    m_relLocalDef.insert(make_pair("PleonasticRelation",unitConfiguration.getListsValueAtKey("PleonasticRelation")));
     m_relLocalDef.insert(make_pair("DefiniteRelation",unitConfiguration.getListsValueAtKey("DefiniteRelation")));
     m_relLocalDef.insert(make_pair("SubjectRelation",unitConfiguration.getListsValueAtKey("SubjectRelation")));
     m_relLocalDef.insert(make_pair("AttributeRelation",unitConfiguration.getListsValueAtKey("AttributeRelation")));
@@ -161,7 +151,7 @@ void CorefSolver::init(
     for (std::map<std::string,std::string>::const_iterator it=salience.begin();
          it!=salience.end();
          it++)
-    { 
+    {
        m_salienceWeights[it->first]=QString::fromUtf8(it->second.c_str()).toDouble();
     }
   }
@@ -178,7 +168,7 @@ void CorefSolver::init(
     for (std::map<std::string,std::string>::const_iterator it=slotValuesStr.begin();
          it!=slotValuesStr.end();
          it++)
-    { 
+    {
        m_slotValues[it->first]=atoi((it->second).c_str());
     }
   }
@@ -191,9 +181,9 @@ void CorefSolver::init(
 }
 
 /**
- * 
- * @param analysis 
- * @return 
+ *
+ * @param analysis
+ * @return
  */
 LimaStatusCode CorefSolver::process(
   AnalysisContent& analysis) const
@@ -203,7 +193,7 @@ LimaStatusCode CorefSolver::process(
   TimeUtils::updateCurrentTime();
   LINFO << "start CorefSolver";
 #endif
-  // create syntacticData  
+  // create syntacticData
   AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
@@ -218,7 +208,7 @@ LimaStatusCode CorefSolver::process(
     LERROR << "no sentence bounds ! abort";
     return MISSING_DATA;
   }
-  if (sb->getGraphId() != "PosGraph") 
+  if (sb->getGraphId() != "PosGraph")
   {
     COREFSOLVERLOGINIT;
     LERROR << "SentenceBounds computed on graph '" << sb->getGraphId() << "'. CorefSolver needs " <<
@@ -233,25 +223,25 @@ LimaStatusCode CorefSolver::process(
     return MISSING_DATA;
   }
 
-  
+
   /** Access to or creation of an annotation graph */
   AnnotationData* annotationData=static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     annotationData=new AnnotationData();
-    /** Creates a node in the annotation graph for each node of the 
+    /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
     if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
     {
       static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
-    } 
+    }
     if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
     {
-      
+
       static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
     }
-   
+
     analysis.setData("AnnotationData",annotationData);
   }
 
@@ -262,20 +252,20 @@ LimaStatusCode CorefSolver::process(
 //       boost::tie(itg, itg_end) = vertices(*anagraph->getGraph());
 //       for (; itg != itg_end; itg++)
 //       {
-//         LinguisticGraph graph =*anagraph->getGraph(); 
+//         LinguisticGraph graph =*anagraph->getGraph();
 //         LinguisticAnalysisStructure::Token* token=get(vertex_token, graph, *itg);
 //         if (token != 0)
 //         {
 //           LimaString mot = token->stringForm();
 //           annotationData->annotate(*itg, Common::Misc::utf8stdstring2limastring("Mot"),mot);
 //         }
-//       } 
+//       }
 
 
 
   /** To be able to dump the content of an annotation, a function pointer with
     * a precise signature has to be givent to the annotation graph. See
-    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint 
+    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint
     * function */
   if (annotationData->dumpFunction("Coreferent") == 0)
   {
@@ -304,7 +294,7 @@ LimaStatusCode CorefSolver::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    
+
     // non pleonastic pronouns (or definite NP)
     Vertices* npAnaphora = new Vertices();
     // Ruled Out Binding by syntacticFilter
@@ -313,22 +303,22 @@ LimaStatusCode CorefSolver::process(
     WeightedVerticesRelation* lexAnaBinding = new WeightedVerticesRelation();
     // potentialBinding
     WeightedVerticesRelation* pBinding = new WeightedVerticesRelation();
-    
+
     // add entry in npVertices and npCandidates
     npVertices.push_front(std::vector<CoreferentAnnotation>());
     npCandidates->push_front(Vertices());
-    // if size>scope, remove last 
+    // if size>scope, remove last
     if (npVertices.size()>m_scope)
       npVertices.pop_back();
     if (npCandidates->size()>m_scope)
       npCandidates->pop_back();
     //degradate the existing salience factors
     for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-         itm != npCandidates->end( ); 
+         itm != npCandidates->end( );
          itm++)
     {
       for (Vertices::iterator candidateItr = (*itm).begin( );
-           candidateItr != (*itm).end( ); 
+           candidateItr != (*itm).end( );
            candidateItr++ )
       {
         (*candidateItr)->salience((*candidateItr)->salience()/2);
@@ -347,7 +337,7 @@ LimaStatusCode CorefSolver::process(
     {
       if (alreadyProcessedVertices.find(v) != alreadyProcessedVertices.end())
         continue;
-      //else alreadyProcessedVertices.insert(v); 
+      //else alreadyProcessedVertices.insert(v);
       CoreferentAnnotation ca(nextReferentId,v);
       if (ca.isIncludedInNounPhrase(graph, m_language, posgraph, analysis, m_inNpCategs, m_microAccessor) )
       {
@@ -359,7 +349,7 @@ LimaStatusCode CorefSolver::process(
       LinguisticGraphOutEdgeIt ite, ite_end;
       boost::tie(ite, ite_end)=boost::out_edges(v, *graph);
       v=target(*ite, *graph);
-      
+
     }/*
 TimeUtils::logElapsedTime("retrieve nps");
 TimeUtils::updateCurrentTime();*/
@@ -399,11 +389,11 @@ TimeUtils::updateCurrentTime();*/
     LDEBUG<< "Candidates:";
 #endif
     for (std::deque<Vertices>::iterator itm = npCandidates->begin( );
-         itm != npCandidates->end( ); 
+         itm != npCandidates->end( );
          itm++ )
 #ifdef DEBUG_LP
       for (Vertices::iterator itc = (*itm).begin( );
-           itc != (*itm).end( ); 
+           itc != (*itm).end( );
            itc++ )
         LDEBUG<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*itc)->morphVertex())->stringForm()) << ":" << (*itc)->salience();
     LDEBUG<< " - ";
@@ -411,19 +401,19 @@ TimeUtils::updateCurrentTime();*/
     LDEBUG << "initialize syntactic filter";
 #endif
     initSyntacticFilter(analysis, posgraph, syntacticData, npAnaphora, npCandidates, roBinding);
-    
+
 // TimeUtils::logElapsedTime("initialize syntactic filter");
 // TimeUtils::updateCurrentTime();
 
 #ifdef DEBUG_LP
     LDEBUG<< "RuledOutBinding:";
     for (VerticesRelation::iterator itro = roBinding->begin( );
-         itro != roBinding->end( ); 
+         itro != roBinding->end( );
          itro++ )
     {
       LDEBUG<< " Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itro).first->morphVertex())->stringForm());
       for (std::set<CoreferentAnnotation*>::iterator its = (*itro).second.begin( );
-           its != (*itro).second.end( ); 
+           its != (*itro).second.end( );
            its++ )
         LDEBUG << " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its)->morphVertex())->stringForm()) << " - ";
     }
@@ -439,13 +429,13 @@ TimeUtils::updateCurrentTime();*/
 #ifdef DEBUG_LP
     LDEBUG<< "Lexical Anaphora Binding:";
     for (WeightedVerticesRelation::iterator itp = lexAnaBinding->begin( );
-         itp != lexAnaBinding->end( ); 
+         itp != lexAnaBinding->end( );
          itp++ )
     {
       LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm());
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
-           its != (*itp).second.end( ); 
-           its++ )  
+           its != (*itp).second.end( );
+           its++ )
         LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
     }
 
@@ -470,14 +460,14 @@ TimeUtils::updateCurrentTime();*/
 #ifdef DEBUG_LP
     LDEBUG<< "Potential Binding:";
     for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
-         itp != pBinding->end( ); 
+         itp != pBinding->end( );
          itp++ )
     {
       LDEBUG<< "Anaphora: " << limastring2utf8stdstring(get(vertex_token, *graph, (*itp).first->morphVertex())->stringForm());
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
-           its != (*itp).second.end( ); 
-           its++ ) 
-      { 
+           its != (*itp).second.end( );
+           its++ )
+      {
         LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
       }
     }
@@ -488,12 +478,12 @@ TimeUtils::updateCurrentTime();*/
     LDEBUG << "apply threshold filter";
 #endif
     applyThresholdFilter(pBinding);
-    
+
 #ifdef DEBUG_LP
     LDEBUG << "apply circular filter";
 #endif
     applyCircularFilter(pBinding);
-    
+
 #ifdef DEBUG_LP
     LDEBUG << "apply morphosyntactic filter";
 #endif
@@ -508,7 +498,7 @@ TimeUtils::updateCurrentTime();*/
 
 /*TimeUtils::logElapsedTime("resolve binding");
 TimeUtils::updateCurrentTime();*/
-    delete npAnaphora;  
+    delete npAnaphora;
     delete roBinding;
     delete pBinding;
     delete lexAnaBinding;
@@ -532,7 +522,7 @@ void CorefSolver::initSyntacticFilter(
   Vertices* npAnaphora,
   std::deque<CoreferentAnnotation::Vertices>* npCandidates,
   VerticesRelation* roBinding) const
-{  
+{
 //   COREFSOLVERLOGINIT;
 /*TimeUtils::logElapsedTime("init synt filter");
 TimeUtils::updateCurrentTime();*/
@@ -545,12 +535,12 @@ TimeUtils::updateCurrentTime();*/
     // for every candidate
     std::set<CoreferentAnnotation*> tmpCandidate;
     for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-      itm != npCandidates->end( ); 
+      itm != npCandidates->end( );
       itm++)
     for (Vertices::iterator candidateItr = (*itm).begin( );
-         candidateItr != (*itm).end( ); 
+         candidateItr != (*itm).end( );
          candidateItr++ )
-    { 
+    {
       // if to be ruled out, insert in roBinding
       if (
       // P is diferent from N.
@@ -561,7 +551,7 @@ TimeUtils::updateCurrentTime();*/
       (
         (*npCandidates->begin()).find(*candidateItr)!=(*npCandidates->begin()).end()
         &&
-        // P is in the argument domain of N. 
+        // P is in the argument domain of N.
         // do not rule out if P is SujInv et N est SUJ_V
         (
            (*anaphItr)->isInTheArgumentDomainOf(**candidateItr, syntacticData, m_language, anagraph, ac, m_macroAccessor, m_microAccessor, m_tagLocalDef,m_conjCoord, new set<LinguisticGraphVertex>())
@@ -572,7 +562,7 @@ TimeUtils::updateCurrentTime();*/
             GovernorOf(m_language,utf8stdstring2limastring("SUJ_V"))(*anagraph,(*candidateItr)->morphVertex(),ac)
            )
 //         &&  limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm())!="en"
-        )  
+        )
       )||
       // P is in the adjunct domain of N.
         ((*anaphItr)->isInTheAdjunctDomainOf(**candidateItr, syntacticData, graph, m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language) /*&&  limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm())!="en" no change*/)||
@@ -591,7 +581,7 @@ TimeUtils::updateCurrentTime();*/
     tmpCandidate.clear();
   }
 }
-  
+
   void CorefSolver::bindingLexicalAnaphora(
   AnalysisContent& ac,
   AnalysisGraph* anagraph,
@@ -599,7 +589,7 @@ TimeUtils::updateCurrentTime();*/
   Vertices* npAnaphora,
   std::deque<CoreferentAnnotation::Vertices>* npCandidates,
   WeightedVerticesRelation* lexAnaBinding) const
-{ 
+{
 //   COREFSOLVERLOGINIT;
       /*TimeUtils::logElapsedTime("init blA");
       TimeUtils::updateCurrentTime();
@@ -615,14 +605,14 @@ TimeUtils::updateCurrentTime();*/
     // for every candidate
     std::map<CoreferentAnnotation*, float> tmpCandidate;
     for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-         itm != npCandidates->end( ); 
+         itm != npCandidates->end( );
          itm++)
       for (Vertices::iterator candidateItr = (*itm).begin( );
-           candidateItr != (*itm).end( ); 
+           candidateItr != (*itm).end( );
            candidateItr++ )
       {
         // if to be binded, insert in lexAnaBinding
-        if ( 
+        if (
           // A is diferent from N.
            (*anaphItr)->morphVertex() != (*candidateItr)->morphVertex() &&
            // A and N do not have any incompatible agreement features
@@ -633,23 +623,23 @@ TimeUtils::updateCurrentTime();*/
            // and N fills a higher argument slot than A.
            (*anaphItr)->isInTheArgumentDomainOf2(**candidateItr, syntacticData,m_language,anagraph,ac,m_macroAccessor,m_microAccessor,m_tagLocalDef,m_conjCoord, new set<LinguisticGraphVertex>()) ||
            // A is in the adjunct domain of N.
-           (*anaphItr)->isInTheAdjunctDomainOf(**candidateItr,syntacticData, anagraph->getGraph(), m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language) ||  
+           (*anaphItr)->isInTheAdjunctDomainOf(**candidateItr,syntacticData, anagraph->getGraph(), m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language) ||
            // A is in the NP domain of N.
-           (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData,  m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language, anagraph, ac) ||  
+           (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData,  m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language, anagraph, ac) ||
            // N is an argument of a verb V,
            // there is an NP Q in the argument domain of N such that Q has no noun determiner,
            // and
            //    (i) A is an argument of Q.
            // or (ii) A is an argument of a preposition PREP and PREP is an adjunct of Q.
            (*anaphItr)->aba4(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,m_language,m_inNpCategs,anagraph,ac,m_conjCoord,npCandidates) ||
-           // A is a determiner of a noun Q, 
+           // A is a determiner of a noun Q,
            // and
            //    (i) Q is in the argument domain of N,
            //        and N fills a higher argument slot than Q.
            // or (ii) Q is in the adjunct domain of N.
-           (*anaphItr)->aba5(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,m_language,anagraph,ac,m_slotValues,m_conjCoord) 
+           (*anaphItr)->aba5(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,m_language,anagraph,ac,m_slotValues,m_conjCoord)
         ))
-        {  
+        {
            tmpCandidate.insert(make_pair(*candidateItr, (*candidateItr)->salience()));
         }
       }
@@ -663,7 +653,7 @@ TimeUtils::updateCurrentTime();*/
   Vertices* npAnaphora,
   std::deque<Vertices>* npCandidates,
   WeightedVerticesRelation* pBinding) const
-{  
+{
 //   COREFSOLVERLOGINIT;
   LinguisticGraph* graph = anagraph->getGraph();
   applyEquivalentClassFilter(graph,npCandidates);
@@ -677,11 +667,11 @@ TimeUtils::updateCurrentTime();*/
       continue;
     // for every candidate
     for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-         itm != npCandidates->end( ); 
+         itm != npCandidates->end( );
          itm++)
     {
       for (Vertices::iterator candidateItr = (*itm).begin( );
-           candidateItr != (*itm).end( ); 
+           candidateItr != (*itm).end( );
            candidateItr++ )
       {
         WeightedVerticesRelation::iterator tmpBinding = pBinding->find(*anaphItr);
@@ -689,7 +679,7 @@ TimeUtils::updateCurrentTime();*/
         {
           std::map <CoreferentAnnotation*,float> tmpMap;
           tmpMap.insert(make_pair(*candidateItr,(*candidateItr)->salience()));
-          pBinding->insert(make_pair(*anaphItr,tmpMap));        
+          pBinding->insert(make_pair(*anaphItr,tmpMap));
         }
         else
         {
@@ -714,19 +704,19 @@ void CorefSolver::getBest(
 #endif
   const LinguisticGraph* graph = anagraph->getGraph();
   for (WeightedVerticesRelation::iterator itp = binding->begin( );
-         itp != binding->end( ); 
+         itp != binding->end( );
          itp++ )
   {
 #ifdef DEBUG_LP
     LDEBUG << "  outer for loop on " << (*itp).first->morphVertex();
 #endif
-    bool result = false; 
+    bool result = false;
     bool erase = false;
     CoreferentAnnotation* ca2erase = 0;
     std::pair<CoreferentAnnotation, CoreferentAnnotation> tmpPair;
     for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
-         its != (*itp).second.end( ); 
-         its++ )  
+         its != (*itp).second.end( );
+         its++ )
     {
 #ifdef DEBUG_LP
       LDEBUG << "  looking at " << (*itp).first->morphVertex() << " ("<<(*itp).first->bindingSalience()<<") -> " << (*its).first->morphVertex() << " ("<<(*its).second<<")";
@@ -759,7 +749,7 @@ void CorefSolver::getBest(
       {
         // mark newer Ref in npCandidates list so that former ref will be removed at next sentence
         for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-            itm != npCandidates->end( ); 
+            itm != npCandidates->end( );
             itm++)
         {
           if ((*itm).find(ca2erase)!=(*itm).end())
@@ -769,7 +759,7 @@ void CorefSolver::getBest(
         }
         // erase the winning candidate from the current list of candidates. last equivalent will be this pronoun from now on.
         for (WeightedVerticesRelation::iterator itp2 = binding->begin( );
-            itp2 != binding->end( ); 
+            itp2 != binding->end( );
             itp2++ )
         {
 #ifdef DEBUG_LP
@@ -783,20 +773,20 @@ void CorefSolver::getBest(
 }
 
 
-  void CorefSolver::applyEquivalentClassFilter(  
+  void CorefSolver::applyEquivalentClassFilter(
   const LinguisticGraph* graph,
   std::deque<CoreferentAnnotation::Vertices>* npCandidates) const
 {
 //   COREFSOLVERLOGINIT;
   std::set<CoreferentAnnotation*> candidates2erase;
   for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-       itm != npCandidates->end( ); 
+       itm != npCandidates->end( );
        itm++)
   {
     for (Vertices::iterator candidateItr = (*itm).begin( );
-         candidateItr != (*itm).end( ); 
+         candidateItr != (*itm).end( );
          candidateItr++ )
-    {  
+    {
       if (!(*candidateItr)->newerRef()->isTaggedAsOneOfThese(graph,m_reflexiveReciprocal,m_microAccessor) && (*candidateItr)->hasNewerRef())
       {
 //         cerr << (*candidateItr)->morphVertex() << " will be erased"<< endl;
@@ -805,15 +795,15 @@ void CorefSolver::getBest(
     }
   }
   for (std::set<CoreferentAnnotation*>::iterator itE = candidates2erase.begin();
-       itE != candidates2erase.end( ); 
-       itE++)  
+       itE != candidates2erase.end( );
+       itE++)
     for (std::deque<Vertices>::iterator itm = npCandidates->begin();
-       itm != npCandidates->end( ); 
+       itm != npCandidates->end( );
        itm++)
     {
       // keep best salience
       for (std::set<CoreferentAnnotation*>::iterator itm2 = (*itm).begin();
-       itm2 != (*itm).end( ); 
+       itm2 != (*itm).end( );
        itm2++)
       {
         if ((*itm2)==(*itE)->newerRef() && (*itE)->salience()>(*itm2)->salience())
@@ -842,16 +832,16 @@ void CorefSolver::adjustSaliences(
 //   float slightDiff = m_salienceWeights.find("SlightDifference")->second;
 
   for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
-       itp != pBinding->end( ); 
+       itp != pBinding->end( );
        itp++ )
   {
     for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
-         its != (*itp).second.end( ); 
-         its++ )  
+         its != (*itp).second.end( );
+         its++ )
     {
 
       // if (NP_CANDIDATE in the same sentence as PRON or after)
-      // && NP_CANDIDATE is after PRON 
+      // && NP_CANDIDATE is after PRON
       // <=>
       // NP_candidate is in last part of npCandidates
       // && vertexOf(PRON) >= vertexOf(NP_Candidate)
@@ -883,8 +873,8 @@ void CorefSolver::adjustSaliences(
 //             (GovernorOf(m_language,utf8stdstring2limastring("COMPDUNOM"))(*anagraph,(*its).first->morphVertex(),ac)/*||GovernorOf(m_language,utf8stdstring2limastring("COD_V"))(*anagraph,(*its).first->morphVertex(),ac)*/)
 //          ))
 //       {
-// //         (*its).second += sameSlotWeight+slightDiff;      
-//       }   
+// //         (*its).second += sameSlotWeight+slightDiff;
+//       }
       // decrease potential if CANDIDATE=PRON
       if ((*itp).first==(*its).first)
       {
@@ -967,11 +957,11 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
   LDEBUG << "CorefSolver::applyThresholdFilter " << m_threshold;
 #endif
   for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
-         itp != pBinding->end( ); 
+         itp != pBinding->end( );
          itp++ )
     {
       for (std::map<CoreferentAnnotation*, float>::iterator its = (*itp).second.begin( );
-           its != (*itp).second.end( ); 
+           its != (*itp).second.end( );
            its++ )
       {
 #ifdef DEBUG_LP
@@ -990,7 +980,7 @@ void CorefSolver::applyCircularFilter(CoreferentAnnotation::WeightedVerticesRela
     }
 }
 
-void CorefSolver::applyMorphoSyntacticFilter(  
+void CorefSolver::applyMorphoSyntacticFilter(
   CoreferentAnnotation::WeightedVerticesRelation* pBinding,
   CoreferentAnnotation::VerticesRelation* roBinding) const
 {
@@ -999,12 +989,12 @@ void CorefSolver::applyMorphoSyntacticFilter(
   LDEBUG << "CorefSolver::applyMorphoSyntacticFilter binding size = " << pBinding->size();
 #endif
   for (WeightedVerticesRelation::iterator itp = pBinding->begin( );
-         itp != pBinding->end( ); 
+         itp != pBinding->end( );
          itp++ )
     {
       std::set<CoreferentAnnotation*> roSet = (*roBinding->find((*itp).first)).second;
       for (std::set<CoreferentAnnotation*>::iterator itro = roSet.begin( );
-         itro != roSet.end( ); 
+         itro != roSet.end( );
          itro++ )
       {
 #ifdef DEBUG_LP

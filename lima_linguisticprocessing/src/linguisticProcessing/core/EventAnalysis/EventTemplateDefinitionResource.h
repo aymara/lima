@@ -31,12 +31,13 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionResource : public Abstrac
   const std::string& getName()  const;
   const std::string& getMention()  const;
   const std::map<std::string,Common::MediaticData::EntityType>& getStructure()  const;
+  unsigned int getCardinality(const std::string& role) const;
     
  private:
   MediaId m_language;
   EventTemplateStructure m_structure;
   std::map<std::string, std::set<std::string> > m_elementMapping;
-  
+  std::map<std::string, unsigned int> m_cardinalities;
 };
 
 } // end namespace

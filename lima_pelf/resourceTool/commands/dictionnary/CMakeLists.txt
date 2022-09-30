@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: MIT
 
-install(PROGRAMS install.sh install-remote.sh install-remote-and-local.sh DESTINATION share/apps/pelf/commands/dictionary)
+install(PROGRAMS install.sh install-remote.sh install-remote-and-local.sh DESTINATION share/apps/pelf/commands/dictionary
+  COMPONENT runtime)

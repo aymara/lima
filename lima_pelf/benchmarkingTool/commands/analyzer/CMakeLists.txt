@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: MIT
 
-install(PROGRAMS analyzer-easy.sh analyzer-easy-remote.sh DESTINATION share/apps/pelf/commands/analyzer)
+install(PROGRAMS analyzer-easy.sh analyzer-easy-remote.sh DESTINATION share/apps/pelf/commands/analyzer
+  COMPONENT runtime)

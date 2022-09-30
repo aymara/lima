@@ -54,5 +54,7 @@ target_link_libraries(annoqtconfeditor ${Qt_LIBRARIES})
 
 
 ########### install files ###############
-install(TARGETS annoqt DESTINATION bin)
-install(TARGETS annoqtconfeditor DESTINATION bin)
+install(TARGETS annoqt DESTINATION bin
+  COMPONENT runtime)
+install(TARGETS annoqtconfeditor DESTINATION bin
+  COMPONENT runtime)

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <limits>
 
+
 using namespace std;
 
 namespace deeplima
@@ -152,11 +153,11 @@ morph_model_t::morph_model_t(const string& str)
   }
 
   {
-    istringstream temp_iss(t);
+    std::istringstream temp_iss(t);
     int v;
     while (temp_iss >> v)
     {
-      if (v < 0 || v > numeric_limits<uint8_t>::max())
+      if (v < 0 || v > std::numeric_limits<uint8_t>::max())
       {
         throw;
       }

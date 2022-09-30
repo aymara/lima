@@ -46,6 +46,7 @@ target_link_libraries(lima-lp-analysisdumpers
   lima-lp-semanticanalysis
   lima-lp-textsegmentation
   lima-lp-eventanalyzer
+  lima-lp-compounds
 )
 
 set_target_properties(lima-lp-analysisdumpers PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
