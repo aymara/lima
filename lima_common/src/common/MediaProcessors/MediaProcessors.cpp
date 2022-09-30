@@ -159,7 +159,7 @@ void MediaProcessors::initPipelines(
       if ( entryItr == pipelineMapping.end() )
       {
         PROCESSORSLOGINIT;
-        LERROR << "no pipeline '" << *pipItr << "' for media " << mediaStr;
+        LINFO << "no pipeline '" << *pipItr << "' for media " << mediaStr;
         continue;
       }
 #ifdef DEBUG_CD
