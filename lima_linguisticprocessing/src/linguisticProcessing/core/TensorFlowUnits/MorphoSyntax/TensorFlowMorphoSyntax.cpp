@@ -1167,7 +1167,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
 
   if (data.object().value("main_alphabet").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param main_alphabet.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param main_alphabet.",
@@ -1188,7 +1188,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
 
   if (data.object().value("feat_order").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param feat_order.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param feat_order.",
@@ -1222,7 +1222,7 @@ void TensorFlowMorphoSyntaxPrivate::load_config(const QString& config_file_name)
 
   if (data.object().value("feat_deps").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param feat_deps.");
     /*LOG_ERROR_AND_THROW("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param feat_deps.",
