@@ -56,6 +56,8 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
     convert_module_from_torch(m, layer);
   }
 
+  Parent::m_multi_bilstm.emplace_back(typename Parent::params_multilayer_bilstm_spec_t(Parent::m_lstm));
+
   Parent::m_linear.reserve(src.get_layers_linear().size());
   for (size_t i = 0; i < src.get_layers_linear().size(); i++)
   {
@@ -72,9 +74,9 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   // temp: create exec plan
   // Encoder
   Parent::m_ops.push_back(new Op_BiLSTM<M, V, T>());
-  Parent::m_params.push_back(new params_bilstm_t<M, V>());
-  params_bilstm_t<M, V> *p_enc = static_cast<params_bilstm_t<M, V>*>(Parent::m_params.back());
-  *p_enc = Parent::m_lstm[Parent::m_lstm_idx["encoder_lstm_0"]];
+  Parent::m_params.push_back(new params_multilayer_bilstm_t<M, V>());
+  params_multilayer_bilstm_t<M, V> *p_enc = static_cast<params_multilayer_bilstm_t<M, V>*>(Parent::m_params.back());
+  *p_enc = Parent::m_multi_bilstm[Parent::m_lstm_idx["encoder_lstm_0"]];
 
   // Linear for decoder init state H
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
