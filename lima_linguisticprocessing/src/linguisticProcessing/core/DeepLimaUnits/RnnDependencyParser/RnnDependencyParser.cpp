@@ -135,7 +135,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
 
         auto dependency_parser_file_name = findFileInPaths(resources_path,
-                                                      QString::fromUtf8("/RnnTagger/%1/%2.pt")
+                                                      QString::fromUtf8("/RnnDependencyParser/%1/%2.pt")
                                                               .arg(lang_str, dependency_parser_name));
 
         auto tagger_model_file_name = findFileInPaths(resources_path,
@@ -154,7 +154,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         std::vector<std::string> class_names;
         std::vector<std::vector<string>> classes;
         m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(),class_names, classes);
-
+        int a=0;
         m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name, class_names]()
         {
             if (m_loaded)
@@ -172,7 +172,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         }
         for (size_t i = 0; i < classes.size(); ++i)
         {
-            m_dependencyParser->set_classes(i, class_names[i], classes[i]);
+            //m_dependencyParser->set_classes(i, class_names[i], classes[i]);
+            LOG_MESSAGE(LERROR, class_names[i]);
+            LOG_MESSAGE(LERROR, classes[i]);
         }
 
     }

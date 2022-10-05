@@ -95,9 +95,8 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_classes_from_fn(const std::
     // dicts and embeddings
     Parent::convert_dicts_and_embeddings(src);
     // classes
-    convert_classes(src.get_classes(), Parent::m_output_str_dicts);
+    convert_classes(src.get_classes(), classes);
     class_names = src.get_class_names();
-    classes = Parent::m_output_str_dicts;
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)
