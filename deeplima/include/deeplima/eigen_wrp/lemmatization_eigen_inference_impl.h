@@ -127,9 +127,9 @@ public:
     deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T> *p_decoder
         = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
 
-    const deeplima::eigen_impl::params_bilstm_t<M, V>& layer
-        = *static_cast<const deeplima::eigen_impl::params_bilstm_t<M, V>*>(Parent::m_params[0]);
-    size_t hidden_size = layer.fw.weight_ih.rows() / 4;
+    const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>& enc_mutlilayer_bilstm
+        = *static_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>*>(Parent::m_params[0]);
+    size_t hidden_size = enc_mutlilayer_bilstm.layers[0].fw.weight_ih.rows() / 4;
 
     Vector fw_h, fw_c, bw_h, bw_c;
     if (true)
