@@ -533,6 +533,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     uint64_t pEnd = 0;
     while (v != sentenceEnd)
     {
+      auto vIn = v;
       //as long as there are vertices in the sentence
       auto ft = get(vertex_token,*posGraph,v);
       if( ft != nullptr && v != sentenceBegin )
@@ -549,6 +550,12 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
            outIter!=outIterEnd; outIter++)
       {
         v = boost::target(*outIter,*posGraph);
+      }
+      if (v == vIn)
+      {
+        DUMPERLOGINIT;
+        LERROR << "ConllDumper::process sentence traversal loop stalls on" << v << "; breaking out.";
+        break;
       }
     }
     auto curSentenceText = originalText->mid(pStart-1, pEnd-pStart+1);
