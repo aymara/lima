@@ -86,7 +86,7 @@ void EventTemplateMerging::init(
     // add a parameter to specify if the event mention can be optional
     optionalMention=unitConfiguration.getBooleanParameter("optionalMention");
   }
-  catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) { } // optional
 
   if (! optionalMention) {
     // add event mention as a mandatory element
