@@ -1,4 +1,4 @@
-#!/bin/bash
+#####!/bin/bash
 
 # SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
@@ -57,9 +57,9 @@ else
 fi
 
 LIMA_SOURCES=$PWD
-pushd $LIMA_SOURCES > /dev/null
+cd $LIMA_SOURCES > /dev/null
 current_branch=`git rev-parse --abbrev-ref HEAD`
-popd > /dev/null
+cd - > /dev/null
 
 # Path to the nltk data necessary to learn the English part of speech tagging
 # model.
