@@ -84,7 +84,7 @@ private:
     std::map< std::string, MediaId > m_mediasIds;
     std::map< MediaId, std::string > m_mediasSymbol;
     std::map< MediaId, QString > m_mediaDefinitionFiles;
-    std::map< MediaId, MediaData* > m_mediasData;
+    std::map< MediaId, std::shared_ptr<MediaData> > m_mediasData;
     std::map< std::string, std::string > m_options;
 
     // entity types
@@ -130,10 +130,7 @@ MediaticDataPrivate::MediaticDataPrivate() :
 MediaticDataPrivate::~MediaticDataPrivate()
 {
   m_mediasIds.clear();
-  for (auto it = m_mediasData.begin(); it != m_mediasData.end(); it++)
-  {
-    delete it->second;
-  }
+  m_mediasData.clear();
   for (auto it = m_entityTypes.begin(); it != m_entityTypes.end(); it++)
   {
     delete *it;
@@ -381,7 +378,7 @@ const MediaData& MediaticData::mediaData(const std::string& med) const
 
 MediaData& MediaticData::mediaData(MediaId media)
 {
-  map<MediaId,MediaData*>::iterator it = m_d->m_mediasData.find(media);
+  auto it = m_d->m_mediasData.find(media);
   if (it == m_d->m_mediasData.end())
   {
     MDATALOGINIT;
@@ -449,19 +446,11 @@ void MediaticDataPrivate::initMedias(
         LDEBUG << (void*)this << " initialize string pool";
 #endif
       }
-      catch (NoSuchList& e)
-      {
-        MDATALOGINIT;
-        LERROR << "missing id for media " << med_str.c_str() << ":" << e.what();
-        throw InvalidConfiguration(
-          std::string("Failed to init media ")+med_str+": "+e.what());
-      }
       catch (NoSuchParam& e)
       {
         MDATALOGINIT;
-        LERROR << "missing id for media " << med_str.c_str() << ":" << e.what();
-        throw InvalidConfiguration(
-          std::string("Failed to init media ")+med_str+": "+e.what());
+        LERROR << "Param common/mediasIds/" << med_str << "missing:" << e.what();
+        throw InvalidConfiguration(std::string("Failed to init media ")+med_str+": "+e.what());
       }
 
       if (qmeds.find(med_str) != qmeds.end())
@@ -507,25 +496,36 @@ void MediaticDataPrivate::initMedias(
           if (!mediaDefinitionFileFound)
           {
             MDATALOGINIT;
-            LERROR << "No media definition file'" << deffile
-                   << "' has been found for media id" << id
+            LERROR << "No media definition file'" << deffile << "' has been found for media id" << id
                    << "in config paths:" << configPaths;
+            // Cleanup: remove data we just added concerning this failed language
+            for (auto med = m_medias.begin(); med != m_medias.end(); med++)
+            {
+              if (*med == med_str)
+                m_medias.erase(med);
+            }
+            m_mediasIds.erase(med_str);
+            m_mediasSymbol.erase(id);
+            m_mediasData.erase(id);
+
             throw InvalidConfiguration();
           }
-        }
-        catch (NoSuchList& e)
-        {
-          MDATALOGINIT;
-          LERROR << "missing definition file for media " << (med_str).c_str()
-                 << ":" << e.what();
-          throw InvalidConfiguration(
-            std::string("Failed to init media ")+(med_str)+": "+e.what());
         }
         catch (NoSuchParam& e)
         {
           MDATALOGINIT;
-          LERROR << "missing definition file for media " << (med_str).c_str()
-                 << ":" << e.what();
+          LERROR << "Param common/mediaDefinitionFiles/" << med_str << "missing:" << e.what();
+          // Cleanup: remove data we just added concerning this failed language
+          for (auto med = m_medias.begin(); med != m_medias.end(); med++)
+          {
+            if (*med == med_str)
+              m_medias.erase(med);
+          }
+          m_mediasIds.erase(med_str);
+          m_mediasSymbol.erase(id);
+          m_mediaDefinitionFiles.erase(id);
+          m_mediasData.erase(id);
+
           throw InvalidConfiguration(
             std::string("Failed to init media ")+(med_str)+": "+e.what());
         }
@@ -547,6 +547,15 @@ void MediaticData::initMediaData(MediaId med)
     LERROR << "No media definition file for med id " << med;
     std::ostringstream oss;
     oss << "No media definition file for med id " << med;
+    // Cleanup: remove data added previously concerning this failed language
+    for (auto medit = m_d->m_medias.begin(); medit != m_d->m_medias.end(); medit++)
+    {
+      if (*medit == m_d->m_mediasSymbol[med])
+        m_d->m_medias.erase(medit);
+    }
+    m_d->m_mediasIds.erase(m_d->m_mediasSymbol[med]);
+    m_d->m_mediasSymbol.erase(med);
+    m_d->m_mediasData.erase(med);
     throw InvalidConfiguration(oss.str());
   }
 #ifdef DEBUG_CD
@@ -569,8 +578,8 @@ void MediaticData::initMediaData(MediaId med)
       parser.getModuleGroupConfiguration("MediaData","Class"),0);
 
     //   MediaData* ldata=new MediaData();
-    m_d->m_mediasData[med]=ldata;
-    ldata->initialize(med,m_d->m_resourcesPath,parser);
+    m_d->m_mediasData[med] = std::shared_ptr<MediaData>(ldata);
+    ldata->initialize(med, m_d->m_resourcesPath,parser);
   }
   else
   {
@@ -578,6 +587,15 @@ void MediaticData::initMediaData(MediaId med)
     LERROR << "Empty class name for MediaData/Class/class for media" << med;
     std::ostringstream oss;
     oss << "Empty class name for MediaData/Class/class for media " << med;
+    // Cleanup: remove data added previously concerning this failed language
+    for (auto medit = m_d->m_medias.begin(); medit != m_d->m_medias.end(); medit++)
+    {
+      if (*medit == m_d->m_mediasSymbol[med])
+        m_d->m_medias.erase(medit);
+    }
+    m_d->m_mediasIds.erase(m_d->m_mediasSymbol[med]);
+    m_d->m_mediasSymbol.erase(med);
+    m_d->m_mediasData.erase(med);
     throw InvalidConfiguration(oss.str());
   }
 }
@@ -645,9 +663,9 @@ void MediaticDataPrivate::initRelations(
   catch (NoSuchGroup& e)
   {
     MDATALOGINIT;
-    LERROR << "No group 'semanticRelations' in 'common' module of lima-common configuration file";
-    throw InvalidConfiguration(
-      std::string("No group 'semanticRelations' in 'common' module of lima-common configuration file:")+e.what());
+    LNOTICE << "No group 'semanticRelations' in 'common' module of lima-common configuration file";
+    // throw InvalidConfiguration(
+    //   std::string("No group 'semanticRelations' in 'common' module of lima-common configuration file:")+e.what());
   }
   catch (NoSuchMap& e)
   {
@@ -683,9 +701,8 @@ void MediaticDataPrivate::initConceptTypes(
   catch (NoSuchGroup& e)
   {
     MDATALOGINIT;
-    LERROR << "No group 'SemanticData' in 'common' module of lima-common configuration file:"
+    LNOTICE << "No group 'SemanticData' in 'common' module of lima-common configuration file:"
             << e.what();
-    throw InvalidConfiguration(e.what());
   }
   catch (NoSuchMap& e)
   {
@@ -745,7 +762,7 @@ void MediaticDataPrivate::initReleaseStringsPool(
   }
   catch (const NoSuchParam& )
   {
-    LWARN << "ReleaseStringsPool parameter not found. Using " << m_releaseStringsPool;
+    LINFO << "ReleaseStringsPool parameter not found. Using " << m_releaseStringsPool;
   }
 }
 
