@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-    - port-to-qt6
+    - master
 
 env:
   # Use docker.io for Docker Hub if empty
