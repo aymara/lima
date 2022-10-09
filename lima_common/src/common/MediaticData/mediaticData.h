@@ -71,8 +71,6 @@ public:
 
     void initMedia(const std::string& media);
 
-    void initMediaData(MediaId med);
-
     const FsaStringsPool& stringsPool(MediaId med) const;
     FsaStringsPool& stringsPool(MediaId med);
 
