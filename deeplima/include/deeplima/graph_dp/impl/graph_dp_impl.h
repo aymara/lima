@@ -153,7 +153,7 @@ public:
     {
       slot_idx = InferenceEngine::next_slot(slot_idx);
     }
-
+    int a=0;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
 
     while (lock_count > 1)

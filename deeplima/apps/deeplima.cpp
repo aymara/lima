@@ -188,7 +188,7 @@ void parse_file(std::istream& input,
 
       parser = std::make_shared<DependencyParserFromTSA>(models_fn.find("dp")->second,
                                                          path_resolver,
-                                                         panalyzer->get_stridx(),
+                                                         *panalyzer->get_stridx(),
                                                          panalyzer->get_class_names(),
                                                          TAG_BUFFER_SIZE,
                                                          8);

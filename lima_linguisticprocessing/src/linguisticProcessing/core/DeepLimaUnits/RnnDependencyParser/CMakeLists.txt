@@ -32,6 +32,7 @@ if (EIGEN3_FOUND)
             lima-lp-annotationgraph
             lima-lp-linguisticanalysisstructure
             lima-lp-textsegmentation
+            lima-lp-syntacticanalysis
             lima-common
             ICU::uc
             convert_from_torch-shared

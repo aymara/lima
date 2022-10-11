@@ -241,15 +241,15 @@ public:
 
   DependencyParser(const std::string& model_fn,
                    const PathResolver& path_resolver,
-                   std::shared_ptr<StringIndex> stridx,
+                   StringIndex& stridx,
                    const std::vector<std::string>& input_class_names,
                    size_t buffer_size,
                    size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
-      m_stridx_ptr(stridx),
-      m_stridx(*m_stridx_ptr)
+      //m_stridx_ptr(stridx),
+      m_stridx(stridx)
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);

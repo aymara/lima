@@ -28,6 +28,9 @@
 #include "deeplima/token_type.h"
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
+#include "linguisticProcessing/core/DeepLimaUnits/TokenIteratorData.h"
+#include "core/SyntacticAnalysis/SyntacticData.h"
+
 
 #define DEBUG_THIS_FILE true
 
@@ -60,8 +63,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         RnnDependencyParserPrivate();
         ~RnnDependencyParserPrivate() ;
         void init(GroupConfigurationStructure& unitConfiguration);
-        void analyzer(vector<segmentation::token_pos>& buffer);
-        void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
+        void analyzer(TokenSequenceAnalyzer<>::TokenIterator* ti);
 
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
@@ -69,15 +71,17 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         DependencyParserFromTSA* m_dependencyParser;
         TokenSequenceAnalyzer<>* m_sequenceAnalyser;
         function<void()> m_load_fn;
-        std::shared_ptr<StringIndex> m_stridx;
+        StringIndex m_stridx;
         PathResolver m_pResolver;
         std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
+        SyntacticAnalysis::SyntagmDefStruct* m_chainMatrix;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+        std::vector<typename DependencyParserFromTSA::token_with_analysis_t> m_tokens;
         bool m_loaded;
     };
 
-    RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false)
+    RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_chainMatrix(), m_loaded(false)
     {
 
     }
@@ -104,7 +108,50 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     Lima::LimaStatusCode
     RnnDependencyParser::process(Lima::AnalysisContent &analysis) const {
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
+        LOG_MESSAGE_WITH_PROLOG(LERROR, "start RnnDependencyParser");
+        auto tiData = dynamic_cast<TokenIteratorData*>(analysis.getData("TokenIterator"));
+        TokenSequenceAnalyzer<>::TokenIterator* tokenIterator = tiData->getTokenIterator();
+        tokenIterator->reset(0);
+        LERROR << "is end : " << tokenIterator->end() << "\n";
+        LERROR << "position : " << tokenIterator->position() << "\n";
+        while(!tokenIterator->end()){
+            LERROR <<"text: "<< tokenIterator->form() << "\n";
+            tokenIterator->next();
+        }
+        tokenIterator->reset();
+
+
+        AnalysisGraph* anagraph= dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+        if (anagraph == nullptr)
+        {
+            LERROR << "no PosGraph ! abort";
+            return MISSING_DATA;
+        }
+
+        SyntacticAnalysis::SyntacticData* syntacticData=dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
+        if (syntacticData == nullptr)
+        {
+            syntacticData=new SyntacticAnalysis::SyntacticData(anagraph,m_d->m_chainMatrix);
+            analysis.setData("SyntacticData",syntacticData);
+        }
+        else if (syntacticData->matrices() == nullptr)
+        {
+            syntacticData->matrices(m_d->m_chainMatrix);
+        }
+        syntacticData->setupDependencyGraph();
+
+        m_d->analyzer(tokenIterator);
+
+        uint curToken=0;
+        for(auto &token: m_d->m_tokens){
+            curToken++;
+            syntacticData->addVertex();
+            LOG_MESSAGE(LERROR,"head is : " << token.m_head_idx << "\n");
+            LOG_MESSAGE(LERROR,"type is : " << token.m_rel_type << "\n");
+            if(token.m_head_idx!=0){
+                syntacticData->addRelationNoChain(token.m_rel_type,curToken,token.m_head_idx);
+            }
+        }
         return SUCCESS_ID;
     }
 
@@ -155,7 +202,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         std::vector<std::vector<string>> classes;
         m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(),class_names, classes);
         int a=0;
-        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name, class_names]()
+        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name, class_names,classes]()
         {
             if (m_loaded)
             {
@@ -163,6 +210,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
             }
 
             m_dependencyParser = new DependencyParserFromTSA(dependency_parser_file_name.toStdString(),m_pResolver,m_stridx,class_names, 1024, 8);
+            for (size_t i = 0; i < classes.size(); ++i)
+            {
+                m_dependencyParser->set_classes(i, class_names[i], classes[i]);
+            }
             m_loaded = true;
         };
 
@@ -170,13 +221,21 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         {
             m_load_fn();
         }
-        for (size_t i = 0; i < classes.size(); ++i)
-        {
-            //m_dependencyParser->set_classes(i, class_names[i], classes[i]);
-            LOG_MESSAGE(LERROR, class_names[i]);
-            LOG_MESSAGE(LERROR, classes[i]);
-        }
 
+
+    }
+
+    void RnnDependencyParserPrivate::analyzer(TokenSequenceAnalyzer<>::TokenIterator* ti) {
+        m_dependencyParser->register_handler([this](const StringIndex& stridx,
+                                                 const std::vector<typename DependencyParserFromTSA::token_with_analysis_t>& tokens,
+                                                 const typename DependencyParserFromTSA::OutputMatrix& classes,
+                                                 size_t begin,
+                                                 size_t end)
+                                 {
+                                     m_tokens = tokens;
+                                 });
+        (*m_dependencyParser)(*ti);
+        m_dependencyParser->finalize();
     }
 
 

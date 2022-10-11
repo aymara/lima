@@ -27,6 +27,7 @@
 #include "deeplima/token_type.h"
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
+#include "linguisticProcessing/core/DeepLimaUnits/TokenIteratorData.h"
 
 #define DEBUG_THIS_FILE true
 
@@ -74,10 +75,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         std::vector<QString> m_lemmas;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         bool m_loaded;
-
+        TokenIteratorData* m_tiData;
+        TokenSequenceAnalyzer<>::TokenIterator* m_ti;
     };
 
-    RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false)
+    RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tiData(new TokenIteratorData())
     {
 
     }
@@ -210,6 +212,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
                 if(name=="upos"){
                     propertyManager = propertyCodeManager.getPropertyManager("MICRO");
                 }
+                else if(name=="ExtPos" || name=="Style"){
+                    continue;
+                }
                 else if(name=="xpos")
                 {
                     propertyManager = propertyCodeManager.getPropertyManager("MACRO");
@@ -320,7 +325,6 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
     void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti) {
         auto classes = m_dumper.getMClasses();
         auto class_names = m_tokensAnalyzer->get_class_names();
-        m_analysis->setData("TokenIterator", reinterpret_cast<AnalysisData *>(&ti));
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "classes: " << class_names);
         while(!ti.end()){
             auto tag = std::map<std::string,std::string>();
@@ -332,6 +336,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             m_lemmas.emplace_back(ti.lemma());
             ti.next();
         }
+        ti.reset(0);
+        m_ti = &ti;
+        m_tiData->setTokenIterator(m_ti);
+        m_analysis->setData("TokenIterator", m_tiData);
     }
 
 }

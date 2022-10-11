@@ -331,7 +331,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitive
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk || tok.m_len == strlen(tok.m_pch)-1)
+      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();
