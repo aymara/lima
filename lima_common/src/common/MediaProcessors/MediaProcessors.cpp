@@ -181,7 +181,7 @@ void MediaProcessors::initPipelines(
         continue;
       }
       auto  pipeline =  static_cast<const MediaProcessUnitPipeline*> ( pu );
-      if ( pipeline==0 )
+      if ( pipeline==nullptr )
       {
         PROCESSORSLOGINIT;
         LERROR << "pipeline '" << *pipItr << "' for media "
