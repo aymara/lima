@@ -57,7 +57,7 @@ class MediaticDataPrivate
 
 private:
   MediaticDataPrivate();
-  virtual ~MediaticDataPrivate();
+  virtual ~MediaticDataPrivate() = default;
 
 protected:
 
@@ -80,6 +80,7 @@ protected:
 
 
 private:
+    bool m_alreadyInitialized = false;
     static const LimaString s_entityTypeNameSeparator;
 
     std::deque< std::string > m_medias;
@@ -95,7 +96,7 @@ private:
     typedef Common::Misc::DoubleAccessObjectToIdMap<LimaString,EntityGroupId> EntityGroupMap;
     typedef Common::Misc::DoubleAccessObjectToIdMap<LimaString,EntityTypeId> EntityTypeMap;
     EntityGroupMap m_entityGroups;
-    std::vector<EntityTypeMap*> m_entityTypes;
+    std::vector< std::shared_ptr<EntityTypeMap> > m_entityTypes;
     EntityTypeHierarchy m_entityHierarchy;
 
     std::map< std::string, uint8_t > m_relTypes;
@@ -104,7 +105,7 @@ private:
     static std::string s_undefinedRelation;
 
 
-    std::map<MediaId,FsaStringsPool*> m_stringsPool;
+    std::map<MediaId, std::shared_ptr<FsaStringsPool> > m_stringsPool;
     bool m_releaseStringsPool;
 
     std::string m_resourcesPath;
@@ -128,23 +129,8 @@ MediaticDataPrivate::MediaticDataPrivate() :
 
 {
   // null first element
-  m_entityTypes.push_back( static_cast<EntityTypeMap*>(0));
+  m_entityTypes.push_back( std::shared_ptr<EntityTypeMap>(nullptr));
 }
-
-MediaticDataPrivate::~MediaticDataPrivate()
-{
-  m_mediasIds.clear();
-  m_mediasData.clear();
-  for (auto it = m_entityTypes.begin(); it != m_entityTypes.end(); it++)
-  {
-    delete *it;
-  }
-  for (auto it = m_stringsPool.begin(); it != m_stringsPool.end(); it++)
-  {
-    delete it->second;
-  }
-}
-
 
 MediaticData::MediaticData() :
     Singleton<MediaticData>(),
@@ -214,13 +200,19 @@ void MediaticData::init(
   const std::deque< std::string >& meds,
   const std::map< std::string, std::string >& opts)
 {
-
+  // TODO make this function thread safe
 //  TimeUtils::updateCurrentTime();
   MDATALOGINIT;
   LINFO << "MediaticData::init " << resourcesPath << " "
-        << configPath << " " << configFile;
-  //LINFO << "Mediatic data initialization";
-
+        << configPath << " " << configFile << "; already initialized?:" << m_d->m_alreadyInitialized;
+  if (m_d->m_alreadyInitialized)
+  {
+#ifdef DEBUG_CD
+    LDEBUG << "MediaticData::init already initialized";
+    return;
+#endif
+  }
+  m_d->m_alreadyInitialized = true;
   m_d->m_resourcesPath=resourcesPath;
   m_d->m_configPath=configPath;
   m_d->m_configFile=configFile;
@@ -258,15 +250,15 @@ void MediaticData::init(
         for (auto it = meds.cbegin(); it != meds.cend(); it++)
           LINFO << "    " << (*it).c_str();
 
+        m_d->m_mediasData.clear();
         m_d->initMedias(configuration, meds);
 
-        m_d->m_mediasData.clear();
-        for (auto it = m_d->m_mediasIds.cbegin();
-             it != m_d->m_mediasIds.cend(); it++)
-        {
-          LDEBUG << "MediaticData::init calling initMediaData for" << it->first << it->second;
-          m_d->initMediaData(it->second);
-        }
+        // for (auto it = m_d->m_mediasIds.cbegin();
+        //      it != m_d->m_mediasIds.cend(); it++)
+        // {
+        //   LDEBUG << "MediaticData::init calling initMediaData for" << it->first << it->second;
+        //   m_d->initMediaData(it->second);
+        // }
       }
       if (configurationFileFound) break;
     }
@@ -442,7 +434,6 @@ void MediaticDataPrivate::initMedias(
       MDATALOGINIT;
       LINFO << "media" << med_str.c_str() << "already initialized: reinit";
       // clear initialization
-      delete m_stringsPool[id];
       m_stringsPool.erase(id);
     }
     //else
@@ -453,7 +444,8 @@ void MediaticDataPrivate::initMedias(
       try
       {
         // initialize strings pool
-        m_stringsPool.insert(std::make_pair(id, new FsaStringsPool()));
+        m_stringsPool[id] = std::shared_ptr<FsaStringsPool>(nullptr);
+        m_stringsPool[id].reset(new FsaStringsPool());
 
         m_mediasIds[med_str]=id;
         m_mediasSymbol[id]=med_str;
@@ -926,13 +918,12 @@ EntityGroupId MediaticData::addEntityGroup(const LimaString& groupName)
   // insert may have created new element or not
   if (static_cast<std::size_t>(groupId) >= m_d->m_entityTypes.size())
   {
-    m_d->m_entityTypes.push_back(new MediaticDataPrivate::EntityTypeMap());
+    m_d->m_entityTypes.push_back( std::make_shared<MediaticDataPrivate::EntityTypeMap>());
   }
   return groupId;
 }
 
-EntityType MediaticDataPrivate::addEntity(EntityGroupId groupId,
-                                   const LimaString& entityName)
+EntityType MediaticDataPrivate::addEntity(EntityGroupId groupId, const LimaString& entityName)
 {
   if (static_cast<std::size_t>(groupId)>=m_entityTypes.size())
   {
@@ -977,7 +968,7 @@ bool MediaticData::getEntityChildList(const EntityType& parent,
 std::vector<EntityType> MediaticData::getGroupAncestors(EntityGroupId groupId) const
 {
   std::vector<EntityType> ancestors;
-  const MediaticDataPrivate::EntityTypeMap::AccessMap& accessMap = m_d->m_entityTypes[groupId]->getAccessMap();
+  const auto& accessMap = m_d->m_entityTypes[groupId]->getAccessMap();
   for(auto iter = accessMap.begin(), iter_end=accessMap.end(); iter != iter_end; iter++){
     const LimaString entityName = *(iter->first);
     int i=entityName.indexOf(m_d->s_entityTypeNameSeparator);

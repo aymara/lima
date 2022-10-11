@@ -35,8 +35,7 @@ namespace Lima {
 namespace Common {
 
 class DynamicLibrariesManagerPrivate;
-class LIMA_FACTORY_EXPORT DynamicLibrariesManager:
-    public Singleton<DynamicLibrariesManager>
+class LIMA_FACTORY_EXPORT DynamicLibrariesManager: public Singleton<DynamicLibrariesManager>
 {
 friend class Singleton<DynamicLibrariesManager>;
 

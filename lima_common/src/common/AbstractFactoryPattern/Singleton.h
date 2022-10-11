@@ -21,9 +21,9 @@ template<typename Object>
 class Singleton
 {
 public:
-  Singleton() {}
-  virtual ~Singleton() {}
-  
+  Singleton() = default;
+  virtual ~Singleton() = default;
+
   /**
     * @brief const singleton accessor
     */
@@ -38,9 +38,10 @@ public:
 
 
 private:
-  static std::unique_ptr< Object > s_instance;
+  Singleton(const Singleton<Object>&) = default;
+  Singleton& operator=(Singleton<Object>&) = default;
 
-  Singleton(const Singleton<Object>&) {}
+  static std::unique_ptr< Object > s_instance;
 };
 
 template<typename Object>
@@ -49,7 +50,7 @@ std::unique_ptr< Object > Singleton<Object>::s_instance(new Object());
 template<typename Object>
 const Object& Singleton<Object>::single()
 {
-  if (s_instance==0)
+  if (s_instance == nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -59,7 +60,7 @@ const Object& Singleton<Object>::single()
 template<typename Object>
 const Object* Singleton<Object>::psingle()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -69,7 +70,7 @@ const Object* Singleton<Object>::psingle()
 template<typename Object>
 Object& Singleton<Object>::changeable()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -79,7 +80,7 @@ Object& Singleton<Object>::changeable()
 template<typename Object>
 Object* Singleton<Object>::pchangeable()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
