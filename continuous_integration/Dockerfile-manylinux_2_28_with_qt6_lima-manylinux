@@ -86,11 +86,12 @@ ENV NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp \
 
 # Build
 #
+#     -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
 RUN cmake -G Ninja  \
     -DQt${QT_VERSION_MAJOR}_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt${QT_VERSION_MAJOR} \
     -DLIMA_RESOURCES:STRING=build \
     -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima \
-    -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
     -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" \
     -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON \
     -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" \
