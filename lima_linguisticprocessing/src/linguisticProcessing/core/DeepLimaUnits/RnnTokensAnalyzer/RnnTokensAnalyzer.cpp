@@ -77,6 +77,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         bool m_loaded;
         TokenIteratorData* m_tiData;
         TokenSequenceAnalyzer<>::TokenIterator* m_ti;
+        TokenSequenceAnalyzer<>::OutputMatrix* m_matrix;
     };
 
     RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tiData(new TokenIteratorData())
@@ -316,6 +317,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
                                                   size_t end){
             TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
             insertTokenInfo(ti);
+            ti.reset(0);
+            m_ti = new TokenSequenceAnalyzer<>::TokenIterator(ti);
+            m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
+            m_tiData->setTokenIterator(m_ti);
+            m_analysis->setData("TokenIterator", m_tiData);
         });
         LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
         (*m_tokensAnalyzer)(buffer, buffer.size());
@@ -336,10 +342,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             m_lemmas.emplace_back(ti.lemma());
             ti.next();
         }
-        ti.reset(0);
-        m_ti = &ti;
-        m_tiData->setTokenIterator(m_ti);
-        m_analysis->setData("TokenIterator", m_tiData);
+
     }
+
 
 }

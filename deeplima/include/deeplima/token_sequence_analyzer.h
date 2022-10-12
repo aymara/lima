@@ -110,6 +110,8 @@ public:
 
     inline const uint8_t token_class(size_t cls_idx) const
     {
+        std::cerr << "time: " << m_current + m_offset << "\n";
+        std::cerr << "cls_idx: " << cls_idx << "\n";
       uint8_t val = m_classes.get(m_current + m_offset, cls_idx);
       return val;
     }
@@ -208,7 +210,8 @@ public:
       m_current_buffer(0),
       m_current_timepoint(0),
       m_stridx_ptr(std::make_shared<StringIndex>()),
-      m_stridx(*m_stridx_ptr)
+      m_stridx(*m_stridx_ptr),
+      m_classes(m_vec)
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
@@ -261,11 +264,11 @@ public:
                              const typename EntityTaggingModule::OutputMatrix& classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
-
+        m_classes.copy(classes);
         m_output_callback(m_stridx,
                           m_buffers[slot_idx],
                           m_lemm_buffers[slot_idx],
-                          classes,
+                          m_classes,
                           begin,
                           end);
 
@@ -426,6 +429,8 @@ protected:
 
   EntityTaggingModule m_cls;
   LemmatizationModule m_lemm;
+  StdMatrix<uint8_t> m_classes;
+  std::vector<std::vector<uint8_t>> m_vec;
 
   output_callback_t m_output_callback;
 };

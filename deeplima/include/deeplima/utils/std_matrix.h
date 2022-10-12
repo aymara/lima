@@ -33,6 +33,12 @@ public:
   {
   }
 
+
+
+  ~StdMatrix(){
+      std::cerr<< "Matrix Destroyed!\n";
+  }
+
   inline uint64_t get(uint64_t time, uint64_t feat) const
   {
     assert(feat < std::numeric_limits<int64_t>::max());
@@ -40,6 +46,10 @@ public:
 
     return m_tensor[feat][time];
   }
+
+  void copy(const StdMatrix<T>& m){
+        this->m_tensor = std::vector<std::vector<T>>(m.m_tensor);
+    }
 
   inline uint64_t size() const
   {

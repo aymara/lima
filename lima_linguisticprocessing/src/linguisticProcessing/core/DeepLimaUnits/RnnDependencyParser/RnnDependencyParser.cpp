@@ -78,6 +78,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         SyntacticAnalysis::SyntagmDefStruct* m_chainMatrix;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         std::vector<typename DependencyParserFromTSA::token_with_analysis_t> m_tokens;
+        std::vector<std::string> m_class_names;
+        std::vector<std::vector<string>> m_classes;
         bool m_loaded;
     };
 
@@ -116,6 +118,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         LERROR << "position : " << tokenIterator->position() << "\n";
         while(!tokenIterator->end()){
             LERROR <<"text: "<< tokenIterator->form() << "\n";
+            for(uint cat=0;cat < m_d->m_class_names.size();cat++){
+                LERROR << "index: " << tokenIterator->token_class(cat) << "\n";
+            }
             tokenIterator->next();
         }
         tokenIterator->reset();
@@ -198,21 +203,20 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
             throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
         }
 
-        std::vector<std::string> class_names;
-        std::vector<std::vector<string>> classes;
-        m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(),class_names, classes);
+
+        m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(),m_class_names, m_classes);
         int a=0;
-        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name, class_names,classes]()
+        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name]()
         {
             if (m_loaded)
             {
                 return;
             }
 
-            m_dependencyParser = new DependencyParserFromTSA(dependency_parser_file_name.toStdString(),m_pResolver,m_stridx,class_names, 1024, 8);
-            for (size_t i = 0; i < classes.size(); ++i)
+            m_dependencyParser = new DependencyParserFromTSA(dependency_parser_file_name.toStdString(),m_pResolver,m_stridx,m_class_names, 1024, 8);
+            for (size_t i = 0; i < m_classes.size(); ++i)
             {
-                m_dependencyParser->set_classes(i, class_names[i], classes[i]);
+                m_dependencyParser->set_classes(i, m_class_names[i], m_classes[i]);
             }
             m_loaded = true;
         };
