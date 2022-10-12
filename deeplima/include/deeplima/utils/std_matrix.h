@@ -28,12 +28,16 @@ class StdMatrix
 {
 public:
 
-  StdMatrix(const std::vector<std::vector<T>>& input)
-    : m_tensor(input)
+  StdMatrix(const std::vector<std::vector<T>>& input) : m_tensor(input)
   {
   }
 
+  StdMatrix(const StdMatrix& m) : m_tensor(m.m_tensor) {
+  }
 
+  StdMatrix& operator=(const StdMatrix& m){
+    m_tensor = m.m_tensor;
+  }
 
   ~StdMatrix(){
       std::cerr<< "Matrix Destroyed!\n";
@@ -48,7 +52,7 @@ public:
   }
 
   void copy(const StdMatrix<T>& m){
-        this->m_tensor = std::vector<std::vector<T>>(m.m_tensor);
+        m_tensor = m.m_tensor;
     }
 
   inline uint64_t size() const
@@ -58,7 +62,7 @@ public:
 
 protected:
 
-  const std::vector<std::vector<T>>& m_tensor;
+  std::vector<std::vector<T>> m_tensor;
 };
 
 #endif
