@@ -56,14 +56,14 @@ public:
   {
     const StringIndex& m_stridx;
     const std::vector<token_with_analysis_t>& m_buffer;
-    const StdMatrix<uint32_t> m_heads;
+    std::shared_ptr< StdMatrix<uint32_t> > m_heads;
     size_t m_current;
     size_t m_offset;
     size_t m_end;
 
   public:
     TokenIterator(const StringIndex& stridx, const std::vector<token_with_analysis_t>& buffer,
-                  const StdMatrix<uint32_t>& heads,
+                  std::shared_ptr< StdMatrix<uint32_t> > heads,
                   size_t offset, size_t end)
       : m_stridx(stridx), m_buffer(buffer), m_heads(heads),
         m_current(0), m_offset(offset), m_end(end - offset)
@@ -105,7 +105,7 @@ public:
 
     inline uint32_t head() const
     {
-      return m_heads.get(m_current, 0);
+      return m_heads->get(m_current, 0);
     }
 
     inline const char* form() const
@@ -235,7 +235,7 @@ public:
   typedef typename DependencyParsingModule::OutputMatrix OutputMatrix;
   typedef std::function < void (const StringIndex& stridx,
                                 const std::vector<token_with_analysis_t>& tokens,
-                                const OutputMatrix& classes,
+                                std::shared_ptr< OutputMatrix> classes,
                                 size_t begin,
                                 size_t end) > output_callback_t;
 
@@ -264,7 +264,7 @@ public:
     }
 
     m_impl.register_handler([this](
-                            const typename DependencyParsingModule::OutputMatrix& classes,
+                            std::shared_ptr< typename DependencyParsingModule::OutputMatrix > classes,
                             size_t begin, size_t end, size_t slot_idx){
        std::cerr << "handler called (dp): " << slot_idx << std::endl;
 
@@ -480,6 +480,12 @@ protected:
       }
 
       iter.next();
+      if (iter.end() && this_sentence_tokens == 1)
+      {
+        lengths.push_back(this_sentence_tokens);
+        tokens_counter += this_sentence_tokens;
+      }
+
     }
 
     iter.reset(current_iter_pos);

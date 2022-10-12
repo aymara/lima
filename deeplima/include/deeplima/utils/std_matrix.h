@@ -6,6 +6,8 @@
 #ifndef DEEPLIMA_APPS_STD_MATRIX_H
 #define DEEPLIMA_APPS_STD_MATRIX_H
 
+#include <memory>
+
 template <class T>
 class StdVector
 {
@@ -28,7 +30,11 @@ class StdMatrix
 {
 public:
 
-  StdMatrix(const std::vector<std::vector<T>>& input) : m_tensor(input)
+  StdMatrix() : m_tensor()
+  {
+  }
+
+  StdMatrix(std::shared_ptr< std::vector< std::vector<T> > > input) : m_tensor(input)
   {
   }
 
@@ -60,9 +66,9 @@ public:
     return m_tensor[0].size();
   }
 
+  std::vector<std::vector<T>> m_tensor;
 protected:
 
-  std::vector<std::vector<T>> m_tensor;
 };
 
 #endif

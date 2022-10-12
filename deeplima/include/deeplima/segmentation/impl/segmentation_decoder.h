@@ -167,7 +167,7 @@ class SegmentationDecoder : public CharReader<>
 {
 public:
 
-  SegmentationDecoder(const OutputMatrix& out, const std::vector<uint8_t>& len)
+  SegmentationDecoder(std::shared_ptr<OutputMatrix> out, const std::vector<uint8_t>& len)
     : m_out(out),
       m_len(len)
   {
@@ -230,11 +230,11 @@ public:
     if (not_empty())
     {
       uint8_t bytes_stored = m_buff_len;
-      if (start_reading(pch, end, m_len[from], m_temp_text, m_tokens[0], m_out.get(from, 0)))
+      if (start_reading(pch, end, m_len[from], m_temp_text, m_tokens[0], m_out->get(from, 0)))
       {
         *pch += m_len[from] - bytes_stored;
         start += m_len[from] - bytes_stored;
-        if (m_out.get(from, 0) != segm_tag_t::X)
+        if (m_out->get(from, 0) != segm_tag_t::X)
         {
           temp_token_len += m_len[from];
         }
@@ -255,7 +255,7 @@ public:
       }
 
 //#ifndef NDEBUG
-//      std::cerr << "[" << from << "]==" << (int)(m_out.get(from, 0)) << std::endl;
+//      std::cerr << "[" << from << "]==" << (int)(m_out->get(from, 0)) << std::endl;
 //#endif
       int8_t gen_cat = 0;
       UChar uch;
@@ -264,7 +264,7 @@ public:
       U8_NEXT(*pch, zero, m_len[from], uch);
       gen_cat = u_charType(uch);
 
-      auto tag = m_out.get(from, 0);
+      auto tag = m_out->get(from, 0);
 
       switch (tag)
       {
@@ -435,7 +435,7 @@ public:
 
 protected:
   // input
-  const OutputMatrix m_out;
+  std::shared_ptr< OutputMatrix > m_out;
   const std::vector<uint8_t>& m_len;
 
   // output

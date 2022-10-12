@@ -162,7 +162,7 @@ void parse_file(std::istream& input,
     psegm = new segmentation::CoNLLUReader();
   }
 
-  TokenSequenceAnalyzer<>* panalyzer = nullptr;
+  std::shared_ptr< TokenSequenceAnalyzer<> > panalyzer = nullptr;
   dumper::AbstractDumper* pdumper = nullptr;
   dumper::DumperBase* pDumperBase = nullptr;
   std::shared_ptr<DependencyParserFromTSA> parser = nullptr;
@@ -175,8 +175,7 @@ void parse_file(std::istream& input,
       lemm_model_fn = it->second;
     }
 
-    panalyzer
-        = new TokenSequenceAnalyzer<>(models_fn.find("tag")->second,
+    panalyzer = std::make_shared< TokenSequenceAnalyzer<> >(models_fn.find("tag")->second,
                                       lemm_model_fn, path_resolver, TAG_BUFFER_SIZE, 8);
 
     if (models_fn.end() != models_fn.find("dp"))
@@ -202,7 +201,7 @@ void parse_file(std::istream& input,
       panalyzer->register_handler([&parser](const StringIndex& stridx,
                                   const token_buffer_t<>& tokens,
                                   const std::vector<StringIndex::idx_t>& lemmata,
-                                  const typename TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                  std::shared_ptr< typename TokenSequenceAnalyzer<>::OutputMatrix > classes,
                                   size_t begin,
                                   size_t end)
       {
@@ -217,7 +216,7 @@ void parse_file(std::istream& input,
 
       parser->register_handler([conllu_dumper](const StringIndex& stridx,
                                   const std::vector<typename DependencyParserFromTSA::token_with_analysis_t>& tokens,
-                                  const typename DependencyParserFromTSA::OutputMatrix& classes,
+                                  std::shared_ptr< typename DependencyParserFromTSA::OutputMatrix > classes,
                                   size_t begin,
                                   size_t end)
       {
@@ -245,7 +244,7 @@ void parse_file(std::istream& input,
       panalyzer->register_handler([conllu_dumper](const StringIndex& stridx,
                                   const token_buffer_t<>& tokens,
                                   const std::vector<StringIndex::idx_t>& lemmata,
-                                  const typename TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                  std::shared_ptr< typename TokenSequenceAnalyzer<>::OutputMatrix > classes,
                                   size_t begin,
                                   size_t end)
       {
@@ -310,7 +309,6 @@ void parse_file(std::istream& input,
 
     std::cerr << "Waiting for analyzer to stop" << std::endl;
     panalyzer->finalize();
-    delete panalyzer;
     std::cerr << "Analyzer stopped" << std::endl;
   }
 

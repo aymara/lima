@@ -125,7 +125,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         while(!tokenIterator->end()){
             LERROR <<"text: "<< tokenIterator->form() << "\n";
             for(uint cat=0;cat < m_d->m_class_names.size();cat++){
-                LERROR << "index: " << tokenIterator->token_class(cat) << "\n";
+                LERROR << "RnnDependencyParser::process class:" << m_d->m_class_names[cat]
+                        << "index: " << tokenIterator->token_class(cat) << "\n";
             }
             tokenIterator->next();
         }
@@ -239,7 +240,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
     void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti) {
         m_dependencyParser->register_handler([this](const StringIndex& stridx,
                                                  const std::vector<typename DependencyParserFromTSA::token_with_analysis_t>& tokens,
-                                                 const typename DependencyParserFromTSA::OutputMatrix& classes,
+                                                 std::shared_ptr< typename DependencyParserFromTSA::OutputMatrix > classes,
                                                  size_t begin,
                                                  size_t end)
                                  {

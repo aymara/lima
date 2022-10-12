@@ -282,7 +282,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         m_tag->register_handler([this](const StringIndex& stridx,
                                                const token_buffer_t<>& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
-                                               const TokenSequenceAnalyzer<>::OutputMatrix& classes,
+                                               std::shared_ptr< TokenSequenceAnalyzer<>::OutputMatrix > classes,
                                                size_t begin,
                                                size_t end){
             TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);

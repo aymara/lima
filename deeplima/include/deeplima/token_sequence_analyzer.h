@@ -27,7 +27,7 @@ public:
     const StringIndex& m_stridx;
     const token_buffer_t<>& m_buffer;
     const std::vector<StringIndex::idx_t> m_lemm_buffer;
-    const StdMatrix<uint8_t>& m_classes;
+    std::shared_ptr< StdMatrix<uint8_t> > m_classes;
     size_t m_current;
     size_t m_offset;
     size_t m_end;
@@ -35,7 +35,7 @@ public:
   public:
     TokenIterator(const StringIndex& stridx, const token_buffer_t<>& buffer,
                   const std::vector<StringIndex::idx_t>& lemm_buffer,
-                  const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
+                  std::shared_ptr< StdMatrix<uint8_t> > classes, size_t offset, size_t end)
       : m_stridx(stridx), m_buffer(buffer), m_lemm_buffer(lemm_buffer), m_classes(classes),
         m_current(0), m_offset(offset), m_end(end - offset)
     {
@@ -112,7 +112,7 @@ public:
     {
         std::cerr << "time: " << m_current + m_offset << "\n";
         std::cerr << "cls_idx: " << cls_idx << "\n";
-      uint8_t val = m_classes.get(m_current + m_offset, cls_idx);
+      uint8_t val = m_classes->get(m_current + m_offset, cls_idx);
       return val;
     }
   };
@@ -211,7 +211,7 @@ public:
       m_current_timepoint(0),
       m_stridx_ptr(std::make_shared<StringIndex>()),
       m_stridx(*m_stridx_ptr),
-      m_classes(m_vec)
+      m_classes(std::make_shared<StdMatrix<uint8_t>>())
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
@@ -242,7 +242,7 @@ public:
       m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
-                             const typename EntityTaggingModule::OutputMatrix& classes,
+                             std::shared_ptr< typename EntityTaggingModule::OutputMatrix > classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
 
@@ -261,10 +261,10 @@ public:
     else
     {
       m_cls.register_handler([this](
-                             const typename EntityTaggingModule::OutputMatrix& classes,
+                             std::shared_ptr< typename EntityTaggingModule::OutputMatrix > classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
-        m_classes.copy(classes);
+        m_classes = classes;
         m_output_callback(m_stridx,
                           m_buffers[slot_idx],
                           m_lemm_buffers[slot_idx],
@@ -290,7 +290,7 @@ public:
   typedef std::function < void (const StringIndex& stridx,
                                 const token_buffer_t<>& tokens,
                                 const std::vector<StringIndex::idx_t>& lemmata,
-                                const OutputMatrix& classes,
+                                std::shared_ptr< OutputMatrix > classes,
                                 size_t begin,
                                 size_t end) > output_callback_t;
 
@@ -398,7 +398,7 @@ protected:
 
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
-                 const StdMatrix<uint8_t>& classes, size_t offset, size_t end)
+                 std::shared_ptr< StdMatrix<uint8_t> > classes, size_t offset, size_t end)
   {
     std::u32string target;
     for (size_t i = 0; i < end - offset; ++i)
@@ -429,8 +429,7 @@ protected:
 
   EntityTaggingModule m_cls;
   LemmatizationModule m_lemm;
-  StdMatrix<uint8_t> m_classes;
-  std::vector<std::vector<uint8_t>> m_vec;
+  std::shared_ptr< StdMatrix<uint8_t> > m_classes;
 
   output_callback_t m_output_callback;
 };

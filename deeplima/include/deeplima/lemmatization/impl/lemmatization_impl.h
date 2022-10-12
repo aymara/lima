@@ -124,14 +124,15 @@ public:
     InferenceEngine::init_new_worker(max_input_word_len);
   }
 
-  inline bool is_fixed(const StdMatrix<uint8_t>& classes, size_t idx)
+  inline bool is_fixed(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx)
   {
     assert(m_upos_idx >= 0);
-    auto upos = classes.get(idx, m_upos_idx);
+    auto upos = classes->get(idx, m_upos_idx);
     return m_fixed_upos[upos];
   }
 
-  void predict(const std::u32string& form, const StdMatrix<uint8_t>& classes, size_t idx, std::u32string& target)
+  void predict(const std::u32string& form, std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx,
+               std::u32string& target)
   {
     // 1. vectorize
     for (size_t i = 0; i < form.size(); ++i)
@@ -143,7 +144,7 @@ public:
     {
       if (m_feat2cls[i] >= 0)
       {
-        m_feat_vectorizer.set(0, i, classes.get(idx, m_feat2cls[i]));
+        m_feat_vectorizer.set(0, i, classes->get(idx, m_feat2cls[i]));
       }
       else
       {

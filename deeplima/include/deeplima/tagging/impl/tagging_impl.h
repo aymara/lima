@@ -84,7 +84,7 @@ public:
   }
 
   typedef typename InferenceEngine::OutputMatrix OutputMatrix;
-  typedef std::function < void (const OutputMatrix& classes,
+  typedef std::function < void (std::shared_ptr< OutputMatrix > classes,
                                 size_t begin, size_t end, size_t slot_idx) > tagging_callback_t;
 
   virtual void register_handler(const tagging_callback_t fn)

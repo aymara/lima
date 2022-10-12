@@ -72,7 +72,7 @@ protected:
 
   slot_t* m_slots;
   std::vector<std::vector<size_t>> m_lengths;
-  std::vector<std::vector<Out>> m_output; // external - classifier id, internal - time position
+  std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
 
 
   inline int32_t prev_slot(int32_t idx)
@@ -131,7 +131,7 @@ protected:
                       this_ptr->get_tensor(),
                       slot.m_input_begin, slot.m_input_end,
                       slot.m_output_begin, slot.m_output_end,
-                      this_ptr->m_output,
+                      this_ptr->m_output->m_tensor,
                       this_ptr->m_lengths[worker_id],
                       {"tokens"});
 
@@ -153,16 +153,18 @@ public:
 
   typedef StdMatrix<Out> OutputMatrix;
 
-  const OutputMatrix get_output() const
+  std::shared_ptr< OutputMatrix > get_output()
   {
-    return OutputMatrix(m_output);
+    return m_output;
   }
 
   RnnSequenceClassifier()
     : m_overlap(0),
       m_num_slots(0),
       m_slot_len(0),
-      m_slots(nullptr)
+      m_slots(nullptr),
+      m_lengths(),
+      m_output(std::make_shared<OutputMatrix>())
   {}
 
   RnnSequenceClassifier(uint32_t max_feat,
@@ -233,9 +235,9 @@ public:
     m_lengths.resize(m_num_slots);
 
     // Vector for calculation results
-    m_output.resize(Model::get_output_str_dicts_names().size());
-    assert(m_output.size() > 0);
-    for (auto& v : m_output)
+    m_output->m_tensor.resize(Model::get_output_str_dicts_names().size());
+    assert(m_output->m_tensor.size() > 0);
+    for (auto& v : m_output->m_tensor)
     {
       v.resize(InputVectorizer::size());
       assert(v.size() > 0);
@@ -265,11 +267,11 @@ public:
 
   inline uint8_t get_output(uint64_t pos, uint8_t cls)
   {
-    assert(cls < m_output.size());
+    assert(cls < m_output->size());
     uint32_t idx = get_slot_idx(pos);
     assert(m_slots[idx].m_lock_count == 1);
     assert(m_slots[idx].m_work_started);
-    return m_output[cls][pos];
+    return m_output->m_tensor[cls][pos];
   }
 
   inline uint64_t get_slot_begin(int32_t idx) const
