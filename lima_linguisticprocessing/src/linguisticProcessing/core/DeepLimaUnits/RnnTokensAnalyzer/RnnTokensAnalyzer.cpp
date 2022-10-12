@@ -67,7 +67,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
         QString m_data;
-        TokenSequenceAnalyzer<>* m_tokensAnalyzer;
+        std::shared_ptr< TokenSequenceAnalyzer<> > m_tokensAnalyzer;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
@@ -75,12 +75,12 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         std::vector<QString> m_lemmas;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         bool m_loaded;
-        TokenIteratorData* m_tiData;
-        TokenSequenceAnalyzer<>::TokenIterator* m_ti;
-        TokenSequenceAnalyzer<>::OutputMatrix* m_matrix;
+        // TokenSequenceAnalyzer<>::OutputMatrix* m_matrix;
     };
 
-    RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper("RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tiData(new TokenIteratorData())
+    RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper(
+                                                            "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+                                                          m_stringsPool(nullptr), m_stridx(), m_loaded(false)
     {
 
     }
@@ -92,7 +92,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     }
 
-    RnnTokensAnalyzer::~RnnTokensAnalyzer() = default;
+    RnnTokensAnalyzer::~RnnTokensAnalyzer(){
+        delete m_d;
+    }
 
     void RnnTokensAnalyzer::init(GroupConfigurationStructure &unitConfiguration, Manager *manager)
     {
@@ -293,7 +295,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             {
                 return;
             }
-            m_tokensAnalyzer = new TokenSequenceAnalyzer<>(tagger_model_file_name.toStdString(),lemmatizer_model_file_name.toStdString(),m_pResolver,1024,8);
+            m_tokensAnalyzer = std::make_shared< TokenSequenceAnalyzer<> >(tagger_model_file_name.toStdString(),
+                                                                           lemmatizer_model_file_name.toStdString(),
+                                                                           m_pResolver, 1024, 8);
             m_loaded = true;
         };
 
@@ -315,13 +319,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
                                                   const TokenSequenceAnalyzer<>::OutputMatrix& classes,
                                                   size_t begin,
                                                   size_t end){
-            TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
-            insertTokenInfo(ti);
-            ti.reset(0);
-            m_ti = new TokenSequenceAnalyzer<>::TokenIterator(ti);
-            m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
-            m_tiData->setTokenIterator(m_ti);
-            m_analysis->setData("TokenIterator", m_tiData);
+            auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(stridx, tokens, lemmata, classes, begin, end);
+            auto tiData = new TokenIteratorData();
+            tiData->setTokenIterator(ti);
+            m_analysis->setData("TokenIterator", tiData);
+            // m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
         });
         LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
         (*m_tokensAnalyzer)(buffer, buffer.size());

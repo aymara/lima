@@ -58,17 +58,18 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     CONFIGURATIONHELPER_LOGGING_INIT(LEMMALOGINIT);
     typedef DependencyParser<typename TokenSequenceAnalyzer<>::TokenIterator> DependencyParserFromTSA;
+
     class RnnDependencyParserPrivate: public ConfigurationHelper {
     public:
         RnnDependencyParserPrivate();
         ~RnnDependencyParserPrivate() ;
         void init(GroupConfigurationStructure& unitConfiguration);
-        void analyzer(TokenSequenceAnalyzer<>::TokenIterator* ti);
+        void analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti);
 
         MediaId m_language;
         FsaStringsPool* m_stringsPool;
         QString m_data;
-        DependencyParserFromTSA* m_dependencyParser;
+        std::shared_ptr<DependencyParserFromTSA> m_dependencyParser;
         TokenSequenceAnalyzer<>* m_sequenceAnalyser;
         function<void()> m_load_fn;
         StringIndex m_stridx;
@@ -83,7 +84,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         bool m_loaded;
     };
 
-    RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_chainMatrix(), m_loaded(false)
+    RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate",
+                                                                                  THIS_FILE_LOGGING_CATEGORY()),
+                                                              m_stringsPool(nullptr), m_stridx(), m_chainMatrix(),
+                                                              m_loaded(false)
     {
 
     }
@@ -95,7 +99,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     }
 
-    RnnDependencyParser::~RnnDependencyParser() = default;
+    RnnDependencyParser::~RnnDependencyParser() {
+        delete m_d;
+    }
 
     void RnnDependencyParser::init(GroupConfigurationStructure &unitConfiguration, Manager *manager)
     {
@@ -112,7 +118,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
     RnnDependencyParser::process(Lima::AnalysisContent &analysis) const {
         LOG_MESSAGE_WITH_PROLOG(LERROR, "start RnnDependencyParser");
         auto tiData = dynamic_cast<TokenIteratorData*>(analysis.getData("TokenIterator"));
-        TokenSequenceAnalyzer<>::TokenIterator* tokenIterator = tiData->getTokenIterator();
+        auto tokenIterator = tiData->getTokenIterator();
         tokenIterator->reset(0);
         LERROR << "is end : " << tokenIterator->end() << "\n";
         LERROR << "position : " << tokenIterator->position() << "\n";
@@ -213,7 +219,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                 return;
             }
 
-            m_dependencyParser = new DependencyParserFromTSA(dependency_parser_file_name.toStdString(),m_pResolver,m_stridx,m_class_names, 1024, 8);
+            m_dependencyParser = std::make_shared<DependencyParserFromTSA>(dependency_parser_file_name.toStdString(),
+                                                                           m_pResolver,m_stridx,m_class_names, 1024, 8);
             for (size_t i = 0; i < m_classes.size(); ++i)
             {
                 m_dependencyParser->set_classes(i, m_class_names[i], m_classes[i]);
@@ -229,7 +236,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     }
 
-    void RnnDependencyParserPrivate::analyzer(TokenSequenceAnalyzer<>::TokenIterator* ti) {
+    void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti) {
         m_dependencyParser->register_handler([this](const StringIndex& stridx,
                                                  const std::vector<typename DependencyParserFromTSA::token_with_analysis_t>& tokens,
                                                  const typename DependencyParserFromTSA::OutputMatrix& classes,

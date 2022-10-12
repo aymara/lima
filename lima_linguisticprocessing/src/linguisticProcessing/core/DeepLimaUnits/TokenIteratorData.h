@@ -13,18 +13,16 @@
 class TokenIteratorData: public Lima::AnalysisData{
 public:
 
-    virtual ~TokenIteratorData(){
+    virtual ~TokenIteratorData() = default;
 
-    }
-
-    void setTokenIterator(deeplima::TokenSequenceAnalyzer<>::TokenIterator* ti){
+    void setTokenIterator(std::shared_ptr<deeplima::TokenSequenceAnalyzer<>::TokenIterator> ti){
         tokenIterator = ti;
     }
 
-    deeplima::TokenSequenceAnalyzer<>::TokenIterator* getTokenIterator(){
+    std::shared_ptr<deeplima::TokenSequenceAnalyzer<>::TokenIterator> getTokenIterator() {
         return tokenIterator;
     }
 private:
-    deeplima::TokenSequenceAnalyzer<>::TokenIterator* tokenIterator;
+    std::shared_ptr<deeplima::TokenSequenceAnalyzer<>::TokenIterator> tokenIterator;
 };
 #endif //LIMA_TOKENITERATORDATA_H
