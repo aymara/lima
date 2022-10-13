@@ -48,7 +48,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
 #define LOG_MESSAGE(stream, msg) stream << msg;
-#define LOG_MESSAGE_WITH_PROLOG(stream, msg) LEMMALOGINIT; LOG_MESSAGE(stream, msg);
+#define LOG_MESSAGE_WITH_PROLOG(stream, msg) SALOGINIT; LOG_MESSAGE(stream, msg);
 #else
     #define LOG_MESSAGE(stream, msg) ;
     #define LOG_MESSAGE_WITH_PROLOG(stream, msg) ;
@@ -56,28 +56,25 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     static SimpleFactory<MediaProcessUnit, RnnDependencyParser> RnnDependencyParserFactory(RNNDEPENDENCYPARSER_CLASSID); // clazy:exclude=non-pod-global-static
 
-    CONFIGURATIONHELPER_LOGGING_INIT(LEMMALOGINIT);
+    CONFIGURATIONHELPER_LOGGING_INIT(SALOGINIT);
     typedef DependencyParser<typename TokenSequenceAnalyzer<>::TokenIterator> DependencyParserFromTSA;
 
     class RnnDependencyParserPrivate: public ConfigurationHelper {
     public:
         RnnDependencyParserPrivate();
-        ~RnnDependencyParserPrivate() ;
+        ~RnnDependencyParserPrivate() = default;
         void init(GroupConfigurationStructure& unitConfiguration);
         void analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti);
 
         MediaId m_language;
-        FsaStringsPool* m_stringsPool;
         QString m_data;
-        std::shared_ptr<DependencyParserFromTSA> m_dependencyParser;
-        TokenSequenceAnalyzer<>* m_sequenceAnalyser;
+        std::shared_ptr<DependencyParserFromTSA> m_dependencyParser = nullptr;
+        std::shared_ptr<TokenSequenceAnalyzer<>> m_sequenceAnalyser = nullptr;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
         std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
-        SyntacticAnalysis::SyntagmDefStruct* m_chainMatrix;
-        const Common::PropertyCode::PropertyAccessor* m_microAccessor;
         std::vector<typename DependencyParserFromTSA::token_with_analysis_t> m_tokens;
         std::vector<std::string> m_class_names;
         std::vector<std::vector<string>> m_classes;
@@ -86,14 +83,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate",
                                                                                   THIS_FILE_LOGGING_CATEGORY()),
-                                                              m_stringsPool(nullptr), m_stridx(), m_chainMatrix(),
+                                                              m_stridx(),
                                                               m_loaded(false)
     {
 
     }
-
-    RnnDependencyParserPrivate::~RnnDependencyParserPrivate() = default;
-
 
     RnnDependencyParser::RnnDependencyParser(): m_d(new RnnDependencyParserPrivate()) {
 
@@ -108,7 +102,6 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnDependencyParser::init");
 
         m_d->m_language = manager->getInitializationParameters().media;
-        m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
 
         m_d->init(unitConfiguration);
 
@@ -133,34 +126,30 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         tokenIterator->reset();
 
 
-        AnalysisGraph* anagraph= dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+        auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
         if (anagraph == nullptr)
         {
             LERROR << "no PosGraph ! abort";
             return MISSING_DATA;
         }
 
-        SyntacticAnalysis::SyntacticData* syntacticData=dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
+        auto syntacticData = dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
         if (syntacticData == nullptr)
         {
-            syntacticData=new SyntacticAnalysis::SyntacticData(anagraph,m_d->m_chainMatrix);
+            syntacticData=new SyntacticAnalysis::SyntacticData(anagraph, nullptr);
             analysis.setData("SyntacticData",syntacticData);
-        }
-        else if (syntacticData->matrices() == nullptr)
-        {
-            syntacticData->matrices(m_d->m_chainMatrix);
         }
         syntacticData->setupDependencyGraph();
 
         m_d->analyzer(tokenIterator);
 
         uint curToken=0;
-        for(auto &token: m_d->m_tokens){
+        for(auto &token: m_d->m_tokens) {
             curToken++;
             syntacticData->addVertex();
-            LOG_MESSAGE(LERROR,"head is : " << token.m_head_idx << "\n");
-            LOG_MESSAGE(LERROR,"type is : " << token.m_rel_type << "\n");
-            if(token.m_head_idx!=0){
+            LOG_MESSAGE(LERROR,"head is : " << token.m_head_idx);
+            LOG_MESSAGE(LERROR,"type is : " << token.m_rel_type);
+            if(token.m_head_idx != 0) {
                 syntacticData->addRelationNoChain(token.m_rel_type,curToken,token.m_head_idx);
             }
         }
@@ -169,6 +158,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfiguration)
     {
+
         m_data = QString(getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries").c_str());
         QString dependency_parser_model_prefix = getStringParameter(unitConfiguration, "dependency_parser_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
         QString tagger_model_prefix = getStringParameter(unitConfiguration, "tagger_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
@@ -184,7 +174,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
         if (!fix_lang_codes(lang_str, udlang))
         {
-            LIMA_EXCEPTION_SELECT_LOGINIT(LEMMALOGINIT,
+            LIMA_EXCEPTION_SELECT_LOGINIT(SALOGINIT,
                                           "RnnDependencyParserPrivate::init: Can't parse language id " << udlang.c_str(),
                                           Lima::InvalidConfiguration);
         }
@@ -211,8 +201,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         }
 
 
-        m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(),m_class_names, m_classes);
-        int a=0;
+        LOG_MESSAGE(LDEBUG, "RnnDependencyParserPrivate::init call m_sequenceAnalyser->get_classes_from_fn");
+        m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(), m_class_names, m_classes);
         m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name]()
         {
             if (m_loaded)

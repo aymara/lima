@@ -36,9 +36,13 @@ public:
     uint16_t m_rel_type = 0;
 
     token_with_analysis_t(size_t num_classes)
-      : m_classes(num_classes, 0)
+      : impl::token_t(), m_classes(num_classes, 0)
     {
     }
+
+    token_with_analysis_t(const token_with_analysis_t& t) = default;
+    token_with_analysis_t& operator=(const token_with_analysis_t& t) = default;
+    virtual ~token_with_analysis_t() = default;
   };
 
   struct tokens_with_analysis_t : public token_buffer_t<token_with_analysis_t>
@@ -265,7 +269,7 @@ public:
 
     m_impl.register_handler([this](
                             std::shared_ptr< typename DependencyParsingModule::OutputMatrix > classes,
-                            size_t begin, size_t end, size_t slot_idx){
+                            size_t begin, size_t end, size_t slot_idx) {
        std::cerr << "handler called (dp): " << slot_idx << std::endl;
 
        m_output_callback(m_stridx,
@@ -354,6 +358,8 @@ public:
         std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
+        token.m_head_idx = iter.head();
+        token.m_rel_type = 0; // TODO where is stored the rel type ???
         for (size_t i = 0; i < m_classes.size(); ++i)
         {
           token.m_classes[i] = iter.token_class(i);
