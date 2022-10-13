@@ -358,8 +358,8 @@ public:
         std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
-        token.m_head_idx = iter.head();
-        token.m_rel_type = 0; // TODO where is stored the rel type ???
+        // token.m_head_idx = iter.head();
+        // token.m_rel_type = 0; // TODO where is stored the rel type ???
         for (size_t i = 0; i < m_classes.size(); ++i)
         {
           token.m_classes[i] = iter.token_class(i);

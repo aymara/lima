@@ -204,6 +204,16 @@ protected:
   typedef lemmatization::impl::LemmatizationImpl< lemmatization::impl::Lemmatizer, EmbdVectorizer, Matrix> LemmatizationModule;
 
 public:
+  TokenSequenceAnalyzer() :
+      m_buffer_size(0),
+      m_current_buffer(0),
+      m_current_timepoint(0),
+      m_stridx_ptr(std::make_shared<StringIndex>()),
+      m_stridx(*m_stridx_ptr),
+      m_classes(std::make_shared<StdMatrix<uint8_t>>())
+  {
+  }
+
   TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn,
                         const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
     : m_buffer_size(buffer_size),

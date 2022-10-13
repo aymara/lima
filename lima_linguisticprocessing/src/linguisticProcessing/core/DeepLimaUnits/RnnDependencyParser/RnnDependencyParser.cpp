@@ -69,7 +69,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         MediaId m_language;
         QString m_data;
         std::shared_ptr<DependencyParserFromTSA> m_dependencyParser = nullptr;
-        std::shared_ptr<TokenSequenceAnalyzer<>> m_sequenceAnalyser = nullptr;
+        // std::shared_ptr<TokenSequenceAnalyzer<>> m_sequenceAnalyser = nullptr;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
@@ -200,9 +200,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
             throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
         }
 
-
-        LOG_MESSAGE(LDEBUG, "RnnDependencyParserPrivate::init call m_sequenceAnalyser->get_classes_from_fn");
-        m_sequenceAnalyser->get_classes_from_fn(tagger_model_file_name.toStdString(), m_class_names, m_classes);
+        LOG_MESSAGE(LDEBUG, "RnnDependencyParserPrivate::init call TokenSequenceAnalyzer<>().get_classes_from_fn");
+        TokenSequenceAnalyzer<>().get_classes_from_fn(tagger_model_file_name.toStdString(), m_class_names, m_classes);
         m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name]()
         {
             if (m_loaded)
