@@ -480,12 +480,12 @@ protected:
       }
 
       iter.next();
-      if (iter.end() && this_sentence_tokens == 1)
-      {
-        lengths.push_back(this_sentence_tokens);
-        tokens_counter += this_sentence_tokens;
-      }
 
+    }
+    if (this_sentence_tokens > 0)
+    {
+      lengths.push_back(this_sentence_tokens);
+      tokens_counter += this_sentence_tokens;
     }
 
     iter.reset(current_iter_pos);
