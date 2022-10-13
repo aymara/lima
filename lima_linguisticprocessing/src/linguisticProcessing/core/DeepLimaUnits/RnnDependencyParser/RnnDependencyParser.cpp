@@ -233,6 +233,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                                                  size_t begin,
                                                  size_t end)
                                  {
+        typename DependencyParserFromTSA::TokenIterator dti(stridx,
+                                                           tokens,
+                                                           classes,
+                                                           begin,
+                                                           end);
                                      m_tokens = tokens;
                                  });
         (*m_dependencyParser)(*ti);

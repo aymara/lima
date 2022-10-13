@@ -89,7 +89,7 @@ public:
 
     inline uint32_t head() const
     {
-      throw;
+      throw std::runtime_error("TokenSequenceAnalyzer<T> does not implement head");
       return 0;
     }
 
