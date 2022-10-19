@@ -59,7 +59,7 @@ public:
   void stop()
   {
     m_stop = true;
-    for (auto& t : m_workers)
+    for (size_t i = 0 ; i < m_workers.size(); i++)
     {
       push(nullptr);
     }

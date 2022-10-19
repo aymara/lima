@@ -80,7 +80,7 @@ public:
     const torch::Tensor m_frozen_input;
     const torch::Tensor m_gold;
   };
-
+  virtual ~BatchIterator() = default;
   virtual void set_batch_size(int64_t batch_size) = 0;
   virtual void start_epoch() = 0;
   virtual bool end() = 0;

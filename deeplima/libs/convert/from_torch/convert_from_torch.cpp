@@ -157,7 +157,7 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
   p->linear.push_back(Parent::m_linear[0]);
   Parent::m_wb.resize(1);
 
-  for (const auto& l : Parent::m_linear)
+  for (size_t i = 0; i < Parent::m_linear.size(); i++)
   {
     Parent::m_output_str_dicts_names.push_back("");
   }

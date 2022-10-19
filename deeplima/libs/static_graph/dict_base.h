@@ -14,6 +14,7 @@ namespace deeplima
 class DictBase
 {
 public:
+  virtual ~DictBase() = default;
   virtual uint64_t size() const = 0;
   virtual c10::IValue toIValue() const = 0;
   virtual void fromIValue(const c10::IValue& v) = 0;
@@ -24,6 +25,7 @@ template <class D=std::shared_ptr<DictBase>>
 class DictsHolderImpl : public std::vector<D>
 {
 public:
+  virtual ~DictsHolderImpl<D>() = default;
   std::vector<uint32_t> get_counters() const
   {
     std::vector<uint32_t> v(this->size());

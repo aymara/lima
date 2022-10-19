@@ -103,8 +103,8 @@ public:
   StaticGraphImpl(DictsHolder&& dicts, const std::string& script);
   StaticGraphImpl() { }
 
-  virtual void load(torch::serialize::InputArchive& archive);
-  virtual void save(torch::serialize::OutputArchive& archive) const;
+  virtual void load(torch::serialize::InputArchive& archive) override;
+  virtual void save(torch::serialize::OutputArchive& archive) const override;
   virtual void set_tags(const std::map<std::string, std::string>& tags);
   virtual const std::map<std::string, std::string>& get_tags() const
   {

@@ -136,7 +136,7 @@ public:
     // in case of ML errors (wrong X tag).
     if (inside)
     {
-      if (dst.size() < tmp.m_len + len + 1)
+      if (dst.size() < size_t(tmp.m_len + len + 1))
       {
         dst.resize(tmp.m_len + len + 1);
       }
@@ -162,12 +162,11 @@ protected:
   uint8_t m_buff_len;
 };
 
-template <class OutputMatrix>
 class SegmentationDecoder : public CharReader<>
 {
 public:
 
-  SegmentationDecoder(std::shared_ptr<OutputMatrix> out, const std::vector<uint8_t>& len)
+  SegmentationDecoder(std::shared_ptr< StdMatrix<uint8_t> > out, const std::vector<uint8_t>& len)
     : m_out(out),
       m_len(len)
   {
@@ -191,7 +190,7 @@ public:
       if (m_tokens[pos].m_pch == (const char*)m_temp_text.data())
       {
         assert(0 == pos);
-        if (m_temp_text.size() < m_tokens[pos].m_len + 1)
+        if (m_temp_text.size() < size_t(m_tokens[pos].m_len + 1))
         {
           m_temp_text.resize(m_tokens[pos].m_len + 1);
         }
@@ -397,7 +396,7 @@ public:
     {
       if (m_tokens[0].m_pch == (const char*)m_temp_text.data())
       {
-        if (m_temp_text.size() < m_tokens[0].m_len + 1)
+        if (m_temp_text.size() < size_t(m_tokens[0].m_len + 1))
         {
           m_temp_text.resize(m_tokens[0].m_len + 1);
         }
@@ -415,7 +414,7 @@ public:
       {
         m_tokens[0] = m_tokens[pos];
       }
-      if (m_temp_text.size() < m_tokens[0].m_len + 1)
+      if (m_temp_text.size() < size_t(m_tokens[0].m_len + 1))
       {
         m_temp_text.resize(m_tokens[0].m_len + 1);
       }
@@ -435,7 +434,7 @@ public:
 
 protected:
   // input
-  std::shared_ptr< OutputMatrix > m_out;
+  std::shared_ptr< StdMatrix<uint8_t> > m_out;
   const std::vector<uint8_t>& m_len;
 
   // output

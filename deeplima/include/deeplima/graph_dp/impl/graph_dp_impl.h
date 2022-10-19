@@ -10,6 +10,7 @@
 #include "deeplima/fastText_wrp/fastText_wrp.h"
 #include "deeplima/eigen_wrp/embd_dict.h"
 #include "deeplima/utils/str_index.h"
+#include "deeplima/utils/std_matrix.h"
 
 #include "helpers/path_resolver.h"
 
@@ -25,9 +26,9 @@ class GraphDpImpl: public InferenceEngine
 {
 public:
 
-  GraphDpImpl()
-    : m_current_slot_no(-1),
+  GraphDpImpl() :
       m_current_slot_timepoints(0),
+      m_current_slot_no(-1),
       m_last_completed_slot(-1),
       m_curr_buff_idx(0)
   {}
@@ -107,8 +108,7 @@ public:
     m_vectorizer.precompute(buffer);
   }
 
-  typedef typename InferenceEngine::OutputMatrix OutputMatrix;
-  typedef std::function < void (std::shared_ptr< OutputMatrix > classes,
+  typedef std::function < void (std::shared_ptr< StdMatrix<uint32_t> > classes,
                                 size_t begin, size_t end, size_t slot_idx) > tagging_callback_t;
 
   virtual void register_handler(const tagging_callback_t fn)
@@ -144,7 +144,7 @@ protected:
 public:
   inline void send_next_results()
   {
-    int32_t slot_idx = m_last_completed_slot;
+    auto slot_idx = m_last_completed_slot;
     if (-1 == slot_idx)
     {
       slot_idx = 0;
@@ -153,7 +153,7 @@ public:
     {
       slot_idx = InferenceEngine::next_slot(slot_idx);
     }
-    int a=0;
+    // int a=0;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
 
     while (lock_count > 1)
@@ -174,7 +174,7 @@ public:
 
   inline void send_all_results()
   {
-    int32_t slot_idx = m_last_completed_slot;
+    auto slot_idx = m_last_completed_slot;
 
     while (true)
     {
@@ -212,7 +212,7 @@ public:
 protected:
   inline void send_results_if_available()
   {
-    int32_t slot_idx = m_last_completed_slot;
+    auto slot_idx = m_last_completed_slot;
     if (-1 == slot_idx)
     {
       slot_idx = 0;
@@ -262,9 +262,11 @@ public:
                                    const std::vector<size_t>& lengths,
                                    int timepoints_to_analyze = -1)
   {
+    std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
+              << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
-    size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
+    // size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
     size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
     for (size_t i = 0; i < count; i++)
     {

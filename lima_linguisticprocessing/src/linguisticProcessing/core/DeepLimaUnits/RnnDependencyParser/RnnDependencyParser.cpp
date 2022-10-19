@@ -57,7 +57,6 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
     static SimpleFactory<MediaProcessUnit, RnnDependencyParser> RnnDependencyParserFactory(RNNDEPENDENCYPARSER_CLASSID); // clazy:exclude=non-pod-global-static
 
     CONFIGURATIONHELPER_LOGGING_INIT(SALOGINIT);
-    typedef DependencyParser<typename TokenSequenceAnalyzer<>::TokenIterator> DependencyParserFromTSA;
 
     class RnnDependencyParserPrivate: public ConfigurationHelper {
     public:
@@ -68,14 +67,14 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
         MediaId m_language;
         QString m_data;
-        std::shared_ptr<DependencyParserFromTSA> m_dependencyParser = nullptr;
+        std::shared_ptr<DependencyParser> m_dependencyParser = nullptr;
         // std::shared_ptr<TokenSequenceAnalyzer<>> m_sequenceAnalyser = nullptr;
         function<void()> m_load_fn;
         StringIndex m_stridx;
         PathResolver m_pResolver;
         std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
-        std::vector<typename DependencyParserFromTSA::token_with_analysis_t> m_tokens;
+        std::vector<typename DependencyParser::token_with_analysis_t> m_tokens;
         std::vector<std::string> m_class_names;
         std::vector<std::vector<string>> m_classes;
         bool m_loaded;
@@ -108,9 +107,18 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
     }
 
     Lima::LimaStatusCode
-    RnnDependencyParser::process(Lima::AnalysisContent &analysis) const {
-        LOG_MESSAGE_WITH_PROLOG(LERROR, "start RnnDependencyParser");
+    RnnDependencyParser::process(Lima::AnalysisContent &analysis) const
+    {
+        TimeUtils::updateCurrentTime();
+        TimeUtilsController RnnDependencyParserProcessTime("RnnDependencyParser");
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnDependencyParser::process");
         auto tiData = dynamic_cast<TokenIteratorData*>(analysis.getData("TokenIterator"));
+        if (tiData == nullptr)
+        {
+            SALOGINIT;
+            LERROR << "Can't Process RnnDependencyParser : missing data 'TokenIterator'";
+            return MISSING_DATA;
+        }
         auto tokenIterator = tiData->getTokenIterator();
         tokenIterator->reset(0);
         LERROR << "is end : " << tokenIterator->end() << "\n";
@@ -153,6 +161,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                 syntacticData->addRelationNoChain(token.m_rel_type,curToken,token.m_head_idx);
             }
         }
+        TimeUtils::logElapsedTime("RnnDependencyParser");
         return SUCCESS_ID;
     }
 
@@ -209,7 +218,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                 return;
             }
 
-            m_dependencyParser = std::make_shared<DependencyParserFromTSA>(dependency_parser_file_name.toStdString(),
+            m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
                                                                            m_pResolver,m_stridx,m_class_names, 1024, 8);
             for (size_t i = 0; i < m_classes.size(); ++i)
             {
@@ -228,12 +237,12 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti) {
         m_dependencyParser->register_handler([this](const StringIndex& stridx,
-                                                 const std::vector<typename DependencyParserFromTSA::token_with_analysis_t>& tokens,
-                                                 std::shared_ptr< typename DependencyParserFromTSA::OutputMatrix > classes,
+                                                 const std::vector<typename DependencyParser::token_with_analysis_t>& tokens,
+                                                 std::shared_ptr< StdMatrix<uint32_t> > classes,
                                                  size_t begin,
                                                  size_t end)
                                  {
-        typename DependencyParserFromTSA::TokenIterator dti(stridx,
+        typename DependencyParser::TokenIterator dti(stridx,
                                                            tokens,
                                                            classes,
                                                            begin,

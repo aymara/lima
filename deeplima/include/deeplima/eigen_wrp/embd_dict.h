@@ -27,7 +27,7 @@ public:
   typedef M tensor_t;
 
   EmbdDict() = default;
-  virtual ~EmbdDict() = default;
+  virtual ~EmbdDict() {}
 
   template <class T>
   void init(std::shared_ptr<Dict<T>> dict, const M& tensor)
@@ -38,7 +38,7 @@ public:
     {
       assert(it.second >= 0);
       assert(it.second < std::numeric_limits<I>::max());
-      assert(it.second < m_embd.cols());
+      assert(m_embd.cols() >=0 && it.second < (unsigned long)(m_embd.cols()));
       m_index[static_cast<K>(it.first)] = I(it.second);
       m_reverse_index[static_cast<I>(it.second)] = static_cast<K>(it.first);
     }
@@ -100,6 +100,7 @@ public:
   typedef std::string value_t;
 
   EmbdDict() {}
+  ~EmbdDict() {}
 
   void init(std::shared_ptr<Dict<value_t>> dict, const M& tensor)
   {

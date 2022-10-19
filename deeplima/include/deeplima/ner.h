@@ -116,7 +116,7 @@ namespace impl
 #error Unknown inference engine
 #endif
 
-  typedef RnnSequenceClassifier<Model, BaseMatrix> EntityTaggingClassifier;
+  typedef RnnSequenceClassifier<Model, BaseMatrix, uint8_t> EntityTaggingClassifier;
 
   //typedef impl::TaggingImpl< EntityTaggingClassifier, int
   //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,

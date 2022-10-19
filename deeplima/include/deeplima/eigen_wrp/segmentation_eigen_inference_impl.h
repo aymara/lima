@@ -49,9 +49,9 @@ public:
   }
 
   virtual void precompute_inputs(
-      const M& inputs,
-      M& outputs,
-      int64_t input_size
+      const M& /*inputs*/,
+      M& /*outputs*/,
+      int64_t /*input_size*/
       )
   {
     throw std::runtime_error("Precomputing isn't supported for segmentation");
@@ -64,18 +64,16 @@ public:
       int64_t input_end,
       int64_t output_begin,
       int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
-      const std::vector<std::string>& outputs_names
+      std::shared_ptr< StdMatrix<uint8_t> >& output,
+      const std::vector<std::string>& /*outputs_names*/
       )
   {
     deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
         = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
-    p_op->execute(Parent::m_wb[0][worker_id],
-        inputs, Parent::m_params[0], output,
-        input_begin, input_end,
-        output_begin, output_end);
+    p_op->execute(Parent::m_wb[0][worker_id], inputs, Parent::m_params[0], output->m_tensor,
+                  input_begin, input_end, output_begin, output_end);
   }
 
 protected:

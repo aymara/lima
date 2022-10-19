@@ -35,7 +35,7 @@ namespace train
 string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_descr_t>& embd_descr,
                                                           const vector<rnn_descr_t>& rnn_descr,
                                                           const vector<deep_biaffine_attention_descr_t>& decoder_descr,
-                                                          const vector<std::string>& output_names,
+                                                          const vector<std::string>& /*output_names*/,
                                                           bool input_includes_root/*,
                                                           const vector<uint32_t>& classes*/)
 {

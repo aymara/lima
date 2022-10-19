@@ -17,13 +17,13 @@
 #include "helpers/path_resolver.h"
 #include "graph_dp/impl/graph_dp_impl.h"
 #include "segmentation/impl/segmentation_decoder.h"
+#include "token_sequence_analyzer.h"
 
 #include "graph_dp.h"
 
 namespace deeplima
 {
 
-template <class Iterator, class Matrix=eigen_wrp::EigenMatrixXf>
 class DependencyParser
 {
 public:
@@ -66,9 +66,11 @@ public:
     size_t m_end;
 
   public:
-    TokenIterator(const StringIndex& stridx, const std::vector<token_with_analysis_t>& buffer,
+    TokenIterator(const StringIndex& stridx,
+                  const std::vector<token_with_analysis_t>& buffer,
                   std::shared_ptr< StdMatrix<uint32_t> > heads,
-                  size_t offset, size_t end)
+                  size_t offset,
+                  size_t end)
       : m_stridx(stridx), m_buffer(buffer), m_heads(heads),
         m_current(0), m_offset(offset), m_end(end - offset)
     {
@@ -141,7 +143,7 @@ public:
       return m_current;
     }
 
-    inline const uint8_t token_class(size_t cls_idx) const
+    inline uint8_t token_class(size_t cls_idx) const
     {
       assert(m_offset == 0);
       uint8_t val = m_buffer[m_current].m_classes[cls_idx];
@@ -151,7 +153,7 @@ public:
 
   class enriched_token_t
   {
-    friend class DependencyParser<Iterator, Matrix>;
+    friend class DependencyParser;
 
   protected:
     const StringIndex& m_stridx;
@@ -177,7 +179,7 @@ public:
     inline bool eos() const
     {
       assert(nullptr != m_ptoken);
-      return flags() & DependencyParser<Iterator, Matrix>::tokens_with_analysis_t::token_t::token_flags_t::sentence_brk;
+      return flags() & DependencyParser::tokens_with_analysis_t::token_t::token_flags_t::sentence_brk;
     }
 
     inline uint32_t cls(size_t idx) const
@@ -234,12 +236,11 @@ public:
 
   typedef graph_dp::impl::GraphDpImpl< graph_dp::impl::GraphDependencyParser,
                                        FeaturesVectorizer,
-                                       Matrix > DependencyParsingModule;
+                                       eigen_wrp::EigenMatrixXf > DependencyParsingModule;
 
-  typedef typename DependencyParsingModule::OutputMatrix OutputMatrix;
   typedef std::function < void (const StringIndex& stridx,
                                 const std::vector<token_with_analysis_t>& tokens,
-                                std::shared_ptr< OutputMatrix> classes,
+                                std::shared_ptr< StdMatrix<uint32_t> > heads,
                                 size_t begin,
                                 size_t end) > output_callback_t;
 
@@ -268,13 +269,13 @@ public:
     }
 
     m_impl.register_handler([this](
-                            std::shared_ptr< typename DependencyParsingModule::OutputMatrix > classes,
+                            std::shared_ptr< StdMatrix<uint32_t> > heads,
                             size_t begin, size_t end, size_t slot_idx) {
        std::cerr << "handler called (dp): " << slot_idx << std::endl;
 
        m_output_callback(m_stridx,
                          m_buffers[slot_idx],
-                         classes,
+                         heads,
                          begin,
                          end);
 
@@ -319,7 +320,7 @@ public:
     }
   }
 
-  void operator()(Iterator& iter)
+  void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
     if (m_current_timepoint >= m_buffer_size)
     {
@@ -358,8 +359,8 @@ public:
         std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
-        token.m_head_idx = iter.head();
-        token.m_rel_type = 0; // TODO where is stored the rel type ???
+        // token.m_head_idx = iter.head();
+        // token.m_rel_type = 0; // TODO where is stored the rel type ???
         for (size_t i = 0; i < m_classes.size(); ++i)
         {
           token.m_classes[i] = iter.token_class(i);
@@ -453,7 +454,7 @@ protected:
                                count);
   }
 
-  size_t count_max_tokens_until_eos(Iterator& iter, std::vector<size_t>& lengths)
+  size_t count_max_tokens_until_eos(TokenSequenceAnalyzer<>::TokenIterator& iter, std::vector<size_t>& lengths)
   {
     size_t current_iter_pos = iter.position();
     size_t tokens_counter = 0;

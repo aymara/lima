@@ -3,10 +3,10 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <common/LimaCommon.h>
-
 #ifndef LIMA_RNNTOKENIZEREXPORT_H
 #define LIMA_RNNTOKENIZEREXPORT_H
+
+#include <common/LimaCommon.h>
 
 #ifdef WIN32
 

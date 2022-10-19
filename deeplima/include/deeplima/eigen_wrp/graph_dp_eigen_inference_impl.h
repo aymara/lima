@@ -58,16 +58,17 @@ public:
   }
 
   virtual void predict(
-      size_t worker_id,
-      const M& inputs,
-      int64_t input_begin,
-      int64_t input_end,
-      int64_t output_begin,
-      int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
-      const std::vector<std::string>& outputs_names
+      size_t /*worker_id*/,
+      const M& /*inputs*/,
+      int64_t /*input_begin*/,
+      int64_t /*input_end*/,
+      int64_t /*output_begin*/,
+      int64_t /*output_end*/,
+      std::shared_ptr< StdMatrix<uint8_t> >& /*output*/,
+      const std::vector<std::string>& /*outputs_names*/
       )
   {
+//     TODO to be implemented?
     assert(false);
   }
 
@@ -75,19 +76,19 @@ public:
       size_t worker_id,
       const M& inputs,
       int64_t input_begin,
-      int64_t input_end,
-      int64_t output_begin,
-      int64_t output_end,
-      std::vector<std::vector<uint32_t>>& output,
+      int64_t /*input_end*/,
+      int64_t /*output_begin*/,
+      int64_t /*output_end*/,
+      std::shared_ptr< StdMatrix<uint32_t> >& output,
       const std::vector<size_t>& lengths,
-      const std::vector<std::string>& outputs_names
+      const std::vector<std::string>& /*outputs_names*/
       )
   {
     deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_encoder
         = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
 
-    const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *plstm
-        = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
+    // const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *plstm
+    //     = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
 
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
@@ -108,7 +109,7 @@ public:
       p_decoder->execute(Parent::m_wb[1][worker_id],
           wb->get_last_output(), Parent::m_params[1],
           start, start + lengths[i],
-          output[0]);
+          (*output)[0]);
 
       start += lengths[i];
     }

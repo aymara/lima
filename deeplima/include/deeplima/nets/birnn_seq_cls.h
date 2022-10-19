@@ -17,7 +17,7 @@
 namespace deeplima
 {
 
-template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out=uint8_t>
+template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out>
 class RnnSequenceClassifier : public InputVectorizer,
                               public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> >,
                               public Model
@@ -37,12 +37,12 @@ class RnnSequenceClassifier : public InputVectorizer,
   struct slot_t
   {
     // input positions
-    int64_t m_input_begin;
-    int64_t m_input_end;
+    uint64_t m_input_begin;
+    uint64_t m_input_end;
 
     // output positions
-    int64_t m_output_begin;
-    int64_t m_output_end;
+    uint64_t m_output_begin;
+    uint64_t m_output_end;
 
     slot_flags_t m_flags;
 
@@ -57,8 +57,8 @@ class RnnSequenceClassifier : public InputVectorizer,
         m_input_end(0),
         m_output_begin(0),
         m_output_end(0),
-        m_work_started(false),
         m_flags(none),
+        m_work_started(false),
         m_lock_count(0),
         m_prev(nullptr),
         m_next(nullptr)
@@ -75,7 +75,7 @@ protected:
   std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
 
 
-  inline int32_t prev_slot(int32_t idx)
+  inline int32_t prev_slot(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -83,7 +83,7 @@ protected:
   }
 
 public:
-  inline int32_t next_slot(int32_t idx)
+  inline int32_t next_slot(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -91,7 +91,7 @@ public:
   }
 
 protected:
-  inline void clear_slot(int32_t idx)
+  inline void clear_slot(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -108,7 +108,7 @@ protected:
     }
   }
 
-  inline void start_job_impl(int32_t idx)
+  inline void start_job_impl(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -131,7 +131,7 @@ protected:
                       this_ptr->get_tensor(),
                       slot.m_input_begin, slot.m_input_end,
                       slot.m_output_begin, slot.m_output_end,
-                      this_ptr->m_output->m_tensor,
+                      this_ptr->m_output,
                       this_ptr->m_lengths[worker_id],
                       {"tokens"});
 
@@ -151,9 +151,7 @@ protected:
 
 public:
 
-  typedef StdMatrix<Out> OutputMatrix;
-
-  std::shared_ptr< OutputMatrix > get_output()
+  std::shared_ptr< StdMatrix<Out> > get_output()
   {
     return m_output;
   }
@@ -164,7 +162,7 @@ public:
       m_slot_len(0),
       m_slots(nullptr),
       m_lengths(),
-      m_output(std::make_shared<OutputMatrix>())
+      m_output(std::make_shared< StdMatrix<Out> >())
   {}
 
   RnnSequenceClassifier(uint32_t max_feat,
@@ -175,7 +173,9 @@ public:
     : m_overlap(0),
       m_num_slots(0),
       m_slot_len(0),
-      m_slots(nullptr)
+      m_slots(nullptr),
+      m_lengths(),
+      m_output(std::make_shared< StdMatrix<Out> >())
   {
     init(max_feat, overlap, num_slots, slot_len, num_threads);
   }
@@ -187,6 +187,12 @@ public:
             uint32_t num_threads,
             bool precomputed_input=false)
   {
+    // RnnSequenceClassifier::init 7, 4, 18, 16384, 8, false
+    // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
+    // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
+
+    std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
+              << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
     m_num_slots = num_slots;
     m_overlap = overlap;
     m_slot_len = slot_len;
@@ -235,8 +241,8 @@ public:
     m_lengths.resize(m_num_slots);
 
     // Vector for calculation results
-    m_output->m_tensor.resize(Model::get_output_str_dicts_names().size());
-    assert(m_output->m_tensor.size() > 0);
+    m_output->resize(Model::get_output_str_dicts_names().size());
+    assert(m_output->size() > 0);
     for (auto& v : m_output->m_tensor)
     {
       v.resize(InputVectorizer::size());
@@ -271,38 +277,38 @@ public:
     uint32_t idx = get_slot_idx(pos);
     assert(m_slots[idx].m_lock_count == 1);
     assert(m_slots[idx].m_work_started);
-    return m_output->m_tensor[cls][pos];
+    return (*m_output)[cls][pos];
   }
 
-  inline uint64_t get_slot_begin(int32_t idx) const
+  inline uint64_t get_slot_begin(uint32_t idx) const
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_begin;
   }
 
-  inline bool get_slot_started(int32_t idx) const
+  inline bool get_slot_started(uint32_t idx) const
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_work_started;
   }
 
-  inline uint64_t get_slot_end(int32_t idx) const
+  inline uint64_t get_slot_end(uint32_t idx) const
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_end;
   }
 
-  inline uint8_t get_lock_count(int32_t idx) const
+  inline uint8_t get_lock_count(uint32_t idx) const
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_lock_count;
   }
 
-  inline void increment_lock_count(int32_t idx, uint8_t v = 1)
+  inline void increment_lock_count(uint32_t idx, uint8_t v = 1)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -311,7 +317,7 @@ public:
               << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
   }
 
-  inline void decrement_lock_count(int32_t idx)
+  inline void decrement_lock_count(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -326,6 +332,7 @@ public:
 
   inline uint64_t get_start_timepoint() const
   {
+    std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
     return m_overlap;
   }
 
@@ -356,7 +363,7 @@ public:
     return rv;
   }
 
-  inline void set_slot_lengths(int32_t idx, const std::vector<size_t>& lengths)
+  inline void set_slot_lengths(uint32_t idx, const std::vector<size_t>& lengths)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -366,7 +373,7 @@ public:
   }
 
   // used in graph-based dependency parser
-  inline void set_slot_begin(int32_t idx, uint64_t slot_begin)
+  inline void set_slot_begin(uint32_t idx, uint64_t slot_begin)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -377,7 +384,7 @@ public:
     slot.m_input_begin = slot_begin;
   }
 
-  inline void set_slot_end(int32_t idx, uint64_t slot_end)
+  inline void set_slot_end(uint32_t idx, uint64_t slot_end)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -391,7 +398,7 @@ public:
     slot.m_input_end = slot_end;
   }
 
-  inline void start_job(int32_t idx, bool no_more_data=false)
+  inline void start_job(uint32_t idx, bool no_more_data=false)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);
@@ -418,7 +425,7 @@ public:
     }
   }
 
-  inline void wait_for_slot(int32_t idx)
+  inline void wait_for_slot(uint32_t idx)
   {
     assert(idx >= 0);
     assert(idx < m_num_slots);

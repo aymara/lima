@@ -53,7 +53,7 @@ public:
     torch::load(*this, fn);
   }
 
-  size_t init_new_worker(size_t input_len)
+  size_t init_new_worker(size_t /*input_len*/)
   {
     return m_workers++;
   }

@@ -30,9 +30,9 @@ class TaggingImpl: public ITagging, public InferenceEngine
 {
 public:
 
-  TaggingImpl()
-    : m_current_slot_no(-1),
+  TaggingImpl() :
       m_current_slot_timepoints(0),
+      m_current_slot_no(-1),
       m_last_completed_slot(-1),
       m_curr_buff_idx(0)
   {}
@@ -83,8 +83,7 @@ public:
     m_vectorizer.precompute(buffer);
   }
 
-  typedef typename InferenceEngine::OutputMatrix OutputMatrix;
-  typedef std::function < void (std::shared_ptr< OutputMatrix > classes,
+  typedef std::function < void (std::shared_ptr< StdMatrix<uint8_t> > classes,
                                 size_t begin, size_t end, size_t slot_idx) > tagging_callback_t;
 
   virtual void register_handler(const tagging_callback_t fn)
@@ -188,7 +187,7 @@ public:
 protected:
   inline void send_results_if_available()
   {
-    int32_t slot_idx = m_last_completed_slot;
+    auto slot_idx = m_last_completed_slot;
     if (-1 == slot_idx)
     {
       slot_idx = 0;
@@ -234,6 +233,7 @@ protected:
 public:
   virtual void handle_token_buffer(size_t slot_no, const typename Vectorizer::dataset_t& buffer, int timepoints_to_analyze = -1)
   {
+    std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", " << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();

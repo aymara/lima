@@ -43,7 +43,7 @@ public:
   {
   }
 
-  virtual void load(const std::string& fn, const PathResolver& path_resolver)
+  virtual void load(const std::string& fn, const PathResolver& /*path_resolver*/)
   {
     InferenceEngine::load(fn);
   }
@@ -75,7 +75,7 @@ public:
 
       auto it = std::find(class_names.begin(), class_names.end(), lang_morph_model.get_feat_name(feat_idx));
 
-      int cls_idx = -1;
+      auto cls_idx = std::numeric_limits<size_t>::max();
       if (class_names.end() != it)
       {
         cls_idx = it - class_names.begin();
@@ -109,7 +109,7 @@ public:
       enc_feats_dict.push_back(d);
 
       m_feat2cls.push_back(cls_idx);
-      if (cls_idx >= 0 && cls_idx < class_names.size() && class_names[cls_idx] == "upos")
+      if (cls_idx != std::numeric_limits<size_t>::max() && cls_idx < class_names.size() && class_names[cls_idx] == "upos")
       {
         m_upos_idx = cls_idx;
       }
@@ -131,7 +131,8 @@ public:
     return m_fixed_upos[upos];
   }
 
-  void predict(const std::u32string& form, std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx,
+  void predict(const std::u32string& form,
+               std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx,
                std::u32string& target)
   {
     // 1. vectorize

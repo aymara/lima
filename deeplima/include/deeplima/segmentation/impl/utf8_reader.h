@@ -76,10 +76,10 @@ public:
     memset(m_buffer, 0, sizeof(buffer_t) * NUM_CHANNELS);
   }
 
-  inline uint32_t parse_start(const uint8_t* str, int32_t& pos, int32_t len)
+  inline uint32_t parse_start(const uint8_t* str, int32_t* pos, int32_t len)
   {
     assert(nullptr != str);
-    assert(0 == pos);
+    assert(0 == *pos);
     assert(len > 0);
     if (m_bytes_left_to_parse > 0)
     {
@@ -89,7 +89,7 @@ public:
       uint8_t char_len = parse(m_bytes_buffer, pos, m_bytes_left_to_parse + bytes_to_copy);
       assert(char_len > 0);
 
-      pos = pos - m_bytes_left_to_parse;
+      *pos = *pos - m_bytes_left_to_parse;
       uint32_t rv = m_bytes_left_to_parse;
       m_bytes_left_to_parse = 0;
 
@@ -99,11 +99,11 @@ public:
     return 0;
   }
 
-  inline uint8_t parse(const uint8_t* str, int32_t& pos, int32_t len)
+  inline uint8_t parse(const uint8_t* str, int32_t* pos, int32_t len)
   {
     int32_t uch = 0;
-    int32_t prev_pos = pos;
-    U8_NEXT(str, pos, len, uch);
+    int32_t prev_pos = *pos;
+    U8_NEXT(str, *pos, len, uch);
     if (uch < 0)
     {
       uint32_t bytes_left = len - prev_pos;
@@ -134,7 +134,7 @@ public:
     push_value(channel_script_change, m_prev_script_code == script_code ? 0x00 : 0x01);
     m_prev_script_code = script_code;
 
-    uint8_t char_len = pos - prev_pos;
+    uint8_t char_len = *pos - prev_pos;
     assert(char_len > 0);
     assert(char_len <= 6);
     push_value(channel_len, char_len);

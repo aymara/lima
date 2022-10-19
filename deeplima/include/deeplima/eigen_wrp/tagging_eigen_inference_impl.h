@@ -74,8 +74,8 @@ public:
       int64_t input_end,
       int64_t output_begin,
       int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
-      const std::vector<std::string>& outputs_names
+      std::shared_ptr< StdMatrix<uint8_t> >& output,
+      const std::vector<std::string>& /*outputs_names*/
       )
   {
     deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
@@ -83,7 +83,7 @@ public:
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
     p_op->execute(Parent::m_wb[0][worker_id],
-        inputs, Parent::m_params[0], output,
+        inputs, Parent::m_params[0], output->m_tensor,
         input_begin, input_end,
         output_begin, output_end);
   }

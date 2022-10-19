@@ -31,7 +31,7 @@ namespace CoNLLU
     }
   }
 
-  void CoNLLUFile::save(const string& filename, bool force)
+  void CoNLLUFile::save(const string& filename, bool /*force*/)
   {
     ofstream output(filename);
     if (!output.is_open())

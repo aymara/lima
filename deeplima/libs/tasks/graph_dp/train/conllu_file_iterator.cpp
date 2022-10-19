@@ -202,7 +202,7 @@ void CoNLLUDataSet::vectorize_bucket_gold(const CoNLLU::BoundedWordLevelAdapter&
     }
 
     const CoNLLU::idx_t& head = (*it).head();
-    const std::string& gold_rel = (*it).deprel();
+    // const std::string& gold_rel = (*it).deprel();
     assert(head.is_real_word());
 
     const CoNLLU::idx_t idx = (*it).idx();
@@ -224,7 +224,7 @@ void CoNLLUDataSet::vectorize_bucket_gold(const CoNLLU::BoundedWordLevelAdapter&
     }*/
 
     current_timepoint++;
-    if (current_timepoint == std::numeric_limits<int64_t>::max())
+    if (current_timepoint == std::numeric_limits<uint64_t>::max())
     {
       throw std::overflow_error("Too much words in the dataset.");
     }

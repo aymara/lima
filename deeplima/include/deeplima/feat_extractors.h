@@ -29,7 +29,7 @@ protected:
   }
 
 public:
-  TokenStrFeatExtractor(const std::string& init_string = "")
+  TokenStrFeatExtractor()
   {
   }
 
@@ -62,7 +62,7 @@ public:
     }
   }
 
-  inline bool should_preprocess_feature(int feat_no) const
+  inline bool should_preprocess_feature(int /*feat_no*/) const
   {
     return true;
   }

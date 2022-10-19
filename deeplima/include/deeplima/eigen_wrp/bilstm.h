@@ -107,11 +107,11 @@ public:
     workbench_t(const params_t& p, uint32_t input_size, bool precomputed_input)
       : temps(p.layers.size()),
         outputs(p.layers.size()),
-        zeros(p.layers.size()),
         fw_h(p.layers.size()),
         fw_c(p.layers.size()),
         bw_h(p.layers.size()),
         bw_c(p.layers.size()),
+        zeros(p.layers.size()),
         m_precomputed_input(precomputed_input)
     {
       for (size_t i = 0; i < p.layers.size(); ++i)
@@ -192,7 +192,8 @@ public:
     workbench_t* wb = static_cast<workbench_t*>(pwb);
     //M& temp = wb->temps[0];
     M& output = wb->outputs[0];
-    const V& zero = wb->zeros[0];
+//     TODO should it be used?
+    // const V& zero = wb->zeros[0];
 
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
     V c = fw_c; //V::Zero(hidden_size);
@@ -221,7 +222,7 @@ public:
     s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * fw_h;
     step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
-    for (size_t t = 1; t < input.cols(); t++)
+    for (int t = 1; t < input.cols(); t++)
     {
       s = temp.col(t).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * output.col(t-1).topRows(hidden_size);
       step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
@@ -345,7 +346,7 @@ protected:
     s = input.col(begin).topRows(hidden_size * 4) + fw.bias_hh + fw.weight_hh * initial_h;
     step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
-    for (size_t t = begin + 1; t < end; t++)
+    for (auto t = begin + 1; t < end; t++)
     {
       s = input.col(t).topRows(hidden_size * 4) + fw.bias_hh + fw.weight_hh * output.col(t-1).topRows(hidden_size);
       step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);

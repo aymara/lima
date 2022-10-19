@@ -59,7 +59,7 @@ public:
     return m_value;
   }
 
-  inline const feat_base_t subvalue(feat_base_t mask, uint8_t offset) const
+  inline feat_base_t subvalue(feat_base_t mask, uint8_t offset) const
   {
     return (m_value & mask) >> offset;
   }

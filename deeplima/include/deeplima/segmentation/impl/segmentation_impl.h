@@ -37,6 +37,7 @@ public:
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
+      m_buff_set(InferenceEngine::get_num_threads() * 2, InferenceEngine::get_slot_size() * 4),
       m_curr_buff_idx(0)
   {}
 
@@ -74,6 +75,7 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn)
   {
+    std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
     size_t n = 0;
     bool just_started = true;
     bool continue_reading = true;
@@ -112,14 +114,14 @@ public:
       // Warming up is required in the beginning of the text
       while (! m_input_encoder.ready_to_generate())
       {
-        m_input_encoder.warmup(p, pos, bytes_read);
+*        m_input_encoder.warmup(p, &pos, bytes_read);
       }
 
       uint32_t lookbehind = 0;
       if (0 == pos)
       {
         // parse_start can handle bytes remaining from the previous buffer
-        if ((lookbehind = m_input_encoder.parse_start(p, pos, bytes_read)) > 0)
+        if ((lookbehind = m_input_encoder.parse_start(p, &pos, bytes_read)) > 0)
         {
           assert(lookbehind <= 6);
           handle_timepoint();
@@ -128,7 +130,7 @@ public:
 
       while (pos < bytes_read)
       {
-        if (m_input_encoder.parse(p, pos, bytes_read) > 0)
+        if (m_input_encoder.parse(p, &pos, bytes_read) > 0)
         {
           handle_timepoint();
         }
@@ -142,7 +144,7 @@ public:
     for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
     {
       int32_t pos = 0;
-      if (m_input_encoder.parse((uint8_t*)final_spaces, pos, 1) > 0)
+      if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
       {
         handle_timepoint();
       }
@@ -280,7 +282,7 @@ protected:
     if (0 == m_current_slot_timepoints || m_current_slot_no < 0)
     {
       m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-      std::cerr << "acquire_slot: got " << m_current_slot_no << " for timepoint " << m_current_timepoint << std::endl;
+      std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint " << m_current_timepoint << std::endl;
       uint8_t lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
 
       while (lock_count > 1)
@@ -304,6 +306,7 @@ protected:
 
   inline void handle_timepoint()
   {
+    std::cerr << "SegmentationImpl::handle_timepoint " << std::endl;
     acquire_slot();
 
     vectorize_timepoint(m_current_timepoint);
@@ -313,7 +316,7 @@ protected:
     if (0 == m_current_slot_timepoints)
     {
       InferenceEngine::start_job(m_current_slot_no);
-      std::cerr << "Slot " << m_current_slot_no << " sent to inference engine" << std::endl;
+      std::cerr << "Slot " << m_current_slot_no << " sent to inference engine (segmentation)" << std::endl;
       acquire_slot();
     }
   }

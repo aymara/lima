@@ -307,8 +307,8 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
   }
 }
 
-void BiRnnAndDeepBiaffineAttentionImpl::train_epoch(size_t batch_size,
-                                                    size_t seq_len,
+void BiRnnAndDeepBiaffineAttentionImpl::train_epoch(size_t /*batch_size*/,
+                                                    size_t /*seq_len*/,
                                                     const vector<string>& output_names,
                                                     shared_ptr<BatchIterator> dataset_iterator,
                                                     torch::optim::Optimizer& opt,
@@ -408,15 +408,16 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::predict(size_t /*worker_id*/,
-             const torch::Tensor& inputs,
-             int64_t input_begin,
-             int64_t input_end,
-             int64_t output_begin,
-             int64_t output_end,
-             std::vector<std::vector<uint8_t>>& output,
-             const std::vector<std::string>& outputs_names,
-             const torch::Device& device)
+             const torch::Tensor& /*inputs*/,
+             int64_t /*input_begin*/,
+             int64_t /*input_end*/,
+             int64_t /*output_begin*/,
+             int64_t /*output_end*/,
+             std::shared_ptr< StdMatrix<uint8_t> >& /*output*/,
+             const std::vector<std::string>& /*outputs_names*/,
+             const torch::Device& /*device*/)
 {
+//   TODO should it be implemented?
 }
 
 } // namespace train

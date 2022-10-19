@@ -23,6 +23,7 @@ template <class DataSet, class StrFeatExtractor, class UIntFeatExtractor, class 
 class WordSeqEmbdVectorizer
 {
 public:
+    void set_model(void* ) {}
   typedef DataSet dataset_t;
   typedef typename DataSet::token_t token_t;
 
@@ -91,10 +92,6 @@ public:
   bool is_precomputing() const
   {
     return false;
-  }
-
-  void set_model(void* pModel)
-  {
   }
 
   inline void precompute(const DataSet& dataset)
@@ -214,6 +211,8 @@ protected:
     std::string m_str_feats; // concatenated string features with \0 as separator
 
   public:
+    void set_model(void* ) {}
+
     timepoint_features_t(size_t num_uint_feats)
       : m_uint_feats(num_uint_feats, 0) { }
 
@@ -389,9 +388,6 @@ public:
     return false;
   }
 
-  void set_model(void* pModel)
-  {
-  }
 
   inline void precompute(const DataSet& dataset)
   {
@@ -518,8 +514,7 @@ public:
     {
       if (Parent::m_curr_bucket_id > 2) break;
 
-      uint64_t i = 0;
-      for (; i < Parent::m_bucket_size && curr < dataset.size(); ++i)
+      for (long int i = 0; i < Parent::m_bucket_size && curr < dataset.size(); ++i)
       {
         const typename DataSet::token_t& token = dataset[curr];
         typename Parent::timepoint_features_t timepoint_features(Parent::m_uint_vectorizers.size());
@@ -550,19 +545,19 @@ public:
     if (Parent::m_precomputed_index.end() != it)
     {
       Idx i = it->second;
-      Idx bucket_id = i / Parent::m_bucket_size;
-      assert(bucket_id < Parent::m_precomputed_vectors.size());
+      auto bucket_id = i / Parent::m_bucket_size;
+      assert(size_t(bucket_id) < Parent::m_precomputed_vectors.size());
       i = i % Parent::m_bucket_size;
       *matrix = &(Parent::m_precomputed_vectors[bucket_id]);
       return i;
     }
 
-    if (Parent::m_curr_bucket_id < Parent::m_precomputed_vectors.size())
+    if (size_t(Parent::m_curr_bucket_id) < Parent::m_precomputed_vectors.size())
     {
       if (Parent::m_next_free_idx >= Parent::m_bucket_size)
       {
         Parent::m_curr_bucket_id++;
-        if (Parent::m_curr_bucket_id >= Parent::m_precomputed_vectors.size())
+        if (size_t(Parent::m_curr_bucket_id) >= Parent::m_precomputed_vectors.size())
         {
           Parent::m_precomputed_vectors.resize(Parent::m_curr_bucket_id + 1);
         }

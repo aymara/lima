@@ -157,6 +157,7 @@ protected:
 class DumperBase
 {
 public:
+  virtual ~DumperBase() = default;
   virtual uint64_t get_token_counter() const = 0;
 };
 
@@ -187,7 +188,7 @@ public:
   {
   }
 
-  ~AnalysisToConllU()
+  virtual ~AnalysisToConllU()
   {
     if (m_next_token_idx > 1)
     {

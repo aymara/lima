@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
+#ifndef ARBORESCENCE_H
+#define ARBORESCENCE_H
+
 #include <vector>
 #include <set>
 #include <map>
@@ -9,9 +12,6 @@
 #include <iostream>
 #include <sstream>
 #include <boost/pending/disjoint_sets.hpp>
-
-#ifndef ARBORESCENCE_H
-#define ARBORESCENCE_H
 
 namespace deeplima
 {

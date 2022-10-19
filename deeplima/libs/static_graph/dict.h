@@ -56,7 +56,7 @@ public:
 
   template <class InputIt>
   explicit Dict(InputIt begin, InputIt end)
-    : Dict(begin, end, [](uint64_t c){ return true; })
+    : Dict(begin, end, [](uint64_t /*c*/){ return true; })
   { }
 
   template<class InputIt, typename F>

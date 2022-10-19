@@ -50,7 +50,7 @@ inline std::vector<size_t> split_list_of_nums(const std::string &str, char delim
     {
       throw std::range_error("Can't parse \"" + str + "\": value " + std::to_string(t) + " must be > 0");
     }
-    if (t >= std::numeric_limits<size_t>::max())
+    if (size_t(t) >= std::numeric_limits<size_t>::max())
     {
       throw std::range_error("Can't parse \"" + str + "\": value " + std::to_string(t) + " is too high");
     }

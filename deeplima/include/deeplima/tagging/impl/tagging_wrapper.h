@@ -61,8 +61,8 @@ public:
       int64_t input_end,
       int64_t output_begin,
       int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
-      const std::vector<size_t>& lengths,
+      std::shared_ptr< StdMatrix<uint8_t> >& output,
+      const std::vector<size_t>& /*lengths*/,
       const std::vector<std::string>& output_names
       )
   {

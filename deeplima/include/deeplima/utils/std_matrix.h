@@ -51,8 +51,8 @@ public:
 
   inline uint64_t get(uint64_t time, uint64_t feat) const
   {
-    assert(feat < std::numeric_limits<int64_t>::max());
-    assert(time < std::numeric_limits<int64_t>::max());
+    assert(feat < std::numeric_limits<uint64_t>::max());
+    assert(time < std::numeric_limits<uint64_t>::max());
 
     return m_tensor[feat][time];
   }
@@ -61,9 +61,30 @@ public:
         m_tensor = m.m_tensor;
     }
 
+  /** Return the number of elements in this matrix. */
   inline uint64_t size() const
   {
+    return m_tensor.size();
+  }
+
+  /** Return the dimension of this matrix's vectors (their size).
+   *
+   * This matrix must be non-empty. Otherwise, the result is undefined.
+   */
+  inline uint64_t dim() const
+  {
+    assert(m_tensor.size() > 0);
     return m_tensor[0].size();
+  }
+
+  inline void resize(size_t new_size)
+  {
+    m_tensor.resize(new_size);
+  }
+
+  inline std::vector<T>& operator[](size_t index)
+  {
+    return m_tensor[index];
   }
 
   std::vector<std::vector<T>> m_tensor;

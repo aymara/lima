@@ -215,11 +215,11 @@ morph_model_t::morph_model_t(const string& str)
 
 string morph_model_t::to_string() const
 {
-  ostringstream oss;
+  std::ostringstream oss;
 
-  oss << m_upos_dict.to_string() << endl;
-  oss << m_feat_dict.to_string() << endl;
-  oss << m_upos_mask << endl;
+  oss << m_upos_dict.to_string() << std::endl;
+  oss << m_feat_dict.to_string() << std::endl;
+  oss << m_upos_mask << std::endl;
 
   // m_masks
   for (size_t i = 0; i < m_masks.size(); ++i)
@@ -244,10 +244,10 @@ string morph_model_t::to_string() const
   oss << endl;
 
   // m_feats2mask
-  for (const map<size_t, size_t>& m : m_feats2mask)
+  for (const auto& m : m_feats2mask)
   {
     size_t c = 0;
-    for (const pair<size_t, size_t>& kv : m)
+    for (const auto& kv : m)
     {
       if (c > 0)
       {
@@ -261,7 +261,7 @@ string morph_model_t::to_string() const
   oss << endl;
 
   // m_feats
-  for (const dict_t& d : m_feats)
+  for (const auto& d : m_feats)
   {
     oss << d.to_string() << endl;
   }
@@ -283,7 +283,7 @@ std::string morph_model_t::to_string(const morph_feats_t& feats) const
     out_strings.emplace_back(m_feats[feat_idx].get_key(feat_val));
   }
 
-  ostringstream oss;
+  std::ostringstream oss;
   for (size_t i = 0; i < out_strings.size(); ++i)
   {
     oss << " " << out_strings[i];

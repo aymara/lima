@@ -33,10 +33,10 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
 
   set_tags(params.m_tags);
 
-  double best_eval_accuracy = 0;
-  double best_eval_loss = numeric_limits<double>::max();
-  size_t count_below_best = 0;
-  double lr_copy = 0;
+  // double best_eval_accuracy = 0;
+  // double best_eval_loss = numeric_limits<double>::max();
+  // size_t count_below_best = 0;
+  // double lr_copy = 0;
   for (size_t e = 1; e < params.m_max_epochs; e++)
   {
     cerr << endl << "********** EPOCH " << e << " **********" << endl;

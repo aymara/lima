@@ -108,7 +108,7 @@ public:
       return m_current;
     }
 
-    inline const uint8_t token_class(size_t cls_idx) const
+    inline uint8_t token_class(size_t cls_idx) const
     {
         std::cerr << "time: " << m_current + m_offset << "\n";
         std::cerr << "cls_idx: " << cls_idx << "\n";
@@ -252,7 +252,7 @@ public:
       m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
-                             std::shared_ptr< typename EntityTaggingModule::OutputMatrix > classes,
+                             std::shared_ptr< StdMatrix<uint8_t> > classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
 
@@ -271,7 +271,7 @@ public:
     else
     {
       m_cls.register_handler([this](
-                             std::shared_ptr< typename EntityTaggingModule::OutputMatrix > classes,
+                             std::shared_ptr< StdMatrix<uint8_t> > classes,
                              size_t begin, size_t end, size_t slot_idx){
         std::cerr << "handler called: " << slot_idx << std::endl;
         m_classes = classes;
@@ -296,11 +296,10 @@ public:
     std::cerr << "~TokenSequenceAnalyzer" << std::endl;
   }
 
-  typedef typename EntityTaggingModule::OutputMatrix OutputMatrix;
   typedef std::function < void (const StringIndex& stridx,
                                 const token_buffer_t<>& tokens,
                                 const std::vector<StringIndex::idx_t>& lemmata,
-                                std::shared_ptr< OutputMatrix > classes,
+                                std::shared_ptr< StdMatrix<uint8_t> > classes,
                                 size_t begin,
                                 size_t end) > output_callback_t;
 

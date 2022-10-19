@@ -145,6 +145,7 @@ void RnnTokenizer::init(
 
 LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 {
+  TimeUtils::updateCurrentTime();
   LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
 
@@ -153,7 +154,13 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   LinguisticGraph* graph=anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = static_cast<LimaStringText*>(analysis.getData("Text"));
+  if (originalText == nullptr)
+  {
+      TOKENIZERLOGINIT;
+      LERROR << "Can't Process RnnTokenizer: missing data 'Text'";
+      return MISSING_DATA;
+  }
 
   // Execute model on the text
   vector< vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
@@ -222,6 +229,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
 
+  TimeUtils::logElapsedTime("RnnTokenizer");
   return SUCCESS_ID;
 }
 

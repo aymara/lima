@@ -61,6 +61,7 @@ public:
     }
 
   public:
+    virtual ~Iterator() = default;
     virtual void set_batch_size(int64_t batch_size);
     virtual void start_epoch();
     virtual bool end();
@@ -71,7 +72,7 @@ public:
     int64_t m_batch_size;
 
     size_t m_current_bucket;
-    size_t m_iter_counter;
+    int64_t m_iter_counter;
 
     friend class CoNLLUDataSet;
   };

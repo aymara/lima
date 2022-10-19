@@ -123,7 +123,7 @@ public:
       vectorize_timepoint(*frozen_features, *embeddable_features, current_timepoint, *it);
 
       current_timepoint++;
-      if (current_timepoint == std::numeric_limits<int64_t>::max())
+      if (current_timepoint == std::numeric_limits<uint64_t>::max())
       {
         throw std::overflow_error("Too much words in the dataset.");
       }

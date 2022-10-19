@@ -8,6 +8,7 @@
 
 #include "birnn_classifier_for_tag.h"
 #include "static_graph/dict.h"
+#include "deeplima/utils/std_matrix.h"
 
 using namespace std;
 using namespace torch;
@@ -281,7 +282,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
   }
 }
 
-void BiRnnClassifierForNerImpl::train_epoch(size_t batch_size,
+void BiRnnClassifierForNerImpl::train_epoch(int64_t batch_size,
                                             size_t seq_len,
                                             const vector<string>& output_names,
                                             const torch::Tensor& trainable_input_batches,
@@ -291,32 +292,32 @@ void BiRnnClassifierForNerImpl::train_epoch(size_t batch_size,
                                             epoch_stat_t& stat,
                                             const torch::Device& device)
 {
-  double running_loss = 0.0;
-  int64_t num_correct = 0;
+  // double running_loss = 0.0;
+  // int64_t num_correct = 0;
 
   for (int64_t b = 0; b < trainable_input_batches.size(1); b += batch_size)
   {
     int64_t current_batch_size
         = (b + batch_size > trainable_input_batches.size(1)) ? trainable_input_batches.size(1) - b : batch_size;
 
-    double batch_loss = 0;
-    double batch_correct = 0;
+    // double batch_loss = 0;
+    // double batch_correct = 0;
 
     train_batch(current_batch_size, seq_len, output_names,
                 trainable_input_batches.index({Slice(), Slice(b, b + current_batch_size), Slice()}),
                 nontrainable_input_batches.index({Slice(), Slice(b, b + current_batch_size), Slice()}),
                 gold_batches.index({Slice(), Slice(b, b + current_batch_size) }),
                 opt, stat, device);
-    running_loss += batch_loss / current_batch_size;
-    num_correct += batch_correct;
+    // running_loss += batch_loss / current_batch_size;
+    // num_correct += batch_correct;
 
     cout << ".";
     cout.flush();
   }
   cout << endl;
 
-  running_loss = running_loss / (trainable_input_batches.size(1) / batch_size + 1);
-  double accuracy = double(num_correct) / (trainable_input_batches.size(0) * trainable_input_batches.size(1));
+  // running_loss = running_loss / (trainable_input_batches.size(1) / batch_size + 1);
+  // double accuracy = double(num_correct) / (trainable_input_batches.size(0) * trainable_input_batches.size(1));
 }
 
 void BiRnnClassifierForNerImpl::train_batch(size_t batch_size,
@@ -363,11 +364,11 @@ void BiRnnClassifierForNerImpl::predict(size_t /*worker_id*/,
              int64_t input_end,
              int64_t output_begin,
              int64_t output_end,
-             std::vector<std::vector<uint8_t>>& output,
+             std::shared_ptr< StdMatrix<uint8_t> >& output,
              const std::vector<std::string>& outputs_names,
              const torch::Device& device)
 {
-  assert(output.size() == outputs_names.size());
+  assert(output->size() == outputs_names.size());
 
   int64_t start_shift = output_begin - input_begin;
   assert(start_shift >= 0);
@@ -388,7 +389,7 @@ void BiRnnClassifierForNerImpl::predict(size_t /*worker_id*/,
     torch::TensorAccessor<int64_t, 1> accessor = output_tensor.accessor<int64_t, 1>();
     for (int64_t p = start_shift; p < output_tensor.size(0) - end_shift; p++)
     {
-      output[i][input_begin + p] = accessor[p];
+      (*output)[i][input_begin + p] = accessor[p];
     }
   }
 }

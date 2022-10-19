@@ -75,7 +75,7 @@ public:
     torch::load(*this, fn, torch::Device(torch::kCPU));
   }
 
-  size_t init_new_worker(size_t input_len)
+  size_t init_new_worker(size_t )
   {
     return m_workers++;
   }
@@ -99,7 +99,7 @@ public:
                int64_t input_end,
                int64_t output_begin,
                int64_t output_end,
-               std::vector<std::vector<uint8_t>>& output,
+               std::shared_ptr< StdMatrix<uint8_t> >& output,
                const std::vector<std::string>& outputs_names,
                const torch::Device& device = torch::Device(torch::kCPU));
 

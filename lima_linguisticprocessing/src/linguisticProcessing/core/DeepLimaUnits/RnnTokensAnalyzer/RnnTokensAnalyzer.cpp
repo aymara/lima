@@ -109,9 +109,17 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     Lima::LimaStatusCode
     RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis) const {
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
+        TimeUtils::updateCurrentTime();
+        TimeUtilsController RnnTokensAnalyzerProcessTime("RnnTokensAnalyzer");
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokensAnalyzer::process");
         m_d->m_analysis = &analysis;
         auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+        if (anagraph == nullptr)
+        {
+            LEMMALOGINIT;
+            LERROR << "Can't Process RnnTokensAnalyzer: missing data 'AnalysisGraph'";
+            return MISSING_DATA;
+        }
         auto srcgraph = anagraph->getGraph();
         auto endVx = anagraph->lastVertex();
         /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
@@ -246,6 +254,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
         }
         boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
         LOG_MESSAGE(LDEBUG, "RnnPosLemmatizer postagging done.");
+        TimeUtils::logElapsedTime("RnnTokensAnalyzer");
         return SUCCESS_ID;
     }
 
@@ -312,13 +321,16 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     }
 
-    void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer) {
+
+    void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer)
+    {
         m_tokensAnalyzer->register_handler([this](const StringIndex& stridx,
                                                   const token_buffer_t<>& tokens,
                                                   const std::vector<StringIndex::idx_t>& lemmata,
-                                                  std::shared_ptr< TokenSequenceAnalyzer<>::OutputMatrix > classes,
+                                                  std::shared_ptr< StdMatrix<uint8_t> > classes,
                                                   size_t begin,
-                                                  size_t end){
+                                                  size_t end)
+        {
             auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(stridx, tokens, lemmata, classes, begin, end);
             auto tiData = new TokenIteratorData();
             tiData->setTokenIterator(ti);
@@ -326,7 +338,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
             // m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
             insertTokenInfo(*ti);
         });
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);
+        LOG_MESSAGE_WITH_PROLOG(LDEBUG, buffer[0].m_pch);
         (*m_tokensAnalyzer)(buffer, buffer.size());
         m_tokensAnalyzer->finalize();
     }

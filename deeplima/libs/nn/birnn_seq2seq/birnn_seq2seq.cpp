@@ -29,10 +29,11 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
   torch::Tensor gold_input = torch::empty({1, target.sizes()[1]},
                                           torch::TensorOptions().dtype(torch::kInt64)).fill_(2);
   gold_input = torch::cat({gold_input, target.index({Slice(0, l-1), Slice()})}, 0);
+  gold_input.to(device);
   //cerr << input.sizes() << " " << gold_input.sizes() << endl;
   //cerr << gold_input << endl;
   //cerr << target << endl;
-  map<string, torch::Tensor> input_map
+  std::map<string, torch::Tensor> input_map
       = { { "enc_chars", input }, { "dec_chars", gold_input } };
 
   assert(input_cat.size() == m_cat_embd_descr.size());
@@ -59,6 +60,7 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
+    loss_tensor.to(device);
     //cerr << loss_tensor.sizes() << endl;
     double loss_value = loss_tensor.mean().item<double>();
     task_stat.m_loss += loss_value;
@@ -73,11 +75,11 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
   opt.step();
 }
 
-void BiRnnSeq2SeqImpl::evaluate(const vector<string>& output_names,
-                                const TorchMatrix<int64_t>& input,
-                                const TorchMatrix<int64_t>& gold,
-                                epoch_stat_t& stat,
-                                const torch::Device& device)
+void BiRnnSeq2SeqImpl::evaluate(const vector<string>& ,
+                                const TorchMatrix<int64_t>& ,
+                                const TorchMatrix<int64_t>& ,
+                                epoch_stat_t& ,
+                                const torch::Device& )
 {
   eval();
 }

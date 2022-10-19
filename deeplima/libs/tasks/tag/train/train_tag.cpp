@@ -103,7 +103,7 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, const FeatExt
     }
 
     current_timepoint++;
-    if (current_timepoint == std::numeric_limits<int64_t>::max())
+    if (current_timepoint == std::numeric_limits<uint64_t>::max())
     {
       throw std::overflow_error("Too much words in the dataset.");
     }

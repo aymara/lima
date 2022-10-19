@@ -74,7 +74,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         bool m_loaded;
     };
 
-    RnnTaggerPrivate::RnnTaggerPrivate(): ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()), m_stringsPool(nullptr), m_stridx(), m_loaded(false), m_tag()
+    RnnTaggerPrivate::RnnTaggerPrivate():
+        ConfigurationHelper("RnnTaggerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+        m_stringsPool(nullptr), m_tag(nullptr), m_stridx(), m_tags(), m_microAccessor(nullptr), m_loaded(false)
     {
 
     }
@@ -101,8 +103,16 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
     Lima::LimaStatusCode
     RnnTagger::process(Lima::AnalysisContent &analysis) const {
+        TimeUtils::updateCurrentTime();
+        TimeUtilsController RnnTaggerProcessTime("RnnTagger");
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
         auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+        if (anagraph == nullptr)
+        {
+            PTLOGINIT;
+            LERROR << "Can't Process RnnTagger: missing data 'AnalysisGraph'";
+            return MISSING_DATA;
+        }
         auto srcgraph = anagraph->getGraph();
         auto endVx = anagraph->lastVertex();
         /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
@@ -221,6 +231,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         }
         boost::add_edge(previousPosVertex, posgraph->lastVertex(), *resultgraph);
         LOG_MESSAGE(LDEBUG, "RnnPosTagger postagging done.");
+        TimeUtils::logElapsedTime("RnnTagger");
         return SUCCESS_ID;
     }
 
@@ -282,7 +293,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
         m_tag->register_handler([this](const StringIndex& stridx,
                                                const token_buffer_t<>& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
-                                               std::shared_ptr< TokenSequenceAnalyzer<>::OutputMatrix > classes,
+                                               std::shared_ptr< StdMatrix<uint8_t> > classes,
                                                size_t begin,
                                                size_t end){
             TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
