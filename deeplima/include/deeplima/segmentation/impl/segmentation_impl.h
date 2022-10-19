@@ -114,7 +114,7 @@ public:
       // Warming up is required in the beginning of the text
       while (! m_input_encoder.ready_to_generate())
       {
-*        m_input_encoder.warmup(p, &pos, bytes_read);
+        m_input_encoder.warmup(p, &pos, bytes_read);
       }
 
       uint32_t lookbehind = 0;
