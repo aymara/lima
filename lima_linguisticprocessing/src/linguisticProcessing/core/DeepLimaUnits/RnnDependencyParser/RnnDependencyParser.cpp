@@ -65,7 +65,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         ~RnnDependencyParserPrivate() = default;
         void init(GroupConfigurationStructure& unitConfiguration);
         void analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti);
-
+        void insertDependencies(DependencyParserFromTSA::TokenIterator &ti);
         MediaId m_language;
         QString m_data;
         std::shared_ptr<DependencyParserFromTSA> m_dependencyParser = nullptr;
@@ -75,9 +75,9 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         PathResolver m_pResolver;
         std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
-        std::vector<typename DependencyParserFromTSA::token_with_analysis_t> m_tokens;
         std::vector<std::string> m_class_names;
         std::vector<std::vector<string>> m_classes;
+        std::vector<uint32_t> m_heads;
         bool m_loaded;
     };
 
@@ -144,13 +144,12 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         m_d->analyzer(tokenIterator);
 
         uint curToken=0;
-        for(auto &token: m_d->m_tokens) {
+        for(auto head: m_d->m_heads) {
             curToken++;
             syntacticData->addVertex();
-            LOG_MESSAGE(LERROR,"head is : " << token.m_head_idx);
-            LOG_MESSAGE(LERROR,"type is : " << token.m_rel_type);
-            if(token.m_head_idx != 0) {
-                syntacticData->addRelationNoChain(token.m_rel_type,curToken,token.m_head_idx);
+            LOG_MESSAGE(LERROR,"head is : " << head);
+            if(head != 0) {
+                syntacticData->addRelationNoChain(1,curToken,head);
             }
         }
         return SUCCESS_ID;
@@ -202,7 +201,11 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
         LOG_MESSAGE(LDEBUG, "RnnDependencyParserPrivate::init call TokenSequenceAnalyzer<>().get_classes_from_fn");
         TokenSequenceAnalyzer<>().get_classes_from_fn(tagger_model_file_name.toStdString(), m_class_names, m_classes);
-        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name]()
+        auto temp_classes_names = m_class_names;
+        auto temp_classes = m_classes;
+        temp_classes_names.erase(temp_classes_names.begin()+1);
+        temp_classes.erase(temp_classes.begin()+1);
+        m_load_fn = [this, dependency_parser_file_name, tagger_model_file_name, temp_classes_names, temp_classes]()
         {
             if (m_loaded)
             {
@@ -210,10 +213,10 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
             }
 
             m_dependencyParser = std::make_shared<DependencyParserFromTSA>(dependency_parser_file_name.toStdString(),
-                                                                           m_pResolver,m_stridx,m_class_names, 1024, 8);
+                                                                           m_pResolver,m_stridx,temp_classes_names, 1024, 8);
             for (size_t i = 0; i < m_classes.size(); ++i)
             {
-                m_dependencyParser->set_classes(i, m_class_names[i], m_classes[i]);
+                m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);
             }
             m_loaded = true;
         };
@@ -238,10 +241,17 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                                                            classes,
                                                            begin,
                                                            end);
-                                     m_tokens = tokens;
+                                     insertDependencies(dti);
                                  });
         (*m_dependencyParser)(*ti);
         m_dependencyParser->finalize();
+    }
+
+    void RnnDependencyParserPrivate::insertDependencies(DependencyParserFromTSA::TokenIterator &ti) {
+        while(!ti.end()){
+            m_heads.push_back(ti.head());
+            ti.next();
+        }
     }
 
 
