@@ -164,7 +164,10 @@ public:
       for (auto i = output_begin - input_begin; i < output_end - input_begin; i++)
       {
         Eigen::Index idx = 0;
-        // typename M::Scalar v = linear_output.col(i).maxCoeff(&idx);
+        // TODO scalar v value is not used but maxCoeff has side effect. It must be kept. Should we remove the
+        // return value or use it somewhat?
+        // typename M::Scalar v =
+        linear_output.col(i).maxCoeff(&idx);
         assert(idx >= 0);
         assert(idx < std::numeric_limits<uint8_t>::max());
         final_output[j][input_begin+i] = (uint8_t) idx;

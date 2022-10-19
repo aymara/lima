@@ -314,6 +314,7 @@ public:
           }
           break;
 
+        // TODO insert the marker for case continuing [[case_]]
         case segm_tag_t::E_EOS:
           m_tokens[pos].m_flags = token_pos::flag_t(m_tokens[pos].m_flags | token_pos::flag_t::sentence_brk);
 

@@ -282,7 +282,8 @@ protected:
     if (0 == m_current_slot_timepoints || m_current_slot_no < 0)
     {
       m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-      std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint " << m_current_timepoint << std::endl;
+      std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint "
+                << m_current_timepoint << std::endl;
       uint8_t lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
 
       while (lock_count > 1)
