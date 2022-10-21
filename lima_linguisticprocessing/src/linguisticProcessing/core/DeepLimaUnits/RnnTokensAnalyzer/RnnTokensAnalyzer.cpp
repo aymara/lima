@@ -301,7 +301,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer) {
         m_tokensAnalyzer->register_handler([this](const StringIndex& stridx,
-                                                  const token_buffer_t& tokens,
+                                                  const token_buffer_t<>& tokens,
                                                   const std::vector<StringIndex::idx_t>& lemmata,
                                                   const TokenSequenceAnalyzer<>::OutputMatrix& classes,
                                                   size_t begin,

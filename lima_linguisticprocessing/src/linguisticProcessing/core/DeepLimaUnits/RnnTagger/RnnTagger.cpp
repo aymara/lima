@@ -280,7 +280,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
 
     void RnnTaggerPrivate::tagger(vector<segmentation::token_pos> &buffer) {
         m_tag->register_handler([this](const StringIndex& stridx,
-                                               const token_buffer_t& tokens,
+                                               const token_buffer_t<>& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
                                                const TokenSequenceAnalyzer<>::OutputMatrix& classes,
                                                size_t begin,
