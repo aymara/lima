@@ -91,7 +91,7 @@ public:
     {
       Eigen::Index idx = 0;
 //       TODO should it be used?
-      // typename M::Scalar v = logits.row(i).maxCoeff(&idx);
+      typename M::Scalar v = logits.row(i).maxCoeff(&idx);
       assert(idx >= 0);
       assert(idx < std::numeric_limits<Eigen::Index>::max());
       output[input_begin + i] = (uint32_t) idx;
