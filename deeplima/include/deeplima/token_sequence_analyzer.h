@@ -110,8 +110,8 @@ public:
 
     inline uint8_t token_class(size_t cls_idx) const
     {
-        std::cerr << "time: " << m_current + m_offset << "\n";
-        std::cerr << "cls_idx: " << cls_idx << "\n";
+        // std::cerr << "time: " << m_current + m_offset << "\n";
+        // std::cerr << "cls_idx: " << cls_idx << "\n";
       uint8_t val = m_classes->get(m_current + m_offset, cls_idx);
       return val;
     }
@@ -324,6 +324,7 @@ public:
 
   void finalize()
   {
+    std::cerr << "TokenSequenceAnalyzer::finalize" << std::endl;
     if (m_current_timepoint > 0)
     {
       if (m_current_timepoint < m_buffer_size)
