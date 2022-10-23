@@ -356,7 +356,7 @@ public:
         token.m_offset = iter.token_offset();
         token.m_len = iter.token_len();
         token.m_form_idx = iter.form_idx();
-        std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
+        // std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
         // token.m_head_idx = iter.head();

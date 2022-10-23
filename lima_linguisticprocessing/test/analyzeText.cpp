@@ -378,7 +378,6 @@ int run(int argc, char** argv)
   SimpleStreamHandler* simpleStreamHandler = nullptr;
   SimpleStreamHandler* fullXmlSimpleStreamHandler = nullptr;
   LTRTextHandler* ltrTextHandler = nullptr;
-  XmlBowDocumentHandler* xmlDocumentHandler = nullptr;
 
   if (dumpers.find("event") != dumpers.end())
   {

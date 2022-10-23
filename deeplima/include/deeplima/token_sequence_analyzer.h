@@ -234,7 +234,8 @@ public:
     m_cls.init(1, num_buffers, buffer_size, m_stridx);
 
     m_unk_idx = m_stridx.get_idx("_");
-    for ( auto& b : m_lemm_buffers ) std::fill(b.begin(), b.end(), m_unk_idx);
+    for ( auto& b : m_lemm_buffers )
+      std::fill(b.begin(), b.end(), m_unk_idx);
 
     {
       token_buffer_t<> buff(m_stridx.size());

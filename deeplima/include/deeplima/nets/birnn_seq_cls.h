@@ -125,7 +125,7 @@ protected:
   {
     slot_t& slot = *((slot_t*)p);
 
-    //std::cerr << "Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
+    std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
 
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
@@ -137,12 +137,12 @@ protected:
 
     assert(slot.m_lock_count > 0);
     slot.m_lock_count--;
-    if (slot.m_flags & left_overlap)
+    if (slot.m_flags & left_overlap && slot.m_prev != nullptr)
     {
       assert(slot.m_prev->m_lock_count > 0);
       slot.m_prev->m_lock_count--;
     }
-    if (slot.m_flags & right_overlap)
+    if (slot.m_flags & right_overlap && slot.m_next != nullptr)
     {
       assert(slot.m_next->m_lock_count > 0);
       slot.m_next->m_lock_count--;

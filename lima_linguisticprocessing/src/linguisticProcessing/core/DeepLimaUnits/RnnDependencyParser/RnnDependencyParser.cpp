@@ -64,7 +64,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         ~RnnDependencyParserPrivate() = default;
         void init(GroupConfigurationStructure& unitConfiguration);
         void analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti);
-        void insertDependencies(DependencyParserFromTSA::TokenIterator &ti);
+        void insertDependencies(DependencyParser::TokenIterator& ti);
         MediaId m_language;
         QString m_data;
         std::shared_ptr<DependencyParser> m_dependencyParser = nullptr;
@@ -222,14 +222,14 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
                 return;
             }
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
             m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
                                                                            m_pResolver,m_stridx,m_class_names, 1024, 8);
-=======
-            m_dependencyParser = std::make_shared<DependencyParserFromTSA>(dependency_parser_file_name.toStdString(),
-                                                                           m_pResolver,m_stridx,temp_classes_names, 1024, 8);
->>>>>>> origin/dependency-parser-module
-            for (size_t i = 0; i < m_classes.size(); ++i)
+// =======
+//             m_dependencyParser = std::make_shared<DependencyParserFromTSA>(dependency_parser_file_name.toStdString(),
+//                                                                            m_pResolver,m_stridx,temp_classes_names, 1024, 8);
+// >>>>>>> origin/dependency-parser-module
+            for (size_t i = 0; i < temp_classes.size(); i++)
             {
                 m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);
             }
@@ -262,8 +262,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         m_dependencyParser->finalize();
     }
 
-    void RnnDependencyParserPrivate::insertDependencies(DependencyParserFromTSA::TokenIterator &ti) {
-        while(!ti.end()){
+    void RnnDependencyParserPrivate::insertDependencies(DependencyParser::TokenIterator& ti) {
+        while (!ti.end()) {
             m_heads.push_back(ti.head());
             ti.next();
         }
