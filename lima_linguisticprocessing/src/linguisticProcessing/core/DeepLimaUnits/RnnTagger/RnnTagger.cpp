@@ -290,13 +290,13 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
     }
 
     void RnnTaggerPrivate::tagger(vector<segmentation::token_pos> &buffer) {
-        m_tag->register_handler([this](const StringIndex& stridx,
+        m_tag->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                const token_buffer_t<>& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
                                                std::shared_ptr< StdMatrix<uint8_t> > classes,
                                                size_t begin,
                                                size_t end){
-            TokenSequenceAnalyzer<>::TokenIterator ti(stridx, tokens, lemmata, classes, begin, end);
+            TokenSequenceAnalyzer<>::TokenIterator ti(*stridx, tokens, lemmata, classes, begin, end);
             insertTags(ti);
         });
         LOG_MESSAGE_WITH_PROLOG(LDEBUG,buffer[0].m_pch);

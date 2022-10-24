@@ -324,16 +324,18 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer {
 
     void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer)
     {
-        m_tokensAnalyzer->register_handler([this](const StringIndex& stridx,
+        m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                   const token_buffer_t<>& tokens,
                                                   const std::vector<StringIndex::idx_t>& lemmata,
                                                   std::shared_ptr< StdMatrix<uint8_t> > classes,
                                                   size_t begin,
                                                   size_t end)
         {
-            auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(stridx, tokens, lemmata, classes, begin, end);
+            auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(*stridx, tokens, lemmata, classes, begin, end);
             auto tiData = new TokenIteratorData();
             tiData->setTokenIterator(ti);
+            // auto si = std::make_shared<deeplima::StringIndex>(stridx);
+            tiData->setStringIndex(stridx);
             m_analysis->setData("TokenIterator", tiData);
             // m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
             insertTokenInfo(*ti);

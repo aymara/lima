@@ -8,6 +8,7 @@
 
 #include "deeplima/token_sequence_analyzer.h"
 #include "common/ProcessUnitFramework/AnalysisContent.h"
+#include "deeplima/utils/str_index.h"
 
 
 class TokenIteratorData: public Lima::AnalysisData{
@@ -22,7 +23,18 @@ public:
     std::shared_ptr<deeplima::TokenSequenceAnalyzer<>::TokenIterator> getTokenIterator() {
         return tokenIterator;
     }
+
+    void setStringIndex(std::shared_ptr<deeplima::StringIndex> stringIndex){
+        m_strIndex = stringIndex;
+    }
+
+    std::shared_ptr<deeplima::StringIndex> getStringIndex() {
+        return m_strIndex;
+    }
+
+
 private:
     std::shared_ptr<deeplima::TokenSequenceAnalyzer<>::TokenIterator> tokenIterator;
+    std::shared_ptr< deeplima::StringIndex > m_strIndex;
 };
 #endif //LIMA_TOKENITERATORDATA_H

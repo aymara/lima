@@ -70,7 +70,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         std::shared_ptr<DependencyParser> m_dependencyParser = nullptr;
         // std::shared_ptr<TokenSequenceAnalyzer<>> m_sequenceAnalyser = nullptr;
         function<void()> m_load_fn;
-        StringIndex m_stridx;
+        std::shared_ptr< StringIndex > m_stridx;
         PathResolver m_pResolver;
         std::vector<std::map<std::string,std::string>> m_tags;
         std::vector<QString> m_lemmas;
@@ -83,7 +83,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
     RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate",
                                                                                   THIS_FILE_LOGGING_CATEGORY()),
-                                                              m_stridx(),
+                                                              m_stridx(new StringIndex()),
                                                               m_loaded(false)
     {
 
@@ -120,6 +120,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
             LERROR << "Can't Process RnnDependencyParser : missing data 'TokenIterator'";
             return MISSING_DATA;
         }
+        auto stridxPtr = tiData->getStringIndex();
+        m_d->m_dependencyParser->setStringIndex(stridxPtr);
         auto tokenIterator = tiData->getTokenIterator();
         tokenIterator->reset(0);
         LERROR << "is end : " << tokenIterator->end() << "\n";

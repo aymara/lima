@@ -146,7 +146,7 @@ void parse_file(std::istream& input,
                 size_t threads,
                 size_t out_fmt)
 {
-  std::cerr << "threads = " << threads << std::endl;
+  std::cerr << "deeplima parse_file threads = " << threads << std::endl;
   std::shared_ptr<segmentation::ISegmentation> psegm;
 
   if (models_fn.end() != models_fn.find("tok"))
@@ -184,7 +184,7 @@ void parse_file(std::istream& input,
 
       parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
                                                          path_resolver,
-                                                         *panalyzer->get_stridx(),
+                                                         panalyzer->get_stridx(),
                                                          panalyzer->get_class_names(),
                                                          TAG_BUFFER_SIZE,
                                                          8);
@@ -195,19 +195,20 @@ void parse_file(std::istream& input,
         conllu_dumper->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
       }
 
-      panalyzer->register_handler([&parser](const StringIndex& stridx,
+      panalyzer->register_handler([&parser](std::shared_ptr< StringIndex > stridx,
                                   const token_buffer_t<>& tokens,
                                   const std::vector<StringIndex::idx_t>& lemmata,
                                   std::shared_ptr< StdMatrix<uint8_t> > classes,
                                   size_t begin,
                                   size_t end)
       {
-        typename TokenSequenceAnalyzer<>::TokenIterator ti(stridx,
+        typename TokenSequenceAnalyzer<>::TokenIterator ti(*stridx,
                                                            tokens,
                                                            lemmata,
                                                            classes,
                                                            begin,
                                                            end);
+        std::cerr << "In panalyzer handler. Calling parser functor" << std::endl;
         (*parser)(ti);
       });
 
@@ -222,6 +223,7 @@ void parse_file(std::istream& input,
                                                            classes,
                                                            begin,
                                                            end);
+        std::cerr << "In parser handler. Calling conllu_dumper functor" << std::endl;
         (*conllu_dumper)(ti, true);
       });
 
@@ -238,19 +240,20 @@ void parse_file(std::istream& input,
         conllu_dumper->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
       }
 
-      panalyzer->register_handler([conllu_dumper](const StringIndex& stridx,
+      panalyzer->register_handler([conllu_dumper](std::shared_ptr< StringIndex > stridx,
                                   const token_buffer_t<>& tokens,
                                   const std::vector<StringIndex::idx_t>& lemmata,
                                   std::shared_ptr< StdMatrix<uint8_t> > classes,
                                   size_t begin,
                                   size_t end)
       {
-        typename TokenSequenceAnalyzer<>::TokenIterator ti(stridx,
+        typename TokenSequenceAnalyzer<>::TokenIterator ti(*stridx,
                                                            tokens,
                                                            lemmata,
                                                            classes,
                                                            begin,
                                                            end);
+        std::cerr << "In panalyzer handler. Calling conllu_dumper functor" << std::endl;
         (*conllu_dumper)(ti);
       });
     }
@@ -259,6 +262,7 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
+      std::cerr << "In psegm handler. Calling panalyzer functor" << std::endl;
       (*panalyzer)(tokens, len);
     });
   }
@@ -279,6 +283,7 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
+      std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
       (*pdumper)(tokens, len);
     });
   }
@@ -290,6 +295,7 @@ void parse_file(std::istream& input,
                           uint32_t& read,
                           uint32_t max)
   {
+    std::cerr << "In psegm parse_from_stream lambda" << std::endl;
     input.read((std::istream::char_type*)buffer, max);
     read = input.gcount();
     return (bool)input;
@@ -304,17 +310,18 @@ void parse_file(std::istream& input,
       token_counter = pDumperBase->get_token_counter();
     }
 
-    std::cerr << "Waiting for analyzer to stop" << std::endl;
+    std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
-    std::cerr << "Analyzer stopped" << std::endl;
+    std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
 
   if (parser)
   {
-    std::cerr << "Waiting for dependency parser to stop" << std::endl;
+    std::cerr << "Waiting for dependency parser to stop. Calling parser->finalize" << std::endl;
     parser->finalize();
+    std::cerr << "Calling parser.reset. parser->finalize returned" << std::endl;
     parser.reset();
-    std::cerr << "Dependency parser stopped" << std::endl;
+    std::cerr << "Dependency parser stopped. " << std::endl;
   }
 
   std::chrono::steady_clock::time_point parsing_end = std::chrono::steady_clock::now();

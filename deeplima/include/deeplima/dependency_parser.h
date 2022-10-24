@@ -246,22 +246,22 @@ public:
 
   DependencyParser(const std::string& model_fn,
                    const PathResolver& path_resolver,
-                   StringIndex& stridx,
+                   std::shared_ptr< StringIndex > stridx,
                    const std::vector<std::string>& input_class_names,
                    size_t buffer_size,
                    size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
-      //m_stridx_ptr(stridx),
-      m_stridx(stridx)
+      m_stridx_ptr(stridx)//,
+      // m_stridx(*stridx)
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.reserve(num_buffers);
 
     m_impl.load(model_fn, path_resolver);
-    m_impl.init(1, num_buffers, buffer_size, m_stridx, input_class_names);
+    m_impl.init(1, num_buffers, buffer_size, *m_stridx_ptr, input_class_names);
 
     for (size_t i = 0; i < num_buffers; ++i)
     {
@@ -273,7 +273,7 @@ public:
                             size_t begin, size_t end, size_t slot_idx) {
        std::cerr << "handler called (dp): " << slot_idx << std::endl;
 
-       m_output_callback(m_stridx,
+       m_output_callback(*m_stridx_ptr,
                          m_buffers[slot_idx],
                          heads,
                          begin,
@@ -291,6 +291,11 @@ public:
 
   void register_handler(const output_callback_t fn) {
     m_output_callback = fn;
+  }
+
+  void setStringIndex(std::shared_ptr<deeplima::StringIndex> stringIndexPtr) {
+    m_stridx_ptr = stringIndexPtr;
+    // m_stridx = StringIndex(*m_stridx_ptr;
   }
 
   void set_classes(size_t idx, const std::string& class_name, const std::vector<std::string>& data)
@@ -322,6 +327,7 @@ public:
 
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
+    std::cerr << "DependencyParser::operator()" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -342,7 +348,7 @@ public:
       {
         token.m_offset = 0;
         token.m_len = 0;
-        token.m_form_idx = m_stridx.get_idx("<ROOT>");
+        token.m_form_idx = m_stridx_ptr->get_idx("<ROOT>");
         std::cerr << "<ROOT>" << std::endl;
         token.m_flags = impl::token_t::token_flags_t(segmentation::token_pos::flag_t::none);
         token.m_lemm_idx = token.m_form_idx;
@@ -356,7 +362,8 @@ public:
         token.m_offset = iter.token_offset();
         token.m_len = iter.token_len();
         token.m_form_idx = iter.form_idx();
-        // std::cerr << m_stridx.get_str(token.m_form_idx) << std::endl;
+        std::cerr << iter.form() << std::endl;
+        // std::cerr << m_stridx_ptr->get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
         // token.m_head_idx = iter.head();
@@ -391,7 +398,7 @@ public:
         if (!iter.end())
         {
           m_lengths.clear();
-          tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
+                  tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
           insert_root = true;
           first_timepoint_idx = m_current_timepoint;
         }
@@ -446,13 +453,15 @@ protected:
                       const std::vector<size_t>& lengths,
                       int count = -1)
   {
+    std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
+              << lengths.size() << ", " << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 
     const tokens_with_analysis_t& current_buffer = m_buffers[buffer_idx];
     m_impl.handle_token_buffer(buffer_idx,
                                first_timepoint_idx,
-                               enriched_token_buffer_t(current_buffer, m_stridx),
+                               enriched_token_buffer_t(current_buffer, *m_stridx_ptr),
                                lengths,
                                count);
   }
@@ -475,9 +484,10 @@ protected:
       if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
           iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
       {
-        lengths.push_back(this_sentence_tokens);
-        tokens_counter += this_sentence_tokens;
-        this_sentence_tokens = 1;
+        break;
+        // lengths.push_back(this_sentence_tokens);
+        // tokens_counter += this_sentence_tokens;
+        // this_sentence_tokens = 1;
       }
 
       if (m_current_timepoint + tokens_counter + this_sentence_tokens == m_buffer_size)
@@ -511,7 +521,7 @@ protected:
   bool m_started = false;
 
   std::shared_ptr</*const*/ StringIndex> m_stridx_ptr;
-  /*const*/ StringIndex& m_stridx;
+  // /*const*/ StringIndex& m_stridx;
   StringIndex::idx_t m_unk_idx;
   std::vector<tokens_with_analysis_t> m_buffers;
   std::vector<size_t> m_lengths;
