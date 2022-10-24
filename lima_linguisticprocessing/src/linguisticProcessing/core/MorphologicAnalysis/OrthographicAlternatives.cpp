@@ -104,7 +104,7 @@ LimaStatusCode OrthographicAlternatives::process(
   LINFO << "MorphologicalAnalysis: starting process OrthographicAlternatives";
 
   StringsPool& sp=Common::LinguisticData::LinguisticData::changeable().stringsPool(m_language);
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
   LinguisticGraphVertexIt it,itEnd;
   VertexDataPropertyMap dataMap=get(vertex_data,*g);

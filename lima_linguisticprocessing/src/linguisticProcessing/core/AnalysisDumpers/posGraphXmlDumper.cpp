@@ -136,13 +136,13 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
   Lima::TimeUtilsController timer("posGraphXmlDumper");
   DUMPERLOGINIT;
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "posGraphXmlDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   LDEBUG << "handler will be: " << m_handler;
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
@@ -150,34 +150,34 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (graph==0) {
-    graph=new AnalysisGraph(m_graph,m_language,true,true);
+    graph = std::make_shared<AnalysisGraph>(m_graph,m_language,true,true);
     analysis.setData(m_graph,graph);
   }
 
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticAnalysis::SyntacticData(static_cast<AnalysisGraph*>(analysis.getData(m_graph)),0);
+    syntacticData = std::make_shared<SyntacticAnalysis::SyntacticData>(std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph)).get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
 
   // Are sentences bounds right?
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
-    sb=new SegmentationData(m_graph);
+    sb = std::make_shared<SegmentationData>(m_graph);
     analysis.setData("SentenceBoundaries",sb);
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -196,8 +196,8 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
   // ??OME2 SegmentationData::iterator sbItr=sb->begin();
   std::vector<Segment>::iterator sbItr=(sb->getSegments().begin());
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph != 0)
   {
     std::vector< bool > alreadyDumpedTokens;
@@ -221,10 +221,10 @@ LimaStatusCode posGraphXmlDumper::process(AnalysisContent& analysis) const
       dumpLimaData(outputStream,
                     sentenceBegin,
                     sentenceEnd,
-                    anagraph,
-                    posgraph,
-                    syntacticData,
-                    annotationData,
+                    anagraph.get(),
+                    posgraph.get(),
+                    syntacticData.get(),
+                    annotationData.get(),
                     "PosGraph",
                     true, alreadyDumpedTokens, fullTokens, ++sentenceId);
 

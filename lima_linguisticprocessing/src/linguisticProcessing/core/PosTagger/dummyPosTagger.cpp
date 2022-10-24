@@ -55,7 +55,7 @@ LimaStatusCode DummyPosTagger::process(
   PTLOGINIT;
   LINFO << "Start of Dummy posTagging";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
   AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
   analysis.setData("PosGraph",posgraph);

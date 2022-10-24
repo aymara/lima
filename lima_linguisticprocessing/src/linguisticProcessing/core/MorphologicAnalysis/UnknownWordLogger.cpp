@@ -66,7 +66,7 @@ LimaStatusCode UnknownWordLogger::process(
 {
   TimeUtils::updateCurrentTime();
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
 
   try

@@ -152,21 +152,22 @@ LimaStatusCode HyphenWordAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process HyphenWordAlternatives";
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (nullptr == annotationData)
   {
     LDEBUG << "HyphenWordAlternatives::process: Misssing AnnotationData. Create it";
-    annotationData = new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentBoundariesName));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sentBoundariesName));
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
@@ -186,7 +187,7 @@ LimaStatusCode HyphenWordAlternatives::process(
       {
         if (tok->status().isAlphaHyphen() && isWorthSplitting(*it, graph))
         {
-          makeHyphenSplitAlternativeFor(*it, graph, annotationData, sb);
+          makeHyphenSplitAlternativeFor(*it, graph, annotationData.get(), sb.get());
         }
       }
     }
@@ -297,7 +298,7 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
   toTokenize.setData("Text",new LimaStringText(hyphenWord));
   LimaStatusCode status=m_tokenizer->process(toTokenize);
   if (status != SUCCESS_ID) return;
-  AnalysisGraph* agTokenizer=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto agTokenizer = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokgraph=agTokenizer->getGraph();
 
   // setup position field

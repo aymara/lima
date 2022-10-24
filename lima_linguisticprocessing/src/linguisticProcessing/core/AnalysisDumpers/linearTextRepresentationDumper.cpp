@@ -102,19 +102,19 @@ LimaStatusCode LinearTextRepresentationDumper::process(
 
     DUMPERLOGINIT;
     // get metadata    
-    LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
     // get the analysis graph    
-    AnalysisGraph* anaGraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+    auto anaGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
     if (anaGraph == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
     // get sentence boundaries    
-    SegmentationData* sb = dynamic_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
       LDEBUG << "LinearTextRepresentationDumper::process: no SentenceBounds available: ignored";
       // sentence bounds ignored: null pointer passed to LTRTextBuilder will be handled there
@@ -124,7 +124,7 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     LTRTextBuilder builder(m_language, m_stopList);
     builder.buildLTRTextFrom(
         *(anaGraph->getGraph()),
-        sb,
+        sb.get(),
         anaGraph->firstVertex(),
         anaGraph->lastVertex(),
         &textRep,
@@ -132,7 +132,7 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     // write LTR_Text
     LDEBUG << "handler will be: " << m_handler;
 //     MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
-    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+    auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
     if (handler == 0) {
       LERROR << "LinearTextRepresentationDumper::process: handler " << m_handler << " has not been given to the core client";

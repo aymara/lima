@@ -296,7 +296,7 @@ LimaStatusCode PythonUppsalaTensorFlowTokenizer::process(AnalysisContent& analys
   LinguisticGraph* graph=anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   // Convert text to PyObject
   auto pyText = PyUnicode_FromString(originalText->toUtf8().constData());
   if (pyText == NULL)

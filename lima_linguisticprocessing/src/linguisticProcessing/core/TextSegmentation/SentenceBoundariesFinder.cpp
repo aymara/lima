@@ -137,7 +137,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
 
   SENTBOUNDLOGINIT;
   LINFO << "start finding sentence bounds";
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (anagraph==0)
   {
     LERROR << "no graph '" << m_graph << "' available !";
@@ -169,14 +169,14 @@ LimaStatusCode SentenceBoundariesFinder::process(
         */
         if (beginSentence != endSentence && prevVx.end() == prevVx.find(beginSentence))
         {
-          sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+          sb->add(Segment("sentence",beginSentence,endSentence,anagraph.get()));
         }
         break;
       }
 #ifdef DEBUG_LP
       LDEBUG << "found endSentence at " << endSentence;
 #endif
-      sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+      sb->add(Segment("sentence",beginSentence,endSentence,anagraph.get()));
       beginSentence=endSentence;
     }
   }
@@ -218,7 +218,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
 #ifdef DEBUG_LP
           LDEBUG << "add sentence " << beginSentence << "-" << endSentence;
 #endif
-          sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+          sb->add(Segment("sentence",beginSentence,endSentence,anagraph.get()));
           beginSentence=endSentence;
       }
       endSentence=anagraph->nextMainPathVertex(endSentence,*m_microAccessor,m_boundaryMicros,lastVx);
@@ -228,7 +228,7 @@ LimaStatusCode SentenceBoundariesFinder::process(
 #ifdef DEBUG_LP
         LDEBUG << "add last sentence " << beginSentence << "-" << endSentence;
 #endif
-      sb->add(Segment("sentence",beginSentence,endSentence,anagraph));
+      sb->add(Segment("sentence",beginSentence,endSentence,anagraph.get()));
     }
   }
   return SUCCESS_ID;

@@ -73,7 +73,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     PTLOGINIT;
@@ -89,7 +89,7 @@ LimaStatusCode DisambiguatedGraphXmlLogger::process(
     return CANNOT_OPEN_FILE_ERROR;
   }
 
-  AnalysisGraph* posTokenList=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posTokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   const LinguisticGraph* posGraph=posTokenList->getGraph();
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);

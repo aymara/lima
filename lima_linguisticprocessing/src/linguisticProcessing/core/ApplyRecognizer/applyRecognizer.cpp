@@ -219,20 +219,21 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
 
   LimaStatusCode returnCode(SUCCESS_ID);
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
-    recoData = new RecognizerData();
+    recoData = std::make_shared<RecognizerData>();
     analysis.setData("RecognizerData", recoData);
   }
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -246,13 +247,13 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   if (m_useSentenceBounds) {
     for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
            reco_end=m_recognizers.end();reco!=reco_end; reco++) {
-      returnCode=processOnEachSentence(analysis,*reco,recoData);
+      returnCode=processOnEachSentence(analysis,*reco,recoData.get());
     }
   }
   else {
     for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
            reco_end=m_recognizers.end();reco!=reco_end; reco++) {
-      returnCode=processOnWholeText(analysis,*reco,recoData);
+      returnCode=processOnWholeText(analysis,*reco,recoData.get());
     }
   }
 
@@ -286,7 +287,7 @@ processOnEachSentence(AnalysisContent& analysis,
 {
   APPRLOGINIT;
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(recoData->getGraphId()));
   if (nullptr==anagraph)
   {
     LERROR << "graph with id '"<< recoData->getGraphId() <<"' is not available";
@@ -294,7 +295,7 @@ processOnEachSentence(AnalysisContent& analysis,
   }
 
   // get sentence bounds
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentenceBoundsData));
+  auto sb=std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sentenceBoundsData));
   if (nullptr==sb)
   {
     LERROR << "no sentence bounds "<< m_sentenceBoundsData << " defined ! abort";
@@ -337,7 +338,7 @@ processOnWholeText(AnalysisContent& analysis,
   // APPRLOGINIT;
   // LDEBUG << "apply recognizer on whole text";
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData(recoData->getGraphId()));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(recoData->getGraphId()));
   if (nullptr == anagraph)
   {
     APPRLOGINIT;
@@ -345,7 +346,7 @@ processOnWholeText(AnalysisContent& analysis,
     return MISSING_DATA;
   }
 
-//   AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+//   auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
   std::vector<RecognizerMatch> seRecognizerResult;
 

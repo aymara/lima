@@ -145,7 +145,7 @@ LimaStatusCode RegexMatcher::process(
   Lima::TimeUtilsController timer("RegexReplacer");
   REGEXREPLACERLOGINIT;
   LINFO << "start RegexMatcher process";
-  AnalysisGraph* anagraph = static_cast< AnalysisGraph* >(analysis.getData("AnalysisGraph"));
+  AnalysisGraph* anagraph = static_cast< AnalysisGraph* >(analysis.getData("AnalysisGraph").get());
   if (anagraph == 0) {
     LERROR << "no AnalysisGraph available for RegexMatcher ! abort";
     return MISSING_DATA;
@@ -154,14 +154,15 @@ LimaStatusCode RegexMatcher::process(
     LERROR << "AnalysisGraph is not a string ! abort";
     return UNKNOWN_ERROR;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
-    anagraph->populateAnnotationGraph(annotationData, "AnalysisGraph");
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    anagraph->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+        annotationData.get(), "PosGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -172,7 +173,7 @@ LimaStatusCode RegexMatcher::process(
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
 
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   std::string text = Common::Misc::limastring2utf8stdstring(*originalText);
   for (auto reit = m_d->m_regexes.begin(); reit != m_d->m_regexes.end(); reit++)
   {
@@ -223,8 +224,7 @@ LimaStatusCode RegexMatcher::process(
 #endif
       while (v != anagraph->lastVertex() && tokenPosition < currentMatchPosition)
       {
-        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph);
-             outItr != outItrEnd; outItr++)
+        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr != outItrEnd; outItr++)
         {
           v=target(*outItr, *graph);
           break;
@@ -237,7 +237,8 @@ LimaStatusCode RegexMatcher::process(
       }
 
 #ifdef DEBUG_LP
-        LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition << " ; current match position is: " << currentMatchPosition;
+        LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition
+                << " ; current match position is: " << currentMatchPosition;
 #endif
         // current token is at current match position
       if (tokenPosition == currentMatchPosition)
@@ -273,8 +274,7 @@ LimaStatusCode RegexMatcher::process(
             break;
           }
         }
-        std::vector< LinguisticGraphVertex >::const_iterator matchVerticesIt, matchVerticesIt_end;
-        matchVerticesIt = matchVertices.begin(); matchVerticesIt_end = matchVertices.end();
+        auto matchVerticesIt = matchVertices.begin(), matchVerticesIt_end = matchVertices.end();
 
 #ifdef DEBUG_LP
         LDEBUG << "Match Found. Vertices are: ";

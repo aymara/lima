@@ -147,7 +147,7 @@ operator()(RecognizerMatch& m,
 #endif
 
   // annotation data is used to get numeric value of already recognized number entities
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   vector<NumberPart> values;
 

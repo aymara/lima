@@ -121,14 +121,14 @@ void SentenceBoundariesUpdaterPrivate::init(XMLConfigurationFiles::GroupConfigur
 
 LimaStatusCode SentenceBoundariesUpdaterPrivate::process(AnalysisContent& analysis) const
 {
-  AnalysisGraph* graph = static_cast<AnalysisGraph*>(analysis.getData(m_graphName));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphName));
   if (graph == nullptr)
   {
     LOG_ERROR_AND_EXIT("SentenceBoundariesUpdaterPrivate::process graph" << m_graphName << "has not been produced: check pipeline",
                        MISSING_DATA);
   }
 
-  SegmentationData* sb = static_cast<SegmentationData*>(analysis.getData(m_sbLayerName));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sbLayerName));
   if (sb == nullptr)
   {
     LOG_ERROR_AND_EXIT("SentenceBoundariesUpdaterPrivate::process segmentation data" << m_sbLayerName << "has not been produced: check pipeline",

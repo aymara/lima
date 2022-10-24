@@ -716,8 +716,8 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
 
   LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowLemmatizer");
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   LinguisticGraph* src_graph = anagraph->getGraph();
 
   auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
@@ -727,7 +727,7 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
     return MISSING_DATA;
   }
 
-  SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   // graph is empty if it has only 2 vertices, start (0) and end (0)
   if (num_vertices(*src_graph) <= 2)

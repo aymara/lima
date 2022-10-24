@@ -102,7 +102,7 @@ QString AnalysisLoader::getInputFile(AnalysisContent& analysis) const
   QString inputFile;
   if (! m_d->m_temporaryFileMetadata.isEmpty()) {
     // get temporary filename from metadata
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0)
     {
       LOGINIT("LP::AnalysisLoader");
@@ -118,7 +118,7 @@ QString AnalysisLoader::getInputFile(AnalysisContent& analysis) const
   }
   else if (! m_d->m_inputFileExtension.isEmpty()) {
     // get filename from metadata
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0)
     {
       LOGINIT("LP::AnalysisLoader");

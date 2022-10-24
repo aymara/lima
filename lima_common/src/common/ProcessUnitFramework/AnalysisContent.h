@@ -14,6 +14,7 @@
 #include "common/LimaCommon.h"
 
 #include <map>
+#include <memory>
 #include <string>
 
 namespace Lima {
@@ -27,19 +28,21 @@ public:
   virtual ~AnalysisData() {}
 };
 
+class AnalysisContentPrivate;
 /**
   * @brief Holds all data that pass through the ProcessUnits
-  * Warning : destructor of AnalysisContent call destructor \
-  * on each AnalysisData
+  * Analysis data are shared pointers, simplifying memory management.
   */
 class LIMA_PROCESSUNITFRAMEWORK_EXPORT AnalysisContent 
 {
 public:
   
   AnalysisContent();
-  
+  AnalysisContent(const AnalysisContent&) = delete;
+  AnalysisContent& operator=(const AnalysisContent&) = delete;
+
   /**
-   * Destroy all AnalysisData in AnalysisContent
+   * Reduce the reference count of all AnalysisData in AnalysisContent causing them to be deleted if needed.
    * @return 
    */
   virtual ~AnalysisContent();
@@ -47,51 +50,139 @@ public:
   /**
    * @brief return AnalysisData by id
    * @param id Id of analysis to return
-   * @return AnalysisData*
-   * @retval pointer to valid AnalysisData if exists
-   * @retval 0 if specified AnalysisData doesn't exists
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
    */
-  AnalysisData* getData(const std::string& id);
-  
+  std::shared_ptr< AnalysisData > getData(const QString& id);
+
   /**
-   * @brief return AnalysisData by id
+   * @brief return constant AnalysisData by id
    * @param id Id of analysis to return
-   * @return AnalysisData*
-   * @retval pointer to valid AnalysisData if exists
-   * @retval 0 if specified AnalysisData doesn't exists
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
    */
-  const AnalysisData* getData(const std::string& id) const;
-  
+  const std::shared_ptr< AnalysisData > getData(const QString& id) const;
+
   /**
    * @brief set an analysisData with the given id.
    * @param id Id to design the given analysisData
-   * @param data AnalysisData to store
+   * @param data AnalysisData to store.
    */
-  void setData(const std::string& id,AnalysisData* data);
-  
-  /** 
+  void setData(const QString& id, std::shared_ptr< AnalysisData > data);
+
+  /**
+   * @brief set an analysisData with the given id. Take ownership of the pointer.
+   * @deprecated Use the shared_ptr-based API instead
+   * @param id Id to design the given analysisData
+   * @param data AnalysisData to store. Take ownership of the pointer.
+   */
+  void setData(const QString& id, AnalysisData* data);
+
+  /**
    * @brief remove the analysisData with the given id
-   * (call destructor of the data)
+   * @param id the identifier of the AnalysisData to remove
+   */
+  void removeData(const QString& id);
+
+  /**
+   * @brief return AnalysisData by id
+   * @deprecated Use the QString-based API instead
+   * @param id Id of analysis to return
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
+   */
+  std::shared_ptr< AnalysisData > getData(const std::string& id);
+
+  /**
+   * @brief return AnalysisData by id
+   * @param id Id of analysis to return
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
+   */
+  std::shared_ptr< AnalysisData > getData(const char* id);
+
+  /**
+   * @brief return constant AnalysisData by id
+   * @deprecated Use the QString-based API instead
+   * @param id Id of analysis to return
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
+   */
+  const std::shared_ptr< AnalysisData > getData(const std::string& id) const;
+
+  /**
+   * @brief return constant AnalysisData by id
+   * @param id Id of analysis to return
+   * @return std::shared_ptr< AnalysisData >
+   * @retval shared pointer to valid AnalysisData if exists
+   * @retval empty shared pointer if specified AnalysisData doesn't exists
+   */
+  const std::shared_ptr< AnalysisData > getData(const char* id) const;
+
+  /**
+   * @brief set an analysisData with the given id.
+   * @deprecated Use the QString-based API instead
+   * @param id Id to design the given analysisData
+   * @param data AnalysisData to store.
+   */
+  void setData(const std::string& id, std::shared_ptr< AnalysisData > data);
+
+  /**
+   * @brief set an analysisData with the given id.
+   * @param id Id to design the given analysisData
+   * @param data AnalysisData to store.
+   */
+  void setData(const char* id, std::shared_ptr< AnalysisData > data);
+
+  /**
+   * @brief set an analysisData with the given id. Take ownership of the pointer.
+   * @deprecated Use the QString-based API instead
+   * @deprecated Use the shared_ptr-based API instead
+   * @param id Id to design the given analysisData
+   * @param data AnalysisData to store. Take ownership of the pointer.
+   */
+  void setData(const std::string& id, AnalysisData* data);
+
+  /**
+   * @brief set an analysisData with the given id. Take ownership of the pointer.
+   * @deprecated Use the shared_ptr-based API instead
+   * @param id Id to design the given analysisData
+   * @param data AnalysisData to store. Take ownership of the pointer.
+   */
+  void setData(const char* id, AnalysisData* data);
+
+  /**
+   * @brief remove the analysisData with the given id
+   * @param id the identifier of the AnalysisData to remove
+   */
+  void removeData(const char* id);
+
+  /**
+   * @brief remove the analysisData with the given id
+   * @deprecated Use the QString-based API instead
    * @param id the identifier of the AnalysisData to remove
    */
   void removeData(const std::string& id);
 
   /**
   * @brief remove all the analysisData
-  * (call destructor of the data)
   */
   void clear();
   
   /**
    * @brief remove the analysisData with the given id without destructing it
-   * (do NOT call the destructor of the data)
+   * @deprecated This was useful when data was raw pointers to transfer ownership. Now that data are shared_pointers, the reference counting mechanism handles the destruction when necessary.
    * @param id the identifier of the AnalysisData to release
    */
   void releaseData(const std::string& id);
 
-  private:
-
-  std::map<std::string,AnalysisData*> m_analysisData;
+private:
+  AnalysisContentPrivate* m_d;
   
 };
 

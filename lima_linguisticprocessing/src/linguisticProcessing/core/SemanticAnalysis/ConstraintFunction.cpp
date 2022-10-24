@@ -60,7 +60,7 @@ bool ClearSemanticRelation::operator()(AnalysisContent& analysis ) const
   SEMLOGINIT;
   LDEBUG << "ClearSemanticRelation::operator()";
 #endif
-  SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
+  auto semanticData = std::dynamic_pointer_cast<SemanticRelationData>(analysis.getData("SemanticRelationData"));
   if (semanticData==0)
   {
     return false;
@@ -83,7 +83,7 @@ bool SaveSemanticRelation::operator()(AnalysisContent& analysis ) const
   SEMLOGINIT;
   LDEBUG << "SaveSemanticRelation::operator()";
 #endif
-  SemanticRelationData * semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
+  auto semanticData = std::dynamic_pointer_cast<SemanticRelationData>(analysis.getData("SemanticRelationData"));
   if (semanticData==0)
   {
     return false;
@@ -113,11 +113,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
           << m_semanticRelationType;
 #endif
   LIMA_UNUSED(anagraph);
-  auto semanticData=static_cast<SemanticRelationData*>(analysis.getData("SemanticRelationData"));
+  auto semanticData = std::dynamic_pointer_cast<SemanticRelationData>(analysis.getData("SemanticRelationData"));
   if (semanticData == nullptr)
   {
-    semanticData=new SemanticRelationData();
-    analysis.setData("SemanticRelationData",semanticData);
+    semanticData = std::make_shared<SemanticRelationData>();
+    analysis.setData("SemanticRelationData", semanticData);
 
   }
 

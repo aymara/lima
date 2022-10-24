@@ -72,7 +72,7 @@ void FullTokenXmlLogger::init(
 LimaStatusCode FullTokenXmlLogger::process(
   AnalysisContent& analysis) const
 {
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     DICTIONARYLOGINIT;
@@ -80,7 +80,7 @@ LimaStatusCode FullTokenXmlLogger::process(
     return MISSING_DATA;
   }
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphId));
   std::ofstream fout;
   if (!openLogFile(fout,metadata->getMetaData("FileName"))) {
     MORPHOLOGINIT;

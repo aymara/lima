@@ -61,11 +61,11 @@ namespace Lima
       {
 //         COREFSOLVERLOGINIT;
         TimeUtils::updateCurrentTime();
-        AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-        const LinguisticAnalysisStructure::AnalysisGraph& graph = *(static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph)));
+        auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+        const auto& graph = *(std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph)));
 
 //         LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
-        LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+        auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
         if (metadata == 0)
         {
           COREFSOLVERLOGINIT;

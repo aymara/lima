@@ -104,8 +104,8 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
                                    const LinguisticGraphVertex& v,
                                    AnalysisContent& analysis) const
 {
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == 0)
   {
     return false;
@@ -228,9 +228,9 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
 
 //     LDEBUG << "CreateSpecificEntity action between " << v1 << " and " << v2
 //         << " with complement " << m_complement;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     return false;
@@ -265,13 +265,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
   }
 
-  AnalysisData* rdata=analysis.getData("RecognizerData");
-  if (rdata==0)  {
+  auto rdata = analysis.getData("RecognizerData");
+  if (rdata == 0)  {
     SELOGINIT;
     LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
     return false;
   }
-  RecognizerData* recoData=static_cast<RecognizerData*>(rdata);
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(rdata);
   if (recoData==0) {
     SELOGINIT;
     LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
@@ -782,7 +782,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
@@ -853,7 +853,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
 
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
@@ -969,7 +969,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& /* unused graph */,
   LDEBUG << "AddEntityFeatureAsEntity::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeatureAsEntity:: Error: missing RecognizerData";
@@ -1028,7 +1028,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeature:: Error: missing RecognizerData";
@@ -1099,7 +1099,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
 
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeature:: Error: missing RecognizerData";
@@ -1243,7 +1243,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "AppendEntityFeature::() feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AppendEntityFeature::() Error: missing RecognizerData";
@@ -1338,7 +1338,7 @@ bool ClearEntityFeatures::
 operator()(AnalysisContent& analysis) const
 {
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData!=0) {
     recoData->clearEntityFeatures();
   }
@@ -1357,7 +1357,7 @@ bool NormalizeEntity::
 operator()(Automaton::RecognizerMatch& match, AnalysisContent& analysis) const
 {
   // get stored features in recognizerData
-  auto recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == nullptr) {
     SELOGINIT;
     LERROR << "NormalizeEntity:: Error: missing RecognizerData";

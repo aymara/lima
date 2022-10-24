@@ -78,7 +78,7 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         const LinguisticAnalysisStructure::MorphoSyntacticData* /*data*/) const
 {
   // should compare to vertex ?
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0) {
     AULOGINIT;
     LDEBUG << "no annotation graph available !";

@@ -279,8 +279,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   LDEBUG << "ConllDumper::process";
 #endif
 
-  LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(
-    analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     DUMPERLOGINIT;
@@ -288,14 +287,14 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     DUMPERLOGINIT;
     LINFO << "ConllDumper::process no AnnotationData ! Will not contain NE nor predicates";
   }
-  m_d->annotationData = annotationData;
-  auto posGraphData=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph.toStdString()));
+  m_d->annotationData = annotationData.get();
+  auto posGraphData=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_d->m_graph.toStdString()));
   // posGraphData est de type PosGraph et non pas AnalysisGraph
   if (posGraphData==0)
   {
@@ -306,7 +305,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   auto posGraph = posGraphData->getGraph();
   m_d->posGraph = posGraph;
 
-  auto anaGraphData=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anaGraphData=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anaGraphData==0)
   {
     DUMPERLOGINIT;
@@ -316,8 +315,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   auto anaGraph = anaGraphData->getGraph();
   m_d->anaGraph = anaGraph;
 
-  auto sd = static_cast<SegmentationData*>(
-    analysis.getData("SentenceBoundaries"));
+  auto sd = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sd == nullptr)
   {
     DUMPERLOGINIT;
@@ -325,11 +323,10 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
 
-  auto syntacticData = static_cast<SyntacticData*>(
-    analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData == nullptr)
   {
-    syntacticData = new SyntacticData(posGraphData,0);
+    syntacticData = std::make_shared<SyntacticData>(posGraphData.get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData", syntacticData);
   }
@@ -353,18 +350,17 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   auto sentenceBegin = sbItr->getFirstVertex();
   auto sentenceEnd = sbItr->getLastVertex();
 
-  auto limaConllTokenIdMapping =
-      static_cast<LimaConllTokenIdMapping*>(
+  auto limaConllTokenIdMapping = std::dynamic_pointer_cast<LimaConllTokenIdMapping>(
         analysis.getData("LimaConllTokenIdMapping"));
   if (limaConllTokenIdMapping == nullptr)
   {
-    limaConllTokenIdMapping = new LimaConllTokenIdMapping();
+    limaConllTokenIdMapping = std::make_shared<LimaConllTokenIdMapping>();
     analysis.setData("LimaConllTokenIdMapping", limaConllTokenIdMapping);
   }
   int sentenceNb = 0;
   LinguisticGraphVertex vEndDone = 0;
 
-  const auto originalText = static_cast<LimaStringText*>(analysis.getData("Text"));
+  const auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
 
   if (m_d->m_format == "CoNLL-U")
   {
@@ -844,8 +840,7 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
 #endif
   QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> result;
 
-  auto annotationData = static_cast<AnnotationData*>(
-    analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     DUMPERLOGINIT;
@@ -854,8 +849,7 @@ void ConllDumperPrivate::collectPredicateTokens(Lima::AnalysisContent& analysis,
     return;
   }
 
-  auto tokenList = static_cast<AnalysisGraph*>(
-    analysis.getData(m_graph.toStdString()));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph.toStdString()));
   if (tokenList == nullptr)
   {
     DUMPERLOGINIT;

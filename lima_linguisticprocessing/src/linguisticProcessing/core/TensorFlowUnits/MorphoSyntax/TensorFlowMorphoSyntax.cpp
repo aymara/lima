@@ -486,16 +486,16 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 
   LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowMorphoSyntax");
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   AnalysisGraph* posgraph = new AnalysisGraph("PosGraph", m_language, false, false, *anagraph);
   analysis.setData("PosGraph", posgraph);
   LinguisticGraph* src_graph = anagraph->getGraph();
 
   /** Creation of an annotation graph if necessary */
-  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData == 0)
   {
-    annotationData = new AnnotationData();
+    annotationData = std::shared_ptr<AnnotationData>();
 
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and

@@ -135,19 +135,19 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
 {
   SALOGINIT;
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (tokenList == 0) {
       SALOGINIT;
       LERROR << "no AnalysisGraph ! abort";
       return MISSING_DATA;
   }
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData == 0) {
       SALOGINIT;
       LERROR << "no SyntacticData ! abort";
@@ -165,7 +165,7 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
   //cout << endl;
   if (m_displayChains) {
     LDEBUG << "call of displayChains";
-    SyntacticAnalysisTools::displayChains(tokenList, ofs);
+    SyntacticAnalysisTools::displayChains(tokenList.get(), ofs);
   }
   if (m_displayDependencies) {
     LDEBUG << "call of displayDependancies";

@@ -102,7 +102,7 @@ m_offset(0)
 void SegmentFeaturePosition::
 update(const AnalysisContent& analysis) {
   // update offset from metadata
-  const LinguisticMetaData* metadata=static_cast<const LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  const LinguisticMetaData* metadata=static_cast<const LinguisticMetaData*>(analysis.getData("LinguisticMetaData").get());
   if (metadata == 0) {
     LOGINIT("LP::Segmentation");
     LWARN << "no LinguisticMetaData ! abort";

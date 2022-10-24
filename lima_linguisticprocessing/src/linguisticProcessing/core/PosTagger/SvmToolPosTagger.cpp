@@ -213,7 +213,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
   auto microAccessor = microManager.getPropertyAccessor();
   // Retrieve morphosyntactic graph
-  auto anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   auto srcgraph = anagraph->getGraph();
   auto endVx = anagraph->lastVertex();
 
@@ -228,19 +228,18 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   analysis.setData("PosGraph",posgraph);
 
   /** Creation of an annotation graph if necessary*/
-  AnnotationData* annotationData =
-  static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData = new AnnotationData();
+    annotationData = std::make_shared<AnnotationData>();
     /** Creates a node in the annotation graph for each node of the
     * morphosyntactic graph. Each new node is annotated with the name mrphv and
     * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
       static_cast<AnalysisGraph*>(
-        analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
-          annotationData,
+        analysis.getData("AnalysisGraph").get())->populateAnnotationGraph(
+          annotationData.get(),
           "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);

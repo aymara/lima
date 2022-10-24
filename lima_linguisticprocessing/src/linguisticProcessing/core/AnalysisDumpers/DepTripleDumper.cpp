@@ -114,7 +114,7 @@ LimaStatusCode DepTripleDumper::process(
 {
   TimeUtils::updateCurrentTime();
   DUMPERLOGINIT;
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "DepTripleDumper::process no LinguisticMetaData ! abort";
@@ -123,7 +123,7 @@ LimaStatusCode DepTripleDumper::process(
   LDEBUG << "handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
@@ -131,32 +131,32 @@ LimaStatusCode DepTripleDumper::process(
     return MISSING_DATA;
   }
   
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "DepTripleDumper::process: hno AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "DepTripleDumper::process: hno PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "DepTripleDumper::process: no SentenceBounds ! abort";
     return MISSING_DATA;
   }
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticData(posgraph,0);
+    syntacticData = std::make_shared<SyntacticData>(posgraph.get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "DepTripleDumper::process: no annotation graph available !";
@@ -167,8 +167,8 @@ LimaStatusCode DepTripleDumper::process(
   HandlerStreamBuf hsb(handler);
   std::ostream outputStream(&hsb);
 
-  VxToTermsMap compoundsHeads = getCompoundsHeads(annotationData,
-    syntacticData, analysis,posgraph, *(anagraph->getGraph()), 
+  VxToTermsMap compoundsHeads = getCompoundsHeads(annotationData.get(),
+    syntacticData.get(), analysis, posgraph.get(), *(anagraph->getGraph()),
     *(posgraph->getGraph()));
   if (sb->getGraphId() != "PosGraph")
   {
@@ -191,8 +191,8 @@ LimaStatusCode DepTripleDumper::process(
                             beginSentence,
                             endSentence,
                             *(anagraph->getGraph()),
-                        *(posgraph->getGraph()), syntacticData,
-                        annotationData, compoundsHeads);
+                        *(posgraph->getGraph()), syntacticData.get(),
+                        annotationData.get(), compoundsHeads);
     outputStream << "." << std::endl;
                         
   }

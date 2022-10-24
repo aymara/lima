@@ -77,7 +77,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
   auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
-  const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  const auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";
@@ -85,17 +85,17 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
   }
 
   if (! m_eventData.empty()) {
-    const AnalysisData* data =analysis.getData(m_eventData);
+    auto data = analysis.getData(m_eventData);
     if (data!=0) {
       // see if the data is of type Events
-      const EventTemplateData* eventData=dynamic_cast<const EventTemplateData*>(data);
+      auto eventData = std::dynamic_pointer_cast<const EventTemplateData>(data);
       if (eventData==0) {
         LOGINIT("LP::EventAnalysis");
         LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
       else {
-        outputEventData(out,eventData,annotationData);
+        outputEventData(out, eventData.get(), annotationData.get());
       }
     }
     else {

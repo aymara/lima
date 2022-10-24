@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 using namespace std;
 //using namespace boost;
@@ -74,22 +75,22 @@ LimaStatusCode SentenceBoundariesXmlLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     SENTBOUNDLOGINIT;
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
+  auto graph=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphId));
 
-  AnalysisData* data=analysis.getData(m_boundaries);
+  auto data=analysis.getData(m_boundaries);
   if (data == 0) {
     SENTBOUNDLOGINIT;
     LERROR << "no SentenceBoundaries data";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(data);
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(data);
 
   std::string docId("");
   try {

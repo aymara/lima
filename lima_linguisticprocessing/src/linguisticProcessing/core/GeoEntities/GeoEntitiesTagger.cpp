@@ -369,13 +369,13 @@ LimaStatusCode GeoEntitiesTagger::process(
   LDEBUG << "start GeoEntitiesTagger";
   
   // ici normalement on peut prendre soit analysis graph soit le prostgraph, cela doit être paramétré
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphId));
   if (anagraph==0)
   {
     LERROR << "no "<< m_graphId << " ! abort";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no AnnotationData ! abort";

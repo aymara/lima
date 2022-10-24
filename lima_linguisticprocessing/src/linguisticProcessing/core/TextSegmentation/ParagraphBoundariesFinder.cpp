@@ -89,7 +89,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   // find paragraphs in text (positions of double carriage returns),
   // then find corresponding vertices in graph
 
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (graph==0) {
     LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
@@ -97,7 +97,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   SegmentationData* boundaries=new SegmentationData(m_graph);
   analysis.setData(m_dataName,boundaries);
 
-  LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto text = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   
   std::vector<uint64_t> paragraphPositions;
   int currentPos=0;
@@ -142,7 +142,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
         boost::tie(inEdge,inEdge_end)=in_edges(currentVertex,*(graph->getGraph()));
         LinguisticGraphVertex prevVertex=source(*inEdge,*(graph->getGraph()));
         if (beginParagraph!=prevVertex) {
-          boundaries->add(Segment("paragraph",beginParagraph,prevVertex,graph));
+          boundaries->add(Segment("paragraph", beginParagraph, prevVertex, graph.get()));
         }
         beginParagraph=prevVertex;
         //boundaries->add(Segment("paragraph",beginParagraph,currentVertex,graph));
@@ -169,7 +169,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   
   // add last segment as a paragraph
   if (beginParagraph!=graph->lastVertex()) {
-    boundaries->add(Segment("paragraph",beginParagraph,graph->lastVertex(),graph));
+    boundaries->add(Segment("paragraph", beginParagraph, graph->lastVertex(), graph.get()));
   }
   
   TimeUtils::logElapsedTime("ParagraphBoundariesFinder");

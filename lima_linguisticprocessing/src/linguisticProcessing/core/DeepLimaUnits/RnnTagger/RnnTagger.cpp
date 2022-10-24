@@ -102,7 +102,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
     Lima::LimaStatusCode
     RnnTagger::process(Lima::AnalysisContent &analysis) const {
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnPosTager");
-        auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+        auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
         auto srcgraph = anagraph->getGraph();
         auto endVx = anagraph->lastVertex();
         /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
@@ -118,19 +118,17 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger {
                 MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
         const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
         /** Creation of an annotation graph if necessary*/
-        AnnotationData* annotationData = dynamic_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+        auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
         if (annotationData==nullptr)
         {
-            annotationData = new AnnotationData();
+            annotationData = std::shared_ptr<AnnotationData>();
             /** Creates a node in the annotation graph for each node of the
             * morphosyntactic graph. Each new node is annotated with the name mrphv and
             * associated to the morphosyntactic vertex number */
-            if (dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != nullptr)
+            if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != nullptr)
             {
-                dynamic_cast<AnalysisGraph*>(
-                        analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
-                        annotationData,
-                        "AnalysisGraph");
+                std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+                        annotationData.get(), "AnalysisGraph");
             }
             analysis.setData("AnnotationData",annotationData);
         }

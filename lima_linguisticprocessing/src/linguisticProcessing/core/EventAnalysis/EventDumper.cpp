@@ -92,20 +92,20 @@ LimaStatusCode EventDumper::process(
   
   LDEBUG << "EventDumper::process()... ";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "EventDumper::process: no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "EventDumper::process: no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "EventDumper::process: no graph 'PosGraph' available !";
@@ -115,7 +115,7 @@ LimaStatusCode EventDumper::process(
   LDEBUG << "EventDumper::process(): handler will be: " << m_handler;
 //  MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 //  AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(LinguisticResources::single().getResource(langid, m_handler));
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   LDEBUG << "EventDumper::process(): handler= " << handler;
   if (handler==0)
@@ -130,11 +130,11 @@ LimaStatusCode EventDumper::process(
   handler->startAnalysis();
 
   LDEBUG << "EventDumper::process() get EventData...";
-  Events* events=static_cast<Events*>(analysis.getData("EventData"));
+  auto events = std::dynamic_pointer_cast<Events>(analysis.getData("EventData"));
   if (events==0)
   {
     LWARN << "EventDumper::process(): no Events !";
-    events=new Events();
+    events = std::make_shared<Events>();
   }
   
   std::string stringEvents = events->toString("P_URI");

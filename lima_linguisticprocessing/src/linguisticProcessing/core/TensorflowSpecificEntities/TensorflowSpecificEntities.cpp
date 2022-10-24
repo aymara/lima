@@ -296,7 +296,7 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
   }
   auto boundItr = (sb->getSegments()).begin();
 
-  auto tokenList = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   auto g = tokenList->getGraph();
   auto tokenMap = get(vertex_token,*g);
 
@@ -524,7 +524,7 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
                                                     const vector<vector<Segment>::iterator>& batch_segments) const
 {
   // LinguisticGraphVertex previous;
-  auto analysisGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto analysisGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
 #ifdef DEBUG_LP
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());
@@ -675,8 +675,8 @@ bool TensorflowSpecificEntities::createSpecificEntity(
           << entityFound.getType() << " on vertices " << entityFound;
 #endif
 
-  auto analysisGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  auto annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto analysisGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   if (annotationData == 0)
   {

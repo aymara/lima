@@ -82,10 +82,10 @@ LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // create EventTemplateData
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LDEBUG << "EventTemplateFilling: create new data 'EventTemplateData'";
-    eventData = new EventTemplateData();
+    eventData = std::make_shared<EventTemplateData>();
     analysis.setData("EventTemplateData", eventData);
   }
 

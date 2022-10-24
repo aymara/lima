@@ -135,17 +135,17 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
   SELOGINIT;
   LINFO << "start process";
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     annotationData=new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
     }
 
     analysis.setData("AnnotationData",annotationData);
@@ -156,7 +156,7 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
   }
 //   if (analysis.getData("SyntacticData")==0)
 //   {
-//     SyntacticAnalysis::SyntacticData* syntacticData=new SyntacticAnalysis::SyntacticData(static_cast<AnalysisGraph*>(analysis.getData(m_graph)),0);
+//     SyntacticAnalysis::SyntacticData* syntacticData=new SyntacticAnalysis::SyntacticData(std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph)),0);
 //     syntacticData->setupDependencyGraph();
 //     analysis.setData("SyntacticData",syntacticData);
 //   }
@@ -180,7 +180,7 @@ LimaStatusCode SpecificEntitiesRecognizer::process(
   // initialize the vertices to clear
   std::set<LinguisticGraphVertex> verticesToRemove;
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
 
   LinguisticGraph* graph=anagraph->getGraph();
   std::queue<LinguisticGraphVertex> toVisit;
@@ -270,7 +270,7 @@ processOnEachSentence(AnalysisContent& analysis) const
   SELOGINIT;
   LDEBUG << "SpecificEntitiesRecognizer::processOnEachSentence";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (anagraph==0) {
     SELOGINIT;
     LERROR << "SpecificEntitiesRecognizer::processOnEachSentence: no graph '" << m_graph << "' available !!";
@@ -328,7 +328,7 @@ processOnWholeText(AnalysisContent& analysis) const
   SELOGINIT;
   LDEBUG << "SpecificEntitiesRecognizer::processOnWholeText";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (anagraph == 0) {
     SELOGINIT;
     LERROR << "no graph '" << m_graph << "' available !!";

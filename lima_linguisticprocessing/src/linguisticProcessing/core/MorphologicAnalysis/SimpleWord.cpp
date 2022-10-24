@@ -132,7 +132,7 @@ LimaStatusCode SimpleWord::process(
   MORPHOLOGINIT;
   LINFO << "starting process SimpleWord";
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
 
   LinguisticGraph* g=tokenList->getGraph();
@@ -208,18 +208,18 @@ LimaStatusCode SimpleWord::process(
     }
   }
 
-  auto annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LINFO << "SimpleWord::process no annotation data, creating and populating it";
-    annotationData = new AnnotationData();
+    annotationData = std::shared_ptr<AnnotationData>();
     analysis.setData("AnnotationData", annotationData);
   }
-  tokenList->populateAnnotationGraph(annotationData, "AnalysisGraph");
-  if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+  tokenList->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
+  if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
   {
-    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(
-      annotationData,
+    std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+      annotationData.get(),
       "PosGraph");
   }
 

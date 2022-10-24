@@ -101,13 +101,13 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
   SAPLOGINIT;
   LINFO << "start syntactic analysis - dependence relations search";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -119,17 +119,17 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
     return INVALID_CONFIGURATION;
   }
 
-  if (analysis.getData("SyntacticData")==0)
+  if (analysis.getData("SyntacticData") == 0)
   {
-    SyntacticData* syntacticData=new SyntacticData(anagraph,0);
+    auto syntacticData = std::make_shared<SyntacticData>(anagraph.get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
-    recoData = new RecognizerData();
+    recoData = std::make_shared<RecognizerData>();
     analysis.setData("RecognizerData", recoData);
   }
   

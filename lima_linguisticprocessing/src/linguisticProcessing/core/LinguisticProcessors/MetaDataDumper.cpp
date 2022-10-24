@@ -46,7 +46,7 @@ LimaStatusCode MetaDataDumper::process(AnalysisContent& analysis) const
   auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
     DUMPERLOGINIT;
     LERROR << "no LinguisticMetaData ! abort";

@@ -104,7 +104,7 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   LDEBUG << "start SimpleEventBuilder";
 
   // get annotation data (for entities)
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";
@@ -112,12 +112,12 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
   }
     
   // get segmentation data
-  AnalysisData* data=analysis.getData(m_segmData);
+  auto data = analysis.getData(m_segmData);
   if (data==0) {
     LERROR << "Missing data '" << m_segmData << "'";
     return MISSING_DATA;
   }
-  SegmentationData* segmData=static_cast<SegmentationData*>(data);
+  auto segmData = std::dynamic_pointer_cast<SegmentationData>(data);
   if (segmData==0)
   {
     LERROR << "Failed to interpret data '" << m_segmData << "' as SegmentationData";
@@ -126,7 +126,7 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
 
   // get graph on which the segmentation data relies
   string graphId=segmData->getGraphId();
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(graphId));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(graphId));
   if (graph==0) {
     LERROR << "Cannot get graph '" << graphId << "' (from segmentation data)";
     return MISSING_DATA;
@@ -143,7 +143,7 @@ LimaStatusCode SimpleEventBuilder::process(AnalysisContent& analysis) const
     if ((*it).getType()==m_segmentType) {
       LDEBUG << "in segment " << m_segmentType << " [" << (*it).getPosBegin() << "," << (*it).getLength() << "]";
       // get entities in this segment
-      getEntitiesFromSegment(entities,graph,(*it).getFirstVertex(),(*it).getLastVertex(),annotationData);
+      getEntitiesFromSegment(entities, graph.get(), (*it).getFirstVertex(),(*it).getLastVertex(), annotationData.get());
 #ifdef DEBUG_LP
       LDEBUG << "found " << entities.size() << " entities";
 #endif
