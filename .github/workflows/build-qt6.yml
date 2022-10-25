@@ -14,10 +14,10 @@ env:
   PYTHON_WHEEL_VERSION: "cp37-abi3"
   PYTHON_FULL_VERSION: "3.7.13"
   QT_VERSION_MAJOR: "6"
-  QT_VERSION_MINOR: "3"
-  QT_VERSION_PATCH: "1"
-  QT_VERSION: "6.3"
-  QT_FULL_VERSION: "6.3.1"
+  QT_VERSION_MINOR: "4"
+  QT_VERSION_PATCH: "0"
+  QT_VERSION: "6.4"
+  QT_FULL_VERSION: "6.4.0"
   PYSIDE_VERSION: "6"
   LLVM_VERSION: "13.0.1"
   GCC_VERSION: "11.2.1"
@@ -26,56 +26,57 @@ env:
 jobs:
 
 
-  #manylinux_2_28_with_qt6:
-    #name: "Build the manylinux_2_28-based image with Qt6"
-    #runs-on: ubuntu-latest
+  manylinux_2_28_with_qt6:
+    name: "Build the manylinux_2_28-based image with Qt6"
+    runs-on: ubuntu-latest
 
-    #steps:
-      #-
-        #name: Login to DockerHub
-        #uses: docker/login-action@v2
-        #with:
-          #username: ${{ secrets.DOCKERHUB_USERNAME }}
-          #password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      #- name: "Checkout code"
-        #uses: actions/checkout@v3
+      - name: "Checkout code"
+        uses: actions/checkout@v3
 
-      #- name: "Build image"
-        #run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}:latest .
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}:latest .
 
-      #- name: "Push image"
-        #run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}:latest
+      - name: "Push image"
+        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}:latest
 
-  #manylinux_2_28_with_qt_and_pyside:
-    #name: "Build the manylinux_2_28_with_qt_and_pyside-based imaged necessary for lima-python"
-    ##needs: manylinux_2_28_with_llvm
-    ##needs: manylinux_2_28_with_qt
-    #runs-on: ubuntu-latest
+  manylinux_2_28_with_qt_and_pyside:
+    name: "Build the manylinux_2_28_with_qt_and_pyside-based imaged necessary for lima-python"
+    #needs: manylinux_2_28_with_llvm
+    needs: manylinux_2_28_with_qt6
+    runs-on: ubuntu-latest
 
-    #steps:
-      #-
-        #name: Login to DockerHub
-        #uses: docker/login-action@v2
-        #with:
-          #username: ${{ secrets.DOCKERHUB_USERNAME }}
-          #password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      #- name: "Checkout code"
-        #uses: actions/checkout@v3
+      - name: "Checkout code"
+        uses: actions/checkout@v3
 
-      #- name: "Free disk space"
-        #run: bash ./free-diskspace.sh
+      - name: "Free disk space"
+        run: bash ./free-diskspace.sh
 
-      #- name: "Build image"
-        #run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
 
-      #- name: "Push image"
-        #run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+      - name: "Push image"
+        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
 
   manylinux_2_28_lima-manylinux:
     name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed"
     runs-on: ubuntu-latest
+    needs: manylinux_2_28_with_qt_and_pyside
 
     steps:
       -
