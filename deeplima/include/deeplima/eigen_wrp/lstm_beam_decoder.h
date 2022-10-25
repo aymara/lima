@@ -233,15 +233,15 @@ public:
     size_t pos = 0;
     while (step < decoding_log.size() && decoding_log[step][pos].cls != 1) step++;
     if (step > 0)
-    {
       step--;
-      do
-      {
-        char32_t ch = embd.decode(decoding_log[step][pos].cls);
-        output_seq.push_back(ch);
-        pos = decoding_log[step][pos].prev_pos;
-        step--;
-      } while (step > 0);
+    while (step >= 0)
+    {
+      char32_t ch = embd.decode(decoding_log[step][pos].cls);
+      output_seq.push_back(ch);
+      pos = decoding_log[step][pos].prev_pos;
+      if (step == 0) // break out here because step is unsigned int
+        break;
+      step--;
     }
     std::reverse(output_seq.begin(), output_seq.end());
 
