@@ -106,6 +106,8 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
+    if (m_vec != nullptr)
+      delete m_vec;
     m_vec = new fasttext::Vector(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
@@ -167,6 +169,8 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
+    if (m_vec != nullptr)
+      delete m_vec;
     m_vec = new fasttext::Vector(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
