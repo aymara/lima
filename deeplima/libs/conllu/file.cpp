@@ -31,7 +31,8 @@ namespace CoNLLU
     }
   }
 
-  void CoNLLUFile::save(const string& filename, bool force)
+  /** TODO implement the force parameter */
+  void CoNLLUFile::save(const string& filename, bool /*force*/)
   {
     ofstream output(filename);
     if (!output.is_open())

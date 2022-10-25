@@ -272,7 +272,7 @@ LimaStatusCode TensorflowSpecificEntities::process(AnalysisContent& analysis) co
   LINFO << "start TensorflowSpecificEntities";
 
   // Get sentence bounds
-  auto sb = static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_d->m_sentBoundariesName));
   if(sb == nullptr)
   {
     TFSELOGINIT;
@@ -530,7 +530,7 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
   auto lingGraph = const_cast<LinguisticGraph*>(analysisGraph->getGraph());
 #endif
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData(m_d->m_sentBoundariesName));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_d->m_sentBoundariesName));
   if (nullptr == sb)
   {
     throw std::runtime_error("TensorflowSpecificEntities::updateAnalysisData: no SentenceBounaries available");
@@ -550,7 +550,7 @@ bool TensorflowSpecificEntities::updateAnalysisData(AnalysisContent& analysis,
       if(get_const(matchingVertexToEntity, *itVisited) != "O")
       {
         // Create a specific object to encapsulate LinguisticGraphVertex which forms the entity
-        Automaton::RecognizerMatch entityFound(analysisGraph,*itVisited,true);
+        Automaton::RecognizerMatch entityFound(analysisGraph.get(),*itVisited,true);
         itVisited++;
         auto entityBegin = entityFound.getBegin();
         // Look for words from the same entity
@@ -801,7 +801,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
   LDEBUG<<"Setting Annotation and dependency.";
 #endif
   // Update SyntacticGraph
-  auto syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   //LinguisticGraphVertex newVertex;
   DependencyGraphVertex newDepVertex = 0;
   if (syntacticData != 0)
@@ -856,8 +856,8 @@ bool TensorflowSpecificEntities::createSpecificEntity(
       LERROR << "        - in edge " << previous << " ->" << newVertex << " NOT added";
     }
 
-    clearUnreachableVertices(analysisGraph, previous);
-    clearUnreachableVertices(analysisGraph, head);
+    clearUnreachableVertices(analysisGraph.get(), previous);
+    clearUnreachableVertices(analysisGraph.get(), head);
   }
 
   inEdgeIt++;
@@ -888,8 +888,8 @@ bool TensorflowSpecificEntities::createSpecificEntity(
       LERROR << "        - out edge " << newVertex << " ->" << next << " NOT added";
     }
 
-    clearUnreachableVertices(analysisGraph, entityFound.getEnd());
-    clearUnreachableVertices(analysisGraph, next);
+    clearUnreachableVertices(analysisGraph.get(), entityFound.getEnd());
+    clearUnreachableVertices(analysisGraph.get(), next);
   }
 
   outEdgeIt++;
@@ -904,7 +904,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
   auto entityFoundItEnd = entityFound.cend();
   for (; entityFoundIt != entityFoundItEnd; entityFoundIt++)
   {
-    clearUnreachableVertices(analysisGraph, (*entityFoundIt).getVertex());
+    clearUnreachableVertices(analysisGraph.get(), (*entityFoundIt).getVertex());
   }
 
   return true;

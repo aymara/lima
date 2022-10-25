@@ -500,8 +500,8 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
-    anagraph->populateAnnotationGraph(annotationData, "AnalysisGraph");
-    posgraph->populateAnnotationGraph(annotationData, "PosGraph");
+    anagraph->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
+    posgraph->populateAnnotationGraph(annotationData.get(), "PosGraph");
 
     LinguisticGraphVertexIt it, it_end;
     boost::tie(it, it_end) = vertices(*src_graph);
@@ -516,14 +516,14 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
     analysis.setData("AnnotationData", annotationData);
   }
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb == nullptr)
   {
     LOG_MESSAGE(LERROR, "No SentenceBounds");
     return MISSING_DATA;
   }
 
-  auto newSb = new SegmentationData("PosGraph");
+  auto newSb = std::make_shared<SegmentationData>("PosGraph");
   for (const auto& segment: sb->getSegments())
   {
     auto firstVxMatches = annotationData->matches("AnalysisGraph",

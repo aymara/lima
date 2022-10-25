@@ -720,7 +720,7 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
   auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   LinguisticGraph* src_graph = anagraph->getGraph();
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb == nullptr)
   {
     LOG_MESSAGE(LERROR, "No SentenceBounds");
@@ -1061,7 +1061,7 @@ void TensorFlowLemmatizerPrivate::process_batch(vector<TFormOccurrences*>& forms
   generate_batch(forms_for_batch, inputs);
 
   // Run model
-  vector<Tensor> out;
+  std::vector<Tensor> out;
   Status status = m_session->Run(inputs, requested_nodes, {}, &out);
   if (!status.ok())
     LIMA_EXCEPTION_LOGINIT(
