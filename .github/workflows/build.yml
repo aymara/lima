@@ -23,16 +23,6 @@ env:
 
 
 jobs:
-#  ubuntu20tf:
-#    name: "Build on Ubuntu 20.04 with TensorFlow support"
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: "Checkout code"
-#        uses: actions/checkout@v3
-#
-#      - name: "Build image"
-#        run: docker build --tag travis-ubuntu20.04 --build-arg BRANCH="master" --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
 
   debian11:
     name: "Build on Debian 11 with TensorFlow support"

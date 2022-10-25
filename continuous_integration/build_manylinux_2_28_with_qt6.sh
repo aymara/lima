@@ -9,7 +9,7 @@ set -o pipefail
 set -o nounset
 
 source python_env_qt6.sh
-docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt6 \
+docker build -f Dockerfile-manylinux_2_28_with_qt6 \
     --build-arg GCC_VERSION="${GCC_VERSION}" \
     --build-arg LLVM_VERSION="${LLVM_VERSION}" \
     --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" \

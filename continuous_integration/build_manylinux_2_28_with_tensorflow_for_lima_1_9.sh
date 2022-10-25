@@ -8,5 +8,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-docker build --progress=plain -f Dockerfile-manylinux_2_28_with_tensorflow_for_lima_1_9 -t aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest .
+docker build --progress=plain -f Dockerfile-manylinux_2_28_with_tensorflow_for_lima_1_9 \
+  -t aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest .
 docker push aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest
