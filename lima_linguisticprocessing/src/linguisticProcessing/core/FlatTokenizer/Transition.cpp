@@ -44,36 +44,36 @@ namespace FlatTokenizer
 {
 
 const char* Transition::SettingNames[] = {
-    "SET_T_ALPHA",              // 0
-    "SET_T_NUMERIC",            // 1
-    "SET_T_PATTERN",            // 2
-    "SET_T_WORD_BRK",           // 3
-    "SET_T_SENTENCE_BRK",       // 4
-    "SET_T_ALPHANUMERIC",       // 5
-    "SET_T_ALPHA_HYPHEN",       // 6
-    "SET_T_ALPHA_POSSESSIVE",   // 7
-    "SET_T_CAPITAL",            // 8
-    "SET_T_SMALL",              // 9
-    "SET_T_CAPITAL_1ST",        // 10
-    "SET_T_ACRONYM",            // 11
-    "SET_T_CAPITAL_SMALL",      // 12
-    "SET_T_CARDINAL_ROMAN",     // 13
-    "SET_T_ORDINAL_ROMAN",      // 14
-    "SET_T_NOT_ROMAN",          // 15
-    "SET_T_INTEGER",            // 16
-    "SET_T_COMMA_NUMBER",       // 17
-    "SET_T_DOT_NUMBER",         // 18
-    "SET_T_FRACTION",           // 19
-    "SET_T_ORDINAL_INTEGER",    // 20
-    "SET_T_ALPHA_CONCAT_ABBREV",// 21
-    "SET_T_PARAGRAPH_BRK",      // 22
-    "SET_T_ARABIC",             // 23
-    "SET_T_LATIN_ARABIC",       // 24
-    "SET_T_ART_DEF",            // 25
-    "SET_T_ACRONYM_ARABIC",     // 26
-    "SET_T_ACRONYM_LATIN_ARABIC"// 27
-    "SET_T_TWITTER",            // 28
-    "SET_T_ABBREV"              // 29
+    "SET_T_ALPHA",               // 0
+    "SET_T_NUMERIC",             // 1
+    "SET_T_PATTERN",             // 2
+    "SET_T_WORD_BRK",            // 3
+    "SET_T_SENTENCE_BRK",        // 4
+    "SET_T_ALPHANUMERIC",        // 5
+    "SET_T_ALPHA_HYPHEN",        // 6
+    "SET_T_ALPHA_POSSESSIVE",    // 7
+    "SET_T_CAPITAL",             // 8
+    "SET_T_SMALL",               // 9
+    "SET_T_CAPITAL_1ST",         // 10
+    "SET_T_ACRONYM",             // 11
+    "SET_T_CAPITAL_SMALL",       // 12
+    "SET_T_CARDINAL_ROMAN",      // 13
+    "SET_T_ORDINAL_ROMAN",       // 14
+    "SET_T_NOT_ROMAN",           // 15
+    "SET_T_INTEGER",             // 16
+    "SET_T_COMMA_NUMBER",        // 17
+    "SET_T_DOT_NUMBER",          // 18
+    "SET_T_FRACTION",            // 19
+    "SET_T_ORDINAL_INTEGER",     // 20
+    "SET_T_ALPHA_CONCAT_ABBREV", // 21
+    "SET_T_PARAGRAPH_BRK",       // 22
+    "SET_T_ARABIC",              // 23
+    "SET_T_LATIN_ARABIC",        // 24
+    "SET_T_ART_DEF",             // 25
+    "SET_T_ACRONYM_ARABIC",      // 26
+    "SET_T_ACRONYM_LATIN_ARABIC",// 27
+    "SET_T_TWITTER",             // 28
+    "SET_T_ABBREV"               // 29
 };
 
 Transition::Transition(const State* state) :
