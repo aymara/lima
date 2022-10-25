@@ -154,8 +154,6 @@ public:
 
     const std::string& getConfigPath() const;
 
-    const std::string& getConfigFile() const;
-
     /** @return the number of categories */
     size_t getNbCategories() const;
 

@@ -208,11 +208,6 @@ const std::string& MediaticData::getConfigPath() const
     return m_d->m_configPath;
 }
 
-const std::string& MediaticData::getConfigFile() const
-{
-    return m_d->m_configFile;
-}
-
 void MediaticData::init(
   const std::string& resourcesPath,
   const std::string& configPath,
@@ -227,18 +222,29 @@ void MediaticData::init(
         << configPath << " " << configFile << "; already initialized?:" << m_d->m_alreadyInitialized;
   if (m_d->m_alreadyInitialized)
   {
-    // TODO Allow reinit or init completion
 #ifdef DEBUG_CD
-    LDEBUG << "MediaticData::init already initialized";
+    LERROR << "MediaticData::init already initialized. Updating";
 #endif
-    return;
+    // return;
   }
   m_d->m_alreadyInitialized = true;
-  m_d->m_resourcesPath=resourcesPath;
-  m_d->m_configPath=configPath;
-  m_d->m_configFile=configFile;
+  if (m_d->m_resourcesPath.empty())
+    m_d->m_resourcesPath = resourcesPath;
+  else
+    m_d->m_resourcesPath = resourcesPath + LIMA_PATH_SEPARATOR + m_d->m_resourcesPath ;
+  if (m_d->m_configPath.empty())
+    m_d->m_configPath = configPath;
+  else
+    m_d->m_configPath = configPath + LIMA_PATH_SEPARATOR + m_d->m_configPath;
+  if (m_d->m_configFile.empty())
+    m_d->m_configFile = configFile;
+  else
+    m_d->m_configFile = configFile + LIMA_PATH_SEPARATOR + m_d->m_configFile;
 
-  m_d->m_options = opts;
+  for (auto [k, v]: opts)
+  {
+    m_d->m_options[k] = v;
+  }
 
   //LINFO << "initialize XMLParser";
   QStringList configPaths = QString::fromUtf8(configPath.c_str()).split(LIMA_PATH_SEPARATOR);
@@ -271,15 +277,7 @@ void MediaticData::init(
         for (auto it = meds.cbegin(); it != meds.cend(); it++)
           LINFO << "    " << (*it).c_str();
 
-        m_d->m_mediasData.clear();
         m_d->initMedias(configuration, meds);
-
-        // for (auto it = m_d->m_mediasIds.cbegin();
-        //      it != m_d->m_mediasIds.cend(); it++)
-        // {
-        //   LDEBUG << "MediaticData::init calling initMediaData for" << it->first << it->second;
-        //   m_d->initMediaData(it->second);
-        // }
       }
       if (configurationFileFound) break;
     }
@@ -423,9 +421,8 @@ MediaData& MediaticData::mediaData(MediaId media)
   return *(it->second);
 }
 
-void MediaticDataPrivate::initMedias(
-  XMLConfigurationFileParser& configParser,
-  const std::deque< std::string >& meds)
+void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
+                                     const std::deque< std::string >& meds)
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
@@ -438,6 +435,7 @@ void MediaticDataPrivate::initMedias(
     qmeds.insert(med);
   }
 
+  // med_str can be modified below. thus, do not use const reference
   for (auto med_str: meds)
   {
     MediaId id(0);
@@ -478,64 +476,48 @@ void MediaticDataPrivate::initMedias(
       MDATALOGINIT;
       LINFO << "media" << med_str.c_str() << "already initialized: reinit";
       // clear initialization
-      m_stringsPool.erase(id);
+      // do not need to erase from strings pool here: the smart pointer is replaced below
+      // m_stringsPool.erase(id);
     }
-    //else
-    // always perform initialization, even if language already initialized
-    // (allows dynamic reinitialization of lima client)
+    else
     {
       m_medias.push_back(med_str);
-      try
+      qmeds.insert(med_str);
+    }
+    // always perform initialization, even if language already initialized
+    // (allows dynamic reinitialization of lima client)
+    // {
+    try
+    {
+      // initialize strings pool
+      m_stringsPool[id] = std::shared_ptr<FsaStringsPool>(nullptr);
+      m_stringsPool[id].reset(new FsaStringsPool());
+
+      m_mediasIds[med_str] = id;
+      m_mediasSymbol[id] = med_str;
+
+      QString deffile = QString::fromUtf8(configParser.getModuleGroupParamValue("common",
+                                                                                "mediaDefinitionFiles",
+                                                                                med_str).c_str());
+      QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
+      bool mediaDefinitionFileFound = false;
+      for(auto confPath = configPaths.begin(); confPath != configPaths.end(); ++confPath)
       {
-        // initialize strings pool
-        m_stringsPool[id] = std::shared_ptr<FsaStringsPool>(nullptr);
-        m_stringsPool[id].reset(new FsaStringsPool());
-
-        m_mediasIds[med_str]=id;
-        m_mediasSymbol[id]=med_str;
-
-        QString deffile =
-          QString::fromUtf8(configParser.getModuleGroupParamValue("common",
-                                                                  "mediaDefinitionFiles",
-                                                                  med_str).c_str());
-        QStringList configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
-        bool mediaDefinitionFileFound = false;
-        for(auto confPath = configPaths.begin();
-            confPath != configPaths.end(); ++confPath)
+        if (QFileInfo::exists(*confPath + "/" + deffile))
         {
-          if (QFileInfo::exists(*confPath + "/" + deffile))
-          {
-            m_mediaDefinitionFiles[id] = (*confPath+"/"+deffile);
+          m_mediaDefinitionFiles[id] = (*confPath+"/"+deffile);
 #ifdef DEBUG_CD
-            LDEBUG << "media definition file for" << med_str << "; id" << id << "is" << m_mediaDefinitionFiles[id];
+          LDEBUG << "media definition file for" << med_str << "; id" << id << "is" << m_mediaDefinitionFiles[id];
 #endif
-            mediaDefinitionFileFound = true;
-            break;
-          }
-        }
-        if (!mediaDefinitionFileFound)
-        {
-          MDATALOGINIT;
-          LERROR << "No media definition file'" << deffile << "' has been found for media id" << id
-                  << "in config paths:" << configPaths;
-          // Cleanup: remove data we just added concerning this failed language
-          for (auto med = m_medias.begin(); med != m_medias.end(); med++)
-          {
-            if (*med == med_str)
-              m_medias.erase(med);
-          }
-          m_mediasIds.erase(med_str);
-          m_mediasSymbol.erase(id);
-          m_mediasData.erase(id);
-          m_mediaDefinitionFiles.erase(id);
-
-          throw InvalidConfiguration();
+          mediaDefinitionFileFound = true;
+          break;
         }
       }
-      catch (NoSuchParam& e)
+      if (!mediaDefinitionFileFound)
       {
         MDATALOGINIT;
-        LERROR << "Param common/mediaDefinitionFiles/" << med_str << "missing:" << e.what();
+        LERROR << "No media definition file'" << deffile << "' has been found for media id" << id
+                << "in config paths:" << configPaths;
         // Cleanup: remove data we just added concerning this failed language
         for (auto med = m_medias.begin(); med != m_medias.end(); med++)
         {
@@ -544,15 +526,33 @@ void MediaticDataPrivate::initMedias(
         }
         m_mediasIds.erase(med_str);
         m_mediasSymbol.erase(id);
-        m_mediaDefinitionFiles.erase(id);
         m_mediasData.erase(id);
+        m_mediaDefinitionFiles.erase(id);
 
-        throw InvalidConfiguration(
-          std::string("Failed to init media ")+(med_str)+": "+e.what());
+        throw InvalidConfiguration();
       }
-      LDEBUG << "MediaticData::initMedias" << med_str << "call initMediaData" << m_mediasIds[med_str];
-      initMediaData(m_mediasIds[med_str]);
     }
+    catch (NoSuchParam& e)
+    {
+      MDATALOGINIT;
+      LERROR << "Param common/mediaDefinitionFiles/" << med_str << "missing:" << e.what();
+      // Cleanup: remove data we just added concerning this failed language
+      for (auto med = m_medias.begin(); med != m_medias.end(); med++)
+      {
+        if (*med == med_str)
+          m_medias.erase(med);
+      }
+      m_mediasIds.erase(med_str);
+      m_mediasSymbol.erase(id);
+      m_mediaDefinitionFiles.erase(id);
+      m_mediasData.erase(id);
+
+      throw InvalidConfiguration(
+        std::string("Failed to init media ")+(med_str)+": "+e.what());
+    }
+    LDEBUG << "MediaticData::initMedias" << med_str << "call initMediaData" << m_mediasIds[med_str];
+    initMediaData(m_mediasIds[med_str]);
+    // }
   }
 
 #ifdef DEBUG_CD
@@ -566,8 +566,8 @@ void MediaticDataPrivate::initMediaData(MediaId med)
   MDATALOGINIT;
   LDEBUG << "MediaticDataPrivate::initMediaData" << (int)med;
 #endif
-  auto it=m_mediaDefinitionFiles.find(med);
-  if (it==m_mediaDefinitionFiles.end())
+  auto it = m_mediaDefinitionFiles.find(med);
+  if (it == m_mediaDefinitionFiles.end())
   {
     MDATALOGINIT;
     std::ostringstream oss;
@@ -656,20 +656,19 @@ uint8_t MediaticData::getRelation(const std::string& relation) const
   return ( (*it).second );
 }
 
-void MediaticDataPrivate::initRelations(
-  XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
+void MediaticDataPrivate::initRelations(XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
   LDEBUG << "MediaticDataPrivate::initRelations";
 #endif
-  m_relTypes[s_undefinedRelation]=0;
-  m_relTypesNum[0]=s_undefinedRelation;
+  m_relTypes[s_undefinedRelation] = 0;
+  m_relTypesNum[0] = s_undefinedRelation;
 
   try
   {
-    const auto& rels=configParser.getModuleConfiguration("common")
-        .getGroupNamed("semanticRelations").getMapAtKey("declaration");
+    const auto& rels = configParser.getModuleConfiguration("common")
+      .getGroupNamed("semanticRelations").getMapAtKey("declaration");
     for (auto it = rels.cbegin(); it != rels.cend(); it++)
     {
       uint8_t relId = atoi(it->second.c_str());
@@ -696,8 +695,7 @@ void MediaticDataPrivate::initRelations(
   }
 }
 
-void MediaticDataPrivate::initConceptTypes(
-    XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
+void MediaticDataPrivate::initConceptTypes(XMLConfigurationFiles::XMLConfigurationFileParser& configParser)
 {
 #ifdef DEBUG_CD
   MDATALOGINIT;
@@ -721,14 +719,12 @@ void MediaticDataPrivate::initConceptTypes(
   catch (NoSuchGroup& e)
   {
     MDATALOGINIT;
-    LNOTICE << "No group 'SemanticData' in 'common' module of lima-common configuration file:"
-            << e.what();
+    LNOTICE << "No group 'SemanticData' in 'common' module of lima-common configuration file:" << e.what();
   }
   catch (NoSuchMap& e)
   {
     MDATALOGINIT;
-    LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file:"
-            << e.what();
+    LERROR << "No map 'conceptTypes' in 'SemanticData' group of lima-common configuration file:" << e.what();
     throw InvalidConfiguration(e.what());
   }
 }
@@ -842,15 +838,14 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
     for (auto it = moduleConf.begin(); it != moduleConf.end(); it++)
     {
 #ifdef DEBUG_CD
-      LDEBUG << "initEntityTypes: looking at group " << (*it).first.c_str();
+      LDEBUG << "initEntityTypes: looking at group " << (*it).first;
 #endif
 
       auto groupName = QString::fromStdString((*it).first);
 
       if (groupName == "include")
       {
-        auto includeList = moduleConf.getListValuesAtKeyOfGroupNamed("includeList",
-                                                                     "include");
+        auto includeList = moduleConf.getListValuesAtKeyOfGroupNamed("includeList", "include");
         string::size_type i;
         string moduleName("");
         for (std::size_t k=0; k<includeList.size(); k++)
@@ -858,17 +853,15 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
           i=includeList[k].find("/");
           if (i==string::npos)
           {
-            LERROR << "Cannot include resources " << includeList[k]
-                    << ": must specify file and module name";
+            LERROR << "Cannot include resources " << includeList[k] << ": must specify file and module name";
             continue;
           }
-          auto configPaths = QString::fromUtf8(m_configPath.c_str()).split(LIMA_PATH_SEPARATOR);
+          auto configPaths = QString::fromStdString(m_configPath).split(LIMA_PATH_SEPARATOR);
           for(auto confPath : configPaths)
           {
             if (QFileInfo::exists(confPath + "/" + string(includeList[k],0,i).c_str()))
             {
-              auto fileName= confPath + "/" + std::string(includeList[k],
-                                                          0,i).c_str();
+              auto fileName= confPath + "/" + std::string(includeList[k], 0,i).c_str();
               XMLConfigurationFileParser lpconfig2(fileName);
               MediaticData::MediaticData::changeable().initEntityTypes(lpconfig2);
               break;
@@ -888,10 +881,9 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
           deque<string>& entityList = groupConf.getListsValueAtKey("entityList");
           for (const auto& ent: entityList)
           {
-            auto entityName = utf8stdstring2limastring(ent);
+            auto entityName = QString::fromStdString(ent);
 #ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: add entityType " << ent.c_str()
-                    << " in group " << groupName;
+            LDEBUG << "initEntityTypes: add entityType " << ent.c_str() << " in group " << groupName;
 #endif
             auto type = addEntity(groupName, entityName);
 #ifdef DEBUG_CD
@@ -907,8 +899,7 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
           {
             auto entityName = QString::fromStdString(i.getName());
 #ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: add entityType " << i.getName()
-                    << " in group " << groupName;
+            LDEBUG << "initEntityTypes: add entityType " << i.getName() << " in group " << groupName;
 #endif
             auto ent = addEntity(groupName, entityName);
 #ifdef DEBUG_CD
@@ -918,13 +909,15 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
             {
               auto parentName = utf8stdstring2limastring(i.getAttribute("isA"));
               EntityType parent;
-              try {
+              try
+              {
                 parent = getEntityType(groupName, parentName);
   #ifdef DEBUG_CD
-                LDEBUG << "initEntityTypes: add parent link:" << ent
-                        << "->" << parent;
+                LDEBUG << "initEntityTypes: add parent link:" << ent << "->" << parent;
   #endif
-              } catch (const LimaException& e) {
+              }
+              catch (const LimaException& e)
+              {
                 LIMA_EXCEPTION( "Unknown entity type" << groupName << parentName);
               }
               addEntityParentLink(ent, parent);
