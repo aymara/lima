@@ -212,7 +212,7 @@ LimaStatusCode SimpleWord::process(
   if (annotationData==0)
   {
     LINFO << "SimpleWord::process no annotation data, creating and populating it";
-    annotationData = std::shared_ptr<AnnotationData>();
+    annotationData = std::make_shared<AnnotationData>();
     analysis.setData("AnnotationData", annotationData);
   }
   tokenList->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
