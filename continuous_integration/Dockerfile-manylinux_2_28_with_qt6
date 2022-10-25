@@ -86,6 +86,8 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtwebengine \
     -skip qtwinextras \
     -skip qtx11extras \
+    -skip qtquick3dphysics \
+    -skip qtpositioning \
     -skip wayland \
     -no-ssl \
     -system-freetype \
