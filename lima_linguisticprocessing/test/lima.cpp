@@ -196,7 +196,7 @@ public:
   LinguisticGraph* posGraph = nullptr;
   LinguisticGraph* anaGraph = nullptr;
   AnnotationData* annotationData = nullptr;
-  SyntacticData* syntacticData = nullptr;
+  std::shared_ptr<SyntacticData> syntacticData = nullptr;
   std::map< LinguisticGraphVertex,
           std::pair<LinguisticGraphVertex,
                     std::string> > vertexDependencyInformations;
@@ -629,7 +629,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
   LDEBUG << "LimaAnalyzerPrivate::collectVertexDependencyInformations";
 #endif
 
-  auto posGraphData = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis->getData("PosGraph"));
+  auto posGraphData = std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis->getData("PosGraph"));
   if (posGraphData == nullptr)
   {
     std::cerr << "Error: PosGraph has not been produced: check pipeline";
@@ -649,10 +649,10 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
       v = lastVertex;
   }
 
-  syntacticData = static_cast<SyntacticData*>(analysis->getData("SyntacticData"));
+  syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis->getData("SyntacticData"));
   if (syntacticData == nullptr)
   {
-    syntacticData = new SyntacticData(posGraphData, 0);
+    syntacticData = std::make_shared<SyntacticData>(posGraphData.get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis->setData("SyntacticData", syntacticData);
   }
