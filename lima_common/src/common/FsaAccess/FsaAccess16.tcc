@@ -133,7 +133,7 @@ void FsaAccess16<graphType>::readBody(
   for( uint32_t nv = 1 ; nv < nbVert ; nv++ ) {
     #ifdef DEBUG_CD
     if (nv % 1000 == 0) {
-      LDEBUG <<  "FsaAccess16::readBody vertex num = " << nv;
+      LTRACE <<  "FsaAccess16::readBody vertex num = " << nv;
     }
     #endif
     dicoVertexType newV = add_vertex(m_graph);
@@ -152,7 +152,7 @@ void FsaAccess16<graphType>::readBody(
   for( uint32_t ne = 0 ; ne < nbEdges ; ne++ ) {
     #ifdef DEBUG_CD
     if (ne % 1000 == 0) {
-      LDEBUG <<  "FsaAccess16::readBody edge num = " << ne;
+      LTRACE <<  "FsaAccess16::readBody edge num = " << ne;
     }
     #endif
     dicoVertexType source, target;

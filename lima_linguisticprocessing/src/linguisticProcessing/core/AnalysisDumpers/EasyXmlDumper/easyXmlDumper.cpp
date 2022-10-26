@@ -156,7 +156,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == 0)
   {
-    annotationData = std::shared_ptr<AnnotationData>();
+    annotationData = std::make_shared<AnnotationData>();
     if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
       std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");

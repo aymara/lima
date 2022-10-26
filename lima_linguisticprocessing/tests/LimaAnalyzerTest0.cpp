@@ -181,7 +181,6 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   {
     throw InvalidConfiguration("loadLibrary method failed.");
   }
-//   std::cerr << "Amose plugins are now initialized hop" << std::endl;
 //   qDebug() << "Amose plugins are now initialized";
 
 

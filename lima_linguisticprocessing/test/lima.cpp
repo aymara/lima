@@ -157,6 +157,8 @@ public:
   LimaAnalyzerPrivate(const LimaAnalyzerPrivate& a) = delete;
   LimaAnalyzerPrivate& operator=(const LimaAnalyzerPrivate& a) = delete;
 
+  void initMetaData();
+
   const std::string analyzeText(const std::string& text,
                                 const std::string& lang,
                                 const std::string& pipeline,
@@ -235,6 +237,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     qlangs(iqlangs), qpipelines(iqpipelines), modulePath(imodulePath),
     user_config_path(iuser_config_path), user_resources_path(iuser_resources_path), meta(imeta)
 {
+  std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate" << std::endl;
   int argc = 1;
   char* argv[2] = {(char*)("LimaAnalyzer"), NULL};
   QCoreApplication app(argc, argv);
@@ -280,7 +283,6 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   {
     throw InvalidConfiguration("loadLibrary method failed.");
   }
-  std::cerr << "Amose plugins are now initialized hop" << std::endl;
   qDebug() << "Amose plugins are now initialized";
 
 
@@ -290,42 +292,12 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
 
   std::string strConfigPath;
 
-  // parse 'meta' argument to add metadata
-  if(!meta.isEmpty())
-  {
-    std::string metaString(meta.toStdString());
-    std::string::size_type k=0;
-    do
-    {
-      k=metaString.find(",");
-      //if (k==std::string::npos) continue;
-      std::string str(metaString,0,k);
-      std::string::size_type i=str.find(":");
-      if (i==std::string::npos)
-      {
-        std::cerr << "meta argument '"<< str
-                  << "' is not of the form XXX:YYY: ignored" << std::endl;
-      }
-      else
-      {
-        //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-        metaData.insert(std::make_pair(std::string(str,0,i),
-                                       std::string(str,i+1)));
-      }
-      if (k!=std::string::npos)
-      {
-        metaString=std::string(metaString,k+1);
-      }
-    }
-    while (k!=std::string::npos);
-  }
+  initMetaData();
 
   std::deque<std::string> pipelines;
   for (const auto& pipeline: qpipelines)
     pipelines.push_back(pipeline.toStdString());
 
-
-  uint64_t beginTime=TimeUtils::getCurrentTime();
 
   std::deque<std::string> langs;
   for (const auto& lang: qlangs)
@@ -341,7 +313,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
-  // std::cerr << "MediaticData initialized" << std::endl;
+  std::cerr << "MediaticData initialized" << std::endl;
 
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
@@ -349,17 +321,17 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() configuring "
-          << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
-          << clientId << std::endl;
+                << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
+                << clientId << std::endl;
 
       // initialize linguistic processing
       Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-          (configDir + "/" + lpConfigFile.c_str()));
+        (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
-        clientId,
-        lpconfig,
-        langs,
-        pipelines);
+          clientId,
+          lpconfig,
+          langs,
+          pipelines);
       clientFactoryConfigured = true;
       break;
     }
@@ -483,6 +455,26 @@ void LimaAnalyzerPrivate::reset()
   vertexToToken.clear();
 }
 
+void LimaAnalyzerPrivate::initMetaData ()
+{
+  // parse 'meta' argument to add metadata
+  if (!meta.isEmpty())
+  {
+    auto metas = meta.split(",");
+    for (const auto& aMeta: metas)
+    {
+      auto kv = aMeta.split(":");
+      if (kv.size() != 2)
+      {
+        std::cerr << "meta argument '"<< aMeta.toStdString() << "' is not of the form XXX:YYY: ignored" << std::endl;
+      }
+      else
+      {
+        metaData[kv[0].toStdString()] = kv[1].toStdString();
+      }
+    }
+  }
+}
 
 std::string LimaAnalyzer::analyzeText(const std::string& text,
                                     const std::string& lang,
@@ -932,9 +924,19 @@ QString LimaAnalyzerPrivate::getMicro(LinguisticAnalysisStructure::MorphoSyntact
 
 int main(int argc, char* argv[])
 {
+  // LimaAnalyzer analyzer1("eng", "main", "");
+  // analyzer1 = LimaAnalyzer("eng", "main", "");
+  // std::cerr << analyzer1.analyzeText("Hop! Hop!") << std::endl;
+  // return 0;
   LimaAnalyzer analyzer0("ud-eng", "deepud", "");
-  std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;
+  std::cerr << analyzer0.analyzeText("Hop! Hop!") << std::endl;
 
-  LimaAnalyzer analyzer1("eng", "main", "");
-  std::cerr << analyzer1.analyzeText("One, 2, tree.") << std::endl;
+  {
+    LimaAnalyzer analyzer1("eng", "main", "");
+    analyzer0 = LimaAnalyzer("ud-eng", "deepud", "");
+    std::cerr << analyzer1.analyzeText("One, 2, three.") << std::endl;
+    std::cerr << analyzer0.analyzeText("English again!") << std::endl;
+  }
+  LimaAnalyzer analyzer2("fra", "deepud", "");
+  std::cerr << analyzer2.analyzeText("Nous analysons du français pour terminer.") << std::endl;
 }

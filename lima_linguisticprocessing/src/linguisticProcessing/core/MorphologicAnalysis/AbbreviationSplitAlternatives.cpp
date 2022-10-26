@@ -189,7 +189,7 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   if (annotationData==0)
   {
     LDEBUG << "AbbreviationSplitAlternatives::process: Misssing AnnotationData. Create it";
-    annotationData = std::shared_ptr<AnnotationData>();
+    annotationData = std::make_shared<AnnotationData>();
     if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
       std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(

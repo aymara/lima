@@ -41,7 +41,7 @@ SPDX-License-Identifier: MIT
         <item value="viterbiPostagger-int-none"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
         <item value="compoundBuilderFromSyntacticData"/>
@@ -67,7 +67,7 @@ SPDX-License-Identifier: MIT
         <item value="viterbiPostagger-freq"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
         <item value="compoundBuilderFromSyntacticData"/>
@@ -111,7 +111,7 @@ SPDX-License-Identifier: MIT
         <item value="viterbiPostagger-int-none"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
         <item value="compoundBuilderFromSyntacticData"/>
@@ -244,7 +244,7 @@ SPDX-License-Identifier: MIT
         <item value="SENT"/>
       </list>
     </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>

@@ -104,8 +104,6 @@ class DepGraphCompoundsBuildVisitorPrivate
   const CompoundsBuilderFromSyntacticData* m_context;
   MediaId m_language;
   SyntacticAnalysis::SyntacticData* m_syntacticData;
-  LinguisticGraphVertex m_startVertex;
-  LinguisticGraphVertex m_stopVertex;
   DependencyGraphVertex m_depFailedVertex;
   std::set< DependencyGraphVertex > m_visited;
   std::set< std::pair< DependencyGraphVertex, LinguisticAnalysisStructure::ChainIdStruct > > m_visitedWithChains;
@@ -145,8 +143,6 @@ DepGraphCompoundsBuildVisitorPrivate::DepGraphCompoundsBuildVisitorPrivate(const
     m_context(cpbfsd),
     m_language(language),
     m_syntacticData(syntacticData),
-    m_startVertex(startVertex),
-    m_stopVertex(stopVertex),
     m_depFailedVertex(syntacticData->depVertexForTokenVertex(iter->firstVertex())),
     m_visited(),
     m_depGraph(depGraph),
@@ -1018,7 +1014,6 @@ std::vector< DependencyGraphEdge >
  #ifdef DEBUG_LP
        LDEBUG << "Looking at " << vx << " out relation ";
  #endif
-      LinguisticGraphVertex tgtTokVertex = m_syntacticData->tokenVertexForDepVertex(target(*outit, *m_depGraph));
       if ( isDepEdgeACompoundNounRelation(*outit) )
       {
  #ifdef DEBUG_LP
@@ -1061,7 +1056,6 @@ std::vector< DependencyGraphEdge >
 //               << MediaticData::single().getEntityName(relTypeMap[*init])
 //               << " on " << *init;
 #endif
-      LinguisticGraphVertex srcTokVertex = m_syntacticData->tokenVertexForDepVertex(source(*init, *m_depGraph));
       if ( isDepEdgeACompoundNounRelation(*init) )
       {
 //        LDEBUG << "Elected";

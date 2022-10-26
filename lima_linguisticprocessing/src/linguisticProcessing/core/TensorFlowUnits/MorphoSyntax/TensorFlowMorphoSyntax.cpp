@@ -493,9 +493,9 @@ LimaStatusCode TensorFlowMorphoSyntaxPrivate::process(AnalysisContent& analysis)
 
   /** Creation of an annotation graph if necessary */
   auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
-  if (annotationData == 0)
+  if (annotationData == nullptr)
   {
-    annotationData = std::shared_ptr<AnnotationData>();
+    annotationData = std::make_shared<AnnotationData>();
 
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
