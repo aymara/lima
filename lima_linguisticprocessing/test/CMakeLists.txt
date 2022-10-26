@@ -238,6 +238,58 @@ target_link_libraries(test_lima
   lima-lp-linguisticprocessing-core
   lima-lp-bagofwords
   lima-lp-eventanalyzer
+  lima-lp-linguisticprocessing-core
+  lima-lp-bagofwords
+  lima-lp-eventanalyzer
+  lima-common-datahandler
+  lima-common-data
+  lima-common-factory
+  lima-common-fsaaccess
+  lima-common-mediaticdata
+  lima-common-processunitframework
+  lima-common
+  lima-common-tools
+  lima-common-xmlconfigurationfiles
+  lima-linguisticprocessing
+  lima-lp-analysisdict
+  lima-lp-analysisdumpers
+  lima-lp-analysishandlers
+  lima-lp-applyrecognizer
+  lima-lp-automatoncompiler
+  lima-lp-automaton
+  lima-lp-bagofwords
+  lima-lp-client
+  lima-lp-compounds
+  lima-lp-conllureader
+  lima-lp-corefsolver
+  lima-lp-dictionary
+  lima-lp-entitytracker
+  lima-lp-eventanalyzer
+  lima-lp-flattokenizer
+  lima-lp-helpers
+  lima-lp-langdetector
+  lima-lp-lineartextrepresentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-linguisticdata
+  lima-lp-linguisticprocessing-core
+  lima-lp-linguisticresources
+  lima-lp-morphologicanalysis
+  lima-lp-postagger
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-se-datetime
+  lima-lp-semanticanalysis
+  lima-lp-se-number
+  lima-lp-se-person
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-textsegmentation
+  lima-lp-tgv
+  lima-lp-wordsensetagger
+  lima-xp-client
+  lima-xp-core
+  lima-xp-documentsreader
+  lima-xp-qtsgmlentities
   Qt::Core
 )
 
