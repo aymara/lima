@@ -214,18 +214,22 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects,
 
 QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator)
 {
-  QStringList pathsList = paths.split(separator);
-  Q_FOREACH(QString path, pathsList)
+  auto pathsList = paths.split(separator);
+  auto filesList =fileName.split(separator);
+  for (const auto& path: pathsList)
   {
-    if (QFileInfo::exists(path + "/" + fileName))
+    for (const auto& file: filesList)
     {
-#ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      if (QFileInfo::exists(path + "/" + file))
       {
-      LOGINIT("FilesReporting");
-      LDEBUG << "File found:" << path + "/" + fileName;
+  #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+        {
+        LOGINIT("FilesReporting");
+        LDEBUG << "File found:" << path + "/" + file;
+        }
+  #endif
+        return path + "/" + file;
       }
-#endif
-      return path + "/" + fileName;
     }
   }
   LOGINIT("FilesReporting");

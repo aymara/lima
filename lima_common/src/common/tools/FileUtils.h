@@ -100,7 +100,8 @@ LIMA_COMMONTOOLS_EXPORT QStringList buildResourcesDirectoriesList(const QStringL
 /**
  * Find the given file in the given paths.
  * @param paths the list of concatenated paths to search the file in
- * @param fileName the name of the file  to search into the paths. Can include a relative path
+ * @param fileName the name of the file  to search into the paths. Can include a relative path. Can be a concatenation
+ *        of several possible file names. Stop on the first file found in the first path
  * @param separator the character used to split the list of paths. Defaults to semicolon
  * @return the full path of the found file if found. Empty string otherwise.
  */
