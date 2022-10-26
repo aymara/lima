@@ -937,6 +937,6 @@ int main(int argc, char* argv[])
     std::cerr << analyzer1.analyzeText("One, 2, three.") << std::endl;
     std::cerr << analyzer0.analyzeText("English again!") << std::endl;
   }
-  LimaAnalyzer analyzer2("fra", "deepud", "");
+  LimaAnalyzer analyzer2("ud-fra", "deepud", "");
   std::cerr << analyzer2.analyzeText("Nous analysons du français pour terminer.") << std::endl;
 }
