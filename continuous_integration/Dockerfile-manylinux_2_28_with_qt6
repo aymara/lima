@@ -1,4 +1,5 @@
-FROM quay.io/pypa/manylinux_2_28_x86_64
+ARG MANYLINUX_TAG
+FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
 ARG GCC_VERSION=11.2.1
 ARG QT_VERSION="6.3"

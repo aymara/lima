@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+export MANYLINUX_TAG="2022-10-25-fbea779"
 export GCC_VERSION="11.2.1"
 export LLVM_VERSION="13.0.1"
 

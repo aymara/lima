@@ -1,7 +1,8 @@
 ARG PYTHON_VERSION
 ARG QT_VERSION
 FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
-FROM quay.io/pypa/manylinux_2_28_x86_64
+ARG MANYLINUX_TAG
+FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
 
 ARG GCC_VERSION
