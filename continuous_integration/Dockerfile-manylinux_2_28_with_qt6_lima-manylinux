@@ -1,21 +1,21 @@
-ARG PYTHON_VERSION="3.7"
-ARG QT_VERSION="6.3"
-FROM aymara/manylinux_2_28_with_qt${QT_VERSION}-python${PYTHON_VERSION}:latest as aymara_manylinux_2_28_with_qt
+ARG PYTHON_VERSION
+ARG QT_VERSION
+FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
 FROM quay.io/pypa/manylinux_2_28_x86_64
 
 
-ARG GCC_VERSION=11.2.1
-ARG QT_VERSION="6.3"
-ARG QT_VERSION_MAJOR="6"
-ARG QT_VERSION_MINOR="3"
-ARG QT_VERSION_PATCH="2"
-ARG QT_FULL_VERSION="6.3.2"
-ARG PYTHON_VERSION="3.7"
-ARG PYTHON_SHORT_VERSION="cp37-cp37m"
-ARG PYTHON_FULL_VERSION="3.7.13"
+ARG GCC_VERSION
+ARG QT_VERSION
+ARG QT_VERSION_MAJOR
+ARG QT_VERSION_MINOR
+ARG QT_VERSION_PATCH
+ARG QT_FULL_VERSION
+ARG PYTHON_VERSION
+ARG PYTHON_SHORT_VERSION
+ARG PYTHON_FULL_VERSION
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
-ARG PYSIDE_VERSION="6"
+ARG PYSIDE_VERSION
 
 COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
 COPY --from=aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
