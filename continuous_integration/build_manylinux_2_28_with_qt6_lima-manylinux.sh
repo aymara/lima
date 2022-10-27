@@ -10,6 +10,7 @@ set -o nounset
 
 source python_env_qt6.sh
 docker build -f Dockerfile-manylinux_2_28_with_qt6_lima-manylinux \
+    --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" \
     --build-arg GCC_VERSION="${GCC_VERSION}" \
     --build-arg LLVM_VERSION="${LLVM_VERSION}" \
     --build-arg BRANCH="${BRANCH}" \
@@ -22,4 +23,5 @@ docker build -f Dockerfile-manylinux_2_28_with_qt6_lima-manylinux \
     --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} \
     --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} \
     -t aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
+
 docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest

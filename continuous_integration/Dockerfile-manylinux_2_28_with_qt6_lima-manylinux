@@ -2,6 +2,7 @@ ARG QT_VERSION
 ARG MANYLINUX_TAG
 FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
 
+ARG MANYLINUX_TAG
 FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
 
