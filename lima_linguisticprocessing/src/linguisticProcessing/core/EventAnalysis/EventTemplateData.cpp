@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateData.cpp
@@ -57,9 +44,10 @@ void EventTemplateData::addTemplate()
 }
 
 void EventTemplateData::addElementInCurrentTemplate(const std::string& role, 
-                                                    const EventTemplateElement& elt)
+                                                    const EventTemplateElement& elt,
+                                                    unsigned int cardinality)
 {
-  back().addElement(role,elt);
+  back().addElement(role,elt,cardinality);
 }
 
 void EventTemplateData::clearCurrentTemplate()
@@ -85,7 +73,7 @@ convertToEvents(const AnnotationData* annotationData) const
   int eventNum=1;
   for (std::vector<EventTemplate>::const_iterator it= begin(); it!= end();it++)
   {
-    const map<string,EventTemplateElement>& templateElements=(*it).getTemplateElements();
+    const TemplateElements& templateElements=(*it).getTemplateElements();
     if (! templateElements.empty()) {
       // one event per template
       Event* event=new Event();

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2018 CEA LIST
+// Copyright 2002-2018 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       transitionSearchStructure.h
@@ -94,8 +81,8 @@ class TransitionSearchStructure
   TransitionList m_otherTransitions;
 
   // static members for access of macro and macro_micro
-  const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  // const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
+  // const Common::PropertyCode::PropertyAccessor* m_microAccessor;
 };
 
 } // end namespace

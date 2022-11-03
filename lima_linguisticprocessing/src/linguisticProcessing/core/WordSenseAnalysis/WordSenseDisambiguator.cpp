@@ -1,22 +1,7 @@
-/*
-    Copyright 2002-2019 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
-
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 /**
   *
@@ -312,13 +297,13 @@ LimaStatusCode WordSenseDisambiguator::process(
 
 
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -329,7 +314,7 @@ LimaStatusCode WordSenseDisambiguator::process(
     "sentence bounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
-  //SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  //auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (sb==0)
   {
     LERROR << "no syntactic data ! abort";
@@ -338,31 +323,31 @@ LimaStatusCode WordSenseDisambiguator::process(
 
 
   /** Access to or creation of an annotation graph */
-  AnnotationData* annotationData=static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
+    annotationData = std::make_shared<AnnotationData>();
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
 
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData.get(), "PosGraph");
     }
 
     analysis.setData("AnnotationData",annotationData);
   }
 
 
-  /** To be able to dump the content of an annotation, a function pointer with
-    * a precise signature has to be givent to the annotation graph. See
-    * @ref{annotationGraphTestProcessUnit.h} for the details of the dumpPoint
-    * function */
+  /**
+   * To be able to dump the content of an annotation, a function pointer with a precise signature has to be givent to
+   * the annotation graph. See @ref{WordSenseAnnotation.h} for the details of the DumpWordSense() function
+   */
   if (annotationData->dumpFunction("WordSense") == 0)
   {
     annotationData->dumpFunction("WordSense", new DumpWordSense());
@@ -588,7 +573,7 @@ LimaStatusCode WordSenseDisambiguator::process(
     if (disambOk)
     {
       LINFO << "write word sense annotations for "<< *itLemmas <<" on graph";
-      wsa.writeAnnotation(annotationData);
+      wsa.writeAnnotation(annotationData.get());
     }
     else
     {

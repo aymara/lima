@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @author      Gael de Chalendar (Gael.de-Chalendar@cea.fr)
   * @date        Created on  Thu Nov, 13 2003
@@ -163,7 +150,7 @@ bool SecondUngovernedBy::operator()(
   LDEBUG << "testing SecondUngovernedBy for " << v1 << " and " << v2 << " with relation: " << m_relation;
 #endif
 
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<const SyntacticData>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
       v2 == graph.firstVertex() || v2 == graph.lastVertex() )
@@ -183,7 +170,7 @@ bool SecondUngovernedBy::operator()(
   // Il faut donc parcourir tous les arcs sortant de dv1, et filtrer
   // ceux entrant dans dv2.
   //  std::tie(it, it_end) = edge_range(dv1, dv2, *(syntacticData-> dependencyGraph()));
-  const DependencyGraph *g = syntacticData-> dependencyGraph();
+  auto g = syntacticData-> dependencyGraph();
   std::tie(it, it_end) = out_edges(dv1, *g);
   for (; it != it_end; it++)
   {
@@ -219,7 +206,7 @@ bool GovernorOf::operator()(const AnalysisGraph& graph,
  LDEBUG << "testing GovernorOf for " << v1 << " with relation : " << m_relation;
 #endif
 
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<const SyntacticData>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
@@ -259,7 +246,7 @@ bool GovernedBy::operator()(const AnalysisGraph& graph,
  SAPLOGINIT;
  LDEBUG << "testing GovernedBy for " << v1 << " with relation: " << m_relation;
 #endif
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<const SyntacticData>(analysis.getData("SyntacticData"));
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
 //    LDEBUG << "GovernedBy: false";
@@ -393,7 +380,7 @@ bool CreateRelationBetween::operator()(const AnalysisGraph&,
  LDEBUG << "testing CreateRelationBetween for " << v1 << " and "
  << v2  << " with relation: " << static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language_id)).getSyntacticRelationName(m_relation);
 #endif
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   bool res = syntacticData->relation(v1, v2, m_relation);
 //  LDEBUG << "CreateRelationBetween: " << (res?"yes":"no");
   return res;
@@ -421,7 +408,7 @@ bool RemoveOutRelationFrom::operator()(const AnalysisGraph& graph,
 */
 //   SAPLOGINIT;
 //   LDEBUG << "testing RemoveOutRelationFrom for " << v1 << " with relation: " << m_relation;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if ( v1 == graph.firstVertex() || v1 == graph.lastVertex() )
   {
 //     LDEBUG << "RemoveOutRelationFrom: false";
@@ -469,7 +456,7 @@ bool CopyRelationsOutOfTo::operator()(const AnalysisGraph& graph,
 */
   SAPLOGINIT;
   LDEBUG << "CopyRelationsOutOfTo" << v1 << v2;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if ( v1 == graph.firstVertex() || v1 == graph.lastVertex()
     || v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
@@ -523,7 +510,7 @@ bool CopyIncomingRelationsTo::operator()(const AnalysisGraph& graph,
 */
   SAPLOGINIT;
   LDEBUG << "CopyIncomingRelationsTo" << v1 << v2;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if ( v1 == graph.firstVertex() || v1 == graph.lastVertex()
     || v2 == graph.firstVertex() || v2 == graph.lastVertex() )
   {
@@ -572,7 +559,7 @@ bool FindRelationFrom::operator()(const AnalysisGraph&,
 */
 //  SAPLOGINIT;
 //  LDEBUG << "testing FindRelationFRom for " << v1;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   DependencyGraph* depGraph=syntacticData->dependencyGraph();
 
 
@@ -690,11 +677,10 @@ bool CreateRelationWithRelated::operator()(
 //  LDEBUG << "testing CreateRelationWithRelated for " << v1
 //  << " and " << v2;
 
-  SyntacticData* syntacticData=
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   std::vector<LinguisticGraphVertex> vfollow=
-    findRelatedVertices(v2,syntacticData);
+    findRelatedVertices(v2, syntacticData.get());
 
   if (vfollow.empty())
   {
@@ -734,10 +720,10 @@ bool CreateRelationReverseWithRelated::operator()(
 //   SAPLOGINIT;
 //   LDEBUG << "CreateRelationReverseWithRelated::operator()" << v1 << v2 << m_relationToCreate;
 
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   std::vector<LinguisticGraphVertex> vfollow=
-    findRelatedVertices(v2,syntacticData);
+    findRelatedVertices(v2, syntacticData.get());
 
   if (vfollow.empty())
   {
@@ -830,9 +816,9 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
     return false;
   }
 
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     return false;
@@ -1220,10 +1206,10 @@ bool CreateCompoundTense::operator()(const AnalysisGraph& anagraph,
 #ifdef DEBUG_LP
   LDEBUG << "CreateCompoundTense: " << m_tempCompType << res;
 #endif
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
-    recoData = new RecognizerData();
+    recoData = std::make_shared<RecognizerData>();
     analysis.setData("RecognizerData", recoData);
   }
 #ifdef DEBUG_LP
@@ -1271,7 +1257,7 @@ bool CreateEasyCompoundTense::operator()(const AnalysisGraph& /*anagraph*/,
                                    const LinguisticGraphVertex& auxVertex,
                                    AnalysisContent& analysis ) const
 {
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
 
   bool res = syntacticData->relation(auxVertex,
@@ -1329,7 +1315,7 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   bool result = true;
 
   // cannot use AnalysisGraph because it is const -> use AnalysisContent
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   LinguisticGraph* posgraph=anagraph->getGraph();
 
   //  SyntacticData* syntacticData = dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData"));
@@ -1423,8 +1409,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph&,
 //   SAPLOGINIT;
 //   LDEBUG << "adding new relation in the dependency graph";
 
-  SyntacticData* syntacticData=
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   try
   {
@@ -1446,10 +1431,8 @@ bool AddRelationInGraph::operator()(AnalysisContent& analysis ) const
 //   SAPLOGINIT;
 //   LDEBUG << "adding stored relations in the dependency graph";
 
-  AnalysisGraph* anagraph=
-    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  SyntacticData* syntacticData=
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   LinguisticGraphVertex src, dest;
   Common::MediaticData::SyntacticRelationId relation;
@@ -1514,10 +1497,8 @@ bool ModifyRelationInGraph::operator()(AnalysisContent& analysis) const
 //   SAPLOGINIT;
 //   LDEBUG << "modify stored relations in the dependency graph";
 
-  AnalysisGraph* anagraph=
-    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  SyntacticData* syntacticData=
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   LinguisticGraphVertex src, dest;
   Common::MediaticData::SyntacticRelationId relation;
@@ -1572,8 +1553,7 @@ bool ClearStoredRelations::operator()(AnalysisContent& analysis) const
 //  SAPLOGINIT;
 //  LDEBUG << "clearing stored relations";
 
-  SyntacticData* syntacticData=
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   syntacticData->clearStoredRelations();
   return true;

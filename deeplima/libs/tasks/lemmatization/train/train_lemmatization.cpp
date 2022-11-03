@@ -1,21 +1,7 @@
-﻿/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+﻿// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <string>
 #include <unordered_map>
@@ -385,8 +371,8 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   {
     vector<embd_descr_t> encoder_embd_descr = { embd_descr_t("enc_chars", params.m_encoder_embd_dim) };
     vector<embd_descr_t> decoder_embd_descr = { embd_descr_t("dec_chars", params.m_decoder_embd_dim) };
-    vector<rnn_descr_t> encoder_rnn_descr = { rnn_descr_t(params.m_encoder_rnn_hidden_dim) /*, rnn_descr_t(32) */ };
-    vector<rnn_descr_t> decoder_rnn_descr = { rnn_descr_t(params.m_decoder_rnn_hidden_dim) /*, rnn_descr_t(32) */ };
+    vector<rnn_descr_t> encoder_rnn_descr = { rnn_descr_t(params.m_encoder_rnn_hidden_dim) };
+    vector<rnn_descr_t> decoder_rnn_descr = { rnn_descr_t(params.m_decoder_rnn_hidden_dim) };
     vector<embd_descr_t> cat_embd_descr;
     for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
     {

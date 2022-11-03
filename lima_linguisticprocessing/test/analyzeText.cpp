@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2020 by CEA LIST
  *
@@ -136,6 +123,27 @@ int main(int argc, char **argv)
 #endif
 }
 
+void initMetaData (const QString& meta, std::map<std::string, std::string>& metaData)
+{
+  // parse 'meta' argument to add metadata
+  if (!meta.isEmpty())
+  {
+    auto metas = meta.split(",");
+    for (const auto& aMeta: metas)
+    {
+      auto kv = aMeta.split(":");
+      if (kv.size() != 2)
+      {
+        std::cerr << "meta argument '"<< aMeta.toStdString() << "' is not of the form XXX:YYY: ignored" << std::endl;
+      }
+      else
+      {
+        metaData[kv[0].toStdString()] = kv[1].toStdString();
+      }
+    }
+  }
+}
+
 int run(int argc, char** argv)
 {
   LIMA_UNUSED(argc);
@@ -171,7 +179,23 @@ int run(int argc, char** argv)
   std::string strConfigPath;
 
 
-  po::options_description desc("Usage");
+  po::options_description desc(R"(Usage: analyzeText [OPTION]... [FILE]...
+Analyze one or more text files. The default behavior is to use the main
+pipeline in English but this can be tweaked using the options and some
+environment variables.
+
+Configuration files are searched in directories in the following order:
+ 1. Paths explicitly given using options below;
+ 2. Dirs from the colon-separated LIMA_CONF environment variable;
+ 3. XDG_DATA_HOME or ~/.local/share/ if not defined;
+ 4. LIMA_DIST/config
+ 5. /usr/share/config/lima
+
+If the environment variable LIMA_SHOW_CONFIG_PATH is defined and non-empty,
+then the list built is written on stderr. Use it if you don't understand what
+happens.
+
+Options)");
   desc.add_options()
   ("help,h", "Display this help message")
   ("version,v", QString::fromUtf8("Shows LIMA version: %1.").arg(LIMA_VERSION).toUtf8().constData())
@@ -294,36 +318,8 @@ int run(int argc, char** argv)
       std::cerr << "syntax error in output setting:" << soutput << std::endl;
     }
   }
-  std::vector<std::pair<std::string,std::string> > userMetaData;
-  // parse 'meta' argument to add metadata
-  if(!meta.empty())
-  {
-    std::string metaString(meta);
-    std::string::size_type k=0;
-    do
-    {
-      k=metaString.find(",");
-      //if (k==std::string::npos) continue;
-      std::string str(metaString,0,k);
-      std::string::size_type i=str.find(":");
-      if (i==std::string::npos)
-      {
-        std::cerr << "meta argument '"<< str
-                  << "' is not of the form XXX:YYY: ignored" << std::endl;
-      }
-      else
-      {
-        //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-        userMetaData.push_back(std::make_pair(std::string(str,0,i),
-                                              std::string(str,i+1)));
-      }
-      if (k!=std::string::npos)
-      {
-        metaString=std::string(metaString,k+1);
-      }
-    }
-    while (k!=std::string::npos);
-  }
+  std::map<std::string,std::string> metaData;
+  initMetaData(QString::fromStdString(meta), metaData);
 
   std::set<std::string> inactiveUnits;
   for (const auto & inactiveUnit : vinactiveUnits)
@@ -391,7 +387,6 @@ int run(int argc, char** argv)
   SimpleStreamHandler* simpleStreamHandler = nullptr;
   SimpleStreamHandler* fullXmlSimpleStreamHandler = nullptr;
   LTRTextHandler* ltrTextHandler = nullptr;
-  XmlBowDocumentHandler* xmlDocumentHandler = nullptr;
 
   if (dumpers.find("event") != dumpers.end())
   {
@@ -430,20 +425,16 @@ int run(int argc, char** argv)
                                    ltrTextHandler));
   }
 
-  std::map<std::string,std::string> metaData;
 
   metaData["Lang"] = langs[0];
-  for (const auto& meta : userMetaData)
-  {
-    metaData[meta.first] = meta.second;
-  }
 
-  if(!files.size()){
+  if(files.size() == 0)
+  {
       std::cerr << "No file to analyze." << std::endl;
   }
 
 
-  uint64_t nfile=0;
+  uint64_t nfile = 0;
   for (const auto&  file : files)
   {
     // display the progress of the analysis
@@ -491,7 +482,7 @@ int run(int argc, char** argv)
       std::cerr << "Cannot open file " << file << " ! " << std::endl;
       continue;
     }
-    metaData["FileName"]=file;
+    metaData["FileName"] = file;
 
     if (splitMode == "lines")
     {

@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_SRC_TRAIN_BIRNN_CLASSIFIER_FOR_SEGMENTATION_H
 #define DEEPLIMA_SRC_TRAIN_BIRNN_CLASSIFIER_FOR_SEGMENTATION_H
@@ -47,8 +33,14 @@ public:
                             const std::vector<nets::rnn_descr_t>& rnn_descr,
                             const std::vector<std::string>& output_names,
                             DictsHolder&& classes,
-                            const std::string& embd_fn)
-    : BiRnnClassifierImpl(std::move(dicts), embd_descr, rnn_descr, output_names, classes.get_counters()),
+                            const std::string& embd_fn,
+                            const train_params_tagging_t& params)
+    : BiRnnClassifierImpl(std::move(dicts),
+                          embd_descr,
+                          rnn_descr,
+                          output_names,
+                          classes.get_counters(),
+                          params.m_input_dropout_prob),
       m_workers(0),
       m_class_names(output_names),
       m_embd_fn(embd_fn)
@@ -78,6 +70,7 @@ public:
              const TorchMatrix<float>& eval_non_trainable_input,
              const TorchMatrix<int64_t>& eval_gold,
              torch::optim::Optimizer& opt,
+             double& best_eval_accuracy,
              const torch::Device& device = torch::Device(torch::kCPU));
 
   void evaluate(const std::vector<std::string>& output_names,

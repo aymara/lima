@@ -1,21 +1,8 @@
-/*
-    Copyright 2004-2021 CEA LIST
+// Copyright 2004-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 #ifdef WIN32
 #define _WINSOCKAPI_
 #endif
@@ -26,16 +13,17 @@
 
 #include "CoreLinguisticProcessingClient.h"
 
-#include "common/MediaticData/mediaticData.h"
-#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/Data/strwstrtools.h"
+#include "common/MediaProcessors/MediaProcessors.h"
+#include "common/MediaProcessors/MediaProcessUnitPipeline.h"
+#include "common/MediaticData/mediaticData.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
+#include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/time/timeUtilsController.h"
 #include "common/tools/FileUtils.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
-#include "common/MediaProcessors/MediaProcessors.h"
 #include "linguisticProcessing/common/linguisticData/LimaStringText.h"
-#include "common/MediaProcessors/MediaProcessUnitPipeline.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
@@ -73,21 +61,21 @@ CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient()
   //LERROR << "CoreLinguisticProcessingClient::~CoreLinguisticProcessingClient()";
 }
 
-void CoreLinguisticProcessingClient::analyze(
-    const std::string& texte,
+std::shared_ptr<AnalysisContent> CoreLinguisticProcessingClient::analyze(
+    const std::string& text,
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
     const std::set<std::string>& inactiveUnits) const
 
 {
-  LimaString limatexte=Common::Misc::utf8stdstring2limastring(texte);
+  auto limatext = QString::fromStdString(text);
 
-  analyze(limatexte,metaData,pipelineId,handlers,inactiveUnits);
+  return analyze(limatext, metaData, pipelineId, handlers, inactiveUnits);
 }
 
-void CoreLinguisticProcessingClient::analyze(
-    const LimaString& text,
+std::shared_ptr<AnalysisContent> CoreLinguisticProcessingClient::analyze(
+    const QString& text,
     const std::map<std::string,std::string>& metaData,
     const std::string& pipelineId,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
@@ -102,20 +90,20 @@ void CoreLinguisticProcessingClient::analyze(
   QString whitespaceOnly("\\s*");
 
   whitespaceOnly = QRegularExpression::anchoredPattern(whitespaceOnly);
- if (QRegularExpression(whitespaceOnly).match(text).hasMatch())
- {
-   LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
-   return;
- }
+  auto analysis = std::make_shared<AnalysisContent>();
+  if (QRegularExpression(whitespaceOnly).match(text).hasMatch())
+  {
+    LWARN << "Empty text given to LIMA linguistic processing client. Nothing to do.";
+    return analysis;
+  }
 
   // create analysis content
-  AnalysisContent analysis;
   LinguisticMetaData* metadataholder=new LinguisticMetaData(); // will be destroyed in AnalysisContent destructor
-  analysis.setData("LinguisticMetaData",metadataholder);
+  analysis->setData("LinguisticMetaData",metadataholder);
 
   metadataholder->setMetaData(metaData);
   LimaStringText* lstexte=new LimaStringText(text); // will be destroyed in AnalysisContent destructor
-  analysis.setData("Text", lstexte);
+  analysis->setData("Text", lstexte);
 
   LINFO << "CoreLinguisticProcessingClient::analyze(";
   for(auto attrIt = metaData.cbegin() ; attrIt != metaData.cend() ; attrIt++ ) {
@@ -129,19 +117,20 @@ void CoreLinguisticProcessingClient::analyze(
     LDEBUG << "CoreLinguisticProcessingClient::analyze: no metadata";
   }
 #endif
-  for (map<string,string>::const_iterator it=metaData.begin(),
-         it_end=metaData.end(); it!=it_end; it++) {
-    if ((*it).first=="date") {
+  for (auto it=metaData.cbegin(), it_end=metaData.cend(); it!=it_end; it++)
+  {
+    if ((*it).first=="date")
+    {
       try {
-        const std::string& str=(*it).second;
-        uint64_t i=str.find("T"); //2006-12-11T12:44:00
+        const auto& str = (*it).second;
+        auto i = str.find("T"); //2006-12-11T12:44:00
         /*if (i!=std::string::npos) {
           QTime docTime=posix_time::time_from_string(str);
           metadataholder->setTime("document",docTime);
           LDEBUG << "use '"<< str << "' as document time";
           }*/
-        string date(str,0,i);
-        QDate docDate=QDate::fromString(date.c_str(),Qt::ISODate);
+        std::string date(str, 0, i);
+        auto docDate = QDate::fromString(date.c_str(),Qt::ISODate);
         metadataholder->setDate("document",docDate);
 
 #ifdef DEBUG_LP
@@ -149,31 +138,36 @@ void CoreLinguisticProcessingClient::analyze(
         LDEBUG << "use boost'"<< docDate.day() <<"/"<< docDate.month() <<"/"<< docDate.year() << "' as document date";
 #endif
       }
-      catch (std::exception& e) {
+      catch (std::exception& e)
+      {
         LERROR << "Error in date conversion (date '"<< (*it).second
                << "' will be ignored): " << e.what();
       }
     }
-    else if ((*it).first=="location") {
+    else if ((*it).first=="location")
+    {
       metadataholder->setLocation("document",(*it).second);
 #ifdef DEBUG_LP
         LDEBUG << "use '"<< (*it).second<< "' as document location";
 #endif
     }
-    else if ((*it).first=="time") {
+    else if ((*it).first=="time")
+    {
       try {
-        QTime docTime= QTime::fromString((*it).second.c_str(),"hh:mm:ss.z" );
+        auto docTime= QTime::fromString((*it).second.c_str(),"hh:mm:ss.z" );
         metadataholder->setTime("document",docTime);
 #ifdef DEBUG_LP
         LDEBUG << "use '"<< (*it).second<< "' as document time";
 #endif
       }
-      catch (std::exception& e) {
+      catch (std::exception& e)
+      {
         LERROR << "Error in ptime conversion (time '"<< (*it).second
                << "' will be ignored): " << e.what();
       }
     }
-    else if ((*it).first=="docid") {
+    else if ((*it).first=="docid")
+    {
 #ifdef DEBUG_LP
       LDEBUG << "use '"<< (*it).second<< "' as document id";
 #endif
@@ -196,7 +190,7 @@ void CoreLinguisticProcessingClient::analyze(
   // try to retrieve offset
   try
   {
-    const std::string& offsetStr=metadataholder->getMetaData("StartOffset");
+    const auto& offsetStr = metadataholder->getMetaData("StartOffset");
     metadataholder->setStartOffset(atoi(offsetStr.c_str()));
   }
   catch (LinguisticProcessingException& )
@@ -204,33 +198,34 @@ void CoreLinguisticProcessingClient::analyze(
     metadataholder->setStartOffset(0);
   }
 
-  const std::string& fileName=metadataholder->getMetaData("FileName");
+  const auto& fileName = metadataholder->getMetaData("FileName");
   // get language
-  const std::string& lang=metadataholder->getMetaData("Lang");
+  const auto& lang = metadataholder->getMetaData("Lang");
   LINFO  << "analyze file is: '" << fileName << "'";
   LINFO  << "analyze pipeline is '" << pipelineId << "'";
   LINFO  << "analyze language is '" << lang << "'";
 #ifdef DEBUG_LP
-  LDEBUG << "texte : " << text;
+  LDEBUG << "text : " << text;
 #endif
-  //LDEBUG << "texte : " << Common::Misc::limastring2utf8stdstring(texte);
+  //LDEBUG << "text : " << Common::Misc::limastring2utf8stdstring(texte);
 
-  MediaId langId=MediaticData::single().getMediaId(lang);
+  auto langId = MediaticData::single().getMediaId(lang);
 
   // get pipeline
-  const MediaProcessUnitPipeline* pipeline=MediaProcessors::single().getPipelineForId(langId,pipelineId);
-  if (pipeline==0)
+  auto pipeline = MediaProcessors::single().getPipelineForId(langId,pipelineId);
+  if (pipeline == nullptr)
   {
     LERROR << "can't get pipeline '" << pipelineId << "'";
-    throw LinguisticProcessingException( std::string("can't get pipeline '" + pipelineId + "' for language '" + lang + "'") );
+    throw LinguisticProcessingException(
+      std::string("can't get pipeline '" + pipelineId + "' for language '" + lang + "'") );
   }
   InactiveUnitsData* inactiveUnitsData = new InactiveUnitsData();
-  for (std::set<std::string>::const_iterator it = inactiveUnits.begin(); it != inactiveUnits.end(); it++)
+  for (auto inactiveUnit: inactiveUnits)
   {
 //     const_cast<MediaProcessUnitPipeline*>(pipeline)->setInactiveProcessUnit(*it);
-    inactiveUnitsData->insert(*it);
+    inactiveUnitsData->insert(inactiveUnit);
   }
-  analysis.setData("InactiveUnits", inactiveUnitsData);
+  analysis->setData("InactiveUnits", inactiveUnitsData);
 
   // add handler to analysis
 #ifdef DEBUG_LP
@@ -240,17 +235,17 @@ void CoreLinguisticProcessingClient::analyze(
     LDEBUG << "    " << (*hit).first << (*hit).second;
   }
 #endif
-  AnalysisHandlerContainer* h = new AnalysisHandlerContainer(const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers));
+  auto h = new AnalysisHandlerContainer(const_cast<std::map<std::string, AbstractAnalysisHandler*>& >(handlers));
 #ifdef DEBUG_LP
   LDEBUG << "set data" ;
 #endif
-  analysis.setData("AnalysisHandlerContainer", h);
+  analysis->setData("AnalysisHandlerContainer", h);
 
   // process analysis
 #ifdef DEBUG_LP
   LDEBUG << "Process pipeline..." ;
 #endif
-  LimaStatusCode status = pipeline->process(analysis);
+  auto status = pipeline->process(*analysis);
 #ifdef DEBUG_LP
   LDEBUG << "pipeline process returned status " << (int)status ;
 #endif
@@ -259,6 +254,7 @@ void CoreLinguisticProcessingClient::analyze(
       LIMA_LP_EXCEPTION( "analysis failed : receive status " << (int)status
                          << " from pipeline." );
   }
+  return analysis;
 }
 
 CoreLinguisticProcessingClientFactory::CoreLinguisticProcessingClientFactory() :
@@ -290,10 +286,9 @@ void CoreLinguisticProcessingClientFactory::configure(
   {
     try
     {
-      langToload=configuration.getModuleGroupListValues(
-                   "lima-coreclient",
-                   "mediaProcessingDefinitionFiles",
-                   "available");
+      langToload = configuration.getModuleGroupListValues("lima-coreclient",
+                                                          "mediaProcessingDefinitionFiles",
+                                                          "available");
     }
     catch (NoSuchList& )
     {
@@ -305,17 +300,17 @@ void CoreLinguisticProcessingClientFactory::configure(
   for (const auto& lang: langToload)
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << lang;
-    MediaId langid=MediaticData::single().getMediaId(lang);
+    auto langid = MediaticData::single().getMediaId(lang);
     QString file;
     try
     {
-      QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+      auto configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
       if (configPaths.isEmpty())
       {
         LERROR << "no config paths available in MediaticData";
         throw InvalidConfiguration("no config paths available in MediaticData");
       }
-      QString mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
+      auto mediaProcessingDefinitionFile = QString::fromUtf8(configuration.getModuleGroupParamValue(
             "lima-coreclient",
             "mediaProcessingDefinitionFiles",
             lang).c_str());
@@ -349,7 +344,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     LINFO << "configure resources for language " << lang;
     try
     {
-      ModuleConfigurationStructure& module=langParser.getModuleConfiguration("Resources");
+      auto& module = langParser.getModuleConfiguration("Resources");
       LinguisticResources::changeable().initLanguage(
         langid,
         module,
@@ -365,7 +360,7 @@ void CoreLinguisticProcessingClientFactory::configure(
     LINFO << "initialize processors";
     try
     {
-      ModuleConfigurationStructure& procmodule=langParser.getModuleConfiguration("Processors");
+      auto& procmodule = langParser.getModuleConfiguration("Processors");
       MediaProcessors::changeable().initMedia(
         langid,
         procmodule/*,
@@ -382,7 +377,7 @@ void CoreLinguisticProcessingClientFactory::configure(
   LINFO << "initialize Pipelines";
   try
   {
-    GroupConfigurationStructure& group=configuration.getModuleGroupConfiguration("lima-coreclient","pipelines");
+    auto& group = configuration.getModuleGroupConfiguration("lima-coreclient","pipelines");
     MediaProcessors::changeable().initPipelines(group,pipelines);
   }
   catch (NoSuchModule& )

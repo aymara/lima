@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_LIBS_TASKS_COMMON_TRAIN_PARAMS_H
 #define DEEPLIMA_LIBS_TASKS_COMMON_TRAIN_PARAMS_H
@@ -43,9 +29,13 @@ struct train_params_t
   float m_learning_rate;
   float m_weight_decay;
 
+  float m_input_dropout_prob;
+
   size_t m_max_epochs;
   size_t m_max_epochs_without_improvement;
   size_t m_batch_size;  // sequences per iteration
+
+  std::string m_optimizers;
 
   train_params_t(std::string device_string="cpu",
                  float learning_rate=0.001,
@@ -56,9 +46,11 @@ struct train_params_t
     : m_device_string(device_string),
       m_learning_rate(learning_rate),
       m_weight_decay(weight_decay),
+      m_input_dropout_prob(0.3),
       m_max_epochs(max_epochs),
       m_max_epochs_without_improvement(max_epochs_without_improvement),
-      m_batch_size(batch_size) {}
+      m_batch_size(batch_size),
+      m_optimizers("adam") {}
 
   virtual const std::string& get_train_set_fn() const
   {

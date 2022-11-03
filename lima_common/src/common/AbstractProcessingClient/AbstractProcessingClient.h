@@ -1,26 +1,13 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMA_ABSTRACTPROCESSINGCLIENT_H
 #define LIMA_ABSTRACTPROCESSINGCLIENT_H
 
 #include "common/Handler/AbstractAnalysisHandler.h"
+#include "common/ProcessUnitFramework/AnalysisContent.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include <set>
 #include <deque>
@@ -36,18 +23,17 @@ public:
     //! @brief Define the destructor virtual to ensure concrete client destructors to be called
     virtual ~AbstractProcessingClient() {}
 
-    //! @brief analyze an image, given the pipeline and the expected resultType
-    //! @param content path of the file or text to analyze in string format
-    //! @param metaData additive information
-    //! @param pipeline analysis pipeline to use (an analysis pipeline is 
-
-    //!                      a chain of processUnit)
-    //! @param inactiveUnits ??? (un truc pour les texteux)
-    virtual void analyze(const std::string& content,
-                         const std::map<std::string,std::string>& metaData,
-                         const std::string& pipeline,
-                         const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-                         const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
+    //! @brief analyze a content, given the pipeline and the expected resultType
+    //! @param content path of the file or content to analyze in string format
+    //! @param metaData additional information
+    //! @param pipeline analysis pipeline to use (an analysis pipeline is a chain of processUnit)
+    //! @param inactiveUnits a set of pipeline units to skip during analysis
+    virtual std::shared_ptr<AnalysisContent> analyze(
+      const std::string& content,
+      const std::map<std::string,std::string>& metaData,
+      const std::string& pipeline,
+      const std::map<std::string, AbstractAnalysisHandler*>& handlers,
+      const std::set<std::string>& inactiveUnits = std::set<std::string>()) const = 0;
 
 };
 
@@ -89,7 +75,7 @@ public:
     std::deque<std::string> pipelines) = 0;
 
   /**
-   * This function create a LinguisticProcessing client 
+   * This function create a LinguisticProcessing client
    */
   virtual std::shared_ptr< AbstractProcessingClient > createClient() const = 0;
 

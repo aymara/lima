@@ -1,0 +1,91 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Use gcc
+#RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev -qq
+
+# Use clang
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update
+RUN apt-get install -y -qq locales unzip bash coreutils apt-utils lsb-release git llvm build-essential clang clang-tidy clang-tools make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev dos2unix python-is-python3
+
+RUN update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++
+
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+RUN locale
+
+ARG GITHUB_TOKEN
+ARG LIMA_DISABLE_FSW_TESTING
+ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
+ARG NLTK_PTB_DP_FILE
+ARG USE_TENSORFLOW="false"
+
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
+
+# Setup
+RUN npm install -g json
+
+RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python3/*/nltk/downloader.py
+RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
+RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+
+RUN pwd
+RUN ls
+WORKDIR /
+COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
+RUN /svmtool.sh $GITHUB_TOKEN
+RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN
+
+
+RUN install -d /src/lima/extern
+COPY ./extern/download_libtorch.sh /src/lima/extern
+WORKDIR /src/lima/extern
+RUN bash ./download_libtorch.sh
+
+
+RUN mkdir -p /src/
+COPY . /src/lima
+WORKDIR /src/lima/extern
+WORKDIR /src/lima
+ARG CACHEBUST=1
+RUN git submodule init && git submodule update
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
+
+RUN mkdir -p /src/lima/build
+WORKDIR /src/lima/build
+
+ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
+ENV PATH /SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH
+ENV NLTK_PTB_DP_FILE /nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+ENV LIMA_DISABLE_FSW_TESTING true
+ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
+ENV LIMA_DIST /usr
+ENV LIMA_CONF /usr/share/config/lima
+ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
+
+# Build
+#
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
+RUN ninja && ninja test && ninja install && ninja package
+RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
+
+# WORKDIR /usr/share/apps/lima/tests
+# RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+# RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+# WORKDIR /usr/share/apps/lima/tests/xmlreader
+# RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+
+# install github-release to be able to deploy packages
+RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin
+
+
+# install python packages necessary to use the language resources install script
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
+
+# Stop dowloading lima models as appveyor build timeouts
+# # install English and French UD models
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+

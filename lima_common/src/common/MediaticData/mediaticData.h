@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @file          mediaticData.h
   * @author        Gael de Chalendar <Gael.de-Chalendar@cea.fr>
@@ -84,8 +71,6 @@ public:
 
     void initMedia(const std::string& media);
 
-    void initMediaData(MediaId med);
-
     const FsaStringsPool& stringsPool(MediaId med) const;
     FsaStringsPool& stringsPool(MediaId med);
 
@@ -127,8 +112,7 @@ public:
     const LimaString& getEntityGroupName(EntityGroupId id) const;
 
     EntityGroupId addEntityGroup(const LimaString& groupName);
-    EntityType addEntity(const LimaString& groupName,
-                         const LimaString& entityName);
+    EntityType addEntity(const LimaString& groupName, const LimaString& entityName);
 
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
@@ -170,23 +154,19 @@ public:
 
     const std::string& getConfigPath() const;
 
-    const std::string& getConfigFile() const;
-
     /** @return the number of categories */
     size_t getNbCategories() const;
 
     virtual ~MediaticData();
 
-    virtual void initEntityTypes(
-        XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
+    virtual void initEntityTypes(XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
 
     const LimaString& getEntityTypeNameSeparator() const;
 
-    bool isValidMedia(const std::string& media);
 private:
   MediaticData();
-  MediaticData(const MediaticData& md);
-  MediaticData& operator=(const MediaticData& md);
+  MediaticData(const MediaticData& md) = delete;
+  MediaticData& operator=(const MediaticData& md) = delete;
 
   MediaticDataPrivate* m_d;
 

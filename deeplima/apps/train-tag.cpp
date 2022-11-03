@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <iomanip>
@@ -62,6 +48,10 @@ int main(int argc, char* argv[])
   ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
   ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
   ("tag",               po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
+  ("batch-size,b",      po::value<size_t>(&params.m_batch_size),        "Batch size")
+  ("seq-len,s",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
+  ("opt,o",             po::value<string>(&params.m_optimizers),        "Optimizers to use (comma separated list: (adam,sgd)+)")
+  ("input-dropout",     po::value<float>(&params.m_input_dropout_prob), "Input dropout probability")
   ;
 
   po::variables_map vm;
@@ -142,6 +132,9 @@ int main(int argc, char* argv[])
 
     params.m_tags[k] = v;
   }
+
+  std::cout << "batch_size=" << params.m_batch_size
+            << " seq_len=" << params.m_sequence_length << std::endl;
 
   return deeplima::tagging::train::train_entity_tagger(params);
 }

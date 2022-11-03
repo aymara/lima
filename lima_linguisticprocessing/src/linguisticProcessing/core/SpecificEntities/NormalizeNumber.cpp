@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       NormalizeNumber.cpp
@@ -60,10 +47,10 @@ NormalizeNumber(MediaId language,
                 const LimaString& complement):
 Automaton::ConstraintFunction(language,complement),
 m_language(language),
-m_microsForNumber(0),
-m_microsForUnit(0),
-m_microsForConjunction(0),
-m_microAccessor(0)
+m_microsForNumber(nullptr),
+m_microsForUnit(nullptr),
+m_microsForConjunction(nullptr),
+m_microAccessor(nullptr)
 {
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
 
@@ -160,7 +147,7 @@ operator()(RecognizerMatch& m,
 #endif
 
   // annotation data is used to get numeric value of already recognized number entities
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   vector<NumberPart> values;
 

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
 
 # define a set of string with may-be useful readable name
 # this file is meant to be included in a CMakeLists.txt
@@ -133,7 +136,10 @@ if(UNIX)
       if(LINUX_NAME) 
          set(SPECIFIC_SYSTEM_VERSION_NAME "${CMAKE_SYSTEM_NAME}-${LINUX_NAME}")
       endif(LINUX_NAME)    
-    endif(EXISTS "/etc/issue")      
+    endif(EXISTS "/etc/issue")
+  elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    set(SPECIFIC_SYSTEM_VERSION_NAME "${CMAKE_SYSTEM_NAME}")
+    set(SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR "Bundle")
   endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(SPECIFIC_SYSTEM_VERSION_NAME "${SPECIFIC_SYSTEM_VERSION_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
   set(SPECIFIC_COMPILER_NAME "")

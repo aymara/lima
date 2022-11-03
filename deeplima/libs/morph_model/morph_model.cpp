@@ -1,27 +1,13 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "morph_model.h"
 #include "deeplima/utils/pretty.h"
 
 #include <iostream>
-
+#include <limits>
 using namespace std;
 
 namespace deeplima
@@ -165,11 +151,11 @@ morph_model_t::morph_model_t(const string& str)
   }
 
   {
-    istringstream temp_iss(t);
+    std::istringstream temp_iss(t);
     int v;
     while (temp_iss >> v)
     {
-      if (v < 0 || v > numeric_limits<uint8_t>::max())
+      if (v < 0 || v > std::numeric_limits<uint8_t>::max())
       {
         throw;
       }

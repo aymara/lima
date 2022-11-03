@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <sstream>
 
@@ -31,11 +17,12 @@ namespace nets
 string BiRnnClassifierImpl::generate_script(const std::vector<embd_descr_t>& embd_descr,
                                             const std::vector<rnn_descr_t>& rnn_descr,
                                             const std::vector<std::string>& output_names,
-                                            const std::vector<uint32_t>& classes)
+                                            const std::vector<uint32_t>& classes,
+                                            float input_dropout_prob)
 {
   stringstream ss;
 
-  ss << "input_dropout = def Dropout prob=0.7" << std::endl;
+  ss << "input_dropout = def Dropout prob=" << input_dropout_prob << std::endl;
 
   size_t rnn_input_size = 0;
   for (size_t i = 0; i < embd_descr.size(); i++)

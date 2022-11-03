@@ -1,19 +1,7 @@
-#   Copyright 2019 CEA LIST
+# Copyright 2019 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 add_subdirectory(treeview)
 
@@ -35,9 +23,9 @@ SET (lima_SRCS
   tools/extract/FileTextExtractor.cpp
 )
 
-if (QtCore_FOUND)
-  if (QtCore_VERSION VERSION_GREATER 5.7.0)
-    if(QtCore_VERSION VERSION_GREATER 5.14.0)
+if (Qt${QT_VERSION_MAJOR}Core_FOUND)
+  if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.7.0)
+    if(Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.14.0)
       qt_add_resources(lima_SRCS resources.qrc)
     else()
       qt5_add_resources(lima_SRCS resources.qrc)
@@ -74,10 +62,26 @@ if (WIN32)
   get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
   install(
     FILES
-      ${_qt_bin_dir}/QtQuickTemplates2.dll
-      ${_qt_bin_dir}/QtQuickControls2.dll
+      ${_qt_bin_dir}/Qt${QT_VERSION_MAJOR}QuickTemplates2.dll
+      ${_qt_bin_dir}/Qt${QT_VERSION_MAJOR}QuickControls2.dll
     DESTINATION
       bin
+  COMPONENT runtime
+  )
+
+elseif (APPLE)
+  add_executable(lima
+    ${lima_SRCS}
+  )
+
+  target_link_libraries(lima
+    lima-common-mediaticdata
+    lima-common-xmlconfigurationfiles
+    lima-lp-client
+    lima-lp-analysishandlers
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::Widgets
   )
 
 else()
@@ -100,5 +104,7 @@ install(TARGETS lima DESTINATION bin
   COMPONENT runtime)
 
 ########### install files ###############
-install(PROGRAMS lima.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(PROGRAMS qml/resources/lima.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)
+install(PROGRAMS lima.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+  COMPONENT runtime)
+install(PROGRAMS qml/resources/lima.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor
+  COMPONENT runtime)

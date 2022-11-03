@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @brief  AbbreviationSplitAlternatives is the module which creates split alternatives
   *         for hyphen word tokens. Each token from the supplied tokens path is processed :
@@ -192,20 +179,21 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LDEBUG << "AbbreviationSplitAlternatives::process: Misssing AnnotationData. Create it";
-    annotationData = new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -237,13 +225,13 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         // si il s'agit d'un possessif alors on traite le cas possessif.
         if (currentToken->status().isAlphaPossessive())
         {
-          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
+          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData.get());
         }
         // On ne traite la forme comme une abbreviation, uniquement si elle n'a pas ete
         // traitee comme un possessif
         if ((!isSplitted) && currentToken->status().isAlphaConcatAbbrev())
         {
-          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData);
+          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData.get());
         }
       }
       else
@@ -251,12 +239,12 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         // En mode non confiance, on effectue tous les traitements
         if (currentToken->status().isAlphaPossessive())
         {
-          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
+          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData.get());
         }
         // On traite la forme comme une abbreviation, meme si elle a ete traitee comme un possessif
         if (currentToken->status().isAlphaConcatAbbrev())
         {
-          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData) || isSplitted;
+          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData.get()) || isSplitted;
         }
       }
 
@@ -322,7 +310,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   toTokenize.setData("Text",beforeAbbrevText);
   LimaStatusCode status=m_tokenizer->process(toTokenize);
   if (status != SUCCESS_ID) return false;
-  AnalysisGraph* tokenizerList=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto tokenizerList = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokGraph=tokenizerList->getGraph();
 
   // insert the first abreviated word
@@ -457,7 +445,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
     LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor: Failed to tokenize possesive word";
     return false;
   }
-  AnalysisGraph* tokenizerList=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto tokenizerList = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokGraph=tokenizerList->getGraph();
 
   // insert the first abreviated word

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /*************************************************************************
 *
 * File        : posTransition.cpp
@@ -28,6 +15,7 @@
 
 
 #include "posTransition.h"
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include <iostream>
 #include <sstream>
 
@@ -102,30 +90,35 @@ bool PosTransition::operator== (const TransitionUnit& tright) const {
 bool PosTransition::
 compare(const LinguisticAnalysisStructure::AnalysisGraph& /*graph*/,
         const LinguisticGraphVertex& /*vertex*/,
-        AnalysisContent& /*analysis*/,
+        AnalysisContent& analysis,
         const LinguisticAnalysisStructure::Token* /*token*/,
         const LinguisticAnalysisStructure::MorphoSyntacticData* data) const
 {
-  MorphoSyntacticData::const_iterator
-    it=data->begin(),
-    it_end=data->end();
-  for (; it!=it_end; it++) {
-    if (compareTpos(m_pos,(*it).properties,
-                    *m_macroAccessor,
-                    *m_microAccessor)) {
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
+  if (metadata == nullptr) {
+    AULOGINIT;
+    LERROR << "TransitionSearchStructure::findMatchingTransitions no LinguisticMetaData ! abort";
+    return false;
+  }
+  auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getPropertyCodeManager();
+  auto& macroAccessor = propertyCodeManager.getPropertyAccessor("MACRO");
+  auto& microAccessor = propertyCodeManager.getPropertyAccessor("MICRO");
+
+  for (const auto& d: *data) {
+    if (compareTpos(m_pos,d.properties, macroAccessor, microAccessor)) {
       return true;
     }
   }
   return false;
 }
 
-bool PosTransition::
-comparePos(const LinguisticCode& pos) const
-{
-  return compareTpos(m_pos,pos,
-                     *m_macroAccessor,
-                     *m_microAccessor);
-}
+// bool PosTransition::
+// comparePos(const LinguisticCode& pos) const
+// {
+//   return compareTpos(m_pos,pos,
+//                      *m_macroAccessor,
+//                      *m_microAccessor);
+// }
 
 } // namespace end
 } // namespace end

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief      A process unit able to match regex against analysed text
  *
  * @file        RegexMatcher.cpp
@@ -158,7 +145,7 @@ LimaStatusCode RegexMatcher::process(
   Lima::TimeUtilsController timer("RegexReplacer");
   REGEXREPLACERLOGINIT;
   LINFO << "start RegexMatcher process";
-  AnalysisGraph* anagraph = static_cast< AnalysisGraph* >(analysis.getData("AnalysisGraph"));
+  AnalysisGraph* anagraph = static_cast< AnalysisGraph* >(analysis.getData("AnalysisGraph").get());
   if (anagraph == 0) {
     LERROR << "no AnalysisGraph available for RegexMatcher ! abort";
     return MISSING_DATA;
@@ -167,14 +154,15 @@ LimaStatusCode RegexMatcher::process(
     LERROR << "AnalysisGraph is not a string ! abort";
     return UNKNOWN_ERROR;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
-    anagraph->populateAnnotationGraph(annotationData, "AnalysisGraph");
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    anagraph->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+        annotationData.get(), "PosGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -185,7 +173,7 @@ LimaStatusCode RegexMatcher::process(
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
 
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   std::string text = Common::Misc::limastring2utf8stdstring(*originalText);
   for (auto reit = m_d->m_regexes.begin(); reit != m_d->m_regexes.end(); reit++)
   {
@@ -236,8 +224,7 @@ LimaStatusCode RegexMatcher::process(
 #endif
       while (v != anagraph->lastVertex() && tokenPosition < currentMatchPosition)
       {
-        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph);
-             outItr != outItrEnd; outItr++)
+        for (boost::tie(outItr,outItrEnd)=boost::out_edges(v,*graph); outItr != outItrEnd; outItr++)
         {
           v=target(*outItr, *graph);
           break;
@@ -250,7 +237,8 @@ LimaStatusCode RegexMatcher::process(
       }
 
 #ifdef DEBUG_LP
-        LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition << " ; current match position is: " << currentMatchPosition;
+        LDEBUG << "current token ("<<v<<", "<<token->stringForm()<<") position is: " << tokenPosition
+                << " ; current match position is: " << currentMatchPosition;
 #endif
         // current token is at current match position
       if (tokenPosition == currentMatchPosition)
@@ -286,8 +274,7 @@ LimaStatusCode RegexMatcher::process(
             break;
           }
         }
-        std::vector< LinguisticGraphVertex >::const_iterator matchVerticesIt, matchVerticesIt_end;
-        matchVerticesIt = matchVertices.begin(); matchVerticesIt_end = matchVertices.end();
+        auto matchVerticesIt = matchVertices.begin(), matchVerticesIt_end = matchVertices.end();
 
 #ifdef DEBUG_LP
         LDEBUG << "Match Found. Vertices are: ";

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       AbstractAnalysisDumper.cpp
@@ -121,7 +108,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with handler "<< m_handlerName;
 // #endif
-    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer").get());
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
     if (handler==0)
     {
@@ -137,7 +124,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with temporary file metadata";
 // #endif
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "AbstractTextualAnalysisDumper::initialize no LinguisticMetaData ! abort";
     }
@@ -157,7 +144,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
   }
 
   if (! m_outputSuffix.empty()) {
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
       DUMPERLOGINIT;
       LERROR << "AbstractTextualAnalysisDumper::initialize: no LinguisticMetaData ! abort";

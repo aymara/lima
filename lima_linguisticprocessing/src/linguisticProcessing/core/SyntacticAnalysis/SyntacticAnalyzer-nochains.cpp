@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 /**
   *
@@ -124,13 +110,13 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
   SACLOGINIT;
   LINFO << "start syntactic analysis - nochains";
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -142,10 +128,10 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
     return INVALID_CONFIGURATION;
   }
 
-  SyntacticData* syntacticData=dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticData(anagraph,m_chainMatrix);
+    syntacticData= std::make_shared<SyntacticData>(anagraph.get(), m_chainMatrix);
     analysis.setData("SyntacticData",syntacticData);
   }
   else if (syntacticData->matrices() == 0)
@@ -167,7 +153,7 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    identifyChains(syntacticData,beginSentence,endSentence,chainId);
+    identifyChains(syntacticData.get(), beginSentence, endSentence, chainId);
     beginSentence=endSentence;
   }
 

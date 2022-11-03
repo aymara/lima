@@ -1,15 +1,8 @@
-/************************************************************************
- *
- * @file       AbstractIEDumper.h
- * @author     Faiza Gara, Romaric Besançon (romaric.besancon@cea.fr)
- * @date       Wed Nov 23 2016
- * copyright   Copyright (C) 2016 by CEA - LIST
- * Project     AMOSE
- *
- * @brief      Abstract dumper for extracted information: entities, relations and events: do not implement the exact output format of these things but contains all the common part consisting of gathering the information.
- *
- *
- ***********************************************************************/
+// Copyright (C) 2016 by CEA - LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #ifndef ABSTRACTIEDUMPER_H
 #define ABSTRACTIEDUMPER_H
 

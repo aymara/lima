@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 namespace Lima
 {
@@ -77,7 +63,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   LINFO << "start ViterbiPosTager";
 
   // Retrieve morphosyntactic graph
-  LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get());
   LinguisticGraph* srcgraph=anagraph->getGraph();
   LinguisticGraphVertex currentVx=anagraph->firstVertex();
   LinguisticGraphVertex endVx=anagraph->lastVertex();
@@ -91,16 +77,16 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
 
   /** Creation of an annotation graph if necessary*/
   Common::AnnotationGraphs::AnnotationData* annotationData =
-      static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+      static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData").get());
   if (annotationData==0)
   {
     annotationData=new Common::AnnotationGraphs::AnnotationData();
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
     * associated to the morphosyntactic vertex number */
-    if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get()) != 0)
     {
-      static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get())->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }

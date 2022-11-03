@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 ########### next target ###############
 
 SET(convertMultXmlToMultBin_SRCS
@@ -28,6 +32,7 @@ ${Boost_LIBRARIES}
 ${QT_LIBRARIES}
 ${optionalLibs})
 
-install(TARGETS convertMultXmlToMultBin DESTINATION bin)
+install(TARGETS convertMultXmlToMultBin DESTINATION bin
+  COMPONENT runtime)
 
 

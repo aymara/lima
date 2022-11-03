@@ -1,19 +1,7 @@
 # Copyright 2021 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-# This file is part of LIMA.
-#
-# LIMA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# LIMA is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with LIMA.  If not, see <https://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.10)
 
@@ -39,6 +27,11 @@ set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost         1.46  REQUIRED COMPONENTS program_options filesystem)
 find_package(ICU           60.0  REQUIRED COMPONENTS uc)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
+if(WIN32)
+include_directories("${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 root: ${EIGEN3_USE_FILE}")
+endif()
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
   set(DEEPLIMA_STANDALONE ON)
@@ -58,4 +51,3 @@ add_subdirectory(apps)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   add_subdirectory(tests)
 endif()
-

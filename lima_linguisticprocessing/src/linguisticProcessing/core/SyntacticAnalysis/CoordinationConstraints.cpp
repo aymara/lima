@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @brief       this file contains the implementations of several constraint
   *              functions for the detection of subsentences
@@ -88,8 +75,7 @@ bool DefineString::operator()(const Lima::LinguisticProcessing::LinguisticAnalys
   LDEBUG << "testing DefineString for " << v1 << " and " << v2 << " with relation: " /*<< (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).
     getEntityNames("SyntacticSimplification")[m_relation])*/;
   std::string complement = Common::Misc::limastring2utf8stdstring(m_complement);
-  SimplificationData* simplificationData =
-      static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
     SACLOGINIT;
@@ -144,10 +130,8 @@ bool SameString::operator()(const Lima::LinguisticProcessing::LinguisticAnalysis
   LDEBUG << "Testing SameString on " << v1 << " and " << v2;
 
   std::string complement = Common::Misc::limastring2utf8stdstring(m_complement);
-  SyntacticData* syntacticData =
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  SimplificationData* simplificationData =
-    static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   LinguisticGraph* graph = syntacticData->graph();
   if (simplificationData==0)
   {

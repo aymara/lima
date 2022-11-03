@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004 by CEA LIST                                        *
  *                                                                         *
@@ -47,7 +34,9 @@ class PropertyAccessorPrivate
   PropertyAccessorPrivate(const std::string& name,
                    const LinguisticCode& mask,
                    const LinguisticCode& emptyNessMask);
-
+  ~PropertyAccessorPrivate() = default;
+  PropertyAccessorPrivate(const PropertyAccessorPrivate& pap) = default;
+  PropertyAccessorPrivate& operator=(const PropertyAccessorPrivate& pap) = default;
   LinguisticCode m_mask;
   LinguisticCode m_emptyNessMask;
   std::string m_name;
@@ -74,6 +63,7 @@ PropertyAccessor::PropertyAccessor(
 PropertyAccessor::~PropertyAccessor()
 {
   delete m_d;
+  m_d = nullptr;
 }
 
 PropertyAccessor::PropertyAccessor(const PropertyAccessor& pa)
@@ -94,6 +84,11 @@ const std::string& PropertyAccessor::getPropertyName() const
 
 LinguisticCode PropertyAccessor::readValue(const LinguisticCode& code) const
 {
+#ifdef DEBUG_LP
+  PROPERTYCODELOGINIT;
+  LDEBUG << "PropertyAccessor::readValue" << code;
+  Q_ASSERT(m_d != nullptr);
+#endif
   return code & m_d->m_mask;
 }
 

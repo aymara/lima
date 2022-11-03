@@ -1,21 +1,11 @@
-#!/bin/bash
+#####!/bin/bash
+
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 invoked=$_   # needs to be first thing in the script
 OPTIND=1    # also remember to initialize your flags and other variables
-
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
 
 usage()
 {
@@ -67,9 +57,9 @@ else
 fi
 
 LIMA_SOURCES=$PWD
-pushd $LIMA_SOURCES > /dev/null
+cd $LIMA_SOURCES > /dev/null
 current_branch=`git rev-parse --abbrev-ref HEAD`
-popd > /dev/null
+cd - > /dev/null
 
 # Path to the nltk data necessary to learn the English part of speech tagging
 # model.

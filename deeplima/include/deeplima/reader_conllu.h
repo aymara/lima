@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_READER_CONLLU_H
 #define DEEPLIMA_READER_CONLLU_H
@@ -58,7 +44,7 @@ public:
   virtual void parse_from_stream(const read_callback_t fn)
   {
     uint32_t buffer_size = 1024*64;
-    char buff[buffer_size];
+    char* buff = new char[buffer_size];
     char* end = buff + buffer_size;
     bool continue_reading = true;
     uint32_t start_writting = 0;

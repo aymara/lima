@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 /** =========================================================================
     @file       linearTextRepresentationDumper.cpp
@@ -116,19 +102,19 @@ LimaStatusCode LinearTextRepresentationDumper::process(
 
     DUMPERLOGINIT;
     // get metadata    
-    LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
     // get the analysis graph    
-    AnalysisGraph* anaGraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+    auto anaGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
     if (anaGraph == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
     // get sentence boundaries    
-    SegmentationData* sb = dynamic_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
       LDEBUG << "LinearTextRepresentationDumper::process: no SentenceBounds available: ignored";
       // sentence bounds ignored: null pointer passed to LTRTextBuilder will be handled there
@@ -138,7 +124,7 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     LTRTextBuilder builder(m_language, m_stopList);
     builder.buildLTRTextFrom(
         *(anaGraph->getGraph()),
-        sb,
+        sb.get(),
         anaGraph->firstVertex(),
         anaGraph->lastVertex(),
         &textRep,
@@ -146,7 +132,7 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     // write LTR_Text
     LDEBUG << "handler will be: " << m_handler;
 //     MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
-    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+    auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
     if (handler == 0) {
       LERROR << "LinearTextRepresentationDumper::process: handler " << m_handler << " has not been given to the core client";

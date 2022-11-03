@@ -1,0 +1,50 @@
+ARG PYTHON_VERSION
+ARG QT_VERSION
+ARG MANYLINUX_TAG
+FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
+ARG MANYLINUX_TAG
+FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
+
+ARG GCC_VERSION
+ARG QT_VERSION
+ARG QT_VERSION_MAJOR
+ARG QT_FULL_VERSION
+ARG PYSIDE_VERSION
+ARG PYTHON_VERSION
+ARG PYTHON_SHORT_VERSION
+ARG PYTHON_FULL_VERSION
+
+COPY --from=aymara_manylinux_2_28_with_qt /opt /opt
+COPY --from=aymara_manylinux_2_28_with_qt /usr/local /usr/local
+ENV Qt_INSTALL_DIR=/opt/qt6
+
+ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
+
+RUN yum install -y wget gcc-toolset-10.x86_64 ninja-build libicu-devel.x86_64 \
+    clang.x86_64 python3-clang.x86_64 llvm-devel.x86_64 clang-devel.x86_64 libxml2-devel.x86_64 libxslt-devel.x86_64 \
+    python3-sphinx.noarch
+# RUN ln -s /usr/bin/uic-qt5 /usr/bin/uic && \
+#     ln -s /usr/bin/rcc-qt5 /usr/bin/rcc &&
+RUN    ln -s /usr/lib64/libclang.so.13 /usr/lib64/libclang.so.1
+ENV CC=/opt/rh/gcc-toolset-10/root/usr/bin/gcc \
+    CXX=/opt/rh/gcc-toolset-10/root/usr/bin/g++
+
+RUN python${PYTHON_VERSION} -m pip install scikit-build
+
+# Install PySide${QT_VERSION_MAJOR} and shiboken${QT_VERSION_MAJOR} from source as binary installs are broken
+# Done in /home/gael/Logiciels/
+WORKDIR /
+RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+WORKDIR /pyside-setup
+
+# Touch files needed for setup but not used in fact
+RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/ && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}m.a
+
+WORKDIR /pyside-setup
+RUN python${PYTHON_VERSION} setup.py install --build-type=all --limited-api=yes --qtpaths=/opt/qt6/bin/qtpaths \
+                        --ignore-git \
+                        --module-subset=Core
+
+WORKDIR /
+RUN rm -Rf /pyside-setup
+

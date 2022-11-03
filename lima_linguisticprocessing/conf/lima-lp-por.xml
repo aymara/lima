@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="Processors">
     <group name="include">
@@ -33,7 +40,7 @@
         <item value="dotGraphWriter"/>
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
@@ -82,7 +89,7 @@
         <item value="dotGraphWriter-beforepos"/>
         <!--item value="viterbiPostagger-freq"/-->
         <item value="sentenceBoundariesFinder"/>
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <item value="dotDepGraphWriter"/>
@@ -351,11 +358,6 @@
       </list>
       <list name="values" />
       <list name="forbid-values" />
-    </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
-      <param key="chainMatrix" value="chainMatrix"/>
-      <param key="maxChainsNbByVertex" value="30"/>
-      <param key="maxChainLength" value="12"/>
     </group>
     <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
     experimental module used to test if LIMA analysis works without nominal and

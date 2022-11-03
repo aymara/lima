@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article>
+  <title>Paramétrages pour le contrôle des mots composés</title>
+
+  <para>Suite à la demande de NP lors de la réunion du 30/03/2005, ce document
+  pésente les différents paramètres de configuration du système qui ont une
+  influence directe sur la production des mots composés et en particulier leur
+  taille. Ceci permettra à NP d'adapter sa configuration de l'analyse et de la
+  recherche aux besoins de ses clients.</para>
+
+  <variablelist>
+    <varlistentry>
+      <term>Ajouter / Supprimer des relations de dépendance à l'analyse</term>
+
+      <listitem>
+        <para>Dans le fichier de configuration S2-common-xxx.xml, le paramètre
+        "&lt;list name="CompoundsRels"&gt;" contient la liste des relations de
+        dépendance à suivre pour la construction des mots composés. Les
+        relations possibles sont celles des deux listes précédentes dans le
+        fichier : "NominalHomoSyntagmaticRelations" et
+        "VerbalHomoSyntagmaticRelations"</para>
+
+        <formalpara>
+          <title>Impact</title>
+
+          <para>Les mots composés trouvés lors de l'analyse du corpus ET lors
+          de l'analyse de la question ne seront plus les mêmes.</para>
+        </formalpara>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Limiter la taille des mots composés à l'indexation.</term>
+
+      <listitem>
+        <para>Les mots composés de plus de 80 octets sont ignorés, ceci est la
+        taille maximale du champ contenant les termes dans la base de
+        données.</para>
+
+        <para>Il est possible de limiter la taille des mots composés à
+        l'indexation à l'aide du paramète '--maxCompoundSize' du programme
+        testPerfWrite. Ainsi il est possible de ne pas indexer les mots
+        composés de plus de N mots simples.</para>
+
+        <formalpara>
+          <title>Impact</title>
+
+          <para>L'index ne contiendra aucun mot composé contenant plus de N
+          mots simples.</para>
+        </formalpara>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Limite la taille des mots composés à la l'analyse de la
+      requête</term>
+
+      <listitem>
+        <para>Dans le fichier de configuration S2-searchengine.xml, le
+        paramètre 'maxCompoundSize' permet de limiter la taille des mots
+        composés à l'analyse de la requête, cette taille est exprimée en
+        nombre de mots simples.</para>
+
+        <formalpara>
+          <title>Impact</title>
+
+          <para>Les mots composés issus de l'analyse de la requête sont
+          limités en taille, ce qui évite de reformuler des mots trop grands
+          offrant trop de possibilités de reformulation et dégradant les
+          performances de la requête.</para>
+        </formalpara>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+</article>

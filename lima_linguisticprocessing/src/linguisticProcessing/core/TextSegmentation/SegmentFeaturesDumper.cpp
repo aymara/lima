@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2012 by CEA LIST                              *
  *                                                                         *
@@ -114,7 +101,7 @@ LimaStatusCode SegmentFeaturesDumper::process(
   LOGINIT("LP::Segmentation");
   LDEBUG << "SegmentFeaturesDumper::process";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
@@ -130,13 +117,13 @@ LimaStatusCode SegmentFeaturesDumper::process(
 
   ostream& out=dstream->out();
 
-  AnalysisData* data=analysis.getData(m_data);
+  auto data=analysis.getData(m_data);
   if (data==0) {
     LERROR << "Error: no data '"<< m_data << "'";
     return MISSING_DATA;
   }
-  SegmentationData* segmData=static_cast<SegmentationData*>(data);
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(segmData->getGraphId()));
+  auto segmData = std::dynamic_pointer_cast<SegmentationData>(data);
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(segmData->getGraphId()));
 
   // ??OME2 LDEBUG << "SegmentationData " << m_data << " has " << segmData->size() << " segments";
   LDEBUG << "SegmentationData " << m_data << " has " << segmData->getSegments().size() << " segments";
@@ -153,7 +140,7 @@ LimaStatusCode SegmentFeaturesDumper::process(
       else {
         out << m_sep;
       }
-      string str=(*f)->getValue(graph,*s);
+      std::string str = (*f)->getValue(graph.get(), *s);
       boost::replace_all(str,m_sep,m_sepReplace);
       out << str;
     }

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief       Data used for Semantic Relation Annotation
   *
   * @file        SemanticRelationData.h
@@ -95,16 +82,14 @@ bool SemanticRelationData::addRelations(AnalysisContent& analysis)
 #ifdef DEBUG_LP
   SEMANTICANALYSISLOGINIT;
 #endif
-  auto annotationData = static_cast< AnnotationData* >(
-    analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   if (annotationData->dumpFunction("SemanticRelation") == 0)
   {
     annotationData->dumpFunction("SemanticRelation", 
                                  new DumpSemanticRelation());
   }
-  auto recoData=static_cast<RecognizerData*>(
-    analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
   for (auto i = m_relations.begin(); i != m_relations.end(); i++) 
   {

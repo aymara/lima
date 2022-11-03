@@ -1,0 +1,864 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="tva_simple.xsl"?>
+<testcases>
+<testcase id="eng.cpd.0" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The name of the president was Bush."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>On doit obtenir le compound (*name_president).</expl>
+  <test id="eng.cpd.0.1" trace=".compounds.xml"
+    comment="'name' est la tete de 'name_president' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part[@head='true']/word[@form='name'][@cat='L_NC']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.0.2" trace=".compounds.xml"
+    comment="'president' est l'extension de 'name_president' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part[@head='false']/word[@form='president'][@cat='L_NC']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.1" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The feathers of the beach parrot were strewn all over the place."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>GN : Sub de Sub Sub : on doit obtenir le compound (*feather_(*beach_parrot)).</expl>
+    <test id="eng.cpd.1.0.a" trace=".disambiguated.xml"
+    comment="'feathers' nom commun"
+    left="XPATH#//vertices/vertex[@position=5]/macro"
+    operator="contains"
+    right="L_NC"
+    conditional="yes"/>
+    <test id="eng.cpd.1.0.b" trace=".disambiguated.xml"
+    comment="'beach' nom commun"
+    left="XPATH#//vertices/vertex[@position=21]/macro"
+    operator="contains"
+    right="L_NC"
+    conditional="yes"/>
+    <test id="eng.cpd.1.0.c" trace=".disambiguated.xml"
+    comment="'parrot' nom commun"
+    left="XPATH#//vertices/vertex[@position=27]/macro"
+    operator="contains"
+    right="L_NC"
+    conditional="yes"/>
+  <test id="eng.cpd.1.1" trace=".compounds.xml"
+    comment="'parrot' est la tete de 'parrot_beach "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part/compound[@pos=21]/part[@head='true']/word[@form='parrot']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.1.2" trace=".compounds.xml"
+    comment="'beach' est l'extension de 'parrot_beach' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part/compound[@pos=21]/part[@head='false']/word[@form='beach']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.1.3" trace=".compounds.xml"
+    comment="'feather' est la tete de 'feather_(parrot_beach)' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part[@head='true']/word[@form='feather']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.1.4" trace=".compounds.xml"
+    comment="'parrot_beach' est l'extension de 'feather_(parrot_beach)' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=5]/part[@head='false']/compound[@form='parrot_beach']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.2" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The marsupilami is a mythical animal. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>GN :  Adj Sub : on reconnait le nom compose 'animal_mythical'</expl>
+  <test id="eng.cpd.2.1" trace=".compounds.xml"
+    comment="'animal' est la tete de 'animal_mythical' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=22][@form='animal_mythical']/part[@head='true']/word[@form='animal']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.2.2" trace=".compounds.xml"
+    comment="'mythical' est l'extension de 'animal_mythical' "
+    left="XPATH#//compounds_dump/sentence/compounds/compound[@pos=22]/part[@head='false']/word[@form='mythical']" 
+    operator="exists"
+    right="" />
+</testcase>
+ <testcase id="eng.cpd.3" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The 200 deaths of the airline accident have all been identified. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Det Adj Sub de Sub de Sub : on doit obtenir le compound (*death_200)(*accident_airline),
+  soit : deaths_200_accident_airline, deaths_200 | accident_airline, deaths_accident_airline, 200_deaths, accident_airline.</expl>
+  <test id="eng.cpd.3.1" trace=".compounds.xml"
+    comment="'death' est la tete de 'death_(accident_airline)' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@pos=5]/part[@head='true']/word[@form='death']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.3.2" trace=".compounds.xml"
+    comment="'accident_airline' est l'extension de 'death_(accident_airline)' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@pos=5]/part[@head='false']/compound[@form='accident_airline']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.3.3" trace=".compounds.xml"
+    comment="'death' est la tete de 'death_200' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@pos=5]/part[@head='true']/word[@form='death']" 
+    operator="exists"
+    right="" />
+</testcase>
+<!--testcase id="eng.cpd.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="It's a reflection of the division of the superpower camps with respect to ex-Yugoslavia. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Analyse de 'division of the superpower camps</expl>
+  <test id="eng.cpd.4.1" trace=".compounds.xml"
+    comment="'division' est la tête de 'division_camp_superpower'"
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@pos=26][@form='division_camp_superpower']/part[@head='true']/word[@form='division']"
+    operator="exists"
+    right="" />
+</testcase-->
+<testcase id="eng.cpd.4" type="bloquant">
+  <call-parameters>
+      <param key="text" value="It's a reflection of the incomprehension and the division of the superpower camps with respect to ex-Yugoslavia."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub et de Sub de Sub Adj Sub : reflection incomprehension, reflection division superpower camps, ex-Yugoslavia'</expl>
+  <test id="eng.cpd.4.1" trace=".compounds.xml"
+    comment="dépendance entre 'reflection_incomprehension' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='reflection_incomprehension']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.4.2" trace=".compounds.xml"
+    comment="dépendance entre 'camp_superpower' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[part[@head='true']/word[@form='camp']][part[@head='false']/word[@form='superpower']]" 
+    operator="exists"
+    right="" />
+  <!--test id="eng.cpd.4.3" trace=".compounds.xml"  
+    comment="dépendance entre 'division_camp' " Created but not testable
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='division_camp']" 
+    operator="exists"
+    right="" /-->
+   <test id="eng.cpd.4.4" trace=".compounds.xml"
+    comment="dépendance entre 'ex_Yugoslavia' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='Yugoslavia_ex']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.4.bis" type="pertinent">
+  <call-parameters>
+      <param key="text" value="It's a reflection of the incomprehension and the division of the superpower camps with respect to ex-Yugoslavia."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub et de Sub de Sub Adj Sub : reflection_division'</expl>
+   <test id="eng.cpd.4.5" trace=".compounds.xml"
+    comment="dépendance entre 'reflection_division' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='reflection_division']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.5" type="pertinent">
+  <call-parameters>
+      <param key="text" value="It's a reflection of the incomprehension and the division of the superpower camps with respect to ex-Yugoslavia. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>par rapport à ; Sub de Sub et de Sub de Sub Adj Sub par rapport à Sub : division_camp_superpower_Yugoslavia_ex'</expl>
+  <test id="eng.cpd.5.1" trace=".compounds.xml"
+    comment="dépendance entre 'camp_superpower_ex_Yugoslavia' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='division_camp_superpower_Yugoslavia_ex']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.6" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The small black cat is sneaky."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj  Adj Sub : cat_petit_noir</expl>
+  <test id="eng.cpd.6.1" trace=".compounds.xml"
+    comment="dépendance entre '(cat_small)_black)'"
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_small_black']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.7" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The cute greedy black cat is still very nice."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj Adj Adj Sub  : cat_cute, cat_cute_greedy, cat_cute_greedy_noir</expl>
+  <test id="eng.cpd.7.1" trace=".disambiguated.xml"
+    comment="'cute' adjectif"
+    left="XPATH#//vertices/vertex[@position=5]/macro" 
+    operator="="
+    right="L_ADJ" 
+    conditional="yes"/>
+  <test id="eng.cpd.7.2" trace=".disambiguated.xml"
+    comment="'greedy' adjectif"
+    left="XPATH#//vertices/vertex[@position=10]/macro" 
+    operator="="
+    right="L_ADJ" 
+    conditional="yes"/>
+  <test id="eng.cpd.7.3" trace=".compounds.xml"
+    comment="dépendance entre 'cat_cute_greedy_black' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_cute_greedy_black'][part[@head='true']/word[@form='cat']][part[@head='false']/word[@form='cute']][part[@head='false']/word[@form='greedy']][part[@head='false']/word[@form='black']]" 
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.cpd.8" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The very greedy black cat is very nice."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adv Adj Adj Sub  : cat_greedy_black</expl>
+  <test id="eng.cpd.8.1" trace=".disambiguated.xml"
+    comment="'tout' adverbe"
+    left="XPATH#//vertices/vertex[@position=5]/macro" 
+    operator="contains"
+    right="L_ADV"
+    conditional="yes"/>
+  <test id="eng.cpd.8.2" trace=".disambiguated.xml"
+    comment="'greedy' adjectif"
+    left="XPATH#//vertices/vertex[@position=10]/macro"
+    operator="contains"
+    right="L_ADJ"
+    conditional="yes"/>
+  <test id="eng.cpd.8.3" trace=".compounds.xml"
+    comment="dépendance entre 'cat_tout_greedy' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_greedy_black']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.cpd.11" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The cat is greedy."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub être (ou vb d'état) Adj_att : cat_greedy</expl>
+  <test id="eng.cpd.11.1" trace=".compounds.xml"
+    comment="dépendance entre 'cat_greedy' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_greedy']"
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.cpd.12" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The greedy cat is greedy."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj Sub être (ou vb d'état) Adj_att : (*(*cat_greedy)_greedy)</expl>
+  <test id="eng.cpd.12.1" trace=".compounds.xml"
+    comment="dépendance entre 'cat_greedy_greedy' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_greedy_greedy']" 
+    operator="exists"
+    right=""/>
+  <test id="eng.cpd.12.2" trace=".compounds.xml"
+    comment="dépendance entre 'cat_greedy' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cat_greedy']" 
+    operator="exists"
+    right=""/>
+</testcase>
+<testcase id="eng.cpd.13" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Np Np : Raymond Radiguet</expl>
+  <test id="eng.cpd.13.1" trace=".compounds.xml"
+    comment="dépendance entre 'writer Radiguet' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='Raymond_Radiguet_writer']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.14" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub Np Np : écrivain Raymond Radiguet</expl>
+  <test id="eng.cpd.14.1" trace=".compounds.xml"
+    comment="dépendance entre 'écrivain Raymond Radiguet' Attention, si Raymond_Radiguet est une entitée nommée alors écrivain_Raymond_Radiguet ne sera pas dumpé"
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='Raymond_Radiguet_writer']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.15" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a friend of the poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de sub : friend of the poet</expl>
+  <test id="eng.cpd.15.1" trace=".compounds.xml"
+    comment="dépendance entre 'compagnon poète' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_poet']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.16" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the famous poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Adj Sub : friend of famous poet</expl>
+  <test id="eng.cpd.16.1" trace=".disambiguated.xml"
+    comment="'famous' adjectif (friend_good)_(poet_famous)"
+    left="XPATH#//vertices/vertex[@position=54]/macro" 
+    operator="="
+    right="L_ADJ" 
+    conditional="yes"/>
+  <test id="eng.cpd.16.2" trace=".compounds.xml"
+    comment="dépendance entre 'poète_célèbre' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='poet_famous']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.16.3" trace=".compounds.xml"
+    comment="dépendance entre 'compagnon_poète_célèbre' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_good_poet_famous']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.17" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the famous poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Np Np : Jean Cocteau</expl>
+  <test id="eng.cpd.17.1" trace=".compounds.xml"
+    comment="dépendance entre 'Jean Cocteau' (cocteau_director)_jean -> cocteau_jean cree lors de l'indexation entre les deux tetes"
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='Jean_Cocteau_director']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.19" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the famous poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub du ...et Sub : friend_director_Jean_Cocteau, director_Jean_Cocteau</expl>
+  <test id="eng.cpd.19.1" trace=".compounds.xml"
+    comment="dépendance entre 'friend_director_Jean_Cocteau' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_cocteau_director_Jean']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.19.2" trace=".compounds.xml"
+    comment="dépendance entre 'director Jean Cocteau' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cocteau_director_Jean']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.20" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the famous poet and director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub du Sub en Sub Np Np : friend_director</expl>
+  <test id="eng.cpd.20.1" trace=".indexed.xml"
+    comment="la dépendance entre n'est pas présente 'friend_director' est présente lors de l'indexation, car pas de distributivité pour les Subs."
+    left="XPATH#//bowText//bowTerm[@lemma='friend_director']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.21" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a good friend of the poet and famous director Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+   <expl>Sub du Sub en Sub Np Np : friend_director_famous_Jean_Cocteau</expl>
+  <test id="eng.cpd.21.1" trace=".compounds.xml"
+    comment="dépendance entre 'friend_director_Jean_Cocteau' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_director_famous_Jean_Cocteau']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.22" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a friend of famous Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj Np Np : Jean_Cocteau_    famous</expl>
+  <test id="eng.cpd.22.1" trace=".compounds.xml"
+    comment="dépendance entre 'Jean_Cocteau_famous' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='Jean_Cocteau_famous']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.22.2" trace=".compounds.xml"
+    comment="dépendance entre 'friend_Jean_Cocteau_famous' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_Jean_Cocteau_famous']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.23" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a famous friend of Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj Sub : friend_famous</expl>
+  <test id="eng.cpd.23.1" trace=".compounds.xml"
+    comment="dépendance entre 'friend_famous' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_famous_Jean_Cocteau'][part[@head='true']/word[@form='friend']][part[@head='false']/word[@form='famous']]"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.24" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The writer Raymond Radiguet was a famous friend of Jean Cocteau."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Adj Sub de Np Np : friend_famous_Jean_Cocteau</expl>
+  <test id="eng.cpd.24.1" trace=".compounds.xml"
+    comment="dépendance entre 'friend_Jean_Cocteau' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='friend_famous_Jean_Cocteau']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.25.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" The monetary policiy has as objective to insure the internal stability of the national currency. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>stabilité interne de la currency nationale</expl>
+  <test id="eng.cpd.25.1" trace=".compounds.xml"
+    comment="dépendance entre 'stabilité_internal_currency_national' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='stability_internal_currency_national'][part[@head='true']/word[@form='stability']][part[@head='false']/word[@form='internal']][part[@head='false']/compound[@form='currency_national']]" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.25.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" The monetary policiy has as objective to insure the internal stability of the national currency. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>stabilité internal de la currency nationale : certains sous mots composés sont présents lors de l'indexation.</expl>
+  <test id="eng.cpd.25.4" trace=".indexed.xml"
+    comment="dépendance entre 'stability_currency' uniquement à l'indexation"
+    left="XPATH#//bowText//bowTerm[@lemma='stability_currency']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.25.5" trace=".indexed.xml"
+    comment="dépendance entre 'stability_currency_national'  "
+    left="XPATH#//bowText//bowTerm[@lemma='stability_currency_national']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.25.6" trace=".indexed.xml"
+    comment="dépendance entre 'stabilité_internal_currency' "
+    left="XPATH#//bowText//bowTerm[@lemma='stability_internal_currency']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.26.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" The World Association of Newspapers has violently condemend the repression of the liberty of expression and of the liberty of the press in Venezuela. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub et de Sub de Sub</expl>
+  <test id="eng.cpd.26.1" trace=".compounds.xml"
+    comment="dépendance entre 'liberty_expression' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='liberty_expression']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.26.2" trace=".compounds.xml"
+    comment="dépendance entre 'repression_liberty_expression' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='repression_liberty_expression']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.26.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value=" The World Association of Newspapers has violently condemend the repression of the liberty of expression and of the liberty of the press in Venezuela. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub et de Sub de Sub : les sous mots-composés sont présents lors de l'indexation.</expl>
+  <test id="eng.cpd.26.3" trace=".indexed.xml"
+    comment="dépendance entre 'press and Venezuela' "
+    left="XPATH#//bowText//bowTerm[@lemma='press_Venezuela']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.26.4" trace=".indexed.xml"
+    comment="dépendance entre 'liberty_press_Venezuela' "
+    left="XPATH#//bowText//bowTerm[@lemma='liberty_press_Venezuela']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.26.c" type="informatif">
+  <call-parameters>
+      <param key="text" value=" The World Association of Newspapers has violently condemend the repression of the liberty of expression and of the liberty of the press in Venezuela. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub et de Sub de Sub : les sous mots-composés sont présents lors de l'indexation.</expl>
+  <test id="eng.cpd.26.5" trace=".indexed.xml"
+    comment="dépendance entre 'repression_liberty_presse' n'existe pas car on gère pas la distributivité"
+    left="XPATH#//bowText//bowTerm[@lemma='repression_liberty_press']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.27.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="These rules apply to any physical or moral person."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub Adj coord. Adj</expl>
+  <test id="eng.cpd.27.1" trace=".compounds.xml"
+    comment="dépendance entre 'personne_moral' sort lors d'indexation "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='person_physical_moral'][part[@head='true']/word[@form='person']][part[@head='false']/word[@form='physical']][part[@head='false']/word[@form='moral']]" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.27.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value="These rules apply to any physical or moral person."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Le term 'person_moral' est créé à l'indexation</expl>
+  <test id="eng.cpd.27.3" trace=".indexed.xml"
+    comment="'personne_moral' est absent, il sort lors d'indexation "
+    left="XPATH#//bowText//bowTerm[@lemma='person_moral']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.28" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The repression against independent journalists and the impunity of thoses who exercise authority endangers the dynamics of democracy. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub contre Sub Adj</expl>
+  <test id="eng.cpd.28.1" trace=".compounds.xml"
+    comment="dépendance entre 'repression_journalist_independent' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='repression_journalist_independent']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.29" type="bloquant">
+  <call-parameters>
+      <param key="text" value="The repression against independent journalists and the impunity of thoses who exercise authority endangers the dynamics of democracy. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub Adj coord det Sub</expl>
+  <test id="eng.cpd.29.1" trace=".compounds.xml"
+    comment="absence dépendance entre 'journaliste_independent_impunity' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='journalist_independent_impunity']"
+    operator="notexists"
+    right="" />
+  <test id="eng.cpd.29.2" trace=".compounds.xml"
+    comment="absence dépendance entre 'journalist_impunity' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='journalist_impunity']"
+    operator="notexists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.30.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value="Modern problems relative to international currency and the new architecture of the international financial system; "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>currency_international, architecture_nouveau, système_financier, système_financier_international, architecture_système, architecture_nouveau_le_système_financier_international</expl>
+  <test id="eng.cpd.30.1" trace=".compounds.xml"
+    comment="dépendance entre 'currency_international' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='currency_international']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.30.2" trace=".compounds.xml"
+    comment="dépendance entre 'architecture_new_système_financial_international' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='architecture_new_system_international_financial'][part[@head='true']/word[@form='architecture']][part[@head='false']/word[@form='new']][part[@head='false']/compound[@form='system_international_financial']]" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.30.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value="Modern problems relative to international currency and the new architecture of the international financial system; "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>système_international, architecture_système_financial_international : lors de l'indexation.</expl>
+  <test id="eng.cpd.30.6" trace=".indexed.xml"
+    comment="dépendance entre 'architecture_system_finacial' "
+    left="XPATH#//bowText//bowTerm[@lemma='architecture_system_financial']"
+    operator="exists"
+    right="" />
+    <test id="eng.cpd.30.7" trace=".indexed.xml"
+    comment="dépendance entre 'system_international' "
+    left="XPATH#//bowText//bowTerm[@lemma='system_international']"
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.30.8" trace=".indexed.xml"
+    comment="dépendance entre 'architecture_system_international_financial' "
+    left="XPATH#//bowText//bowTerm[@lemma='architecture_system_international_financial']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.31" type="bloquant">
+  <call-parameters>
+      <param key="text" value="This allows the solidification of the balance of payments of TWC."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub de Sub</expl>
+  <test id="eng.cpd.31.1" trace=".compounds.xml"
+    comment="dépendance entre 'balance_payment' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='balance_payment_twc']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.31.2" trace=".compounds.xml"
+    comment="dépendance entre 'payment_twc' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='payment_twc']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.31.3" trace=".compounds.xml"
+    comment="dépendance entre 'solidification_balance_payment_twc' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='solidification_balance_payment_twc']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.31.b" type="pertinent">
+  <call-parameters>
+      <param key="text" value="This allows the solidification of the balance of payments of TWC."/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub de Sub : lors de l'indexation.</expl>
+  <test id="eng.cpd.31.4" trace=".indexed.xml"
+    comment="absence dépendance entre 'solidification_payment_twc' "
+    left="XPATH#//bowText//bowTerm[@lemma='solidification_payment_twc']"
+    operator="notexists"
+    right="" />
+  <test id="eng.cpd.31.5" trace=".indexed.xml"
+    comment="ABSENCE dépendance entre 'balance_payment', voir à l'indexation "
+    left="XPATH#//bowText//bowTerm[@lemma='balance_payment']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.32" type="informatif">
+  <call-parameters>
+      <param key="text" value="This allows in the long term a balance of payments with the TWC. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub de Sub de Sub de Sub</expl>
+  <test id="eng.cpd.32.1" trace=".indexed.xml"
+    comment="absence dépendance entre 'terme_balance' "
+    left="XPATH#//bowText//bowTerm[@lemma='term_balance']"
+    operator="notexists"
+    right="" />
+  <test id="eng.cpd.32.2" trace=".indexed.xml"
+    comment="dépendance entre 'balance_payment' "
+    left="XPATH#//bowText//bowTerm[@lemma='balance_payment']"
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.33" type="informatif">
+  <call-parameters>
+      <param key="text" value="Does the dsitributiciy of 'and' apply to a black and white cow ? "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>Sub Adj et Adj : non-distributivité du et.</expl>
+  <test id="eng.cpd.33.1" trace=".compounds.xml"
+    comment="dépendance entre 'cow_blanc "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cow_white']" 
+    operator="notexists"
+    right="" />
+  <test id="eng.cpd.33.2" trace=".compounds.xml"
+    comment="dépendance entre 'cow_black' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='cow_black']" 
+    operator="notexists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.34" type="pertinent">
+  <call-parameters>
+      <param key="text" value="The control of capital is assured by the conversion into national currency of the deposits in the UICM. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>confere ci-dessous</expl>
+  <test id="eng.cpd.34.1" trace=".compounds.xml"
+    comment="dépendance entre 'control_capital' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='control_capital']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.34.2" trace=".compounds.xml"
+    comment="dépendance entre 'currency_national' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='currency_national']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.34.3" trace=".compounds.xml"
+    comment="dépendance entre 'conversion_currency' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='conversion_currency_national']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.34.4" trace=".compounds.xml"
+    comment="dépendance entre 'conversion_currency_national_deposit' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='conversion_currency_national_deposit']" 
+    operator="exists"
+    right="" />
+  <test id="eng.cpd.34.5" trace=".compounds.xml"
+    comment="dépendance entre 'conversion_currency_national_dépôt' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='conversion_currency_national_deposit_uicm']" 
+    operator="exists"
+    right="" />
+</testcase>
+<testcase id="eng.cpd.35.a" type="bloquant">
+  <call-parameters>
+      <param key="text" value=" The World Association of Newspapers has violently condemend the repression of the liberty of expression and of the liberty of the press in Venezuela. "/>
+      <param key="language" value="eng"/>
+      <list key="pipelines">
+        <item value="query"/>
+        <item value="indexer"/>
+      </list>
+    </call-parameters>
+  <expl>World Association of Newspapers</expl>
+  <test id="eng.cpd.35.1" trace=".compounds.xml"
+    comment="dépendance entre 'association_world_newspaper' "
+    left="XPATH#//compounds_dump/sentence/compounds//compound[@form='association_world_newspaper'][part[@head='true']/word[@form='association']][part[@head='false']/word[@form='world']][part[@head='false']/word[@form='newspaper']]" 
+    operator="exists"
+    right="" />
+</testcase>
+</testcases>

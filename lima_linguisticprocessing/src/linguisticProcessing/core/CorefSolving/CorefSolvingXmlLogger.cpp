@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief      xml logger for coreferences 
   *
   * @file       CorefSolvingXmlLogger.cpp
@@ -96,7 +83,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime(); 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     COREFSOLVERLOGINIT;
@@ -110,19 +97,18 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   if (!out.good()) {
       throw runtime_error("can't open file " + outputFile);
   }
-   AnalysisGraph* /*anagraph=static_cast<AnalysisGraph*>(analysis.getData("SimpleGraph"));
-   if (anagraph==0)*/
-  
-    anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-    if (anagraph==0)
-    {
-        COREFSOLVERLOGINIT;
-        LERROR << "no PosGraph ! abort";
-        return MISSING_DATA;
-    }
+
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  if (anagraph==0)
+  {
+      COREFSOLVERLOGINIT;
+      LERROR << "no PosGraph ! abort";
+      return MISSING_DATA;
+  }
   
 
-  dump(out, anagraph,/* static_cast<SyntacticData*>(analysis.getData("SyntacticData")),*/ static_cast<AnnotationData*>(analysis.getData("AnnotationData")));
+  dump(out, anagraph.get(),/* static_cast<SyntacticData*>(analysis.getData("SyntacticData")),*/
+       std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData")).get());
   out.flush();
   out.close();  
   TimeUtils::logElapsedTime("CorefSolverXmlLogger");

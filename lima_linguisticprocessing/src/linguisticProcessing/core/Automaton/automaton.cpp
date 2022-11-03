@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
 *
 * File        : automaton.cpp
@@ -225,8 +212,11 @@ bool Automaton::existsEpsilonPathToFinal(const Tstate state) const {
 }
 
 void Automaton::initializeSearchStructures(MediaId language) {
+  std::cerr << "Automaton::initializeSearchStructure " << (void*)this << std::endl;
   const Common::PropertyCode::PropertyAccessor* macro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   const Common::PropertyCode::PropertyAccessor* micro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  std::cerr << "Automaton::initializeSearchStructure macro " << (void*)macro << std::endl;
+  std::cerr << "Automaton::initializeSearchStructure micro " << (void*)micro << std::endl;
   for (uint64_t i(0); i<m_numberStates; i++) {
     if (m_searchStructures[i]==0) {
       m_searchStructures[i]=new TransitionSearchStructure<Transition>();

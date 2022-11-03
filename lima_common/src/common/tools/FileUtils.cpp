@@ -1,21 +1,8 @@
-/*
-    Copyright 2015 CEA LIST
+// Copyright 2015 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  * @file       FileUtils.h
  * @author     Gael de Chalendar
@@ -154,27 +141,52 @@ void buildDirectoriesListForProject(QStringList& target,
 QStringList buildConfigurationDirectoriesList(const QStringList& projects,
                                               const QStringList& paths)
 {
-  //qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+  // qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
 
-  QString dataHome = getDataHome();
-
-  appendNonEmptyDirs(configDirs, QStringList(dataHome + "/lima/config/"));
-
+ // 1. Add the paths explicitly given
   appendNonEmptyDirs(configDirs, paths);
 
-  for (const auto& project: projects)
+  // 2. Add dirs from LIMA_CONF if no project is given
+  if (projects.empty())
   {
-    buildDirectoriesListForProject(configDirs, project, "_CONF", "/share/config/");
+    QString var = getEnvVar(QString::fromStdString("lima") + "_CONF");
+    if ( !var.isEmpty() )
+    {
+      configDirs << var.split(LIMA_PATH_SEPARATOR);
+    }
+  }
+  else
+  {
+    // 3. Add dirs from each PROJECT_CONF
+    for (const auto& project: projects)
+    {
+      QString var = getEnvVar(project.toUpper() + "_CONF");
+      if ( !var.isEmpty() )
+      {
+        configDirs << var.split(LIMA_PATH_SEPARATOR);
+      }
+    }
+  }
+  // 4. Add conf dir in XDG_DATA_HOME or ~/.local/share/ after LIMA_CONF but before /usr
+  QString dataHome = getDataHome();
+  appendNonEmptyDirs(configDirs, QStringList(dataHome + "/lima/config/"));
+
+  // 5. Then add the *_CONF for each given project and complete if necessary with *_DIST/… or /usr/…
+  if ( configDirs.isEmpty() )
+  {
+    for (const auto& project: projects)
+    {
+        appendFirstOrSecondForProject(configDirs, project, "/share/config/", "");
+    }
   }
 
-  // If current project is not lima, try to add a lima config dir for this project
-  if (!projects.contains("lima"))
+  QString var = getEnvVar(QString::fromStdString("LIMA_SHOW_CONFIG_PATH"));
+  if ( !var.isEmpty() )
   {
-    appendFirstOrSecondForProject(configDirs, QString("lima"), "_CONF", "/share/config/");
+    qDebug() << "LIMA Configuration directories list built is:" << configDirs;
   }
 
-  //qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 
@@ -202,18 +214,22 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects,
 
 QString findFileInPaths(const QString& paths, const QString& fileName, const QChar& separator)
 {
-  QStringList pathsList = paths.split(separator);
-  Q_FOREACH(QString path, pathsList)
+  auto pathsList = paths.split(separator);
+  auto filesList =fileName.split(separator);
+  for (const auto& path: pathsList)
   {
-    if (QFileInfo::exists(path + "/" + fileName))
+    for (const auto& file: filesList)
     {
-#ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+      if (QFileInfo::exists(path + "/" + file))
       {
-      LOGINIT("FilesReporting");
-      LDEBUG << "File found:" << path + "/" + fileName;
+  #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
+        {
+        LOGINIT("FilesReporting");
+        LDEBUG << "File found:" << path + "/" + file;
+        }
+  #endif
+        return path + "/" + file;
       }
-#endif
-      return path + "/" + fileName;
     }
   }
   LOGINIT("FilesReporting");

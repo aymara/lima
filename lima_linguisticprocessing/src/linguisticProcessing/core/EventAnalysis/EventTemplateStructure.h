@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplateStructure.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Thu Sep  1 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * Project     LIMA
- * 
- * @brief      structure of an event template (define the name and type of possible template elements)
- * 
- * 
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef EVENTTEMPLATESTRUCTURE_H
 #define EVENTTEMPLATESTRUCTURE_H

@@ -1,7 +1,8 @@
-/***************************************************************************
- *   Copyright (C) 2004-2012 by CEA LIST                              *
- *                                                                         *
- ***************************************************************************/
+// Copyright (C) 2004-2012 by CEA LIST                              *
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "XmlIEDumper.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 

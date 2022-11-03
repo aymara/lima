@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="entities">
     <group name="Person">
@@ -44,7 +51,7 @@
       <param key="useSentenceBounds" value="no"/>
     </group>
     <group name="PersonRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-person">
-      <param key="automaton" value="PersonCompRules"/>
+      <param key="automaton" value="PersonRules"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
       <param key="useSentenceBounds" value="no"/>
     </group>
@@ -62,9 +69,6 @@
   <module name="resources-eng">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-eng.bin"/>
-    </group>
-    <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-eng.bin"/>
     </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EMBEDED-eng.bin"/>
@@ -92,9 +96,6 @@
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-ud.bin"/>
     </group>
-    <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-ud.bin"/>
-    </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EMBEDED-ud.bin"/>
     </group>
@@ -120,9 +121,6 @@
   <module name="resources-ud-eng">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-ud-eng.bin"/>
-    </group>
-    <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-ud-eng.bin"/>
     </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EMBEDED-ud-eng.bin"/>
@@ -150,9 +148,6 @@
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-fre.bin"/>
     </group>
-    <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-fre.bin"/>
-    </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EMBEDED-fre.bin"/>
     </group>
@@ -178,9 +173,6 @@
   <module name="resources-por">
     <group name="PersonRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/PERSON-por.bin"/>
-    </group>
-    <group name="PersonCompRules" class="AutomatonRecognizer">
-      <param key="rules" value="SpecificEntities/PERSON_COMP-por.bin"/>
     </group>
     <group name="EmbededCompRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EMBEDED-por.bin"/>

@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_LIBS_NN_BIRNN_SEQ_CLASSIFIER_H
 #define DEEPLIMA_LIBS_NN_BIRNN_SEQ_CLASSIFIER_H
@@ -59,9 +45,10 @@ public:
                       const std::vector<embd_descr_t>& embd_descr,
                       const std::vector<rnn_descr_t>& rnn_descr,
                       const std::vector<std::string>& output_names,
-                      const std::vector<uint32_t>& classes)
+                      const std::vector<uint32_t>& classes,
+                      float input_dropout_prob)
     : StaticGraphImpl(dicts,
-                      generate_script(embd_descr, rnn_descr, output_names, classes)),
+                      generate_script(embd_descr, rnn_descr, output_names, classes, input_dropout_prob)),
       m_embd_descr(embd_descr)
   {
   }
@@ -160,7 +147,8 @@ protected:
   static std::string generate_script(const std::vector<embd_descr_t>& embd_descr,
                                      const std::vector<rnn_descr_t>& rnn_descr,
                                      const std::vector<std::string>& output_names,
-                                     const std::vector<uint32_t>& classes);
+                                     const std::vector<uint32_t>& classes,
+                                     float input_dropout_prob);
 
   std::vector<embd_descr_t> m_embd_descr;
 };

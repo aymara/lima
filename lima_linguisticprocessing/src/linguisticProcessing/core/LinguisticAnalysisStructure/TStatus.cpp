@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief          The status of a token found by Tokenizer for the use of
   *                 Morphologic Analysis modules
   *
@@ -338,11 +325,11 @@ const Lima::LimaString& TStatus::defaultKey() const {
 void TStatus::setDefaultKey(const Lima::LimaString& defaultKey) {
 #ifdef DEBUG_LP
   TOKENIZERLOGINIT;
-  LDEBUG << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey);
-  LDEBUG << "TStatus::setDefaultKey previous:" << ((m_d->_defaultKey.empty())?LimaString("EMPTY"):m_d->_defaultKey.back());
+  LTRACE << "TStatus::setDefaultKey to" << Common::Misc::limastring2utf8stdstring(defaultKey);
+  LTRACE << "TStatus::setDefaultKey previous:" << ((m_d->_defaultKey.empty())?LimaString("EMPTY"):m_d->_defaultKey.back());
   if (!m_d->_defaultKey.empty())
   {
-    LDEBUG << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back());
+    LTRACE << "TStatus::setDefaultKey previous:" << Common::Misc::limastring2utf8stdstring(m_d->_defaultKey.back());
   }
 #endif
   // do not push several times the same value

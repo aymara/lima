@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="entities">
     <group name="include">
@@ -34,9 +41,11 @@
         <item value="viterbiPostagger-int-none"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="compoundsXmlLogger"/>
       </list>
     </group>
     <group name="indexer" class="ProcessUnitPipeline">
@@ -58,9 +67,11 @@
         <item value="viterbiPostagger-freq"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="compoundsXmlLogger"/>
       </list>
     </group>
     <group name="limaserver" class="ProcessUnitPipeline" >
@@ -100,9 +111,11 @@
         <item value="viterbiPostagger-int-none"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalysisXmlLogger"/>
+        <item value="compoundBuilderFromSyntacticData"/>
+        <item value="compoundsXmlLogger"/>
       </list>
     </group>
     <group name="approxmatcher" class="ProcessUnitPipeline" >
@@ -231,7 +244,7 @@
         <item value="SENT"/>
       </list>
     </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
       <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>
@@ -251,6 +264,42 @@
       <param key="outputSuffix" value=".default.xml"/>
     </group>
     <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <map name="Macros2ConceptTypes">
+        <entry key="NONE_1" value="LatticeDown"/>
+        <entry key="DET" value="Determiner"/>
+        <entry key="PRON" value="Determiner"/>
+        <entry key="ADV" value="SemanticModifier"/>
+        <entry key="ADJ" value="Complementer"/>
+        <entry key="NC" value="Complementer"/>
+        <entry key="NP" value="Complementer"/>
+      </map>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <list name="CompoundsRels">
+        <item value="COMPADV"/>
+        <item value="ADJPRENSUB"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+
+        <!-- Uncomment relation names below if you want to build compounds
+        including verbs and verbal dependencies. To be used in conjuction with
+          the syntacticAnalyzerNoChains in mm-lp. -->
+            <!--item value="CodPrev"/>
+            <item value="SUJ_V"/>
+            <item value="COD_V"/>
+            <item value="CPL_V"/>
+            <item value="MOD_V"/>
+            <item value="ATB_S"/>
+            <item value="CoiPrev"/>
+            <item value="CPLV_V"/-->
+      </list>
     </group>
     <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
       <param key="outputSuffix" value=".tokenizer.xml"/>
@@ -342,6 +391,27 @@
         <entry key="PERSON" value="NP"/>
         <entry key="PRODUCT" value="NP"/>
         <entry key="EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="compoundsXmlLogger" class="CompoundsXmlLogger">
+      <param key="outputSuffix" value=".compounds.xml"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="false"/>
+      <param key="useEmptyMicro" value="false"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
       </map>
       <param key="properNounCategory" value="NP"/>
       <param key="commonNounCategory" value="NC"/>

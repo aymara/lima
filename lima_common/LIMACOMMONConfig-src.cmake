@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 # - Find LimaCommon
 
 set(LIMA_VERSION_MAJOR "3")

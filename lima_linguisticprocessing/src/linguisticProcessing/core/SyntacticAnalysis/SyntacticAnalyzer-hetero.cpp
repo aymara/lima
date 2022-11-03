@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
  * @brief      process unit to extract heterosyntagmatic dependency relations
  *
@@ -176,8 +163,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
   SAHLOGINIT;
   LINFO << "start heterosyntagmatic dependence relations search";
 
-  AnalysisGraph* posgraph=
-    static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
@@ -185,8 +171,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
   }
   LinguisticGraph* graph = posgraph->getGraph();
 
-  SegmentationData* sb=
-    static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -198,11 +183,10 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
     return INVALID_CONFIGURATION;
   }
 
-  SimplificationData* simplificationData =
-    static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
-    simplificationData=new SimplificationData(posgraph);
+    simplificationData = std::make_shared<SimplificationData>(posgraph.get());
     analysis.setData("SimplificationData",simplificationData);
   }
 
@@ -342,7 +326,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
 #endif
 
   // Initialisation
-  SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
     SAHLOGINIT;
@@ -350,7 +334,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::recopyCoordinationStrings(AnalysisCo
     return MISSING_DATA;
   }
   
-  SimplificationData* simplificationData = static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
     SAHLOGINIT;

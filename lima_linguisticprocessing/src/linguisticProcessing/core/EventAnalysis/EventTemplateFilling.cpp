@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateFilling.cpp
@@ -95,16 +82,23 @@ LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // create EventTemplateData
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LDEBUG << "EventTemplateFilling: create new data 'EventTemplateData'";
-    eventData = new EventTemplateData();
+    eventData = std::make_shared<EventTemplateData>();
     analysis.setData("EventTemplateData", eventData);
   }
 
+  // set a temporary template definition resource that can be accessed 
+  // by the actions called in the ApplyRecognizer
+  analysis.setData("EventTemplateFillingTemplateDefinition", new EventTemplateDefinitionData(m_templateDefinition));
+  
   LimaStatusCode returnCode=SUCCESS_ID;
   returnCode=ApplyRecognizer::process(analysis);
 
+  // remove temporary data
+  analysis.removeData("EventTemplateFillingTemplateDefinition");
+  
   TimeUtils::logElapsedTime("EventTemplateFilling");
   return returnCode;
 }

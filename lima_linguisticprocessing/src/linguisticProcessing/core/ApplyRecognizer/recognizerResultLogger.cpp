@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       recognizerResultLogger.cpp
@@ -81,7 +68,7 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
   APPRLOGINIT;
   LDEBUG << "RecognizerResultLogger: logging data "<< m_data;
   // get metadata (for filename)
-  LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
     APPRLOGINIT;
     LERROR << "no LinguisticMetaData ! abort";
@@ -112,13 +99,13 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
   }
 
  // get result data
-  AnalysisData* resultData=analysis.getData(m_data);
+  auto resultData = analysis.getData(m_data);
   if (resultData == 0) {
     APPRLOGINIT;
     LERROR << "no data " << m_data << "in AnalysisContent";
     return MISSING_DATA;
   }
-  RecognizerResultData* recoData=dynamic_cast<RecognizerResultData*>(resultData);
+  auto recoData = std::dynamic_pointer_cast<RecognizerResultData>(resultData);
   if (recoData == 0) {
     APPRLOGINIT;
     LERROR << "data " << m_data << "in AnalysisContent is not a RecognizerResultData";

@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2016 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2016 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMA_MISC_SINGLETON_H
 #define LIMA_MISC_SINGLETON_H
@@ -35,9 +21,9 @@ template<typename Object>
 class Singleton
 {
 public:
-  Singleton() {}
-  virtual ~Singleton() {}
-  
+  Singleton() = default;
+  virtual ~Singleton() = default;
+
   /**
     * @brief const singleton accessor
     */
@@ -52,9 +38,10 @@ public:
 
 
 private:
-  static std::unique_ptr< Object > s_instance;
+  Singleton(const Singleton<Object>&) = default;
+  Singleton& operator=(Singleton<Object>&) = default;
 
-  Singleton(const Singleton<Object>&) {}
+  static std::unique_ptr< Object > s_instance;
 };
 
 template<typename Object>
@@ -63,7 +50,7 @@ std::unique_ptr< Object > Singleton<Object>::s_instance(new Object());
 template<typename Object>
 const Object& Singleton<Object>::single()
 {
-  if (s_instance==0)
+  if (s_instance == nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -73,7 +60,7 @@ const Object& Singleton<Object>::single()
 template<typename Object>
 const Object* Singleton<Object>::psingle()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -83,7 +70,7 @@ const Object* Singleton<Object>::psingle()
 template<typename Object>
 Object& Singleton<Object>::changeable()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }
@@ -93,7 +80,7 @@ Object& Singleton<Object>::changeable()
 template<typename Object>
 Object* Singleton<Object>::pchangeable()
 {
-  if (s_instance==0)
+  if (s_instance==nullptr)
   {
     s_instance=std::unique_ptr< Object >(new Object());
   }

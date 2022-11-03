@@ -1,7 +1,7 @@
-/*
-    Copyright 2006-2016 CEA LIST
-    Author: Olivier Mesnard <olivier.mesnard@cea.fr>
-*/
+// Copyright 2006-2016 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 /**
  * This program is designed to test the LIMA document readers whose role is to dispatch

@@ -1,22 +1,7 @@
-/*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-*/
+// Copyright (C) <year>  <name of author>
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "analysisthread.h"
 
@@ -67,7 +52,9 @@ public:
 
   QString TokensToJson( const QString& str );
 
-  Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
+  void initMetaData(const QString& meta, std::map<std::string, std::string>& metaData);
+
+Lima::LinguisticProcessing::AbstractLinguisticProcessingClient* m_analyzer;
   QHttpRequest* m_request;
   // QHttpResponse* m_response;
   const std::set<std::string>& m_langs;
@@ -143,6 +130,27 @@ void AnalysisThread::run ()
 }
 
 
+void AnalysisThreadPrivate::initMetaData (const QString& meta, std::map<std::string, std::string>& metaData)
+{
+  // parse 'meta' argument to add metadata
+  if (!meta.isEmpty())
+  {
+    auto metas = meta.split(",");
+    for (const auto& aMeta: metas)
+    {
+      auto kv = aMeta.split(":");
+      if (kv.size() != 2)
+      {
+        std::cerr << "meta argument '"<< aMeta.toStdString() << "' is not of the form XXX:YYY: ignored" << std::endl;
+      }
+      else
+      {
+        metaData[kv[0].toStdString()] = kv[1].toStdString();
+      }
+    }
+  }
+}
+
 void AnalysisThread::startAnalysis()
 {
   LIMASERVERLOGINIT;
@@ -200,24 +208,7 @@ void AnalysisThread::startAnalysis()
     }
     if (item.first == "meta")
     {
-      QStringList metadataValues = item.second.split(",");
-      LDEBUG << "AnalysisThread::startAnalysis: meta=" << metadataValues;
-      for (const auto& metadataValue: metadataValues)
-      {
-        auto keyAndValue = metadataValue.split(":");
-        if (keyAndValue.size() != 2)
-        {
-          LIMASERVERLOGINIT;
-          LERROR << "meta argument '" << metadataValue
-                  << "' is not of the form XXX:YYY: ignored";
-        }
-        else
-        {
-          //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-          metaData.insert(std::make_pair(keyAndValue[0].toUtf8().constData(),
-                                         keyAndValue[1].toUtf8().constData()));
-        }
-      }
+      m_d->initMetaData(item.second, metaData);
     }
     if( (item.first == "text") & (m_d->m_request->methodString() == "HTTP_GET") )
     {

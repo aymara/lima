@@ -1,4 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <modulesConfig>
   <module name="entities">
     <group name="include">
@@ -47,7 +54,7 @@
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -204,7 +211,7 @@
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -278,7 +285,7 @@
         <item value="viterbiPostagger-freq"/>
         <item value="dotGraphWriter"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="dotDepGraphWriter"/>
@@ -319,7 +326,7 @@
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="sentenceBoundariesFinder"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -365,7 +372,7 @@
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="sentenceBoundariesFinder"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -400,7 +407,7 @@
         <item value="SpecificEntitiesModex"/>
         <item value="@PosTagger@"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -670,12 +677,6 @@
       <list name="values" />
       <list name="forbid-values" />
     </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
-      <param key="chainMatrix" value="chainMatrix"/>
-      <param key="disambiguated" value="true"/>
-      <param key="maxChainsNbByVertex" value="30"/>
-      <param key="maxChainLength" value="12"/>
-    </group>
     <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
     experimental module used to test if LIMA analysis works without nominal and
     verbal. It allows also to build compounds using verbs and heterosyntagmatic
@@ -718,6 +719,44 @@
     </group>
     <group name="tagFusionLoader" class="ExampleLoader">
       <param key="inputFile" value="..."/>
+    </group>
+    <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <map name="Macros2ConceptTypes">
+        <entry key="NONE_1" value="LatticeDown"/>
+        <entry key="DET" value="Determiner"/>
+        <entry key="PRON" value="Determiner"/>
+        <entry key="ADV" value="SemanticModifier"/>
+        <entry key="ADJ" value="Complementer"/>
+        <entry key="NC" value="Complementer"/>
+        <entry key="NP" value="Complementer"/>
+      </map>
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+      <list name="CompoundsRels">
+        <item value="COMPADV"/>
+        <item value="ADJPRENSUB"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+
+        <!-- Uncomment relation names below if you want to build compounds
+        including verbs and verbal dependencies. To be used in conjuction with
+          the syntacticAnalyzerNoChains in mm-lp. -->
+            <!--item value="CodPrev"/>
+            <item value="SUJ_V"/>
+            <item value="COD_V"/>
+            <item value="CPL_V"/>
+            <item value="MOD_V"/>
+            <item value="ATB_S"/>
+            <item value="CoiPrev"/>
+            <item value="CPLV_V"/-->
+      </list>
     </group>
 
 <!-- ******************************************

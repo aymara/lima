@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       NormalizeDateTime.cpp
@@ -137,13 +124,13 @@ getReferenceDate(const AnalysisContent& analysis,
                  QDate& date) const
 {
   // get posix time from current text metadata
-  const AnalysisData* data=analysis.getData("LinguisticMetaData");
+  auto data = analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
     LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
-  const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
+  auto metadata = std::dynamic_pointer_cast<const LinguisticMetaData>(data);
 
   date=metadata->getDate(m_dateRefName);
 #ifdef DEBUG_LP
@@ -171,13 +158,13 @@ getReferenceTime(const AnalysisContent& analysis,
                  QTime& time) const
 {
   // get posix time from current text metadata
-  const AnalysisData* data=analysis.getData("LinguisticMetaData");
+  auto data = analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
     LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
-  const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
+  auto metadata = std::dynamic_pointer_cast<const LinguisticMetaData>(data);
 
   time=metadata->getTime(m_timeRefName);
   return (time.isValid());
@@ -188,13 +175,13 @@ getReferenceLocation(const AnalysisContent& analysis,
                      std::string& location) const
 {
   // get posix time from current text metadata
-  const AnalysisData* data=analysis.getData("LinguisticMetaData");
+  auto data = analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
     LERROR << "missing data 'LinguisticMetaData'";
     return false;
   }
-  const LinguisticMetaData* metadata=dynamic_cast<const LinguisticMetaData*>(data);
+  auto metadata = std::dynamic_pointer_cast<const LinguisticMetaData>(data);
 
   location=metadata->getLocation(m_locRefName);
   return (! location.empty());
@@ -280,15 +267,15 @@ updateCurrentDate(AnalysisContent& analysis,
                   const QDate& currentDate) const
 {
   // get metadata to update
-  AnalysisData* data=analysis.getData("LinguisticMetaData");
+  auto data = analysis.getData("LinguisticMetaData");
   if (data == 0) {
     SELOGINIT;
     LERROR << "missing data 'LinguisticMetaData'";
     return;
   }
-  LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(data);
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(data);
 
-  metadata->setDate("current",currentDate);
+  metadata->setDate("current", currentDate);
 }
 
 unsigned short NormalizeDate::getDayFromString(const LimaString& numdayString) const

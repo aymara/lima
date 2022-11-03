@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2008 by CEA LIST                              *
  *                                                                         *
@@ -74,11 +61,11 @@ namespace Lima
       {
 //         COREFSOLVERLOGINIT;
         TimeUtils::updateCurrentTime();
-        AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-        const LinguisticAnalysisStructure::AnalysisGraph& graph = *(static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph)));
+        auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+        const auto& graph = *(std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph)));
 
 //         LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
-        LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+        auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
         if (metadata == 0)
         {
           COREFSOLVERLOGINIT;

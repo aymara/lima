@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
 <list>
 <E id="E12"> L'héroïsme est chose ordinaire à nos communes picardes. </E>
 <E id="E13"> Les femmes marchaient au combat au même rang que les hommes. </E>

@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QRegularExpression>
@@ -39,6 +25,8 @@
 #include "RnnTokenizer.h"
 
 #include "deeplima/segmentation.h"
+
+
 
 #define DEBUG_THIS_FILE true
 
@@ -165,11 +153,12 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   LinguisticGraph* graph=anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
 
   // Execute model on the text
   vector< vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
   m_d->tokenize(*originalText, sentencesTokens);
+    LOG_MESSAGE(LDEBUG, "      Number of token '" << sentencesTokens.size() << "'");
 
   // Insert the tokens in the graph and create sentence limits
   SegmentationData* sb = new SegmentationData("AnalysisGraph");
@@ -342,8 +331,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitive
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
+      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk || tok.m_len == strlen(tok.m_pch)-1)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();

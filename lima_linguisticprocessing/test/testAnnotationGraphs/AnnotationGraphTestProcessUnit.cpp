@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   *
   * @file        annotationGraphTestProcessUnit.cpp
@@ -76,27 +63,27 @@ LimaStatusCode AnnotationGraphTestProcessUnit::process(
   SALOGINIT;
   LINFO << "start AnnotationGraphTestProcessUnit";
   // create syntacticData
-  if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))==0)
+  if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   
   /** Creation of an annotation graph if necessary*/
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     annotationData=new AnnotationData();
     /** Creates a node in the annotation graph for each node of the 
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
     }
     
     analysis.setData("AnnotationData",annotationData);

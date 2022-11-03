@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2010 by CEA LIST                              *
  *                                                                         *
@@ -299,35 +286,35 @@ process(AnalysisContent& analysis) const
   DUMPERLOGINIT;
   LDEBUG << "GenericXmlDumper::process";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";
     return MISSING_DATA;
   }
 
-  SyntacticData* syntacticData = 0;
+  std::shared_ptr<SyntacticData> syntacticData;
   if(m_outputCompounds) {
-    syntacticData=static_cast< SyntacticData* >(analysis.getData("SyntacticData"));
+    syntacticData = std::dynamic_pointer_cast< SyntacticData >(analysis.getData("SyntacticData"));
     if (annotationData==0)
     {
       LWARN << "compounds are supposed to be printed in output but no syntactic data available !";
@@ -335,7 +322,7 @@ process(AnalysisContent& analysis) const
   }
 
   auto dstream = initialize(analysis);
-  xmlOutput(dstream->out(), analysis, anagraph, posgraph, annotationData,syntacticData);
+  xmlOutput(dstream->out(), analysis, anagraph.get(), posgraph.get(), annotationData.get(), syntacticData.get());
   
 
   TimeUtils::logElapsedTime("GenericXmlDumper");
@@ -354,13 +341,13 @@ xmlOutput(std::ostream& out,
 
   out << "<text>" << endl;
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
 
   const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);
 
-  SegmentationData* sb(0);
+  std::shared_ptr<SegmentationData> sb;
   if (m_outputSentenceBoundaries) {
-    sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb==0) {
       LWARN << "GenericXmlDumper:: no SentenceBoundaries";
     }

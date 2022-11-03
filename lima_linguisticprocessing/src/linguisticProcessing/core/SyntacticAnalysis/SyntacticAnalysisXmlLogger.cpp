@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief       Debug logger for dependency graphs
   *
   * @file        SyntacticAnalysisXmlLogger.cpp
@@ -82,7 +69,7 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
 {
   TimeUtils::updateCurrentTime();
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -101,20 +88,20 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
 
   SALOGINIT;
 
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<const SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
     LERROR << "no SyntacticData ! abort";
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no SentenceBounds ! abort";
@@ -139,8 +126,8 @@ LimaStatusCode SyntacticAnalysisXmlLogger::process(
     dumpLimaData(outputStream,
                   beginSentence,
                   endSentence,
-                  anagraph,
-                  syntacticData);
+                  anagraph.get(),
+                  syntacticData.get());
 
     sbItr++;
   }

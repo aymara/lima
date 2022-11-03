@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventXmlLogger.cpp
@@ -83,35 +70,35 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
   ostream& out=dstream->out();
 
   if (! m_eventData.empty()) {
-    const AnalysisData* data =analysis.getData(m_eventData);
+    auto data = analysis.getData(m_eventData);
     if (data!=0) {
       // see if the data is of type Events
-      const Events* events=dynamic_cast<const Events*>(data);
+      auto events = std::dynamic_pointer_cast<const Events>(data);
       if (events!=0) {
         LDEBUG << "data '" << m_eventData << "' is of type Events";
-        outputEvents(out, events);
+        outputEvents(out, events.get());
       }
       else {
         // see if the data is of type EventData
-        const EventData* eventData=dynamic_cast<const EventData*>(data);
+        auto eventData = std::dynamic_pointer_cast<const EventData>(data);
         if (eventData!=0) {
           LDEBUG << "data '" << m_eventData << "' is of type EventData";
-          outputEventData(out, eventData);
+          outputEventData(out, eventData.get());
         }
         else {
           // see if data is of type EventTemplateData
-          const EventTemplateData* eventTemplateData=dynamic_cast<const EventTemplateData*>(data);
+          auto eventTemplateData = std::dynamic_pointer_cast<const EventTemplateData>(data);
           if (eventTemplateData!=0) {
             LDEBUG << "data '" << m_eventData << "' is of type EventTemplateData";
             // output it converted to Events (need annotation data)
-            const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+            auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
             if (annotationData==0)
             {
               LERROR << "no annotation graph available !";
               return MISSING_DATA;
             }
 
-            outputEvents(out, eventTemplateData->convertToEvents(annotationData));
+            outputEvents(out, eventTemplateData->convertToEvents(annotationData.get()));
           }
           else {
             LOGINIT("LP::EventAnalysis");

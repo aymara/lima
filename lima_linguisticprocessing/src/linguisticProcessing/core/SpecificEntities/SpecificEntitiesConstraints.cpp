@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
@@ -117,8 +104,8 @@ bool isASpecificEntity::operator()(const LinguisticAnalysisStructure::AnalysisGr
                                    const LinguisticGraphVertex& v,
                                    AnalysisContent& analysis) const
 {
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == 0)
   {
     return false;
@@ -173,7 +160,6 @@ m_language(language)
 #ifdef DEBUG_LP
   SELOGINIT;
 #endif
-  m_sp=&(Common::MediaticData::MediaticData::changeable().stringsPool(language));
 
   LimaString str=complement; // copy for easier parse (modify)
   LimaString sep=Common::Misc::utf8stdstring2limastring(",");
@@ -242,9 +228,9 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
 
 //     LDEBUG << "CreateSpecificEntity action between " << v1 << " and " << v2
 //         << " with complement " << m_complement;
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     return false;
@@ -279,13 +265,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     annotationData->dumpFunction("SpecificEntity", new DumpSpecificEntityAnnotation());
   }
 
-  AnalysisData* rdata=analysis.getData("RecognizerData");
-  if (rdata==0)  {
+  auto rdata = analysis.getData("RecognizerData");
+  if (rdata == 0)  {
     SELOGINIT;
     LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
     return false;
   }
-  RecognizerData* recoData=static_cast<RecognizerData*>(rdata);
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(rdata);
   if (recoData==0) {
     SELOGINIT;
     LERROR << "CreateSpecificEntity: missing data RecognizerData: entity will not be created";
@@ -296,7 +282,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
 //   LDEBUG << "    match is " << match;
 
 //   LDEBUG << "    Creating annotation ";
-  SpecificEntityAnnotation annot(match,*m_sp);
+  SpecificEntityAnnotation annot(match, Common::MediaticData::MediaticData::changeable().stringsPool(m_language));
   std::ostringstream oss;
   annot.dump(oss);
 #ifdef DEBUG_LP
@@ -393,7 +379,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
   }
 
-  const FsaStringsPool& sp=*m_sp;
+  auto& sp = Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
   Token* newToken = new Token(
       seFlex,
       sp[seFlex],
@@ -796,7 +782,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
@@ -867,7 +853,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
 
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "SetEntityFeature:: Error: missing RecognizerData";
@@ -983,7 +969,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& /* unused graph */,
   LDEBUG << "AddEntityFeatureAsEntity::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeatureAsEntity:: Error: missing RecognizerData";
@@ -1042,7 +1028,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "AddEntityFeature::(feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeature:: Error: missing RecognizerData";
@@ -1113,7 +1099,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
 
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AddEntityFeature:: Error: missing RecognizerData";
@@ -1257,7 +1243,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   LDEBUG << "AppendEntityFeature::() feature:" << m_featureName << ", vertex:" << vertex << ")";
 #endif
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     SELOGINIT;
     LERROR << "AppendEntityFeature::() Error: missing RecognizerData";
@@ -1352,7 +1338,7 @@ bool ClearEntityFeatures::
 operator()(AnalysisContent& analysis) const
 {
   // get RecognizerData: the data in which the features are stored
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData!=0) {
     recoData->clearEntityFeatures();
   }
@@ -1371,7 +1357,7 @@ bool NormalizeEntity::
 operator()(Automaton::RecognizerMatch& match, AnalysisContent& analysis) const
 {
   // get stored features in recognizerData
-  auto recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == nullptr) {
     SELOGINIT;
     LERROR << "NormalizeEntity:: Error: missing RecognizerData";

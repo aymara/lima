@@ -1,19 +1,7 @@
 # Copyright 2021 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-# This file is part of LIMA.
-#
-# LIMA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# LIMA is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with LIMA.  If not, see <https://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 set(SOURCE_LIST
   convert_from_torch.cpp
@@ -29,6 +17,9 @@ add_library(convert_from_torch
   ${SOURCE_LIST}
   ${HEADER_LIST}
 )
+target_compile_definitions(convert_from_torch
+        PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
+    )
 
 target_link_libraries(convert_from_torch
   PRIVATE
@@ -44,6 +35,9 @@ if (NOT DEEPLIMA_STANDALONE)
     ${SOURCE_LIST}
     ${HEADER_LIST}
   )
+  target_compile_definitions(convert_from_torch-shared
+        PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
+    )
 
   target_link_libraries(convert_from_torch-shared
     PRIVATE
@@ -52,9 +46,9 @@ if (NOT DEEPLIMA_STANDALONE)
     model_lemmatization
     ${TORCH_LIBRARIES}
   )
-
+  ADD_DLL_TO_PATH(convert_from_torch-shared)
   install(TARGETS convert_from_torch-shared
-    DESTINATION lib
+    DESTINATION ${LIB_INSTALL_DIR}
     COMPONENT runtime
   )
 endif()

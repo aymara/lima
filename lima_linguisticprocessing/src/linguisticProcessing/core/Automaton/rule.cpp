@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
 *
 * File        : rule.cpp
@@ -348,7 +335,7 @@ ostream& operator << (ostream& os, const Rule& r) {
   os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << endl;
   os << "left=" << endl << r.leftAutomaton();
   os << "right=" << endl << r.rightAutomaton();
-  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties().toString() << endl;
+  os << "entityType:" << r.getType() << "; lingPropeties:" << r.getLinguisticProperties().toString() << endl;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << endl;
@@ -364,7 +351,7 @@ QDebug& operator << (QDebug& os, const Rule& r) {
   os << "trigger=" << *(r.getTrigger()) << "(w=" << (r.getWeight())<< "):" << QTENDL;
   os << "left=" << QTENDL << r.leftAutomaton();
   os << "right=" << QTENDL << r.rightAutomaton();
-  os << "entityType:" << r.getType()<< ";" << "lingPropeties:" << r.getLinguisticProperties() << QTENDL;
+  os << "entityType:" << r.getType() << "; lingPropeties:" << r.getLinguisticProperties() << QTENDL;
   for (std::vector<Constraint>::const_iterator action=r.m_actions.begin();
     action!=r.m_actions.end(); action++) {
     os << *action << QTENDL;

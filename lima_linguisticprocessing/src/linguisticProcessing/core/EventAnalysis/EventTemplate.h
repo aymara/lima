@@ -1,15 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplate.h
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Thu Sep  1 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * Project     LIMA
- *
- * @brief      template for event representation
- *
- *
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef EVENTTEMPLATE_H
 #define EVENTTEMPLATE_H
@@ -24,6 +16,7 @@ namespace LinguisticProcessing {
 namespace EventAnalysis {
 
 typedef std::string EventRole;
+typedef std::multimap<std::string,EventTemplateElement> TemplateElements;
 
 class LIMA_EVENTANALISYS_EXPORT EventTemplate
 {
@@ -32,15 +25,16 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplate
   EventTemplate(const std::string&);
   ~EventTemplate();
 
-  void addElement(const std::string& role, const EventTemplateElement& elt);
+  void setTemplateElements(const TemplateElements& elts);
+  void addElement(const std::string& role, const EventTemplateElement& elt, unsigned int cardinality);
   void setWeight(double w) { m_weight=w; }
   void setType(const std::string type) { m_type=type; }
   void setMain(bool isMainEvent) { m_mainEvent=isMainEvent; }
   void clear();
 
   const EventTemplateElement& getElement(const std::string& role) const;
-  const std::map<std::string,EventTemplateElement>& getTemplateElements() const { return m_template; }
-  std::map<std::string,EventTemplateElement>& getTemplateElements() { return m_template; }
+  const TemplateElements& getTemplateElements() const { return m_template; }
+  TemplateElements& getTemplateElements() { return m_template; }
   double getWeight() const { return m_weight; }
   const std::string getType() const { return m_type; }
   bool isMainEvent() const { return m_mainEvent; }
@@ -51,7 +45,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplate
   LIMA_EVENTANALISYS_EXPORT  friend QDebug& operator<<(QDebug& os, const EventTemplate& e);
 
  private:
-  std::map<std::string,EventTemplateElement> m_template;
+  TemplateElements m_template;
   double m_weight;
   bool m_mainEvent;
   std::string m_type;

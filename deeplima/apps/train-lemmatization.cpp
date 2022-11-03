@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <iomanip>
@@ -58,6 +44,9 @@ int main(int argc, char* argv[])
   ("dev,d",             po::value<string>(&params.m_dev_set_fn),              "File with evaluation data")
   ("maxepoch,m",        po::value<size_t>(&params.m_max_epochs),              "Max epochs")
   ("enc-hidden-dim",    po::value<size_t>(&params.m_encoder_rnn_hidden_dim),  "Encoder RNN hidden dim")
+  ("enc-embd-dim",      po::value<size_t>(&params.m_encoder_embd_dim),        "Encoder character embedding dim")
+  ("dec-hidden-dim",    po::value<size_t>(&params.m_decoder_rnn_hidden_dim),  "Decoder RNN hidden dim")
+  ("dec-embd-dim",      po::value<size_t>(&params.m_decoder_embd_dim),        "Decoder character embedding dim")
   ("device",            po::value<string>(&params.m_device_string),           "Computing device: (cpu|cuda)[:<device-index>]")
   ("tag",               po::value<vector<string>>(&m_raw_tags),               "Tags (plain text)")
   ;

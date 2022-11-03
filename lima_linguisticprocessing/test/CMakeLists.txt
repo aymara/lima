@@ -1,22 +1,10 @@
-#   Copyright 2002-2020 CEA LIST
+# Copyright 2002-2020 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 include_directories($ENV{LIMA_EXTERNALS}}/include)
-add_subdirectory(testAnnotationGraphs)
+#add_subdirectory(testAnnotationGraphs)
 add_subdirectory(perlTCPClientServer)
 if (QHTTPSERVER_FOUND)
   add_subdirectory(limaServer)
@@ -58,7 +46,8 @@ target_link_libraries(limasimple-analyze
   Boost::program_options
 )
 
-install(TARGETS limasimple-analyze DESTINATION bin
+install(TARGETS limasimple-analyze
+  DESTINATION bin
   COMPONENT runtime)
 
 ########### next target ###############
@@ -177,7 +166,9 @@ target_link_libraries(analyzeXml
 )
 
 
-install(TARGETS analyzeXml DESTINATION bin)
+install(TARGETS analyzeXml
+  DESTINATION bin
+  COMPONENT runtime)
 
 
 ########### next target ###############
@@ -231,8 +222,78 @@ target_link_libraries(readMultFile
   ${Boost_LIBRARIES}
 )
 
-install(TARGETS readMultFile DESTINATION bin)
+install(TARGETS readMultFile
+  DESTINATION bin
+  COMPONENT runtime)
 
 add_subdirectory(convertMultXmlToMultBin)
 
 ########### install files ###############
+
+
+
+set(test_lima_sources lima.cpp )
+add_executable(test_lima ${test_lima_sources})
+target_link_libraries(test_lima
+  lima-lp-linguisticprocessing-core
+  lima-lp-bagofwords
+  lima-lp-eventanalyzer
+  lima-lp-linguisticprocessing-core
+  lima-lp-bagofwords
+  lima-lp-eventanalyzer
+  lima-common-datahandler
+  lima-common-data
+  lima-common-factory
+  lima-common-fsaaccess
+  lima-common-mediaticdata
+  lima-common-processunitframework
+  lima-common
+  lima-common-tools
+  lima-common-xmlconfigurationfiles
+  lima-linguisticprocessing
+  lima-lp-analysisdict
+  lima-lp-analysisdumpers
+  lima-lp-analysishandlers
+  lima-lp-applyrecognizer
+  lima-lp-automatoncompiler
+  lima-lp-automaton
+  lima-lp-bagofwords
+  lima-lp-client
+  lima-lp-compounds
+  lima-lp-conllureader
+  lima-lp-corefsolver
+  lima-lp-dictionary
+  lima-lp-entitytracker
+  lima-lp-eventanalyzer
+  lima-lp-flattokenizer
+  lima-lp-helpers
+  lima-lp-langdetector
+  lima-lp-lineartextrepresentation
+  lima-lp-linguisticanalysisstructure
+  lima-lp-linguisticdata
+  lima-lp-linguisticprocessing-core
+  lima-lp-linguisticresources
+  lima-lp-morphologicanalysis
+  lima-lp-postagger
+  lima-lp-propertycode
+  lima-lp-regexmatcher
+  lima-lp-se-datetime
+  lima-lp-semanticanalysis
+  lima-lp-se-number
+  lima-lp-se-person
+  lima-lp-specificentities
+  lima-lp-syntacticanalysis
+  lima-lp-textsegmentation
+  lima-lp-tgv
+  lima-lp-wordsensetagger
+  lima-xp-client
+  lima-xp-core
+  lima-xp-documentsreader
+  lima-xp-qtsgmlentities
+  Qt::Core
+)
+
+install(TARGETS test_lima
+  DESTINATION bin
+  COMPONENT runtime)
+

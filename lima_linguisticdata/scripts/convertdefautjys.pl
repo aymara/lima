@@ -1,27 +1,16 @@
 #!/usr/bin/perl -s
-#   Copyright 2002-2013 CEA LIST
-#    
-#   This file is part of LIMA.
+
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
 
 ###############################################
-# Programme de conversion de cat�ories :
-#convertit dicostd en dicojys (codage multiplicatif des donn�s)
+# Programme de conversion de catï¿œories :
+#convertit dicostd en dicojys (codage multiplicatif des donnï¿œs)
 ###############################################
 
-print STDERR ("INFO : Debut du traitement conversion des categories par d�faut\n");
+print STDERR ("INFO : Debut du traitement conversion des categories par défaut\n");
 
 open(SOURCE,"$ARGV[0]") || die("Impossible d'ouvrir le fichier $ARGV[0]\n");
 open(CIBLE,">$ARGV[1]") || die("Impossible d'ouvrir le fichier $ARGV[1]\n");
@@ -32,7 +21,7 @@ open(ERROR,">>error.txt") || die("Impossible d'ouvrir le fichier error.txt\n");
 # Initialisation du fichier d'erreur
 # Fin d'initialisation du fichier d'erreur
 
-#chargement dans une table des cat�ories et de leurs correspondances
+#chargement dans une table des catï¿œories et de leurs correspondances
 %tags;
 while (<CONVERT>) {
 	@donneestags = split(/;/);
@@ -52,7 +41,7 @@ while (<SOURCE>) {
 	
 # Codage des categories
 
-	#Fin du codage des cat�ories
+	#Fin du codage des catï¿œories
 
 	if ($tags{$info} ne "") {
 		print CIBLE ("$type	$tags{$info}\n");

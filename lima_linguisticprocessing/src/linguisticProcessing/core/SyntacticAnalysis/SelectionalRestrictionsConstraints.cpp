@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
 * @brief       this file contains the definitions of several constraint
 *              functions for the disambiguation of dependencies based on
@@ -97,7 +84,7 @@ bool StoreForDisambiguation::operator()(
 /*
   Critical Function : comment logging messages
 */
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
     v2 == graph.firstVertex() || v2 == graph.lastVertex() )
@@ -151,7 +138,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   SAPLOGINIT;
   LDEBUG << "DisambiguateWith " << v1 << ", " << v2;
 #endif
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   SyntacticData::Relation oldRelation = syntacticData->relationStoredForSelectionalConstraint();
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
 
@@ -166,7 +153,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   // dummy implementation:
   //   get old target (noun), get old target COD target (verb), get current node
   //   get current det source of detsub if any
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     SAPLOGINIT;

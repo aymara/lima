@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateDataDumper.cpp
@@ -88,7 +75,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
   auto dstream=AbstractTextualAnalysisDumper::initialize(analysis);
   ostream& out=dstream->out();
 
-  const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  const auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";
@@ -96,17 +83,17 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
   }
 
   if (! m_eventData.empty()) {
-    const AnalysisData* data =analysis.getData(m_eventData);
+    auto data = analysis.getData(m_eventData);
     if (data!=0) {
       // see if the data is of type Events
-      const EventTemplateData* eventData=dynamic_cast<const EventTemplateData*>(data);
+      auto eventData = std::dynamic_pointer_cast<const EventTemplateData>(data);
       if (eventData==0) {
         LOGINIT("LP::EventAnalysis");
         LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
       else {
-        Events *events=eventData->convertToEvents(annotationData);
+        Events *events=eventData->convertToEvents(annotationData.get());
         events->write(out);
       }
     }

@@ -1,10 +1,7 @@
-//************************************************************************
-//! @file       documentsreader_export.h
-//! @author     gael.de-chalendar@cea.fr
-//! @date       October 2012
-//! copyright   Copyright (C) 2012 by CEA LIST (DIASI/LVIC)
-//! Project     Juliet
-//! @brief  Symbol exporting for Windows DLL documentsreader.dll
+// Copyright (C) 2012 by CEA LIST (DIASI/LVIC)
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DOCUMENTSREADER_EXPORT_H
 #define DOCUMENTSREADER_EXPORT_H

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateFillingActions.cpp
@@ -82,19 +69,30 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
                                     AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    eventData = new EventTemplateData();
+    eventData = std::make_shared<EventTemplateData>();
     analysis.setData("EventTemplateData", eventData);
   }
+  // get the cardinality for the role in the template definition
+  unsigned int cardinality(1);
+  auto defData = std::dynamic_pointer_cast<EventTemplateDefinitionData>(analysis.getData("EventTemplateFillingTemplateDefinition"));
+  if (defData==0) {
+    LDEBUG << "AddTemplateElement: no template definition provided";
+  }
+  else {
+    cardinality=defData->resource->getCardinality(m_role);
+  }
+  // !!!! TODO: add cardinality as argument for addElementInCurrentTemplate !!!
+    
   if (! m_type.isNull()) {
     EventTemplateElement elt(v,&graph,m_type);
-    LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role;
-    eventData->addElementInCurrentTemplate(m_role,elt);
+    LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role << ", cardinality =" << cardinality;
+    eventData->addElementInCurrentTemplate(m_role,elt,cardinality);
   }
   else {
     //get type from specific entity associated to the vertex
-    const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+    const auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
     if (annotationData==0)
     {
       LOGINIT("LP::EventAnalysis");
@@ -114,8 +112,8 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
         pointerValue<SpecificEntityAnnotation>();
 
         EventTemplateElement elt(v,&graph,se->getType());
-        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role;
-        eventData->addElementInCurrentTemplate(m_role,elt);
+        LDEBUG << "AddTemplateElement: add " << elt << " as " << m_role << ", cardinality =" << cardinality;
+        eventData->addElementInCurrentTemplate(m_role,elt,cardinality);
       }
     }
   }
@@ -146,7 +144,7 @@ m_eventType()
 
 bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
 {
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";
@@ -172,7 +170,7 @@ Automaton::ConstraintFunction(language,complement)
 
 bool ClearEventTemplate::operator()(AnalysisContent& analysis) const
 {
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";

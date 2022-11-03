@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
   * @brief  HyphenWordAlternatives is the module which creates split alternatives
   *         for hyphen word tokens. Each token from the supplied tokens path is processed :
@@ -165,21 +152,22 @@ LimaStatusCode HyphenWordAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process HyphenWordAlternatives";
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (nullptr == annotationData)
   {
     LDEBUG << "HyphenWordAlternatives::process: Misssing AnnotationData. Create it";
-    annotationData = new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentBoundariesName));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sentBoundariesName));
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
@@ -199,7 +187,7 @@ LimaStatusCode HyphenWordAlternatives::process(
       {
         if (tok->status().isAlphaHyphen() && isWorthSplitting(*it, graph))
         {
-          makeHyphenSplitAlternativeFor(*it, graph, annotationData, sb);
+          makeHyphenSplitAlternativeFor(*it, graph, annotationData.get(), sb.get());
         }
       }
     }
@@ -310,7 +298,7 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
   toTokenize.setData("Text",new LimaStringText(hyphenWord));
   LimaStatusCode status=m_tokenizer->process(toTokenize);
   if (status != SUCCESS_ID) return;
-  AnalysisGraph* agTokenizer=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto agTokenizer = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokgraph=agTokenizer->getGraph();
 
   // setup position field

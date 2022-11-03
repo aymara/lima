@@ -1,4 +1,9 @@
 #!/usr/bin/perl -s
+
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 #
 # Perl Program created by besancon on Mon Nov  8 2004
 # Version : $Id$

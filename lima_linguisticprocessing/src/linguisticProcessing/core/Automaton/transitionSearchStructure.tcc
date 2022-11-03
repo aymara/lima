@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2018 CEA LIST
+// Copyright 2002-2018 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       transitionSearchStructure.tcc
@@ -43,6 +30,7 @@
 #include "deaccentuatedTransition.h"
 #include "common/MediaticData/mediaticData.h"
 #include <deque>
+#include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -120,19 +108,19 @@ empty() const {
 // initialize the search structure from a list of objects
 //************************************************************************
 template <typename TargetType>
-void TransitionSearchStructure<TargetType>::
-init(const std::vector<TargetType>& l,
+void TransitionSearchStructure<TargetType>::init(const std::vector<TargetType>& l,
      const Common::PropertyCode::PropertyAccessor* macroAccessor,
-     const Common::PropertyCode::PropertyAccessor* microAccessor) {
-//   AULOGINIT;
-//   LDEBUG << "TransitionSearchStructure: init";
-  typename std::vector<TargetType>::const_iterator
-    it=l.begin(),
-    it_end=l.end();
-  for (; it!=it_end;it++) {
-    TransitionUnit* transition=(*it).transitionUnit();
+     const Common::PropertyCode::PropertyAccessor* microAccessor)
+{
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "TransitionSearchStructure::init" << (void*)macroAccessor << (void*)microAccessor;
+#endif
 
-    TargetType* newTarget=new TargetType(*it);
+  for (auto it=l.begin(), it_end=l.end(); it!=it_end;it++) {
+    auto transition = (*it).transitionUnit();
+
+    auto newTarget = new TargetType(*it);
     // transition type is not used in target (use only transition properties,
     // suchas constraints, keep, negative etc): to optimize space, it
     // can be replaced by empty star transition (no info)
@@ -198,8 +186,8 @@ init(const std::vector<TargetType>& l,
 //   LDEBUG << m_posMap.size() << " pos stored in posMap";
 
   // initialization of helper members (to avoid doing it for each comparison)
-  m_macroAccessor=macroAccessor;
-  m_microAccessor=microAccessor;
+  // m_macroAccessor=macroAccessor;
+  // m_microAccessor=microAccessor;
 }
 
 //************************************************************************
@@ -218,6 +206,15 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
    AULOGINIT;
    LDEBUG << "TransitionSearchStructure::findMatchingTransitions from vertex " << vertex;
 #endif
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
+  if (metadata == nullptr) {
+    LERROR << "TransitionSearchStructure::findMatchingTransitions no LinguisticMetaData ! abort";
+      return 0;
+  }
+  auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getPropertyCodeManager();
+  auto& macroAccessor = propertyCodeManager.getPropertyAccessor("MACRO");
+  auto& microAccessor = propertyCodeManager.getPropertyAccessor("MICRO");
+
   matchingTransitions.clear();
 
   if (! m_wordMap.empty()) {
@@ -249,7 +246,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     for (; it!=it_end; it++) {
 
       // match on macro+micro
-      Tpos pos(m_microAccessor->readValue((*it).properties));
+      Tpos pos(microAccessor.readValue((*it).properties));
 
       std::pair<typename PosMap::const_iterator,typename PosMap::const_iterator>
         posRange=m_posMap.equal_range(pos);
@@ -258,7 +255,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       }
 
       // match on macro only
-      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      Tpos posMacro(macroAccessor.readValue((*it).properties));
       posRange=m_posMap.equal_range(posMacro);
       for (; posRange.first!=posRange.second; posRange.first++) {
         matchingTransitions.push_back(posRange.first->second);
@@ -273,7 +270,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     for (; it!=it_end; it++) {
 
       // match on macro+micro
-      Tpos pos(m_microAccessor->readValue((*it).properties));
+      Tpos pos(microAccessor.readValue((*it).properties));
 
       std::pair<typename LemmaMap::const_iterator,typename LemmaMap::const_iterator>
         lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,pos));
@@ -282,7 +279,7 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       }
 
       // match on macro only
-      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      Tpos posMacro(macroAccessor.readValue((*it).properties));
       lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,posMacro));
       for (; lemmaRange.first!=lemmaRange.second; lemmaRange.first++) {
         matchingTransitions.push_back(lemmaRange.first->second);
@@ -340,7 +337,14 @@ uint64_t TransitionSearchStructure<TargetType>::
    AULOGINIT;
    LDEBUG << "findMatchingTransitions2 from vertex " << vertex;
 #endif
-  matchingTransitions.clear();
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
+  if (metadata == nullptr) {
+    LERROR << "TransitionSearchStructure::findMatchingTransitions no LinguisticMetaData ! abort";
+      return 0;
+  }
+  auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getPropertyCodeManager();
+  auto& macroAccessor = propertyCodeManager.getPropertyAccessor("MACRO");
+  auto& microAccessor = propertyCodeManager.getPropertyAccessor("MICRO");
 
   if (! m_wordMap.empty()) {
     // get words in token
@@ -375,7 +379,7 @@ uint64_t TransitionSearchStructure<TargetType>::
     for (; it!=it_end; it++) {
 
       // match on macro+micro
-      Tpos pos(m_microAccessor->readValue((*it).properties));
+      Tpos pos(microAccessor.readValue((*it).properties));
 
       std::pair<typename PosMap::const_iterator,typename PosMap::const_iterator>
         posRange=m_posMap.equal_range(pos);
@@ -384,7 +388,7 @@ uint64_t TransitionSearchStructure<TargetType>::
       }
 
       // match on macro only
-      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      Tpos posMacro(macroAccessor.readValue((*it).properties));
       posRange=m_posMap.equal_range(posMacro);
       for (; posRange.first!=posRange.second; posRange.first++) {
         matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,posRange.first->second));
@@ -400,7 +404,7 @@ uint64_t TransitionSearchStructure<TargetType>::
     for (; it!=it_end; it++) {
 
       // match on macro+micro
-      Tpos pos(m_microAccessor->readValue((*it).properties));
+      Tpos pos(microAccessor.readValue((*it).properties));
 
       std::pair<typename LemmaMap::const_iterator,typename LemmaMap::const_iterator>
         lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,pos));
@@ -409,7 +413,7 @@ uint64_t TransitionSearchStructure<TargetType>::
       }
 
       // match on macro only
-      Tpos posMacro(m_macroAccessor->readValue((*it).properties));
+      Tpos posMacro(macroAccessor.readValue((*it).properties));
       lemmaRange=m_lemmaMap.equal_range(std::make_pair((*it).lemma,posMacro));
       for (; lemmaRange.first!=lemmaRange.second; lemmaRange.first++) {
         matchingTransitions.push_back(std::pair<std::deque<LinguisticGraphVertex>,const TargetType* >(singleton,lemmaRange.first->second));

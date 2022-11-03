@@ -1,11 +1,7 @@
-/************************************************************************
- *
- * @file       EventTemplateDefinitionResource.cpp
- * @author     Romaric Besancon (romaric.besancon@cea.fr)
- * @date       Fri Sep  2 2011
- * copyright   Copyright (C) 2011 by CEA LIST
- * 
- ***********************************************************************/
+// Copyright (C) 2011 by CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "EventTemplateDefinitionResource.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
@@ -49,6 +45,16 @@ const std::string& EventTemplateDefinitionResource::getName () const
 const std::map<std::string,Common::MediaticData::EntityType>& EventTemplateDefinitionResource::getStructure () const
 {
   return m_structure.getStructure();
+}
+
+unsigned int EventTemplateDefinitionResource::getCardinality(const std::string& role) const
+{
+  auto it=m_cardinalities.find(role);
+  if (it!=m_cardinalities.end()) {
+    return (*it).second;
+  }
+  // default cardinality for unknown role
+  return(1);
 }
 
 //----------------------------------------------------------------------
@@ -100,6 +106,25 @@ init(GroupConfigurationStructure& unitConfiguration,
     throw InvalidConfiguration();
   }
 
+  try
+  {
+    map<string,string> elts  = unitConfiguration.getMapAtKey("cardinalities");
+    for(auto it=elts.begin(),it_end=elts.end();it!=it_end;it++) {
+      LDEBUG << "templateElement =" << (*it).first;
+      m_cardinalities[(*it).first]=stoi((*it).second);
+    }
+  }
+  catch (NoSuchMap& ) {
+    // ignored
+  }
+  // default cardinalities for all elements is 1
+  for (auto it: m_structure.getStructure()) {
+    if (m_cardinalities.find(it.first)==m_cardinalities.end()) {
+      m_cardinalities[it.first]=1;
+    }
+  }
+  
+  
   // get element mapping, for template merging
   LDEBUG << "get elementMapping ";
   try

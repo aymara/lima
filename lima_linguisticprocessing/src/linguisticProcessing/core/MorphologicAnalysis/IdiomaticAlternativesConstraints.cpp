@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2020 CEA LIST
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2020 by CEA LIST                                   *
  *                                                                         *
@@ -79,7 +66,7 @@ void CreateIdiomaticAlternative::removeEdges(
     LDEBUG << "  first and last are equal => ignoring";
     return;
   }*/
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
 
   std::set< LinguisticGraphVertex > matchVertices;
@@ -156,13 +143,13 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
 #endif
   if (result.empty()) return false;
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *(result.getGraph());
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData->dumpFunction("IdiomExpr") == 0)
   {
     annotationData->dumpFunction("IdiomExpr", new DumpIdiomaticExpressionAnnotation());
   }
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
   std::set<LinguisticGraphVertex> addedVertices;
   // initialize the vertices to clear

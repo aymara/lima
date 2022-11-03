@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2019 by CEA LIST                                   *
  *                                                                         *
@@ -52,7 +39,7 @@ public:
 
   void clear();
 
-  std::map<MediaId,AbstractResource::Manager*> m_resourcesManagers;
+  std::map<MediaId, std::shared_ptr<AbstractResource::Manager> > m_resourcesManagers;
 
   // private member functions
   void includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
@@ -60,7 +47,9 @@ public:
 
 };
 
-LinguisticResourcesPrivate::LinguisticResourcesPrivate() {}
+LinguisticResourcesPrivate::LinguisticResourcesPrivate()
+{
+}
 
 LinguisticResourcesPrivate::~LinguisticResourcesPrivate()
 {
@@ -69,13 +58,6 @@ LinguisticResourcesPrivate::~LinguisticResourcesPrivate()
 
 void LinguisticResourcesPrivate::clear()
 {
-  for (std::map<MediaId,AbstractResource::Manager*>::iterator it=m_resourcesManagers.begin();
-       it!=m_resourcesManagers.end();
-       it++)
-  {
-    delete it->second;
-    it->second=0;
-  }
   m_resourcesManagers.clear();
 }
 
@@ -105,7 +87,7 @@ AbstractResource* LinguisticResources::getResource(MediaId lang,const std::strin
   RESOURCESLOGINIT;
   LDEBUG << "LinguisticResources::getResource" << this << lang << id.c_str();
 #endif
-  std::map<MediaId,AbstractResource::Manager*>::const_iterator it=m_d->m_resourcesManagers.find(lang);
+  auto it = m_d->m_resourcesManagers.find(lang);
   if (it==m_d->m_resourcesManagers.end())
   {
     LIMA_EXCEPTION_SELECT_LOGINIT(
@@ -121,32 +103,40 @@ void LinguisticResources::initLanguage(
   Common::XMLConfigurationFiles::ModuleConfigurationStructure& confModule,
   bool registerMainKeysInStringPool)
 {
+  // TODO make this function thread safe
   RESOURCESLOGINIT;
 #ifdef DEBUG_LP
   LDEBUG << "LinguisticResources::initLanguage" << this << confModule.getName();
 #endif
+  if (m_d->m_resourcesManagers.find(lang) != m_d->m_resourcesManagers.end())
+  {
+    LINFO << "LinguisticResources::initLanguage resources already initialized for" << lang;
+    return;
+  }
   ResourceInitializationParameters params;
   params.language=lang;
-  m_d->m_resourcesManagers[lang]=new AbstractResource::Manager(confModule,params);
-  Common::XMLConfigurationFiles::ModuleConfigurationStructure& module=
-    m_d->m_resourcesManagers[lang]->getModuleConfigurationStructure();
-  m_d->includeResources(module,module);
+  m_d->m_resourcesManagers[lang] = std::make_shared<AbstractResource::Manager>(confModule, params);
+  auto& module= m_d->m_resourcesManagers[lang]->getModuleConfigurationStructure();
+  m_d->includeResources(module, module);
 
   if (registerMainKeysInStringPool)
   {
     // Initialize FsaStringsPool : main keys must be registered at beginning
-    try {
-      string mainkeys=confModule.getParamValueAtKeyOfGroupNamed("mainKeys","FsaStringsPool");
+    try
+    {
+      const auto& mainkeys = confModule.getParamValueAtKeyOfGroupNamed("mainKeys","FsaStringsPool");
       LINFO << "load mainKeys " << mainkeys << " into StringPool";
-      AbstractResource* res=getResource(lang,mainkeys);
-      AnalysisDict::AbstractAccessResource* access=static_cast<AnalysisDict::AbstractAccessResource*>(res);
+      auto res = getResource(lang,mainkeys);
+      auto access = static_cast<AnalysisDict::AbstractAccessResource*>(res);
       access->setMainKeys(true);
       Common::MediaticData::MediaticData::changeable().stringsPool(lang).registerMainKeys(access->getAccessByString());
-    } catch (NoSuchGroup& )
+    }
+    catch (NoSuchGroup& )
     {
       LERROR << "No group 'FsaStringsPool' defined in Resource module. Can't register any main keys";
       throw InvalidConfiguration();
-    } catch (NoSuchParam& )
+    }
+    catch (NoSuchParam& )
     {
       LERROR << "No param 'mainKeys' defined in FsaStringsPool group. Can't register any main keys";
       throw InvalidConfiguration();
@@ -154,71 +144,76 @@ void LinguisticResources::initLanguage(
   }
 }
 
-void LinguisticResourcesPrivate::
-includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
-                 Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule)
+void LinguisticResourcesPrivate::includeResources(
+    Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
+    Common::XMLConfigurationFiles::ModuleConfigurationStructure& includeModule)
 {
   RESOURCESLOGINIT;
 #ifdef DEBUG_LP
-        LDEBUG << "LinguisticResourcesPrivate::includeResources" << this << &module << module.getName() << &includeModule << includeModule.getName();
+  LDEBUG << "LinguisticResourcesPrivate::includeResources" << this << &module << module.getName()
+          << &includeModule << includeModule.getName();
 #endif
-  try {
-    deque<string> includeList=includeModule.getListValuesAtKeyOfGroupNamed("includeList","include");
-    for (deque<string>::const_iterator it=includeList.begin(),
-           it_end=includeList.end(); it!=it_end; it++) {
-      string::size_type i=(*it).find("/");
-      if (i==string::npos) {
-        LERROR << "Cannot include resources " << *it
-               << ": must specify file and module name";
+  try
+  {
+    const auto& includeList = includeModule.getListValuesAtKeyOfGroupNamed("includeList", "include");
+    for (const auto& include: includeList)
+    {
+      auto i = include.find("/");
+      if (i==string::npos)
+      {
+        LERROR << "Cannot include resources " << include << ": must specify file and module name";
         continue;
       }
       QString fileName;
       std::string moduleName;
-      try {
+      try
+      {
         RESOURCESLOGINIT;
 #ifdef DEBUG_LP
         LDEBUG << "i="<< i;
 #endif
-        QStringList configPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
-        Q_FOREACH(QString confPath, configPaths)
+        auto configPaths = QString::fromUtf8(
+          Common::MediaticData::MediaticData::single().getConfigPath().c_str()).split(LIMA_PATH_SEPARATOR);
+        for(const auto& confPath: configPaths)
         {
-          if  (QFileInfo::exists(confPath + "/" + string((*it),0,i).c_str()))
+          if  (QFileInfo::exists(confPath + "/" + string(include, 0, i).c_str()))
           {
 
-            fileName = (confPath + "/" + string((*it),0,i).c_str());
+            fileName = (confPath + "/" + string(include, 0, i).c_str());
             break;
           }
         }
         if (fileName.isEmpty())
         {
-          LERROR << "No resources" << *it << "found in" << Common::MediaticData::MediaticData::single().getConfigPath();
+          LERROR << "No resources" << include << "found in"
+                  << Common::MediaticData::MediaticData::single().getConfigPath();
           continue;
         }
-        moduleName=string((*it),i+1);
+        moduleName = std::string(include, i+1);
         LINFO << "LinguisticResourcesPrivate::includeResources filename="<< fileName << "moduleName="<< moduleName;
         XMLConfigurationFileParser parser(fileName);
-        ModuleConfigurationStructure& newMod=parser.getModuleConfiguration(moduleName);
+        auto& newMod = parser.getModuleConfiguration(moduleName);
         module.addModule(newMod);
 #ifdef DEBUG_LP
         ostringstream oss;
-        for (auto it=module.cbegin(),it_end=module.cend(); it!=it_end; it++)
+        for (const auto& group: module)
         {
-          oss << (*it).first << ";";
+          oss << group.first << ";";
         }
        LDEBUG << "LinguisticResourcesPrivate::includeResources added module with the following groups: " << oss.str();
 #endif
         // recursive inclusions
-        includeResources(module,newMod);
+        includeResources(module, newMod);
       }
-      catch(NoSuchModule& ) {
+      catch(NoSuchModule& )
+      {
         RESOURCESLOGINIT;
-        LERROR << "Cannot find module " << moduleName
-               << " in file " << fileName;
+        LERROR << "Cannot find module " << moduleName << " in file " << fileName;
       }
-      catch(exception& e) {
+      catch(exception& e)
+      {
         RESOURCESLOGINIT;
-        LERROR << "Error trying to find module " << moduleName
-               << " in file " << fileName << ":" << e.what();
+        LERROR << "Error trying to find module " << moduleName << " in file " << fileName << ":" << e.what();
       }
     }
   }
@@ -227,16 +222,15 @@ includeResources(Common::XMLConfigurationFiles::ModuleConfigurationStructure& mo
 }
 
 
-Common::XMLConfigurationFiles::ModuleConfigurationStructure&
-LinguisticResources::getModuleConfiguration(MediaId lang)
+Common::XMLConfigurationFiles::ModuleConfigurationStructure& LinguisticResources::getModuleConfiguration(MediaId lang)
 {
 #ifdef DEBUG_LP
   RESOURCESLOGINIT;
   LDEBUG << "LinguisticResources::getModuleConfiguration" << this << lang;
 #endif
-  std::map<MediaId,AbstractResource::Manager*>::iterator it=
-    m_d->m_resourcesManagers.find(lang);
-  if (it == m_d->m_resourcesManagers.end()) {
+  auto it = m_d->m_resourcesManagers.find(lang);
+  if (it == m_d->m_resourcesManagers.end())
+  {
     RESOURCESLOGINIT;
     LERROR << "no Resources module configuration for language "<< (uint64_t)lang;
     throw InvalidConfiguration();

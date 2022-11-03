@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <chrono>
 #include <iostream>
@@ -161,6 +147,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
                                       const TorchMatrix<float>& eval_nontrainable_input,
                                       const TorchMatrix<int64_t>& eval_gold,
                                       torch::optim::Optimizer& opt,
+                                      double& best_eval_accuracy,
                                       const torch::Device& device)
 {
   set_tags(params.m_tags);
@@ -182,7 +169,6 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       = aligned_gold.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
   std::cerr << gold_batches.sizes() << std::endl;*/
 
-  double best_eval_accuracy = 0;
   double best_eval_loss = numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;

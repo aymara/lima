@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2014 CEA LIST
+// Copyright 2002-2014 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       SemanticRoleLabelingLoader.cpp
@@ -177,15 +164,15 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
 #ifdef DEBUG_LP
   SEMANTICANALYSISLOGINIT;
 #endif
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graph));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_d->m_graph));
   if (tokenList==0)
   {
     SEMANTICANALYSISLOGINIT;
     LERROR << "graph " << m_d->m_graph << " has not been produced: check pipeline" ;
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  LimaConllTokenIdMapping* limaConllMapping = static_cast<LimaConllTokenIdMapping*>(analysis.getData("LimaConllTokenIdMapping"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+  auto limaConllMapping = std::dynamic_pointer_cast<LimaConllTokenIdMapping>(analysis.getData("LimaConllTokenIdMapping"));
 
   QString fileName = getInputFile(analysis);
 
@@ -216,12 +203,12 @@ LimaStatusCode SemanticRoleLabelingLoader::process(AnalysisContent& analysis) co
     }
   }
 
-  ConllHandler cHandler(m_d->m_language, analysis, tokenList);
+  ConllHandler cHandler(m_d->m_language, analysis, tokenList.get());
   for (std::map<int,QString>::iterator it=sentences.begin(); it!=sentences.end(); ++it)
   {
     int sentenceIndex=it->first;
     QString sentence=it->second;
-    if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping, sentence))
+    if(cHandler.extractSemanticInformation(sentenceIndex, limaConllMapping.get(), sentence))
     {
 #ifdef DEBUG_LP
       LDEBUG << "SemanticRoleLabelingLoader::process there is/are " << cHandler.m_verbalClassNb << "verbal class(es) for this sentence " ;

@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <iostream>
 #include <iterator>
@@ -515,43 +501,49 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
 
   // batch_size
   if (data.object().value("batch_size").isUndefined())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" missing param batch_size.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param batch_size.";
+  }
   if (!data.object().value("batch_size").isDouble())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" param batch_size is not a number.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param batch_size is not a number.";
+  }
   m_batch_size = data.object().value("batch_size").toInt();
 
   QJsonObject encoder_conf = get_json_object(data.object(), "encoder");
 
   // max_input_len
   if (encoder_conf.value("max_len").isUndefined())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" missing param max_len.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param max_len.";
+  }
   if (!encoder_conf.value("max_len").isDouble())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" param max_len is not a number.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param max_len is not a number.";
+  }
   m_max_input_len = encoder_conf.value("max_len").toInt();
 
   // ctx_len
   if (encoder_conf.value("ctx_len").isUndefined())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" missing param ctx_len.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" missing param ctx_len.";
+  }
   if (!encoder_conf.value("ctx_len").isDouble())
-    LIMA_EXCEPTION_LOGINIT(
-      TENSORFLOWLEMMATIZERLOGINIT,
-      "TensorFlowLemmatizer::load_config config file \""
-      << config_file_name << "\" param ctx_len is not a number.");
+  {
+    TENSORFLOWLEMMATIZERLOGINIT;
+    LDEBUG << "TensorFlowLemmatizer::load_config config file \""
+      << config_file_name << "\" param ctx_len is not a number.";
+  }
   m_ctx_len = encoder_conf.value("ctx_len").toInt();
 
   // beam_size
@@ -559,7 +551,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   QJsonObject decoder_conf = get_json_object(data.object(), "decoder");
   if (decoder_conf.value("beam_size").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param beam_size.");
     /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param beam_size.");*/
@@ -648,13 +640,13 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
   }
   else
   {
-    LOG_MESSAGE(LERROR, "ERROR: TensorFlowLemmatizerPrivate::load_config: \"dont_lemmatize\" isn't defined.");
+    LOG_MESSAGE(LINFO, "ERROR: TensorFlowLemmatizerPrivate::load_config: \"dont_lemmatize\" isn't defined.");
     m_dont_lemmatize.insert(pm.getPropertyValue("PUNCT"));
   }
 
   if (data.object().value("main_alphabet").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param main_alphabet.");
     /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param main_alphabet.");*/
@@ -673,7 +665,7 @@ void TensorFlowLemmatizerPrivate::load_config(const QString& config_file_name)
 
   if (data.object().value("special_chars").isUndefined())
   {
-    LOG_MESSAGE(LERROR, "TensorFlowLemmatizer::load_config config file \""
+    LOG_MESSAGE(LINFO, "TensorFlowLemmatizer::load_config config file \""
                 << config_file_name << "\" missing param special_chars.");
     /*LIMA_EXCEPTION("TensorFlowLemmatizer::load_config config file \""
           << config_file_name << "\" missing param special_chars.");*/
@@ -724,18 +716,18 @@ LimaStatusCode TensorFlowLemmatizerPrivate::process(AnalysisContent& analysis)
 
   LOG_MESSAGE_WITH_PROLOG(LINFO, "Start of TensorFlowLemmatizer");
 
-  AnalysisGraph* anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posgraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   LinguisticGraph* src_graph = anagraph->getGraph();
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb == nullptr)
   {
     LOG_MESSAGE(LERROR, "No SentenceBounds");
     return MISSING_DATA;
   }
 
-  SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   // graph is empty if it has only 2 vertices, start (0) and end (0)
   if (num_vertices(*src_graph) <= 2)
@@ -1069,7 +1061,7 @@ void TensorFlowLemmatizerPrivate::process_batch(vector<TFormOccurrences*>& forms
   generate_batch(forms_for_batch, inputs);
 
   // Run model
-  vector<Tensor> out;
+  std::vector<Tensor> out;
   Status status = m_session->Run(inputs, requested_nodes, {}, &out);
   if (!status.ok())
     LIMA_EXCEPTION_LOGINIT(

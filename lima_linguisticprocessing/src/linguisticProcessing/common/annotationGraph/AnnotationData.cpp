@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief       A structures that holds an annotation graph and gives a high
   *              level API to access it
   *
@@ -717,8 +704,9 @@ void AnnotationData::addMatching(const std::string& first,
 /** @brief Gets the set of vertices matched in the second graph by the given
  * vertex of the first graph
  */
-std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& first, AnnotationGraphVertex firstVx,
-      const std::string& second) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& first,
+                                                          AnnotationGraphVertex firstVx,
+                                                          const std::string& second) const
   {
     return matches( m_d->m_pool[ QString::fromStdString(first + second) ], firstVx);
   }
@@ -738,8 +726,9 @@ void AnnotationData::addMatching(const StringsPoolIndex& first, AnnotationGraphV
   addMatching( m_d->m_pool[ m_d->m_pool[second] + m_d->m_pool[first] ], secondVx, firstVx);
 }
 
-std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& first, AnnotationGraphVertex firstVx,
-      const StringsPoolIndex& second) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& first,
+                                                          AnnotationGraphVertex firstVx,
+                                                          const StringsPoolIndex& second) const
   {
     return matches( m_d->m_pool[ m_d->m_pool[first] + m_d->m_pool[second] ], firstVx);
   }
@@ -750,9 +739,8 @@ bool AnnotationData::isMatching(const StringsPoolIndex& first, AnnotationGraphVe
   return isMatching( m_d->m_pool[ m_d->m_pool[first] + m_d->m_pool[second] ], firstVx, secondVx);
 }
 
-std::set< AnnotationGraphVertex > AnnotationData::matches(
-    const StringsPoolIndex& direction,
-    AnnotationGraphVertex firstVx) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& direction,
+                                                          AnnotationGraphVertex firstVx) const
 {
   if (m_d->m_matchings.find(direction) == m_d->m_matchings.end())
   {

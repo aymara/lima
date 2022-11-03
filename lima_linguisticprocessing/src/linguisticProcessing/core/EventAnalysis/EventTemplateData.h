@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       EventTemplateData.h
@@ -34,6 +21,7 @@
 
 #include "EventAnalysisExport.h"
 #include "EventTemplate.h"
+#include "EventTemplateDefinitionResource.h"
 
 namespace Lima {
 namespace LinguisticProcessing {
@@ -49,7 +37,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
   ~EventTemplateData();
   
   void addTemplate();
-  void addElementInCurrentTemplate(const std::string& role, const EventTemplateElement& elt);
+  void addElementInCurrentTemplate(const std::string& role, const EventTemplateElement& elt, unsigned int cardinality);
   void clearCurrentTemplate();
   void setTypeInCurrentTemplate(const std::string&);
 
@@ -62,6 +50,14 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
                         const Common::AnnotationGraphs::AnnotationData* annotationData,
                         const std::string& role,
                         uint64_t eventId)  const;
+};
+
+class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionData : public AnalysisData
+{
+  public:
+    EventTemplateDefinitionData(EventTemplateDefinitionResource* r):resource(r) {}
+    // no destructor to free the pointer : the pointer is on an external resource
+    EventTemplateDefinitionResource* resource;
 };
 
 } // end namespace

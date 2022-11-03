@@ -1,21 +1,7 @@
-/*
-    Copyright 2002-2020 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2002-2020 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "ApproxStringMatcher.h"
 
@@ -307,7 +293,7 @@ LimaStatusCode ApproxStringMatcher::process(
   MORPHOLOGINIT;
   LINFO << "starting process ApproxStringMatcher";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   std::basic_string<wchar_t> indexName;
   try {
     if (metadata != 0) {
@@ -325,16 +311,16 @@ LimaStatusCode ApproxStringMatcher::process(
          << Lima::Common::Misc::limastring2utf8stdstring(name);
 #endif
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   // initialize annotation data
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LINFO << "ApproxStringMatcher::process no annotation data, creating and populating it";
-    annotationData=new AnnotationData();
+    annotationData = std::make_shared<AnnotationData>();
     analysis.setData("AnnotationData",annotationData);
   }
-  anagraph->populateAnnotationGraph(annotationData, "AnalysisGraph");
+  anagraph->populateAnnotationGraph(annotationData.get(), "AnalysisGraph");
 
   // initialize annotation data for SpecificEntity???
   if (annotationData==0)
@@ -416,7 +402,7 @@ LimaStatusCode ApproxStringMatcher::process(
     }
     if( !outOfGraph ) {
       // TODO: check if( solution.suggestion.nb_error <= (len*m_nbMaxNumError)/m_nbMaxDenError ) ??
-      createVertex(g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData );
+      createVertex(g, anagraph->firstVertex(), anagraph->lastVertex(), solution, annotationData.get() );
       // result.push_back(solution);
     }
   }

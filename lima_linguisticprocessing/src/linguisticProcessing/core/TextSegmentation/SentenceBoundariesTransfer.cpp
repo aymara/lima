@@ -1,21 +1,8 @@
-/*
-    Copyright 2019 CEA LIST
+// Copyright 2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 #include "SentenceBoundariesTransfer.h"
 #include "SegmentationData.h"
 #include "common/MediaticData/mediaticData.h"
@@ -87,7 +74,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
   SEGMENTATIONLOGINIT;
   LINFO << "SentenceBoundariesTransfer::process start transfering sentence bounds from AnalysisGraph to PosGraph";
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries").get());
   if (sb == nullptr)
   {
     DUMPERLOGINIT;
@@ -101,22 +88,19 @@ LimaStatusCode SentenceBoundariesTransfer::process(
     return SUCCESS_ID;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(
-    analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process no graph 'AnalysisGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(
-    analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(
-    analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process: no annotation graph available !";
@@ -148,7 +132,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
              << segment.getLastVertex();
       continue;
     }
-    Segment newSegment("sentence",*firstVxMatches.begin(),*lastVxMatches.begin(),posgraph);
+    Segment newSegment("sentence", *firstVxMatches.begin(), *lastVxMatches.begin(), posgraph.get());
     newSb->add(newSegment);
   }
 

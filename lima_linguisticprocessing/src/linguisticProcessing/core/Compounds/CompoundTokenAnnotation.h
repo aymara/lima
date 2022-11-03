@@ -1,7 +1,7 @@
-/***************************************************************************
- *   Copyright (C) 2005 by CEA LIST                               *
- *                                                                         *
- ***************************************************************************/
+// Copyright 2002-2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef LIMA_LINGUISTICPROCESSING_COMPOUNDS_COMPOUNDTOKENANNOTATION_H
 #define LIMA_LINGUISTICPROCESSING_COMPOUNDS_COMPOUNDTOKENANNOTATION_H
@@ -43,29 +43,22 @@ namespace Compounds
  * It is a node annotation for adverbs or pronouns and a link annotation for
  * adjectives
 */
-class  ConceptModifier
+class LIMA_COMPOUNDS_EXPORT ConceptModifier
 {
 public:
 
-  ConceptModifier() {}
+  ConceptModifier();
   ConceptModifier(const StringsPoolIndex& realization,
-                  const Common::MediaticData::ConceptType type
+                          const Common::MediaticData::ConceptType type
                               = Common::MediaticData::ConceptType(std::numeric_limits< uint32_t >::max()),
-                  const std::vector< uint64_t >& references
-                              = std::vector< uint64_t>()) :
-      m_realization(realization),
-      m_conceptType(type),
-      m_referencedAnnotations(references) {}
+                          const std::vector< uint64_t >& references
+                          = std::vector< uint64_t>());
 
-  virtual ~ConceptModifier() {}
+  virtual ~ConceptModifier();
 
 
   /** @brief The functions that dumps a ConceptModifier on an output stream */
-  void dump(std::ostream& os,const FsaStringsPool& sp) const
-  {
-    LIMA_UNUSED(os)
-    LIMA_UNUSED(sp)
-  }
+  void dump(std::ostream& os,const FsaStringsPool& sp) const;
 
   inline StringsPoolIndex getRealization() const;
 //   inline void setRealization(StringsPoolIndex realization);
@@ -102,7 +95,7 @@ private:
 };
 
 
-class  CompoundTokenAnnotation : public std::vector< ConceptModifier >
+class LIMA_COMPOUNDS_EXPORT CompoundTokenAnnotation : public std::vector< ConceptModifier >
 {
 public:
   CompoundTokenAnnotation() {}
@@ -124,18 +117,14 @@ public:
 class LIMA_COMPOUNDS_EXPORT DumpCompoundTokenAnnotation : public Common::AnnotationGraphs::AnnotationData::Dumper {
 public:
 
-  DumpCompoundTokenAnnotation(const FsaStringsPool& sp)
-  {
-    LIMA_UNUSED(sp)
-  }
+  DumpCompoundTokenAnnotation(const FsaStringsPool& sp) : m_sp(sp) {};
 
-  virtual int dump(std::ostream& os,
-                   Common::AnnotationGraphs::GenericAnnotation& ga) const override
-  {
-    LIMA_UNUSED(os)
-    LIMA_UNUSED(ga)
-    return 0;
-  }
+  virtual int dump(
+      std::ostream& os,
+      Common::AnnotationGraphs::GenericAnnotation& ga) const override;
+
+private:
+  const FsaStringsPool& m_sp;
 };
 
 

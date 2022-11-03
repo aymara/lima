@@ -1,22 +1,7 @@
-/*
-    Copyright 2002-2013 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public Lice↔nse
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
-
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "AnalysisContent.h"
 
@@ -25,86 +10,145 @@ using namespace std;
 namespace Lima
 {
 
+class AnalysisContentPrivate
+{
+  friend class AnalysisContent;
+public:
+
+  AnalysisContentPrivate() = default;
+
+  /**
+   * Destroy all AnalysisData in AnalysisContent
+   * @return
+   */
+  ~AnalysisContentPrivate() = default;
+
+  std::map<QString, std::shared_ptr< AnalysisData > > m_analysisData;
+
+};
+
 AnalysisContent::AnalysisContent() :
-    m_analysisData()
+    m_d(new AnalysisContentPrivate())
 {}
 
 AnalysisContent::~AnalysisContent()
 {
-  for (map<string,AnalysisData*>::iterator it=m_analysisData.begin();
-         it!=m_analysisData.end();
-         it++)
-  {
-    delete it->second;
-    it->second=0;
-  }
+  delete m_d;
 }
 
-AnalysisData* AnalysisContent::getData(
-  const std::string& id)
+std::shared_ptr< AnalysisData > AnalysisContent::getData(const QString& id)
 {
-  map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
-  if (it==m_analysisData.end())
+  auto it = m_d->m_analysisData.find(id);
+  if (it == m_d->m_analysisData.end())
   {
 #ifdef DEBUG_CD
     PROCESSUNITFRAMEWORKLOGINIT;
-    LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+    LTRACE << "analysis data " << id << " doesn't exists, return 0";
 #endif
     return nullptr;
   }
   return it->second;
 }
 
-const AnalysisData* AnalysisContent::getData(
-  const std::string& id) const
+const std::shared_ptr< AnalysisData > AnalysisContent::getData(const QString& id) const
 {
-  map<string,AnalysisData*>::const_iterator it=m_analysisData.find(id);
-  if (it==m_analysisData.end())
+  auto it = m_d->m_analysisData.find(id);
+  if (it == m_d->m_analysisData.end())
   {
 #ifdef DEBUG_CD
     PROCESSUNITFRAMEWORKLOGINIT;
-    LTRACE << "data " << id.c_str() << " doesn't exists, return 0";
+    LTRACE << "data " << id << " doesn't exists, return 0";
 #endif
     return nullptr;
   }
   return it->second;
 }
 
-void AnalysisContent::setData(
-  const std::string& id,
-  AnalysisData* data)
+void AnalysisContent::setData(const QString& id, std::shared_ptr< AnalysisData > data)
 {
 #ifdef DEBUG_CD
   PROCESSUNITFRAMEWORKLOGINIT;
-  LDEBUG << "setData " << id.c_str();
+  LDEBUG << "AnalysisContent::setData" << id;
 #endif
-  map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
-  if (it!=m_analysisData.end())
+  auto it = m_d->m_analysisData.find(id);
+  if (it != m_d->m_analysisData.end())
   {
     PROCESSUNITFRAMEWORKLOGINIT;
-    LERROR << "id " << id.c_str() << " already exists, it will be replaced";
-    if (it->second != 0) {
-      delete it->second;
-    }
-    it->second=data;
+    LWARN << "id " << id << " already exists, it will be replaced";
   }
-  m_analysisData[id]=data;
+  m_d->m_analysisData[id] = data;
+}
+
+void AnalysisContent::setData(const QString& id, AnalysisData* data)
+{
+#ifdef DEBUG_CD
+  PROCESSUNITFRAMEWORKLOGINIT;
+  LDEBUG << "AnalysisContent::setData" << id;
+#endif
+ setData(id, std::shared_ptr<AnalysisData>(data));
+}
+
+void AnalysisContent::removeData(const QString& id)
+{
+#ifdef DEBUG_CD
+  PROCESSUNITFRAMEWORKLOGINIT;
+  LDEBUG << "removeData " << id;
+#endif
+  auto it = m_d->m_analysisData.find(id);
+  if (it != m_d->m_analysisData.end())
+  {
+    m_d->m_analysisData.erase(it);
+  }
+}
+
+std::shared_ptr< AnalysisData > AnalysisContent::getData(const std::string& id)
+{
+  return getData(QString::fromStdString(id));
+}
+
+std::shared_ptr< AnalysisData > AnalysisContent::getData(const char* id)
+{
+  return getData(QString::fromStdString(id));
+}
+
+const std::shared_ptr< AnalysisData > AnalysisContent::getData(const char* id) const
+{
+  return getData(QString::fromStdString(id));
+}
+
+const std::shared_ptr< AnalysisData > AnalysisContent::getData(const std::string& id) const
+{
+  return getData(QString::fromStdString(id));
+}
+
+void AnalysisContent::setData(const std::string& id, std::shared_ptr<AnalysisData> data)
+{
+  setData(QString::fromStdString(id), data);
+}
+
+void AnalysisContent::setData(const std::string& id, AnalysisData* data)
+{
+  setData(QString::fromStdString(id), data);
+}
+
+void AnalysisContent::setData(const char* id, std::shared_ptr<AnalysisData> data)
+{
+  setData(QString::fromStdString(id), data);
+}
+
+void AnalysisContent::setData(const char* id, AnalysisData* data)
+{
+  setData(QString::fromStdString(id), data);
 }
 
 void AnalysisContent::removeData(const std::string& id)
 {
-#ifdef DEBUG_CD
-  PROCESSUNITFRAMEWORKLOGINIT;
-  LDEBUG << "removeData " << id.c_str();
-#endif
-  map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
-  if (it!=m_analysisData.end())
-  {
-    if (it->second != 0) {
-      delete it->second;
-    }
-    m_analysisData.erase(it);
-  }
+  removeData(QString::fromStdString(id));
+}
+
+void AnalysisContent::removeData(const char* id)
+{
+  removeData(QString::fromStdString(id));
 }
 
 void AnalysisContent::releaseData(const std::string& id)
@@ -113,11 +157,7 @@ void AnalysisContent::releaseData(const std::string& id)
   PROCESSUNITFRAMEWORKLOGINIT;
   LDEBUG << "AnalysisContent::releaseData " << id.c_str();
 #endif
-  map<string,AnalysisData*>::iterator it=m_analysisData.find(id);
-  if (it!=m_analysisData.end())
-  {
-    m_analysisData.erase(it);
-  }
+  removeData(id);
 }
 
 } // Lima

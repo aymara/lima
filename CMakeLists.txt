@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 cmake_minimum_required(VERSION 3.16)
 project(Lima)
 set(CMAKE_CXX_STANDARD 17)
@@ -30,6 +34,7 @@ set(CMAKE_MODULE_PATH
 set(CMAKE_PREFIX_PATH
     "${CMAKE_PREFIX_PATH}"
     "$ENV{LIMA_EXTERNALS}"
+/Users/gael/Qt/5.15.2/clang_64/
 )
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
@@ -39,7 +44,9 @@ set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.
 message("PERL5LIB=$ENV{PERL5LIB}")
 message("PATH=$ENV{PATH}")
 
-if(UNIX)
+if(APPLE)
+    set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+elseif(UNIX)
   # Try to find architecture
   execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
   string(STRIP "${CPACK_PACKAGE_ARCHITECTURE}" CPACK_PACKAGE_ARCHITECTURE)
@@ -53,6 +60,15 @@ if(UNIX)
     set(LSB_DISTRIB "unix")
   endif(NOT LSB_DISTRIB)
   set(CPACK_SYSTEM_NAME "${LSB_DISTRIB}-${CPACK_PACKAGE_ARCHITECTURE}")
+endif()
+
+# assume built-in pthreads on MacOS
+if(APPLE)
+    set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+    set(CMAKE_HAVE_THREADS_LIBRARY 1)
+    set(CMAKE_USE_WIN32_THREADS_INIT 0)
+    set(CMAKE_USE_PTHREADS_INIT 1)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
 endif()
 
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES Windows)
@@ -119,21 +135,22 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
 
   include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${TensorFlow_LIBRARIES}
+    install(FILES ${TensorFlow_LIBRARIES} ${TensorFlow_LIBRARIES_DYN}
       ${Eigen_LIBRARIES}
           DESTINATION ${LIB_INSTALL_DIR}
           COMPONENT runtime)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
       ${Eigen_LIBRARIES}
-      ${TensorFlow_LIBRARIES})
+      ${TensorFlow_LIBRARIES}
+      ${TensorFlow_LIBRARIES_DYN})
   endif ()
 else()
   message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick QuickTest Test Xml Widgets )
+addQtModules(Core Gui Qml Quick Test Xml Widgets )
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -147,6 +164,7 @@ if ("${QT_DBUSCPP2XML_EXECUTABLE}" STREQUAL "QT_DBUSCPP2XML_EXECUTABLE-NOTFOUND"
   message(WARNING "Dbus tools not found ${QT_DBUSCPP2XML_EXECUTABLE}")
 else ()
 endif()
+
 
 add_definitions( -DBoost_DEBUG=ON )
 add_definitions( -DBOOST_ALL_NO_LIB )
@@ -202,9 +220,11 @@ file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
 
 macro (ADD_DLL_TO_PATH _lib)
     message("ADD_DLL_TO_PATH ${_lib}")
-    set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
-
-    if(WIN32)
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.so)
+    elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        set(ADD_DLL_TO_PATH_LIB_NAME lib${_lib}.dylib)
+    elseif (WIN32)
       set(ADD_DLL_TO_PATH_LIB_NAME ${_lib}.dll)
     endif()
     message("Will copy $<TARGET_FILE_DIR:${_lib}>/${ADD_DLL_TO_PATH_LIB_NAME} to ${CMAKE_BINARY_DIR}/execEnv/lib/")
@@ -376,18 +396,39 @@ endif ()
 
 message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
 
-if (NOT TensorFlow_FOUND AND NOT EIGEN_FOUND AND NOT EIGEN3_FOUND)
   # Here we are looking up for a system-wide installation of Eigen
-  message("Looking up for system-wide Eigen")
-  find_package(Eigen3 3.3 NO_MODULE)
-endif()
+message("Looking up for Eigen3")
+find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
+if(WIN32 AND EIGEN3_FOUND)
+include_directories("${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}/..")
+message("Eigen3 root: ${EIGEN3_USE_FILE}")
+endif()
 
 find_package(Torch)
-find_package(ICU 60.0  REQUIRED COMPONENTS uc)
+find_package(ICU 60.0 COMPONENTS uc)
+message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
+include_directories(${ICU_INCLUDE_DIR})
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  install(DIRECTORY  ${ICU_INCLUDE_DIR}/../bin64/
+          DESTINATION ${LIB_INSTALL_DIR}
+          COMPONENT runtime
+          FILES_MATCHING PATTERN "icu*.dll")
+  FILE(GLOB ICU_LIBRARIES "${ICU_INCLUDE_DIR}/../bin64/icu*.dll")
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+      ${ICU_LIBRARIES})
+      message("icu: ${ICU_LIBRARIES}")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/extern)
+
+# Set the default component name before any call to install
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
 
 # Allow to set LIMA_VERSION variables necessary to setup packages names
 configure_file(lima_common/LIMACOMMONConfig-src.cmake LIMACOMMONConfig.cmake @ONLY)
@@ -460,7 +501,7 @@ endif()
 
 add_subdirectory(extern)
 
-if (TORCH_FOUND AND (EIGEN_FOUND OR EIGEN3_FOUND))
+if (TORCH_FOUND AND EIGEN3_FOUND)
   message("Torch and Eigen found. deeplima will be built.")
   message("TORCH_CXX_FLAGS = ${TORCH_CXX_FLAGS}")
   message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
@@ -484,6 +525,8 @@ endif(DOXYGEN_FOUND)
 
 ########### packaging ###############
 
+
+
 message("CPACK_INSTALL_CMAKE_PROJECTS=${CPACK_INSTALL_CMAKE_PROJECTS}")
 
 # Specify additional runtime libraries that may not be detected. After
@@ -504,7 +547,6 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 endif()
 include(InstallRequiredSystemLibraries)
 
-set(CPACK_MONOLITHIC_INSTALL 1)
 if (TensorFlow_FOUND AND Eigen_FOUND)
   set(CPACK_PACKAGE_NAME "lima-tf")
 else()
@@ -518,13 +560,55 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 
 # set of commands to define component based packaging
 # notify cpack of component all names
-set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "runtime")
-SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por)
+SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por ud)
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 SET(CPACK_DEBIAN_USE_DISPLAY_NAME_IN_FILENAME ON)
 
+# Cpack Bundle Mac OS X installer commands
+# See https://cmake.org/cmake/help/latest/cpack_gen/bundle.html for more commands
+# Particularly those for signing the generated package
+
+
+#CPACK_BUNDLE_NAME
+#    The name of the generated bundle. This appears in the macOS Finder as the bundle name. Required.
+set(CPACK_BUNDLE_NAME ${CPACK_PACKAGE_FILE_NAME})
+
+#CPACK_BUNDLE_ICON
+#    Path to an macOS icon file that will be used as the icon for the generated bundle. This is the icon that
+#    appears in the macOS Finder for the bundle, and in the macOS dock when the bundle is opened. Required.
+set(CPACK_BUNDLE_ICON "${CMAKE_SOURCE_DIR}/lima.icns")
+
+install(PROGRAMS "${CMAKE_SOURCE_DIR}/lima-bundle-startup.sh"
+    DESTINATION bin
+    COMPONENT runtime)
+
+#set(CPACK_BUNDLE_STARTUP_COMMAND "/Volumes/lima-2.1.-Darwin/lima-2.1.-Darwin.app/Contents/MacOS/lima-2.1.-Darwin")
+set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_SOURCE_DIR}/lima-bundle-startup.sh")
+
+
+set(ICON_FILE_NAME "${CPACK_BUNDLE_NAME}")
+
+#CFBundleGetInfoString
+set(MACOSX_BUNDLE_INFO_STRING "${CPACK_PACKAGE_DESCRIPTION_SUMMARY} Version ${${PROJECT_NAME}_VERSION}, Copyright ${CPACK_PACKAGE_VENDOR}")
+set(MACOSX_BUNDLE_ICON_FILE ${ICON_FILE_NAME})
+set(MACOSX_BUNDLE_GUI_IDENTIFIER "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
+#CFBundleLongVersionString
+set(MACOSX_BUNDLE_LONG_VERSION_STRING "${CPACK_PACKAGE_DESCRIPTION_SUMMARY} Version ${${PROJECT_NAME}_VERSION}")
+set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${${PROJECT_NAME}_VERSION})
+
+#CPACK_BUNDLE_PLIST
+#    Path to an macOS Property List [.plist] file that will be used for the generated bundle. This assumes
+#    that the caller has generated or specified their own Info.plist file. Required.
+set(CONFIGURED_PLIST_PATH ${CMAKE_BINARY_DIR}/packaging/Info.plist)
+
+configure_file(${CMAKE_SOURCE_DIR}/lima.plist ${CONFIGURED_PLIST_PATH} @ONLY)
+set(CPACK_BUNDLE_PLIST ${CONFIGURED_PLIST_PATH})
+
+
+
+# Cpack NSIS Windows installer commands
 
 SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
 SET(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
@@ -535,6 +619,7 @@ if ("x$ENV{LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS}" STREQUAL "x")
   set(CPACK_DEBIAN_runtime_PACKAGE_SHLIBDEPS ON)
 endif()
 set(CPACK_GENERATOR ${SPECIFIC_SYSTEM_PREFERED_CPACK_GENERATOR})
+message("Cpack generator is ${CPACK_GENERATOR}")
 
 list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!define env_hklm 'HKLM \\\"SYSTEM\\\\CurrentControlSet\\\\Control\\\\Session Manager\\\\Environment\\\"'")
 list(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteRegExpandStr \\\${env_hklm} LIMA_DIST $INSTDIR")

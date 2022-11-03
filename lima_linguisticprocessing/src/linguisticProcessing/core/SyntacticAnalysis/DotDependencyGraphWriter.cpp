@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2019 CEA LIST
+// Copyright 2002-2019 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /**
  * @brief      output of dependency graph with dot format
  *
@@ -134,11 +121,11 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
 {
   SALOGINIT;
 
-  AnalysisGraph* anagraph=dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posgraph=dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  AnnotationData* annotationData=dynamic_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -192,7 +179,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
       PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>
         edgeWriter(posgraph->getGraph(),m_language,
                   syntacticData->dependencyGraph(),
-                   syntacticData);
+                   syntacticData.get());
 
       LimaGraphGraphvizGraphWriter graphWriter(
         m_graphDotOptions,
@@ -208,7 +195,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
   }
   else if (m_outputMode == SentenceBySentence)
   {
-    SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb==0)
     {
       LERROR << "no sentence bounds ! abort";
@@ -278,10 +265,10 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
                        i,
                        beginSentence,
                        endSentence,
-                       anagraph,
-                       posgraph,
-                       syntacticData,
-                       annotationData);
+                       anagraph.get(),
+                       posgraph.get(),
+                       syntacticData.get(),
+                       annotationData.get());
       }
       ofs << "}"<<std::endl;
     }

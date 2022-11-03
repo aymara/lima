@@ -1,19 +1,8 @@
-#   Copyright 2002-2013 CEA LIST
+# Copyright 2002-2013 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
+# SPDX-License-Identifier: MIT
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(SHORTEN_POR_CORPUS_FOR_SVMLEARN "Use a shortened corpus for SVMTlearn to reduce learning time" OFF)
@@ -24,7 +13,6 @@ option(WITH_ARCH "Enable architecture optimizations" OFF)
 message("WITH_ARCH=${WITH_ARCH}")
 option(WITH_DEBUG_MESSAGES "Enable debug messages" OFF)
 message("WITH_DEBUG_MESSAGES=${WITH_DEBUG_MESSAGES}")
-
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     message("Linux flags")
@@ -121,9 +109,9 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 
     # Flags needed for the LIMA plugins mechanism to work: our libs are dynamically loaded by
     # factories, thus their symbols must be known even if not used by the binary
-    set(CMAKE_EXE_LINKER_FLAGS "-Wl,defs,--no-as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,defs,--no-as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,defs,--no-as-needed")
+#    set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
+#    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-as-needed")
+#    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-as-needed")
 
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
@@ -135,32 +123,9 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     if (HAVE_NO_OMIT_FRAME_POINTER)
       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
     endif()
-
-    if (HAVE_STDCPP17)
-      message("C++17 supported ")
-      set(CMAKE_CXX_STANDARD 17)
-      set(CMAKE_CXX_STANDARD_REQUIRED ON)
-      set(CMAKE_CXX_EXTENSIONS OFF)
-    elseif (HAVE_STDCPP14)
-      message("C++14 supported ")
-      set(CMAKE_CXX_STANDARD 14)
-      set(CMAKE_CXX_STANDARD_REQUIRED ON)
-      set(CMAKE_CXX_EXTENSIONS OFF)
-    elseif (HAVE_STDCPP11)
-      message("C++11 supported")
-      set(CMAKE_CXX_FLAGS "-std=c++11 -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-      CHECK_CXX_COMPILER_FLAG(-Wsuggest-override HAVE_SUGGEST_OVERRIDE)
-      if (HAVE_SUGGEST_OVERRIDE)
-#       set(CMAKE_CXX_FLAGS "-Wsuggest-override -Werror=suggest-override ${CMAKE_CXX_FLAGS}")
-        set(CMAKE_CXX_FLAGS "-Wsuggest-override ${CMAKE_CXX_FLAGS}")
-      endif()
-    elseif (HAVE_STDCPP0X)
-      message("C++0x supported")
-      set(CMAKE_CXX_FLAGS "-std=c++0x -DBOOST_NO_HASH ${CMAKE_CXX_FLAGS}")
-    else ()
-      message("C++0x NOT supported")
-      set(CMAKE_CXX_FLAGS "-DNO_STDCPP0X ${CMAKE_CXX_FLAGS}")
-    endif ()
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
     set(CMAKE_CXX_FLAGS "-W -Wall ${CMAKE_CXX_FLAGS}")
 
     if (WITH_ASAN)
@@ -227,7 +192,7 @@ else ()
 
   install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
     DESTINATION bin
-    COMPONENT Libraries)
+    COMPONENT runtime)
 
 endif ()
 

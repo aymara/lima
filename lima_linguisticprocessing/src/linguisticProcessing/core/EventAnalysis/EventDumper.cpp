@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2012 by CEA LIST                              *
  *                                                                         *
@@ -105,20 +92,20 @@ LimaStatusCode EventDumper::process(
   
   LDEBUG << "EventDumper::process()... ";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "EventDumper::process: no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "EventDumper::process: no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "EventDumper::process: no graph 'PosGraph' available !";
@@ -128,7 +115,7 @@ LimaStatusCode EventDumper::process(
   LDEBUG << "EventDumper::process(): handler will be: " << m_handler;
 //  MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
 //  AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(LinguisticResources::single().getResource(langid, m_handler));
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   LDEBUG << "EventDumper::process(): handler= " << handler;
   if (handler==0)
@@ -143,11 +130,11 @@ LimaStatusCode EventDumper::process(
   handler->startAnalysis();
 
   LDEBUG << "EventDumper::process() get EventData...";
-  Events* events=static_cast<Events*>(analysis.getData("EventData"));
+  auto events = std::dynamic_pointer_cast<Events>(analysis.getData("EventData"));
   if (events==0)
   {
     LWARN << "EventDumper::process(): no Events !";
-    events=new Events();
+    events = std::make_shared<Events>();
   }
   
   std::string stringEvents = events->toString("P_URI");

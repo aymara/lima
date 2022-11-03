@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /************************************************************************
  *
  * @file       Features.cpp
@@ -267,7 +254,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
         ) const
 {
   std::string typeName("NAN");
-  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annot = std::dynamic_pointer_cast<  Common::AnnotationGraphs::AnnotationData >(analysis.getData("AnnotationData"));
   
   std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
@@ -298,7 +285,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
 ) const
 {
   std::string mxvalue("NAN");
-  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annot = std::dynamic_pointer_cast<  Common::AnnotationGraphs::AnnotationData >(analysis.getData("AnnotationData"));
   
   std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
@@ -317,9 +304,9 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
   if (mxvalue == "NAN") {
     MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
     // take first
-    for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
+    auto it=data->begin(), it_end=data->end();
+    if (it != it_end) {
       mxvalue = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
-      break;
     }
   }
   // replace empty lemma values by tokens

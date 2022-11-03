@@ -1,20 +1,7 @@
-#   Copyright 2002-2020 CEA LIST
+# Copyright 2002-2020 CEA LIST
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 #
-#   This file is part of LIMA.
-#
-#   LIMA is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   LIMA is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-#
+# SPDX-License-Identifier: MIT
 
 set(ENV{LC_ALL} "C")
 
@@ -27,7 +14,7 @@ if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     OUTPUT dico.xml forms.dic default-eng.dat
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../opening_tag.txt > dico.xml.tmp
     COMMAND cat ${dicoFiles} > forms.dic
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
+    COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
     #COMMAND LC_ALL="C" sort -u -o forms.dic.3 forms.dic.2
     COMMAND LC_ALL="C" sort -u forms.dic.2 | LC_ALL="C" comm -23 - ${CMAKE_CURRENT_SOURCE_DIR}/to_ignore.dic > forms.dic.3
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
@@ -52,7 +39,7 @@ else()
     COMMAND cat ${dicoFiles} > forms.dic
     COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge-dico-poscorpus.py eng forms.dic ${CMAKE_CURRENT_BINARY_DIR}/../../../disambiguisationMatrices/eng/corpus_eng_merge.txt forms.dic.2
     #COMMAND sort -u -o forms.dic.3 forms.dic.2
-    COMMAND sort -L -u forms.dic.2 | comm -23 - ${CMAKE_CURRENT_SOURCE_DIR}/to_ignore.dic > forms.dic.3
+    COMMAND sort -u forms.dic.2 | comm -23 - ${CMAKE_CURRENT_SOURCE_DIR}/to_ignore.dic > forms.dic.3
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl forms.dic.3 dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/compound_entries.txt >> dico.xml.tmp
     COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/../../closing_tag.txt >> dico.xml.tmp

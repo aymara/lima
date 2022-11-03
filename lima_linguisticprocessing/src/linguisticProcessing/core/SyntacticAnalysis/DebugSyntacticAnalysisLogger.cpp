@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /** @brief      debug only logger for syntactic analysis.
   *
   * @file       debugSyntacticAnalysisLogger.cpp
@@ -148,19 +135,19 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
 {
   SALOGINIT;
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (tokenList == 0) {
       SALOGINIT;
       LERROR << "no AnalysisGraph ! abort";
       return MISSING_DATA;
   }
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData == 0) {
       SALOGINIT;
       LERROR << "no SyntacticData ! abort";
@@ -178,7 +165,7 @@ LimaStatusCode DebugSyntacticAnalysisLogger::process(
   //cout << endl;
   if (m_displayChains) {
     LDEBUG << "call of displayChains";
-    SyntacticAnalysisTools::displayChains(tokenList, ofs);
+    SyntacticAnalysisTools::displayChains(tokenList.get(), ofs);
   }
   if (m_displayDependencies) {
     LDEBUG << "call of displayDependancies";

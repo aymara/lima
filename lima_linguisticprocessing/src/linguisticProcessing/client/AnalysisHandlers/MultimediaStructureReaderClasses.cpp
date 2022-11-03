@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #include "MultimediaStructureReaderClasses.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "common/Data/strwstrtools.h"

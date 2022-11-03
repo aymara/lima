@@ -1,4 +1,9 @@
 #!/usr/bin/perl -s
+
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 #
 # Perl Program created by Romaric Besancon on Wed Mar 17 2010
 # Version : $Id$ 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/. ${CMAKE_SOURCE_DIR}/src )
 
 
@@ -53,7 +57,8 @@ target_link_libraries(tvx
   ${optionalLibs}
 )
 
-install(TARGETS tvx DESTINATION bin)
+install(TARGETS tvx DESTINATION bin
+        COMPONENT runtime)
 
 
 ########### install files ###############

@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2012 by CEA LIST                              *
  *                                                                         *
@@ -180,7 +167,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
 
   /* First retrieve the source graph (Analysis) */
   analysisGraph = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>
-    (analysis.getData("AnalysisGraph"));
+    (analysis.getData("AnalysisGraph").get());
   srcGraph = analysisGraph->getGraph();
 
   /* Let's start with the "forward" algorithm
@@ -284,7 +271,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
 
   /* Build everything needed to populate the PosGraph */
   Common::AnnotationGraphs::AnnotationData* annotationData =
-  static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData").get());
 
   LinguisticGraphVertex previousPosVertex = 0;
 

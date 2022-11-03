@@ -1,21 +1,8 @@
-/*
-    Copyright 2002-2013 CEA LIST
+// Copyright 2002-2013 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
 /***************************************************************************
  *   Copyright (C) 2004-2012 by CEA LIST                              *
  *                                                                         *
@@ -102,7 +89,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   // find paragraphs in text (positions of double carriage returns),
   // then find corresponding vertices in graph
 
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (graph==0) {
     LERROR << "no graph '" << m_graph << "' available !";
     return MISSING_DATA;
@@ -110,7 +97,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   SegmentationData* boundaries=new SegmentationData(m_graph);
   analysis.setData(m_dataName,boundaries);
 
-  LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto text = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   
   std::vector<uint64_t> paragraphPositions;
   int currentPos=0;
@@ -155,7 +142,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
         boost::tie(inEdge,inEdge_end)=in_edges(currentVertex,*(graph->getGraph()));
         LinguisticGraphVertex prevVertex=source(*inEdge,*(graph->getGraph()));
         if (beginParagraph!=prevVertex) {
-          boundaries->add(Segment("paragraph",beginParagraph,prevVertex,graph));
+          boundaries->add(Segment("paragraph", beginParagraph, prevVertex, graph.get()));
         }
         beginParagraph=prevVertex;
         //boundaries->add(Segment("paragraph",beginParagraph,currentVertex,graph));
@@ -182,7 +169,7 @@ LimaStatusCode ParagraphBoundariesFinder::process(
   
   // add last segment as a paragraph
   if (beginParagraph!=graph->lastVertex()) {
-    boundaries->add(Segment("paragraph",beginParagraph,graph->lastVertex(),graph));
+    boundaries->add(Segment("paragraph", beginParagraph, graph->lastVertex(), graph.get()));
   }
   
   TimeUtils::logElapsedTime("ParagraphBoundariesFinder");

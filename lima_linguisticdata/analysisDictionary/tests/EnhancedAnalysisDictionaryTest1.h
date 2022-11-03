@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
+
 #ifndef ENHANCEDANALYSISDICTIONARYTEST1_H
 #define ENHANCEDANALYSISDICTIONARYTEST1_H
 
