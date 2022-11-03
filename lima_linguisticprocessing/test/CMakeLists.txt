@@ -290,7 +290,7 @@ target_link_libraries(test_lima
   lima-xp-core
   lima-xp-documentsreader
   lima-xp-qtsgmlentities
-  Qt::Core
+  ${QT_LIBRARIES}
 )
 
 install(TARGETS test_lima
