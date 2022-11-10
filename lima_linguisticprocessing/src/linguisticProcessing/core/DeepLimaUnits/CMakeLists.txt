@@ -10,6 +10,6 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 include_directories(common)
 
 add_subdirectory(RnnTokenizer)
-add_subdirectory(RnnTagger)
+add_subdirectory(RnnNER)
 add_subdirectory(RnnTokensAnalyzer)
 add_subdirectory(RnnDependencyParser)

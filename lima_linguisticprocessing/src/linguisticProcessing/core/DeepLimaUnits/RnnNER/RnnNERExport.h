@@ -3,8 +3,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-#ifndef LIMA_RNNTAGGEREXPORT_H
-#define LIMA_RNNTAGGEREXPORT_H
+#ifndef LIMA_RNNNEREXPORT_H
+#define LIMA_RNNNEREXPORT_H
 
 #include <common/LimaCommon.h>
 
@@ -19,7 +19,7 @@
 
 #else // Not WIN32
 
-#define LIMA_RNNTAGGER_EXPORT
+#define LIMA_RNNNER_EXPORT
 
 #endif
 
