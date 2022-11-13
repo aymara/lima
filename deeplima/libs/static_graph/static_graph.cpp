@@ -6,6 +6,8 @@
 #include "static_graph.h"
 #include "dict.h"
 
+#include "deeplima/utils/split_string.h"
+
 using torch::indexing::Slice;
 using namespace torch;
 using namespace std;
@@ -430,6 +432,7 @@ void StaticGraphImpl::parse_script(const string& script)
           op.m_fn = [inputs, outputs, shape](context_t& ctx)
           {
             //cerr << "reshape arg: " << ctx.m_tensors[inputs[0]].sizes() << endl;
+            //cerr << "shape="; for (auto v : shape) cerr << v << ", "; cerr << endl;
             auto out = torch::reshape(ctx.m_tensors[inputs[0]], shape);
             //cerr << "reshape res: " << out.sizes() << endl;
             ctx.m_tensors[outputs[0]] = out;
@@ -684,6 +687,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
       throw;
     }
     step.m_iargs["dims"] = parse_iargs(it->second);
+    assert(step.m_iargs["dims"].size() > 0);
   }
   else if (type == "unbind")
   {
@@ -708,16 +712,9 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
 vector<int64_t> StaticGraphImpl::parse_iargs(const string& str)
 {
   vector<int64_t> rv;
-  istringstream ss(str);
 
-  for (int64_t i; ss >> i;)
-  {
-    rv.push_back(i);
-    if (ss.peek() == ',')
-    {
-      ss.ignore();
-    }
-  }
+  for (const string& s : deeplima::utils::split(str, ','))
+    rv.push_back(strtol(s.c_str(), nullptr, 10));
 
   return rv;
 }
