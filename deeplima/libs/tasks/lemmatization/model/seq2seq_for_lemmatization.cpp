@@ -1,4 +1,4 @@
-// Copyright 2002-2021 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -81,14 +81,14 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   {
     int64_t end_sample = params.m_batch_size > n_samples ? n_samples : i + params.m_batch_size;
     assert(i < end_sample);
-    const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) });
-    const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) });
+    const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
+    const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
 
     vector<TorchMatrix<int64_t>::tensor_t> batch_input_cat(train_input_cat.size());
     for (size_t feat_idx = 0; feat_idx < train_input_cat.size(); ++feat_idx)
     {
       const auto& input_cat_tensor = train_input_cat[feat_idx].get_tensor();
-      batch_input_cat[feat_idx] = input_cat_tensor.index({ Slice(), Slice(i, end_sample) });
+      batch_input_cat[feat_idx] = input_cat_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
     }
 
     train_batch({ "output" }, batch_input, batch_input_cat, batch_gold, opt, stat, device);

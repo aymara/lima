@@ -1,4 +1,4 @@
-﻿// Copyright 2002-2021 CEA LIST
+﻿// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -361,11 +361,30 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   cerr << "Fixed tokens removed from train set: " << utils::backport::erase_if(form2lemma, is_fixed_pos) << endl;
   cerr << "Fixed tokens removed from   dev set: " << utils::backport::erase_if(dev_form2lemma, is_fixed_pos) << endl;
 
+  torch::Device device(params.m_device_string);
+
   vector<TorchMatrix<int64_t>> train_input_seq, train_gold;
   vector<TorchMatrix<int64_t>> dev_input_seq, dev_gold;
   vector<vector<TorchMatrix<int64_t>>> train_input_cat, dev_input_cat;
   vectorize_dataset(lang_morph_model, form2lemma, str_idx, dh, 31, train_input_seq, train_input_cat, train_gold);
   vectorize_dataset(lang_morph_model, dev_form2lemma, str_idx, dh, 31, dev_input_seq, dev_input_cat, dev_gold);
+
+  for (auto& t : train_input_seq)
+      t.to(device);
+  for (auto& t : dev_input_seq)
+      t.to(device);
+
+  for (auto& t : train_gold)
+      t.to(device);
+  for (auto& t : dev_gold)
+      t.to(device);
+
+  for (auto& v : train_input_cat)
+      for (auto& t : v)
+          t.to(device);
+  for (auto& v : dev_input_cat)
+      for (auto& t : v)
+          t.to(device);
 
   if (model.is_empty())
   {
@@ -398,7 +417,6 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
                                .weight_decay(params.m_weight_decay));
-  torch::Device device(params.m_device_string);
 
   model->to(device);
 
