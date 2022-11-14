@@ -214,7 +214,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
          * Adding link beetween the node in the analysis graph and the pos graph.
          */
         std::shared_ptr<Automaton::RecognizerMatch> entityFound;
-        QString prev_tag = "0";
+        QString prev_tag = "O";
         while (anaVerticesIndex < anaVertices.size()){
             auto anaVertex = anaVertices[anaVerticesIndex];
  /*           auto newVx = boost::add_vertex(*resultgraph);
@@ -228,7 +228,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
             if (morphoData!=nullptr)
             {
                 auto entityTag = QString::fromUtf8(m_d->m_tags[anaVerticesIndex].c_str());
-                if(entityTag != prev_tag || (entityTag[0]!="B" && prev_tag != "O") ){
+                if(anaVerticesIndex>0 && entityTag != prev_tag || (entityTag[0]!="B" && prev_tag != "O") ){
                     LinguisticGraphVertex newVertex = anagraph->firstVertex();
                     if (entityFound->size() == 1)
                     {
@@ -384,6 +384,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                         try {
                             seType = Common::MediaticData::MediaticData::single().getEntityType(entityTag);
                         } catch (LimaException& e) {
+                            PTLOGINIT;
                             LIMA_EXCEPTION( "Lima exception while getting entity type "
                                                     << entityTag << ": " << e.what());
                         }
