@@ -71,6 +71,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                 const set<LinguisticCode>& micros,
                 LinguisticAnalysisStructure::LinguisticElement& elem) const;
 
+        std::map<QString,QString> loadFileTags(const QString& filepath);
+
         void clearUnreachableVertices(
                 AnalysisGraph* anagraph,
                 LinguisticGraphVertex from) const;
@@ -86,6 +88,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
         PathResolver m_pResolver;
         std::vector<string> m_tags;
         const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+        std::map<QString, QString> m_typeMap;
         bool m_loaded;
     };
 
@@ -215,6 +218,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
          */
         std::shared_ptr<Automaton::RecognizerMatch> entityFound;
         QString prev_tag = "O";
+        bool isTagged = false;
         while (anaVerticesIndex < anaVertices.size()){
             auto anaVertex = anaVertices[anaVerticesIndex];
  /*           auto newVx = boost::add_vertex(*resultgraph);
@@ -228,7 +232,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
             if (morphoData!=nullptr)
             {
                 auto entityTag = QString::fromUtf8(m_d->m_tags[anaVerticesIndex].c_str());
-                if(anaVerticesIndex>0 && entityTag != prev_tag || (entityTag[0]!="B" && prev_tag != "O") ){
+                if((anaVerticesIndex>0 && entityTag != prev_tag) || (entityTag[0]!="B" && prev_tag != "O") ){
                     LinguisticGraphVertex newVertex = anagraph->firstVertex();
                     if (entityFound->size() == 1)
                     {
@@ -241,152 +245,153 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                                            .pointerValue<SpecificEntities::SpecificEntityAnnotation>()->getType() == entityFound->getType() )
                             {
                                 entityFound = nullptr;
-                                continue;
+                                isTagged = true;
                             }
                         }
                     }
+                    if(isTagged){
+                        if (annotationData->dumpFunction("SpecificEntity") == nullptr)
+                        {
+                            annotationData->dumpFunction("SpecificEntity",
+                                                         new SpecificEntities::DumpSpecificEntityAnnotation());
+                        }
 
-                    if (annotationData->dumpFunction("SpecificEntity") == nullptr)
-                    {
-                        annotationData->dumpFunction("SpecificEntity",
-                                                     new SpecificEntities::DumpSpecificEntityAnnotation());
-                    }
+                        auto lingGraph = const_cast<LinguisticGraph*>(anagraph->getGraph());
+                        auto tokenMap = get(vertex_token, *lingGraph);
+                        auto dataMap = get(vertex_data, *lingGraph);
 
-                    auto lingGraph = const_cast<LinguisticGraph*>(anagraph->getGraph());
-                    auto tokenMap = get(vertex_token, *lingGraph);
-                    auto dataMap = get(vertex_data, *lingGraph);
+                        SpecificEntities::SpecificEntityAnnotation annot(*entityFound,*m_d->m_stringsPool);
+                        auto head = annot.getHead();
+                        auto dataHead = dataMap[head];
 
-                    SpecificEntities::SpecificEntityAnnotation annot(*entityFound,*m_d->m_stringsPool);
-                    auto head = annot.getHead();
-                    auto dataHead = dataMap[head];
+                        // Prepare a new Token and a new MorphoSyntacticData for the new Vertex built basing on entity's head from specificentityannotation data
+                        auto seFlex = annot.getString();
+                        auto seLemma = annot.getNormalizedString();
+                        //No features with this method
+                        auto seNorm = annot.getNormalizedForm();
 
-                    // Prepare a new Token and a new MorphoSyntacticData for the new Vertex built basing on entity's head from specificentityannotation data
-                    auto seFlex = annot.getString();
-                    auto seLemma = annot.getNormalizedString();
-                    //No features with this method
-                    auto seNorm = annot.getNormalizedForm();
+                        // creata a new MorphoSyntacticData
+                        auto newMorphData = new MorphoSyntacticData();
 
-                    // creata a new MorphoSyntacticData
-                    auto newMorphData = new MorphoSyntacticData();
+                        // all linguisticElements of this morphosyntacticData share common SE information
+                        LinguisticElement elem;
+                        elem.inflectedForm = seFlex;  // StringsPoolIndex
+                        elem.lemma = seLemma;         // StringsPoolIndex
+                        elem.normalizedForm = seNorm; // StringsPoolIndex
+                        elem.type = SPECIFIC_ENTITY;  // MorphoSyntacticType
 
-                    // all linguisticElements of this morphosyntacticData share common SE information
-                    LinguisticElement elem;
-                    elem.inflectedForm = seFlex;  // StringsPoolIndex
-                    elem.lemma = seLemma;         // StringsPoolIndex
-                    elem.normalizedForm = seNorm; // StringsPoolIndex
-                    elem.type = SPECIFIC_ENTITY;  // MorphoSyntacticType
+                        auto seType = entityFound->getType();
+                        const auto& resourceName = Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId())+"Micros";
+                        auto res = LinguisticResources::single().getResource(m_d->m_language,
+                                                                             resourceName.toStdString());
+                        if (res != nullptr)
+                        {
+                            auto entityMicros = static_cast<SpecificEntities::SpecificEntitiesMicros*>(res);
+                            auto micros = entityMicros->getMicros(seType);
+                            //create a set of linguisticElements. Each LinguisticElement is linked to a
+                            //LinguisticCode from the entity
+                            m_d->addMicrosToMorphoSyntacticData(newMorphData, dataHead, *micros, elem);
+                        }
 
-                    auto seType = entityFound->getType();
-                    const auto& resourceName = Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId())+"Micros";
-                    auto res = LinguisticResources::single().getResource(m_d->m_language,
-                                                                         resourceName.toStdString());
-                    if (res != nullptr)
-                    {
-                        auto entityMicros = static_cast<SpecificEntities::SpecificEntitiesMicros*>(res);
-                        auto micros = entityMicros->getMicros(seType);
-                        //create a set of linguisticElements. Each LinguisticElement is linked to a
-                        //LinguisticCode from the entity
-                        m_d->addMicrosToMorphoSyntacticData(newMorphData, dataHead, *micros, elem);
-                    }
+                        const auto& sp = *m_d->m_stringsPool; //match id to string
+                        auto newToken = new Token(
+                                seFlex,
+                                sp[seFlex],
+                                entityFound->positionBegin(),
+                                entityFound->length());
+                        auto tStatus = tokenMap[head]->status();
 
-                    const auto& sp = *m_d->m_stringsPool; //match id to string
-                    auto newToken = new Token(
-                            seFlex,
-                            sp[seFlex],
-                            entityFound->positionBegin(),
-                            entityFound->length());
-                    auto tStatus = tokenMap[head]->status();
+                        auto syntacticData = dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
+                        //LinguisticGraphVertex newVertex;
+                        DependencyGraphVertex newDepVertex = 0;
+                        if (syntacticData != nullptr)
+                        {
+                            boost::tie (newVertex, newDepVertex) = syntacticData->addVertex();
+                        }
+                        else
+                        {
+                            newVertex = add_vertex(*lingGraph);
+                        }
 
-                    auto syntacticData = dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
-                    //LinguisticGraphVertex newVertex;
-                    DependencyGraphVertex newDepVertex = 0;
-                    if (syntacticData != nullptr)
-                    {
-                        boost::tie (newVertex, newDepVertex) = syntacticData->addVertex();
-                    }
-                    else
-                    {
-                        newVertex = add_vertex(*lingGraph);
-                    }
+                        // Update AnnotationGraph : create a new vertex and annotation
+                        auto agv =  annotationData->createAnnotationVertex();
+                        annotationData->addMatching(anagraph->getGraphId(), newVertex,
+                                                    "annot", agv);
+                        annotationData->annotate(agv,
+                                                 QString::fromStdString(anagraph->getGraphId()),
+                                                 newVertex);
+                        tokenMap[newVertex] = newToken;
+                        dataMap[newVertex] = newMorphData;
+                        GenericAnnotation ga(annot);
+                        annotationData->annotate(agv, QString::fromUtf8("SpecificEntity"), ga);
 
-                    // Update AnnotationGraph : create a new vertex and annotation
-                    auto agv =  annotationData->createAnnotationVertex();
-                    annotationData->addMatching(anagraph->getGraphId(), newVertex,
-                                                "annot", agv);
-                    annotationData->annotate(agv,
-                                             QString::fromStdString(anagraph->getGraphId()),
-                                             newVertex);
-                    tokenMap[newVertex] = newToken;
-                    dataMap[newVertex] = newMorphData;
-                    GenericAnnotation ga(annot);
-                    annotationData->annotate(agv, QString::fromUtf8("SpecificEntity"), ga);
+                        LinguisticGraphInEdgeIt inEdgeIt, inEdgeItEnd;
+                        boost::tie(inEdgeIt,inEdgeItEnd) = boost::in_edges(head, *lingGraph);
+                        bool success;
+                        LinguisticGraphEdge e;
+                        if(inEdgeIt != inEdgeItEnd)
+                        {
+                            LinguisticGraphVertex previous = boost::source(*inEdgeIt, *lingGraph);
+                            boost::remove_edge(head, previous, *lingGraph);
+                            boost::tie(e, success) = boost::add_edge(previous, newVertex, *lingGraph);
 
-                    LinguisticGraphInEdgeIt inEdgeIt, inEdgeItEnd;
-                    boost::tie(inEdgeIt,inEdgeItEnd) = boost::in_edges(head, *lingGraph);
-                    bool success;
-                    LinguisticGraphEdge e;
-                    if(inEdgeIt != inEdgeItEnd)
-                    {
-                        LinguisticGraphVertex previous = boost::source(*inEdgeIt, *lingGraph);
-                        boost::remove_edge(head, previous, *lingGraph);
-                        boost::tie(e, success) = boost::add_edge(previous, newVertex, *lingGraph);
+                            m_d->clearUnreachableVertices(anagraph, previous);
+                            m_d->clearUnreachableVertices(anagraph, head);
+                        }
 
-                        m_d->clearUnreachableVertices(anagraph, previous);
-                        m_d->clearUnreachableVertices(anagraph, head);
-                    }
+                        inEdgeIt++;
+                        //It is supposed that only one path in the graph exists before this module. Necessarily, only one edge in and out have to be updated
+                        if(inEdgeIt != inEdgeItEnd)
+                        {
+                            LimaException("Error: graph contains multiple paths");
+                        }
 
-                    inEdgeIt++;
-                    //It is supposed that only one path in the graph exists before this module. Necessarily, only one edge in and out have to be updated
-                    if(inEdgeIt != inEdgeItEnd)
-                    {
-                        continue;
-                    }
+                        LinguisticGraphOutEdgeIt outEdgeIt, outEdgeItEnd;
+                        boost::tie(outEdgeIt, outEdgeItEnd) = boost::out_edges(entityFound->getEnd(),
+                                                                               *lingGraph);
+                        if(outEdgeIt != outEdgeItEnd)
+                        {
+                            auto next = boost::target(*outEdgeIt, *lingGraph);
+                            boost::remove_edge(entityFound->getEnd(), next, *lingGraph);
+                            boost::tie(e, success) = boost::add_edge(newVertex, next, *lingGraph);
 
-                    LinguisticGraphOutEdgeIt outEdgeIt, outEdgeItEnd;
-                    boost::tie(outEdgeIt, outEdgeItEnd) = boost::out_edges(entityFound->getEnd(),
-                                                                           *lingGraph);
-                    if(outEdgeIt != outEdgeItEnd)
-                    {
-                        auto next = boost::target(*outEdgeIt, *lingGraph);
-                        boost::remove_edge(entityFound->getEnd(), next, *lingGraph);
-                        boost::tie(e, success) = boost::add_edge(newVertex, next, *lingGraph);
-                        
 
-                        m_d->clearUnreachableVertices(anagraph, entityFound->getEnd());
-                        m_d->clearUnreachableVertices(anagraph, next);
-                    }
+                            m_d->clearUnreachableVertices(anagraph, entityFound->getEnd());
+                            m_d->clearUnreachableVertices(anagraph, next);
+                        }
 
-                    outEdgeIt++;
-                    if(outEdgeIt != outEdgeItEnd)
-                    {
-                        continue;
-                    }
+                        outEdgeIt++;
+                        if(outEdgeIt != outEdgeItEnd)
+                        {
+                            LimaException("Error: graph contains multiple paths");
+                        }
 
-                    // Finalysing cleaning
-                    // TO DO : Check if it is useful
-                    auto entityFoundIt = entityFound->cbegin();
-                    auto entityFoundItEnd = entityFound->cend();
-                    for (; entityFoundIt != entityFoundItEnd; entityFoundIt++)
-                    {
-                        m_d->clearUnreachableVertices(anagraph, (*entityFoundIt).getVertex());
+                        // Finalysing cleaning
+                        // TO DO : Check if it is useful
+                        auto entityFoundIt = entityFound->cbegin();
+                        auto entityFoundItEnd = entityFound->cend();
+                        for (; entityFoundIt != entityFoundItEnd; entityFoundIt++)
+                        {
+                            m_d->clearUnreachableVertices(anagraph, (*entityFoundIt).getVertex());
+                        }
                     }
 
                 }
                 if(entityTag == "O"){
                     prev_tag = "O";
-                    continue;
                 }
                 else{
                     if(entityFound == nullptr){
                         entityFound = std::make_shared<Automaton::RecognizerMatch>(anagraph,anaVertex,true);
-                        entityTag.remove(QRegularExpression("^[BI]-"));
+                        auto entityModex = m_d->m_typeMap[entityTag];
+                        entityModex.remove(QRegularExpression("^[BI]-"));
                         EntityType seType;
                         try {
-                            seType = Common::MediaticData::MediaticData::single().getEntityType(entityTag);
+                            seType = Common::MediaticData::MediaticData::single().getEntityType(entityModex);
                         } catch (LimaException& e) {
                             PTLOGINIT;
                             LIMA_EXCEPTION( "Lima exception while getting entity type "
-                                                    << entityTag << ": " << e.what());
+                                                    << entityModex << ": " << e.what());
                         }
                         entityFound->setType(seType);
                     }
@@ -399,7 +404,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
 
 
             }
-
+            isTagged = false;
             anaVerticesIndex++;
         }
         LOG_MESSAGE(LDEBUG, "RnnNER NER done.");
@@ -432,10 +437,20 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
         auto model_file_name = findFileInPaths(resources_path,
                                                QString::fromUtf8("/RnnNER/%1/%2.pt")
                                                        .arg(lang_str, model_name));
+
         if (model_file_name.isEmpty())
         {
             throw InvalidConfiguration("RnnNERPrivate::init: tagger model file not found.");
         }
+        auto config_file_name = findFileInPaths(resources_path,
+                                           QString::fromUtf8("/RnnNER/%1/ner.cfg")
+                                                   .arg(lang_str));
+        if (config_file_name.isEmpty())
+        {
+            throw InvalidConfiguration("RnnNERPrivate::init: ner config file not found.");
+        }
+
+        m_typeMap = loadFileTags(config_file_name);
 
         m_load_fn = [this, model_file_name]()
         {
@@ -459,6 +474,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
         {
             m_dumper.set_classes(i, m_tag->get_class_names()[i], m_tag->get_classes()[i]);
         }
+
     }
 
     void RnnNERPrivate::tagger(vector<segmentation::token_pos> &buffer) {
@@ -553,6 +569,33 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                 boost::clear_vertex(v, g);
             }
         }
+    }
+
+    std::map<QString,QString> RnnNERPrivate::loadFileTags(const QString& filepath)
+    {
+        QFile file(filepath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
+        }
+        if(file.size()==0)
+        {
+            std::cout<<"The file is empty.";
+            return {};
+        }
+        QTextStream in(&file);
+        std::map<QString,QString> d;
+        unsigned int i=0;
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+            line=line.simplified();
+            i=line.indexOf(":");
+            QString type = line.left(i);
+            QString modex = line.mid(i+1);
+            d[type]=modex;
+        }
+        return d;
     }
 
 }

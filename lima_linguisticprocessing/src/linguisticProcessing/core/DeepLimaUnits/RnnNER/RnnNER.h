@@ -30,6 +30,18 @@ class RnnNERPrivate;
 *                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
 *                    for each detected token.
 */
+
+/**
+ * @class BadFileException
+ * @brief Class exception
+ */
+    class BadFileException : public std::logic_error {
+    public:
+        explicit BadFileException(const std::string& s= "") :
+                std::logic_error(s){}
+        ~BadFileException() noexcept override = default;
+    };
+
 class LIMA_RNNNER_EXPORT RnnNER : public MediaProcessUnit
 {
 public:
