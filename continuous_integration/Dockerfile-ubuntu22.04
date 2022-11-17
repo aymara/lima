@@ -20,6 +20,11 @@ ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 ARG USE_TENSORFLOW="false"
+ARG CFLAGS=""
+ARG CXXFLAGS=""
+ARG TORCH_CUDA_ARCH_LIST="6.1"
+ARG LIBTORCH_DL="./download_libtorch.sh" # Use ./download_libtorch_gpu.sh for GPU build
+
 
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
 
@@ -42,7 +47,7 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 RUN install -d /src/lima/extern
 COPY ./extern/download_libtorch.sh /src/lima/extern
 WORKDIR /src/lima/extern
-RUN bash ./download_libtorch.sh
+RUN bash ${LIBTORCH_DL}
 
 
 RUN mkdir -p /src/
@@ -64,6 +69,8 @@ ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
 ENV LIMA_DIST /usr
 ENV LIMA_CONF /usr/share/config/lima
 ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
+ENV CFLAGS=$CFLAGS
+ENV CXXFLAGS=$CXXFLAGS
 
 # Build
 #
