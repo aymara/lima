@@ -203,7 +203,11 @@ Options)");
    "supported languages trigrams")
   ("dumper,d",
    po::value< std::vector<std::string> >(&dumpersv),
-   "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter),bowh (BowTextHandler),fullxml (SimpleStreamHandler),text (SimpleStreamHandler), event (EventHandler), xmlbow (XmlBowDocumentHandler)]. To use any of them, the corresponding dumper must be available in the pipeline configuration. Default is bow but must be set if any other is set")
+   "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter), "
+   "bowh (BowTextHandler), fullxml (SimpleStreamHandler), text (SimpleStreamHandler), "
+   "event (EventHandler), xmlbow (XmlBowDocumentHandler)]. To use any of them, "
+   "the corresponding dumper must be available in the pipeline configuration. "
+   "Default is bow but must be set if any other is set")
   ("output,o",
    po::value< std::vector<std::string> >(&outputsv),
    "where to write dumpers output. By default, each dumper writes its results on a file whose name is the input file with a predefined suffix  appended. This option allows to chose another suffix or to write on standard output. Its syntax  is the following: <dumper>:<destination> with <dumper> a  dumper name and destination, either the value 'stdout' or a suffix.")
