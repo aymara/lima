@@ -13,6 +13,7 @@ set(WITH_DEBUG_MESSAGES ON)
 set(WITH_ARCH OFF)
 set(WITH_ASAN OFF)
 set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON)
+set(LIMA_RESOURCES buid)
 
 enable_testing()
 include(GNUInstallDirs)
@@ -476,9 +477,9 @@ include_directories(
 )
 add_subdirectory(lima_linguisticprocessing)
 
-# if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
   add_subdirectory(lima_linguisticdata)
-# endif()
+endif()
 
 add_subdirectory(lima_pelf)
 
