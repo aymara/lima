@@ -130,7 +130,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
 
   LDEBUG << "handler will be: " << m_handler;
 //   MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
@@ -138,28 +138,28 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
     return MISSING_DATA;
   }
   
-  AnalysisGraph* graph = static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (graph == 0)
   {
     graph = new AnalysisGraph(m_graph,m_language,true,true);
     analysis.setData(m_graph,graph);
   }
 
-  SyntacticData* syntacticData = static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData == 0)
   {
-    syntacticData = new SyntacticAnalysis::SyntacticData(static_cast<AnalysisGraph*>(analysis.getData(m_graph)),0);
+    syntacticData = new SyntacticAnalysis::SyntacticData(std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph)),0);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == 0)
   {
-    annotationData = new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::shared_ptr<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -169,8 +169,8 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   std::ostream outputStream(&hsb);
 
   LDEBUG << "EasyXmlDumper:: process before printing heading";
-  AnalysisGraph* anaGraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posGraph = static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anaGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anaGraph != 0 && posGraph != 0)
   {
     LDEBUG << "EasyXmlDumper:: begin of posgraph";

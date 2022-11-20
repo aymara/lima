@@ -86,6 +86,7 @@ void EventTemplateMerging::init(
     // add a parameter to specify if the event mention can be optional
     optionalMention=unitConfiguration.getBooleanParameter("optionalMention");
   }
+  catch (Common::XMLConfigurationFiles::NoSuchParam& ) { } // optional
   catch (Common::XMLConfigurationFiles::NoSuchList& ) { } // optional
 
   if (! optionalMention) {
@@ -127,7 +128,7 @@ LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
 
   // get EventTemplateData
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LERROR << "TemplateMerging:missing data 'EventTemplateData'";
     return MISSING_DATA;
@@ -135,13 +136,13 @@ LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
 
   LimaStatusCode returnCode=SUCCESS_ID;
   if (m_useSentenceBounds) {
-    returnCode=mergeEventTemplatesOnEachSentence(analysis,eventData);
+    returnCode=mergeEventTemplatesOnEachSentence(analysis, eventData.get());
   }
   else {
-    returnCode=mergeEventTemplates(eventData,0,0);
+    returnCode=mergeEventTemplates(eventData.get(),0,0);
   }
   
-  cleanEventTemplates(eventData);
+  cleanEventTemplates(eventData.get());
   
   TimeUtils::logElapsedTime("EventTemplateMerging");
   return returnCode;
@@ -151,7 +152,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplatesOnEachSentence(AnalysisC
 {
   LOGINIT("LP::EventAnalysis");
   // get sentence bounds
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData(m_sentenceBoundsData));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sentenceBoundsData));
   if (nullptr==sb)
   {
     LERROR << "no sentence bounds "<< m_sentenceBoundsData << " defined ! abort";

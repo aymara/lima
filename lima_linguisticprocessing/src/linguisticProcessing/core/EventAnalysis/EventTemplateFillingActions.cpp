@@ -69,14 +69,14 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
                                     AnalysisContent& analysis) const
 {
   LOGINIT("LP::EventAnalysis");
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    eventData = new EventTemplateData();
+    eventData = std::make_shared<EventTemplateData>();
     analysis.setData("EventTemplateData", eventData);
   }
   // get the cardinality for the role in the template definition
   unsigned int cardinality(1);
-  EventTemplateDefinitionData* defData=static_cast<EventTemplateDefinitionData*>(analysis.getData("EventTemplateFillingTemplateDefinition"));
+  auto defData = std::dynamic_pointer_cast<EventTemplateDefinitionData>(analysis.getData("EventTemplateFillingTemplateDefinition"));
   if (defData==0) {
     LDEBUG << "AddTemplateElement: no template definition provided";
   }
@@ -92,7 +92,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
   }
   else {
     //get type from specific entity associated to the vertex
-    const AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+    const auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
     if (annotationData==0)
     {
       LOGINIT("LP::EventAnalysis");
@@ -144,7 +144,7 @@ m_eventType()
 
 bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
 {
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";
@@ -170,7 +170,7 @@ Automaton::ConstraintFunction(language,complement)
 
 bool ClearEventTemplate::operator()(AnalysisContent& analysis) const
 {
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     LOGINIT("LP::EventAnalysis");
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";

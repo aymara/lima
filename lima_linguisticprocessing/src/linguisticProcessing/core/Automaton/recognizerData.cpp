@@ -212,7 +212,7 @@ void RecognizerData::storeVerticesToRemove(const RecognizerMatch& result,
 void RecognizerData::removeVertices(AnalysisContent& analysis) const
 {
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
-    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
+    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()).get());
 
   // remove vertices and edges in reverse order, so that
   // it does not affect the reordering of vertex numbers in
@@ -256,7 +256,7 @@ void RecognizerData::removeEdges(AnalysisContent& analysis)
   LDEBUG << "RecognizerData: removing edges to remove";
 #endif
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
-    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
+    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()).get());
   LinguisticGraph& g=*(anagraph->getGraph());
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex> >::const_iterator it, it_end;
   it = m_edgesToRemove.begin(); it_end = m_edgesToRemove.end();
@@ -277,7 +277,7 @@ void RecognizerData::setEdgeToBeRemoved(AnalysisContent& analysis, LinguisticGra
   //   APPRLOGINIT;
   //   LDEBUG << "RecognizerData: setting edge "<<e<<" to be removed";
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
-    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
+    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()).get());
   LinguisticGraph& g=*(anagraph->getGraph());
 
   std::pair<LinguisticGraphVertex, LinguisticGraphVertex> p = std::make_pair(source(e,g),target(e,g));
@@ -305,7 +305,7 @@ void RecognizerData::clearUnreachableVertices(
   std::set< std::pair<LinguisticGraphVertex, LinguisticGraphVertex > > validated;
 
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
-    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
+    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()).get());
   LinguisticGraph& g=*(anagraph->getGraph());
 
   current.push_back(from);
@@ -379,7 +379,7 @@ void RecognizerData::clearUnreachableVertices(
 #endif
 
   LinguisticAnalysisStructure::AnalysisGraph* anagraph=
-    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()));
+    static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_resultData->getGraphId()).get());
   LinguisticGraph& g=*(anagraph->getGraph());
 
   std::queue<LinguisticGraphVertex> verticesToCheck;

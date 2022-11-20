@@ -71,8 +71,6 @@ public:
 
     void initMedia(const std::string& media);
 
-    void initMediaData(MediaId med);
-
     const FsaStringsPool& stringsPool(MediaId med) const;
     FsaStringsPool& stringsPool(MediaId med);
 
@@ -114,8 +112,7 @@ public:
     const LimaString& getEntityGroupName(EntityGroupId id) const;
 
     EntityGroupId addEntityGroup(const LimaString& groupName);
-    EntityType addEntity(const LimaString& groupName,
-                         const LimaString& entityName);
+    EntityType addEntity(const LimaString& groupName, const LimaString& entityName);
 
     // simple implementation of entity taxonomy: child-parent links
     void addEntityParentLink(const EntityType& child, const EntityType& parent);
@@ -157,23 +154,19 @@ public:
 
     const std::string& getConfigPath() const;
 
-    const std::string& getConfigFile() const;
-
     /** @return the number of categories */
     size_t getNbCategories() const;
 
     virtual ~MediaticData();
 
-    virtual void initEntityTypes(
-        XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
+    virtual void initEntityTypes(XMLConfigurationFiles::XMLConfigurationFileParser& configParser);
 
     const LimaString& getEntityTypeNameSeparator() const;
 
-    bool isValidMedia(const std::string& media);
 private:
   MediaticData();
-  MediaticData(const MediaticData& md);
-  MediaticData& operator=(const MediaticData& md);
+  MediaticData(const MediaticData& md) = delete;
+  MediaticData& operator=(const MediaticData& md) = delete;
 
   MediaticDataPrivate* m_d;
 

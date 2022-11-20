@@ -66,7 +66,7 @@ void CreateIdiomaticAlternative::removeEdges(
     LDEBUG << "  first and last are equal => ignoring";
     return;
   }*/
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
 
   std::set< LinguisticGraphVertex > matchVertices;
@@ -143,13 +143,13 @@ bool CreateIdiomaticAlternative::operator()(Automaton::RecognizerMatch& result,
 #endif
   if (result.empty()) return false;
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *(result.getGraph());
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData->dumpFunction("IdiomExpr") == 0)
   {
     annotationData->dumpFunction("IdiomExpr", new DumpIdiomaticExpressionAnnotation());
   }
 
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
   std::set<LinguisticGraphVertex> addedVertices;
   // initialize the vertices to clear

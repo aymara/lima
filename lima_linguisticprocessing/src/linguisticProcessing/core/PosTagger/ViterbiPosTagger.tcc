@@ -63,7 +63,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   LINFO << "start ViterbiPosTager";
 
   // Retrieve morphosyntactic graph
-  LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  LinguisticAnalysisStructure::AnalysisGraph* anagraph=static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get());
   LinguisticGraph* srcgraph=anagraph->getGraph();
   LinguisticGraphVertex currentVx=anagraph->firstVertex();
   LinguisticGraphVertex endVx=anagraph->lastVertex();
@@ -77,16 +77,16 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
 
   /** Creation of an annotation graph if necessary*/
   Common::AnnotationGraphs::AnnotationData* annotationData =
-      static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+      static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData").get());
   if (annotationData==0)
   {
     annotationData=new Common::AnnotationGraphs::AnnotationData();
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
     * associated to the morphosyntactic vertex number */
-    if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get()) != 0)
     {
-      static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData("AnalysisGraph").get())->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }

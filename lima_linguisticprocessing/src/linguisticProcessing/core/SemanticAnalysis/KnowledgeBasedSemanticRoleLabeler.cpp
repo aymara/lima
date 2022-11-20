@@ -313,7 +313,7 @@ LimaStatusCode KnowledgeBasedSemanticRoleLabeler::process(
   LINFO << "start SRL process";
 #endif
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == nullptr)
   {
     metadata_equal_zero();

@@ -112,7 +112,7 @@ void SpecificEntitiesLoader::init(Common::XMLConfigurationFiles::GroupConfigurat
 LimaStatusCode SpecificEntitiesLoader::process(AnalysisContent& analysis) const
 {
   // get analysis graph
-  auto graph = static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graphName.toStdString()));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_d->m_graphName.toStdString()));
   if (graph == nullptr)
   {
     LOGINIT("LP::SpecificEntities");

@@ -141,27 +141,52 @@ void buildDirectoriesListForProject(QStringList& target,
 QStringList buildConfigurationDirectoriesList(const QStringList& projects,
                                               const QStringList& paths)
 {
-  //qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
+  // qDebug() << "buildConfigurationDirectoriesList" << projects << paths;
   QStringList configDirs;
 
-  QString dataHome = getDataHome();
-
-  appendNonEmptyDirs(configDirs, QStringList(dataHome + "/lima/config/"));
-
+ // 1. Add the paths explicitly given
   appendNonEmptyDirs(configDirs, paths);
 
-  for (const auto& project: projects)
+  // 2. Add dirs from LIMA_CONF if no project is given
+  if (projects.empty())
   {
-    buildDirectoriesListForProject(configDirs, project, "_CONF", "/share/config/");
+    QString var = getEnvVar(QString::fromStdString("lima") + "_CONF");
+    if ( !var.isEmpty() )
+    {
+      configDirs << var.split(LIMA_PATH_SEPARATOR);
+    }
+  }
+  else
+  {
+    // 3. Add dirs from each PROJECT_CONF
+    for (const auto& project: projects)
+    {
+      QString var = getEnvVar(project.toUpper() + "_CONF");
+      if ( !var.isEmpty() )
+      {
+        configDirs << var.split(LIMA_PATH_SEPARATOR);
+      }
+    }
+  }
+  // 4. Add conf dir in XDG_DATA_HOME or ~/.local/share/ after LIMA_CONF but before /usr
+  QString dataHome = getDataHome();
+  appendNonEmptyDirs(configDirs, QStringList(dataHome + "/lima/config/"));
+
+  // 5. Then add the *_CONF for each given project and complete if necessary with *_DIST/… or /usr/…
+  if ( configDirs.isEmpty() )
+  {
+    for (const auto& project: projects)
+    {
+        appendFirstOrSecondForProject(configDirs, project, "/share/config/", "");
+    }
   }
 
-  // If current project is not lima, try to add a lima config dir for this project
-  if (!projects.contains("lima"))
+  QString var = getEnvVar(QString::fromStdString("LIMA_SHOW_CONFIG_PATH"));
+  if ( !var.isEmpty() )
   {
-    appendFirstOrSecondForProject(configDirs, QString("lima"), "_CONF", "/share/config/");
+    qDebug() << "LIMA Configuration directories list built is:" << configDirs;
   }
 
-  //qDebug() << "buildConfigurationDirectoriesList result:" << configDirs;
   return configDirs;
 }
 

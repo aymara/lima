@@ -68,21 +68,21 @@ LimaStatusCode EntityTracker::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
   SELOGINIT;
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";

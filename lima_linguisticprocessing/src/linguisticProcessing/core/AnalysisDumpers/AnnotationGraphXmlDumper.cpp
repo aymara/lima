@@ -104,13 +104,13 @@ LimaStatusCode AnnotationGraphXmlDumper::dump(
 {
   TimeUtilsController timer("AnnotationGraphXmlDumper");
   DUMPERLOGINIT;
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "AnnotationGraphXmlDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
   LDEBUG << "handler will be: " << m_handler;
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
@@ -127,7 +127,7 @@ LimaStatusCode AnnotationGraphXmlDumper::dump(
 //  outputStream << "<!DOCTYPE lima_analysis_dump SYSTEM \"lima-xml-output.dtd\">" << std::endl;
   outputStream << "<lima_annotation_graph_dump>" << std::endl;
 
-  dumpLimaData(outputStream, *(static_cast<AnnotationData*>(analysis.getData("AnnotationData"))));
+  dumpLimaData(outputStream, *(std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"))));
 
   outputStream << "</lima_annotation_graph_dump>" << std::endl;
   handler->endAnalysis();

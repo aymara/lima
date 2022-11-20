@@ -23,16 +23,6 @@ env:
 
 
 jobs:
-#  ubuntu20tf:
-#    name: "Build on Ubuntu 20.04 with TensorFlow support"
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: "Checkout code"
-#        uses: actions/checkout@v2
-#
-#      - name: "Build image"
-#        run: docker build --tag travis-ubuntu20.04 --build-arg BRANCH="master" --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
 
   debian11:
     name: "Build on Debian 11 with TensorFlow support"
@@ -48,7 +38,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -99,13 +89,13 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
+      # - name: Sign the published Docker image
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   env:
+      #     COSIGN_EXPERIMENTAL: "true"
+      #   # This step uses the identity token to provision an ephemeral certificate
+      #   # against the sigstore community Fulcio instance.
+      #   run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}
 
   # Cannot run this build on each commit to master, it takes to much time (several hours), having to build the
   # whole qt and llvm, etc.
@@ -123,7 +113,7 @@ jobs:
           #password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       #- name: "Checkout code"
-        #uses: actions/checkout@v2
+        #uses: actions/checkout@v3
 
       ##- name: "Free disk space"
         ##run: bash ./free-diskspace.sh
@@ -147,7 +137,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: "Checkout code"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "Build image"
         run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_lima-manylinux --build-arg BRANCH="${{ github.ref_name }}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
@@ -168,7 +158,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: "Checkout code"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "Build image"
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" -t aymara/lima-ubuntu22.04:latest .

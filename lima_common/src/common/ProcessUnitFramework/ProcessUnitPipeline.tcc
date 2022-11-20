@@ -65,7 +65,7 @@ LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
 
   debugPrintInactiveUnits();
 
-  const InactiveUnitsData* dataInactiveProcessUnits = dynamic_cast<const InactiveUnitsData*>(analysis.getData("InactiveUnits"));
+  const InactiveUnitsData* dataInactiveProcessUnits = dynamic_cast<const InactiveUnitsData*>(analysis.getData("InactiveUnits").get());
   bool hasInactiveProcessUnits = !m_inactiveUnitsIds.empty()
                                   || (dataInactiveProcessUnits != 0
                                       && dataInactiveProcessUnits->size() != 0) ;

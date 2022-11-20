@@ -95,20 +95,18 @@ class SvmToolPosTaggerPrivate
   friend class SvmToolPosTagger;
 
   SvmToolPosTaggerPrivate();
-  ~SvmToolPosTaggerPrivate() {}
+  ~SvmToolPosTaggerPrivate() = default;
   SvmToolPosTaggerPrivate(const SvmToolPosTaggerPrivate&) = delete;
   SvmToolPosTaggerPrivate& operator=(const SvmToolPosTaggerPrivate&) = delete;
 
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   MediaId m_language;
-  tagger* m_tagger;
+  std::unique_ptr<tagger> m_tagger;
   std::string m_model;
   bool m_allFeatures;
   QStringList m_features;
 };
 
 SvmToolPosTaggerPrivate::SvmToolPosTaggerPrivate() :
-  m_microAccessor(nullptr),
   m_language(0),
   m_tagger(nullptr),
   m_model(),
@@ -146,10 +144,6 @@ void SvmToolPosTagger::init(
 
   PTLOGINIT;
   m_d->m_language = manager->getInitializationParameters().media;
-  const auto& ldata = static_cast<const LanguageData&>(
-      Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
-  const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
-  m_d->m_microAccessor = &(microManager.getPropertyAccessor());
   auto resourcesPath = MediaticData::single().getResourcesPath();
   try
   {
@@ -191,7 +185,7 @@ void SvmToolPosTagger::init(
   }
   LDEBUG << "Creating SVM Tagger with model: " << m_d->m_model;
   erCompRegExp();
-  m_d->m_tagger = new tagger(m_d->m_model.c_str());
+  m_d->m_tagger = std::make_unique<tagger>(m_d->m_model.c_str());
 // //   m_d->m_taggertaggerPutBackupDictionary(const std::string& dictName);
 //   m_d->m_tagger->taggerPutStrategy(0);
 //   m_d->m_tagger->taggerPutFlow("RL");
@@ -214,8 +208,12 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   PTLOGINIT;
   LINFO << "start SvmToolPosTager";
 #endif
+  const auto& ldata = static_cast<const LanguageData&>(
+      Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
+  const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
+  auto microAccessor = microManager.getPropertyAccessor();
   // Retrieve morphosyntactic graph
-  auto anagraph = static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   auto srcgraph = anagraph->getGraph();
   auto endVx = anagraph->lastVertex();
 
@@ -230,19 +228,18 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   analysis.setData("PosGraph",posgraph);
 
   /** Creation of an annotation graph if necessary*/
-  AnnotationData* annotationData =
-  static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData = new AnnotationData();
+    annotationData = std::make_shared<AnnotationData>();
     /** Creates a node in the annotation graph for each node of the
     * morphosyntactic graph. Each new node is annotated with the name mrphv and
     * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
       static_cast<AnalysisGraph*>(
-        analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
-          annotationData,
+        analysis.getData("AnalysisGraph").get())->populateAnnotationGraph(
+          annotationData.get(),
           "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
@@ -262,7 +259,6 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
 
   const auto& propertyCodeManager = static_cast<const LanguageData&>(
     MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
-  const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
   // to add tokens possible tags to the tagger dictionary
   const auto& propertyManagers = propertyCodeManager.getPropertyManagers();
 
@@ -430,7 +426,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     {
       auto posData = new MorphoSyntacticData();
       CheckDifferentPropertyPredicate differentMicro(
-          m_d->m_microAccessor,
+          &microAccessor,
           microManager.getPropertyValue(elements[1].toStdString()));
       std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),

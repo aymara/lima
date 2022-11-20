@@ -194,14 +194,14 @@ LimaStatusCode CorefSolver::process(
   LINFO << "start CorefSolver";
 #endif
   // create syntacticData
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     COREFSOLVERLOGINIT;
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     COREFSOLVERLOGINIT;
@@ -215,7 +215,7 @@ LimaStatusCode CorefSolver::process(
     "sentence bounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (sb==0)
   {
     COREFSOLVERLOGINIT;
@@ -225,21 +225,23 @@ LimaStatusCode CorefSolver::process(
 
 
   /** Access to or creation of an annotation graph */
-  AnnotationData* annotationData=static_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  if (annotationData==0)
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+  if (annotationData == 0)
   {
-    annotationData=new AnnotationData();
+    annotationData = std::make_shared<AnnotationData>();
     /** Creates a node in the annotation graph for each node of the
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
 
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+        annotationData.get(), "PosGraph");
     }
 
     analysis.setData("AnnotationData",annotationData);
@@ -269,7 +271,7 @@ LimaStatusCode CorefSolver::process(
     * function */
   if (annotationData->dumpFunction("Coreferent") == 0)
   {
-    annotationData->dumpFunction("Coreferent", new DumpCoreferent(annotationData));
+    annotationData->dumpFunction("Coreferent", new DumpCoreferent(annotationData.get()));
   }
 
 
@@ -339,7 +341,7 @@ LimaStatusCode CorefSolver::process(
         continue;
       //else alreadyProcessedVertices.insert(v);
       CoreferentAnnotation ca(nextReferentId,v);
-      if (ca.isIncludedInNounPhrase(graph, m_language, posgraph, analysis, m_inNpCategs, m_microAccessor) )
+      if (ca.isIncludedInNounPhrase(graph, m_language, posgraph.get(), analysis, m_inNpCategs, m_microAccessor) )
       {
         (*npVertices.begin()).push_back(ca);
         alreadyProcessedVertices.insert(v);
@@ -362,7 +364,10 @@ TimeUtils::updateCurrentTime();*/
         itca++)
     {
       (*itca).newerRef(&(*itca));
-      int classif = (*itca).classify(graph, syntacticData, m_macroAccessor, m_microAccessor, m_tagLocalDef, m_relLocalDef, m_definiteCategs, m_reflexiveReciprocal, m_undefPronouns, m_possPronouns, m_resolveDefinites, m_resolveN3PPronouns, m_personAccessor, posgraph, m_language);
+      int classif = (*itca).classify(graph, syntacticData.get(), m_macroAccessor, m_microAccessor, m_tagLocalDef,
+                                     m_relLocalDef, m_definiteCategs, m_reflexiveReciprocal, m_undefPronouns,
+                                     m_possPronouns, m_resolveDefinites, m_resolveN3PPronouns, m_personAccessor,
+                                     posgraph.get(), m_language);
       if (classif == 1 || classif == 11)
       {
         npAnaphora->insert(&(*itca));
@@ -372,7 +377,8 @@ TimeUtils::updateCurrentTime();*/
         (*npCandidates->begin()).insert(&(*itca));
       }
 
-      (*itca).salience((*itca).salienceWeighting(m_salienceWeights, syntacticData, m_macroAccessor,posgraph,m_language,m_tagLocalDef, m_relLocalDef,analysis,savedSb,endSentence));
+      (*itca).salience((*itca).salienceWeighting(m_salienceWeights, syntacticData.get(), m_macroAccessor,posgraph.get(),
+                                                 m_language, m_tagLocalDef, m_relLocalDef, analysis, savedSb, endSentence));
     }
 
 // TimeUtils::logElapsedTime("classify");
@@ -400,7 +406,7 @@ TimeUtils::updateCurrentTime();*/
 
     LDEBUG << "initialize syntactic filter";
 #endif
-    initSyntacticFilter(analysis, posgraph, syntacticData, npAnaphora, npCandidates, roBinding);
+    initSyntacticFilter(analysis, posgraph.get(), syntacticData.get(), npAnaphora, npCandidates, roBinding);
 
 // TimeUtils::logElapsedTime("initialize syntactic filter");
 // TimeUtils::updateCurrentTime();
@@ -421,7 +427,7 @@ TimeUtils::updateCurrentTime();*/
 
     LDEBUG << "initialize lexical anaphora binding";
 #endif
-    bindingLexicalAnaphora(analysis,posgraph, syntacticData, npAnaphora, npCandidates, lexAnaBinding);
+    bindingLexicalAnaphora(analysis,posgraph.get(), syntacticData.get(), npAnaphora, npCandidates, lexAnaBinding);
 
 // TimeUtils::logElapsedTime("initialize lex ana binding");
 // TimeUtils::updateCurrentTime();
@@ -441,7 +447,7 @@ TimeUtils::updateCurrentTime();*/
 
     LDEBUG << "resolve lexical anaphora";
 #endif
-    getBest(syntacticData, posgraph, lexAnaBinding, /*results,*/ npCandidates, annotationData);
+    getBest(syntacticData.get(), posgraph.get(), lexAnaBinding, /*results,*/ npCandidates, annotationData.get());
 
 
 // TimeUtils::logElapsedTime("resolve lexical anaphora");
@@ -450,12 +456,12 @@ TimeUtils::updateCurrentTime();*/
 #ifdef DEBUG_LP
     LDEBUG << "initialize potential binding";
 #endif
-    bindingPotentialCandidates(posgraph, npAnaphora, npCandidates, pBinding);
+    bindingPotentialCandidates(posgraph.get(), npAnaphora, npCandidates, pBinding);
 
 #ifdef DEBUG_LP
     LDEBUG << "adjust local saliences";
 #endif
-    adjustSaliences(syntacticData,npCandidates,pBinding, endSentence,posgraph,analysis);
+    adjustSaliences(syntacticData.get(), npCandidates, pBinding, endSentence, posgraph.get(), analysis);
 
 #ifdef DEBUG_LP
     LDEBUG<< "Potential Binding:";
@@ -468,7 +474,9 @@ TimeUtils::updateCurrentTime();*/
            its != (*itp).second.end( );
            its++ )
       {
-        LDEBUG <<(*its).first->morphVertex()<< " - " << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm()) <<  " : " <<  (*its).second;
+        LDEBUG <<(*its).first->morphVertex()<< " - "
+                << limastring2utf8stdstring(get(vertex_token, *graph, (*its).first->morphVertex())->stringForm())
+                <<  " : " <<  (*its).second;
       }
     }
     LDEBUG;
@@ -494,7 +502,7 @@ TimeUtils::updateCurrentTime();*/
 #ifdef DEBUG_LP
     LDEBUG << "resolve binding";
 #endif
-    getBest(syntacticData,posgraph,pBinding,/*results,*/npCandidates,annotationData);
+    getBest(syntacticData.get(), posgraph.get(), pBinding,/*results,*/npCandidates, annotationData.get());
 
 /*TimeUtils::logElapsedTime("resolve binding");
 TimeUtils::updateCurrentTime();*/
@@ -546,7 +554,8 @@ TimeUtils::updateCurrentTime();*/
       // P is diferent from N.
       /*(*anaphItr)->morphVertex() != (*candidateItr)->morphVertex() && */
       // P and N have incompatible agreement features.
-      !(*anaphItr)->isAgreementCompatibleWith(**candidateItr, syntacticData, m_genderAccessor, m_personAccessor, m_numberAccessor, m_language, anagraph, ac) ||
+      !(*anaphItr)->isAgreementCompatibleWith(**candidateItr, syntacticData, m_genderAccessor, m_personAccessor,
+                                              m_numberAccessor, m_language, anagraph, ac) ||
       // P & N are in the same sentence AND ...
       (
         (*npCandidates->begin()).find(*candidateItr)!=(*npCandidates->begin()).end()
@@ -554,7 +563,9 @@ TimeUtils::updateCurrentTime();*/
         // P is in the argument domain of N.
         // do not rule out if P is SujInv et N est SUJ_V
         (
-           (*anaphItr)->isInTheArgumentDomainOf(**candidateItr, syntacticData, m_language, anagraph, ac, m_macroAccessor, m_microAccessor, m_tagLocalDef,m_conjCoord, new set<LinguisticGraphVertex>())
+           (*anaphItr)->isInTheArgumentDomainOf(**candidateItr, syntacticData, m_language, anagraph, ac,
+                                                m_macroAccessor, m_microAccessor, m_tagLocalDef,m_conjCoord,
+                                                new set<LinguisticGraphVertex>())
           &&
           !(
             GovernorOf(m_language,utf8stdstring2limastring("SujInv"))(*anagraph,(*anaphItr)->morphVertex(),ac)
@@ -565,11 +576,13 @@ TimeUtils::updateCurrentTime();*/
         )
       )||
       // P is in the adjunct domain of N.
-        ((*anaphItr)->isInTheAdjunctDomainOf(**candidateItr, syntacticData, graph, m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language) /*&&  limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm())!="en" no change*/)||
+        ((*anaphItr)->isInTheAdjunctDomainOf(**candidateItr, syntacticData, graph, m_macroAccessor, m_tagLocalDef,
+                                             m_relLocalDef, m_language) /*&&  limastring2utf8stdstring(get(vertex_token, *graph, (*anaphItr)->morphVertex())->stringForm())!="en" no change*/)||
       // P is an argument of a head H, N is not a pronoun, and N is contained in H.
 //        (*anaphItr)->sf4(**candidateItr, syntacticData, m_macroAccessor, L_PRON(), m_language, anagraph, ac) ||
       // P is in the NP domain of N.
-      (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData, m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language, anagraph, ac) ||
+      (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData, m_macroAccessor, m_tagLocalDef, m_relLocalDef,
+                                     m_language, anagraph, ac) ||
       // P is a determiner of a noun Q, and N is contained in Q.
       (*anaphItr)->sf6(**candidateItr, syntacticData, m_relLocalDef, m_language, anagraph, ac)
       )
@@ -616,28 +629,36 @@ TimeUtils::updateCurrentTime();*/
           // A is diferent from N.
            (*anaphItr)->morphVertex() != (*candidateItr)->morphVertex() &&
            // A and N do not have any incompatible agreement features
-          (*anaphItr)->isAgreementCompatibleWith(**candidateItr, syntacticData, m_genderAccessor, m_personAccessor, m_numberAccessor, m_language, anagraph, ac) && (
+          (*anaphItr)->isAgreementCompatibleWith(**candidateItr, syntacticData, m_genderAccessor, m_personAccessor,
+                                                 m_numberAccessor, m_language, anagraph, ac) && (
            // A is SUBSUBJUX of N
-          !SecondUngovernedBy(m_language, utf8stdstring2limastring("SUBSUBJUX"))(*anagraph,(*anaphItr)->morphVertex(),(*candidateItr)->morphVertex(),ac) ||
+          !SecondUngovernedBy(m_language, utf8stdstring2limastring("SUBSUBJUX"))(*anagraph,(*anaphItr)->morphVertex(),
+                                                                                 (*candidateItr)->morphVertex(),ac) ||
            // A is in the argument domain of N,
            // and N fills a higher argument slot than A.
-           (*anaphItr)->isInTheArgumentDomainOf2(**candidateItr, syntacticData,m_language,anagraph,ac,m_macroAccessor,m_microAccessor,m_tagLocalDef,m_conjCoord, new set<LinguisticGraphVertex>()) ||
+           (*anaphItr)->isInTheArgumentDomainOf2(**candidateItr, syntacticData,m_language,anagraph,ac,m_macroAccessor,
+                                                 m_microAccessor,m_tagLocalDef,m_conjCoord,
+                                                 new set<LinguisticGraphVertex>()) ||
            // A is in the adjunct domain of N.
-           (*anaphItr)->isInTheAdjunctDomainOf(**candidateItr,syntacticData, anagraph->getGraph(), m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language) ||
+           (*anaphItr)->isInTheAdjunctDomainOf(**candidateItr,syntacticData, anagraph->getGraph(), m_macroAccessor,
+                                               m_tagLocalDef, m_relLocalDef, m_language) ||
            // A is in the NP domain of N.
-           (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData,  m_macroAccessor, m_tagLocalDef, m_relLocalDef, m_language, anagraph, ac) ||
+           (*anaphItr)->isInTheNpDomainOf(**candidateItr, syntacticData,  m_macroAccessor, m_tagLocalDef, m_relLocalDef,
+                                          m_language, anagraph, ac) ||
            // N is an argument of a verb V,
            // there is an NP Q in the argument domain of N such that Q has no noun determiner,
            // and
            //    (i) A is an argument of Q.
            // or (ii) A is an argument of a preposition PREP and PREP is an adjunct of Q.
-           (*anaphItr)->aba4(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,m_language,m_inNpCategs,anagraph,ac,m_conjCoord,npCandidates) ||
+           (*anaphItr)->aba4(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,
+                             m_language,m_inNpCategs,anagraph,ac,m_conjCoord,npCandidates) ||
            // A is a determiner of a noun Q,
            // and
            //    (i) Q is in the argument domain of N,
            //        and N fills a higher argument slot than Q.
            // or (ii) Q is in the adjunct domain of N.
-           (*anaphItr)->aba5(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,m_language,anagraph,ac,m_slotValues,m_conjCoord)
+           (*anaphItr)->aba5(**candidateItr,syntacticData,m_tagLocalDef,m_relLocalDef,m_macroAccessor,m_microAccessor,
+                             m_language,anagraph,ac,m_slotValues,m_conjCoord)
         ))
         {
            tmpCandidate.insert(make_pair(*candidateItr, (*candidateItr)->salience()));

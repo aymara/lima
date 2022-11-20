@@ -71,7 +71,7 @@ LimaStatusCode SyntacticRelationsLogger::process(
 {
   SALOGINIT;
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -87,9 +87,9 @@ LimaStatusCode SyntacticRelationsLogger::process(
       return CANNOT_OPEN_FILE_ERROR;
   }*/
 
-//   AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+//   auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   //ofs << endl << "Printing syntactic analysis result :" << endl;
-  const SyntacticData* syntacticData=static_cast<const SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<const SyntacticData>(analysis.getData("SyntacticData"));
   LDEBUG << "call of displayRelationsXMLFormat";
   SyntacticAnalysisTools::displayRelationsXMLFormat(*syntacticData,m_language,outputStream);
   

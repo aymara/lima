@@ -84,7 +84,7 @@ bool StoreForDisambiguation::operator()(
 /*
   Critical Function : comment logging messages
 */
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 
   if (v1 == graph.firstVertex() || v1 == graph.lastVertex() ||
     v2 == graph.firstVertex() || v2 == graph.lastVertex() )
@@ -138,7 +138,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   SAPLOGINIT;
   LDEBUG << "DisambiguateWith " << v1 << ", " << v2;
 #endif
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   SyntacticData::Relation oldRelation = syntacticData->relationStoredForSelectionalConstraint();
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
 
@@ -153,7 +153,7 @@ bool DisambiguateWith::operator()(const AnalysisGraph& graph,
   // dummy implementation:
   //   get old target (noun), get old target COD target (verb), get current node
   //   get current det source of detsub if any
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     SAPLOGINIT;

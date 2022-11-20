@@ -87,7 +87,7 @@ LimaStatusCode DisambiguationLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       PTLOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -98,7 +98,7 @@ LimaStatusCode DisambiguationLogger::process(
 
   map<Token*,set<LinguisticCode>,lToken > categoriesMapping;
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
   LinguisticGraphVertexIt vxItr,vxItrEnd;

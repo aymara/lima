@@ -58,19 +58,24 @@ LIMA_COMMONTOOLS_EXPORT uint64_t countLines(QFile& file);
  * @brief Build a list of configuration directories from a list of project
  * names and a list of paths.
  *
- * For each project name "project", try to add the dir from the environment
- * variable $PROJECT_CONF. If it does not exist, try
- * $PROJECT_DIST/share/config/project. If it does not exist either, try
- * /usr/share/config/project.
- * Then add existing paths from the given list.
- * In LIMA the projects list will be limited to the single element "lima" but
+ * 1. Add the paths explicitly given
+ * 2. Add dirs from LIMA_CONF if no project is given
+ * 3. Add dirs from each PROJECT_CONF
+ * 4. Add conf dir in XDG_DATA_HOME or ~/.local/share/ after LIMA_CONF but before /usr
+ * 5. Then add the *_CONF for each given project and complete if necessary with *_DIST/… or /usr/…
+ *
+ * In LIMA the @ref projects list will be empty (or just "lima") but
  * projects depending on LIMA will be able to add their own separate
  * configurations.
  *
+ * If the environment variable LIMA_SHOW_CONFIG_PATH is defined and non-empty, then the list built is written on stderr
+ *
  * @param projects The list of project names to explore
- * @param paths The list of paths to look into.
+ * @param paths The list of paths to look into first.
+ *
+ * @return The list of directories that will be searched for configuration files
  */
-LIMA_COMMONTOOLS_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects,
+LIMA_COMMONTOOLS_EXPORT QStringList buildConfigurationDirectoriesList(const QStringList& projects = QStringList(),
                                                                const QStringList& paths = QStringList() );
 
 /**

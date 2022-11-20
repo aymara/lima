@@ -101,32 +101,32 @@ LimaStatusCode DepTripletLogger::process(
 {
   TimeUtils::updateCurrentTime();
   SALOGINIT;
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "no LinguisticMetaData ! abort";
     return MISSING_DATA;
   }
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticData(posgraph,0);
+    syntacticData = std::make_shared<SyntacticData>(posgraph.get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no annotation graph available !";
@@ -141,12 +141,12 @@ LimaStatusCode DepTripletLogger::process(
     return CANNOT_OPEN_FILE_ERROR;
   }
 
-  VxToTermsMap compoundsHeads = getCompoundsHeads(annotationData,
-    syntacticData, analysis,posgraph, *(anagraph->getGraph()), 
+  VxToTermsMap compoundsHeads = getCompoundsHeads(annotationData.get(),
+    syntacticData.get(), analysis, posgraph.get(), *(anagraph->getGraph()),
     *(posgraph->getGraph()));
   dumpDependencyRelations(outputStream, *(anagraph->getGraph()), 
-                          *(posgraph->getGraph()), syntacticData, 
-                          annotationData, compoundsHeads);
+                          *(posgraph->getGraph()), syntacticData.get(),
+                          annotationData.get(), compoundsHeads);
 
   //  delete syntacticData;
 

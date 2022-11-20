@@ -1,16 +1,16 @@
 ARG PYTHON_VERSION="3.8"
-ARG QT_VERSION="5.15"
+ARG QT_VERSION="6.3"
 FROM aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_28_with_qt_and_pyside
 FROM quay.io/pypa/manylinux_2_28_x86_64
 
 
 ARG GCC_VERSION=10.1.0
-ARG QT_VERSION_MAJOR="5"
-ARG QT_FULL_VERSION="5.15.2"
-ARG PYSIDE_VERSION="2"
-ARG PYTHON_VERSION="3.8"
-ARG PYTHON_SHORT_VERSION="38"
-ARG PYTHON_FULL_VERSION="3.8.12"
+ARG QT_VERSION_MAJOR="6"
+ARG QT_FULL_VERSION="6.3.2"
+ARG PYSIDE_VERSION="6"
+ARG PYTHON_VERSION="3.7"
+ARG PYTHON_SHORT_VERSION="37"
+ARG PYTHON_FULL_VERSION="3.7.13"
 
 
 COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
@@ -78,7 +78,7 @@ ENV NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp \
 
 # Build
 #
-RUN cmake -G Ninja  -DQt${QT_VERSION_MAJOR}_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt${QT_VERSION_MAJOR} -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON  ..
+RUN cmake -G Ninja  -DQt${QT_VERSION_MAJOR}_DIR:PATH=/opt/qt${QT_VERSION_MAJOR}/${QT_FULL_VERSION}/gcc_64/lib/cmake/Qt${QT_VERSION_MAJOR} -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON  ..
 RUN ninja && ninja install
 # && ninja package
 # RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.

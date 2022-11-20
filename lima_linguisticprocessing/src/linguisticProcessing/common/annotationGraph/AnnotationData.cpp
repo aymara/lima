@@ -704,8 +704,9 @@ void AnnotationData::addMatching(const std::string& first,
 /** @brief Gets the set of vertices matched in the second graph by the given
  * vertex of the first graph
  */
-std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& first, AnnotationGraphVertex firstVx,
-      const std::string& second) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const std::string& first,
+                                                          AnnotationGraphVertex firstVx,
+                                                          const std::string& second) const
   {
     return matches( m_d->m_pool[ QString::fromStdString(first + second) ], firstVx);
   }
@@ -725,8 +726,9 @@ void AnnotationData::addMatching(const StringsPoolIndex& first, AnnotationGraphV
   addMatching( m_d->m_pool[ m_d->m_pool[second] + m_d->m_pool[first] ], secondVx, firstVx);
 }
 
-std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& first, AnnotationGraphVertex firstVx,
-      const StringsPoolIndex& second) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& first,
+                                                          AnnotationGraphVertex firstVx,
+                                                          const StringsPoolIndex& second) const
   {
     return matches( m_d->m_pool[ m_d->m_pool[first] + m_d->m_pool[second] ], firstVx);
   }
@@ -737,9 +739,8 @@ bool AnnotationData::isMatching(const StringsPoolIndex& first, AnnotationGraphVe
   return isMatching( m_d->m_pool[ m_d->m_pool[first] + m_d->m_pool[second] ], firstVx, secondVx);
 }
 
-std::set< AnnotationGraphVertex > AnnotationData::matches(
-    const StringsPoolIndex& direction,
-    AnnotationGraphVertex firstVx) const
+std::set< AnnotationGraphVertex > AnnotationData::matches(const StringsPoolIndex& direction,
+                                                          AnnotationGraphVertex firstVx) const
 {
   if (m_d->m_matchings.find(direction) == m_d->m_matchings.end())
   {

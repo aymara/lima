@@ -121,11 +121,11 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
 {
   SALOGINIT;
 
-  AnalysisGraph* anagraph=dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
-  AnalysisGraph* posgraph=dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-  AnnotationData* annotationData=dynamic_cast<AnnotationData*>(analysis.getData("AnnotationData"));
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  auto annotationData = std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SALOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -179,7 +179,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
       PosTaggingDepGraphEdgeWriter<LinguisticGraph,LinguisticGraphEdge>
         edgeWriter(posgraph->getGraph(),m_language,
                   syntacticData->dependencyGraph(),
-                   syntacticData);
+                   syntacticData.get());
 
       LimaGraphGraphvizGraphWriter graphWriter(
         m_graphDotOptions,
@@ -195,7 +195,7 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
   }
   else if (m_outputMode == SentenceBySentence)
   {
-    SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+    auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb==0)
     {
       LERROR << "no sentence bounds ! abort";
@@ -265,10 +265,10 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
                        i,
                        beginSentence,
                        endSentence,
-                       anagraph,
-                       posgraph,
-                       syntacticData,
-                       annotationData);
+                       anagraph.get(),
+                       posgraph.get(),
+                       syntacticData.get(),
+                       annotationData.get());
       }
       ofs << "}"<<std::endl;
     }

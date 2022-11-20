@@ -79,8 +79,8 @@ void AnnotDotGraphWriter::init(
 LimaStatusCode AnnotDotGraphWriter::process(AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime();
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphId));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     COMPOUNDSLOGINIT;
@@ -93,7 +93,7 @@ LimaStatusCode AnnotDotGraphWriter::process(AnalysisContent& analysis) const
     LERROR << "no AnalysisGraph named " << m_graphId << " ! ";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     COMPOUNDSLOGINIT;

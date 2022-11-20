@@ -122,7 +122,7 @@ LimaStatusCode BowDumper::process(
   TimeUtilsController timer("BowDumper");
   DUMPERLOGINIT;
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     LERROR << "no LinguisticMetaData ! abort";
@@ -130,7 +130,7 @@ LimaStatusCode BowDumper::process(
   }
 
 
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
 
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
 
@@ -143,25 +143,25 @@ LimaStatusCode BowDumper::process(
     return MISSING_DATA;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph==0)
   {
     LERROR << "BowDumper::process: no graph 'AnaGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph==0)
   {
     LERROR << "BowDumper::process: no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "BowDumper::process: no annotation graph available !";
     return MISSING_DATA;
   }
-  SyntacticData* syntacticData=static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
 /*  if (syntacticData==0)
   {
     LERROR << "BowDumper::process: no SyntacticData ! abort";
@@ -169,7 +169,8 @@ LimaStatusCode BowDumper::process(
   }*/
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticAnalysis::SyntacticData(static_cast<AnalysisGraph*>(analysis.getData(m_graph)),0);
+    syntacticData = std::make_shared<SyntacticAnalysis::SyntacticData>(
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph)).get(), nullptr);
     syntacticData->setupDependencyGraph();
     analysis.setData("SyntacticData",syntacticData);
   }
@@ -180,9 +181,9 @@ LimaStatusCode BowDumper::process(
   bowText.lang=metadata->getMetaData("Lang");
   uint64_t offset = metadata->getStartOffset();
   std::set<LinguisticGraphVertex> addedEntities;
-  buildBoWText(annotationData,syntacticData,bowText,analysis,anagraph,posgraph,addedEntities,offset);
+  buildBoWText(annotationData.get(),syntacticData.get(),bowText,analysis,anagraph.get(),posgraph.get(),addedEntities,offset);
   if (m_allEntities) {
-    addAllEntities(annotationData,addedEntities,bowText,anagraph,posgraph,offset);
+    addAllEntities(annotationData.get(),addedEntities,bowText,anagraph.get(),posgraph.get(),offset);
   }
 
   BoWBinaryWriter writer(handler->shiftFrom());
@@ -210,7 +211,7 @@ void BowDumper::buildBoWText(
   DUMPERLOGINIT;
 #endif
 
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     DUMPERLOGINIT;

@@ -99,7 +99,7 @@ LimaStatusCode EnchantSpellingAlternatives::process(AnalysisContent& analysis) c
   LINFO << "MorphologicalAnalysis: starting process EnchantSpellingAlternatives";
 
   FsaStringsPool& sp=Common::MediaticData::MediaticData::changeable().stringsPool(m_d->m_language);
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
   VertexDataPropertyMap dataMap=get(vertex_data,*g);
   VertexTokenPropertyMap tokenMap=get(vertex_token,*g);

@@ -92,7 +92,7 @@ void SegmentationResultsLoader::init(Common::XMLConfigurationFiles::GroupConfigu
 LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) const
 {
   // get analysis graph
-  auto graph = static_cast<AnalysisGraph*>(analysis.getData(m_d->m_graphName.toStdString()));
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_d->m_graphName.toStdString()));
   if (graph == nullptr)
   {
     LOGINIT("LP::AnalysisLoader");
@@ -110,11 +110,11 @@ LimaStatusCode SegmentationResultsLoader::process(AnalysisContent& analysis) con
   }
   else
   {
-    segmData = static_cast<SegmentationData*>(data);
+    segmData = static_cast<SegmentationData*>(data.get());
     if (segmData == nullptr)
     {
       LOGINIT("LP::AnalysisLoader");
-      LERROR << "data "<< data <<" is not an object of class SegmentationData";
+      LERROR << "data "<< data.get() <<" is not an object of class SegmentationData";
       return MISSING_DATA;
     }
   }

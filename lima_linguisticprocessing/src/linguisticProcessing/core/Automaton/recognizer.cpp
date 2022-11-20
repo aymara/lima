@@ -532,7 +532,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
             << " of type "<< currentRule->getType()
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
             << ") on vertex " << position;
-      RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+      RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData").get());
       if (stopAtFirstSuccess||(recoData != nullptr && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
         delete match; // a copy has been made
@@ -790,7 +790,7 @@ uint64_t Recognizer::
 #endif
       }
     }
-    RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+    RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData").get());
     if (nullptr != recoData)
     {
       std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
@@ -876,7 +876,7 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         RecognizerMatch& lastSuccess=result.back();
         Token* t=get(vertex_token,*(graph.getGraph()),current);
         uint64_t currentTokenEnd=t->position()+t->length();
-        RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+        RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData").get());
         if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
           if (lastSuccess.positionEnd() >= currentTokenEnd) {
             current=lastSuccess.getEnd();

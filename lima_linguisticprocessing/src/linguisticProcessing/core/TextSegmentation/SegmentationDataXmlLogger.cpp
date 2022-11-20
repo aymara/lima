@@ -61,7 +61,7 @@ LimaStatusCode SegmentationDataXmlLogger::process(
   LDEBUG << "SegmentationDataXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LOGINIT("LP::Segmentation");
       LERROR << "no LinguisticMetaData ! abort";
@@ -91,9 +91,9 @@ LimaStatusCode SegmentationDataXmlLogger::process(
 
   // log 
   out << "<segmentation>" << endl;
-  const AnalysisData* data =analysis.getData(m_data);
+  auto data = analysis.getData(m_data);
   if (data!=0) {
-    const SegmentationData* segData=static_cast<const SegmentationData*>(data);
+    const SegmentationData* segData=static_cast<const SegmentationData*>(data.get());
     const vector<Segment> seg=segData->getSegments();
     for (vector<Segment>::const_iterator it=seg.begin(), it_end=seg.end(); it!=it_end; it++) {
       out 

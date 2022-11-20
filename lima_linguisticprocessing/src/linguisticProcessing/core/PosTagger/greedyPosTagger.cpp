@@ -95,7 +95,7 @@ LimaStatusCode GreedyPosTagger::process(
   PTLOGINIT;
   LINFO << "start greedy posTagging";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
   AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
 
@@ -126,7 +126,7 @@ LimaStatusCode GreedyPosTagger::process(
     {
 
       // process vertex
-      processVertex(*toProcessItr,anagraph);
+      processVertex(*toProcessItr,anagraph.get());
       processed.insert(make_pair(*toProcessItr,out_degree(*toProcessItr,*graph)));
       //cerr << "processed : insert " << *toProcessItr << " with " << out_degree(*toProcessItr,*graph) << endl;
 

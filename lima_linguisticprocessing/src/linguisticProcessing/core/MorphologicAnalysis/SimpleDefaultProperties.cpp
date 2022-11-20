@@ -106,7 +106,7 @@ LimaStatusCode SimpleDefaultProperties::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process DefaultProperties";
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
   // Affectation des propriétés par défaut
   affectPropertiesOnePath(*tokenList);

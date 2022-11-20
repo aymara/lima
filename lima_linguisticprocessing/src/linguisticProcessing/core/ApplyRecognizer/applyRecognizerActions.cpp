@@ -280,8 +280,8 @@ operator()(RecognizerMatch& result,
 //   APPRLOGINIT;
 //   LDEBUG << "in CreateAlternative action";
   // need dictionary
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=anagraph->getGraph();
 
   if (result.isContiguous()) {
@@ -444,7 +444,7 @@ operator()(RecognizerMatch& result,
 {
 //   APPRLOGINIT;
 //   LDEBUG << "add result in data:" << result;
-  RecognizerData* recoData=dynamic_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData= std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData==0) {
     APPRLOGINIT;
     LWARN << "StoreInData: cannot find RecognizerData in AnalysisContent";

@@ -34,7 +34,9 @@ class PropertyAccessorPrivate
   PropertyAccessorPrivate(const std::string& name,
                    const LinguisticCode& mask,
                    const LinguisticCode& emptyNessMask);
-
+  ~PropertyAccessorPrivate() = default;
+  PropertyAccessorPrivate(const PropertyAccessorPrivate& pap) = default;
+  PropertyAccessorPrivate& operator=(const PropertyAccessorPrivate& pap) = default;
   LinguisticCode m_mask;
   LinguisticCode m_emptyNessMask;
   std::string m_name;
@@ -61,6 +63,7 @@ PropertyAccessor::PropertyAccessor(
 PropertyAccessor::~PropertyAccessor()
 {
   delete m_d;
+  m_d = nullptr;
 }
 
 PropertyAccessor::PropertyAccessor(const PropertyAccessor& pa)
@@ -81,6 +84,11 @@ const std::string& PropertyAccessor::getPropertyName() const
 
 LinguisticCode PropertyAccessor::readValue(const LinguisticCode& code) const
 {
+#ifdef DEBUG_LP
+  PROPERTYCODELOGINIT;
+  LDEBUG << "PropertyAccessor::readValue" << code;
+  Q_ASSERT(m_d != nullptr);
+#endif
   return code & m_d->m_mask;
 }
 
