@@ -23,7 +23,7 @@ ARG USE_TENSORFLOW="false"
 ARG CFLAGS=""
 ARG CXXFLAGS=""
 ARG TORCH_CUDA_ARCH_LIST="6.1"
-ARG LIBTORCH_DL="./download_libtorch.sh" # Use ./download_libtorch_gpu.sh for GPU build
+ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
 
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
@@ -45,9 +45,9 @@ RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
 RUN install -d /src/lima/extern
-COPY ./extern/download_libtorch.sh /src/lima/extern
+COPY ./extern/$LIBTORCH_DL /src/lima/extern
 WORKDIR /src/lima/extern
-RUN bash ${LIBTORCH_DL}
+RUN bash ./${LIBTORCH_DL}
 
 
 RUN mkdir -p /src/
