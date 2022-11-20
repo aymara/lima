@@ -13,7 +13,7 @@ set(WITH_DEBUG_MESSAGES ON CACHE BOOL "")
 set(WITH_ARCH OFF CACHE BOOL "")
 set(WITH_ASAN OFF CACHE BOOL "")
 set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON CACHE BOOL "")
-set(LIMA_RESOURCES build CACHE STRING "Whether to build linguistic resources or not")
+set(WITH_LIMA_RESOURCES ON CACHE BOOL "Whether to build linguistic resources or not")
 
 enable_testing()
 include(GNUInstallDirs)
@@ -477,8 +477,11 @@ include_directories(
 )
 add_subdirectory(lima_linguisticprocessing)
 
-if ("x${LIMA_RESOURCES}" STREQUAL "xbuild")
+if (WITH_LIMA_RESOURCES)
+  message("LIMA resources will be built")
   add_subdirectory(lima_linguisticdata)
+else()
+  message("LIMA resources will NOT be built")
 endif()
 
 add_subdirectory(lima_pelf)
