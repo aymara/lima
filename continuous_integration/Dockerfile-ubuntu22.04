@@ -1,5 +1,6 @@
 FROM ubuntu:22.04
 
+ARG PACKAGES="yes"
 ARG COMPILER="clang"
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -76,8 +77,8 @@ ENV CXXFLAGS=$CXXFLAGS
 
 
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
-RUN ninja && ninja test && ninja install && ninja package
-RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
+RUN ninja && ninja test && ninja install
+RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb ; fi'
 
 # WORKDIR /usr/share/apps/lima/tests
 # RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
@@ -86,7 +87,7 @@ RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 # RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
 # install github-release to be able to deploy packages
-RUN /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin
+RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi
 
 
 # install python packages necessary to use the language resources install script
