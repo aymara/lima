@@ -262,7 +262,15 @@ int main(int argc, char **argv)
   return a.exec();
 }
 
-int run(int argc, char** argv)
+#if defined(__has_feature)
+#  if __has_feature(address_sanitizer)
+    __attribute__((no_sanitize("address")))
+    __attribute__((no_sanitize("leak")))
+    __attribute__((disable_sanitizer_instrumentation))
+#  endif
+#endif
+int
+run(int argc, char** argv)
 {
   readCommandLineArguments(argc,argv);
 
