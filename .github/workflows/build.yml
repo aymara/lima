@@ -189,15 +189,16 @@ jobs:
 
       - name: "Build image"
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" -t aymara/lima-ubuntu22.04-fia:latest .
+
+      - name: "Push docker image"
+        run: docker push aymara/lima-ubuntu22.04-fia:latest
+
       - name: "Convert docker image to Singularity"
         run: |
           singularity build lima_factoryia.sif docker-daemon://aymara/lima-ubuntu22.04-fia:latest
           sha256sum lima_factoryia.sif >> sha256sums
 
-      - name: "Push docker image"
-        run: docker push aymara/lima-ubuntu22.04-fia:latest
-
-      - name: Release
+          - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
