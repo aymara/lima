@@ -161,6 +161,9 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v3
 
+      - name: "Free disk space"
+        run: bash ./free-diskspace.sh
+
       - name: "Build image"
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04:latest .
 
