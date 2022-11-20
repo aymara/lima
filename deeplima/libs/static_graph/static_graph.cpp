@@ -754,7 +754,7 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
   int64_t hidden_size = get_option<int64_t>(opts, "hidden_size");
 
   torch::nn::LSTMOptions lstm_options(input_size, hidden_size);
-  set<string> consumed_options({ "input_size", "hidden_size" });
+  std::set<std::string> consumed_options({ "input_size", "hidden_size" });
   // input_size=6 hidden_size=4 num_layers=2 batch_first=true bidirectional=true dropout
   for (const auto& kv: opts)
   {
