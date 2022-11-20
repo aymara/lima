@@ -214,3 +214,9 @@ jobs:
           files: |
             lima_factoryia.sif
             sha256sums
+
+      - name: Upload generated apptainer image
+        uses: actions/upload-artifact@v3
+        with:
+          name: apptainer-image
+          path: lima_factoryia.sif
