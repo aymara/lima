@@ -188,7 +188,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Build image"
-        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-args COMPILER="gcc" -t aymara/lima-ubuntu22.04-fia:latest .
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" -t aymara/lima-ubuntu22.04-fia:latest .
       - name: "Convert docker image to Singularity"
         run: |
           singularity build lima_factoryia.sif docker-daemon://aymara/lima-ubuntu22.04-fia:latest
