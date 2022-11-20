@@ -198,7 +198,7 @@ jobs:
           singularity build lima_factoryia.sif docker-daemon://aymara/lima-ubuntu22.04-fia:latest
           sha256sum lima_factoryia.sif >> sha256sums
 
-          - name: Release
+      - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
