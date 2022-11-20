@@ -282,10 +282,6 @@ target_link_libraries(test_lima
     lima-lp-se-person
     lima-lp-specificentities
     lima-lp-syntacticanalysis
-    lima-lp-tensorflowlemmatizer
-    lima-lp-tensorflowmorphosyntax
-    lima-lp-tensorflowspecificentities
-    lima-lp-tensorflowtokenizer
     lima-lp-textsegmentation
     lima-lp-tgv
     lima-lp-wordsensetagger
@@ -293,7 +289,6 @@ target_link_libraries(test_lima
     lima-xp-core
     lima-xp-documentsreader
     lima-xp-qtsgmlentities
-    tensorflow-for-lima
 
     Qt::Core
 )
