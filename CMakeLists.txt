@@ -13,7 +13,7 @@ set(WITH_DEBUG_MESSAGES ON)
 set(WITH_ARCH OFF)
 set(WITH_ASAN OFF)
 set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON)
-set(LIMA_RESOURCES buid)
+set(LIMA_RESOURCES build)
 
 enable_testing()
 include(GNUInstallDirs)
