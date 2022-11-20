@@ -6,8 +6,8 @@
 #include <string>
 
 #include "conllu/treebank.h"
+#include "tasks/segmentation/model/train_params_segmentation.h"
 
 int train_segmentation_model(const deeplima::CoNLLU::Treebank& tb,
-                             const std::string& model_name,
-                             bool train_ss);
+                             deeplima::segmentation::train::train_params_segmentation_t &params);
 

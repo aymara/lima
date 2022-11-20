@@ -73,22 +73,22 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   //cerr << train_input.get_tensor().sizes() << endl;
   //cerr << train_gold.get_tensor().sizes() << endl;
   //cerr << train_input.size() << endl;
-  const auto& input_tensor = train_input.get_tensor();
-  const auto& gold_tensor = train_gold.get_tensor();
+  const auto& input_tensor = train_input.get_tensor().to(device);
+  const auto& gold_tensor = train_gold.get_tensor().to(device);
   int64_t n_samples = input_tensor.sizes()[1];
   nets::epoch_stat_t stat;
   for (int64_t i = 0; i < n_samples; i += params.m_batch_size)
   {
     int64_t end_sample = params.m_batch_size > n_samples ? n_samples : i + params.m_batch_size;
     assert(i < end_sample);
-    const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) });
-    const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) });
+    const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
+    const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
 
     vector<TorchMatrix<int64_t>::tensor_t> batch_input_cat(train_input_cat.size());
     for (size_t feat_idx = 0; feat_idx < train_input_cat.size(); ++feat_idx)
     {
-      const auto& input_cat_tensor = train_input_cat[feat_idx].get_tensor();
-      batch_input_cat[feat_idx] = input_cat_tensor.index({ Slice(), Slice(i, end_sample) });
+      const auto& input_cat_tensor = train_input_cat[feat_idx].get_tensor().to(device);
+      batch_input_cat[feat_idx] = input_cat_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
     }
 
     train_batch({ "output" }, batch_input, batch_input_cat, batch_gold, opt, stat, device);

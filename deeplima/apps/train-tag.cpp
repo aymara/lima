@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
   ("seq-len,s",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
   ("opt,o",             po::value<string>(&params.m_optimizers),        "Optimizers to use (comma separated list: (adam,sgd)+)")
   ("input-dropout",     po::value<float>(&params.m_input_dropout_prob), "Input dropout probability")
+  ("beta-one",          po::value<float>(&params.m_beta_one)->default_value(0.9),        "Beta One value of Adam Optimizer")
+  ("beta-two",          po::value<float>(&params.m_beta_two)->default_value(0.9),        "Beta Two value of Adam Optimizer")
   ;
 
   po::variables_map vm;

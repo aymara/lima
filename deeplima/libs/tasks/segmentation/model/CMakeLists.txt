@@ -11,6 +11,7 @@ add_library(birnn_classifier_for_segmentation
 
 target_link_libraries(birnn_classifier_for_segmentation
   PRIVATE
+  train_common
   torch_birnn_seq_classifier
   ${TORCH_LIBRARIES}
 )
