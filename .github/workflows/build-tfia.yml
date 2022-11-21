@@ -1,0 +1,104 @@
+on:
+  push:
+    branches:
+    - master
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  MANYLINUX_TAG: "2022-10-25-fbea779"
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  PYTHON_VERSION: "3.7"
+  PYTHON_SHORT_VERSION: "cp37-cp37m"
+  PYTHON_WHEEL_VERSION: "cp37-abi3"
+  PYTHON_FULL_VERSION: "3.7.13"
+  QT_VERSION_MAJOR: "5"
+  QT_VERSION_MINOR: "15"
+  QT_VERSION_PATCH: "2"
+  QT_VERSION: "5.15"
+  QT_FULL_VERSION: "5.15.2"
+  PYSIDE_VERSION: "2"
+  LLVM_VERSION: "14.0.6"
+  GCC_VERSION: "10.1.0"
+
+
+jobs:
+
+  ubuntu22_04_lima_factoryia:
+    name: "Build the Ubuntu 22.04 Lima image for the FactoryIA cluster"
+    runs-on: ubuntu-latest
+    env:
+      LIBTORCH_DL: "./download_libtorch_gpu.sh"
+      COMPILER: "gcc"
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Install singularity
+        uses: eWaterCycle/setup-singularity@v7
+        with:
+          singularity-version: 3.8.3
+
+
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Free disk space"
+        run: bash ./free-diskspace.sh
+
+      - name: "Build image"
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04-fia:latest .
+
+      - name: "Push docker image"
+        run: docker push aymara/lima-ubuntu22.04-fia:latest
+
+
+  ubuntu22_04_lima_factoryia_apptainer:
+    name: "Convert the docker image into an apptainer one for the FactoryIA cluster"
+    runs-on: ubuntu-latest
+    needs: ubuntu22_04_lima_factoryia
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Install singularity
+        uses: eWaterCycle/setup-singularity@v7
+        with:
+          singularity-version: 3.8.3
+
+      - name: "Push docker image"
+        run: docker push aymara/lima-ubuntu22.04-fia:latest
+
+      - name: "Convert docker image to Singularity"
+        run: |
+          singularity build lima_factoryia.sif aymara/lima-ubuntu22.04-fia:latest
+          sha256sum lima_factoryia.sif >> sha256sums
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: |
+      #       lima_factoryia.sif
+      #       sha256sums
+      #
+      - name: Upload generated apptainer image
+        uses: actions/upload-artifact@v3
+        with:
+          name: apptainer-image
+          path: lima_factoryia.sif
+      - name: Upload generated apptainer image
+        uses: actions/upload-artifact@v3
+        with:
+          name: apptainer-image-signature
+          path: sha256sums
