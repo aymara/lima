@@ -87,11 +87,11 @@ RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t
 # RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
 # install github-release to be able to deploy packages
-RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi
+RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi '
 
 
 # install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip3 install arpy requests tqdm ; fi"
+RUN /bin/bash -c 'if [[ "$USE_TENSORFLOW" == true ]] ; then pip3 install arpy requests tqdm ; fi'
 
 # Stop dowloading lima models as appveyor build timeouts
 # # install English and French UD models
