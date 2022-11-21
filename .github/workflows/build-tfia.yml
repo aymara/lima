@@ -66,6 +66,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: "Free disk space"
+        run: bash ./free-diskspace.sh
+
       - name: Install singularity
         uses: eWaterCycle/setup-singularity@v7
         with:
