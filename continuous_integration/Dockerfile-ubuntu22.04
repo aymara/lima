@@ -9,7 +9,7 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get in
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
 
-RUN /usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log
+RUN bash -c '/usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log'
 
 RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
