@@ -73,7 +73,7 @@ jobs:
 
       - name: "Convert docker image to Singularity"
         run: |
-          singularity build lima_factoryia.sif aymara/lima-ubuntu22.04-fia:latest
+          singularity build lima_factoryia.sif docker://aymara/lima-ubuntu22.04-fia:latest
           sha256sum lima_factoryia.sif >> sha256sums
 
       - name: Upload generated apptainer image
