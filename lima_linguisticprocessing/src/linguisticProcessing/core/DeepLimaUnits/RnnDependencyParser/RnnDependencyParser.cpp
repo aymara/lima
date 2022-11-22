@@ -147,7 +147,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         auto syntacticData = dynamic_pointer_cast<SyntacticAnalysis::SyntacticData>(analysis.getData("SyntacticData"));
         if (syntacticData == nullptr)
         {
-            syntacticData=std::make_shared<SyntacticAnalysis::SyntacticData>(anagraph.get(), nullptr);
+            syntacticData = std::make_shared<SyntacticAnalysis::SyntacticData>(anagraph.get(), nullptr);
             analysis.setData("SyntacticData",syntacticData);
         }
         syntacticData->setupDependencyGraph();

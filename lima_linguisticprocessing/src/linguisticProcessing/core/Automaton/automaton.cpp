@@ -212,8 +212,11 @@ bool Automaton::existsEpsilonPathToFinal(const Tstate state) const {
 }
 
 void Automaton::initializeSearchStructures(MediaId language) {
+  std::cerr << "Automaton::initializeSearchStructure " << (void*)this << std::endl;
   const Common::PropertyCode::PropertyAccessor* macro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   const Common::PropertyCode::PropertyAccessor* micro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  std::cerr << "Automaton::initializeSearchStructure macro " << (void*)macro << std::endl;
+  std::cerr << "Automaton::initializeSearchStructure micro " << (void*)micro << std::endl;
   for (uint64_t i(0); i<m_numberStates; i++) {
     if (m_searchStructures[i]==0) {
       m_searchStructures[i]=new TransitionSearchStructure<Transition>();

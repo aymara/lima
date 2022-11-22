@@ -81,8 +81,8 @@ class TransitionSearchStructure
   TransitionList m_otherTransitions;
 
   // static members for access of macro and macro_micro
-  const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
+  // const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
+  // const Common::PropertyCode::PropertyAccessor* m_microAccessor;
 };
 
 } // end namespace

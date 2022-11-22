@@ -607,7 +607,7 @@ void MediaticDataPrivate::initMediaData(MediaId med)
 
     //   MediaData* ldata=new MediaData();
     m_mediasData[med] = std::shared_ptr<MediaData>(ldata);
-    ldata->initialize(med, m_resourcesPath,parser);
+    ldata->initialize(med, m_resourcesPath, parser);
   }
   else
   {

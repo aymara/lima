@@ -108,8 +108,6 @@
 
 #include <QtCore>
 
-#define DEBUG_LP
-
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
@@ -156,6 +154,8 @@ public:
   ~LimaAnalyzerPrivate() = default;
   LimaAnalyzerPrivate(const LimaAnalyzerPrivate& a) = delete;
   LimaAnalyzerPrivate& operator=(const LimaAnalyzerPrivate& a) = delete;
+
+  void initMetaData();
 
   const std::string analyzeText(const std::string& text,
                                 const std::string& lang,
@@ -280,7 +280,6 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   {
     throw InvalidConfiguration("loadLibrary method failed.");
   }
-  std::cerr << "Amose plugins are now initialized hop" << std::endl;
   qDebug() << "Amose plugins are now initialized";
 
 
@@ -290,35 +289,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
 
   std::string strConfigPath;
 
-  // parse 'meta' argument to add metadata
-  if(!meta.isEmpty())
-  {
-    std::string metaString(meta.toStdString());
-    std::string::size_type k=0;
-    do
-    {
-      k=metaString.find(",");
-      //if (k==std::string::npos) continue;
-      std::string str(metaString,0,k);
-      std::string::size_type i=str.find(":");
-      if (i==std::string::npos)
-      {
-        std::cerr << "meta argument '"<< str
-                  << "' is not of the form XXX:YYY: ignored" << std::endl;
-      }
-      else
-      {
-        //std::cout << "add metadata " << std::string(str,0,i) << "=>" << std::string(str,i+1) << std::endl;
-        metaData.insert(std::make_pair(std::string(str,0,i),
-                                       std::string(str,i+1)));
-      }
-      if (k!=std::string::npos)
-      {
-        metaString=std::string(metaString,k+1);
-      }
-    }
-    while (k!=std::string::npos);
-  }
+  initMetaData();
 
   std::deque<std::string> pipelines;
   for (const auto& pipeline: qpipelines)
@@ -483,6 +454,26 @@ void LimaAnalyzerPrivate::reset()
   vertexToToken.clear();
 }
 
+void LimaAnalyzerPrivate::initMetaData ()
+{
+  // parse 'meta' argument to add metadata
+  if (!meta.isEmpty())
+  {
+    auto metas = meta.split(",");
+    for (const auto& aMeta: metas)
+    {
+      auto kv = aMeta.split(":");
+      if (kv.size() != 2)
+      {
+        std::cerr << "meta argument '"<< aMeta.toStdString() << "' is not of the form XXX:YYY: ignored" << std::endl;
+      }
+      else
+      {
+        metaData[kv[0].toStdString()] = kv[1].toStdString();
+      }
+    }
+  }
+}
 
 std::string LimaAnalyzer::analyzeText(const std::string& text,
                                     const std::string& lang,
@@ -680,12 +671,12 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
             auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity"))
               .pointerValue<SpecificEntityAnnotation>();
             previousNeType = "O";
-            bool first = true;
+            // bool first = true;
             for (const auto& vse : se->vertices())
             {
               collectVertexDependencyInformations(vse, analysis);
               vertexToToken[vse] = tokenId;
-              first = false;
+              // first = false;
             }
             break;
           }
@@ -704,7 +695,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
           // and the ne-Type includes or not BIO information using in this case the
           // previousNeType member.
           previousNeType = "O";
-          bool first = true;
+          // bool first = true;
           vertexToToken[v] = tokenId;
           tokenId++;
           for (const auto& vse : se->vertices())
@@ -722,7 +713,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
 
             vertexToToken[posVertex] = tokenId;
             // std::cerr << "docFrom_analysis pushing token" << std::endl;
-            first = false;
+            // first = false;
           }
           previousNeType = neType;
         }

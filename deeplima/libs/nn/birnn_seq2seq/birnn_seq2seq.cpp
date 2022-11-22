@@ -39,7 +39,7 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
   for (size_t feat_idx = 0; feat_idx < m_cat_embd_descr.size(); ++feat_idx)
   {
     //std::cerr << input_cat[feat_idx].sizes() << std::endl;
-    input_map[m_cat_embd_descr[feat_idx].m_name] = torch::squeeze(input_cat[feat_idx], 0);
+    input_map[m_cat_embd_descr[feat_idx].m_name] = torch::squeeze(input_cat[feat_idx], 0).to(device);
   }
   auto output_map = forward(input_map, output_names.begin(), output_names.end());
 
@@ -48,14 +48,14 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
     const string& task_name = output_names[i];
     task_stat_t& task_stat = stat[task_name];
 
-    auto output = output_map[task_name];
+    auto output = output_map[task_name].to(device);
 
     //cerr << "output.sizes() == " << output.sizes() << std::endl;
     ////cerr << target << endl;
     ////cerr << std::get<1>(output.topk(1, 2)).reshape(target.sizes()) << endl;
-    auto o = output.reshape({ -1, output.size(2) });
+    auto o = output.reshape({ -1, output.size(2) }).to(device);
     //cerr << target.sizes() << endl;
-    auto this_task_target = target.reshape({ -1 }); //.index({ Slice(), Slice(i, i+1) });
+    auto this_task_target = target.reshape({ -1 }).to(device); //.index({ Slice(), Slice(i, i+1) });
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);

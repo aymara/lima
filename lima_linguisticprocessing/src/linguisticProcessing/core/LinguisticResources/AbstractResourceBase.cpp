@@ -49,7 +49,7 @@ QString AbstractResourceBase::getResourceFileName(const QString& paramName)
 {
   QString file;
   QStringList resourcesPaths = QString::fromUtf8(Common::MediaticData::MediaticData::single().getResourcesPath().c_str()).split(LIMA_PATH_SEPARATOR);
-  Q_FOREACH(QString resPath, resourcesPaths)
+  for(QString resPath : resourcesPaths)
   {
     file = resPath + "/" + paramName;
     if (QFileInfo::exists(file))

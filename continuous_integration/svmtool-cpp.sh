@@ -19,5 +19,5 @@ URL=$(echo "$SVMTOOL_LATEST_RELEASE_JSON" | grep browser_download_url | grep deb
 echo "URL=$URL"
 
 TEMP_DEB="$(mktemp)"
-curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB"
+curl  -LJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB"
 dpkg -i "$TEMP_DEB"

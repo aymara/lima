@@ -10,6 +10,7 @@ set -o nounset
 
 source python_env.sh
 docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside \
+    --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" \
     --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" \
     --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" \
     --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" \

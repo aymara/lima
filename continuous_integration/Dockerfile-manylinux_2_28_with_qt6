@@ -1,14 +1,15 @@
-FROM quay.io/pypa/manylinux_2_28_x86_64
+ARG MANYLINUX_TAG
+FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
-ARG GCC_VERSION=11.2.1
-ARG QT_VERSION="6.3"
-ARG QT_VERSION_MAJOR="6"
-ARG QT_VERSION_MINOR="3"
-ARG QT_VERSION_PATCH="1"
-ARG QT_FULL_VERSION="6.3.1"
-ARG PYTHON_VERSION="3.7"
-ARG PYTHON_SHORT_VERSION="cp37-cp37m"
-ARG PYTHON_FULL_VERSION="3.7.13"
+ARG GCC_VERSION
+ARG QT_VERSION
+ARG QT_VERSION_MAJOR
+ARG QT_VERSION_MINOR
+ARG QT_VERSION_PATCH
+ARG QT_FULL_VERSION
+ARG PYTHON_VERSION
+ARG PYTHON_SHORT_VERSION
+ARG PYTHON_FULL_VERSION
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 RUN yum install -y wget ninja-build
@@ -77,7 +78,6 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtserialbus \
     -skip qtserialport \
     -skip qtspeech \
-    -skip qttools \
     -skip qtdoc \
     -skip qttranslations \
     -skip qtvirtualkeyboard \

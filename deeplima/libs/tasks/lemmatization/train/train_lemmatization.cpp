@@ -419,7 +419,9 @@ int train_lemmatization(const train_params_lemmatization_t& params)
                                .weight_decay(params.m_weight_decay));
 
   model->to(device);
-
+  for(auto& matrix: train_input_seq) matrix.to(device);
+  for(auto& matrix: train_gold) matrix.to(device);
+  for(auto& vec: train_input_cat) for(auto& matrix:vec) matrix.to(device);
   model->train(params, train_input_seq, train_input_cat, train_gold, dev_input_seq, dev_input_cat, dev_gold, optimizer, device);
 
   return 0;

@@ -8,11 +8,11 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-
+  MANYLINUX_TAG: "2022-10-25-fbea779"
   PYTHON_VERSION: "3.7"
   PYTHON_SHORT_VERSION: "cp37-cp37m"
   PYTHON_WHEEL_VERSION: "cp37-abi3"
-  PYTHON_FULL_VERSION: "3.7.13"
+  PYTHON_FULL_VERSION: "3.7.15"
   QT_VERSION_MAJOR: "6"
   QT_VERSION_MINOR: "4"
   QT_VERSION_PATCH: "0"
@@ -24,7 +24,6 @@ env:
 
 
 jobs:
-
 
   manylinux_2_28_with_qt6:
     name: "Build the manylinux_2_28-based image with Qt6"

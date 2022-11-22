@@ -9,7 +9,7 @@ RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get in
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
 
-RUN bash -c '/usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log'
+RUN /usr/sbin/update-nvidia-cudnn -u > /tmp/update-nvidia-cudnn.log 2>&1 || cat /tmp/update-nvidia-cudnn.log
 
 RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -35,8 +35,6 @@ RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/ind
 RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
-RUN pwd
-RUN ls
 WORKDIR /
 COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
 RUN /svmtool.sh $GITHUB_TOKEN
@@ -76,25 +74,15 @@ ENV CXXFLAGS=$CXXFLAGS
 #
 
 
-RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
-RUN ninja && ninja test && ninja install
-RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb ; fi'
+RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
+RUN ninja && ninja install
 
-# WORKDIR /usr/share/apps/lima/tests
-# RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
-# RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
-# WORKDIR /usr/share/apps/lima/tests/xmlreader
-# RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+ENV CFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
+ENV CXXFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
 
-# install github-release to be able to deploy packages
-RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi '
+RUN rm -Rf /src/lima/build
+RUN mkdir -p /src/lima/build
+WORKDIR /src/lima/build
 
-
-# install python packages necessary to use the language resources install script
-RUN /bin/bash -c 'if [[ "$USE_TENSORFLOW" == true ]] ; then pip3 install arpy requests tqdm ; fi'
-
-# Stop dowloading lima models as appveyor build timeouts
-# # install English and French UD models
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
-
+RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
+RUN ninja && ninja install

@@ -54,7 +54,7 @@ SPDX-License-Identifier: MIT
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -211,7 +211,7 @@ SPDX-License-Identifier: MIT
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -285,7 +285,7 @@ SPDX-License-Identifier: MIT
         <item value="viterbiPostagger-freq"/>
         <item value="dotGraphWriter"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="dotDepGraphWriter"/>
@@ -326,7 +326,7 @@ SPDX-License-Identifier: MIT
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="sentenceBoundariesFinder"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -372,7 +372,7 @@ SPDX-License-Identifier: MIT
         <!--item value="disambiguatedGraphXmlLogger"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="sentenceBoundariesFinder"/-->
-        <!--item value="syntacticAnalyzerChains"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <!--item value="dotDepGraphWriter"/-->
@@ -407,7 +407,7 @@ SPDX-License-Identifier: MIT
         <item value="SpecificEntitiesModex"/>
         <item value="@PosTagger@"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalyzerDummy"/>
@@ -676,12 +676,6 @@ SPDX-License-Identifier: MIT
       </list>
       <list name="values" />
       <list name="forbid-values" />
-    </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
-      <param key="chainMatrix" value="chainMatrix"/>
-      <param key="disambiguated" value="true"/>
-      <param key="maxChainsNbByVertex" value="30"/>
-      <param key="maxChainLength" value="12"/>
     </group>
     <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
     experimental module used to test if LIMA analysis works without nominal and
