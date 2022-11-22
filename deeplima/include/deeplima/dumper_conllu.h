@@ -315,13 +315,13 @@ public:
       std::cout << "\t";
       if (hasDeps)
       {
-        std::cout << iter.head();
+        std::cout << iter.head() << "\tdep";
       }
       else
       {
-        std::cout << m_next_token_idx - 1;
+        std::cout << m_next_token_idx - 1 << "\t_";
       }
-      std::cout << "\t_\t_\t_" << std::endl;
+      std::cout << "\t_\t_" << std::endl;
 
       increment_token_counter();
 

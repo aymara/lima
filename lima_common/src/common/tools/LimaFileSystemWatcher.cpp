@@ -53,7 +53,7 @@ void  LimaFileSystemWatcherPrivate::slotDirectoryChanged ( const QString & path 
   {
     // for each of the files associated to the dir 'path', check if it exists again.
     QList<QString> files = m_pathToDeletedFileMap.values(path);
-    for(auto file : files)
+    for(auto& file : files)
     {
       // file has been recreated: watch it again, remove it from list of deleted and signal the change
       if (QFileInfo::exists(file))

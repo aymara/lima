@@ -235,7 +235,6 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     qlangs(iqlangs), qpipelines(iqpipelines), modulePath(imodulePath),
     user_config_path(iuser_config_path), user_resources_path(iuser_resources_path), meta(imeta)
 {
-  std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate" << std::endl;
   int argc = 1;
   char* argv[2] = {(char*)("LimaAnalyzer"), NULL};
   QCoreApplication app(argc, argv);
@@ -297,6 +296,8 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     pipelines.push_back(pipeline.toStdString());
 
 
+  uint64_t beginTime=TimeUtils::getCurrentTime();
+
   std::deque<std::string> langs;
   for (const auto& lang: qlangs)
     langs.push_back(lang.toStdString());
@@ -311,7 +312,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     configPath.toUtf8().constData(),
     commonConfigFile,
     langs);
-  std::cerr << "MediaticData initialized" << std::endl;
+  // std::cerr << "MediaticData initialized" << std::endl;
 
   bool clientFactoryConfigured = false;
   Q_FOREACH(QString configDir, configDirs)
@@ -319,17 +320,17 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() configuring "
-                << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
-                << clientId << std::endl;
+          << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
+          << clientId << std::endl;
 
       // initialize linguistic processing
       Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-        (configDir + "/" + lpConfigFile.c_str()));
+          (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
-          clientId,
-          lpconfig,
-          langs,
-          pipelines);
+        clientId,
+        lpconfig,
+        langs,
+        pipelines);
       clientFactoryConfigured = true;
       break;
     }
@@ -922,19 +923,9 @@ QString LimaAnalyzerPrivate::getMicro(LinguisticAnalysisStructure::MorphoSyntact
 
 int main(int argc, char* argv[])
 {
-  // LimaAnalyzer analyzer1("eng", "main", "");
-  // analyzer1 = LimaAnalyzer("eng", "main", "");
-  // std::cerr << analyzer1.analyzeText("Hop! Hop!") << std::endl;
-  // return 0;
   LimaAnalyzer analyzer0("ud-eng", "deepud", "");
-  std::cerr << analyzer0.analyzeText("Hop! Hop!") << std::endl;
+  std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;
 
-  {
-    LimaAnalyzer analyzer1("eng", "main", "");
-    analyzer0 = LimaAnalyzer("ud-eng", "deepud", "");
-    std::cerr << analyzer1.analyzeText("One, 2, three.") << std::endl;
-    std::cerr << analyzer0.analyzeText("English again!") << std::endl;
-  }
-  LimaAnalyzer analyzer2("ud-fra", "deepud", "");
-  std::cerr << analyzer2.analyzeText("Nous analysons du français pour terminer.") << std::endl;
+  LimaAnalyzer analyzer1("eng", "main", "");
+  std::cerr << analyzer1.analyzeText("One, 2, tree.") << std::endl;
 }

@@ -150,7 +150,7 @@ bool Categories::configure(const QString& fileName, bool reload)
         }
         if(category == local_zone) {
             // Ensure the local logger knows all the latest declared destinations
-            for (auto destination: Destinations::instance().destinations())
+            for (auto& destination: Destinations::instance().destinations())
             {
               logger.addDestination(destination);
             }
@@ -243,7 +243,7 @@ LIMA_COMMONQSLOG_EXPORT bool initQsLog(const QString& configString)
       if (initDir.exists())
       {
         QStringList entryList = initDir.entryList();
-        for(QString entry : entryList)
+        for(QString& entry : entryList)
         {
           if (QsLogging::Destinations::instance().configure(configDir + "/log4cpp/" + entry))
           {

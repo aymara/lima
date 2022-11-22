@@ -242,7 +242,7 @@ echo "libTorch: " $LIBTORCH_PATH
 # export LSAN_OPTIONS=suppressions=${LIMA_SOURCES}/suppr.txt
 export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
-echoerr "Launching cmake from $PWD on $source_dir"
+echoerr "Launching cmake from $PWD on $source_dir WITH_ASAN=$WITH_ASAN"
 cmake  -G "$generator" \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \

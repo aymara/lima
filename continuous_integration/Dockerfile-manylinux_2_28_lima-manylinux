@@ -6,7 +6,6 @@ FROM aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSIO
 ARG MANYLINUX_TAG
 FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
-
 ARG GCC_VERSION
 ARG QT_VERSION_MAJOR
 ARG QT_FULL_VERSION

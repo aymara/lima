@@ -1,4 +1,4 @@
-// Copyright 2002-2021 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -27,9 +27,8 @@ void BiRnnSeq2SeqImpl::train_batch(const std::vector<std::string>& output_names,
   opt.zero_grad();
   int64_t l = target.sizes()[0];
   torch::Tensor gold_input = torch::empty({1, target.sizes()[1]},
-                                          torch::TensorOptions().dtype(torch::kInt64)).fill_(2);
+                                          torch::TensorOptions().dtype(torch::kInt64)).fill_(2).to(device);
   gold_input = torch::cat({gold_input, target.index({Slice(0, l-1), Slice()})}, 0);
-  gold_input.to(device);
   //cerr << input.sizes() << " " << gold_input.sizes() << endl;
   //cerr << gold_input << endl;
   //cerr << target << endl;

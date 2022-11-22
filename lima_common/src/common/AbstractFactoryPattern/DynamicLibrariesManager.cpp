@@ -171,6 +171,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   {
     LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
     libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
+
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
