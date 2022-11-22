@@ -124,7 +124,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
         TimeUtils::updateCurrentTime();
         TimeUtilsController RnnNERProcessTime("RnnNER");
         LOG_MESSAGE_WITH_PROLOG(LDEBUG, "start RnnNER");
-        auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+        auto anagraph = dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
         if (anagraph == nullptr)
         {
             PTLOGINIT;
@@ -146,21 +146,21 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                 MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
         const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
         /** Creation of an annotation graph if necessary*/
-        AnnotationData* annotationData = dynamic_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+        auto annotationData = dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
         if (annotationData==nullptr)
         {
-            annotationData = new AnnotationData();
+            annotationData = std::make_shared<AnnotationData>();
             /** Creates a node in the annotation graph for each node of the
             * morphosyntactic graph. Each new node is annotated with the name mrphv and
             * associated to the morphosyntactic vertex number */
-            if (dynamic_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != nullptr)
+            if (dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != nullptr)
             {
-                dynamic_cast<AnalysisGraph*>(
+                dynamic_pointer_cast<AnalysisGraph>(
                         analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
-                        annotationData,
+                        annotationData.get(),
                         "AnalysisGraph");
             }
-            analysis.setData("AnnotationData",annotationData);
+            analysis.setData("AnnotationData", annotationData);
         }
         if (num_vertices(*srcgraph)<=2)
         {
@@ -301,7 +301,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                                 entityFound->length());
                         auto tStatus = tokenMap[head]->status();
 
-                        auto syntacticData = dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
+                        auto syntacticData = dynamic_pointer_cast<SyntacticAnalysis::SyntacticData>(analysis.getData("SyntacticData"));
                         //LinguisticGraphVertex newVertex;
                         DependencyGraphVertex newDepVertex = 0;
                         if (syntacticData != nullptr)
@@ -335,8 +335,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                             boost::remove_edge(head, previous, *lingGraph);
                             boost::tie(e, success) = boost::add_edge(previous, newVertex, *lingGraph);
 
-                            m_d->clearUnreachableVertices(anagraph, previous);
-                            m_d->clearUnreachableVertices(anagraph, head);
+                            m_d->clearUnreachableVertices(anagraph.get(), previous);
+                            m_d->clearUnreachableVertices(anagraph.get(), head);
                         }
 
                         inEdgeIt++;
@@ -356,8 +356,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                             boost::tie(e, success) = boost::add_edge(newVertex, next, *lingGraph);
 
 
-                            m_d->clearUnreachableVertices(anagraph, entityFound->getEnd());
-                            m_d->clearUnreachableVertices(anagraph, next);
+                            m_d->clearUnreachableVertices(anagraph.get(), entityFound->getEnd());
+                            m_d->clearUnreachableVertices(anagraph.get(), next);
                         }
 
                         outEdgeIt++;
@@ -372,7 +372,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                         auto entityFoundItEnd = entityFound->cend();
                         for (; entityFoundIt != entityFoundItEnd; entityFoundIt++)
                         {
-                            m_d->clearUnreachableVertices(anagraph, (*entityFoundIt).getVertex());
+                            m_d->clearUnreachableVertices(anagraph.get(), (*entityFoundIt).getVertex());
                         }
                     }
 
@@ -382,7 +382,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
                 }
                 else{
                     if(entityFound == nullptr){
-                        entityFound = std::make_shared<Automaton::RecognizerMatch>(anagraph,anaVertex,true);
+                        entityFound = std::make_shared<Automaton::RecognizerMatch>(anagraph.get(), anaVertex, true);
                         auto entityModex = m_d->m_typeMap[entityTag];
                         entityModex.remove(QRegularExpression("^[BI]-"));
                         EntityType seType;
@@ -477,7 +477,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER {
 
     }
 
-    void RnnNERPrivate::tagger(vector<segmentation::token_pos> &buffer) {
+    void RnnNERPrivate::tagger(std::vector<segmentation::token_pos> &buffer) {
         m_tag->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                const token_buffer_t<>& tokens,
                                                const std::vector<StringIndex::idx_t>& lemmata,
