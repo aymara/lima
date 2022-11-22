@@ -14,24 +14,27 @@ if (EIGEN3_FOUND)
     include_directories(AFTER ${CMAKE_SOURCE_DIR}/extern/libtorch/include/torch/csrc/api/include)
     include_directories(AFTER ${CMAKE_SOURCE_DIR}/extern/)
 
-    SET(lima-lp-rnn-tagger_LIB_SRCS
-            RnnTagger.cpp
+    SET(lima-lp-rnn-ner_LIB_SRCS
+            RnnNER.cpp
             )
 
-    DECLARE_LIMA_PLUGIN(lima-lp-rnn-tagger)
+    DECLARE_LIMA_PLUGIN(lima-lp-rnn-ner)
 
-    target_compile_definitions(lima-lp-rnn-tagger
-            PRIVATE "-DLIMA_RNNTAGGER_EXPORTING"
+    target_compile_definitions(lima-lp-rnn-ner
+            PRIVATE "-DLIMA_RNNNER_EXPORTING"
             PUBLIC
             DEEPLIMA_INFERENCE_ENGINE=IE_EIGEN
             )
 
-    target_link_libraries(lima-lp-rnn-tagger
+    target_link_libraries(lima-lp-rnn-ner
             lima-lp-linguisticdata
             lima-lp-linguisticresources
             lima-lp-annotationgraph
             lima-lp-linguisticanalysisstructure
             lima-lp-textsegmentation
+            lima-lp-automaton
+            lima-lp-specificentities
+            lima-lp-applyrecognizer
             lima-common
             ICU::uc
             convert_from_torch-shared
@@ -42,13 +45,13 @@ if (EIGEN3_FOUND)
             ${TORCH_LIBRARIES}
             )
 
-    set_target_properties(lima-lp-rnn-tagger PROPERTIES
+    set_target_properties(lima-lp-rnn-ner PROPERTIES
             VERSION ${LIMA_LP_LIB_VERSION}
             SOVERSION ${LIMA_LP_LIB_SOVERSION}
             )
 
     install(
-            TARGETS lima-lp-rnn-tagger
+            TARGETS lima-lp-rnn-ner
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT runtime
     )

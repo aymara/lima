@@ -435,7 +435,9 @@ void MultXmlReaderPrivate::readBowToken()
   Q_ASSERT(m_reader.isStartElement() && m_reader.name() == QLatin1String("bowToken"));
 #endif
   getTokenAttributes(m_reader, lemma, category, position, length, id);
+#ifdef DEBUG_LP
   LDEBUG << lemma << category << position << length << id ;
+#endif
   auto token = boost::shared_ptr< BoWToken >(new BoWToken(lemma,category,position,length));
   m_refMap[id] = token;
   if (m_currentComplexToken.empty())
@@ -558,7 +560,9 @@ void MultXmlReaderPrivate::readBowNamedEntity()
     QTextStream qts(&errorString);
     qts << __FILE__ << ", line" << __LINE__
         << "Unknown entity type" << typeName;
-    LERROR << errorString;
+#ifdef DEBUG_LP
+      LERROR << errorString;
+#endif
     throw LimaException(errorString);
   }
   auto ne = boost::shared_ptr< BoWNamedEntity >(

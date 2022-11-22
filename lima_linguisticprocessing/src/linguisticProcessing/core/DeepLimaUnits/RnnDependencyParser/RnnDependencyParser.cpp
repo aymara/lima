@@ -112,7 +112,8 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
     {
         TimeUtils::updateCurrentTime();
         TimeUtilsController RnnDependencyParserProcessTime("RnnDependencyParser");
-        LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnDependencyParser::process");
+        SALOGINIT;
+        LOG_MESSAGE(LDEBUG, "RnnDependencyParser::process");
         auto tiData = dynamic_pointer_cast<TokenIteratorData>(analysis.getData("TokenIterator"));
         if (tiData == nullptr)
         {

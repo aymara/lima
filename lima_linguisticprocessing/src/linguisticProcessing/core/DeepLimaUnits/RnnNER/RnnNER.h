@@ -3,21 +3,21 @@
 //
 // SPDX-License-Identifier: MIT
 
-#ifndef LIMA_LINGUISTICPROCESSING_Tagger_RnnTagger_H
-#define LIMA_LINGUISTICPROCESSING_Tagger_RnnTagger_H
+#ifndef LIMA_LINGUISTICPROCESSING_Tagger_RnnNER_H
+#define LIMA_LINGUISTICPROCESSING_Tagger_RnnNER_H
 
-#include "RnnTaggerExport.h"
+#include "RnnNERExport.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 
-namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTagger
+namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER
 {
 
-#define RNNTagger_CLASSID "RnnTagger"
+#define RNNNER_CLASSID "RnnNER"
 
 class CharChart;
 
-class RnnTaggerPrivate;
-#define RNNTAGGER_CLASSID "RnnTagger"
+class RnnNERPrivate;
+#define RNNTAGGER_CLASSID "RnnNER"
 
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
 *
@@ -30,11 +30,23 @@ class RnnTaggerPrivate;
 *                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
 *                    for each detected token.
 */
-class LIMA_RNNTAGGER_EXPORT RnnTagger : public MediaProcessUnit
+
+/**
+ * @class BadFileException
+ * @brief Class exception
+ */
+    class BadFileException : public std::logic_error {
+    public:
+        explicit BadFileException(const std::string& s= "") :
+                std::logic_error(s){}
+        ~BadFileException() noexcept override = default;
+    };
+
+class LIMA_RNNNER_EXPORT RnnNER : public MediaProcessUnit
 {
 public:
-    RnnTagger();
-    ~RnnTagger() override;
+    RnnNER();
+    ~RnnNER() override;
 
     void init(Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
               Manager* manager) override;
@@ -42,7 +54,7 @@ public:
     LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
-    RnnTaggerPrivate* m_d;
+    RnnNERPrivate* m_d;
 };
 
 } // namespace Lima

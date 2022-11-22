@@ -35,6 +35,8 @@ SPDX-License-Identifier: MIT
         <!-- Uncomment below and comment above to use deelima libtorch based modules instead of tensorflow ones -->
 <!--        <item value="RnnTokenizer"/>
         <item value="RnnTokensAnalyzer"/>
+        <item value="RnnDependencyParser"/>
+        <item value="RnnNER"/>
         <item value="RnnDependencyParser"/>-->
         <item value="conllDumper"/>
       </list>
@@ -76,8 +78,8 @@ SPDX-License-Identifier: MIT
       <param key="model_prefix" value="tokenizer-$udlang"/>
     </group>
 
-    <group name="RnnTagger" class="RnnTagger">
-      <param key="model_prefix" value="tagger-$udlang"/>
+    <group name="RnnNER" class="RnnNER">
+      <param key="model_prefix" value="ner-$udlang"/>
     </group>
 
     <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
