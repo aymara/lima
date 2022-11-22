@@ -65,13 +65,13 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   SADLOGINIT;
   LINFO << "start syntactic analysis - disambiguation";
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -85,25 +85,23 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   
   if (analysis.getData("SyntacticData")==0)
   {
-    SyntacticData* syntacticData=new SyntacticData(anagraph,0);
+    auto syntacticData = std::make_shared< SyntacticData >(anagraph.get(), nullptr);
     syntacticData->setupDependencyGraph();
-    analysis.setData("SyntacticData",syntacticData);
+    analysis.setData("SyntacticData", syntacticData);
   }
 
 
 //  bool l2r = true;
   // ??OME2 for (SegmentationData::const_iterator boundItr=sb->begin();
   //     boundItr!=sb->end();
-  for (std::vector<Segment>::const_iterator boundItr=(sb->getSegments()).begin();
-       boundItr!=(sb->getSegments()).end();
-       boundItr++)
+  for (auto boundItr=(sb->getSegments()).begin(); boundItr!=(sb->getSegments()).end(); boundItr++)
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
 #ifdef DEBUG_LP
     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
 #endif
-    ChainsDisambiguator cd(dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData")), 
+    ChainsDisambiguator cd(std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData")).get(),
         beginSentence, endSentence, m_language, m_depGraphMaxBranchingFactor);
     cd.initPaths();
     cd.computePaths();

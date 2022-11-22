@@ -110,13 +110,13 @@ LimaStatusCode SyntacticAnalyzerChains::process(
   SACLOGINIT;
   LINFO << "start syntactic analysis - chains";
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -128,10 +128,10 @@ LimaStatusCode SyntacticAnalyzerChains::process(
     return INVALID_CONFIGURATION;
   }
 
-  SyntacticData* syntacticData=dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticData(anagraph,m_chainMatrix);
+    syntacticData = std::make_shared<SyntacticData>(anagraph.get(), m_chainMatrix);
     analysis.setData("SyntacticData",syntacticData);
   }
   else if (syntacticData->matrices() == 0)
@@ -162,7 +162,7 @@ LimaStatusCode SyntacticAnalyzerChains::process(
       next = anagraph->nextMainPathVertex(current,*m_macroAccessor,ponctuMacroFilter,endSentence);
 //       LDEBUG << "analyze chain from " << current << " to " << next;
 //       LDEBUG << "identify chains";
-      identifyChains(syntacticData,current,next,chainId);
+      identifyChains(syntacticData.get(),current,next,chainId);
       current = next;
     }
     beginSentence=endSentence;

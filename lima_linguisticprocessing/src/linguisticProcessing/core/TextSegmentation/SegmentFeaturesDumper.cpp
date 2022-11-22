@@ -101,7 +101,7 @@ LimaStatusCode SegmentFeaturesDumper::process(
   LOGINIT("LP::Segmentation");
   LDEBUG << "SegmentFeaturesDumper::process";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
@@ -117,13 +117,13 @@ LimaStatusCode SegmentFeaturesDumper::process(
 
   ostream& out=dstream->out();
 
-  AnalysisData* data=analysis.getData(m_data);
+  auto data=analysis.getData(m_data);
   if (data==0) {
     LERROR << "Error: no data '"<< m_data << "'";
     return MISSING_DATA;
   }
-  SegmentationData* segmData=static_cast<SegmentationData*>(data);
-  AnalysisGraph* graph=static_cast<AnalysisGraph*>(analysis.getData(segmData->getGraphId()));
+  auto segmData = std::dynamic_pointer_cast<SegmentationData>(data);
+  auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(segmData->getGraphId()));
 
   // ??OME2 LDEBUG << "SegmentationData " << m_data << " has " << segmData->size() << " segments";
   LDEBUG << "SegmentationData " << m_data << " has " << segmData->getSegments().size() << " segments";
@@ -140,7 +140,7 @@ LimaStatusCode SegmentFeaturesDumper::process(
       else {
         out << m_sep;
       }
-      string str=(*f)->getValue(graph,*s);
+      std::string str = (*f)->getValue(graph.get(), *s);
       boost::replace_all(str,m_sep,m_sepReplace);
       out << str;
     }

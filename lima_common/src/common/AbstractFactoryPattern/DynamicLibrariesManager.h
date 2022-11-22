@@ -35,8 +35,7 @@ namespace Lima {
 namespace Common {
 
 class DynamicLibrariesManagerPrivate;
-class LIMA_FACTORY_EXPORT DynamicLibrariesManager:
-    public Singleton<DynamicLibrariesManager>
+class LIMA_FACTORY_EXPORT DynamicLibrariesManager: public Singleton<DynamicLibrariesManager>
 {
 friend class Singleton<DynamicLibrariesManager>;
 
@@ -44,7 +43,16 @@ public:
   ~DynamicLibrariesManager();
   
   bool isLoaded(const std::string& libName);
-  bool loadLibrary(const std::string& libName);
+#if defined(__has_feature)
+#  if __has_feature(address_sanitizer)
+    __attribute__((no_sanitize("address")))
+    __attribute__((no_sanitize("leak")))
+    __attribute__((disable_sanitizer_instrumentation))
+#  endif
+#endif
+  __attribute__((no_sanitize("address", "thread")))
+  bool
+   loadLibrary(const std::string& libName);
   void addSearchPath(const std::string& searchPath);
   void addSearchPathes(QString searchPathes);
 

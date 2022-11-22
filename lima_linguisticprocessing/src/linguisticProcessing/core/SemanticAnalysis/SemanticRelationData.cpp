@@ -82,16 +82,14 @@ bool SemanticRelationData::addRelations(AnalysisContent& analysis)
 #ifdef DEBUG_LP
   SEMANTICANALYSISLOGINIT;
 #endif
-  auto annotationData = static_cast< AnnotationData* >(
-    analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   if (annotationData->dumpFunction("SemanticRelation") == 0)
   {
     annotationData->dumpFunction("SemanticRelation", 
                                  new DumpSemanticRelation());
   }
-  auto recoData=static_cast<RecognizerData*>(
-    analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
 
   for (auto i = m_relations.begin(); i != m_relations.end(); i++) 
   {

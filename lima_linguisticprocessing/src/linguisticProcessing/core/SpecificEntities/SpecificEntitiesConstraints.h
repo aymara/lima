@@ -100,9 +100,8 @@ private:
      LinguisticAnalysisStructure::LinguisticElement& elem) const;
 
 
-     MediaId m_language;
+  MediaId m_language;
   Common::MediaticData::EntityType m_type;
-  FsaStringsPool* m_sp;
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   std::set< LinguisticCode > m_microsToKeep;
 

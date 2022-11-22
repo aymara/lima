@@ -57,7 +57,7 @@ SPDX-License-Identifier: MIT
         <item value="dotPosGraphWriter"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <!--item value="dotDepGraphWriter"/-->
         <item value="syntacticAnalyzerDepsHetero"/>
@@ -86,7 +86,7 @@ SPDX-License-Identifier: MIT
         <item value="dotPosGraphWriter"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <!--item value="dotDepGraphWriter"/-->
@@ -115,7 +115,7 @@ SPDX-License-Identifier: MIT
         <item value="dotPosGraphWriter"/>
         <item value="disambiguatedGraphXmlLogger"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerChains"/>
+        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="syntacticAnalysisXmlLogger"/>
@@ -222,8 +222,9 @@ SPDX-License-Identifier: MIT
         <item value="PONCTU_FORTE" />
       </list>
     </group>
-    <group name="syntacticAnalyzerChains" class="SyntacticAnalyzerChains">
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
       <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
       <param key="maxChainsNbByVertex" value="30"/>
       <param key="maxChainLength" value="12"/>
     </group>

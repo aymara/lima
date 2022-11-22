@@ -80,8 +80,7 @@ bool SubsentenceBounds::operator()(const Lima::LinguisticProcessing::LinguisticA
   LDEBUG << "testing SubsentenceBounds for " << v1 << " and " << v2 << " with relation: " /*<< (static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).
     getEntityNames("SyntacticSimplification")[m_relation])*/;
   
-  SimplificationData* simplificationData =
-      static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
     SASLOGINIT;
@@ -115,10 +114,8 @@ bool Simplify::operator()(RecognizerMatch& /*unused*/,
   SASLOGINIT;
   LDEBUG << "Doing simplification";
 
-  SyntacticData* syntacticData =
-    static_cast<SyntacticData*>(analysis.getData("SyntacticData"));
-  SimplificationData* simplificationData =
-    static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   LinguisticGraph* graph = syntacticData->graph();
   if (simplificationData==0)
   {
@@ -190,8 +187,7 @@ bool ClearStoredSubsentences::operator()(AnalysisContent& analysis) const
   SASLOGINIT;
   LDEBUG << "clearing stored subsentences";
   
-  SimplificationData* simplificationData =
-    static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   
   simplificationData->clearBounds();
   return true;

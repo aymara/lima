@@ -7,7 +7,7 @@
   * @file       xmlConfigurationFileHandler.cpp
   * @brief      originally in detectlibraries
   * @date       begin Mon Oct, 13 2003 (ven oct 18 2002)
-  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr> 
+  * @author     Gael de Chalendar <Gael.de-Chalendar@cea.fr>
 
   *             copyright (C) 2002-2003 by CEA
   */
@@ -34,7 +34,7 @@ namespace XMLConfigurationFiles
 // ---------------------------------------------------------------------------
 XMLConfigurationFileHandler::XMLConfigurationFileHandler(ConfigurationStructure& theConfiguration) :
     QXmlDefaultHandler(),
-    m_moduleName(""), m_groupName(""), m_listName(""), m_configuration(theConfiguration)
+    m_moduleName(), m_groupName(""), m_listName(""), m_configuration(theConfiguration)
 {}
 
 XMLConfigurationFileHandler::~XMLConfigurationFileHandler()
@@ -112,11 +112,11 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   LTRACE << "start element " << stringName;
 
   // set the current module name and create its entry if necessary
-  if (stringName == string("module"))
+  if (stringName == std::string("module"))
   {
     m_moduleName = attributes.value("name").toUtf8().constData();
     LTRACE << "XMLConfigurationFileHandler::startElement module name is " << m_moduleName;
-    if ((m_configuration. find(m_moduleName)) == (m_configuration. end()))
+    if ((m_configuration.find(m_moduleName)) == (m_configuration.end()))
     {
       m_configuration.insert(make_pair(m_moduleName, ModuleConfigurationStructure(m_moduleName)));
     }
@@ -127,7 +127,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     m_groupName = toString(attributes.value("name"));
     LTRACE << "group name is " << m_groupName;
     int32_t indName=attributes.index("name"); // index for the attribute 'name' (not always the first)
-    
+
     m_configuration.addGroupNamedForModuleNamed(m_groupName, m_moduleName);
     for (int32_t i=0;i<attributes.length();i++)
     {
@@ -176,7 +176,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
       m_itemWithAttributes=true;
     }
-    
+
     if (m_itemWithAttributes) {
       string itemName=toString(attributes.value("value"));
       ItemWithAttributes item(itemName);
@@ -217,11 +217,11 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
       m_firstItem=false;
     }
     else if (nbAtt>2 && !m_itemWithAttributes) {
-      // was indeed in list of item with attributes => has to change     
+      // was indeed in list of item with attributes => has to change
       m_configuration.changeMapToMapOfItems(m_mapName,m_moduleName,m_groupName);
       m_itemWithAttributes=true;
     }
-    
+
     if (m_itemWithAttributes) {
       string key=toString(attributes.value("key"));
       string value=toString(attributes.value("value"));
@@ -238,7 +238,7 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     else {
       string key = toString(attributes.value("key"));
       string value = toString(attributes.value("value"));
-      m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);      
+      m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);
     }
   }
   return true;

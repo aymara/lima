@@ -68,7 +68,7 @@ LimaStatusCode DicoConcatenatedAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "starting process DicoConcatenated";
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* g=tokenList->getGraph();
   LinguisticGraphVertexIt it,itEnd;
   VertexDataPropertyMap dataMap=get(vertex_data,*g);

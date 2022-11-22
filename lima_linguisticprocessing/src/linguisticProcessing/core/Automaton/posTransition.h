@@ -55,7 +55,7 @@ class LIMA_AUTOMATON_EXPORT PosTransition : public TransitionUnit
 
   Tpos pos() const;
   void setPos(Tpos);
-  bool comparePos(const LinguisticCode& pos) const;
+  // bool comparePos(const LinguisticCode& pos) const;
 
  private:
   Tpos m_pos;

@@ -108,7 +108,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with handler "<< m_handlerName;
 // #endif
-    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+    AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer").get());
     AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handlerName));
     if (handler==0)
     {
@@ -124,7 +124,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
 // #ifdef DEBUG_LP
     LDEBUG << "AbstractTextualAnalysisDumper: initialize DumperStream with temporary file metadata";
 // #endif
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "AbstractTextualAnalysisDumper::initialize no LinguisticMetaData ! abort";
     }
@@ -144,7 +144,7 @@ std::shared_ptr<DumperStream> AbstractTextualAnalysisDumper::initialize(
   }
 
   if (! m_outputSuffix.empty()) {
-    LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+    auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
       DUMPERLOGINIT;
       LERROR << "AbstractTextualAnalysisDumper::initialize: no LinguisticMetaData ! abort";

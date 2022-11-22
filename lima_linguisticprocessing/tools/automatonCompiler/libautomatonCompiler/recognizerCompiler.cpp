@@ -103,6 +103,9 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
                                          MediaId language,
                                          const std::string& filename) {
   AUCLOGINIT;
+#ifdef LDEBUG
+  LDEBUG << "RecognizerCompiler::buildRecognizer" << language << filename;
+#endif
   // Lima::TimeUtilsController("RecognizerCompiler::buildRecognizer", true);
   // Lima::TimeUtilsController* ctrl1  = new Lima::TimeUtilsController("RecognizerCompiler::buildRecognizer", true);
   // ugly hack to keep tracks of the files

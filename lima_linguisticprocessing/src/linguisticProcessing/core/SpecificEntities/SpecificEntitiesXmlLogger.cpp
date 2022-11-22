@@ -92,7 +92,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   LDEBUG << "SpecificEntitiesXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
-  auto annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     SELOGINIT;
@@ -100,8 +100,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     return MISSING_DATA;
   }
 
-  auto graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(
-    analysis.getData(m_graph));
+  auto graphp = std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph));
   if (graphp == nullptr)
   {
     SELOGINIT;
@@ -112,7 +111,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
   auto lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
   auto tokenMap = get(vertex_token, *lingGraph);
 
-  auto metadata = static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == nullptr)
   {
       SELOGINIT;
@@ -174,7 +173,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
     // idiomatic expressions parts and named entity parts)
     // -> this will not include nested entities
 
-    auto tokenList = static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+    auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
     if (tokenList == nullptr)
     {
       LERROR << "graph " << m_graph << " has not been produced: check pipeline";
@@ -207,10 +206,10 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
           toVisit.push(next);
         }
       }
-      const auto annot = getSpecificEntityAnnotation(v, annotationData);
+      const auto annot = getSpecificEntityAnnotation(v, annotationData.get());
       if (annot != 0)
       {
-        outputEntity(annotationData, out, v, annot, tokenMap, offset);
+        outputEntity(annotationData.get(), out, v, annot, tokenMap, offset);
       }
     }
   }
@@ -248,7 +247,7 @@ LimaStatusCode SpecificEntitiesXmlLogger::process(
           continue;
         }
         v = annotationData->intAnnotation(*itv, QString::fromStdString(m_graph));
-        outputEntity(annotationData, out, v, annot, tokenMap, offset);
+        outputEntity(annotationData.get(), out, v, annot, tokenMap, offset);
       }
     }
   }

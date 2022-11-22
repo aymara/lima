@@ -9,7 +9,7 @@ namespace Lima
 {
 std::hash<std::bitset<LC_WIDTH>> LinguisticCode::hash_fn;
 LIMA_COMMON_EXPORT const char LinguisticCode::alphabet[] = "0123456789ABCDEF";
-static const std::string odds = "13579";
+Q_GLOBAL_STATIC_WITH_ARGS(std::string, odds, ("13579"));
 LIMA_COMMON_EXPORT const LinguisticCode LinguisticCode::ZERO;
 
 LIMA_COMMON_EXPORT std::string LinguisticCode::toDecString() const
@@ -59,7 +59,7 @@ LIMA_COMMON_EXPORT LinguisticCode LinguisticCode::fromDecString(const std::strin
   while (num.size() > 0 && num != std::string("0"))
   {
     char last = num[num.size() - 1];
-    if (std::string::npos != odds.find(last))
+    if (std::string::npos != odds->find(last))
     {
       x.base[pos] = true;
     }
@@ -70,7 +70,7 @@ LIMA_COMMON_EXPORT LinguisticCode LinguisticCode::fromDecString(const std::strin
     {
       char ch = (num[i] - '0') / 2 + add;
       new_num += (ch + '0');
-      if (std::string::npos != odds.find(num[i]))
+      if (std::string::npos != odds->find(num[i]))
       {
         add = 5;
       }

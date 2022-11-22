@@ -29,13 +29,15 @@ SPDX-License-Identifier: MIT
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="RnnTokenizer"/>
+        <item value="cpptftokenizer"/>
+        <item value="tfmorphosyntax"/>
+        <item value="tflemmatizer"/>
+        <!-- Uncomment below and comment above to use deelima libtorch based modules instead of tensorflow ones -->
+<!--        <item value="RnnTokenizer"/>
         <item value="RnnTokensAnalyzer"/>
         <item value="RnnDependencyParser"/>
         <item value="RnnNER"/>
-        <!--item value="cpptftokenizer"/-->
-        <!--item value="tfmorphosyntax"/-->
-        <!--item value="tflemmatizer"/-->
+        <item value="RnnDependencyParser"/>-->
         <item value="conllDumper"/>
       </list>
     </group>

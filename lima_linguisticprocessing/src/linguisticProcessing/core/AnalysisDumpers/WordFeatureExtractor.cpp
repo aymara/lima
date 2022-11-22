@@ -254,7 +254,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
         ) const
 {
   std::string typeName("NAN");
-  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annot = std::dynamic_pointer_cast<  Common::AnnotationGraphs::AnnotationData >(analysis.getData("AnnotationData"));
   
   std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
@@ -285,7 +285,7 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
 ) const
 {
   std::string mxvalue("NAN");
-  Common::AnnotationGraphs::AnnotationData *annot = static_cast<  Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annot = std::dynamic_pointer_cast<  Common::AnnotationGraphs::AnnotationData >(analysis.getData("AnnotationData"));
   
   std::set< AnnotationGraphVertex > matches = annot->matches(graph->getGraphId(),v,"annot"); 
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin(); it != matches.end(); it++)
@@ -304,9 +304,9 @@ getValue(const LinguisticAnalysisStructure::AnalysisGraph* graph,
   if (mxvalue == "NAN") {
     MorphoSyntacticData* data=get(vertex_data,*(graph->getGraph()),v);
     // take first
-    for (MorphoSyntacticData::const_iterator it=data->begin(),it_end=data->end();it!=it_end;it++) {
+    auto it=data->begin(), it_end=data->end();
+    if (it != it_end) {
       mxvalue = Common::Misc::limastring2utf8stdstring((*&(Common::MediaticData::MediaticData::single().stringsPool(m_language)))[(*it).normalizedForm]);
-      break;
     }
   }
   // replace empty lemma values by tokens

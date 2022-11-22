@@ -48,7 +48,12 @@ add_library(lima-lp-automaton SHARED
 )
 ADD_DLL_TO_PATH(lima-lp-automaton)
 
-target_link_libraries(lima-lp-automaton lima-lp-linguisticanalysisstructure lima-lp-linguisticresources lima-lp-flattokenizer)
+target_link_libraries(lima-lp-automaton
+  lima-lp-flattokenizer
+  lima-lp-linguisticanalysisstructure
+  lima-lp-linguisticprocessors
+  lima-lp-linguisticresources
+)
 
 set_target_properties(lima-lp-automaton PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
 

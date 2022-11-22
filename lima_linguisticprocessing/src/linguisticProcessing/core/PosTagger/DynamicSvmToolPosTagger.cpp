@@ -167,7 +167,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
 
   /* First retrieve the source graph (Analysis) */
   analysisGraph = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>
-    (analysis.getData("AnalysisGraph"));
+    (analysis.getData("AnalysisGraph").get());
   srcGraph = analysisGraph->getGraph();
 
   /* Let's start with the "forward" algorithm
@@ -271,7 +271,7 @@ LimaStatusCode DynamicSvmToolPosTagger::process(AnalysisContent& analysis) const
 
   /* Build everything needed to populate the PosGraph */
   Common::AnnotationGraphs::AnnotationData* annotationData =
-  static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData"));
+  static_cast< Common::AnnotationGraphs::AnnotationData* >(analysis.getData("AnnotationData").get());
 
   LinguisticGraphVertex previousPosVertex = 0;
 

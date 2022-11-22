@@ -68,7 +68,7 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
   APPRLOGINIT;
   LDEBUG << "RecognizerResultLogger: logging data "<< m_data;
   // get metadata (for filename)
-  LinguisticMetaData* metadata=dynamic_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
     APPRLOGINIT;
     LERROR << "no LinguisticMetaData ! abort";
@@ -99,13 +99,13 @@ LimaStatusCode RecognizerResultLogger::process(AnalysisContent& analysis) const
   }
 
  // get result data
-  AnalysisData* resultData=analysis.getData(m_data);
+  auto resultData = analysis.getData(m_data);
   if (resultData == 0) {
     APPRLOGINIT;
     LERROR << "no data " << m_data << "in AnalysisContent";
     return MISSING_DATA;
   }
-  RecognizerResultData* recoData=dynamic_cast<RecognizerResultData*>(resultData);
+  auto recoData = std::dynamic_pointer_cast<RecognizerResultData>(resultData);
   if (recoData == 0) {
     APPRLOGINIT;
     LERROR << "data " << m_data << "in AnalysisContent is not a RecognizerResultData";

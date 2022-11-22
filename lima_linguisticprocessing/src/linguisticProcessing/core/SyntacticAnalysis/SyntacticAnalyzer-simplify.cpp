@@ -67,13 +67,13 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
   SASLOGINIT;
   LINFO << "SyntacticAnalyzerSimplify::process";
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -82,17 +82,16 @@ LimaStatusCode SyntacticAnalyzerSimplify::process(
 
   if (analysis.getData("SyntacticData")==0)
   {
-    SyntacticData* syntacticData=new SyntacticData(anagraph,0);
+    auto syntacticData = std::make_shared<SyntacticData>(anagraph.get(), nullptr);
     syntacticData->setupDependencyGraph();
-    analysis.setData("SyntacticData",syntacticData);
+    analysis.setData("SyntacticData", syntacticData);
   }
   
-  SimplificationData* simplificationData =
-    static_cast<SimplificationData*>(analysis.getData("SimplificationData"));
+  auto simplificationData = std::dynamic_pointer_cast<SimplificationData>(analysis.getData("SimplificationData"));
   if (simplificationData==0)
   {
-    simplificationData=new SimplificationData(anagraph);
-    analysis.setData("SimplificationData",simplificationData);
+    simplificationData = std::make_shared<SimplificationData>(anagraph.get());
+    analysis.setData("SimplificationData", simplificationData);
   }
   
   // ??OME2 SegmentationData::const_iterator boundItr, boundItr_end;

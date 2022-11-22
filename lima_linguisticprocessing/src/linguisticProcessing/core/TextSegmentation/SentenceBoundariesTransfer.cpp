@@ -74,7 +74,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
   SEGMENTATIONLOGINIT;
   LINFO << "SentenceBoundariesTransfer::process start transfering sentence bounds from AnalysisGraph to PosGraph";
 
-  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries").get());
   if (sb == nullptr)
   {
     DUMPERLOGINIT;
@@ -88,22 +88,19 @@ LimaStatusCode SentenceBoundariesTransfer::process(
     return SUCCESS_ID;
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(
-    analysis.getData("AnalysisGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   if (anagraph == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process no graph 'AnalysisGraph' available !";
     return MISSING_DATA;
   }
-  AnalysisGraph* posgraph=static_cast<AnalysisGraph*>(
-    analysis.getData("PosGraph"));
+  auto posgraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (posgraph == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process no graph 'PosGraph' available !";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(
-    analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == nullptr)
   {
     LERROR << "SentenceBoundariesTransfer::process: no annotation graph available !";
@@ -135,7 +132,7 @@ LimaStatusCode SentenceBoundariesTransfer::process(
              << segment.getLastVertex();
       continue;
     }
-    Segment newSegment("sentence",*firstVxMatches.begin(),*lastVxMatches.begin(),posgraph);
+    Segment newSegment("sentence", *firstVxMatches.begin(), *lastVxMatches.begin(), posgraph.get());
     newSb->add(newSegment);
   }
 

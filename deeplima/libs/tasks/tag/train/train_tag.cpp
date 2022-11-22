@@ -297,7 +297,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
       optimizer = make_shared<torch::optim::Adam>(model->parameters(),
                                                   torch::optim::AdamOptions(params.m_learning_rate)
                                                   .weight_decay(params.m_weight_decay)
-                                                  .betas({0.9, 0.9}));
+                                                  .betas({params.m_beta_one, params.m_beta_two}));
     }
     else if (opt_name == "sgd")
     {

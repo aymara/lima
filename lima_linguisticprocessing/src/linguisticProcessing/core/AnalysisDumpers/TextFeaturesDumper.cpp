@@ -99,7 +99,7 @@ LimaStatusCode TextFeaturesDumper::process(
   AnalysisContent&  analysis) const
 {
   DUMPERLOGINIT;
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;
@@ -109,7 +109,7 @@ LimaStatusCode TextFeaturesDumper::process(
 
   map<Token*,LinguisticGraphVertex,lTokenPosition > categoriesMapping;
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   if (anagraph==0) {
     LERROR << "graph " << m_graph << " has not been produced: check pipeline";
     return MISSING_DATA;
@@ -153,7 +153,7 @@ LimaStatusCode TextFeaturesDumper::process(
        ftItr!=categoriesMapping.end();
        ftItr++)
   {
-    outputVertex(dstream->out(),anagraph,ftItr->second,analysis,metadata->getStartOffset());
+    outputVertex(dstream->out(),anagraph.get(),ftItr->second,analysis,metadata->getStartOffset());
   }
 
   

@@ -114,7 +114,7 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         TimeUtilsController RnnDependencyParserProcessTime("RnnDependencyParser");
         SALOGINIT;
         LOG_MESSAGE(LDEBUG, "RnnDependencyParser::process");
-        auto tiData = dynamic_cast<TokenIteratorData*>(analysis.getData("TokenIterator"));
+        auto tiData = dynamic_pointer_cast<TokenIteratorData>(analysis.getData("TokenIterator"));
         if (tiData == nullptr)
         {
             SALOGINIT;
@@ -138,17 +138,17 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
         tokenIterator->reset();
 
 
-        auto anagraph = dynamic_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+        auto anagraph = dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
         if (anagraph == nullptr)
         {
             LERROR << "no PosGraph ! abort";
             return MISSING_DATA;
         }
 
-        auto syntacticData = dynamic_cast<SyntacticAnalysis::SyntacticData*>(analysis.getData("SyntacticData"));
+        auto syntacticData = dynamic_pointer_cast<SyntacticAnalysis::SyntacticData>(analysis.getData("SyntacticData"));
         if (syntacticData == nullptr)
         {
-            syntacticData=new SyntacticAnalysis::SyntacticData(anagraph, nullptr);
+            syntacticData = std::make_shared<SyntacticAnalysis::SyntacticData>(anagraph.get(), nullptr);
             analysis.setData("SyntacticData",syntacticData);
         }
         syntacticData->setupDependencyGraph();

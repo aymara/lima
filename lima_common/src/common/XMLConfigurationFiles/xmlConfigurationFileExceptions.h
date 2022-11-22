@@ -48,7 +48,7 @@ namespace Lima {
         //! @brief destructor (throw the exception)
         NoSuchModule& operator=(const NoSuchModule&) = delete;
         NoSuchModule(const NoSuchModule&) = default;
-        virtual ~NoSuchModule() throw() = default;
+        virtual ~NoSuchModule() = default;
       private:
         //! @brief the name of the <i>module</i> that was not found
         const std::string moduleName;

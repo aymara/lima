@@ -293,21 +293,21 @@ LimaStatusCode CompoundsBuilderFromSyntacticData::process(
   LDEBUG << "CompoundsBuilderFromSyntacticData::process : start";
 #endif
 
-  AnalysisData* tmp=analysis.getData("SyntacticData");
+  auto tmp=analysis.getData("SyntacticData");
   if (tmp==0)
   {
     LERROR << "Can't Process CompoundsBuilderFromSyntacticData : missing data 'SyntacticData'";
     return MISSING_DATA;
   }
-  SyntacticData* data=static_cast<SyntacticData*>(tmp);
+  auto data = std::dynamic_pointer_cast<SyntacticData>(tmp);
 
-  tmp=analysis.getData("PosGraph");
+  tmp = analysis.getData("PosGraph");
   if (tmp==0)
   {
     LERROR << "Can't Process CompoundsBuilderFromSyntacticData : missing data 'AnalysisGraph'";
     return MISSING_DATA;
   }
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(tmp);
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(tmp);
 
   tmp=analysis.getData("SentenceBoundaries");
   if (tmp==0)
@@ -315,23 +315,25 @@ LimaStatusCode CompoundsBuilderFromSyntacticData::process(
     LERROR << "can't process CompoundsBuilderFromSyntacticData : missing SentenceBounds !";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(tmp);
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(tmp);
   if (sb->getGraphId() != "PosGraph") {
     LERROR << "SentenceBounds have been computed on " << sb->getGraphId() << " !";
     LERROR << "SyntacticAnalyzer-deps needs SentenceBounds on PosGraph";
     return INVALID_CONFIGURATION;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
-    annotationData=new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(
+        annotationData.get(), "PosGraph");
     }
 
     analysis.setData("AnnotationData",annotationData);
@@ -353,12 +355,12 @@ LimaStatusCode CompoundsBuilderFromSyntacticData::process(
    DepGraphCompoundsBuildVisitor vis(
         this,
         m_d->m_language,
-        data,
+        data.get(),
         data->dependencyGraph() ,
-        anagraph,
+        anagraph.get(),
         beginSentence,
         endSentence,
-        annotationData,
+        annotationData.get(),
         m_d->m_useChains);
 
     // don't use STL algorithm to avoid throwing exceptions

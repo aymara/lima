@@ -119,7 +119,7 @@ bool Destinations::configure(const QString& fileName, bool reload)
   QFileInfo fileInfo(fileName);
   QDir configDir = fileInfo.dir();
 
-//   std::cerr << "Destinations::configure " << fileName.toStdString() << " " << reload << std::endl;
+  // std::cerr << "Destinations::configure " << fileName.toStdString() << " " << reload << std::endl;
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -216,14 +216,15 @@ FileDestination::FileDestination(const QString& filePath)
 {
   mFile.setFileName(filePath);
   mFile.open(QFile::WriteOnly|QFile::Append); //fixme: should throw on failure
-//   std::cerr << "FileDestination::FileDestination "
-//             << QFileInfo(mFile).absoluteFilePath().toUtf8().constData()
-//             << std::endl;
+  // std::cerr << "FileDestination::FileDestination "
+  //           << QFileInfo(mFile).absoluteFilePath().toUtf8().constData()
+  //           << std::endl;
   mOutputStream.setDevice(&mFile);
 }
 
 void FileDestination::write(const QString& message, const QString& zone)
 {
+  // std::cerr << "FileDestination::write " << zone.toStdString() << " " << message.toStdString() << std::endl;
   if (!zone.isEmpty())
     mOutputStream << " : " << zone << " : ";
   mOutputStream << message << QTENDL;
@@ -232,6 +233,7 @@ void FileDestination::write(const QString& message, const QString& zone)
 
 void DebugOutputDestination::write(const QString& message, const QString& zone)
 {
+  // std::cerr << "DebugOutputDestination::write " << zone.toStdString() << " " << message.toStdString() << std::endl;
   if (!zone.isEmpty())
     QsDebugOutput::output(QString(QLatin1String(" : %1 : %2")).arg(zone, message));
   else
@@ -240,12 +242,14 @@ void DebugOutputDestination::write(const QString& message, const QString& zone)
 
 DestinationPtr DestinationFactory::MakeFileDestination(const QString& filePath)
 {
-   return DestinationPtr(new FileDestination(filePath));
+  // std::cerr << "DestinationFactory::MakeFileDestination " << filePath.toStdString() << std::endl;
+  return DestinationPtr(new FileDestination(filePath));
 }
 
 DestinationPtr DestinationFactory::MakeDebugOutputDestination()
 {
-   return DestinationPtr(new DebugOutputDestination);
+  // std::cerr << "DestinationFactory::MakeDebugOutputDestination" << std::endl;
+  return DestinationPtr(new DebugOutputDestination);
 }
 
 } // end namespace

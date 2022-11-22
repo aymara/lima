@@ -90,14 +90,13 @@ process(AnalysisContent& analysis) const
   SEMANTICANALYSISLOGINIT;
   LDEBUG << "SemanticRelationsXmlLogger";
     
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   
-  const LinguisticAnalysisStructure::AnalysisGraph& graph = 
-    *(static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph)));
+  const auto& graph = *(std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph)));
   
   LinguisticGraph* lingGraph = const_cast<LinguisticGraph*>(graph.getGraph());
   VertexTokenPropertyMap tokenMap = get(vertex_token, *lingGraph);
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       SEMANTICANALYSISLOGINIT;
       LERROR << "no LinguisticMetaData ! abort";
@@ -171,7 +170,7 @@ process(AnalysisContent& analysis) const
 
       // output
       outputStream << "<annotation type=\"" << annot->getType() << "\">" << endl
-          << vertexStringForSemanticAnnotation("vertex",*itv,tokenMap,annotationData,offset)
+          << vertexStringForSemanticAnnotation("vertex", *itv, tokenMap, annotationData.get(), offset)
           << "</annotation>" << endl;
     }
   }
@@ -202,8 +201,8 @@ process(AnalysisContent& analysis) const
 
       //output
       outputStream << "<relation type=\"" << annot->type() << "\">" << endl
-          << vertexStringForSemanticAnnotation("source",source(*it,annotGraph),tokenMap,annotationData,offset)
-          << vertexStringForSemanticAnnotation("target",target(*it,annotGraph),tokenMap,annotationData,offset)
+          << vertexStringForSemanticAnnotation("source",source(*it,annotGraph),tokenMap,annotationData.get(),offset)
+          << vertexStringForSemanticAnnotation("target",target(*it,annotGraph),tokenMap,annotationData.get(),offset)
           << "</relation>" << endl;
       
     }

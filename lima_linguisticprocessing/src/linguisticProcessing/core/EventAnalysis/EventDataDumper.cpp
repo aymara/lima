@@ -85,34 +85,33 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
   ostream& out=dstream->out();
   if ((! m_eventData.empty())
     &&(! m_segmentationData.empty())) {
-    AnalysisData* data =analysis.getData(m_eventData);
+    auto data = analysis.getData(m_eventData);
     if (data!=0) {
       // see if the data is of type EventData
-      const EventData* eventData=dynamic_cast<const EventData*>(data);
+      auto eventData = std::dynamic_pointer_cast<const EventData>(data);
 
       if (eventData!=0) {
         LOGINIT("LP::EventAnalysis");
         LDEBUG << "EventDataDumper::process: data '" << m_eventData << "' is of type EventData";
         // get segmentation
-        const AnalysisData* data2 =analysis.getData(m_segmentationData);
-        const Lima::LinguisticProcessing::SegmentationData* segmData=0;
+        auto data2 = analysis.getData(m_segmentationData);
         if(data2==0) {
-    LERROR << "EventDataDumper::process: error: no SegmentationData!!";
-    return MISSING_DATA;
-  }
-        segmData = dynamic_cast<const Lima::LinguisticProcessing::SegmentationData*>(data2);
-  if (segmData==0) {
-    LERROR << "EventDataDumper::process: data "<< data2 <<" is not an object of class SegmentationData";
-    return MISSING_DATA;
-  }
-  eventData->convertToEvents(segmData);
-  Events *events=eventData->convertToEvents(segmData);
-  LDEBUG << "EventDataDumper::process: events->write(out)...";
-  events->write(out);
+          LERROR << "EventDataDumper::process: error: no SegmentationData!!";
+          return MISSING_DATA;
+        }
+        auto segmData = std::dynamic_pointer_cast<const Lima::LinguisticProcessing::SegmentationData>(data2);
+        if (segmData==0) {
+          LERROR << "EventDataDumper::process: data "<< data2.get() <<" is not an object of class SegmentationData";
+          return MISSING_DATA;
+        }
+        eventData->convertToEvents(segmData.get());
+        Events *events=eventData->convertToEvents(segmData.get());
+        LDEBUG << "EventDataDumper::process: events->write(out)...";
+        events->write(out);
       }
       else {
         // see if the data is of type Events
-        const Events* events=dynamic_cast<const Events*>(data);
+        auto events = std::dynamic_pointer_cast<const Events>(data);
         if (events!=0) {
           LDEBUG << "data '" << m_eventData << "' is of type Events";
           events->write(out);

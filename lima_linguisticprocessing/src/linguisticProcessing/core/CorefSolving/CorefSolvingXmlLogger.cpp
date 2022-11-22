@@ -83,7 +83,7 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   AnalysisContent& analysis) const
 {
   TimeUtils::updateCurrentTime(); 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
   {
     COREFSOLVERLOGINIT;
@@ -97,19 +97,18 @@ LimaStatusCode CorefSolvingXmlLogger::process(
   if (!out.good()) {
       throw runtime_error("can't open file " + outputFile);
   }
-   AnalysisGraph* /*anagraph=static_cast<AnalysisGraph*>(analysis.getData("SimpleGraph"));
-   if (anagraph==0)*/
-  
-    anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
-    if (anagraph==0)
-    {
-        COREFSOLVERLOGINIT;
-        LERROR << "no PosGraph ! abort";
-        return MISSING_DATA;
-    }
+
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
+  if (anagraph==0)
+  {
+      COREFSOLVERLOGINIT;
+      LERROR << "no PosGraph ! abort";
+      return MISSING_DATA;
+  }
   
 
-  dump(out, anagraph,/* static_cast<SyntacticData*>(analysis.getData("SyntacticData")),*/ static_cast<AnnotationData*>(analysis.getData("AnnotationData")));
+  dump(out, anagraph.get(),/* static_cast<SyntacticData*>(analysis.getData("SyntacticData")),*/
+       std::dynamic_pointer_cast<AnnotationData>(analysis.getData("AnnotationData")).get());
   out.flush();
   out.close();  
   TimeUtils::logElapsedTime("CorefSolverXmlLogger");

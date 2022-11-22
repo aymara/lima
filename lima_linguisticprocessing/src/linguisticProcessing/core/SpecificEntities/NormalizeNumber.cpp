@@ -47,10 +47,10 @@ NormalizeNumber(MediaId language,
                 const LimaString& complement):
 Automaton::ConstraintFunction(language,complement),
 m_language(language),
-m_microsForNumber(0),
-m_microsForUnit(0),
-m_microsForConjunction(0),
-m_microAccessor(0)
+m_microsForNumber(nullptr),
+m_microsForUnit(nullptr),
+m_microsForConjunction(nullptr),
+m_microAccessor(nullptr)
 {
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
 
@@ -147,7 +147,7 @@ operator()(RecognizerMatch& m,
 #endif
 
   // annotation data is used to get numeric value of already recognized number entities
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
 
   vector<NumberPart> values;
 

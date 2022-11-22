@@ -1,0 +1,99 @@
+ARG MANYLINUX_TAG
+FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
+
+ARG GCC_VERSION
+ARG QT_VERSION
+ARG QT_VERSION_MAJOR
+ARG QT_VERSION_MINOR
+ARG QT_VERSION_PATCH
+ARG QT_FULL_VERSION
+ARG PYTHON_VERSION
+ARG PYTHON_SHORT_VERSION
+ARG PYTHON_FULL_VERSION
+ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
+
+RUN yum install -y wget ninja-build
+
+RUN install -d /src
+WORKDIR /src
+RUN wget -q https://download.qt.io/archive/qt/${QT_VERSION}/${QT_FULL_VERSION}/single/qt-everywhere-src-${QT_FULL_VERSION}.tar.xz
+RUN tar xf qt-everywhere-src-${QT_FULL_VERSION}.tar.xz
+
+WORKDIR /
+
+ENV BUILD_TARGET=/build
+ENV SRC=/src
+
+RUN mkdir -p "$BUILD_TARGET"
+
+
+RUN echo "Building QT version $QT_FULL_VERSION."
+
+# This build process is inspired by
+# https://www.tal.org/tutorials/building-qt-512-raspberry-pi
+ENV SRC_DIR="/src/qt-everywhere-src-${QT_FULL_VERSION}"
+
+WORKDIR $BUILD_TARGET
+RUN bash "${SRC_DIR}"/configure \
+    -c++std c++17 \
+    -confirm-license \
+    -opensource \
+    -dbus-linked \
+    -no-eglfs \
+    -no-evdev \
+    -no-glib \
+    -make libs \
+    -no-cups \
+    -no-gbm \
+    -no-gtk \
+    -no-pch \
+    -no-xcb \
+    -no-xcb-xlib \
+    -nomake examples \
+    -nomake tests \
+    -prefix /opt/qt${QT_VERSION_MAJOR} \
+    -qpa eglfs \
+    -qt-pcre \
+    -reduce-exports \
+    -release \
+    -skip qt3d \
+    -skip qtactiveqt \
+    -skip qtandroidextras \
+    -skip qtcanvas3d \
+    -skip qtcharts \
+    -skip qtdatavis3d \
+    -skip qtgamepad \
+    -skip qtgraphicaleffects \
+    -skip qtlocation \
+    -skip qtlottie \
+    -skip qtmacextras \
+    -skip qtpurchasing \
+    -skip qtquick3d \
+    -skip qtquickcontrols \
+    -skip qtquickcontrols2 \
+    -skip qtquicktimeline \
+    -skip qtscript \
+    -skip qtscxml \
+    -skip qtsensors \
+    -skip qtserialbus \
+    -skip qtserialport \
+    -skip qtspeech \
+    -skip qtdoc \
+    -skip qttranslations \
+    -skip qtvirtualkeyboard \
+    -skip qtwayland \
+    -skip qtwebview \
+    -skip qtwebengine \
+    -skip qtwinextras \
+    -skip qtx11extras \
+    -skip qtquick3dphysics \
+    -skip qtpositioning \
+    -skip wayland \
+    -no-ssl \
+    -system-freetype \
+    -system-libjpeg \
+    -system-libpng \
+    -system-zlib
+
+RUN cmake --build . --parallel && cmake --install .
+

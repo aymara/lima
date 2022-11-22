@@ -67,7 +67,7 @@ public:
       if (it == staticLog.end())
       {
         Logger* logger = new Logger(zone);
-        for (auto destination: Destinations::instance().destinations())
+        for (auto& destination: Destinations::instance().destinations())
         {
           logger->addDestination(destination);
         }

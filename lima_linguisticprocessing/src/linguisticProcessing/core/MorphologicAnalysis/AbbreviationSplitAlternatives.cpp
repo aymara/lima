@@ -179,20 +179,21 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"));
+  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   LinguisticGraph* graph=tokenList->getGraph();
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LDEBUG << "AbbreviationSplitAlternatives::process: Misssing AnnotationData. Create it";
-    annotationData = new AnnotationData();
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    annotationData = std::make_shared<AnnotationData>();
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
+        annotationData.get(), "AnalysisGraph");
     }
     analysis.setData("AnnotationData",annotationData);
   }
@@ -224,13 +225,13 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         // si il s'agit d'un possessif alors on traite le cas possessif.
         if (currentToken->status().isAlphaPossessive())
         {
-          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
+          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData.get());
         }
         // On ne traite la forme comme une abbreviation, uniquement si elle n'a pas ete
         // traitee comme un possessif
         if ((!isSplitted) && currentToken->status().isAlphaConcatAbbrev())
         {
-          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData);
+          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData.get());
         }
       }
       else
@@ -238,12 +239,12 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
         // En mode non confiance, on effectue tous les traitements
         if (currentToken->status().isAlphaPossessive())
         {
-          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData);
+          isSplitted=makePossessiveAlternativeFor(*it, graph, annotationData.get());
         }
         // On traite la forme comme une abbreviation, meme si elle a ete traitee comme un possessif
         if (currentToken->status().isAlphaConcatAbbrev())
         {
-          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData) || isSplitted;
+          isSplitted=makeConcatenatedAbbreviationSplitAlternativeFor(*it,graph, annotationData.get()) || isSplitted;
         }
       }
 
@@ -309,7 +310,7 @@ bool AbbreviationSplitAlternatives::makeConcatenatedAbbreviationSplitAlternative
   toTokenize.setData("Text",beforeAbbrevText);
   LimaStatusCode status=m_tokenizer->process(toTokenize);
   if (status != SUCCESS_ID) return false;
-  AnalysisGraph* tokenizerList=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto tokenizerList = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokGraph=tokenizerList->getGraph();
 
   // insert the first abreviated word
@@ -444,7 +445,7 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
     LERROR << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor: Failed to tokenize possesive word";
     return false;
   }
-  AnalysisGraph* tokenizerList=static_cast<AnalysisGraph*>(toTokenize.getData("AnalysisGraph"));
+  auto tokenizerList = std::dynamic_pointer_cast<AnalysisGraph>(toTokenize.getData("AnalysisGraph"));
   LinguisticGraph* tokGraph=tokenizerList->getGraph();
 
   // insert the first abreviated word

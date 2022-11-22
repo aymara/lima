@@ -107,6 +107,7 @@ Logger::~Logger()
 
 void Logger::addDestination(DestinationPtr destination)
 {
+   // std::cerr << "Logger::addDestination " << destination << std::endl;
    assert(destination);
    d->destList.push_back(destination);
 }
@@ -178,6 +179,7 @@ void Logger::Helper::writeToLog()
 
    Logger& logger = Logger::instance(zone);
    QMutexLocker lock(&logger.d->logMutex);
+   // std::cerr << "Logger::Helper::writeToLog " << completeMessage.toStdString() << std::endl;
    logger.write(completeMessage);
 }
 
@@ -197,6 +199,7 @@ Logger::Helper::~Helper()
 //! sends the message to all the destinations
 void Logger::write(const QString& message)
 {
+   // std::cerr << "Logger::write " << message.toStdString() << std::endl;
   if (message.isNull())
   {
     std::cerr << "Logger::write null message for " << d->zone.toUtf8().constData() << std::endl << std::flush;

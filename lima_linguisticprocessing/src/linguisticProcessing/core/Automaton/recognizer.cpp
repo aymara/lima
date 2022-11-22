@@ -82,6 +82,10 @@ Recognizer::Recognizer():
 Recognizer::Recognizer(const Recognizer& r):
 AbstractResource(r)
 {
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "Recognizer::Recognizer copy constructor";
+#endif
   init();
   copy(r);
 
@@ -103,6 +107,10 @@ Recognizer::~Recognizer()
 //**********************************************************************
 Recognizer& Recognizer::operator = (const Recognizer& r)
 {
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "Recognizer::Recognizer operator=";
+#endif
   if (this != &r)
   {
     freeMem();
@@ -122,7 +130,10 @@ void Recognizer::init(
   Manager* manager)
 
 {
-
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "Recognizer::init" << (void*)this;
+#endif
   /** @addtogroup ResourceConfiguration
    * - <b>&lt;group name="..." class="AutomatonRecognizer"&gt;</b>
    *    -  rules : file containing the compiled rules of the recognizer
@@ -371,11 +382,11 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
 #ifdef DEBUG_LP
   LDEBUG << "Recognizer::testSetOfRules: testing set of rules triggered by " << trigger << " on vertex " << position;
-    LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
+  LDEBUG << "onlyOneSuccessPerType=" << onlyOneSuccessPerType;
   if (logger.isDebugEnabled()) {
    std::ostringstream oss;
-   for (SetOfRules::const_iterator it=rules.begin(),it_end=rules.end();it!=it_end;it++) {
-     oss << " - " << (*it)->getWeight();
+   for (const auto& rule: rules) {
+     oss << " - " << rule->getWeight();
    }
    LDEBUG << "Rule weights" << oss.str();
   }
@@ -383,23 +394,18 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
   bool reapplySameRule(false);
 
-  SetOfRules::const_iterator
-    rule=rules.begin(),
-    rule_end=rules.end();
-  for (; rule!=rule_end; rule++) {
-    Rule* currentRule=*rule;
-
+  for (auto rule = rules.cbegin(); rule != rules.cend(); rule++) {
+    const auto& currentRule = *rule;
 #ifdef DEBUG_LP
     if (logger.isDebugEnabled()) {
-      LDEBUG << "Recognizer::testSetOfRules: testing rule "<<*currentRule << "," << currentRule->getRuleId() <<" of type "
+      LDEBUG << "Recognizer::testSetOfRules: testing rule "<<*currentRule << ","
+             << currentRule->getRuleId() <<" of type "
              << currentRule->getType() << ",reapply="
              << reapplySameRule << " from " << position;
     }
 #endif
 
-    if (forbiddenTypes &&
-        forbiddenTypes->find(currentRule->getType())
-        != forbiddenTypes->end()) {
+    if (forbiddenTypes && forbiddenTypes->find(currentRule->getType()) != forbiddenTypes->end()) {
       // type previously forbidden by a negative rule
 /*      LDEBUG << "type " << currentRule->getType()
              << " is forbidden: continue";*/
@@ -407,9 +413,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     }
 
     // initializes the constraint checklist
-    ConstraintCheckList
-      constraintCheckList(currentRule->numberOfConstraints(),
-                          ConstraintCheckListElement(graph));
+    ConstraintCheckList constraintCheckList(currentRule->numberOfConstraints(),
+                                            ConstraintCheckListElement(graph));
 
     // treat the constraints for the trigger with the constraint
     // checklist corresponding to this rule
@@ -421,10 +426,9 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
     //  if (!trigger.checkConstraints(graph,position,analysis,
     //                                constraintCheckList)) {
-    bool constraintsVerified=true;  
-    for (const auto elt: triggermatch) {
-      if (!trigger.checkConstraints(graph,elt.getVertex(),analysis,
-                                    constraintCheckList)) {
+    bool constraintsVerified = true;
+    for (const auto& elt: triggermatch) {
+      if (!trigger.checkConstraints(graph, elt.getVertex(),analysis, constraintCheckList)) {
         // one unary constraint was not verified
         constraintsVerified=false;
         break;
@@ -433,7 +437,8 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     if (! constraintsVerified) {
       // apply actions (for actions triggered by failure)
       if (!currentRule->negative()) {
-        currentRule->executeActions(graph, analysis,
+        currentRule->executeActions(graph,
+                                    analysis,
                                     constraintCheckList,
                                     false,
                                     0); // match is not used
@@ -453,12 +458,12 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
                                      m_automatonControlParams);
     //LDEBUG << "success=" << success;
 
-    RecognizerMatch* match=0;
+    std::unique_ptr<RecognizerMatch> match=nullptr;
 
     if (success) {
       // build complete match
 
-      match=new RecognizerMatch(leftmatch);
+      match=std::make_unique<RecognizerMatch>(leftmatch);
       if (leftmatch.getHead() != 0) {
         match->setHead(leftmatch.getHead());
       }
@@ -495,7 +500,7 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       actionSuccess = currentRule->executeActions(graph, analysis,
                                                   constraintCheckList,
                                                   success,
-                                                  match);
+                                                  match.get());
       //LDEBUG << "actionSuccess=" << actionSuccess;
     }
 
@@ -524,19 +529,15 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
       if (forbiddenTypes && currentRule->negative()) {
         forbiddenTypes->insert(currentRule->getType());
         success = false;
-        delete match;
-        match=0;
         continue;
       }
       LINFO << "Recognizer::testSetOfRules: execute rule " << currentRule->getRuleId()
             << " of type "<< currentRule->getType()
             << "(" <<  Lima::Common::MediaticData::MediaticData::single().getEntityName(currentRule->getType())
             << ") on vertex " << position;
-      RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+      RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData").get());
       if (stopAtFirstSuccess||(recoData != nullptr && !recoData->getNextVertices().empty())) {
         matches.push_back(*match);
-        delete match; // a copy has been made
-        match=0;
 #ifdef DEBUG_LP
         if (logger.isDebugEnabled() && recoData != nullptr) {
           LDEBUG << "Recognizer::testSetOfRules: Returning from testSetOfRules cause stopAtFirstSuccess ("
@@ -555,8 +556,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 //               LDEBUG << "Reapplication of same rule gives same result: "
 //                     << "abort to avoid inifinite loop: "
 //                     << *match << ";" << matches.back();
-              delete match; // a copy has been made
-              match=0;
               reapplySameRule=false;
               continue;
             }
@@ -571,8 +570,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
 
 //         LDEBUG << "add match to results " << *match;
         matches.push_back(*match);
-        delete match; // a copy has been made
-        match=0;
 
         if (onlyOneSuccessPerType) {
 /*          LDEBUG << "add " << currentRule->getType()
@@ -585,10 +582,6 @@ uint64_t Recognizer::testSetOfRules(const TransitionUnit& trigger,
     else {
 //      LDEBUG << "-> no success";
       reapplySameRule=false;
-    }
-
-    if (match !=0) {
-      delete match;
     }
   }
 
@@ -693,8 +686,7 @@ uint64_t Recognizer::
   //match may include the last vertex: store following vertices to check on those
   set<LinguisticGraphVertex> afterTheEnd;
   if (downstreamBound!=graph.lastVertex()) {
-    LinguisticGraphOutEdgeIt outEdge,outEdge_end;
-    boost::tie (outEdge,outEdge_end)=out_edges(downstreamBound,*(graph.getGraph()));
+    auto [outEdge,outEdge_end]=out_edges(downstreamBound,*(graph.getGraph()));
     for (; outEdge!=outEdge_end; outEdge++) {
       LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
       afterTheEnd.insert(next);
@@ -704,7 +696,7 @@ uint64_t Recognizer::
   bool lastReached = false;
   while (!toVisit.empty())
   {
-    LinguisticGraphVertex currentVertex=toVisit.front();
+    auto currentVertex = toVisit.front();
     toVisit.pop_front();
     // patch for inifinite loop : check if we already seen this node
     if (visited.find(currentVertex) != visited.end())
@@ -769,11 +761,10 @@ uint64_t Recognizer::
     }
 
     // store following nodes to test
-    LinguisticGraphOutEdgeIt outEdge,outEdge_end;
-    boost::tie (outEdge,outEdge_end)=out_edges(currentVertex,*(graph.getGraph()));
+    auto [outEdge,outEdge_end] = out_edges(currentVertex,*(graph.getGraph()));
 
     for (; outEdge!=outEdge_end; outEdge++) {
-      LinguisticGraphVertex next=target(*outEdge,*(graph.getGraph()));
+      auto next=target(*outEdge,*(graph.getGraph()));
       if (visited.find(next)==visited.end()) {
 #ifdef DEBUG_LP
         LDEBUG << "Recognizer: adding out edge target vertex to the 'to visit' list: " << next;
@@ -790,19 +781,16 @@ uint64_t Recognizer::
 #endif
       }
     }
-    RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+    auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
     if (nullptr != recoData)
     {
-      std::set<LinguisticGraphVertex>& nextVertices = recoData->getNextVertices();
+      auto& nextVertices = recoData->getNextVertices();
       if (!nextVertices.empty())
       {
 #ifdef DEBUG_LP
         LDEBUG << "Recognizer: adding next vertices to the 'to visit' list";
 #endif
-        std::set< LinguisticGraphVertex >::const_iterator nvit, nvit_end;
-        nvit = nextVertices.begin();
-        nvit_end = nextVertices.end();
-        for (; nvit != nvit_end; nvit++)
+        for (auto nvit = nextVertices.begin(), nvit_end = nextVertices.end(); nvit != nvit_end; nvit++)
         {
 #ifdef DEBUG_LP
           LDEBUG << "           - " << *nvit;
@@ -835,8 +823,8 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
              bool applySameRuleWhileSuccess) const
 {
   //AULOGINIT;
-  Token* token = get(vertex_token, *(graph.getGraph()), current);
-  MorphoSyntacticData* data = get(vertex_data, *(graph.getGraph()), current);
+  auto token = get(vertex_token, *(graph.getGraph()), current);
+  auto data = get(vertex_data, *(graph.getGraph()), current);
 
   if (token==0) {
     AULOGINIT;
@@ -850,6 +838,7 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     return 0;
   }
 
+  // TODO replace TriggerRule* raw pointer by a shared pointer
   vector<TriggerRule*> matchingRules;
   set<Common::MediaticData::EntityType> forbiddenTypes;
   uint64_t nbSuccess=0;
@@ -857,11 +846,8 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   findNextSetOfRules(graph, current, analysis, token, data, matchingRules);
 
   if (! matchingRules.empty()) {
-    std::vector<TriggerRule*>::const_iterator
-      ruleSet=matchingRules.begin(),
-      ruleSet_end=matchingRules.end();
-    for (; ruleSet!=ruleSet_end; ruleSet++) {
-      uint64_t nbSuccessForTheseRules=
+    for (auto ruleSet=matchingRules.begin(), ruleSet_end=matchingRules.end(); ruleSet!=ruleSet_end; ruleSet++) {
+      auto nbSuccessForTheseRules=
         testSetOfRules(*((*ruleSet)->transitionUnit()),
                        (*ruleSet)->setOfRules(),
                        graph, current, begin, end, analysis,
@@ -873,10 +859,10 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         nbSuccess+=nbSuccessForTheseRules;
         // skip recognized part (if the end of the recognized part is after
         // current token)
-        RecognizerMatch& lastSuccess=result.back();
-        Token* t=get(vertex_token,*(graph.getGraph()),current);
-        uint64_t currentTokenEnd=t->position()+t->length();
-        RecognizerData* recoData = static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+        auto& lastSuccess=result.back();
+        auto t=get(vertex_token,*(graph.getGraph()),current);
+        auto currentTokenEnd=t->position()+t->length();
+        auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
         if (stopAtFirstSuccess||(recoData != 0 && !recoData->getNextVertices().empty())) {
           if (lastSuccess.positionEnd() >= currentTokenEnd) {
             current=lastSuccess.getEnd();
@@ -885,10 +871,9 @@ testOnVertex(const LinguisticAnalysisStructure::AnalysisGraph& graph,
         }
       }
     }
-    for(std::vector<TriggerRule*>::iterator it=matchingRules.begin(),
-      it_end=matchingRules.end(); it!=it_end; it++) {
-       if (*it!=0) {
-        delete (*it);
+    for(auto rule: matchingRules) {
+       if (rule!=nullptr) {
+        delete rule;
        }
     }
   }
@@ -1001,9 +986,9 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // matching rules are gathered by common trigger (transition unit)
   // we have to re-sort the rules by their weight at a global level, independently of the trigger
   // create a vector of TriggerRule where each contains only one rule, then sort it
-  for (std::vector<const TriggerRule*>::const_iterator it=matchingRules.begin(),it_end=matchingRules.end();it!=it_end;it++) {
-    for (SetOfRules::const_iterator r=(*it)->setOfRules().begin(),r_end=(*it)->setOfRules().end(); r!=r_end;r++) {
-      matchingSetOfRules.push_back(new TriggerRule((*it)->transitionUnit(),SetOfRules(1,*r)));
+  for (auto rule: matchingRules) {
+    for (auto r: rule->setOfRules()) {
+      matchingSetOfRules.push_back(new TriggerRule(rule->transitionUnit(), SetOfRules(1, r)));
     }
   }
   sort(matchingSetOfRules.begin(),matchingSetOfRules.end(),CompareTriggerRule());
@@ -1011,9 +996,9 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // then, gather rules with the same trigger that are consecutive in this new list
   // (may save some constraint checking on trigger)
   if (! matchingSetOfRules.empty()) {
-    std::vector<TriggerRule*>::iterator it=matchingSetOfRules.begin();
-    TransitionUnit* currentTrigger=(*it)->transitionUnit();
-    std::vector<TriggerRule*>::iterator next=it;
+    auto it=matchingSetOfRules.begin();
+    auto currentTrigger=(*it)->transitionUnit();
+    auto next=it;
     next++;
     while (next!=matchingSetOfRules.end()) {
       if ((*next)->transitionUnit() == currentTrigger) {
@@ -1031,9 +1016,13 @@ findNextSetOfRules(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 }
 
 void Recognizer::initializeSearchStructure() {
-  const Common::PropertyCode::PropertyAccessor* macro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  const Common::PropertyCode::PropertyAccessor* micro=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-  m_searchStructure.init(m_rules,macro,micro);
+  auto macro = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
+  auto micro = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "Recognizer::initializeSearchStructure" << (void*)macro << (void*)micro;
+#endif
+  m_searchStructure.init(m_rules, macro, micro);
 }
 
 void Recognizer::clearSearchStructure() {

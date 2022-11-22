@@ -77,6 +77,10 @@ void AutomatonReader::
 readRecognizer(const std::string& filename,
                Recognizer& reco)
 {
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "AutomatonReader::readRecognizer" << filename;
+#endif
   if (! filename.empty() &&
       filename[filename.size()-1] == '/') {
     AULOGINIT;
@@ -105,10 +109,14 @@ readRecognizer(const std::string& filename,
   file.close();
 }
 
-void AutomatonReader::
-readRecognizer(std::ifstream& file,
+void AutomatonReader::readRecognizer(std::ifstream& file,
                Recognizer& reco)
 {
+#ifdef LDEBUG
+  AULOGINIT;
+  LDEBUG << "AutomatonReader::readRecognizer";
+#endif
+
   MediaId language=readHeader(file);
   reco.m_language = language;
 

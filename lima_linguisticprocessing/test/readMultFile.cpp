@@ -121,7 +121,7 @@ Param readCommandLineArguments()
   parser.addOption(
     QCommandLineOption(
       QStringList() << "output-format",
-      QCoreApplication::translate("main", "The chosen output format"),
+      QCoreApplication::translate("main", "INACTIVE | The chosen output format within: xml, text, stat"),
       "outputFormat", "xml")
                   );
   parser.addOption(

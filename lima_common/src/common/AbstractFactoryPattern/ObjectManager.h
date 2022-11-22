@@ -20,7 +20,7 @@ namespace Lima
 {
 
 /**
-* Manager for objects. The manager create object when necessay, store them,
+* Manager for objects. The manager create object when necessary, store them,
 * avoiding to create same object twice.
 * @brief Manager for Objects
 * @param Objects to manage
@@ -34,7 +34,7 @@ public:
   *  @brief ObjectManager destructor
   */
   virtual ~ObjectManager();
-  
+
   /**
    * If object doesn't exists, call the create method
    * @brief get object of the given id
@@ -43,7 +43,7 @@ public:
    * @throw InvalidConfiguration if failed to create object from given configuration
    */
   virtual Object* getObject(const std::string& id);
-  
+
 protected:
 
   /**
@@ -53,7 +53,7 @@ protected:
    * @throw InvalidConfiguration if failed to create object from given configuration
    */
   virtual Object* createObject(const std::string& id) = 0;
-  
+
 private:
 
   typedef typename std::map<std::string,Object*> ObjectMap;

@@ -423,7 +423,7 @@ uint64_t RecognizerOnAnalyzedText::applyToText(LimaString contentText,
 
 //   cerr << "applying recognizer on graph" << endl;
 
-  AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(m_analysis.getData("AnalysisGraph"));
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(m_analysis.getData("AnalysisGraph"));
 
   //LinguisticGraphVertex tokenList=analysis.getCurrent();
 //  LinguisticGraph* graph=tokenList->getGraph();

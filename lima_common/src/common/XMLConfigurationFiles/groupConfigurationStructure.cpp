@@ -41,13 +41,13 @@ typedef std::map< std::string, std::deque<std::string > > MSDS;
 std::ostream& operator<<(std::ostream& os, const MSDS& mss);
 
 typedef std::map< std::string, std::deque<ItemWithAttributes> > MSDI;
-std::ostream& operator<<(std::ostream& os, const MSDS& mss);
+std::ostream& operator<<(std::ostream& os, const MSDI& msdi);
 
 typedef std::map< std::string, std::map<std::string,std::string > > MSMSS;
 std::ostream& operator<<(std::ostream& os, const MSMSS& msmss);
 
 typedef std::map< std::string, std::map<std::string,ItemWithAttributes> > MSMSI;
-std::ostream& operator<<(std::ostream& os, const MSMSS& msmss);
+std::ostream& operator<<(std::ostream& os, const MSMSI& msmsi);
 
 
 class GroupConfigurationStructurePrivate
@@ -483,10 +483,13 @@ void GroupConfigurationStructure::changeMapToMapOfItems(const std::string &mapNa
 
 std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs)
 {
-  return os << "    Attributes :     " << dgcs.m_d->m_attributes << endl
-         << "    Params :     " << dgcs.m_d->m_params << endl
-         << "    Lists :             " << dgcs.m_d->m_lists << endl
-         << "    Maps :             " << dgcs.m_d->m_maps << endl;
+  return os << "Group :        " << dgcs.m_d->m_groupName << endl
+            << "Attributes :   " << dgcs.m_d->m_attributes << endl
+            << "Params :       " << dgcs.m_d->m_params << endl
+            << "Lists :        " << dgcs.m_d->m_lists << endl
+            << "Maps :         " << dgcs.m_d->m_maps << endl
+            << "ListsOfItems : " << dgcs.m_d->m_listsOfItems << endl
+            << "MapsOfItems :  " << dgcs.m_d->m_mapsOfItems << endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const MSS& mss)
@@ -523,10 +526,53 @@ std::ostream& operator<<(std::ostream& os, const MSMSS& msmss)
     {
       os << "[" << it2->first << "->" << it2->second << "]";
     }
-    os << endl;
+    os << "}" << endl;
   }
   return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const MSDI& msdi)
+{
+  for (MSDI::const_iterator it=msdi.begin();it!=msdi.end();it++)
+  {
+    os << it->first << " { ";
+    auto di=it->second;
+    for (std::deque<ItemWithAttributes>::const_iterator it2=di.begin();it2!=di.end();it2++)
+    {
+      os << it2->getName() << "[";
+      std::map<std::string,std::string> attributes = it2->getAttributes();
+      for(auto it3 = attributes.begin(); it3!=attributes.end(); it3++)
+      {
+          os << "@" << it3->first << "=" << it3->second << ", ";
+      }
+      os << "] ";
+    }
+    os << "}" << endl;
+  }
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MSMSI& msmsi)
+{
+  for (MSMSI::const_iterator it=msmsi.begin();it!=msmsi.end();it++)
+  {
+    os << it->first << " { ";
+    auto msi=it->second;
+    for (std::map<std::string,ItemWithAttributes>::const_iterator it2=msi.begin();it2!=msi.end();it2++)
+    {
+      os << it2->first << "=>" << it2->second.getName() << "[";
+      std::map<std::string,std::string> attributes = it2->second.getAttributes();
+      for(auto it3 = attributes.begin(); it3!=attributes.end(); it3++)
+      {
+          os << "@" << it3->first << "=" << it3->second << ", ";
+      }
+      os << "] ";
+    }
+    os << "}" << endl;
+  }
+  return os;
+}
+
 
 } // closing namespace XMLConfigurationFiles
 } // closing namespace Common

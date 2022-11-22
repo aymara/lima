@@ -113,7 +113,7 @@ LimaStatusCode ExternalProcessUnit::process(AnalysisContent& analysis) const
   LOGINIT("LP::External");
   LINFO << "ExternalProcessUnit: start";
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "no LinguisticMetaData ! abort";
       return MISSING_DATA;

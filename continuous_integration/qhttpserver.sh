@@ -19,6 +19,6 @@ echo "QHTTPSERVER_LATEST_RELEASE_JSON=$QHTTPSERVER_LATEST_RELEASE_JSON"
 URL=$(echo "$QHTTPSERVER_LATEST_RELEASE_JSON"| grep browser_download_url | grep debian9 | grep '.deb"' | head -n 1 | cut -d '"' -f 4)
 echo "URL=$URL"
 TEMP_DEB="$(mktemp)"
-curl  -vLJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB"
+curl  -LJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN -o "$TEMP_DEB"
 dpkg -i "$TEMP_DEB"
 

@@ -147,35 +147,35 @@ LimaStatusCode EventAnalyzer::process(
   LDEBUG << "start EventAnalyzer";
   
   // ici normalement on peut prendre soit analysis graph soit le Posgraph, cela doit être paramétré
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graphId));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graphId));
   if (anagraph==0)
   {
     LERROR << "no "<< m_graphId << " ! abort";
     return MISSING_DATA;
   }
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     LERROR << "no AnnotationData ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no SentenceBoundaries ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* pb=static_cast<SegmentationData*>(analysis.getData("ParagraphBoundaries"));
+  auto pb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("ParagraphBoundaries"));
   if (pb==0)
   {
     LERROR << "no ParagraphBoundaries ! abort";
     return MISSING_DATA;
   }
   std::vector<Paragraph*> v_paragraph;
-  compute_paragraphs(v_paragraph,anagraph->getGraph(),anagraph,sb,pb,annotationData);
+  compute_paragraphs(v_paragraph,anagraph->getGraph(),anagraph.get(),sb.get(), pb.get(), annotationData.get());
   
   std::map<std::string,Event*> map_event;
-  compute_events(map_event,v_paragraph,anagraph->getGraph(),annotationData,m_graphId);
+  compute_events(map_event,v_paragraph,anagraph->getGraph(), annotationData.get(), m_graphId);
   
   Events * eventData=new Events();
   
@@ -184,7 +184,7 @@ LimaStatusCode EventAnalyzer::process(
   Event* main_event=0;
   for (std::map<std::string,Event*>::const_iterator iT=map_event.begin();iT!=map_event.end();iT++)
   {
-    (*iT).second->compute_entities_weight(m_entitiesWeights,annotationData,m_graphId);
+    (*iT).second->compute_entities_weight(m_entitiesWeights, annotationData.get(), m_graphId);
     if ((*iT).second->get_weight() > max_weight)
     {
       max_weight=(*iT).second->get_weight();
@@ -255,7 +255,9 @@ LimaStatusCode EventAnalyzer::process(
   return SUCCESS_ID;
 }
 
-void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std::vector<Paragraph*> v_par,LinguisticGraph* graph,Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId) const
+void EventAnalyzer::compute_events(std::map<std::string,Event*>& map_event, std::vector<Paragraph*> v_par,
+                                   LinguisticGraph* graph,Common::AnnotationGraphs::AnnotationData* annotationData,
+                                   std::string graphId) const
 {
   EVENTANALYZERLOGINIT;
   
@@ -594,7 +596,9 @@ bool EventAnalyzer::is_specific_entity(LinguisticGraphVertex v,AnnotationData* a
   return false;
 }
 
-Common::MediaticData::EntityType EventAnalyzer::getEntityType(LinguisticGraphVertex v, Common::AnnotationGraphs::AnnotationData* annotationData,std::string graphId) const
+Common::MediaticData::EntityType EventAnalyzer::getEntityType(LinguisticGraphVertex v,
+                                                              Common::AnnotationGraphs::AnnotationData* annotationData
+                                                              ,std::string graphId) const
 {
   Common::MediaticData::EntityType e;
   std::set< AnnotationGraphVertex > matches = annotationData->matches(graphId,v,"annot");

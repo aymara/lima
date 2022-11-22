@@ -37,7 +37,7 @@ void LangDetector::init(Common::XMLConfigurationFiles::GroupConfigurationStructu
 LimaStatusCode LangDetector::process(AnalysisContent &analysis) const {
     LANGDETECTORLOGINIT;
     LINFO << "start langdetector process";
-    QString* originalText=dynamic_cast<QString*>(analysis.getData("Text"));
+    QString* originalText=dynamic_cast<QString*>(analysis.getData("Text").get());
     std::string langLabel = m_d->detectLang(originalText->toStdString());
     std::string language = Lima::LinguisticProcessing::LDetector::LangDetectorCore::labelToPrintable(langLabel);
     LINFO << "The detected language is: "<<language;

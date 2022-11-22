@@ -247,7 +247,7 @@ LimaStatusCode CppTensorFlowTokenizer::process(AnalysisContent& analysis) const
   LinguisticGraph* graph=anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
 
   // Evaluate TensorFlow model on the text
   auto sentencesTokens = m_d->tokenize(*originalText);

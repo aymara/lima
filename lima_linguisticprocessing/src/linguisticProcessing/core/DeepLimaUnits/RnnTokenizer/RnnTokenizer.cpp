@@ -154,7 +154,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   LinguisticGraph* graph=anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
-  auto originalText = static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   if (originalText == nullptr)
   {
       TOKENIZERLOGINIT;

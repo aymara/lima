@@ -120,7 +120,7 @@ LimaStatusCode GeoDumper::process(
 {
   DUMPERLOGINIT;
   LDEBUG << "Process GeoDumper ";
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
       LERROR << "GeoDumper::process: no LinguisticMetaData ! abort";
       return MISSING_DATA;
@@ -141,7 +141,7 @@ LimaStatusCode GeoDumper::process(
   //AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(handlerContainer->getHandler());
   LDEBUG << "handler will be: " << m_handler;
   //MediaId langid = static_cast<const  Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getMedia();
-  AnalysisHandlerContainer* h = static_cast<AnalysisHandlerContainer*>(analysis.getData("AnalysisHandlerContainer"));
+  auto h = std::dynamic_pointer_cast<AnalysisHandlerContainer>(analysis.getData("AnalysisHandlerContainer"));
   AbstractTextualAnalysisHandler* handler = static_cast<AbstractTextualAnalysisHandler*>(h->getHandler(m_handler));
   if (handler==0)
   {
@@ -156,7 +156,7 @@ LimaStatusCode GeoDumper::process(
 
   map<Token*, pair<LinguisticGraphVertex,vector<MorphoSyntacticData*> >, lTokenPosition > categoriesMapping;
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
   LinguisticGraph* graph=anagraph->getGraph();
   ltNormProperty sorter(m_propertyAccessor);
   //const FsaStringsPool& sp=Common::MediaticData::MediaticData::single().stringsPool(m_language);

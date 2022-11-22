@@ -150,7 +150,7 @@ LimaStatusCode Tokenizer::process(
   TimeUtilsController flatTokenizerProcessTime("FlatTokenizer");
   TOKENIZERLOGINIT;
   LINFO << "start tokenizer process";
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text").get());
   AnalysisGraph* anagraph(0);
 
   anagraph=new AnalysisGraph("AnalysisGraph",m_d->_language,true,true);

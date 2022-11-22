@@ -63,27 +63,27 @@ LimaStatusCode AnnotationGraphTestProcessUnit::process(
   SALOGINIT;
   LINFO << "start AnnotationGraphTestProcessUnit";
   // create syntacticData
-  if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))==0)
+  if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))==0)
   {
     LERROR << "no AnalysisGraph ! abort";
     return MISSING_DATA;
   }
   
   /** Creation of an annotation graph if necessary*/
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0)
   {
     annotationData=new AnnotationData();
     /** Creates a node in the annotation graph for each node of the 
       * morphosyntactic graph. Each new node is annotated with the name mrphv and
       * associated to the morphosyntactic vertex number */
-    if (static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(annotationData, "AnalysisGraph");
     }
-    if (static_cast<AnalysisGraph*>(analysis.getData("PosGraph")) != 0)
+    if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph")) != 0)
     {
-      static_cast<AnalysisGraph*>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
+      std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"))->populateAnnotationGraph(annotationData, "PosGraph");
     }
     
     analysis.setData("AnnotationData",annotationData);

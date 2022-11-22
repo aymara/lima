@@ -110,13 +110,13 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
   SACLOGINIT;
   LINFO << "start syntactic analysis - nochains";
   // create syntacticData
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData("PosGraph"));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
   if (anagraph==0)
   {
     LERROR << "no PosGraph ! abort";
     return MISSING_DATA;
   }
-  SegmentationData* sb=static_cast<SegmentationData*>(analysis.getData("SentenceBoundaries"));
+  auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
   if (sb==0)
   {
     LERROR << "no sentence bounds ! abort";
@@ -128,10 +128,10 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
     return INVALID_CONFIGURATION;
   }
 
-  SyntacticData* syntacticData=dynamic_cast<SyntacticData*>(analysis.getData("SyntacticData"));
+  auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
   if (syntacticData==0)
   {
-    syntacticData=new SyntacticData(anagraph,m_chainMatrix);
+    syntacticData= std::make_shared<SyntacticData>(anagraph.get(), m_chainMatrix);
     analysis.setData("SyntacticData",syntacticData);
   }
   else if (syntacticData->matrices() == 0)
@@ -153,7 +153,7 @@ LimaStatusCode SyntacticAnalyzerNoChains::process(
   {
     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-    identifyChains(syntacticData,beginSentence,endSentence,chainId);
+    identifyChains(syntacticData.get(), beginSentence, endSentence, chainId);
     beginSentence=endSentence;
   }
 

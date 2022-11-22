@@ -88,7 +88,7 @@ LimaStatusCode StatusLogger::process(
   const_cast<StatusLogger*>(this)->m_predTime=tmp;
 
   // log file and document name
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   
   try
   {
@@ -116,7 +116,7 @@ LimaStatusCode StatusLogger::process(
     }
   }
 
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text").get());
   *m_out << "TextSize= " << originalText->size() << endl;
   TimeUtils::logElapsedTime("StatusLogger");
   return SUCCESS_ID;

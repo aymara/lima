@@ -218,7 +218,7 @@ LimaStatusCode SpecificEntitiesCompletion::process(
   //
   // use second approach
 
-  auto graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph));
+  auto graphp = std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph));
   if (graphp == nullptr)
   {
     SELOGINIT;
@@ -249,7 +249,7 @@ LimaStatusCode SpecificEntitiesCompletion::process(
 void SpecificEntitiesCompletion::getEntities(AnalysisContent& analysis, Entities& foundEntities,
                                              const VertexTokenPropertyMap& tokenMap) const
 {
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==0) {
     SELOGINIT;
     LDEBUG << "SpecificEntitiesCompletion: no annotation data";
@@ -295,7 +295,7 @@ findOccurrences(Entities& foundEntities,
                 AnalysisContent& analysis,
                 std::vector<EntityOccurrence>& newEntities) const
 {
-  LimaStringText* text=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto text = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
   for (const auto& e: foundEntities)
   {
     QRegularExpression re(e.regex());
@@ -325,10 +325,10 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
   SELOGINIT;
 
   // needs recognizerdata to make CreateSpecificEntity work
-  RecognizerData* recoData=static_cast<RecognizerData*>(analysis.getData("RecognizerData"));
+  auto recoData = std::dynamic_pointer_cast<RecognizerData>(analysis.getData("RecognizerData"));
   if (recoData == 0)
   {
-    recoData = new RecognizerData();
+    recoData = std::make_shared<RecognizerData>();
     analysis.setData("RecognizerData", recoData);
   }
   // resultData is mandatory in recognizerData
@@ -342,7 +342,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
     entityCreator[t]=std::make_unique<CreateSpecificEntity>(m_language,entityName);
   }
 
-  AnalysisGraph* anagraph=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+  auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
 
   LinguisticGraph* graph=anagraph->getGraph();
   VertexTokenPropertyMap tokenMap=get(vertex_token,*graph);
@@ -352,7 +352,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
   const LinguisticGraphVertex firstVx = anagraph->firstVertex();
   const LinguisticGraphVertex lastVx = anagraph->lastVertex();
 
-  RecognizerMatch currentMatch(anagraph);
+  RecognizerMatch currentMatch(anagraph.get());
   int currentOccurrence=-1;
 
   // todo: ensure the process is robust when the analysis graph is not linear...
@@ -381,7 +381,7 @@ updateAnalysis(std::vector<EntityOccurrence>& occurrences,
 
       if (v != firstVx && v != lastVx)
       {
-        processVertex(v,tokenMap,occurrences,currentOccurrence,currentMatch, entityCreator, anagraph, analysis);
+        processVertex(v,tokenMap,occurrences,currentOccurrence,currentMatch, entityCreator, anagraph.get(), analysis);
       }
     }
   }

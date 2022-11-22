@@ -260,9 +260,9 @@ LimaStatusCode AbstractIEDumper::process(
 
   std::string sourceFile;
 
-  LimaStringText* originalText=static_cast<LimaStringText*>(analysis.getData("Text"));
+  auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
 
-  LinguisticMetaData* metadata=static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
+  auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0) {
     DUMPERLOGINIT;
     LERROR << "no LinguisticMetaData ! abort";
@@ -271,9 +271,9 @@ LimaStatusCode AbstractIEDumper::process(
 
   sourceFile=metadata->getMetaData("FileName");
 
-  IEDumperMetaData* dumperMetadata=new IEDumperMetaData(metadata);
+  IEDumperMetaData* dumperMetadata=new IEDumperMetaData(metadata.get());
 
-  AnnotationData* annotationData = static_cast< AnnotationData* >(analysis.getData("AnnotationData"));
+  auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData == 0) {
     DUMPERLOGINIT;
     LERROR << "no annotationData ! abort";
@@ -281,22 +281,22 @@ LimaStatusCode AbstractIEDumper::process(
   }
 
 
-  LinguisticAnalysisStructure::AnalysisGraph* graphp = static_cast<LinguisticAnalysisStructure::AnalysisGraph*>(analysis.getData(m_graph));
+  auto graphp = std::dynamic_pointer_cast<LinguisticAnalysisStructure::AnalysisGraph>(analysis.getData(m_graph));
   if (graphp == 0) {
     DUMPERLOGINIT;
     LERROR << "no graph "<< m_graph <<" ! abort";
     return MISSING_DATA;
   }
 
-  EventTemplateData* eventData=static_cast<EventTemplateData*>(analysis.getData("EventTemplateData"));
+  auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     DUMPERLOGINIT;
     LDEBUG << "No data 'EventTemplateData'";
   }
 
-  AnalysisData* offsetData=analysis.getData("OffsetMapping");
+  auto offsetData = analysis.getData("OffsetMapping");
   if (offsetData!=0) {
-    m_offsetMapping=static_cast<OffsetMapping*>(offsetData);
+    m_offsetMapping = std::dynamic_pointer_cast<OffsetMapping>(offsetData).get();
   }
 
   const LinguisticAnalysisStructure::AnalysisGraph& graph = *graphp;
@@ -341,7 +341,7 @@ LimaStatusCode AbstractIEDumper::process(
     // idiomatic expressions parts and named entity parts)
     // -> this will not include nested entities
 
-    AnalysisGraph* tokenList=static_cast<AnalysisGraph*>(analysis.getData(m_graph));
+    auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
     if (tokenList==0) {
       LERROR << "graph " << m_graph << " has not been produced: check pipeline";
       return MISSING_DATA;
@@ -370,7 +370,7 @@ LimaStatusCode AbstractIEDumper::process(
           toVisit.push(next);
         }
       }
-      const SpecificEntityAnnotation* annot=getSpecificEntityAnnotation(v,annotationData);
+      const SpecificEntityAnnotation* annot=getSpecificEntityAnnotation(v,annotationData.get());
       if (annot != 0) {
         outputEntity(out,v,annot,tokenMap,offset,*originalText,mapEntities,mapAttributes,dumperMetadata);
       }
@@ -420,21 +420,21 @@ LimaStatusCode AbstractIEDumper::process(
 
   outputEventsHeader(out);
   if (eventData!=0) {
-    uint nbEvents=outputEventData(out,eventData,annotationData,tokenMap,mapEntities,offset,
+    uint nbEvents=outputEventData(out,eventData.get(),annotationData.get(),tokenMap,mapEntities,offset,
                                   *originalText, dumperMetadata);
     dumperMetadata->nbEvents+=nbEvents;
   }
   outputEventsFooter(out);
 
   outputRelationsHeader(out);
-  uint nbRelations=outputSemanticRelations( out, annotationData, tokenMap, mapEntities, offset, dumperMetadata);
+  uint nbRelations=outputSemanticRelations( out, annotationData.get(), tokenMap, mapEntities, offset, dumperMetadata);
   dumperMetadata->nbRelations+=nbRelations;
   outputRelationsFooter(out);
 
   outputGlobalFooter(out);
 
   // save current state for future output
-  dumperMetadata->save(metadata);
+  dumperMetadata->save(metadata.get());
 
   TimeUtils::logElapsedTime("AbstractIEDumper");
   return SUCCESS_ID;
