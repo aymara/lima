@@ -210,7 +210,7 @@ void AnalysisThread::startAnalysis()
     {
       m_d->initMetaData(item.second, metaData);
     }
-    if( (item.first == "text") & (m_d->m_request->methodString() == "HTTP_GET") )
+    if( (item.first == "text") && (m_d->m_request->methodString() == "HTTP_GET") )
     {
       // Get text from parameter in GET mode
       textQS = item.second;

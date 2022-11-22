@@ -108,8 +108,6 @@
 
 #include <QtCore>
 
-#define DEBUG_LP
-
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::LinguisticProcessing::SpecificEntities;
 using namespace Lima::LinguisticProcessing::SyntacticAnalysis;
@@ -672,12 +670,12 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
             auto se = annotationData->annotation(vx, QString::fromUtf8("SpecificEntity"))
               .pointerValue<SpecificEntityAnnotation>();
             previousNeType = "O";
-            bool first = true;
+            // bool first = true;
             for (const auto& vse : se->vertices())
             {
               collectVertexDependencyInformations(vse, analysis);
               vertexToToken[vse] = tokenId;
-              first = false;
+              // first = false;
             }
             break;
           }
@@ -696,7 +694,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
           // and the ne-Type includes or not BIO information using in this case the
           // previousNeType member.
           previousNeType = "O";
-          bool first = true;
+          // bool first = true;
           vertexToToken[v] = tokenId;
           tokenId++;
           for (const auto& vse : se->vertices())
@@ -714,7 +712,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
 
             vertexToToken[posVertex] = tokenId;
             // std::cerr << "docFrom_analysis pushing token" << std::endl;
-            first = false;
+            // first = false;
           }
           previousNeType = neType;
         }

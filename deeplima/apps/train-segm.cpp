@@ -18,7 +18,8 @@
 using namespace std;
 namespace po = boost::program_options;
 
-int train_segmentation_model(const string& ud_path, const string& corpus, deeplima::segmentation::train::train_params_segmentation_t &params);
+int train_segmentation_model(const std::string& ud_path, const std::string& corpus,
+                             deeplima::segmentation::train::train_params_segmentation_t &params);
 
 int main(int argc, char* argv[])
 {
@@ -83,7 +84,8 @@ int main(int argc, char* argv[])
 
 using namespace deeplima;
 
-int train_segmentation_model(const string& ud_path, const string& corpus, deeplima::segmentation::train::train_params_segmentation_t &params)
+int train_segmentation_model(const std::string& ud_path, const std::string& corpus,
+                             deeplima::segmentation::train::train_params_segmentation_t &params)
 {
   boost::filesystem::path path_to_treebank = boost::filesystem::path(ud_path) / corpus;
   CoNLLU::Treebank tb(path_to_treebank.string());

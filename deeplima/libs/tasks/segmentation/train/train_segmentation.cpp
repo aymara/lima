@@ -116,9 +116,11 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
   const auto& dev_doc = tb.get_doc("dev");
   auto dev_input = vectorizer.process(dev_doc.get_original_text(), dev_doc.get_text().size() + 1);
 
-  auto train_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"), (int64_t)train_char_counter, train_ss);
+  auto train_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"), (int64_t)train_char_counter,
+                                                         params.train_ss);
 
-  auto dev_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"), dev_doc.get_text().size() + 1, train_ss);
+  auto dev_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"), dev_doc.get_text().size() + 1,
+                                                       params.train_ss);
 
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
