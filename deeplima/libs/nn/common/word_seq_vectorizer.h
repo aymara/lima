@@ -16,16 +16,14 @@
 
 namespace deeplima
 {
-namespace tagging
-{
-namespace train
+namespace nets
 {
 
 template <class DataSet, class StrFeatExtractor, class UIntFeatExtractor, class MatrixInt, class MatrixFloat>
-class WordSeqVectorizerImpl : public tagging::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat>
+class WordSeqVectorizerImpl : public vectorizers::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat>
 {
 public:
-  typedef tagging::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat> Parent;
+  typedef vectorizers::WordSeqEmbdVectorizer<DataSet, StrFeatExtractor, UIntFeatExtractor, MatrixFloat> Parent;
 
   struct embeddable_feature_descr_t : public Parent::feature_descr_base_t
   {
@@ -45,6 +43,16 @@ public:
   WordSeqVectorizerImpl(const std::vector<typename Parent::feature_descr_t>& features,
                         const std::vector<embeddable_feature_descr_t>& embeddable_features)
     : Parent(features),
+      m_embeddable_features(embeddable_features),
+      m_embeddable_size(0)
+  {
+    m_embeddable_size = m_embeddable_features.size();
+  }
+
+  WordSeqVectorizerImpl(const std::vector<typename Parent::feature_descr_t>& features,
+                        const std::vector<embeddable_feature_descr_t>& embeddable_features,
+                        const StrFeatExtractor& str_feat_extractor)
+    : Parent(features, str_feat_extractor),
       m_embeddable_features(embeddable_features),
       m_embeddable_size(0)
   {
@@ -83,8 +91,27 @@ public:
     std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
     vectorization_t rv(embeddable_features, frozen_features);
 
+    process(src, rv, 0);
+
+    return rv;
+  }
+
+  vectorization_t init_dst(uint64_t len) const
+  {
+    std::shared_ptr<MatrixFloat> frozen_features(new MatrixFloat(len, Parent::m_features_size));
+    std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
+    vectorization_t rv(embeddable_features, frozen_features);
+
+    return rv;
+  }
+
+  void process(const DataSet& src, vectorization_t dst, uint64_t start) const
+  {
+    std::shared_ptr<MatrixInt> embeddable_features = dst.first;
+    std::shared_ptr<MatrixFloat> frozen_features = dst.second;
+
     typename DataSet::const_iterator it = src.begin();
-    uint64_t current_timepoint = 0;
+    uint64_t current_timepoint = start;
     while (src.end() != it)
     {
       while(!(*it).is_word() && src.end() != it)
@@ -96,19 +123,17 @@ public:
       vectorize_timepoint(*frozen_features, *embeddable_features, current_timepoint, *it);
 
       current_timepoint++;
-      if (current_timepoint == std::numeric_limits<int64_t>::max())
+      if (current_timepoint == std::numeric_limits<uint64_t>::max())
       {
         throw std::overflow_error("Too much words in the dataset.");
       }
 
       it++;
     }
-
-    return rv;
   }
 
   inline void vectorize_timepoint(MatrixFloat& frozen_features, MatrixInt& embeddable_features,
-                                  uint64_t timepoint, const typename DataSet::token_t& token)
+                                  uint64_t timepoint, const typename DataSet::token_t& token) const
   {
     Parent::vectorize_timepoint(frozen_features, timepoint, token);
 
@@ -125,8 +150,8 @@ public:
         break;
       case Parent::str_feature:
       {
-        size_t ifeat = StrFeatExtractor::get_feat_id(feat_descr.m_name);
-        const std::string& feat_val = StrFeatExtractor::feat_value(/*src.data(),*/ token, ifeat);
+        size_t ifeat = Parent::m_str_feat_extractor.get_feat_id(feat_descr.m_name);
+        const std::string& feat_val = Parent::m_str_feat_extractor.feat_value(token, ifeat);
         std::shared_ptr<StringDict> dict
             = std::dynamic_pointer_cast<StringDict, DictBase>(feat_descr.m_dict);
         uint64_t idx = dict->get_idx(feat_val);
@@ -140,8 +165,7 @@ public:
   }
 };
 
-} // namespace train
-} // namespace tagging
+} // namespace nets
 } // namespace deeplima
 
 #endif

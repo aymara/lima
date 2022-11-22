@@ -97,7 +97,7 @@ public:
                          const param_base_t* params,
                          std::vector<std::vector<uint8_t>>& final_output,
                          size_t input_begin,
-                         size_t input_end,
+                         size_t /*input_end*/,
                          size_t output_begin,
                          size_t output_end)
   {
@@ -136,7 +136,7 @@ public:
     s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * zero;
     step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
-    for (size_t t = 1; t < input.cols(); t++)
+    for (Eigen::Index t = 1; t < input.cols(); t++)
     {
       s = temp.col(t).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * output.col(t-1).topRows(hidden_size);
       step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
@@ -161,11 +161,13 @@ public:
       M& linear_output = wb->lin_out[j];
       linear_output = (linear[j].weight * output).colwise() + linear[j].bias;
 
-      for (Eigen::Index i = output_begin - input_begin;
-           i < output_end - input_begin; i++)
+      for (auto i = output_begin - input_begin; i < output_end - input_begin; i++)
       {
         Eigen::Index idx = 0;
-        typename M::Scalar v = linear_output.col(i).maxCoeff(&idx);
+        // TODO scalar v value is not used but maxCoeff has side effect. It must be kept. Should we remove the
+        // return value or use it somewhat?
+        // typename M::Scalar v =
+        linear_output.col(i).maxCoeff(&idx);
         assert(idx >= 0);
         assert(idx < std::numeric_limits<uint8_t>::max());
         final_output[j][input_begin+i] = (uint8_t) idx;

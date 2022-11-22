@@ -145,6 +145,7 @@ void RnnTokenizer::init(
 
 LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 {
+  TimeUtils::updateCurrentTime();
   LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
 
@@ -154,6 +155,12 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
   auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
+  if (originalText == nullptr)
+  {
+      TOKENIZERLOGINIT;
+      LERROR << "Can't Process RnnTokenizer: missing data 'Text'";
+      return MISSING_DATA;
+  }
 
   // Execute model on the text
   vector< vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
@@ -222,6 +229,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 
   add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
 
+  TimeUtils::logElapsedTime("RnnTokenizer");
   return SUCCESS_ID;
 }
 
@@ -331,7 +339,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitive
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk || tok.m_len == strlen(tok.m_pch)-1)
+      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();

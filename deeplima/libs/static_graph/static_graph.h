@@ -13,6 +13,7 @@
 #include <torch/serialize/archive.h>
 
 #include "dict_base.h"
+#include "nn/torch_modules/deep_biaffine_attention_decoder.h"
 
 namespace deeplima
 {
@@ -33,6 +34,7 @@ class StaticGraphImpl : public torch::nn::Module
       reshape = 5,
       unbind = 6,
       unsqueeze = 7,
+      sigmoid = 8,
       max_step_type
     };
 
@@ -92,6 +94,7 @@ class StaticGraphImpl : public torch::nn::Module
     lstm = 2,
     linear = 3,
     dropout = 4,
+    deep_biaffine_attention_decoder = 5,
     max_module_type
   };
 
@@ -100,8 +103,8 @@ public:
   StaticGraphImpl(DictsHolder&& dicts, const std::string& script);
   StaticGraphImpl() { }
 
-  virtual void load(torch::serialize::InputArchive& archive);
-  virtual void save(torch::serialize::OutputArchive& archive) const;
+  virtual void load(torch::serialize::InputArchive& archive) override;
+  virtual void save(torch::serialize::OutputArchive& archive) const override;
   virtual void set_tags(const std::map<std::string, std::string>& tags);
   virtual const std::map<std::string, std::string>& get_tags() const
   {
@@ -355,6 +358,7 @@ protected:
   virtual void create_submodule_LSTM(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_Linear(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_Dropout(const std::string& name, const std::map<std::string, std::string>& opts);
+  virtual void create_submodule_DeepBiaffineAttentionDecoder(const std::string& name, const std::map<std::string, std::string>& opts);
 
   DictsHolder m_dicts;
   std::string m_script;
@@ -364,6 +368,7 @@ protected:
   std::vector<torch::nn::LSTM> m_lstm;
   std::vector<torch::nn::Linear> m_linear;
   std::vector<torch::nn::Dropout> m_dropout;
+  std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> m_deep_biaffine_attention_decoder;
 
 public:
 
@@ -391,6 +396,11 @@ public:
   const std::vector<torch::nn::Dropout>& get_layers_dropout() const
   {
     return m_dropout;
+  }
+
+  const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder>& get_layers_deep_biaffine_attn_decoder() const
+  {
+    return m_deep_biaffine_attention_decoder;
   }
 
   torch::nn::Embedding get_module_by_name(const std::string& name) const
@@ -423,6 +433,10 @@ public:
     else if (type == "dropout")
     {
       t = dropout;
+    }
+    else if (type == "deep_biaffine_attention_decoder")
+    {
+      t = deep_biaffine_attention_decoder;
     }
     else
     {

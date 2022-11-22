@@ -58,6 +58,15 @@ struct rnn_descr_t
     : m_dim(dim) { }
 };
 
+struct deep_biaffine_attention_descr_t
+{
+  size_t m_arc_dim;
+  // size_t m_input_rnn_layer; // 0 - embd, 1 - 1st RNN layer, ...
+
+  explicit deep_biaffine_attention_descr_t(size_t arc_dim)
+    : m_arc_dim(arc_dim) { }
+};
+
 } // nets
 } // deeplima
 

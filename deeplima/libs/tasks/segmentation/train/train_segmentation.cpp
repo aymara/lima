@@ -32,7 +32,7 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, 
   std::shared_ptr<M> out(new M(len, 1));
 
   auto tokens = annot.get_tokens();
-  int64_t p = 0;
+  size_t p = 0;
   for (size_t i = 0; i < tokens.size(); i++)
   {
     const auto& t = tokens[i];
@@ -101,30 +101,24 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
   uint64_t train_char_counter = 0;
 
   DictionaryBuilder dict_builder(ngram_descr);
-  DictsHolder dicts
-      = dict_builder.process(train_doc.get_original_text(), 100, train_char_counter);
+  auto dicts = dict_builder.process(train_doc.get_original_text(), 100, train_char_counter);
 
-  if (train_char_counter >= std::numeric_limits<int64_t>::max())
+  if (train_char_counter >= std::numeric_limits<uint64_t>::max())
   {
     throw std::overflow_error("Too much characters in training set.");
   }
 
   Utf8CharSeqToTorchMatrix vectorizer(ngram_descr);
   vectorizer.set_dicts(dicts);
-  shared_ptr<TorchMatrix<int64_t>> train_input = vectorizer.process(train_doc.get_original_text(),
+  auto train_input = vectorizer.process(train_doc.get_original_text(),
                                                                     (int64_t)train_char_counter);
 
-  const CoNLLU::Document& dev_doc = tb.get_doc("dev");
-  shared_ptr<TorchMatrix<int64_t>> dev_input = vectorizer.process(dev_doc.get_original_text(),
-                                                                  dev_doc.get_text().size() + 1);
+  const auto& dev_doc = tb.get_doc("dev");
+  auto dev_input = vectorizer.process(dev_doc.get_original_text(), dev_doc.get_text().size() + 1);
 
-  shared_ptr<TorchMatrix<int64_t>> train_gold
-      = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"),
-                                             (int64_t)train_char_counter, params.train_ss);
+  auto train_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"), (int64_t)train_char_counter, train_ss);
 
-  shared_ptr<TorchMatrix<int64_t>> dev_gold
-      = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"),
-                                             dev_doc.get_text().size() + 1, params.train_ss);
+  auto dev_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"), dev_doc.get_text().size() + 1, train_ss);
 
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },

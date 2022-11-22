@@ -67,7 +67,8 @@ public:
 
   typedef params_lstm_beam_decoder_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params, bool precomputed_input=false) const
+  virtual workbench_t* create_workbench(uint32_t /*input_size*/, const param_base_t* params,
+                                        bool precomputed_input=false) const
   {
     assert(nullptr != params);
     const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
@@ -118,7 +119,8 @@ public:
     workbench_t* wb = static_cast<workbench_t*>(pwb);
     M& temp = wb->temp;
     M& output = wb->out;
-    const V& zero = wb->zero;
+//     TODO should it be used?
+    // const V& zero = wb->zero;
 
     std::vector<std::vector<decoding_timepoint_t>> decoding_log(max_output_len, std::vector<decoding_timepoint_t>(beam_size));
 
@@ -227,15 +229,18 @@ public:
     */
 
     // Backtracking
-    int step = 0;
+    size_t step = 0;
     size_t pos = 0;
     while (step < decoding_log.size() && decoding_log[step][pos].cls != 1) step++;
-    step--;
+    if (step > 0)
+      step--;
     while (step >= 0)
     {
       char32_t ch = embd.decode(decoding_log[step][pos].cls);
       output_seq.push_back(ch);
       pos = decoding_log[step][pos].prev_pos;
+      if (step == 0) // break out here because step is unsigned int
+        break;
       step--;
     }
     std::reverse(output_seq.begin(), output_seq.end());

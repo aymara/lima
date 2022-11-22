@@ -12,4 +12,4 @@ include_directories(common)
 add_subdirectory(RnnTokenizer)
 add_subdirectory(RnnTagger)
 add_subdirectory(RnnTokensAnalyzer)
-
+add_subdirectory(RnnDependencyParser)

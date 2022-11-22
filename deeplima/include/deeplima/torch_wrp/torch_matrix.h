@@ -65,9 +65,9 @@ public:
     m_accessor = m_tensor.accessor<T, 2>();
   }
 
-  inline void set(uint64_t time, uint64_t feat, T value)
+  inline void set(int64_t time, uint64_t feat, T value)
   {
-    assert(feat < std::numeric_limits<int64_t>::max());
+    assert(feat < std::numeric_limits<uint64_t>::max());
     assert(time < std::numeric_limits<int64_t>::max() - m_start_time);
     assert(time < m_tensor.size(0));
 
@@ -78,8 +78,8 @@ public:
 
   inline uint64_t get(uint64_t time, uint64_t feat)
   {
-    assert(feat < std::numeric_limits<int64_t>::max());
-    assert(time < std::numeric_limits<int64_t>::max() - m_start_time);
+    assert(feat < std::numeric_limits<uint64_t>::max());
+    assert(time < std::numeric_limits<uint64_t>::max() - m_start_time);
 
     return m_accessor[m_start_time + time][feat];
   }

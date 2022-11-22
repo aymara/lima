@@ -23,6 +23,7 @@ add_library(static_graph
 target_link_libraries(static_graph
   PRIVATE
   ${TORCH_LIBRARIES}
+  torch_modules
 )
 
 

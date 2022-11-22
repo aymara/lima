@@ -33,14 +33,34 @@ public:
 
   virtual void load(const std::string& fn) = 0;
 
-  const uint_dicts_holder_t& get_uint_dicts() const
+  inline const uint_dicts_holder_t& get_input_uint_dicts() const
   {
-    return m_uint_dicts;
+    return m_input_uint_dicts;
   }
 
-  const str_dicts_holder_t& get_str_dicts() const
+  inline const std::vector<std::string>& get_input_uint_dicts_names() const
   {
-    return m_str_dicts;
+    return m_input_uint_dicts_names;
+  }
+
+  inline const str_dicts_holder_t& get_input_str_dicts() const
+  {
+    return m_input_str_dicts;
+  }
+
+  inline const std::vector<std::string>& get_input_str_dicts_names() const
+  {
+    return m_input_str_dicts_names;
+  }
+
+  inline const std::vector<std::vector<std::string>>& get_output_str_dicts() const
+  {
+    return m_output_str_dicts;
+  }
+
+  inline const std::vector<std::string>& get_output_str_dicts_names() const
+  {
+    return m_output_str_dicts_names;
   }
 
   virtual size_t init_new_worker(size_t input_len, bool precomputed_input=false)
@@ -85,7 +105,8 @@ public:
     {
       if (nullptr != p)
       {
-        delete p;
+        // TODO: Why this fails?
+        // delete p;
       }
     }
   }
@@ -103,7 +124,7 @@ public:
       int64_t input_end,
       int64_t output_begin,
       int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
+      std::shared_ptr< StdMatrix<uint8_t> >& output,
       const std::vector<std::string>& outputs_names
       ) = 0;
 
@@ -113,12 +134,21 @@ protected:
 
   std::vector<std::vector<Op_Base::workbench_t*>> m_wb; // outer - calculation step, inner - worker id
 
-  uint_dicts_holder_t m_uint_dicts;
-  str_dicts_holder_t m_str_dicts;
+  uint_dicts_holder_t m_input_uint_dicts;
+  std::vector<std::string> m_input_uint_dicts_names;
+  str_dicts_holder_t m_input_str_dicts;
+  std::vector<std::string> m_input_str_dicts_names;
+
+  std::vector<std::vector<std::string>> m_output_str_dicts;
+  std::vector<std::string> m_output_str_dicts_names;
 
   typedef params_bilstm_t<M, V> params_bilstm_spec_t;
   std::vector<params_bilstm_spec_t> m_lstm;
   std::map<std::string, size_t> m_lstm_idx;
+
+  typedef params_multilayer_bilstm_t<M, V> params_multilayer_bilstm_spec_t;
+  std::vector<params_multilayer_bilstm_spec_t> m_multi_bilstm;
+  std::map<std::string, size_t> m_multi_bilstm_idx;
 
   std::vector<params_linear_t<M, V>> m_linear;
   std::map<std::string, size_t> m_linear_idx;

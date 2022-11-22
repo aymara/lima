@@ -24,9 +24,10 @@ class EmbdDict : public FeatureVectorizerToMatrix<M, K, I>
 {
 public:
   typedef K value_t;
+  typedef M tensor_t;
 
   EmbdDict() = default;
-  virtual ~EmbdDict() = default;
+  virtual ~EmbdDict() {}
 
   template <class T>
   void init(std::shared_ptr<Dict<T>> dict, const M& tensor)
@@ -37,7 +38,7 @@ public:
     {
       assert(it.second >= 0);
       assert(it.second < std::numeric_limits<I>::max());
-      assert(it.second < m_embd.cols());
+      assert(m_embd.cols() >=0 && it.second < (unsigned long)(m_embd.cols()));
       m_index[static_cast<K>(it.first)] = I(it.second);
       m_reverse_index[static_cast<I>(it.second)] = static_cast<K>(it.first);
     }
@@ -68,7 +69,7 @@ public:
     target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
   }
 
-  M& get_tensor()
+  const M& get_tensor() const
   {
     return m_embd;
   }
@@ -99,6 +100,7 @@ public:
   typedef std::string value_t;
 
   EmbdDict() {}
+  ~EmbdDict() {}
 
   void init(std::shared_ptr<Dict<value_t>> dict, const M& tensor)
   {
@@ -133,9 +135,30 @@ public:
     target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
   }
 
-  M& get_tensor()
+  const M& get_tensor() const
   {
     return m_embd;
+  }
+
+  template <class K>
+  std::shared_ptr<Dict<K>> get_int_dict() const
+  {
+    std::vector<value_t> vk;
+    vk.reserve(m_index.size());
+    for ( const auto& it : m_index )
+    {
+      vk.push_back(it.first);
+    }
+    std::sort(vk.begin(), vk.end());
+
+    std::vector<K> vi(m_index.size());
+    for (size_t i = 0; i < vk.size(); ++i)
+    {
+      vi[i] = lookup(vk[i]);
+    }
+
+    std::shared_ptr<Dict<K>> rv = std::make_shared<Dict<K>>(vi);
+    return rv;
   }
 
 protected:

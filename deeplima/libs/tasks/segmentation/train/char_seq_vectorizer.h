@@ -45,12 +45,12 @@ protected:
 
     while (! m_input_encoder.ready_to_generate())
     {
-      m_input_encoder.warmup((const uint8_t*)text.data(), pos, text.size());
+      m_input_encoder.warmup((const uint8_t*)text.data(), &pos, text.size());
     }
 
-    while (pos < text.size())
+    while (size_t(pos) < text.size())
     {
-      if (m_input_encoder.parse((const uint8_t*)text.data(), pos, text.size()) > 0)
+      if (m_input_encoder.parse((const uint8_t*)text.data(), &pos, text.size()) > 0)
       {
         handle_timepoint(*target, current_timepoint);
       }
@@ -60,7 +60,7 @@ protected:
     for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
     {
       int32_t pos = 0;
-      if (m_input_encoder.parse((uint8_t*)final_spaces, pos, 1) > 0)
+      if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
       {
         handle_timepoint(*target, current_timepoint);
       }
@@ -81,7 +81,7 @@ protected:
       Adapter::set(target, current_timepoint, i, v);
     }
     current_timepoint++;
-    if (current_timepoint == std::numeric_limits<int64_t>::max())
+    if (current_timepoint == std::numeric_limits<uint64_t>::max())
     {
       throw std::overflow_error("Too much characters in training set.");
     }

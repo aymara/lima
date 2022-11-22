@@ -41,6 +41,10 @@ public:
     return m_impl.get_precomputed_dim();
   }
 
+  virtual void get_classes_from_fn(const std::string& fn, std::vector<std::string>& class_names, std::vector<std::vector<std::string>>& classes){
+      m_impl.convert_classes_from_fn(fn,class_names, classes);
+  }
+
   inline void precompute_inputs(
       const typename M::tensor_t& inputs,
       typename M::tensor_t& outputs,
@@ -57,7 +61,8 @@ public:
       int64_t input_end,
       int64_t output_begin,
       int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
+      std::shared_ptr< StdMatrix<uint8_t> >& output,
+      const std::vector<size_t>& /*lengths*/,
       const std::vector<std::string>& output_names
       )
   {
@@ -73,19 +78,19 @@ public:
     return m_impl.get_uint_dicts();
   }
 
-  inline const typename M::str_dicts_holder_t& get_str_dicts() const
+  inline const typename M::str_dicts_holder_t& get_input_str_dicts() const
   {
-    return m_impl.get_str_dicts();
+    return m_impl.get_input_str_dicts();
   }
 
-  inline const std::vector<std::vector<std::string>>& get_classes() const
+  inline const std::vector<std::string>& get_output_str_dicts_names() const
   {
-    return m_impl.get_classes();
+    return m_impl.get_output_str_dicts_names();
   }
 
-  inline const std::vector<std::string>& get_class_names() const
+  inline const std::vector<std::vector<std::string>>& get_output_str_dicts() const
   {
-    return m_impl.get_class_names();
+    return m_impl.get_output_str_dicts();
   }
 
   inline const std::string& get_embd_fn(size_t idx) const

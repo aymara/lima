@@ -97,7 +97,7 @@ public:
     return StreamDecoder::bits_per_position(m_ngram_descr[idx].m_type) != 1;
   }
 
-  inline uint8_t warmup(const uint8_t* str, int32_t& pos, int32_t len)
+  inline uint8_t warmup(const uint8_t* str, int32_t* pos, int32_t len)
   {
     assert(!ready_to_generate());
     uint8_t char_len = StreamDecoder::parse(str, pos, len);
@@ -148,7 +148,7 @@ protected:
         mask = (mask << StreamDecoder::bits_per_position(nd.m_type)) | one_pos_mask;
       }
 
-      for (size_t j = 0; j < (m_lookahead - l); j++)
+      for (int8_t j = 0; j < (m_lookahead - l); j++)
       {
         mask <<= StreamDecoder::bits_per_position(nd.m_type);
       }

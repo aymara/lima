@@ -53,12 +53,12 @@ public:
 
   inline const typename M::uint_dicts_holder_t& get_uint_dicts() const
   {
-    return m_impl.get_uint_dicts();
+    return m_impl.get_input_uint_dicts();
   }
 
   inline const typename M::str_dicts_holder_t& get_str_dicts() const
   {
-    return m_impl.get_str_dicts();
+    return m_impl.get_input_str_dicts();
   }
 
   inline const morph_model::morph_model_t& get_morph_model() const

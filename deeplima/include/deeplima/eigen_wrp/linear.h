@@ -37,11 +37,13 @@ public:
   typedef V Vector;
   typedef params_linear_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params, bool precomputed_input=false) const
+  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params,
+                                        bool precomputed_input=false) const
   {
     assert(input_size > 0);
     assert(nullptr != params);
-    const params_linear_t<M, V>& layer = *static_cast<const params_t*>(params);
+//     TODO should it be used?
+    // const params_linear_t<M, V>& layer = *static_cast<const params_t*>(params);
 
     return new workbench_t();
   }
@@ -55,7 +57,8 @@ public:
     assert(nullptr != params);
     const params_linear_t<M, V>& layer = *static_cast<const params_t*>(params);
 
-    workbench_t* wb = static_cast<workbench_t*>(pwb);
+//     TODO should it be used?
+    // workbench_t* wb = static_cast<workbench_t*>(pwb);
 
     output = (layer.weight * input).colwise() + layer.bias;
 

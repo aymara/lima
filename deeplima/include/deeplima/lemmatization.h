@@ -60,7 +60,7 @@ namespace impl
 #error Unknown inference engine
 #endif
 
-  typedef RnnSeq2Seq<Model, BaseMatrix> Lemmatizer;
+  typedef RnnSeq2Seq<Model, BaseMatrix, uint8_t> Lemmatizer;
 } // namespace impl
 } // namespace lemmatization
 } // namespace deeplima

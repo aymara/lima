@@ -37,8 +37,8 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
   assert(m_embd_fn[0].size() > 0);
 
   // classes
-  convert_classes(src.get_classes(), m_classes);
-  m_class_names = src.get_class_names();
+  convert_classes(src.get_classes(), Parent::m_output_str_dicts);
+  Parent::m_output_str_dicts_names = src.get_class_names();
 
   // torch modules
   Parent::m_lstm.reserve(src.get_layers_lstm().size());
@@ -85,6 +85,18 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
     cerr << "\t" << it.first << " = " << it.second << endl;
   }
   cerr << endl;
+}
+
+template <class M, class V, class T>
+void BiRnnEigenInferenceForTagging<M, V, T>::convert_classes_from_fn(const std::string& fn, std::vector<std::string>& class_names, std::vector<std::vector<std::string>>& classes) {
+    train::BiRnnClassifierForNerImpl src;
+    torch::load(src, fn, torch::Device(torch::kCPU));
+
+    // dicts and embeddings
+    Parent::convert_dicts_and_embeddings(src);
+    // classes
+    convert_classes(src.get_classes(), classes);
+    class_names = src.get_class_names();
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)

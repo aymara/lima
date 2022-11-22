@@ -24,7 +24,7 @@ public:
     m_dicts = dicts;
   }
 
-  void init(const DH& dicts, int64_t max_time, int64_t max_feat)
+  void init(const DH& dicts, int64_t max_time, uint64_t max_feat)
   {
     assert(dicts.size() == max_feat);
     m_dicts = dicts;
@@ -38,7 +38,7 @@ public:
     Matrix::init(max_time, dim);
   }
 
-  void init(int64_t max_time, int64_t max_feat)
+  void init(int64_t max_time, uint64_t max_feat)
   {
     assert(m_dicts.size() > 0);
     assert(m_dicts.size() == max_feat);

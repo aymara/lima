@@ -12,6 +12,7 @@
 #include "static_graph/static_graph.h"
 #include "deeplima/torch_wrp/torch_matrix.h"
 #include "nn/common/layer_descr.h"
+#include "deeplima/utils/std_matrix.h"
 
 namespace deeplima
 {
@@ -101,7 +102,7 @@ public:
                int64_t input_end,
                int64_t output_begin,
                int64_t output_end,
-               std::vector<std::vector<uint8_t>>& output,
+               std::shared_ptr< StdMatrix<uint8_t> >& output,
                const std::vector<std::string>& outputs_names,
                const torch::Device& device = torch::Device(torch::kCPU));
 

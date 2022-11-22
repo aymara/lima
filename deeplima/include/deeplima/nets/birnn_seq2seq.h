@@ -15,33 +15,32 @@
 namespace deeplima
 {
 
-template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/ >
+template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, typename Out >
 class RnnSeq2Seq : public InputVectorizer,
                    public Model
 {
-  typedef RnnSeq2Seq<Model, InputVectorizer> ThisClass;
+  typedef RnnSeq2Seq<Model, InputVectorizer, Out> ThisClass;
 
-  std::vector<std::vector<uint8_t>> m_output; // external - classifier id, internal - time position
+  std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
 
 public:
 
-  typedef StdMatrix<uint8_t> OutputMatrix;
-
-  const OutputMatrix get_output() const
+  std::shared_ptr< StdMatrix<Out> > get_output()
   {
-    return OutputMatrix(m_output);
+    return m_output;
   }
 
   RnnSeq2Seq()
   {
   }
 
-  void init(uint32_t max_feat,
-            uint32_t overlap,
-            uint32_t num_slots,
-            uint32_t slot_len,
-            uint32_t num_threads)
+  void init(uint32_t /*max_feat*/,
+            uint32_t /*overlap*/,
+            uint32_t /*num_slots*/,
+            uint32_t /*slot_len*/,
+            uint32_t /*num_threads*/)
   {
+    std::cerr << "RnnSeq2Seq::init NOT IMPLEMENTED" << std::endl;
   }
 
   void load(const std::string& fn)

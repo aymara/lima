@@ -30,14 +30,21 @@ namespace CoNLLU
   {
   public:
     Sentence()
-      : m_first_line(0), m_first_token_line(0), m_num_tokens(0) { }
+      : m_first_line(0), m_first_token_line(0), m_num_tokens(0), m_first_word(0) { }
     const Word& get_word(size_t idx) const;
     const Word& get_word(idx_t id) const;
+
+    size_t calc_num_of_words(const Annotation& annot) const;
+    size_t get_first_word_idx() const
+    {
+      return m_first_word;
+    }
 
   protected:
     size_t m_first_line;
     size_t m_first_token_line;
     size_t m_num_tokens;
+    size_t m_first_word;
 
     friend class Annotation;
   };
@@ -123,15 +130,20 @@ namespace CoNLLU
     Annotation() : m_pdoc(nullptr) {}
 
     void load(const std::string& fn);
+    void load(std::istream& input);
 
     const Sentence& get_sentence(size_t idx) const;
+    inline size_t get_num_sentences() const
+    {
+      return m_sentences.size();
+    }
 
-    const std::vector<token_t>& get_tokens() const
+    inline const std::vector<token_t>& get_tokens() const
     {
       return m_tokens;
     }
 
-    const std::vector<word_t>& get_words() const
+    inline const std::vector<word_t>& get_words() const
     {
       return m_words;
     }
@@ -320,12 +332,23 @@ namespace CoNLLU
         return m_line.deprel();
       }
 
+      inline const idx_t& head() const
+      {
+        return m_line.head();
+      }
+
+      inline const idx_t& idx() const
+      {
+        return m_line.idx();
+      }
+
       inline const std::map<std::string, std::set<std::string>>& feats() const
       {
         return m_line.feats();
       }
     };
 
+  protected:
     struct iterator_struct
     {
       Annotation::words_const_iterator m_it;
@@ -366,13 +389,13 @@ namespace CoNLLU
     WordLevelAdapter(const Annotation* p)
       : m_data(p) {}
 
-    const_iterator begin() const
+    virtual const_iterator begin() const
     {
       assert(nullptr != m_data);
       return iterator_struct(m_data->words_begin(), *m_data);
     }
 
-    const_iterator end() const
+    virtual const_iterator end() const
     {
       assert(nullptr != m_data);
       return iterator_struct(m_data->words_end(), *m_data);
@@ -384,7 +407,7 @@ namespace CoNLLU
       return *m_data;
     }
 
-    size_t size() const
+    virtual size_t size() const
     {
       assert(nullptr != m_data);
       return m_data->get_words().size();
@@ -392,6 +415,35 @@ namespace CoNLLU
 
   protected:
     const Annotation* m_data;
+  };
+
+  class BoundedWordLevelAdapter : public WordLevelAdapter
+  {
+  public:
+    BoundedWordLevelAdapter(const Annotation* p, size_t first_word_idx, size_t len)
+      : WordLevelAdapter(p), m_first_word_idx(first_word_idx), m_len(len) {}
+
+    virtual const_iterator begin() const
+    {
+      assert(nullptr != m_data);
+      return iterator_struct(m_data->words_begin() + m_first_word_idx, *m_data);
+    }
+
+    virtual const_iterator end() const
+    {
+      assert(nullptr != m_data);
+      return iterator_struct(m_data->words_begin() + m_first_word_idx + m_len, *m_data);
+    }
+
+    virtual size_t size() const
+    {
+      assert(nullptr != m_data);
+      return m_len;
+    }
+
+  protected:
+    size_t m_first_word_idx;
+    size_t m_len;
   };
 
   bool parse_ud_file_name(const std::string& fn, std::map<std::string, std::string>& fields);

@@ -82,11 +82,11 @@ namespace impl
 #error Unknown inference engine
 #endif
 
-  typedef RnnSequenceClassifier<Model, EmbdVectorizer> SegmentationClassifier;
+  typedef RnnSequenceClassifier<Model, EmbdVectorizer, uint8_t> SegmentationClassifier;
 
   typedef impl::SegmentationImpl< SegmentationClassifier,
                                   impl::CharNgramEncoderFromUtf8,
-                                  impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix> > SegmentationModuleUtf8;
+                                  impl::SegmentationDecoder > SegmentationModuleUtf8;
 
   //typedef impl::SegmentationImpl< SegmentationClassifier,
   //                                impl::CharNgramEncoderFromUtf16,

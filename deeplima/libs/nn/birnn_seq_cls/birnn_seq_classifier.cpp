@@ -53,11 +53,11 @@ void BiRnnClassifierImpl::predict(size_t /*worker_id*/,
                                   int64_t input_end,
                                   int64_t output_begin,
                                   int64_t output_end,
-                                  std::vector<std::vector<uint8_t>>& output,
+                                  std::shared_ptr< StdMatrix<uint8_t> >& output,
                                   const std::vector<std::string>& outputs_names,
                                   const torch::Device& device)
 {
-  assert(output.size() == outputs_names.size());
+  assert(output->size() == outputs_names.size());
 
   int64_t start_shift = output_begin - input_begin;
   assert(start_shift >= 0);
@@ -78,7 +78,7 @@ void BiRnnClassifierImpl::predict(size_t /*worker_id*/,
     torch::TensorAccessor<int64_t, 1> accessor = output_tensor.accessor<int64_t, 1>();
     for (int64_t p = start_shift; p < output_tensor.size(0) - end_shift; p++)
     {
-      output[i][input_begin + p] = accessor[p];
+      (*output)[i][input_begin + p] = accessor[p];
     }
   }
 }
@@ -87,6 +87,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
                                       map<string, torch::Tensor>& dst,
                                       const torch::Device& device)
 {
+  int64_t c = 0;
   for (size_t i = 0; i < m_embd_descr.size(); i++)
   {
     if (dst.end() != dst.find(m_embd_descr[i].m_name))
@@ -98,7 +99,8 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), 1 }).to(device);
+            = src.index({Slice(), Slice(c, c+1) }).reshape({ (int64_t)src.size(0), 1 }).to(device);
+        c++;
       }
       else if (m_embd_descr[i].m_type == 0)
       {
@@ -112,7 +114,8 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
       if (m_embd_descr[i].m_type == 1)
       {
         dst[m_embd_descr[i].m_name]
-            = src.index({Slice(), Slice(), Slice(i, i+1) }).reshape({ (int64_t)src.size(0), -1 }).to(device);
+            = src.index({Slice(), Slice(), Slice(c, c+1) }).reshape({ (int64_t)src.size(0), -1 }).to(device);
+        c++;
       }
       else if (m_embd_descr[i].m_type == 0)
       {
@@ -120,7 +123,7 @@ void BiRnnClassifierImpl::split_input(const torch::Tensor& src,
         //    = src.index({Slice(), Slice(), Slice(i, i+m_embd_descr[i].m_dim) }).reshape({ (int64_t)src.size(0), m_embd_descr[i].m_dim });
       }
     }
-    //std::cout << dst[m_embd_descr[i].m_name].sizes() << std::endl;
+    //std::cout << "dst[" << m_embd_descr[i].m_name << "]=" << dst[m_embd_descr[i].m_name].sizes() << std::endl;
   }
 }
 
@@ -159,7 +162,7 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
     //cerr << this_task_target.sizes() << endl;
 
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
-    task_stat.m_loss = loss_tensor.item<double>();
+    task_stat.m_loss = loss_tensor.sum().item<double>();
     auto prediction = o.argmax(1);
     task_stat.m_correct = prediction.eq(this_task_target).sum().item<int64_t>();
     task_stat.m_items = this_task_target.size(0);
@@ -172,14 +175,13 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
       //cerr << this_task_target << endl;
       //cerr << prediction << endl;
       task_stat.m_num_classes = o.size(-1);
-      double tp = 0, fp = 0, fn = 0;
       auto gold_positive = prediction.eq(1);
       auto gold_negative = prediction.eq(0);
       auto pred_positive = this_task_target.eq(1);
       auto pred_negative = this_task_target.eq(0);
-      tp = torch::logical_and(gold_positive, pred_positive).count_nonzero().item<int64_t>();
-      fp = torch::logical_and(gold_negative, pred_positive).count_nonzero().item<int64_t>();
-      fn = torch::logical_and(gold_positive, pred_negative).count_nonzero().item<int64_t>();
+      auto tp = torch::logical_and(gold_positive, pred_positive).count_nonzero().item<int64_t>();
+      // auto fp = torch::logical_and(gold_negative, pred_positive).count_nonzero().item<int64_t>();
+      // auto fn = torch::logical_and(gold_positive, pred_negative).count_nonzero().item<int64_t>();
       task_stat.m_precision = tp / (prediction.eq(1).sum().item<int64_t>() + 0.00001);
       task_stat.m_recall = tp / (this_task_target.eq(1).sum().item<int64_t>() + 0.00001);
       task_stat.m_f1 = (2 * task_stat.m_precision * task_stat.m_recall) / (task_stat.m_precision + task_stat.m_recall + 0.00001);
@@ -290,8 +292,8 @@ void BiRnnClassifierImpl::train_epoch(size_t batch_size,
 {
   for (int64_t b = 0; b < input_batches.size(1); b += batch_size)
   {
-    int64_t current_batch_size
-        = ((b + batch_size) > input_batches.size(1)) ? input_batches.size(1) - b : batch_size;
+    auto current_batch_size
+        = ((b + (int64_t)batch_size) > input_batches.size(1)) ? input_batches.size(1) - b : batch_size;
 
     train_batch(current_batch_size, seq_len, output_names,
                 input_batches.index({Slice(), Slice(b, b + current_batch_size), Slice()}),
@@ -346,7 +348,7 @@ void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
     torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
-    double loss_value = loss_tensor.mean().item<double>();
+    double loss_value = loss_tensor.sum().item<double>();
     task_stat.m_loss += loss_value;
     //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
     auto prediction = o.argmax(1);

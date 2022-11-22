@@ -41,7 +41,7 @@ public:
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
 
-  virtual void load(const std::string& fn)
+  virtual void load(const std::string& fn) override
   {
     convert_from_torch(fn);
   }
@@ -77,7 +77,7 @@ public:
       const M& inputs,
       M& outputs,
       int64_t input_size
-      )
+      ) override
   {
     deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
         = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
@@ -86,15 +86,15 @@ public:
   }
 
   virtual void predict(
-      size_t worker_id,
-      const M& inputs,
-      int64_t input_begin,
-      int64_t input_end,
-      int64_t output_begin,
-      int64_t output_end,
-      std::vector<std::vector<uint8_t>>& output,
-      const std::vector<std::string>& outputs_names
-      )
+      size_t /*worker_id*/,
+      const M& /*inputs*/,
+      int64_t /*input_begin*/,
+      int64_t /*input_end*/,
+      int64_t /*output_begin*/,
+      int64_t /*output_end*/,
+      std::shared_ptr< StdMatrix<uint8_t> >& /*output*/,
+      const std::vector<std::string>& /*outputs_names*/
+      ) override
   {
     assert(false);
   }
@@ -105,9 +105,9 @@ public:
       const M& input_feats,
       int64_t input_len,
       int64_t output_max_len,
-      int64_t beam_size,
-      std::vector<uint32_t>& output,
-      const std::vector<std::string>& output_names
+      int64_t /*beam_size*/,
+      std::vector< uint32_t >& output,
+      const std::vector<std::string>& /*output_names*/
       )
   {
     assert(Parent::m_wb.size() > 0);
@@ -133,9 +133,9 @@ public:
     deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T> *p_decoder
         = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
 
-    const deeplima::eigen_impl::params_bilstm_t<M, V>& layer
-        = *static_cast<const deeplima::eigen_impl::params_bilstm_t<M, V>*>(Parent::m_params[0]);
-    size_t hidden_size = layer.fw.weight_ih.rows() / 4;
+    const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>& enc_mutlilayer_bilstm
+        = *static_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>*>(Parent::m_params[0]);
+    size_t hidden_size = enc_mutlilayer_bilstm.layers[0].fw.weight_ih.rows() / 4;
 
     Vector fw_h, fw_c, bw_h, bw_c;
     if (true)
@@ -166,7 +166,7 @@ public:
     p_linear_h->execute(Parent::m_wb[1][worker_id], encoder_state, Parent::m_params[1], decoder_initial_h);
     p_linear_c->execute(Parent::m_wb[2][worker_id], encoder_state, Parent::m_params[2], decoder_initial_c);
 
-    const EmbdUInt64Float& decoder_embd = Parent::m_uint_dicts[1];
+    const EmbdUInt64Float& decoder_embd = Parent::m_input_uint_dicts[1];
     p_decoder->execute(Parent::m_wb[4][worker_id], decoder_embd,
         decoder_initial_h, decoder_initial_c,
         Parent::m_params[4], 0x10FFFE, 9, output, output_max_len);
@@ -204,7 +204,7 @@ protected:
   morph_model::morph_model_t m_morph_model;
   std::vector<size_t> m_fixed_upos;
 
-  virtual void convert_from_torch(const std::string& fn);
+  virtual void convert_from_torch(const std::string& fn) override;
 };
 
 typedef BiRnnSeq2SeqEigenInferenceForLemmatization<Eigen::MatrixXf, Eigen::VectorXf, float> BiRnnSeq2SeqEigenInferenceForLemmatizationF;

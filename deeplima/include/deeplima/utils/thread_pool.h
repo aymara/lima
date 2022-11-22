@@ -59,7 +59,7 @@ public:
   void stop()
   {
     m_stop = true;
-    for (auto& t : m_workers)
+    for (size_t i = 0 ; i < m_workers.size(); i++)
     {
       push(nullptr);
     }
@@ -80,7 +80,7 @@ public:
       }
       else
       {
-        throw std::runtime_error("All workers must be joiable here.");
+        throw std::runtime_error("All workers must be joinable here.");
       }
     }
   }
@@ -126,16 +126,19 @@ protected:
     void* job = nullptr;
     while (true)
     {
+      std::cerr << "thread_fn " << worker_id << " main loop" << std::endl;
       if (wait_for_new_job(&job))
       {
+        std::cerr << "wait_for_new_job is true" << std::endl;
         if (nullptr == job)
         {
           break;
         }
-        //std::cerr << "worker: " << (void*) job << " started" << std::endl;
+        std::cerr << "worker: " << (void*) job << " started" << std::endl;
         P::run_one_job(static_cast<P*>(this), worker_id, job);
-        //std::cerr << "worker: " << (void*) job << " completed" << std::endl;
+        std::cerr << "worker: " << (void*) job << " completed" << std::endl;
         m_cv_notify.notify_all();
+        std::cerr << "notify_all done" << std::endl;
       }
       else
       {
@@ -147,6 +150,7 @@ protected:
     {
       throw std::runtime_error("Worker finished but stop flag isn't set.");
     }
+    std::cerr << "thread_fn done" << std::endl;
   }
 
   std::vector<std::thread> m_workers;

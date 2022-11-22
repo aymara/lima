@@ -61,7 +61,7 @@ struct locked_buffer_set_t
   uint8_t* m_mem;
   uint32_t m_max_buff_size;
 
-  locked_buffer_set_t(size_t n = 0, uint32_t buffer_size = 0)
+  locked_buffer_set_t(size_t , uint32_t buffer_size = 0)
     : m_mem(nullptr),
       m_max_buff_size(buffer_size)
   {}

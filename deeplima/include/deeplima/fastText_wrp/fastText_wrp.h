@@ -31,7 +31,7 @@ template <class Matrix, class Idx=uint64_t>
 class DirectDict : public deeplima::FeatureVectorizerToMatrix<Matrix, uint64_t, Idx>
 {
 public:
-  DirectDict(size_t n_values) {}
+  DirectDict(size_t ) {}
 
   virtual Idx dim() const override
   {
@@ -48,7 +48,9 @@ template <>
 class DirectDict<Eigen::MatrixXf, Eigen::Index> : public deeplima::FeatureVectorizerToMatrix<Eigen::MatrixXf, uint64_t, Eigen::Index>
 {
 public:
-  DirectDict(size_t n_values) {}
+  DirectDict(size_t )
+  {
+  }
 
   virtual Eigen::Index dim() const override
   {
@@ -104,6 +106,8 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
+    if (m_vec != nullptr)
+      delete m_vec;
     m_vec = new fasttext::Vector(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
@@ -120,7 +124,7 @@ public:
     assert(nullptr != m_vec);
 
     m_fasttext.getWordVector(*m_vec, value);
-    for (int i = 0; i < m_dim; i++)
+    for (Idx i = 0; i < m_dim; i++)
     {
       target.set(time, pos + i, (*m_vec)[i]);
     }
@@ -165,6 +169,8 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
+    if (m_vec != nullptr)
+      delete m_vec;
     m_vec = new fasttext::Vector(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
@@ -182,7 +188,7 @@ public:
 
     m_fasttext.getWordVector(*m_vec, value);
     auto blk = target.block(pos, time, m_dim, 1);
-    for (size_t i = 0; i < m_dim; i++)
+    for (Eigen::Index i = 0; i < m_dim; i++)
     {
       blk(i, 0) = (*m_vec)[i];
     }
@@ -192,7 +198,7 @@ public:
   void get_words(word_callback_t fn)
   {
     std::shared_ptr<const fasttext::Dictionary> pd = m_fasttext.getDictionary();
-    for (size_t i = 0; i < pd->nwords(); ++i)
+    for (int32_t i = 0; i < pd->nwords(); ++i)
     {
       fn(pd->getWord(i));
     }

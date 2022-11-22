@@ -32,6 +32,10 @@ SPDX-License-Identifier: MIT
         <item value="cpptftokenizer"/>
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
+        <!-- Uncomment below and comment above to use deelima libtorch based modules instead of tensorflow ones -->
+<!--        <item value="RnnTokenizer"/>
+        <item value="RnnTokensAnalyzer"/>
+        <item value="RnnDependencyParser"/>-->
         <item value="conllDumper"/>
       </list>
     </group>
@@ -80,6 +84,11 @@ SPDX-License-Identifier: MIT
       <param key="tagger_model_prefix" value="tagger-$udlang"/>
       <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
     </group>
+
+    <group name="RnnDependencyParser" class="RnnDependencyParser">
+    <param key="tagger_model_prefix" value="tagger-$udlang"/>
+    <param key="dependency_parser_model_prefix" value="dependencyParser-$udlang"/>
+  </group>
 
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
       <param key="model_prefix" value="tokenizer-$udlang"/>

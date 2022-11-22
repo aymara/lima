@@ -16,13 +16,14 @@
 
 namespace deeplima
 {
-namespace tagging
+namespace vectorizers
 {
 
 template <class DataSet, class StrFeatExtractor, class UIntFeatExtractor, class MatrixFloat, class Idx=uint64_t>
 class WordSeqEmbdVectorizer
 {
 public:
+    void set_model(void* ) {}
   typedef DataSet dataset_t;
   typedef typename DataSet::token_t token_t;
 
@@ -39,6 +40,7 @@ public:
     feature_type_t m_type;
     int m_dim; // 0 means "ask feature extractor"
     std::string m_name;
+    size_t m_feat_id = 0;
 
     feature_descr_base_t(feature_type_t type, const std::string& name, int dim = 0)
       : m_type(type), m_dim(dim), m_name(name) {}
@@ -62,6 +64,9 @@ protected:
   typedef FeatureVectorizerToMatrix<MatrixFloat, uint64_t, Idx> uint_vectorizer_t;
   typedef FeatureVectorizerToMatrix<MatrixFloat, const std::string&, Idx> str_vectorizer_t;
 
+  const StrFeatExtractor m_str_feat_extractor;
+  UIntFeatExtractor m_uint_feat_extractor;
+
   std::vector<std::pair<uint_vectorizer_t*, size_t>> m_uint_vectorizers; // pointer to vectorizer, feat_idx
   std::vector<std::pair<str_vectorizer_t*, size_t>> m_str_vectorizers;
 
@@ -76,17 +81,26 @@ public:
     init_features(features);
   }
 
+  WordSeqEmbdVectorizer(const std::vector<feature_descr_t>& features,
+                        const StrFeatExtractor& str_feat_extractor)
+    : m_features_size(0),
+      m_str_feat_extractor(str_feat_extractor)
+  {
+    init_features(features);
+  }
+
   bool is_precomputing() const
   {
     return false;
   }
 
-  void set_model(void* pModel)
+  inline void precompute(const DataSet& dataset)
   {
   }
 
-  inline void precompute(const DataSet& dataset)
+  UIntFeatExtractor& get_uint_feat_extractor()
   {
+    return m_uint_feat_extractor;
   }
 
   void init_features(const std::vector<feature_descr_t>& features)
@@ -95,14 +109,14 @@ public:
     m_features_size = 0;
     m_features_pos.reserve(m_features.size());
 
-    for (const auto feat_descr : m_features)
+    for (auto& feat_descr : m_features)
     {
-      if (int_feature == feat_descr.m_type)
+      if (str_feature == feat_descr.m_type)
       {
-        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
-        size_t feat_idx = UIntFeatExtractor::get_feat_id(feat_descr.m_name);
-        m_uint_vectorizers.emplace_back(std::make_pair(pfv, feat_idx));
+        feat_descr.m_feat_id = m_str_feat_extractor.get_feat_id(feat_descr.m_name);
+        m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
 
         m_features_pos.push_back(m_features_size);
 
@@ -115,16 +129,12 @@ public:
           m_features_size += feat_descr.m_dim;
         }
       }
-    }
-
-    for (const auto feat_descr : m_features)
-    {
-      if (str_feature == feat_descr.m_type)
+      else if (int_feature == feat_descr.m_type)
       {
-        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
-        size_t feat_idx = StrFeatExtractor::get_feat_id(feat_descr.m_name);
-        m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_idx));
+        feat_descr.m_feat_id = m_uint_feat_extractor.get_feat_id(feat_descr.m_name);
+        m_uint_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
 
         m_features_pos.push_back(m_features_size);
 
@@ -158,21 +168,24 @@ public:
     return m_features_size;
   }
 
-  inline void vectorize_timepoint(MatrixFloat& target, uint64_t timepoint, const typename DataSet::token_t& token)
+  inline void vectorize_timepoint(MatrixFloat& target, uint64_t timepoint, const typename DataSet::token_t& token) const
   {
-    size_t feat_idx = 0;
-    for (size_t i = 0; i < m_uint_vectorizers.size(); ++i)
+    for (size_t feat_idx = 0; feat_idx < m_features.size(); ++feat_idx)
     {
-      const float feat_val = UIntFeatExtractor::feat_value(token, m_uint_vectorizers[i].second);
-      m_uint_vectorizers[i].first->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
-      feat_idx++;
-    }
+      const auto& feat_descr = m_features[feat_idx];
 
-    for (size_t i = 0; i < m_str_vectorizers.size(); ++i)
-    {
-      const std::string& feat_val = StrFeatExtractor::feat_value(token, m_str_vectorizers[i].second);
-      m_str_vectorizers[i].first->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
-      feat_idx++;
+      if (feature_type_t::int_feature == m_features[feat_idx].m_type)
+      {
+        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        const float feat_val = m_uint_feat_extractor.feat_value(token, feat_descr.m_feat_id);
+        pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
+      }
+      else if (feature_type_t::str_feature == m_features[feat_idx].m_type)
+      {
+        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        const std::string& feat_val = m_str_feat_extractor.feat_value(token, feat_descr.m_feat_id);
+        pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
+      }
     }
   }
 };
@@ -198,6 +211,8 @@ protected:
     std::string m_str_feats; // concatenated string features with \0 as separator
 
   public:
+    void set_model(void* ) {}
+
     timepoint_features_t(size_t num_uint_feats)
       : m_uint_feats(num_uint_feats, 0) { }
 
@@ -373,9 +388,6 @@ public:
     return false;
   }
 
-  void set_model(void* pModel)
-  {
-  }
 
   inline void precompute(const DataSet& dataset)
   {
@@ -391,14 +403,14 @@ public:
     size_t feat_idx = 0;
     for (size_t i = 0; i < Parent::m_uint_vectorizers.size(); ++i)
     {
-      const uint64_t feat_val = UIntFeatExtractor::feat_value(token, Parent::m_uint_vectorizers[i].second);
+      const uint64_t feat_val = Parent::m_uint_feat_extractor.feat_value(token, Parent::m_uint_vectorizers[i].second);
       timepoint_features.set_uint_feat(i, feat_val);
       feat_idx++;
     }
 
     for (size_t i = 0; i < Parent::m_str_vectorizers.size(); ++i)
     {
-      const std::string& feat_val = StrFeatExtractor::feat_value(token, Parent::m_str_vectorizers[i].second);
+      const std::string& feat_val = Parent::m_str_feat_extractor.feat_value(token, Parent::m_str_vectorizers[i].second);
       timepoint_features.append_str_feat(feat_val);
       feat_idx++;
     }
@@ -502,8 +514,7 @@ public:
     {
       if (Parent::m_curr_bucket_id > 2) break;
 
-      uint64_t i = 0;
-      for (; i < Parent::m_bucket_size && curr < dataset.size(); ++i)
+      for (long int i = 0; i < Parent::m_bucket_size && curr < dataset.size(); ++i)
       {
         const typename DataSet::token_t& token = dataset[curr];
         typename Parent::timepoint_features_t timepoint_features(Parent::m_uint_vectorizers.size());
@@ -534,19 +545,19 @@ public:
     if (Parent::m_precomputed_index.end() != it)
     {
       Idx i = it->second;
-      Idx bucket_id = i / Parent::m_bucket_size;
-      assert(bucket_id < Parent::m_precomputed_vectors.size());
+      auto bucket_id = i / Parent::m_bucket_size;
+      assert(size_t(bucket_id) < Parent::m_precomputed_vectors.size());
       i = i % Parent::m_bucket_size;
       *matrix = &(Parent::m_precomputed_vectors[bucket_id]);
       return i;
     }
 
-    if (Parent::m_curr_bucket_id < Parent::m_precomputed_vectors.size())
+    if (size_t(Parent::m_curr_bucket_id) < Parent::m_precomputed_vectors.size())
     {
       if (Parent::m_next_free_idx >= Parent::m_bucket_size)
       {
         Parent::m_curr_bucket_id++;
-        if (Parent::m_curr_bucket_id >= Parent::m_precomputed_vectors.size())
+        if (size_t(Parent::m_curr_bucket_id) >= Parent::m_precomputed_vectors.size())
         {
           Parent::m_precomputed_vectors.resize(Parent::m_curr_bucket_id + 1);
         }
@@ -588,7 +599,7 @@ public:
   }
 };
 
-} // namespace tagging
+} // namespace vectorizers
 } // namespace deeplima
 
 #endif

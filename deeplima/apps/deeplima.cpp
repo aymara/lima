@@ -10,12 +10,16 @@
 #include <map>
 #include <chrono>
 #include <functional>
+#include <memory>
 #include <boost/program_options.hpp>
 
 #include "version/version.h"
 #include "helpers/path_resolver.h"
 
 namespace po = boost::program_options;
+
+#define READ_BUFFER_SIZE (1024 * 1024 * 2)
+#define TAG_BUFFER_SIZE (1024)
 
 void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,
@@ -31,7 +35,7 @@ int main(int argc, char* argv[])
        << ")" << std::endl;
 
   size_t threads = 1;
-  std::string input_format, output_format, tok_model, tag_model, lem_model;
+  std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
   std::vector<std::string> input_files;
 
   po::options_description desc("deeplima (analysis demo)");
@@ -42,6 +46,7 @@ int main(int argc, char* argv[])
   ("tok-model",       po::value<std::string>(&tok_model)->default_value(""),             "Tokenization model")
   ("tag-model",       po::value<std::string>(&tag_model)->default_value(""),             "Tagging model")
   ("lem-model",       po::value<std::string>(&lem_model)->default_value(""),             "Lemmatization model")
+  ("dp-model",        po::value<std::string>(&dp_model)->default_value(""),              "Dependency parsing model")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ;
@@ -91,6 +96,11 @@ int main(int argc, char* argv[])
     models["lem"] = lem_model;
   }
 
+  if (dp_model.size() > 0)
+  {
+    models["dp"] = dp_model;
+  }
+
   size_t out_fmt = 1;
   if (output_format.size() > 0)
   {
@@ -104,9 +114,12 @@ int main(int argc, char* argv[])
 
   if (vm.count("input-file") > 0)
   {
+
+    char read_buffer[READ_BUFFER_SIZE];
     for ( const auto& fn : input_files )
     {
       std::ifstream file(fn, std::ifstream::binary | std::ios::in);
+      file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
       parse_file(file, models, path_resolver, threads, out_fmt);
     }
   }
@@ -121,6 +134,7 @@ int main(int argc, char* argv[])
 #include "deeplima/segmentation.h"
 #include "deeplima/ner.h"
 #include "deeplima/token_sequence_analyzer.h"
+#include "deeplima/dependency_parser.h"
 #include "deeplima/dumper_conllu.h"
 #include "deeplima/reader_conllu.h"
 
@@ -132,23 +146,24 @@ void parse_file(std::istream& input,
                 size_t threads,
                 size_t out_fmt)
 {
-  std::cerr << "threads = " << threads << std::endl;
-  segmentation::ISegmentation* psegm = nullptr;
+  std::cerr << "deeplima parse_file threads = " << threads << std::endl;
+  std::shared_ptr<segmentation::ISegmentation> psegm;
 
   if (models_fn.end() != models_fn.find("tok"))
   {
-    psegm = new segmentation::Segmentation();
-    static_cast<segmentation::Segmentation*>(psegm)->load(models_fn.find("tok")->second);
-    static_cast<segmentation::Segmentation*>(psegm)->init(threads, 16*1024);
+    psegm.reset(new segmentation::Segmentation());
+    static_cast<segmentation::Segmentation*>(psegm.get())->load(models_fn.find("tok")->second);
+    static_cast<segmentation::Segmentation*>(psegm.get())->init(threads, 16*1024);
   }
   else
   {
-    psegm = new segmentation::CoNLLUReader();
+    psegm.reset(new segmentation::CoNLLUReader());
   }
 
-  TokenSequenceAnalyzer<>* panalyzer = nullptr;
-  dumper::AbstractDumper* pdumper = nullptr;
-  dumper::AnalysisToConllU<typename TokenSequenceAnalyzer<>::TokenIterator> conllu_dumper;
+  std::shared_ptr< TokenSequenceAnalyzer<> > panalyzer = nullptr;
+  std::shared_ptr< dumper::AbstractDumper > pdumper = nullptr;
+  std::shared_ptr< dumper::DumperBase > pDumperBase = nullptr;
+  std::shared_ptr<DependencyParser> parser = nullptr;
   if (models_fn.end() != models_fn.find("tag"))
   {
     std::string lemm_model_fn;
@@ -158,35 +173,96 @@ void parse_file(std::istream& input,
       lemm_model_fn = it->second;
     }
 
-    panalyzer
-        = new TokenSequenceAnalyzer<>(models_fn.find("tag")->second,
-                                      lemm_model_fn, path_resolver, 1024, 8);
+    panalyzer = std::make_shared< TokenSequenceAnalyzer<> >(models_fn.find("tag")->second,
+                                      lemm_model_fn, path_resolver, TAG_BUFFER_SIZE, 8);
 
-    for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
+    if (models_fn.end() != models_fn.find("dp"))
     {
-      conllu_dumper.set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+      // with dependency parsing
+      auto conllu_dumper = std::make_shared<dumper::AnalysisToConllU<typename DependencyParser::TokenIterator> >();
+      pDumperBase = conllu_dumper;
+
+      parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
+                                                         path_resolver,
+                                                         panalyzer->get_stridx(),
+                                                         panalyzer->get_class_names(),
+                                                         TAG_BUFFER_SIZE,
+                                                         8);
+
+      for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
+      {
+        parser->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+        conllu_dumper->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+      }
+
+      panalyzer->register_handler([&parser](std::shared_ptr< StringIndex > stridx,
+                                  const token_buffer_t<>& tokens,
+                                  const std::vector<StringIndex::idx_t>& lemmata,
+                                  std::shared_ptr< StdMatrix<uint8_t> > classes,
+                                  size_t begin,
+                                  size_t end)
+      {
+        typename TokenSequenceAnalyzer<>::TokenIterator ti(*stridx,
+                                                           tokens,
+                                                           lemmata,
+                                                           classes,
+                                                           begin,
+                                                           end);
+        std::cerr << "In panalyzer handler. Calling parser functor" << std::endl;
+        (*parser)(ti);
+      });
+
+      parser->register_handler([conllu_dumper](const StringIndex& stridx,
+                                  const std::vector<typename DependencyParser::token_with_analysis_t>& tokens,
+                                  std::shared_ptr< StdMatrix<uint32_t> > classes,
+                                  size_t begin,
+                                  size_t end)
+      {
+        typename DependencyParser::TokenIterator ti(stridx,
+                                                           tokens,
+                                                           classes,
+                                                           begin,
+                                                           end);
+        std::cerr << "In parser handler. Calling conllu_dumper functor" << std::endl;
+        (*conllu_dumper)(ti, true);
+      });
+
+
     }
-
-    panalyzer->register_handler([&conllu_dumper](const StringIndex& stridx,
-                                const token_buffer_t& tokens,
-                                const std::vector<StringIndex::idx_t>& lemmata,
-                                const typename TokenSequenceAnalyzer<>::OutputMatrix& classes,
-                                size_t begin,
-                                size_t end)
+    else
     {
-      typename TokenSequenceAnalyzer<>::TokenIterator ti(stridx,
-                                                         tokens,
-                                                         lemmata,
-                                                         classes,
-                                                         begin,
-                                                         end);
-      conllu_dumper(ti);
-    });
+      // without dependency parsing
+      auto conllu_dumper = std::make_shared< dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> >();
+      pDumperBase = conllu_dumper;
+
+      for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
+      {
+        conllu_dumper->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
+      }
+
+      panalyzer->register_handler([conllu_dumper](std::shared_ptr< StringIndex > stridx,
+                                  const token_buffer_t<>& tokens,
+                                  const std::vector<StringIndex::idx_t>& lemmata,
+                                  std::shared_ptr< StdMatrix<uint8_t> > classes,
+                                  size_t begin,
+                                  size_t end)
+      {
+        typename TokenSequenceAnalyzer<>::TokenIterator ti(*stridx,
+                                                           tokens,
+                                                           lemmata,
+                                                           classes,
+                                                           begin,
+                                                           end);
+        std::cerr << "In panalyzer handler. Calling conllu_dumper functor" << std::endl;
+        (*conllu_dumper)(ti);
+      });
+    }
 
     psegm->register_handler([panalyzer]
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
+      std::cerr << "In psegm handler. Calling panalyzer functor" << std::endl;
       (*panalyzer)(tokens, len);
     });
   }
@@ -194,10 +270,10 @@ void parse_file(std::istream& input,
   {
     switch (out_fmt) {
     case 1:
-      pdumper = new dumper::TokensToConllU();
+      pdumper.reset(new dumper::TokensToConllU());
       break;
     case 2:
-      pdumper = new dumper::Horizontal();
+      pdumper.reset(new dumper::Horizontal());
       break;
     default:
       throw std::runtime_error("Unknown output format");
@@ -207,6 +283,7 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
+      std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
       (*pdumper)(tokens, len);
     });
   }
@@ -215,9 +292,10 @@ void parse_file(std::istream& input,
 
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
-                         uint32_t& read,
-                         uint32_t max)
+                          uint32_t& read,
+                          uint32_t max)
   {
+    std::cerr << "In psegm parse_from_stream lambda" << std::endl;
     input.read((std::istream::char_type*)buffer, max);
     read = input.gcount();
     return (bool)input;
@@ -229,29 +307,27 @@ void parse_file(std::istream& input,
   {
     if (0 == token_counter)
     {
-      token_counter = conllu_dumper.get_token_counter();
+      token_counter = pDumperBase->get_token_counter();
     }
 
-    std::cerr << "Waiting for analyzer to stop" << std::endl;
+    std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
-    delete panalyzer;
-    std::cerr << "Analyzer stopped" << std::endl;
+    std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
+
+  if (parser)
+  {
+    std::cerr << "Waiting for dependency parser to stop. Calling parser->finalize" << std::endl;
+    parser->finalize();
+    std::cerr << "Calling parser.reset. parser->finalize returned" << std::endl;
+    parser.reset();
+    std::cerr << "Dependency parser stopped. " << std::endl;
+  }
+
   std::chrono::steady_clock::time_point parsing_end = std::chrono::steady_clock::now();
   float parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin).count();
   float speed = (float(token_counter) * 1000) / parsing_duration;
   std::cerr << "Parsing speed: " << speed << " tokens / sec" << std::endl;
-
-  if (nullptr != psegm)
-  {
-    std::cerr << "Deleting psegm" << std::endl;
-    delete psegm;
-  }
-
-  if (nullptr != pdumper)
-  {
-    delete pdumper;
-  }
 
   if (!input.eof() && (input.fail() || input.bad()))
   {

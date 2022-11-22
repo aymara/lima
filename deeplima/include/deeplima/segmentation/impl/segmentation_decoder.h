@@ -136,7 +136,7 @@ public:
     // in case of ML errors (wrong X tag).
     if (inside)
     {
-      if (dst.size() < tmp.m_len + len + 1)
+      if (dst.size() < size_t(tmp.m_len + len + 1))
       {
         dst.resize(tmp.m_len + len + 1);
       }
@@ -162,12 +162,11 @@ protected:
   uint8_t m_buff_len;
 };
 
-template <class OutputMatrix>
 class SegmentationDecoder : public CharReader<>
 {
 public:
 
-  SegmentationDecoder(const OutputMatrix& out, const std::vector<uint8_t>& len)
+  SegmentationDecoder(std::shared_ptr< StdMatrix<uint8_t> > out, const std::vector<uint8_t>& len)
     : m_out(out),
       m_len(len)
   {
@@ -191,7 +190,7 @@ public:
       if (m_tokens[pos].m_pch == (const char*)m_temp_text.data())
       {
         assert(0 == pos);
-        if (m_temp_text.size() < m_tokens[pos].m_len + 1)
+        if (m_temp_text.size() < size_t(m_tokens[pos].m_len + 1))
         {
           m_temp_text.resize(m_tokens[pos].m_len + 1);
         }
@@ -230,11 +229,11 @@ public:
     if (not_empty())
     {
       uint8_t bytes_stored = m_buff_len;
-      if (start_reading(pch, end, m_len[from], m_temp_text, m_tokens[0], m_out.get(from, 0)))
+      if (start_reading(pch, end, m_len[from], m_temp_text, m_tokens[0], m_out->get(from, 0)))
       {
         *pch += m_len[from] - bytes_stored;
         start += m_len[from] - bytes_stored;
-        if (m_out.get(from, 0) != segm_tag_t::X)
+        if (m_out->get(from, 0) != segm_tag_t::X)
         {
           temp_token_len += m_len[from];
         }
@@ -255,7 +254,7 @@ public:
       }
 
 //#ifndef NDEBUG
-//      std::cerr << "[" << from << "]==" << (int)(m_out.get(from, 0)) << std::endl;
+//      std::cerr << "[" << from << "]==" << (int)(m_out->get(from, 0)) << std::endl;
 //#endif
       int8_t gen_cat = 0;
       UChar uch;
@@ -264,7 +263,7 @@ public:
       U8_NEXT(*pch, zero, m_len[from], uch);
       gen_cat = u_charType(uch);
 
-      auto tag = m_out.get(from, 0);
+      auto tag = m_out->get(from, 0);
 
       switch (tag)
       {
@@ -315,6 +314,7 @@ public:
           }
           break;
 
+        // TODO insert the marker for case continuing [[case_]]
         case segm_tag_t::E_EOS:
           m_tokens[pos].m_flags = token_pos::flag_t(m_tokens[pos].m_flags | token_pos::flag_t::sentence_brk);
 
@@ -397,7 +397,7 @@ public:
     {
       if (m_tokens[0].m_pch == (const char*)m_temp_text.data())
       {
-        if (m_temp_text.size() < m_tokens[0].m_len + 1)
+        if (m_temp_text.size() < size_t(m_tokens[0].m_len + 1))
         {
           m_temp_text.resize(m_tokens[0].m_len + 1);
         }
@@ -415,7 +415,7 @@ public:
       {
         m_tokens[0] = m_tokens[pos];
       }
-      if (m_temp_text.size() < m_tokens[0].m_len + 1)
+      if (m_temp_text.size() < size_t(m_tokens[0].m_len + 1))
       {
         m_temp_text.resize(m_tokens[0].m_len + 1);
       }
@@ -435,7 +435,7 @@ public:
 
 protected:
   // input
-  const OutputMatrix m_out;
+  std::shared_ptr< StdMatrix<uint8_t> > m_out;
   const std::vector<uint8_t>& m_len;
 
   // output

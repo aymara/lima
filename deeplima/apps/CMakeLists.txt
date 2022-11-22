@@ -23,7 +23,7 @@ install(TARGETS deeplima-train-segm
 )
 
 ############################################################
-# Train NER models
+# Train tagging models
 
 add_executable(deeplima-train-tag
   train-tag.cpp
@@ -60,6 +60,27 @@ target_link_libraries(deeplima-train-lemmatization
 )
 
 install(TARGETS deeplima-train-lemmatization
+  DESTINATION bin
+  COMPONENT runtime
+)
+
+############################################################
+# Train dependency parsing models
+
+add_executable(deeplima-train-dp
+  train-dp.cpp
+)
+
+target_link_libraries(deeplima-train-dp
+  PRIVATE
+  train_graph_dp
+  conllu
+  Boost::program_options
+  Boost::filesystem
+  version
+)
+
+install(TARGETS deeplima-train-dp
   DESTINATION bin
   COMPONENT runtime
 )

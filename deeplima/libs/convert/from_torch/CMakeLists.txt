@@ -7,6 +7,7 @@ set(SOURCE_LIST
   convert_from_torch.cpp
   entity_tagging_model.cpp
   lemmatization_model.cpp
+  graph_dp_model.cpp
 )
 
 set(HEADER_LIST
@@ -26,6 +27,7 @@ target_link_libraries(convert_from_torch
   birnn_classifier_for_segmentation
   birnn_classifier_for_tag
   model_lemmatization
+  birnn_and_deep_biaffine_attention
   ${TORCH_LIBRARIES}
 )
 
@@ -44,6 +46,7 @@ if (NOT DEEPLIMA_STANDALONE)
     birnn_classifier_for_segmentation
     birnn_classifier_for_tag
     model_lemmatization
+    birnn_and_deep_biaffine_attention
     ${TORCH_LIBRARIES}
   )
   ADD_DLL_TO_PATH(convert_from_torch-shared)

@@ -7,4 +7,5 @@ add_subdirectory(common)
 add_subdirectory(segmentation)
 add_subdirectory(tag)
 add_subdirectory(lemmatization)
+add_subdirectory(graph_dp)
 

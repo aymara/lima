@@ -243,7 +243,7 @@ void vectorize_dataset(const morph_model::morph_model_t& lang_morph_model,
         // input categories
         /*std::cerr << str_idx.get_str(enc_form.m_str_id) << " "
                   << lang_morph_model.to_string(enc_form.m_feats) << std::endl;*/
-        for (int64_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
+        for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
         {
           auto feat_value = lang_morph_model.decode_feat(enc_form.m_feats, feat_idx);
           //std::cerr << " " << feat_value;
