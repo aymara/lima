@@ -10,7 +10,7 @@
 
 #ifdef WIN32
 
-#ifdef LIMA_RNNNER_EXPORT
+#ifdef LIMA_RNNNER_EXPORTING
    #define LIMA_RNNNER_EXPORT    __declspec(dllexport)
 #else
    #define LIMA_RNNNER_EXPORT    __declspec(dllimport)
