@@ -10,10 +10,10 @@
 
 #ifdef WIN32
 
-#ifdef LIMA_RNNTAGGER_EXPORTING
-   #define LIMA_RNNTAGGER_EXPORT    __declspec(dllexport)
+#ifdef LIMA_RNNNER_EXPORT
+   #define LIMA_RNNNER_EXPORT    __declspec(dllexport)
 #else
-   #define LIMA_RNNTAGGER_EXPORT    __declspec(dllimport)
+   #define LIMA_RNNNER_EXPORT    __declspec(dllimport)
 #endif
 
 
