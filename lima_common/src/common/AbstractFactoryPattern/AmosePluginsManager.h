@@ -40,12 +40,11 @@ public:
    */
 #if defined(__has_feature)
 #  if __has_feature(address_sanitizer)
-    __attribute__((no_sanitize("address")))
+    __attribute__((no_sanitize("address", "thread")))
     __attribute__((no_sanitize("leak")))
     __attribute__((disable_sanitizer_instrumentation))
 #  endif
 #endif
-  __attribute__((no_sanitize("address", "thread")))
   bool
   loadPlugins(const QString& configDirs = "");
 
