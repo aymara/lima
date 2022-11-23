@@ -19,6 +19,18 @@ class CharChart;
 class RnnNERPrivate;
 #define RNNTAGGER_CLASSID "RnnNER"
 
+
+/**
+ * @class BadFileException
+ * @brief Class exception
+ */
+class BadFileException : public std::logic_error {
+public:
+    explicit BadFileException(const std::string& s= "") :
+            std::logic_error(s){}
+    ~BadFileException() noexcept override = default;
+};
+
 /** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
 *
 * As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
@@ -30,18 +42,6 @@ class RnnNERPrivate;
 *                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
 *                    for each detected token.
 */
-
-/**
- * @class BadFileException
- * @brief Class exception
- */
-    class BadFileException : public std::logic_error {
-    public:
-        explicit BadFileException(const std::string& s= "") :
-                std::logic_error(s){}
-        ~BadFileException() noexcept override = default;
-    };
-
 class LIMA_RNNNER_EXPORT RnnNER : public MediaProcessUnit
 {
 public:

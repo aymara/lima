@@ -68,7 +68,7 @@ private:
 #define CONFIGURATIONHELPER_LOGGING_INIT(X) \
     namespace \
     { \
-        inline string THIS_FILE_LOGGING_CATEGORY() \
+        inline std::string THIS_FILE_LOGGING_CATEGORY() \
         { \
             X; \
             return logger.zone().toStdString(); \
