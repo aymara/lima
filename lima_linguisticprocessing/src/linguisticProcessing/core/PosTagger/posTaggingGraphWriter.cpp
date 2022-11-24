@@ -32,8 +32,8 @@ void PosTaggingGraphWriter::writeToDotFile(const std::string& dotFileName,deque<
     write_graphviz(
       ofs,
       *m_graph,
-      PosTaggingVertexWriter<LinguisticGraph,LinguisticGraphVertex>(m_graph,m_language,vertexDisplay),
-      PosTaggingEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(m_language,m_graph,m_trigramMatrix,m_bigramMatrix),
+      PosTaggingVertexWriter<LinguisticGraph,LinguisticGraphVertex>(m_graph, m_language, vertexDisplay),
+      PosTaggingEdgeWriter<LinguisticGraph,LinguisticGraphEdge>(m_language, m_graph, m_trigramMatrix, m_bigramMatrix),
           graphWriter);
   }
 

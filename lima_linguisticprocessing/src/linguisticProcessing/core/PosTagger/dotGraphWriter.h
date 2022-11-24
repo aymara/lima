@@ -22,7 +22,7 @@ class LIMA_POSTAGGER_EXPORT DotGraphWriter : public MediaProcessUnit
 
 public:
   DotGraphWriter();
-  virtual ~DotGraphWriter();
+  virtual ~DotGraphWriter() = default;
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,

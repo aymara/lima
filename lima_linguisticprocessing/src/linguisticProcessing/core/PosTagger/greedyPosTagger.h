@@ -32,7 +32,7 @@ namespace PosTagger
 
 #define GREEDYPOSTAGGER_CLASSID "GreedyPosTagger"
 
-class LIMA_POSTAGGER_EXPORT GreedyPosTagger : public MediaProcessUnit
+class LIMA_POSTAGGER_EXPORT [[deprecated]] GreedyPosTagger : public MediaProcessUnit
 {
 
 public:

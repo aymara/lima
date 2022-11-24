@@ -29,10 +29,9 @@ namespace LinguisticProcessing
 
 SimpleFactory<MediaProcessUnit,DotGraphWriter> dotGraphWriterFactory(DOTGRAPHWRITER_CLASSID);
 
-DotGraphWriter::DotGraphWriter()
-{}
-
-DotGraphWriter::~DotGraphWriter()
+DotGraphWriter::DotGraphWriter() :
+  m_trigramMatrix(nullptr),
+  m_bigramMatrix(nullptr)
 {}
 
 void DotGraphWriter::init(
@@ -61,8 +60,8 @@ void DotGraphWriter::init(
     auto res = LinguisticResources::single().getResource(m_language, bigrams);
     m_bigramMatrix = std::dynamic_pointer_cast<PosTagger::BigramMatrix>(res);
   } catch (NoSuchParam& ) {
-    LWARN << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language;
-    throw InvalidConfiguration();
+    LDEBUG << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language;
+    // throw InvalidConfiguration();
   }
   try
   {

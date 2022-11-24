@@ -340,7 +340,7 @@ const std::string& MediaticDataPrivate::getMediaId(MediaId idNum)
 
 const std::string& MediaticData::getMediaId(MediaId idNum) const
 {
-  QReadLocker lock(&m_d->m_lock);
+  // QReadLocker lock(&m_d->m_lock);
   return m_d->getMediaId(idNum);
 }
 
@@ -378,7 +378,7 @@ MediaId MediaticDataPrivate::getMediaId(const std::string& stringId)
 
 MediaId MediaticData::getMediaId(const std::string& stringId) const
 {
-  QWriteLocker lock(&m_d->m_lock);
+  QReadLocker lock(&m_d->m_lock);
   return m_d->getMediaId(stringId);
 }
 
