@@ -18,6 +18,7 @@ namespace train
 
 struct train_params_t
 {
+  std::string m_output_format;
   std::string m_output_model_name;
   std::string m_input_model_name; // pretrained model
   std::string m_train_set_fn;
@@ -47,7 +48,8 @@ struct train_params_t
                  size_t max_epochs=100,
                  size_t max_epochs_without_improvement=10,
                  size_t batch_size=4)
-    : m_device_string(device_string),
+    : m_output_format("txt"),
+      m_device_string(device_string),
       m_learning_rate(learning_rate),
       m_weight_decay(weight_decay),
       m_beta_one(beta_one),

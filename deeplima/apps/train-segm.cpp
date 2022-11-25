@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
   ("weight-decay,d",    po::value<float>(&params.m_weight_decay),        "Weight Decay")
   ("beta-one",          po::value<float>(&params.m_beta_one),        "Beta One value of Adam Optimizer")
   ("beta-two",          po::value<float>(&params.m_beta_two),        "Beta Two value of Adam Optimizer")
+  ("output-format,f",   po::value<std::string>(&params.m_output_format)->default_value("txt"), "The output format: txt or json")
   ;
 
   po::variables_map vm;
