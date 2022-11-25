@@ -550,7 +550,9 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
       throw InvalidConfiguration(
         std::string("Failed to init media ")+(med_str)+": "+e.what());
     }
+#ifdef DEBUG_CD
     LDEBUG << "MediaticData::initMedias" << med_str << "call initMediaData" << m_mediasIds[med_str];
+#endif
     initMediaData(m_mediasIds[med_str]);
     // }
   }
