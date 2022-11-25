@@ -121,8 +121,7 @@ void RnnNER::init(GroupConfigurationStructure &unitConfiguration, Manager *manag
   m_d->init(unitConfiguration);
 }
 
-Lima::LimaStatusCode
-RnnNER::process(Lima::AnalysisContent &analysis) const
+Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
 {
   TimeUtils::updateCurrentTime();
   TimeUtilsController RnnNERProcessTime("RnnNER");

@@ -208,8 +208,9 @@ findMatchingTransitions(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 #endif
   auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == nullptr) {
+    AULOGINIT;
     LERROR << "TransitionSearchStructure::findMatchingTransitions no LinguisticMetaData ! abort";
-      return 0;
+    return 0;
   }
   auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getPropertyCodeManager();
   auto& macroAccessor = propertyCodeManager.getPropertyAccessor("MACRO");
@@ -339,8 +340,9 @@ uint64_t TransitionSearchStructure<TargetType>::
 #endif
   auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == nullptr) {
+    AULOGINIT;
     LERROR << "TransitionSearchStructure::findMatchingTransitions no LinguisticMetaData ! abort";
-      return 0;
+    return 0;
   }
   auto& propertyCodeManager = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(metadata->getMetaData("Lang"))).getPropertyCodeManager();
   auto& macroAccessor = propertyCodeManager.getPropertyAccessor("MACRO");
