@@ -225,15 +225,14 @@ void BiRnnClassifierImpl::train(size_t epochs,
 
     evaluate(output_names, eval_input, eval_gold, eval_stat, device);
 
-    cout << "EPOCH " << e << " | LR=" << lr_copy << endl;
     for (const string& task_name : output_names)
     {
       const task_stat_t& train = train_stat[task_name];
       const task_stat_t& eval = eval_stat[task_name];
-      cout << task_name << " ";
-      cout << " | TRAIN LOSS=" << train.m_loss << " ACC=" << train.m_accuracy
+      std::cout << "EPOCH " << e << task_name << " | LR=" << lr_copy;
+      std::cout << " | TRAIN LOSS=" << train.m_loss << " ACC=" << train.m_accuracy
            << " | EVAL LOSS=" << eval.m_loss << " ACC=" << eval.m_accuracy
-           << endl;
+           << std::endl << std::flush;
     }
 
     task_stat_t& main_task_eval = eval_stat[output_names[0]];
