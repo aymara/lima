@@ -87,7 +87,8 @@ typedef DictionaryBuilderImpl< CharNgramEncoder< Utf8Reader<> > > DictionaryBuil
 typedef CharSeqVectorizerImpl< CharNgramEncoder< Utf8Reader<> >, TorchMatrix<int64_t>,
                                DictHolderAdapter< UInt64Dict, TorchMatrix<int64_t> > > Utf8CharSeqToTorchMatrix;
 
-int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation::train::train_params_segmentation_t &params)
+int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation::train::train_params_segmentation_t &params,
+                             int gpuid)
 {
   vector<ngram_descr_t> ngram_descr = { { 0,  1, ngram_descr_t::char_ngram },
                                         { 0,  2, ngram_descr_t::char_ngram },
@@ -135,7 +136,13 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
                                .weight_decay(params.m_weight_decay)
                                .betas({params.m_beta_one, params.m_beta_two}));
 
-  torch::Device device("cuda");
+  std::string dev = "cpu";
+  if (gpuid >= 0)
+  {
+    std::ostringstream oss(dev);
+    oss << "cuda:" << gpuid;
+  }
+  torch::Device device(dev);
 
   train_input->to(device);
   train_gold->to(device);

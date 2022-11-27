@@ -12,6 +12,7 @@
 #include "tasks/segmentation/model/train_params_segmentation.h"
 
 int train_segmentation_model (const deeplima::CoNLLU::Treebank & tb,
-                              deeplima::segmentation::train::train_params_segmentation_t & params);
+                              deeplima::segmentation::train::train_params_segmentation_t & params,
+                              int gpuid);
 
 #endif

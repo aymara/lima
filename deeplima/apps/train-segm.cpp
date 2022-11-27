@@ -19,7 +19,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 int train_segmentation_model(const std::string& ud_path, const std::string& corpus,
-                             deeplima::segmentation::train::train_params_segmentation_t &params);
+                             deeplima::segmentation::train::train_params_segmentation_t &params, int gpuid);
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
   string corpus, ud_path;
   deeplima::segmentation::train::train_params_segmentation_t params;
-
+  int gpuid = -1;
 
   po::options_description desc("DeepLima Segmentation Trainer");
   desc.add_options()
@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
   ("beta-one",          po::value<float>(&params.m_beta_one),        "Beta One value of Adam Optimizer")
   ("beta-two",          po::value<float>(&params.m_beta_two),        "Beta Two value of Adam Optimizer")
   ("output-format,f",   po::value<std::string>(&params.m_output_format)->default_value("txt"), "The output format: txt or json")
+  ("gpuid,g",           po::value<int>(&gpuid)->default_value(-1), "The id of the gpu to use. -1 for cpu.")
   ;
 
   po::variables_map vm;
@@ -80,17 +81,17 @@ int main(int argc, char* argv[])
   }
   params.train_ss = vm["sentence"].as<bool>();
 
-  return train_segmentation_model(ud_path, corpus, params);
+  return train_segmentation_model(ud_path, corpus, params, gpuid);
 }
 
 using namespace deeplima;
 
 int train_segmentation_model(const std::string& ud_path, const std::string& corpus,
-                             deeplima::segmentation::train::train_params_segmentation_t &params)
+                             deeplima::segmentation::train::train_params_segmentation_t &params, int gpuid)
 {
   boost::filesystem::path path_to_treebank = boost::filesystem::path(ud_path) / corpus;
   CoNLLU::Treebank tb(path_to_treebank.string());
 
-  return train_segmentation_model(tb, params);
+  return train_segmentation_model(tb, params, gpuid);
 }
 
