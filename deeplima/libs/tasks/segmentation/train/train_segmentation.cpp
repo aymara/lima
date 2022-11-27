@@ -139,8 +139,9 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
   std::string dev = "cpu";
   if (gpuid >= 0)
   {
-    std::ostringstream oss(dev);
+    std::ostringstream oss;
     oss << "cuda:" << gpuid;
+    dev = oss.str();
   }
   torch::Device device(dev);
 
