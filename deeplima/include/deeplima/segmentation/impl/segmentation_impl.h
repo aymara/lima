@@ -165,8 +165,8 @@ public:
         send_next_results();
       }
 
-      m_buff_set.pretty_print();
-      InferenceEngine::pretty_print();
+      // m_buff_set.pretty_print();
+      // InferenceEngine::pretty_print();
 
       n = m_buff_set.next(n);
     }
@@ -265,8 +265,8 @@ protected:
       // Worker still uses this slot. Waiting...
       std::cerr << "send_next_results: waiting for slot " << slot_idx
            << " (lock_count==" << int(lock_count) << ")\n";
-      m_buff_set.pretty_print();
-      InferenceEngine::pretty_print();
+      // m_buff_set.pretty_print();
+      // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
       lock_count = InferenceEngine::get_lock_count(slot_idx);
     }

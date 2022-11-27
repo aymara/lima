@@ -105,16 +105,16 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
     {
       if (!it.key().isString())
       {
-        cerr << "ERROR: keys in \"tags\" dict must be strings" << endl;
+        std::cerr << "ERROR: keys in \"tags\" dict must be strings" << endl;
       }
       if (!it.value().isString())
       {
-        cerr << "ERROR: values in \"tags\" dict must be strings" << endl;
+        std::cerr << "ERROR: values in \"tags\" dict must be strings" << endl;
       }
 
       if (m_tags.end() != m_tags.find(it.key().toStringRef()))
       {
-        throw runtime_error("Duplicated tags in the model");
+        throw std::runtime_error("Duplicated tags in the model");
       }
 
       m_tags[it.key().toStringRef()] = it.value().toStringRef();
@@ -193,12 +193,12 @@ void StaticGraphImpl::to(torch::Device device, bool non_blocking)
   for (auto m : m_dropout) m->to(device);
   for (auto m : m_deep_biaffine_attention_decoder) m->to(device);
   torch::nn::Module::to(device, non_blocking);
-  cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
+  // cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }
 
 void StaticGraphImpl::parse_script(const string& script)
 {
-  cerr << script << endl;
+  // cerr << script << endl;
   stringstream ss(script);
   string line;
 
@@ -748,14 +748,14 @@ void StaticGraphImpl::create_submodule_Embedding(const std::string& name, const 
   torch::nn::Embedding m(m_dicts[dict_idx]->size(), dim);
   m_embedding.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::embedding, m_embedding.size() - 1);
-  m->pretty_print(cerr);
-  cerr << endl;
-  for ( const auto& t : m->parameters())
-  {
-    cerr << t.sizes() << endl;
+  // m->pretty_print(cerr);
+  // cerr << endl;
+  // for ( const auto& t : m->parameters())
+  // {
+    // cerr << t.sizes() << endl;
     //cerr << "itemsize = " << t.type().typeMeta().itemsize() << endl;
-  }
-  cerr << endl;
+  // }
+  // cerr << endl;
 
   register_module(name, m);
 }
@@ -769,13 +769,13 @@ void StaticGraphImpl::create_submodule_Dropout(const std::string& name, const st
   m_dropout.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::dropout, m_dropout.size() - 1);
 
-  m->pretty_print(cerr);
-  cerr << endl;
-  for ( const auto& t : m->parameters())
-  {
-    cerr << t.sizes() << endl;
-  }
-  cerr << endl;
+  // m->pretty_print(cerr);
+  // cerr << endl;
+  // for ( const auto& t : m->parameters())
+  // {
+  //   cerr << t.sizes() << endl;
+  // }
+  // cerr << endl;
 
   register_module(name, m);
 }
@@ -790,13 +790,13 @@ void StaticGraphImpl::create_submodule_Linear(const std::string& name, const std
   m_linear.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::linear, m_linear.size() - 1);
 
-  m->pretty_print(cerr);
-  cerr << endl;
-  for ( const auto& t : m->parameters())
-  {
-    cerr << t.sizes() << endl;
-  }
-  cerr << endl;
+  // m->pretty_print(cerr);
+  // cerr << endl;
+  // for ( const auto& t : m->parameters())
+  // {
+  //   cerr << t.sizes() << endl;
+  // }
+  // cerr << endl;
 
   register_module(name, m);
 }
@@ -848,8 +848,8 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
   m_lstm.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::lstm, m_lstm.size() - 1);
 
-  m->pretty_print(cerr);
-  cerr << endl;
+  // m->pretty_print(cerr);
+  // cerr << endl;
 
   register_module(name, m);
 }

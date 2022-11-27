@@ -180,7 +180,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
 
     //{
       int64_t num_batches = (train_trainable_input.size() - e) / params.m_sequence_length;
-      cerr << "train_trainable_input.size() == " << train_trainable_input.size() << endl;
+      // std::cerr << "train_trainable_input.size() == " << train_trainable_input.size() << endl;
       int64_t num_features = (int64_t)train_trainable_input.get_max_feat();
       int64_t seq_len_i64 = (int64_t)params.m_sequence_length;
 
@@ -200,7 +200,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       std::cerr << gold_batches.sizes() << std::endl;
     //}
 
-    cout << "EPOCH " << e << " | LR=" << lr_copy << " " << endl;
+    std::cout << "EPOCH " << e << " | LR=" << lr_copy << " " << std::endl << std::flush;
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
@@ -242,9 +242,9 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
                  task_name.c_str(),
                  train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy);
       }
-      cout << buff << endl;
+      std::cout << buff << std::endl << std::flush;
     }
-    cout << "TIME: train=" << train_duration << "[ms] eval=" << eval_duration << "[ms]" << endl;
+    std::cout << "TIME: train=" << train_duration << "[ms] eval=" << eval_duration << "[ms]" << std::endl << std::flush;
 
     task_stat_t& main_task_eval = eval_stat[output_names[0]];
 
@@ -311,10 +311,10 @@ void BiRnnClassifierForNerImpl::train_epoch(int64_t batch_size,
     // running_loss += batch_loss / current_batch_size;
     // num_correct += batch_correct;
 
-    cout << ".";
-    cout.flush();
+    std::cout << ".";
+    std::cout.flush();
   }
-  cout << endl;
+  std::cout << endl;
 
   // running_loss = running_loss / (trainable_input_batches.size(1) / batch_size + 1);
   // double accuracy = double(num_correct) / (trainable_input_batches.size(0) * trainable_input_batches.size(1));

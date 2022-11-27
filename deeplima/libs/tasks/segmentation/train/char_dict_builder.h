@@ -69,7 +69,7 @@ public:
       }
     }
 
-    std::cerr << "dicts[0].size() == " << dicts[0]->size() << std::endl;
+    // std::cerr << "dicts[0].size() == " << dicts[0]->size() << std::endl;
     //std::cout << dicts[0].to_string();
 
     return dicts;
@@ -105,7 +105,7 @@ public:
                                                      })
                                       );
 
-    std::cerr << "dicts[0].size() == " << dicts[0]->size() << std::endl;
+    // std::cerr << "dicts[0].size() == " << dicts[0]->size() << std::endl;
   }
 
 protected:

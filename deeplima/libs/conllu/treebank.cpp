@@ -60,7 +60,7 @@ bool Treebank::load(const std::string& path)
       m_parts[fields["part"]].doc.load(plain_text_fn.string());
       m_parts[fields["part"]].annot.m_pdoc = &m_parts[fields["part"]].doc;
       m_parts[fields["part"]].annot.load(entry.path().string());
-      cout << "Success" << endl;
+      // std::cout << "Success" << std::endl;
     }
   }
   return true;

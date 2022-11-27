@@ -136,7 +136,7 @@ public:
       // Worker still uses this slot. Waiting...
       std::cerr << "send_next_results: waiting for slot " << slot_idx
            << " (lock_count==" << int(lock_count) << ")\n";
-      InferenceEngine::pretty_print();
+      // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
       lock_count = InferenceEngine::get_lock_count(slot_idx);
     }
@@ -173,7 +173,7 @@ public:
         // Worker still uses this slot. Waiting...
         std::cerr << "send_next_results: waiting for slot " << slot_idx
              << " (lock_count==" << int(lock_count) << ")\n";
-        InferenceEngine::pretty_print();
+        // InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
         lock_count = InferenceEngine::get_lock_count(slot_idx);
       }
@@ -217,7 +217,7 @@ protected:
       // Worker still uses this slot. Waiting...
       std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
            << " lock_count=" << int(lock_count) << std::endl;
-      InferenceEngine::pretty_print();
+      // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
     }
