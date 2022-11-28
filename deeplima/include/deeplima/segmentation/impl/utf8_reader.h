@@ -6,8 +6,9 @@
 #ifndef DEEPLIMA_APPS_UTF8_DECODER_H
 #define DEEPLIMA_APPS_UTF8_DECODER_H
 
-#include <limits>
 #include <cassert>
+#include <limits>
+#include <stdexcept>
 
 #include <string.h>
 #include <unicode/uchar.h>

@@ -6,6 +6,7 @@
 #ifndef DEEPLIMA_APPS_STD_MATRIX_H
 #define DEEPLIMA_APPS_STD_MATRIX_H
 
+#include <iostream>
 #include <memory>
 
 template <class T>

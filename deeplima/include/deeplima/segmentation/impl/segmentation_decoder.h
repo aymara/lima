@@ -6,9 +6,11 @@
 #ifndef DEEPLIMA_APPS_SEGMENTATION_DECODER_H
 #define DEEPLIMA_APPS_SEGMENTATION_DECODER_H
 
-#include <vector>
-#include <string>
+#include <iostream>
 #include <functional>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 #include <unicode/uchar.h>
 
