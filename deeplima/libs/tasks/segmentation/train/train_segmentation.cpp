@@ -3,8 +3,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <vector>
-#include <iostream>
 
 #include "deeplima/segmentation/impl/utf8_reader.h"
 #include "deeplima/segmentation/impl/segmentation_decoder.h"
@@ -17,6 +15,12 @@
 #include "char_dict_builder.h"
 #include "char_seq_vectorizer.h"
 #include "train_segmentation.h"
+
+#include <c10/util/Exception.h>
+
+#include <iostream>
+#include <memory>
+#include <vector>
 
 using namespace std;
 
@@ -90,7 +94,7 @@ typedef CharSeqVectorizerImpl< CharNgramEncoder< Utf8Reader<> >, TorchMatrix<int
 int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation::train::train_params_segmentation_t &params,
                              int gpuid)
 {
-  vector<ngram_descr_t> ngram_descr = { { 0,  1, ngram_descr_t::char_ngram },
+  std::vector<ngram_descr_t> ngram_descr = { { 0,  1, ngram_descr_t::char_ngram },
                                         { 0,  2, ngram_descr_t::char_ngram },
                                         { -1, 3, ngram_descr_t::char_ngram },
                                         { 0,  1, ngram_descr_t::type_ngram },
@@ -153,10 +157,18 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
 
   model->to(device);
 
-  model->train(300, params.m_batch_size, params.m_sequence_length, { "tokens" },
-              *(train_input.get()), *(train_gold.get()),
-              *(dev_input.get()), *(dev_gold.get()),
-              optimizer, params.m_output_model_name, device);
+  try
+  {
+    model->train(300, params.m_batch_size, params.m_sequence_length, { "tokens" },
+                *(train_input.get()), *(train_gold.get()),
+                *(dev_input.get()), *(dev_gold.get()),
+                optimizer, params.m_output_model_name, device);
+  }
+  catch (const c10::Error& e)
+  {
+    std::cerr << "Exception in model training: " << e.what() << std::endl;
+    return 1;
+  }
 
   return 0;
 }
