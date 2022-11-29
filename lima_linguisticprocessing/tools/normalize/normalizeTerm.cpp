@@ -35,6 +35,10 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 
+ #include <QtCore/QList>
+ #include <QtCore/QThread>
+ #include <QtConcurrent/qtconcurrentmap.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <fstream>
@@ -111,33 +115,47 @@ int run(int argc,char** argv)
     return dowork(argc,argv);
 }
 
-int dowork(int argc,char* argv[])
-{
-  QStringList configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
-                                                             QStringList());
-  QString configPath = configDirs.join(LIMA_PATH_SEPARATOR);
 
-  QStringList resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
-                                                            QStringList());
-  QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
-
-  QsLogging::initQsLog(configPath);
-  // Necessary to initialize factories
-  Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
-    throw InvalidConfiguration("loadPlugins method failed.");
+struct Parameters {
+  bool printCategs;
+  QStringList configDirs;
+  QString configPath;
+  QStringList resourcesDirs;
+  QString resourcesPath;
 
   std::string resourcesPathParam;
   std::string configPathParam;
-  std::string lpConfigFile("lima-analysis.xml");
-  std::string commonConfigFile("lima-common.xml");
-  std::string pipeline("normalization");
-  std::string clientId("lima-coreclient");
-
-  bool printCategs=false;
-
+  std::string lpConfigFile;
+  std::string commonConfigFile;
+  std::string pipeline;
+  std::string clientId;
   std::deque<std::string> langs;
   std::deque<std::string> files;
+
+  int chunk_size;
+
+  Parameters(){
+
+    printCategs=false;
+    lpConfigFile = "lima-analysis.xml";
+    commonConfigFile = "lima-common.xml";
+    pipeline = "normalization";
+    clientId = "lima-coreclient";
+    chunk_size = 500;
+  }
+};
+Parameters params;
+
+int read_cmd_line(int argc, char** argv) {
+
+  params.configDirs = buildConfigurationDirectoriesList(QStringList({"lima"}),
+                                                             QStringList());
+  params.configPath = params.configDirs.join(LIMA_PATH_SEPARATOR);
+
+  params.resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
+                                                            QStringList());
+  params.resourcesPath = params.resourcesDirs.join(LIMA_PATH_SEPARATOR);
+
 
   if (argc>1)
   {
@@ -150,54 +168,118 @@ int dowork(int argc,char* argv[])
         if (arg == "--help")
           usage(argc, argv);
         else if (arg== "--printCategs")
-          printCategs=true;
+          params.printCategs=true;
         else if (arg== "--availableUnits")
           listunits();
         else if (arg== "--catch") ;
         else if ( (pos = arg.find("--lp-config-file=")) != std::string::npos )
-          lpConfigFile = arg.substr(pos+17);
+          params.lpConfigFile = arg.substr(pos+17);
         else if ( (pos = arg.find("--common-config-file=")) != std::string::npos )
-          commonConfigFile = arg.substr(pos+21);
+          params.commonConfigFile = arg.substr(pos+21);
         else if ( (pos = arg.find("--config-dir=")) != std::string::npos )
-          configPathParam = arg.substr(pos+13);
+          params.configPathParam = arg.substr(pos+13);
         else if ( (pos = arg.find("--resources-dir=")) != std::string::npos )
-          resourcesPathParam = arg.substr(pos+16);
+          params.resourcesPathParam = arg.substr(pos+16);
         else if ( (pos = arg.find("--language=")) != std::string::npos )
-          langs.push_back(arg.substr(pos+11));
+          params.langs.push_back(arg.substr(pos+11));
 //         else if ( (pos = arg.find("--pipeline=")) != std::string::npos )
 //           pipeline = arg.substr(pos+11);
         else if ( (pos = arg.find("--client=")) != std::string::npos )
-          clientId=arg.substr(pos+9);
+          params.clientId=arg.substr(pos+9);
+        else if ( (pos = arg.find("--chunk=")) != std::string::npos )
+          params.chunk_size = atoi( arg.substr(pos+8).c_str() );
         else usage(argc, argv);
       }
       else
       {
-        files.push_back(arg);
+          params.files.push_back(arg);
       }
     }
   }
 
-  if (langs.size()<1)
+  if (params.langs.size()<1)
   {
     std::cerr << "no language defined !" << std::endl;
     return -1;
   }
 
-  if (!configPathParam.empty())
+  if (!params.configPathParam.empty())
   {
-    configPath = QString::fromUtf8(configPathParam.c_str());
-    configDirs = configPath.split(LIMA_PATH_SEPARATOR);
+      params.configPath = QString::fromUtf8(params.configPathParam.c_str());
+      params.configDirs = params.configPath.split(LIMA_PATH_SEPARATOR);
   }
-  if (!resourcesPathParam.empty())
+  if (!params.resourcesPathParam.empty())
   {
-    resourcesPath = QString::fromUtf8(resourcesPathParam.c_str());
-    resourcesDirs = resourcesPath.split(LIMA_PATH_SEPARATOR);
+      params.resourcesPath = QString::fromUtf8(params.resourcesPathParam.c_str());
+      params.resourcesDirs = params.resourcesPath.split(LIMA_PATH_SEPARATOR);
+  }
+  return 0;
+}
+
+
+struct MyFunctor {
+
+  MyFunctor(
+          std::shared_ptr <AbstractLinguisticProcessingClient > _client,
+                         const std::map<std::string, std::string>& _metaData,
+                         MediaId _lang)
+  {
+    this->client = _client;
+    this->metaData = _metaData;
+    this->lang = _lang;
   }
 
-  QsLogging::initQsLog(configPath);
+  std::shared_ptr <AbstractLinguisticProcessingClient > client;
+  std::map<std::string, std::string> metaData;
+  MediaId lang;
+
+  typedef QString result_type;
+
+
+  QString operator()(const QString& contentText)
+  {
+      // Set the handlers
+      std::map<std::string, AbstractAnalysisHandler*> handlers;
+      BowTextHandler bowTextHandler;
+      handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
+
+      //        cout << "normalize " << contentText << endl;
+
+      client->analyze(contentText,metaData,params.pipeline,handlers);
+
+      // analyze resulting bowText to extract normalization
+      std::multimap<LimaString, std::string> norms=extractNormalization(contentText,
+                                                             bowTextHandler.getBowText(),
+                                                             lang);
+      std::ostringstream oss;
+      if (norms.empty())
+      {
+        norms.insert(std::make_pair(contentText,"NONE_1"));
+      }
+      for (auto it = norms.cbegin(); it != norms.cend(); it++)
+      {
+          oss << limastring2utf8stdstring(it->first);
+        if (params.printCategs)
+        {
+            oss << "#" << it->second;
+        }
+        oss << ";";
+      }
+      oss << std::endl;
+
+      return QString::fromStdString(oss.str());
+  }
+};
+
+int dowork(int argc,char* argv[])
+{
+  int st = read_cmd_line(argc, argv);
+  if (st != SUCCESS_ID) return st;
+
+  QsLogging::initQsLog(params.configPath);
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
+  if (!Lima::AmosePluginsManager::changeable().loadPlugins(params.configPath))
     throw InvalidConfiguration("loadPlugins method failed.");
 
 #ifndef DEBUG_LP
@@ -206,46 +288,49 @@ int dowork(int argc,char* argv[])
 #endif
     // initialize common
     MediaticData::changeable().init(
-      resourcesPath.toUtf8().constData(),
-      configPath.toUtf8().constData(),
-      commonConfigFile,
-      langs);
+        params.resourcesPath.toUtf8().constData(),
+        params.configPath.toUtf8().constData(),
+        params.commonConfigFile,
+        params.langs);
 
     // initialize linguistic processing
     std::deque<std::string> pipelines;
-    pipelines.push_back(pipeline);
+    pipelines.push_back(params.pipeline);
 
-    QString lpConfigFileFound = Common::Misc::findFileInPaths(configPath,
-                                                              lpConfigFile.c_str(),
+    QString lpConfigFileFound = Common::Misc::findFileInPaths(params.configPath,
+                                                              params.lpConfigFile.c_str(),
                                                               LIMA_PATH_SEPARATOR);
 
     Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
         lpConfigFileFound.toUtf8().constData());
     LinguisticProcessingClientFactory::changeable().configureClientFactory(
-        clientId,
+        params.clientId,
         lpconfig,
-        langs,
+        params.langs,
         pipelines);
 
     std::shared_ptr <AbstractLinguisticProcessingClient > client=
         std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
-          LinguisticProcessingClientFactory::single().createClient(clientId));
+          LinguisticProcessingClientFactory::single().createClient(params.clientId));
 
-    // Set the handlers
-    std::map<std::string, AbstractAnalysisHandler*> handlers;
-    BowTextHandler bowTextHandler;
-    handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
+//    // Set the handlers
+//    std::map<std::string, AbstractAnalysisHandler*> handlers;
+//    BowTextHandler bowTextHandler;
+//    handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
 
     std::map<std::string, std::string> metaData;
-    metaData["Lang"]=langs[0];
-    MediaId lang=MediaticData::single().getMediaId(langs[0]);
+    metaData["Lang"]=params.langs[0];
+    MediaId lang=MediaticData::single().getMediaId(params.langs[0]);
 
-    for (auto fileItr = files.cbegin(); fileItr != files.cend(); fileItr++)
+    for (auto fileItr = params.files.cbegin(); fileItr != params.files.cend(); fileItr++)
     {
       // open the output file
       std::ostringstream os;
       os << *fileItr << ".norm";
       std::ofstream fout(os.str().c_str());
+
+      // prepare chunk of lines for parallel processing
+      QStringList contentList;
 
       // loading of the input file
       TimeUtils::updateCurrentTime();
@@ -255,45 +340,37 @@ int dowork(int argc,char* argv[])
       std::string line(buf);
       while (file.good())
       {
-        if (line.size()==0)
+        contentList.clear();
+        while (file.good() && contentList.size() < params.chunk_size )
         {
+          if (line.size()==0)
+          {
+            file.getline(buf,256);
+            line = std::string(buf);
+            continue;
+          }
+
+          LimaString contentText;
+          // The input text MUST be UTF-8 encoded !!!
+          contentText = QString::fromStdString(line).trimmed();
+          contentList.push_back(contentText);
+
+          // read next line
           file.getline(buf,256);
-          line = std::string(buf);
-          continue;
+          line=std::string(buf);
         }
-        //        cout << "normalize " << line << endl;
-        LimaString contentText;
-        // The input text MUST be UTF-8 encoded !!!
-        contentText = QString::fromStdString(line).trimmed();
+
         // analyze it
         metaData["FileName"] = *fileItr;
+        QFuture<QString> future = QtConcurrent::mapped(contentList, MyFunctor(client, metaData, lang));
 
-        // Lima::TimeUtilsController *timer = new Lima::TimeUtilsController("test",true);
-        client->analyze(contentText,metaData,pipeline,handlers);
-        // delete timer;
-
-
-        // analyze resulting bowText to extract normalization
-        std::multimap<LimaString, std::string> norms=extractNormalization(contentText,
-                                                               bowTextHandler.getBowText(),
-                                                               lang);
-        if (norms.empty())
+        //future.waitForFinished();
+        QStringList outputList = future.results();
+        for(int i=0; i<outputList.size(); i++)
         {
-          norms.insert(std::make_pair(contentText,"NONE_1"));
+          fout << outputList[i].toStdString();
         }
-        for (auto it = norms.cbegin(); it != norms.cend(); it++)
-        {
-          fout << limastring2utf8stdstring(it->first);
-          if (printCategs)
-          {
-            fout << "#" << it->second;
-          }
-          fout << ";";
-        }
-        fout << std::endl;
-        // read next line
-        file.getline(buf,256);
-        line=std::string(buf);
+
       }
     }
 #ifndef DEBUG_LP
@@ -305,7 +382,6 @@ int dowork(int argc,char* argv[])
 #endif
   return SUCCESS_ID;
 }
-
 
 std::multimap<LimaString, std::string> extractNormalization(const LimaString& source,
                                                  const BoWText& bowText,

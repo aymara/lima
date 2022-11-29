@@ -151,7 +151,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick Test Xml Widgets )
+addQtModules(Core Gui Qml Quick Test Xml Widgets Concurrent)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components

@@ -632,7 +632,7 @@ void LanguageDataPrivate::initLimaToLanguageCodeMapping(XMLConfigurationFilePars
   }
   catch (NoSuchMap& )
   {
-    LDEBUG << "No map 'LinguisticData/Categories/llimaToLanguageCodeMapping' in common language configuration file for language "
+    LDEBUG << "No map 'LinguisticData/Categories/limaToLanguageCodeMapping' in common language configuration file for language "
     << (int)m_language;
   }
   catch (NoSuchGroup& )

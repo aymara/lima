@@ -12,11 +12,13 @@ SET(normalizeTerm_SRCS
 )
 
 add_executable(normalizeTerm ${normalizeTerm_SRCS})
+set_target_properties(normalizeTerm PROPERTIES VERSION ${LIMA_VERSION})
 
 target_link_libraries(normalizeTerm
   lima-lp-analysishandlers
   lima-lp-client
   lima-lp-bagofwords
+  ${Qt_LIBRARIES}
 )
 
 install(TARGETS normalizeTerm DESTINATION bin
