@@ -105,7 +105,7 @@ public:
 
     inline uint32_t lemma_idx() const
     {
-      throw;
+      throw std::runtime_error("TokenIterator::lemma_idx");
       return 0;
     }
 

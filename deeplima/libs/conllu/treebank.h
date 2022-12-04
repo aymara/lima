@@ -461,7 +461,7 @@ namespace CoNLLU
     {
       if (!load(path))
       {
-        throw;
+        throw std::runtime_error(std::string("Error: treebank cannot load part "+name);
       }
     }
 
@@ -472,7 +472,7 @@ namespace CoNLLU
       {
         return it->second.doc;
       }
-      throw;
+      throw std::runtime_error(std::string("Error: treebank does not have a "+name+" part");
     }
 
     const Annotation& get_annot(const std::string& name) const
@@ -482,7 +482,7 @@ namespace CoNLLU
       {
         return it->second.annot;
       }
-      throw;
+      throw std::runtime_error(std::string("Error: treebank does not have a "+name+" part");
     }
 
   protected:

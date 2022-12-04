@@ -48,7 +48,7 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, 
 
     if (t.m_len == 0)
     {
-      throw;
+      throw std::runtime_error("vectorize_gold length should be 0");
     }
 
     if (t.m_len == 1)
