@@ -25,9 +25,9 @@ string get_datetime_str();
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  std::cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
-       << "git branch: " << deeplima::version::get_git_branch()
-       << ")" << std::endl;
+  // std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  //      << "git branch: " << deeplima::version::get_git_branch()
+  //      << ")" << std::endl;
 
   std::string corpus, ud_path;
   deeplima::tagging::train::train_params_tagging_t params;
@@ -136,8 +136,8 @@ int main(int argc, char* argv[])
     params.m_tags[k] = v;
   }
 
-  std::cout << "batch_size=" << params.m_batch_size
-            << " seq_len=" << params.m_sequence_length << std::endl;
+  // std::cerr << "batch_size=" << params.m_batch_size
+  //           << " seq_len=" << params.m_sequence_length << std::endl;
 
   return deeplima::tagging::train::train_entity_tagger(params);
 }

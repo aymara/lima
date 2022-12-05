@@ -25,9 +25,9 @@ string get_datetime_str();
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
-       << "git branch: " << deeplima::version::get_git_branch()
-       << ")" << endl;
+  // std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  //      << "git branch: " << deeplima::version::get_git_branch()
+  //      << ")" << std::endl;
 
   string corpus, ud_path;
   deeplima::lemmatization::train::train_params_lemmatization_t params;

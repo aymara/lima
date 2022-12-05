@@ -30,9 +30,9 @@ void parse_file(std::istream& input,
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
-       << "git branch: " << deeplima::version::get_git_branch()
-       << ")" << std::endl;
+  // std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  //      << "git branch: " << deeplima::version::get_git_branch()
+  //      << ")" << std::endl;
 
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;

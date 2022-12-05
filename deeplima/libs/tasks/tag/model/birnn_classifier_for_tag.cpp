@@ -337,10 +337,10 @@ void BiRnnClassifierForNerImpl::train_epoch(int64_t batch_size,
     // running_loss += batch_loss / current_batch_size;
     // num_correct += batch_correct;
 
-    std::cout << ".";
-    std::cout.flush();
+    // std::cout << ".";
+    // std::cout.flush();
   }
-  std::cout << endl;
+  // std::cout << endl;
 
   // running_loss = running_loss / (trainable_input_batches.size(1) / batch_size + 1);
   // double accuracy = double(num_correct) / (trainable_input_batches.size(0) * trainable_input_batches.size(1));
