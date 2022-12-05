@@ -39,7 +39,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   // double lr_copy = 0;
   for (size_t e = 1; e < params.m_max_epochs; e++)
   {
-    cerr << endl << "********** EPOCH " << e << " **********" << endl;
+    std::cerr << "EPOCH " << e;
     nets::epoch_stat_t train_stat, eval_stat;
     Module::train(true);
 
@@ -98,12 +98,12 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   {
     stat["output"].m_accuracy = float(stat["output"].m_correct) / stat["output"].m_items;
   }
-  cerr << " LEN: " << input_tensor.sizes()[0]
-       << " LOSS: " << stat["output"].m_loss
-       << " ACC: " << stat["output"].m_accuracy
-       << " CORRECT: " << stat["output"].m_correct
-       << " TOTAL: " << stat["output"].m_items
-       << endl;
+  std::cerr << " LEN: " << input_tensor.sizes()[0]
+            << " LOSS: " << stat["output"].m_loss
+            << " ACC: " << stat["output"].m_accuracy
+            << " CORRECT: " << stat["output"].m_correct
+            << " TOTAL: " << stat["output"].m_items
+            << std::endl;
 }
 
 void Seq2SeqLemmatizerImpl::evaluate(const vector<TorchMatrix<int64_t>>& input,

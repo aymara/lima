@@ -247,7 +247,7 @@ void CoNLLUDataSet::Iterator::start_epoch()
 {
   if (0 == m_batch_size)
   {
-    throw;
+      throw std::runtime_error("CoNLLUDataSet::Iterator::start_epoch batch size cannot be 0.");
   }
   m_current_bucket = 0;
   m_iter_counter = 0;

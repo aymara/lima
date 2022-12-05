@@ -50,8 +50,8 @@ public:
 
   virtual ~RnnSeq2Seq()
   {
-    std::cerr << "-> ~RnnSeq2Seq" << std::endl;
-    std::cerr << "<- ~RnnSeq2Seq" << std::endl;
+    // std::cerr << "-> ~RnnSeq2Seq" << std::endl;
+    // std::cerr << "<- ~RnnSeq2Seq" << std::endl;
   }
 };
 

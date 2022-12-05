@@ -192,12 +192,12 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
 
       auto trainable_input_batches
           = aligned_trainable_input.reshape({ num_batches, seq_len_i64, num_features }).transpose(0, 1);
-      cerr << "aligned_non_trainable_input.sizes() == " << aligned_nontrainable_input.sizes() << endl;
+      // std::cerr << "aligned_non_trainable_input.sizes() == " << aligned_nontrainable_input.sizes() << endl;
       auto nontrainable_input_batches
           = aligned_nontrainable_input.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
       auto gold_batches
           = aligned_gold.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
-      std::cerr << gold_batches.sizes() << std::endl;
+      // std::cerr << gold_batches.sizes() << std::endl;
     //}
 
     std::cout << "EPOCH " << e << " | LR=" << lr_copy << " " << std::endl << std::flush;

@@ -95,9 +95,9 @@ public:
       assert(idx >= 0);
       assert(idx < std::numeric_limits<Eigen::Index>::max());
       output[input_begin + i] = (uint32_t) idx;
-      std::cerr << i << "\t" << idx << std::endl;
+      // std::cerr << i << "\t" << idx << std::endl;
     }
-    std::cerr << std::endl;
+    // std::cerr << std::endl;
 
     //arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
 

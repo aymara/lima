@@ -255,7 +255,7 @@ public:
       m_cls.register_handler([this](
                              std::shared_ptr< StdMatrix<uint8_t> > classes,
                              size_t begin, size_t end, size_t slot_idx){
-        std::cerr << "handler called: " << slot_idx << std::endl;
+        // std::cerr << "handler called: " << slot_idx << std::endl;
 
         lemmatize(m_buffers[slot_idx], m_lemm_buffers[slot_idx], classes, begin, end);
 
@@ -274,7 +274,7 @@ public:
       m_cls.register_handler([this](
                              std::shared_ptr< StdMatrix<uint8_t> > classes,
                              size_t begin, size_t end, size_t slot_idx){
-        std::cerr << "handler called: " << slot_idx << std::endl;
+        // std::cerr << "handler called: " << slot_idx << std::endl;
         m_classes = classes;
         m_output_callback(m_stridx_ptr,
                           m_buffers[slot_idx],
@@ -294,7 +294,7 @@ public:
 
   ~TokenSequenceAnalyzer()
   {
-    std::cerr << "~TokenSequenceAnalyzer" << std::endl;
+    // std::cerr << "~TokenSequenceAnalyzer" << std::endl;
   }
 
   typedef std::function < void (std::shared_ptr< StringIndex > stridx,
@@ -325,12 +325,12 @@ public:
 
   void finalize()
   {
-    std::cerr << "TokenSequenceAnalyzer::finalize" << std::endl;
+    // std::cerr << "TokenSequenceAnalyzer::finalize" << std::endl;
     if (m_current_timepoint > 0)
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        std::cerr << "TokenSequenceAnalyzer::finalize call start_analysis" << std::endl;
+        // std::cerr << "TokenSequenceAnalyzer::finalize call start_analysis" << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint);
       }
       else
@@ -392,7 +392,7 @@ public:
 
   void start_analysis(size_t buffer_idx, int count = -1)
   {
-    std::cerr << "TokenSequenceAnalyzer::start_analysis " << buffer_idx << ", " << count << std::endl;
+    // std::cerr << "TokenSequenceAnalyzer::start_analysis " << buffer_idx << ", " << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 

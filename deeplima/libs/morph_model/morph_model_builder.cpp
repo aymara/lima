@@ -157,37 +157,37 @@ morph_model_t morph_model_builder::build(const CoNLLU::Annotation& annotation1,
   builder::collect_statistics(annotation1, upos, feats, feat2upos);
   builder::collect_statistics(annotation2, upos, feats, feat2upos);
 
-  for ( const auto& kv : feats )
-  {
-    cerr << kv.first << "\t:";
-    for ( const string& s : kv.second )
-    {
-      cerr << " " << s;
-    }
-    cerr << endl;
-  }
-  cerr << endl;
+  // for ( const auto& kv : feats )
+  // {
+  //   cerr << kv.first << "\t:";
+  //   for ( const string& s : kv.second )
+  //   {
+  //     cerr << " " << s;
+  //   }
+  //   cerr << endl;
+  // }
+  // cerr << endl;
 
-  for ( const auto& kv : upos )
-  {
-    //cerr << kv.first << endl;
-    for ( const string& s : kv.second )
-    {
-      cerr << kv.first << "\t" << s << endl;
-    }
-    cerr << endl;
-  }
+  // for ( const auto& kv : upos )
+  // {
+  //   cerr << kv.first << endl;
+  //   for ( const string& s : kv.second )
+  //   {
+  //     cerr << kv.first << "\t" << s << endl;
+  //   }
+  //   cerr << endl;
+  // }
 
-  for ( const auto& kv : feat2upos )
-  {
-    cerr << kv.first << "\t:";
-    for ( const string& s : kv.second )
-    {
-      cerr << " " << s;
-    }
-    cerr << endl;
-  }
-  cerr << endl;
+  // for ( const auto& kv : feat2upos )
+  // {
+  //   cerr << kv.first << "\t:";
+  //   for ( const string& s : kv.second )
+  //   {
+  //     cerr << " " << s;
+  //   }
+  //   cerr << endl;
+  // }
+  // cerr << endl;
 
   vector<string> feats_by_use_count;
   feats_by_use_count.reserve(feat2upos.size());
@@ -201,18 +201,18 @@ morph_model_t morph_model_builder::build(const CoNLLU::Annotation& annotation1,
   });
 
   size_t total = 0;
-  cerr << "UPOS\t\t" << upos.size() << " " << builder::min_bits_for_value(upos.size()) << endl;
+  // cerr << "UPOS\t\t" << upos.size() << " " << builder::min_bits_for_value(upos.size()) << endl;
   total += upos.size();
   for ( const string& s : feats_by_use_count )
   {
-    cerr << s << "\t" << feat2upos[s].size();
+    // cerr << s << "\t" << feat2upos[s].size();
     size_t num_values = /*1 +*/ feats[s].size();
-    cerr << "\t" << num_values << " " << builder::min_bits_for_value(num_values);
+    // cerr << "\t" << num_values << " " << builder::min_bits_for_value(num_values);
     total += builder::min_bits_for_value(num_values);
 
-    cerr << endl;
+    // cerr << endl;
   }
-  cout << "Total bits: " << total << endl;
+  // cout << "Total bits: " << total << endl;
 
   map<string, vector<string>> upos2feat;
   vector<bool> used(feats_by_use_count.size(), false);

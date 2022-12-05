@@ -113,12 +113,12 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   Parent::m_wb.resize(6);
 
   // tags
-  cerr << "TAGS:" << endl;
-  for ( const auto& it : src.get_tags() )
-  {
-    cerr << "\t" << it.first << " = " << it.second << endl;
-  }
-  cerr << endl;
+  // cerr << "TAGS:" << endl;
+  // for ( const auto& it : src.get_tags() )
+  // {
+  //   cerr << "\t" << it.first << " = " << it.second << endl;
+  // }
+  // cerr << endl;
 }
 
 } // namespace eigen_impl

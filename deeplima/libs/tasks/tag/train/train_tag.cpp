@@ -272,7 +272,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
                                   params);
   }
 
-  cerr << model->get_script() << endl;
+  // cerr << model->get_script() << endl;
 
   torch::Device device(params.m_device_string);
 

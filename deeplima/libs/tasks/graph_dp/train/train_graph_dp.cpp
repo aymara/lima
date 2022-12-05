@@ -126,7 +126,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     model->load(params.m_input_model_name);
   }
 
-  cerr << model->get_script() << endl;
+  // cerr << model->get_script() << endl;
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)

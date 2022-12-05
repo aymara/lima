@@ -22,7 +22,7 @@ public:
   DictVectorizer(int64_t max_time, int64_t max_feat)
     : Matrix(max_time, max_feat)
   {
-    std::cerr << "DictVectorizer::DictVectorizer()" << std::endl;
+    // std::cerr << "DictVectorizer::DictVectorizer()" << std::endl;
   }
 
   void init(const DH& dicts, int64_t max_time, int64_t max_feat)

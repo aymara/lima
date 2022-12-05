@@ -222,7 +222,7 @@ protected:
   {
     if (src.length() < 1)
     {
-      throw;
+      throw std::runtime_error("Dict::from_wstring empty input.");
     }
     k = src[0];
   }

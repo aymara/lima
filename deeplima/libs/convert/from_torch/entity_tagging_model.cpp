@@ -79,12 +79,12 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
   Parent::m_wb.resize(1);
 
   // tags
-  cerr << "TAGS:" << endl;
-  for ( const auto& it : src.get_tags() )
-  {
-    cerr << "\t" << it.first << " = " << it.second << endl;
-  }
-  cerr << endl;
+  // cerr << "TAGS:" << endl;
+  // for ( const auto& it : src.get_tags() )
+  // {
+  //   cerr << "\t" << it.first << " = " << it.second << endl;
+  // }
+  // cerr << endl;
 }
 
 template <class M, class V, class T>

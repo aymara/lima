@@ -183,7 +183,7 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
       if ((m_sentences.size() > 1 && sent_idx < m_sentences.size() - 1)
           || sent_idx > m_sentences.size() + 1)
       {
-        throw;
+        throw std::runtime_error("rebuild_structure: wrong sent_idx.");
       }
     }
 
@@ -240,7 +240,7 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
           }
           else
           {
-            throw;
+            throw std::runtime_error("rebuild_structure: size_ext not found.");
           }
         }
       }
@@ -261,7 +261,7 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
   }
 
   if (!test_structure())
-    throw;
+    throw std::runtime_error("test_structure failed.");
 }
 
 bool Annotation::test_structure() const

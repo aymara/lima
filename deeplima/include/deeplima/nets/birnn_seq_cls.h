@@ -125,7 +125,7 @@ protected:
   {
     slot_t& slot = *((slot_t*)p);
 
-    std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
+    // std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
 
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
@@ -191,8 +191,8 @@ public:
     // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
     // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
 
-    std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
-              << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
+    // std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
+    //           << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
     m_num_slots = num_slots;
     m_overlap = overlap;
     m_slot_len = slot_len;
@@ -262,13 +262,13 @@ public:
 
   virtual ~RnnSequenceClassifier()
   {
-    std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
+    // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
     ThreadPoolParent::stop();
     if (nullptr != m_slots)
     {
       delete[] m_slots;
     }
-    std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
+    // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
   }
 
   inline uint8_t get_output(uint64_t pos, uint8_t cls)
@@ -313,8 +313,8 @@ public:
     assert(idx >= 0);
     assert(idx < m_num_slots);
     m_slots[idx].m_lock_count += v;
-    std::cerr << "Lock for slot " << idx
-              << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
+    // std::cerr << "Lock for slot " << idx
+    //           << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
   }
 
   inline void decrement_lock_count(uint32_t idx)
@@ -332,7 +332,7 @@ public:
 
   inline uint64_t get_start_timepoint() const
   {
-    std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
+    // std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
     return m_overlap;
   }
 

@@ -271,7 +271,7 @@ public:
     m_impl.register_handler([this](
                             std::shared_ptr< StdMatrix<uint32_t> > heads,
                             size_t begin, size_t end, size_t slot_idx) {
-       std::cerr << "handler called (dp): " << slot_idx << std::endl;
+       // std::cerr << "handler called (dp): " << slot_idx << std::endl;
 
        m_output_callback(*m_stridx_ptr,
                          m_buffers[slot_idx],
@@ -286,7 +286,7 @@ public:
 
   ~DependencyParser()
   {
-    std::cerr << "~DependencyParser" << std::endl;
+    // std::cerr << "~DependencyParser" << std::endl;
   }
 
   void register_handler(const output_callback_t fn) {
@@ -327,7 +327,7 @@ public:
 
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
-    std::cerr << "DependencyParser::operator()" << std::endl;
+    // std::cerr << "DependencyParser::operator()" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -349,7 +349,7 @@ public:
         token.m_offset = 0;
         token.m_len = 0;
         token.m_form_idx = m_stridx_ptr->get_idx("<ROOT>");
-        std::cerr << "<ROOT>" << std::endl;
+        // std::cerr << "<ROOT>" << std::endl;
         token.m_flags = impl::token_t::token_flags_t(segmentation::token_pos::flag_t::none);
         token.m_lemm_idx = token.m_form_idx;
         insert_root = false;
@@ -362,7 +362,7 @@ public:
         token.m_offset = iter.token_offset();
         token.m_len = iter.token_len();
         token.m_form_idx = iter.form_idx();
-        std::cerr << iter.form() << std::endl;
+        // std::cerr << iter.form() << std::endl;
         // std::cerr << m_stridx_ptr->get_str(token.m_form_idx) << std::endl;
         token.m_flags = impl::token_t::token_flags_t(iter.flags());
         token.m_lemm_idx = iter.lemma_idx();
@@ -419,7 +419,7 @@ public:
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        std::cerr << "Starting (dp) ..." << std::endl;
+        // std::cerr << "Starting (dp) ..." << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint, m_lengths, m_current_timepoint);
       }
       else
@@ -453,8 +453,8 @@ protected:
                       const std::vector<size_t>& lengths,
                       int count = -1)
   {
-    std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
-              << lengths.size() << ", " << count << std::endl;
+    // std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
+    //           << lengths.size() << ", " << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 
