@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 
 #include "birnn_classifier_for_tag.h"
@@ -200,8 +201,6 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       // std::cerr << gold_batches.sizes() << std::endl;
     //}
 
-    std::cout << "EPOCH " << e << " | LR=" << lr_copy << " " << std::endl << std::flush;
-
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
     train_epoch(params.m_batch_size,
@@ -222,6 +221,33 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
 
     auto train_duration = std::chrono::duration_cast<std::chrono::milliseconds>(train_end - begin).count();
     auto eval_duration = std::chrono::duration_cast<std::chrono::milliseconds>(eval_end - train_end).count();
+
+    std::cout << "EPOCH " << e << " | LR=" << lr_copy << " | ";
+    for (const string& task_name : output_names)
+    {
+      if (task_name == "upos")
+      {
+        const task_stat_t& train = train_stat[task_name];
+        const task_stat_t& eval = eval_stat[task_name];
+        char buff[128];
+        if (2 == eval.m_num_classes)
+        {
+          snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f PR=%.4f RC=%.4f F1=%.4f",
+                  task_name.c_str(),
+                  train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy,
+                  eval.m_precision, eval.m_recall,
+                  eval.m_f1);
+        }
+        else
+        {
+          snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f",
+                  task_name.c_str(),
+                  train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy);
+        }
+        std::cout << buff << std::endl << std::flush;
+        break;
+      }
+    }
 
     char buff[128];
     for (const string& task_name : output_names)
