@@ -5,11 +5,14 @@
 
 #include <string>
 
+#include "deeplima/utils/secure_cast.h"
+
 #include "seq2seq_for_lemmatization.h"
 
 using namespace std;
 using namespace torch;
 using torch::indexing::Slice;
+using namespace deeplima::utils;
 
 namespace deeplima
 {
@@ -23,7 +26,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
                                   const vector<vector<TorchMatrix<int64_t>>>& train_input_cat,
                                   const vector<TorchMatrix<int64_t>>& train_gold,
                                   const vector<TorchMatrix<int64_t>>& eval_input,
-                                  const vector<vector<TorchMatrix<int64_t>>>& eval_input_cat,
+                                  const vector<vector<TorchMatrix<int64_t>>>& /*eval_input_cat*/,
                                   const vector<TorchMatrix<int64_t>>& eval_gold,
                                   torch::optim::Optimizer& opt,
                                   const torch::Device& device)
@@ -79,7 +82,7 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   nets::epoch_stat_t stat;
   for (int64_t i = 0; i < n_samples; i += params.m_batch_size)
   {
-    int64_t end_sample = params.m_batch_size > n_samples ? n_samples : i + params.m_batch_size;
+    int64_t end_sample = cast_to_signed<decltype(n_samples)>(params.m_batch_size) > n_samples ? n_samples : i + params.m_batch_size;
     assert(i < end_sample);
     const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
     const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);

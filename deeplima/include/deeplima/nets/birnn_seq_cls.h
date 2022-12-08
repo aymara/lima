@@ -77,7 +77,6 @@ protected:
 
   inline int32_t prev_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return (idx == 0) ? (m_num_slots - 1) : idx - 1;
   }
@@ -85,7 +84,6 @@ protected:
 public:
   inline int32_t next_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return (idx == m_num_slots - 1) ? 0 : idx + 1;
   }
@@ -93,7 +91,6 @@ public:
 protected:
   inline void clear_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -110,7 +107,6 @@ protected:
 
   inline void start_job_impl(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -282,35 +278,30 @@ public:
 
   inline uint64_t get_slot_begin(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_begin;
   }
 
   inline bool get_slot_started(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_work_started;
   }
 
   inline uint64_t get_slot_end(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_end;
   }
 
   inline uint8_t get_lock_count(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_lock_count;
   }
 
   inline void increment_lock_count(uint32_t idx, uint8_t v = 1)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     m_slots[idx].m_lock_count += v;
     // std::cerr << "Lock for slot " << idx
@@ -319,7 +310,6 @@ public:
 
   inline void decrement_lock_count(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     assert(m_slots[idx].m_lock_count > 0);
 
@@ -365,7 +355,6 @@ public:
 
   inline void set_slot_lengths(uint32_t idx, const std::vector<size_t>& lengths)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     assert(idx < m_lengths.size());
 
@@ -375,7 +364,6 @@ public:
   // used in graph-based dependency parser
   inline void set_slot_begin(uint32_t idx, uint64_t slot_begin)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
@@ -386,7 +374,6 @@ public:
 
   inline void set_slot_end(uint32_t idx, uint64_t slot_end)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
@@ -400,7 +387,6 @@ public:
 
   inline void start_job(uint32_t idx, bool no_more_data=false)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -427,7 +413,6 @@ public:
 
   inline void wait_for_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     const slot_t& slot = m_slots[idx];
     assert(slot.m_work_started);
