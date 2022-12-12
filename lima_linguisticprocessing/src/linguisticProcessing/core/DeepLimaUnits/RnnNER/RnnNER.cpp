@@ -140,9 +140,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
   auto posgraph = std::make_shared<LinguisticAnalysisStructure::AnalysisGraph>(
       "PosGraph", m_d->m_language, false, true);
   analysis.setData("PosGraph", posgraph);
-  const auto& propertyCodeManager = dynamic_cast<const LanguageData&>(
-          MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
-  // const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
+
   /** Creation of an annotation graph if necessary*/
   auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==nullptr)

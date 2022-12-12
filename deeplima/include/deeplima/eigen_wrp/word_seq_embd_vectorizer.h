@@ -149,7 +149,7 @@ public:
       }
     }
 
-    for (const auto feat_descr : m_features)
+    for (const auto& feat_descr : m_features)
     {
       if (float_feature == feat_descr.m_type)
       {

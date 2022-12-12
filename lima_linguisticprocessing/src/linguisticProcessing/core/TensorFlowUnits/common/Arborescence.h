@@ -232,7 +232,7 @@ public:
       }
 
       if (best_new_arc.first == 0 || best_new_arc.second == 0)
-        throw;
+        throw std::runtime_error("wrong best new arc");
 
       heads[best_new_arc.first] = best_new_arc.second;
 
@@ -263,7 +263,7 @@ public:
     }
 
     if (roots.size() == 0)
-      throw; // This function is intended to choose from a several (> 0) of roots
+      throw std::runtime_error("need at least one root."); // This function is intended to choose from a several (> 0) of roots
 
     if (roots.size() == 1)
       return;
@@ -536,7 +536,7 @@ void arborescence(const std::function <weight_t(vertex_idx_t, vertex_idx_t)>& ad
   n_roots = impl::Arborescence<vertex_idx_t, weight_t>::count_roots(heads, len);
 
   if (n_roots != 1)
-    throw; // there is a bug in choose_one_root
+    throw std::runtime_error("should have found exactly one root."); // there is a bug in choose_one_root
 
   // now n_roots == 1
   if (impl::Arborescence<vertex_idx_t, weight_t>::is_connected(heads, len))

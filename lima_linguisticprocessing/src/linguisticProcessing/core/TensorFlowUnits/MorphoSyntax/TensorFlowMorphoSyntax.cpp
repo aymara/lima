@@ -911,7 +911,7 @@ void TensorFlowMorphoSyntaxPrivate::fixMissingFeature(const vector<vector<float>
     }
 
   if (upos_str.size() == 0)
-    throw;
+    throw std::runtime_error("upos_str should not be empty.");
 
   if (m_feat_deps[upos_val].size() == 0)
     return;
@@ -1042,7 +1042,7 @@ void TensorFlowMorphoSyntaxPrivate::generate_batch(const vector<TSentence>& sent
 
     len(i) = n + 1;
     if (n + 1 > m_max_seq_len)
-      throw;
+      throw std::runtime_error("n overflows max sequence length");
   }
 }
 
