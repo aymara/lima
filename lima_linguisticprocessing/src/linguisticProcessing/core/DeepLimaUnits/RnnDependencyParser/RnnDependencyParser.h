@@ -10,27 +10,28 @@
 namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser
 {
 
-    class CharChart;
+class CharChart;
 
-    class RnnDependencyParserPrivate;
+class RnnDependencyParserPrivate;
+
 #define RNNDEPENDENCYPARSER_CLASSID "RnnDependencyParser"
 
-/** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
-*
-* As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
-*
-* IOPES:
-* - Output:          an AnalysisContent
-* - Preconditions:   the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
-* - Effects:         the AnalysisContent will contain an AnalysisData of type AnalysisGraph
-*                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
-*                    for each detected token.
-*/
-    class LIMA_RNNDEPENDENCYPARSER_EXPORT RnnDependencyParser : public MediaProcessUnit
+/** @brief This is a @ref MediaProcessUnit that executes a RNN-based dependency parser model and fills LIMA data
+ * structures with its results.
+ *
+ * As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
+ *
+ * IOPES:
+ * - Output:
+ * - Preconditions:
+ * - Effects:
+ *
+ */
+class LIMA_RNNDEPENDENCYPARSER_EXPORT RnnDependencyParser : public MediaProcessUnit
 {
     public:
     RnnDependencyParser();
-    ~RnnDependencyParser() override;
+    virtual ~RnnDependencyParser() override;
 
     void init(Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
               Manager* manager) override;
