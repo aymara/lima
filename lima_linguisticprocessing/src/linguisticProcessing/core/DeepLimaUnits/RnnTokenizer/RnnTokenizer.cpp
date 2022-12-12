@@ -1,4 +1,3 @@
-// Copyright 2002-2021 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -30,7 +29,6 @@
 
 #define DEBUG_THIS_FILE true
 
-using namespace std;
 using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima::Common::PropertyCode;
 using namespace Lima::Common::MediaticData;
@@ -47,8 +45,6 @@ namespace DeepLimaUnits
 {
 namespace RnnTokenizer
 {
-
-static u32string SPACE = QString::fromUtf8(" ").toStdU32String();
 
 static SimpleFactory<MediaProcessUnit, RnnTokenizer> rnntokenizerFactory(RNNTOKENIZER_CLASSID); // clazy:exclude=non-pod-global-static
 
@@ -83,7 +79,7 @@ public:
   };
 
   void init(GroupConfigurationStructure& unitConfiguration);
-  void tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences);
+  void tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
@@ -91,20 +87,20 @@ public:
   QString m_data;
 
 protected:
-  void append_new_word(vector< TPrimitiveToken >& current_sentence,
+  void append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                        const QString& current_token,
                        int current_token_offset) const;
 
   size_t m_max_seq_len;
 
-  map<QString, vector<QString>> m_trrules;
+  std::map<QString, std::vector<QString>> m_trrules;
 
   // Parameters
   bool m_ignoreEOL;
 
   segmentation::impl::SegmentationModuleUtf8 m_segm;
 
-  function<void()> m_load_fn;
+  std::function<void()> m_load_fn;
   bool m_loaded;
 };
 
@@ -149,9 +145,9 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
 
-  auto anagraph = new AnalysisGraph("AnalysisGraph",m_d->m_language,true,true);
-  analysis.setData("AnalysisGraph",anagraph);
-  LinguisticGraph* graph=anagraph->getGraph();
+  auto anagraph = std::make_shared<AnalysisGraph>("AnalysisGraph", m_d->m_language, true, true);
+  analysis.setData("AnalysisGraph", anagraph);
+  auto graph = anagraph->getGraph();
   m_d->m_currentVx = anagraph->firstVertex();
   // Get text from analysis
   auto originalText = std::dynamic_pointer_cast<LimaStringText>(analysis.getData("Text"));
@@ -163,14 +159,15 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   }
 
   // Execute model on the text
-  vector< vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
+  std::vector< std::vector< RnnTokenizerPrivate::TPrimitiveToken > > sentencesTokens;
   m_d->tokenize(*originalText, sentencesTokens);
     LOG_MESSAGE(LDEBUG, "      Number of token '" << sentencesTokens.size() << "'");
 
   // Insert the tokens in the graph and create sentence limits
-  SegmentationData* sb = new SegmentationData("AnalysisGraph");
+  auto sb = std::make_shared<SegmentationData>("AnalysisGraph");
   analysis.setData(m_d->m_data.toStdString(), sb);
 
+  // Remove the default 0 -> 1 edge before adding tokens
   remove_edge(anagraph->firstVertex(),
               anagraph->lastVertex(),
               *graph);
@@ -184,14 +181,14 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
       continue;
     }
 
-    LinguisticGraphVertex endSentence = numeric_limits< LinguisticGraphVertex >::max();
+    auto endSentence = std::numeric_limits< LinguisticGraphVertex >::max();
     for (const auto& token: sentence)
     {
       const auto& str = token.wordText;
 
       LOG_MESSAGE(LDEBUG, "      Adding token '" << str << "'");
 
-      StringsPoolIndex form=(*m_d->m_stringsPool)[str];
+      auto form = (*m_d->m_stringsPool)[str];
       Token *tToken = new Token(form, str, token.start+1, token.wordText.size());
       if (tToken == nullptr)
       {
@@ -203,8 +200,8 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
       if (token.originalText.size() > 0)
       {
         // tranduced token
-        // save original word as orph alternative
-        StringsPoolIndex orig = (*m_d->m_stringsPool)[token.originalText];
+        // save original word as orthographic alternative
+        auto orig = (*m_d->m_stringsPool)[token.originalText];
         tToken->addOrthographicAlternatives(orig);
       }
 
@@ -213,7 +210,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
       LOG_MESSAGE(LDEBUG, "      status is " << tToken->status().toString());
 
       // Adds on the path
-      LinguisticGraphVertex newVx = add_vertex(*graph);
+      auto newVx = add_vertex(*graph);
       endSentence = newVx;
       put(vertex_token, *graph, newVx, tToken);
       put(vertex_data, *graph, newVx, new MorphoSyntacticData());
@@ -223,11 +220,11 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 
     LOG_MESSAGE(LDEBUG, "adding sentence" << beginSentence << endSentence);
 
-    sb->add(Segment("sentence", beginSentence, endSentence, anagraph));
+    sb->add(Segment("sentence", beginSentence, endSentence, anagraph.get()));
     beginSentence = endSentence;
   }
 
-  add_edge(m_d->m_currentVx,anagraph->lastVertex(),*graph);
+  add_edge(m_d->m_currentVx, anagraph->lastVertex(), *graph);
 
   TimeUtils::logElapsedTime("RnnTokenizer");
   return SUCCESS_ID;
@@ -236,14 +233,16 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
 void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
 {
   m_data = QString(getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries").c_str());
-  QString model_prefix = getStringParameter(unitConfiguration, "model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
+  auto model_prefix = QString::fromStdString(
+    getStringParameter(unitConfiguration, "model_prefix",
+                       ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY));
 
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokenizerPrivate::init" << model_prefix);
 
-  QString lang_str = MediaticData::single().media(m_language).c_str();
-  QString resources_path = MediaticData::single().getResourcesPath().c_str();
-  QString model_name = model_prefix;
-  string udlang;
+  auto lang_str = QString::fromStdString(MediaticData::single().media(m_language));
+  auto resources_path = QString::fromStdString(MediaticData::single().getResourcesPath());
+  auto model_name = model_prefix;
+  std::string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
   if (!fix_lang_codes(lang_str, udlang))
@@ -253,7 +252,7 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
       Lima::InvalidConfiguration);
   }
 
-  model_name.replace(QString("$udlang"), QString(udlang.c_str()));
+  model_name.replace(QString("$udlang"), QString::fromStdString(udlang));
 
   auto model_file_name = findFileInPaths(resources_path,
                                          QString::fromUtf8("/RnnTokenizer/%1/%2.pt")
@@ -282,13 +281,13 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
   }
 }
 
-void RnnTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& current_sentence,
+void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                                           const QString& current_token,
                                           int current_token_offset) const
 {
-  QString ctoken_lower = current_token.toLower();
+  auto ctoken_lower = current_token.toLower();
 
-  map<QString, vector<QString>>::const_iterator i = m_trrules.find(ctoken_lower);
+  auto i = m_trrules.find(ctoken_lower);
   if (i == m_trrules.end())
   {
     current_sentence.push_back(TPrimitiveToken(current_token, current_token_offset));
@@ -296,13 +295,11 @@ void RnnTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& current_sen
   else
   {
     size_t n = 0;
-    for (const QString& w : i->second)
+    for (const auto& w : i->second)
     {
       if (n == 0)
       {
-        current_sentence.push_back(TPrimitiveToken(w,
-                                                   current_token_offset,
-                                                   current_token));
+        current_sentence.push_back(TPrimitiveToken(w, current_token_offset, current_token));
       }
       else
       {
@@ -312,7 +309,7 @@ void RnnTokenizerPrivate::append_new_word(vector< TPrimitiveToken >& current_sen
   }
 }
 
-void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitiveToken>>& sentences)
+void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences)
 {
   m_load_fn();
 
@@ -321,18 +318,18 @@ void RnnTokenizerPrivate::tokenize(const QString& text, vector<vector<TPrimitive
   sentences.clear();
   sentences.reserve(text.size() / 15);
 
-  vector< TPrimitiveToken > current_sentence;
+  std::vector< TPrimitiveToken > current_sentence;
   int current_token_offset = 0;
 
-  string text_utf8 = text.toStdString();
+  auto text_utf8 = text.toStdString();
 
   m_segm.register_handler([this, &sentences, &current_sentence, &current_token_offset]
-                          (const vector<segmentation::token_pos>& tokens,
+                          (const std::vector<segmentation::token_pos>& tokens,
                            uint32_t len)
   {
     for (size_t i = 0; i < len; i++)
     {
-      const segmentation::token_pos& tok = tokens[i];
+      const auto& tok = tokens[i];
       if (0 == tok.m_len)
       {
         continue;

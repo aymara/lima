@@ -17,36 +17,23 @@ namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnNER
 class CharChart;
 
 class RnnNERPrivate;
-#define RNNTAGGER_CLASSID "RnnNER"
 
 
-/**
- * @class BadFileException
- * @brief Class exception
- */
-class BadFileException : public std::logic_error {
-public:
-    explicit BadFileException(const std::string& s= "") :
-            std::logic_error(s){}
-    ~BadFileException() noexcept override = default;
-};
-
-/** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
+/** @brief This is a @ref MediaProcessUnit which detects named entities
 *
 * As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
 *
 * IOPES:
-* - Output:          an AnalysisContent
-* - Preconditions:   the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
-* - Effects:         the AnalysisContent will contain an AnalysisData of type AnalysisGraph
-*                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
-*                    for each detected token.
+* - Output:
+* - Preconditions:
+* - Effects:
+*
 */
 class LIMA_RNNNER_EXPORT RnnNER : public MediaProcessUnit
 {
 public:
     RnnNER();
-    ~RnnNER() override;
+    virtual ~RnnNER() override;
 
     void init(Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
               Manager* manager) override;
