@@ -2,82 +2,12 @@ configuration: Release
 
 environment:
   matrix:
-  - job_name: Debian 11
-    APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
-  - job_name: Ubuntu 20.04
-    APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   - job_name: Visual Studio 2019
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-  #- job_name: MacOS
-    #APPVEYOR_BUILD_WORKER_IMAGE: macOS
+  # - job_name: MacOS
+  #   APPVEYOR_BUILD_WORKER_IMAGE: macOS
 
 for:
-  - matrix:
-      only:
-        - job_name: Debian 11
-    services:
-      - docker
-    build_script:
-      - docker build --tag debian11 --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-debian11 .
-      - docker create -ti --name dummy debian11 bash
-      - docker cp dummy:/src/lima/build ./
-      - docker rm -f dummy
-      - cp build/*.deb ./
-      - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | grep -Po "[1-9]\d{3}\-[0-1]\d-[0-3]\d +[0-2]\d:[0-6]\d:[0-6]\d" | sed -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
-      - ps: echo $env:LIMA_VERSION_RELEASE
-    artifacts:
-      - path: "*.deb"
-        name: packages
-    deploy:
-      description: '$(LIMA_VERSION_RELEASE)'
-      provider: GitHub
-      #tag: $(LIMA_VERSION_RELEASE)
-      tag: appveyor_ci
-      draft: true
-      prerelease: true
-      skip_tags: true
-      auth_token:
-        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-      artifact: packages
-      force_update: true
-      on:
-        branch: master                 # release from master branch only
-        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
-
-
-  - matrix:
-      only:
-        - job_name: Ubuntu 20.04
-    services:
-      - docker
-    build_script:
-      - docker build --tag travis-ubuntu20.04 --build-arg USE_TENSORFLOW="true" -f ./continuous_integration/Dockerfile-travis-ubuntu20.04 .
-      - docker create -ti --name dummy travis-ubuntu20.04 bash
-      - docker cp dummy:/src/lima/build ./
-      - docker rm -f dummy
-      - cp build/*.deb ./
-      - ps: $env:LIMA_VERSION_RELEASE="$(git log --date=iso  -1 | grep Date | grep -Po "[1-9]\d{3}\-[0-1]\d-[0-3]\d +[0-2]\d:[0-6]\d:[0-6]\d" | sed -e 's/\+.*//' -e 's/[- :]//g')-$(git log --format=%h --abbrev=8 -1)"
-      - ps: echo $env:LIMA_VERSION_RELEASE
-    artifacts:
-      - path: "*.deb"
-        name: packages
-    deploy:
-      description: '$(LIMA_VERSION_RELEASE)'
-      provider: GitHub
-      #tag: $(LIMA_VERSION_RELEASE)
-      tag: appveyor_ci
-      draft: true
-      prerelease: true
-      skip_tags: true
-      auth_token:
-        secure: 01sh5OxKgkUJbTt/ldX/duLQk6iP28Iwet3reW8FK8f7Z3xiM2RLHQUwOzZye4qs
-      artifact: packages
-      force_update: true
-      on:
-        branch: master                 # release from master branch only
-        APPVEYOR_REPO_TAG: false       # deploy on non tag push only
-
-
   - matrix:
       only:
         - job_name: Visual Studio 2019
@@ -86,14 +16,8 @@ for:
       LIMA_EXTERNALS: c:/d
       LIMA_CONF: 'c:\b\execEnv\config'
       LIMA_RESOURCES: 'c:\b\execEnv\resources'
-      #Qt5_INSTALL_DIR: 'C:\Qt\5.15.0\msvc2019_64'
-      #Qt5_INSTALL_DIR: 'C:\Qt\5.13.2\msvc2017_64'
       Qt5_INSTALL_DIR: 'C:\Qt\5.15.2\msvc2019_64'
-      #BOOST_ROOT: 'C:\Libraries\boost_1_71_0'
-      #BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
       BOOST_ROOT: 'C:\Libraries\boost_1_77_0'
-      #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_71_0\lib64-msvc-14.2'
-      #BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_69_0\lib64-msvc-14.1'
       BOOST_LIBRARYDIR: 'C:\Libraries\boost_1_77_0\lib64-msvc-14.2'
       LIMA_DISABLE_FSW_TESTING: true
       NLTK_PTB_DP_DIR: 'c:\dependency_treebank'
