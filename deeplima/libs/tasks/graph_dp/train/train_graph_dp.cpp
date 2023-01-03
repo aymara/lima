@@ -166,7 +166,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
   }
 
-  return -1;
+  return 0;
 }
 
 } // train
