@@ -18,7 +18,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     message("Linux flags")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer -Ofast")
 
     if (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
