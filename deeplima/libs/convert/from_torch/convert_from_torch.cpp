@@ -8,6 +8,20 @@
 
 #include "convert_from_torch.h"
 
+#include <string>
+#include <regex>
+#include "torch/script.h"
+
+// Dummy function below allows to avoid a crash when compiling with ASAN, as described here:
+// https://github.com/pytorch/pytorch/issues/49460
+// it's unnecessary to invoke this function, just enforce library compiled
+void dummy() {
+    std::regex regstr("Why");
+    std::string s = "Why crashed";
+    std::regex_search(s, regstr);
+}
+
+
 using namespace std;
 using namespace torch;
 using namespace deeplima::convert_from_torch;
