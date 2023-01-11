@@ -423,6 +423,12 @@ public:
       }
       if ((const char*)m_temp_text.data() != m_tokens[0].m_pch)
       {
+        if (m_tokens[0].m_pch == nullptr)
+        {
+          std::cerr << std::string("Got null pointer for m_pch at ")+ __FILE__+":"+std::to_string(__LINE__) << std::endl;
+          std::cerr << std::string("We ask to copy ") << m_tokens[0].m_len << " bytes from there." << std::endl;
+          // throw std::runtime_error((std::string("Got null pointer for m_pch at ")+ __FILE__+":"+std::to_string(__LINE__)).c_str());
+        }
         memcpy(m_temp_text.data(), m_tokens[0].m_pch, m_tokens[0].m_len);
         m_tokens[0].m_pch = (const char*)(m_temp_text.data());
       }
