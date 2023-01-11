@@ -78,19 +78,36 @@ public:
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
     feats.emplace_back(Vectorizer::str_feature, "form", &m_fastText);
-    for (size_t i = 0; i < class_names.size(); ++i)
+    // for (size_t i = 0; i < class_names.size(); ++i)
+    // {
+    //   if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
+    //   {
+    //     // TODO: skip morph classes that aren't requested by DP
+    //     throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
+    //   }
+    //
+    //   feats.emplace_back(Vectorizer::int_feature,
+    //                      InferenceEngine::get_input_str_dicts_names()[i+1],
+    //                      m_featVectorizers[i]);
+    //
+    //   m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
+    // }
+    for (const auto& class_name: class_names)
     {
-      if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
+      int i = 0;
+      for (const auto& input_str_dicts_names: InferenceEngine::get_input_str_dicts_names())
       {
-        // TODO: skip morph classes that aren't requested by DP
-        throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
+        if (class_name == input_str_dicts_names)
+        {
+          feats.emplace_back(Vectorizer::int_feature,
+                            class_name,
+                            m_featVectorizers[i]);
+
+          m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
+          break;
+        }
+        i++;
       }
-
-      feats.emplace_back(Vectorizer::int_feature,
-                         InferenceEngine::get_input_str_dicts_names()[i+1],
-                         m_featVectorizers[i]);
-
-      m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
     }
     m_vectorizer.init_features(feats);
 
