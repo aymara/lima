@@ -118,7 +118,13 @@ int main(int argc, char* argv[])
     char read_buffer[READ_BUFFER_SIZE];
     for ( const auto& fn : input_files )
     {
+      std::cerr << "Reading file: " << fn << std::endl;
       std::ifstream file(fn, std::ifstream::binary | std::ios::in);
+      if (!file.is_open())
+      {
+        std::cerr << "Failed to open file: " << fn << std::endl;
+        throw std::runtime_error("Failed to open file");
+      }
       file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
       parse_file(file, models, path_resolver, threads, out_fmt);
     }

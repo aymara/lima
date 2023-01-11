@@ -327,7 +327,7 @@ public:
 
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
-    // std::cerr << "DependencyParser::operator()" << std::endl;
+    std::cerr << "DependencyParser::operator()" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -339,6 +339,7 @@ public:
     bool insert_root = true;
     while (!iter.end())
     {
+      std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
       assert(m_current_timepoint < m_buffer_size);
       assert(m_current_buffer < m_buffers.size());
 
@@ -434,12 +435,14 @@ public:
 protected:
   void acquire_buffer()
   {
+    std::cerr << "DependencyParser::acquire_buffer" << std::endl;
     size_t next_buffer_idx = (m_current_buffer + 1 < m_buffers.size()) ? (m_current_buffer + 1) : 0;
     const token_buffer_t<token_with_analysis_t>& next_buffer = m_buffers[next_buffer_idx];
 
     // wait for buffer
     while (next_buffer.locked())
     {
+      std::cerr << "DependencyParser::acquire_buffer locked" << std::endl;
       m_impl.send_next_results();
     }
     assert(!next_buffer.locked());
