@@ -70,6 +70,7 @@ protected:
   Compounds::BowGenerator* m_bowGenerator;
   std::string m_graph;
   bool m_allEntities;
+  bool m_xml; // if true, output is not binary but text, in XML format
 
 private:
   void buildBoWText(

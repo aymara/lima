@@ -18,6 +18,7 @@
 #include "linguisticProcessing/common/BagOfWords/bowTerm.h"
 #include "linguisticProcessing/common/BagOfWords/bowText.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
+#include "linguisticProcessing/common/BagOfWords/bowXMLWriter.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
@@ -70,7 +71,8 @@ BowDumper::BowDumper():
    AbstractTextualAnalysisDumper(),
     m_bowGenerator(new Compounds::BowGenerator()),
     m_graph(),
-    m_allEntities(false)
+    m_allEntities(false),
+    m_xml(false)
 {
 }
 
@@ -113,6 +115,18 @@ void BowDumper::init(
     }
   }
   catch (NoSuchParam& ) { } // ignored: optional parameter
+
+  try
+  {
+    std::string allEntities=unitConfiguration.getParamsValueAtKey("xml");
+    if (allEntities=="yes" || allEntities=="1" || allEntities=="true") {
+      m_xml=true;
+    }
+  }
+  catch (NoSuchParam& ) { } // ignored: optional parameter
+  m_bowGenerator->init(unitConfiguration, m_language);
+  
+  
   m_bowGenerator->init(unitConfiguration, m_language);
 }
 
@@ -186,13 +200,19 @@ LimaStatusCode BowDumper::process(
     addAllEntities(annotationData.get(),addedEntities,bowText,anagraph.get(),posgraph.get(),offset);
   }
 
-  BoWBinaryWriter writer(handler->shiftFrom());
   auto dstream = initialize(analysis);
 
 #ifdef DEBUG_LP
   LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
-  writer.writeBoWText(dstream->out(),bowText);
+  if (m_xml) {
+    BoWXMLWriter writer(dstream->out());
+    writer.writeBoWText(&bowText,false,false);
+  }
+  else {
+    BoWBinaryWriter writer(handler->shiftFrom());
+    writer.writeBoWText(dstream->out(),bowText);
+  }
 
   return SUCCESS_ID;
 }
