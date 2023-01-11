@@ -54,9 +54,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   {
     try
     {
-      p_embd = shared_ptr<FastTextVectorizerToTorchMatrix>(
-              new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
-            );
+      p_embd = std::make_shared<FastTextVectorizerToTorchMatrix>(params.m_embeddings_fn);
       assert(nullptr != p_embd.get());
       //feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
     }
