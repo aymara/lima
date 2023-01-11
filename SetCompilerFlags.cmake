@@ -37,6 +37,13 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STDCPP11)
     CHECK_CXX_COMPILER_FLAG(-std=c++14 HAVE_STDCPP14)
     CHECK_CXX_COMPILER_FLAG(-std=c++17 HAVE_STDCPP17)
+
+    # If compiling with clang, must set this option to allow to view symbols from libstdc++
+    CHECK_CXX_COMPILER_FLAG(-fno-limit-debug-info HAVE_NO_LIMIT_DEBUG_INFO)
+    if (HAVE_NO_LIMIT_DEBUG_INFO)
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-limit-debug-info")
+    endif()
+
     CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_SANITIZE_UNDEFINED)
     CHECK_CXX_COMPILER_FLAG(-fno-omit-frame-pointer HAVE_NO_OMIT_FRAME_POINTER)
     if (HAVE_NO_OMIT_FRAME_POINTER)
