@@ -106,7 +106,7 @@ public:
       if (nullptr != p)
       {
         // TODO: Why this fails?
-        // delete p;
+        delete p;
       }
     }
   }
