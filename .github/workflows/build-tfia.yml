@@ -27,8 +27,7 @@ jobs:
 
   ubuntu22_04_lima_factoryia:
     name: "Build the Ubuntu 22.04 Lima image for the FactoryIA cluster"
-    runs-on: self-hosted
-    # runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     env:
       LIBTORCH_DL: "./download_libtorch_gpu.sh"
       COMPILER: "gcc"
@@ -44,20 +43,20 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v3
 
-      # - name: Free Disk Space (Ubuntu)
-      #   uses: jlumbroso/free-disk-space@main
-      #   with:
-      #     # this might remove tools that are actually needed,
-      #     # if set to "true" but frees about 6 GB
-      #     tool-cache: false
-      #
-      #     # all of these default to true, but feel free to set to
-      #     # "false" if necessary for your workflow
-      #     android: true
-      #     dotnet: true
-      #     haskell: true
-      #     large-packages: true
-      #     swap-storage: true
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
 
       - name: "Build image"
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04-fia:latest .
