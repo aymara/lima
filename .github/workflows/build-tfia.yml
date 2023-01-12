@@ -1,4 +1,3 @@
-runs-on: self-hosted
 on:
   push:
     branches:
@@ -28,7 +27,8 @@ jobs:
 
   ubuntu22_04_lima_factoryia:
     name: "Build the Ubuntu 22.04 Lima image for the FactoryIA cluster"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
     env:
       LIBTORCH_DL: "./download_libtorch_gpu.sh"
       COMPILER: "gcc"
