@@ -62,7 +62,7 @@ void ShiftFromTest::ShiftFromTest0()
           QVERIFY(textPosition==sf.correct_offset(offset, indexOfText));
 
           auto indexOfWord = limaText.indexOf("word");
-          QVERIFY(wordPosition=sf.correct_offset(offset, indexOfWord));
+          QVERIFY(wordPosition==sf.correct_offset(offset, indexOfWord));
 
         }
         if (reader.isStartElement() && reader.name() == QLatin1String("TEXT2"))
