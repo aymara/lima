@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+
 set(SOURCE_LIST
   static_graph.cpp
   dict.cpp
@@ -19,6 +20,9 @@ add_library(static_graph
   ${SOURCE_LIST}
   ${HEADER_LIST}
 )
+target_compile_definitions(static_graph
+      PRIVATE "-DDICT_EXPORTING"
+  )
 
 target_link_libraries(static_graph
   PRIVATE

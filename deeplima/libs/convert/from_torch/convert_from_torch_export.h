@@ -8,18 +8,12 @@
 #define DEEPLIMA_CONVERTFROMTORCHEXPORT_H
 
 #ifdef WIN32
-
 #ifdef DEEPLIMA_CONVERTFROMTORCH_EXPORTING
    #define DEEPLIMA_CONVERTFROMTORCH_EXPORT    __declspec(dllexport)
 #else
    #define DEEPLIMA_CONVERTFROMTORCH_EXPORT    __declspec(dllimport)
 #endif
-
-
 #else // Not WIN32
-
 #define DEEPLIMA_CONVERTFROMTORCH_EXPORT
-
 #endif
-
 #endif

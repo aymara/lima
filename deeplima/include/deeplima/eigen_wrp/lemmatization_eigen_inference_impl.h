@@ -25,7 +25,11 @@ namespace eigen_impl
 {
   
 #ifdef WIN32
+#ifdef LEMM_EXPORTING
   #define LEMM_EXPORT __declspec(dllexport)
+#else
+  #define LEMM_EXPORT  __declspec(dllimport)
+#endif
 #else
   #define LEMM_EXPORT
 #endif

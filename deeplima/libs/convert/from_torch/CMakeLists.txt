@@ -21,6 +21,12 @@ add_library(convert_from_torch
 target_compile_definitions(convert_from_torch
         PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
     )
+target_compile_definitions(convert_from_torch
+        PRIVATE "-DLEMM_EXPORTING"
+    )
+target_compile_definitions(convert_from_torch
+      PRIVATE "-DDEP_PARSING_EXPORTING"
+  )
 
 target_link_libraries(convert_from_torch
   PRIVATE
@@ -39,6 +45,12 @@ if (NOT DEEPLIMA_STANDALONE)
   )
   target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
+    )
+  target_compile_definitions(convert_from_torch-shared
+        PRIVATE "-DLEMM_EXPORTING"
+    )
+  target_compile_definitions(convert_from_torch-shared
+        PRIVATE "-DDEP_PARSING_EXPORTING"
     )
 
   target_link_libraries(convert_from_torch-shared
