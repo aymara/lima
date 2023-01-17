@@ -340,7 +340,6 @@ int run(int argc, char** argv)
         TimeUtils::updateCurrentTime();
 
         QString outputFile;
-
         if(useHandler == "bow")
         {
           // for bow documents, use xmlDocumentHandler
@@ -410,6 +409,11 @@ int run(int argc, char** argv)
           throw InvalidConfiguration(QString("unknown handler ") + useHandler);
         }
         std::ofstream fout(outputFile.toStdString(), std::ofstream::binary);
+        if(!fout.is_open()) {
+            XMLREADERCLIENTLOGINIT;
+            LERROR << "could not open output file " << outputFile << "! Skip";
+            continue;
+        }
         if(handler != 0)
         {
           if (dynamic_cast<AbstractXmlDocumentHandler*>(handler) != 0)
