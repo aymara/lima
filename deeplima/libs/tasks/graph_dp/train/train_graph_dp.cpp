@@ -77,7 +77,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   // This list should be saved somewhere and retrieved here later on
   ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t> feat_extractor
       = tag_dict_builder.preprocess(CoNLLU::WordLevelAdapter(&train_data),
-                                    "*form,upos,xpos,feats,-Typo,-Foreign");
+                                    "*form,upos,feats,xpos,-Typo,-Foreign");
   DictsHolder tag_dh = tag_dict_builder.process(CoNLLU::WordLevelAdapter(&train_data),
                                                 feat_extractor, 0, "");
 

@@ -113,7 +113,7 @@ public:
     {
       if (str_feature == feat_descr.m_type)
       {
-        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = static_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
         feat_descr.m_feat_id = m_str_feat_extractor.get_feat_id(feat_descr.m_name);
         m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
@@ -131,7 +131,7 @@ public:
       }
       else if (int_feature == feat_descr.m_type)
       {
-        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = static_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
         feat_descr.m_feat_id = m_uint_feat_extractor.get_feat_id(feat_descr.m_name);
         m_uint_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
@@ -174,15 +174,15 @@ public:
     {
       const auto& feat_descr = m_features[feat_idx];
 
-      if (feature_type_t::int_feature == m_features[feat_idx].m_type)
+      if (feature_type_t::int_feature == feat_descr.m_type)
       {
-        uint_vectorizer_t *pfv = dynamic_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = static_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
         const float feat_val = m_uint_feat_extractor.feat_value(token, feat_descr.m_feat_id);
         pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
       }
-      else if (feature_type_t::str_feature == m_features[feat_idx].m_type)
+      else if (feature_type_t::str_feature == feat_descr.m_type)
       {
-        str_vectorizer_t *pfv = dynamic_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = static_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
         const std::string& feat_val = m_str_feat_extractor.feat_value(token, feat_descr.m_feat_id);
         pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
       }

@@ -203,7 +203,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
                                               double& best_eval_accuracy,
                                               const torch::Device& device)
 {
-  shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
+  std::shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
 
   double best_eval_loss = numeric_limits<double>::max();
