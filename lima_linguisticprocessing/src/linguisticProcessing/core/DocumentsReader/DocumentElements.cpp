@@ -143,7 +143,7 @@ void PropagatedProperties::print(QTextStream& out) const
       for(auto str : iter->second) {
           out << QString::fromStdString(str) << ", ";
       }
-      out << endl;
+      out << Qt::endl;
   }
   return;
 }
@@ -155,7 +155,7 @@ void PropagatedProperties::print(QDebug& out) const
       for(auto str : iter->second) {
           out << QString::fromStdString(str) << ", ";
       }
-      out << endl;
+      out << Qt::endl;
   }
   return;
 }
