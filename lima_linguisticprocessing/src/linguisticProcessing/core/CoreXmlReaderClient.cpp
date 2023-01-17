@@ -327,7 +327,8 @@ std::shared_ptr<AnalysisContent> CoreXmlReaderClient::analyze(
      return std::make_shared<AnalysisContent>();
 }
 
-void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocument &contentDocument, bool isIndexing)
+void CoreXmlReaderClient::startNode(const DocumentsReader::ContentStructuredDocument &contentDocument,
+                                    bool isIndexing)
 {
     AbstractStructuredDocumentElement *absElement = contentDocument.back();
     DocumentsReader::AbstractStructuredDocumentElementWithProperties *element  =

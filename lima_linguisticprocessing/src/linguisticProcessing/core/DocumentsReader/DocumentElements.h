@@ -20,6 +20,9 @@
 #include <deque>
 #include <string>
 
+#include <QtCore/QTextStream>
+
+
 #ifndef DOCUMENTELEMENTS_H
 #define DOCUMENTELEMENTS_H
 
@@ -124,6 +127,22 @@ public:
   virtual FieldType nodeType() override {return NODE_DISCARDABLE;}
 };
 
+class DOCUMENTSREADER_EXPORT PropagatedProperties : public std::map<DocumentPropertyType, std::vector<std::string> >
+{
+public:
+  virtual ~PropagatedProperties() {};
+
+  friend DOCUMENTSREADER_EXPORT std::ostream& operator << (std::ostream&, const PropagatedProperties&);
+  friend DOCUMENTSREADER_EXPORT QTextStream& operator << (QTextStream&, const PropagatedProperties&);
+  friend DOCUMENTSREADER_EXPORT QDebug& operator << (QDebug&, const PropagatedProperties&);
+
+  virtual void print(std::ostream&) const;
+  virtual void print(QTextStream&) const;
+  virtual void print(QDebug&) const;
+};
+
+
+
 class DOCUMENTSREADER_EXPORT AbstractStructuredDocumentElementWithProperties :
     public AbstractStructuredDocumentElement,
     public Lima::Common::Misc::GenericDocumentProperties
@@ -132,18 +151,19 @@ public:
   AbstractStructuredDocumentElementWithProperties(
       const QString& elementName,
       unsigned int firstBytePos ,
-      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
+      const PropagatedProperties& toBePropagated );
   virtual ~AbstractStructuredDocumentElementWithProperties();
 
   void addProperty( const DocumentPropertyType& propType, const std::string& value );
 
-  const std::map<DocumentPropertyType, std::vector<std::string> >& getPropertyList() const;
+
+  const PropagatedProperties& getPropertyList() const;
 
   void setPropagatedValue(
-    const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
+    const PropagatedProperties& toBePropagated );
 
 protected:
-  std::map<DocumentPropertyType, std::vector<std::string> > m_toBePropagated;
+  PropagatedProperties m_toBePropagated;
 
 };
 
@@ -170,7 +190,7 @@ public:
       const QString& elementName,
       unsigned int firstBytePos ,
       const DocumentPropertyType& propType,
-      const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated );
+      const PropagatedProperties& toBePropagated );
   ~IndexingDocumentElement();
 
   bool hasPropType( )  override { return( m_propType.getValueCardinality() != CARDINALITY_NONE ); }
@@ -187,7 +207,7 @@ class DOCUMENTSREADER_EXPORT HierarchyDocumentElement :
 {
 public:
   HierarchyDocumentElement( const QString& elementName, unsigned int firstBytePos ,
-   const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated  );
+   const PropagatedProperties& toBePropagated  );
   ~HierarchyDocumentElement() {}
   virtual FieldType nodeType() override {return NODE_HIERARCHY;}
 };
@@ -204,7 +224,7 @@ public:
   PresentationDocumentElement(
       const QString& elementName,
       unsigned int firstBytePos ,
-      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
+      const PropagatedProperties& toBePropagated );
   ~PresentationDocumentElement() {}
   bool isPresentation() override {return true;}
   virtual FieldType nodeType() override {return NODE_PRESENTATION;}
@@ -221,7 +241,7 @@ public:
       const QString& elementName,
       unsigned int firstBytePos,
       const DocumentPropertyType& propType,
-      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated  );
+      const PropagatedProperties& toBePropagated  );
   ~IgnoredDocumentElement() {}
   virtual FieldType nodeType() override {return NODE_IGNORED;}
 

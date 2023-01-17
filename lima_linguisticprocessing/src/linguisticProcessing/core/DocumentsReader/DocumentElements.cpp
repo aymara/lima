@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 
+#include <QtCore/QTextStream>
+
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
 #include "contentDocument.h"
 
@@ -98,6 +100,68 @@ void AbstractStructuredDocumentElement::addSpaces(int nbSpaces) {
 #endif
 }
 
+//***********************************************************************
+// output
+//***********************************************************************
+
+std::ostream& operator << (std::ostream& out, const PropagatedProperties& properties)
+{
+  properties.print(out);
+  return out;
+}
+
+QTextStream& operator << (QTextStream& out, const PropagatedProperties& properties)
+{
+  properties.print(out);
+  return out;
+}
+
+QDebug& operator << (QDebug& out, const PropagatedProperties& properties)
+{
+  properties.print(out);
+  return out;
+}
+
+
+void PropagatedProperties::print(std::ostream& out) const
+{
+  for(auto iter=begin(); iter!=end(); iter++) {
+      out << iter->first.getId() << "," << storageTypeTag[iter->first.getStorageType()].toStdString()
+          << "," << cardinalityTypeTag[iter->first.getValueCardinality()].toStdString() << ": ";
+      for(auto str : iter->second) {
+          out << str << ", ";
+      }
+      out << endl;
+  }
+  return;
+}
+void PropagatedProperties::print(QTextStream& out) const
+{
+  for(auto iter=begin(); iter!=end(); iter++) {
+      out << QString::fromStdString(iter->first.getId()) << "," << storageTypeTag[iter->first.getStorageType()]
+          << "," << cardinalityTypeTag[iter->first.getValueCardinality()] << ": ";
+      for(auto str : iter->second) {
+          out << QString::fromStdString(str) << ", ";
+      }
+      out << endl;
+  }
+  return;
+}
+void PropagatedProperties::print(QDebug& out) const
+{
+  for(auto iter=begin(); iter!=end(); iter++) {
+      out << QString::fromStdString(iter->first.getId()) << "," << storageTypeTag[iter->first.getStorageType()]
+          << "," << cardinalityTypeTag[iter->first.getValueCardinality()] << ": ";
+      for(auto str : iter->second) {
+          out << QString::fromStdString(str) << ", ";
+      }
+      out << endl;
+  }
+  return;
+}
+//***********************************************************************
+
+
 DiscardableDocumentElement::DiscardableDocumentElement( const QString& elementName, unsigned int firstBytePos )
     : AbstractStructuredDocumentElement(elementName, firstBytePos)
 {
@@ -110,7 +174,7 @@ DiscardableDocumentElement::DiscardableDocumentElement( const QString& elementNa
 PresentationDocumentElement::PresentationDocumentElement(
     const QString& elementName,
     unsigned int firstBytePos,
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
+    const PropagatedProperties& toBePropagated )
     : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
@@ -124,7 +188,7 @@ IgnoredDocumentElement::IgnoredDocumentElement(
     const QString& elementName,
     unsigned int firstBytePos,
     const DocumentPropertyType& propType,
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
+    const PropagatedProperties& toBePropagated )
     : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
@@ -151,7 +215,7 @@ void DocumentPropertyElement::addToCurrentOffset(const Lima::LimaString& value) 
 AbstractStructuredDocumentElementWithProperties::AbstractStructuredDocumentElementWithProperties(
     const QString& elementName,
     unsigned int firstBytePos,
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated ) :
+    const PropagatedProperties& toBePropagated ) :
   AbstractStructuredDocumentElement(elementName, firstBytePos), m_toBePropagated(toBePropagated)
 {
 }
@@ -163,7 +227,7 @@ AbstractStructuredDocumentElementWithProperties::~AbstractStructuredDocumentElem
 HierarchyDocumentElement::HierarchyDocumentElement(
     const QString& elementName,
     unsigned int firstBytePos,
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated  ) :
+    const PropagatedProperties& toBePropagated  ) :
   AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
@@ -176,7 +240,7 @@ HierarchyDocumentElement::HierarchyDocumentElement(
 IndexingDocumentElement::IndexingDocumentElement(
     const QString& elementName, unsigned int firstBytePos,
     const DocumentPropertyType& propType,
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
+    const PropagatedProperties& toBePropagated )
   : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
   m_propType = propType;
@@ -199,12 +263,18 @@ IndexingDocumentElement::~IndexingDocumentElement()
 
 // TODO: transfert this code in parent class ?
 void AbstractStructuredDocumentElementWithProperties::setPropagatedValue(
-    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
+    const PropagatedProperties& toBePropagated )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
-  LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue" << getElementName() << toBePropagated.size();
+  LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue" << getElementName() << this << "," << toBePropagated.size() << "properties";
 #endif
+
+  if(toBePropagated.size()) {
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue properties:" << toBePropagated;
+#endif
+  }
 
   for(auto it = toBePropagated.begin() ; it != toBePropagated.end() ; it++  )
   {
@@ -309,7 +379,7 @@ void AbstractStructuredDocumentElementWithProperties::addProperty(
   }
 }
 
-const std::map<DocumentPropertyType, std::vector<std::string> >&
+const PropagatedProperties&
 AbstractStructuredDocumentElementWithProperties::getPropertyList() const
 {
   return m_toBePropagated;

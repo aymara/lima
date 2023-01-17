@@ -57,7 +57,7 @@ DocumentPropertyElement* ContentStructuredDocument::addPropertyChild(
   LDEBUG << "ContentStructuredDocument::addPropertyChild" << elementName << "for property" << type.getId();
 #endif
   DocumentPropertyElement* result;
-  result = new DocumentPropertyElement(elementName, parserOffset, type );
+  result = new DocumentPropertyElement(elementName, parserOffset, type);
   push_back(result);
   return result;
 }
@@ -84,8 +84,8 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
 #ifdef DEBUG_LP
     LDEBUG  << "empty";
 #endif
-    const std::map<DocumentPropertyType, std::vector<std::string> > toBePropagated;
-    result = new HierarchyDocumentElement(elementName, parserOffset, toBePropagated);
+    const PropagatedProperties emptyPropagated;
+    result = new HierarchyDocumentElement(elementName, parserOffset, emptyPropagated);
   }
   else {
 #ifdef DEBUG_LP
@@ -149,7 +149,7 @@ IndexingDocumentElement* ContentStructuredDocument::pushIndexingChild(
   }
   result->GenericDocumentProperties::setIntValue("offBegPrpty", parserOffset);
 
-  push_back(result );
+  push_back(result);
 #ifdef DEBUG_LP
   LDEBUG << "ContentStructuredDocument::pushIndexingChild: end";
 #endif
@@ -219,7 +219,7 @@ PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(
   }
   else
   {
-    const std::map<DocumentPropertyType, std::vector<std::string> > emptyPropagated;
+    const PropagatedProperties emptyPropagated;
     result = new PresentationDocumentElement(elementName, parserOffset, emptyPropagated );
     result->addSpaces(parserOffset-back()->getOffset());
   }
@@ -292,9 +292,16 @@ void ContentStructuredDocument::popPresentationElement( unsigned int parserOffse
   if (!empty())
   {
     AbstractStructuredDocumentElement* newCurrent = back();
-    if (dynamic_cast<HierarchyDocumentElement*>(newCurrent) !=0)
+#ifdef DEBUG_LP
+    LDEBUG << "ContentStructuredDocument::popPresentationElement new current element is" <<newCurrent->getElementName();
+#endif
+    HierarchyDocumentElement* hierNewCurrent = dynamic_cast<HierarchyDocumentElement*>(newCurrent);
+    if (hierNewCurrent !=0)
     {
-      dynamic_cast<HierarchyDocumentElement*>(newCurrent)->setPropagatedValue(currentElement->getPropertyList());
+#ifdef DEBUG_LP
+      LDEBUG << "ContentStructuredDocument::popPresentationElement propagating properties from" <<currentElement->getElementName() <<"to"<<newCurrent->getElementName();
+#endif
+        hierNewCurrent->setPropagatedValue(currentElement->getPropertyList());
     }
     newCurrent->back()->addText(currentElement->back()->getText());
     newCurrent->setOffset(parserOffset);
@@ -320,11 +327,19 @@ void ContentStructuredDocument::popIndexingElement(unsigned int parserOffset)
   if (!empty())
   {
     AbstractStructuredDocumentElement* newCurrent = back();
-    if (dynamic_cast<HierarchyDocumentElement*>(newCurrent) !=0)
+#ifdef DEBUG_LP
+    LDEBUG << "ContentStructuredDocument::popIndexingElement new current element is" <<newCurrent->getElementName();
+#endif
+    HierarchyDocumentElement* hierNewCurrent = dynamic_cast<HierarchyDocumentElement*>(newCurrent);
+    if ( hierNewCurrent !=0)
     {
-      dynamic_cast<HierarchyDocumentElement*>(newCurrent)->setPropagatedValue(currentElement->getPropertyList());
+#ifdef DEBUG_LP
+      LDEBUG << "ContentStructuredDocument::popIndexingElement propagating properties from" <<currentElement->getElementName() <<"to"<<newCurrent->getElementName();
+#endif
+      hierNewCurrent->setPropagatedValue(currentElement->getPropertyList());
     }
     newCurrent->setOffset(parserOffset);
+
   }
   delete currentElement;
 }
@@ -346,12 +361,13 @@ void ContentStructuredDocument::popIgnoredElement(unsigned int parserOffset)
 #ifdef DEBUG_LP
     LDEBUG << "ContentStructuredDocument::popIgnoredElement new current element is" <<newCurrent->getElementName();
 #endif
-    if (dynamic_cast<HierarchyDocumentElement*>(newCurrent) !=0)
+    HierarchyDocumentElement* hierNewCurrent = dynamic_cast<HierarchyDocumentElement*>(newCurrent);
+    if ( hierNewCurrent !=0 )
     {
 #ifdef DEBUG_LP
       LDEBUG << "ContentStructuredDocument::popIgnoredElement propagating properties from" <<currentElement->getElementName() <<"to"<<newCurrent->getElementName();
 #endif
-      dynamic_cast<HierarchyDocumentElement*>(newCurrent)->setPropagatedValue(currentElement->getPropertyList());
+      hierNewCurrent->setPropagatedValue(currentElement->getPropertyList());
     }
     newCurrent->setOffset(parserOffset);
   }
@@ -373,9 +389,26 @@ void ContentStructuredDocument::popHierarchyElement(unsigned int parserOffset)
   if (!empty())
   {
     AbstractStructuredDocumentElement* newCurrent = back();
-    if (dynamic_cast<HierarchyDocumentElement*>(newCurrent) !=0)
+#ifdef DEBUG_LP
+    LDEBUG << "ContentStructuredDocument::popHierarchyElement new current element is" <<newCurrent->getElementName();
+#endif
+    HierarchyDocumentElement* hierNewCurrent = dynamic_cast<HierarchyDocumentElement*>(newCurrent);
+    if ( hierNewCurrent != 0 )
     {
-      dynamic_cast<HierarchyDocumentElement*>(newCurrent)->setPropagatedValue(currentElement->getPropertyList());
+#ifdef DEBUG_LP
+      LDEBUG << "ContentStructuredDocument::popHierarchyElement propagating properties from" <<currentElement->getElementName() <<"to"<<newCurrent->getElementName();
+#endif
+       auto identPrpty = currentElement->getStringValue("identPrpty");
+       if(identPrpty.second && identPrpty.first!="")
+       {
+#ifdef DEBUG_LP
+        LDEBUG << "ContentStructuredDocument::popHierarchyElement no dot propagate since current identPrpty is not empty:" << identPrpty.first;
+#endif
+       }
+       else {
+           hierNewCurrent->setPropagatedValue(currentElement->getPropertyList());
+       }
+
     }
     newCurrent->setOffset(parserOffset);
   }
