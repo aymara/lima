@@ -52,14 +52,22 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
 
       assert(input.get_max_feat() == gold.get_max_feat());
       assert(input.get_max_feat() == input_cat[0].get_max_feat());
-      train_stat = train_on_subset(params, input, input_cat, gold, opt, device);
+      auto train_subset_stat = train_on_subset(params, input, input_cat, gold, opt, device);
+      train_stat["output"].m_loss = train_subset_stat["output"].m_loss;
+      train_stat["output"].m_correct += train_subset_stat["output"].m_correct;
+      train_stat["output"].m_items +=  train_subset_stat["output"].m_items;
     }
+    if (train_stat["output"].m_items > 0)
+    {
+      train_stat["output"].m_accuracy = float(train_stat["output"].m_correct) / train_stat["output"].m_items;
+    }
+
 
     // evaluate(eval_input, eval_gold, eval_stat, device);
     std::cout << "EPOCH " << e << " | lemmatization"
               << " | LR=" << params.m_learning_rate << " | "
-              // << " LEN: " << input_tensor.sizes()[0]
-              << " TRAIN LOSS: " << train_stat["output"].m_loss
+              // << " LEN=" << input_tensor.sizes()[0]
+              << " TRAIN LOSS=" << train_stat["output"].m_loss
               << " ACC=" << train_stat["output"].m_accuracy
               << " CORRECT=" << train_stat["output"].m_correct
               << " TOTAL=" << train_stat["output"].m_items
