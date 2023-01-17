@@ -130,13 +130,15 @@ void DocumentPropertyType::init (
     {
         DRLOGINIT;
         LERROR << "no param 'storageType' in DocumentPropertyType group for " << getId();
-        throw Lima::InvalidConfiguration();
+        throw Lima::InvalidConfiguration("no param 'storageType' in DocumentPropertyType group for "+getId());
     }
 
     // taille pour le stockage (nombre de bytes pour une chaine de caracteres)
     try
     {
-        m_d->m_storageSize=atoi ( unitConfiguration.getParamsValueAtKey ( "storageSize" ).c_str() );
+        if(m_d->m_storageType == StorageType::STORAGE_UTF8_STRING) {
+            m_d->m_storageSize=atoi ( unitConfiguration.getParamsValueAtKey ( "storageSize" ).c_str() );
+        }
     }
     catch ( NoSuchParam& e )
     {
@@ -162,23 +164,27 @@ void DocumentPropertyType::init (
     {
         DRLOGINIT;
         LERROR << "no param 'cardinality' in DocumentPropertyType group for " << getId();
-        throw Lima::InvalidConfiguration();
+        throw Lima::InvalidConfiguration("no param 'cardinality' in DocumentPropertyType group for " + getId());
     }
 
     // liste des noms d'elements dont le contenu defini la valeur de l'attribut
     try
     {
         const std::deque< std::string >& list = unitConfiguration.getListsValueAtKey ( "elementNames" );
-        Q_FOREACH( const std::string& elem, list)
+        for(const std::string& elem : list)
         {
+#ifdef DEBUG_LP
+                DRLOGINIT
+                LDEBUG << "DocumentPropertyType::init: m_tagElementNames.push_back("
+                    << elem << ")";
+#endif
           m_d->m_tagElementNames.push_back(QString::fromUtf8(elem.c_str()));
         }
     }
     catch ( NoSuchList& e )
     {
-#ifdef DEBUG_LP
+        DRLOGINIT;
         LDEBUG << "no list 'elementNames' in DocumentPropertyType group for " << getId();
-#endif
     }
 
     // liste des noms d'elements + attributs dont la valeur defini la valeur de l'attribut
@@ -201,8 +207,9 @@ void DocumentPropertyType::init (
                 std::string attributeName ( *it,spaceOffset+1,equalOffset-spaceOffset-1 );
                 std::string newFieldName ( *it,0,spaceOffset );
 #ifdef DEBUG_LP
+                DRLOGINIT
                 LDEBUG << "DocumentPropertyType::init: m_tagAttributeNames.push_back("
-                << newFieldName << ", " << attributeName << ")";
+                    << newFieldName << ", " << attributeName << ")";
 #endif
                 m_d->m_tagAttributeNames.push_back ( pair<QString,QString> ( QString::fromUtf8(newFieldName.c_str()),QString::fromUtf8(attributeName.c_str()) ) );
             }
@@ -210,9 +217,8 @@ void DocumentPropertyType::init (
     }
     catch ( NoSuchList& e )
     {
- #ifdef DEBUG_LP
+       DRLOGINIT;
        LDEBUG << "no list 'attributeNames' in DocumentPropertyType group for " << getId();
-#endif
     }
 
 }
@@ -255,7 +261,7 @@ void ExtensionDocumentPropertyType::init (
     if ( m_d->m_tagAttributeNames.empty() && m_d->m_tagElementNames.empty() )
     {
         LERROR << "no list ('attributeNames' or 'elementNames') in DocumentPropertyType group for " << getId();
-        throw Lima::InvalidConfiguration();
+        throw Lima::InvalidConfiguration("no list ('attributeNames' or 'elementNames') in DocumentPropertyType group for " + getId());
     }
 }
 

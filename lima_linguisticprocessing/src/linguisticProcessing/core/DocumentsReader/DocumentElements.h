@@ -129,19 +129,21 @@ class DOCUMENTSREADER_EXPORT AbstractStructuredDocumentElementWithProperties :
     public Lima::Common::Misc::GenericDocumentProperties
 {
 public:
-  AbstractStructuredDocumentElementWithProperties( const QString& elementName, unsigned int firstBytePos ,
-   const std::map<DocumentPropertyType, std::string>& toBePropagated );
+  AbstractStructuredDocumentElementWithProperties(
+      const QString& elementName,
+      unsigned int firstBytePos ,
+      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
   virtual ~AbstractStructuredDocumentElementWithProperties();
 
   void addProperty( const DocumentPropertyType& propType, const std::string& value );
 
-  const std::map<DocumentPropertyType, std::string>& getPropertyList() const;
+  const std::map<DocumentPropertyType, std::vector<std::string> >& getPropertyList() const;
 
   void setPropagatedValue(
-    const std::map<DocumentPropertyType, std::string>& toBePropagated );
+    const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
 
 protected:
-  std::map<DocumentPropertyType, std::string> m_toBePropagated;
+  std::map<DocumentPropertyType, std::vector<std::string> > m_toBePropagated;
 
 };
 
@@ -164,7 +166,11 @@ class DOCUMENTSREADER_EXPORT IndexingDocumentElement :
     public AbstractStructuredDocumentElementWithProperties
 {
 public:
-  IndexingDocumentElement(  const QString& elementName, unsigned int firstBytePos , const DocumentPropertyType& propType, const std::map< DocumentPropertyType, std::string >& toBePropagated );
+  IndexingDocumentElement(
+      const QString& elementName,
+      unsigned int firstBytePos ,
+      const DocumentPropertyType& propType,
+      const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated );
   ~IndexingDocumentElement();
 
   bool hasPropType( )  override { return( m_propType.getValueCardinality() != CARDINALITY_NONE ); }
@@ -181,7 +187,7 @@ class DOCUMENTSREADER_EXPORT HierarchyDocumentElement :
 {
 public:
   HierarchyDocumentElement( const QString& elementName, unsigned int firstBytePos ,
-   const std::map<DocumentPropertyType, std::string>& toBePropagated  );
+   const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated  );
   ~HierarchyDocumentElement() {}
   virtual FieldType nodeType() override {return NODE_HIERARCHY;}
 };
@@ -195,8 +201,10 @@ public:
 class PresentationDocumentElement : public AbstractStructuredDocumentElementWithProperties
 {
 public:
-  PresentationDocumentElement( const QString& elementName, unsigned int firstBytePos ,
-   const std::map<DocumentPropertyType, std::string>& toBePropagated );
+  PresentationDocumentElement(
+      const QString& elementName,
+      unsigned int firstBytePos ,
+      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated );
   ~PresentationDocumentElement() {}
   bool isPresentation() override {return true;}
   virtual FieldType nodeType() override {return NODE_PRESENTATION;}
@@ -209,7 +217,11 @@ public:
 class DOCUMENTSREADER_EXPORT IgnoredDocumentElement : public AbstractStructuredDocumentElementWithProperties
 {
 public:
-  IgnoredDocumentElement( const QString& elementName, unsigned int firstBytePos, const DocumentPropertyType& propType, const std::map<DocumentPropertyType, std::string >& toBePropagated  );
+  IgnoredDocumentElement(
+      const QString& elementName,
+      unsigned int firstBytePos,
+      const DocumentPropertyType& propType,
+      const std::map<DocumentPropertyType, std::vector<std::string> >& toBePropagated  );
   ~IgnoredDocumentElement() {}
   virtual FieldType nodeType() override {return NODE_IGNORED;}
 
@@ -224,7 +236,10 @@ public:
 class DOCUMENTSREADER_EXPORT DocumentPropertyElement : public AbstractStructuredDocumentElement
 {
 public:
-  DocumentPropertyElement(const QString& elementName, unsigned int firstBytePos , const DocumentPropertyType& propType );
+  DocumentPropertyElement(
+      const QString& elementName,
+      unsigned int firstBytePos ,
+      const DocumentPropertyType& propType );
   bool hasPropType( ) override { return true; }
   ~DocumentPropertyElement() {}
   // Called when some character content is added

@@ -207,8 +207,13 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects,
 
   appendNonEmptyDirs(resourcesDirs, paths);
 
+  QString var = getEnvVar(QString::fromStdString("LIMA_SHOW_CONFIG_PATH"));
+  if ( !var.isEmpty() )
+  {
+    qDebug() << "LIMA Resources directories list built is:" << resourcesDirs;
+  }
   LOGINIT("FilesReporting");
-  LINFO << "Resources directories are:" << resourcesDirs;
+  LINFO << "LIMA Resources directories list built is:" << resourcesDirs;
   return resourcesDirs;
 }
 

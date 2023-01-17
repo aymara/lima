@@ -349,10 +349,9 @@ MediaId MediaticDataPrivate::getMediaId(const std::string& stringId)
   if (stringId.empty())
   {
     MDATALOGINIT;
-    LERROR << "MediaticData::getMediaId invalid empty argument stringId at"
-            << __FILE__ << ", line" << __LINE__;
+    LERROR << "MediaticData::getMediaId invalid empty argument stringId at" << __FILE__ << ", line" << __LINE__;
     throw std::runtime_error(
-      std::string("MediaticData::getMediaId invalid empty argument stringId at ").c_str() );
+      std::string("MediaticData::getMediaId invalid empty argument stringId") );
   }
   auto it = m_mediasIds.find(stringId);
   if (it == m_mediasIds.end())

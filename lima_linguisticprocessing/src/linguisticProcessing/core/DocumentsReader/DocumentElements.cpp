@@ -16,6 +16,7 @@
 #include <fstream>
 #include <string>
 #include <deque>
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
 
 #include "linguisticProcessing/core/XmlProcessingCommon.h"
@@ -106,7 +107,10 @@ DiscardableDocumentElement::DiscardableDocumentElement( const QString& elementNa
 #endif
 }
 
-PresentationDocumentElement::PresentationDocumentElement( const QString& elementName, unsigned int firstBytePos, const std::map< DocumentPropertyType, std::string >& toBePropagated )
+PresentationDocumentElement::PresentationDocumentElement(
+    const QString& elementName,
+    unsigned int firstBytePos,
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
     : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
@@ -116,7 +120,11 @@ PresentationDocumentElement::PresentationDocumentElement( const QString& element
   m_toBePropagated = toBePropagated;
 }
 
-IgnoredDocumentElement::IgnoredDocumentElement( const QString& elementName, unsigned int firstBytePos, const DocumentPropertyType& propType, const std::map< DocumentPropertyType, std::string >& toBePropagated )
+IgnoredDocumentElement::IgnoredDocumentElement(
+    const QString& elementName,
+    unsigned int firstBytePos,
+    const DocumentPropertyType& propType,
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
     : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
@@ -126,7 +134,10 @@ IgnoredDocumentElement::IgnoredDocumentElement( const QString& elementName, unsi
   m_propType = propType;
 }
 
-DocumentPropertyElement::DocumentPropertyElement( const QString& elementName, unsigned int firstBytePos, const DocumentPropertyType& propType )
+DocumentPropertyElement::DocumentPropertyElement(
+    const QString& elementName,
+    unsigned int firstBytePos,
+    const DocumentPropertyType& propType )
      : AbstractStructuredDocumentElement(elementName, firstBytePos) {
   m_propType = propType;
 }
@@ -138,7 +149,9 @@ void DocumentPropertyElement::addToCurrentOffset(const Lima::LimaString& value) 
 }
 
 AbstractStructuredDocumentElementWithProperties::AbstractStructuredDocumentElementWithProperties(
-    const QString& elementName, unsigned int firstBytePos, const std::map< DocumentPropertyType, std::string >& toBePropagated ) :
+    const QString& elementName,
+    unsigned int firstBytePos,
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated ) :
   AbstractStructuredDocumentElement(elementName, firstBytePos), m_toBePropagated(toBePropagated)
 {
 }
@@ -147,27 +160,31 @@ AbstractStructuredDocumentElementWithProperties::~AbstractStructuredDocumentElem
 {
 }
 
-HierarchyDocumentElement::HierarchyDocumentElement( const QString& elementName, unsigned int firstBytePos, const std::map< DocumentPropertyType, std::string >& toBePropagated  ) :
+HierarchyDocumentElement::HierarchyDocumentElement(
+    const QString& elementName,
+    unsigned int firstBytePos,
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated  ) :
   AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "HierarchyDocumentElement::HierarchyDocumentElement(" << elementName << ")";
 #endif
+  setPropagatedValue(toBePropagated);
 }
 
 IndexingDocumentElement::IndexingDocumentElement(
     const QString& elementName, unsigned int firstBytePos,
     const DocumentPropertyType& propType,
-    const std::map< DocumentPropertyType, std::string >& toBePropagated )
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
   : AbstractStructuredDocumentElementWithProperties(elementName, firstBytePos, toBePropagated)
 {
   m_propType = propType;
 #ifdef DEBUG_LP
   DRLOGINIT;
   LDEBUG << "IndexingDocumentElement::IndexingDocumentElement(" << elementName << ")";
-  setPropagatedValue(toBePropagated);
 #endif
+  setPropagatedValue(toBePropagated);
 }
 
 IndexingDocumentElement::~IndexingDocumentElement()
@@ -182,7 +199,7 @@ IndexingDocumentElement::~IndexingDocumentElement()
 
 // TODO: transfert this code in parent class ?
 void AbstractStructuredDocumentElementWithProperties::setPropagatedValue(
-    const map< DocumentPropertyType, string >& toBePropagated )
+    const std::map< DocumentPropertyType, std::vector<std::string> >& toBePropagated )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -192,37 +209,67 @@ void AbstractStructuredDocumentElementWithProperties::setPropagatedValue(
   for(auto it = toBePropagated.begin() ; it != toBePropagated.end() ; it++  )
   {
     const DocumentPropertyType& property = (*it).first;
-    std::string data = (*it).second;
-    if (data.empty())
+    std::vector<std::string> v_data = (*it).second;
+    if (v_data.empty())
     {
 #ifdef DEBUG_LP
     LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue do not try to propagate empty value for" << property.getId();
 #endif
       continue;
     }
-    m_toBePropagated.insert(std::make_pair(property,data));
+    if(property.getValueCardinality() != CARDINALITY_MULTIPLE) {
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue add propagated value for later use, for" << property.getId() << v_data;
+#endif
+      m_toBePropagated.insert(std::make_pair(property,v_data));
+    }
+    else {
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue append propagated value for later use, for" << property.getId() << v_data;
+#endif
+      for(std::string data : v_data) {
+          auto ite_Beg = m_toBePropagated[property].begin(),
+              ite_End = m_toBePropagated[property].end();
+          if(std::find(ite_Beg,ite_End,data) == ite_End) {
+              m_toBePropagated[property].push_back(data);
+          }
+      }
+    }
+
+#ifdef DEBUG_LP
+    LTRACE << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue propagating" << property.getId() << v_data;
+#endif
+    for(std::string data : v_data) {
+      if (data.empty())
+      {
+#ifdef DEBUG_LP
+        LDEBUG << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue do not try to propagate empty value for" << property.getId();
+#endif
+        continue;
+      }
 #ifdef DEBUG_LP
     LTRACE << "AbstractStructuredDocumentElementWithProperties::setPropagatedValue propagating" << property.getId() << data;
 #endif
-    switch (property.getStorageType()) {
+      switch (property.getStorageType()) {
 
-    case STORAGE_DATE: {
-      QDate dateValue;
-      QDate dateIgnore;
-      ContentStructuredDocument::parseDate(data,dateValue,dateIgnore);
-      GenericDocumentProperties::setDateValue(property.getId(), dateValue);
+      case STORAGE_DATE: {
+        QDate dateValue;
+        QDate dateIgnore;
+        ContentStructuredDocument::parseDate(data,dateValue,dateIgnore);
+        GenericDocumentProperties::setDateValue(property.getId(), dateValue);
+        }
+        break;
+      case STORAGE_UTF8_STRING:
+        if( property.getValueCardinality() == CARDINALITY_MULTIPLE)
+          GenericDocumentProperties::addStringValue(property.getId(), data);
+        else
+          GenericDocumentProperties::setStringValue(property.getId(), data);
+        break;
+      case STORAGE_INTEGER:
+      default:
+        GenericDocumentProperties::setIntValue(property.getId(), atoi(data.c_str()));
+        break;
       }
-      break;
-    case STORAGE_UTF8_STRING:
-      if( property.getValueCardinality() == CARDINALITY_MULTIPLE)
-        GenericDocumentProperties::addStringValue(property.getId(), data);
-      else
-        GenericDocumentProperties::setStringValue(property.getId(), data);
-      break;
-    case STORAGE_INTEGER:
-    default:
-      GenericDocumentProperties::setIntValue(property.getId(), atoi(data.c_str()));
-      break;
     }
   }
 }
@@ -237,7 +284,7 @@ void AbstractStructuredDocumentElementWithProperties::addProperty(
   // insert property if it's not present
   if (m_toBePropagated.find(propType) == m_toBePropagated.end())
   {
-    auto result = m_toBePropagated.insert(std::make_pair(propType,value));
+    auto result = m_toBePropagated.insert(std::make_pair(propType, std::vector<std::string>(1,value) ));
     if (!result.second)
     {
       DRLOGINIT;
@@ -246,21 +293,27 @@ void AbstractStructuredDocumentElementWithProperties::addProperty(
   }
   else
   {
-    // replace property value
+    // replace property value or append if cardinality is multi-valued
+    if (propType.getValueCardinality() == CARDINALITY_MULTIPLE) {
 #ifdef DEBUG_LP
-    LDEBUG << "AbstractStructuredDocumentElementWithProperties::addProperty replace" << getElementName() << propType.getId() << "value" << m_toBePropagated[propType] << "by" << value;
+    LDEBUG << "AbstractStructuredDocumentElementWithProperties::addProperty append" << getElementName() << propType.getId() << "value" << m_toBePropagated[propType] << "with" << value;
 #endif
-    m_toBePropagated[propType] = value;
+        m_toBePropagated[propType].push_back( value );
+    }
+    else {
+#ifdef DEBUG_LP
+    LDEBUG << "AbstractStructuredDocumentElementWithProperties::addProperty set" << getElementName() << propType.getId() << "value" << m_toBePropagated[propType] << "by" << value;
+#endif
+        m_toBePropagated[propType] = std::vector<std::string>(1, value);
+    }
   }
 }
 
-const std::map<DocumentPropertyType, std::string>&
+const std::map<DocumentPropertyType, std::vector<std::string> >&
 AbstractStructuredDocumentElementWithProperties::getPropertyList() const
 {
   return m_toBePropagated;
 }
-
-
 
 } // namespace DocumentsReader
 }

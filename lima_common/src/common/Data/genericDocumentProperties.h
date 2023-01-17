@@ -130,6 +130,8 @@ class LIMA_DATA_EXPORT GenericDocumentProperties
   void setStringValue(const std::string& propName, const std::string& val);
   void setDateValue(const std::string& propName, const QDate& val);
   void setDateIntervalValue(const std::string& propName, const std::pair<QDate,QDate>& val);
+  void setMultipleStringPropValue(const std::string& propName, const std::vector<std::string>& val);
+  void setMultipleWeightedPropValue(const std::string& propName, const std::vector<std::pair<std::string,float> >& val);
 
   void addStringValue(const std::string& propName, const std::string& str);
   void addWeightedPropValue(const std::string& propName, const std::pair<std::string,float>& str);

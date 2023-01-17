@@ -640,8 +640,21 @@ bool StructuredDocumentXMLParser::endElement(const QString& namespaceURI,
 #endif
     m_currentDocument->popPresentationElement ( parserOffset );
 #ifdef DEBUG_LP
-    LDEBUG << "StructuredDocumentXMLParser::endElement(" << qsname
-    << "), document.size = " << m_currentDocument->size() << " before return";
+    LDEBUG << "StructuredDocumentXMLParser::endElement(" << qsname << "), document.size = "
+          << m_currentDocument->size() << " before return";
+#endif
+    return true;
+    break;
+  case NODE_PROPERTY:
+#ifdef DEBUG_LP
+    LDEBUG << "StructuredDocumentXMLParser::endElement: pop property element " << qsname;
+#endif
+    if (currentElement->getPropType().getValueCardinality() != CARDINALITY_NONE && !currentElement->empty() )
+      m_currentDocument->setDataToElement(currentElement, currentElement->getPropType(), currentElement->back()->getText().toUtf8().constData(), m_processor);
+    m_currentDocument->popPropertyElement( parserOffset );
+#ifdef DEBUG_LP
+    LDEBUG << "StructuredDocumentXMLParser::endElement(" << qsname << "), document.size = "
+            << m_currentDocument->size() << " before return";
 #endif
     return true;
     break;

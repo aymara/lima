@@ -177,7 +177,8 @@ void CoreXmlReaderClient::handle(
       XMLREADERCLIENTLOGINIT;
       LINFO << "CoreXmlReaderClient::handle"
             << "[" << rtext.left(50) << "], offset =" << offset
-            << ", tagName =" << tagName ;
+            << ", tagName =" << tagName << ", element name ="
+            << elementName ;
     }
     ostringstream os;
     os << offset;

@@ -131,6 +131,18 @@ void GenericDocumentProperties::setDateIntervalValue(const std::string& propName
 }
 
 
+void GenericDocumentProperties::setMultipleStringPropValue(const std::string& propName,
+                                                           const std::vector<std::string>& val)
+{
+  m_d->m_multipleStringValues[propName]=val;
+}
+void GenericDocumentProperties::setMultipleWeightedPropValue(const std::string& propName,
+                                                             const std::vector<std::pair<std::string,float> >& val)
+{
+  m_d->m_multipleWeightedPropValues[propName]=val;
+}
+
+
 std::pair<uint64_t, bool> GenericDocumentProperties::getIntValue(std::string propName) const
 {
   auto pos = m_d->m_intValues.find(propName);
@@ -192,7 +204,6 @@ std::pair<StringPropMultIter,StringPropMultIter> GenericDocumentProperties::getM
   if( pos == m_d->m_multipleStringValues.end() )
   {
     return std::pair<StringPropMultIter, StringPropMultIter>(m_d->m_noStringVal.begin(), m_d->m_noStringVal.end());
-//  std::vector<std::pair<std::string,float>> m_noWeightedPropVal;
   }
   else
   {

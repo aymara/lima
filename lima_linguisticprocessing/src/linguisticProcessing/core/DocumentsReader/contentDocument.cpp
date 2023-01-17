@@ -84,7 +84,7 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
 #ifdef DEBUG_LP
     LDEBUG  << "empty";
 #endif
-    std::map<DocumentPropertyType, std::string> toBePropagated;
+    const std::map<DocumentPropertyType, std::vector<std::string> > toBePropagated;
     result = new HierarchyDocumentElement(elementName, parserOffset, toBePropagated);
   }
   else {
@@ -108,7 +108,7 @@ HierarchyDocumentElement* ContentStructuredDocument::pushHierarchyChild(
       LWARN << "ContentStructuredDocument::pushHierarchyChild: result was not initialized";
   }
 
-  push_back(result );
+  push_back(result);
 #ifdef DEBUG_LP
   LDEBUG << "ContentStructuredDocument::pushHierarchyChild: end";
 #endif
@@ -186,7 +186,8 @@ IgnoredDocumentElement* ContentStructuredDocument::pushIgnoredChild(
   return result;
 }
 
-DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(const QString& elementName, unsigned int parserOffset )
+DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(
+    const QString& elementName, unsigned int parserOffset )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -198,7 +199,8 @@ DiscardableDocumentElement* ContentStructuredDocument::pushDiscardableChild(cons
   return result;
 }
 
-PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(const QString& elementName, unsigned int parserOffset )
+PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(
+    const QString& elementName, unsigned int parserOffset )
 {
 #ifdef DEBUG_LP
   DRLOGINIT;
@@ -217,7 +219,7 @@ PresentationDocumentElement* ContentStructuredDocument::pushPresentationChild(co
   }
   else
   {
-    const std::map<DocumentPropertyType, std::string> emptyPropagated;
+    const std::map<DocumentPropertyType, std::vector<std::string> > emptyPropagated;
     result = new PresentationDocumentElement(elementName, parserOffset, emptyPropagated );
     result->addSpaces(parserOffset-back()->getOffset());
   }
@@ -313,7 +315,7 @@ void ContentStructuredDocument::popIndexingElement(unsigned int parserOffset)
   pop_back();
   if (currentElement->hasPropType() && !currentElement->getPropType().getId().empty())
   {
-    currentElement->addProperty(currentElement->getPropType(),currentElement->back()->getText() .toUtf8().constData());
+    currentElement->addProperty(currentElement->getPropType(), currentElement->back()->getText().toUtf8().constData());
   }
   if (!empty())
   {
@@ -405,7 +407,6 @@ void ContentStructuredDocument::setDataToPreviousElement( StructuredXmlDocumentH
 void ContentStructuredDocument::setDataToLastElement( const DocumentPropertyType& property,
   const std::string& data, StructuredXmlDocumentHandler* processor ) {
   AbstractStructuredDocumentElement* absElement = back();
-
   setDataToElement( absElement, property, data, processor );
 }
 
@@ -452,19 +453,33 @@ void ContentStructuredDocument::setDataToElement( AbstractStructuredDocumentElem
       }
       break;
     case STORAGE_UTF8_STRING: {
-      if( property.getValueCardinality() == CARDINALITY_MULTIPLE)
-        element->addStringValue(property.getId(), data);
-      else
-        element->setStringValue(property.getId(), data);
+        if( property.getValueCardinality() == CARDINALITY_MULTIPLE) {
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement addStringValue : " << property.getId() << " => "<< data;
+#endif
+          element->addStringValue(property.getId(), data);
+        } else {
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement setStringValue : " << property.getId() << " => "<< data;
+#endif
+          element->setStringValue(property.getId(), data);
+        }
       }
       break;
-    case STORAGE_INTEGER:
+    case STORAGE_INTEGER: {
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement setIntValue : " << property.getId() << " => "<< atoi(data.c_str());
+#endif
       element->setIntValue(property.getId(), atoi(data.c_str()));
+      }
       break;
     case STORAGE_WEIGHTED_PROPERTY: {
       std::string val;
       float score;
       parseWeightedValue(data, val, score);
+#ifdef DEBUG_LP
+  LDEBUG << "ContentStructuredDocument::setDataToElement addWeightedPropValue : " << property.getId() << " => "<< val<< "="<<score;
+#endif
       element->addWeightedPropValue( property.getId(), make_pair(val,score));
       }
       break;
