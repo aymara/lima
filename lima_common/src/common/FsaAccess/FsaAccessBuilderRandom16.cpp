@@ -371,7 +371,7 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
                << from << "," << to << "), outd=" << outd0;
         std::ostringstream oss2;
         oss2 << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: remove_edge("
-               << edge << "," << currentChar << ")";
+               << edge << "," << (int)currentChar << ")";
         LDEBUG <<  oss2.str().c_str();
 #endif
         remove_edge(edge, m_graph);
