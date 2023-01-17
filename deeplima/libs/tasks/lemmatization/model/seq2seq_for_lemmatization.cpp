@@ -65,7 +65,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
 
     // evaluate(eval_input, eval_gold, eval_stat, device);
     std::cout << "EPOCH " << e << " | lemmatization"
-              << " | LR=" << params.m_learning_rate << " | "
+              << " | LR=" << params.m_learning_rate << " |"
               // << " LEN=" << input_tensor.sizes()[0]
               << " TRAIN LOSS=" << train_stat["output"].m_loss
               << " ACC=" << train_stat["output"].m_accuracy
