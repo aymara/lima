@@ -71,7 +71,8 @@ public:
     read(buf, sep);
   }
 
-  Line() { }
+  Line() = default;
+  virtual ~Line() = default;
 
   virtual void read(const std::string& buf, char sep = '\t');
   virtual std::string write(char sep = '\t') const;
@@ -90,6 +91,8 @@ public:
   {
     init_impl(line);
   }
+
+  virtual ~CoNLLULine() = default;
 
   virtual void read(const std::string& buf, char sep = '\t')
   {

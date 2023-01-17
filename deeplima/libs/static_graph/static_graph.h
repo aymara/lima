@@ -123,7 +123,7 @@ public:
       )
   {
     std::vector<std::string> output_names = { output_name };
-    return forward(inputs, output_names.begin(), output_names.end());
+    return forward(inputs, output_names.cbegin(), output_names.cend());
   }
 
   std::map<std::string, torch::Tensor> forward(
@@ -131,7 +131,7 @@ public:
       const std::vector<std::string>& output_names
       )
   {
-    return forward(inputs, output_names.begin(), output_names.end());
+    return forward(inputs, output_names.cbegin(), output_names.cend());
   }
 
   template< class InputIt >
@@ -263,6 +263,7 @@ protected:
         if (given_inputs_idx.end() == given_inputs_idx.find(in_idx))
         {
           required.push_back(in_idx);
+          // given_inputs_idx.insert(in_idx);
         }
       }
     }

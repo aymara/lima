@@ -34,8 +34,7 @@ size_t Sentence::calc_num_of_words(const Annotation& annot) const
     }
   }
 
-  const CoNLLULine& line = annot.get_line(idx);
-  assert(line.is_empty_line()); // double check the structure
+  assert(annot.get_line(idx).is_empty_line()); // double check the structure
 
   return counter;
 }

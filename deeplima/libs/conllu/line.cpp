@@ -71,7 +71,7 @@ string CoNLLULine::write(char sep) const
   l[3] = serialize_string(_upos);
   l[4] = serialize_string(_xpos);
   l[5] = serialize_feats();
-  l[6] = (std::numeric_limits<size_t>::max() == _head._first) ? "_" : _head.serialize();
+  l[6] = (std::numeric_limits<idx_t::base_int_t>::max() == _head._first) ? "_" : _head.serialize();
   l[7] = serialize_string(_deprel);
   l[8] = serialize_deps();
   l[9] = serialize_misc();
