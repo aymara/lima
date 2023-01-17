@@ -28,7 +28,7 @@ public:
     const std::map<std::string,LinguisticCode>& conversionMap,
     bool reverseKeys);
 
-  virtual ~DictionaryCompiler() = default;
+  virtual ~DictionaryCompiler();
   DictionaryCompiler(const DictionaryCompiler&) = delete;
   DictionaryCompiler& operator=(const DictionaryCompiler&) = delete;
 

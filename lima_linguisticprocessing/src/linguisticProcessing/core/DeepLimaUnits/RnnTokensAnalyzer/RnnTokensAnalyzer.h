@@ -1,4 +1,3 @@
-// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -12,23 +11,26 @@
 namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnTokensAnalyzer
 {
 
-    class CharChart;
+class CharChart;
 
-    class RnnTokensAnalyzerPrivate;
+class RnnTokensAnalyzerPrivate;
+
 #define RNNTOKENSANALYZER_CLASSID "RnnTokensAnalyzer"
 
-/** @brief This is a @ref MediaProcessUnit that is usually the first element of the pipeline. It cuts the input text into tokens
-*
-* As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
-*
-* IOPES:
-* - Output:          an AnalysisContent
-* - Preconditions:   the AnalysisContent must contain an AnalysisData of type LimaStringText named "Text"
-* - Effects:         the AnalysisContent will contain an AnalysisData of type AnalysisGraph
-*                    named "AnalysisGraph" which is a linear graph (a string) containing one vertex
-*                    for each detected token.
+/**
+  * @brief This is a @ref MediaProcessUnit which executes deeplima RNN-based PoS tagger and lemmatizer.
+  *
+  * The text is supposed to be already tokenized.
+  *
+  * As a ProcessUnit, it has an init and a process function. See @ref ProcessUnit for details.
+  *
+  * IOPES:
+  * - Output:
+  * - Preconditions:
+  * - Effects:
+  * @author Tristan Derouet
 */
-    class LIMA_RNNTOKENSANALYZER_EXPORT RnnTokensAnalyzer : public MediaProcessUnit
+class LIMA_RNNTOKENSANALYZER_EXPORT RnnTokensAnalyzer : public MediaProcessUnit
 {
     public:
     RnnTokensAnalyzer();

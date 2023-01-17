@@ -16,6 +16,7 @@ template <class Idx=uint64_t>
 class FeatureVectorizerBase
 {
 public:
+  virtual ~FeatureVectorizerBase() = default;
   virtual Idx dim() const = 0;
 };
 
@@ -23,6 +24,7 @@ template <class Matrix, class Type, class Idx=uint64_t>
 class FeatureVectorizerToMatrix : public FeatureVectorizerBase<Idx>
 {
 public:
+  virtual ~FeatureVectorizerToMatrix() = default;
   virtual void get(const Type value, Matrix& target, Idx time, Idx pos) const = 0;
 
 };

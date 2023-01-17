@@ -209,7 +209,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
   double best_eval_loss = numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
-
+  unsigned int epoch = 0;
   while (true)
   {
     for (auto &group : opt.param_groups())
@@ -217,7 +217,8 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
         if (group.has_options())
         {
             auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
-            cout << "LR == " << options.get_lr() << endl;
+            // cout << "LR == " << options.get_lr() << endl;
+            lr_copy = options.get_lr();
         }
     }
 
@@ -251,23 +252,20 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
     char buff[128];
     for (const string& task_name : output_names)
     {
-      const task_stat_t& train = train_stat[task_name];
-      const task_stat_t& eval = eval_stat[task_name];
+      const auto& train = train_stat[task_name];
+      const auto& eval = eval_stat[task_name];
+      std::cout << "EPOCH " << epoch << " | " << task_name << " | LR=" << lr_copy
+                << " | TRAIN LOSS=" << train.m_loss << " ACC=" << train.m_accuracy
+                << " | EVAL LOSS=" << eval.m_loss << " ACC=" << eval.m_accuracy;
       if (2 == eval.m_num_classes)
       {
-        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f PR=%.4f RC=%.4f F1=%.4f",
-                 task_name.c_str(),
-                 train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy,
-                 eval.m_precision, eval.m_recall,
-                 eval.m_f1);
+        std::cout << " P=" << eval.m_precision << " R=" << eval.m_recall<< " F1=" << eval.m_f1;
       }
       else
       {
-        snprintf(buff, 128, "%16s | TRAIN LOSS=%4.4f ACC=%.4f | EVAL LOSS=%4.4f ACC=%.4f CORRECT=%lu",
-                 task_name.c_str(),
-                 train.m_loss, train.m_accuracy, eval.m_loss, eval.m_accuracy, eval.m_correct);
+        std::cout << " CORRECT=" << eval.m_correct;
       }
-      cout << buff << endl;
+      std::cout << std::endl << std::flush;
     }
     cout << "TIME: train=" << train_duration << "[ms] eval=" << eval_duration << "[ms]" << endl;
 
@@ -304,6 +302,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
         return;
       }
     }
+    epoch++;
   }
 }
 

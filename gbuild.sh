@@ -222,8 +222,8 @@ if [[ $CMAKE_GENERATOR == "VS" ]]; then
   mkdir -p $LIMA_BUILD_DIR
   pushd $LIMA_BUILD_DIR
 else
-  mkdir -p $build_prefix/$mode/$current_project
-  pushd $build_prefix/$mode/$current_project
+  mkdir -p $build_prefix/$mode-$WITH_ASAN/$current_project
+  pushd $build_prefix/$mode-$WITH_ASAN/$current_project
 fi
 
 if [ "$USE_TF" = false ] ; then

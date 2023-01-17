@@ -232,9 +232,13 @@ public:
     size_t step = 0;
     size_t pos = 0;
     while (step < decoding_log.size() && decoding_log[step][pos].cls != 1) step++;
+
     if (step > 0)
+    {
       step--;
-    while (step >= 0)
+    }
+
+    while (true)
     {
       char32_t ch = embd.decode(decoding_log[step][pos].cls);
       output_seq.push_back(ch);

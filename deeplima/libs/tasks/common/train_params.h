@@ -47,14 +47,15 @@ struct train_params_t
                  float beta_two=0.999,
                  size_t max_epochs=100,
                  size_t max_epochs_without_improvement=10,
-                 size_t batch_size=4)
+                 size_t batch_size=4,
+                 float input_dropout=0.3)
     : m_output_format("txt"),
       m_device_string(device_string),
       m_learning_rate(learning_rate),
       m_weight_decay(weight_decay),
       m_beta_one(beta_one),
       m_beta_two(beta_two),
-      m_input_dropout_prob(0.3),
+      m_input_dropout_prob(input_dropout),
       m_max_epochs(max_epochs),
       m_max_epochs_without_improvement(max_epochs_without_improvement),
       m_batch_size(batch_size),

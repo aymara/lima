@@ -75,7 +75,7 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn)
   {
-    std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
+    // std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
     size_t n = 0;
     bool just_started = true;
     bool continue_reading = true;
@@ -97,9 +97,9 @@ public:
         break;
       }
       counter += bytes_read;
-      std::cerr << "Reading callback: " << bytes_read << " bytes, continue_reading="
-           << continue_reading << " counter=" << counter
-           << std::endl;
+      // std::cerr << "Reading callback: " << bytes_read << " bytes, continue_reading="
+      //      << continue_reading << " counter=" << counter
+           // << std::endl;
       buff.m_char_aligned_data = (const char*)(buff.m_data);
       buff.m_len = bytes_read;
       buff.lock();
@@ -179,7 +179,7 @@ public:
 
   virtual ~SegmentationImpl()
   {
-    std::cerr << "~SimpleTextSegmentation" << std::endl;
+    // std::cerr << "~SimpleTextSegmentation" << std::endl;
   }
 
 protected:
@@ -263,8 +263,8 @@ protected:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "send_next_results: waiting for slot " << slot_idx
-           << " (lock_count==" << int(lock_count) << ")\n";
+      // std::cerr << "send_next_results: waiting for slot " << slot_idx
+      //      << " (lock_count==" << int(lock_count) << ")\n";
       // m_buff_set.pretty_print();
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
@@ -282,15 +282,15 @@ protected:
     if (0 == m_current_slot_timepoints || m_current_slot_no < 0)
     {
       m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-      std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint "
-                << m_current_timepoint << std::endl;
+      // std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint "
+      //           << m_current_timepoint << std::endl;
       uint8_t lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
 
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        std::cerr << "handle_timepoint, waiting for slot " << m_current_slot_no
-             << " lock_count=" << lock_count << std::endl;
+        // std::cerr << "handle_timepoint, waiting for slot " << m_current_slot_no
+        //      << " lock_count=" << lock_count << std::endl;
         InferenceEngine::wait_for_slot(m_current_slot_no);
         lock_count = InferenceEngine::get_lock_count(m_current_slot_no);
       }
@@ -307,7 +307,7 @@ protected:
 
   inline void handle_timepoint()
   {
-    std::cerr << "SegmentationImpl::handle_timepoint " << std::endl;
+    // std::cerr << "SegmentationImpl::handle_timepoint " << std::endl;
     acquire_slot();
 
     vectorize_timepoint(m_current_timepoint);
@@ -317,7 +317,7 @@ protected:
     if (0 == m_current_slot_timepoints)
     {
       InferenceEngine::start_job(m_current_slot_no);
-      std::cerr << "Slot " << m_current_slot_no << " sent to inference engine (segmentation)" << std::endl;
+      // std::cerr << "Slot " << m_current_slot_no << " sent to inference engine (segmentation)" << std::endl;
       acquire_slot();
     }
   }

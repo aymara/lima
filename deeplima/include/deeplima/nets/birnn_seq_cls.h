@@ -77,7 +77,6 @@ protected:
 
   inline int32_t prev_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return (idx == 0) ? (m_num_slots - 1) : idx - 1;
   }
@@ -85,7 +84,6 @@ protected:
 public:
   inline int32_t next_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return (idx == m_num_slots - 1) ? 0 : idx + 1;
   }
@@ -93,7 +91,6 @@ public:
 protected:
   inline void clear_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -110,7 +107,6 @@ protected:
 
   inline void start_job_impl(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -125,7 +121,7 @@ protected:
   {
     slot_t& slot = *((slot_t*)p);
 
-    std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
+    // std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
 
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
@@ -191,8 +187,8 @@ public:
     // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
     // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
 
-    std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
-              << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
+    // std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
+    //           << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
     m_num_slots = num_slots;
     m_overlap = overlap;
     m_slot_len = slot_len;
@@ -262,13 +258,13 @@ public:
 
   virtual ~RnnSequenceClassifier()
   {
-    std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
+    // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
     ThreadPoolParent::stop();
     if (nullptr != m_slots)
     {
       delete[] m_slots;
     }
-    std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
+    // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
   }
 
   inline uint8_t get_output(uint64_t pos, uint8_t cls)
@@ -282,44 +278,38 @@ public:
 
   inline uint64_t get_slot_begin(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_begin;
   }
 
   inline bool get_slot_started(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_work_started;
   }
 
   inline uint64_t get_slot_end(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_output_end;
   }
 
   inline uint8_t get_lock_count(uint32_t idx) const
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     return m_slots[idx].m_lock_count;
   }
 
   inline void increment_lock_count(uint32_t idx, uint8_t v = 1)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     m_slots[idx].m_lock_count += v;
-    std::cerr << "Lock for slot " << idx
-              << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
+    // std::cerr << "Lock for slot " << idx
+    //           << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
   }
 
   inline void decrement_lock_count(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     assert(m_slots[idx].m_lock_count > 0);
 
@@ -332,7 +322,7 @@ public:
 
   inline uint64_t get_start_timepoint() const
   {
-    std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
+    // std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
     return m_overlap;
   }
 
@@ -365,7 +355,6 @@ public:
 
   inline void set_slot_lengths(uint32_t idx, const std::vector<size_t>& lengths)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     assert(idx < m_lengths.size());
 
@@ -375,7 +364,6 @@ public:
   // used in graph-based dependency parser
   inline void set_slot_begin(uint32_t idx, uint64_t slot_begin)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
@@ -386,7 +374,6 @@ public:
 
   inline void set_slot_end(uint32_t idx, uint64_t slot_end)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
@@ -400,7 +387,6 @@ public:
 
   inline void start_job(uint32_t idx, bool no_more_data=false)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
 
@@ -427,7 +413,6 @@ public:
 
   inline void wait_for_slot(uint32_t idx)
   {
-    assert(idx >= 0);
     assert(idx < m_num_slots);
     const slot_t& slot = m_slots[idx];
     assert(slot.m_work_started);

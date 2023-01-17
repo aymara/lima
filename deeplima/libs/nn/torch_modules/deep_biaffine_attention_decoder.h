@@ -42,7 +42,7 @@ public:
       root(register_parameter("root", torch::randn({1, 1, hidden_arc_dim}))),
       root2(register_parameter("root2", torch::randn({1, 1, hidden_arc_dim})))
   {
-    std::cerr << U1.dtype() << std::endl;
+    // std::cerr << U1.dtype() << std::endl;
   }
 
   torch::Tensor forward(torch::Tensor input);

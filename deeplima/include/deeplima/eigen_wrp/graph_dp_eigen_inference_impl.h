@@ -19,8 +19,18 @@ namespace graph_dp
 namespace eigen_impl
 {
 
+#ifdef WIN32
+#ifdef DEP_PARSING_EXPORTING
+  #define DEP_PARSING_EXPORT __declspec(dllexport)
+#else
+  #define DEP_PARSING_EXPORT  __declspec(dllimport)
+#endif
+#else
+  #define DEP_PARSING_EXPORT
+#endif
+
 template <class M, class V, class T>
-class BiRnnAndDeepBiaffineAttentionEigenInference : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
+class DEP_PARSING_EXPORT BiRnnAndDeepBiaffineAttentionEigenInference : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
 {
 public:
   typedef M Matrix;

@@ -5,11 +5,14 @@
 
 #include <string>
 
+#include "deeplima/utils/secure_cast.h"
+
 #include "seq2seq_for_lemmatization.h"
 
 using namespace std;
 using namespace torch;
 using torch::indexing::Slice;
+using namespace deeplima::utils;
 
 namespace deeplima
 {
@@ -23,7 +26,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
                                   const vector<vector<TorchMatrix<int64_t>>>& train_input_cat,
                                   const vector<TorchMatrix<int64_t>>& train_gold,
                                   const vector<TorchMatrix<int64_t>>& eval_input,
-                                  const vector<vector<TorchMatrix<int64_t>>>& eval_input_cat,
+                                  const vector<vector<TorchMatrix<int64_t>>>& /*eval_input_cat*/,
                                   const vector<TorchMatrix<int64_t>>& eval_gold,
                                   torch::optim::Optimizer& opt,
                                   const torch::Device& device)
@@ -39,10 +42,8 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   // double lr_copy = 0;
   for (size_t e = 1; e < params.m_max_epochs; e++)
   {
-    cerr << endl << "********** EPOCH " << e << " **********" << endl;
     nets::epoch_stat_t train_stat, eval_stat;
     Module::train(true);
-
     for (size_t i = 0; i < train_input.size(); ++i)
     {
       const TorchMatrix<int64_t>& input = train_input[i];
@@ -51,10 +52,27 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
 
       assert(input.get_max_feat() == gold.get_max_feat());
       assert(input.get_max_feat() == input_cat[0].get_max_feat());
-      train_on_subset(params, input, input_cat, gold, opt, device);
+      auto train_subset_stat = train_on_subset(params, input, input_cat, gold, opt, device);
+      train_stat["output"].m_loss = train_subset_stat["output"].m_loss;
+      train_stat["output"].m_correct += train_subset_stat["output"].m_correct;
+      train_stat["output"].m_items +=  train_subset_stat["output"].m_items;
+    }
+    if (train_stat["output"].m_items > 0)
+    {
+      train_stat["output"].m_accuracy = float(train_stat["output"].m_correct) / train_stat["output"].m_items;
     }
 
-    //evaluate(eval_input, eval_gold, eval_stat, device);
+
+    // evaluate(eval_input, eval_gold, eval_stat, device);
+    std::cout << "EPOCH " << e << " | lemmatization"
+              << " | LR=" << params.m_learning_rate << " |"
+              // << " LEN=" << input_tensor.sizes()[0]
+              << " TRAIN LOSS=" << train_stat["output"].m_loss
+              << " ACC=" << train_stat["output"].m_accuracy
+              << " CORRECT=" << train_stat["output"].m_correct
+              << " TOTAL=" << train_stat["output"].m_items
+              << std::endl << std::flush;
+
 
     if (!params.m_output_model_name.empty())
     {
@@ -63,7 +81,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   }
 }
 
-void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& params,
+nets::epoch_stat_t Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& params,
                                             const TorchMatrix<int64_t>& train_input,
                                             const vector<TorchMatrix<int64_t>> train_input_cat,
                                             const TorchMatrix<int64_t>& train_gold,
@@ -79,7 +97,7 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   nets::epoch_stat_t stat;
   for (int64_t i = 0; i < n_samples; i += params.m_batch_size)
   {
-    int64_t end_sample = params.m_batch_size > n_samples ? n_samples : i + params.m_batch_size;
+    int64_t end_sample = cast_to_signed<decltype(n_samples)>(params.m_batch_size) > n_samples ? n_samples : i + params.m_batch_size;
     assert(i < end_sample);
     const auto batch_input = input_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
     const auto batch_gold = gold_tensor.index({ Slice(), Slice(i, end_sample) }).to(device);
@@ -98,12 +116,7 @@ void Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& 
   {
     stat["output"].m_accuracy = float(stat["output"].m_correct) / stat["output"].m_items;
   }
-  cerr << " LEN: " << input_tensor.sizes()[0]
-       << " LOSS: " << stat["output"].m_loss
-       << " ACC: " << stat["output"].m_accuracy
-       << " CORRECT: " << stat["output"].m_correct
-       << " TOTAL: " << stat["output"].m_items
-       << endl;
+  return stat;
 }
 
 void Seq2SeqLemmatizerImpl::evaluate(const vector<TorchMatrix<int64_t>>& input,

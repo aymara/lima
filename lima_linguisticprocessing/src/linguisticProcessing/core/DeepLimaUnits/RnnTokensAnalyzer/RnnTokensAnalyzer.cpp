@@ -1,4 +1,3 @@
-// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -55,7 +54,8 @@ static SimpleFactory<MediaProcessUnit, RnnTokensAnalyzer> RnnTokensAnalyzerFacto
 
 CONFIGURATIONHELPER_LOGGING_INIT(LEMMALOGINIT);
 
-class RnnTokensAnalyzerPrivate: public ConfigurationHelper {
+class RnnTokensAnalyzerPrivate: public ConfigurationHelper
+{
 public:
     RnnTokensAnalyzerPrivate();
     ~RnnTokensAnalyzerPrivate() ;
@@ -69,10 +69,10 @@ public:
     FsaStringsPool* m_stringsPool;
     QString m_data;
     std::shared_ptr< TokenSequenceAnalyzer<> > m_tokensAnalyzer;
-    function<void()> m_load_fn;
+    std::function<void()> m_load_fn;
     StringIndex m_stridx;
     PathResolver m_pResolver;
-    std::vector<std::map<std::string,std::string>> m_tags;
+    std::vector< std::map<std::string, std::string> > m_tags;
     std::vector<QString> m_lemmas;
     const Common::PropertyCode::PropertyAccessor* m_microAccessor;
     bool m_loaded;
@@ -83,17 +83,17 @@ RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper(
                                                         "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
                                                         m_stringsPool(nullptr), m_stridx(), m_loaded(false)
 {
-
 }
 
 RnnTokensAnalyzerPrivate::~RnnTokensAnalyzerPrivate() = default;
 
 
-RnnTokensAnalyzer::RnnTokensAnalyzer(): m_d(new RnnTokensAnalyzerPrivate()) {
-
+RnnTokensAnalyzer::RnnTokensAnalyzer(): m_d(new RnnTokensAnalyzerPrivate())
+{
 }
 
-RnnTokensAnalyzer::~RnnTokensAnalyzer(){
+RnnTokensAnalyzer::~RnnTokensAnalyzer()
+{
     delete m_d;
 }
 
@@ -105,7 +105,6 @@ void RnnTokensAnalyzer::init(GroupConfigurationStructure &unitConfiguration, Man
     m_d->m_stringsPool = &MediaticData::changeable().stringsPool(m_d->m_language);
 
     m_d->init(unitConfiguration);
-
 }
 
 Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis) const
@@ -131,15 +130,15 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
                                                                     m_d->m_language,
                                                                     false,
                                                                     true);
-    analysis.setData("PosGraph",posgraph);
+    analysis.setData("PosGraph", posgraph);
     const auto& propertyCodeManager = dynamic_cast<const LanguageData&>(
             MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
     const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
     /** Creation of an annotation graph if necessary*/
     auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
-    if (annotationData==nullptr)
+    if (annotationData == nullptr)
     {
-        annotationData = std::shared_ptr<AnnotationData>();
+        annotationData = std::make_shared<AnnotationData>();
         /** Creates a node in the annotation graph for each node of the
         * morphosyntactic graph. Each new node is annotated with the name mrphv and
         * associated to the morphosyntactic vertex number */
@@ -148,24 +147,26 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"))->populateAnnotationGraph(
                     annotationData.get(), "AnalysisGraph");
         }
-        analysis.setData("AnnotationData",annotationData);
+        analysis.setData("AnnotationData", annotationData);
     }
     if (num_vertices(*srcgraph)<=2)
     {
         return SUCCESS_ID;
     }
 
-    VertexTokenPropertyMap vTokens = get(vertex_token, *srcgraph);
+    auto vTokens = get(vertex_token, *srcgraph);
     auto currentVx = anagraph->firstVertex();
-    LinguisticGraph* resultgraph=posgraph->getGraph();
-    remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
+    auto resultgraph = posgraph->getGraph();
+    remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *resultgraph);
 
     std::vector<segmentation::token_pos> buffer;
     std::vector< LinguisticGraphVertex > anaVertices;
     std::vector<std::string> v;
 
-    while(currentVx != endVx){
-        if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+    while(currentVx != endVx)
+    {
+        if (currentVx != 0 && vTokens[currentVx] != nullptr)
+        {
             const auto& src = vTokens[currentVx];
             v.push_back(src->stringForm().toStdString());
             buffer.emplace_back();
@@ -183,11 +184,13 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
         }
     }
     /**
-        * Construction of the tokens used in the tagger.
-        */
-    for(unsigned long k=0;k<anaVertices.size();k++){
+      * Construction of the tokens used in the tagger.
+      */
+    for(unsigned long k = 0; k < anaVertices.size(); k++)
+    {
         currentVx = anaVertices[k];
-        if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+        if (currentVx != 0 && vTokens[currentVx] != nullptr)
+        {
             const auto& src = vTokens[currentVx];
             auto& token = buffer[k];
             token.m_offset = src->position();
@@ -198,12 +201,13 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
     }
     m_d->analyzer(buffer);
     std::vector<LinguisticGraphVertex>::size_type anaVerticesIndex = 0;
-    LinguisticGraphVertex previousPosVertex = posgraph->firstVertex();
+    auto previousPosVertex = posgraph->firstVertex();
     /*
-        * Here we add the part of speech data to the tokens
-        * Adding link beetween the node in the analysis graph and the pos graph.
-        */
-    while (anaVerticesIndex < anaVertices.size()){
+     * Here we add the part of speech data to the tokens
+     * Adding link beetween the node in the analysis graph and the pos graph.
+     */
+    while (anaVerticesIndex < anaVertices.size())
+    {
         auto anaVertex = anaVertices[anaVerticesIndex];
         auto newVx = boost::add_vertex(*resultgraph);
         auto agv =  annotationData->createAnnotationVertex();
@@ -213,38 +217,41 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
 
         auto srcToken = get(vertex_token,*srcgraph,anaVertex);
 
-
         auto posData = new MorphoSyntacticData();
 
         LinguisticElement lElement = LinguisticElement();
-        for(const auto& name: m_d->m_tokensAnalyzer->get_class_names()){
-            PropertyManager propertyManager = microManager;
-            if(name=="upos"){
+        for(const auto& name: m_d->m_tokensAnalyzer->get_class_names())
+        {
+            auto propertyManager = microManager;
+            if(name == "upos")
+            {
                 propertyManager = propertyCodeManager.getPropertyManager("MICRO");
             }
-            else if(name=="ExtPos" || name=="Style"){
+            else if(name=="ExtPos" || name=="Style")
+            {
                 continue;
             }
             else if(name=="xpos")
             {
                 propertyManager = propertyCodeManager.getPropertyManager("MACRO");
             }
-            else{
+            else
+            {
                 propertyManager = propertyCodeManager.getPropertyManager(name);
             }
             auto value = propertyManager.getPropertyValue(m_d->m_tags[anaVerticesIndex][name]);
-            if(value.toBool()){
+            if(value.toBool())
+            {
                 LOG_MESSAGE(LDEBUG, "value: " << value);
-                propertyManager.getPropertyAccessor().writeValue(value,lElement.properties);
+                propertyManager.getPropertyAccessor().writeValue(value, lElement.properties);
             }
         }
-        FsaStringsPool* sp = &MediaticData::changeable().stringsPool(m_d->m_language);
+        auto sp = &MediaticData::changeable().stringsPool(m_d->m_language);
         lElement.lemma = (*sp)[m_d->m_lemmas[anaVerticesIndex]];
         posData->push_back(lElement);
 
-        put(vertex_data,*resultgraph,newVx,posData);
-        put(vertex_token,*resultgraph,newVx,srcToken);
-
+        put(vertex_data, *resultgraph, newVx, posData);
+        put(vertex_token, *resultgraph, newVx, srcToken);
 
         boost::add_edge(previousPosVertex, newVx, *resultgraph);
 
@@ -321,7 +328,7 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
 }
 
 
-void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer)
+void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
     m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
@@ -331,7 +338,7 @@ void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer)
                                                 size_t end)
     {
         auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(*stridx, tokens, lemmata, classes, begin, end);
-        auto tiData = new TokenIteratorData();
+        auto tiData = std::make_shared<TokenIteratorData>();
         tiData->setTokenIterator(ti);
         // auto si = std::make_shared<deeplima::StringIndex>(stridx);
         tiData->setStringIndex(stridx);
@@ -344,22 +351,24 @@ void RnnTokensAnalyzerPrivate::analyzer(vector<segmentation::token_pos> &buffer)
     m_tokensAnalyzer->finalize();
 }
 
-void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti) {
+void RnnTokensAnalyzerPrivate::insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti)
+{
     auto classes = m_dumper.getMClasses();
     auto class_names = m_tokensAnalyzer->get_class_names();
     LOG_MESSAGE_WITH_PROLOG(LDEBUG, "classes: " << class_names);
-    while(!ti.end()){
-        auto tag = std::map<std::string,std::string>();
+    while(!ti.end())
+    {
+        auto tag = std::map<std::string, std::string>();
         LOG_MESSAGE(LDEBUG, ti.lemma());
-        for(uint cat=0;cat < class_names.size();cat++){
-            tag.insert({class_names[cat],classes[cat][ti.token_class(cat)]});
+        for(uint cat = 0; cat < class_names.size(); cat++)
+        {
+            tag.insert({class_names[cat], classes[cat][ti.token_class(cat)]});
         }
         m_tags.push_back(tag);
         m_lemmas.emplace_back(ti.lemma());
         ti.next();
     }
     ti.reset();
-
 }
 
 

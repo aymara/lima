@@ -109,7 +109,7 @@ morph_model_t::morph_model_t(const string& str)
   }
   if (t.empty())
   {
-    throw;
+    throw std::runtime_error("morph_model_t: t should not be empty here.");
   }
   m_upos_dict = morph_model_t::dict_t::from_string(t);
 
@@ -120,7 +120,7 @@ morph_model_t::morph_model_t(const string& str)
     getline(iss, t);
   }  if (t.empty())
   {
-    throw;
+    throw std::runtime_error("morph_model_t: t should not be empty here.");
   }
   m_feat_dict = morph_model_t::dict_t::from_string(t);
 
@@ -159,7 +159,7 @@ morph_model_t::morph_model_t(const string& str)
     {
       if (v < 0 || v > std::numeric_limits<uint8_t>::max())
       {
-        throw;
+        throw std::runtime_error("morph_model_t: invalid value for v.");
       }
       uint8_t ui = uint8_t(v);
       m_offset.push_back(ui);
@@ -183,7 +183,7 @@ morph_model_t::morph_model_t(const string& str)
       string::size_type i = p.find('_');
       if (string::npos == i)
       {
-        throw;
+        throw std::runtime_error("_ has not been found in p.");
       }
       p[i] = ' ';
       istringstream p_iss(p);
@@ -191,7 +191,7 @@ morph_model_t::morph_model_t(const string& str)
       p_iss >> a >> b;
       if (m_feats2mask[m_feats2mask.size() - 1].end() != m_feats2mask[m_feats2mask.size() - 1].find(a))
       {
-        throw;
+        throw std::runtime_error("morph_model_t: a not found in mask.");
       }
       m_feats2mask[m_feats2mask.size() - 1][a] = b;
     }

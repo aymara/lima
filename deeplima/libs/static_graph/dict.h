@@ -16,8 +16,19 @@
 namespace deeplima
 {
 
+#ifdef WIN32
+#ifdef DICT_EXPORTING
+  #define DICT_EXPORT __declspec(dllexport)
+#else
+  #define DICT_EXPORT  __declspec(dllimport)
+#endif
+#else
+  #define DICT_EXPORT
+#endif
+
+
 template <class T>
-class Dict : public DictBase
+class DICT_EXPORT Dict : public DictBase
 {
 public:
   typedef T value_t;
@@ -222,7 +233,7 @@ protected:
   {
     if (src.length() < 1)
     {
-      throw;
+      throw std::runtime_error("Dict::from_wstring empty input.");
     }
     k = src[0];
   }

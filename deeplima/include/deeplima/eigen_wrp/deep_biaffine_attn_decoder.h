@@ -45,12 +45,13 @@ public:
   typedef V Vector;
   typedef params_deep_biaffine_attn_decoder_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params,
-                                        bool precomputed_input=false) const
+  virtual workbench_t* create_workbench(uint32_t input_size,
+                                        const param_base_t* params,
+                                        bool /*precomputed_input=false*/) const
   {
     assert(input_size > 0);
     assert(nullptr != params);
-//     TODO should it be used
+    // TODO should it be used
     // const params_deep_biaffine_attn_decoder_t<M, V>& layer = *static_cast<const params_t*>(params);
 
     return new workbench_t();
@@ -67,7 +68,7 @@ public:
     assert(nullptr != params);
     const params_deep_biaffine_attn_decoder_t<M, V>& layer = *static_cast<const params_t*>(params);
 
-//     TODO should it be used?
+    // TODO should it be used?
     // workbench_t* wb = static_cast<workbench_t*>(pwb);
 
     const M input = input_matrix.block(0, 0, input_matrix.rows(), input_end - input_begin);
@@ -90,14 +91,13 @@ public:
     for (Eigen::Index i = 0; i < logits.rows(); ++i)
     {
       Eigen::Index idx = 0;
-//       TODO should it be used?
-      typename M::Scalar v = logits.row(i).maxCoeff(&idx);
+      /*typename M::Scalar v = */ logits.row(i).maxCoeff(&idx);
       assert(idx >= 0);
-      assert(idx < std::numeric_limits<Eigen::Index>::max());
+      assert(idx < std::numeric_limits<uint32_t>::max());
       output[input_begin + i] = (uint32_t) idx;
-      std::cerr << i << "\t" << idx << std::endl;
+      // std::cerr << i << "\t" << idx << std::endl;
     }
-    std::cerr << std::endl;
+    // std::cerr << std::endl;
 
     //arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
 

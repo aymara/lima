@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v1.2.0
         with:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
@@ -55,7 +55,7 @@ jobs:
           android: true
           dotnet: true
           haskell: true
-          large-packages: true
+          large-packages: false
           swap-storage: true
 
       - name: "Build image"

@@ -23,10 +23,15 @@ namespace tagging
 namespace eigen_impl
 {
 #ifdef WIN32
+#ifdef TAG_EXPORTING
   #define TAG_EXPORT __declspec(dllexport)
+#else
+  #define TAG_EXPORT  __declspec(dllimport)
+#endif
 #else
   #define TAG_EXPORT
 #endif
+
 template <class M, class V, class T>
 class TAG_EXPORT BiRnnEigenInferenceForTagging : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
 {

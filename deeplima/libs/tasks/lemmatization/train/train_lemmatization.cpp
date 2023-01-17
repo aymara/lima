@@ -286,13 +286,13 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   {
     // Serialization test
     string t1 = lang_morph_model.to_string();
-    cerr << t1 << endl;
+    // cerr << t1 << endl;
     morph_model::morph_model_t m2(t1);
     string t2 = m2.to_string();
     if (t1 != t2)
     {
-      cerr << t2 << endl;
-      throw;
+      // cerr << t2 << endl;
+      throw std::runtime_error("train_lemmatization: "+t2);
     }
     // End of serialization test
   }
@@ -412,7 +412,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
                               cat_embd_descr, str_fixed_upos);
   }
 
-  std::cerr << model->get_script() << std::endl;
+  // std::cerr << model->get_script() << std::endl;
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)

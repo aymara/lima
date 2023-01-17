@@ -408,7 +408,7 @@ public:
         memcpy(m_temp_text.data() + temp_token_len, start, m_tokens[pos].m_len - temp_token_len);
         m_tokens[pos].m_pch = (const char*)(m_temp_text.data());
       }
-      std::cerr << std::endl;
+      // std::cerr << std::endl;
     }
 
     if (!m_tokens[pos].empty())
@@ -423,7 +423,10 @@ public:
       }
       if ((const char*)m_temp_text.data() != m_tokens[0].m_pch)
       {
-        memcpy(m_temp_text.data(), m_tokens[0].m_pch, m_tokens[0].m_len);
+        if (m_tokens[0].m_pch != nullptr)
+        {
+          memcpy(m_temp_text.data(), m_tokens[0].m_pch, m_tokens[0].m_len);
+        }
         m_tokens[0].m_pch = (const char*)(m_temp_text.data());
       }
     }

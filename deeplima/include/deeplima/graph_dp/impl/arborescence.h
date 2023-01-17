@@ -244,7 +244,7 @@ public:
       }
 
       if (best_new_arc.first == 0 || best_new_arc.second == 0)
-        throw;
+        throw std::runtime_error("make_connected best_new_arc first or second should be 0");
 
       heads[offset+best_new_arc.first] = best_new_arc.second;
 
@@ -278,7 +278,8 @@ public:
     }
 
     if (roots.size() == 0)
-      throw; // This function is intended to choose from a several (> 0) of roots
+      // This function is intended to choose from a several (> 0) of roots
+      throw std::runtime_error("choose_one_root should have at least one root");
 
     if (roots.size() == 1)
       return;
@@ -563,7 +564,8 @@ void arborescence(const M& adj_matrix,
   n_roots = impl::Arborescence<M, vertex_idx_t, weight_t>::count_roots(begin, end);
 
   if (n_roots != 1)
-    throw; // there is a bug in choose_one_root
+    throw std::runtime_error("choose_one_root should have selected one root.");
+    // there is a bug in choose_one_root
 
   // now n_roots == 1
   if (impl::Arborescence<M, vertex_idx_t, weight_t>::is_connected(begin, end))

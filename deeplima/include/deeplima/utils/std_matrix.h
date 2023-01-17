@@ -47,7 +47,7 @@ public:
   }
 
   ~StdMatrix(){
-      std::cerr<< "Matrix Destroyed!\n";
+      // std::cerr << "Matrix Destroyed!\n";
   }
 
   inline uint64_t get(uint64_t time, uint64_t feat) const

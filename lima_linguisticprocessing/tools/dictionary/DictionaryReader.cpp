@@ -203,6 +203,11 @@ DictionaryCompiler::DictionaryCompiler(
 {
 }
 
+DictionaryCompiler::~DictionaryCompiler()
+{
+  delete m_d;
+}
+
 bool DictionaryCompiler::parse(QIODevice *device)
 {
   return m_d->parse(device);

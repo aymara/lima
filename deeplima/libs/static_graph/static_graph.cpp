@@ -52,7 +52,7 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
 
     if (!types_of_dicts.get(i).isString())
     {
-      throw;
+      throw std::runtime_error("Error in static graph");
     }
     const std::string& dict_type = types_of_dicts.get(i).toStringRef();
 
@@ -61,7 +61,7 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
     {
       if (!v.isList())
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
 
       if (dict_type == UInt64Dict::class_id())
@@ -225,7 +225,7 @@ void StaticGraphImpl::parse_script(const string& script)
     {
       if (m_tensor_name_to_idx.end() != m_tensor_name_to_idx.find(name))
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       m_tensor_name_to_idx[name] = known_tensors;
       op.m_outputs.push_back(m_tensor_name_to_idx[name]);
@@ -238,7 +238,7 @@ void StaticGraphImpl::parse_script(const string& script)
       auto it = m_tensor_name_to_idx.find(name);
       if (m_tensor_name_to_idx.end() == it)
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       op.m_inputs.push_back(it->second);
     }
@@ -251,7 +251,7 @@ void StaticGraphImpl::parse_script(const string& script)
           auto it = m_modules.find(module_name);
           if (m_modules.end() == it)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
           module_ref_t module_ref = it->second;
           switch (module_ref.m_type)
@@ -264,7 +264,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
                 if (inputs.size() != 1 || outputs.size() != 1)
                 {
-                  throw;
+                  throw std::runtime_error("Error in static graph");
                 }
 
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
@@ -285,7 +285,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
                 if (inputs.size() < 1)
                 {
-                  throw;
+                  throw std::runtime_error("Error in static graph");
                 }
 
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
@@ -300,7 +300,7 @@ void StaticGraphImpl::parse_script(const string& script)
                     }
                     else
                     {
-                      throw;
+                      throw std::runtime_error("Error in static graph");
                     }
                   }
                   auto out = m->forward(ctx.m_tensors[inputs[0]], h0_and_c0);
@@ -317,7 +317,7 @@ void StaticGraphImpl::parse_script(const string& script)
                         ctx.m_tensors[outputs[2]] = std::get<1>(std::get<1>(out));
                         if (outputs.size() > 3)
                         {
-                          throw;
+                          throw std::runtime_error("Error in static graph");
                         }
                       }
                     }
@@ -334,7 +334,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
                 if (inputs.size() != 1 || outputs.size() != 1)
                 {
-                  throw;
+                  throw std::runtime_error("Error in static graph");
                 }
 
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
@@ -353,7 +353,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
                 if (inputs.size() != 1 || outputs.size() != 1)
                 {
-                  throw;
+                  throw std::runtime_error("Error in static graph");
                 }
 
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
@@ -375,7 +375,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
                 if (inputs.size() != 1 || outputs.size() != 1)
                 {
-                  throw;
+                  throw std::runtime_error("Error in static graph");
                 }
 
                 op.m_fn = [&m, inputs, outputs](context_t& ctx)
@@ -387,7 +387,7 @@ void StaticGraphImpl::parse_script(const string& script)
               break;
 
             default:
-              throw;
+              throw std::runtime_error("Error in static graph");
           }
         }
         break;
@@ -400,7 +400,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() == 0 || outputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
@@ -426,7 +426,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() == 0 || outputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs, shape](context_t& ctx)
@@ -448,7 +448,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
@@ -458,7 +458,7 @@ void StaticGraphImpl::parse_script(const string& script)
             //cerr << "unbind res: " << out.sizes() << endl;
             if (outputs.size() != out.size())
             {
-              throw;
+              throw std::runtime_error("Error in static graph");
             }
             for (size_t j = 0; j < out.size(); ++j)
             {
@@ -476,7 +476,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() != 1 || outputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
@@ -499,7 +499,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() != 1 || outputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs, dim](context_t& ctx)
@@ -517,7 +517,7 @@ void StaticGraphImpl::parse_script(const string& script)
 
           if (inputs.size() != 1 || outputs.size() != 1)
           {
-            throw;
+            throw std::runtime_error("Error in static graph");
           }
 
           op.m_fn = [inputs, outputs](context_t& ctx)
@@ -528,7 +528,7 @@ void StaticGraphImpl::parse_script(const string& script)
         break;
 
       default:
-        throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     m_ops.push_back(op);
@@ -537,7 +537,7 @@ void StaticGraphImpl::parse_script(const string& script)
     {
       if (m_outidx_to_opidx.end() != m_outidx_to_opidx.find(out_idx))
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       m_outidx_to_opidx[out_idx] = m_ops.size() - 1;
     }
@@ -555,13 +555,13 @@ map<string, string> StaticGraphImpl::parse_options(istringstream& ss)
     string::size_type p = s.find('=');
     if (string::npos == p)
     {
-      throw;
+      throw std::runtime_error("Error in static graph");
     }
     string k = s.substr(0, p);
     string v = s.substr(p+1);
     if (opts.end() != opts.find(k))
     {
-      throw;
+      throw std::runtime_error("Error in static graph");
     }
     opts[k] = v;
   }
@@ -608,7 +608,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
   {
     if (step.m_names.size() != 1)
     {
-      throw;
+      throw std::runtime_error("Error in static graph");
     }
     // Name def Class arg1=Value1 arg2=Value2 ...
     step.m_type = step_descr_t::step_type_t::def;
@@ -644,7 +644,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     }
     else
     {
-      throw;
+      throw std::runtime_error("Error in static graph");
     }
   }
   else if (type == "cat")
@@ -684,7 +684,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     auto it = step.m_args.find("dims");
     if (step.m_args.end() == it)
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
     step.m_iargs["dims"] = parse_iargs(it->second);
     assert(step.m_iargs["dims"].size() > 0);
@@ -703,7 +703,7 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
   }
   else
   {
-    throw;
+        throw std::runtime_error("Error in static graph");
   }
 
   return step;
@@ -725,12 +725,12 @@ void StaticGraphImpl::create_arg(const std::vector<std::string>& names, const st
   {
     if (m_args.cend() != m_args.find(name))
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     if (m_tensor_name_to_idx.cend() != m_tensor_name_to_idx.find(name))
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     m_args.insert(name);
@@ -833,14 +833,14 @@ void StaticGraphImpl::create_submodule_LSTM(const std::string& name, const std::
     }
     else
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
     consumed_options.insert(kv.first);
   }
 
   if (consumed_options.size() != opts.size())
   {
-    throw;
+        throw std::runtime_error("Error in static graph");
   }
 
   torch::nn::LSTM m(lstm_options);

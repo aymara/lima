@@ -23,10 +23,15 @@ namespace segmentation
 namespace eigen_impl
 {
 #ifdef WIN32
+#ifdef SEGM_EXPORTING
   #define SEGM_EXPORT __declspec(dllexport)
+#else
+  #define SEGM_EXPORT  __declspec(dllimport)
+#endif
 #else
   #define SEGM_EXPORT
 #endif
+
 template <class M, class V, class T>
 class SEGM_EXPORT BiRnnEigenInferenceForSegmentation : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
 {

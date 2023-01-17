@@ -30,9 +30,9 @@ void parse_file(std::istream& input,
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
-       << "git branch: " << deeplima::version::get_git_branch()
-       << ")" << std::endl;
+  // std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  //      << "git branch: " << deeplima::version::get_git_branch()
+  //      << ")" << std::endl;
 
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
@@ -118,7 +118,13 @@ int main(int argc, char* argv[])
     char read_buffer[READ_BUFFER_SIZE];
     for ( const auto& fn : input_files )
     {
+      std::cerr << "Reading file: " << fn << std::endl;
       std::ifstream file(fn, std::ifstream::binary | std::ios::in);
+      if (!file.is_open())
+      {
+        std::cerr << "Failed to open file: " << fn << std::endl;
+        throw std::runtime_error("Failed to open file");
+      }
       file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
       parse_file(file, models, path_resolver, threads, out_fmt);
     }
@@ -288,7 +294,7 @@ void parse_file(std::istream& input,
     });
   }
 
-  std::chrono::steady_clock::time_point parsing_begin = std::chrono::steady_clock::now();
+  auto parsing_begin = std::chrono::high_resolution_clock::now();
 
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
@@ -301,14 +307,8 @@ void parse_file(std::istream& input,
     return (bool)input;
   });
 
-  uint64_t token_counter = (nullptr != pdumper ? pdumper->get_token_counter() : 0);
-
   if (nullptr != panalyzer)
   {
-    if (0 == token_counter)
-    {
-      token_counter = pDumperBase->get_token_counter();
-    }
 
     std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
@@ -323,11 +323,18 @@ void parse_file(std::istream& input,
     parser.reset();
     std::cerr << "Dependency parser stopped. " << std::endl;
   }
+  auto parsing_end = std::chrono::high_resolution_clock::now();
+  auto parsing_duration = std::chrono::duration_cast<std::chrono::seconds>(parsing_end - parsing_begin);
 
-  std::chrono::steady_clock::time_point parsing_end = std::chrono::steady_clock::now();
-  float parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin).count();
-  float speed = (float(token_counter) * 1000) / parsing_duration;
-  std::cerr << "Parsing speed: " << speed << " tokens / sec" << std::endl;
+  uint64_t token_counter = (nullptr != pdumper ? pdumper->get_token_counter() : 0);
+  if (0 == token_counter)
+  {
+    token_counter = pDumperBase->get_token_counter();
+  }
+
+  float speed = float(token_counter) / parsing_duration.count();
+  std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
+  std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
 
   if (!input.eof() && (input.fail() || input.bad()))
   {

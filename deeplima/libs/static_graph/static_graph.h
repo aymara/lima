@@ -48,7 +48,7 @@ class StaticGraphImpl : public torch::nn::Module
     {
       if (m_type >= max_step_type)
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
     }
   };
@@ -76,7 +76,7 @@ class StaticGraphImpl : public torch::nn::Module
     {
       if (m_type >= max_op_type)
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
     }
 
@@ -123,7 +123,7 @@ public:
       )
   {
     std::vector<std::string> output_names = { output_name };
-    return forward(inputs, output_names.begin(), output_names.end());
+    return forward(inputs, output_names.cbegin(), output_names.cend());
   }
 
   std::map<std::string, torch::Tensor> forward(
@@ -131,7 +131,7 @@ public:
       const std::vector<std::string>& output_names
       )
   {
-    return forward(inputs, output_names.begin(), output_names.end());
+    return forward(inputs, output_names.cbegin(), output_names.cend());
   }
 
   template< class InputIt >
@@ -156,12 +156,12 @@ public:
     {
       if (m_tensor_name_to_idx.end() == m_tensor_name_to_idx.find(kv.first))
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       size_t idx = m_tensor_name_to_idx[kv.first];
       if (idx >= ctx.m_tensors.size())
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       ctx.m_tensors[idx] = kv.second;
     }
@@ -185,12 +185,12 @@ public:
       const std::string& str = *it;
       if (m_tensor_name_to_idx.end() == m_tensor_name_to_idx.find(str))
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       size_t idx = m_tensor_name_to_idx[str];
       if (idx >= ctx.m_tensors.size())
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
       rv[str] = ctx.m_tensors[idx];
 
@@ -229,7 +229,7 @@ protected:
     std::string key = get_exec_plan_key(inputs, outputs_begin, outputs_end);
     if (m_exec_plans.end() != m_exec_plans.find(key))
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     std::set<size_t> given_inputs_idx;
@@ -263,6 +263,7 @@ protected:
         if (given_inputs_idx.end() == given_inputs_idx.find(in_idx))
         {
           required.push_back(in_idx);
+          // given_inputs_idx.insert(in_idx);
         }
       }
     }
@@ -319,7 +320,7 @@ protected:
     const auto it = opts.find(name);
     if (opts.cend() == it)
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
     T v;
     std::istringstream ss(it->second);
@@ -327,7 +328,7 @@ protected:
     std::string s;
     if (ss >> s)
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     return v;
@@ -338,7 +339,7 @@ protected:
     const auto it = opts.find(name);
     if (opts.cend() == it)
     {
-      throw;
+        throw std::runtime_error("Error in static graph");
     }
 
     if (it->second == "true")
@@ -349,7 +350,7 @@ protected:
     {
       return false;
     }
-    throw;
+    throw std::runtime_error("Error in static graph");
   }
 
   virtual void create_arg(const std::vector<std::string>& names, const std::map<std::string, std::string>& opts);
@@ -467,7 +468,7 @@ protected:
     {
       if (m_type >= module_type_t::max_module_type)
       {
-        throw;
+        throw std::runtime_error("Error in static graph");
       }
     }
   };

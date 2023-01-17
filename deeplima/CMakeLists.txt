@@ -12,7 +12,7 @@ project(
   LANGUAGES CXX
 )
 
-include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../SetCompilerFlags.cmake)
 
 # set(CMAKE_CXX_STANDARD 14)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)

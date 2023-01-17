@@ -78,19 +78,36 @@ public:
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
     feats.emplace_back(Vectorizer::str_feature, "form", &m_fastText);
-    for (size_t i = 0; i < class_names.size(); ++i)
+    // for (size_t i = 0; i < class_names.size(); ++i)
+    // {
+    //   if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
+    //   {
+    //     // TODO: skip morph classes that aren't requested by DP
+    //     throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
+    //   }
+    //
+    //   feats.emplace_back(Vectorizer::int_feature,
+    //                      InferenceEngine::get_input_str_dicts_names()[i+1],
+    //                      m_featVectorizers[i]);
+    //
+    //   m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
+    // }
+    for (const auto& class_name: class_names)
     {
-      if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
+      int i = 0;
+      for (const auto& input_str_dicts_names: InferenceEngine::get_input_str_dicts_names())
       {
-        // TODO: skip morph classes that aren't requested by DP
-        throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
+        if (class_name == input_str_dicts_names)
+        {
+          feats.emplace_back(Vectorizer::int_feature,
+                            class_name,
+                            m_featVectorizers[i]);
+
+          m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
+          break;
+        }
+        i++;
       }
-
-      feats.emplace_back(Vectorizer::int_feature,
-                         InferenceEngine::get_input_str_dicts_names()[i+1],
-                         m_featVectorizers[i]);
-
-      m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
     }
     m_vectorizer.init_features(feats);
 
@@ -118,7 +135,7 @@ public:
 
   virtual ~GraphDpImpl()
   {
-    std::cerr << "~GraphDpImpl" << std::endl;
+    // std::cerr << "~GraphDpImpl" << std::endl;
   }
 
 protected:
@@ -159,8 +176,8 @@ public:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "send_next_results: waiting for slot " << slot_idx
-           << " (lock_count==" << int(lock_count) << ")\n";
+      // std::cerr << "send_next_results: waiting for slot " << slot_idx
+      //      << " (lock_count==" << int(lock_count) << ")\n";
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
       lock_count = InferenceEngine::get_lock_count(slot_idx);
@@ -196,8 +213,8 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        std::cerr << "send_next_results: waiting for slot " << slot_idx
-             << " (lock_count==" << int(lock_count) << ")\n";
+        // std::cerr << "send_next_results: waiting for slot " << slot_idx
+        //      << " (lock_count==" << int(lock_count) << ")\n";
         // InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
         lock_count = InferenceEngine::get_lock_count(slot_idx);
@@ -234,14 +251,14 @@ protected:
   inline void acquire_slot(size_t slot_no)
   {
     // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-    std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
+    // std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
-           << " lock_count=" << int(lock_count) << std::endl;
+      // std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+      //      << " lock_count=" << int(lock_count) << std::endl;
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
@@ -262,8 +279,8 @@ public:
                                    const std::vector<size_t>& lengths,
                                    int timepoints_to_analyze = -1)
   {
-    std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
-              << timepoints_to_analyze << std::endl;
+    // std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
+    //           << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     // size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
@@ -277,7 +294,7 @@ public:
     InferenceEngine::set_slot_begin(slot_no, first_timepoint_idx);
     InferenceEngine::set_slot_end(slot_no, /*offset +*/ count);
     InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);
-    std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
+    // std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
   }
 
   inline void no_more_data(size_t slot_no)

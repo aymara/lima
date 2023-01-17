@@ -243,18 +243,18 @@ int train_entity_tagger(const train_params_tagging_t& params)
 
   if (train_input.first && train_input.second && train_input.first->size() != train_input.second->size())
   {
-    cerr << "ERROR: train set length missmatch: "
+    std::cerr << "ERROR: train set length missmatch: "
          << train_input.first->size()
-         << " " << train_input.second->size() << endl;
+         << " " << train_input.second->size() << std::endl;
     throw runtime_error("Train set length missmatch");
   }
 
   if ((train_input.first && train_input.first->size() != train_gold->size())
     || (train_input.second && train_input.second->size() != train_gold->size()))
   {
-    cerr << "ERROR: train set length (input != gold): "
+    std::cerr << "ERROR: train set length (input != gold): "
          << (train_input.first ? train_input.first->size() : train_input.second->size())
-         << " " << train_gold->size() << endl;
+         << " " << train_gold->size() << std::endl;
     throw runtime_error("Train set length missmatch (input != gold)");
   }
 
@@ -272,7 +272,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
                                   params);
   }
 
-  cerr << model->get_script() << endl;
+  // cerr << model->get_script() << endl;
 
   torch::Device device(params.m_device_string);
 

@@ -54,9 +54,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   {
     try
     {
-      p_embd = shared_ptr<FastTextVectorizerToTorchMatrix>(
-              new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
-            );
+      p_embd = std::make_shared<FastTextVectorizerToTorchMatrix>(params.m_embeddings_fn);
       assert(nullptr != p_embd.get());
       //feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
     }
@@ -74,9 +72,12 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   }
 
   TagDictBuilderFromCoNLLU tag_dict_builder;
+  // TODO retrieve tagger tasks list from model or config
+  // Currently the list below (form,upos…) is hard-coded while the tagging model can be trained with various tasks.
+  // This list should be saved somewhere and retrieved here later on
   ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t> feat_extractor
       = tag_dict_builder.preprocess(CoNLLU::WordLevelAdapter(&train_data),
-                                    "*form,upos,feats,-Typo,-Foreign");
+                                    "*form,upos,xpos,feats,-Typo,-Foreign");
   DictsHolder tag_dh = tag_dict_builder.process(CoNLLU::WordLevelAdapter(&train_data),
                                                 feat_extractor, 0, "");
 
@@ -126,7 +127,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     model->load(params.m_input_model_name);
   }
 
-  cerr << model->get_script() << endl;
+  // cerr << model->get_script() << endl;
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
@@ -166,7 +167,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
   }
 
-  return -1;
+  return 0;
 }
 
 } // train

@@ -9,6 +9,7 @@
 
 
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
+#include "common/misc/Exceptions.h"
 #include "common/tools/FileUtils.h"
 #include "common/MediaticData/mediaticData.h"
 #include "common/time/timeUtilsController.h"
@@ -68,16 +69,15 @@ public:
   void init(GroupConfigurationStructure& unitConfiguration);
   void tagger(std::vector<segmentation::token_pos>& buffer);
   void insertTags(TokenSequenceAnalyzer<>::TokenIterator &ti);
-  void addMicrosToMorphoSyntacticData(LinguisticAnalysisStructure::MorphoSyntacticData* newMorphData,
+  void addMicrosToMorphoSyntacticData(
+          LinguisticAnalysisStructure::MorphoSyntacticData* newMorphData,
           const LinguisticAnalysisStructure::MorphoSyntacticData* oldMorphData,
           const std::set<LinguisticCode>& micros,
           LinguisticAnalysisStructure::LinguisticElement& elem) const;
 
   std::map<QString,QString> loadFileTags(const QString& filepath);
 
-  void clearUnreachableVertices(
-          AnalysisGraph* anagraph,
-          LinguisticGraphVertex from) const;
+  void clearUnreachableVertices(AnalysisGraph* anagraph, LinguisticGraphVertex from) const;
 
   dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
 
@@ -99,8 +99,6 @@ RnnNERPrivate::RnnNERPrivate():
     m_stringsPool(nullptr), m_tag(nullptr), m_stridx(), m_tags(), m_microAccessor(nullptr), m_loaded(false)
 {
 }
-
-
 
 RnnNER::RnnNER(): m_d(new RnnNERPrivate()) {
 
@@ -142,9 +140,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
   auto posgraph = std::make_shared<LinguisticAnalysisStructure::AnalysisGraph>(
       "PosGraph", m_d->m_language, false, true);
   analysis.setData("PosGraph", posgraph);
-  const auto& propertyCodeManager = dynamic_cast<const LanguageData&>(
-          MediaticData::single().mediaData(m_d->m_language)).getPropertyCodeManager();
-  // const auto& microManager = propertyCodeManager.getPropertyManager("MICRO");
+
   /** Creation of an annotation graph if necessary*/
   auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
   if (annotationData==nullptr)
@@ -169,15 +165,17 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
 
   VertexTokenPropertyMap vTokens = get(vertex_token, *srcgraph);
   auto currentVx = anagraph->firstVertex();
-  LinguisticGraph* resultgraph=posgraph->getGraph();
-  remove_edge(posgraph->firstVertex(),posgraph->lastVertex(),*resultgraph);
+  auto resultgraph = posgraph->getGraph();
+  remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *resultgraph);
 
   std::vector<segmentation::token_pos> buffer;
   std::vector< LinguisticGraphVertex > anaVertices;
   std::vector<std::string> v;
 
-  while(currentVx != endVx){
-      if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+  while(currentVx != endVx)
+  {
+      if (currentVx != 0 && vTokens[currentVx] != nullptr)
+      {
           const auto& src = vTokens[currentVx];
           v.push_back(src->stringForm().toStdString());
           buffer.emplace_back();
@@ -197,9 +195,11 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
   /**
     * Construction of the tokens used in the tagger.
     */
-  for(unsigned long k=0;k<anaVertices.size();k++){
+  for(unsigned long k = 0; k < anaVertices.size(); k++)
+  {
       currentVx = anaVertices[k];
-      if (currentVx != 0 && vTokens[currentVx] != nullptr) {
+      if (currentVx != 0 && vTokens[currentVx] != nullptr)
+      {
           const auto& src = vTokens[currentVx];
           auto& token = buffer[k];
           token.m_offset = src->position();
@@ -230,7 +230,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
     auto morphoData = get(vertex_data,*srcgraph,anaVertex);
     // auto srcToken = get(vertex_token,*srcgraph,anaVertex);
 
-    if (morphoData!=nullptr)
+    if (morphoData != nullptr)
     {
       auto entityTag = QString::fromUtf8(m_d->m_tags[anaVerticesIndex].c_str());
       if((anaVerticesIndex>0 && entityTag != prev_tag) || (entityTag[0]!="B" && prev_tag != "O") )
@@ -251,8 +251,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
             }
           }
         }
-      if(isTagged)
-      {
+        if(isTagged)
+        {
           if (annotationData->dumpFunction("SpecificEntity") == nullptr)
           {
             annotationData->dumpFunction("SpecificEntity",
@@ -318,11 +318,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
 
           // Update AnnotationGraph : create a new vertex and annotation
           auto agv =  annotationData->createAnnotationVertex();
-          annotationData->addMatching(anagraph->getGraphId(), newVertex,
-                                      "annot", agv);
-          annotationData->annotate(agv,
-                                    QString::fromStdString(anagraph->getGraphId()),
-                                    newVertex);
+          annotationData->addMatching(anagraph->getGraphId(), newVertex, "annot", agv);
+          annotationData->annotate(agv, QString::fromStdString(anagraph->getGraphId()), newVertex);
           tokenMap[newVertex] = newToken;
           dataMap[newVertex] = newMorphData;
           GenericAnnotation ga(annot);
@@ -334,7 +331,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
           LinguisticGraphEdge e;
           if(inEdgeIt != inEdgeItEnd)
           {
-              LinguisticGraphVertex previous = boost::source(*inEdgeIt, *lingGraph);
+              auto previous = boost::source(*inEdgeIt, *lingGraph);
               boost::remove_edge(head, previous, *lingGraph);
               boost::tie(e, success) = boost::add_edge(previous, newVertex, *lingGraph);
 
@@ -350,8 +347,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
             }
 
             LinguisticGraphOutEdgeIt outEdgeIt, outEdgeItEnd;
-            boost::tie(outEdgeIt, outEdgeItEnd) = boost::out_edges(entityFound->getEnd(),
-                                                                    *lingGraph);
+            boost::tie(outEdgeIt, outEdgeItEnd) = boost::out_edges(entityFound->getEnd(), *lingGraph);
             if(outEdgeIt != outEdgeItEnd)
             {
               auto next = boost::target(*outEdgeIt, *lingGraph);
@@ -394,7 +390,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
           try
           {
             seType = Common::MediaticData::MediaticData::single().getEntityType(entityModex);
-          } catch (LimaException& e)
+          }
+          catch (LimaException& e)
           {
             PTLOGINIT;
             LIMA_EXCEPTION( "Lima exception while getting entity type "
@@ -521,11 +518,9 @@ void RnnNERPrivate::addMicrosToMorphoSyntacticData(
         LinguisticAnalysisStructure::LinguisticElement& elem) const
 {
   // try to filter existing microcategories
-  for (auto it = oldMorphData->cbegin(), it_end = oldMorphData->cend();
-        it!=it_end; it++)
+  for (auto it = oldMorphData->cbegin(), it_end = oldMorphData->cend(); it != it_end; it++)
   {
-      if (micros.find(m_microAccessor->readValue((*it).properties)) !=
-          micros.end())
+      if (micros.find(m_microAccessor->readValue((*it).properties)) != micros.end())
       {
           elem.properties = (*it).properties;
           newMorphData->push_back(elem);
@@ -553,7 +548,7 @@ void RnnNERPrivate::clearUnreachableVertices(
   while (! verticesToCheck.empty() )
   {
 
-      LinguisticGraphVertex v = verticesToCheck.front();
+      auto v = verticesToCheck.front();
       verticesToCheck.pop();
       bool toClear = false;
       if (out_degree(v, g) == 0 && v != anagraph->lastVertex())
@@ -588,7 +583,7 @@ std::map<QString,QString> RnnNERPrivate::loadFileTags(const QString& filepath)
   QFile file(filepath);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-      throw BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
+      throw Lima::BadFileException("The file "+filepath.toStdString()+" doesn't exist.");
   }
   if(file.size()==0)
   {

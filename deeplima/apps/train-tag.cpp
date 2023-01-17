@@ -25,28 +25,29 @@ string get_datetime_str();
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
-  cout << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
-       << "git branch: " << deeplima::version::get_git_branch()
-       << ")" << endl;
+  // std::cerr << "deeplima (git commit hash: " << deeplima::version::get_git_commit_hash() << ", "
+  //      << "git branch: " << deeplima::version::get_git_branch()
+  //      << ")" << std::endl;
 
-  string corpus, ud_path;
+  std::string corpus, ud_path;
   deeplima::tagging::train::train_params_tagging_t params;
-  vector<string> m_raw_tags;
+  std::vector<std::string> m_raw_tags;
 
   po::options_description desc("deeplima (train tagging model)");
   desc.add_options()
   ("help,h",                                                            "Display this help message")
-  ("corpus,c",          po::value<string>(&corpus),                     "Training corpus name")
-  ("ud-path,u",         po::value<string>(&ud_path),                    "Path to UD collection")
-  ("name,n",            po::value<string>(&params.m_output_model_name), "Model name")
-  ("pretrained,p",      po::value<string>(&params.m_input_model_name),  "Pretrained model name")
-  ("embeddings,e",      po::value<string>(&params.m_embeddings_fn),     "File with embeddings (fastText .bin or .ftz)")
-  ("train,t",           po::value<string>(&params.m_train_set_fn),      "File with training data")
-  ("dev,d",             po::value<string>(&params.m_dev_set_fn),        "File with evaluation data")
+  ("corpus,c",          po::value<std::string>(&corpus),                     "Training corpus name")
+  ("ud-path,u",         po::value<std::string>(&ud_path),                    "Path to UD collection")
+  ("name,n",            po::value<std::string>(&params.m_output_model_name), "Model name")
+  ("pretrained,p",      po::value<std::string>(&params.m_input_model_name),  "Pretrained model name")
+  ("embeddings,e",      po::value<std::string>(&params.m_embeddings_fn),     "File with embeddings (fastText .bin or .ftz)")
+  ("train,t",           po::value<std::string>(&params.m_train_set_fn),      "File with training data")
+  ("dev,d",             po::value<std::string>(&params.m_dev_set_fn),        "File with evaluation data")
   ("maxepoch,m",        po::value<size_t>(&params.m_max_epochs),        "Max epochs")
+  ("max-epochs-without-improvement", po::value<size_t>(&params.m_max_epochs_without_improvement), "Max epochs without improvement")
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
-  ("device",            po::value<string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
-  ("tasks",             po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
+  ("device",            po::value<std::string>(&params.m_device_string),     "Computing device: (cpu|cuda)[:<device-index>]")
+  ("tasks",             po::value<std::string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (upos,feats,xpos)+)" )
   ("tag",               po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
   ("batch-size,b",      po::value<size_t>(&params.m_batch_size),        "Batch size")
   ("seq-len,s",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
@@ -54,6 +55,9 @@ int main(int argc, char* argv[])
   ("input-dropout",     po::value<float>(&params.m_input_dropout_prob), "Input dropout probability")
   ("beta-one",          po::value<float>(&params.m_beta_one)->default_value(0.9),        "Beta One value of Adam Optimizer")
   ("beta-two",          po::value<float>(&params.m_beta_two)->default_value(0.9),        "Beta Two value of Adam Optimizer")
+  ("learning-rate",     po::value<float>(&params.m_learning_rate)->default_value(0.01),  "Learning rate")
+  ("weight-decay",      po::value<float>(&params.m_weight_decay)->default_value(0.00001),"Weight decay")
+  ("output-format,f",   po::value<std::string>(&params.m_output_format)->default_value("txt"), "The output format: txt or json")
   ;
 
   po::variables_map vm;
@@ -135,8 +139,8 @@ int main(int argc, char* argv[])
     params.m_tags[k] = v;
   }
 
-  std::cout << "batch_size=" << params.m_batch_size
-            << " seq_len=" << params.m_sequence_length << std::endl;
+  // std::cerr << "batch_size=" << params.m_batch_size
+  //           << " seq_len=" << params.m_sequence_length << std::endl;
 
   return deeplima::tagging::train::train_entity_tagger(params);
 }

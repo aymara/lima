@@ -93,7 +93,7 @@ public:
 
   virtual ~TaggingImpl()
   {
-    std::cerr << "~TaggingImpl" << std::endl;
+    // std::cerr << "~TaggingImpl" << std::endl;
   }
 
 protected:
@@ -134,8 +134,8 @@ public:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "send_next_results: waiting for slot " << slot_idx
-           << " (lock_count==" << int(lock_count) << ")\n";
+      // std::cerr << "send_next_results: waiting for slot " << slot_idx
+      //      << " (lock_count==" << int(lock_count) << ")\n";
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
       lock_count = InferenceEngine::get_lock_count(slot_idx);
@@ -171,8 +171,8 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        std::cerr << "send_next_results: waiting for slot " << slot_idx
-             << " (lock_count==" << int(lock_count) << ")\n";
+        // std::cerr << "send_next_results: waiting for slot " << slot_idx
+        //      << " (lock_count==" << int(lock_count) << ")\n";
         // InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
         lock_count = InferenceEngine::get_lock_count(slot_idx);
@@ -209,14 +209,14 @@ protected:
   inline void acquire_slot(size_t slot_no)
   {
     // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-    std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
+    // std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
-           << " lock_count=" << int(lock_count) << std::endl;
+      // std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+      //      << " lock_count=" << int(lock_count) << std::endl;
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
@@ -233,7 +233,7 @@ protected:
 public:
   virtual void handle_token_buffer(size_t slot_no, const typename Vectorizer::dataset_t& buffer, int timepoints_to_analyze = -1)
   {
-    std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", " << timepoints_to_analyze << std::endl;
+    // std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", " << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
@@ -245,7 +245,7 @@ public:
 
     InferenceEngine::set_slot_end(slot_no, offset + count);
     InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);
-    std::cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << std::endl;
+    // std::cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << std::endl;
   }
 
   inline void no_more_data(size_t slot_no)

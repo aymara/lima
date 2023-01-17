@@ -1177,7 +1177,7 @@ void ConllDumperPrivate::getTransducedTokens(const LinguisticGraph& graph,
       else
       {
         if (tokenId == 0)
-          throw;
+          throw std::runtime_error("token id should not be null");
         out[tokenId - 1] = 2;
         firstTransducedTokenId = tokenId - 1;
       }

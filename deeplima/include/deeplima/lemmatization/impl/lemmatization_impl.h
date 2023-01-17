@@ -172,7 +172,7 @@ public:
 
   virtual ~LemmatizationImpl()
   {
-    std::cerr << "~LemmatizationImpl" << std::endl;
+    // std::cerr << "~LemmatizationImpl" << std::endl;
   }
 
 protected:
