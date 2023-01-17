@@ -30,8 +30,7 @@ public:
     : m_input_encoder(ngram_descr),
       m_unk(~0)
   {
-    auto test_feat = m_input_encoder.get_feat(0);
-    assert(sizeof(uint64_t) >= sizeof(test_feat));
+    assert(sizeof(uint64_t) >= sizeof(m_input_encoder.get_feat(0)));
   }
 
   inline uint64_t get_num_features() const
