@@ -301,6 +301,7 @@ public:
             assert(0 == m_tokens[pos].m_len);
             m_tokens[pos].m_pch = *pch;
           }
+          [[fallthrough]];
 
         case segm_tag_t::I:
           if (0 == m_tokens[pos].m_len
@@ -319,6 +320,7 @@ public:
         // TODO insert the marker for case continuing [[case_]]
         case segm_tag_t::E_EOS:
           m_tokens[pos].m_flags = token_pos::flag_t(m_tokens[pos].m_flags | token_pos::flag_t::sentence_brk);
+          [[fallthrough]];
 
         case segm_tag_t::E:
           if (0 == m_tokens[pos].m_len
