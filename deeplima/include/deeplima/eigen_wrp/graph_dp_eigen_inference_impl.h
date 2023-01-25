@@ -102,8 +102,7 @@ public:
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
 
-    typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t* wb
-        = static_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t*>(Parent::m_wb[0][worker_id]);
+    auto wb = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t>(Parent::m_wb[0][worker_id]);
 
     auto p_decoder = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<M, V, T>>(
       Parent::m_ops[1]);

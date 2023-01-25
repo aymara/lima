@@ -67,7 +67,7 @@ public:
 
   typedef params_lstm_beam_decoder_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t /*input_size*/, const std::shared_ptr<param_base_t> params,
+  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t /*input_size*/, const std::shared_ptr<param_base_t> params,
                                         bool precomputed_input=false) const override
   {
     assert(nullptr != params);
@@ -80,7 +80,7 @@ public:
     {
       output_sizes.push_back(p.weight.rows());
     }
-    return new workbench_t(layer.fw.weight_ih.rows() / 4, output_sizes, precomputed_input);
+    return std::make_shared<workbench_t>(layer.fw.weight_ih.rows() / 4, output_sizes, precomputed_input);
   }
 
   virtual bool supports_precomputing() const
@@ -101,7 +101,7 @@ public:
     output_block.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
   }
 
-  virtual size_t execute(Op_Base::workbench_t* pwb,
+  virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
                          const EmbdUInt64Float& embd,
                          const V& initial_state_h,
                          const V& initial_state_c,
@@ -116,7 +116,7 @@ public:
     const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
     const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear[0];
 
-    auto wb = static_cast<workbench_t*>(pwb);
+    auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
     M& temp = wb->temp;
     M& output = wb->out;
 //     TODO should it be used?

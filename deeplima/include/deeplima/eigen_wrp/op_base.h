@@ -32,7 +32,9 @@ public:
     virtual ~workbench_t() { }
   };
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const std::shared_ptr<param_base_t> params, bool precomputed_input) const = 0;
+  virtual std::shared_ptr<workbench_t> create_workbench(uint32_t input_size,
+                                                        const std::shared_ptr<param_base_t> params,
+                                                        bool precomputed_input) const = 0;
 };
 
 } // namespace eigen_impl

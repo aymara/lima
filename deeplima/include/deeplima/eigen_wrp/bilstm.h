@@ -144,14 +144,14 @@ public:
 public:
   typedef V Vector;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const std::shared_ptr<param_base_t> params, bool precomputed_input=false) const override
+  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t input_size, const std::shared_ptr<param_base_t> params, bool precomputed_input=false) const override
   {
     assert(input_size > 0);
     assert(nullptr != params);
     auto p = std::dynamic_pointer_cast<const params_t>(params);
 
     //return new workbench_t(input_size, p.layers[0].fw.weight_ih.rows() / 4, precomputed_input);
-    return new workbench_t(*p, input_size, precomputed_input);
+    return std::make_shared<workbench_t>(*p, input_size, precomputed_input);
   }
 
   virtual bool supports_precomputing() const
@@ -174,7 +174,7 @@ public:
     output_block.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
   }
 
-  virtual size_t execute(Op_Base::workbench_t* pwb,
+  virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
                          const M& input_matrix,
                          const std::shared_ptr<param_base_t> params,
                          size_t input_begin,
@@ -189,7 +189,7 @@ public:
     const auto& p = *std::dynamic_pointer_cast<const params_t>(params);
     const typename params_t::layer_params_t& layer = p.layers[0];
 
-    workbench_t* wb = static_cast<workbench_t*>(pwb);
+    auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
     //M& temp = wb->temps[0];
     M& output = wb->outputs[0];
 //     TODO should it be used?
@@ -255,7 +255,7 @@ public:
     return 0;
   }
 
-  virtual size_t execute(Op_Base::workbench_t* pwb,
+  virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
                          const M& input_matrix,
                          const std::shared_ptr<param_base_t> params,
                          const size_t input_begin,
@@ -264,7 +264,7 @@ public:
     assert(nullptr != pwb);
     assert(nullptr != params);
     const auto& p = *std::dynamic_pointer_cast<const params_t>(params);
-    workbench_t* wb = static_cast<workbench_t*>(pwb);
+    auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
 
     for (size_t i = 0; i < p.layers.size(); ++i)
     {

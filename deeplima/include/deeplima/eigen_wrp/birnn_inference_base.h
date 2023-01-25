@@ -82,16 +82,16 @@ public:
 
   virtual ~BiRnnInferenceBase()
   {
-    for (std::vector<Op_Base::workbench_t*>& v : m_wb)
-    {
-      for (Op_Base::workbench_t* p : v)
-      {
-        if (nullptr != p)
-        {
-          delete p;
-        }
-      }
-    }
+    // for (auto& v : m_wb)
+    // {
+    //   for (auto& p : v)
+    //   {
+    //     if (nullptr != p)
+    //     {
+    //       delete p;
+    //     }
+    //   }
+    // }
 
     // for (Op_Base* p : m_ops)
     // {
@@ -138,7 +138,7 @@ protected:
   std::vector<std::shared_ptr<Op_Base>> m_ops;
   std::vector<std::shared_ptr<param_base_t>> m_params; // TODO: replace this
 
-  std::vector<std::vector<Op_Base::workbench_t*>> m_wb; // outer - calculation step, inner - worker id
+  std::vector<std::vector<std::shared_ptr<Op_Base::workbench_t>>> m_wb; // outer - calculation step, inner - worker id
 
   uint_dicts_holder_t m_input_uint_dicts;
   std::vector<std::string> m_input_uint_dicts_names;
