@@ -85,10 +85,10 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
   }
 
   // temp: create exec plan
-  Parent::m_ops.push_back(new Op_BiLSTM<M, V, T>());
+  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<M, V, T>>());
   Parent::m_params.push_back(Parent::m_multi_bilstm[0]);
 
-  Parent::m_ops.push_back(new Op_DeepBiaffineAttnDecoder<M, V, T>());
+  Parent::m_ops.push_back(std::make_shared<Op_DeepBiaffineAttnDecoder<M, V, T>>());
   Parent::m_params.push_back(m_deep_biaffine_attn_decoder[0]);
 
   Parent::m_wb.resize(2);

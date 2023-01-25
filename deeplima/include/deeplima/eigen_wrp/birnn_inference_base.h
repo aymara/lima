@@ -93,13 +93,13 @@ public:
       }
     }
 
-    for (Op_Base* p : m_ops)
-    {
-      if (nullptr != p)
-      {
-        delete p;
-      }
-    }
+    // for (Op_Base* p : m_ops)
+    // {
+    //   if (nullptr != p)
+    //   {
+    //     delete p;
+    //   }
+    // }
 
     // for (param_base_t* p : m_params)
     // {
@@ -135,7 +135,7 @@ public:
       ) = 0;
 
 protected:
-  std::vector<Op_Base*> m_ops;
+  std::vector<std::shared_ptr<Op_Base>> m_ops;
   std::vector<std::shared_ptr<param_base_t>> m_params; // TODO: replace this
 
   std::vector<std::vector<Op_Base::workbench_t*>> m_wb; // outer - calculation step, inner - worker id

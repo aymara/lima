@@ -82,8 +82,7 @@ public:
       int64_t input_size
       ) override
   {
-    deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
-        = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>>(Parent::m_ops[0]);
 
     p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
   }
@@ -118,26 +117,23 @@ public:
 
     // Features encoders
     // for encoder
-    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_feats_enc
-        = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[5]);
+    auto p_linear_feats_enc = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[5]);
     Vector encoded_feats_for_encoder;
     p_linear_feats_enc->execute(Parent::m_wb[5][worker_id], input_feats, Parent::m_params[5], encoded_feats_for_encoder);
 
     // for decoder
-    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_feats_dec
-        = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[3]);
+    auto p_linear_feats_dec = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[3]);
 
     Vector encoded_feats;
     p_linear_feats_dec->execute(Parent::m_wb[3][worker_id], input_feats, Parent::m_params[3], encoded_feats);
 
-    deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_encoder
-        = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
+    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
-    auto p_decoder = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
+    auto p_decoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>>(Parent::m_ops[4]);
 
-    const auto& enc_mutlilayer_bilstm
-        = *std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>>(Parent::m_params[0]);
-    size_t hidden_size = enc_mutlilayer_bilstm.layers[0].fw.weight_ih.rows() / 4;
+    auto enc_mutlilayer_bilstm
+        = std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>>(Parent::m_params[0]);
+    size_t hidden_size = enc_mutlilayer_bilstm->layers[0].fw.weight_ih.rows() / 4;
 
     Vector fw_h, fw_c, bw_h, bw_c;
     if (true)
@@ -159,10 +155,8 @@ public:
     Vector encoder_state(hidden_size * 4 + encoded_feats.rows());
     encoder_state << fw_h, fw_c, bw_h, bw_c, encoded_feats;
 
-    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_h
-        = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[1]);
-    deeplima::eigen_impl::Op_Linear<M, V, T> *p_linear_c
-        = static_cast<deeplima::eigen_impl::Op_Linear<M, V, T>*>(Parent::m_ops[2]);
+    auto p_linear_h = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[1]);
+    auto p_linear_c = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[2]);
 
     Vector decoder_initial_h, decoder_initial_c;
     p_linear_h->execute(Parent::m_wb[1][worker_id], encoder_state, Parent::m_params[1], decoder_initial_h);
