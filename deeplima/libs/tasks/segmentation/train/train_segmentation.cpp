@@ -33,7 +33,7 @@ using namespace deeplima;
 template <class M>
 std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, bool eos)
 {
-  std::shared_ptr<M> out(new M(len, 1));
+  auto out = std::make_shared<M>(len, 1);
 
   auto tokens = annot.get_tokens();
   size_t p = 0;

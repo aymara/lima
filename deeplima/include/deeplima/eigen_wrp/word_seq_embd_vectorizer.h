@@ -48,9 +48,9 @@ public:
 
   struct feature_descr_t : public feature_descr_base_t
   {
-    FeatureVectorizerBase<Idx>* m_pvectorizer; // feature extractor
+    std::shared_ptr<FeatureVectorizerBase<Idx>> m_pvectorizer; // feature extractor
 
-    feature_descr_t(feature_type_t type, const std::string& name, FeatureVectorizerBase<Idx>* pvectorizer)
+    feature_descr_t(feature_type_t type, const std::string& name, std::shared_ptr<FeatureVectorizerBase<Idx>> pvectorizer)
       : feature_descr_base_t(type, name, 0), m_pvectorizer(pvectorizer) {}
   };
 
@@ -67,8 +67,8 @@ protected:
   const StrFeatExtractor m_str_feat_extractor;
   UIntFeatExtractor m_uint_feat_extractor;
 
-  std::vector<std::pair<uint_vectorizer_t*, size_t>> m_uint_vectorizers; // pointer to vectorizer, feat_idx
-  std::vector<std::pair<str_vectorizer_t*, size_t>> m_str_vectorizers;
+  std::vector<std::pair<std::shared_ptr<uint_vectorizer_t>, size_t>> m_uint_vectorizers; // pointer to vectorizer, feat_idx
+  std::vector<std::pair<std::shared_ptr<str_vectorizer_t>, size_t>> m_str_vectorizers;
 
 public:
 
@@ -113,7 +113,7 @@ public:
     {
       if (str_feature == feat_descr.m_type)
       {
-        auto pfv = static_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = std::dynamic_pointer_cast<str_vectorizer_t>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
         feat_descr.m_feat_id = m_str_feat_extractor.get_feat_id(feat_descr.m_name);
         m_str_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
@@ -131,7 +131,7 @@ public:
       }
       else if (int_feature == feat_descr.m_type)
       {
-        auto pfv = static_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = std::dynamic_pointer_cast<uint_vectorizer_t>(feat_descr.m_pvectorizer);
         assert(nullptr != pfv);
         feat_descr.m_feat_id = m_uint_feat_extractor.get_feat_id(feat_descr.m_name);
         m_uint_vectorizers.emplace_back(std::make_pair(pfv, feat_descr.m_feat_id));
@@ -176,13 +176,13 @@ public:
 
       if (feature_type_t::int_feature == feat_descr.m_type)
       {
-        auto pfv = static_cast<uint_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = std::dynamic_pointer_cast<uint_vectorizer_t>(feat_descr.m_pvectorizer);
         const float feat_val = m_uint_feat_extractor.feat_value(token, feat_descr.m_feat_id);
         pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
       }
       else if (feature_type_t::str_feature == feat_descr.m_type)
       {
-        auto pfv = static_cast<str_vectorizer_t*>(feat_descr.m_pvectorizer);
+        auto pfv = std::dynamic_pointer_cast<str_vectorizer_t>(feat_descr.m_pvectorizer);
         const std::string& feat_val = m_str_feat_extractor.feat_value(token, feat_descr.m_feat_id);
         pfv->get(feat_val, target, timepoint, m_features_pos[feat_idx]);
       }

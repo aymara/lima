@@ -27,6 +27,7 @@ class GraphDpImpl: public InferenceEngine
 public:
 
   GraphDpImpl() :
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
@@ -39,15 +40,16 @@ public:
     )
     : InferenceEngine(
         0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_timepoint(InferenceEngine::get_start_timepoint())
   {
   }
 
-  EmbdUInt64Float* convert(const EmbdStrFloat& src)
+  std::shared_ptr<EmbdUInt64Float> convert(const EmbdStrFloat& src)
   {
     auto d = src.get_int_dict<EmbdUInt64Float::value_t>();
     auto t = src.get_tensor().transpose();
-    EmbdUInt64Float* p = new EmbdUInt64Float();
+    auto p = std::make_shared<EmbdUInt64Float>();
     p->init(d, t);
 
     return p;
@@ -64,7 +66,7 @@ public:
       m_featVectorizers[i] = convert(this->get_input_str_dicts()[i]);
     }
 
-    m_fastText.load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
+    m_fastText->load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
   }
 
   void init(size_t threads,
@@ -73,11 +75,11 @@ public:
             StringIndex& stridx,
             const std::vector<std::string>& class_names)
   {
-    m_fastText.get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
 
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
-    feats.emplace_back(Vectorizer::str_feature, "form", &m_fastText);
+    feats.emplace_back(Vectorizer::str_feature, "form", m_fastText);
     for (size_t i = 0; i < class_names.size(); ++i)
     {
       if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
@@ -321,8 +323,8 @@ public:
 
 protected:
   Vectorizer m_vectorizer;
-  FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> m_fastText;
-  std::vector<FeatureVectorizerBase<Eigen::Index>*> m_featVectorizers;
+  std::shared_ptr<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>> m_fastText;
+  std::vector<std::shared_ptr<FeatureVectorizerBase<Eigen::Index>>> m_featVectorizers;
 
   tagging_callback_t m_callback;
 

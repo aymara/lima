@@ -276,10 +276,10 @@ void parse_file(std::istream& input,
   {
     switch (out_fmt) {
     case 1:
-      pdumper.reset(new dumper::TokensToConllU());
+      pdumper = std::make_shared<dumper::TokensToConllU>();
       break;
     case 2:
-      pdumper.reset(new dumper::Horizontal());
+      pdumper = std::make_shared<dumper::Horizontal>();
       break;
     default:
       throw std::runtime_error("Unknown output format");

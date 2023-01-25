@@ -87,8 +87,8 @@ public:
       i++;
     }
 
-    std::shared_ptr<MatrixFloat> frozen_features(new MatrixFloat(len, Parent::m_features_size));
-    std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
+    auto frozen_features = std::make_shared<MatrixFloat>(len, Parent::m_features_size);
+    auto embeddable_features = std::make_shared<MatrixInt>(len, m_embeddable_size);
     vectorization_t rv(embeddable_features, frozen_features);
 
     process(src, rv, 0);
@@ -98,8 +98,8 @@ public:
 
   vectorization_t init_dst(uint64_t len) const
   {
-    std::shared_ptr<MatrixFloat> frozen_features(new MatrixFloat(len, Parent::m_features_size));
-    std::shared_ptr<MatrixInt> embeddable_features(new MatrixInt(len, m_embeddable_size));
+    auto frozen_features = std::make_shared<MatrixFloat>(len, Parent::m_features_size);
+    auto embeddable_features = std::make_shared<MatrixInt>(len, m_embeddable_size);
     vectorization_t rv(embeddable_features, frozen_features);
 
     return rv;

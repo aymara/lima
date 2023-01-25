@@ -73,7 +73,7 @@ void BiRnnClassifierForNerImpl::load(serialize::InputArchive& archive)
         throw std::runtime_error("classes must be a list of lists of strings.");
       }
 
-      shared_ptr<StringDict> d = shared_ptr<StringDict>(new StringDict());
+      auto d = std::make_shared<StringDict>();
       d->fromIValue(l.get(i));
       m_classes.push_back(d);
     }

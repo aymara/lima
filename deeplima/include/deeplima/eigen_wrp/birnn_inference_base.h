@@ -31,6 +31,8 @@ public:
   typedef EmbdUInt64FloatHolder uint_dicts_holder_t;
   typedef EmbdStrFloatHolder str_dicts_holder_t;
 
+  virtual ~BiRnnInferenceBase() = default;
+
   virtual void load(const std::string& fn) = 0;
 
   inline const uint_dicts_holder_t& get_input_uint_dicts() const
@@ -78,43 +80,6 @@ public:
     }
 
     return new_worker_idx;
-  }
-
-  virtual ~BiRnnInferenceBase()
-  {
-    // for (auto& v : m_wb)
-    // {
-    //   for (auto& p : v)
-    //   {
-    //     if (nullptr != p)
-    //     {
-    //       delete p;
-    //     }
-    //   }
-    // }
-
-    // for (Op_Base* p : m_ops)
-    // {
-    //   if (nullptr != p)
-    //   {
-    //     delete p;
-    //   }
-    // }
-
-    // for (param_base_t* p : m_params)
-    // {
-    //   if (nullptr != p)
-    //   {
-        // TODO: Why this fails?
-        // In graph_dp_model.cpp, lines 89 and 92, addresses of objects alocated elsewhere are
-        // pushed back.
-        // But in convert_from_torch.cpp, line 168, an object allocated with new is pushed back
-        // To solve this problem: create copy constructors when needed to the parameters and store only objects
-        // allocated with new (change graph_dp_model.cpp, lines 89 and 92)
-        // In the meantime comment out again the delete (reopening a memory leak)
-        // delete p;
-      // }
-    // }
   }
 
   virtual void precompute_inputs(

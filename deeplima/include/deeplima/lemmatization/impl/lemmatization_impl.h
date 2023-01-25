@@ -102,7 +102,7 @@ public:
         v = { 0 };
       }
 
-      std::shared_ptr<Dict<uint64_t>> dd = std::shared_ptr<Dict<uint64_t>>(new Dict<uint64_t>(v));
+      auto dd = std::make_shared<Dict<uint64_t>>(v);
       EmbdUInt64Float d;
 
       d.init(dd, str_dicts[feat_idx].get_tensor().transpose());

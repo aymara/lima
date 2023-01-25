@@ -104,7 +104,7 @@ public:
       buff.m_len = bytes_read;
       buff.lock();
 
-      int32_t pos = 0;
+      uint32_t pos = 0;
       uint8_t* p = buff.m_data;
       if (!just_started && 0 == n)
       {
@@ -143,7 +143,7 @@ public:
     char final_spaces[] = " ";
     for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
     {
-      int32_t pos = 0;
+      uint32_t pos = 0;
       if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
       {
         handle_timepoint();

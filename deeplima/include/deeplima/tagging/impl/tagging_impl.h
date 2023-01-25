@@ -31,6 +31,7 @@ class TaggingImpl: public ITagging, public InferenceEngine
 public:
 
   TaggingImpl() :
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
@@ -41,8 +42,8 @@ public:
       size_t threads,
       size_t buffer_size_per_thread
     )
-    : InferenceEngine(
-        0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+    : InferenceEngine(0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_timepoint(InferenceEngine::get_start_timepoint())
   {
   }
@@ -54,19 +55,18 @@ public:
     if (this->get_input_str_dicts().size())
     {
       auto z = *(this->get_input_str_dicts().begin());
-      std::shared_ptr<FeatureVectorizerBase<Eigen::Index>> p
-          = std::shared_ptr<EmbdStrFloat>( new EmbdStrFloat(z) );
+      auto p = std::make_shared<EmbdStrFloat>(z);
     }
 
-    m_fastText.load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
+    m_fastText->load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
   }
 
   void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
   {
-    m_fastText.get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
 
     m_vectorizer.init_features({
-                                 { Vectorizer::str_feature, "form", &m_fastText }
+                                 { Vectorizer::str_feature, "form", m_fastText }
                                });
 
     m_vectorizer.set_model(this);
@@ -262,7 +262,7 @@ public:
 
 protected:
   Vectorizer m_vectorizer;
-  FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> m_fastText;
+  std::shared_ptr<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>> m_fastText;
 
   tagging_callback_t m_callback;
 

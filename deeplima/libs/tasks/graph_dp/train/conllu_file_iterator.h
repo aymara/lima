@@ -51,7 +51,7 @@ public:
 
   class Iterator : public BatchIterator
   {
-  private:
+  public:
     Iterator(const CoNLLUDataSet& dataset)
       : m_dataset(dataset),
         m_batch_size(0),
@@ -60,7 +60,6 @@ public:
     {
     }
 
-  public:
     virtual ~Iterator() = default;
     virtual void set_batch_size(int64_t batch_size);
     virtual void start_epoch();

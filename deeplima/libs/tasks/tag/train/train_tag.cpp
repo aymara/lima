@@ -80,7 +80,7 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, const FeatExt
     i++;
   }
 
-  std::shared_ptr<M> out(new M(len, tag_dh.size()));
+  auto out = std::make_shared<M>(len, tag_dh.size());
 
   typename CoNLLU::WordLevelAdapter::const_iterator it = src.begin();
   uint64_t current_timepoint = 0;
@@ -164,16 +164,14 @@ int train_entity_tagger(const train_params_tagging_t& params)
   // Input features
   vector<CoNLLUToTorchMatrix::feature_descr_t> feat_descr;
 
-  shared_ptr<FastTextVectorizerToTorchMatrix> p_embd;
+  std::shared_ptr<FastTextVectorizerToTorchMatrix> p_embd;
   if (params.m_embeddings_fn.size() > 0)
   {
     try
     {
-      p_embd = shared_ptr<FastTextVectorizerToTorchMatrix>(
-              new FastTextVectorizerToTorchMatrix(params.m_embeddings_fn)
-            );
+      p_embd = std::make_shared<FastTextVectorizerToTorchMatrix>(params.m_embeddings_fn);
       assert(nullptr != p_embd.get());
-      feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
+      feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd });
     }
     catch (const exception& e)
     {
@@ -196,9 +194,9 @@ int train_entity_tagger(const train_params_tagging_t& params)
       throw std::invalid_argument("Can't use EOS as both input and output");
     }
 
-    p_eos = shared_ptr<DirectDict<TorchMatrix<float>>>(new DirectDict<TorchMatrix<float>>(2));
-    assert(nullptr != p_embd.get());
-    feat_descr.push_back({ CoNLLUToTorchMatrix::int_feature, "eos", p_eos.get() });
+    p_eos = std::make_shared<DirectDict<TorchMatrix<float>>>(2);
+    assert(nullptr != p_embd);
+    feat_descr.push_back({ CoNLLUToTorchMatrix::int_feature, "eos", p_eos });
   }
 
   vector<CoNLLUToTorchMatrix::embeddable_feature_descr_t> embd_feat_descr;

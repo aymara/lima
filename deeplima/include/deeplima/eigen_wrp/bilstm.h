@@ -150,7 +150,6 @@ public:
     assert(nullptr != params);
     auto p = std::dynamic_pointer_cast<const params_t>(params);
 
-    //return new workbench_t(input_size, p.layers[0].fw.weight_ih.rows() / 4, precomputed_input);
     return std::make_shared<workbench_t>(*p, input_size, precomputed_input);
   }
 

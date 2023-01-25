@@ -55,16 +55,15 @@ public:
     {
       if (m_input_encoder.allow_unk(i))
       {
-        dicts[i] = std::shared_ptr<UInt64Dict> (new UInt64Dict(m_unk,
+        dicts[i] = std::make_shared<UInt64Dict>(m_unk,
                                                           temp_dicts[i].begin(), temp_dicts[i].end(),
                                                           [char_counter, min_ipm](uint64_t c){
                                                             return ipm(c, char_counter) > min_ipm;
-                                                          })
-                                            );
+                                                          });
       }
       else
       {
-        dicts[i] = std::shared_ptr<UInt64Dict> (new UInt64Dict(temp_dicts[i].begin(), temp_dicts[i].end()));
+        dicts[i] = std::make_shared<UInt64Dict>(temp_dicts[i].begin(), temp_dicts[i].end());
       }
     }
 
@@ -97,12 +96,10 @@ public:
     uint64_t total = text.size();
     DictsHolder dicts;
     dicts.resize(temp_dicts.size());
-    dicts[0] = std::shared_ptr<UInt64Dict>(new UInt64Dict(m_unk,
-                                                     char_dict,
-                                                     [total, min_ipm](uint64_t c){
+    dicts[0] = std::make_shared<UInt64Dict>(m_unk, char_dict,
+                                            [total, min_ipm](uint64_t c){
                                                        return ipm(c, total) > min_ipm;
-                                                     })
-                                      );
+                                                     });
 
     // std::cerr << "dicts[0].size() == " << dicts[0]->size() << std::endl;
   }
@@ -118,7 +115,7 @@ protected:
                    uint64_t& char_counter,
                    std::vector<std::unordered_map<uint64_t, uint64_t>>& temp_dicts)
   {
-    int32_t pos = 0;
+    uint32_t pos = 0;
     char_counter = 0;
 
     while (! m_input_encoder.ready_to_generate())
@@ -137,7 +134,7 @@ protected:
     char final_spaces[] = " ";
     for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
     {
-      int32_t pos = 0;
+      uint32_t pos = 0;
       if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
       {
         handle_timepoint(char_counter, temp_dicts);

@@ -97,7 +97,7 @@ public:
     return StreamDecoder::bits_per_position(m_ngram_descr[idx].m_type) != 1;
   }
 
-  inline uint8_t warmup(const uint8_t* str, int32_t* pos, int32_t len)
+  inline uint8_t warmup(const uint8_t* str, uint32_t* pos, uint32_t len)
   {
     assert(!ready_to_generate());
     uint8_t char_len = StreamDecoder::parse(str, pos, len);
