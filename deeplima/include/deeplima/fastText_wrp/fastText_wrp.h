@@ -77,7 +77,7 @@ class FastTextVectorizer : public FeatureVectorizerToMatrix<Matrix, const std::s
 protected:
   fasttext::FastText m_fasttext;
   Idx m_dim;
-  fasttext::Vector *m_vec;
+  std::shared_ptr<fasttext::Vector> m_vec;
 public:
 
   FastTextVectorizer(const std::string& fn = "")
@@ -90,13 +90,7 @@ public:
     }
   }
 
-  virtual ~FastTextVectorizer()
-  {
-    if (nullptr != m_vec)
-    {
-      delete m_vec;
-    }
-  }
+  virtual ~FastTextVectorizer() = default;
 
   virtual void load(const std::string& fn)
   {
@@ -108,9 +102,7 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
-    if (m_vec != nullptr)
-      delete m_vec;
-    m_vec = new fasttext::Vector(m_dim);
+    m_vec = std::make_shared<fasttext::Vector>(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
   }
@@ -140,7 +132,7 @@ class FastTextVectorizer<Eigen::MatrixXf, Eigen::Index>
 protected:
   fasttext::FastText m_fasttext;
   Eigen::Index m_dim;
-  fasttext::Vector *m_vec;
+  std::shared_ptr<fasttext::Vector> m_vec;
 public:
 
   FastTextVectorizer(const std::string& fn = "")
@@ -153,13 +145,7 @@ public:
     }
   }
 
-  virtual ~FastTextVectorizer()
-  {
-    if (nullptr != m_vec)
-    {
-      delete m_vec;
-    }
-  }
+  virtual ~FastTextVectorizer() = default;
 
   virtual void load(const std::string& fn)
   {
@@ -171,9 +157,7 @@ public:
 
     m_dim = m_fasttext.getDimension();
     assert(m_dim > 0);
-    if (m_vec != nullptr)
-      delete m_vec;
-    m_vec = new fasttext::Vector(m_dim);
+    m_vec = std::make_shared<fasttext::Vector>(m_dim);
     assert(nullptr != m_vec);
     m_vec->zero();
   }

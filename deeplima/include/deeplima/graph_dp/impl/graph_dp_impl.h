@@ -27,6 +27,7 @@ class GraphDpImpl: public InferenceEngine
 public:
 
   GraphDpImpl() :
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
@@ -39,15 +40,16 @@ public:
     )
     : InferenceEngine(
         0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
       m_current_timepoint(InferenceEngine::get_start_timepoint())
   {
   }
 
-  EmbdUInt64Float* convert(const EmbdStrFloat& src)
+  std::shared_ptr<EmbdUInt64Float> convert(const EmbdStrFloat& src)
   {
     auto d = src.get_int_dict<EmbdUInt64Float::value_t>();
     auto t = src.get_tensor().transpose();
-    EmbdUInt64Float* p = new EmbdUInt64Float();
+    auto p = std::make_shared<EmbdUInt64Float>();
     p->init(d, t);
 
     return p;
@@ -64,7 +66,7 @@ public:
       m_featVectorizers[i] = convert(this->get_input_str_dicts()[i]);
     }
 
-    m_fastText.load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
+    m_fastText->load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
   }
 
   void init(size_t threads,
@@ -73,42 +75,42 @@ public:
             StringIndex& stridx,
             const std::vector<std::string>& class_names)
   {
-    m_fastText.get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
 
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
-    feats.emplace_back(Vectorizer::str_feature, "form", &m_fastText);
-    // for (size_t i = 0; i < class_names.size(); ++i)
-    // {
-    //   if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
-    //   {
-    //     // TODO: skip morph classes that aren't requested by DP
-    //     throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
-    //   }
-    //
-    //   feats.emplace_back(Vectorizer::int_feature,
-    //                      InferenceEngine::get_input_str_dicts_names()[i+1],
-    //                      m_featVectorizers[i]);
-    //
-    //   m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
-    // }
-    for (const auto& class_name: class_names)
+    feats.emplace_back(Vectorizer::str_feature, "form", m_fastText);
+    for (size_t i = 0; i < class_names.size(); ++i)
     {
-      int i = 0;
-      for (const auto& input_str_dicts_names: InferenceEngine::get_input_str_dicts_names())
+      if (class_names[i] != InferenceEngine::get_input_str_dicts_names()[i+1])
       {
-        if (class_name == input_str_dicts_names)
-        {
-          feats.emplace_back(Vectorizer::int_feature,
-                            class_name,
-                            m_featVectorizers[i]);
-
-          m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
-          break;
-        }
-        i++;
+        // TODO: skip morph classes that aren't requested by DP
+        throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + InferenceEngine::get_input_str_dicts_names()[i+1]);
       }
+
+      feats.emplace_back(Vectorizer::int_feature,
+                         InferenceEngine::get_input_str_dicts_names()[i+1],
+                         m_featVectorizers[i]);
+
+      m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
     }
+    // for (const auto& class_name: class_names)
+    // {
+    //   int i = 0;
+    //   for (const auto& input_str_dicts_names: InferenceEngine::get_input_str_dicts_names())
+    //   {
+    //     if (class_name == input_str_dicts_names)
+    //     {
+    //       feats.emplace_back(Vectorizer::int_feature,
+    //                         class_name,
+    //                         m_featVectorizers[i]);
+    //
+    //       m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
+    //       break;
+    //     }
+    //     i++;
+    //   }
+    // }
     m_vectorizer.init_features(feats);
 
     m_vectorizer.set_model(this);
@@ -151,6 +153,7 @@ protected:
   {
     uint64_t from = InferenceEngine::get_slot_begin(slot_idx);
     const uint64_t to = InferenceEngine::get_slot_end(slot_idx);
+    std::cerr << "GraphDpImpl::send_results " << slot_idx << ", from=" << from << ", to=" << to << std::endl;
 
     m_callback(InferenceEngine::get_output(), from, to, slot_idx);
 
@@ -192,7 +195,7 @@ public:
   inline void send_all_results()
   {
     auto slot_idx = m_last_completed_slot;
-
+    std::cerr << "GraphDpImpl::send_all_results" << slot_idx << std::endl;
     while (true)
     {
       if (-1 == slot_idx)
@@ -207,15 +210,16 @@ public:
       uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
       if (0 == lock_count)
       {
+        std::cerr << "GraphDpImpl::send_all_results DONE" << std::endl;
         return;
       }
 
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        // std::cerr << "send_next_results: waiting for slot " << slot_idx
-        //      << " (lock_count==" << int(lock_count) << ")\n";
-        // InferenceEngine::pretty_print();
+        std::cerr << "send_next_results: waiting for slot " << slot_idx
+             << " (lock_count==" << int(lock_count) << ")\n";
+        InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
         lock_count = InferenceEngine::get_lock_count(slot_idx);
       }
@@ -251,14 +255,14 @@ protected:
   inline void acquire_slot(size_t slot_no)
   {
     // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-    // std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
+    std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
-      //      << " lock_count=" << int(lock_count) << std::endl;
+      std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+           << " lock_count=" << int(lock_count) << std::endl;
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
@@ -279,8 +283,8 @@ public:
                                    const std::vector<size_t>& lengths,
                                    int timepoints_to_analyze = -1)
   {
-    // std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
-    //           << timepoints_to_analyze << std::endl;
+    std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
+              << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     // size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
@@ -293,8 +297,16 @@ public:
     InferenceEngine::set_slot_lengths(slot_no, lengths);
     InferenceEngine::set_slot_begin(slot_no, first_timepoint_idx);
     InferenceEngine::set_slot_end(slot_no, /*offset +*/ count);
+
+    auto& slot = InferenceEngine::m_slots[slot_no];
+
+    std::cerr << "GraphDpImpl::handle_token_buffer slot " << slot_no << ": input="
+              << slot.m_input_begin << ", " << slot.m_input_end << "; output="
+              << slot.m_output_begin << ", " << slot.m_output_end << ", "
+              << std::endl;
+
     InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);
-    // std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
+    std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
   }
 
   inline void no_more_data(size_t slot_no)
@@ -311,8 +323,8 @@ public:
 
 protected:
   Vectorizer m_vectorizer;
-  FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index> m_fastText;
-  std::vector<FeatureVectorizerBase<Eigen::Index>*> m_featVectorizers;
+  std::shared_ptr<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>> m_fastText;
+  std::vector<std::shared_ptr<FeatureVectorizerBase<Eigen::Index>>> m_featVectorizers;
 
   tagging_callback_t m_callback;
 

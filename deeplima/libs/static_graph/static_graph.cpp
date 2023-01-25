@@ -66,19 +66,19 @@ void StaticGraphImpl::load(serialize::InputArchive& archive)
 
       if (dict_type == UInt64Dict::class_id())
       {
-        m_dicts[i] = shared_ptr<UInt64Dict>(new UInt64Dict());
+        m_dicts[i] = std::make_shared<UInt64Dict>();
       }
       else if (dict_type == WstringDict::class_id())
       {
-        m_dicts[i] = shared_ptr<WstringDict>(new WstringDict());
+        m_dicts[i] = std::make_shared<WstringDict>();
       }
       else if (dict_type == StringDict::class_id())
       {
-        m_dicts[i] = shared_ptr<StringDict>(new StringDict());
+        m_dicts[i] = std::make_shared<StringDict>();
       }
       else if (dict_type == Char32Dict::class_id())
       {
-        m_dicts[i] = shared_ptr<Char32Dict>(new Char32Dict());
+        m_dicts[i] = std::make_shared<Char32Dict>();
       }
       else
       {

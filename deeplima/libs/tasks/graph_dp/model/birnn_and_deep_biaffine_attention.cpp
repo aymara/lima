@@ -115,7 +115,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
         throw std::runtime_error("List of input features must be a list of lists of strings.");
       }
 
-      shared_ptr<StringDict> d = shared_ptr<StringDict>(new StringDict());
+      auto d = std::make_shared<StringDict>();
       d->fromIValue(l.get(i));
       m_input_classes.push_back(d);
     }
@@ -203,7 +203,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
                                               double& best_eval_accuracy,
                                               const torch::Device& device)
 {
-  shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
+  std::shared_ptr<BatchIterator> train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
 
   double best_eval_loss = numeric_limits<double>::max();
@@ -249,7 +249,6 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
     auto train_duration = std::chrono::duration_cast<std::chrono::milliseconds>(train_end - begin).count();
     auto eval_duration = std::chrono::duration_cast<std::chrono::milliseconds>(eval_end - train_end).count();
 
-    char buff[128];
     for (const string& task_name : output_names)
     {
       const auto& train = train_stat[task_name];

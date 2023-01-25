@@ -81,21 +81,19 @@ public:
     {
       if (unk_str.size() > 0)
       {
-        dicts[ifeat] = std::shared_ptr<StringDict>(new StringDict(unk_str,
+        dicts[ifeat] = std::make_shared<StringDict>(unk_str,
                                                    values[ifeat].begin(), values[ifeat].end(),
                                                    [total, min_ipm](uint64_t c) {
                                                        return ipm(c, total) > min_ipm;
-                                                    })
-                                                  );
+                                                    });
       }
       else
       {
-        dicts[ifeat] = std::shared_ptr<StringDict>(new StringDict(values[ifeat].begin(),
+        dicts[ifeat] = std::make_shared<StringDict>(values[ifeat].begin(),
                                                                   values[ifeat].end(),
                                                    [total, min_ipm](uint64_t c) {
                                                        return ipm(c, total) > min_ipm;
-                                                    })
-                                                  );
+                                                    });
       }
 
     }

@@ -73,8 +73,7 @@ public:
       const std::vector<std::string>& /*outputs_names*/
       )
   {
-    deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T> *p_op
-        = static_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>*>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>>(Parent::m_ops[0]);
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
     p_op->execute(Parent::m_wb[0][worker_id], inputs, Parent::m_params[0], output->m_tensor,

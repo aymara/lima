@@ -63,6 +63,17 @@ class RnnSequenceClassifier : public InputVectorizer,
         m_prev(nullptr),
         m_next(nullptr)
     { }
+    slot_t(const slot_t& s)
+      : m_input_begin(s.m_input_begin),
+        m_input_end(s.m_input_end),
+        m_output_begin(s.m_output_begin),
+        m_output_end(s.m_output_end),
+        m_flags(s.m_flags),
+        m_work_started(s.m_work_started),
+        m_lock_count(0),
+        m_prev(nullptr),
+        m_next(nullptr)
+    { }
   };
 
 protected:
@@ -70,7 +81,7 @@ protected:
   uint32_t m_num_slots;
   uint32_t m_slot_len;
 
-  slot_t* m_slots;
+  std::vector<slot_t> m_slots;
   std::vector<std::vector<size_t>> m_lengths;
   std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
 
@@ -156,7 +167,7 @@ public:
     : m_overlap(0),
       m_num_slots(0),
       m_slot_len(0),
-      m_slots(nullptr),
+      m_slots(),
       m_lengths(),
       m_output(std::make_shared< StdMatrix<Out> >())
   {}
@@ -169,7 +180,7 @@ public:
     : m_overlap(0),
       m_num_slots(0),
       m_slot_len(0),
-      m_slots(nullptr),
+      m_slots(),
       m_lengths(),
       m_output(std::make_shared< StdMatrix<Out> >())
   {
@@ -201,7 +212,8 @@ public:
     }
     ThreadPoolParent::init(num_threads);
 
-    m_slots = new slot_t[m_num_slots];
+    m_slots.clear();
+    m_slots.resize(m_num_slots);
     for (size_t i = 0; i < m_num_slots; i++)
     {
       slot_t& slot = m_slots[i];
@@ -260,10 +272,10 @@ public:
   {
     // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
     ThreadPoolParent::stop();
-    if (nullptr != m_slots)
-    {
-      delete[] m_slots;
-    }
+    // if (nullptr != m_slots)
+    // {
+    //   delete[] m_slots;
+    // }
     // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
   }
 
@@ -416,11 +428,15 @@ public:
     assert(idx < m_num_slots);
     const slot_t& slot = m_slots[idx];
     assert(slot.m_work_started);
+    std::cerr << "RnnSequenceClassifier::wait_for_slot " << idx << "/" << m_num_slots
+              << "; lock count=" << int(slot.m_lock_count) << std::endl;
     while (slot.m_lock_count > 1)
     {
-      ThreadPoolParent::wait_for_any_job_notification([&slot](){
-        return 1 == slot.m_lock_count;
-      });
+      std::cerr << "RnnSequenceClassifier::wait_for_slot " << int(slot.m_lock_count) << std::endl;
+      ThreadPoolParent::wait_for_any_job_notification([&slot]() {
+          return 1 == slot.m_lock_count;
+        }
+      );
     }
   }
 

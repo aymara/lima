@@ -58,12 +58,12 @@ public:
 
   typedef params_bilstm_dense_argmax_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t input_size, const param_base_t* params, bool precomputed_input=false) const
+  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t input_size, const std::shared_ptr<param_base_t> params, bool precomputed_input=false) const override
   {
     assert(input_size > 0);
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
-    const std::vector<params_linear_t<M, V>>& linear = static_cast<const params_t*>(params)->linear;
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
+    const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear;
 
     std::vector<uint32_t> output_sizes;
     output_sizes.reserve(linear.size());
@@ -71,7 +71,7 @@ public:
     {
       output_sizes.push_back(p.weight.rows());
     }
-    return new workbench_t(input_size, layer.fw.weight_ih.rows() / 4, output_sizes, precomputed_input);
+    return std::make_shared<workbench_t>(input_size, layer.fw.weight_ih.rows() / 4, output_sizes, precomputed_input);
   }
 
   virtual bool supports_precomputing() const
@@ -79,10 +79,10 @@ public:
     return true;
   }
 
-  virtual void precompute_inputs(const param_base_t* params, const M& inputs, M& outputs, int64_t first_column)
+  virtual void precompute_inputs(const std::shared_ptr<param_base_t> params, const M& inputs, M& outputs, int64_t first_column)
   {
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
 
     auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
@@ -92,9 +92,9 @@ public:
     output_block.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
   }
 
-  virtual size_t execute(Op_Base::workbench_t* pwb,
+  virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
                          const M& input_matrix,
-                         const param_base_t* params,
+                         const std::shared_ptr<param_base_t> params,
                          std::vector<std::vector<uint8_t>>& final_output,
                          size_t input_begin,
                          size_t /*input_end*/,
@@ -103,10 +103,10 @@ public:
   {
     assert(nullptr != pwb);
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
-    const std::vector<params_linear_t<M, V>>& linear = static_cast<const params_t*>(params)->linear;
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
+    const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear;
 
-    workbench_t* wb = static_cast<workbench_t*>(pwb);
+    auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
     M& temp = wb->temp;
     M& output = wb->out;
     const V& zero = wb->zero;

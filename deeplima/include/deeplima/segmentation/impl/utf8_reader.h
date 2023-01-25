@@ -77,7 +77,7 @@ public:
     memset(m_buffer, 0, sizeof(buffer_t) * NUM_CHANNELS);
   }
 
-  inline uint32_t parse_start(const uint8_t* str, int32_t* pos, int32_t len)
+  inline uint32_t parse_start(const uint8_t* str, uint32_t* pos, uint32_t len)
   {
     assert(nullptr != str);
     assert(0 == *pos);
@@ -100,7 +100,7 @@ public:
     return 0;
   }
 
-  inline uint8_t parse(const uint8_t* str, int32_t* pos, int32_t len)
+  inline uint8_t parse(const uint8_t* str, uint32_t* pos, uint32_t len)
   {
     int32_t uch = 0;
     int32_t prev_pos = *pos;

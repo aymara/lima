@@ -61,8 +61,8 @@ void ShiftFromTest::ShiftFromTest0()
           auto indexOfText = limaText.indexOf("text");
           QVERIFY(textPosition==sf.correct_offset(offset, indexOfText));
 
-          auto indexOfWord = limaText.indexOf("word");
 	  // TODO Test below fails after correcting = to ==. Correct it!
+          // auto indexOfWord = limaText.indexOf("word");
           // QVERIFY(wordPosition==sf.correct_offset(offset, indexOfWord));
 
         }

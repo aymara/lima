@@ -40,6 +40,8 @@ public:
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
 
+  virtual ~BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>() = default;
+
   virtual void load(const std::string& fn)
   {
     convert_from_torch(fn);
@@ -47,11 +49,9 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *p_params =
-      static_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
-
-    const auto& p = *p_params;
-    size_t hidden_size = p.layers[0].fw.weight_ih.rows() + p.layers[0].bw.weight_ih.rows();
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t>(Parent::m_params[0]);
+    const auto& layer = p_params->layers[0];
+    auto hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
     return hidden_size;
   }
 
@@ -61,8 +61,7 @@ public:
       int64_t input_size
       )
   {
-    deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_op
-        = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
   }
@@ -94,8 +93,8 @@ public:
       const std::vector<std::string>& /*outputs_names*/
       )
   {
-    deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_encoder
-        = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
+    auto p_encoder
+        = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     // const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *plstm
     //     = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
@@ -103,11 +102,10 @@ public:
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
 
-    typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t* wb
-        = static_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t*>(Parent::m_wb[0][worker_id]);
+    auto wb = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::workbench_t>(Parent::m_wb[0][worker_id]);
 
-    typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<M, V, T>* p_decoder
-        = static_cast<typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<M, V, T>*>(Parent::m_ops[1]);
+    auto p_decoder = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<M, V, T>>(
+      Parent::m_ops[1]);
 
     size_t start = input_begin;
     for (size_t i = 0; i < lengths.size(); ++i)
@@ -116,10 +114,12 @@ public:
           inputs, Parent::m_params[0],
           start, start + lengths[i]);
 
-      p_decoder->execute(Parent::m_wb[1][worker_id],
-          wb->get_last_output(), Parent::m_params[1],
-          start, start + lengths[i],
-          (*output)[0]);
+      p_decoder->execute(
+        Parent::m_wb[1][worker_id],
+        wb->get_last_output(),
+        Parent::m_params[1],
+        start, start + lengths[i],
+        (*output)[0]);
 
       start += lengths[i];
     }
@@ -133,7 +133,7 @@ public:
 protected:
   std::vector<std::string> m_embd_fn;
 
-  std::vector<deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<M, V>> m_deep_biaffine_attn_decoder;
+  std::vector<std::shared_ptr<deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<M, V>>> m_deep_biaffine_attn_decoder;
   std::map<std::string, size_t> m_deep_biaffine_attn_decoder_idx;
 
   virtual void convert_from_torch(const std::string& fn);

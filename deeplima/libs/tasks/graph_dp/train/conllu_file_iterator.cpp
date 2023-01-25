@@ -49,7 +49,7 @@ CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
 {
   for (auto p_embd : m_feat_vectorizers)
   {
-    m_feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
+    m_feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd });
   }
 
   for (size_t i = 0; i < m_morph_tag_dh.size(); ++i)
@@ -78,35 +78,6 @@ std::vector<nets::embd_descr_t> CoNLLUDataSet::get_embd_descr()
   CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr, m_feat_extractor);
   return vectorizer.get_embd_descr();
 }
-
-/*typedef FastTextVectorizer<TorchMatrix<float>> FastTextVectorizerToTorchMatrix;
-
-void CoNLLUFileIterator::load_embeddings()
-{
-  for (const string& fn : m_embd_file_names)
-  {
-    try
-    {
-      shared_ptr<FastTextVectorizerToTorchMatrix> p_embd
-          = shared_ptr<FastTextVectorizerToTorchMatrix>(
-              new FastTextVectorizerToTorchMatrix(fn)
-            );
-      assert(nullptr != p_embd.get());
-
-      m_feat_vectorizers.push_back(p_embd);
-      m_feat_descr.push_back({ CoNLLUToTorchMatrix::str_feature, "form", p_embd.get() });
-    }
-    catch (const exception& e)
-    {
-      cerr << "CoNLLUFileIterator::load_embeddings: " << e.what() << endl;
-      throw e;
-    }
-    catch (...)
-    {
-      throw runtime_error("CoNLLUFileIterator::load_embeddings: something wrong happened while loading \"" + fn + "\"");
-    }
-  }
-}*/
 
 void CoNLLUDataSet::vectorize()
 {
@@ -154,8 +125,7 @@ size_t CoNLLUDataSet::vectorize_bucket(size_t len, const vector<size_t>& sents, 
   uint64_t timepoints_per_sentence = m_add_root ? len + 1 : len;
   uint64_t total_timepoints = timepoints_per_sentence * sents.size();
   m_input_buckets[timepoints_per_sentence] = vectorizer.init_dst(total_timepoints);
-  m_gold_buckets[timepoints_per_sentence]
-      = std::shared_ptr<TorchMatrix<int64_t>>(new TorchMatrix<int64_t>(total_timepoints, 1));
+  m_gold_buckets[timepoints_per_sentence] = std::make_shared<TorchMatrix<int64_t>>(total_timepoints, 1);
 
   CoNLLU::Annotation m_root_annot;
   stringstream root_line;
@@ -233,9 +203,9 @@ void CoNLLUDataSet::vectorize_bucket_gold(const CoNLLU::BoundedWordLevelAdapter&
   }
 }
 
-shared_ptr<BatchIterator> CoNLLUDataSet::get_iterator() const
+std::shared_ptr<BatchIterator> CoNLLUDataSet::get_iterator() const
 {
-  return shared_ptr<Iterator>(new Iterator(*this));
+  return std::make_shared<Iterator>(*this);
 }
 
 void CoNLLUDataSet::Iterator::set_batch_size(int64_t batch_size)

@@ -61,10 +61,19 @@ struct locked_buffer_set_t
   uint8_t* m_mem;
   uint32_t m_max_buff_size;
 
-  locked_buffer_set_t(size_t , uint32_t buffer_size = 0)
+  locked_buffer_set_t(size_t /* currently unused. should be 2 times the number of threads */,
+                      uint32_t buffer_size = 0)
     : m_mem(nullptr),
       m_max_buff_size(buffer_size)
   {}
+
+  ~locked_buffer_set_t()
+  {
+    if (nullptr != m_mem)
+    {
+      delete[] m_mem;
+    }
+  }
 
   void init(size_t n, uint32_t buffer_size)
   {
@@ -74,6 +83,10 @@ struct locked_buffer_set_t
     m_max_buff_size = buffer_size;
 
     m_data.resize(n);
+    if (nullptr != m_mem)
+    {
+      delete[] m_mem;
+    }
     m_mem = new uint8_t [ 8 + n * buffer_size ];
 
     if (nullptr == m_mem)
@@ -119,14 +132,6 @@ struct locked_buffer_set_t
   {
     assert(n < m_data.size());
     return m_data[n];
-  }
-
-  ~locked_buffer_set_t()
-  {
-    if (nullptr != m_mem)
-    {
-      delete[] m_mem;
-    }
   }
 
   void pretty_print()

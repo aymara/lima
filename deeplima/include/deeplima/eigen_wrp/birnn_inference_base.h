@@ -31,6 +31,8 @@ public:
   typedef EmbdUInt64FloatHolder uint_dicts_holder_t;
   typedef EmbdStrFloatHolder str_dicts_holder_t;
 
+  virtual ~BiRnnInferenceBase() = default;
+
   virtual void load(const std::string& fn) = 0;
 
   inline const uint_dicts_holder_t& get_input_uint_dicts() const
@@ -80,37 +82,6 @@ public:
     return new_worker_idx;
   }
 
-  virtual ~BiRnnInferenceBase()
-  {
-    for (std::vector<Op_Base::workbench_t*>& v : m_wb)
-    {
-      for (Op_Base::workbench_t* p : v)
-      {
-        if (nullptr != p)
-        {
-          delete p;
-        }
-      }
-    }
-
-    for (Op_Base* p : m_ops)
-    {
-      if (nullptr != p)
-      {
-        delete p;
-      }
-    }
-
-    for (param_base_t* p : m_params)
-    {
-      if (nullptr != p)
-      {
-        // TODO: Why this fails?
-        delete p;
-      }
-    }
-  }
-
   virtual void precompute_inputs(
       const M& inputs,
       M& outputs,
@@ -129,10 +100,10 @@ public:
       ) = 0;
 
 protected:
-  std::vector<Op_Base*> m_ops;
-  std::vector<param_base_t*> m_params; // TODO: replace this
+  std::vector<std::shared_ptr<Op_Base>> m_ops;
+  std::vector<std::shared_ptr<param_base_t>> m_params; // TODO: replace this
 
-  std::vector<std::vector<Op_Base::workbench_t*>> m_wb; // outer - calculation step, inner - worker id
+  std::vector<std::vector<std::shared_ptr<Op_Base::workbench_t>>> m_wb; // outer - calculation step, inner - worker id
 
   uint_dicts_holder_t m_input_uint_dicts;
   std::vector<std::string> m_input_uint_dicts_names;
@@ -147,7 +118,7 @@ protected:
   std::map<std::string, size_t> m_lstm_idx;
 
   typedef params_multilayer_bilstm_t<M, V> params_multilayer_bilstm_spec_t;
-  std::vector<params_multilayer_bilstm_spec_t> m_multi_bilstm;
+  std::vector<std::shared_ptr<params_multilayer_bilstm_spec_t>> m_multi_bilstm;
   std::map<std::string, size_t> m_multi_bilstm_idx;
 
   std::vector<params_linear_t<M, V>> m_linear;

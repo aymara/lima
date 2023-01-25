@@ -95,19 +95,17 @@ DictsHolder build_char_dicts(const form2lemma_t& form2lemma, StringIndex& str_id
   }
 
   d.resize(2);
-  d[0] = shared_ptr<Char32Dict>(new Char32Dict(0, EOS,
+  d[0] = std::make_shared<Char32Dict>(0, EOS,
                                  temp_encoder_dict.begin(), temp_encoder_dict.end(),
                                  [](uint64_t c) {
                                      return c > 1;
-                                  })
-                                );
+                                  });
 
-  d[1] = shared_ptr<Char32Dict>(new Char32Dict(0, EOS, START,
+  d[1] = std::make_shared<Char32Dict>(0, EOS, START,
                                  temp_decoder_dict.begin(), temp_decoder_dict.end(),
                                  [](uint64_t c) {
                                      return c > 1;
-                                  })
-                                );
+                                  });
 
   return d;
 }
@@ -397,7 +395,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     {
       cat_embd_descr.emplace_back(embd_descr_t("cat_" + lang_morph_model.get_feat_name(feat_idx), 8));
       const std::vector<std::string>& values = lang_morph_model.get_feat_vec_ref(feat_idx);
-      dh.emplace_back(shared_ptr<StringDict>(new StringDict(values)));
+      dh.emplace_back(std::make_shared<StringDict>(values));
     }
     string str_fixed_upos = utils::join(fixed_upos.begin(),
                                         fixed_upos.end(),
