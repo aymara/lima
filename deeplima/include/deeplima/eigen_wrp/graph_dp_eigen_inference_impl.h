@@ -40,6 +40,8 @@ public:
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
 
+  virtual ~BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>() = default;
+
   virtual void load(const std::string& fn)
   {
     convert_from_torch(fn);
@@ -47,11 +49,9 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *p_params =
-      static_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
-
-    const auto& p = *p_params;
-    size_t hidden_size = p.layers[0].fw.weight_ih.rows() + p.layers[0].bw.weight_ih.rows();
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t>(Parent::m_params[0]);
+    const auto& layer = p_params->layers[0];
+    auto hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
     return hidden_size;
   }
 
@@ -116,10 +116,12 @@ public:
           inputs, Parent::m_params[0],
           start, start + lengths[i]);
 
-      p_decoder->execute(Parent::m_wb[1][worker_id],
-          wb->get_last_output(), Parent::m_params[1],
-          start, start + lengths[i],
-          (*output)[0]);
+      p_decoder->execute(
+        Parent::m_wb[1][worker_id],
+        wb->get_last_output(),
+        Parent::m_params[1],
+        start, start + lengths[i],
+        (*output)[0]);
 
       start += lengths[i];
     }
@@ -133,7 +135,7 @@ public:
 protected:
   std::vector<std::string> m_embd_fn;
 
-  std::vector<deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<M, V>> m_deep_biaffine_attn_decoder;
+  std::vector<std::shared_ptr<deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<M, V>>> m_deep_biaffine_attn_decoder;
   std::map<std::string, size_t> m_deep_biaffine_attn_decoder_idx;
 
   virtual void convert_from_torch(const std::string& fn);

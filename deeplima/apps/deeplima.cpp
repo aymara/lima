@@ -157,13 +157,13 @@ void parse_file(std::istream& input,
 
   if (models_fn.end() != models_fn.find("tok"))
   {
-    psegm.reset(new segmentation::Segmentation());
-    static_cast<segmentation::Segmentation*>(psegm.get())->load(models_fn.find("tok")->second);
-    static_cast<segmentation::Segmentation*>(psegm.get())->init(threads, 16*1024);
+    psegm = std::make_shared<segmentation::Segmentation>();
+    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->load(models_fn.find("tok")->second);
+    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->init(threads, 16*1024);
   }
   else
   {
-    psegm.reset(new segmentation::CoNLLUReader());
+    psegm = std::make_shared<segmentation::CoNLLUReader>();
   }
 
   std::shared_ptr< TokenSequenceAnalyzer<> > panalyzer = nullptr;

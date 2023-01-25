@@ -67,12 +67,12 @@ public:
 
   typedef params_lstm_beam_decoder_t<M, V> params_t;
 
-  virtual workbench_t* create_workbench(uint32_t /*input_size*/, const param_base_t* params,
-                                        bool precomputed_input=false) const
+  virtual workbench_t* create_workbench(uint32_t /*input_size*/, const std::shared_ptr<param_base_t> params,
+                                        bool precomputed_input=false) const override
   {
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
-    const std::vector<params_linear_t<M, V>>& linear = static_cast<const params_t*>(params)->linear;
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
+    const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear;
 
     std::vector<uint32_t> output_sizes;
     output_sizes.reserve(linear.size());
@@ -88,10 +88,10 @@ public:
     return true;
   }
 
-  virtual void precompute_inputs(const param_base_t* params, const M& inputs, M& outputs, int64_t first_column)
+  virtual void precompute_inputs(const std::shared_ptr<param_base_t> params, const M& inputs, M& outputs, int64_t first_column)
   {
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
 
     auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
@@ -105,7 +105,7 @@ public:
                          const EmbdUInt64Float& embd,
                          const V& initial_state_h,
                          const V& initial_state_c,
-                         const param_base_t* params,
+                         const std::shared_ptr<param_base_t> params,
                          uint32_t start_code,
                          size_t beam_size,
                          std::vector<uint32_t>& output_seq,
@@ -113,10 +113,10 @@ public:
   {
     assert(nullptr != pwb);
     assert(nullptr != params);
-    const params_bilstm_t<M, V>& layer = static_cast<const params_t*>(params)->bilstm;
-    const params_linear_t<M, V>& linear = static_cast<const params_t*>(params)->linear[0];
+    const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
+    const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear[0];
 
-    workbench_t* wb = static_cast<workbench_t*>(pwb);
+    auto wb = static_cast<workbench_t*>(pwb);
     M& temp = wb->temp;
     M& output = wb->out;
 //     TODO should it be used?

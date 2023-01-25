@@ -56,7 +56,7 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
     convert_module_from_torch(m, layer);
   }
 
-  Parent::m_multi_bilstm.emplace_back(typename Parent::params_multilayer_bilstm_spec_t(Parent::m_lstm));
+  Parent::m_multi_bilstm.emplace_back(std::make_shared<typename Parent::params_multilayer_bilstm_spec_t>(Parent::m_lstm));
 
   Parent::m_linear.reserve(src.get_layers_linear().size());
   for (size_t i = 0; i < src.get_layers_linear().size(); i++)
@@ -74,40 +74,42 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   // temp: create exec plan
   // Encoder
   Parent::m_ops.push_back(new Op_BiLSTM<M, V, T>());
-  Parent::m_params.push_back(new params_multilayer_bilstm_t<M, V>());
-  params_multilayer_bilstm_t<M, V> *p_enc = static_cast<params_multilayer_bilstm_t<M, V>*>(Parent::m_params.back());
-  *p_enc = Parent::m_multi_bilstm[Parent::m_lstm_idx["encoder_lstm_0"]];
+  // Parent::m_params.push_back(std::make_shared<params_multilayer_bilstm_t<M, V>>());
+  // auto p_enc = std::dynamic_pointer_cast<params_multilayer_bilstm_t<M, V>>(Parent::m_params.back());
+  // *p_enc = Parent::m_multi_bilstm[Parent::m_lstm_idx["encoder_lstm_0"]];
+  Parent::m_params.push_back(Parent::m_multi_bilstm[Parent::m_lstm_idx["encoder_lstm_0"]]);
+
 
   // Linear for decoder init state H
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
-  Parent::m_params.push_back(new params_linear_t<M, V>());
-  params_linear_t<M, V> *p_fc_h0 = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_linear_t<M, V>>());
+  auto p_fc_h0 = std::dynamic_pointer_cast<params_linear_t<M, V>>(Parent::m_params.back());
   *p_fc_h0 = Parent::m_linear[Parent::m_linear_idx["interm_fc_h0"]];
 
   // Linear for decoder init state C
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
-  Parent::m_params.push_back(new params_linear_t<M, V>());
-  params_linear_t<M, V> *p_fc_c0 = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_linear_t<M, V>>());
+  auto p_fc_c0 = std::dynamic_pointer_cast<params_linear_t<M, V>>(Parent::m_params.back());
   *p_fc_c0 = Parent::m_linear[Parent::m_linear_idx["interm_fc_c0"]];
 
   // Linear for features encoder
   // input to decoder
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
-  Parent::m_params.push_back(new params_linear_t<M, V>());
-  params_linear_t<M, V> *p_fc_feats_dec = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_linear_t<M, V>>());
+  auto p_fc_feats_dec = std::dynamic_pointer_cast<params_linear_t<M, V>>(Parent::m_params.back());
   *p_fc_feats_dec = Parent::m_linear[Parent::m_linear_idx["fc_cat2decoder"]];
 
   // Decoder
   Parent::m_ops.push_back(new Op_LSTM_Beam_Decoder<M, V, T>());
-  Parent::m_params.push_back(new params_lstm_beam_decoder_t<M, V>());
-  params_lstm_beam_decoder_t<M, V> *p_dec = static_cast<params_lstm_beam_decoder_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_lstm_beam_decoder_t<M, V>>());
+  auto p_dec = std::dynamic_pointer_cast<params_lstm_beam_decoder_t<M, V>>(Parent::m_params.back());
   p_dec->bilstm = Parent::m_lstm[Parent::m_lstm_idx["decoder_lstm_0"]];
   p_dec->linear.push_back(Parent::m_linear[Parent::m_linear_idx["fc_output"]]);
 
   // input to encoder
   Parent::m_ops.push_back(new Op_Linear<M, V, T>());
-  Parent::m_params.push_back(new params_linear_t<M, V>());
-  params_linear_t<M, V> *p_fc_feats_enc = static_cast<params_linear_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_linear_t<M, V>>());
+  auto p_fc_feats_enc = std::dynamic_pointer_cast<params_linear_t<M, V>>(Parent::m_params.back());
   *p_fc_feats_enc = Parent::m_linear[Parent::m_linear_idx["fc_cat2encoder"]];
 
   Parent::m_wb.resize(6);

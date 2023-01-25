@@ -52,7 +52,7 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
     convert_module_from_torch(m, layer);
   }
 
-  Parent::m_multi_bilstm.emplace_back(typename Parent::params_multilayer_bilstm_spec_t(Parent::m_lstm));
+  Parent::m_multi_bilstm.emplace_back(std::make_shared<typename Parent::params_multilayer_bilstm_spec_t>(Parent::m_lstm));
   Parent::m_multi_bilstm_idx["encoder"] = 0;
 
   Parent::m_linear.reserve(src.get_layers_linear().size());
@@ -78,18 +78,18 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
     const deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder& m
         = src.get_layers_deep_biaffine_attn_decoder()[i];
 
-    m_deep_biaffine_attn_decoder.emplace_back(params_deep_biaffine_attn_decoder_t<M, V>());
-    params_deep_biaffine_attn_decoder_t<M, V>& layer = m_deep_biaffine_attn_decoder.back();
+    m_deep_biaffine_attn_decoder.emplace_back(std::make_shared<params_deep_biaffine_attn_decoder_t<M, V>>());
+    auto& layer = *m_deep_biaffine_attn_decoder.back().get();
 
     convert_module_from_torch(m, layer);
   }
 
   // temp: create exec plan
   Parent::m_ops.push_back(new Op_BiLSTM<M, V, T>());
-  Parent::m_params.push_back(&Parent::m_multi_bilstm[0]);
+  Parent::m_params.push_back(Parent::m_multi_bilstm[0]);
 
   Parent::m_ops.push_back(new Op_DeepBiaffineAttnDecoder<M, V, T>());
-  Parent::m_params.push_back(&m_deep_biaffine_attn_decoder[0]);
+  Parent::m_params.push_back(m_deep_biaffine_attn_decoder[0]);
 
   Parent::m_wb.resize(2);
 

@@ -69,8 +69,7 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t *p_params =
-      static_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t*>(Parent::m_params[0]);
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params[0]);
 
     const auto& layer = p_params->bilstm;
     size_t hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
@@ -134,11 +133,10 @@ public:
     deeplima::eigen_impl::Op_BiLSTM<M, V, T> *p_encoder
         = static_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>*>(Parent::m_ops[0]);
 
-    deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T> *p_decoder
-        = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
+    auto p_decoder = static_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>*>(Parent::m_ops[4]);
 
-    const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>& enc_mutlilayer_bilstm
-        = *static_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>*>(Parent::m_params[0]);
+    const auto& enc_mutlilayer_bilstm
+        = *std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>>(Parent::m_params[0]);
     size_t hidden_size = enc_mutlilayer_bilstm.layers[0].fw.weight_ih.rows() / 4;
 
     Vector fw_h, fw_c, bw_h, bw_c;

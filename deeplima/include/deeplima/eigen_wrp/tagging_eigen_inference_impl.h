@@ -52,8 +52,8 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t *p_params =
-      static_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t*>(Parent::m_params[0]);
+    auto p_params =
+      std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params[0]);
 
     const auto& layer = p_params->bilstm;
     size_t hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();

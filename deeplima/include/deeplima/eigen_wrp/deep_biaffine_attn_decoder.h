@@ -46,8 +46,8 @@ public:
   typedef params_deep_biaffine_attn_decoder_t<M, V> params_t;
 
   virtual workbench_t* create_workbench(uint32_t input_size,
-                                        const param_base_t* params,
-                                        bool /*precomputed_input=false*/) const
+                                        const std::shared_ptr<param_base_t> params,
+                                        bool /*precomputed_input=false*/) const override
   {
     assert(input_size > 0);
     assert(nullptr != params);
@@ -59,32 +59,32 @@ public:
 
   virtual size_t execute(Op_Base::workbench_t* pwb,
                          const M& input_matrix,
-                         const param_base_t* params,
+                         const std::shared_ptr<param_base_t> params,
                          const size_t input_begin,
                          const size_t input_end,
                          std::vector<uint32_t>& output)
   {
     assert(nullptr != pwb);
     assert(nullptr != params);
-    const params_deep_biaffine_attn_decoder_t<M, V>& layer = *static_cast<const params_t*>(params);
+    auto layer = std::dynamic_pointer_cast<const params_t>(params);
 
     // TODO should it be used?
     // workbench_t* wb = static_cast<workbench_t*>(pwb);
 
     const M input = input_matrix.block(0, 0, input_matrix.rows(), input_end - input_begin);
 
-    M arc_head = ((layer.m_weight_head * input).colwise() + layer.m_bias_head).transpose();
+    M arc_head = ((layer->m_weight_head * input).colwise() + layer->m_bias_head).transpose();
     elu_inplace(arc_head);
-    M arc_dep = (layer.m_weight_dep * input).colwise() + layer.m_bias_dep;
+    M arc_dep = (layer->m_weight_dep * input).colwise() + layer->m_bias_dep;
     elu_inplace(arc_dep);
 
     M b(arc_head.rows(), arc_head.rows());
     for (Eigen::Index i = 0; i < arc_head.rows(); ++i)
     {
-      b.col(i) = arc_head * layer.m_u2;
+      b.col(i) = arc_head * layer->m_u2;
     }
 
-    M Wx = (arc_head * layer.m_U1) * arc_dep;
+    M Wx = (arc_head * layer->m_U1) * arc_dep;
 
     M logits = Wx + b;
 

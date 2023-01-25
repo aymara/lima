@@ -69,8 +69,8 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
 
   // temp: create exec plan
   Parent::m_ops.push_back(new Op_BiLSTM_Dense_ArgMax<M, V, T>());
-  Parent::m_params.push_back(new params_bilstm_dense_argmax_t<M, V>());
-  params_bilstm_dense_argmax_t<M, V> *p = static_cast<params_bilstm_dense_argmax_t<M, V>*>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<params_bilstm_dense_argmax_t<M, V>>());
+  auto p = std::dynamic_pointer_cast<params_bilstm_dense_argmax_t<M, V>>(Parent::m_params.back());
   p->bilstm = Parent::m_lstm[0];
   for (size_t i = 0; i < Parent::m_linear.size(); ++i)
   {

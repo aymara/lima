@@ -416,11 +416,15 @@ public:
     assert(idx < m_num_slots);
     const slot_t& slot = m_slots[idx];
     assert(slot.m_work_started);
+    std::cerr << "RnnSequenceClassifier::wait_for_slot " << idx << "/" << m_num_slots
+              << "; lock count=" << int(slot.m_lock_count) << std::endl;
     while (slot.m_lock_count > 1)
     {
-      ThreadPoolParent::wait_for_any_job_notification([&slot](){
-        return 1 == slot.m_lock_count;
-      });
+      std::cerr << "RnnSequenceClassifier::wait_for_slot " << int(slot.m_lock_count) << std::endl;
+      ThreadPoolParent::wait_for_any_job_notification([&slot]() {
+          return 1 == slot.m_lock_count;
+        }
+      );
     }
   }
 

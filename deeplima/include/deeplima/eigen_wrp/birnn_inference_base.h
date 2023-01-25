@@ -101,14 +101,20 @@ public:
       }
     }
 
-    for (param_base_t* p : m_params)
-    {
-      if (nullptr != p)
-      {
+    // for (param_base_t* p : m_params)
+    // {
+    //   if (nullptr != p)
+    //   {
         // TODO: Why this fails?
-        delete p;
-      }
-    }
+        // In graph_dp_model.cpp, lines 89 and 92, addresses of objects alocated elsewhere are
+        // pushed back.
+        // But in convert_from_torch.cpp, line 168, an object allocated with new is pushed back
+        // To solve this problem: create copy constructors when needed to the parameters and store only objects
+        // allocated with new (change graph_dp_model.cpp, lines 89 and 92)
+        // In the meantime comment out again the delete (reopening a memory leak)
+        // delete p;
+      // }
+    // }
   }
 
   virtual void precompute_inputs(
@@ -130,7 +136,7 @@ public:
 
 protected:
   std::vector<Op_Base*> m_ops;
-  std::vector<param_base_t*> m_params; // TODO: replace this
+  std::vector<std::shared_ptr<param_base_t>> m_params; // TODO: replace this
 
   std::vector<std::vector<Op_Base::workbench_t*>> m_wb; // outer - calculation step, inner - worker id
 
@@ -147,7 +153,7 @@ protected:
   std::map<std::string, size_t> m_lstm_idx;
 
   typedef params_multilayer_bilstm_t<M, V> params_multilayer_bilstm_spec_t;
-  std::vector<params_multilayer_bilstm_spec_t> m_multi_bilstm;
+  std::vector<std::shared_ptr<params_multilayer_bilstm_spec_t>> m_multi_bilstm;
   std::map<std::string, size_t> m_multi_bilstm_idx;
 
   std::vector<params_linear_t<M, V>> m_linear;
