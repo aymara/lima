@@ -327,7 +327,7 @@ public:
 
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
-    std::cerr << "DependencyParser::operator()" << std::endl;
+    // std::cerr << "DependencyParser::operator()" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -336,7 +336,7 @@ public:
     size_t first_timepoint_idx = 0;
     m_lengths.reserve(256);
     size_t tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
-    std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
+    // std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
     bool insert_root = true;
     while (!iter.end())
     {
@@ -344,7 +344,7 @@ public:
       assert(m_current_buffer < m_buffers.size());
 
       token_with_analysis_t& token = m_buffers[m_current_buffer][m_current_timepoint];
-      std::cerr << "DependencyParser::operator() processing token: " << iter.form() << std::endl;
+      // std::cerr << "DependencyParser::operator() processing token: " << iter.form() << std::endl;
 
       if (insert_root)
       {
@@ -391,8 +391,8 @@ public:
 
       if (m_current_timepoint >= m_buffer_size || 0 == tokens_to_process)
       {
-        std::cerr << "DependencyParser::operator() call start_analysis " << m_current_buffer << ", "
-                  << first_timepoint_idx << "," << m_current_timepoint << std::endl;
+        // std::cerr << "DependencyParser::operator() call start_analysis " << m_current_buffer << ", "
+        //           << first_timepoint_idx << "," << m_current_timepoint << std::endl;
         start_analysis(m_current_buffer, first_timepoint_idx, m_lengths, m_current_timepoint);
         m_started = true;
 
@@ -414,10 +414,10 @@ public:
 
   void finalize()
   {
-    std::cerr << "DependencyParser::finalize" << std::endl;
+    // std::cerr << "DependencyParser::finalize" << std::endl;
     while (!m_started)
     {
-      std::cerr << "DependencyParser::finalize sleeping" << std::endl;
+      // std::cerr << "DependencyParser::finalize sleeping" << std::endl;
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
@@ -425,7 +425,7 @@ public:
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        std::cerr << "DependencyParser::finalize call start_analysis" << std::endl;
+        // std::cerr << "DependencyParser::finalize call start_analysis" << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint, m_lengths, -1);
       }
       else
@@ -434,28 +434,28 @@ public:
       }
     }
 
-    std::cerr << "DependencyParser::finalize call send_all_results" << std::endl;
+    // std::cerr << "DependencyParser::finalize call send_all_results" << std::endl;
     m_impl.send_all_results();
   }
 
 protected:
   void acquire_buffer()
   {
-    std::cerr << "DependencyParser::acquire_buffer" << std::endl;
+    // std::cerr << "DependencyParser::acquire_buffer" << std::endl;
     size_t next_buffer_idx = (m_current_buffer + 1 < m_buffers.size()) ? (m_current_buffer + 1) : 0;
     const token_buffer_t<token_with_analysis_t>& next_buffer = m_buffers[next_buffer_idx];
 
     // wait for buffer
     while (next_buffer.locked())
     {
-      std::cerr << "DependencyParser::acquire_buffer locked" << std::endl;
+      // std::cerr << "DependencyParser::acquire_buffer locked" << std::endl;
       m_impl.send_next_results();
     }
     assert(!next_buffer.locked());
 
     m_current_buffer = next_buffer_idx;
     m_current_timepoint = 0;
-    std::cerr << "DependencyParser::acquire_buffer DONE:" << m_current_buffer << std::endl;
+    // std::cerr << "DependencyParser::acquire_buffer DONE:" << m_current_buffer << std::endl;
   }
 
   void start_analysis(size_t buffer_idx,
@@ -463,8 +463,8 @@ protected:
                       const std::vector<size_t>& lengths,
                       int count = -1)
   {
-    std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
-              << lengths.size() << ", " << count << std::endl;
+    // std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
+    //           << lengths.size() << ", " << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 

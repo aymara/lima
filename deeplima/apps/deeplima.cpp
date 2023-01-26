@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
     char read_buffer[READ_BUFFER_SIZE];
     for ( const auto& fn : input_files )
     {
-      std::cerr << "Reading file: " << fn << std::endl;
+      // std::cerr << "Reading file: " << fn << std::endl;
       std::ifstream file(fn, std::ifstream::binary | std::ios::in);
       if (!file.is_open())
       {
@@ -154,7 +154,7 @@ void parse_file(std::istream& input,
                 size_t threads,
                 size_t out_fmt)
 {
-  std::cerr << "deeplima parse_file threads = " << threads << std::endl;
+  // std::cerr << "deeplima parse_file threads = " << threads << std::endl;
   std::shared_ptr<segmentation::ISegmentation> psegm;
 
   if (models_fn.end() != models_fn.find("tok"))
@@ -216,7 +216,7 @@ void parse_file(std::istream& input,
                                                            classes,
                                                            begin,
                                                            end);
-        std::cerr << "In panalyzer handler. Calling parser functor" << std::endl;
+        // std::cerr << "In panalyzer handler. Calling parser functor" << std::endl;
         (*parser)(ti);
       });
 
@@ -231,7 +231,7 @@ void parse_file(std::istream& input,
                                                            classes,
                                                            begin,
                                                            end);
-        std::cerr << "In parser handler. Calling conllu_dumper functor" << std::endl;
+        // std::cerr << "In parser handler. Calling conllu_dumper functor" << std::endl;
         (*conllu_dumper)(ti, true);
       });
 
@@ -261,7 +261,7 @@ void parse_file(std::istream& input,
                                                            classes,
                                                            begin,
                                                            end);
-        std::cerr << "In panalyzer handler. Calling conllu_dumper functor" << std::endl;
+        // std::cerr << "In panalyzer handler. Calling conllu_dumper functor" << std::endl;
         (*conllu_dumper)(ti);
       });
     }
@@ -270,7 +270,7 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
-      std::cerr << "In psegm handler. Calling panalyzer functor" << std::endl;
+      // std::cerr << "In psegm handler. Calling panalyzer functor" << std::endl;
       (*panalyzer)(tokens, len);
     });
   }
@@ -291,7 +291,7 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
-      std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
+      // std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
       (*pdumper)(tokens, len);
     });
   }
@@ -303,7 +303,7 @@ void parse_file(std::istream& input,
                           uint32_t& read,
                           uint32_t max)
   {
-    std::cerr << "In psegm parse_from_stream lambda" << std::endl;
+    // std::cerr << "In psegm parse_from_stream lambda" << std::endl;
     input.read((std::istream::char_type*)buffer, max);
     read = input.gcount();
     return (bool)input;
@@ -312,18 +312,18 @@ void parse_file(std::istream& input,
   if (nullptr != panalyzer)
   {
 
-    std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
+    // std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
-    std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
+    // std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
 
   if (parser)
   {
-    std::cerr << "Waiting for dependency parser to stop. Calling parser->finalize" << std::endl;
+    // std::cerr << "Waiting for dependency parser to stop. Calling parser->finalize" << std::endl;
     parser->finalize();
-    std::cerr << "Calling parser.reset. parser->finalize returned" << std::endl;
+    // std::cerr << "Calling parser.reset. parser->finalize returned" << std::endl;
     parser.reset();
-    std::cerr << "Dependency parser stopped. " << std::endl;
+    // std::cerr << "Dependency parser stopped. " << std::endl;
   }
   auto parsing_end = std::chrono::high_resolution_clock::now();
   auto parsing_duration = std::chrono::duration_cast<std::chrono::seconds>(parsing_end - parsing_begin);
