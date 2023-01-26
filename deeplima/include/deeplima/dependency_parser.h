@@ -336,14 +336,15 @@ public:
     size_t first_timepoint_idx = 0;
     m_lengths.reserve(256);
     size_t tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
+    std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
     bool insert_root = true;
     while (!iter.end())
     {
-      std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
       assert(m_current_timepoint < m_buffer_size);
       assert(m_current_buffer < m_buffers.size());
 
       token_with_analysis_t& token = m_buffers[m_current_buffer][m_current_timepoint];
+      std::cerr << "DependencyParser::operator() processing token: " << iter.form() << std::endl;
 
       if (insert_root)
       {
@@ -390,6 +391,8 @@ public:
 
       if (m_current_timepoint >= m_buffer_size || 0 == tokens_to_process)
       {
+        std::cerr << "DependencyParser::operator() call start_analysis " << m_current_buffer << ", "
+                  << first_timepoint_idx << "," << m_current_timepoint << std::endl;
         start_analysis(m_current_buffer, first_timepoint_idx, m_lengths, m_current_timepoint);
         m_started = true;
 

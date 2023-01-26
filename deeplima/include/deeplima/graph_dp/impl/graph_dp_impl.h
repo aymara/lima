@@ -151,9 +151,12 @@ protected:
 
   inline void send_results(int32_t slot_idx)
   {
+    uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
+    std::cerr << "GraphDpImpl::send_results " << slot_idx+1
+          << " (lock_count=" << int(lock_count) << ")\n";
     uint64_t from = InferenceEngine::get_slot_begin(slot_idx);
     const uint64_t to = InferenceEngine::get_slot_end(slot_idx);
-    std::cerr << "GraphDpImpl::send_results " << slot_idx << ", from=" << from << ", to=" << to << std::endl;
+    std::cerr << "GraphDpImpl::send_results " << slot_idx+1 << ", from=" << from << ", to=" << to << std::endl;
 
     m_callback(InferenceEngine::get_output(), from, to, slot_idx);
 
@@ -165,6 +168,7 @@ public:
   inline void send_next_results()
   {
     auto slot_idx = m_last_completed_slot;
+    std::cerr << "GraphDpImpl::send_next_results " << slot_idx+1 << std::endl;
     if (-1 == slot_idx)
     {
       slot_idx = 0;
@@ -175,13 +179,15 @@ public:
     }
     // int a=0;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
+    std::cerr << "GraphDpImpl::send_next_results " << slot_idx+1
+              << " (lock_count=" << int(lock_count) << ")" << std::endl;
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "send_next_results: waiting for slot " << slot_idx
-      //      << " (lock_count==" << int(lock_count) << ")\n";
-      // InferenceEngine::pretty_print();
+      std::cerr << "GraphDpImpl::send_next_results: waiting for slot " << slot_idx+1
+           << " (lock_count==" << int(lock_count) << ")\n";
+      InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
       lock_count = InferenceEngine::get_lock_count(slot_idx);
     }
@@ -217,7 +223,7 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        std::cerr << "send_next_results: waiting for slot " << slot_idx
+        std::cerr << "GraphDpImpl::send_all_results: waiting for slot " << slot_idx+1
              << " (lock_count==" << int(lock_count) << ")\n";
         InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
@@ -255,15 +261,16 @@ protected:
   inline void acquire_slot(size_t slot_no)
   {
     // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
-    std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
     uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
+    std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; current lock count: " << int(lock_count) << std::endl;
+    InferenceEngine::pretty_print();
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+      std::cerr << "GraphDpImpl::acquiring_slot, waiting for slot " << (slot_no+1)
            << " lock_count=" << int(lock_count) << std::endl;
-      // InferenceEngine::pretty_print();
+      InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_no);
       lock_count = InferenceEngine::get_lock_count(slot_no);
     }
@@ -273,7 +280,13 @@ protected:
       send_results(slot_no);
     }
 
+    lock_count = InferenceEngine::get_lock_count(slot_no);
+    std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; before increment_lock_count: " << int(lock_count) << std::endl;
+    InferenceEngine::pretty_print();
     InferenceEngine::increment_lock_count(slot_no);
+    lock_count = InferenceEngine::get_lock_count(slot_no);
+    std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; after increment_lock_count: " << int(lock_count) << std::endl;
+    InferenceEngine::pretty_print();
   }
 
 public:
@@ -283,8 +296,9 @@ public:
                                    const std::vector<size_t>& lengths,
                                    int timepoints_to_analyze = -1)
   {
-    std::cerr << "GraphDpImpl::handle_token_buffer " << slot_no << ", " << first_timepoint_idx << ", "
-              << timepoints_to_analyze << std::endl;
+    int lock_count = InferenceEngine::get_lock_count(slot_no);
+    std::cerr << "GraphDpImpl::handle_token_buffer " << (slot_no+1) << ", " << first_timepoint_idx << ", "
+              << timepoints_to_analyze << "; lock_count=" << lock_count << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     // size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
@@ -300,9 +314,10 @@ public:
 
     auto& slot = InferenceEngine::m_slots[slot_no];
 
-    std::cerr << "GraphDpImpl::handle_token_buffer slot " << slot_no << ": input="
+    lock_count = InferenceEngine::get_lock_count(slot_no);
+    std::cerr << "GraphDpImpl::handle_token_buffer slot " << (slot_no+1) << " retrieved: input="
               << slot.m_input_begin << ", " << slot.m_input_end << "; output="
-              << slot.m_output_begin << ", " << slot.m_output_end << ", "
+              << slot.m_output_begin << ", " << slot.m_output_end << ", lock_count=" << lock_count
               << std::endl;
 
     InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);

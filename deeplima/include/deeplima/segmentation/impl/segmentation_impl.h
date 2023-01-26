@@ -263,7 +263,7 @@ protected:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "send_next_results: waiting for slot " << slot_idx
+      // std::cerr << "SegmentationImpl::send_next_results: waiting for slot " << slot_idx+1
       //      << " (lock_count==" << int(lock_count) << ")\n";
       // m_buff_set.pretty_print();
       // InferenceEngine::pretty_print();

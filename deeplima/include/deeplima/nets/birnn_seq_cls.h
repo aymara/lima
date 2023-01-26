@@ -132,8 +132,14 @@ protected:
   {
     slot_t& slot = *((slot_t*)p);
 
-    // std::cerr << "RnnSequenceClassifier::run_one_job Starting work on slot with lock_count==" << slot.m_lock_count << std::endl;
-
+    std::cerr << "RnnSequenceClassifier::run_one_job worker " << worker_id
+              << ". slot lock_count=" << int(slot.m_lock_count)
+              << "; begin= " << slot.m_input_begin
+              << "; end=" << slot.m_input_end
+              << "; flags= " << int(slot.m_flags)
+              << "; prev=" << (void*)slot.m_prev
+              << "; next=" << (void*)slot.m_next << std::endl;
+    this_ptr->pretty_print();
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
                       slot.m_input_begin, slot.m_input_end,
@@ -141,12 +147,21 @@ protected:
                       this_ptr->m_output,
                       this_ptr->m_lengths[worker_id],
                       {"tokens"});
+    std::cerr << "RnnSequenceClassifier::run_one_job after predict worker " << worker_id
+              << ". slot lock_count=" << int(slot.m_lock_count)
+              << "; begin= " << slot.m_input_begin
+              << "; end=" << slot.m_input_end
+              << "; flags= " << int(slot.m_flags)
+              << "; prev=" << (void*)slot.m_prev
+              << "; next=" << (void*)slot.m_next << std::endl;
+    this_ptr->pretty_print();
 
     assert(slot.m_lock_count > 0);
     slot.m_lock_count--;
     if (slot.m_flags & left_overlap && slot.m_prev != nullptr)
     {
       assert(slot.m_prev->m_lock_count > 0);
+      // slot.m_prev->m_lock_count--;
       slot.m_prev->m_lock_count--;
     }
     if (slot.m_flags & right_overlap && slot.m_next != nullptr)
@@ -198,8 +213,8 @@ public:
     // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
     // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
 
-    // std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
-    //           << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
+    std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
+              << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
     m_num_slots = num_slots;
     m_overlap = overlap;
     m_slot_len = slot_len;
@@ -270,13 +285,9 @@ public:
 
   virtual ~RnnSequenceClassifier()
   {
-    // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
+    std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
     ThreadPoolParent::stop();
-    // if (nullptr != m_slots)
-    // {
-    //   delete[] m_slots;
-    // }
-    // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
+    std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
   }
 
   inline uint8_t get_output(uint64_t pos, uint8_t cls)
@@ -316,8 +327,9 @@ public:
   {
     assert(idx < m_num_slots);
     m_slots[idx].m_lock_count += v;
-    // std::cerr << "Lock for slot " << idx
-    //           << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
+    std::cerr << "RnnSequenceClassifier::increment_lock_count by " << int(v) << " for slot " << int(idx+1)
+              << ". it is now: " << int(m_slots[idx].m_lock_count) << std::endl;
+    pretty_print();
   }
 
   inline void decrement_lock_count(uint32_t idx)
@@ -330,11 +342,15 @@ public:
     {
       clear_slot(idx);
     }
+    std::cerr << "RnnSequenceClassifier::decrement_lock_count Lock for slot " << int(idx+1)
+              << " set to " << int(m_slots[idx].m_lock_count) << std::endl;
+    pretty_print();
   }
 
   inline uint64_t get_start_timepoint() const
   {
-    // std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
+    std::cerr << "RnnSequenceClassifier::get_start_timepoint return " << m_overlap << std::endl;
+    pretty_print();
     return m_overlap;
   }
 
@@ -401,12 +417,21 @@ public:
   {
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
-
+    std::cerr << "RnnSequenceClassifier::start_job " << int(idx+1) << ", " << no_more_data
+              << "; lock count=" << int(slot.m_lock_count)
+              << "; flags= " << int(slot.m_flags)
+              << "; overlap= " << int(m_overlap)
+              << std::endl;
     if (no_more_data)
     {
-      slot.m_flags = (slot_flags_t)(slot.m_flags & (~right_overlap));
+      slot.m_flags = m_overlap == 0 ? none : (slot_flags_t)(slot.m_flags & (~right_overlap)) ;
+      std::cerr << "RnnSequenceClassifier::start_job after reverse" << int(idx+1) << ", " << no_more_data
+                << "; lock count=" << int(slot.m_lock_count)
+                << "; flags= " << int(slot.m_flags)
+                << std::endl;
     }
 
+    // increment_lock_count(idx);
     increment_lock_count(idx, 1
                          + ((slot.m_flags & left_overlap) > 0 ? 1 : 0)
                          + ((slot.m_flags & right_overlap) > 0 ? 1 : 0));
@@ -428,11 +453,13 @@ public:
     assert(idx < m_num_slots);
     const slot_t& slot = m_slots[idx];
     assert(slot.m_work_started);
-    std::cerr << "RnnSequenceClassifier::wait_for_slot " << idx << "/" << m_num_slots
+    std::cerr << "RnnSequenceClassifier::wait_for_slot " << (idx+1) << "/" << m_num_slots
               << "; lock count=" << int(slot.m_lock_count) << std::endl;
+    pretty_print();
     while (slot.m_lock_count > 1)
     {
-      std::cerr << "RnnSequenceClassifier::wait_for_slot " << int(slot.m_lock_count) << std::endl;
+      std::cerr << "RnnSequenceClassifier::wait_for_slot in while lock_count=" << int(slot.m_lock_count) << std::endl;
+      pretty_print();
       ThreadPoolParent::wait_for_any_job_notification([&slot]() {
           return 1 == slot.m_lock_count;
         }
@@ -440,7 +467,7 @@ public:
     }
   }
 
-  void pretty_print()
+  void pretty_print() const
   {
     std::cerr << "SLOTS: ";
     for (size_t i = 0; i < m_num_slots; i++)

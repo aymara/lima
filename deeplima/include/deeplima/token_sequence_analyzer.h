@@ -325,20 +325,23 @@ public:
 
   void finalize()
   {
-    // std::cerr << "TokenSequenceAnalyzer::finalize" << std::endl;
+    std::cerr << "TokenSequenceAnalyzer::finalize" << m_current_timepoint << ", " << m_buffer_size << std::endl;
     if (m_current_timepoint > 0)
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        // std::cerr << "TokenSequenceAnalyzer::finalize call start_analysis" << std::endl;
+        std::cerr << "TokenSequenceAnalyzer::finalize call start_analysis " << m_current_buffer << ", "
+                  << m_current_timepoint << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint);
       }
       else
       {
+        std::cerr << "TokenSequenceAnalyzer::finalize call no_more_data " << m_current_buffer << std::endl;
         m_cls.no_more_data(m_current_buffer);
       }
     }
 
+    std::cerr << "TokenSequenceAnalyzer::finalize call send_all_results " << std::endl;
     m_cls.send_all_results();
   }
 
@@ -392,7 +395,7 @@ public:
 
   void start_analysis(size_t buffer_idx, int count = -1)
   {
-    // std::cerr << "TokenSequenceAnalyzer::start_analysis " << buffer_idx << ", " << count << std::endl;
+    std::cerr << "TokenSequenceAnalyzer::start_analysis " << buffer_idx << ", " << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 

@@ -134,7 +134,7 @@ public:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "send_next_results: waiting for slot " << slot_idx
+      // std::cerr << "TaggingImpl::send_next_results: waiting for slot " << slot_idx+1
       //      << " (lock_count==" << int(lock_count) << ")\n";
       // InferenceEngine::pretty_print();
       InferenceEngine::wait_for_slot(slot_idx);
@@ -171,7 +171,7 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        // std::cerr << "send_next_results: waiting for slot " << slot_idx
+        // std::cerr << "TaggingImpl::send_all_results: waiting for slot " << slot_idx+1
         //      << " (lock_count==" << int(lock_count) << ")\n";
         // InferenceEngine::pretty_print();
         InferenceEngine::wait_for_slot(slot_idx);
