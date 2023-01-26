@@ -26,7 +26,7 @@ Options default values are in parentheses.
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
   -p package        <(OFF)|ON> package building selection
-  -r resources      <precompiled|(build)> build the linguistic resources or use the
+  -r resources      <precompiled|(build)|none> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
   -v version        <(val)|rev> version number is set either to the value set by
@@ -86,7 +86,7 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
             ;;
         r)
             resources=${OPTARG}
-            [[ "$resources" == "precompiled" || "$resources" == "build" ]] || usage
+            [[ "$resources" == "precompiled" || "$resources" == "build" || "$resources" == "none" ]] || usage
             ;;
         s)
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
@@ -177,6 +177,12 @@ else
   WITH_ARCH="OFF"
 fi
 
+if [[ $resources == "build" ]]; then
+  WITH_LIMA_RESOURCES="ON"
+else
+  WITH_LIMA_RESOURCES="OFF"
+fi
+ 
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   make_cmd="make -j$j"
   make_test="make test"
@@ -255,6 +261,7 @@ cmake  -G "$generator" \
     -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
     -DWITH_GUI=$WITH_GUI \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
+    -DWITH_LIMA_RESOURCES=$WITH_LIMA_RESOURCES \
     $source_dir
 result=$?
 if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
