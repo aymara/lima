@@ -99,7 +99,7 @@ public:
     }
     // std::cerr << std::endl;
 
-    //arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
+    arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
 
     return 0;
   }

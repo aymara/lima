@@ -79,6 +79,9 @@ public:
     }
   }
 
+  /**
+   * A node is a root if its head id is 0.
+   */
   static size_t count_roots(typename std::vector<vertex_idx_t>::const_iterator pos,
                             typename std::vector<vertex_idx_t>::const_iterator end)
   {
@@ -204,6 +207,7 @@ public:
                              std::vector<vertex_idx_t>& heads,
                              size_t offset)
   {
+    std::cerr << "make_connected" << std::endl;
     std::vector< std::vector<size_t> > head2child;
     size_t len = adj_matrix.rows();
     assert(adj_matrix.rows() == adj_matrix.cols());
@@ -334,6 +338,7 @@ public:
                                 std::vector<vertex_idx_t>& heads,
                                 size_t offset)
   {
+    std::cerr << "arborescence_impl" << std::endl;
     assert(adj_matrix.rows() == adj_matrix.cols());
     size_t len = adj_matrix.rows();
 
@@ -546,43 +551,46 @@ void arborescence(const M& adj_matrix,
                   std::vector<vertex_idx_t>& heads,
                   size_t offset)
 {
-  //impl::Arborescence<M, vertex_idx_t, weight_t>::fill_heads_with_max(adj_matrix, len, heads.begin);
+  std::cerr << "arborescence" << std::endl;
+  typedef impl::Arborescence<M, vertex_idx_t, weight_t> Tree;
+  //Tree::fill_heads_with_max(adj_matrix, len, heads.begin);
   assert(adj_matrix.rows() == adj_matrix.cols());
   size_t len = adj_matrix.rows();
 
   const typename std::vector<vertex_idx_t>::const_iterator begin = heads.cbegin() + offset;
   const typename std::vector<vertex_idx_t>::const_iterator end = begin + len;
 
-  size_t n_roots = impl::Arborescence<M, vertex_idx_t, weight_t>::count_roots(begin, end);
+  size_t n_roots = Tree::count_roots(begin, end);
 
   if (n_roots == 0)
-    impl::Arborescence<M, vertex_idx_t, weight_t>::choose_root(adj_matrix, heads, offset);
+    Tree::choose_root(adj_matrix, heads, offset);
 
   if (n_roots > 1)
-    impl::Arborescence<M, vertex_idx_t, weight_t>::choose_one_root(adj_matrix, heads, offset);
+    Tree::choose_one_root(adj_matrix, heads, offset);
 
-  n_roots = impl::Arborescence<M, vertex_idx_t, weight_t>::count_roots(begin, end);
+  n_roots = Tree::count_roots(begin, end);
 
   if (n_roots != 1)
     throw std::runtime_error("choose_one_root should have selected one root.");
     // there is a bug in choose_one_root
 
   // now n_roots == 1
-  if (impl::Arborescence<M, vertex_idx_t, weight_t>::is_connected(begin, end))
-   return;
+  // if (Tree::is_connected(begin, end))
+  //   // TODO detect and clear cycles
+  //   return;
 
-  impl::Arborescence<M, vertex_idx_t, weight_t>::make_connected(adj_matrix, heads, offset);
+  Tree::make_connected(adj_matrix, heads, offset);
 
-  n_roots = impl::Arborescence<M, vertex_idx_t, weight_t>::count_roots(begin, end);
+  n_roots = Tree::count_roots(begin, end);
 
   if (n_roots == 1)
-    if (impl::Arborescence<M, vertex_idx_t, weight_t>::is_connected(begin, end))
+    if (Tree::is_connected(begin, end))
       return;
 
   // we still have problems. Retrying with full tree reconstruction.
   std::fill(heads.begin() + offset, heads.begin() + offset + len, 0);
 
-  impl::Arborescence<M, vertex_idx_t, weight_t>::arborescence_impl(adj_matrix, heads, offset);
+  Tree::arborescence_impl(adj_matrix, heads, offset);
 }
 
 } // namespace deeplima

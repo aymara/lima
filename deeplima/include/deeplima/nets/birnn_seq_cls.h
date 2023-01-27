@@ -424,6 +424,7 @@ public:
     //           << std::endl;
     if (no_more_data)
     {
+      // Must not take into account flags if overlap is zero (parsing)
       slot.m_flags = m_overlap == 0 ? none : (slot_flags_t)(slot.m_flags & (~right_overlap)) ;
       // std::cerr << "RnnSequenceClassifier::start_job after reverse" << int(idx+1) << ", " << no_more_data
       //           << "; lock count=" << int(slot.m_lock_count)
