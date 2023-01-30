@@ -45,13 +45,7 @@ public:
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
 
-  ~BiRnnSeq2SeqEigenInferenceForLemmatization()
-  {
-    for (auto p : m_workbenches)
-    {
-      delete p;
-    }
-  }
+  virtual ~BiRnnSeq2SeqEigenInferenceForLemmatization() = default;
 
   virtual void load(const std::string& fn) override
   {
@@ -72,7 +66,7 @@ public:
       Parent::m_wb[i].push_back(Parent::m_ops[i]->create_workbench(input_len, Parent::m_params[i], precomputed_input));
     }
 
-    m_workbenches.push_back(new workbench_t);
+    m_workbenches.push_back(std::make_shared<workbench_t>());
 
     return new_worker_idx;
   }
@@ -226,7 +220,7 @@ protected:
   morph_model::morph_model_t m_morph_model;
   std::vector<size_t> m_fixed_upos;
 
-  std::vector<workbench_t*> m_workbenches;
+  std::vector<std::shared_ptr<workbench_t>> m_workbenches;
 
   virtual void convert_from_torch(const std::string& fn) override;
 };
