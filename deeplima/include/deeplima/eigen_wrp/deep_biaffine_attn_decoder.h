@@ -64,10 +64,11 @@ public:
                          const size_t input_end,
                          std::vector<uint32_t>& output)
   {
+    // std::cerr << "Op_DeepBiaffineAttnDecoder::execute input begin=" << input_begin << ", end=" << input_end << std::endl;
     assert(nullptr != pwb);
     assert(nullptr != params);
     auto layer = std::dynamic_pointer_cast<const params_t>(params);
-
+    // TODO check if layer is empty, signaling that the cast failed
     // TODO should it be used?
     // auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
 

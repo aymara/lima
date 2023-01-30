@@ -17,6 +17,16 @@
 namespace deeplima
 {
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  out << '[';
+  if ( !v.empty() ) {
+    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+  }
+  out << "]";
+  return out;
+}
+
 template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out>
 class RnnSequenceClassifier : public InputVectorizer,
                               public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> >,
@@ -52,6 +62,8 @@ class RnnSequenceClassifier : public InputVectorizer,
     slot_t* m_prev;
     slot_t* m_next;
 
+    std::vector<size_t> m_lengths;
+
     slot_t()
       : m_input_begin(0),
         m_input_end(0),
@@ -61,7 +73,8 @@ class RnnSequenceClassifier : public InputVectorizer,
         m_work_started(false),
         m_lock_count(0),
         m_prev(nullptr),
-        m_next(nullptr)
+        m_next(nullptr),
+        m_lengths()
     { }
     slot_t(const slot_t& s)
       : m_input_begin(s.m_input_begin),
@@ -72,7 +85,8 @@ class RnnSequenceClassifier : public InputVectorizer,
         m_work_started(s.m_work_started),
         m_lock_count(0),
         m_prev(nullptr),
-        m_next(nullptr)
+        m_next(nullptr),
+        m_lengths(s.m_lengths)
     { }
   };
 
@@ -120,6 +134,11 @@ protected:
   {
     assert(idx < m_num_slots);
     slot_t& slot = m_slots[idx];
+    // std::cerr << "RnnSequenceClassifier::start_job_impl slot id=" << (idx+1)
+    //           << ", slot begin=" << slot.m_input_begin
+    //           << ", slot end=" << slot.m_input_end
+    //           << ", m_lengths=" << m_lengths
+    //           << std::endl;
 
     if (! slot.m_work_started)
     {
@@ -138,15 +157,21 @@ protected:
     //           << "; end=" << slot.m_input_end
     //           << "; flags= " << int(slot.m_flags)
     //           << "; prev=" << (void*)slot.m_prev
-    //           << "; next=" << (void*)slot.m_next << std::endl;
+    //           << "; next=" << (void*)slot.m_next
+    //           << "; lengths=" << slot.m_lengths
+    //           << ". lengths=" << this_ptr->m_lengths
+    //           << std::endl;
     // this_ptr->pretty_print();
+
     this_ptr->predict(worker_id,
                       this_ptr->get_tensor(),
                       slot.m_input_begin, slot.m_input_end,
                       slot.m_output_begin, slot.m_output_end,
                       this_ptr->m_output,
-                      this_ptr->m_lengths[worker_id],
+                      slot.m_lengths,
+                      // this_ptr->m_lengths[worker_id],
                       {"tokens"});
+
     // std::cerr << "RnnSequenceClassifier::run_one_job after predict worker " << worker_id
     //           << ". slot lock_count=" << int(slot.m_lock_count)
     //           << "; begin= " << slot.m_input_begin
@@ -213,8 +238,11 @@ public:
     // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
     // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
 
-    // std::cerr << "RnnSequenceClassifier::init " << max_feat << ", " << overlap << ", " << num_slots << ", "
-    //           << slot_len << ", " << num_threads << ", " << precomputed_input << std::endl;
+    // std::cerr << "RnnSequenceClassifier::init max_feat=" << max_feat << ", overlap=" << overlap
+    //           << ", num_slots=" << num_slots
+    //           << ", slot_len=" << slot_len
+    //           << ", num_threads=" << num_threads
+    //           << ", precomputed_input=" << precomputed_input << std::endl;
     m_num_slots = num_slots;
     m_overlap = overlap;
     m_slot_len = slot_len;
@@ -237,7 +265,6 @@ public:
       slot.m_output_end = slot.m_output_begin + m_slot_len;
       slot.m_input_begin = slot.m_output_begin - m_overlap;
       slot.m_input_end = slot.m_output_end + m_overlap;
-
       if (m_overlap > 0)
       {
         slot.m_flags = (slot_flags_t)(left_overlap | right_overlap);
@@ -259,6 +286,10 @@ public:
       {
         slot.m_flags = left_overlap;
       }
+      // std::cerr << "RnnSequenceClassifier::init slot " << (i+1)
+      //           << " input begin=" << slot.m_input_begin << ", end=" << slot.m_input_end
+      //           << " output begin=" << slot.m_output_begin << ", end=" << slot.m_output_end
+      //           << std::endl;
     }
 
     m_lengths.resize(m_num_slots);
@@ -383,15 +414,19 @@ public:
 
   inline void set_slot_lengths(uint32_t idx, const std::vector<size_t>& lengths)
   {
+    // std::cerr << "RnnSequenceClassifier::set_slot_lengths slot id=" << (idx+1) << ", lengths=" << lengths << std::endl;
     assert(idx < m_num_slots);
     assert(idx < m_lengths.size());
 
     m_lengths[idx] = lengths;
+    auto& slot = m_slots[idx];
+    slot.m_lengths = lengths;
   }
 
   // used in graph-based dependency parser
   inline void set_slot_begin(uint32_t idx, uint64_t slot_begin)
   {
+    // std::cerr << "RnnSequenceClassifier::set_slot_begin slot id=" << (idx+1) << ", slot_begin=" << slot_begin << std::endl;
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
@@ -402,9 +437,12 @@ public:
 
   inline void set_slot_end(uint32_t idx, uint64_t slot_end)
   {
+    // std::cerr << "RnnSequenceClassifier::set_slot_end slot id=" << (idx+1) << ", slot_end=" << slot_end << std::endl;
     assert(idx < m_num_slots);
 
     slot_t& slot = m_slots[idx];
+    // std::cerr << "RnnSequenceClassifier::set_slot_end slot output begin=" << slot.m_output_begin
+    //           << ", end=" << slot.m_output_end << std::endl;
 
     assert(slot_end > slot.m_output_begin);
     assert(slot_end <= slot.m_output_end);

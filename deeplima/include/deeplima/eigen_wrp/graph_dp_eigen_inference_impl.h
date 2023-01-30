@@ -93,8 +93,9 @@ public:
       const std::vector<std::string>& /*outputs_names*/
       )
   {
-    auto p_encoder
-        = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
+    // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict "
+    //           << "output dim=" << output->dim() << ", lengths=" << lengths << std::endl;
+    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     // const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *plstm
     //     = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t*>(Parent::m_params[0]);
@@ -118,7 +119,8 @@ public:
         Parent::m_wb[1][worker_id],
         wb->get_last_output(),
         Parent::m_params[1],
-        start, start + lengths[i],
+        start,
+        start + lengths[i],
         (*output)[0]);
 
       start += lengths[i];

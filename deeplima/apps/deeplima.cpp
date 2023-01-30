@@ -20,8 +20,8 @@ namespace po = boost::program_options;
 
 #define READ_BUFFER_SIZE (1024 * 1024 * 2)
 #define TAG_BUFFER_SIZE (1024)
-// #define DP_BUFFER_SIZE (16384)
-#define DP_BUFFER_SIZE (1024)
+#define DP_BUFFER_SIZE (16384)
+// #define DP_BUFFER_SIZE (1024)
 
 void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,

@@ -297,8 +297,11 @@ public:
                                    int timepoints_to_analyze = -1)
   {
     int lock_count = InferenceEngine::get_lock_count(slot_no);
-    // std::cerr << "GraphDpImpl::handle_token_buffer " << (slot_no+1) << ", " << first_timepoint_idx << ", "
-    //           << timepoints_to_analyze << "; lock_count=" << lock_count << std::endl;
+    // std::cerr << "GraphDpImpl::handle_token_buffer " << (slot_no+1) << ", "
+    //           << first_timepoint_idx
+    //           << ", lengths=" << lengths
+    //           << ", " << timepoints_to_analyze
+    //           << "; lock_count=" << lock_count << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     // size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();

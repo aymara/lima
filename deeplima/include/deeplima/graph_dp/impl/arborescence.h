@@ -10,11 +10,23 @@
 #include <map>
 #include <list>
 #include <iostream>
+#include <iterator> // needed for std::ostram_iterator
 #include <sstream>
 #include <boost/pending/disjoint_sets.hpp>
 
 namespace deeplima
 {
+
+// template <typename T>
+// std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+//   out << '[';
+//   if ( !v.empty() ) {
+//     std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+//   }
+//   out << "]";
+//   return out;
+// }
+
 namespace impl
 {
 
@@ -39,6 +51,7 @@ class Arborescence
 
   static void remove_from_f(edge_t* e, std::vector<edge_t*>& f_roots)
   {
+    // std::cerr << "remove_from_f" << std::endl;
     while (e != nullptr)
     {
       e->removed = true;
@@ -60,6 +73,7 @@ public:
                                   size_t len,
                                   std::vector<size_t>& heads)
   {
+    // std::cerr << "fill_heads_with_max" << std::endl;
     for (vertex_idx_t i = 1; i < len; i++)
     {
       vertex_idx_t max_id = 0;
@@ -85,6 +99,7 @@ public:
   static size_t count_roots(typename std::vector<vertex_idx_t>::const_iterator pos,
                             typename std::vector<vertex_idx_t>::const_iterator end)
   {
+    // std::cerr << "count_roots pos=" << *pos << "; end=" << *end << std::endl;
     size_t c = 0;
     pos++;
     for (; pos != end; pos++)
@@ -92,12 +107,14 @@ public:
       if (*pos == 0)
         c++;
     }
+    // std::cerr << "count_roots: " << c << std::endl;
     return c;
   }
 
   static bool is_connected(typename std::vector<vertex_idx_t>::const_iterator pos,
                            typename std::vector<vertex_idx_t>::const_iterator end)
   {
+    // std::cerr << "is_connected" << std::endl;
     std::vector< std::vector<size_t> > head2child;
     size_t len = end - pos;
     head2child.resize(len);
@@ -138,6 +155,7 @@ public:
                                        size_t len,
                                        std::vector<size_t>& accessibility_map)
   {
+    // std::cerr << "find_disconnected_groups" << std::endl;
     std::fill(accessibility_map.begin(), accessibility_map.end(), 0);
 
     std::vector<size_t> stack;
@@ -165,6 +183,7 @@ public:
                          size_t len,
                          size_t offset)
   {
+    // std::cerr << "find_loops" << std::endl;
     std::vector<size_t> visited = connected;
     loops.clear();
 
@@ -207,7 +226,7 @@ public:
                              std::vector<vertex_idx_t>& heads,
                              size_t offset)
   {
-    std::cerr << "make_connected" << std::endl;
+    // std::cerr << "make_connected" << std::endl;
     std::vector< std::vector<size_t> > head2child;
     size_t len = adj_matrix.rows();
     assert(adj_matrix.rows() == adj_matrix.cols());
@@ -268,6 +287,7 @@ public:
                               std::vector<vertex_idx_t>& heads,
                               size_t offset)
   {
+    // std::cerr << "choose_one_root" << std::endl;
     assert(adj_matrix.rows() == adj_matrix.cols());
     size_t len = adj_matrix.rows();
 
@@ -310,6 +330,7 @@ public:
                           std::vector<vertex_idx_t>& heads,
                           size_t offset)
   {
+    // std::cerr << "choose_root" << std::endl;
     assert(adj_matrix.rows() == adj_matrix.cols());
     size_t len = adj_matrix.rows();
 
@@ -338,7 +359,7 @@ public:
                                 std::vector<vertex_idx_t>& heads,
                                 size_t offset)
   {
-    std::cerr << "arborescence_impl" << std::endl;
+    // std::cerr << "arborescence_impl" << std::endl;
     assert(adj_matrix.rows() == adj_matrix.cols());
     size_t len = adj_matrix.rows();
 
@@ -551,11 +572,11 @@ void arborescence(const M& adj_matrix,
                   std::vector<vertex_idx_t>& heads,
                   size_t offset)
 {
-  std::cerr << "arborescence" << std::endl;
   typedef impl::Arborescence<M, vertex_idx_t, weight_t> Tree;
   //Tree::fill_heads_with_max(adj_matrix, len, heads.begin);
   assert(adj_matrix.rows() == adj_matrix.cols());
   size_t len = adj_matrix.rows();
+  // std::cerr << "arborescence heads=" << heads << ", offset=" << offset << ", len=" << len << std::endl;
 
   const typename std::vector<vertex_idx_t>::const_iterator begin = heads.cbegin() + offset;
   const typename std::vector<vertex_idx_t>::const_iterator end = begin + len;

@@ -463,8 +463,8 @@ protected:
                       const std::vector<size_t>& lengths,
                       int count = -1)
   {
-    // std::cerr << "DependencyParser::start_analysis " << buffer_idx << ", " << first_timepoint_idx << ", "
-    //           << lengths.size() << ", " << count << std::endl;
+    // std::cerr << "DependencyParser::start_analysis buffer_idx=" << buffer_idx << ", first_timepoint_idx=" << first_timepoint_idx
+    //           << ", lengths=" << lengths << ", count=" << count << std::endl;
     assert(!m_buffers[buffer_idx].locked());
     m_buffers[buffer_idx].lock();
 
@@ -482,6 +482,9 @@ protected:
     size_t tokens_counter = 0;
     size_t this_sentence_tokens = m_current_timepoint > 0 ? 0 : 1;
 
+    // std::cerr << "DependencyParser::count_max_tokens_until_eos m_current_timepoint=" << m_current_timepoint
+    //           << "; tokens_counter=" << tokens_counter << "; this_sentence_tokens=" << this_sentence_tokens
+    //           << "; m_buffer_size=" << m_buffer_size << std::endl;
     if (m_current_timepoint + tokens_counter + this_sentence_tokens >= m_buffer_size)
     {
       throw std::runtime_error("No place for new tokens in this buffer");
@@ -490,6 +493,10 @@ protected:
     while (!iter.end())
     {
       this_sentence_tokens++;
+      // std::cerr << "DependencyParser::count_max_tokens_until_eos m_current_timepoint=" << m_current_timepoint
+      //           << "; tokens_counter=" << tokens_counter << "; this_sentence_tokens=" << this_sentence_tokens
+      //           << "; m_buffer_size=" << m_buffer_size
+      //           << "; token=" << iter.form() << std::endl;
 
       if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
           iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
@@ -519,6 +526,8 @@ protected:
     }
 
     iter.reset(current_iter_pos);
+    // std::cerr << "DependencyParser::count_max_tokens_until_eos lengths=" << lengths
+    //           << "; tokens_counter=" << tokens_counter << std::endl;
     return tokens_counter;
   }
 
