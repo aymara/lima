@@ -23,7 +23,7 @@ namespace lemmatization
 {
 namespace eigen_impl
 {
-  
+
 #ifdef WIN32
 #ifdef LEMM_EXPORTING
   #define LEMM_EXPORT __declspec(dllexport)
@@ -45,6 +45,14 @@ public:
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
 
+  ~BiRnnSeq2SeqEigenInferenceForLemmatization()
+  {
+    for (auto p : m_workbenches)
+    {
+      delete p;
+    }
+  }
+
   virtual void load(const std::string& fn) override
   {
     convert_from_torch(fn);
@@ -63,6 +71,8 @@ public:
       assert(nullptr != Parent::m_params[i]);
       Parent::m_wb[i].push_back(Parent::m_ops[i]->create_workbench(input_len, Parent::m_params[i], precomputed_input));
     }
+
+    m_workbenches.push_back(new workbench_t);
 
     return new_worker_idx;
   }
@@ -101,6 +111,15 @@ public:
     assert(false);
   }
 
+  struct workbench_t
+  {
+    Vector encoded_feats_for_encoder;
+    Vector encoded_feats_for_decoder;
+    Vector fw_h, fw_c, bw_h, bw_c; // encoder's output
+    Vector encoder_state; // too bad: this is a copy of previous things
+    Vector decoder_initial_h, decoder_initial_c;
+  };
+
   virtual void predict(
       size_t worker_id,
       const M& inputs,
@@ -114,18 +133,24 @@ public:
   {
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
+    assert(m_workbenches.size() > worker_id);
+    workbench_t& wb = *(m_workbenches[worker_id]);
 
     // Features encoders
     // for encoder
     auto p_linear_feats_enc = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[5]);
-    Vector encoded_feats_for_encoder;
-    p_linear_feats_enc->execute(Parent::m_wb[5][worker_id], input_feats, Parent::m_params[5], encoded_feats_for_encoder);
+    p_linear_feats_enc->execute(Parent::m_wb[5][worker_id],
+                                input_feats,
+                                Parent::m_params[5],
+                                wb.encoded_feats_for_encoder);
 
     // for decoder
     auto p_linear_feats_dec = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[3]);
 
-    Vector encoded_feats;
-    p_linear_feats_dec->execute(Parent::m_wb[3][worker_id], input_feats, Parent::m_params[3], encoded_feats);
+    p_linear_feats_dec->execute(Parent::m_wb[3][worker_id],
+                                input_feats,
+                                Parent::m_params[3],
+                                wb.encoded_feats_for_decoder);
 
     auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
@@ -135,36 +160,37 @@ public:
         = std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>>(Parent::m_params[0]);
     size_t hidden_size = enc_mutlilayer_bilstm->layers[0].fw.weight_ih.rows() / 4;
 
-    Vector fw_h, fw_c, bw_h, bw_c;
     if (true)
     {
       // layout of encoded_feats_for_encoder:
       //
       // encoder_init_state_ = forward module=fc_cat2encoder input=categories_enc_embd
       // encoder_init_state = reshape input=encoder_init_state_ dims=2,-1,(encoder_input_size / 2)
-      fw_h = encoded_feats_for_encoder.head(hidden_size);
-      fw_c = fw_h;
-      bw_h = encoded_feats_for_encoder.tail(hidden_size);
-      bw_c = bw_h;
+      wb.fw_h = wb.encoded_feats_for_encoder.head(hidden_size);
+      wb.fw_c = wb.fw_h;
+      wb.bw_h = wb.encoded_feats_for_encoder.tail(hidden_size);
+      wb.bw_c = wb.bw_h;
     }
     p_encoder->execute(Parent::m_wb[0][worker_id],
         inputs, Parent::m_params[0],
-        0, input_len, fw_h, fw_c, bw_h, bw_c);
+        0, input_len, wb.fw_h, wb.fw_c, wb.bw_h, wb.bw_c);
 
 
-    Vector encoder_state(hidden_size * 4 + encoded_feats.rows());
-    encoder_state << fw_h, fw_c, bw_h, bw_c, encoded_feats;
+    if (wb.encoder_state.rows() == 0)
+    {
+      wb.encoder_state = Vector(hidden_size * 4 + wb.encoded_feats_for_decoder.rows());
+    }
+    wb.encoder_state << wb.fw_h, wb.fw_c, wb.bw_h, wb.bw_c, wb.encoded_feats_for_decoder;
 
     auto p_linear_h = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[1]);
     auto p_linear_c = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[2]);
 
-    Vector decoder_initial_h, decoder_initial_c;
-    p_linear_h->execute(Parent::m_wb[1][worker_id], encoder_state, Parent::m_params[1], decoder_initial_h);
-    p_linear_c->execute(Parent::m_wb[2][worker_id], encoder_state, Parent::m_params[2], decoder_initial_c);
+    p_linear_h->execute(Parent::m_wb[1][worker_id], wb.encoder_state, Parent::m_params[1], wb.decoder_initial_h);
+    p_linear_c->execute(Parent::m_wb[2][worker_id], wb.encoder_state, Parent::m_params[2], wb.decoder_initial_c);
 
     const EmbdUInt64Float& decoder_embd = Parent::m_input_uint_dicts[1];
     p_decoder->execute(Parent::m_wb[4][worker_id], decoder_embd,
-        decoder_initial_h, decoder_initial_c,
+        wb.decoder_initial_h, wb.decoder_initial_c,
         Parent::m_params[4], 0x10FFFE, 9, output, output_max_len);
   }
 
@@ -199,6 +225,8 @@ protected:
   std::vector<std::string> m_embd_fn;
   morph_model::morph_model_t m_morph_model;
   std::vector<size_t> m_fixed_upos;
+
+  std::vector<workbench_t*> m_workbenches;
 
   virtual void convert_from_torch(const std::string& fn) override;
 };

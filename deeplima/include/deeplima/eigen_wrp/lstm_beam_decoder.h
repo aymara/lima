@@ -50,8 +50,15 @@ protected:
 
     M temp;
     M out;
+    M states_c, states_h;
+    V s, g_o, g_u, g_if;
     std::vector<M> lin_out;
     const V zero;
+    std::vector<uint32_t> initial_top_classes;
+    std::vector<float> initial_logprob;
+    std::vector<uint32_t> top_classes;
+    std::vector<float> logprob;
+    std::vector<uint32_t> indices;
     bool m_precomputed_input;
   };
 
@@ -67,8 +74,9 @@ public:
 
   typedef params_lstm_beam_decoder_t<M, V> params_t;
 
-  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t /*input_size*/, const std::shared_ptr<param_base_t> params,
-                                        bool precomputed_input=false) const override
+  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t /*input_size*/,
+                                                                 const std::shared_ptr<param_base_t> params,
+                                                                 bool precomputed_input=false) const override
   {
     assert(nullptr != params);
     const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->bilstm;
@@ -119,21 +127,27 @@ public:
     auto wb = std::dynamic_pointer_cast<workbench_t>(pwb);
     M& temp = wb->temp;
     M& output = wb->out;
-//     TODO should it be used?
+    //     TODO should it be used?
     // const V& zero = wb->zero;
 
     std::vector<std::vector<decoding_timepoint_t>> decoding_log(max_output_len, std::vector<decoding_timepoint_t>(beam_size));
 
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
-    V s, g_u, g_o, g_if;
+    V& s = wb->s;
+    V& g_u = wb->g_u;
+    V& g_o = wb->g_o;
+    V& g_if = wb->g_if;
     V c = initial_state_c;
     V h = initial_state_h;
 
     M input(embd.dim(), 1); //= input_matrix.block(0, input_begin, input_matrix.rows(), temp.cols());
     embd.get(start_code, input, 0, 0);
 
-    std::vector<uint32_t> initial_top_classes(beam_size);
-    std::vector<float> initial_logprob(beam_size);
+    std::vector<uint32_t>& initial_top_classes = wb->initial_top_classes;
+    initial_top_classes.resize(beam_size);
+    std::vector<float>&  initial_logprob = wb->initial_logprob;
+    initial_logprob.resize(beam_size);
+
     step_with_decoding(layer, linear, input, output, s, g_u, g_o, g_if, temp, hidden_size, beam_size, 0,
                        initial_top_classes, initial_logprob, c, h);
 
@@ -144,33 +158,37 @@ public:
     }
     decoding_step++;
 
-    M states_c(hidden_size, beam_size);
+    M& states_c = wb->states_c;
+    if (states_c.cols() != beam_size)
+      states_c = M::Zero(hidden_size, beam_size);
     for (size_t i = 0; i < beam_size; ++i) states_c.col(i) = c;
-    M states_h(hidden_size, beam_size);
+    M& states_h = wb->states_h;
+    if (states_h.cols() != beam_size)
+      states_h = M::Zero(hidden_size, beam_size);
     for (size_t i = 0; i < beam_size; ++i) states_h.col(i) = h;
+
+    std::vector<uint32_t>& top_classes = wb->top_classes;
+    top_classes.resize(beam_size * beam_size);
+    std::vector<float>& logprob = wb->logprob;
+    logprob.resize(beam_size * beam_size);
+    std::vector<uint32_t>& indices = wb->indices;
+    indices.resize(beam_size * beam_size);
 
     while (decoding_step < max_output_len)
     {
-      std::vector<uint32_t> top_classes(beam_size * beam_size);
-      std::vector<float> logprob(beam_size * beam_size);
       for (size_t i = 0; i < beam_size; ++i)
       {
-        V tc = states_c.col(i);
-        V th = states_h.col(i);
         embd.get_direct(decoding_log[decoding_step - 1][i].cls, input, 0, 0);
         step_with_decoding(layer, linear, input, output, s, g_u, g_o, g_if, temp,
                            hidden_size, beam_size,
                            i * beam_size,
-                           top_classes, logprob, tc, th); //, states_h.col(i));
-        states_c.col(i) = tc;
-        states_h.col(i) = th;
+                           top_classes, logprob, states_c, states_h, i);
         for (size_t j = 0; j < beam_size; ++j)
         {
           logprob[i * beam_size + j] += initial_logprob[i];
         }
       }
 
-      std::vector<uint32_t> indices(beam_size * beam_size);
       for (uint32_t i = 0; i < beam_size * beam_size; ++i) indices[i] = i;
       std::sort(indices.begin(), indices.end(), [&logprob](size_t a, size_t b){
         return logprob[a] > logprob[b];
@@ -309,6 +327,62 @@ protected:
     }
   }
 
+  inline void step_with_decoding(
+        const params_bilstm_t<M, V>& layer,
+        const params_linear_t<M, V>& linear,
+        const M& input,                      // [in]
+        M& output,                           // [temp]
+        V& s,                                // [in]     result before gating
+        V& g_u,                              // [temp]   update gate
+        V& g_o,                              // [temp]   output gate
+        V& g_if,                             // [temp]   input and forget gates
+        M& temp,                             // [temp]
+        size_t hidden_size,                  // [in]
+        size_t beam_size,                    // [in]
+        size_t start_pos,                    // [in]
+        std::vector<uint32_t>& top_classes,  // [out]
+        std::vector<float>& logprob,         // [out]
+        M& states_c,                         // [in/out]
+        M& states_h,                         // [in/out]
+        size_t beam_idx                      // [in]
+      )
+  {
+    // Top rows - forward pass
+    temp.topRows(hidden_size * 4) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
+
+    // Forward pass
+    s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * states_h.col(beam_idx);
+    step_fw(hidden_size, 0, s, g_u, g_o, g_if, states_c, beam_idx, output);
+    states_h.col(beam_idx) = output.col(0).topRows(hidden_size);
+
+    // Linear
+    V lin_out = (linear.weight * output).colwise() + linear.bias;
+    Eigen::Index idx = 0;
+    typename V::Scalar max_value = lin_out.maxCoeff(&idx);
+    auto d1 = lin_out.array() - max_value;
+    auto d2 = Eigen::exp(d1);
+    typename V::Scalar d3 = d2.sum();
+    typename V::Scalar d4 = max_value + d3;
+    Eigen::ArrayXf all_logprob = lin_out.array() - d4;
+    std::vector<uint32_t> indices(lin_out.rows());
+    for (uint32_t i = 0; i < indices.size(); ++i) indices[i] = i;
+
+    std::partial_sort_copy(indices.begin(), indices.end(), top_classes.begin() + start_pos, top_classes.begin() + start_pos + beam_size,
+                           [&all_logprob](uint32_t a, uint32_t b) {
+      return all_logprob[a] > all_logprob[b];
+    });
+
+    for (size_t i = 0; i < beam_size; ++i)
+    {
+      logprob[start_pos + i] = all_logprob[top_classes[start_pos + i]];
+      /*
+      std::cerr << i << " " << top_classes[start_pos + i]
+                     << " " << all_logprob[top_classes[start_pos + i]]
+                     << " " << lin_out[top_classes[start_pos + i]] << std::endl;
+      */
+    }
+  }
+
   inline void step_fw(
         size_t hidden_size, // [in]     LSTM parameter
         size_t t,           // [in]     step (position in output)
@@ -327,6 +401,29 @@ protected:
     c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
 
     output.col(t).topRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+  }
+
+  inline void step_fw(
+        size_t hidden_size, // [in]     LSTM parameter
+        size_t t,           // [in]     step (position in output)
+        const V& s,         // [in]     result before gating
+        V& g_u,             // [temp]   update gate
+        V& g_o,             // [temp]   output gate
+        V& g_if,            // [temp]   input and forget gates
+        M& states_c,        // [in/out] cell state
+        size_t beam_idx,    // [in]
+        M& output           // [out]    matrix of output states
+      )
+  {
+    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
+    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
+    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+
+    states_c.col(beam_idx) = g_if.segment(0, hidden_size).cwiseProduct(g_u)
+                           + g_if.segment(hidden_size, hidden_size).cwiseProduct(states_c.col(beam_idx));
+
+    output.col(t).topRows(hidden_size)
+      = g_o.cwiseProduct(states_c.col(beam_idx).unaryExpr( [](float x) { return my_tanh(x); } ));
   }
 
   inline void step_bw(
