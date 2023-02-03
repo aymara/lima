@@ -335,8 +335,8 @@ void parse_file(std::istream& input,
   }
 
   float speed = float(token_counter) / parsing_duration.count();
-  // std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
-  // std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
+  std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
+  std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
 
   if (!input.eof() && (input.fail() || input.bad()))
   {
