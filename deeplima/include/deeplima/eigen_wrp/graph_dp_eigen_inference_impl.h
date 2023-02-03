@@ -128,7 +128,7 @@ public:
       start += lengths[i];
     }
     // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict executes done " << start << std::endl;
-    arborescence<uint32_t, typename M::Scalar>((*output)[0], start);
+    // arborescence<uint32_t, typename M::Scalar>((*output)[0], start);
     // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict after correcting arborescence: " << (*output)[0] << std::endl;
   }
 
