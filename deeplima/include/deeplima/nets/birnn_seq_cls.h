@@ -178,7 +178,9 @@ protected:
     //           << "; end=" << slot.m_input_end
     //           << "; flags= " << int(slot.m_flags)
     //           << "; prev=" << (void*)slot.m_prev
-    //           << "; next=" << (void*)slot.m_next << std::endl;
+    //           << "; next=" << (void*)slot.m_next
+    //           // << "; output=" << (*(this_ptr->m_output))[0]
+    //           << std::endl;
     // this_ptr->pretty_print();
 
     assert(slot.m_lock_count > 0);

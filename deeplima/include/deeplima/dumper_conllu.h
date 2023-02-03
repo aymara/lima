@@ -15,6 +15,108 @@ namespace deeplima
 namespace dumper
 {
 
+struct ConllToken
+{
+  ConllToken() = default;
+  ConllToken(const ConllToken&) = default;
+  ConllToken& operator=(const ConllToken&) = default;
+  ~ConllToken() = default;
+
+    // ID: Word index, integer starting at 1 for each new sentence; may be a range for multiword tokens; may be a decimal number for empty nodes (decimal numbers can be lower than 1 but must be greater than 0).
+  uint32_t id = 0;
+    // FORM: Word form or punctuation symbol.
+  std::string form = "_";
+    // LEMMA: Lemma or stem of word form.
+  std::string lemma = "_";
+    // UPOS: Universal part-of-speech tag.
+  std::string upos = "_";
+    // XPOS: Language-specific part-of-speech tag; underscore if not available.
+  std::string xpos = "_";
+    // FEATS: List of morphological features from the universal feature inventory or from a defined language-specific extension; underscore if not available.
+  std::string feats = "_";
+    // HEAD: Head of the current word, which is either a value of ID or zero (0).
+  int head = 0;
+    // DEPREL: Universal dependency relation to the HEAD (root iff HEAD = 0) or a defined language-specific subtype of one.
+  std::string deprel = "dep";
+    // DEPS: Enhanced dependency graph in the form of a list of head-deprel pairs.
+  std::string deps = "_";
+    // MISC: Any other annotation.
+  std::string misc = "_";
+};
+
+std::ostream& operator<<(std::ostream& oss, const ConllToken& token)
+{
+  oss << token.id << "\t"
+      << token.form << "\t"
+      << token.lemma << "\t"
+      << token.upos << "\t"
+      << token.xpos << "\t"
+      << token.feats << "\t"
+      << token.head << "\t"
+      << token.deprel << "\t"
+      << token.deps << "\t"
+      << token.misc << std::endl << std::flush;
+  return oss;
+}
+
+
+bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<char>& color, std::vector<int>& parent,
+         int& cycle_start, int& cycle_end)
+{
+    color[v] = 1;
+    auto u = heads[v];
+    if (color[u] == 0) {
+        parent[u] = v;
+        if (dfs(u, heads, color, parent, cycle_start, cycle_end))
+            return true;
+    } else if (color[u] == 1) {
+        cycle_end = v;
+        cycle_start = u;
+        return true;
+    }
+
+    color[v] = 2;
+    return false;
+}
+
+bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
+{
+  std::cerr << "find_cycle " << heads << ", " << root << std::endl;
+  uint32_t n = heads.size();
+  std::vector<char> color;
+  std::vector<int> parent;
+  int32_t cycle_start, cycle_end = 0;
+  color.assign(n, 0);
+  parent.assign(n, -1);
+  cycle_start = -1;
+
+  for (uint32_t v = 1; v < n; v++)
+  {
+    if (v == root) continue;
+    if (color[v] == 0 && dfs(v, heads, color, parent, cycle_start, cycle_end))
+        break;
+  }
+
+  if (cycle_start == -1 || cycle_start == root)
+  {
+    std::cerr << "Acyclic" << std::endl;
+    return false;
+  }
+  else
+  {
+    // if (cycle_start > 0 && cycle_start != root)
+    //   heads[cycle_start] = root;
+    if (cycle_end > 0 && cycle_end != root && cycle_end < n)
+    {
+      std::cerr << "Cycle found from " << cycle_start << ", " << cycle_end << " in " << heads << " with root: " << root << std::endl;
+      heads[cycle_end] = root;
+      return true;
+    }
+    else
+      return false;
+  }
+}
+
 class AbstractDumper
 {
 protected:
@@ -167,6 +269,8 @@ class AnalysisToConllU : public DumperBase
 protected:
   uint64_t m_token_counter;
   uint32_t m_next_token_idx;
+  std::vector<ConllToken> m_tokens;
+  uint32_t m_root;
 
   inline void increment_token_counter()
   {
@@ -182,18 +286,19 @@ protected:
 public:
   AnalysisToConllU()
     : m_token_counter(0),
-      m_next_token_idx(1),
+      m_next_token_idx(0),
       m_has_feats(false),
-      m_first_feature_to_print(0)
+      m_first_feature_to_print(0),
+      m_root(0)
   {
   }
 
   virtual ~AnalysisToConllU()
   {
-    if (m_next_token_idx > 1)
-    {
+    // if (m_next_token_idx > 1)
+    // {
       std::cout << std::endl;
-    }
+    // }
   }
 
   const std::vector<std::vector<std::string>> &getMClasses() const {
@@ -254,8 +359,34 @@ public:
     return feat_str;
   }
 
-  void operator()(I& iter, bool hasDeps = false)
+  // void flush()
+  // {
+  //   if (!m_tokens.empty())
+  //   {
+  //     for (const auto& token: m_tokens)
+  //     {
+  //       std::cerr << token ;
+  //       std::cout << token ;
+  //     }
+  //     std::cout << std::endl;
+  //   }
+  //   m_tokens.clear();
+  //   m_root = 0;
+  // }
+
+  void operator()(I& iter, uint32_t begin, uint32_t end, bool hasDeps = false)
   {
+    // std::cerr << "AnalysisToConllU::operator() " << iter.form() << ", " << begin << ", " << end << std::endl;
+    m_tokens.reserve(end);
+    if (m_next_token_idx == 1)
+    {
+      std::cout << std::endl;
+      m_root = 0;
+    }
+    else if (m_next_token_idx == 0)
+    {
+      m_next_token_idx = 1;
+    }
     std::string temp;
     while (!iter.end())
     {
@@ -265,6 +396,7 @@ public:
         iter.next();
         continue;
       }
+      ConllToken token;
       std::ostringstream s;
       if (temp.size() > 0)
       {
@@ -289,51 +421,122 @@ public:
         temp = str;
         continue;
       }
-      std::cout << m_next_token_idx << "\t";
-      std::cout << str << "\t";
-      std::cout << iter.lemma();
-      if (true)
-      {
-        std::cout << "\t" << m_classes[0][iter.token_class(0)];
-      }
-      else
-      {
-        std::cout << "\t_";
-      }
+      // std::cerr << m_next_token_idx << "\t" << str << "\t" << iter.lemma() << "\t" << m_classes[0][iter.token_class(0)];
+      token.id = m_next_token_idx;
+      token.form = str;
+      token.lemma = iter.lemma();
+      token.upos = m_classes[0][iter.token_class(0)];
+      // std::cout << m_next_token_idx << "\t";
+      // std::cout << str << "\t";
+      // std::cout << iter.lemma();
+      // if (true)
+      // {
+        // std::cout << "\t" << m_classes[0][iter.token_class(0)];
+      // }
+      // else
+      // {
+      //   std::cout << "\t_";
+      // }
 
-      std::cout << "\t_\t";
+      // std::cerr << "\t_\t";
+      // std::cout << "\t_\t";
 
       if (m_has_feats)
       {
-        std::cout << generate_feats(iter);
+        // std::cerr << generate_feats(iter);
+        // std::cout << generate_feats(iter);
+        token.feats = generate_feats(iter);
       }
       else
       {
-        std::cout << "_";
+        // std::cerr << "_";
+        // std::cout << "_";
       }
 
-      std::cout << "\t";
+      // std::cerr << "\t";
+      // std::cout << "\t";
       if (hasDeps)
       {
-        std::cout << iter.head() << "\tdep";
+        if ((m_root == begin) && (iter.head() == 0))
+        {
+          m_root = m_next_token_idx;
+          token.head = 0;
+          token.deprel = "root";
+        }
+        else if  (iter.head() >= end)
+        {
+          // std::cerr << "head is out of sentence. rehead to root or set it as root if no root is set " << m_root << "\tdep"<< std::endl;
+          if (m_root == 0)
+          {
+            token.head = 0;
+            token.deprel = "root";
+            m_root = m_next_token_idx;
+          }
+          else
+          {
+            // std::cout << root << "\tdep";
+            token.head = m_root;
+            token.deprel = "dep";
+          }
+        }
+        else if ((m_root != begin) && (iter.head() == 0))
+        {
+          // std::cerr << "multiple roots in the sentence. rehead to the first root" << std::endl;
+          // std::cerr << m_root << "\tdep";
+          // std::cout << root << "\tdep";
+          token.head = m_root;
+          token.deprel = "dep";
+        }
+        else if (iter.head() == m_next_token_idx)
+        {
+          token.head = m_root;
+          token.deprel = "dep";
+        }
+        else
+        {
+          // std::cerr << iter.head() << "\tdep";
+          // std::cout << iter.head() << "\tdep";
+          token.head = iter.head();
+          token.deprel = "dep";
+        }
       }
       else
       {
-        std::cout << m_next_token_idx - 1 << "\t_";
+        // std::cerr << m_next_token_idx - 1 << "\t_";
+        // std::cout << m_next_token_idx - 1 << "\t_";
+        token.head = m_next_token_idx - 1;
+        if (token.head == 0)
+          token.deprel = "root";
       }
-      std::cout << "\t_\t_" << std::endl;
-
+      // std::cerr << "\t_\t_" << std::endl;
+      // std::cout << "\t_\t_" << std::endl;
+      m_tokens.push_back(token);
       increment_token_counter();
 
       m_next_token_idx += 1;
       if (iter.flags() & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
           iter.flags() & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
       {
-        std::cout << std::endl;
+        // std::cout << std::endl;
         m_next_token_idx = 1;
       }
       iter.next();
     }
+    // std::vector<uint32_t> heads(m_tokens.size()+1);
+    // heads[0] = 0;
+    // for (size_t i = 1; i < heads.size(); i++)
+    // {
+    //   heads[i] = m_tokens[i-1].head;
+    // }
+    // std::cerr << "AnalysisToConllU::operator() heads before find_cycle: " << heads << std::endl;
+    // while (find_cycle(heads, m_root)) ;
+    // std::cerr << "AnalysisToConllU::operator() heads after  find_cycle: " << heads << std::endl;
+    for (const auto& token: m_tokens)
+    {
+      // std::cerr << token ;
+      std::cout << token ;
+    }
+    m_tokens.clear();
   }
 };
 

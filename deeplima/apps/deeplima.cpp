@@ -20,8 +20,8 @@ namespace po = boost::program_options;
 
 #define READ_BUFFER_SIZE (1024 * 1024 * 2)
 #define TAG_BUFFER_SIZE (1024)
-#define DP_BUFFER_SIZE (16384)
-// #define DP_BUFFER_SIZE (1024)
+// #define DP_BUFFER_SIZE (16384)
+#define DP_BUFFER_SIZE (128)
 
 void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,
@@ -231,10 +231,10 @@ void parse_file(std::istream& input,
                                                            classes,
                                                            begin,
                                                            end);
-        // std::cerr << "In parser handler. Calling conllu_dumper functor" << std::endl;
-        (*conllu_dumper)(ti, true);
+        // std::cerr << "In parser handler. Calling conllu_dumper functor " << begin << ", " << end << std::endl;
+        (*conllu_dumper)(ti, begin, end, true);
       });
-
+      // conllu_dumper->flush();
 
     }
     else
@@ -262,7 +262,7 @@ void parse_file(std::istream& input,
                                                            begin,
                                                            end);
         // std::cerr << "In panalyzer handler. Calling conllu_dumper functor" << std::endl;
-        (*conllu_dumper)(ti);
+        (*conllu_dumper)(ti, begin, end);
       });
     }
 
@@ -335,8 +335,8 @@ void parse_file(std::istream& input,
   }
 
   float speed = float(token_counter) / parsing_duration.count();
-  std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
-  std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
+  // std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
+  // std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
 
   if (!input.eof() && (input.fail() || input.bad()))
   {

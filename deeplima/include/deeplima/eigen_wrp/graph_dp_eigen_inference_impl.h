@@ -11,6 +11,7 @@
 #include "birnn_inference_base.h"
 #include "bilstm.h"
 #include "deep_biaffine_attn_decoder.h"
+// #include "deeplima/graph_dp/impl/arborescence.h"
 
 namespace deeplima
 {
@@ -94,7 +95,8 @@ public:
       )
   {
     // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict "
-    //           << "output dim=" << output->dim() << ", lengths=" << lengths << std::endl;
+    //           << "input_begin=" << input_begin
+    //           << ", output dim=" << output->dim() << ", lengths=" << lengths << std::endl;
     auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     // const typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t *plstm
@@ -125,6 +127,9 @@ public:
 
       start += lengths[i];
     }
+    // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict executes done " << start << std::endl;
+    arborescence<uint32_t, typename M::Scalar>((*output)[0], start);
+    // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::predict after correcting arborescence: " << (*output)[0] << std::endl;
   }
 
   inline const std::string& get_embd_fn(size_t idx) const
