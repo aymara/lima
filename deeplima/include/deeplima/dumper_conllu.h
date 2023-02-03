@@ -60,14 +60,30 @@ std::ostream& operator<<(std::ostream& oss, const ConllToken& token)
 }
 
 
-bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<char>& color, std::vector<int>& parent,
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  out << '[';
+  if ( !v.empty() ) {
+    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+  }
+  out << "]";
+  return out;
+}
+
+bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<int>& color,
          int& cycle_start, int& cycle_end)
 {
+    // std::cerr << "dfs " << v << ", " << heads << ", " << color << ", " << cycle_start << ", " << cycle_end << std::endl;
     color[v] = 1;
     auto u = heads[v];
+    if (u == 0)
+    {
+      color[v] = 2;
+      return false;
+    }
     if (color[u] == 0) {
-        parent[u] = v;
-        if (dfs(u, heads, color, parent, cycle_start, cycle_end))
+        // parent[u] = v;
+        if (dfs(u, heads, color, cycle_start, cycle_end))
             return true;
     } else if (color[u] == 1) {
         cycle_end = v;
@@ -81,25 +97,23 @@ bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<char>& color, std::ve
 
 bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
 {
-  std::cerr << "find_cycle " << heads << ", " << root << std::endl;
+  // std::cerr << "find_cycle " << heads << ", " << root << std::endl;
   uint32_t n = heads.size();
-  std::vector<char> color;
-  std::vector<int> parent;
+  std::vector<int> color;
   int32_t cycle_start, cycle_end = 0;
   color.assign(n, 0);
-  parent.assign(n, -1);
   cycle_start = -1;
 
   for (uint32_t v = 1; v < n; v++)
   {
     if (v == root) continue;
-    if (color[v] == 0 && dfs(v, heads, color, parent, cycle_start, cycle_end))
+    if (color[v] == 0 && dfs(v, heads, color, cycle_start, cycle_end))
         break;
   }
 
   if (cycle_start == -1 || cycle_start == root)
   {
-    std::cerr << "Acyclic" << std::endl;
+    // std::cerr << "Acyclic" << std::endl;
     return false;
   }
   else
@@ -108,12 +122,15 @@ bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
     //   heads[cycle_start] = root;
     if (cycle_end > 0 && cycle_end != root && cycle_end < n)
     {
-      std::cerr << "Cycle found from " << cycle_start << ", " << cycle_end << " in " << heads << " with root: " << root << std::endl;
+      // std::cerr << "Cycle found from " << cycle_start << ", " << cycle_end << " in " << heads << " with root: " << root << std::endl;
       heads[cycle_end] = root;
       return true;
     }
     else
+    {
+      // std::cerr << "Cycle not found from " << cycle_start << ", " << cycle_end << " in " << heads << " with root: " << root << std::endl;
       return false;
+    }
   }
 }
 
@@ -376,7 +393,8 @@ public:
 
   void operator()(I& iter, uint32_t begin, uint32_t end, bool hasDeps = false)
   {
-    // std::cerr << "AnalysisToConllU::operator() " << iter.form() << ", " << begin << ", " << end << std::endl;
+    // std::cerr << "AnalysisToConllU::operator() " << iter.form() << ", " << begin << ", " << end << ", "
+    //           << m_next_token_idx << ", " << m_tokens << std::endl;
     m_tokens.reserve(end);
     if (m_next_token_idx == 1)
     {
@@ -519,24 +537,31 @@ public:
       {
         // std::cout << std::endl;
         m_next_token_idx = 1;
+        std::vector<uint32_t> heads(m_tokens.size()+1);
+        heads[0] = 0;
+        for (size_t i = 1; i < heads.size(); i++)
+        {
+          heads[i] = m_tokens[i-1].head;
+        }
+        // std::cerr << "AnalysisToConllU::operator() heads before find_cycle: " << heads << std::endl;
+        while (find_cycle(heads, m_root))
+        {
+          // std::cerr << "AnalysisToConllU::operator() heads after cycle found: " << heads << std::endl;
+        }
+        // std::cerr << "AnalysisToConllU::operator() heads after no more cycle: " << heads << std::endl;
+        for (size_t i = 1; i < heads.size(); i++)
+        {
+          m_tokens[i-1].head = heads[i];
+        }
+        for (const auto& token: m_tokens)
+        {
+          // std::cerr << token ;
+          std::cout << token ;
+        }
+        m_tokens.clear();
       }
       iter.next();
     }
-    // std::vector<uint32_t> heads(m_tokens.size()+1);
-    // heads[0] = 0;
-    // for (size_t i = 1; i < heads.size(); i++)
-    // {
-    //   heads[i] = m_tokens[i-1].head;
-    // }
-    // std::cerr << "AnalysisToConllU::operator() heads before find_cycle: " << heads << std::endl;
-    // while (find_cycle(heads, m_root)) ;
-    // std::cerr << "AnalysisToConllU::operator() heads after  find_cycle: " << heads << std::endl;
-    for (const auto& token: m_tokens)
-    {
-      // std::cerr << token ;
-      std::cout << token ;
-    }
-    m_tokens.clear();
   }
 };
 
