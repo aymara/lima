@@ -61,9 +61,11 @@ std::ostream& operator<<(std::ostream& oss, const ConllToken& token)
 
 
 template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v)
+{
   out << '[';
-  if ( !v.empty() ) {
+  if ( !v.empty() )
+  {
     std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
   }
   out << "]";
@@ -200,6 +202,7 @@ public:
       if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
           tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
       {
+        // std::cerr << "Horizontal endl" << std::endl;
         std::cout << std::endl;
       }
     }
@@ -217,6 +220,7 @@ public:
   {
     if (m_next_token_idx > 1)
     {
+      // std::cerr << "on destructor" << std::endl;
       std::cout << std::endl;
     }
   }
@@ -255,6 +259,7 @@ public:
       std::cout << str;
       std::cout << "\t_\t_\t_\t_\t";
       std::cout << m_next_token_idx - 1;
+      // std::cerr << "TokensToConllU::operator end of token" << std::endl;
       std::cout << "\t_\t_\t_" << std::endl;
 
       increment_token_counter();
@@ -263,6 +268,7 @@ public:
       if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
           tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
       {
+        // std::cerr << "TokensToConllU end of sentence" << std::endl;
         std::cout << std::endl;
         m_next_token_idx = 1;
       }
@@ -314,7 +320,8 @@ public:
   {
     // if (m_next_token_idx > 1)
     // {
-      std::cout << std::endl;
+    // std::cerr << "on AnalysisToConllU destructor" << std::endl;
+    //   std::cout << std::endl;
     // }
   }
 
@@ -398,7 +405,8 @@ public:
     m_tokens.reserve(end);
     if (m_next_token_idx == 1)
     {
-      std::cout << std::endl;
+      // std::cerr << "AnalysisToConllU::operator() m_next_token_idx=" << m_next_token_idx << std::endl;
+      // std::cout << std::endl;
       m_root = 0;
     }
     else if (m_next_token_idx == 0)
@@ -535,6 +543,7 @@ public:
       if (iter.flags() & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
           iter.flags() & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
       {
+        // std::cerr << "on sent/para break. m_next_token_idx=" << m_next_token_idx << std::endl;
         // std::cout << std::endl;
         m_next_token_idx = 1;
         std::vector<uint32_t> heads(m_tokens.size()+1);
@@ -559,6 +568,8 @@ public:
           std::cout << token ;
         }
         m_tokens.clear();
+        // std::cerr << "after clearing tokens. m_next_token_idx=" << m_next_token_idx << std::endl;
+        std::cout << std::endl;
       }
       iter.next();
     }

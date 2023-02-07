@@ -366,7 +366,7 @@ public:
         token.m_form_idx = iter.form_idx();
         // std::cerr << iter.form() << std::endl;
         // std::cerr << m_stridx_ptr->get_str(token.m_form_idx) << std::endl;
-        token.m_flags = impl::token_t::token_flags_t(iter.flags());
+        token.m_flags = iter.flags();
         token.m_lemm_idx = iter.lemma_idx();
         // token.m_head_idx = iter.head();
         // token.m_rel_type = 0; // TODO where is stored the rel type ???
