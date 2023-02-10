@@ -14,6 +14,7 @@
 
 #include "dict_base.h"
 #include "nn/torch_modules/deep_biaffine_attention_decoder.h"
+#include "nn/torch_modules/stanza_models_depparse_model.h"
 
 namespace deeplima
 {
@@ -95,6 +96,7 @@ class StaticGraphImpl : public torch::nn::Module
     linear = 3,
     dropout = 4,
     deep_biaffine_attention_decoder = 5,
+    stanza_models_depparse_model = 6,
     max_module_type
   };
 
@@ -360,6 +362,7 @@ protected:
   virtual void create_submodule_Linear(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_Dropout(const std::string& name, const std::map<std::string, std::string>& opts);
   virtual void create_submodule_DeepBiaffineAttentionDecoder(const std::string& name, const std::map<std::string, std::string>& opts);
+  virtual void create_submodule_StanzaDepparseParser(const std::string& name, const std::map<std::string, std::string>& opts);
 
   DictsHolder m_dicts;
   std::string m_script;
@@ -370,6 +373,7 @@ protected:
   std::vector<torch::nn::Linear> m_linear;
   std::vector<torch::nn::Dropout> m_dropout;
   std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> m_deep_biaffine_attention_decoder;
+  std::shared_ptr<deeplima::nets::torch_modules::StanzaDepparseParser> m_stanza_depparse_parser;
 
 public:
 
@@ -402,6 +406,11 @@ public:
   const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder>& get_layers_deep_biaffine_attn_decoder() const
   {
     return m_deep_biaffine_attention_decoder;
+  }
+
+   const deeplima::nets::torch_modules::StanzaDepparseParser& get_layers_stanza_depparse_parser() const
+  {
+    return *m_stanza_depparse_parser;
   }
 
   torch::nn::Embedding get_module_by_name(const std::string& name) const
@@ -438,6 +447,10 @@ public:
     else if (type == "deep_biaffine_attention_decoder")
     {
       t = deep_biaffine_attention_decoder;
+    }
+    else if (type == "m_stanza_depparse_parser")
+    {
+      t = stanza_models_depparse_model;
     }
     else
     {

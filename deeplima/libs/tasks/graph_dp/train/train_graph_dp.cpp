@@ -122,7 +122,9 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
                                   params.m_input_includes_root);
-  } else {
+  }
+  else
+  {
     model = BiRnnAndDeepBiaffineAttention();
     model->load(params.m_input_model_name);
   }

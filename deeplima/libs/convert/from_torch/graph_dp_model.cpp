@@ -94,12 +94,12 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
   Parent::m_wb.resize(2);
 
   // tags
-  // cerr << "TAGS:" << endl;
+  // std::cerr << "TAGS:" << std::endl;
   // for ( const auto& it : src.get_tags() )
   // {
-  //   cerr << "\t" << it.first << " = " << it.second << endl;
+  //   std::cerr << "\t" << it.first << " = " << it.second << std::endl;
   // }
-  // cerr << endl;
+  // std::cerr << std::endl;
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)
