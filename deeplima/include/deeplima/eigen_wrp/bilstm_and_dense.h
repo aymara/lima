@@ -87,9 +87,9 @@ public:
 
     auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
     // Top rows - forward pass
-    output_block.topRows(hidden_size * 4) = (layer.fw.weight_ih * inputs).colwise() + layer.fw.bias_ih;
+    output_block.topRows(hidden_size * 4).noalias() = (layer.fw.weight_ih * inputs).colwise() + layer.fw.bias_ih;
     // Bottom rows - backward pass
-    output_block.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
+    output_block.bottomRows(hidden_size * 4).noalias() = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
   }
 
   virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
@@ -113,16 +113,17 @@ public:
 
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
     V c = V::Zero(hidden_size);
-
-    M input = input_matrix.block(0, input_begin, input_matrix.rows(), temp.cols());
-    // TODO: rewrite this!!!
-
     V s, g_u, g_o, g_if;
+
+    Eigen::Ref<const M> input = input_matrix.block(0, input_begin, input_matrix.rows(), temp.cols());
 
     if (wb->m_precomputed_input)
     {
-      // precomputed inputs
-      temp = input;
+      forward_pass(hidden_size, input, layer.fw, s, g_u, g_o, g_if, c, output);
+
+      V c_fw = c;
+      c = V::Zero(hidden_size);
+      backward_pass(hidden_size, input, layer.bw, s, g_u, g_o, g_if, c, output);
     }
     else
     {
@@ -130,36 +131,19 @@ public:
       temp.topRows(hidden_size * 4) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
       // Bottom rows - backward pass
       temp.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
-    }
 
-    // Forward pass
-    s = temp.col(0).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * zero;
-    step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
+      forward_pass(hidden_size, temp, layer.fw, s, g_u, g_o, g_if, c, output);
 
-    for (Eigen::Index t = 1; t < input.cols(); t++)
-    {
-      s = temp.col(t).topRows(hidden_size * 4) + layer.fw.bias_hh + layer.fw.weight_hh * output.col(t-1).topRows(hidden_size);
-      step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
-    }
-
-    // Backward pass
-    V c_fw = c;
-    c = V::Zero(hidden_size);
-    int t = input.cols() - 1;
-    s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * zero;
-    step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
-
-    for (t = input.cols() - 2; t >= 0; t--)
-    {
-      s = temp.col(t).bottomRows(hidden_size * 4) + layer.bw.bias_hh + layer.bw.weight_hh * output.col(t+1).bottomRows(hidden_size);
-      step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
+      V c_fw = c;
+      c = V::Zero(hidden_size);
+      backward_pass(hidden_size, temp, layer.bw, s, g_u, g_o, g_if, c, output);
     }
 
     // Linear layer on top of RNN outputs
     for (size_t j = 0; j < final_output.size(); j++)
     {
       M& linear_output = wb->lin_out[j];
-      linear_output = (linear[j].weight * output).colwise() + linear[j].bias;
+      linear_output.noalias() = (linear[j].weight * output).colwise() + linear[j].bias;
 
       for (auto i = output_begin - input_begin; i < output_end - input_begin; i++)
       {
@@ -201,32 +185,49 @@ public:
   }
 
 protected:
-  inline void step(
-        size_t hidden_size, // [in]     LSTM parameter
-        size_t t,           // [in]     step (position in output)
-        const V& s,         // [in]     result before gating
+  inline void forward_pass(
+        size_t hidden_size,
+        Eigen::Ref<const M> input,
+        const params_lstm_t<M, V>& fw,
+        V& s,
         V& g_u,             // [temp]   update gate
         V& g_o,             // [temp]   output gate
         V& g_if,            // [temp]   input and forget gates
         V& c,               // [in/out] cell state
-        M& output,          // [out]    matrix of output states
-        bool forward        // [in]     true - forward, false - backward
+        M& output
       )
   {
-    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
-    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
-    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+    // Forward pass
+    s.noalias() = input.col(0).topRows(hidden_size * 4) + fw.bias_hh; // + layer.fw.weight_hh * zero;
+    step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
 
-    c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
-
-    // TODO: remove if
-    if (forward)
+    for (Eigen::Index t = 1; t < input.cols(); t++)
     {
-      output.col(t).topRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+      s.noalias() = input.col(t).topRows(hidden_size * 4) + fw.bias_hh + fw.weight_hh * output.col(t-1).topRows(hidden_size);
+      step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
     }
-    else
+  }
+
+  inline void backward_pass(
+        size_t hidden_size,
+        Eigen::Ref<const M> input,
+        const params_lstm_t<M, V>& bw,
+        V& s,
+        V& g_u,             // [temp]   update gate
+        V& g_o,             // [temp]   output gate
+        V& g_if,            // [temp]   input and forget gates
+        V& c,               // [in/out] cell state
+        M& output
+      )
+  {
+    int t = input.cols() - 1;
+    s.noalias() = input.col(t).bottomRows(hidden_size * 4) + bw.bias_hh; // + bw.weight_hh * zero;
+    step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
+
+    for (t = input.cols() - 2; t >= 0; t--)
     {
-      output.col(t).bottomRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+      s.noalias() = input.col(t).bottomRows(hidden_size * 4) + bw.bias_hh + bw.weight_hh * output.col(t+1).bottomRows(hidden_size);
+      step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
     }
   }
 
@@ -241,13 +242,13 @@ protected:
         M& output           // [out]    matrix of output states
       )
   {
-    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
-    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
-    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+    g_if = 1 / (1 + Eigen::exp( - s.segment(0, hidden_size * 2).array() ) );
+    g_u = 2 / (1 + Eigen::exp( - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
+    g_o = 1 / (1 + Eigen::exp( - s.segment(hidden_size * 3, hidden_size).array() ) );
 
     c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
 
-    output.col(t).topRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+    output.col(t).topRows(hidden_size).noalias() = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
   }
 
   inline void step_bw(
@@ -261,13 +262,13 @@ protected:
         M& output           // [out]    matrix of output states
       )
   {
-    g_if = 1 / (1 + Eigen::exp( 0 - s.segment(0, hidden_size * 2).array() ) );
-    g_u = 2 / (1 + Eigen::exp( 0 - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
-    g_o = 1 / (1 + Eigen::exp( 0 - s.segment(hidden_size * 3, hidden_size).array() ) );
+    g_if = 1 / (1 + Eigen::exp( - s.segment(0, hidden_size * 2).array() ) );
+    g_u = 2 / (1 + Eigen::exp( - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
+    g_o = 1 / (1 + Eigen::exp( - s.segment(hidden_size * 3, hidden_size).array() ) );
 
     c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
 
-    output.col(t).bottomRows(hidden_size) = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+    output.col(t).bottomRows(hidden_size).noalias() = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
   }
 
   inline static float my_tanh(float x)
