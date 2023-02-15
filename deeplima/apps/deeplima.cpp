@@ -326,7 +326,7 @@ void parse_file(std::istream& input,
     // std::cerr << "Dependency parser stopped. " << std::endl;
   }
   auto parsing_end = std::chrono::high_resolution_clock::now();
-  auto parsing_duration = std::chrono::duration_cast<std::chrono::seconds>(parsing_end - parsing_begin);
+  auto parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin);
 
   uint64_t token_counter = (nullptr != pdumper ? pdumper->get_token_counter() : 0);
   if (0 == token_counter)
@@ -334,8 +334,10 @@ void parse_file(std::istream& input,
     token_counter = pDumperBase->get_token_counter();
   }
 
-  float speed = float(token_counter) / parsing_duration.count();
-  std::cerr << "Parsed: " << token_counter << " in " << parsing_duration.count() << " seconds." << std::endl;
+  float speed = float(token_counter) * 1000 / parsing_duration.count();
+  std::cerr << "Parsed: " << token_counter << " in "
+            << std::fixed << std::setprecision(2)
+            << float(parsing_duration.count()) / 1000 << " seconds." << std::endl;
   std::cerr << "Parsing speed: " << speed << " tokens / sec." << std::endl;
 
   if (!input.eof() && (input.fail() || input.bad()))
