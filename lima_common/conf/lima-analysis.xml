@@ -605,8 +605,8 @@ SPDX-License-Identifier: MIT
         <entry key="freText" value="fre"/>
         <entry key="porText" value="por"/>
       </map>
-      <!--do not changed description of DocumentPropertyType-list and DocumentPropertyType !!!-->
-      <!--They are predefined in the database schema. See firebird/create_table.sql-->
+      <!-- Do not change description of DocumentPropertyType-list and DocumentPropertyType !!!-->
+      <!-- They are predefined in the database schema. See firebird/create_table.sql-->
       <!-- let alone titleProperty, all theses properties are mandatory -->
       <!-- Some of theses properties are technical properties and not known from the user -->
       <!-- During parsing of document, if these properties are  -->
@@ -625,9 +625,11 @@ SPDX-License-Identifier: MIT
       <!--WARNING! changes in description of DocumentPropertyType-list-->
       <!--may lead to inconsistency in existing database-->
       <list name="extended-properties-list">
+        <item value="digestPrpty"/>
         <item value="datePrpty"/>
         <item value="originPrpty"/>
         <item value="authPrpty"/>
+        <item value="tagPrpty"/>
         <item value="locationPrpty"/>
         <item value="privacyPrpty"/>
         <item value="countryPrpty"/>
@@ -639,16 +641,26 @@ SPDX-License-Identifier: MIT
         <item value="chainePrpty"/>
         <item value="dateDiffPrpty"/>
         <item value="progPrpty"/>
+        <item value="nbPagesPrpty"/>
+        <item value="pageNumPrpty"/>
       </list>
     </group>
+    <!--  StandardDocumentPropertyType definitions  -->
     <group name="identPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="128"/>
       <param key="cardinality" value="mandatory"/>
+      <param key="description" value="Internal document identifier"/>
+      <param key="isInternal" value="false"/>
       <list name="elementNames">
         <item value="DOCID"/>
+        <item value="DOCNO"/>
         <item value="num"/>
+        <item value="url"/>
+        <item value="identPrpty"/>
       </list>
       <list name="attributeNames">
+        <item value="ARTICLE id="/>
         <item value="DOC id="/>
         <item value="doc id="/>
         <item value="document id="/>
@@ -661,6 +673,7 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
+      <param key="description" value="Document title"/>
       <list name="elementNames">
         <item value="Titre"/>
         <item value="title"/>
@@ -669,6 +682,7 @@ SPDX-License-Identifier: MIT
         <item value="engTITLE"/>
         <item value="freTITLE"/>
         <item value="HEADLINE"/>
+        <item value="titlePrpty"/>
       </list>
       <list name="attributeNames">
         <item value="Trans audio_filename="/>
@@ -679,9 +693,13 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
+      <param key="description" value="Local plain text file (xml) holding the text content of the original document"/>
       <list name="elementNames">
         <item value="source"/>
+        <item value="SOURCE"/>
+        <item value="filename"/>
         <item value="FILENAME"/>
+        <item value="srcePrpty"/>
       </list>
       <list name="attributeNames">
         <item value="filename name="/>
@@ -691,6 +709,7 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="integer"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
+      <param key="isInternal" value="true"/>
       <list name="attributeNames">
       </list>
     </group>
@@ -698,6 +717,7 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="integer"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
+      <param key="isInternal" value="true"/>
       <list name="attributeNames">
       </list>
     </group>
@@ -705,6 +725,9 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="string"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
+      <list name="elementNames">
+        <item value="startTimePrpty"/>
+      </list>
       <list name="attributeNames">
         <item value="Section startTime="/>
         <item value="Turn startTime="/>
@@ -715,6 +738,9 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="string"/>
       <param key="storageSize" value="8"/>
       <param key="cardinality" value="mandatory"/>
+      <list name="elementNames">
+        <item value="endTimePrpty"/>
+      </list>
       <list name="attributeNames">
         <item value="Section endTime="/>
         <item value="Turn endTime="/>
@@ -723,27 +749,36 @@ SPDX-License-Identifier: MIT
     </group>
     <group name="indexDatePrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="date"/>
+      <param key="storageSize" value="16"/>
       <param key="cardinality" value="optional"/>
+      <param key="description" value="Indexation date"/>
       <list name="elementNames">
         <item value="indexDate"/>
+        <item value="indexDatePrpty"/>
       </list>
     </group>
     <group name="typPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="16"/>
       <param key="cardinality" value="optional"/>
+      <param key="description" value="Type of document"/>
+      <list name="elementNames">
+        <item value="type"/>
+        <item value="typPrpty"/>
+      </list>
       <list name="attributeNames">
         <item value="type id="/>
         <item value="Section type="/>
       </list>
-      <list name="elementNames">
-        <item value="type"/>
-      </list>
     </group>
     <group name="langPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="8"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
+        <item value="language"/>
         <item value="LANGUAGE"/>
+        <item value="langPrpty"/>
       </list>
       <list name="attributeNames">
         <item value="langue-et-encodagendTimee langue="/>
@@ -754,7 +789,12 @@ SPDX-License-Identifier: MIT
     </group>
     <group name="encodPrpty" class="StandardDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="8"/>
       <param key="cardinality" value="optional"/>
+      <param key="isInternal" value="true"/>
+      <list name="elementNames">
+        <item value="encodPrpty"/>
+      </list>
       <list name="attributeNames">
         <item value="langue-et-encodage encodage="/>
       </list>
@@ -763,79 +803,146 @@ SPDX-License-Identifier: MIT
       <param key="storageType" value="string"/>
       <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
+      <list name="elementNames">
+        <item value="namePrpty"/>
+      </list>
       <list name="attributeNames">
         <item value="Turn speaker="/>
       </list>
     </group>
-
+    <!--  ExtensionDocumentPropertyType definitions  -->
+    <group name="digestPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="cardinality" value="optional"/>
+      <list name="elementNames">
+        <item value="digest"/>
+        <item value="digestPrpty"/>
+      </list>
+      <list name="attributeNames">
+      </list>
+    </group>
     <group name="datePrpty" class="ExtensionDocumentPropertyType">
-      <!--value is "integer" (64 bits integer), "string" (utf8 string), "date" (boost::gregorian_date)-->
+      <!--value is "integer" (64 bits integer), "string" (utf8 string), "date" (boost::gregorian_date : dd/mm/yyyy or yyyy-mm-dd)-->
       <param key="storageType" value="date"/>
+      <param key="storageSize" value="16"/>
       <!--value is "optional" (0..1), "mandatory" (1, not null) "multi-valued"-->
       <param key="cardinality" value="optional"/>
-      <!--value is "document" or "node"-->
+      <param key="description" value="Declared emission date of the original document"/>
       <list name="elementNames">
         <item value="date"/>
+        <item value="datePrpty"/>
+        <item value="ISODATE"/>
+      </list>
+      <list name="attributeNames">
+        <item value="DOC date="/>
       </list>
     </group>
     <group name="originPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="128"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
         <item value="origin"/>
+        <item value="originPrpty"/>
       </list>
       <list name="attributeNames">
         <item value="COLLECTION verse_par="/>
       </list>
-
     </group>
     <group name="authPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="32"/>
       <param key="cardinality" value="multi-valued"/>
       <list name="elementNames">
         <item value="author"/>
         <item value="Nom"/>
+        <item value="authPrpty"/>
+      </list>
+    </group>
+    <group name="tagPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="16"/>
+      <param key="cardinality" value="multi-valued"/>
+      <list name="elementNames">
+        <item value="status"/>
+        <item value="label"/>
+      </list>
+    </group>
+    <group name="nbPagesPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="integer"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="optional"/>
+      <list name="elementNames">
+        <item value="nb_pages"/>
+        <item value="NB_PAGES"/>
+      </list>
+    </group>
+    <group name="pageNumPrpty" class="ExtensionDocumentPropertyType">
+      <param key="storageType" value="integer"/>
+      <param key="storageSize" value="8"/>
+      <param key="cardinality" value="optional"/>
+      <list name="elementNames"/>
+      <list name="attributeNames">
+        <item value="text page_num="/>
+        <item value="TEXT page_num="/>
+        <item value="engTEXT page_num="/>
+        <item value="freTEXT page_num="/>
       </list>
     </group>
     <group name="locationPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="256"/>
       <param key="cardinality" value="optional"/>
+      <param key="description" value="Location/url of the original document (pdf docx html etc)"/>
       <list name="elementNames">
         <item value="location"/>
+        <item value="locationPrpty"/>
       </list>
     </group>
     <group name="privacyPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="16"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
         <item value="privacy"/>
+        <item value="privacyPrpty"/>
       </list>
     </group>
     <group name="countryPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="16"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
         <item value="country"/>
+        <item value="countryPrpty"/>
       </list>
     </group>
     <group name="senderPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="32"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
         <item value="sender"/>
+        <item value="senderPrpty"/>
       </list>
     </group>
     <group name="docRefPrpty" class="ExtensionDocumentPropertyType">
-      <param key="storageType" value="int"/>
+      <param key="storageType" value="string"/>
+      <param key="storageSize" value="16"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
         <item value="reference"/>
+        <item value="docRefPrpty"/>
+        <item value="freREFERENCE"/>
+        <item value="engREFERENCE"/>
       </list>
     </group>
     <group name="speakerPrpty" class="ExtensionDocumentPropertyType">
       <param key="storageType" value="string"/>
+      <param key="storageSize" value="32"/>
       <param key="cardinality" value="optional"/>
       <list name="elementNames">
+        <item value="speakerPrpty"/>
       </list>
       <list name="attributeNames">
         <item value="SpeechSegment spkr="/>
@@ -846,6 +953,7 @@ SPDX-License-Identifier: MIT
       <param key="cardinality" value="optional"/>
       <param key="storageSize" value="10"/>
       <list name="elementNames">
+        <item value="chainePrpty"/>
       </list>
       <list name="attributeNames">
         <item value="Audiofile chaine="/>
@@ -856,6 +964,7 @@ SPDX-License-Identifier: MIT
       <param key="cardinality" value="optional"/>
       <param key="storageSize" value="8"/>
       <list name="elementNames">
+        <item value="dateDiffPrpty"/>
       </list>
       <list name="attributeNames">
         <item value="Audiofile dateDiff="/>
@@ -866,6 +975,7 @@ SPDX-License-Identifier: MIT
       <param key="cardinality" value="optional"/>
       <param key="storageSize" value="20"/>
       <list name="elementNames">
+        <item value="progPrpty"/>
       </list>
       <list name="attributeNames">
         <item value="Audiofile heureDiff="/>
@@ -884,3 +994,4 @@ SPDX-License-Identifier: MIT
 
 
 </modulesConfig>
+

@@ -60,7 +60,7 @@ FormatType readFormatType(const std::string& str)
 {
   if (str == "text" ||
       str == "TEXT") { return TEXT; }
-  else  if (str == "stat" ||
+  else if (str == "stat" ||
             str == "STAT" ||
             str == "nbdocs" ) { return STAT; }
   else if (str == "xml" ||
