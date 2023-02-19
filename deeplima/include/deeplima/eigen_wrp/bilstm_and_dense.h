@@ -87,9 +87,11 @@ public:
 
     auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
     // Top rows - forward pass
-    output_block.topRows(hidden_size * 4).noalias() = (layer.fw.weight_ih * inputs).colwise() + layer.fw.bias_ih + layer.fw.bias_hh;
+    const V fw_bias = layer.fw.bias_ih + layer.fw.bias_hh;
+    output_block.topRows(hidden_size * 4).noalias() = (layer.fw.weight_ih * inputs).colwise() + fw_bias;
     // Bottom rows - backward pass
-    output_block.bottomRows(hidden_size * 4).noalias() = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih + layer.bw.bias_hh;
+    const V bw_bias = layer.bw.bias_ih + layer.bw.bias_hh;
+    output_block.bottomRows(hidden_size * 4).noalias() = (layer.bw.weight_ih * inputs).colwise() + bw_bias;
   }
 
   virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
