@@ -17,6 +17,12 @@
 #include "birnn_inference_base.h"
 #include "morph_model/morph_model.h"
 
+//#define LEMM_INFERENCE_PROFILE
+
+#ifdef LEMM_INFERENCE_PROFILE
+#include <chrono>
+#endif
+
 namespace deeplima
 {
 namespace lemmatization
@@ -73,9 +79,10 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params[0]);
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t>(Parent::m_params[0]);
 
-    const auto& layer = p_params->bilstm;
+    assert(p_params->layers.size() > 0);
+    const auto& layer = p_params->layers[0];
     size_t hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
     return hidden_size;
   }
@@ -86,7 +93,7 @@ public:
       int64_t input_size
       ) override
   {
-    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
   }
@@ -130,13 +137,27 @@ public:
     assert(m_workbenches.size() > worker_id);
     workbench_t& wb = *(m_workbenches[worker_id]);
 
+#ifdef LEMM_INFERENCE_PROFILE
+    using clock = std::chrono::system_clock;
+    using ms = std::chrono::duration<double, std::milli>;
+#endif
+
     // Features encoders
     // for encoder
     auto p_linear_feats_enc = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[5]);
+
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto before = clock::now();
+#endif
+
     p_linear_feats_enc->execute(Parent::m_wb[5][worker_id],
                                 input_feats,
                                 Parent::m_params[5],
                                 wb.encoded_feats_for_encoder);
+
+#ifdef LEMM_INFERENCE_PROFILE
+   const auto exec1 = clock::now();
+#endif
 
     // for decoder
     auto p_linear_feats_dec = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[3]);
@@ -145,7 +166,9 @@ public:
                                 input_feats,
                                 Parent::m_params[3],
                                 wb.encoded_feats_for_decoder);
-
+#ifdef LEMM_INFERENCE_PROFILE
+   const auto exec2 = clock::now();
+#endif
     auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
 
     auto p_decoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>>(Parent::m_ops[4]);
@@ -165,10 +188,21 @@ public:
       wb.bw_h = wb.encoded_feats_for_encoder.tail(hidden_size);
       wb.bw_c = wb.bw_h;
     }
+
+#ifdef LEMM_INFERENCE_PROFILE
+    std::cerr << "inputs.cols()=" << inputs.cols() << std::endl;
+    std::cerr << "inputs.rows()=" << inputs.rows() << std::endl;
+
+    const auto exec3 = clock::now();
+#endif
+
     p_encoder->execute(Parent::m_wb[0][worker_id],
         inputs, Parent::m_params[0],
         0, input_len, wb.fw_h, wb.fw_c, wb.bw_h, wb.bw_c);
 
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto exec4 = clock::now();
+#endif
 
     if (wb.encoder_state.rows() == 0)
     {
@@ -179,13 +213,42 @@ public:
     auto p_linear_h = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[1]);
     auto p_linear_c = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[2]);
 
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto exec5 = clock::now();
+#endif
+
     p_linear_h->execute(Parent::m_wb[1][worker_id], wb.encoder_state, Parent::m_params[1], wb.decoder_initial_h);
+
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto exec6 = clock::now();
+#endif
+
     p_linear_c->execute(Parent::m_wb[2][worker_id], wb.encoder_state, Parent::m_params[2], wb.decoder_initial_c);
+
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto exec7 = clock::now();
+#endif
 
     const EmbdUInt64Float& decoder_embd = Parent::m_input_uint_dicts[1];
     p_decoder->execute(Parent::m_wb[4][worker_id], decoder_embd,
         wb.decoder_initial_h, wb.decoder_initial_c,
-        Parent::m_params[4], 0x10FFFE, 9, output, output_max_len);
+        Parent::m_params[4], 0x10FFFE, 0x10FFFF, 9, output, output_max_len);
+
+#ifdef LEMM_INFERENCE_PROFILE
+    const auto exec8 = clock::now();
+
+    std::cerr << "feats for enc : " << (exec1 - before).count() << std::endl;
+    std::cerr << "feats for dec : " << (exec2 - exec1).count() << std::endl;
+
+    std::cerr << "copy          : " << (exec3 - exec2).count() << std::endl;
+    std::cerr << "encoder       : " << (exec4 - exec3).count() << std::endl;
+    std::cerr << "copy          : " << (exec5 - exec4).count() << std::endl;
+
+    std::cerr << "prep h        : " << (exec6 - exec5).count() << std::endl;
+    std::cerr << "prep c        : " << (exec7 - exec6).count() << std::endl;
+    std::cerr << "decoder       : " << (exec8 - exec7).count() << std::endl;
+    throw;
+#endif
   }
 
   const std::vector<std::vector<std::string>>& get_classes() const
