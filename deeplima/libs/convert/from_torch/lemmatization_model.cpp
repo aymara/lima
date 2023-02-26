@@ -107,7 +107,7 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   p_dec->linear = Parent::m_linear[Parent::m_linear_idx["fc_output"]];
 
   // Precompute all decoder's embeddings
-  M precomputed_embd_tensor = M::Zero(Parent::m_input_uint_dicts[1].get_tensor().rows() * 4,
+  M precomputed_embd_tensor = M::Zero(p_dec->lstm.weight_ih.rows(),
                                       Parent::m_input_uint_dicts[1].get_tensor().cols());
   std::shared_ptr<Op_LSTM_Beam_Decoder<M, V, T>> decoder
     = std::dynamic_pointer_cast<Op_LSTM_Beam_Decoder<M, V, T>>(Parent::m_ops.back());
