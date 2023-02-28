@@ -454,10 +454,13 @@ QDebug& operator<<(QDebug& os, const Node& node)
 std::ostream& operator<<(ostream& os, const Structure& structure)
 {
   const auto& nodes = structure.getNodes();
+  os << "Structure( structId:" << structure.getStructId()
+       << ", nodes ("<<nodes.size()<<"): ";
   for (auto ItrNodes = nodes.cbegin(); ItrNodes != nodes.cend(); ItrNodes++)
   {
-    os << ItrNodes->second;
+      os << "node (" << ItrNodes->first << ":" << ItrNodes->second<<")";
   }
+  os << " )";
   return os;
 }
 
