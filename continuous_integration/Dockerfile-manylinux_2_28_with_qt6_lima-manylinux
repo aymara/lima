@@ -31,6 +31,9 @@ ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 
+ARG TORCH_CUDA_ARCH_LIST="6.1"
+ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
+
 RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64
 
 # WORKDIR /
@@ -66,6 +69,9 @@ ARG CACHEBUST=1
 RUN git pull
 RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
 
+WORKDIR /src/lima/extern
+RUN bash ./${LIBTORCH_DL}
+
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
 
@@ -93,6 +99,8 @@ RUN cmake -G Ninja  \
     -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" \
     -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON \
     -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" \
+    -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} \
+    -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch \
     -DWITH_DEBUG_MESSAGES=ON \
     -DWITH_ARCH=OFF \
     -DWITH_ASAN=OFF \

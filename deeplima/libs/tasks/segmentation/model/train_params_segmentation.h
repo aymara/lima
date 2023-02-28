@@ -23,7 +23,8 @@ namespace deeplima
                 bool train_ss;
 
                 train_params_segmentation_t()
-                        : m_rnn_hidden_dim(8),
+                        : deeplima::train::train_params_t(),
+                          m_rnn_hidden_dim(8),
                           m_sequence_length(256),
                           train_ss(false){}
             };

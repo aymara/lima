@@ -24,4 +24,4 @@ docker build -f Dockerfile-manylinux_2_28_lima-manylinux \
     --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} \
     -t aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
 
-docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
+#docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
