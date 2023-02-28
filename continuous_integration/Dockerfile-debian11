@@ -11,7 +11,7 @@ ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 
 # Setup
-RUN apt-get update -y -qq && apt-get install -y -qq apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qtbase5-dev-tools libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3
+RUN apt-get update -y -qq && apt-get install -y -qq apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qtbase5-dev-tools libqt5concurrent5 libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3
 
 RUN wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
