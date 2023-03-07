@@ -387,7 +387,7 @@ int run(int argc,char** argv)
   for (const auto& inputFile: param.files)
   {
 
-    std::cout << "\rReading file "<< i << "/" << param.files.size()
+    std::cerr << "\rReading file "<< i << "/" << param.files.size()
           << " ("  << std::setiosflags(std::ios::fixed)
           << std::setprecision(2) << (i*100.0/param.files.size()) <<"%) '"
           << inputFile.toUtf8().constData() << "'" /*<< std::endl*/
