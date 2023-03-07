@@ -40,7 +40,8 @@ class IndexElement;
 class LIMA_BOW_EXPORT BoWXMLWriter :  public AbstractBoWDocumentHandler
 {
  public:
-  BoWXMLWriter(std::ostream& os); 
+  BoWXMLWriter(std::ostream& os,
+               int32_t offset=0); // general offset to adjust all positions
   virtual ~BoWXMLWriter();
 
   void writeBoWText(const BoWText* document,

@@ -206,7 +206,10 @@ LimaStatusCode BowDumper::process(
   LDEBUG << "BowDumper::process writing BoW text on" << &(dstream->out());
 #endif
   if (m_xml) {
-    BoWXMLWriter writer(dstream->out());
+    // positions of tokens in the analysis start at 1, positions in the bow binary format
+    // start at 0 : must adjust positions in BowXMLWriter
+    int32_t offset=-1; 
+    BoWXMLWriter writer(dstream->out(),offset);
     writer.writeBoWText(&bowText,false,false);
   }
   else {
