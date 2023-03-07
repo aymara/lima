@@ -13,6 +13,7 @@
 #include "MorphologicAnalysisExport.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
+#include "linguisticProcessing/core/LinguisticProcessors/AbstractTextualAnalysisDumper.h"
 
 #include <iostream>
 
@@ -30,7 +31,7 @@ namespace MorphologicAnalysis
 /**
 @author Benoit Mathieu
 */
-class LIMA_MORPHOLOGICANALYSIS_EXPORT UnknownWordLogger : public MediaProcessUnit
+class LIMA_MORPHOLOGICANALYSIS_EXPORT UnknownWordLogger : public AbstractTextualAnalysisDumper
 {
 public:
   UnknownWordLogger();
@@ -44,8 +45,6 @@ public:
   LimaStatusCode process(AnalysisContent& analysis) const override;
 
 private:
-
-  std::ostream* m_out;
 
 };
 
