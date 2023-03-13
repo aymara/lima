@@ -37,7 +37,7 @@ namespace MorphologicAnalysis
 SimpleFactory<MediaProcessUnit,UnknownWordLogger> unknownWordLoggerFactory(UNKNOWNWORDLOGGER_CLASSID);
 
 UnknownWordLogger::UnknownWordLogger()
-    : MediaProcessUnit(),m_out(0)
+    : AbstractTextualAnalysisDumper()
 {}
 
 UnknownWordLogger::~UnknownWordLogger()
@@ -47,18 +47,7 @@ void UnknownWordLogger::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   Manager* manager)
 {
-  MORPHOLOGINIT;
-  MediaId language = manager->getInitializationParameters().media;
-  try
-  {
-    std::string outputFile=unitConfiguration.getParamsValueAtKey("outputFile");
-    m_out=new std::ofstream(outputFile.c_str(), std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
-  }
-  catch (NoSuchParam& )
-  {
-    LERROR << "no param 'outputFile' in UnknownWordLogger group for language " << (int) language;
-    throw InvalidConfiguration();
-  }
+  AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
 }
 
 LimaStatusCode UnknownWordLogger::process(

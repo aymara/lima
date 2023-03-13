@@ -87,9 +87,11 @@ public:
 
     auto output_block = outputs.block(0, first_column, outputs.rows(), inputs.cols());
     // Top rows - forward pass
-    output_block.topRows(hidden_size * 4).noalias() = (layer.fw.weight_ih * inputs).colwise() + layer.fw.bias_ih;
+    const V fw_bias = layer.fw.bias_ih + layer.fw.bias_hh;
+    output_block.topRows(hidden_size * 4).noalias() = (layer.fw.weight_ih * inputs).colwise() + fw_bias;
     // Bottom rows - backward pass
-    output_block.bottomRows(hidden_size * 4).noalias() = (layer.bw.weight_ih * inputs).colwise() + layer.bw.bias_ih;
+    const V bw_bias = layer.bw.bias_ih + layer.bw.bias_hh;
+    output_block.bottomRows(hidden_size * 4).noalias() = (layer.bw.weight_ih * inputs).colwise() + bw_bias;
   }
 
   virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
@@ -113,17 +115,17 @@ public:
 
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
     V c = V::Zero(hidden_size);
-    V s, g_u, g_o, g_if;
+    V s;
 
     Eigen::Ref<const M> input = input_matrix.block(0, input_begin, input_matrix.rows(), temp.cols());
 
     if (wb->m_precomputed_input)
     {
-      forward_pass(hidden_size, input, layer.fw, s, g_u, g_o, g_if, c, output);
+      forward_pass(hidden_size, input, layer.fw, s, c, output);
 
       V c_fw = c;
       c = V::Zero(hidden_size);
-      backward_pass(hidden_size, input, layer.bw, s, g_u, g_o, g_if, c, output);
+      backward_pass(hidden_size, input, layer.bw, s, c, output);
     }
     else
     {
@@ -132,11 +134,11 @@ public:
       // Bottom rows - backward pass
       temp.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
 
-      forward_pass(hidden_size, temp, layer.fw, s, g_u, g_o, g_if, c, output);
+      forward_pass(hidden_size, temp, layer.fw, s, c, output);
 
       V c_fw = c;
       c = V::Zero(hidden_size);
-      backward_pass(hidden_size, temp, layer.bw, s, g_u, g_o, g_if, c, output);
+      backward_pass(hidden_size, temp, layer.bw, s, c, output);
     }
 
     // Linear layer on top of RNN outputs
@@ -180,100 +182,92 @@ public:
       }
     }*/
 
-
     return 0;
   }
 
 protected:
   inline void forward_pass(
-        size_t hidden_size,
-        Eigen::Ref<const M> input,
-        const params_lstm_t<M, V>& fw,
-        V& s,
-        V& g_u,             // [temp]   update gate
-        V& g_o,             // [temp]   output gate
-        V& g_if,            // [temp]   input and forget gates
-        V& c,               // [in/out] cell state
-        M& output
+        const size_t hidden_size,       // [in]     the size of the hidden state
+        Eigen::Ref<const M> input,      // [in]     the pre-computed inputs
+        const params_lstm_t<M, V>& fw,  // [in]     weights for the forward pass
+        V& s,                           // [temp]   preallocated space for results before gating
+        V& c,                           // [in/out] the cell state
+        M& output                       // [out]    the output states
       )
   {
-    // Forward pass
-    s.noalias() = input.col(0).topRows(hidden_size * 4) + fw.bias_hh; // + layer.fw.weight_hh * zero;
-    step_fw(hidden_size, 0, s, g_u, g_o, g_if, c, output);
+    step_fw(hidden_size, 0, input.col(0).topRows(hidden_size * 4), c, output);
 
     for (Eigen::Index t = 1; t < input.cols(); t++)
     {
-      s.noalias() = input.col(t).topRows(hidden_size * 4) + fw.bias_hh + fw.weight_hh * output.col(t-1).topRows(hidden_size);
-      step_fw(hidden_size, t, s, g_u, g_o, g_if, c, output);
+      s = input.col(t).topRows(hidden_size * 4);
+      s.noalias() += fw.weight_hh * output.block(0, t-1, hidden_size, 1);
+
+      step_fw(hidden_size, t, s, c, output);
     }
   }
 
   inline void backward_pass(
-        size_t hidden_size,
-        Eigen::Ref<const M> input,
-        const params_lstm_t<M, V>& bw,
-        V& s,
-        V& g_u,             // [temp]   update gate
-        V& g_o,             // [temp]   output gate
-        V& g_if,            // [temp]   input and forget gates
-        V& c,               // [in/out] cell state
-        M& output
+        const size_t hidden_size,       // [in]     the size of the hidden state
+        Eigen::Ref<const M> input,      // [in]     the pre-computed inputs
+        const params_lstm_t<M, V>& bw,  // [in]     weights for the backward pass
+        V& s,                           // [temp]   preallocated space for results before gating
+        V& c,                           // [in/out] the cell state
+        M& output                       // [out]    the output states
       )
   {
     int t = input.cols() - 1;
-    s.noalias() = input.col(t).bottomRows(hidden_size * 4) + bw.bias_hh; // + bw.weight_hh * zero;
-    step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
+    step_bw(hidden_size, t, input.col(t).bottomRows(hidden_size * 4), c, output);
 
     for (t = input.cols() - 2; t >= 0; t--)
     {
-      s.noalias() = input.col(t).bottomRows(hidden_size * 4) + bw.bias_hh + bw.weight_hh * output.col(t+1).bottomRows(hidden_size);
-      step_bw(hidden_size, t, s, g_u, g_o, g_if, c, output);
+      s = input.col(t).bottomRows(hidden_size * 4);
+      s.noalias() += bw.weight_hh * output.block(hidden_size, t+1, hidden_size, 1);
+      step_bw(hidden_size, t, s, c, output);
     }
   }
 
-  inline void step_fw(
-        size_t hidden_size, // [in]     LSTM parameter
-        size_t t,           // [in]     step (position in output)
-        const V& s,         // [in]     result before gating
-        V& g_u,             // [temp]   update gate
-        V& g_o,             // [temp]   output gate
-        V& g_if,            // [temp]   input and forget gates
-        V& c,               // [in/out] cell state
-        M& output           // [out]    matrix of output states
+  #define TANH(x)    ( T(2) / ( T(1) + Eigen::exp( T(-2) * x.array() ) ) - T(1) )
+  #define SIGMOID(x) ( T(1) / ( T(1) + Eigen::exp( - x.array() ) ) )
+
+  inline void update_c(
+        const size_t hidden_size,  // [in]     the size of the hidden state
+        const V& s,                // [in]     the results before gating
+        V& c                       // [in/out] the cell state
       )
   {
-    g_if = 1 / (1 + Eigen::exp( - s.segment(0, hidden_size * 2).array() ) );
-    g_u = 2 / (1 + Eigen::exp( - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
-    g_o = 1 / (1 + Eigen::exp( - s.segment(hidden_size * 3, hidden_size).array() ) );
+    // c = c * forget_gate = c * 1 / sigmoid(...)
+    c = c.array() / (1 + Eigen::exp( - s.segment(hidden_size, hidden_size).array() ) );
 
-    c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
+    // c = c + input_gate * update_gate
+    c += ( SIGMOID(s.segment(0, hidden_size)).array() * TANH(s.segment(hidden_size * 2, hidden_size)).array() ).matrix();
+  }
 
-    output.col(t).topRows(hidden_size).noalias() = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
+  inline void step_fw(
+        const size_t hidden_size,  // [in]     the size of the hidden state
+        const size_t t,            // [in]     step (the position in output)
+        const V& s,                // [in]     the results before gating
+        V& c,                      // [in/out] the cell state
+        M& output                  // [out]    the matrix of output states
+      )
+  {
+    update_c(hidden_size, s, c);
+
+    // output = output_gate * tanh(c)
+    output.col(t).topRows(hidden_size).noalias() = (SIGMOID(s.segment(hidden_size * 3, hidden_size)).array() * TANH(c).array()).matrix();
   }
 
   inline void step_bw(
-        size_t hidden_size, // [in]     LSTM parameter
-        size_t t,           // [in]     step (position in output)
-        const V& s,         // [in]     result before gating
-        V& g_u,             // [temp]   update gate
-        V& g_o,             // [temp]   output gate
-        V& g_if,            // [temp]   input and forget gates
-        V& c,               // [in/out] cell state
-        M& output           // [out]    matrix of output states
+        const size_t hidden_size,  // [in]     the size of the hidden state
+        const size_t t,            // [in]     step (the position in output)
+        const V& s,                // [in]     the results before gating
+        V& c,                      // [in/out] the cell state
+        M& output                  // [out]    matrix of output states
       )
   {
-    g_if = 1 / (1 + Eigen::exp( - s.segment(0, hidden_size * 2).array() ) );
-    g_u = 2 / (1 + Eigen::exp( - 2 * s.segment(hidden_size * 2, hidden_size).array() ) ) - 1; // tanh
-    g_o = 1 / (1 + Eigen::exp( - s.segment(hidden_size * 3, hidden_size).array() ) );
+    update_c(hidden_size, s, c);
 
-    c = g_if.segment(0, hidden_size).cwiseProduct(g_u) + g_if.segment(hidden_size, hidden_size).cwiseProduct(c);
-
-    output.col(t).bottomRows(hidden_size).noalias() = g_o.cwiseProduct(c.unaryExpr( [](float x) { return my_tanh(x); } ));
-  }
-
-  inline static float my_tanh(float x)
-  {
-    return ::tanhf(x);
+    // output = output_gate * tanh(c)
+    output.col(t).bottomRows(hidden_size).noalias() = (SIGMOID(s.segment(hidden_size * 3, hidden_size)).array() * TANH(c).array()).matrix();
   }
 };
 

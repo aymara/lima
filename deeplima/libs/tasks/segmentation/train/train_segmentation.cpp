@@ -91,10 +91,12 @@ typedef DictionaryBuilderImpl< CharNgramEncoder< Utf8Reader<> > > DictionaryBuil
 typedef CharSeqVectorizerImpl< CharNgramEncoder< Utf8Reader<> >, TorchMatrix<int64_t>,
                                DictHolderAdapter< UInt64Dict, TorchMatrix<int64_t> > > Utf8CharSeqToTorchMatrix;
 
-int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation::train::train_params_segmentation_t &params,
+int train_segmentation_model(const CoNLLU::Treebank& tb,
+                             deeplima::segmentation::train::train_params_segmentation_t &params,
                              int gpuid)
 {
-  std::vector<ngram_descr_t> ngram_descr = { { 0,  1, ngram_descr_t::char_ngram },
+  std::vector<ngram_descr_t> ngram_descr = {
+                                        { 0,  1, ngram_descr_t::char_ngram },
                                         { 0,  2, ngram_descr_t::char_ngram },
                                         { -1, 3, ngram_descr_t::char_ngram },
                                         { 0,  1, ngram_descr_t::type_ngram },
@@ -108,7 +110,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
   DictionaryBuilder dict_builder(ngram_descr);
   auto dicts = dict_builder.process(train_doc.get_original_text(), 100, train_char_counter);
 
-  if (train_char_counter >= std::numeric_limits<uint64_t>::max())
+  if (train_char_counter >= std::numeric_limits<int64_t>::max())
   {
     throw std::overflow_error("Too much characters in training set.");
   }
@@ -116,7 +118,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
   Utf8CharSeqToTorchMatrix vectorizer(ngram_descr);
   vectorizer.set_dicts(dicts);
   auto train_input = vectorizer.process(train_doc.get_original_text(),
-                                                                    (int64_t)train_char_counter);
+                                        (int64_t)train_char_counter);
 
   const auto& dev_doc = tb.get_doc("dev");
   auto dev_input = vectorizer.process(dev_doc.get_original_text(), dev_doc.get_text().size() + 1);
@@ -132,8 +134,15 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
                                            { "scriptchange", 1 } };
 
   std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( params.m_rnn_hidden_dim ) };
-  BiRnnClassifierForSegmentation model(std::move(dicts), ngram_descr, embd_descr,
-                                       rnn_descr, "tokens", params.train_ss ? 7 : 5, 0.1);
+
+
+  BiRnnClassifierForSegmentation model(std::move(dicts),
+                                       ngram_descr,
+                                       embd_descr,
+                                       rnn_descr,
+                                       "tokens",
+                                       params.train_ss ? 7 : 5,
+                                       params.m_input_dropout_prob);
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
@@ -159,7 +168,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb, deeplima::segmentation:
 
   try
   {
-    model->train(300, params.m_batch_size, params.m_sequence_length, { "tokens" },
+    model->train(params.m_max_epochs, params.m_batch_size, params.m_sequence_length, { "tokens" },
                 *(train_input.get()), *(train_gold.get()),
                 *(dev_input.get()), *(dev_gold.get()),
                 optimizer, params.m_output_model_name, device);

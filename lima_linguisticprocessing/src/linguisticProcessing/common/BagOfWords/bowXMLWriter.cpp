@@ -43,7 +43,7 @@ class BoWXMLWriterPrivate
 {
 friend class BoWXMLWriter;
 
-  BoWXMLWriterPrivate(std::ostream& os);
+  BoWXMLWriterPrivate(std::ostream& os, int32_t offset);
   virtual ~BoWXMLWriterPrivate();
 
 
@@ -55,6 +55,8 @@ friend class BoWXMLWriter;
 
   Lima::MediaId m_language;
 
+  int32_t m_offset; /**< general offset to adjust all positions */
+  
   // private functions
   void setSpaces(const std::string& s);
 
@@ -86,11 +88,12 @@ friend class BoWXMLWriter;
 void BoWXMLWriter::incIndent() { m_d->incIndent() ; }
 void BoWXMLWriter::decIndent() { m_d->decIndent(); }
 
-BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os):
+BoWXMLWriterPrivate::BoWXMLWriterPrivate(std::ostream& os, int32_t offset):
 m_outputStream(os),
 m_currentTokId(0),
 m_spaces(""),
-m_language(0)
+m_language(0),
+m_offset(offset)
 {
 }
 
@@ -101,8 +104,8 @@ BoWXMLWriterPrivate::~BoWXMLWriterPrivate()
 //**********************************************************************
 // writer functions
 //**********************************************************************
-BoWXMLWriter::BoWXMLWriter(std::ostream& os):
-    m_d(new BoWXMLWriterPrivate(os))
+BoWXMLWriter::BoWXMLWriter(std::ostream& os, int32_t offset):
+    m_d(new BoWXMLWriterPrivate(os, offset))
 {
 }
 
@@ -355,7 +358,7 @@ void BoWXMLWriterPrivate::writeIndexElement(
     }
     m_outputStream << " lemma=\"" << xmlString(Misc::limastring2utf8stdstring(element.getSimpleTerm()))
        << "\" category=\"" << cat
-       << "\" position=\"" << element.getPosition()
+       << "\" position=\"" << element.getPosition() + m_offset
        << "\" length=\"" << element.getLength() << "\"";
     if (element.isNamedEntity()) {
       m_outputStream << " neType=\"" << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(element.getNamedEntityType())) << "\"";
@@ -411,7 +414,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(tok->getLemma()))
        << "\" category=\"" << cat
-       <<"\" position=\"" << tok->getPosition()
+       <<"\" position=\"" << tok->getPosition() + m_offset
        << "\" length=\"" << tok->getLength() << "\""
        << "/>" << std::endl;
     break;
@@ -421,7 +424,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
     m_outputStream <<m_spaces << "<bowPredicate "
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(term->getPredicateType())))
-       <<"\" position=\"" << term->getPosition()
+       <<"\" position=\"" << term->getPosition() + m_offset
        << "\" length=\"" << term->getLength() << "\""
        << ">" << std::endl;
     incIndent();
@@ -438,7 +441,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(term->getLemma()))
        << "\" category=\"" << cat
-       <<"\" position=\"" << term->getPosition()
+       <<"\" position=\"" << term->getPosition() + m_offset
        << "\" length=\"" << term->getLength() << "\""
        << ">" << std::endl;
     incIndent();
@@ -455,7 +458,7 @@ void BoWXMLWriterPrivate::writeBoWToken(
        << "id=\"" << m_currentTokId
        << "\" lemma=\"" << xmlString(Misc::limastring2utf8stdstring(ne->getLemma()))
        << "\" category=\"" << cat
-       <<"\" position=\"" << ne->getPosition()
+       <<"\" position=\"" << ne->getPosition() + m_offset
        << "\" length=\"" << ne->getLength()
        << "\" type=\""
        << Misc::limastring2utf8stdstring(MediaticData::MediaticData::single().getEntityName(ne->getNamedEntityType()))

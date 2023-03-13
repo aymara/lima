@@ -866,6 +866,7 @@ SPDX-License-Identifier: MIT
       <list name="elementNames">
         <item value="status"/>
         <item value="label"/>
+        <item value="tagPrpty"/>
       </list>
     </group>
     <group name="nbPagesPrpty" class="ExtensionDocumentPropertyType">
@@ -875,6 +876,7 @@ SPDX-License-Identifier: MIT
       <list name="elementNames">
         <item value="nb_pages"/>
         <item value="NB_PAGES"/>
+        <item value="nbPagesPrpty"/>
       </list>
     </group>
     <group name="pageNumPrpty" class="ExtensionDocumentPropertyType">
