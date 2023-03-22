@@ -64,7 +64,7 @@ private:
 protected:
   MediaId m_language;
 
-  std::map< std::string, Automaton::Recognizer* > m_recognizers;
+  std::map< std::string, std::shared_ptr<Automaton::Recognizer> > m_recognizers;
   
   std::deque< std::string > m_actions;
 

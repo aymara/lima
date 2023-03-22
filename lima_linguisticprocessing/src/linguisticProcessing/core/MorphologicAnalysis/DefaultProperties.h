@@ -53,7 +53,7 @@ protected:
 
 private:
     
-    FlatTokenizer::CharChart* m_charChart;
+    std::shared_ptr<FlatTokenizer::CharChart> m_charChart;
     std::set<LimaString> m_skipUnmarkStatus;
     MediaId m_language;
     std::map<LimaString,std::vector<LinguisticCode> > m_defaults;

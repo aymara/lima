@@ -351,13 +351,13 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     }
     const LimaString& resourceName =
       Common::MediaticData::MediaticData::single().getEntityGroupName(seType.getGroupId())+"Micros";
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,resourceName.toUtf8().constData());
+    auto res = LinguisticResources::single().getResource(m_language,resourceName.toUtf8().constData());
 #ifdef DEBUG_LP
     LDEBUG << "Entities resource name is : " << resourceName;
 #endif
     if (res!=0) {
-      SpecificEntitiesMicros* entityMicros=static_cast<SpecificEntitiesMicros*>(res);
-      const std::set<LinguisticCode>* micros=entityMicros->getMicros(seType);
+      auto entityMicros = std::dynamic_pointer_cast<SpecificEntitiesMicros>(res);
+      auto micros = entityMicros->getMicros(seType);
 #ifdef DEBUG_LP
       if (logger.isDebugEnabled())
       {

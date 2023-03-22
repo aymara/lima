@@ -70,7 +70,7 @@ class LIMA_AUTOMATON_EXPORT DeaccentuatedTransition : public TransitionUnit
  private:
   LimaString m_deaccentuatedForm;
   MediaId m_language;
-  FlatTokenizer::CharChart* m_charchart;
+  std::shared_ptr<FlatTokenizer::CharChart> m_charchart;
 };
 
 } // end namespace

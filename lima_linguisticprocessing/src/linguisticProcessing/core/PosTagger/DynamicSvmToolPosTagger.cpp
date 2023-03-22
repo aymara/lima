@@ -54,11 +54,11 @@ DynamicSvmToolPosTaggerFactory::DynamicSvmToolPosTaggerFactory(const std::string
     InitializableObjectFactory<MediaProcessUnit>(id)
 {}
 
-MediaProcessUnit* DynamicSvmToolPosTaggerFactory::create(
+std::shared_ptr<MediaProcessUnit> DynamicSvmToolPosTaggerFactory::create(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   MediaProcessUnit::Manager* manager) const
 {
-  MediaProcessUnit* posTagger = new DynamicSvmToolPosTagger;
+  auto posTagger = std::make_shared<DynamicSvmToolPosTagger>();
   posTagger->init(unitConfiguration,manager);
 
   return posTagger;

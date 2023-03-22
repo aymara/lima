@@ -77,7 +77,7 @@ public:
 
 protected:
   MediaId m_language;
-  const NormalizeDateTimeResources* m_resources;
+  std::shared_ptr<NormalizeDateTimeResources> m_resources;
   ReferenceData m_referenceData;
   const std::set<LinguisticCode>* m_microsForMonth;
   const std::set<LinguisticCode>* m_microsForDays;
@@ -127,7 +127,7 @@ public:
 
   const ReferenceData& getReferenceData() const { return m_referenceData; }
   bool hasResources() const { return (m_resources!=0); }
-  const NormalizeDateTimeResources* getResources() const { return m_resources; }
+  const std::shared_ptr<NormalizeDateTimeResources> getResources() const { return m_resources; }
   
 protected:
   //private member functions
@@ -140,7 +140,7 @@ protected:
 
 private:
   MediaId m_language;
-  const NormalizeDateTimeResources* m_resources;
+  std::shared_ptr<NormalizeDateTimeResources> m_resources;
   ReferenceData m_referenceData;
 };
 

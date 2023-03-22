@@ -32,7 +32,7 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
-Condition::Condition(const CharChart* chart) :
+Condition::Condition(std::shared_ptr<CharChart> chart) :
 _before(),
 _after(),
 _status(chart)

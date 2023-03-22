@@ -36,14 +36,14 @@ public:
       Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
       Manager* manager) override;
     
-    virtual Common::AbstractAccessByString* getAccessByString() const override;
+    virtual std::shared_ptr<Common::AbstractAccessByString> getAccessByString() const override;
     
 private Q_SLOTS:
   void accessFileChanged ( const QString & path );
 
 
 protected:
-  Common::AbstractAccessByString* m_fsaAccess;
+  std::shared_ptr<Common::AbstractAccessByString> m_fsaAccess;
 
 private:
   // A read/write locker to prevent accessing m_dicoData during its loading

@@ -49,7 +49,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT LinearTextRepresentationLogger : public MediaP
 private:
     std::string m_outputSuffix;
     MediaId m_language;
-    StopList* m_stopList;
+    std::shared_ptr<StopList> m_stopList;
 
 
 // methods

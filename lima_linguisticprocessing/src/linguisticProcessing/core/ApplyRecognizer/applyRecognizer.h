@@ -46,7 +46,7 @@ public:
     
 private:
   // automaton to apply
-  std::vector<Automaton::Recognizer*> m_recognizers;
+  std::vector<std::shared_ptr<Automaton::Recognizer>> m_recognizers;
 
   // parameters of the application
   bool m_useSentenceBounds;

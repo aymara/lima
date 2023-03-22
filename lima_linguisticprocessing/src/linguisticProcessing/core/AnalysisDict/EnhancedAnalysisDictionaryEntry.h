@@ -44,7 +44,7 @@ public:
     unsigned char* endEntryData,
     const DictionaryData* dicoData,
     bool isMainKeys,
-    Lima::Common::AbstractAccessByString* access,
+    std::shared_ptr<Lima::Common::AbstractAccessByString> access,
     Lima::FsaStringsPool* sp
   );
   EnhancedAnalysisDictionaryEntry(const EnhancedAnalysisDictionaryEntry& eade);
@@ -80,7 +80,7 @@ class LIMA_ANALYSISDICT_EXPORT NotMainKeysDictionaryEntryHandler : public Abstra
 public:
 
   NotMainKeysDictionaryEntryHandler(
-    Lima::Common::AbstractAccessByString* access,
+    std::shared_ptr<Lima::Common::AbstractAccessByString> access,
     Lima::FsaStringsPool* sp) :
     m_access(access),
     m_sp(sp) {}
@@ -109,7 +109,7 @@ public:
   void foundProperties(LinguisticCode lings) override;
   
 private:
-  Lima::Common::AbstractAccessByString* m_access;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> m_access;
   Lima::FsaStringsPool* m_sp;
   AbstractDictionaryEntryHandler* m_delegate;
 };

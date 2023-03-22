@@ -47,7 +47,7 @@ namespace AnalysisDumpers {
 
 LTRTextBuilder::LTRTextBuilder(
     const MediaId& language,
-    StopList* stopList) : m_language(language), m_stopList(stopList) {
+    std::shared_ptr<StopList> stopList) : m_language(language), m_stopList(stopList) {
 
     m_macroAccessor =
         &static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MACRO");

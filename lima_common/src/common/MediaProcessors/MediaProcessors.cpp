@@ -30,10 +30,10 @@ class MediaProcessorsPrivate
   virtual ~MediaProcessorsPrivate() {}
 
   std::map<MediaId,MediaProcessUnit::Manager*> m_pipelineManagers;
-  std::map<std::string,std::map<MediaId,const MediaProcessUnitPipeline*> > m_pipelines;
+  std::map<std::string,std::map<MediaId,std::shared_ptr<MediaProcessUnitPipeline>> > m_pipelines;
 
 //   std::map<MediaId,MediaAnalysisDumper::Manager*> m_dumperManagers;
-  std::map<std::string,std::map<MediaId,const MediaAnalysisDumper*> > m_analysisDumpers;
+  std::map<std::string,std::map<MediaId,std::shared_ptr<MediaAnalysisDumper> > > m_analysisDumpers;
 
   // recursive read of configuration files
   void includeProcessors(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
@@ -166,7 +166,7 @@ void MediaProcessors::initPipelines(
       LDEBUG << "MediaProcessors::initPipelines instanciating"
               << entryItr->second;
 #endif
-      const MediaProcessUnit* pu = nullptr;
+      std::shared_ptr<MediaProcessUnit> pu = nullptr;
       try
       {
         pu = mapItr->second->getObject( entryItr->second );
@@ -180,7 +180,7 @@ void MediaProcessors::initPipelines(
         LERROR << "no process unit '" << entryItr->second << "' for media " << mediaStr;
         continue;
       }
-      auto  pipeline =  static_cast<const MediaProcessUnitPipeline*> ( pu );
+      auto  pipeline =  std::dynamic_pointer_cast<MediaProcessUnitPipeline> ( pu );
       if ( pipeline==nullptr )
       {
         PROCESSORSLOGINIT;
@@ -194,7 +194,7 @@ void MediaProcessors::initPipelines(
 }
 
 
-const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
+std::shared_ptr<MediaProcessUnitPipeline> MediaProcessors::getPipelineForId (
     MediaId med,
     const std::string& id ) const
 {
@@ -206,7 +206,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
            << " configuration file !";
     return nullptr;
   }
-  map<MediaId,const MediaProcessUnitPipeline*>::const_iterator medItr=pipItr->second.find ( med );
+  auto medItr = pipItr->second.find ( med );
   if ( medItr==pipItr->second.end() )
   {
     PROCESSORSLOGINIT;
@@ -219,7 +219,7 @@ const MediaProcessUnitPipeline* MediaProcessors::getPipelineForId (
   return medItr->second;
 }
 
-const MediaAnalysisDumper* MediaProcessors::getAnalysisDumperForId (
+std::shared_ptr<MediaAnalysisDumper> MediaProcessors::getAnalysisDumperForId (
     MediaId med,
     const std::string& type ) const
 {

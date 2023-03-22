@@ -178,7 +178,7 @@ class LIMA_POSTAGGER_EXPORT ViterbiPosTaggerFactory : public InitializableObject
 {
 public:
 
-  virtual MediaProcessUnit* create(
+  virtual std::shared_ptr<MediaProcessUnit> create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     MediaProcessUnit::Manager* manager) const override ;
 

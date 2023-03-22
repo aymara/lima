@@ -603,11 +603,11 @@ void MediaticDataPrivate::initMediaData(MediaId med)
                                                        "class");
   if (!param.empty())
   {
-    MediaData* ldata = MediaData::Factory::getFactory(param)->create(
+    auto ldata = MediaData::Factory::getFactory(param)->create(
       parser.getModuleGroupConfiguration("MediaData","Class"),0);
 
     //   MediaData* ldata=new MediaData();
-    m_mediasData[med] = std::shared_ptr<MediaData>(ldata);
+    m_mediasData[med] = ldata;
     ldata->initialize(med, m_resourcesPath, parser);
   }
   else

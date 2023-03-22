@@ -41,8 +41,8 @@ public:
   LimaStatusCode process(AnalysisContent& analysis) const override;
     
 private:
-  const MediaProcessUnit* m_dumper;
-  const MediaProcessUnit* m_loader;
+  std::shared_ptr<MediaProcessUnit> m_dumper;
+  std::shared_ptr<MediaProcessUnit> m_loader;
   QString m_commandLine;
   QString m_inputSuffix;
   QString m_outputSuffix;

@@ -188,7 +188,7 @@ int run(int argc,char** argv)
   langs.push_back(param.language);
   MediaticData::changeable().init(resourcesPath,configDir,commonConfigFile,langs);
 
-  AbstractAnalysisDictionary* dictionary(0);
+  std::shared_ptr<AbstractAnalysisDictionary> dictionary;
 
 
   if (param.dicoId != "none")
@@ -241,8 +241,8 @@ int run(int argc,char** argv)
     }
 
     // get dictionary
-    AbstractResource* res=LinguisticResources::single().getResource(langid,param.dicoId);
-    dictionary=static_cast<AbstractAnalysisDictionary*>(res);
+    auto res = LinguisticResources::single().getResource(langid,param.dicoId);
+    dictionary = std::dynamic_pointer_cast<AbstractAnalysisDictionary>(res);
     if (dictionary==0)
     {
       cerr << "can't get dictionary " << param.dicoId << " for language " << param.language << endl;
@@ -279,16 +279,16 @@ int run(int argc,char** argv)
     }
 
     std::cout << "build accessMethod ..." << std::endl;
-    FsaAccessSpare16* fsaAccess=new FsaAccessSpare16();
+    auto fsaAccess = std::make_shared<FsaAccessSpare16>();
     fsaAccess->read(param.keyFileName);
 
     std::cout << "register mainkeys" << std::endl;
-    MediaId langid=MediaticData::single().getMediaId(param.language);
-    FsaStringsPool& sp= Common::MediaticData::MediaticData::changeable().stringsPool(langid);
+    auto langid = MediaticData::single().getMediaId(param.language);
+    auto& sp = Common::MediaticData::MediaticData::changeable().stringsPool(langid);
     sp.registerMainKeys(fsaAccess);
 
     std::cout << "build EnhancedAnalysisDictionary... " << std::endl;
-    dictionary=new EnhancedAnalysisDictionary(
+    dictionary = std::make_shared<EnhancedAnalysisDictionary>(
                  &sp,
                  fsaAccess,
                  param.dataFileName);

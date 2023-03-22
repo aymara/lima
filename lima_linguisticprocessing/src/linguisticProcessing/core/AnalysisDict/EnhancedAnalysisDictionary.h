@@ -32,7 +32,7 @@ public:
     
     EnhancedAnalysisDictionary(
       FsaStringsPool* sp,
-      Lima::Common::AbstractAccessByString* access,
+      std::shared_ptr<Lima::Common::AbstractAccessByString> access,
       const std::string& dataFile);
 
     virtual ~EnhancedAnalysisDictionary();
@@ -66,7 +66,7 @@ public:
 
 private Q_SLOTS:
   void dictionaryFileChanged ( const QString & path );
-  void slotAccessFileReloaded(Common::AbstractAccessByString* access);
+  void slotAccessFileReloaded(std::shared_ptr<Common::AbstractAccessByString> access);
 
 private :
   EnhancedAnalysisDictionary(const EnhancedAnalysisDictionary& ead);

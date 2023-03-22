@@ -35,7 +35,7 @@ public:
     bool tryDirect,
     bool tryUncapitalized,
     bool tryDesaccentedForm,
-    FlatTokenizer::CharChart* charChart,
+    std::shared_ptr<FlatTokenizer::CharChart> charChart,
     FsaStringsPool* sp);
     
   virtual ~AlternativesReader();
@@ -52,7 +52,7 @@ private:
   bool m_tryDirect;
   bool m_tryUncapitalized;
   bool m_tryDesaccentedForm;
-  FlatTokenizer::CharChart* m_charChart;
+  std::shared_ptr<FlatTokenizer::CharChart> m_charChart;
   FsaStringsPool* m_sp;
 };
 

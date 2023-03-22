@@ -60,7 +60,7 @@ void SpecificEntitiesRecognizer::init(
   try
   {
     string automaton=unitConfiguration.getParamsValueAtKey("automaton");
-    AbstractResource* res=LinguisticResources::single().getResource(language,automaton);
+    auto res = LinguisticResources::single().getResource(language,automaton);
     m_recognizer=static_cast<Automaton::Recognizer*>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )

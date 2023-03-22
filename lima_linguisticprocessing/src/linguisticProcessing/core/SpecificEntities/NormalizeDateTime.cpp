@@ -227,8 +227,8 @@ m_isInterval(false)
 
   if (language != UNDEFLANG) {
     try {
-      AbstractResource* res = LinguisticResources::single().getResource(language,"microsForDateTimeNormalization");
-      MicrosForNormalization* micros=static_cast<MicrosForNormalization*>(res);
+      auto res = LinguisticResources::single().getResource(language,"microsForDateTimeNormalization");
+      auto micros = std::dynamic_pointer_cast<MicrosForNormalization>(res);
       m_microsForMonth=micros->getMicros("MonthMicros");
       m_microsForDays=micros->getMicros("DayMicros");
     }
@@ -240,14 +240,13 @@ m_isInterval(false)
   }
 
   try {
-    AbstractResource* res=LinguisticResources::changeable().
-      getResource(language,"DateTimeNormalization");
+    auto res = LinguisticResources::changeable().getResource(language,"DateTimeNormalization");
     if (res==0) {
       SELOGINIT;
       LWARN << "no resource 'DateTimeNormalization'";
     }
     else {
-      m_resources=static_cast<const NormalizeDateTimeResources*>(res);
+      m_resources = std::dynamic_pointer_cast<NormalizeDateTimeResources>(res);
     }
   }
   catch (std::exception& e) {
@@ -700,14 +699,13 @@ m_referenceData()
   m_referenceData.parseComplement(complement);
 
   try {
-    AbstractResource* res=LinguisticResources::changeable().
-      getResource(language,"DateTimeNormalization");
+    auto res = LinguisticResources::changeable().getResource(language,"DateTimeNormalization");
     if (res==0) {
       SELOGINIT;
       LWARN << "no resource 'DateTimeNormalization'";
     }
     else {
-      m_resources=static_cast<const NormalizeDateTimeResources*>(res);
+      m_resources = std::dynamic_pointer_cast<NormalizeDateTimeResources>(res);
     }
   }
   catch (std::exception& e) {

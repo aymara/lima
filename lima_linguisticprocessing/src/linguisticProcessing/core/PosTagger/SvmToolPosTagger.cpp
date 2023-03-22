@@ -39,13 +39,13 @@ SvmToolPosTaggerFactory::SvmToolPosTaggerFactory(const std::string& id) :
     InitializableObjectFactory<MediaProcessUnit>(id)
 {}
 
-MediaProcessUnit* SvmToolPosTaggerFactory::create(
+std::shared_ptr<MediaProcessUnit> SvmToolPosTaggerFactory::create(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   MediaProcessUnit::Manager* manager) const
 {
 //   PTLOGINIT;
-  MediaProcessUnit* posTagger = new SvmToolPosTagger;
-  posTagger->init(unitConfiguration,manager);
+  auto posTagger = std::make_shared<SvmToolPosTagger>();
+  posTagger->init(unitConfiguration, manager);
 
   return posTagger;
 }

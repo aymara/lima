@@ -17,27 +17,27 @@ namespace DocumentsReader {
 
 
 DocumentsReaderResources::DocumentsReaderResources()
-    : m_objectManager(0) {}
+    : m_objectManager() {}
 
 DocumentsReaderResources::~DocumentsReaderResources()
 {
-  if( m_objectManager )
-    delete m_objectManager;
+  // if( m_objectManager )
+  //   delete m_objectManager;
 }
 
-StructuredDocumentXMLParser* DocumentsReaderResources::getXmlParser(const std::string& id)
+std::shared_ptr<StructuredDocumentXMLParser> DocumentsReaderResources::getXmlParser(const std::string& id)
   const
 {
-  AbstractReaderResource* res = m_objectManager->getObject(id);
-  StructuredDocumentXMLParser* xmlParserPtr = static_cast<StructuredDocumentXMLParser*>(res);
+  auto res = m_objectManager->getObject(id);
+  auto xmlParserPtr = std::dynamic_pointer_cast<StructuredDocumentXMLParser>(res);
   return xmlParserPtr;
 }
 
-DocumentPropertyType* DocumentsReaderResources::getProperty(const std::string& id)
+std::shared_ptr<DocumentPropertyType> DocumentsReaderResources::getProperty(const std::string& id)
   const
 {
-  AbstractReaderResource* res = m_objectManager->getObject(id);
-  DocumentPropertyType* attributePtr = dynamic_cast<DocumentPropertyType*>(res);
+  auto res = m_objectManager->getObject(id);
+  auto attributePtr = std::dynamic_pointer_cast<DocumentPropertyType>(res);
   return attributePtr;
 }
 
@@ -45,7 +45,7 @@ void DocumentsReaderResources::init(
   Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure& confModule)
 {
   ReaderResourceInitializationParameters params;
-  m_objectManager=new AbstractReaderResource::Manager(confModule,params);
+  m_objectManager=std::make_unique<AbstractReaderResource::Manager>(confModule,params);
 }
 
 } // DocumentsReader

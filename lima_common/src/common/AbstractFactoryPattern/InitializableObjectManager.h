@@ -77,7 +77,7 @@ protected:
    * @param obj
    * @param gconf
    */
-  virtual Object* createObject(const std::string& id) override;
+  virtual std::shared_ptr<Object> createObject(const std::string& id) override;
 
 private:
 
@@ -129,13 +129,13 @@ InitializableObjectManager<Object,InitializationParameters>::InitializableObject
 {}
 
 template <typename Object,typename InitializationParameters>
-Object* InitializableObjectManager<Object,InitializationParameters>::createObject(
+std::shared_ptr<Object> InitializableObjectManager<Object,InitializationParameters>::createObject(
   const std::string& id)
 {
   ABSTRACTFACTORYPATTERNLOGINIT;
   LDEBUG << "InitializableObjectManager::createObject" << this << id
          << "from module" << &m_conf << m_conf.getName().c_str();
-  Object* obj = nullptr;
+  std::shared_ptr<Object> obj;
   try
   {
     Common::XMLConfigurationFiles::GroupConfigurationStructure& gconf=m_conf.getGroupNamed(id);

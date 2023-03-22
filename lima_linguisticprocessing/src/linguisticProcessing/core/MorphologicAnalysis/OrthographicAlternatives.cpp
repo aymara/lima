@@ -59,7 +59,7 @@ void OrthographicAlternatives::init(
   try
   {
     string dico=unitConfiguration.getParamsValueAtKey("dictionary");
-    AbstractResource* res= LinguisticResources::single().getResource(m_language,dico);
+    auto res = LinguisticResources::single().getResource(m_language,dico);
     m_dictionary=static_cast<AbstractAnalysisDictionary*>(res);
   }
   catch (NoSuchParam& )
@@ -71,7 +71,7 @@ void OrthographicAlternatives::init(
   try
   {
     string dico=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res= LinguisticResources::single().getResource(m_language,dico);
+    auto res = LinguisticResources::single().getResource(m_language,dico);
     m_charChart=static_cast<CharChart*>(res);
   }
   catch (NoSuchParam& )

@@ -80,9 +80,9 @@ m_charSplitRegexp()
 
 AbbreviationSplitAlternatives::~AbbreviationSplitAlternatives()
 {
-  if (m_reader) {
-    delete m_reader;
-  }
+  // if (m_reader) {
+  //   delete m_reader;
+  // }
 }
 
 
@@ -96,8 +96,8 @@ void AbbreviationSplitAlternatives::init(
   try
   {
     string dico=unitConfiguration.getParamsValueAtKey("dictionary");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
-    m_dictionary=static_cast<AnalysisDict::AbstractAnalysisDictionary*>(res);
+    auto res = LinguisticResources::single().getResource(m_language,dico);
+    m_dictionary = std::dynamic_pointer_cast<AnalysisDict::AbstractAnalysisDictionary>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -106,9 +106,9 @@ void AbbreviationSplitAlternatives::init(
   }
   try
   {
-    string tok=unitConfiguration.getParamsValueAtKey("tokenizer");
-    const MediaProcessUnit* res=manager->getObject(tok);
-    m_tokenizer=static_cast<const FlatTokenizer::Tokenizer*>(res);
+    auto tok = unitConfiguration.getParamsValueAtKey("tokenizer");
+    auto res = manager->getObject(tok);
+    m_tokenizer = std::dynamic_pointer_cast<FlatTokenizer::Tokenizer>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -131,12 +131,12 @@ void AbbreviationSplitAlternatives::init(
     throw InvalidConfiguration();
   }
 
-  FlatTokenizer::CharChart* charChart(0);
+  std::shared_ptr<FlatTokenizer::CharChart> charChart;
   try
   {
-    string charchart=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,charchart);
-    charChart=static_cast<FlatTokenizer::CharChart*>(res);
+    auto charchart = unitConfiguration.getParamsValueAtKey("charChart");
+    auto res = LinguisticResources::single().getResource(m_language,charchart);
+    charChart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -145,14 +145,14 @@ void AbbreviationSplitAlternatives::init(
   }
   try
   {
-    string confident=unitConfiguration.getParamsValueAtKey("confidentMode");
-    m_confidentMode=(confident=="true");
+    auto confident = unitConfiguration.getParamsValueAtKey("confidentMode");
+    m_confidentMode = (confident=="true");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
     LWARN << "no param 'confidentMode' in AbbreviationSplitAlternatives group for language " << (int) m_language;
     LWARN << "use default value : 'true'";
-    m_confidentMode=true;
+    m_confidentMode = true;
   }
 
   try
@@ -168,7 +168,7 @@ void AbbreviationSplitAlternatives::init(
   }
 
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
-  m_reader=new AlternativesReader(m_confidentMode,true,true,true,charChart,sp);
+  m_reader = std::make_shared<AlternativesReader>(m_confidentMode, true, true, true, charChart, sp);
 
 }
 
@@ -179,8 +179,8 @@ LimaStatusCode AbbreviationSplitAlternatives::process(
   MORPHOLOGINIT;
   LINFO << "MorphologicalAnalysis: starting process AbbreviationSplitAlternatives";
 
-  auto tokenList=std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
-  LinguisticGraph* graph=tokenList->getGraph();
+  auto tokenList = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
+  auto graph = tokenList->getGraph();
 
   VertexDataPropertyMap dataMap = get( vertex_data, *graph );
   VertexTokenPropertyMap tokenMap = get( vertex_token, *graph );

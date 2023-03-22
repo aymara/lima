@@ -44,12 +44,12 @@ class EnhancedAnalysisDictionaryPrivate
 
   EnhancedAnalysisDictionaryPrivate(
     FsaStringsPool* sp,
-    Lima::Common::AbstractAccessByString* access,
+    std::shared_ptr<Lima::Common::AbstractAccessByString> access,
     const std::string& dataFile);
 
   ~EnhancedAnalysisDictionaryPrivate();
 
-  Lima::Common::AbstractAccessByString* m_access;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> m_access;
   DictionaryData* m_dicoData;
   Lima::FsaStringsPool* m_sp;
   bool m_isMainKeys;
@@ -66,7 +66,7 @@ EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate() :
 
 EnhancedAnalysisDictionaryPrivate::EnhancedAnalysisDictionaryPrivate(
       FsaStringsPool* sp,
-      Lima::Common::AbstractAccessByString* access,
+      std::shared_ptr<Lima::Common::AbstractAccessByString> access,
       const std::string& dataFile) :
    m_access(access),
    m_dicoData(new DictionaryData()),
@@ -104,7 +104,7 @@ EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(const QString& dataFilePa
 
 EnhancedAnalysisDictionary::EnhancedAnalysisDictionary(
       FsaStringsPool* sp,
-      Lima::Common::AbstractAccessByString* access,
+      std::shared_ptr<Lima::Common::AbstractAccessByString> access,
       const std::string& dataFile) :
    m_d(new EnhancedAnalysisDictionaryPrivate(sp, access, dataFile))
 {
@@ -136,9 +136,10 @@ void EnhancedAnalysisDictionary::init(
   try
   {
     string accessId=unitConfiguration.getParamsValueAtKey("accessKeys");
-    const AbstractResource* res=LinguisticResources::single().getResource(language,accessId);
-    const AbstractAccessResource* aar=static_cast<const AbstractAccessResource*>(res);
-    if (!connect(aar,SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),this,SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
+    auto res = LinguisticResources::single().getResource(language,accessId);
+    auto aar = std::dynamic_pointer_cast<AbstractAccessResource>(res);
+    if (!connect(aar.get(), SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),
+                 this, SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
     {
       LIMA_EXCEPTION("Unable to connect accessFileReloaded");
     }
@@ -167,11 +168,11 @@ void EnhancedAnalysisDictionary::init(
 
 }
 
-void EnhancedAnalysisDictionary::slotAccessFileReloaded(Common::AbstractAccessByString* access)
+void EnhancedAnalysisDictionary::slotAccessFileReloaded(std::shared_ptr<Common::AbstractAccessByString> access)
 {
   ANALYSISDICTLOGINIT;
   LDEBUG << "EnhancedAnalysisDictionary::slotAccessFileReloaded";
-  m_d->m_access=access;
+  m_d->m_access = access;
  }
 
 void EnhancedAnalysisDictionary::dictionaryFileChanged ( const QString & path )
@@ -227,7 +228,10 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   if (wordId >= m_d->m_dicoData->getSize())
   {
 //    LDEBUG << "return empty : index out of range";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(static_cast<StringsPoolIndex>(0),false,true,false,false,false,0,0,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+    return DictionaryEntry(
+      std::make_shared<EnhancedAnalysisDictionaryEntry>(
+        static_cast<StringsPoolIndex>(0), false, true, false, false, false, nullptr, nullptr, m_d->m_dicoData,
+        m_d->m_isMainKeys, m_d->m_access, m_d->m_sp));
   }
 
   StringsPoolIndex strId=wordId;
@@ -246,7 +250,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   if (read == 0)
   {
 //    LDEBUG << "return empty entry";
-    return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,true,false,false,false,p,p,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+    return DictionaryEntry(std::make_shared<EnhancedAnalysisDictionaryEntry>(strId,final,true,false,false,false,p,p,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
   }
   unsigned char* start=p;
   unsigned char* end=p+read;
@@ -273,7 +277,7 @@ DictionaryEntry EnhancedAnalysisDictionary::getEntryData(const StringsPoolIndex 
   }
   Q_ASSERT(p==end);
 //  LDEBUG << "return entry " << (uint64_t)start << " , " << (uint64_t)end;
-  return DictionaryEntry(new EnhancedAnalysisDictionaryEntry(strId,final,false,hasLing,hasConcat,hasAccented,start,end,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
+  return DictionaryEntry(std::make_shared<EnhancedAnalysisDictionaryEntry>(strId,final,false,hasLing,hasConcat,hasAccented,start,end,m_d->m_dicoData,m_d->m_isMainKeys,m_d->m_access,m_d->m_sp));
 }
 
 std::pair< DictionarySubWordIterator, DictionarySubWordIterator > EnhancedAnalysisDictionary::getSubWordEntries(const int offset, const LimaString& key) const

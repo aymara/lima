@@ -71,8 +71,8 @@ void DefaultProperties::init(
   try
   {
     string dico = unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res = LinguisticResources::single().getResource(m_language,dico);
-    m_charChart = static_cast< FlatTokenizer::CharChart* >(res);
+    auto res = LinguisticResources::single().getResource(m_language,dico);
+    m_charChart = std::dynamic_pointer_cast< FlatTokenizer::CharChart >(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

@@ -39,13 +39,13 @@ public:
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     Manager* manager) override = 0;
 
-  virtual Common::AbstractAccessByString* getAccessByString() const = 0;
+  virtual std::shared_ptr<Common::AbstractAccessByString> getAccessByString() const = 0;
 
   inline bool isMainKeys() const;
   inline void setMainKeys(bool flag);
 
 Q_SIGNALS:
-  void accessFileReloaded ( Common::AbstractAccessByString* fsaAccess );
+  void accessFileReloaded ( std::shared_ptr<Common::AbstractAccessByString> fsaAccess );
   
 protected:
   bool m_isMainKeys;

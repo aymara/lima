@@ -119,7 +119,7 @@ private:
   Common::MediaticData::EntityType m_entityType;
   Common::MediaticData::EntityGroupId m_entityGroupId;
   RegexMap m_regexes;
-  const NameIndexResource * m_nameIndex;
+  std::shared_ptr<NameIndexResource> m_nameIndex;
 };
 } // MorphologicAnalysis
 } // LinguisticProcessing

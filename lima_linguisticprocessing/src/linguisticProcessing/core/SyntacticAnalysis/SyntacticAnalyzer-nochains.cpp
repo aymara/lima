@@ -55,13 +55,13 @@ void SyntacticAnalyzerNoChains::init(
 
 {
   SACLOGINIT;
-  m_language=manager->getInitializationParameters().media;
-  m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
+  m_language = manager->getInitializationParameters().media;
+  m_macroAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
+  m_microAccessor = &(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
-    std::string chainMatrixId=unitConfiguration.getParamsValueAtKey("chainMatrix");
-    m_chainMatrix=static_cast<SyntagmDefStruct*>(LinguisticResources::single().getResource(m_language,chainMatrixId));
+    std::string chainMatrixId = unitConfiguration.getParamsValueAtKey("chainMatrix");
+    m_chainMatrix = std::dynamic_pointer_cast<SyntagmDefStruct>(LinguisticResources::single().getResource(m_language,chainMatrixId));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

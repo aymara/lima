@@ -89,7 +89,7 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
   m_language=manager->getInitializationParameters().media;
   try {
     std::string rules=unitConfiguration.getParamsValueAtKey("rules");
-    m_recognizer = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,rules));
+    m_recognizer = std::dynamic_pointer_cast<Automaton::Recognizer>(LinguisticResources::single().getResource(m_language,rules));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -105,7 +105,10 @@ void SyntacticAnalyzerDepsHetero::init(GroupConfigurationStructure& unitConfigur
     {
       SAHLOGINIT;
       LINFO << "Loading subsentences recognizer " << (*itm).second << " for type " << (*itm).first;
-      m_subSentRecognizers.insert(std::make_pair(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationId((*itm).first), static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,(*itm).second))));
+      m_subSentRecognizers.insert(
+        std::make_pair(
+          static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getSyntacticRelationId((*itm).first),
+          std::dynamic_pointer_cast<Automaton::Recognizer>(LinguisticResources::single().getResource(m_language,(*itm).second))));
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchMap& )
@@ -293,7 +296,7 @@ LimaStatusCode SyntacticAnalyzerDepsHetero::process(AnalysisContent& analysis) c
                 << boost::source(last,*graph) << "/" << beginSentence << "/"
                 << endSentence;
 #endif
-            Automaton::Recognizer* subSentRecognizer = (*(m_subSentRecognizers.find(subSentType))).second;
+            auto subSentRecognizer = (*(m_subSentRecognizers.find(subSentType))).second;
             subSentRecognizer->apply(*posgraph,
                                      boost::target(first,*graph),
                                      boost::source(last,*graph),

@@ -57,7 +57,7 @@ void SyntacticAnalyzerSimplify::init(
   LINFO << "SyntacticAnalyzerSimplify::init";
   m_language=manager->getInitializationParameters().media;
   std::string rules=unitConfiguration.getParamsValueAtKey("simplifyAutomaton");
-  m_recognizer = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,rules));
+  m_recognizer = std::dynamic_pointer_cast<Automaton::Recognizer>(LinguisticResources::single().getResource(m_language,rules));
 }
 
 LimaStatusCode SyntacticAnalyzerSimplify::process(

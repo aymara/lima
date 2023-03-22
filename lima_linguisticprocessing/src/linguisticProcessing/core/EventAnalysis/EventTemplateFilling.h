@@ -44,7 +44,7 @@ public:
   LimaStatusCode process(AnalysisContent& analysis) const override;
     
 private:
-  EventTemplateDefinitionResource* m_templateDefinition;
+  std::shared_ptr<EventTemplateDefinitionResource> m_templateDefinition;
 
 };
 

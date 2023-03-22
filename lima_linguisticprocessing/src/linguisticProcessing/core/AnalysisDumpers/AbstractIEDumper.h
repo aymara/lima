@@ -93,7 +93,7 @@ protected:
   std::set< std::string > m_ignore;  // list of entity types to ignore in the output
   std::deque< std::string > m_attributes;
   bool m_all_attributes;
-  std::map<std::string,EventAnalysis::EventTemplateDefinitionResource*> m_templateDefinitions;
+  std::map<std::string, std::shared_ptr<EventAnalysis::EventTemplateDefinitionResource>> m_templateDefinitions;
   std::set<std::string> m_templateNames;
   // small hack: make it mutable so that process() can be const
   // @todo: pass it as argument to all the internal functions where needed

@@ -81,7 +81,7 @@ void LinguisticResources::clearResources()
   m_d->clear();
 }
 
-AbstractResource* LinguisticResources::getResource(MediaId lang,const std::string& id) const
+std::shared_ptr<AbstractResource> LinguisticResources::getResource(MediaId lang,const std::string& id) const
 {
 #ifdef DEBUG_LP
   RESOURCESLOGINIT;
@@ -127,7 +127,7 @@ void LinguisticResources::initLanguage(
       const auto& mainkeys = confModule.getParamValueAtKeyOfGroupNamed("mainKeys","FsaStringsPool");
       LINFO << "load mainKeys " << mainkeys << " into StringPool";
       auto res = getResource(lang,mainkeys);
-      auto access = static_cast<AnalysisDict::AbstractAccessResource*>(res);
+      auto access = std::dynamic_pointer_cast<AnalysisDict::AbstractAccessResource>(res);
       access->setMainKeys(true);
       Common::MediaticData::MediaticData::changeable().stringsPool(lang).registerMainKeys(access->getAccessByString());
     }

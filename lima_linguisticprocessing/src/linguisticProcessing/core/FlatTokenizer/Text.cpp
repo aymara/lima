@@ -35,7 +35,7 @@ class TextPrivate
 {
 friend class Text;
 public:
-  TextPrivate(MediaId lang, const CharChart* charChart);
+  TextPrivate(MediaId lang, std::shared_ptr<CharChart> charChart);
   ~TextPrivate();
   TextPrivate(const Text&) = delete;
   TextPrivate& operator=(const Text&) = delete;
@@ -49,11 +49,11 @@ public:
   LinguisticGraphVertex m_lastVx;
 
   FsaStringsPool* m_stringsPool;
-  const CharChart* m_charChart;
+  std::shared_ptr<CharChart> m_charChart;
 };
 
 
-TextPrivate::TextPrivate(MediaId lang, const CharChart* charChart) :
+TextPrivate::TextPrivate(MediaId lang, std::shared_ptr<CharChart> charChart) :
     m_text(),
     m_curPtr(0),
     m_debPtr(0),
@@ -70,7 +70,7 @@ TextPrivate::~TextPrivate()
 {
 }
 
-Text::Text(MediaId lang, const CharChart* charChart) :
+Text::Text(MediaId lang, std::shared_ptr<CharChart> charChart) :
     m_d(new TextPrivate(lang, charChart))
 {
 }
@@ -121,7 +121,7 @@ void Text::clear()
   //    _tTokenList = 0; Not destroyed here
 }
 
-void Text::setGraph(LinguisticGraphVertex position,LinguisticGraph* graph)
+void Text::setGraph(LinguisticGraphVertex position, LinguisticGraph* graph)
 {
   m_d->m_currentVx=position;
   m_d->m_tTokenGraph = graph;

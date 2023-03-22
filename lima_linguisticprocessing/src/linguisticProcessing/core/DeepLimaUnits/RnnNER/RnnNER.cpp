@@ -289,7 +289,7 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
                                                                 resourceName.toStdString());
           if (res != nullptr)
           {
-            auto entityMicros = static_cast<SpecificEntities::SpecificEntitiesMicros*>(res);
+            auto entityMicros = std::dynamic_pointer_cast<SpecificEntities::SpecificEntitiesMicros>(res);
             auto micros = entityMicros->getMicros(seType);
             //create a set of linguisticElements. Each LinguisticElement is linked to a
             //LinguisticCode from the entity

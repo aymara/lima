@@ -93,6 +93,10 @@ public:
 
   bool endDocument();
 
+  // helper function for initialization when created
+  void init (
+      Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
+      Manager* manager ) override;
   //----------------------------------------------------------------------
   // private function members
 private:
@@ -127,10 +131,6 @@ private:
       Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& groupConf ) ;
 
 
-  // helper function for initialization when created
-  void init (
-      Lima::Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
-      Manager* manager ) override;
 
   // helper function for test functions on fields (isXXX)
   bool isFieldType ( const QString& elementName, const FieldType& type ) const;

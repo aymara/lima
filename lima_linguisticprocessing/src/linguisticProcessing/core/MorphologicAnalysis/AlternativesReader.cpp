@@ -28,7 +28,7 @@ AlternativesReader::AlternativesReader(
   bool tryDirect,
   bool tryUncapitalized,
   bool tryDesaccentedForm,
-  FlatTokenizer::CharChart* charChart,
+  std::shared_ptr<FlatTokenizer::CharChart> charChart,
   FsaStringsPool* sp) :
     m_confidentMode(confidentMode),
     m_tryDirect(tryDirect),

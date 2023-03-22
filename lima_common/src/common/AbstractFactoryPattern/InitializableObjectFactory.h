@@ -31,7 +31,7 @@ public:
     RegistrableFactory<InitializableObjectFactory<Object> >(id) 
     {};
 
-  virtual Object* create(
+  virtual std::shared_ptr<Object> create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     typename Object::Manager* manager) const = 0;
 

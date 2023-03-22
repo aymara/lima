@@ -75,7 +75,7 @@ public:
 
 private:
   MediaId m_language;
-  SelectionalPreferences* m_preferences;
+  std::shared_ptr<SelectionalPreferences> m_preferences;
 };
 
 

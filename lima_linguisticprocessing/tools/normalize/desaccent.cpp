@@ -163,23 +163,20 @@ int run(int argc,char** argv)
   }
 
   // initialization
-  AbstractResource* res=LinguisticResources::single().
-      getResource(langid,"flatcharchart");
-  CharChart* charChart =static_cast<CharChart*>(res);
+  auto res = LinguisticResources::single().getResource(langid,"flatcharchart");
+  auto charChart = std::dynamic_pointer_cast<CharChart>(res);
 
-  for (vector<string>::const_iterator argItr=vfiles.begin();
-       argItr!=vfiles.end();
-       argItr++)
+  for (auto vfile: vfiles)
   {
-    std::ifstream fin(argItr->c_str(), std::ifstream::binary);
+    std::ifstream fin(vfile.c_str(), std::ifstream::binary);
     string line;
     if (fin.good())
     {
       line = Lima::Common::Misc::readLine(fin);
       while (fin.good() && !fin.eof() && line!="")
       {
-        LimaString str=utf8stdstring2limastring(line);
-        LimaString res;
+        auto str = utf8stdstring2limastring(line);
+        QString res;
         if (lower)
         {
           res = charChart->toLower(str);

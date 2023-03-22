@@ -47,7 +47,7 @@ public:
   virtual ~TokenizerPrivate();
 
   Automaton _automaton;
-  CharChart* _charChart;
+  std::shared_ptr<CharChart> _charChart;
   MediaId _language;
 
 };
@@ -68,9 +68,9 @@ Tokenizer::~Tokenizer()
   delete m_d;
 }
 
-const CharChart* Tokenizer::charChart() const {return m_d->_charChart;}
-CharChart* Tokenizer::charChart() {return m_d->_charChart;}
-void Tokenizer::setCharChart(CharChart* charChart) {m_d->_charChart = charChart;}
+const std::shared_ptr<CharChart> Tokenizer::charChart() const {return m_d->_charChart;}
+std::shared_ptr<CharChart> Tokenizer::charChart() {return m_d->_charChart;}
+void Tokenizer::setCharChart(std::shared_ptr<CharChart> charChart) {m_d->_charChart = charChart;}
 
 void Tokenizer::init(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -85,8 +85,8 @@ void Tokenizer::init(
   try
   {
     string charchartId=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res=LinguisticResources::single().getResource(m_d->_language,charchartId);
-    m_d->_charChart=static_cast<CharChart*>(res);
+    auto res = LinguisticResources::single().getResource(m_d->_language,charchartId);
+    m_d->_charChart = std::dynamic_pointer_cast<CharChart>(res);
   }
   catch (NoSuchParam& )
   {

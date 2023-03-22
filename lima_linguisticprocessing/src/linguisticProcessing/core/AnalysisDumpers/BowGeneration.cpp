@@ -123,7 +123,7 @@ class LIMA_ANALYSISDUMPERS_EXPORT BowGeneratorPrivate
   typedef std::set< std::pair<uint64_t,uint64_t> > TokenPositions;
 
   MediaId m_language;
-  AnalysisDumpers::StopList* m_stopList;
+  std::shared_ptr<AnalysisDumpers::StopList> m_stopList;
   bool m_useStopList;
   bool m_useEmptyMacro;
   bool m_useEmptyMicro;
@@ -257,7 +257,7 @@ void BowGenerator::init(
     try
     {
       auto stoplist = unitConfiguration.getParamsValueAtKey("stopList");
-      m_d->m_stopList = static_cast<StopList*>(LinguisticResources::single().getResource(m_d->m_language, stoplist));
+      m_d->m_stopList = std::dynamic_pointer_cast<StopList>(LinguisticResources::single().getResource(m_d->m_language, stoplist));
 #ifdef DEBUG_LP
       LDEBUG << "BowGenerator.init(): STOPLIST:";
       for(const auto& word: *m_d->m_stopList)

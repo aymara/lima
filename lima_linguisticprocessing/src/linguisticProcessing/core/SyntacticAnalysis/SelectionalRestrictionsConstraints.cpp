@@ -107,15 +107,14 @@ DisambiguateWith::DisambiguateWith(MediaId language,
 {
   //  ConstraintFunction::addFunction("GovernorOf",this);
   try {
-    AbstractResource* res=LinguisticResources::changeable().
-    getResource(language,"selectionalPreferences");
+    auto res = LinguisticResources::changeable().getResource(language,"selectionalPreferences");
     if (res==0)
     {
       SELOGINIT;
       LWARN << "no resource 'selectionalPreferences'";
     }
     else {
-      m_preferences=static_cast<SelectionalPreferences*>(res);
+      m_preferences = std::dynamic_pointer_cast<SelectionalPreferences>(res);
     }
   }
   catch (std::exception& e) {

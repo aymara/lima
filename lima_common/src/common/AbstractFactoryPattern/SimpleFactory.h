@@ -44,7 +44,7 @@ public:
     *        if no appropriate factory is available
     * Constraint : Object must be an InitializableObject
     */
-  virtual Base* create(
+  virtual std::shared_ptr<Base> create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     typename Base::Manager* manager) const override;
 
@@ -56,13 +56,13 @@ SimpleFactory<Base,Object>::SimpleFactory(const std::string& classId) :
 {}
 
 template<typename Base,typename Object>
-Base* SimpleFactory<Base,Object>::create(
+std::shared_ptr<Base> SimpleFactory<Base,Object>::create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     typename Base::Manager* manager) const
 {
-  Base* obj=new Object();
+  auto obj = std::make_shared<Object>();
   obj->setId(unitConfiguration.getName());
-  obj->init(unitConfiguration,manager);
+  obj->init(unitConfiguration, manager);
   return obj;
 }
 

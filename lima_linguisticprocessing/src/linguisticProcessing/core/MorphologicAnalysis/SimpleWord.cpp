@@ -55,7 +55,7 @@ SimpleWord::SimpleWord() :
 
 SimpleWord::~SimpleWord()
 {
-  delete m_reader;
+  // delete m_reader;
 }
 
 void SimpleWord::init(
@@ -76,8 +76,8 @@ void SimpleWord::init(
     throw InvalidConfiguration();
   }
 
-  AbstractResource* res=LinguisticResources::single().getResource(language,dico);
-  m_dictionary=static_cast<AbstractAnalysisDictionary*>(res);
+  auto res = LinguisticResources::single().getResource(language,dico);
+  m_dictionary = std::dynamic_pointer_cast<AbstractAnalysisDictionary>(res);
 
   try
   {
@@ -98,9 +98,9 @@ void SimpleWord::init(
 
   try
   {
-    string chart=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res= LinguisticResources::single().getResource(language,chart);
-    m_charChart=static_cast<FlatTokenizer::CharChart*>(res);
+    auto chart = unitConfiguration.getParamsValueAtKey("charChart");
+    auto res = LinguisticResources::single().getResource(language,chart);
+    m_charChart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
   }
   catch (NoSuchParam& )
   {
@@ -108,11 +108,12 @@ void SimpleWord::init(
     throw InvalidConfiguration();
   }
 
-  m_reader=new AlternativesReader(m_confidentMode,true,true,true,m_charChart,&Common::MediaticData::MediaticData::changeable().stringsPool(language));
+  m_reader = std::make_shared<AlternativesReader>(m_confidentMode, true, true, true, m_charChart,
+                                                  &Common::MediaticData::MediaticData::changeable().stringsPool(language));
 
   try
   {
-    string concat=unitConfiguration.getParamsValueAtKey("parseConcatenated");
+    auto concat = unitConfiguration.getParamsValueAtKey("parseConcatenated");
     m_parseConcatenated=(concat=="true");
   }
   catch (NoSuchParam& )
@@ -157,19 +158,19 @@ LimaStatusCode SimpleWord::process(
 
       if (m_parseConcatenated)
       {
-        concatHandler=new ConcatenatedDataHandler(g,currentToken,SIMPLE_WORD,m_sp);
-        accentedConcatHandler=new AccentedConcatenatedDataHandler(
+        concatHandler = new ConcatenatedDataHandler(g,currentToken,SIMPLE_WORD,m_sp);
+        accentedConcatHandler = new AccentedConcatenatedDataHandler(
           g,
           currentToken->stringForm(),
           currentToken->position(),
           currentToken->status(),
           SIMPLE_WORD,
           m_sp,
-          m_charChart);
-        SequenceEntryHandler* seh=new SequenceEntryHandler();
+          m_charChart.get());
+        SequenceEntryHandler* seh = new SequenceEntryHandler();
         seh->addHandler(lingInfoHandler);
         seh->addHandler(accentedConcatHandler);
-        accentedHandler=seh;
+        accentedHandler = seh;
       }
 
       // parse data
