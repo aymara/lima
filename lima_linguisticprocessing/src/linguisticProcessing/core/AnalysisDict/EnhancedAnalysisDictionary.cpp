@@ -138,8 +138,8 @@ void EnhancedAnalysisDictionary::init(
     string accessId=unitConfiguration.getParamsValueAtKey("accessKeys");
     auto res = LinguisticResources::single().getResource(language,accessId);
     auto aar = std::dynamic_pointer_cast<AbstractAccessResource>(res);
-    if (!connect(aar.get(), SIGNAL(accessFileReloaded(Common::AbstractAccessByString*)),
-                 this, SLOT(slotAccessFileReloaded(Common::AbstractAccessByString*))))
+    if (!connect(aar.get(), SIGNAL(accessFileReloaded(std::shared_ptr<Common::AbstractAccessByString>)),
+                 this, SLOT(slotAccessFileReloaded(std::shared_ptr<Common::AbstractAccessByString>))))
     {
       LIMA_EXCEPTION("Unable to connect accessFileReloaded");
     }
