@@ -721,6 +721,7 @@ SPDX-License-Identifier: MIT
       <param key="inputFile" value="..."/>
     </group>
     <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
+      <param key="useChains" value="false"/>
       <map name="Macros2ConceptTypes">
         <entry key="NONE_1" value="LatticeDown"/>
         <entry key="DET" value="Determiner"/>
