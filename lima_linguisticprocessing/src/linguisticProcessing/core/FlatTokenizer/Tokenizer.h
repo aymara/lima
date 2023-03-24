@@ -54,9 +54,9 @@ public:
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
 
-  const CharChart* charChart() const;
-  CharChart* charChart();
-  void setCharChart(CharChart* charChart);
+  const std::shared_ptr<CharChart> charChart() const;
+  std::shared_ptr<CharChart> charChart();
+  void setCharChart(std::shared_ptr<CharChart> charChart);
 
   private:
 

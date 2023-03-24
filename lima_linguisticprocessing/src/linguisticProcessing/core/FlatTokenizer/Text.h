@@ -37,7 +37,7 @@ class LIMA_FLATTOKENIZER_EXPORT Text
 friend class TextPrivate;
 
 public:
-  Text(MediaId lang, const CharChart* charChart);
+  Text(MediaId lang, std::shared_ptr<CharChart> charChart);
   virtual ~Text();
   Text(const Text&) = delete;
   Text& operator=(const Text&) = delete;

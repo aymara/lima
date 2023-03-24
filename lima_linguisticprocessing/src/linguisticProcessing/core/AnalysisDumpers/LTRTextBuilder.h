@@ -62,7 +62,7 @@ private:
     EXPLORED_VERTICES_T m_exploredVertices;
     uint64_t m_currentOffset;
     MediaId m_language;
-    StopList* m_stopList;
+    std::shared_ptr<StopList> m_stopList;
     const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
     const Common::PropertyCode::PropertyAccessor* m_microAccessor;
 
@@ -72,7 +72,7 @@ private:
 public:
     LTRTextBuilder(
     const MediaId& language,
-        StopList* stopList);
+        std::shared_ptr<StopList> stopList);
     /** @brief build a LTRText representation of the analyzed text
      * @param graph the linguistic graph containing the analyzed text
      * @param sb a pointer on the sentence boundaries segmentation data: if zero, sentence boundaries are ignored, all text is treated as a single segment

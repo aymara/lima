@@ -46,12 +46,12 @@ public:
     AnalysisContent& analysis) const override;
 
 private:
-  Lima::LinguisticProcessing::AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
-  AlternativesReader* m_reader;
+  std::shared_ptr<AnalysisDict::AbstractAnalysisDictionary> m_dictionary;
+  std::shared_ptr<AlternativesReader> m_reader;
   bool m_confidentMode;
   bool m_parseConcatenated;
   FsaStringsPool* m_sp;
-  FlatTokenizer::CharChart* m_charChart;
+  std::shared_ptr<FlatTokenizer::CharChart> m_charChart;
   
   void linkConcatVertices(
     LinguisticGraph* graph,

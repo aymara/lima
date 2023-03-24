@@ -28,14 +28,14 @@ public:
 
   virtual ~DocumentsReaderResources();
 
-  StructuredDocumentXMLParser* getXmlParser( const std::string& id) const;
-  DocumentPropertyType* getProperty( const std::string& id) const;
+  std::shared_ptr<StructuredDocumentXMLParser> getXmlParser( const std::string& id) const;
+  std::shared_ptr<DocumentPropertyType> getProperty( const std::string& id) const;
   void init( Lima::Common::XMLConfigurationFiles::ModuleConfigurationStructure& confModule);
 private:
 
   DocumentsReaderResources();
 
-  AbstractReaderResource::Manager* m_objectManager;
+  std::unique_ptr<AbstractReaderResource::Manager> m_objectManager;
 
 };
 

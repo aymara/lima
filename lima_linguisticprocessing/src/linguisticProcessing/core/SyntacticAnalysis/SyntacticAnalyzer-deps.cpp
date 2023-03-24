@@ -72,7 +72,7 @@ void SyntacticAnalyzerDeps::init(
       std::string action = *actionsit;
       if ( (action != "setl2r") &&  (action != "setr2l") )
       {
-          m_recognizers[action] = static_cast<Automaton::Recognizer*>(LinguisticResources::single().getResource(m_language,action));
+          m_recognizers[action] = std::dynamic_pointer_cast<Automaton::Recognizer>(LinguisticResources::single().getResource(m_language, action));
       }
       else
       {
@@ -158,10 +158,11 @@ LimaStatusCode SyntacticAnalyzerDeps::process(
 #ifdef DEBUG_LP
         LDEBUG << "Geting automaton for action" << action;
 #endif
-        Automaton::Recognizer* recognizer = const_cast< Automaton::Recognizer*  >((*(m_recognizers.find(action))).second);
+        auto recognizer = (*(m_recognizers.find(action))).second;
         std::vector<Automaton::RecognizerMatch> result;
 #ifdef DEBUG_LP
-        LDEBUG << "Applying automaton for action " << action << " on sentence from " << beginSentence << " to " << endSentence;
+        LDEBUG << "Applying automaton for action " << action << " on sentence from "
+                << beginSentence << " to " << endSentence;
 #endif
         recognizer->apply(*anagraph,
                           beginSentence,

@@ -39,7 +39,7 @@ public:
 
   void clearResources();
 
-  AbstractResource* getResource(
+  std::shared_ptr<AbstractResource> getResource(
     MediaId lang,
     const std::string& id) const;
 

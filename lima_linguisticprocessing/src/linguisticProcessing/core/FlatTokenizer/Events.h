@@ -31,7 +31,7 @@ class LIMA_FLATTOKENIZER_EXPORT Events : public std::vector<const CharClass*>
 {
 
 public:
-    explicit Events(const CharChart* chart);
+    explicit Events(std::shared_ptr<CharChart> chart);
     virtual ~Events();
  
     void addEventNamed(const LimaString& eventName);
@@ -41,7 +41,7 @@ public:
     bool isRecognized(const Lima::LimaChar& event) const;
 
 private:
-  const CharChart* m_chart;
+  std::shared_ptr<CharChart> m_chart;
 };
 
 } //namespace FlatTokenizer

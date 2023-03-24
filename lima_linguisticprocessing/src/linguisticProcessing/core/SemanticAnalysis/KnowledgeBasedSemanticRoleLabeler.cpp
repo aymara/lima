@@ -53,8 +53,8 @@ public:
   virtual ~KnowledgeBasedSemanticRoleLabelerPrivate();
 
   PyObject* m_instance;
-  const MediaProcessUnit* m_dumper;
-  const MediaProcessUnit* m_loader;
+  std::shared_ptr<MediaProcessUnit> m_dumper;
+  std::shared_ptr<MediaProcessUnit> m_loader;
   QString m_inputSuffix;
   QString m_outputSuffix;
   QString m_temporaryFileMetadata;
@@ -107,7 +107,7 @@ void KnowledgeBasedSemanticRoleLabeler::init(
   try {
     string dumperName=unitConfiguration.getParamsValueAtKey("dumper");
     // create the dumper
-    m_d->m_dumper=manager->getObject(dumperName);
+    m_d->m_dumper = manager->getObject(dumperName);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     SEMANTICANALYSISLOGINIT;

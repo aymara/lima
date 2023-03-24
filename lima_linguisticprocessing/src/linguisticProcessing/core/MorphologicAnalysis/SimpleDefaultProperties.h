@@ -51,7 +51,7 @@ protected:
 private:
 
   std::vector<LinguisticCode> m_defaultProperties;
-  FlatTokenizer::CharChart* m_charChart;
+  std::shared_ptr<FlatTokenizer::CharChart> m_charChart;
   MediaId m_language;
 
   // Each token of the specified path without dictionnary entry is

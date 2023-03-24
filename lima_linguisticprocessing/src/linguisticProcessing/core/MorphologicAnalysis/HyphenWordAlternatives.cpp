@@ -65,7 +65,7 @@ HyphenWordAlternatives::HyphenWordAlternatives()
 
 HyphenWordAlternatives::~HyphenWordAlternatives()
 {
-  delete m_reader;
+  // delete m_reader;
 }
 
 void HyphenWordAlternatives::init(
@@ -78,8 +78,8 @@ void HyphenWordAlternatives::init(
   try
   {
     string dico=unitConfiguration.getParamsValueAtKey("dictionary");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
-    m_dictionary=static_cast<AnalysisDict::AbstractAnalysisDictionary*>(res);
+    auto res = LinguisticResources::single().getResource(m_language,dico);
+    m_dictionary = std::dynamic_pointer_cast<AnalysisDict::AbstractAnalysisDictionary>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -89,8 +89,8 @@ void HyphenWordAlternatives::init(
   try
   {
     string charchart=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,charchart);
-    m_charChart=static_cast<FlatTokenizer::CharChart*>(res);
+    auto res = LinguisticResources::single().getResource(m_language,charchart);
+    m_charChart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -100,8 +100,8 @@ void HyphenWordAlternatives::init(
   try
   {
     string tok=unitConfiguration.getParamsValueAtKey("tokenizer");
-    const MediaProcessUnit* res=manager->getObject(tok);
-    m_tokenizer=static_cast<const FlatTokenizer::Tokenizer*>(res);
+    auto res = manager->getObject(tok);
+    m_tokenizer = std::dynamic_pointer_cast<FlatTokenizer::Tokenizer>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -110,7 +110,7 @@ void HyphenWordAlternatives::init(
   }
   try
   {
-    m_deleteHyphenWord=( unitConfiguration.getParamsValueAtKey("deleteHyphenWord") == "true");
+    m_deleteHyphenWord =( unitConfiguration.getParamsValueAtKey("deleteHyphenWord") == "true");
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -130,7 +130,7 @@ void HyphenWordAlternatives::init(
     m_confidentMode=true;
   }
   FsaStringsPool* sp=&Common::MediaticData::MediaticData::changeable().stringsPool(m_language);
-  m_reader=new AlternativesReader(m_confidentMode,true,true,true,m_charChart,sp);
+  m_reader = std::make_shared<AlternativesReader>(m_confidentMode, true, true, true, m_charChart, sp);
 
   const auto &theMediaticData = static_cast<const Common::MediaticData::MediaticData&>(Common::MediaticData::MediaticData::single());
   m_engLanguageId = theMediaticData.getMediaId("eng");

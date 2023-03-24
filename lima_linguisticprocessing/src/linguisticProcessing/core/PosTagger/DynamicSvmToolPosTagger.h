@@ -109,7 +109,7 @@ class DynamicSvmToolPosTaggerFactory : public InitializableObjectFactory<MediaPr
 {
 public:
 
-  virtual MediaProcessUnit* create(
+  virtual std::shared_ptr<MediaProcessUnit> create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     MediaProcessUnit::Manager* manager) const override ;
 

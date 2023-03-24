@@ -67,8 +67,8 @@ public:
 private:
   void debugPrintInactiveUnits() const;
 
-  typedef typename std::list<const ProcessUnit*> ProcessUnitSequence;
-  typedef typename std::list<const ProcessUnit*>::const_iterator ProcessUnitSequenceCItr;
+  typedef typename std::list<std::shared_ptr<ProcessUnit>> ProcessUnitSequence;
+  typedef typename std::list<std::shared_ptr<ProcessUnit>>::const_iterator ProcessUnitSequenceCItr;
   ProcessUnitSequence m_processUnitSequence;
 
   /// @deprecated the inactive units must be sent as an AnalysisData in the AnalysisContent to allow various inactive units in various threads

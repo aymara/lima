@@ -51,9 +51,9 @@ void GreedyPosTagger::init(
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
   try
   {
-    string trigrams=unitConfiguration.getParamsValueAtKey("trigramMatrix");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,trigrams);
-    m_trigramMatrix=static_cast<TrigramMatrix*>(res);
+    auto trigrams = unitConfiguration.getParamsValueAtKey("trigramMatrix");
+    auto res = LinguisticResources::single().getResource(m_language, trigrams);
+    m_trigramMatrix = std::dynamic_pointer_cast<TrigramMatrix>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -64,8 +64,8 @@ void GreedyPosTagger::init(
   try
   {
     string bigrams=unitConfiguration.getParamsValueAtKey("bigramMatrix");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,bigrams);
-    m_bigramMatrix=static_cast<BigramMatrix*>(res);
+    auto res = LinguisticResources::single().getResource(m_language, bigrams);
+    m_bigramMatrix = std::dynamic_pointer_cast<BigramMatrix>(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {
@@ -86,8 +86,7 @@ void GreedyPosTagger::init(
 
 }
 
-LimaStatusCode GreedyPosTagger::process(
-  AnalysisContent& analysis) const
+LimaStatusCode GreedyPosTagger::process(AnalysisContent& analysis) const
 {
 
   // start postagging here !
@@ -97,12 +96,12 @@ LimaStatusCode GreedyPosTagger::process(
 
   auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
 
-  AnalysisGraph* posgraph=new AnalysisGraph("PosGraph",m_language,false,true,*anagraph);
+  auto posgraph = std::make_shared<AnalysisGraph>("PosGraph", m_language, false, true, *anagraph);
 
   // walk on the vertex but don't process a vertex if one
   // of its predecessor hasn't been processed.
-  LinguisticGraph* graph=posgraph->getGraph();
-  LinguisticGraphVertex endVx=posgraph->lastVertex();
+  auto graph = posgraph->getGraph();
+  LinguisticGraphVertex endVx = posgraph->lastVertex();
 
   map<LinguisticGraphVertex,uint64_t> processed;
   set<LinguisticGraphVertex> toProcess;
@@ -126,7 +125,7 @@ LimaStatusCode GreedyPosTagger::process(
     {
 
       // process vertex
-      processVertex(*toProcessItr,anagraph.get());
+      processVertex(*toProcessItr, anagraph.get());
       processed.insert(make_pair(*toProcessItr,out_degree(*toProcessItr,*graph)));
       //cerr << "processed : insert " << *toProcessItr << " with " << out_degree(*toProcessItr,*graph) << endl;
 

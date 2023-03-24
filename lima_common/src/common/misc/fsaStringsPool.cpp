@@ -35,7 +35,7 @@ class FsaStringsPoolPrivate
   void clear();
   void clear(const uint64_t pos);
 
-  Common::AbstractAccessByString* m_mainKeys;
+  std::shared_ptr<Common::AbstractAccessByString> m_mainKeys;
   StringsPoolIndex m_mainKeySize;
   StringsPool m_additionalPool;
   std::vector<LimaString>* m_cache;
@@ -66,7 +66,7 @@ FsaStringsPool::~FsaStringsPool()
   delete m_d;
 }
 
-void FsaStringsPool::registerMainKeys(AbstractAccessByString* mainKeys)
+void FsaStringsPool::registerMainKeys(std::shared_ptr<AbstractAccessByString> mainKeys)
 {
   STRPOOLLOGINIT;
   LINFO << "register main keys" ;

@@ -28,7 +28,7 @@ namespace SyntacticAnalysis {
 
 SyntacticData::SyntacticData(
         AnalysisGraph* anagraph,
-        const SyntagmDefStruct* matrices) :
+        std::shared_ptr<SyntagmDefStruct> matrices) :
     m_anagraph(anagraph),
     m_graph(anagraph->getGraph()),
     m_depGraph(0),

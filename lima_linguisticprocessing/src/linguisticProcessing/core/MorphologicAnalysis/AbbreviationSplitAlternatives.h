@@ -69,12 +69,12 @@ protected:
 
 private:
 
-    const FlatTokenizer::Tokenizer* m_tokenizer;
-    AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
+    std::shared_ptr<FlatTokenizer::Tokenizer> m_tokenizer;
+    std::shared_ptr<AnalysisDict::AbstractAnalysisDictionary> m_dictionary;
     std::vector<LimaString> m_abbreviations;
     MediaId m_language;
     bool m_confidentMode;
-    AlternativesReader* m_reader;
+    std::shared_ptr<AlternativesReader> m_reader;
     QRegularExpression m_charSplitRegexp;
 
     bool makeConcatenatedAbbreviationSplitAlternativeFor(

@@ -236,7 +236,7 @@ protected:
    *
    * Only used to initialize the SyntacticData in the process method.
    */
-  SyntagmDefStruct* m_chainMatrix;
+  std::shared_ptr<SyntagmDefStruct> m_chainMatrix;
 
   /** @brief Sets the max number of chains on one vertex.
    * 

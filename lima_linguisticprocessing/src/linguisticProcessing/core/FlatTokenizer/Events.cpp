@@ -27,7 +27,7 @@ namespace LinguisticProcessing
 namespace FlatTokenizer
 {
 
-Events::Events(const CharChart* chart) : std::vector<const CharClass*>(),
+Events::Events(std::shared_ptr<CharChart> chart) : std::vector<const CharClass*>(),
                m_chart(chart)
 {
 }

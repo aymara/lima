@@ -37,7 +37,7 @@ public:
     LevelData() : startEntryData(0),endEntryData(0),keys(0),dicoData(0),mainKeys(false) {};
     unsigned char* startEntryData;
     unsigned char* endEntryData;
-    const Lima::Common::AbstractAccessByString* keys;
+    std::shared_ptr<Lima::Common::AbstractAccessByString> keys;
     const DictionaryData* dicoData;
     bool mainKeys;
   };

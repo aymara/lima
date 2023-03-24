@@ -58,9 +58,9 @@ void EventTemplateFilling::init(
 
   try {
     std::string templateResource=unitConfiguration.getParamsValueAtKey("eventTemplate");
-    AbstractResource* res=LinguisticResources::single().getResource(language,templateResource);
+    auto res=LinguisticResources::single().getResource(language,templateResource);
     if (res) {
-      m_templateDefinition=static_cast<EventTemplateDefinitionResource*>(res);
+      m_templateDefinition = std::dynamic_pointer_cast<EventTemplateDefinitionResource>(res);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
@@ -91,7 +91,8 @@ LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
 
   // set a temporary template definition resource that can be accessed 
   // by the actions called in the ApplyRecognizer
-  analysis.setData("EventTemplateFillingTemplateDefinition", new EventTemplateDefinitionData(m_templateDefinition));
+  analysis.setData("EventTemplateFillingTemplateDefinition",
+                   std::make_shared<EventTemplateDefinitionData>(m_templateDefinition));
   
   LimaStatusCode returnCode=SUCCESS_ID;
   returnCode=ApplyRecognizer::process(analysis);

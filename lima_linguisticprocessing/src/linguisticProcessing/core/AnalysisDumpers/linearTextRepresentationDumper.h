@@ -56,7 +56,7 @@ public:
 
 private:
   MediaId m_language;
-  StopList* m_stopList;
+  std::shared_ptr<StopList> m_stopList;
   std::string m_handler;
 };
 

@@ -385,7 +385,7 @@ run(int argc, char** argv)
     auto resReco = LinguisticResources::single().getResource(language,
                                                              "automatonCompiler");
 
-    Recognizer& reco = *(static_cast< Recognizer* >(resReco));
+    auto reco = std::dynamic_pointer_cast< Recognizer >(resReco);
 
     // look at the modex config file to find the dynamic libraries that must be loaded
     if (! param.modexConfigFile.empty())
@@ -434,11 +434,11 @@ run(int argc, char** argv)
       {
         //reco.readFromFile(param.inputRulesFile);
         AutomatonReader reader;
-        reader.readRecognizer(param.inputRulesFile,reco);
+        reader.readRecognizer(param.inputRulesFile,*reco);
 
         if (! param.listTriggers)
         {
-          std::cout << reco;
+          std::cout << *reco;
         }
       }
       catch (std::exception& e)
@@ -458,7 +458,7 @@ run(int argc, char** argv)
         //std::cerr << "\rBuilding recognizer…";
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
-        compiler.buildRecognizer(reco,language);
+        compiler.buildRecognizer(*reco,language);
 	// delete ctrl2;
       }
       catch (std::exception& e)
@@ -478,7 +478,7 @@ run(int argc, char** argv)
           auto res = LinguisticResources::single().getResource(language,
                                                                dicostr);
 
-          auto dico = static_cast< AnalysisDict::AbstractAnalysisDictionary* >(res);
+          auto dico = std::dynamic_pointer_cast< AnalysisDict::AbstractAnalysisDictionary >(res);
           if (dico == nullptr)
           {
             throw std::runtime_error("dictionary not available for language "+
@@ -503,7 +503,7 @@ run(int argc, char** argv)
           AutomatonWriter writer;
           LINFO << "writer.WritingRecognizer(language:" << language
                 << "debug:" << param.debug << ")";
-          writer.writeRecognizer(reco, param.outputFile, language, param.debug);
+          writer.writeRecognizer(*reco, param.outputFile, language, param.debug);
           //reco.writeToFile(param.outputFile);
         }
       }
@@ -516,7 +516,7 @@ run(int argc, char** argv)
 
     if (param.listTriggers)
     {
-      reco.listTriggers();
+      reco->listTriggers();
     }
 
   }

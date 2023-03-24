@@ -53,14 +53,13 @@ void FsaRwAccessResource::init(
    */
     
   ANALYSISDICTLOGINIT;
-  FsaAccess::FsaAccessBuilderRandom16* fsaAccess;
   try
   {
     QString keyfile = Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(), unitConfiguration.getParamsValueAtKey("keyFile").c_str());
-    fsaAccess=new FsaAccess::FsaAccessBuilderRandom16();
+    auto fsaAccess = std::make_shared<FsaAccess::FsaAccessBuilderRandom16>();
     fsaAccess->read(keyfile.toUtf8().constData());
-    m_fsaAccess=fsaAccess;
-    m_fsaRwAccess=fsaAccess;
+    m_fsaAccess = fsaAccess;
+    m_fsaRwAccess = fsaAccess;
   }
   catch (NoSuchParam& )
   {
@@ -70,11 +69,11 @@ void FsaRwAccessResource::init(
 }
 
 
-AbstractAccessByString* FsaRwAccessResource::getAccessByString() const
+std::shared_ptr<AbstractAccessByString> FsaRwAccessResource::getAccessByString() const
   { return m_fsaAccess;}
 
 
-AbstractModifierOnAccessByString* FsaRwAccessResource::getRwAccessByString() const
+std::shared_ptr<AbstractModifierOnAccessByString> FsaRwAccessResource::getRwAccessByString() const
   { return m_fsaRwAccess;}
 
 }

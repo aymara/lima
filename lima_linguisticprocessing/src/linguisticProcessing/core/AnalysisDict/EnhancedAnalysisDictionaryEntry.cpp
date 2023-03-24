@@ -29,7 +29,7 @@ EnhancedAnalysisDictionaryEntry::EnhancedAnalysisDictionaryEntry(
   unsigned char* endEntryData,
   const DictionaryData* dicoData,
   bool isMainKeys,
-  Lima::Common::AbstractAccessByString* access,
+  std::shared_ptr<Lima::Common::AbstractAccessByString> access,
   Lima::FsaStringsPool* sp) :
     AbstractDictionaryEntry(formId,isFinal,isEmpty,hasLingInfos,
                             hasConcatenated,hasAccentedForm),

@@ -96,7 +96,7 @@ void EnhancedAnalysisDictionaryTest0::test()
                                         "mainDictionary",
                                         "dictionaryValuesFile").c_str());
   std::cout << "Load keys " << keyFileName.toUtf8().constData() << std::endl;
-  FsaAccessSpare16* fsaAccess=new FsaAccessSpare16();
+  auto fsaAccess = std::make_shared<FsaAccessSpare16>();
   fsaAccess->read(keyFileName.toUtf8().constData());
 
   std::cout << "Register mainkeys" << std::endl;

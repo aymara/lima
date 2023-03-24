@@ -58,7 +58,7 @@ typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Mediat
       * @param graph @b IN/OUT <I>LinguisticGraph*</I> the graph containing
       *        morphological data
       */
-    SyntacticData(LinguisticAnalysisStructure::AnalysisGraph* pit, const SyntagmDefStruct* matrices);
+    SyntacticData(LinguisticAnalysisStructure::AnalysisGraph* pit, std::shared_ptr<SyntagmDefStruct> matrices);
 
     virtual ~SyntacticData();
 
@@ -71,8 +71,8 @@ typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Mediat
     inline LinguisticAnalysisStructure::AnalysisGraph* iterator() {return m_anagraph;}
     inline const LinguisticAnalysisStructure::AnalysisGraph* iterator() const {return m_anagraph;}
 
-    inline const SyntagmDefStruct* matrices() const {return m_matrices;}
-    inline void matrices(const SyntagmDefStruct* matrices) {m_matrices=matrices;}
+    inline std::shared_ptr<SyntagmDefStruct> matrices() const {return m_matrices;}
+    inline void matrices(std::shared_ptr<SyntagmDefStruct> matrices) {m_matrices=matrices;}
 
   inline std::vector<LinguisticAnalysisStructure::Token*>& ownedTokens() {return m_ownedTokens;}
   inline std::vector<LinguisticAnalysisStructure::MorphoSyntacticData*>& ownedMorphosyntacticData() {return m_ownedMorphData;}
@@ -194,7 +194,7 @@ typedef std::tuple< LinguisticGraphVertex, LinguisticGraphVertex, Common::Mediat
     /** @brief The graph containing syntactic dependency relations */
     DependencyGraph* m_depGraph;
 
-    const SyntagmDefStruct* m_matrices;
+    std::shared_ptr<SyntagmDefStruct> m_matrices;
 
     /** @brief The mapping between both graphs */
     std::pair<

@@ -32,7 +32,7 @@ namespace PosTagger
 
 #define GREEDYPOSTAGGER_CLASSID "GreedyPosTagger"
 
-class LIMA_POSTAGGER_EXPORT GreedyPosTagger : public MediaProcessUnit
+class LIMA_POSTAGGER_EXPORT [[deprecated]] GreedyPosTagger : public MediaProcessUnit
 {
 
 public:
@@ -49,8 +49,8 @@ public:
 
 private:
 
-  const TrigramMatrix*        m_trigramMatrix;
-  const BigramMatrix*         m_bigramMatrix;
+  std::shared_ptr<TrigramMatrix> m_trigramMatrix;
+  std::shared_ptr<BigramMatrix> m_bigramMatrix;
   LinguisticCode m_microCatPonctuForte;
   const Common::PropertyCode::PropertyAccessor* m_macroAccessor;
   const Common::PropertyCode::PropertyAccessor* m_microAccessor;

@@ -69,14 +69,14 @@ protected:
 
 private:
 
-    const FlatTokenizer::Tokenizer* m_tokenizer;
-    AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
-    FlatTokenizer::CharChart* m_charChart;
+    std::shared_ptr<FlatTokenizer::Tokenizer> m_tokenizer;
+    std::shared_ptr<AnalysisDict::AbstractAnalysisDictionary> m_dictionary;
+    std::shared_ptr<FlatTokenizer::CharChart> m_charChart;
     bool m_deleteHyphenWord;
     bool m_confidentMode;
     MediaId m_language;
     MediaId m_engLanguageId;
-    AlternativesReader* m_reader;
+    std::shared_ptr<AlternativesReader> m_reader;
     std::string m_sentBoundariesName;
 
     void makeHyphenSplitAlternativeFor(

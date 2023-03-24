@@ -60,7 +60,7 @@ class LIMA_ANALYSISDICT_EXPORT AbstractDictionaryEntry
 class LIMA_ANALYSISDICT_EXPORT DictionaryEntry
 {
   public:
-    DictionaryEntry(AbstractDictionaryEntry* delegate);
+    DictionaryEntry(std::shared_ptr<AbstractDictionaryEntry> delegate);
     DictionaryEntry(const DictionaryEntry& dicoEntry);
     virtual ~DictionaryEntry();
     DictionaryEntry& operator=(const DictionaryEntry& dicoEntry);
@@ -76,7 +76,7 @@ class LIMA_ANALYSISDICT_EXPORT DictionaryEntry
     inline void parseAccentedForms(AbstractDictionaryEntryHandler* handler) const;
     
   private:
-    AbstractDictionaryEntry* m_delegate;
+    std::shared_ptr<AbstractDictionaryEntry> m_delegate;
 };
 
 } // AnalysisDict

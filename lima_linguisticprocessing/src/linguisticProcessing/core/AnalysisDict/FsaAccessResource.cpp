@@ -47,10 +47,10 @@ FsaAccessResource::FsaAccessResource(QObject* parent)
 
 FsaAccessResource::~FsaAccessResource()
 {
-  if (m_fsaAccess!=0)
-  {
-    delete m_fsaAccess;
-  }
+  // if (m_fsaAccess!=0)
+  // {
+  //   delete m_fsaAccess;
+  // }
 }
 
 void FsaAccessResource::init(
@@ -68,7 +68,7 @@ void FsaAccessResource::init(
     QString keyFile = getResourceFileName(unitConfiguration.getParamsValueAtKey("keyFile").c_str());
     if (! keyFile.isEmpty())
     {
-      FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+      auto fsaAccess = std::make_shared<FsaAccess::FsaAccessSpare16>();
       QWriteLocker locker(&m_lock);
       LINFO << "FsaAccessResource::init read keyFile" << keyFile;
       fsaAccess->read(keyFile.toStdString());
@@ -105,7 +105,7 @@ void FsaAccessResource::init(
   }
 }
 
-AbstractAccessByString* FsaAccessResource::getAccessByString() const
+std::shared_ptr<AbstractAccessByString> FsaAccessResource::getAccessByString() const
   { return m_fsaAccess;}
 
 void FsaAccessResource::accessFileChanged ( const QString & path )
@@ -117,10 +117,10 @@ void FsaAccessResource::accessFileChanged ( const QString & path )
   if (QFileInfo::exists(path))
   {
     LINFO << "FsaAccessResource::accessFileChanged reload" << path;
-    FsaAccess::FsaAccessSpare16* fsaAccess=new FsaAccess::FsaAccessSpare16();
+    auto fsaAccess = std::make_shared<FsaAccess::FsaAccessSpare16>();
     QWriteLocker locker(&m_lock);
     fsaAccess->read(path.toUtf8().constData());
-    delete m_fsaAccess;
+    // delete m_fsaAccess;
     m_fsaAccess=fsaAccess;
     Q_EMIT accessFileReloaded(m_fsaAccess);
   }

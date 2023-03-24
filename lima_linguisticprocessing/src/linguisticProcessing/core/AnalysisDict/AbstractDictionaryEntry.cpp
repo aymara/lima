@@ -45,25 +45,25 @@ AbstractDictionaryEntry(const AbstractDictionaryEntry& de) :
 AbstractDictionaryEntry::~AbstractDictionaryEntry()
 {}
 
-DictionaryEntry::DictionaryEntry(AbstractDictionaryEntry* delegate) :
+DictionaryEntry::DictionaryEntry(std::shared_ptr<AbstractDictionaryEntry> delegate) :
   m_delegate(delegate)
 {}
 
 DictionaryEntry::DictionaryEntry(const DictionaryEntry& dicoEntry) :
-  m_delegate(0)
+  m_delegate(dicoEntry.m_delegate)
 {
-  m_delegate=dicoEntry.m_delegate->clone();
+  // m_delegate=dicoEntry.m_delegate->clone();
 }
   
 DictionaryEntry::~DictionaryEntry()
 {
-  delete m_delegate;
+  // delete m_delegate;
 }
 
 DictionaryEntry& DictionaryEntry::operator=(const DictionaryEntry& dicoEntry)
 {
-  delete m_delegate;
-  m_delegate=dicoEntry.m_delegate->clone();
+  // delete m_delegate;
+  m_delegate = dicoEntry.m_delegate;
   return *this;
 }
 

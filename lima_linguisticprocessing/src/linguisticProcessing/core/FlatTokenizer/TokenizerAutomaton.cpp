@@ -59,8 +59,8 @@ void TokenizerAutomaton::init(
   try
   {
     string charchartId=unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res=LinguisticResources::single().getResource(_language,charchartId);
-    _charChart=static_cast<CharChart*>(res);
+    auto res = LinguisticResources::single().getResource(_language,charchartId);
+    _charChart = std::dynamic_pointer_cast<CharChart>(res);
   }
   catch (NoSuchParam& )
   {
@@ -69,7 +69,7 @@ void TokenizerAutomaton::init(
     throw InvalidConfiguration();
   }
 
-  m_text=new Text(_language,_charChart);
+  m_text = new Text(_language, _charChart);
 }
 
 const State* TokenizerAutomaton::stateNamed(const LimaString& name) const

@@ -45,7 +45,7 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         * @return ProcessUnitPipeline*
         * @retval 0 if can't get the corresponding pipeline
         */
-        const MediaProcessUnitPipeline* getPipelineForId ( MediaId med,const std::string& id ) const;
+        std::shared_ptr<MediaProcessUnitPipeline> getPipelineForId ( MediaId med,const std::string& id ) const;
 
         /**
         * @brief get the dumper for the given id and media
@@ -54,7 +54,7 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         * @return ObjetAnalysisDumper*
         * @retval 0 if can't get the corresponding dumper
         */
-        const MediaAnalysisDumper* getAnalysisDumperForId ( MediaId med,const std::string& type ) const;
+        std::shared_ptr<MediaAnalysisDumper> getAnalysisDumperForId ( MediaId med,const std::string& type ) const;
 
         void initMedia (
             MediaId,

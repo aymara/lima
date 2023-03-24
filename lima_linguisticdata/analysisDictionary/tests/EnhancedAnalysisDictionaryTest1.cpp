@@ -128,27 +128,27 @@ void EnhancedAnalysisDictionaryTest1::testLanguage(
   // get globalFsaAccess (convert keys to Id)
   auto globalFsaAccess = LinguisticResources::single().getResource(mediaId,"globalFsaAccess");
   // check if it an AbstractAccessResource
-  auto aar = dynamic_cast<const AbstractAccessResource*>(globalFsaAccess);
+  auto aar = std::dynamic_pointer_cast<AbstractAccessResource>(globalFsaAccess);
   QVERIFY(aar != nullptr);
   // check if it isMainKeys
   QVERIFY(aar->isMainKeys());
   // check if it a FsaAccessResource
-  const FsaAccessResource* far=dynamic_cast<const FsaAccessResource*>(globalFsaAccess);
+  auto far = std::dynamic_pointer_cast<FsaAccessResource>(globalFsaAccess);
   QVERIFY(far != nullptr);
   // get AbstractAccessByString
-  const Common::AbstractAccessByString* aas = aar->getAccessByString();
+  auto aas = aar->getAccessByString();
   QVERIFY(aas != nullptr);
   // check if it a FsaAccess::FsaAccessSpare16*
-  const FsaAccess::FsaAccessSpare16* fas=dynamic_cast<const FsaAccess::FsaAccessSpare16*>(aas);
+  auto fas = std::dynamic_pointer_cast<FsaAccess::FsaAccessSpare16>(aas);
   QVERIFY(fas != nullptr);
 
   // get mainDictionary
-  const AbstractResource* mainDictionary=LinguisticResources::single().getResource(mediaId,"mainDictionary");
+  auto mainDictionary = LinguisticResources::single().getResource(mediaId,"mainDictionary");
   // check if it a AbstractAnalysisDictionary
-  const AbstractAnalysisDictionary* aad=dynamic_cast<const AbstractAnalysisDictionary*>(mainDictionary);
+  auto aad = std::dynamic_pointer_cast<AbstractAnalysisDictionary>(mainDictionary);
   QVERIFY( aad != nullptr );
   // check if it a EnhancedAnalysisDictionary
-  const EnhancedAnalysisDictionary* ead=dynamic_cast<const EnhancedAnalysisDictionary*>(mainDictionary);
+  auto ead = std::dynamic_pointer_cast<EnhancedAnalysisDictionary>(mainDictionary);
   QVERIFY( ead != nullptr );
 
   // test uint64_t getSize() const;

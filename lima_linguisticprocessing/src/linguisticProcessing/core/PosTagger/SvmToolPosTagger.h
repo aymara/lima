@@ -71,7 +71,7 @@ class SvmToolPosTaggerFactory : public InitializableObjectFactory<MediaProcessUn
 {
 public:
 
-  virtual MediaProcessUnit* create(
+  virtual std::shared_ptr<MediaProcessUnit> create(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
     MediaProcessUnit::Manager* manager) const override ;
 

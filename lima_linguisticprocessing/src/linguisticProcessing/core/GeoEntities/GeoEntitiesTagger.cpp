@@ -204,7 +204,7 @@ void GeoEntitiesTagger::init(
   try
   {
     string dico = unitConfiguration.getParamsValueAtKey("charChart");
-    AbstractResource* res = LinguisticResources::single().getResource(manager->getInitializationParameters().media,dico);
+    auto res = LinguisticResources::single().getResource(manager->getInitializationParameters().media,dico);
     m_charChart = static_cast< FlatTokenizer::CharChart* >(res);
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )

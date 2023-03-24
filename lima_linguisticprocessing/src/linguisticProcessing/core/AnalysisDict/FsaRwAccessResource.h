@@ -39,11 +39,11 @@ public:
      Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
      Manager* manager) override;
 
-    virtual Common::AbstractModifierOnAccessByString* getRwAccessByString() const;
-    virtual Common::AbstractAccessByString* getAccessByString() const override;
+    virtual std::shared_ptr<Common::AbstractAccessByString> getAccessByString() const override;
+    virtual std::shared_ptr<Common::AbstractModifierOnAccessByString> getRwAccessByString() const;
 
 private:
-  Common::AbstractModifierOnAccessByString* m_fsaRwAccess;
+  std::shared_ptr<Common::AbstractModifierOnAccessByString> m_fsaRwAccess;
 //  Common::AbstractAccessByString* m_fsaAccess;
     
 };

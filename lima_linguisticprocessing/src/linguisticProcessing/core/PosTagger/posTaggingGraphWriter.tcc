@@ -275,7 +275,7 @@ public:
       {
         cat1 = microManager.getPropertyAccessor().readValue(d1->begin()->properties);
       }
-      if (!m_trigramMatrix->exists(cat1, cat2, cat3))
+      if (m_trigramMatrix != nullptr && !m_trigramMatrix->exists(cat1, cat2, cat3))
       {
         hasNonValidTrigram = true;
         gramNotFound.push_back(gram);
@@ -286,7 +286,7 @@ public:
     if (hasNonValidTrigram)
     {
       // check if bigram is valid
-      if (!m_bigramMatrix->exists(cat2, cat3))
+      if (m_bigramMatrix != nullptr && !m_bigramMatrix->exists(cat2, cat3))
       {
         gramNotFound.push_back(gram);
         hasNonValidBigram = true;

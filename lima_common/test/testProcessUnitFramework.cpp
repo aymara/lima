@@ -94,7 +94,7 @@ int run(int argc, char** argv)
 
   DummyProcessUnit::Manager manager(modconf);
 
-  DummyProcessUnit* pip=manager.getObject("myPipeline");
+  auto pip = manager.getObject("myPipeline");
   if (pip==0) {
     cerr << "FAILED : Getting myPipeline failed !!" << endl;
     return -1;

@@ -52,8 +52,8 @@ m_microAccessor(0)
 
   if (language != UNDEFLANG) {
     try {
-      AbstractResource* res = LinguisticResources::single().getResource(language,"microsForPersonNameNormalization");
-      MicrosForNormalization* micros=static_cast<MicrosForNormalization*>(res);
+      auto res = LinguisticResources::single().getResource(language,"microsForPersonNameNormalization");
+      auto micros = std::dynamic_pointer_cast<MicrosForNormalization>(res);
       m_microsForFirstname=micros->getMicros("FirstnameMicros");
     }
     catch (exception& e) {

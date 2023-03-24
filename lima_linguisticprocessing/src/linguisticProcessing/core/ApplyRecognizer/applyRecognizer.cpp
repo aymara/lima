@@ -66,17 +66,17 @@ void ApplyRecognizer::init(
   try {
     // try to get a single automaton
     string automaton=unitConfiguration.getParamsValueAtKey("automaton");
-    AbstractResource* res=LinguisticResources::single().getResource(language,automaton);
-    m_recognizers.push_back(static_cast<Recognizer*>(res));
+    auto res = LinguisticResources::single().getResource(language,automaton);
+    m_recognizers.push_back(std::dynamic_pointer_cast<Recognizer>(res));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     try {
     // try to get a list of automatons
       const deque<string>& automatonList=unitConfiguration.getListsValueAtKey("automatonList");
-      for (deque<string>::const_iterator it=automatonList.begin(),
-             it_end=automatonList.end(); it!=it_end; it++) {
-        AbstractResource* res=LinguisticResources::single().getResource(language,*it);
-        m_recognizers.push_back(static_cast<Recognizer*>(res));
+      for (auto automaton: automatonList)
+      {
+        auto res = LinguisticResources::single().getResource(language, automaton);
+        m_recognizers.push_back(std::dynamic_pointer_cast<Recognizer>(res));
       }
     }
     catch (Common::XMLConfigurationFiles::NoSuchList& ) {
@@ -245,15 +245,13 @@ LimaStatusCode ApplyRecognizer::process(AnalysisContent& analysis) const
   recoData->setResultData(resultData);
 
   if (m_useSentenceBounds) {
-    for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
-           reco_end=m_recognizers.end();reco!=reco_end; reco++) {
-      returnCode=processOnEachSentence(analysis,*reco,recoData.get());
+    for (auto reco: m_recognizers) {
+      returnCode = processOnEachSentence(analysis, reco.get(), recoData.get());
     }
   }
   else {
-    for (vector<Recognizer*>::const_iterator reco=m_recognizers.begin(),
-           reco_end=m_recognizers.end();reco!=reco_end; reco++) {
-      returnCode=processOnWholeText(analysis,*reco,recoData.get());
+    for (auto reco: m_recognizers) {
+      returnCode = processOnWholeText(analysis, reco.get(), recoData.get());
     }
   }
 

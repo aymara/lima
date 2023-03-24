@@ -22,7 +22,7 @@ class LIMA_POSTAGGER_EXPORT DotGraphWriter : public MediaProcessUnit
 
 public:
   DotGraphWriter();
-  virtual ~DotGraphWriter();
+  virtual ~DotGraphWriter() = default;
 
   void init(
     Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
@@ -34,8 +34,8 @@ protected:
 
   std::string m_outputSuffix;
   MediaId m_language;
-  const Lima::LinguisticProcessing::PosTagger::TrigramMatrix* m_trigramMatrix;
-  const Lima::LinguisticProcessing::PosTagger::BigramMatrix* m_bigramMatrix;
+  std::shared_ptr<Lima::LinguisticProcessing::PosTagger::TrigramMatrix> m_trigramMatrix;
+  std::shared_ptr<Lima::LinguisticProcessing::PosTagger::BigramMatrix> m_bigramMatrix;
   std::deque<std::string> m_vertexDisplay;
   std::string m_graphId;
 

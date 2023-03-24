@@ -49,7 +49,7 @@ class CompoundsBuilderFromSyntacticDataPrivate
 
   std::map< LinguisticCode, Lima::Common::MediaticData::ConceptType > m_macro2ConceptMapping;
   std::set< std::string > m_compoundsRels;
-  bool m_useChains = true;
+  bool m_useChains = false;
 };
 
 CompoundsBuilderFromSyntacticDataPrivate::CompoundsBuilderFromSyntacticDataPrivate()

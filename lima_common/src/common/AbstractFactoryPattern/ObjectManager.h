@@ -42,7 +42,7 @@ public:
    * @return pointer to object corresponding to id
    * @throw InvalidConfiguration if failed to create object from given configuration
    */
-  virtual Object* getObject(const std::string& id);
+  virtual std::shared_ptr<Object> getObject(const std::string& id);
 
 protected:
 
@@ -52,36 +52,36 @@ protected:
    * @return pointer to object corresponding to id
    * @throw InvalidConfiguration if failed to create object from given configuration
    */
-  virtual Object* createObject(const std::string& id) = 0;
+  virtual std::shared_ptr<Object> createObject(const std::string& id) = 0;
 
 private:
 
-  typedef typename std::map<std::string,Object*> ObjectMap;
-  typedef typename std::map<std::string,Object*>::iterator ObjectMapItr;
+  typedef typename std::map<std::string, std::shared_ptr<Object>> ObjectMap;
+  typedef typename std::map<std::string, std::shared_ptr<Object>>::iterator ObjectMapItr;
   ObjectMap m_objects;
 };
 
 template <typename Object>
 ObjectManager<Object>::~ObjectManager()
 {
-  for (ObjectMapItr it=m_objects.begin();
-       it!=m_objects.end();
-       it++)
-  {
-    delete it->second;
-    it->second=0;
-  }
+  // for (ObjectMapItr it=m_objects.begin();
+  //      it!=m_objects.end();
+  //      it++)
+  // {
+  //   delete it->second;
+  //   it->second=0;
+  // }
   m_objects.clear();
 }
 
 template <typename Object>
-Object* ObjectManager<Object>::getObject(
+std::shared_ptr<Object> ObjectManager<Object>::getObject(
   const std::string& id) {
-  ObjectMapItr ioItr=m_objects.find(id);
-  if (ioItr==m_objects.end())
+  auto ioItr = m_objects.find(id);
+  if (ioItr == m_objects.end())
   {
-    Object* obj=this->createObject(id);
-    m_objects[id]=obj;
+    auto obj = this->createObject(id);
+    m_objects[id] = obj;
     return obj;
   }
   return ioItr->second;

@@ -49,8 +49,8 @@ private:
 
 protected:
   MediaId m_language;
-  Automaton::Recognizer* m_recognizer;
-  std::map< Common::MediaticData::SyntacticRelationId, Automaton::Recognizer* > m_subSentRecognizers;
+  std::shared_ptr<Automaton::Recognizer> m_recognizer;
+  std::map< Common::MediaticData::SyntacticRelationId, std::shared_ptr<Automaton::Recognizer> > m_subSentRecognizers;
   bool m_unfold;
   bool m_linkSubSentences;
   bool m_applySameRuleWhileSuccess;

@@ -33,7 +33,7 @@ ViterbiPosTaggerFactory::ViterbiPosTaggerFactory(const std::string& id) :
     InitializableObjectFactory<MediaProcessUnit>(id)
 {}
 
-MediaProcessUnit* ViterbiPosTaggerFactory::create(
+std::shared_ptr<MediaProcessUnit> ViterbiPosTaggerFactory::create(
   Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration,
   MediaProcessUnit::Manager* manager) const 
 {
@@ -81,7 +81,7 @@ MediaProcessUnit* ViterbiPosTaggerFactory::create(
     throw InvalidConfiguration();
   }
 
-  MediaProcessUnit* posTagger(0);
+  std::shared_ptr<MediaProcessUnit> posTagger;
   
   LINFO << "ViterbiPosTagger cost function is" << costFunction;
   if (costFunction == "IntegerCost")
@@ -105,13 +105,13 @@ MediaProcessUnit* ViterbiPosTaggerFactory::create(
     
     ViterbiCostFunction<uint64_t,SimpleIntegerCostFactory<uint64_t> > costFunction(language, &microManager, SimpleIntegerCostFactory<uint64_t>(trigramCost,bigramCost,unigramCost), trigramsFile, bigramsFile);
     
-    posTagger = new ViterbiPosTagger< uint64_t, ViterbiCostFunction< uint64_t, SimpleIntegerCostFactory<uint64_t> > >(costFunction);
+    posTagger = std::make_shared<ViterbiPosTagger< uint64_t, ViterbiCostFunction< uint64_t, SimpleIntegerCostFactory<uint64_t> > >>(costFunction);
     
   }
   else if (costFunction == "FrequencyCost")
   {
     ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> costFunction(language,&microManager,FrequencyCostFactory(),trigramsFile,bigramsFile);
-    posTagger=new ViterbiPosTagger<FrequencyCost,ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> >(costFunction);
+    posTagger = std::make_shared<ViterbiPosTagger<FrequencyCost,ViterbiCostFunction<FrequencyCost,FrequencyCostFactory> >>(costFunction);
   }
   else
   {

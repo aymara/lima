@@ -61,7 +61,7 @@ void SyntacticAnalyzerChains::init(
   try
   {
     std::string chainMatrixId=unitConfiguration.getParamsValueAtKey("chainMatrix");
-    m_chainMatrix=static_cast<SyntagmDefStruct*>(LinguisticResources::single().getResource(m_language,chainMatrixId));
+    m_chainMatrix = std::dynamic_pointer_cast<SyntagmDefStruct>(LinguisticResources::single().getResource(m_language,chainMatrixId));
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& )
   {

@@ -1,4 +1,4 @@
-// Copyright 2002-2013 CEA LIST
+// Copyright 2002-2022 CEA LIST
 // SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 //
 // SPDX-License-Identifier: MIT
@@ -274,26 +274,27 @@ template <typename Graph, typename Edge> class PosTaggingEdgeWriter {
     for(boost::tie(inItr,inItrEnd)=in_edges(source(e,*m_graph),*m_graph);
         inItr!=inItrEnd;
         inItr++)
-        {
+    {
       LinguisticAnalysisStructure::MorphoSyntacticData* d1=get(vertex_data,*m_graph,source(*inItr,*m_graph));
       if (d1!=0 && !d1->empty()) {
         cat1=microManager.getPropertyAccessor().readValue(d1->begin()->properties);
       }
-      if (!m_trigramMatrix->exists(cat1,cat2,cat3))
+      if (m_trigramMatrix != nullptr && !m_trigramMatrix->exists(cat1,cat2,cat3))
       {
           hasNonValidTrigram=true;
           gramNotFound.push_back(gram);
           gramNotFound.back().insert(gramNotFound.back().begin(),cat1);
       }
 
-        }
-    if (hasNonValidTrigram) {
-        // check if bigram is valid
-        if (!m_bigramMatrix->exists(cat2,cat3))
-        {
-      gramNotFound.push_back(gram);
-      hasNonValidBigram=true;
-        }
+    }
+    if (hasNonValidTrigram)
+    {
+      // check if bigram is valid
+      if (m_bigramMatrix != nullptr && !m_bigramMatrix->exists(cat2,cat3))
+      {
+        gramNotFound.push_back(gram);
+        hasNonValidBigram=true;
+      }
     }
 
     out << "[label=\"";
@@ -322,7 +323,7 @@ template <typename Graph, typename Edge> class PosTaggingEdgeWriter {
 
   private:
     const Graph* m_graph;
-    const Lima::LinguisticProcessing::PosTagger::TrigramMatrix*        m_trigramMatrix;
-    const Lima::LinguisticProcessing::PosTagger::BigramMatrix*         m_bigramMatrix;
+    const Lima::LinguisticProcessing::PosTagger::TrigramMatrix* m_trigramMatrix;
+    const Lima::LinguisticProcessing::PosTagger::BigramMatrix* m_bigramMatrix;
     const Common::PropertyCode::PropertyCodeManager* m_propertyCodeManager;
  };

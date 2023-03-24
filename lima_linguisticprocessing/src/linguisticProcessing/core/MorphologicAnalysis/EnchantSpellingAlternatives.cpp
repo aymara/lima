@@ -47,7 +47,7 @@ public:
     LinguisticAnalysisStructure::MorphoSyntacticData* tokenData,
     FsaStringsPool& sp);
 
-  AnalysisDict::AbstractAnalysisDictionary* m_dictionary;
+  std::shared_ptr<AnalysisDict::AbstractAnalysisDictionary> m_dictionary;
   MediaId m_language;
   enchant::Dict* m_enchantDictionary;
 };
@@ -81,8 +81,8 @@ void EnchantSpellingAlternatives::init(
   try
   {
     std::string dico=unitConfiguration.getParamsValueAtKey("dictionary");
-    AbstractResource* res= LinguisticResources::single().getResource(m_d->m_language,dico);
-    m_d->m_dictionary=static_cast<AbstractAnalysisDictionary*>(res);
+    auto res = LinguisticResources::single().getResource(m_d->m_language,dico);
+    m_d->m_dictionary = std::dynamic_pointer_cast<AbstractAnalysisDictionary>(res);
   }
   catch (NoSuchParam& )
   {

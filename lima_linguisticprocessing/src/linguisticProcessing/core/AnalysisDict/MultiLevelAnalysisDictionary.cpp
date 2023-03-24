@@ -41,7 +41,7 @@ multiLevelAnalysisDictionaryFactory(MULTILEVELANALYSISDICTIONARY_CLASSID);
 struct LevelDico {
   LevelDico() : id(),keys(0),data(),mainKeys(false) {};
   std::string id;
-  Lima::Common::AbstractAccessByString* keys;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> keys;
   DictionaryData* data;
   bool mainKeys;
 };
@@ -57,9 +57,8 @@ friend class MultiLevelAnalysisDictionary;
     MultiLevelAnalysisDictionaryPrivate& operator=(const MultiLevelAnalysisDictionaryPrivate&) = delete;
 
   /**
-  * Les dicos sont ordonn�es du plus sp�cifique au plus g�n�rique.
-  * L'ordre dans lequel ils sont d�clar�s dans le fichier de conf est l'ordre dans
-  * lequel ils sont lus.
+  * The dicos are ordered from most specific to most generic.
+  * The order in which they are declared in the conf file is the order in which they are read.
   */
   std::vector<LevelDico> m_dicos;
   Lima::FsaStringsPool* m_sp;
@@ -108,7 +107,7 @@ void MultiLevelAnalysisDictionary::init(
     {
       LINFO << "load LevelDictionary : key=" << *keyIt << " data=" << *dataIt;
       auto res = LinguisticResources::single().getResource(language, *keyIt);
-      auto aar = static_cast<const AbstractAccessResource*>(res);
+      auto aar = std::dynamic_pointer_cast<AbstractAccessResource>(res);
       LevelDico ldico;
       ldico.id = *keyIt;
       ldico.keys = aar->getAccessByString();
@@ -313,7 +312,7 @@ DictionaryEntry MultiLevelAnalysisDictionary::getEntry(const StringsPoolIndex fo
     data.mainKeys = dicoIt->mainKeys;
     entryData.push_back(data);
   }
-  return DictionaryEntry(new MultiLevelAnalysisDictionaryEntry(form,
+  return DictionaryEntry(std::make_shared<MultiLevelAnalysisDictionaryEntry>(form,
                                                                final,
                                                                empty,
                                                                hasLing,

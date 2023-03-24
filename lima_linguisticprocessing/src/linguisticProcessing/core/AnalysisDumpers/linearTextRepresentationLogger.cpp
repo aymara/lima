@@ -84,7 +84,7 @@ void LinearTextRepresentationLogger::init(
     if (useStopList) {
         try {
             string stoplist = unitConfiguration.getParamsValueAtKey("stopList");
-            m_stopList = static_cast<StopList*>(LinguisticResources::single().getResource(m_language, stoplist));
+            m_stopList = std::dynamic_pointer_cast<StopList>(LinguisticResources::single().getResource(m_language, stoplist));
         }
         catch (NoSuchParam& ) {
             LERROR << "No param 'stopList' in LinearTextRepresentationLogger configuration group for language " << m_language;

@@ -746,7 +746,7 @@ bool TensorflowSpecificEntities::createSpecificEntity(
                                                        resourceName.toStdString());
   if (res != nullptr)
   {
-    auto entityMicros = static_cast<SpecificEntities::SpecificEntitiesMicros*>(res);
+    auto entityMicros = std::dynamic_pointer_cast<SpecificEntities::SpecificEntitiesMicros>(res);
     auto micros = entityMicros->getMicros(seType);
 #ifdef DEBUG_LP
     if (logger.isDebugEnabled())

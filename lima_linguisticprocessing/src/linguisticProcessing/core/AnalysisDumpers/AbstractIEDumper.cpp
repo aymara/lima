@@ -214,11 +214,11 @@ void AbstractIEDumper::init(
     {
       std::string templateResource=*it;
       //std::cout << "templateResource=" << templateResource << "\n";
-      AbstractResource* res=LinguisticResources::single().getResource(language,templateResource);
+      auto res = LinguisticResources::single().getResource(language,templateResource);
       if (res)
       {
         //std::cout << " La ressource est lue \n";
-        EventTemplateDefinitionResource* templateDefinitions=static_cast<EventTemplateDefinitionResource*>(res);
+        auto templateDefinitions = std::dynamic_pointer_cast<EventTemplateDefinitionResource>(res);
         m_templateDefinitions.insert(std::make_pair(templateResource,templateDefinitions));
       }
     }

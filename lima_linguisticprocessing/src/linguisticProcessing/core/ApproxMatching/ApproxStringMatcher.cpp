@@ -210,8 +210,8 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'nameindex' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  const AbstractResource* res=LinguisticResources::single().getResource(m_language,nameindexId);
-  m_nameIndex=static_cast<const NameIndexResource*>(res);
+  const auto res = LinguisticResources::single().getResource(m_language,nameindexId);
+  m_nameIndex = std::dynamic_pointer_cast<NameIndexResource>(res);
 
   /*
   // get dictionary of normalized forms
@@ -225,7 +225,7 @@ void ApproxStringMatcher::init(
     LERROR << "no param 'dictionary' in ApproxStringMatcher group for language " << (int) m_language;
     throw InvalidConfiguration();
   }
-  AbstractResource* res=LinguisticResources::single().getResource(m_language,dico);
+  auto res = LinguisticResources::single().getResource(m_language,dico);
   AbstractAccessResource* lexicon = lexicon=static_cast<AbstractAccessResource*>(res);
   m_lexicon = lexicon->getAccessByString();
   */

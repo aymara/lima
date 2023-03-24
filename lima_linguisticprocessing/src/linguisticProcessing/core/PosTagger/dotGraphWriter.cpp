@@ -29,10 +29,9 @@ namespace LinguisticProcessing
 
 SimpleFactory<MediaProcessUnit,DotGraphWriter> dotGraphWriterFactory(DOTGRAPHWRITER_CLASSID);
 
-DotGraphWriter::DotGraphWriter()
-{}
-
-DotGraphWriter::~DotGraphWriter()
+DotGraphWriter::DotGraphWriter() :
+  m_trigramMatrix(nullptr),
+  m_bigramMatrix(nullptr)
 {}
 
 void DotGraphWriter::init(
@@ -50,23 +49,23 @@ void DotGraphWriter::init(
   m_language=manager->getInitializationParameters().media;
   try {
     string trigrams=unitConfiguration.getParamsValueAtKey("trigramMatrix");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,trigrams);
-    m_trigramMatrix=static_cast<PosTagger::TrigramMatrix*>(res);
+    auto res = LinguisticResources::single().getResource(m_language,trigrams);
+    m_trigramMatrix = std::dynamic_pointer_cast<PosTagger::TrigramMatrix>(res);
   } catch (NoSuchParam& ) {
     LERROR << "No param 'trigramMatrix' in DotGraphWriter group for language " << (int)m_language;
     throw InvalidConfiguration();
   }
   try {
     string bigrams=unitConfiguration.getParamsValueAtKey("bigramMatrix");
-    AbstractResource* res=LinguisticResources::single().getResource(m_language,bigrams);
-    m_bigramMatrix=static_cast<PosTagger::BigramMatrix*>(res);
+    auto res = LinguisticResources::single().getResource(m_language, bigrams);
+    m_bigramMatrix = std::dynamic_pointer_cast<PosTagger::BigramMatrix>(res);
   } catch (NoSuchParam& ) {
-    LWARN << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language;
-    throw InvalidConfiguration();
+    LDEBUG << "No param 'bigramMatrix' in DotGraphWriter group for language " << (int)m_language;
+    // throw InvalidConfiguration();
   }
   try
   {
-    m_outputSuffix=unitConfiguration.getParamsValueAtKey("outputSuffix");
+    m_outputSuffix = unitConfiguration.getParamsValueAtKey("outputSuffix");
   }
   catch (NoSuchParam& )
   {
@@ -133,8 +132,8 @@ LimaStatusCode DotGraphWriter::process(AnalysisContent& analysis) const
   PosTagger::PosTaggingGraphWriter gw(
     anagraph->getGraph(),
     m_language,
-    m_trigramMatrix,
-    m_bigramMatrix);
+    m_trigramMatrix.get(),
+    m_bigramMatrix.get());
   gw.setOptions(m_graphDotOptions,m_nodeDotOptions,m_edgeDotOptions);
   gw.writeToDotFile(outputFileName,m_vertexDisplay);
 

@@ -127,7 +127,7 @@ class DepGraphCompoundsBuildVisitorPrivate
 
   std::vector< boost::tuple<uint64_t,DependencyGraphVertex, std::set<uint64_t> > > m_nodesmap;
 
-  bool m_useChains = true;
+  bool m_useChains = false;
 };
 
 DepGraphCompoundsBuildVisitorPrivate::DepGraphCompoundsBuildVisitorPrivate(const

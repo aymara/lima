@@ -56,7 +56,7 @@ private:
 protected:
   MediaId m_language;
 
-  Automaton::Recognizer* m_recognizer;
+  std::shared_ptr<Automaton::Recognizer> m_recognizer;
 
 };
 

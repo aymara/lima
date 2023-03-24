@@ -58,14 +58,14 @@ public:
   const State* stateNamed(const LimaString& name) const;
   State* stateNamed(const LimaString& name);
 
-  inline const CharChart* charChart() const {return m_charChart;}
-  inline void setCharChart(const CharChart* cc) {m_charChart = cc;}
+  inline const std::shared_ptr<CharChart> charChart() const {return m_charChart;}
+  inline void setCharChart(std::shared_ptr<CharChart> cc) {m_charChart = cc;}
   
   inline void setStartState(const State* s) {m_startState = s;}
 private:
   const State* m_startState;
   std::vector<State*> m_states;
-  const CharChart* m_charChart;
+  std::shared_ptr<CharChart> m_charChart;
 };
 
 } //namespace FlatTokenizer

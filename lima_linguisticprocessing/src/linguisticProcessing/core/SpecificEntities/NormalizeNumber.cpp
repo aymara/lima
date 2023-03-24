@@ -56,8 +56,8 @@ m_microAccessor(nullptr)
 
   if (language != UNDEFLANG) {
     try {
-      AbstractResource* res = LinguisticResources::single().getResource(language,"microsForNumberNormalization");
-      MicrosForNormalization* micros=static_cast<MicrosForNormalization*>(res);
+      auto res = LinguisticResources::single().getResource(language,"microsForNumberNormalization");
+      auto micros = std::dynamic_pointer_cast<MicrosForNormalization>(res);
       m_microsForNumber=micros->getMicros("NumberMicros");
       m_microsForUnit=micros->getMicros("UnitMicros");
       m_microsForConjunction=micros->getMicros("ConjCoordMicros");

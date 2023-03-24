@@ -33,7 +33,7 @@ namespace FlatTokenizer
 class LIMA_FLATTOKENIZER_EXPORT Condition {
 
 public:
-  explicit Condition(const CharChart* chart);
+  explicit Condition(std::shared_ptr<CharChart> chart);
   virtual ~Condition();
 
   // for run-time usage. Within a context, a condition is

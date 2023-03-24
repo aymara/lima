@@ -44,9 +44,8 @@ m_deaccentuatedForm(deaccentuatedForm),
 m_language(language),
 m_charchart(0)
 {
-  AbstractResource* res=LinguisticResources::single().
-    getResource(m_language,"charchart");
-  m_charchart=static_cast<FlatTokenizer::CharChart*>(res);
+  auto res = LinguisticResources::single().getResource(m_language,"charchart");
+  m_charchart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
 }
 
 DeaccentuatedTransition::
@@ -56,9 +55,8 @@ m_deaccentuatedForm(t.m_deaccentuatedForm),
 m_language(t.m_language),
 m_charchart(0)
 {
-  AbstractResource* res=LinguisticResources::single().
-    getResource(m_language,"charchart");
-  m_charchart=static_cast<FlatTokenizer::CharChart*>(res);
+  auto res = LinguisticResources::single().getResource(m_language,"charchart");
+  m_charchart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
 }
 
 //***********************************************************************
@@ -74,11 +72,10 @@ DeaccentuatedTransition& DeaccentuatedTransition::
 operator = (const DeaccentuatedTransition& t) {
   if (this != &t) {
     TransitionUnit::operator=(t);
-    m_deaccentuatedForm=t.getDeaccentuatedForm();
-    m_language=t.m_language;
-    AbstractResource* res=LinguisticResources::single().
-      getResource(m_language,"charchart");
-    m_charchart=static_cast<FlatTokenizer::CharChart*>(res);
+    m_deaccentuatedForm = t.getDeaccentuatedForm();
+    m_language =t.m_language;
+    auto res = LinguisticResources::single().getResource(m_language,"charchart");
+    m_charchart = std::dynamic_pointer_cast<FlatTokenizer::CharChart>(res);
   }
   return *this;
 }

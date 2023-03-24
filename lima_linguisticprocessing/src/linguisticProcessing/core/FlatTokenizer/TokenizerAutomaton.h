@@ -51,15 +51,15 @@ public:
   const State* stateNamed(const LimaString& name) const;
   State* stateNamed(const LimaString& name);
 
-  inline const CharChart* charChart() const {return _charChart;}
-  inline CharChart* charChart() {return _charChart;}
-  inline void setCharChart(CharChart* charChart) {_charChart = charChart;}
+  inline const std::shared_ptr<CharChart> charChart() const {return _charChart;}
+  inline std::shared_ptr<CharChart> charChart() {return _charChart;}
+  inline void setCharChart(std::shared_ptr<CharChart> charChart) {_charChart = charChart;}
 
   private:
   Text* m_text;
 
   Automaton* _automaton;
-  CharChart* _charChart;
+  std::shared_ptr<CharChart> _charChart;
   MediaId _language;
 
   std::vector<State*> m_states;

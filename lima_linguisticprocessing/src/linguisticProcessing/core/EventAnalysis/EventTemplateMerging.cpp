@@ -59,9 +59,9 @@ void EventTemplateMerging::init(
 
   try {
     std::string templateResource=unitConfiguration.getParamsValueAtKey("eventTemplate");
-    AbstractResource* res=LinguisticResources::single().getResource(language,templateResource);
+    auto res = LinguisticResources::single().getResource(language,templateResource);
     if (res) {
-      m_templateDefinition=static_cast<EventTemplateDefinitionResource*>(res);
+      m_templateDefinition = std::dynamic_pointer_cast<EventTemplateDefinitionResource>(res);
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {

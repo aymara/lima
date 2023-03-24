@@ -32,7 +32,7 @@ void ProcessUnitPipeline<ProcessUnit>::init(
     for (const auto& puid: sequence)
     {
       LINFO << "get processUnit '" << puid.c_str() << "'";
-      const ProcessUnit* pu = manager->getObject(puid);
+      auto pu = manager->getObject(puid);
       m_processUnitSequence.push_back(pu);
     }
   }
@@ -51,7 +51,7 @@ void ProcessUnitPipeline<ProcessUnit>::push_back(
 {
   PROCESSUNITFRAMEWORKLOGINIT;
   LINFO << "push back unit '" << unitId.c_str() << "'";
-  const ProcessUnit* pu=manager->getObject(unitId);
+  auto pu = manager->getObject(unitId);
   m_processUnitSequence.push_back(pu);
 }
 
@@ -65,7 +65,7 @@ LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
 
   debugPrintInactiveUnits();
 
-  const InactiveUnitsData* dataInactiveProcessUnits = dynamic_cast<const InactiveUnitsData*>(analysis.getData("InactiveUnits").get());
+  auto dataInactiveProcessUnits = std::dynamic_pointer_cast<InactiveUnitsData>(analysis.getData("InactiveUnits"));
   bool hasInactiveProcessUnits = !m_inactiveUnitsIds.empty()
                                   || (dataInactiveProcessUnits != 0
                                       && dataInactiveProcessUnits->size() != 0) ;

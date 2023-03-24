@@ -39,7 +39,7 @@ public:
   virtual ~DocumentReaderPrivate();
 
   QXmlStreamReader* m_reader;
-  StructuredDocumentXMLParser* m_parser;
+  std::shared_ptr<StructuredDocumentXMLParser> m_parser;
 
   std::shared_ptr<ShiftFrom> m_shiftFrom;
 

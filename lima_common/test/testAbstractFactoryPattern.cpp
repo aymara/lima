@@ -80,27 +80,27 @@ int run(int argc, char** argv)
   //
   DummyInitializableObject::Manager manager(modconf);
 
-  DummyInitializableObject* mvd=manager.getObject("myVeryDummy");
-  if (mvd==0) {
+  auto mvd = manager.getObject("myVeryDummy");
+  if (mvd==nullptr) {
     std::cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << std::endl;
     return -1;
   }
-  VeryDummyInitializableObject* vdvd=dynamic_cast<VeryDummyInitializableObject*>(mvd);
+  auto vdvd = std::dynamic_pointer_cast<VeryDummyInitializableObject>(mvd);
   if (vdvd==0) {
     std::cerr << "FAILED : myVeryDummy is not an objet of class VeryDummyInitializableObject !!" << std::endl;
     return -1;
   }
-  DummyInitializableObject* ovd=manager.getObject("otherVeryDummy");
+  auto ovd = manager.getObject("otherVeryDummy");
   if (ovd==0) {
     std::cerr << "FAILED : Getting VeryDummyInitializableObject failed !!" << std::endl;
     return -1;
   }
-  DummyInitializableObject* mvd2=manager.getObject("myVeryDummy");
+  auto mvd2 = manager.getObject("myVeryDummy");
   if (mvd!=mvd2) {
     std::cerr << "FAILED : Getting myVeryDummy has been re-initialized !!" << std::endl;
     return -1;
   }
-  DummyInitializableObject* nsd=manager.getObject("myNotSoDummy");
+  auto nsd = manager.getObject("myNotSoDummy");
   if (nsd==0) {
     std::cerr << "FAILED : Getting myMyNotSoDummy failed !!" << std::endl;
     return -1;

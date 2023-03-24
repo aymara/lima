@@ -55,9 +55,9 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateData : public AnalysisData, public 
 class LIMA_EVENTANALISYS_EXPORT EventTemplateDefinitionData : public AnalysisData
 {
   public:
-    EventTemplateDefinitionData(EventTemplateDefinitionResource* r):resource(r) {}
+    EventTemplateDefinitionData(std::shared_ptr<EventTemplateDefinitionResource> r) : resource(r) {}
     // no destructor to free the pointer : the pointer is on an external resource
-    EventTemplateDefinitionResource* resource;
+    std::shared_ptr<EventTemplateDefinitionResource> resource;
 };
 
 } // end namespace

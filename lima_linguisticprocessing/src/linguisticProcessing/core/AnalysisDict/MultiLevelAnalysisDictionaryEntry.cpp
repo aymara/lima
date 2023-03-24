@@ -46,7 +46,7 @@ public:
 
   // data attributes
   bool mainKeys;
-  const Lima::Common::AbstractAccessByString* keys;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> keys;
   const DictionaryData* dicoData;
 
   void next(FsaStringsPool& sp);
@@ -93,7 +93,7 @@ public:
 
   // data attributes
   bool mainKeys;
-  const Lima::Common::AbstractAccessByString* keys;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> keys;
   const DictionaryData* dicoData;
 
 
@@ -132,7 +132,7 @@ public:
 
   // data attributes
   bool mainKeys;
-  const Lima::Common::AbstractAccessByString* keys;
+  std::shared_ptr<Lima::Common::AbstractAccessByString> keys;
   const DictionaryData* dicoData;
 
   void next(FsaStringsPool& sp);

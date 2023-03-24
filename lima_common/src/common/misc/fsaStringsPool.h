@@ -47,7 +47,7 @@ public:
     * using an automaton as source. It would allow to not merge both
     */
    
-    void registerMainKeys(Common::AbstractAccessByString* mainKeys);
+    void registerMainKeys(std::shared_ptr<Common::AbstractAccessByString> mainKeys);
     
     void registerUser(void* p);
     void unregisterUser(void* p);
