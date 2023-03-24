@@ -100,7 +100,7 @@ public:
     return m_class_names;
   }
 
-  const std::string& get_embd_fn(size_t idx) const
+  const std::string& get_embd_fn([[maybe_unused]] size_t idx) const
   {
     assert(0 == idx);
     return m_embd_fn;

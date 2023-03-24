@@ -25,9 +25,9 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
                                   const vector<TorchMatrix<int64_t>>& train_input,
                                   const vector<vector<TorchMatrix<int64_t>>>& train_input_cat,
                                   const vector<TorchMatrix<int64_t>>& train_gold,
-                                  const vector<TorchMatrix<int64_t>>& eval_input,
+                                  const vector<TorchMatrix<int64_t>>& /*eval_input*/,
                                   const vector<vector<TorchMatrix<int64_t>>>& /*eval_input_cat*/,
-                                  const vector<TorchMatrix<int64_t>>& eval_gold,
+                                  const vector<TorchMatrix<int64_t>>& /*eval_gold*/,
                                   torch::optim::Optimizer& opt,
                                   const torch::Device& device)
 {

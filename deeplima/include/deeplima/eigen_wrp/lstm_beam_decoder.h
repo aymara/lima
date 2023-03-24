@@ -86,7 +86,7 @@ public:
     const auto& layer = std::dynamic_pointer_cast<const params_t>(params)->lstm;
     const auto& linear = std::dynamic_pointer_cast<const params_t>(params)->linear;
 
-    std::vector<uint32_t> output_sizes = { linear.weight.rows() };
+    std::vector<uint32_t> output_sizes = { static_cast<uint32_t>(linear.weight.rows()) };
     return std::make_shared<workbench_t>(layer.weight_ih.rows() / 4, output_sizes, precomputed_input);
   }
 
