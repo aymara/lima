@@ -7,6 +7,7 @@
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
 #include <memory>
+#include <map>
 
 #include "segmentation.h"
 #include "helpers/path_resolver.h"
@@ -18,8 +19,31 @@
 namespace deeplima
 {
 
-template <class Matrix=eigen_wrp::EigenMatrixXf>
-class TokenSequenceAnalyzer
+class ITokenSequenceAnalyzer
+{
+public:
+  typedef std::function < void (std::shared_ptr< StringIndex > stridx,
+                                const token_buffer_t<>& tokens,
+                                const std::vector<StringIndex::idx_t>& lemmata,
+                                std::shared_ptr< StdMatrix<uint8_t> > classes,
+                                size_t begin,
+                                size_t end) > output_callback_t;
+
+  virtual void register_handler(const output_callback_t fn) = 0;
+
+  virtual const std::vector<std::vector<std::string>>& get_classes() const = 0;
+
+  virtual const std::vector<std::string>& get_class_names() const = 0;
+
+  virtual std::shared_ptr<StringIndex> get_stridx() const = 0;
+
+  virtual void finalize() = 0;
+
+  virtual void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len) = 0;
+};
+
+template <class Matrix=eigen_wrp::EigenMatrixXf, typename TaggingAuxScalar=float>
+class TokenSequenceAnalyzer : public ITokenSequenceAnalyzer
 {
 public:
   class TokenIterator
@@ -191,12 +215,14 @@ protected:
   //                                    enriched_token_buffer_t,
   //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
+  typedef tagging::impl::EntityTaggingClassifier<TaggingAuxScalar> Classifier;
+
   typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
-                                      tagging::impl::EntityTaggingClassifier,
+                                      Classifier,
                                       enriched_token_buffer_t,
                                       typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
-  typedef tagging::impl::TaggingImpl< tagging::impl::EntityTaggingClassifier,
+  typedef tagging::impl::TaggingImpl< Classifier,
                                       FeaturesVectorizer,
                                       Matrix > EntityTaggingModule;
 
@@ -273,7 +299,8 @@ public:
     {
       m_cls.register_handler([this](
                              std::shared_ptr< StdMatrix<uint8_t> > classes,
-                             size_t begin, size_t end, size_t slot_idx){
+                             size_t begin, size_t end, size_t slot_idx)
+      {
         // std::cerr << "handler called: " << slot_idx << std::endl;
         m_classes = classes;
         m_output_callback(m_stridx_ptr,
@@ -288,64 +315,55 @@ public:
     }
   }
 
-    void get_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes){
-       m_cls.get_classes_from_fn(fn, classes_names, classes);
-    }
-
-  ~TokenSequenceAnalyzer()
+  void get_classes_from_fn(const std::string& fn,
+                           std::vector<std::string>& classes_names,
+                           std::vector<std::vector<std::string>>& classes)
   {
-    // std::cerr << "~TokenSequenceAnalyzer" << std::endl;
+    m_cls.get_classes_from_fn(fn, classes_names, classes);
   }
 
-  typedef std::function < void (std::shared_ptr< StringIndex > stridx,
-                                const token_buffer_t<>& tokens,
-                                const std::vector<StringIndex::idx_t>& lemmata,
-                                std::shared_ptr< StdMatrix<uint8_t> > classes,
-                                size_t begin,
-                                size_t end) > output_callback_t;
+  virtual ~TokenSequenceAnalyzer()
+  {
+  }
 
-  void register_handler(const output_callback_t fn) {
+  virtual void register_handler(const output_callback_t fn) override
+  {
     m_output_callback = fn;
   }
 
-  const std::vector<std::vector<std::string>>& get_classes() const
+  virtual const std::vector<std::vector<std::string>>& get_classes() const override
   {
     return m_cls.get_output_str_dicts();
   }
 
-  const std::vector<std::string>& get_class_names() const
+  virtual const std::vector<std::string>& get_class_names() const override
   {
     return m_cls.get_output_str_dicts_names();
   }
 
-  std::shared_ptr<StringIndex> get_stridx() const
+  virtual std::shared_ptr<StringIndex> get_stridx() const override
   {
     return m_stridx_ptr;
   }
 
-  void finalize()
+  virtual void finalize() override
   {
-    // std::cerr << "TokenSequenceAnalyzer::finalize" << m_current_timepoint << ", " << m_buffer_size << std::endl;
     if (m_current_timepoint > 0)
     {
       if (m_current_timepoint < m_buffer_size)
       {
-        // std::cerr << "TokenSequenceAnalyzer::finalize call start_analysis " << m_current_buffer << ", "
-        //           << m_current_timepoint << std::endl;
         start_analysis(m_current_buffer, m_current_timepoint);
       }
       else
       {
-        // std::cerr << "TokenSequenceAnalyzer::finalize call no_more_data " << m_current_buffer << std::endl;
         m_cls.no_more_data(m_current_buffer);
       }
     }
 
-    // std::cerr << "TokenSequenceAnalyzer::finalize call send_all_results " << std::endl;
     m_cls.send_all_results();
   }
 
-  inline void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len)
+  virtual void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len) override
   {
     if (m_current_timepoint >= m_buffer_size)
     {
@@ -377,6 +395,8 @@ public:
     }
   }
 
+protected:
+
   void acquire_buffer()
   {
     size_t next_buffer_idx = (m_current_buffer + 1 < m_buffers.size()) ? (m_current_buffer + 1) : 0;
@@ -403,13 +423,13 @@ public:
     m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx), count);
   }
 
-protected:
-
   void process_buffer(size_t buffer_idx)
   {
     const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
     m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx));
   }
+
+  typedef std::pair<StringIndex::idx_t, morph_model::morph_feats_t> lemm_cache_key_t;
 
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
@@ -424,10 +444,22 @@ protected:
       }
       else
       {
-        const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
-        m_lemm.predict(f, classes, i + offset, target);
+        const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset));
+        const auto it = m_lemm_cache.find(form_key);
+        if (m_lemm_cache.end() == it)
+        {
+          const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
+          m_lemm.predict(f, classes, i + offset, target);
 
-        lemm_buffer[i] = m_stridx.get_idx(target);
+          lemm_buffer[i] = m_stridx.get_idx(target);
+
+          // add form to cache
+          //m_lemm_cache[form_key] = lemm_buffer[i];
+        }
+        else
+        {
+          lemm_buffer[i] = it->second;
+        }
       }
     }
   }
@@ -445,6 +477,8 @@ protected:
   EntityTaggingModule m_cls;
   LemmatizationModule m_lemm;
   std::shared_ptr< StdMatrix<uint8_t> > m_classes;
+
+  std::map<lemm_cache_key_t, StringIndex::idx_t> m_lemm_cache;
 
   output_callback_t m_output_callback;
 };

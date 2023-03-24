@@ -26,13 +26,13 @@ namespace eigen_impl
 #ifdef TAG_EXPORTING
   #define TAG_EXPORT __declspec(dllexport)
 #else
-  #define TAG_EXPORT  __declspec(dllimport)
+  #define TAG_EXPORT __declspec(dllimport)
 #endif
 #else
   #define TAG_EXPORT
 #endif
 
-template <class M, class V, class T>
+template <typename M, typename V, typename T, typename AuxScalar=float>
 class TAG_EXPORT BiRnnEigenInferenceForTagging : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
 {
 public:
@@ -42,18 +42,21 @@ public:
   typedef M tensor_t;
   typedef EmbdUInt64FloatHolder dicts_holder_t;
   typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
+  typedef deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T, AuxScalar> op_bilstm_dense_argmax_t;
 
   virtual void load(const std::string& fn)
   {
     convert_from_torch(fn);
   }
 
-  virtual void convert_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes);
+  virtual void convert_classes_from_fn(const std::string& fn,
+                                       std::vector<std::string>& classes_names,
+                                       std::vector<std::vector<std::string>>& classes);
 
   virtual size_t get_precomputed_dim() const
   {
     auto p_params =
-      std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params[0]);
+      std::dynamic_pointer_cast<typename op_bilstm_dense_argmax_t::params_t>(Parent::m_params[0]);
 
     const auto& layer = p_params->bilstm;
     size_t hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
@@ -66,7 +69,7 @@ public:
       int64_t input_size
       )
   {
-    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<op_bilstm_dense_argmax_t>(Parent::m_ops[0]);
 
     p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
   }
@@ -82,7 +85,7 @@ public:
       const std::vector<std::string>& /*outputs_names*/
       )
   {
-    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T>>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<op_bilstm_dense_argmax_t>(Parent::m_ops[0]);
     assert(Parent::m_wb.size() > 0);
     assert(worker_id < Parent::m_wb[0].size());
     p_op->execute(Parent::m_wb[0][worker_id],
@@ -101,8 +104,6 @@ protected:
 
   virtual void convert_from_torch(const std::string& fn);
 };
-
-typedef BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float> BiRnnEigenInferenceForTaggingF;
 
 } // namespace eigen_impl
 } // namespace tagging

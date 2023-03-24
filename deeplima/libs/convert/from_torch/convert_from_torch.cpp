@@ -165,11 +165,12 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
 
   // temp: create exec plan
   Parent::m_ops.push_back(std::make_shared<Op_BiLSTM_Dense_ArgMax<M, V, T>>());
-  Parent::m_params.push_back(std::make_shared<params_bilstm_dense_argmax_t<M, V>>());
-  auto p = std::dynamic_pointer_cast<params_bilstm_dense_argmax_t<M, V>>(Parent::m_params.back());
+  Parent::m_params.push_back(std::make_shared<typename Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>());
+  auto p = std::dynamic_pointer_cast<typename Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params.back());
   p->bilstm = Parent::m_lstm[0];
   p->linear.push_back(Parent::m_linear[0]);
   Parent::m_wb.resize(1);
+  p->precompute();
 
   for (size_t i = 0; i < Parent::m_linear.size(); i++)
   {

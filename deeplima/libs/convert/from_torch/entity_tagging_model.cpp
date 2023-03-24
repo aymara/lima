@@ -24,9 +24,10 @@ namespace eigen_impl
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes);
 
 template class BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float>;
+template class BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float, int16_t>;
 
-template <class M, class V, class T>
-void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::string& fn)
+template <typename M, typename V, typename T, typename AuxScalar>
+void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForNerImpl src;
   torch::load(src, fn, torch::Device(torch::kCPU));
@@ -68,35 +69,39 @@ void BiRnnEigenInferenceForTagging<M, V, T>::convert_from_torch(const std::strin
   }
 
   // temp: create exec plan
-  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM_Dense_ArgMax<M, V, T>>());
-  Parent::m_params.push_back(std::make_shared<params_bilstm_dense_argmax_t<M, V>>());
-  auto p = std::dynamic_pointer_cast<params_bilstm_dense_argmax_t<M, V>>(Parent::m_params.back());
+  Parent::m_ops.push_back(std::make_shared<op_bilstm_dense_argmax_t>());
+  Parent::m_params.push_back(std::make_shared<typename op_bilstm_dense_argmax_t::params_t>());
+  auto p = std::dynamic_pointer_cast<typename op_bilstm_dense_argmax_t::params_t>(Parent::m_params.back());
   p->bilstm = Parent::m_lstm[0];
   for (size_t i = 0; i < Parent::m_linear.size(); ++i)
   {
     p->linear.push_back(Parent::m_linear[i]);
   }
+  p->precompute();
   Parent::m_wb.resize(1);
 
   // tags
-  // cerr << "TAGS:" << endl;
-  // for ( const auto& it : src.get_tags() )
-  // {
-  //   cerr << "\t" << it.first << " = " << it.second << endl;
-  // }
-  // cerr << endl;
+  /*cerr << "TAGS:" << endl;
+  for ( const auto& it : src.get_tags() )
+  {
+    cerr << "\t" << it.first << " = " << it.second << endl;
+  }
+  cerr << endl;*/
 }
 
-template <class M, class V, class T>
-void BiRnnEigenInferenceForTagging<M, V, T>::convert_classes_from_fn(const std::string& fn, std::vector<std::string>& class_names, std::vector<std::vector<std::string>>& classes) {
-    train::BiRnnClassifierForNerImpl src;
-    torch::load(src, fn, torch::Device(torch::kCPU));
+template <typename M, typename V, typename T, typename AuxScalar>
+void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_classes_from_fn(
+        const std::string& fn,
+        std::vector<std::string>& class_names,
+        std::vector<std::vector<std::string>>& classes) {
+  train::BiRnnClassifierForNerImpl src;
+  torch::load(src, fn, torch::Device(torch::kCPU));
 
-    // dicts and embeddings
-    Parent::convert_dicts_and_embeddings(src);
-    // classes
-    convert_classes(src.get_classes(), classes);
-    class_names = src.get_class_names();
+  // dicts and embeddings
+  Parent::convert_dicts_and_embeddings(src);
+  // classes
+  convert_classes(src.get_classes(), classes);
+  class_names = src.get_class_names();
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)
