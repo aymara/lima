@@ -444,7 +444,7 @@ protected:
       }
       else
       {
-        const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset));
+        const lemm_cache_key_t form_key(buffer[i].m_form_idx, 0 /*m_lemm.get_morph_feats(classes, i + offset)*/ );
         const auto it = m_lemm_cache.find(form_key);
         if (m_lemm_cache.end() == it)
         {
