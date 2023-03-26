@@ -7,7 +7,7 @@
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "segmentation.h"
 #include "helpers/path_resolver.h"
@@ -430,6 +430,12 @@ protected:
   }
 
   typedef std::pair<StringIndex::idx_t, morph_model::morph_feats_t> lemm_cache_key_t;
+  struct lemm_cache_key_hash
+  {
+    std::size_t operator() (const lemm_cache_key_t &arg) const {
+        return std::hash<StringIndex::idx_t>()(arg.first) ^ arg.second.hash();
+    }
+  };
 
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
@@ -444,7 +450,7 @@ protected:
       }
       else
       {
-        const lemm_cache_key_t form_key(buffer[i].m_form_idx, 0 /*m_lemm.get_morph_feats(classes, i + offset)*/ );
+        const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset) );
         const auto it = m_lemm_cache.find(form_key);
         if (m_lemm_cache.end() == it)
         {
@@ -454,7 +460,7 @@ protected:
           lemm_buffer[i] = m_stridx.get_idx(target);
 
           // add form to cache
-          //m_lemm_cache[form_key] = lemm_buffer[i];
+          m_lemm_cache[form_key] = lemm_buffer[i];
         }
         else
         {
@@ -478,7 +484,7 @@ protected:
   LemmatizationModule m_lemm;
   std::shared_ptr< StdMatrix<uint8_t> > m_classes;
 
-  std::map<lemm_cache_key_t, StringIndex::idx_t> m_lemm_cache;
+  std::unordered_map<lemm_cache_key_t, StringIndex::idx_t, lemm_cache_key_hash> m_lemm_cache;
 
   output_callback_t m_output_callback;
 };

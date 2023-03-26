@@ -131,6 +131,19 @@ public:
     return m_fixed_upos[upos];
   }
 
+  morph_model::morph_feats_t get_morph_feats(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx) const
+  {
+    auto lang_morph_model = InferenceEngine::get_morph_model();
+    std::vector<size_t> feats(lang_morph_model.get_feats_count());
+
+    const auto feat2cls = m_feat2cls;
+    const morph_model::morph_feats_t v = lang_morph_model.convert([idx, &feat2cls, &classes](size_t feat_idx) {
+      return classes->get(idx, feat2cls[feat_idx]);
+    });
+
+    return v;
+  }
+
   void predict(const std::u32string& form,
                std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx,
                std::u32string& target)
