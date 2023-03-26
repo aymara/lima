@@ -224,8 +224,8 @@ public:
                          size_t output_begin,
                          size_t output_end)
   {
-    assert(nullptr != pwb);
-    assert(nullptr != params);
+    assert(pwb);
+    assert(pparams);
     const params_t& params = *std::dynamic_pointer_cast<const params_t>(pparams);
     const auto& layer = params.bilstm;
     const auto& linear = params.linear;
