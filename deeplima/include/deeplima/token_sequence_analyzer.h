@@ -15,6 +15,7 @@
 #include "token_type.h"
 #include "ner.h"
 #include "lemmatization.h"
+#include "conllu/line.h"
 
 namespace deeplima
 {
@@ -240,7 +241,7 @@ public:
   {
   }
 
-  TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn,
+  TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn, const std::string& lemm_dict_fn,
                         const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
@@ -312,6 +313,11 @@ public:
 
         m_buffers[slot_idx].unlock();
       });
+    }
+
+    if (lemm_dict_fn.size() > 0)
+    {
+      load_lemm_cache(lemm_dict_fn);
     }
   }
 
@@ -436,6 +442,52 @@ protected:
         return std::hash<StringIndex::idx_t>()(arg.first) ^ arg.second.hash();
     }
   };
+
+  void load_lemm_cache(const std::string& fn)
+  {
+    const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
+    std::ifstream f(fn, std::ios::in);
+    std::string line;
+    while (std::getline(f, line))
+    {
+      if (line.size() == 0)
+      {
+        continue;
+      }
+      const std::vector<std::string> v = utils::split(line, '\t');
+      if (v.size() != 3)
+      {
+        throw std::runtime_error(std::string("Can't decode dict line \"") + line + "\"");
+      }
+
+      const std::vector<std::string> upos_feats = utils::split(v[1], ' ');
+      if (upos_feats.size() != 2)
+      {
+        throw std::runtime_error(std::string("Can't decode upos and feats in dict line \"") + line + "\"");
+      }
+
+      std::map<std::string, std::set<std::string>> feats;
+      if (!deeplima::CoNLLU::CoNLLULine::parse_feats(upos_feats[1], feats))
+      {
+        throw std::runtime_error(std::string("Can't parse feats in dict line \"") + line + "\"");
+      }
+
+      morph_model::morph_feats_t encoded_feats = mm.convert(upos_feats[0], feats);
+
+      const StringIndex::idx_t form_idx = m_stridx.get_idx(v[0]);
+
+      const lemm_cache_key_t form_key(form_idx, encoded_feats);
+
+      const auto it = m_lemm_cache.find(form_key);
+      if (m_lemm_cache.end() != it)
+      {
+        throw std::runtime_error(std::string("Duplicate keys in dict: \"") + line + "\"");
+      }
+
+      m_lemm_cache[form_key] = m_stridx.get_idx(v[2]);
+    }
+
+  }
 
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,

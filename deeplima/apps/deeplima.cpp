@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
 
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
+  std::string lem_dict;
   bool tag_use_mp;
   std::vector<std::string> input_files;
 
@@ -51,6 +52,7 @@ int main(int argc, char* argv[])
   ("tag-model",       po::value<std::string>(&tag_model)->default_value(""),             "Tagging model")
   ("lem-model",       po::value<std::string>(&lem_model)->default_value(""),             "Lemmatization model")
   ("dp-model",        po::value<std::string>(&dp_model)->default_value(""),              "Dependency parsing model")
+  ("lem-dict",        po::value<std::string>(&lem_dict)->default_value(""),              "Lemmatization dictionary")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ("tag-use-mp",      po::value<bool>(&tag_use_mp)->default_value(true),                 "Use mixed-precision calculations in tagger")
@@ -104,6 +106,11 @@ int main(int argc, char* argv[])
   if (dp_model.size() > 0)
   {
     models["dp"] = dp_model;
+  }
+
+  if (lem_dict.size() > 0)
+  {
+    models["lem_dict"] = lem_dict;
   }
 
   size_t out_fmt = 1;
@@ -178,18 +185,25 @@ void parse_file(std::istream& input,
   std::shared_ptr<DependencyParser> parser = nullptr;
   if (models_fn.end() != models_fn.find("tag"))
   {
-    std::string lemm_model_fn;
-    std::map<std::string, std::string>::const_iterator it = models_fn.find("lem");
-    if (models_fn.end() != it)
+    auto find_or_empty_line = [](const auto& m, const std::string& k)
     {
-      lemm_model_fn = it->second;
-    }
+      const auto it = m.find(k);
+      if (m.end() != it)
+      {
+        return it->second;
+      }
+      using mt = typename std::remove_reference<decltype(m)>::type::mapped_type;
+      return mt("");
+    };
+    std::string lemm_model_fn = find_or_empty_line(models_fn, "lem");
+    std::string lemm_dict_fn = find_or_empty_line(models_fn, "lem_dict");
 
     if (tag_use_mp)
     {
       panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, int16_t> >(
           models_fn.find("tag")->second,
           lemm_model_fn,
+          lemm_dict_fn,
           path_resolver,
           TAG_BUFFER_SIZE,
           8);
@@ -199,6 +213,7 @@ void parse_file(std::istream& input,
       panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, float> >(
           models_fn.find("tag")->second,
           lemm_model_fn,
+          lemm_dict_fn,
           path_resolver,
           TAG_BUFFER_SIZE,
           8);
