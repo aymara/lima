@@ -110,7 +110,9 @@ def install_model(dir, fn, code, prefix_list):
                         if file is not None:
                             full_dir, name = os.path.split(m.name)
                             if len(prefix_list) > 0:
-                                name_prefix, _ = name.split("-")
+                                name_prefix = (
+                                    name.split("-")[0] if "-" in name else name
+                                )
                                 if name_prefix not in prefix_list:
                                     continue
                             mo = re.match(
