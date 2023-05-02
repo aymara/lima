@@ -18,6 +18,18 @@
 namespace deeplima
 {
 
+
+/**
+ * Handle multithread processing of token sequence.
+ *
+ * Uses several buffers. There is no dependency between buffers because we compute a little bit more than strictly
+ * necessary to serve as the context. After computing, not all the buffer is used as output.
+ *
+ * Loads all necessary models
+ *
+ * Precompute should be separated from inference during conversion of torch model to ours. But currently, the torch
+ * model is loaded during initialization
+ */
 template <class Matrix=eigen_wrp::EigenMatrixXf>
 class TokenSequenceAnalyzer
 {
