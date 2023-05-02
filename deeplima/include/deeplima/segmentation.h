@@ -15,6 +15,13 @@
 
 #include "nets/birnn_seq_cls.h"
 
+/**
+ * This is the only inference task implemented both with torch and eigen, even if the structure exist for others.
+ * But the eigen implementation is the only one used in reality and it is way more efficient. So, the torch
+ * implementation could be removed later.
+ *
+ * CharNgramEncoder is not well suited for transformers.
+ */
 #if DEEPLIMA_INFERENCE_ENGINE == IE_TORCH
 
 #include "torch_wrp/dict_vectorizer.h"

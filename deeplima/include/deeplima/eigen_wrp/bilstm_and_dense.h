@@ -23,6 +23,25 @@ struct params_bilstm_dense_argmax_t : public param_base_t
   std::vector<params_linear_t<M, V>> linear;
 };
 
+/**
+ * Fusion of several torch modules implemented for inference in Eigen
+ *
+ * Precomputed inputs. The x of each gate is fasttext embeddings. They can be computed during model loading. This
+ * is done in precompute_inputs. This takes a very long time. This can be done in the first layer only
+ *
+ * forward_pass is different for fixed point and non-fixed point
+ *
+ * The implementation with factorization is less efficient while it should be more.
+ *
+ * In linear layer on top of RNN outputs.
+ * - Could bequicker in fixed point than in floating point but not sure. Must be tested
+ * - For pos tagging, could avoid to compute everything because it is very sparse but the code must stay generic and
+ *    cannot use information specific to morphologic model.
+ *
+ * In fixed, only last step is in fixed because some necessary functions (tanh…) are not implemented in fixed but
+ * quicker nevertheless
+ *
+ */
 template<class M, class V, class T>
 class Op_BiLSTM_Dense_ArgMax : public Op_Base
 {

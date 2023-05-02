@@ -27,6 +27,17 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
   return out;
 }
 
+/**
+ * Handles multithreading
+ *
+ * buffers from elsewhere are called slots here
+ *
+ * Starts and stops threads.
+ * Each classifier has its own threadpool
+ * Each thread has its own stack so on machines with low memory, could be a problem.
+ *
+ *
+ */
 template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out>
 class RnnSequenceClassifier : public InputVectorizer,
                               public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> >,
