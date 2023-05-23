@@ -49,7 +49,10 @@ namespace torch_impl
 
 namespace eigen_impl
 {
-  typedef impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTaggingF> Model;
+  template <typename AuxScalar=float>
+  class Model : public impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float, AuxScalar>>
+  {};
+
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
   /*typedef WordSeqEmbdVectorizer<token_buffer_t,
                                 TokenStrFeatExtractor<token_buffer_t::token_t>,
@@ -99,7 +102,9 @@ namespace impl
 
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
 
-  typedef eigen_impl::Model Model;
+  template <typename AuxScalar=float>
+  class Model : public eigen_impl::Model<AuxScalar>
+  {};
 
   template <class TokenVector, class Token>
   class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
@@ -116,7 +121,9 @@ namespace impl
 #error Unknown inference engine
 #endif
 
-  typedef RnnSequenceClassifier<Model, BaseMatrix, uint8_t> EntityTaggingClassifier;
+  template <typename AuxScalar=float>
+  class EntityTaggingClassifier: public RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>
+  {};
 
   //typedef impl::TaggingImpl< EntityTaggingClassifier, int
   //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,

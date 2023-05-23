@@ -45,8 +45,8 @@ public:
   typedef V Vector;
   typedef params_deep_biaffine_attn_decoder_t<M, V> params_t;
 
-  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench(uint32_t input_size,
-                                        const std::shared_ptr<param_base_t> params,
+  virtual std::shared_ptr<Op_Base::workbench_t> create_workbench([[maybe_unused]] uint32_t input_size,
+                                        [[maybe_unused]] const std::shared_ptr<param_base_t> params,
                                         bool /*precomputed_input=false*/) const override
   {
     assert(input_size > 0);
@@ -57,7 +57,7 @@ public:
     return std::make_shared<workbench_t>();
   }
 
-  virtual size_t execute(std::shared_ptr<Op_Base::workbench_t> pwb,
+  virtual size_t execute([[maybe_unused]] std::shared_ptr<Op_Base::workbench_t> pwb,
                          const M& input_matrix,
                          const std::shared_ptr<param_base_t> params,
                          const size_t input_begin,
