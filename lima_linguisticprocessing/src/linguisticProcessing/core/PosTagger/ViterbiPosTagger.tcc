@@ -68,10 +68,10 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   LinguisticGraphVertex currentVx=anagraph->firstVertex();
   LinguisticGraphVertex endVx=anagraph->lastVertex();
 
-  /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed) 
+  /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
   /// set to false as the tokens are owned by the anagraph
-  /// @note : tokens newly created later will be owned by their creator and have 
-  /// to be deleted by this one 
+  /// @note : tokens newly created later will be owned by their creator and have
+  /// to be deleted by this one
   LinguisticAnalysisStructure::AnalysisGraph* posgraph=new LinguisticAnalysisStructure::AnalysisGraph("PosGraph",m_language,false,true);
   analysis.setData("PosGraph",posgraph);
 
@@ -126,7 +126,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
 
     stepData.clear();
     /**
-    * Order vertices and store micro-categories in stepData. 
+    * Order vertices and store micro-categories in stepData.
     */
     initializeStepDataFromGraph(srcgraph,currentVx,currentResultVxMicro,
                                 predCats,nextVx,stepData);
@@ -296,14 +296,21 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
     }
 }
 
-
 template<typename Cost,typename CostFunction>
 void ViterbiPosTagger<Cost,CostFunction>::performViterbiOnStepData(StepDataVector& stepData) const
 {
+
 #ifdef DEBUG_LP
   PTLOGINIT;
-  LINFO << "performViterbiOnStepData";
+  LINFO << "performViterbiOnStepData on" << stepData.size() << "items";
 #endif
+
+  if(stepData.size() <=2){
+    LIMA_EXCEPTION_SELECT_LOGINIT(PTLOGINIT,
+                                  "Input stepDataVector should be larger than 2 items.",
+                                  LinguisticProcessingException);
+  }
+
   // 1. foreach node of our lattice
   StepDataVectorItr stepItr=stepData.begin();
   stepItr++;

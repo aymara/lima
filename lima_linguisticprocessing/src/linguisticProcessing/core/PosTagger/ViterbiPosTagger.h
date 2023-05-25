@@ -24,6 +24,7 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
+#include "linguisticProcessing/client/LinguisticProcessingException.h"
 
 #include <list>
 #include <vector>
@@ -77,7 +78,7 @@ public:
     Manager* manager) override;
 
   LimaStatusCode process(AnalysisContent& analysis) const override;
-  
+
 private:
 
   struct PredData
@@ -146,7 +147,7 @@ private:
 	 * With the example below, we would put "A B C D E" in stepData,
 	 * along with their microdatas.
 	 */
-	
+
 	void initializeStepDataFromGraph(
     const LinguisticGraph* srcgraph,
     LinguisticGraphVertex start,

@@ -162,13 +162,14 @@ void CoreXmlReaderClient::handle(
     DocumentsReader::IndexingDocumentElement* element  =
         dynamic_cast<DocumentsReader::IndexingDocumentElement*>(absElement);
     std::string elementName = element->getElementName().toUtf8().constData();
+    const PropagatedProperties& properties = element->getPropertyList();
 
 #ifdef DEBUG_LP
     if( logger.loggingLevel() == QsLogging::DebugLevel )
     {
       LDEBUG << "CoreXmlReaderClient::handle [" << rtext << "], offset ="
-            << offset << ", tagName =" << tagName << ", element name ="
-            << elementName ;
+            << offset << ", tagName =" << tagName << ", elementName ="
+            << elementName << ", properties = " << properties;
     }
     else if( logger.loggingLevel() == QsLogging::InfoLevel )
 #endif
@@ -176,9 +177,9 @@ void CoreXmlReaderClient::handle(
       // Chercher les analyses diponibles
       XMLREADERCLIENTLOGINIT;
       LINFO << "CoreXmlReaderClient::handle"
-            << "[" << rtext.left(50) << "], offset =" << offset
-            << ", tagName =" << tagName << ", element name ="
-            << elementName ;
+            << "[" << rtext.left(80) << "], offset =" << offset
+            << ", tagName =" << tagName << ", elementName ="
+            << elementName << ", properties = " << properties;
     }
     ostringstream os;
     os << offset;

@@ -597,21 +597,17 @@ bool StructuredDocumentXMLParser::endElement(const QString& namespaceURI,
     assert(currentElement->size() > 0);
 #endif
 
-#ifndef DEBUG_LP
     try {
-#endif
         m_processor->handle(*m_currentDocument, currentElement->front()->getText(),
                             m_addAbsoluteOffsetToTokens ? currentElement->front()->getOffset() : 0,
                             qsname.toUtf8().constData());
-#ifndef DEBUG_LP
     }
     catch(const LinguisticProcessing::LinguisticProcessingException& e)
     {
         DRLOGINIT;
         LERROR << "StructuredDocumentXMLParser::endElement: error while handling indexing element"
-                << qsname<< "absolute offset:" << currentElement->front()->getOffset();
+                << qsname << "absolute offset:" << currentElement->front()->getOffset() << ". The content will be ignored.";
     }
-#endif
 
 #ifdef DEBUG_LP
    LDEBUG << "StructuredDocumentXMLParser::endElement: pop indexing element handled" << qsname;
