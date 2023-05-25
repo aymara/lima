@@ -27,7 +27,8 @@ void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,
                 const deeplima::PathResolver& path_resolver,
                 size_t threads,
-                size_t out_fmt=1);
+                size_t out_fmt=1,
+                bool tag_use_mp=true);
 
 int main(int argc, char* argv[])
 {
@@ -38,6 +39,8 @@ int main(int argc, char* argv[])
 
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
+  std::string lem_dict;
+  bool tag_use_mp;
   std::vector<std::string> input_files;
 
   po::options_description desc("deeplima (analysis demo)");
@@ -49,8 +52,10 @@ int main(int argc, char* argv[])
   ("tag-model",       po::value<std::string>(&tag_model)->default_value(""),             "Tagging model")
   ("lem-model",       po::value<std::string>(&lem_model)->default_value(""),             "Lemmatization model")
   ("dp-model",        po::value<std::string>(&dp_model)->default_value(""),              "Dependency parsing model")
+  ("lem-dict",        po::value<std::string>(&lem_dict)->default_value(""),              "Lemmatization dictionary")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
+  ("tag-use-mp",      po::value<bool>(&tag_use_mp)->default_value(true),                 "Use mixed-precision calculations in tagger")
   ;
 
   po::positional_options_description pos_desc;
@@ -103,6 +108,11 @@ int main(int argc, char* argv[])
     models["dp"] = dp_model;
   }
 
+  if (lem_dict.size() > 0)
+  {
+    models["lem_dict"] = lem_dict;
+  }
+
   size_t out_fmt = 1;
   if (output_format.size() > 0)
   {
@@ -128,12 +138,12 @@ int main(int argc, char* argv[])
         throw std::runtime_error("Failed to open file");
       }
       file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
-      parse_file(file, models, path_resolver, threads, out_fmt);
+      parse_file(file, models, path_resolver, threads, out_fmt, tag_use_mp);
     }
   }
   else
   {
-    parse_file(std::cin, models, path_resolver, threads, out_fmt);
+    parse_file(std::cin, models, path_resolver, threads, out_fmt, tag_use_mp);
   }
 
   return 0;
@@ -152,7 +162,8 @@ void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,
                 const PathResolver& path_resolver,
                 size_t threads,
-                size_t out_fmt)
+                size_t out_fmt,
+                bool tag_use_mp)
 {
   // std::cerr << "deeplima parse_file threads = " << threads << std::endl;
   std::shared_ptr<segmentation::ISegmentation> psegm;
@@ -168,21 +179,45 @@ void parse_file(std::istream& input,
     psegm = std::make_shared<segmentation::CoNLLUReader>();
   }
 
-  std::shared_ptr< TokenSequenceAnalyzer<> > panalyzer = nullptr;
+  std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr;
   std::shared_ptr< dumper::AbstractDumper > pdumper = nullptr;
   std::shared_ptr< dumper::DumperBase > pDumperBase = nullptr;
   std::shared_ptr<DependencyParser> parser = nullptr;
   if (models_fn.end() != models_fn.find("tag"))
   {
-    std::string lemm_model_fn;
-    std::map<std::string, std::string>::const_iterator it = models_fn.find("lem");
-    if (models_fn.end() != it)
+    auto find_or_empty_line = [](const auto& m, const std::string& k)
     {
-      lemm_model_fn = it->second;
-    }
+      const auto it = m.find(k);
+      if (m.end() != it)
+      {
+        return it->second;
+      }
+      using mt = typename std::remove_reference<decltype(m)>::type::mapped_type;
+      return mt("");
+    };
+    std::string lemm_model_fn = find_or_empty_line(models_fn, "lem");
+    std::string lemm_dict_fn = find_or_empty_line(models_fn, "lem_dict");
 
-    panalyzer = std::make_shared< TokenSequenceAnalyzer<> >(models_fn.find("tag")->second,
-                                      lemm_model_fn, path_resolver, TAG_BUFFER_SIZE, 8);
+    if (tag_use_mp)
+    {
+      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, int16_t> >(
+          models_fn.find("tag")->second,
+          lemm_model_fn,
+          lemm_dict_fn,
+          path_resolver,
+          TAG_BUFFER_SIZE,
+          8);
+    }
+    else
+    {
+      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, float> >(
+          models_fn.find("tag")->second,
+          lemm_model_fn,
+          lemm_dict_fn,
+          path_resolver,
+          TAG_BUFFER_SIZE,
+          8);
+    }
 
     if (models_fn.end() != models_fn.find("dp"))
     {

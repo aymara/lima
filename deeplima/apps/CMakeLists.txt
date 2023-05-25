@@ -65,6 +65,26 @@ install(TARGETS deeplima-train-lemmatization
 )
 
 ############################################################
+# Generate lemmatization dictionary
+
+add_executable(deeplima-gen-lemm-dict
+  gen-lemm-dict.cpp
+)
+
+target_link_libraries(deeplima-gen-lemm-dict
+  PRIVATE
+  conllu
+  Boost::program_options
+  Boost::filesystem
+  ICU::i18n
+)
+
+install(TARGETS deeplima-gen-lemm-dict
+  DESTINATION bin
+  COMPONENT runtime
+)
+
+############################################################
 # Train dependency parsing models
 
 add_executable(deeplima-train-dp

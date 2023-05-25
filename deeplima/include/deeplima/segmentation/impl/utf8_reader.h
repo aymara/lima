@@ -87,7 +87,7 @@ public:
       uint8_t bytes_to_copy = len > 4 ? 4 : len;
       memcpy(m_bytes_buffer + m_bytes_left_to_parse, str, bytes_to_copy);
 
-      uint8_t char_len = parse(m_bytes_buffer, pos, m_bytes_left_to_parse + bytes_to_copy);
+      [[maybe_unused]] uint8_t char_len = parse(m_bytes_buffer, pos, m_bytes_left_to_parse + bytes_to_copy);
       assert(char_len > 0);
 
       *pos = *pos - m_bytes_left_to_parse;

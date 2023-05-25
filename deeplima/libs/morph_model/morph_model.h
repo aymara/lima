@@ -13,6 +13,11 @@
 #include <unordered_map>
 #include <cassert>
 
+#ifndef NDEBUG
+#include <iostream>
+#include "deeplima/utils/pretty.h"
+#endif
+
 namespace deeplima
 {
 namespace morph_model
@@ -62,6 +67,11 @@ public:
   inline feat_base_t subvalue(feat_base_t mask, uint8_t offset) const
   {
     return (m_value & mask) >> offset;
+  }
+
+  inline auto hash() const
+  {
+    return std::hash<feat_base_t>{}(m_value);
   }
 };
 
@@ -209,6 +219,41 @@ public:
 public:
 
   morph_feats_t convert(const std::string& upos, const std::map<std::string, std::set<std::string>>& feats) const;
+
+  template <typename F>
+  morph_feats_t convert(F featid2value) const
+  {
+    auto upos_idx = m_feat_dict.get_id("upos");
+    assert(upos_idx >= 0);
+    auto upos_id = featid2value(upos_idx);
+    const std::map<std::string, std::set<std::string>> feats;
+
+    morph_feats_t v(upos_id);
+
+    const auto& feats2mask = m_feats2mask[upos_id];
+
+    for ( const auto& kv : feats2mask )
+    {
+      const auto feat_id = kv.first;
+      if (feat_id == upos_idx)
+      {
+        continue;
+      }
+
+      size_t mask_id = kv.second;
+      assert(mask_id < m_offset.size());
+      uint8_t offset = m_offset[mask_id];
+
+      auto feat_value_id = featid2value(feat_id);
+      v.append(feat_value_id << offset);
+    }
+
+#ifndef NDEBUG
+    std::cerr << pretty_bits_to_string(v.toBaseType()) << " " << to_string(v) << std::endl;
+#endif
+
+    return v;
+  }
 
   const std::string& decode_upos_to_str(const morph_feats_t& feats) const;
 

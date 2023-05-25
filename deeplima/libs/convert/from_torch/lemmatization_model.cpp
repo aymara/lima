@@ -103,8 +103,16 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization<M, V, T>::convert_from_torch(con
   Parent::m_ops.push_back(std::make_shared<Op_LSTM_Beam_Decoder<M, V, T>>());
   Parent::m_params.push_back(std::make_shared<params_lstm_beam_decoder_t<M, V>>());
   auto p_dec = std::dynamic_pointer_cast<params_lstm_beam_decoder_t<M, V>>(Parent::m_params.back());
-  p_dec->bilstm = Parent::m_lstm[Parent::m_lstm_idx["decoder_lstm_0"]];
-  p_dec->linear.push_back(Parent::m_linear[Parent::m_linear_idx["fc_output"]]);
+  p_dec->lstm = Parent::m_lstm[Parent::m_lstm_idx["decoder_lstm_0"]].fw;
+  p_dec->linear = Parent::m_linear[Parent::m_linear_idx["fc_output"]];
+
+  // Precompute all decoder's embeddings
+  M precomputed_embd_tensor = M::Zero(p_dec->lstm.weight_ih.rows(),
+                                      Parent::m_input_uint_dicts[1].get_tensor().cols());
+  std::shared_ptr<Op_LSTM_Beam_Decoder<M, V, T>> decoder
+    = std::dynamic_pointer_cast<Op_LSTM_Beam_Decoder<M, V, T>>(Parent::m_ops.back());
+  decoder->precompute_inputs(p_dec, Parent::m_input_uint_dicts[1].get_tensor(), precomputed_embd_tensor, 0);
+  Parent::m_input_uint_dicts[1].set_tensor(precomputed_embd_tensor);
 
   // input to encoder
   Parent::m_ops.push_back(std::make_shared<Op_Linear<M, V, T>>());
