@@ -49,7 +49,6 @@ class CompoundsBuilderFromSyntacticDataPrivate
 
   std::map< LinguisticCode, Lima::Common::MediaticData::ConceptType > m_macro2ConceptMapping;
   std::set< std::string > m_compoundsRels;
-  bool m_useChains = false;
 };
 
 CompoundsBuilderFromSyntacticDataPrivate::CompoundsBuilderFromSyntacticDataPrivate()
@@ -81,11 +80,6 @@ void CompoundsBuilderFromSyntacticData::init(
   m_d->initConceptTypes(unitConfiguration);
   m_d->initCompoundRels(unitConfiguration);
   m_d->initMacros2ConceptsMapping(unitConfiguration);
-  try {
-    m_d->m_useChains = unitConfiguration.getBooleanParameter("useChains");
-  } catch (const NoSuchParam&)
-  {}
-
 }
 
 void CompoundsBuilderFromSyntacticDataPrivate::initCompoundRels(
@@ -360,8 +354,7 @@ LimaStatusCode CompoundsBuilderFromSyntacticData::process(
         anagraph.get(),
         beginSentence,
         endSentence,
-        annotationData.get(),
-        m_d->m_useChains);
+        annotationData.get());
 
     // don't use STL algorithm to avoid throwing exceptions
     LinguisticGraphVertex firstVx = anagraph->firstVertex();

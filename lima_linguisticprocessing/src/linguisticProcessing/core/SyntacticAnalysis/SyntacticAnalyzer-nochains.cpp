@@ -191,46 +191,7 @@ void SyntacticAnalyzerNoChains::identifyChains(SyntacticData* data,
 
   while (! ( tank.empty() && nextVxs.empty()) )
   {
-//     LDEBUG << "LOOP";
-    if (pile.size() >= m_maxChainLength)
-    {
-#ifdef DEBUG_LP
-      SACLOGINIT;
-      LNOTICE << "Chain reached its max size or is too long.";
-//       LDEBUG << "Trying to find a chain end in the too long stack";
-#endif
-      LinguisticGraphVertex lastChainVx = unstackUptoChainEnd(data, pile, currentType);
-      if (lastChainVx != first) {
-//         LDEBUG << "Chain end is " << lastChainVx << ". Reporting the chain in the graph.";
-        std::string newChainString = stringChain(data,pile, currentType, alreadyFinished,startChainId,lastChainVx);
-        alreadyReported.insert(newChainString);
-        reportChainInGraph(data,pile, currentType, alreadyFinished,startChainId,lastChainVx);
-        LinguisticGraphOutEdgeIt it, it_end;
-        boost::tie(it, it_end) = out_edges(lastChainVx, *(data->graph()));
-//         LDEBUG << "Initializing for the sons of " << lastChainVx;
-        for (; it != it_end; it++)
-        {
-//           LDEBUG << "Looking at an out edge of the chain's last vertex : " << *it;
-          LinguisticGraphVertex nextVx = target(*it, *(data->graph()));
-          if (alreadyFinished.find(nextVx) == alreadyFinished.end())
-          {
-//             LDEBUG << "Adding " << nextVx << " to nextVxs";
-            nextVxs.push_back(nextVx);
-          }
-        }
-      } 
-      else {
-//         LDEBUG << "NoChainEndInStack";
-      }
-      if ( ! tank.empty() )
-      {
-//         LDEBUG << "Using a new stack after chain too long";
-//         boost::tie(pile, pileSons) = tank.back();
-        pile = tank.back();
-        tank.pop_back();
-      }
-    }
-    else if (tank.empty())
+    if (tank.empty())
     {
 //       LDEBUG << "tank is empty";
       LinguisticGraphVertex nextVx = nextVxs.back();
@@ -482,23 +443,23 @@ void SyntacticAnalyzerNoChains::reportChainInGraph(
 
     VertexChainIdPropertyMap vertexChainIdMap = get( vertex_chain_id, *(data->graph()) );
 
-    std::vector< ChainStackTuple >::const_iterator it, it_end;
-    it = pile.begin(); it_end = pile.end();
-    for (; it != it_end; it++)
-    {
-      LinguisticGraphVertex current = (*it).get<0>();
-      if ((vertexChainIdMap[current].size() >= m_maxChainsNbByVertex) )
-      {
-        SACLOGINIT;
-        LNOTICE << "Too much chains on " << current << " ; cannot add a new one.";
-        return;
-      }
-    }
+    // std::vector< ChainStackTuple >::const_iterator it, it_end;
+    // it = pile.begin(); it_end = pile.end();
+    // for (; it != it_end; it++)
+    // {
+    //   LinguisticGraphVertex current = (*it).get<0>();
+    //   if ((vertexChainIdMap[current].size() >= m_maxChainsNbByVertex) )
+    //   {
+    //     SACLOGINIT;
+    //     LNOTICE << "Too much chains on " << current << " ; cannot add a new one.";
+    //     return;
+    //   }
+    // }
 
 
-    std::vector< ChainStackTuple >::const_iterator it_beg, it_last;
-    it = pile.begin(); it_beg = pile.begin();
-    it_end = pile.end(); it_last = --(pile.end());
+    // std::vector< ChainStackTuple >::const_iterator it_beg, it_last;
+    auto it = pile.cbegin(); auto it_beg = pile.cbegin();
+    auto it_end = pile.cend(); auto it_last = --(pile.cend());
     std::ostringstream oss;
     for (; it != it_end; it++)
     {
@@ -520,15 +481,15 @@ void SyntacticAnalyzerNoChains::reportChainInGraph(
       }
       oss << current;
       if (current != data->iterator()->firstVertex() && current != data->iterator()->lastVertex()
-          && (vertexChainIdMap[current].size() < m_maxChainsNbByVertex) )
+          // && (vertexChainIdMap[current].size() < m_maxChainsNbByVertex)
+          )
       {
 //         LDEBUG << "executing: vertexChainIdMap[" << current << "].insert(" << property << ")";
         vertexChainIdMap[current].insert(property);
 
         if (pile.size() > 1)
         {
-          std::vector< ChainStackTuple >::const_iterator it2, it2_end;
-          it2 = pile.begin(); it2_end = pile.end();
+          auto it2 = pile.cbegin(); auto it2_end = pile.cend();
           bool ok = false;
           for (; it2 != it2_end; it2++)
           {
@@ -560,11 +521,11 @@ void SyntacticAnalyzerNoChains::reportChainInGraph(
           }
         }
       }
-      else if (vertexChainIdMap[current].size() >= m_maxChainsNbByVertex)
-      {
-        SACLOGINIT;
-        LNOTICE << "Too much chains on " << current << " ; cannot add a new one.";
-      }
+      // else if (vertexChainIdMap[current].size() >= m_maxChainsNbByVertex)
+      // {
+      //   SACLOGINIT;
+      //   LNOTICE << "Too much chains on " << current << " ; cannot add a new one.";
+      // }
       if (current == stop)
         break;
       else
