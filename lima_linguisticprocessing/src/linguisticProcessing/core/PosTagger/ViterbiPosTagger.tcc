@@ -157,6 +157,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
         currentResultVxMicro=m_microAccessor->readValue(data->begin()->properties);
       }
     } else {
+//     LERROR << "currentResultVxMicro set to defaultCateg" << m_defaultCateg;
       currentResultVxMicro=m_defaultCateg;
     }
 
@@ -170,9 +171,11 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
     {
       LinguisticAnalysisStructure::MorphoSyntacticData* srcVxData=get(vertex_data, *resultgraph, source(*inItr,*resultgraph));
       if (srcVxData!=0 && !srcVxData->empty()) {
+//        LDEBUG << "push_back  microCateg" << m_microAccessor->readValue(srcVxData->begin()->properties);
         predCats.push_back( m_microAccessor->readValue(srcVxData->begin()->properties) );
       } else {
-        predCats.push_back(m_defaultCateg);
+//        LDEBUG << "push_back  defaultCateg" << m_defaultCateg;
+        predCats.push_back( m_defaultCateg );
       }
     }
   }
@@ -180,7 +183,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   // last currentResultVx must be the last vertex
   {
     LinguisticGraphVertex lastVx=posgraph->lastVertex();
-//     LDEBUG << "replace last vertex " << currentResultVx << " by " << lastVx;
+//    LDEBUG << "replace last vertex " << currentResultVx << " by " << lastVx;
     LinguisticGraphInEdgeIt inItr,inItrEnd;
     boost::tie(inItr,inItrEnd) = in_edges(currentResultVx,*resultgraph);
     for (;inItr!=inItrEnd;inItr++)
@@ -304,12 +307,6 @@ void ViterbiPosTagger<Cost,CostFunction>::performViterbiOnStepData(StepDataVecto
   PTLOGINIT;
   LINFO << "performViterbiOnStepData on" << stepData.size() << "items";
 #endif
-
-  if(stepData.size() <=2){
-    LIMA_EXCEPTION_SELECT_LOGINIT(PTLOGINIT,
-                                  "Input stepDataVector should be larger than 2 items.",
-                                  LinguisticProcessingException);
-  }
 
   // 1. foreach node of our lattice
   StepDataVectorItr stepItr=stepData.begin();

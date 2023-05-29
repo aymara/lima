@@ -114,5 +114,6 @@ typedef std::set<LinguisticGraphVertex> SetOfLinguisticGraphVertices;
 typedef boost::property_map<LinguisticGraph, boost::vertex_color_t >::type VertexColorLinguisticGraphPropertyMap;
 
 LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT QDebug& operator<< (QDebug& qd, LinguisticGraphEdge& edge);
+LIMA_LINGUISTICANALYSISSTRUCTURE_EXPORT QDebug& operator<< (QDebug& qd, const LinguisticGraphEdge& edge);
 
 #endif // LIMA_GRAPH_PHOENIXGRAPH_H
