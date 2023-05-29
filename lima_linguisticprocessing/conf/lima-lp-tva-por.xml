@@ -39,7 +39,6 @@ SPDX-License-Identifier: MIT
         <item value="dotGraphWriter"/>
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
@@ -89,7 +88,6 @@ SPDX-License-Identifier: MIT
         <item value="dotGraphWriter-beforepos"/>
         <!--item value="viterbiPostagger-freq"/-->
         <item value="sentenceBoundariesFinder"/>
-        <!--item value="syntacticAnalyzerNoChains"/-->
         <!--item value="syntacticAnalyzerDeps"/-->
         <!--item value="syntacticAnalyzerDepsHetero"/-->
         <item value="dotDepGraphWriter"/>
@@ -335,17 +333,6 @@ SPDX-License-Identifier: MIT
       <list name="micros">
         <item value="PONCTU_FORTE" />
       </list>
-    </group>
-    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
-    experimental module used to test if LIMA analysis works without nominal and
-    verbal. It allows also to build compounds using verbs and heterosyntagmatic
-    dependencies. For that, one have to add adequate relations in
-    CompoundRelations in mm-common. -->
-    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
-      <param key="chainMatrix" value="chainMatrix"/>
-      <param key="disambiguated" value="true"/>
-      <param key="maxChainsNbByVertex" value="30"/>
-      <param key="maxChainLength" value="12"/>
     </group>
     <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
       <param key="depGraphMaxBranchingFactor" value="100"/>

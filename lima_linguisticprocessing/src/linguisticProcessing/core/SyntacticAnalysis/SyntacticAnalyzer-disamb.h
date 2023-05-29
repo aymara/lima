@@ -60,10 +60,10 @@ protected:
 
   bool m_disamb;
   
-  LinguisticGraphVertex nextChainsDisambBreakFrom(
-        const LinguisticGraphVertex& v,
-        const LinguisticAnalysisStructure::AnalysisGraph& graph,
-        const LinguisticGraphVertex& nextSentenceBreak) const;
+  // LinguisticGraphVertex nextChainsDisambBreakFrom(
+  //       const LinguisticGraphVertex& v,
+  //       const LinguisticAnalysisStructure::AnalysisGraph& graph,
+  //       const LinguisticGraphVertex& nextSentenceBreak) const;
 
 };
 
