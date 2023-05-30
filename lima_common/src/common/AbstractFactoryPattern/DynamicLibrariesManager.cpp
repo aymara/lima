@@ -165,6 +165,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   }
 
   std::shared_ptr< QLibrary > libhandle;
+  std::vector<std::string> triedPaths;
   // try supplementary search path
   for (auto it = m_d->m_supplementarySearchPath.begin();
        it != m_d->m_supplementarySearchPath.end(); it++)
@@ -188,6 +189,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
       LDEBUG << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open supplementary lib " << libhandle->errorString();
       libhandle.reset();
+      triedPaths.push_back(((*it)+"/").c_str());
     }
   }
   // now try system default search path
@@ -208,6 +210,11 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
+      for (auto it = triedPaths.begin();
+        it != triedPaths.end(); it++)
+      {
+        LERROR << "the library" << libName << "was not found in: " << *it;
+      }
       LERROR << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open system lib " << libhandle->errorString();
       return false;
