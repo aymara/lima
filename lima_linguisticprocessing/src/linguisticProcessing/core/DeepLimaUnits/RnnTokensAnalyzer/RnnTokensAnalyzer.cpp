@@ -294,6 +294,9 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
     auto lemmatizer_model_file_name = findFileInPaths(resources_path,
                                                     QString::fromUtf8("/RnnLemmatizer/%1/%2.pt")
                                                             .arg(lang_str, lemmatizer_model_name));
+    auto lemmatizer_dictionary_file_name = findFileInPaths(resources_path,
+                                                           QString::fromUtf8("/RnnLemmatizer/%1/%2.dic")
+                                                            .arg(lang_str, lemmatizer_model_name));
     if (tagger_model_file_name.isEmpty())
     {
         throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
@@ -304,7 +307,7 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
         lemmatizer_model_file_name = "";
     }
 
-    m_load_fn = [this, tagger_model_file_name, lemmatizer_model_file_name]()
+    m_load_fn = [this, tagger_model_file_name, lemmatizer_model_file_name, lemmatizer_dictionary_file_name]()
     {
         if (m_loaded)
         {
@@ -312,7 +315,7 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
         }
         m_tokensAnalyzer = std::make_shared< TokenSequenceAnalyzer<> >(tagger_model_file_name.toStdString(),
                                                                        lemmatizer_model_file_name.toStdString(),
-                                                                       "",
+                                                                       lemmatizer_dictionary_file_name.toStdString(),
                                                                        m_pResolver, 1024, 8);
         m_loaded = true;
     };
