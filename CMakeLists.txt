@@ -410,7 +410,7 @@ message("Eigen3 root: ${EIGEN3_USE_FILE}")
 endif()
 
 find_package(Torch)
-find_package(ICU 60.0 COMPONENTS uc)
+find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
 

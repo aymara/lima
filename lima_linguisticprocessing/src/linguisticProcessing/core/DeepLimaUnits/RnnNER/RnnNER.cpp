@@ -464,7 +464,7 @@ void RnnNERPrivate::init(GroupConfigurationStructure& unitConfiguration)
     {
       return;
     }
-    m_tag = std::make_shared< TokenSequenceAnalyzer<> >(model_file_name.toStdString(), "", m_pResolver, 1024, 8);
+    m_tag = std::make_shared< TokenSequenceAnalyzer<> >(model_file_name.toStdString(), "", "", m_pResolver, 1024, 8);
 
 
     m_loaded = true;

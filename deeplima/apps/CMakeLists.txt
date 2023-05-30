@@ -74,9 +74,8 @@ add_executable(deeplima-gen-lemm-dict
 target_link_libraries(deeplima-gen-lemm-dict
   PRIVATE
   conllu
-  Boost::program_options
-  Boost::filesystem
-  ICU::i18n
+  ${Boost_LIBRARIES}
+  ${ICU_LIBRARIES}
 )
 
 install(TARGETS deeplima-gen-lemm-dict
