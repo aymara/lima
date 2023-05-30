@@ -511,6 +511,8 @@ if (TORCH_FOUND AND EIGEN3_FOUND)
   message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
   add_subdirectory(deeplima)
+else()
+  message("Torch and/or Eigen NOT found. deeplima will NOT be built.")
 endif()
 
 ########### documentation ###############

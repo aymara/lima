@@ -36,7 +36,8 @@ if (EIGEN3_FOUND)
             lima-lp-specificentities
             lima-lp-applyrecognizer
             lima-common
-            ICU::uc
+            ${ICU_LIBRARIES}
+            conllu
             convert_from_torch-shared
             fasttext-static
             utils
