@@ -213,7 +213,8 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
       for (auto it = triedPaths.begin();
         it != triedPaths.end(); it++)
       {
-        LERROR << "the library" << libName << "was not found in: " << *it;
+        LERROR << "Failed to load library" << libName << "from " << (*it)
+               << "due to" << libhandle->errorString();
       }
       LERROR << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open system lib " << libhandle->errorString();
