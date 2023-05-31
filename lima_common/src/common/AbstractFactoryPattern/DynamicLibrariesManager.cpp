@@ -98,14 +98,14 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
     dl_iterate_phdr([](dl_phdr_info *info, size_t size, void* data) -> int {
         LIMA_UNUSED(size);
 
-        if (data == NULL)
+        if (data == nullptr)
             throw LimaException("Callback passed to dl_iterate_phdr unexpectedly got NULL in \"data\" argument.");
 
         auto& d = *((std::pair<bool&, const std::string&>*)data);
 
         //std::cerr << info->dlpi_name << std::endl;
 
-        if (info == NULL || info->dlpi_name == NULL)
+        if (info == nullptr || info->dlpi_name == nullptr)
             throw LimaException("Callback passed to dl_iterate_phdr unexpectedly got NULL in \"info\" argument.");
 
         std::string s(info->dlpi_name);
@@ -136,12 +136,11 @@ DynamicLibrariesManager::~DynamicLibrariesManager()
 {
 }
 
-bool DynamicLibrariesManager::
-isLoaded(const std::string& libName)
+bool DynamicLibrariesManager::isLoaded(const std::string& libName)
 {
   m_d->isSomethingSimilarLoaded(libName);
-  auto it=m_d->m_handles.find(libName);
-  return (it!=m_d->m_handles.end());
+  auto it = m_d->m_handles.find(libName);
+  return (it != m_d->m_handles.end());
 }
 
 bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
@@ -156,7 +155,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     return true;
   }
 
-  auto it=m_d->m_handles.find(libName);
+  auto it = m_d->m_handles.find(libName);
   if (it != m_d->m_handles.end())
   {
     LTRACE << "DynamicLibrariesManager::loadLibrary trying to reload dynamic library." << libName;
@@ -167,11 +166,10 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   std::shared_ptr< QLibrary > libhandle;
   std::vector< std::pair< std::string, std::string> > triedPaths;
   // try supplementary search path
-  for (auto it = m_d->m_supplementarySearchPath.begin();
-       it != m_d->m_supplementarySearchPath.end(); it++)
+  for (const auto& path: m_d->m_supplementarySearchPath)
   {
-    LDEBUG << "Trying supplementary " << ((*it)+"/"+libName).c_str();
-    libhandle = std::shared_ptr<QLibrary>(new QLibrary( ((*it)+"/"+libName).c_str() ));
+    LDEBUG << "Trying supplementary " << (path+"/"+libName).c_str();
+    libhandle = std::make_shared<QLibrary>((path+"/"+libName).c_str());
 
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
@@ -188,15 +186,16 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
       ABSTRACTFACTORYPATTERNLOGINIT;
       LDEBUG << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open supplementary lib " << libhandle->errorString();
-      triedPaths.emplace_back(((*it)+"/").c_str(), libhandle->errorString());
+      triedPaths.emplace_back( path, libhandle->errorString().toStdString() );
       libhandle.reset();
+
     }
   }
   // now try system default search path
   if (!libhandle)
   {
-    LDEBUG << "Trying " << libName.c_str();
-    libhandle = std::shared_ptr<QLibrary>( new QLibrary( libName.c_str() ) );
+    LDEBUG << "Trying " << libName;
+    libhandle = std::make_shared<QLibrary>( libName.c_str() );
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
     if (libhandle->load())
@@ -210,11 +209,9 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
     else
     {
       ABSTRACTFACTORYPATTERNLOGINIT;
-      for (auto it = triedPaths.begin();
-       it != triedPaths.end(); it++)
+      for (const auto& pathErr: triedPaths)
       {
-        LERROR << "Failed to load library " << libName << "from " << it->first
-               << " due to " << it->second;
+        LERROR << "Failed to load library " << libName << "from " << pathErr.first << " due to " << pathErr.second;
       }
       LERROR << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open system lib " << libhandle->errorString();
@@ -223,7 +220,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   }
   else
   {
-    m_d->m_handles[libName]=libhandle;
+    m_d->m_handles[libName] = libhandle;
     LDEBUG << "the library " << libName << " was loaded";
     return true;
   }
