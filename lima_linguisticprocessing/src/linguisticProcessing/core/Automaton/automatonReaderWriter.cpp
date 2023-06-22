@@ -183,28 +183,28 @@ readHeader(std::ifstream& file)
   // if language is specified
   if (!language.empty())
   {
-    // see if it is already initialized (if not, do it)
-    if (Common::MediaticData::MediaticData::single().getMediasIds().find(language)
-        ==Common::MediaticData::MediaticData::single().getMediasIds().end())
-    {
-      AULOGINIT;
-      ostringstream oss;
-      oss << "language " << language
-          << " is not initialized. ";
-#if __cplusplus >= 201703L
-      oss << "Initialized languages are: ";
-      for (const auto &[k, v] : Common::MediaticData::MediaticData::single().getMediasIds())
-        oss << k << ", ";
-#endif
-
-      LERROR << oss.str();
-      throw runtime_error(oss.str());
-    }
+//     // see if it is already initialized (if not, do it)
+//     if (Common::MediaticData::MediaticData::single().getMediasIds().find(language)
+//         ==Common::MediaticData::MediaticData::single().getMediasIds().end())
+//     {
+//       AULOGINIT;
+//       ostringstream oss;
+//       oss << "language " << language
+//           << " is not initialized. ";
+// #if __cplusplus >= 201703L
+//       oss << "Initialized languages are: ";
+//       for (const auto &[k, v] : Common::MediaticData::MediaticData::single().getMediasIds())
+//         oss << k << ", ";
+// #endif
+//
+//       LERROR << oss.str();
+//       throw runtime_error(oss.str());
+//     }
     lang=Common::MediaticData::MediaticData::single().media(language);
   }
 
   // readEntityType and save mapping
-  Common::MediaticData::MediaticData::changeable().readEntityTypes(file,m_entityGroupMapping,m_entityTypeMapping);
+  Common::MediaticData::MediaticData::changeable().readEntityTypes(file, m_entityGroupMapping, m_entityTypeMapping);
 
   // initialize constraint functions
   readRegisteredConstraints(file,lang);
@@ -213,7 +213,7 @@ readHeader(std::ifstream& file)
 }
 
 Rule* AutomatonReader::
-readRule(std::ifstream& file,MediaId language)
+readRule(std::ifstream& file, MediaId language)
 {
   Rule* rule=new Rule;
 

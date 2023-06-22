@@ -38,6 +38,8 @@ SPDX-License-Identifier: MIT
         <item value="RnnDependencyParser"/>
         <item value="RnnNER"/>
         <item value="RnnDependencyParser"/>-->
+        <item value="SpecificEntitiesModexAfterPos"/>
+<!--         <item value="specificEntitiesXmlLogger"/> -->
         <item value="compoundBuilderFromSyntacticData"/>
         <item value="conllDumper"/>
       </list>

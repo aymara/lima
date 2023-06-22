@@ -301,7 +301,7 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   QString lang_str = MediaticData::single().media(m_language).c_str();
   QString resources_path = MediaticData::single().getResourcesPath().c_str();
   QString model_name = model_prefix;
-  string udlang;
+  std::string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
 
   if (!fix_lang_codes(lang_str, udlang))
@@ -312,6 +312,7 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
+  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init model_name:" << model_name);
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")

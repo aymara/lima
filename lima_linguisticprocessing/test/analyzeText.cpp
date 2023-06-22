@@ -281,9 +281,26 @@ Options)");
   }
 
 
+  bool udInLangs = false;
+  bool oneUdLangInLangs = false;
+  for (const auto& lang: languages)
+  {
+    if (lang == "ud")
+    {
+      udInLangs = true;
+      break;
+    }
+    if (lang.rfind("ud-", 0) == 0)
+    {
+      oneUdLangInLangs = true;
+    }
+  }
+  if (!udInLangs and oneUdLangInLangs)
+  {
+    languages.push_back("ud");
+  }
   std::deque<std::string> langs(languages.size());
   std::copy(languages.begin(), languages.end(), langs.begin());
-
   std::set<std::string> dumpers;
   if (dumpersv.empty())
   {
