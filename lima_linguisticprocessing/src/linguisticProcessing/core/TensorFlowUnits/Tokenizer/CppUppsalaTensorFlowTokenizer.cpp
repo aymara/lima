@@ -312,7 +312,7 @@ void CppUppsalaTokenizerPrivate::init(GroupConfigurationStructure& unitConfigura
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
-  LOG_MESSAGE_WITH_PROLOG(LDEBUG, "CppUppsalaTokenizerPrivate::init model_name:" << model_name);
+  LOG_MESSAGE(LDEBUG, "CppUppsalaTokenizerPrivate::init model_name:" << model_name);
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowTokenizer/%1/%2.conf")
