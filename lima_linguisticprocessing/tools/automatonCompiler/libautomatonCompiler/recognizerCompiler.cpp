@@ -24,9 +24,12 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/time/timeUtilsController.h"
 
+
 #include "linguisticProcessing/core/Automaton/automatonCommon.h" // for exceptions
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h" // to check rules
 #include "linguisticProcessing/core/Automaton/entityTransition.h" // for exceptions
+#include <QDir>
+#include <QFileInfo>
 
 using namespace Lima::LinguisticProcessing::Automaton::AutomatonCompiler;
 using namespace Lima::Common;
@@ -244,6 +247,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         nextFilename=findSpecialCharacter(s,CHAR_SEP_LISTFILENAME,beginFilename);
         string filename=Common::Misc::limastring2utf8stdstring(
           s.mid(beginFilename,(nextFilename==-1)?nextFilename:nextFilename-beginFilename));
+        searchFile(filename);
         buildRecognizer(reco, language, filename);
         beginFilename=nextFilename+1;
       } while (nextFilename != -1);
@@ -260,6 +264,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         nextFilename=findSpecialCharacter(s,CHAR_SEP_LISTFILENAME,beginFilename);
         string filename=Common::Misc::limastring2utf8stdstring(
           s.mid(beginFilename,(nextFilename==-1)?nextFilename:nextFilename-beginFilename));
+        searchFile(filename);
         readGazeteers(filename,gazeteers,subAutomatons);
         beginFilename=nextFilename+1;
       } while (nextFilename != -1);
@@ -940,6 +945,22 @@ printWarning(const std::string& error,
   }
 }
 
+void RecognizerCompiler::searchFile(std::string& filename) {
+  QString qfilename = QString::fromStdString(filename);
+  QFile Fout(qfilename);
+  if (!Fout.exists()) {
+    QFileInfo fileInfo(QString::fromStdString(m_filename));
+    QString directoryPath = fileInfo.dir().path();
+    filename = (QDir::cleanPath(directoryPath + QDir::separator() + qfilename)).toStdString();
+    QFile Fout(QString::fromStdString(filename));
+    if (!Fout.exists()) {
+      std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+      ?"/usr/share/apps/lima/resources"
+      :string(qgetenv("LIMA_RESOURCES").constData());
+      filename = (QDir::cleanPath(QString::fromStdString(resourcesPath) + QDir::separator() + qfilename)).toStdString();
+    }
+  }
+}
 
 } // end namespace
 } // end namespace
