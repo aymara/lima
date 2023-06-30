@@ -35,6 +35,7 @@
 #include <QRegularExpression>
 #include <QSet>
 #include <QString>
+#include <QDir>
 
 using namespace std;
 
@@ -254,12 +255,12 @@ void MediaticData::init(
   {
     for(QString confFile: configFiles)
     {
-      if (QFileInfo::exists(confPath + "/" + confFile))
+      if (QFileInfo::exists(confPath + QDir::separator() + confFile))
       {
         LDEBUG << "MediaticData::init parse configuration file: "
-                << (confPath + "/" + confFile);
+                << (confPath + QDir::separator() + confFile);
         configurationFileFound = true;
-        XMLConfigurationFileParser configuration(confPath + "/" + confFile);
+        XMLConfigurationFileParser configuration(confPath + QDir::separator() + confFile);
 
         LDEBUG << "MediaticData::init initialize global parameters";
         m_d->initReleaseStringsPool(configuration);

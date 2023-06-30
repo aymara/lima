@@ -957,6 +957,8 @@ void RecognizerCompiler::searchFile(std::string& filename) {
       std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
       ?"/usr/share/apps/lima/resources"
       :string(qgetenv("LIMA_RESOURCES").constData());
+      QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
+      //if(resourcesPath.find(LIMA_PATH_SEPARATOR) == resourcesPath.end())
       filename = (QDir::cleanPath(QString::fromStdString(resourcesPath) + QDir::separator() + qfilename)).toStdString();
     }
   }
