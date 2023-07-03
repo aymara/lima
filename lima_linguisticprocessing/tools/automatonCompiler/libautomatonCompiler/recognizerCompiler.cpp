@@ -947,21 +947,23 @@ printWarning(const std::string& error,
 
 void RecognizerCompiler::searchFile(std::string& filename) {
   QString qfilename = QString::fromStdString(filename);
-  QFile Fout(qfilename);
-  if (!Fout.exists()) {
-    QFileInfo fileInfo(QString::fromStdString(m_filename));
+  if (!QFileInfo::exists(qfilename)) {
+    QFileInfo fileInfo(qfilename);
     QString directoryPath = fileInfo.dir().path();
-    filename = (QDir::cleanPath(directoryPath + QDir::separator() + qfilename)).toStdString();
-    QFile Fout(QString::fromStdString(filename));
-    if (!Fout.exists()) {
-      std::string resourcesPath=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+    filename = (QDir::cleanPath(directoryPath + QDir::separator() + QString::fromStdString(filename))).toStdString();
+    if (!QFileInfo::exists(QString::fromStdString(filename))) {
+      std::string lima_resources=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
       ?"/usr/share/apps/lima/resources"
       :string(qgetenv("LIMA_RESOURCES").constData());
-      QStringList resourcesPaths = QString::fromUtf8(resourcesPath.c_str()).split(LIMA_PATH_SEPARATOR);
-      //if(resourcesPath.find(LIMA_PATH_SEPARATOR) == resourcesPath.end())
-      filename = (QDir::cleanPath(QString::fromStdString(resourcesPath) + QDir::separator() + qfilename)).toStdString();
-    }
-  }
+      QStringList resourcesPaths = QString::fromUtf8(lima_resources.c_str()).split(LIMA_PATH_SEPARATOR);
+      for(QString resourcesPath : resourcesPaths){
+        if (!QFileInfo::exists(resourcesPath + QDir::separator() + qfilename)) {
+          filename = (QDir::cleanPath(resourcesPath + QDir::separator() + qfilename)).toStdString();
+        break;
+        }
+      }
+     }
+   }
 }
 
 } // end namespace
