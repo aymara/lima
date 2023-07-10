@@ -532,7 +532,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
       printWarning("empty class as trigger ["+str+"]",ruleString);
     }
     else {
-      printWarning("Unrecognized class as trigger ["+str+"]",ruleString);
+      throwError("Unrecognized class as trigger ["+str+"]",ruleString);
     }
     return;
   }
