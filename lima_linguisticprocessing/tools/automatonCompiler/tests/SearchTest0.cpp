@@ -20,10 +20,10 @@ QTEST_MAIN ( SearchTest );
 
 void SearchTest::SearchTest0()
 {
-    qputenv("LIMA_CONF", "src/conf");
+    qputenv("LIMA_CONF", "src/conf:config");
 
     QProcess process;
-
+    process.setWorkingDirectory("/home/gael/Projets/Lima/Builds/master/Debug-OFF/lima/execEnv");
     process.setProgram("compile-rules");
 
     QStringList arguments;
@@ -33,6 +33,7 @@ void SearchTest::SearchTest0()
     process.start();
 
     process.waitForFinished();
+    qDebug() << "working directory was " << process.workingDirectory();
 
     QByteArray standardOutput = process.readAllStandardOutput();
     QByteArray standardError = process.readAllStandardError();
