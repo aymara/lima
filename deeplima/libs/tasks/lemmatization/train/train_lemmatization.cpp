@@ -110,6 +110,7 @@ DictsHolder build_char_dicts(const form2lemma_t& form2lemma, StringIndex& str_id
   return d;
 }
 
+// TODO add use shallow fixed classes
 set<morph_model::feat_base_t> find_fixed(const morph_model::morph_model_t& lang_morph_model,
                 const form2lemma_t& form2lemma,
                 /*const*/ StringIndex& str_idx // TODO: str_idx must be const here
