@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Organization">
+      <list name="entityList">
+        <item value="ORGANIZATION"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="OrganizationModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognition"/>
+      </list>
+    </group>
+    <group name="OrganizationModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="OrganizationModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="OrganizationRecognitionForLimaserver"/>
+      </list>
+    </group>
+    <group name="OrganizationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="OrganizationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="OrganizationRecognitionForLimaserver" class="ApplyRecognizer">
+      <param key="automaton" value="OrganizationCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-eng.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-eng.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud-eng.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud-eng.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-fre.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-fre.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-por.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-por.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="NPROP"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

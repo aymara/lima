@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Numex">
+      <list name="entityList">
+        <item value="NUMBER"/>
+        <item value="UNIT"/>
+        <item value="NUMEX"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="NumexModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="NumexRecognition"/>
+      </list>
+    </group>
+    <group name="NumexModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognitionAfterPos"/>
+        <item value="UnitRecognitionAfterPos"/>
+        <item value="NumexRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="NumberRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumberRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="UnitRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="UnitRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumexRecognition" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumexRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumberRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumberRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="UnitRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="UnitRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="NumexRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-number">
+      <param key="automaton" value="NumexRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-eng.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-eng.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-eng.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-ud.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-ud.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-ud.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-ud-eng.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-ud-eng.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-ud-eng.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-fre.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-fre.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-fre.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <!--item value="ADJNUM"/-->
+        <item value="ADJ"/>
+        <item value="DET"/>
+        <item value="NC"/>
+        <!--item value="PRO"/-->
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NC"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NC"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NC"/>
+        <item value="DET"/>
+        <item value="PRO"/>
+        <item value="ADJ"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NC"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-por.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-por.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-por.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <list name="Numex.NUMBER">
+        <item value="N"/>
+        <item value="NUM"/>
+        <item value="NPROP"/>
+        <item value="ADJ"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="N"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="N"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="N"/>
+        <item value="NUM"/>
+        <item value="NPROP"/>
+        <item value="ADJ"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="N"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="KC"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

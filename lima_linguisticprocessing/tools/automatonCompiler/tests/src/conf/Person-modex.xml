@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Person">
+      <list name="entityList">
+        <item value="PERSON"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="PersonModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognition"/>
+      </list>
+    </group>
+    <group name="PersonModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="PersonModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PersonRecognitionForLimaserver"/>
+      </list>
+    </group>
+    <group name="EmbededModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EmbededEntitiesRecognition"/>
+      </list>
+    </group>
+    <group name="EmbededModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EmbededEntitiesRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="PersonRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PersonRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PersonRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="PersonRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="EmbededEntitiesRecognition" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="EmbededCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="EmbededEntitiesRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-person">
+      <param key="automaton" value="EmbededCompRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-eng.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-eng.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-ud.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-ud.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-ud-eng.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-ud-eng.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-fre.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-fre.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="NPP"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="PersonRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PERSON-por.bin"/>
+    </group>
+    <group name="EmbededCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EMBEDED-por.bin"/>
+    </group>
+    <group name="PersonIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Person.PERSON" value="yes"/>
+      </map>
+    </group>
+    <group name="PersonMicros" class="SpecificEntitiesMicros">
+      <list name="Person.PERSON">
+        <item value="NPROP"/>
+      </list>
+    </group>
+    <group name="microsForPersonNameNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="FirstnameMicros"/>
+      </list>
+      <list name="FirstnameMicros">
+        <item value="NPROP"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

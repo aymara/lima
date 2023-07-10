@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+<module name="entities">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/entities"/>
+        <item value="DateTime-modex.xml/entities"/>
+        <item value="Organization-modex.xml/entities"/>
+        <item value="Location-modex.xml/entities"/>
+        <item value="Person-modex.xml/entities"/>
+        <item value="Event-modex.xml/entities"/>
+        <item value="Product-modex.xml/entities"/>
+        <item value="Miscellaneous-modex.xml/entities"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/Processors"/>
+        <item value="DateTime-modex.xml/Processors"/>
+        <item value="Organization-modex.xml/Processors"/>
+        <item value="Location-modex.xml/Processors"/>
+        <item value="Person-modex.xml/Processors"/>
+        <item value="Event-modex.xml/Processors"/>
+        <item value="Product-modex.xml/Processors"/>
+        <item value="Miscellaneous-modex.xml/Processors"/>
+      </list>
+    </group>
+    <group name="SpecificEntitiesModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="DateTimeModex"/>
+        <item value="NumexRecognition"/>
+        <item value="OrganizationModex"/>
+        <item value="PersonModex"/>
+        <item value="LocationModex"/>
+        <item value="EventModex"/>
+        <item value="ProductModex"/>
+      </list>
+    </group>
+    <group name="SpecificEntitiesModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognitionAfterPos"/>
+        <item value="UnitRecognitionAfterPos"/>
+        <item value="DateTimeModexAfterPos"/>
+        <item value="NumexRecognitionAfterPos"/>
+        <item value="OrganizationModexAfterPos"/>
+        <item value="PersonModexAfterPos"/>
+        <item value="LocationModexAfterPos"/>
+        <item value="EventModexAfterPos"/>
+        <item value="ProductModexAfterPos"/>
+      </list>
+    </group>
+    <group name="SpecificEntitiesModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="NumberRecognition"/>
+        <item value="UnitRecognition"/>
+        <item value="DateTimeModex"/>
+        <item value="NumexRecognition"/>
+        <item value="OrganizationModex"/>
+        <item value="LocationModex"/>
+        <item value="PersonModex"/>
+        <item value="EventModex"/>
+        <item value="ProductModex"/>
+        <item value="EmbededModex"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-eng"/>
+        <item value="DateTime-modex.xml/resources-eng"/>
+        <item value="Organization-modex.xml/resources-eng"/>
+        <item value="Location-modex.xml/resources-eng"/>
+        <item value="Person-modex.xml/resources-eng"/>
+        <item value="Event-modex.xml/resources-eng"/>
+        <item value="Product-modex.xml/resources-eng"/>
+        <item value="Miscellaneous-modex.xml/resources-eng"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-ud"/>
+        <item value="DateTime-modex.xml/resources-ud"/>
+        <item value="Organization-modex.xml/resources-ud"/>
+        <item value="Location-modex.xml/resources-ud"/>
+        <item value="Person-modex.xml/resources-ud"/>
+        <item value="Event-modex.xml/resources-ud"/>
+        <item value="Product-modex.xml/resources-ud"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-ud-eng"/>
+        <item value="DateTime-modex.xml/resources-ud-eng"/>
+        <item value="Organization-modex.xml/resources-ud-eng"/>
+        <item value="Location-modex.xml/resources-ud-eng"/>
+        <item value="Person-modex.xml/resources-ud-eng"/>
+        <item value="Event-modex.xml/resources-ud-eng"/>
+        <item value="Product-modex.xml/resources-ud-eng"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-fre"/>
+        <item value="DateTime-modex.xml/resources-fre"/>
+        <item value="Organization-modex.xml/resources-fre"/>
+        <item value="Location-modex.xml/resources-fre"/>
+        <item value="Person-modex.xml/resources-fre"/>
+        <item value="Event-modex.xml/resources-fre"/>
+        <item value="Product-modex.xml/resources-fre"/>
+        <item value="Miscellaneous-modex.xml/resources-fre"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-por"/>
+        <item value="DateTime-modex.xml/resources-por"/>
+        <item value="Organization-modex.xml/resources-por"/>
+        <item value="Location-modex.xml/resources-por"/>
+        <item value="Person-modex.xml/resources-por"/>
+        <item value="Event-modex.xml/resources-por"/>
+        <item value="Product-modex.xml/resources-por"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

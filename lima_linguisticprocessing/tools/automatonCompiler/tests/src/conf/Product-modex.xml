@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Product">
+      <list name="entityList">
+        <item value="PRODUCT"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="ProductModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="ProductRecognition"/>
+      </list>
+    </group>
+    <group name="ProductModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="ProductRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="ProductRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="ProductRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="ProductRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="ProductRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-eng.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-ud.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-ud-eng.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-fre.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="NPP"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="ProductRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PRODUCT-por.bin"/>
+    </group>
+    <group name="ProductIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Product.PRODUCT" value="yes"/>
+      </map>
+    </group>
+    <group name="ProductMicros" class="SpecificEntitiesMicros">
+      <list name="Product.PRODUCT">
+        <item value="NPROP"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

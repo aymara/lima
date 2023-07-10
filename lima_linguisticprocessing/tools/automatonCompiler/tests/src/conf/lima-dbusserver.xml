@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="dbus-server">
+    <group name="analyzer">
+      <list name="languages">
+        <item value="fre"/>
+        <item value="eng"/>
+        <item value="por"/>
+      </list>
+      <list name="pipelines">
+        <item value="main"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

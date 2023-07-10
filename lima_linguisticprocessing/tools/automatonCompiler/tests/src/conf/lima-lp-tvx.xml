@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <!-- Configuration du client coeur -->
+  <module name="lima-coreclient">
+    <group name="mediaProcessingDefinitionFiles">
+      <list name="available">
+        <!--item value="ara"/-->
+        <!--item value="chi"/-->
+        <!--item value="eng"/-->
+        <item value="fre"/>
+        <!--item value="ger"/-->
+        <!--item value="hun"/-->
+        <!--item value="ita"/-->
+        <!--item value="spa"/-->
+      </list>
+      <param key="fre" value="lima-lp-tvx-fre.xml" />
+      <param key="eng" value="lima-lp-eng.xml" />
+      <param key="spa" value="lima-lp-spa.xml" />
+      <param key="ger" value="lima-lp-ger.xml" />
+      <param key="hun" value="lima-lp-hun.xml" />
+      <param key="chi" value="lima-lp-chi.xml" />
+      <param key="ara" value="lima-lp-ara.xml" />
+      <param key="ita" value="lima-lp-ita.xml" />
+    </group>
+    <group name="pipelines">
+      <!-- chaque map represente 1 pipeline, qui est decline selon les langues. -->
+      <!-- chaque langue doit definir le pipeline correspondant dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du pipeline. C'est cet identifiant qu'il faut
+            donner au client pour utiliser ce pipeline -->
+      <map name="main">
+        <entry key="fre" value="main"/>
+        <entry key="eng" value="main"/>
+        <entry key="spa" value="main"/>
+        <entry key="ger" value="main"/>
+        <entry key="hun" value="main"/>
+        <entry key="ara" value="main"/>
+        <entry key="chi" value="main"/>
+        <entry key="ita" value="main"/>
+  <entry key="hun" value="main"/>
+      </map>
+      <map name="query">
+        <entry key="fre" value="query"/>
+        <entry key="eng" value="query"/>
+        <entry key="spa" value="query"/>
+        <entry key="ger" value="query"/>
+        <entry key="hun" value="query"/>
+        <entry key="ara" value="query"/>
+        <!--entry key="chi" value="query"/-->
+        <entry key="ita" value="query"/>
+      </map>
+      <map name="indexer">
+        <entry key="fre" value="indexer"/>
+        <entry key="eng" value="indexer"/>
+        <entry key="spa" value="indexer"/>
+        <entry key="ger" value="indexer"/>
+        <entry key="hun" value="indexer"/>
+        <entry key="ara" value="indexer"/>
+        <!--entry key="chi" value="indexer"/-->
+        <entry key="ita" value="indexer"/>
+      </map>
+      <map name="normalization">
+        <entry key="fre" value="normalization"/>
+        <entry key="eng" value="normalization"/>
+        <entry key="spa" value="normalization"/>
+        <entry key="ger" value="normalization"/>
+        <entry key="hun" value="normalization"/>
+        <entry key="ara" value="normalization"/>
+        <!--entry key="chi" value="normalization"/-->
+        <entry key="ita" value="normalization"/>
+      </map>
+    </group>
+    <group name="analysisDumpers">
+      <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->
+      <!-- chaque langue doit definir le dumper correspondant dans son fichier de configuration -->
+      <!-- l'attribut 'name' de la map est l'identifiant du dumper. C'est cet identifiant qu'il faut
+            donner au client pour utiliser ce dumper -->
+      <map name="bowDumper">
+        <entry key="fre" value="bowDumper"/>
+        <entry key="eng" value="bowDumper"/>
+        <entry key="spa" value="bowDumper"/>
+        <entry key="ger" value="bowDumper"/>
+        <entry key="hun" value="bowDumper"/>
+        <entry key="ara" value="bowDumper"/>
+        <entry key="chi" value="bowDumper"/>
+        <entry key="ita" value="bowDumper"/>
+  <entry key="hun" value="bowDumper"/>
+      </map>
+      <map name="normalizationBowDumper">
+        <entry key="fre" value="normalizationBowDumper"/>
+        <entry key="eng" value="normalizationBowDumper"/>
+        <entry key="spa" value="normalizationBowDumper"/>
+        <entry key="ger" value="normalizationBowDumper"/>
+        <entry key="hun" value="normalizationBowDumper"/>
+        <entry key="ara" value="normalizationBowDumper"/>
+        <entry key="chi" value="normalizationBowDumper"/>
+        <entry key="ita" value="normalizationBowDumper"/>
+      </map>
+      <map name="compactFullDumper">
+        <!--entry key="fre" value="compactFullDumper"/-->
+        <!--entry key="eng" value="compactFullDumper"/-->
+        <!--entry key="spa" value="compactFullDumper"/-->
+        <!--entry key="ger" value="compactFullDumper"/-->
+      </map>
+      <map name="fullXmlDumper">
+        <entry key="fre" value="fullXmlDumper"/>
+        <entry key="eng" value="fullXmlDumper"/>
+        <entry key="spa" value="fullXmlDumper"/>
+        <entry key="ger" value="fullXmlDumper"/>
+        <entry key="hun" value="fullXmlDumper"/>
+        <entry key="ara" value="fullXmlDumper"/>
+        <entry key="chi" value="fullXmlDumper"/>
+        <entry key="ita" value="fullXmlDumper"/>
+      </map>
+      <map name="textDumper">
+        <entry key="fre" value="textDumper"/>
+        <entry key="eng" value="textDumper"/>
+        <entry key="spa" value="textDumper"/>
+        <entry key="ger" value="textDumper"/>
+        <entry key="hun" value="textDumper"/>
+        <entry key="ara" value="textDumper"/>
+        <entry key="chi" value="textDumper"/>
+        <entry key="ita" value="textDumper"/>
+      </map>
+      <map name="ltrDumper">
+        <entry key="fre" value="ltrDumper"/>
+        <entry key="eng" value="ltrDumper"/>
+        <entry key="spa" value="ltrDumper"/>
+        <entry key="ger" value="ltrDumper"/>
+        <entry key="hun" value="ltrDumper"/>
+        <entry key="ara" value="ltrDumper"/>
+        <entry key="chi" value="ltrDumper"/>
+        <entry key="ita" value="ltrDumper"/>
+      </map>
+      <map name="depTripletDumper">
+        <entry key="fre" value="depTripletDumper"/>
+        <entry key="eng" value="depTripletDumper"/>
+        <entry key="spa" value="depTripletDumper"/>
+        <entry key="ger" value="depTripletDumper"/>
+        <entry key="hun" value="depTripletDumper"/>
+        <entry key="ara" value="depTripletDumper"/>
+        <entry key="chi" value="depTripletDumper"/>
+        <entry key="ita" value="depTripletDumper"/>
+      </map>
+      <map name="agXmlDumper">
+        <entry key="fre" value="agXmlDumper"/>
+        <entry key="eng" value="agXmlDumper"/>
+        <entry key="spa" value="agXmlDumper"/>
+        <entry key="ger" value="agXmlDumper"/>
+        <entry key="hun" value="agXmlDumper"/>
+        <entry key="ara" value="agXmlDumper"/>
+        <entry key="chi" value="agXmlDumper"/>
+        <entry key="ita" value="agXmlDumper"/>
+      </map>
+    </group>
+  </module>
+  <!-- configuration du xmlreader client -->
+  <module name="lp-structuredXmlreaderclient">
+    <group name="documentXMLParser" class="StructuredDocumentXMLParser">
+      <param key="addAbsoluteOffsetToTokens" value="yes"/>
+      <map name="availableMediaAndFactories">
+        <entry key="fre" value="lpFactory"/>
+      </map>
+      <list name="discardableNodes">
+        <item value="USELESS" />
+        <item value="Sync" />
+      </list>
+      <map name="specialCharacterSize">
+        <entry key="&lt;" value="4"/>
+        <entry key="&gt;" value="4"/>
+        <entry key="&amp;" value="5"/>
+      </map>
+      <list name="hierarchyNodes">
+        <item value="COLLECTION" />
+        <item value="DOC" />
+        <item value="SECTION" />
+        <item value="Section" />
+      </list>
+      <list name="indexingNodes">
+        <item value="TITLE" />
+        <item value="PARA" />
+        <item value="Titre" />
+        <item value="LigneQuestion" />
+      </list>
+      <map name="indexingNodesCorrespondance">
+      </map>
+      <!--do not changed description of DocumentPropertyType-list and DocumentPropertyType !!!-->
+      <!--They are predefined in the database schema. See firebird/create_table.sql-->
+      <list name="standard-properties-list">
+        <item value="identPrpty"/>
+        <item value="titlePrpty"/>
+        <item value="srcePrpty"/>
+        <item value="offBegPrpty"/>
+        <item value="offEndPrpty"/>
+        <item value="indexDatePrpty"/>
+        <item value="typPrpty"/>
+        <item value="langPrpty"/>
+        <item value="encodPrpty"/>
+      </list>
+      <!--WARNING! changes in description of DocumentPropertyType-list-->
+      <!--may lead to inconsistency in existing database-->
+      <list name="extended-properties-list">
+        <item value="datePrpty"/>
+        <item value="originPrpty"/>
+        <item value="authPrpty"/>
+        <item value="locationPrpty"/>
+        <item value="privacyPrpty"/>
+        <item value="countryPrpty"/>
+        <item value="senderPrpty"/>
+        <item value="docRefPrpty"/>
+      </list>
+    </group>
+      <group name="identPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="mandatory"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="DOCNO"/>
+          <item value="num"/>
+        </list>
+        <list name="attributeNames">
+          <item value="document id="/>
+        </list>
+      </group>
+      <group name="titlePrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="storageSize" value="256"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="title"/>
+          <item value="TI"/>
+          <item value="TITLE"/>
+          <item value="HEADLINE"/>
+        </list>
+      </group>
+      <group name="srcePrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="storageSize" value="256"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="source"/>
+          <item value="FILENAME"/>
+        </list>
+        <list name="attributeNames">
+          <item value="filename name="/>
+        </list>
+      </group>
+      <group name="offBegPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="integer"/>
+        <param key="storageSize" value="8"/>
+        <param key="cardinality" value="mandatory"/>
+        <param key="propagated" value="false"/>
+      </group>
+      <group name="offEndPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="integer"/>
+        <param key="storageSize" value="8"/>
+        <param key="cardinality" value="mandatory"/>
+        <param key="propagated" value="true"/>
+      </group>
+      <group name="indexDatePrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="date"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="date"/>
+        </list>
+      </group>
+      <group name="typPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="attributeNames">
+          <item value="type id="/>
+        </list>
+        <list name="elementNames">
+          <item value="type"/>
+        </list>
+      </group>
+      <group name="langPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="true"/>
+        <list name="elementNames">
+          <item value="LANGUAGE"/>
+        </list>
+        <list name="attributeNames">
+          <item value="langue-et-encodage langue="/>
+          <item value="language id="/>
+          <item value="DOC lang="/>
+        </list>
+      </group>
+      <group name="encodPrpty" class="StandardDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="attributeNames">
+          <item value="langue-et-encodage encodage="/>
+        </list>
+      </group>
+
+      <group name="datePrpty" class="ExtensionDocumentPropertyType">
+        <!--value is "integer" (64 bits integer), "string" (utf8 string), "date" (boost::gregorian_date)-->
+        <param key="storageType" value="date"/>
+        <!--value is "optional" (0..1), "mandatory" (1, not null) "multi-valued"-->
+        <param key="cardinality" value="optional"/>
+        <!--value is "document" or "node"-->
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="date"/>
+        </list>
+      </group>
+      <group name="originPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="origin"/>
+        </list>
+        <list name="attributeNames">
+          <item value="COLLECTION verse_par="/>
+        </list>
+
+      </group>
+      <group name="authPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="multi-valued"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="author"/>
+        </list>
+      </group>
+      <group name="locationPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="location"/>
+        </list>
+      </group>
+      <group name="privacyPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="privacy"/>
+        </list>
+      </group>
+      <group name="countryPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="country"/>
+        </list>
+      </group>
+      <group name="senderPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="string"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="sender"/>
+        </list>
+      </group>
+       <group name="docRefPrpty" class="ExtensionDocumentPropertyType">
+        <param key="storageType" value="int"/>
+        <param key="cardinality" value="optional"/>
+        <param key="propagated" value="false"/>
+        <list name="elementNames">
+          <item value="reference"/>
+        </list>
+      </group>
+    <group name="config">
+      <param key="delegateClient" value="lp-coreclient"/>
+      <param key="textSplitting" value="n"/>
+    </group>
+    <group name="XMLEntities">
+    </group>
+    <group name="tagSemantic">
+    </group>
+  </module>
+</modulesConfig>

@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Miscellaneous">
+      <list name="entityList">
+        <item value="MISCELLANEOUS"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="MiscellaneousModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+      </list>
+    </group>
+    <group name="MiscellaneousModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+      </list>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Miscellaneous.MISCELLANEOUS" value="yes"/>
+      </map>
+    </group>
+    <group name="MiscellaneousMicros" class="SpecificEntitiesMicros">
+      <list name="Miscellaneous.MISCELLANEOUS">
+        <item value="PROPN"/>
+        <item value="NOUN"/>
+        <item value="ADJ"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Miscellaneous.MISCELLANEOUS" value="yes"/>
+      </map>
+    </group>
+    <group name="MiscellaneousMicros" class="SpecificEntitiesMicros">
+      <list name="Miscellaneous.MISCELLANEOUS">
+        <item value="PROPN"/>
+        <item value="NOUN"/>
+        <item value="ADJ"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Miscellaneous.MISCELLANEOUS" value="yes"/>
+      </map>
+    </group>
+    <group name="MiscellaneousMicros" class="SpecificEntitiesMicros">
+      <list name="Miscellaneous.MISCELLANEOUS">
+        <item value="PROPN"/>
+        <item value="NOUN"/>
+        <item value="ADJ"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Miscellaneous.MISCELLANEOUS" value="yes"/>
+      </map>
+    </group>
+    <group name="MiscellaneousMicros" class="SpecificEntitiesMicros">
+      <list name="Miscellaneous.MISCELLANEOUS">
+        <item value="NOUN"/>
+<!--         <item value="NPP"/> -->
+        <item value="ADJ"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

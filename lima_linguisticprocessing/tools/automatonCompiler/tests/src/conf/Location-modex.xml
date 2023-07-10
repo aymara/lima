@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Location">
+      <list name="entityList">
+        <item value="LOCATION"/>
+        <item value="CITY" isA="LOCATION"/>
+        <item value="REGION" isA="LOCATION"/>
+        <item value="COUNTRY" isA="LOCATION"/>
+        <item value="BUILDING" isA="LOCATION"/>
+        <item value="ODO"/>
+        <item value="ADDRESS"/>
+        <item value="GEO"/>
+        <item value="STATION_TC"/>
+        <item value="COORDINATE"/>
+        <item value="URL"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="LocationModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PreLocationRecognition"/>
+        <item value="LocationRecognition"/>
+        <item value="PostLocationRecognition"/>
+      </list>
+    </group>
+    <group name="LocationModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PreLocationRecognitionAfterPos"/>
+        <item value="LocationRecognitionAfterPos"/>
+        <item value="PostLocationRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="LocationModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="PreLocationRecognitionForLimaserver"/>
+        <item value="LocationRecognitionForLimaserver"/>
+        <item value="PostLocationRecognitionForLimaserver"/>
+      </list>
+    </group>
+    <group name="PreLocationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="PreLocationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="LocationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="LocationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PostLocationRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PreLocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="PreLocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="LocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="LocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PostLocationRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PreLocationRecognitionForLimaserver" class="ApplyRecognizer">
+      <param key="automaton" value="PreLocationCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="LocationRecognitionForLimaserver" class="ApplyRecognizer">
+      <param key="automaton" value="LocationCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="PostLocationRecognitionForLimaserver" class="ApplyRecognizer">
+      <param key="automaton" value="PostLocationCompRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-eng.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-eng.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-eng.bin"/>
+    </group>
+    <group name="PreLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION-eng.bin"/>
+    </group>
+    <group name="PreLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION_COMP-eng.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-eng.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.URL">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-ud.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-ud.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-ud.bin"/>
+    </group>
+    <group name="PreLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION-ud.bin"/>
+    </group>
+    <group name="PreLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION_COMP-ud.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-ud.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.URL">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-ud-eng.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-ud-eng.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-ud-eng.bin"/>
+    </group>
+    <group name="PreLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION-ud-eng.bin"/>
+    </group>
+    <group name="PreLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION_COMP-ud-eng.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-ud-eng.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="PROPN"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.URL">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NOUN"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-fre.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-fre.bin"/>
+    </group>
+    <group name="PreLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION-fre.bin"/>
+    </group>
+    <group name="PreLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PreLOCATION_COMP-fre.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-fre.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-fre.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+        <entry key="Location.URL" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="NPP"/>
+      </list>
+      <list name="Location.STATION_TC">
+        <item value="NC"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="NC"/>
+      </list>
+      <list name="Location.URL">
+        <item value="NC"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="NC"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="NC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="LocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION-por.bin"/>
+    </group>
+    <group name="LocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/LOCATION_COMP-por.bin"/>
+    </group>
+    <group name="PostLocationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION-por.bin"/>
+    </group>
+    <group name="PostLocationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/PostLOCATION_COMP-por.bin"/>
+    </group>
+    <group name="LocationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Location.LOCATION" value="yes"/>
+      </map>
+    </group>
+    <group name="LocationMicros" class="SpecificEntitiesMicros">
+      <list name="Location.LOCATION">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.CITY">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.REGION">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.COUNTRY">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.BUILDING">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.GEO">
+        <item value="NPROP"/>
+      </list>
+      <list name="Location.ODO">
+        <item value="N"/>
+      </list>
+      <list name="Location.URL">
+        <item value="N"/>
+      </list>
+      <list name="Location.COORDINATE">
+        <item value="N"/>
+      </list>
+      <list name="Location.ADDRESS">
+        <item value="N"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

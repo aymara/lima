@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="AuthorsPosition">
+      <list name="entityList">
+        <item value="AUTHORS_POSITION"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="AuthorsPositionModex" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
+      </list>
+    </group>
+    <group name="AuthorsPositionModexAfterPos" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+	      <item value="GoalRecognition"/>
+	      <item value="GoalRecognitionLogger"/>
+      </list>
+    </group>
+    <group name="GoalRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="GoalRecognitionRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="yes"/>
+      <param key="stopAtFirstSuccess" value="no"/>
+      <param key="storeInData" value="goalRecognitionData"/>
+    </group>
+    <group name="GoalRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="GoalRecognitionRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="yes"/>
+      <param key="stopAtFirstSuccess" value="no"/>
+      <param key="storeInData" value="goalRecognitionData"/>
+    </group>
+    <group name="GoalRecognitionLogger" class="RecognizerResultLogger">
+      <param key="data" value="goalRecognitionData"/>
+      <param key="outputSuffix" value=".authors_position.xml"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-eng.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-ud.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-ud-eng.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-fre.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-por.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="N"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

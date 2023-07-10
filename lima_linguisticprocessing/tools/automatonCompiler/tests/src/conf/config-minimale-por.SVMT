@@ -1,0 +1,13 @@
+# -------------------------------------------------------------
+# SVMT configuration file
+#
+# ------------- location of the training set-------------------
+TRAINSET = %SAMPLE-PATH%/90pc.tfcv
+TESTSET = %SAMPLE-PATH%/10pc.svmt
+# ------------- location of the Joachims svmlight software ----
+SVMDIR = %SVM-DIR%
+# ------------- name of the model to create -------------------
+NAME = lima
+# ------- action items ----------------------------------------
+do M0 LR T
+# -------------------------------------------------------------

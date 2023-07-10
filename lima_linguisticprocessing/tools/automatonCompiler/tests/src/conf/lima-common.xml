@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="common">
+    <group name="mediaDeclaration">
+      <list name="available">
+        <item value="eng" />
+        <item value="fre" />
+        <item value="por" />
+        <item value="ud" />
+
+        <!-- Universal Dependencies -->
+        <item value="ud-afr" />
+        <item value="ud-ara" />
+        <item value="ud-bel" />
+        <item value="ud-bre" />
+        <item value="ud-bul" />
+        <item value="ud-cat" />
+        <item value="ud-ces" />
+        <item value="ud-chu" />
+        <item value="ud-cop" />
+        <item value="ud-cym" />
+        <item value="ud-dan" />
+        <item value="ud-deu" />
+        <item value="ud-ell" />
+        <item value="ud-eng" />
+        <item value="ud-est" />
+        <item value="ud-eus" />
+        <item value="ud-fas" />
+        <item value="ud-fin" />
+        <item value="ud-fra" />
+        <item value="ud-fro" />
+        <item value="ud-gla" />
+        <item value="ud-gle" />
+        <item value="ud-glg" />
+        <item value="ud-heb" />
+        <item value="ud-hin" />
+        <item value="ud-hrv" />
+        <item value="ud-hun" />
+        <item value="ud-hye" />
+        <item value="ud-ind" />
+        <item value="ud-ita" />
+        <item value="ud-jpn" />
+        <item value="ud-kaz" />
+        <item value="ud-kmr" />
+        <item value="ud-kor" />
+        <item value="ud-lat" />
+        <item value="ud-lav" />
+        <item value="ud-lit" />
+        <item value="ud-lzh" />
+        <item value="ud-mar" />
+        <item value="ud-mlt" />
+        <item value="ud-nld" />
+        <item value="ud-nno" />
+        <item value="ud-nob" />
+        <item value="ud-orv" />
+        <item value="ud-pcm" />
+        <item value="ud-pol" />
+        <item value="ud-por" />
+        <item value="ud-ron" />
+        <item value="ud-rus" />
+        <item value="ud-slk" />
+        <item value="ud-slv" />
+        <item value="ud-sme" />
+        <item value="ud-spa" />
+        <item value="ud-sqi" />
+        <item value="ud-srp" />
+        <item value="ud-swe" />
+        <item value="ud-tam" />
+        <item value="ud-tel" />
+        <item value="ud-tha" />
+        <item value="ud-tur" />
+        <item value="ud-uig" />
+        <item value="ud-ukr" />
+        <item value="ud-urd" />
+        <item value="ud-vie" />
+        <item value="ud-wol" />
+        <item value="ud-zho" />
+        <item value="ud-zho-simp" />
+      </list>
+    </group>
+    <group name="mediasIds">
+      <param key="eng" value="6"/>
+      <param key="fre" value="5"/>
+      <param key="por" value="7"/>
+
+      <param key="ud" value="100"/>
+      <param key="ud-afr" value="101" />
+      <param key="ud-ara" value="102" />
+      <param key="ud-bel" value="103" />
+      <param key="ud-bre" value="104" />
+      <param key="ud-bul" value="105" />
+      <param key="ud-cat" value="106" />
+      <param key="ud-ces" value="107" />
+      <param key="ud-chu" value="108" />
+      <param key="ud-cop" value="109" />
+      <param key="ud-cym" value="110" />
+      <param key="ud-dan" value="111" />
+      <param key="ud-deu" value="112" />
+      <param key="ud-ell" value="113" />
+      <param key="ud-eng" value="114" />
+      <param key="ud-est" value="115" />
+      <param key="ud-eus" value="116" />
+      <param key="ud-fas" value="117" />
+      <param key="ud-fin" value="118" />
+      <param key="ud-fra" value="119" />
+      <param key="ud-fro" value="120" />
+      <param key="ud-gla" value="121" />
+      <param key="ud-gle" value="122" />
+      <param key="ud-glg" value="123" />
+      <param key="ud-heb" value="124" />
+      <param key="ud-hin" value="125" />
+      <param key="ud-hrv" value="126" />
+      <param key="ud-hun" value="127" />
+      <param key="ud-hye" value="128" />
+      <param key="ud-ind" value="129" />
+      <param key="ud-ita" value="130" />
+      <param key="ud-jpn" value="131" />
+      <param key="ud-kaz" value="132" />
+      <param key="ud-kmr" value="133" />
+      <param key="ud-kor" value="134" />
+      <param key="ud-lat" value="135" />
+      <param key="ud-lav" value="136" />
+      <param key="ud-lit" value="137" />
+      <param key="ud-lzh" value="138" />
+      <param key="ud-mar" value="139" />
+      <param key="ud-mlt" value="140" />
+      <param key="ud-nld" value="141" />
+      <param key="ud-nno" value="142" />
+      <param key="ud-nob" value="143" />
+      <param key="ud-orv" value="144" />
+      <param key="ud-pcm" value="145" />
+      <param key="ud-pol" value="146" />
+      <param key="ud-por" value="147" />
+      <param key="ud-ron" value="148" />
+      <param key="ud-rus" value="149" />
+      <param key="ud-slk" value="150" />
+      <param key="ud-slv" value="151" />
+      <param key="ud-sme" value="152" />
+      <param key="ud-spa" value="153" />
+      <param key="ud-sqi" value="154" />
+      <param key="ud-srp" value="155" />
+      <param key="ud-swe" value="156" />
+      <param key="ud-tam" value="157" />
+      <param key="ud-tel" value="158" />
+      <param key="ud-tha" value="159" />
+      <param key="ud-tur" value="160" />
+      <param key="ud-uig" value="161" />
+      <param key="ud-ukr" value="162" />
+      <param key="ud-urd" value="163" />
+      <param key="ud-vie" value="164" />
+      <param key="ud-wol" value="165" />
+      <param key="ud-zho" value="166" />
+      <param key="ud-zho-simp" value="167" />
+
+    </group>
+    <group name="mediaDefinitionFiles">
+      <param key="eng" value="lima-common-eng.xml" />
+      <param key="fre" value="lima-common-fre.xml" />
+      <param key="por" value="lima-common-por.xml" />
+      <param key="ud" value="lima-common-ud.xml" />
+
+      <param key="ud-afr" value="lima-common-ud.xml" />
+      <param key="ud-ara" value="lima-common-ud.xml" />
+      <param key="ud-bel" value="lima-common-ud.xml" />
+      <param key="ud-bre" value="lima-common-ud.xml" />
+      <param key="ud-bul" value="lima-common-ud.xml" />
+      <param key="ud-cat" value="lima-common-ud.xml" />
+      <param key="ud-ces" value="lima-common-ud.xml" />
+      <param key="ud-chu" value="lima-common-ud.xml" />
+      <param key="ud-cop" value="lima-common-ud.xml" />
+      <param key="ud-cym" value="lima-common-ud.xml" />
+      <param key="ud-dan" value="lima-common-ud.xml" />
+      <param key="ud-deu" value="lima-common-ud.xml" />
+      <param key="ud-ell" value="lima-common-ud.xml" />
+      <param key="ud-eng" value="lima-common-ud-eng.xml" />
+      <param key="ud-est" value="lima-common-ud.xml" />
+      <param key="ud-eus" value="lima-common-ud.xml" />
+      <param key="ud-fas" value="lima-common-ud.xml" />
+      <param key="ud-fin" value="lima-common-ud.xml" />
+      <param key="ud-fra" value="lima-common-ud.xml" />
+      <param key="ud-fro" value="lima-common-ud.xml" />
+      <param key="ud-gla" value="lima-common-ud.xml" />
+      <param key="ud-gle" value="lima-common-ud.xml" />
+      <param key="ud-glg" value="lima-common-ud.xml" />
+      <param key="ud-heb" value="lima-common-ud.xml" />
+      <param key="ud-hin" value="lima-common-ud.xml" />
+      <param key="ud-hrv" value="lima-common-ud.xml" />
+      <param key="ud-hun" value="lima-common-ud.xml" />
+      <param key="ud-hye" value="lima-common-ud.xml" />
+      <param key="ud-ind" value="lima-common-ud.xml" />
+      <param key="ud-ita" value="lima-common-ud.xml" />
+      <param key="ud-jpn" value="lima-common-ud.xml" />
+      <param key="ud-kaz" value="lima-common-ud.xml" />
+      <param key="ud-kmr" value="lima-common-ud.xml" />
+      <param key="ud-kor" value="lima-common-ud.xml" />
+      <param key="ud-lat" value="lima-common-ud.xml" />
+      <param key="ud-lav" value="lima-common-ud.xml" />
+      <param key="ud-lit" value="lima-common-ud.xml" />
+      <param key="ud-lzh" value="lima-common-ud.xml" />
+      <param key="ud-mar" value="lima-common-ud.xml" />
+      <param key="ud-mlt" value="lima-common-ud.xml" />
+      <param key="ud-nld" value="lima-common-ud.xml" />
+      <param key="ud-nno" value="lima-common-ud.xml" />
+      <param key="ud-nob" value="lima-common-ud.xml" />
+      <param key="ud-orv" value="lima-common-ud.xml" />
+      <param key="ud-pcm" value="lima-common-ud.xml" />
+      <param key="ud-pol" value="lima-common-ud.xml" />
+      <param key="ud-por" value="lima-common-ud.xml" />
+      <param key="ud-ron" value="lima-common-ud.xml" />
+      <param key="ud-rus" value="lima-common-ud.xml" />
+      <param key="ud-slk" value="lima-common-ud.xml" />
+      <param key="ud-slv" value="lima-common-ud.xml" />
+      <param key="ud-sme" value="lima-common-ud.xml" />
+      <param key="ud-spa" value="lima-common-ud.xml" />
+      <param key="ud-sqi" value="lima-common-ud.xml" />
+      <param key="ud-srp" value="lima-common-ud.xml" />
+      <param key="ud-swe" value="lima-common-ud.xml" />
+      <param key="ud-tam" value="lima-common-ud.xml" />
+      <param key="ud-tel" value="lima-common-ud.xml" />
+      <param key="ud-tha" value="lima-common-ud.xml" />
+      <param key="ud-tur" value="lima-common-ud.xml" />
+      <param key="ud-uig" value="lima-common-ud.xml" />
+      <param key="ud-ukr" value="lima-common-ud.xml" />
+      <param key="ud-urd" value="lima-common-ud.xml" />
+      <param key="ud-vie" value="lima-common-ud.xml" />
+      <param key="ud-wol" value="lima-common-ud.xml" />
+      <param key="ud-zho-simp" value="lima-common-ud.xml" />
+      <param key="ud-zho" value="lima-common-ud.xml" />
+    </group>
+    <group name="stringPool">
+      <param key="release" value="false"/>
+    </group>
+    <group name="SemanticData">
+      <map name="conceptTypes">
+        <entry key="LatticeDown" value="0"/>
+        <entry key="Determiner" value="1"/>
+        <entry key="SemanticModifier" value="2"/>
+        <entry key="Complementer" value="3"/>
+      </map>
+    </group>
+    <group name="semanticRelations">
+      <map name="declaration">
+        <entry key="synonym" value="1"/>
+        <entry key="S" value="1"/>
+        <entry key="antonym" value="2"/>
+        <entry key="meronym" value="3"/>
+        <entry key="hyponym" value="4"/>
+        <entry key="hyperonym" value="5"/>
+        <entry key="seealso" value="6"/>
+        <entry key="V-S" value="7"/>
+        <entry key="M-F" value="8"/>
+        <entry key="V-J" value="9"/>
+        <entry key="J-D" value="10"/>
+        <entry key="V-A" value="11"/>
+      </map>
+    </group>
+  </module>
+</modulesConfig>

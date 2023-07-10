@@ -1,0 +1,841 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="Processors">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/Processors"/>
+      </list>
+    </group>
+
+<!-- ******************************************
+  Definition of pipelines
+*********************************************** -->
+    <group name="main" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <!--item value="beginStatusLogger"/-->
+        <item value="flattokenizer"/>
+        <item value="regexmatcher"/>
+        <!--item value="fullTokenXmlLoggerTokenizer"/-->
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <item value="defaultProperties"/>
+        <!--item value="fullTokenXmlLoggerDefaultProperties"/-->
+        <item value="dotGraphWriter-beforepos"/>
+        <!--item value="SpecificEntitiesModex"/-->
+        <!--item value="specificEntitiesXmlLogger"/-->
+        <!--item value="viterbiPostagger-freq"/-->
+        <item value="SvmToolPosTagger"/>
+        <!--item value="DynamicSvmToolPosTagger"/-->
+        <item value="sentenceBoundariesFinder"/>
+        <!--item value="geoEntities"/-->
+        <item value="dotGraphWriter"/>
+        <!--item value="linearTextRepresentationLogger"/-->
+        <!--item value="sentenceBoundsXmlLogger"/-->
+        <!--item value="syntacticAnalyzerNoChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="syntacticAnalyzerDisamb"/-->
+        <!--item value="debugSyntacticAnalysisLogger-disamb"/-->
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
+        <!--item value="syntacticAnalyzerDummy"/-->
+        <!--item value="debugSyntacticAnalysisLogger-deps"/-->
+        <!--item value="dotDepGraphWriter"/-->
+        <!--item value="dotGraphWriterAfterSA"/-->
+        <!--item value="coreferencesSolving"/-->
+        <!--item value="wordSenseDisambiguation"/-->
+        <!--item value="wordSenseXmlLogger"/-->
+        <!--item value="annotDotGraphWriter"/-->
+        <!--item value="depTripletLogger"/-->
+        <!--item value="corefLogger"/-->
+        <!--item value="geoDumper"/-->
+        <!--item value="bowDumper"/-->
+        <!--item value="posGraphXmlDumper"/-->
+        <!--item value="fullXmlDumper"/-->
+        <!--item value="simpleXmlDumper"/-->
+        <item value="conllDumper"/>
+        <!--item value="textDumper"/-->
+        <!--item value="NullDumper"/-->
+      </list>
+    </group>
+    <group name="limaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <item value="defaultProperties"/>
+        <!--item value="SpecificEntitiesModexForLimaserver"/-->
+        <!--item value="specificEntitiesXmlLoggerForLimaserver"/-->
+        <!--item value="viterbiPostagger-int-none"/-->
+        <!--item value="limaserverHandler"/-->
+      </list>
+    </group>
+    <group name="easy" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="flattokenizer"/>
+        <item value="simpleWord"/>
+        <item value="hyphenWordAlternatives"/>
+        <!--item value="idiomaticAlternatives"/-->
+        <item value="defaultProperties"/>
+        <!--item value="SpecificEntitiesModex"/-->
+        <item value="dotGraphWriter-beforepos"/>
+        <!--item value="viterbiPostagger-freq"/-->
+        <item value="sentenceBoundariesFinder"/>
+        <!--item value="syntacticAnalyzerNoChains"/-->
+        <!--item value="syntacticAnalyzerDeps"/-->
+        <!--item value="syntacticAnalyzerDepsHetero"/-->
+        <item value="dotDepGraphWriter"/>
+        <item value="easyXmlDumper"/>
+      </list>
+    </group>
+    <group name="none" class="ProcessUnitPipeline">
+      <list name="processUnitSequence"/>
+    </group>
+<!-- ******************************************
+  Definition of process units
+*********************************************** -->
+    <group name="flattokenizer" class="FlatTokenizer">
+      <param key="automatonFile" value="LinguisticProcessings/por/tokenizerAutomaton-por.tok"/>
+      <param key="charChart" value="flatcharchart"/>
+    </group>
+    <group name="regexmatcher" class="RegexMatcher">
+      <map name="regexes">
+        <entry key="[\w\-_]+(\.[\w\-_]+)*\@[\w\-_](\.[\w\-_]+)+" value="t_url"/>
+        <entry key="((mailto|http|ftp|https):\/\/)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?" value="t_url"/>
+      </map>
+    </group>
+    <group name="simpleWord" class="SimpleWord">
+            <param key="dictionary" value="mainDictionary"/>
+        <param key="confidentMode" value="true"/>
+        <param key="charChart" value="flatcharchart"/>
+        <param key="parseConcatenated" value="false"/>
+    </group>
+    <group name="coreferencesSolving" class="CoreferencesSolving">
+      <param key="scope" value="3" />
+      <param key="threshold" value="60" />
+      <param key="Resolve Definites" value="0" />
+      <param key="Resolve non third person pronouns" value="0" />
+      <map name="MacroCategories">
+        <entry key="PronMacroCategory" value="PRON"/>
+        <entry key="VerbMacroCategory" value="V" />
+        <entry key="PrepMacroCategory" value="PREP" />
+        <entry key="NomCommunMacroCategory" value="NC" />
+        <entry key="NomPropreMacroCategory" value="NP" />
+      </map>
+      <list name="LexicalAnaphora">
+        <item value="CLR"/>
+      </list>
+      <list name="UndefinitePronouns">
+        <!--item value="PRON_INDEFINI"/>
+        <item value="PRON_INDEFINI_VAL_NEG"/-->
+      </list>
+      <list name="PossessivePronouns">
+        <!--item value="PRON_POSSESSIF_SUJET" />
+        <item value="PRON_POSSESSIF_COD" />
+        <item value="PRON_POSSESSIF_COI" /-->
+      </list>
+      <list name="PrepRelation">
+        <item value="PREPSUB"/>
+        <item value="PrepDetInt"/>
+        <item value="PrepInf"/>
+        <item value="PrepPronRelCa"/>
+        <item value="PrepPron"/>
+        <item value="PrepPronRel"/>
+        <item value="PrepPronCliv"/>
+        <item value="PrepAdv"/>
+      </list>
+    <list name="PleonasticRelation">
+      <item value="Pleon"/>
+    </list>
+    <list name="DefiniteRelation">
+      <item value="DETSUB"/>
+    </list>
+    <list name="SubjectRelation">
+      <item value="SUJ_V" />
+      <item value="SUJ_V_REL" />
+      <item value="PronSujVerbe" />
+      <item value="SujInv" />
+    </list>
+    <list name="AttributeRelation">
+      <item value="ATB_S"/>
+    </list>
+    <list name="CODRelation">
+      <item value="COD_V" />
+      <item value="CodPrev" />
+      <item value="PronReflVerbe" />
+    </list>
+    <list name="COIRelation">
+      <item value="CPL_V" />
+      <item value="CoiPrev" />
+    </list>
+    <list name="AdjunctRelation">
+          <item value="CPLV_V" />
+          <item value="CC_TEMPS" />
+          <item value="CC_LIEU" />
+           <item value="CC_BUT" />
+          <item value="CC_MOYEN" />
+          <item value="CC_MANIERE" />
+          <item value="COMPADJ" />
+          <item value="COMPADV" />
+      </list>
+      <list name="AgentRelation">
+          <item value="COMPADJ" />
+      </list>
+      <list name="NPDeterminerRelation">
+          <item value="COMPDUNOM" />
+           <item value="COMPDUNOM2" />
+          <item value="SUBSUBJUX" />
+          <item value="COMP_N-N" />
+          <item value="COMPDUNOM_INC" />
+      </list>
+      <!-- Lappin & Leass salience factors -->
+      <map name="SalienceFactors">
+        <entry key="SentenceRecency" value="90"/>
+        <entry key="SubjEmph" value="90"/>
+        <entry key="ExistEmph" value="70"/>
+        <entry key="CodEmph" value="50"/>
+        <entry key="CoiCoblEmph" value="40"/>
+        <entry key="HeadEmph" value="80"/>
+        <entry key="NonAdvEmph" value="50"/>
+        <entry key="IsInSubordinate" value="-70"/>
+        <!-- local factors -->
+        <entry key="Cataphora" value="-120"/>
+        <entry key="SameSlot" value="90"/>
+        <entry key="Itself" value="-140"/>
+      </map>
+      <map name="SlotValues">
+        <entry key="SubjectRelation" value="4"/>
+        <entry key="AgentRelation" value="3"/>
+        <entry key="CODRelation" value="2"/>
+        <entry key="COIRelation" value="1"/>
+        <entry key="AdjunctRelation" value="1"/>
+     </map>
+    </group>
+    <group name="wordSenseDisambiguation" class="WordSenseDisambiguation" >
+      <!--param key="mode" value="b_Romanseval_most_frequent"/>
+      <param key="sensesPath" value="/home/cm218888/opendata/romanseval_data/SenseInventory" /-->
+      <param key="mode" value="b_Jaws_most_frequent"/>
+      <param key="sensesPath" value="/home/cm218888/otherdata/jaws-1.0/SenseInventory" />
+      <!--param key="mode" value="s_Wsi_mrd"/>
+      <param key="sensesPath" value="/home/cm218888/otherdata/wsi/clustersBin" />
+      <param key="mapping" value="m_Jaws_senses" />
+      <param key="mappingFile" value="mapping.txt" /-->
+      <param key="dictionaryFile" value="/home/cm218888/otherdata/words.ids" />
+      <param key="bestNNDir" value="knnall" />
+      <list name="NounContextList">
+        <item value="COD_V"/>
+        <!--item value="SUJ_V"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM.reverse"/>
+        <item value="SUBADJPOST.reverse"/>
+        <item value="ADJPRENSUB.reverse"/>
+        <item value="window5"/>
+        <item value="window20"/-->
+      </list>
+      <map name="knnsearchConfig">
+        <entry key="hashedDir" value="/home/cm218888/otherdata/hasheddb"/>
+        <entry key="totalPermutations" value="10" />
+        <entry key="beam" value="20" />
+        <entry key="k" value="50" />
+      </map>
+    </group>
+    <group name="hyphenWordAlternatives" class="HyphenWordAlternatives">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="flatcharchart"/>
+      <param key="tokenizer" value="flattokenizer"/>
+    </group>
+    <group name="geoEntities" class="GeoEntitiesTagger">
+      <param key="charChart" value="flatcharchart"/>
+      <param key="dbms" value="mysql"/>
+      <param key="dbConnection" value="dbname=GAZETIKI_DB user=gazetiki password=gazpwd"/>
+      <param key="maxEntityLength" value="10" />
+      <param key="graph" value="PosGraph"/>
+      <param key="fieldClass" value="CLASS_3"/>
+      <map name="Trigger">
+        <!--entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="PONCTU_PARAGRAPHE" unlessFirstToken="YES"/-->
+        <entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="" unlessFirstToken="YES"/>
+        <entry key="NP" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
+      </map>
+      <map name="EndWord">
+        <!--entry key="PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
+        <entry key="T_COMMA_NUMBER" value="Status" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
+      </map>
+    </group>
+    <group name="idiomaticAlternatives" class="ApplyRecognizer">
+      <param key="automaton" value="idiomaticExpressionsRecognizer"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="updateGraph" value="yes"/>
+    </group>
+    <group name="defaultProperties" class="DefaultProperties">
+      <param key="dictionary" value="mainDictionary"/>
+      <param key="charChart" value="flatcharchart"/>
+      <param key="defaultPropertyFile" value="LinguisticProcessings/por/default-por.dat"/>
+      <list name="skipUnmarkStatus">
+        <item value="t_capital_1st"/>
+        <item value="t_dot_number"/>
+        <item value="t_integer"/>
+      </list>
+    </group>
+    <group name="simpleDefaultProperties" class="SimpleDefaultProperties">
+      <list name="defaultCategories">
+        <item value="NP NP"/>
+      </list>
+    </group>
+    <group name="viterbiPostagger-freq" class="ViterbiPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
+      <param key="costFunction" value="FrequencyCost"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPostagger-int" class="ViterbiPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
+      <param key="costFunction" value="IntegerCost"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="viterbiPostagger-int-none" class="ViterbiPosTagger">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
+      <param key="costFunction" value="IntegerCost"/>
+      <param key="defaultCategory" value="NONE_1"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="SvmToolPosTagger" class="SvmToolPosTagger">
+      <param key="model" value="Disambiguation/SVMToolModel-por/lima"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="DynamicSvmToolPosTagger" class="DynamicSvmToolPosTagger">
+      <param key="model" value="Disambiguation/SVMToolModel-por/lima"/>
+      <param key="defaultCategory" value="PONCTU_FORTE"/>
+      <list name="stopCategories">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <group name="sentenceBoundariesFinder" class="SentenceBoundariesFinder">
+      <param key="graph" value="PosGraph"/>
+      <list name="micros">
+        <item value="PONCTU_FORTE" />
+      </list>
+    </group>
+    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
+    experimental module used to test if LIMA analysis works without nominal and
+    verbal. It allows also to build compounds using verbs and heterosyntagmatic
+    dependencies. For that, one have to add adequate relations in
+    CompoundRelations in mm-common. -->
+    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
+      <param key="chainMatrix" value="chainMatrix"/>
+      <param key="disambiguated" value="true"/>
+      <param key="maxChainsNbByVertex" value="30"/>
+      <param key="maxChainLength" value="12"/>
+    </group>
+    <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
+      <param key="depGraphMaxBranchingFactor" value="100"/>
+    </group>
+    <group name="syntacticAnalyzerDeps" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+          <item value="pass0HomoSyntagmaticRelationRules"/>
+          <item value="pass1HomoSyntagmaticRelationRules"/>
+          <item value="pass2HomoSyntagmaticRelationRules"/>
+          <item value="pleonasticPronouns"/>
+          <item value="compoundTensesRules"/>
+      </list>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="syntacticAnalyzerDepsHetero" class="SyntacticAnalyzerDepsHetero">
+      <param key="rules" value="heteroSyntagmaticRelationRules"/>
+      <param key="selectionalPreferences" value="selectionalPreferences"/>
+      <param key="unfold" value="true"/>
+      <param key="linkSubSentences" value="true"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+      <map name="subSentencesRules">
+        <entry key="SubSent" value="heteroSyntagmaticRelationRules"/>
+        <entry key="SubordRel" value="heteroSyntagmaticRelationRules"/>
+        <entry key="Parent" value="heteroSyntagmaticRelationRules"/>
+        <entry key="Quotes" value="heteroSyntagmaticRelationRules"/>
+        <entry key="VirguleSeule" value="heteroSyntagmaticRelationRules"/>
+        <entry key="Appos" value="heteroSyntagmaticRelationRules"/>
+        <entry key="AdvSeul" value="heteroSyntagmaticRelationRules"/>
+        <entry key="AdvInit" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompAdv" value="heteroSyntagmaticRelationRules"/>
+        <entry key="Adverbe" value="heteroSyntagmaticRelationRules"/>
+        <entry key="ConjInfSecond" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CCInit" value="heteroSyntagmaticRelationRules"/>
+        <entry key="Infinitive" value="heteroSyntagmaticRelationRules"/>
+        <entry key="SUBSUBJUX" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompDuNom1" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompDuNom2" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompAdj1" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompAdj2" value="heteroSyntagmaticRelationRules"/>
+        <entry key="SubordParticipiale" value="heteroSyntagmaticRelationRules"/>
+        <entry key="ElemListe" value="heteroSyntagmaticRelationRules"/>
+        <entry key="ConjSecond" value="heteroSyntagmaticRelationRules"/>
+        <entry key="InciseNom" value="heteroSyntagmaticRelationRules"/>
+        <entry key="CompCirc" value="heteroSyntagmaticRelationRules"/>
+        <entry key="SubordInit" value="heteroSyntagmaticRelationRules"/>
+        <entry key="ConjNominale" value="heteroSyntagmaticRelationRules"/>
+      </map>
+    </group>
+    <group name="syntacticAnalyzerDummy" class="SyntacticAnalyzerDeps">
+      <list name="actions">
+        <item value="l2rDummyRules"/>
+      </list>
+    </group>
+    <!-- ******************************************
+  Definition of loggers
+*********************************************** -->
+    <group name="beginStatusLogger" class="StatusLogger">
+      <param key="outputFile" value="beginStatus-por.log"/>
+      <list name="toLog">
+        <item value="VmSize"/>
+        <item value="VmData"/>
+      </list>
+    </group>
+    <group name="specificEntitiesXmlLogger" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+    </group>
+    <group name="specificEntitiesXmlLoggerForLimaserver" class="SpecificEntitiesXmlLogger">
+      <param key="outputSuffix" value=".se.xml"/>
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="compactFormat" value="yes"/>
+      <param key="handler" value="se"/>
+      <param key="followGraph" value="true"/>
+    </group>
+    <group name="fullTokenXmlLoggerTokenizer" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".tokenizer.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerSimpleWord" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".simpleword.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerHyphen" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".hyphen.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerIdiomatic" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".idiom.xml"/>
+    </group>
+    <group name="sentenceBoundariesXmlLogger" class="SentenceBoundariesXmlLogger">
+      <param key="outputSuffix" value=".sentences.xml"/>
+    </group>
+    <group name="fullTokenXmlLoggerDefaultProperties" class="FullTokenXmlLogger">
+      <param key="outputSuffix" value=".default.xml"/>
+    </group>
+    <group name="wordSenseXmlLogger" class="WordSenseXmlLogger">
+      <param key="outputSuffix" value=".senses.xml"/>
+    </group>
+    <group name="disambiguatedGraphXmlLogger" class="DisambiguatedGraphXmlLogger">
+      <param key="outputSuffix" value=".disambiguated.xml"/>
+      <param key="dictionaryCode" value="dictionaryCode"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-chains" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.chains.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-disamb" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.disamb.txt"/>
+    </group>
+    <group name="debugSyntacticAnalysisLogger-deps" class="DebugSyntacticAnalysisLogger">
+      <param key="outputSuffix" value=".syntanal.deps.txt"/>
+    </group>
+    <group name="dotGraphWriter-beforepos" class="DotGraphWriter">
+      <param key="graph" value="AnalysisGraph"/>
+      <param key="outputSuffix" value=".bp.dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list name="vertexDisplay">
+        <item value="text"/>
+        <item value="inflectedform"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+      <item value="numbers"/-->
+      </list>
+    </group>
+    <group name="dotGraphWriter" class="DotGraphWriter">
+      <param key="graph" value="PosGraph"/>
+      <param key="outputSuffix" value=".dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list name="vertexDisplay">
+        <item value="text"/>
+        <item value="inflectedform"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+      <item value="numbers"/-->
+      </list>
+    </group>
+    <group name="corefLogger" class="CorefSolvingLogger">
+      <param key="outputSuffix" value=".wh"/>
+    </group>
+    <group name="dotGraphWriterAfterSA" class="DotGraphWriter">
+      <param key="outputSuffix" value=".afterSA.dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list name="vertexDisplay">
+        <item value="lemme"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+    </group>
+    <group name="dotDepGraphWriter" class="DotDependencyGraphWriter">
+      <param key="outputMode" value="SentenceBySentence"/> <!-- Valid values: FullGraph,SentenceBySentence -->
+      <param key="writeOnlyDepEdges" value="false"/>
+      <param key="outputSuffix" value=".sa.dot"/>
+      <param key="trigramMatrix" value="trigramMatrix"/>
+      <param key="bigramMatrix" value="bigramMatrix"/>
+      <list name="vertexDisplay">
+        <item value="inflectedform"/>
+        <item value="symbolicmicrocategory"/>
+        <item value="numericmicrocategory"/>
+        <!--item value="genders"/>
+        <item value="numbers"/-->
+      </list>
+      <map name="graphDotOptions">
+        <entry key="rankdir" value="LR"/>
+      </map>
+      <map name="nodeDotOptions">
+        <entry key="shape" value="box"/>
+      </map>
+    </group>
+    <group name="annotDotGraphWriter" class="AnnotDotGraphWriter">
+      <param key="graph" value="PosGraph"/>
+      <param key="outputSuffix" value=".ag.dot"/>
+    </group>
+    <group name="linearTextRepresentationLogger" class="LinearTextRepresentationLogger">
+      <param key="outputSuffix" value=".ltr"/>
+    </group>
+    <group name="syntacticAnalysisXmlLogger" class="SyntacticAnalysisXmlLogger">
+      <param key="outputSuffix" value=".sa.xml"/>
+    </group>
+    <group name="depTripletLogger" class="DepTripletLogger">
+      <param key="outputSuffix" value=".deptrip.txt"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="no"/>
+      <param key="useEmptyMacro" value="no"/>
+      <param key="useEmptyMicro" value="no"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+      <list name="selectedDependency">
+        <item value="ADJPRENSUB"/>
+        <item value="APPOS"/>
+        <item value="ATB_O"/>
+        <item value="ATB_S"/>
+        <item value="COD_V"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPL"/>
+        <item value="CPL_V"/>
+        <item value="SUBADJPOST"/>
+        <item value="SUBSUBJUX"/>
+        <item value="SUJ_V"/>
+      </list>
+    </group>
+<!-- ******************************************
+  Definition of dumpers
+*********************************************** -->
+    <group name="bowDumper" class="BowDumper">
+      <param key="handler" value="bowTextWriter"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="bowTextHandler" class="BowDumper">
+      <param key="handler" value="bowTextHandler"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="textQueryHandler" class="BowDumper">
+      <param key="handler" value="bowTextHandler"/>
+<!--       <param key="handler" value="bowTextWriter"/> -->
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="true"/>
+      <param key="useEmptyMacro" value="true"/>
+      <param key="useEmptyMicro" value="true"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="bowDocumentDumper" class="BowDumper">
+      <param key="handler" value="bowDocumentHandler"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="false"/>
+      <param key="useEmptyMicro" value="false"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="bowTextDumper" class="BowDumper">
+      <param key="handler" value="bowTextHandler"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="false"/>
+      <param key="useEmptyMicro" value="false"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="geoDumper" class="GeoDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <param key="graph" value="PosGraph"/>
+    </group>
+    <group name="simpleXmlDumper" class="SimpleXmlDumper">
+      <param key="handler" value="xmlSimpleHandler"/>
+    </group>
+    <group name="NullDumper" class="NullDumper"/>
+    <group name="agXmlDumper" class="AnnotationGraphXmlDumper">
+      <param key="handler" value="xmlSimpleStreamHandler"/>
+    </group>
+    <group name="normalizationBowDumper" class="BowDumper">
+      <param key="handler" value="bowTextWriter"/>
+      <param key="stopList" value="stopList"/>
+      <param key="useStopList" value="false"/>
+      <param key="useEmptyMacro" value="false"/>
+      <param key="useEmptyMicro" value="false"/>
+      <map name="NEmacroCategories">
+        <entry key="DateTime.DATE" value="NC"/>
+        <entry key="Numex.NUMBER" value="NC"/>
+        <entry key="Numex.UNIT" value="NC"/>
+        <entry key="Numex.NUMEX" value="NC"/>
+        <entry key="Organization.ORGANIZATION" value="NP"/>
+        <entry key="Location.LOCATION" value="NP"/>
+        <entry key="Person.PERSON" value="NP"/>
+        <entry key="Product.PRODUCT" value="NP"/>
+        <entry key="Event.EVENT" value="NP"/>
+      </map>
+      <param key="properNounCategory" value="NP"/>
+      <param key="commonNounCategory" value="NC"/>
+      <param key="NEnormalization" value="useNENormalizedForm"/>
+    </group>
+    <group name="fullXmlDumper" class="FullXmlDumper">
+      <param key="handler" value="fullXmlSimpleStreamHandler"/>
+    </group>
+    <group name="posGraphXmlDumper" class="posGraphXmlDumper">
+      <param key="handler" value="xmlSimpleStreamHandler"/>
+    </group>
+    <group name="conllDumper" class="ConllDumper">
+      <param key="outputSuffix" value=".conll"/>
+      <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="textDumper" class="TextDumper">
+      <param key="outputSuffix" value=".out"/>
+      <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="ltrDumper" class="LTRDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+    </group>
+    <group name="depTripleDumper" class="DepTripleDumper">
+      <param key="handler" value="simpleStreamHandler"/>
+      <list name="selectedDependency">
+        <item value="ADJPRENSUB"/>
+        <!--item value="ADVADV"/-->
+        <!--item value="AdvSub"/-->
+        <item value="APPOS"/>
+        <item value="ATB_O"/>
+        <item value="ATB_S"/>
+        <item value="COD_V"/>
+        <!--item value="COMPADJ"/-->
+        <!--item value="COMPADV"/-->
+        <!--item value="CompDet"/-->
+        <item value="COMPDUNOM"/>
+        <item value="COMPL"/>
+        <!--item value="COORD1"/-->
+        <!--item value="COORD2"/-->
+        <item value="CPL_V"/>
+        <!--item value="DETSUB"/-->
+        <!--item value="MOD_A"/-->
+        <!--item value="MOD_N"/-->
+        <!--item value="MOD_V"/-->
+        <!--item value="Neg"/-->
+        <!--item value="PrepDet"/-->
+        <!--item value="PrepPron"/-->
+        <!--item value="PREPSUB"/-->
+        <item value="SUBADJPOST"/>
+        <item value="SUBSUBJUX"/>
+        <item value="SUJ_V"/>
+      </list>
+    </group>
+  </module>
+<!-- ******************************************
+  Definition of Resources
+*********************************************** -->
+  <module name="Resources">
+    <group name="include">
+      <list name="includeList">
+        <item value="SpecificEntities-modex.xml/resources-por"/>
+      </list>
+    </group>
+
+    <group name="FsaStringsPool">
+      <param key="mainKeys" value="globalFsaAccess"/>
+    </group>
+    <group name="flatcharchart" class="FlatTokenizerCharChart">
+      <param key="charFile" value="LinguisticProcessings/por/tokenizerAutomaton-por.chars.tok"/>
+    </group>
+    <group name="mainDictionary" class="EnhancedAnalysisDictionary">
+      <param key="accessKeys" value="globalFsaAccess"/>
+      <param key="dictionaryValuesFile" value="LinguisticProcessings/por/dicoDat-por.dat"/>
+    </group>
+    <group name="globalFsaAccess" class="FsaAccess">
+      <param key="keyFile" value="LinguisticProcessings/por/dicoKey-por.dat"/>
+    </group>
+    <group name="dictionaryCode" class="DictionaryCode">
+      <param key="codeFile" value="LinguisticProcessings/por/code-por.dat"/>
+      <param key="codeListFile" value="LinguisticProcessings/por/codesList-por.dat"/>
+    </group>
+    <group name="idiomaticExpressionsRecognizer" class="AutomatonRecognizer">
+      <param key="rules" value="LinguisticProcessings/por/idiomaticExpressions-por.bin"/>
+    </group>
+    <group name="trigramMatrix" class="TrigramMatrix">
+      <param key="trigramFile" value="Disambiguation/trigramMatrix-por.dat"/>
+    </group>
+    <group name="bigramMatrix" class="BigramMatrix">
+      <param key="bigramFile" value="Disambiguation/bigramMatrix-por.dat"/>
+    </group>
+    <group name="stopList" class="StopList">
+      <param key="file" value="LinguisticProcessings/StopLists/stopList-por.dat"/>
+    </group>
+    <group name="frequencyDictionary" class="CompactDict16">
+      <param key="dictionaryKey" value="Reformulation/frequency-dico-por-keys.dat"/>
+      <param key="dictionaryValues" value="Reformulation/frequency-dico-por-val.dat"/>
+    </group>
+    <group name="chainMatrix" class="SyntagmDefinitionStructure">
+      <param key="file" value="SyntacticAnalysis/chainsMatrix-por.bin"/>
+    </group>
+    <group name="pass1HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-por-homodeps-pass1.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="pass2HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-por-homodeps-pass2.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="pass0HomoSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-por-homodeps-pass0.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="pleonasticPronouns" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-por-pleonasticPronouns.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="compoundTensesRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-compoundTense.txt.bin"/>
+      <param key="applySameRuleWhileSuccess" value="true"/>
+    </group>
+    <group name="heteroSyntagmaticRelationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/rules-por-heterodeps.txt.bin"/>
+    </group>
+    <group name="l2rDummyRules" class="AutomatonRecognizer">
+      <param key="rules" value="SyntacticAnalysis/l2rDummy-por.bin"/>
+    </group>
+    <group name="selectionalPreferences" class="SelectionalPreferences">
+      <param key="file" value="SyntacticAnalysis/selectionalPreferences-por.bin"/>
+    </group>
+    <group name="automatonCompiler" class="AutomatonRecognizer">
+      <param key="rules" value=""/>
+    </group>
+    <group name="bowTextWriter" class="BowTextWriter"/>
+    <group name="bowTextXmlWriter" class="BowTextXmlWriter"/>
+    <group name="bowTextHandler" class="BowTextHandler"/>
+    <group name="bowDocumentHandler" class="BowDocumentHandler"/>
+    <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="xmlDocumentHandler" class="xmlDocumentHandler"/>
+  </module>
+</modulesConfig>

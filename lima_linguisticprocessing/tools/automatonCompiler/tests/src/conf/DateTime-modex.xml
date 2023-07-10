@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="DateTime">
+      <list name="entityList">
+        <item value="DATE"/>
+        <item value="TIME"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="DateTimeModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="DateRecognition"/>
+        <item value="TimeRecognition"/>
+      </list>
+    </group>
+    <group name="DateTimeModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="DateRecognitionAfterPos"/>
+        <item value="TimeRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="DateTimeModexForLimaserver" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="DateRecognitionForLimaserver"/>
+        <item value="TimeRecognitionForLimaserver"/>
+      </list>
+    </group>
+    <group name="DateRecognition" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="DateRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="DateRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="DateRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="DateRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="DateRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="TimeRecognition" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="TimeRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="TimeRecognitionAfterPos" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="TimeRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="TimeRecognitionForLimaserver" class="ApplyRecognizer" lib="lima-lp-se-datetime">
+      <param key="automaton" value="TimeRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+
+  <module name="resources-eng">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-eng.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-eng.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="NOUN"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-eng.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-eng.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="DayMicros">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-ud.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-ud.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="PROPN"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-ud.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-ud.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="PROPN"/>
+      </list>
+      <list name="DayMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-ud-eng.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-ud-eng.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="PROPN"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="PROPN"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-ud-eng.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-ud-eng.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="PROPN"/>
+      </list>
+      <list name="DayMicros">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-fre.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-fre.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="NC"/>
+        <!--item value="ADJNUM"/-->
+        <item value="ADJ"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="NC"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-fre.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-fre.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="NC"/>
+      </list>
+      <list name="DayMicros">
+        <item value="NC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="DateRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/DATE-por.bin"/>
+    </group>
+    <group name="TimeRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/TIME-por.bin"/>
+    </group>
+    <group name="DateTimeIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="DateTime.DATE" value="yes"/>
+        <entry key="DateTime.TIME" value="yes"/>
+      </map>
+    </group>
+    <group name="DateTimeMicros" class="SpecificEntitiesMicros">
+      <list name="DateTime.DATE">
+        <item value="N"/>
+      </list>
+      <list name="DateTime.TIME">
+        <item value="N"/>
+      </list>
+    </group>
+    <group name="DateTimeNormalization" class="NormalizeDateTimeResources">
+      <param key="timezoneDatabase" value="SpecificEntities/tz-db-por.dat"/>
+      <param key="monthsDays" value="SpecificEntities/monthsdays-por.dat"/>
+    </group>
+    <group name="microsForDateTimeNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="MonthMicros"/>
+        <item value="DayMicros"/>
+      </list>
+      <list name="MonthMicros">
+        <item value="N"/>
+      </list>
+      <list name="DayMicros">
+        <item value="N"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

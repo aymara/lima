@@ -1,0 +1,7 @@
+set encoding=utf8
+using modex TEST-modex.xml
+using groups TEST
+set defaultAction=>CreateSpecificEntity()
+use petit.lst
+
+petit::test:A:

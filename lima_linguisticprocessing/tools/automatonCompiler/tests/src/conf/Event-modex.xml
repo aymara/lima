@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="entities">
+    <group name="Event">
+      <list name="entityList">
+        <item value="EVENT"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="EventModex" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EventRecognition"/>
+      </list>
+    </group>
+    <group name="EventModexAfterPos" class="ProcessUnitPipeline" >
+      <list name="processUnitSequence">
+        <item value="EventRecognitionAfterPos"/>
+      </list>
+    </group>
+    <group name="EventRecognition" class="ApplyRecognizer">
+      <param key="automaton" value="EventRules"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+    <group name="EventRecognitionAfterPos" class="ApplyRecognizer">
+      <param key="automaton" value="EventRules"/>
+      <param key="applyOnGraph" value="PosGraph"/>
+      <param key="useSentenceBounds" value="no"/>
+    </group>
+  </module>
+  <module name="resources-eng">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-eng.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-ud.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-eng">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-ud-eng.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-fre.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NC"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-por">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-por.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="N"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

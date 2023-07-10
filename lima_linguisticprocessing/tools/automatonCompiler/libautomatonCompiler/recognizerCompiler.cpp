@@ -947,18 +947,21 @@ printWarning(const std::string& error,
 
 void RecognizerCompiler::searchFile(std::string& filename) {
   QString qfilename = QString::fromStdString(filename);
+  qDebug() << "file serached as :" << filename;
   if (!QFileInfo::exists(qfilename)) {
-    QFileInfo fileInfo(qfilename);
+    QFileInfo fileInfo(QString::fromStdString(m_filename));
     QString directoryPath = fileInfo.dir().path();
     filename = (QDir::cleanPath(directoryPath + QDir::separator() + QString::fromStdString(filename))).toStdString();
+    qDebug() << "file serached as :" << filename;
     if (!QFileInfo::exists(QString::fromStdString(filename))) {
       std::string lima_resources=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
       ?"/usr/share/apps/lima/resources"
       :string(qgetenv("LIMA_RESOURCES").constData());
       QStringList resourcesPaths = QString::fromUtf8(lima_resources.c_str()).split(LIMA_PATH_SEPARATOR);
       for(QString resourcesPath : resourcesPaths){
-        if (!QFileInfo::exists(resourcesPath + QDir::separator() + qfilename)) {
+        if (QFileInfo::exists(resourcesPath + QDir::separator() + qfilename)) {
           filename = (QDir::cleanPath(resourcesPath + QDir::separator() + qfilename)).toStdString();
+          qDebug() << "file serached as :" << filename;
         break;
         }
       }

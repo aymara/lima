@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="http-server">
+    <group name="analyzer">
+      <list name="languages">
+        <item value="eng" />
+        <item value="fre" />
+        <item value="por" />
+
+        <!-- Universal Dependencies -->
+        <item value="ud-afr" />
+        <item value="ud-ara" />
+        <item value="ud-bel" />
+        <item value="ud-bre" />
+        <item value="ud-bul" />
+        <item value="ud-cat" />
+        <item value="ud-ces" />
+        <item value="ud-chu" />
+        <item value="ud-cop" />
+        <item value="ud-cym" />
+        <item value="ud-dan" />
+        <item value="ud-deu" />
+        <item value="ud-ell" />
+        <item value="ud-eng" />
+        <item value="ud-est" />
+        <item value="ud-eus" />
+        <item value="ud-fas" />
+        <item value="ud-fin" />
+        <item value="ud-fra" />
+        <item value="ud-fro" />
+        <item value="ud-gla" />
+        <item value="ud-gle" />
+        <item value="ud-glg" />
+        <item value="ud-heb" />
+        <item value="ud-hin" />
+        <item value="ud-hrv" />
+        <item value="ud-hun" />
+        <item value="ud-hye" />
+        <item value="ud-ind" />
+        <item value="ud-ita" />
+        <item value="ud-jpn" />
+        <item value="ud-kaz" />
+        <item value="ud-kmr" />
+        <item value="ud-kor" />
+        <item value="ud-lat" />
+        <item value="ud-lav" />
+        <item value="ud-lit" />
+        <item value="ud-lzh" />
+        <item value="ud-mar" />
+        <item value="ud-mlt" />
+        <item value="ud-nld" />
+        <item value="ud-nno" />
+        <item value="ud-nob" />
+        <item value="ud-orv" />
+        <item value="ud-pcm" />
+        <item value="ud-pol" />
+        <item value="ud-por" />
+        <item value="ud-ron" />
+        <item value="ud-rus" />
+        <item value="ud-slk" />
+        <item value="ud-slv" />
+        <item value="ud-sme" />
+        <item value="ud-spa" />
+        <item value="ud-sqi" />
+        <item value="ud-srp" />
+        <item value="ud-swe" />
+        <item value="ud-tam" />
+        <item value="ud-tel" />
+        <item value="ud-tha" />
+        <item value="ud-tur" />
+        <item value="ud-uig" />
+        <item value="ud-ukr" />
+        <item value="ud-urd" />
+        <item value="ud-vie" />
+        <item value="ud-wol" />
+        <item value="ud-zho" />
+        <item value="ud-zho-simp" />
+      </list>
+      <list name="pipelines">
+        <item value="limaserver"/>
+        <item value="main"/>
+        <item value="deep"/>
+        <item value="deepud"/>
+      </list>
+    </group>
+    <group name="address">
+      <param key="port" value="8080"/>
+    </group>
+  </module>
+</modulesConfig>

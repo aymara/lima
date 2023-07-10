@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="MediaData">
+    <group name="Class">
+        <param key="class" value="LanguageData"/>
+    </group>
+  </module>
+  <module name="LinguisticData">
+    <group name="Categories">
+      <list name="sentenceBreakMicros">
+        <item value="SENT"/>
+      </list>
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/eng/code-eng.xml" />
+      <list name="emptyMacro">
+        <item value="DET" />
+        <item value="PRON" />
+        <item value="ADV" />
+        <item value="PREP" />
+        <item value="CONJ" />
+        <item value="PONCTU" />
+        <item value="INTERJ" />
+      </list>
+      <list name="emptyMicro">
+        <item value="ADV"/>
+        <item value="PART"/>
+        <item value="CONJ"/>
+        <item value="SCONJ"/>
+        <item value="DET"/>
+        <item value="INTJ"/>
+        <item value="OQU"/>
+        <item value="COMMA"/>
+        <item value="COLON"/>
+        <item value="SENT"/>
+        <item value="QUOT"/>
+        <item value="OPAR"/>
+        <item value="CPAR"/>
+        <item value="CUR"/>
+        <item value="ADP"/>
+        <item value="PRON"/>
+      </list>
+      <list name="conjugatedVerbs" >
+        <item value="AUX"/>
+        <item value="VERB"/>
+      </list>
+      <list name="propositionIntroductors" >
+          <item value="CONJ" />
+          <item value="SCONJ" />
+          <item value="ADP" />
+      </list>
+    </group>
+    <group name="SyntacticRelations">
+      <list name="relationList">
+        <item value="acl"/> <!-- See Universal Dependencies-->
+        <item value="acl:relcl"/>
+        <item value="ADJPRENSUB"/>
+        <item value="ADJSUB"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="ADVADV2"/>
+        <item value="AdvSub"/>
+        <item value="AdvSub2"/>
+        <item value="AdvVerbe"/>
+        <item value="APPOS"/>
+        <item value="ATB_S"/>
+        <item value="aux"/> <!-- See Universal Dependencies-->
+        <item value="auxpass"/> <!-- See Universal Dependencies-->
+        <item value="CodPrev"/>
+        <item value="COD_V"/>
+        <item value="CoiPrev"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="COMPADV2"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="COORD1"/>
+        <item value="COORD2"/>
+        <item value="CPLV_V"/>
+        <item value="CPL_V"/>
+        <item value="DetAdj"/>
+        <item value="DETADJ"/>
+        <item value="DetIntSub"/>
+        <item value="det"/> <!-- See Universal Dependencies-->
+        <item value="DetSubNum"/>
+        <item value="Dummy"/>
+        <item value="JUXT"/>
+        <item value="mark"/> <!-- See Universal Dependencies-->
+        <item value="MOD_A"/>
+        <item value="MOD_N"/>
+        <item value="MOD_V"/>
+        <item value="Neg"/>
+        <item value="PrepInf"/>
+        <item value="Quotes"/>
+        <item value="SUBADJPOST"/>
+        <item value="SUBADJPOST2"/>
+        <item value="SUBSUBJUX"/>
+        <item value="Parent"/>
+        <item value="Pleon"/>
+        <item value="PrepAdv"/>
+        <item value="PrepDetInt"/>
+        <item value="PREPSUB"/>
+        <item value="SujInv"/>
+        <item value="SUJ_V"/>
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <param key="CompoundTensesDefFile" value="SyntacticAnalysis/compoundTenses-eng.bin"/>
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="det"/>
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+        <item value="Prefixe"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+        <item value="PrepInf"/>
+      </list>
+      <list name="NounPhraseHeadCategs">	      
+        <item value="NOUN" />
+        <item value="PROPN" />
+        <item value="PRON" />
+      </list>
+      <list name="DefiniteCategs">	      
+        <item value="DET" />
+      </list>
+    </group>
+  </module>
+</modulesConfig>

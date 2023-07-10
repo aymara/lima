@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+<!-- Configuration du client coeur -->
+<module name="lima-coreclient">
+  <group name="mediaProcessingDefinitionFiles">
+    <list name="available">
+      <item value="fre"/>
+      <item value="eng"/>
+      <item value="por"/>
+    </list>
+    <param key="fre" value="lima-lp-tva-fre.xml" />
+    <param key="eng" value="lima-lp-tva-eng.xml" />
+    <param key="por" value="lima-lp-tva-por.xml" />
+  </group>
+  <group name="pipelines">
+    <!-- chaque map represente 1 pipeline, qui est decline selon les langues. -->
+    <!-- chaque langue doit definir le pipeline correspondant dans son fichier de configuration -->
+    <!-- l'attribut 'name' de la map est l'identifiant du pipeline. C'est cet identifiant qu'il faut
+         donner au client pour utiliser ce pipeline -->
+    <map name="query">
+      <entry key="fre" value="query"/>
+      <entry key="eng" value="query"/>
+      <entry key="por" value="query"/>
+    </map>
+    <map name="indexer">
+      <entry key="fre" value="indexer"/>
+      <entry key="eng" value="indexer"/>
+      <entry key="por" value="indexer"/>
+    </map>
+    <map name="limaserver">
+      <entry key="fre" value="limaserver"/>
+      <entry key="eng" value="limaserver"/>
+      <entry key="por" value="limaserver"/>
+    </map>
+    <map name="normalization">
+      <entry key="fre" value="normalization"/>
+      <entry key="eng" value="normalization"/>
+      <entry key="por" value="normalization"/>
+    </map>
+    <map name="fakeMultiLevel">
+      <entry key="fre" value="fakeMultiLevel"/>
+      <entry key="eng" value="fakeMultiLevel"/>
+      <entry key="por" value="fakeMultiLevel"/>
+    </map>
+    <map name="approxmatcher">
+      <entry key="eng" value="approxmatcher"/>
+      <entry key="fre" value="approxmatcher"/>
+    </map>
+    <map name="ner-rules-pretok">
+      <entry key="eng" value="ner-rules-pretok"/>
+      <entry key="fre" value="ner-rules-pretok"/>
+      <entry key="por" value="ner-rules-pretok"/>
+    </map>
+  </group>
+  <group name="analysisDumpers">
+    <!-- chaque map represente 1 dumper, qui est decline selon les languages. -->
+    <!-- chaque langue doit definir le dumper correspondant dans son fichier de configuration -->
+    <!-- l'attribut 'name' de la map est l'identifiant du dumper. C'est cet identifiant qu'il faut
+         donner au client pour utiliser ce dumper -->
+    <map name="bowDumper">
+      <entry key="fre" value="bowDumper"/>
+      <entry key="eng" value="bowDumper"/>
+      <entry key="por" value="bowDumper"/>
+    </map>
+  </group>
+    </module>
+</modulesConfig>
