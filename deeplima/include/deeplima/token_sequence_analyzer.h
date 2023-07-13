@@ -14,7 +14,6 @@
 #include "utils/str_index.h"
 #include "token_type.h"
 #include "ner.h"
-#include "lemmatization.h"
 #include "conllu/line.h"
 #include "deeplima/nets/birnn_seq2seq.h"
 #include "deeplima/lemmatization/impl/lemmatization_impl.h"
@@ -148,6 +147,92 @@ public:
 
   typedef TokenIterator output_iterator_t;
 
+protected:
+
+  class enriched_token_t
+  {
+    friend class TokenSequenceAnalyzer;
+
+  protected:
+    const StringIndex& m_stridx;
+    const token_buffer_t<>::token_t* m_ptoken;
+
+    inline void set_token(const token_buffer_t<>::token_t* p)
+    {
+      m_ptoken = p;
+    }
+  public:
+
+    enriched_token_t(const StringIndex& stridx)
+      : m_stridx(stridx),
+        m_ptoken(nullptr)
+    { }
+
+    inline token_buffer_t<>::token_t::token_flags_t flags() const
+    {
+      assert(nullptr != m_ptoken);
+      return m_ptoken->m_flags;
+    }
+
+    inline bool eos() const
+    {
+      assert(nullptr != m_ptoken);
+      return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
+    }
+
+    inline const std::string& form() const
+    {
+      assert(nullptr != m_ptoken);
+      const std::string& f = m_stridx.get_str(m_ptoken->m_form_idx);
+      return f;
+    }
+  };
+
+  class enriched_token_buffer_t
+  {
+    const token_buffer_t<>& m_data;
+    mutable enriched_token_t m_token; // WARNING: only one iterator is supported
+
+  public:
+    typedef enriched_token_t token_t;
+
+    enriched_token_buffer_t(const token_buffer_t<>& data, const StringIndex& stridx)
+      : m_data(data), m_token(stridx) { }
+
+    inline token_buffer_t<>::size_type size() const
+    {
+      return m_data.size();
+    }
+
+    inline const enriched_token_t& operator[](size_t idx) const
+    {
+      m_token.set_token(m_data.data() + idx);
+      return m_token;
+    }
+  };
+
+  //typedef tagging::impl::FeaturesVectorizer<
+  //                                    enriched_token_buffer_t,
+  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+
+  //typedef tagging::impl::FeaturesVectorizerWithCache<
+  //                                    enriched_token_buffer_t,
+  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+
+  typedef tagging::impl::EntityTaggingClassifier<TaggingAuxScalar> Classifier;
+
+  typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
+                                      Classifier,
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+
+  // typedef tagging::impl::TaggingImpl< Classifier,
+  //                                     FeaturesVectorizer,
+  //                                     Matrix > EntityTaggingModule;
+
+  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
+  // typedef lemmatization::impl::LemmatizationImpl< RnnSeq2Seq, EmbdVectorizer, Matrix> LemmatizationModule;
+
 public:
   TokenSequenceAnalyzer() :
       m_buffer_size(0),
@@ -159,8 +244,12 @@ public:
   {
   }
 
-  TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn, const std::string& lemm_dict_fn,
-                        const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
+  TokenSequenceAnalyzer(const std::string& model_fn,
+                        const std::string& lemm_model_fn,
+                        const std::string& lemm_dict_fn,
+                        const PathResolver& path_resolver,
+                        size_t buffer_size,
+                        size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
@@ -168,6 +257,8 @@ public:
       m_stridx(*m_stridx_ptr),
       m_classes(std::make_shared<StdMatrix<uint8_t>>())
   {
+    std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", " << lemm_model_fn << ", "
+              << lemm_dict_fn << std::endl;
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
@@ -194,7 +285,15 @@ public:
 
     if (lemm_model_fn.size() > 0)
     {
-      m_lemm.load(lemm_model_fn, path_resolver);
+      try
+      {
+        m_lemm.load(lemm_model_fn, path_resolver);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "TokenSequenceAnalyzer failed to load lemmatization model " << lemm_model_fn << std::endl;
+        throw;
+      }
       m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
@@ -365,6 +464,10 @@ protected:
   {
     const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
     std::ifstream f(fn, std::ios::in);
+    if (!f) {
+        std::cerr << "load_lemm_cache failed to open file " << fn << ".\n";
+        throw std::runtime_error(std::string("load_lemm_cache failed to open file ") + fn);
+    }
     std::string line;
     while (std::getline(f, line))
     {

@@ -32,17 +32,17 @@ namespace eigen_impl
   #define TAG_EXPORT
 #endif
 
-template <typename M, typename V, typename T, typename AuxScalar=float>
-class TAG_EXPORT BiRnnEigenInferenceForTagging : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
+template <typename AuxScalar=float>
+class TAG_EXPORT BiRnnEigenInferenceForTagging : public deeplima::eigen_impl::BiRnnInferenceBase
 {
 public:
-  typedef M Matrix;
-  typedef V Vector;
-  typedef T Scalar;
-  typedef M tensor_t;
+  typedef Eigen::MatrixXf Matrix;
+  typedef Eigen::VectorXf Vector;
+  typedef float Scalar;
+  typedef Eigen::MatrixXf tensor_t;
   typedef EmbdUInt64FloatHolder dicts_holder_t;
-  typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
-  typedef deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<M, V, T, AuxScalar> op_bilstm_dense_argmax_t;
+  typedef deeplima::eigen_impl::BiRnnInferenceBase Parent;
+  typedef deeplima::eigen_impl::Op_BiLSTM_Dense_ArgMax<Eigen::MatrixXf, Eigen::VectorXf, float, AuxScalar> op_bilstm_dense_argmax_t;
 
   virtual void load(const std::string& fn)
   {
@@ -64,8 +64,8 @@ public:
   }
 
   virtual void precompute_inputs(
-      const M& inputs,
-      M& outputs,
+      const Eigen::MatrixXf& inputs,
+      Eigen::MatrixXf& outputs,
       int64_t input_size
       )
   {
@@ -76,7 +76,7 @@ public:
 
   virtual void predict(
       size_t worker_id,
-      const M& inputs,
+      const Eigen::MatrixXf& inputs,
       int64_t input_begin,
       int64_t input_end,
       int64_t output_begin,

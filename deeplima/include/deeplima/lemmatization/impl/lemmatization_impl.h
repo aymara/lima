@@ -11,7 +11,7 @@
 #include "deeplima/eigen_wrp/embd_dict.h"
 #include "deeplima/eigen_wrp/dict_embd_vectorizer.h"
 #include "deeplima/utils/str_index.h"
-
+#include "morph_model/morph_model.h"
 #include "helpers/path_resolver.h"
 
 namespace deeplima
@@ -59,7 +59,9 @@ protected:
   EmbdVectorizer m_vectorizer;
   EmbdVectorizer m_feat_vectorizer;
   std::vector<int> m_feat2cls;
+  /** index in the features matrix of the upos line*/
   int m_upos_idx;
+  /** index i is true if upos whose index is i is considered as fixed*/
   std::vector<bool> m_fixed_upos;
 };
 

@@ -84,7 +84,16 @@ public:
 
   virtual void load(const std::string& fn)
   {
-    InferenceEngine::load(fn);
+    try
+    {
+      InferenceEngine::load(fn);
+    }
+    catch (std::runtime_error& e)
+    {
+      std::cerr << "SegmentationImpl exception while trying to load model  " << fn << ":" << std::endl
+                << e.what();
+      throw;
+    }
     m_input_encoder.init(InferenceEngine::get_ngram_descr());
   }
 

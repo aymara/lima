@@ -135,15 +135,33 @@ int main(int argc, char* argv[])
       if (!file.is_open())
       {
         std::cerr << "Failed to open file: " << fn << std::endl;
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error(std::string("Failed to open file "+fn));
       }
       file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
-      parse_file(file, models, path_resolver, threads, out_fmt, tag_use_mp);
+      try
+      {
+        parse_file(file, models, path_resolver, threads, out_fmt, tag_use_mp);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "Analysis failure: Exception while analyzing file " << fn << ":" << std::endl
+                  << e.what() << std::endl;
+        return 1;
+      }
     }
   }
   else
   {
-    parse_file(std::cin, models, path_resolver, threads, out_fmt, tag_use_mp);
+    try
+    {
+      parse_file(std::cin, models, path_resolver, threads, out_fmt, tag_use_mp);
+    }
+    catch (const std::runtime_error& e)
+    {
+      std::cerr << "Analysis failure: Exception while analyzing text from stdin:" << std::endl
+                << e.what() << std::endl;
+      return 1;
+    }
   }
 
   return 0;
@@ -207,7 +225,7 @@ void parse_file(std::istream& input,
     std::string lemm_model_fn = find_or_empty_line(models_fn, "lem");
     std::string lemm_dict_fn = find_or_empty_line(models_fn, "lem_dict");
 
-    if (tag_use_mp)
+    try
     {
       if (tag_use_mp)
       {
@@ -230,15 +248,10 @@ void parse_file(std::istream& input,
             8);
       }
     }
-    else
+    catch (const std::runtime_error& e)
     {
-      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, float> >(
-          models_fn.find("tag")->second,
-          lemm_model_fn,
-          lemm_dict_fn,
-          path_resolver,
-          TAG_BUFFER_SIZE,
-          8);
+      std::cerr << "parse_file failed to initialize analyzer: " << e.what() << std::endl;
+      throw std::runtime_error(std::string("parse_file failed to initialize analyzer: ") + e.what());
     }
 
     if (models_fn.end() != models_fn.find("dp"))
@@ -247,12 +260,20 @@ void parse_file(std::istream& input,
       auto conllu_dumper = std::make_shared<dumper::AnalysisToConllU<typename DependencyParser::TokenIterator> >();
       pDumperBase = conllu_dumper;
 
-      parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
-                                                         path_resolver,
-                                                         panalyzer->get_stridx(),
-                                                         panalyzer->get_class_names(),
-                                                         DP_BUFFER_SIZE,
-                                                         8);
+      try
+      {
+        parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
+                                                          path_resolver,
+                                                          panalyzer->get_stridx(),
+                                                          panalyzer->get_class_names(),
+                                                          DP_BUFFER_SIZE,
+                                                          8);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "parse_file failed to initialize parser: " << e.what() << std::endl;
+        throw std::runtime_error(std::string("parse_file failed to initialize parser: ") + e.what());
+      }
 
       for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
       {

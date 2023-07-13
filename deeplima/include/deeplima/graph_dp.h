@@ -24,7 +24,6 @@ namespace deeplima::graph_dp
 
 namespace eigen_impl
 {
-
   typedef impl::GraphDpInferenceWrapper<BiRnnAndDeepBiaffineAttentionEigenInference> Model;
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
 
@@ -77,10 +76,6 @@ namespace impl
 
 
   typedef RnnSequenceClassifier<Model, BaseMatrix, uint32_t> GraphDependencyParser;
-
-  //typedef impl::TaggingImpl< EntityTaggingClassifier, int
-  //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
-  //                           FeaturesVectorizer > EntityTaggingModule;
 
 } // namespace impl
 

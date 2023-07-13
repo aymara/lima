@@ -77,6 +77,11 @@ public:
 
 class morph_model_builder;
 
+/**
+ * Helper class for morphology data (upos, features) binarization.
+ *
+ * Get id from data string and reverse.
+ */
 class morph_model_t
 {
   struct dict_t
