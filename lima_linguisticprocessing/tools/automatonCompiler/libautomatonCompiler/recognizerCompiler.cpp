@@ -289,12 +289,19 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         g.setAlias(alias);
         int offsetParOpen(findSpecialCharacter(s,CHAR_OPEN_GAZ,
                                                         offsetEqual));
-        if (offsetParOpen != -1) {
-          g.readValues(*this,gazeteers,s.mid(offsetParOpen+1));
-        }
-        else {
-          g.readValues(*this,gazeteers);
-        }
+       // try
+       // {
+          if (offsetParOpen != -1) {
+            g.readValues(*this,gazeteers,s.mid(offsetParOpen+1));
+          }
+          else {
+            g.readValues(*this,gazeteers);
+          }
+        //}
+      //  catch (std::runtime_error& e)
+       // {
+         // throwError("found parenthesis in :",e.what());
+       // }
         //std::cerr << g << endl;
         g.buildAutomatonString(gazeteers,subAutomatons);
         // check if another gazeteer exist with same name
@@ -681,7 +688,14 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
   RecognizerCompiler reco(filename);
   while (! reco.endOfFile()) {
     Gazeteer g;
+    try
+    {
     g.read(reco);
+    }
+    catch (std::runtime_error& e)
+    {
+      throwError("found parenthesis in :",e.what());
+    }
     if (g.numberOfWords()!=0) {
       LINFO << "Adding gazeteer:"
             << g.alias()
