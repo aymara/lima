@@ -131,6 +131,7 @@ target_link_libraries(deeplima-eigen
   fasttext-static
   version
   utils
+  lemmatization_inference
 )
 
 install(TARGETS deeplima-eigen

@@ -6,6 +6,7 @@
 #ifndef DEEPLIMA_TAGGING_IMPL_H
 #define DEEPLIMA_TAGGING_IMPL_H
 
+#include "deeplima/ner.h"
 #include "deeplima/token_type.h"
 #include "deeplima/fastText_wrp/fastText_wrp.h"
 #include "deeplima/eigen_wrp/embd_dict.h"
@@ -18,20 +19,82 @@ namespace deeplima
 namespace tagging
 {
 
-class ITagging
-{
-public:
-};
-
 namespace impl {
 
-template <class InferenceEngine, class Vectorizer, class Matrix>
-class TaggingImpl: public ITagging, public InferenceEngine
+class enriched_token_t
 {
+  friend class TokenSequenceAnalyzer;
+
+protected:
+  const StringIndex& m_stridx;
+  const token_buffer_t<>::token_t* m_ptoken;
+
+public:
+  inline void set_token(const token_buffer_t<>::token_t* p)
+  {
+    m_ptoken = p;
+  }
+
+  enriched_token_t(const StringIndex& stridx)
+    : m_stridx(stridx),
+      m_ptoken(nullptr)
+  { }
+
+  inline token_buffer_t<>::token_t::token_flags_t flags() const
+  {
+    assert(nullptr != m_ptoken);
+    return m_ptoken->m_flags;
+  }
+
+  inline bool eos() const
+  {
+    assert(nullptr != m_ptoken);
+    return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
+  }
+
+  inline const std::string& form() const
+  {
+    assert(nullptr != m_ptoken);
+    const std::string& f = m_stridx.get_str(m_ptoken->m_form_idx);
+    return f;
+  }
+};
+
+class enriched_token_buffer_t
+{
+  const token_buffer_t<>& m_data;
+  mutable enriched_token_t m_token; // WARNING: only one iterator is supported
+
+public:
+  typedef enriched_token_t token_t;
+
+  enriched_token_buffer_t(const token_buffer_t<>& data, const StringIndex& stridx)
+    : m_data(data), m_token(stridx) { }
+
+  inline token_buffer_t<>::size_type size() const
+  {
+    return m_data.size();
+  }
+
+  inline const enriched_token_t& operator[](size_t idx) const
+  {
+    m_token.set_token(m_data.data() + idx);
+    return m_token;
+  }
+};
+
+template <typename TaggingAuxScalar>
+class TaggingImpl: public EntityTaggingClassifier<TaggingAuxScalar>
+{
+  using Classifier = EntityTaggingClassifier<TaggingAuxScalar> ;
+  using Vectorizer = FeaturesVectorizerWithPrecomputing<
+                                      Classifier,
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t> ;
 public:
 
   TaggingImpl() :
-      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
+      m_fastText(std::make_shared<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
@@ -42,15 +105,15 @@ public:
       size_t threads,
       size_t buffer_size_per_thread
     )
-    : InferenceEngine(0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
-      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
-      m_current_timepoint(InferenceEngine::get_start_timepoint())
+    : Classifier(0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+      m_fastText(std::make_shared<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+      m_current_timepoint(Classifier::get_start_timepoint())
   {
   }
 
   virtual void load(const std::string& fn, const PathResolver& path_resolver)
   {
-    InferenceEngine::load(fn);
+    Classifier::load(fn);
 
     if (this->get_input_str_dicts().size())
     {
@@ -58,7 +121,7 @@ public:
       auto p = std::make_shared<EmbdStrFloat>(z);
     }
 
-    m_fastText->load(path_resolver.resolve("embd", InferenceEngine::get_embd_fn(0), {"bin", "ftz"}));
+    m_fastText->load(path_resolver.resolve("embd", Classifier::get_embd_fn(0), {"bin", "ftz"}));
   }
 
   void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
@@ -71,11 +134,11 @@ public:
 
     m_vectorizer.set_model(this);
 
-    InferenceEngine::init(m_vectorizer.dim(),
+    Classifier::init(m_vectorizer.dim(),
                           16, num_buffers, buffer_size_per_thread, threads,
                           m_vectorizer.is_precomputing());
 
-    m_current_timepoint = InferenceEngine::get_start_timepoint();
+    m_current_timepoint = Classifier::get_start_timepoint();
   }
 
   void precompute_inputs(const typename Vectorizer::dataset_t& buffer)
@@ -101,18 +164,18 @@ protected:
   inline void increment_timepoint(uint64_t& timepoint)
   {
     assert(m_current_slot_timepoints > 0);
-    InferenceEngine::increment_timepoint(timepoint);
+    Classifier::increment_timepoint(timepoint);
     m_current_slot_timepoints--;
   }
 
   inline void send_results(int32_t slot_idx)
   {
-    uint64_t from = InferenceEngine::get_slot_begin(slot_idx);
-    const uint64_t to = InferenceEngine::get_slot_end(slot_idx);
+    uint64_t from = Classifier::get_slot_begin(slot_idx);
+    const uint64_t to = Classifier::get_slot_end(slot_idx);
 
-    m_callback(InferenceEngine::get_output(), from, to, slot_idx);
+    m_callback(Classifier::get_output(), from, to, slot_idx);
 
-    InferenceEngine::decrement_lock_count(slot_idx);
+    Classifier::decrement_lock_count(slot_idx);
     m_last_completed_slot = slot_idx;
   }
 
@@ -126,19 +189,19 @@ public:
     }
     else
     {
-      slot_idx = InferenceEngine::next_slot(slot_idx);
+      slot_idx = Classifier::next_slot(slot_idx);
     }
 
-    uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
+    uint8_t lock_count = Classifier::get_lock_count(slot_idx);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
       // std::cerr << "TaggingImpl::send_next_results: waiting for slot " << slot_idx+1
       //      << " (lock_count==" << int(lock_count) << ")\n";
-      // InferenceEngine::pretty_print();
-      InferenceEngine::wait_for_slot(slot_idx);
-      lock_count = InferenceEngine::get_lock_count(slot_idx);
+      // Classifier::pretty_print();
+      Classifier::wait_for_slot(slot_idx);
+      lock_count = Classifier::get_lock_count(slot_idx);
     }
     if (1 == lock_count)
     {
@@ -159,10 +222,10 @@ public:
       }
       else
       {
-        slot_idx = InferenceEngine::next_slot(slot_idx);
+        slot_idx = Classifier::next_slot(slot_idx);
       }
 
-      uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
+      uint8_t lock_count = Classifier::get_lock_count(slot_idx);
       if (0 == lock_count)
       {
         return;
@@ -173,9 +236,9 @@ public:
         // Worker still uses this slot. Waiting...
         // std::cerr << "TaggingImpl::send_all_results: waiting for slot " << slot_idx+1
         //      << " (lock_count==" << int(lock_count) << ")\n";
-        // InferenceEngine::pretty_print();
-        InferenceEngine::wait_for_slot(slot_idx);
-        lock_count = InferenceEngine::get_lock_count(slot_idx);
+        // Classifier::pretty_print();
+        Classifier::wait_for_slot(slot_idx);
+        lock_count = Classifier::get_lock_count(slot_idx);
       }
       if (1 == lock_count)
       {
@@ -194,10 +257,10 @@ protected:
     }
     else
     {
-      slot_idx = InferenceEngine::next_slot(slot_idx);
+      slot_idx = Classifier::next_slot(slot_idx);
     }
 
-    uint8_t lock_count = InferenceEngine::get_lock_count(slot_idx);
+    uint8_t lock_count = Classifier::get_lock_count(slot_idx);
 
     if (1 == lock_count)
     {
@@ -208,18 +271,18 @@ protected:
 
   inline void acquire_slot(size_t slot_no)
   {
-    // m_current_slot_no = InferenceEngine::get_slot_idx(m_current_timepoint);
+    // m_current_slot_no = Classifier::get_slot_idx(m_current_timepoint);
     // std::cerr << "tagging acquiring_slot: " << slot_no << std::endl;
-    uint8_t lock_count = InferenceEngine::get_lock_count(slot_no);
+    uint8_t lock_count = Classifier::get_lock_count(slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
       // std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
       //      << " lock_count=" << int(lock_count) << std::endl;
-      // InferenceEngine::pretty_print();
-      InferenceEngine::wait_for_slot(slot_no);
-      lock_count = InferenceEngine::get_lock_count(slot_no);
+      // Classifier::pretty_print();
+      Classifier::wait_for_slot(slot_no);
+      lock_count = Classifier::get_lock_count(slot_no);
     }
     if (1 == lock_count)
     {
@@ -227,7 +290,7 @@ protected:
       send_results(slot_no);
     }
 
-    InferenceEngine::increment_lock_count(slot_no);
+    Classifier::increment_lock_count(slot_no);
   }
 
 public:
@@ -236,33 +299,33 @@ public:
     // std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", " << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
-    size_t offset = slot_no * buffer.size() + InferenceEngine::get_start_timepoint();
+    size_t offset = slot_no * buffer.size() + Classifier::get_start_timepoint();
     size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
     for (size_t i = 0; i < count; i++)
     {
-      m_vectorizer.vectorize_timepoint(Matrix::get_tensor(), offset + i, buffer[i]);
+      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), offset + i, buffer[i]);
     }
 
-    InferenceEngine::set_slot_end(slot_no, offset + count);
-    InferenceEngine::start_job(slot_no, timepoints_to_analyze > 0);
+    Classifier::set_slot_end(slot_no, offset + count);
+    Classifier::start_job(slot_no, timepoints_to_analyze > 0);
     // std::cerr << "Slot " << slot_no << " sent to inference engine (tagging)" << std::endl;
   }
 
   inline void no_more_data(size_t slot_no)
   {
-    if (!InferenceEngine::get_slot_started(slot_no))
+    if (!Classifier::get_slot_started(slot_no))
     {
-      while (InferenceEngine::get_lock_count(slot_no) > 1)
+      while (Classifier::get_lock_count(slot_no) > 1)
       {
-        InferenceEngine::decrement_lock_count(slot_no);
+        Classifier::decrement_lock_count(slot_no);
       }
-      InferenceEngine::start_job(slot_no, true);
+      Classifier::start_job(slot_no, true);
     }
   }
 
 protected:
   Vectorizer m_vectorizer;
-  std::shared_ptr<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>> m_fastText;
+  std::shared_ptr<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>> m_fastText;
 
   tagging_callback_t m_callback;
 

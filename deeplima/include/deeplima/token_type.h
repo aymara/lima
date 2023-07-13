@@ -6,7 +6,11 @@
 #ifndef DEEPLIMA_TOKEN_TYPE_H
 #define DEEPLIMA_TOKEN_TYPE_H
 
+#include <cassert>
+#include <cstdlib>
+#include <cstddef>
 #include <vector>
+#include <stdint.h>
 
 namespace deeplima
 {

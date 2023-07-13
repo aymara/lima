@@ -26,7 +26,6 @@
 
 #endif
 
-#include "tagging/impl/tagging_impl.h"
 #include "tagging/impl/tagging_wrapper.h"
 #include "eigen_wrp/word_seq_embd_vectorizer.h"
 #include "feat_extractors.h"

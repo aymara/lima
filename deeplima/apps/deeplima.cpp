@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#include "deeplima/segmentation.h"
+#include "deeplima/segmentation/impl/segmentation_impl.h"
 #include "deeplima/ner.h"
 #include "deeplima/token_sequence_analyzer.h"
 #include "deeplima/dependency_parser.h"
@@ -170,9 +170,18 @@ void parse_file(std::istream& input,
 
   if (models_fn.end() != models_fn.find("tok"))
   {
-    psegm = std::make_shared<segmentation::Segmentation>();
-    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->load(models_fn.find("tok")->second);
-    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->init(threads, 16*1024);
+    psegm = std::make_shared<segmentation::impl::SegmentationImpl>();
+    try
+    {
+      std::dynamic_pointer_cast<segmentation::impl::SegmentationImpl>(psegm)->load(models_fn.find("tok")->second);
+    }
+    catch (std::runtime_error& e)
+    {
+      std::cerr << "In parse_file: failed to load model file " << models_fn.find("tok")->second << ": "
+                << e.what() << std::endl;
+      throw;
+    }
+    std::dynamic_pointer_cast<segmentation::impl::SegmentationImpl>(psegm)->init(threads, 16*1024);
   }
   else
   {
@@ -200,13 +209,26 @@ void parse_file(std::istream& input,
 
     if (tag_use_mp)
     {
-      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, int16_t> >(
-          models_fn.find("tag")->second,
-          lemm_model_fn,
-          lemm_dict_fn,
-          path_resolver,
-          TAG_BUFFER_SIZE,
-          8);
+      if (tag_use_mp)
+      {
+          panalyzer = std::make_shared< TokenSequenceAnalyzer<int16_t> >(
+              models_fn.find("tag")->second,
+              lemm_model_fn,
+              lemm_dict_fn,
+              path_resolver,
+              TAG_BUFFER_SIZE,
+              8);
+      }
+      else
+      {
+        panalyzer = std::make_shared< TokenSequenceAnalyzer<float> >(
+            models_fn.find("tag")->second,
+            lemm_model_fn,
+            lemm_dict_fn,
+            path_resolver,
+            TAG_BUFFER_SIZE,
+            8);
+      }
     }
     else
     {

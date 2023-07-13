@@ -9,13 +9,17 @@
 #include <memory>
 #include <unordered_map>
 
-#include "segmentation.h"
+// #include "segmentation.h"
 #include "helpers/path_resolver.h"
 #include "utils/str_index.h"
 #include "token_type.h"
 #include "ner.h"
 #include "lemmatization.h"
 #include "conllu/line.h"
+#include "deeplima/nets/birnn_seq2seq.h"
+#include "deeplima/lemmatization/impl/lemmatization_impl.h"
+#include "deeplima/segmentation/impl/segmentation_decoder.h"
+#include "deeplima/tagging/impl/tagging_impl.h"
 
 namespace deeplima
 {
@@ -40,10 +44,10 @@ public:
 
   virtual void finalize() = 0;
 
-  virtual void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len) = 0;
+  virtual void operator()(const std::vector<segmentation::token_pos>& tokens, uint32_t len) = 0;
 };
 
-template <class Matrix=eigen_wrp::EigenMatrixXf, typename TaggingAuxScalar=float>
+template <typename TaggingAuxScalar=float>
 class TokenSequenceAnalyzer : public ITokenSequenceAnalyzer
 {
 public:
@@ -144,92 +148,6 @@ public:
 
   typedef TokenIterator output_iterator_t;
 
-protected:
-
-  class enriched_token_t
-  {
-    friend class TokenSequenceAnalyzer;
-
-  protected:
-    const StringIndex& m_stridx;
-    const token_buffer_t<>::token_t* m_ptoken;
-
-    inline void set_token(const token_buffer_t<>::token_t* p)
-    {
-      m_ptoken = p;
-    }
-  public:
-
-    enriched_token_t(const StringIndex& stridx)
-      : m_stridx(stridx),
-        m_ptoken(nullptr)
-    { }
-
-    inline token_buffer_t<>::token_t::token_flags_t flags() const
-    {
-      assert(nullptr != m_ptoken);
-      return m_ptoken->m_flags;
-    }
-
-    inline bool eos() const
-    {
-      assert(nullptr != m_ptoken);
-      return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
-    }
-
-    inline const std::string& form() const
-    {
-      assert(nullptr != m_ptoken);
-      const std::string& f = m_stridx.get_str(m_ptoken->m_form_idx);
-      return f;
-    }
-  };
-
-  class enriched_token_buffer_t
-  {
-    const token_buffer_t<>& m_data;
-    mutable enriched_token_t m_token; // WARNING: only one iterator is supported
-
-  public:
-    typedef enriched_token_t token_t;
-
-    enriched_token_buffer_t(const token_buffer_t<>& data, const StringIndex& stridx)
-      : m_data(data), m_token(stridx) { }
-
-    inline token_buffer_t<>::size_type size() const
-    {
-      return m_data.size();
-    }
-
-    inline const enriched_token_t& operator[](size_t idx) const
-    {
-      m_token.set_token(m_data.data() + idx);
-      return m_token;
-    }
-  };
-
-  //typedef tagging::impl::FeaturesVectorizer<
-  //                                    enriched_token_buffer_t,
-  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-
-  //typedef tagging::impl::FeaturesVectorizerWithCache<
-  //                                    enriched_token_buffer_t,
-  //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-
-  typedef tagging::impl::EntityTaggingClassifier<TaggingAuxScalar> Classifier;
-
-  typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
-                                      Classifier,
-                                      enriched_token_buffer_t,
-                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-
-  typedef tagging::impl::TaggingImpl< Classifier,
-                                      FeaturesVectorizer,
-                                      Matrix > EntityTaggingModule;
-
-  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
-  typedef lemmatization::impl::LemmatizationImpl< lemmatization::impl::Lemmatizer, EmbdVectorizer, Matrix> LemmatizationModule;
-
 public:
   TokenSequenceAnalyzer() :
       m_buffer_size(0),
@@ -271,7 +189,7 @@ public:
         buff[i].m_form_idx = i;
       }
 
-      m_cls.precompute_inputs(enriched_token_buffer_t(buff, m_stridx));
+      m_cls.precompute_inputs(tagging::impl::enriched_token_buffer_t(buff, m_stridx));
     }
 
     if (lemm_model_fn.size() > 0)
@@ -426,13 +344,13 @@ protected:
     m_buffers[buffer_idx].lock();
 
     const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
-    m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx), count);
+    m_cls.handle_token_buffer(buffer_idx, tagging::impl::enriched_token_buffer_t(current_buffer, m_stridx), count);
   }
 
   void process_buffer(size_t buffer_idx)
   {
     const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
-    m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx));
+    m_cls.handle_token_buffer(buffer_idx, tagging::impl::enriched_token_buffer_t(current_buffer, m_stridx));
   }
 
   typedef std::pair<StringIndex::idx_t, morph_model::morph_feats_t> lemm_cache_key_t;
@@ -532,8 +450,8 @@ protected:
   std::vector<token_buffer_t<>> m_buffers;
   std::vector<std::vector<StringIndex::idx_t>> m_lemm_buffers; // access control is sync with m_buffers
 
-  EntityTaggingModule m_cls;
-  LemmatizationModule m_lemm;
+  tagging::impl::TaggingImpl<TaggingAuxScalar> m_cls;
+  lemmatization::impl::LemmatizationImpl m_lemm;
   std::shared_ptr< StdMatrix<uint8_t> > m_classes;
 
   std::unordered_map<lemm_cache_key_t, StringIndex::idx_t, lemm_cache_key_hash> m_lemm_cache;

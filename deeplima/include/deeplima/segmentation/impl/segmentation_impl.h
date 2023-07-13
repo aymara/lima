@@ -8,6 +8,21 @@
 
 #include "deeplima/utils/locked_buffer.h"
 
+#include "deeplima/nets/birnn_seq_cls.h"
+
+#include "deeplima/eigen_wrp/eigen_matrix.h"
+#include "deeplima/eigen_wrp/embd_dict.h"
+#include "deeplima/eigen_wrp/dict_embd_vectorizer.h"
+#include "deeplima/eigen_wrp/segmentation_eigen_inference_impl.h"
+
+// #include "config.h"
+
+#include "utf8_reader.h"
+#include "char_ngram_encoder.h"
+#include "segmentation_decoder.h"
+#include "segmentation_wrapper.h"
+
+
 namespace deeplima
 {
 namespace segmentation
@@ -25,11 +40,22 @@ public:
   virtual ~ISegmentation() { }
 };
 
-namespace impl {
-
-template <class InferenceEngine, class InputEncoder, class OutputDecoder>
-class SegmentationImpl: public ISegmentation, public InferenceEngine
+namespace eigen_impl
 {
+  typedef impl::SegmentationInferenceWrapper<BiRnnEigenInferenceForSegmentation> Model;
+  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
+}
+
+namespace impl {
+  using CharNgramEncoderFromUtf8 = CharNgramEncoder< Utf8Reader<> > ;
+
+  using SegmentationClassifier = RnnSequenceClassifier<eigen_impl::Model, eigen_impl::EmbdVectorizer, uint8_t> ;
+  using InputEncoder = CharNgramEncoderFromUtf8;
+  using OutputDecoder = SegmentationDecoder;
+
+class SegmentationImpl: public ISegmentation, public SegmentationClassifier
+{
+  using InferenceEngine = SegmentationClassifier;
 public:
 
   SegmentationImpl()

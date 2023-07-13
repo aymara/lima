@@ -11,6 +11,9 @@
 #include <cstdlib>
 
 #include "deeplima/utils/std_matrix.h"
+#include "deeplima/eigen_wrp/eigen_matrix.h"
+#include "deeplima/eigen_wrp/lemmatization_eigen_inference_impl.h"
+#include "deeplima/lemmatization/impl/lemmatization_wrapper.h"
 
 namespace deeplima
 {

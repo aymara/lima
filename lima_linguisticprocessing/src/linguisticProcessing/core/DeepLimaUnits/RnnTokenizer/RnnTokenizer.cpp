@@ -98,7 +98,7 @@ protected:
   // Parameters
   bool m_ignoreEOL;
 
-  segmentation::impl::SegmentationModuleUtf8 m_segm;
+  segmentation::impl::SegmentationImpl m_segm;
 
   std::function<void()> m_load_fn;
   bool m_loaded;
