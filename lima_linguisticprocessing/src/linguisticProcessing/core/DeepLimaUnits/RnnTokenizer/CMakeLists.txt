@@ -35,6 +35,7 @@ if (EIGEN3_FOUND)
         lima-common
         ICU::uc
         convert_from_torch-shared
+        lemmatization_inference
         ${TORCH_LIBRARIES}
     )
 

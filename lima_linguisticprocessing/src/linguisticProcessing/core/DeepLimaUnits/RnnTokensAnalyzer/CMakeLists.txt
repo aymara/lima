@@ -39,6 +39,7 @@ if (EIGEN3_FOUND)
             utils
             morph_model
             static_graph
+            lemmatization_inference
             ${TORCH_LIBRARIES}
             )
 
