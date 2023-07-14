@@ -25,18 +25,24 @@ endmacro ()
 ########### next test ###############
 TEST_RULES_DEPLOY()
 
-SET(SearchTest0_SRCS
-   SearchTest0.cpp
+SET(AutomatonCompilerUseTest0_SRCS
+   AutomatonCompilerUseTest0.cpp
 )
 
-add_executable(SearchTest0 ${SearchTest0_SRCS} ${SearchTest0_MOC_OUTFILES})
+add_executable(AutomatonCompilerUseTest0 ${AutomatonCompilerUseTest0_SRCS} ${AutomatonCompilerUseTest0_MOC_OUTFILES})
 
-target_link_libraries(SearchTest0
+target_link_libraries(AutomatonCompilerUseTest0
   Qt${QT_VERSION_MAJOR}::Test
 )
 
 add_test(
-  NAME SearchTest0
-  COMMAND SearchTest0
-  WORKING_DIRECTORY execEnv)
+  NAME AutomatonCompilerUseTest0
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv
+  COMMAND  ${CMAKE_COMMAND} -E env
+    LIMA_PWD=${CMAKE_BINARY_DIR}/execEnv
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf:${CMAKE_BINARY_DIR}/execEnv/config
+    LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/src/resources:${CMAKE_BINARY_DIR}/execEnv/resources
+    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
+    ${CMAKE_CURRENT_BINARY_DIR}/AutomatonCompilerUseTest0
+  )
 

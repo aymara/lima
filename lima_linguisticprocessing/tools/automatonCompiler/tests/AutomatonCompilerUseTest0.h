@@ -7,11 +7,11 @@
 
 #include <QObject>
 
-class SearchTest : public QObject
+class AutomatonCompilerUseTest : public QObject
 {
     Q_OBJECT
 
 private Q_SLOTS:
-    void SearchTest0();
+    void AutomatonCompilerUseTest0();
 };
 

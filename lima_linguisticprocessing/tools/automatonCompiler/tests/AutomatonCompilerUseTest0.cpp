@@ -6,7 +6,7 @@
 // clazy:skip
 
 
-#include "SearchTest0.h"
+#include "AutomatonCompilerUseTest0.h"
 #include <QtTest/QTest>
 #include <QProcess>
 #include <QCoreApplication>
@@ -15,16 +15,17 @@
 
 
 
-QTEST_MAIN ( SearchTest );
+QTEST_MAIN ( AutomatonCompilerUseTest );
 
 
-void SearchTest::SearchTest0()
+void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
 {
-    qputenv("LIMA_CONF", "src/conf:config");
-
     QProcess process;
-//     process.setWorkingDirectory("/home/mrussotto/Builds/master/Debug-OFF/lima/execEnv");
     process.setProgram("compile-rules");
+    process.setWorkingDirectory(qgetenv("LIMA_PWD"));
+    qDebug() << "environment is " << process.systemEnvironment();
+    qDebug() << "application dir is " << QCoreApplication::applicationDirPath();
+    qDebug() << "current path is " << QDir::currentPath();
 
     QStringList arguments;
     arguments << "--language=fre" << "--modex=TEST-modex.xml" << "-osrc/resources/SpecificEntities/test.bin" << "src/rules/test.rules";
@@ -34,6 +35,8 @@ void SearchTest::SearchTest0()
 
     process.waitForFinished();
     qDebug() << "working directory was " << process.workingDirectory();
+    qDebug() << "standart output:" << process.readAllStandardOutput();
+    qDebug() << "standart error:" << process.readAllStandardError();
 
     QCOMPARE(process.exitCode(), 0);
 
