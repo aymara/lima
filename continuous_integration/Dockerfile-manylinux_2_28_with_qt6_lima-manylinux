@@ -98,6 +98,7 @@ RUN cmake -G Ninja  \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" \
     -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON \
+    -DCTEST_OUTPUT_ON_FAILURE=ON \
     -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" \
     -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} \
     -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch \
@@ -105,7 +106,7 @@ RUN cmake -G Ninja  \
     -DWITH_ARCH=OFF \
     -DWITH_ASAN=OFF \
     -DWITH_GUI=ON  ..
-RUN ninja && ninja install
+RUN ninja && ninja install  && ninja test
 # && ninja package
 # RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.
 

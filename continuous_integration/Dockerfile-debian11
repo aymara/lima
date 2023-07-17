@@ -65,7 +65,7 @@ ENV LIBTORCH_PATH=/src/lima/extern/libtorch/
 # Build
 #
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH ..
-RUN ninja && ninja test && ninja install && ninja package
+RUN ninja && ninja install && ninja test && ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
 # WORKDIR /usr/share/apps/lima/tests
