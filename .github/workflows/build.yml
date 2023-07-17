@@ -75,7 +75,8 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v2
+        # uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4.1.1
         with:
           context: .
           file: "continuous_integration/Dockerfile-debian11"
