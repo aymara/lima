@@ -27,8 +27,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     # factories, thus their symbols must be known even if not used by the binary
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
     # set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "-Wl,-z,defs,--no-as-needed")
-
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,-z,defs,--no-as-needed,--no-undefined")
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG(-std=c++0x HAVE_STDCPP0X)
     CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STDCPP11)
