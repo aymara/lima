@@ -164,7 +164,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Free disk space"
-        run: bash ./free-diskspace.sh
+        uses: jlumbroso/free-disk-space@v1.2.0
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: true
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
 
       - name: "Build image"
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04:latest .
@@ -195,14 +207,14 @@ jobs:
         with:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
-          tool-cache: false
+          tool-cache: true
 
           # all of these default to true, but feel free to set to
           # "false" if necessary for your workflow
           android: true
           dotnet: true
           haskell: true
-          large-packages: false
+          large-packages: true
           swap-storage: true
 
       - name: "Build image"
