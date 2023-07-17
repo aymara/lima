@@ -547,7 +547,7 @@ class GraphDpImpl: public deeplima::graph_dp::impl::GraphDependencyParser
 public:
 
   GraphDpImpl() :
-      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
+      m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
       m_current_slot_timepoints(0),
       m_current_slot_no(-1),
       m_last_completed_slot(-1),
@@ -560,7 +560,7 @@ public:
     )
     : deeplima::graph_dp::impl::GraphDependencyParser(
         0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
-      m_fastText(std::make_shared<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>>()),
+      m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
       m_current_timepoint(deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint())
   {
   }
@@ -828,7 +828,7 @@ public:
     size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
     for (size_t i = 0; i < count; i++)
     {
-      m_vectorizer.vectorize_timepoint(Matrix::get_tensor(), /*offset +*/ i, buffer[i]);
+      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), /*offset +*/ i, buffer[i]);
     }
 
     deeplima::graph_dp::impl::GraphDependencyParser::set_slot_lengths(slot_no, lengths);
@@ -861,7 +861,7 @@ public:
 
 protected:
   Vectorizer m_vectorizer;
-  std::shared_ptr<FastTextVectorizer<typename Matrix::matrix_t, Eigen::Index>> m_fastText;
+  std::shared_ptr<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>> m_fastText;
   std::vector<std::shared_ptr<FeatureVectorizerBase<Eigen::Index>>> m_featVectorizers;
 
   tagging_callback_t m_callback;

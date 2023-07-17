@@ -6,9 +6,10 @@
 #ifndef DEEPLIMA_SRC_INFERENCE_RNN_SEQ_CLS_H
 #define DEEPLIMA_SRC_INFERENCE_RNN_SEQ_CLS_H
 
-#include <vector>
 #include <chrono>
 #include <cstdlib>
+#include <iterator>
+#include <vector>
 
 #include "deeplima/utils/thread_pool.h"
 

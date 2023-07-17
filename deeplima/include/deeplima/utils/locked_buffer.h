@@ -6,6 +6,13 @@
 #ifndef DEEPLIMA_APPS_LOCKED_BUFFER_H
 #define DEEPLIMA_APPS_LOCKED_BUFFER_H
 
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+
 struct locked_buffer_t
 {
   uint8_t* m_data;

@@ -15,7 +15,7 @@
 #include "eigen_wrp/dict_embd_vectorizer.h"
 #include "eigen_wrp/graph_dp_eigen_inference_impl.h"
 
-#include "graph_dp/impl/graph_dp_wrapper.h"
+// #include "graph_dp/impl/graph_dp_wrapper.h"
 #include "eigen_wrp/word_seq_embd_vectorizer.h"
 #include "feat_extractors.h"
 
@@ -24,7 +24,7 @@ namespace deeplima::graph_dp
 
 namespace eigen_impl
 {
-  typedef impl::GraphDpInferenceWrapper<BiRnnAndDeepBiaffineAttentionEigenInference> Model;
+  using Model = BiRnnAndDeepBiaffineAttentionEigenInference;
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
 
   template <class TokenVector, class Token>
@@ -61,7 +61,7 @@ namespace eigen_impl
 namespace impl
 {
 
-  typedef eigen_impl::Model Model;
+  using Model = eigen_impl::BiRnnAndDeepBiaffineAttentionEigenInference;
 
   template <class TokenVector, class Token>
   class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
