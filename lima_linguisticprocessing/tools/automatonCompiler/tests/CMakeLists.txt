@@ -42,7 +42,7 @@ add_test(
     LIMA_PWD=${CMAKE_BINARY_DIR}/execEnv
     LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf:${CMAKE_BINARY_DIR}/execEnv/config
     LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/src/resources:${CMAKE_BINARY_DIR}/execEnv/resources
-    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:$ENV{LD_LIBRARY_PATH}
+    LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}:$ENV{LD_LIBRARY_PATH}
     ${CMAKE_CURRENT_BINARY_DIR}/AutomatonCompilerUseTest0
   )
 

@@ -36,6 +36,7 @@ if (EIGEN3_FOUND)
         ICU::uc
         convert_from_torch-shared
         lemmatization_inference
+        segmentation_inference
         ${TORCH_LIBRARIES}
     )
 

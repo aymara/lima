@@ -131,6 +131,7 @@ target_link_libraries(deeplima-eigen
   fasttext-static
   version
   utils
+  segmentation_inference
   lemmatization_inference
 )
 

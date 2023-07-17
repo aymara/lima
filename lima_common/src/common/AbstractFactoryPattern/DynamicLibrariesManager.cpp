@@ -213,6 +213,7 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
       {
         LERROR << "Failed to load library " << libName << "from " << pathErr.first << " due to " << pathErr.second;
       }
+      LERROR << "Failed to load library " << libName << "also from system paths";
       LERROR << "DynamicLibrariesManager::loadLibrary() -- "
              << "Failed to open system lib " << libhandle->errorString();
       return false;

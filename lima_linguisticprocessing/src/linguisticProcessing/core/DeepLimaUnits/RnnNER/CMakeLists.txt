@@ -44,6 +44,7 @@ if (EIGEN3_FOUND)
             morph_model
             static_graph
             lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
             )
 

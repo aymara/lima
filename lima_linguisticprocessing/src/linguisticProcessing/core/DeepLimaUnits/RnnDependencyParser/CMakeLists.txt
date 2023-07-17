@@ -39,6 +39,7 @@ if (EIGEN3_FOUND)
             fasttext-static
             utils
             lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
             )
 
