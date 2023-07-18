@@ -271,13 +271,13 @@ cmake  -G "$generator" \
     -DCTEST_OUTPUT_ON_FAILURE="ON" \
     $source_dir
 result=$?
-if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
+if [ "$result" != "0" ]; then echoerr "Failed to configure LIMA."; popd; exit $result; fi
 
 echoerr "Running make command:"
 echo "$make_cmd"
 eval $make_cmd
 result=$?
-if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
+if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
 
 echoerr "Running make install:"
 echo "$make_install"

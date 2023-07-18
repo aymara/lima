@@ -36,14 +36,6 @@ ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU bu
 
 RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64
 
-# WORKDIR /
-# RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
-# WORKDIR /svm_light
-# RUN tar xzf ../svm_light.tar.gz
-# RUN make
-# RUN cp svm_classify svm_learn /usr/bin
-# RUN rm -Rf /svm_light
-
 WORKDIR /
 
 # Those will have to be compiled for manylinux_2_28 instead of installed with the existing deb package
