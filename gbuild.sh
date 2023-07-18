@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 #Fail if anything goes wrong
-set -o errexit
+# set -o errexit
 set -o pipefail
 set -o nounset
 # set -o xtrace
@@ -29,6 +29,7 @@ Options default values are in parentheses.
   -r resources      <precompiled|(build)|none> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
+  -t tests          <(OFF)|ON> run unit tests after install
   -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
@@ -52,13 +53,14 @@ CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 WITH_PACK="OFF"
+RUN_UNIT_TESTS="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 USE_TF=true
 TF_SOURCES_PATH=""
 WITH_GUI="ON"
 LIMA_SOURCES=$PWD
 
-while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
+while getopts ":d:m:n:r:v:G:a:p:P:st:Tj:g:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -90,6 +92,10 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
             ;;
         s)
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
+            ;;
+        t)
+            RUN_UNIT_TESTS=${OPTARG}
+            [[ "x$RUN_UNIT_TESTS" == "xON" || "x$RUN_UNIT_TESTS" == "xOFF" ]] || usage
             ;;
         v)
             version=$OPTARG
@@ -191,7 +197,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja -j $j"
-  make_test="ninja test"
+  make_test="ctest"
   make_install="ninja install"
   make_package="ninja package"
   generator="Ninja"
@@ -262,6 +268,7 @@ cmake  -G "$generator" \
     -DWITH_GUI=$WITH_GUI \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
     -DWITH_LIMA_RESOURCES=$WITH_LIMA_RESOURCES \
+    -DCTEST_OUTPUT_ON_FAILURE="ON" \
     $source_dir
 result=$?
 if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
@@ -272,19 +279,27 @@ eval $make_cmd
 result=$?
 if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
 
-if [[ $OSTYPE == ’darwin’* ]] ; 
-then
-echoerr "Running make test:"
-echo "$make_test"
-eval $make_test
-result=$?
-if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
-fi
 echoerr "Running make install:"
 echo "$make_install"
 eval $make_install
 result=$?
-if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+if [ "$result" != "0" ]; then echoerr "Failed to install LIMA."; popd; exit $result; fi
+
+if [ $RUN_UNIT_TESTS == "ON" ];
+#if [[ $OSTYPE == ’darwin’* ]] ;
+then
+echoerr "Running make test:"
+eval $make_test
+result=$?
+echoerr "Done make test:"
+if [ "$result" != "0" ];
+then
+  echoerr "Some LIMA tests failed."
+  ctest --rerun-failed --output-on-failure
+  popd
+  exit $result
+fi
+fi
 
 if [ $WITH_PACK == "ON" ];
 then
@@ -292,7 +307,7 @@ then
   echo "$make_package"
   eval $make_package
   result=$?
-  if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+  if [ "$result" != "0" ]; then echoerr "Failed to package LIMA."; popd; exit $result; fi
 fi
 
 if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;

@@ -27,8 +27,21 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
     qDebug() << "application dir is " << QCoreApplication::applicationDirPath();
     qDebug() << "current path is " << QDir::currentPath();
 
+    // Prepare data
+    QDir currentPath(QDir::currentPath());
+    QVERIFY(QDir(QDir::currentPath()+"/src").removeRecursively());
+    QFile::remove("petit.lst");
+    QVERIFY(currentPath.mkpath("src/conf"));
+    QVERIFY(QFile::copy("tests/src/conf/lima-lp-fre.xml", "src/conf/lima-lp-fre.xml"));
+    QVERIFY(QFile::copy("tests/src/conf/TEST-modex.xml", "src/conf/TEST-modex.xml"));
+    QVERIFY(currentPath.mkpath("src/rules"));
+    QVERIFY(QFile::copy("tests/src/petit.lst", "petit.lst"));
+    QVERIFY(QFile::copy("tests/src/test.txt", "src/test.txt"));
+    QVERIFY(QFile::copy("tests/src/rules/test.rules", "src/rules/test.rules"));
+
+    // Prepare command
     QStringList arguments;
-    arguments << "--language=fre" << "--modex=TEST-modex.xml" << "-osrc/resources/SpecificEntities/test.bin" << "src/rules/test.rules";
+    arguments << "--language=fre" << "--modex=TEST-modex.xml" << "-oresources/SpecificEntities/test.bin" << "src/rules/test.rules";
     process.setArguments(arguments);
 
     process.start();
@@ -42,14 +55,13 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
 
     qDebug() << "file found in the current directory";
 
-    QString sourceFilePath_currentDirectory = "petit.lst";
-    QString destinationFilePath_filerulesDirectory = "src/rules/petit.lst";
-
-    QFile sourceFile_currentDirectory(sourceFilePath_currentDirectory);
-    QFile destinationFile_filerulesDirectory(destinationFilePath_filerulesDirectory);
-
-    QVERIFY(sourceFile_currentDirectory.rename(destinationFilePath_filerulesDirectory));
-    qDebug() << "File moved successfuly";
+    qDebug() << "current path is " << QDir::currentPath();
+    QVERIFY(QFile::exists("petit.lst"));
+    QVERIFY(QFile::remove("petit.lst"));
+    QDir destinationDir("src/rules");
+    QVERIFY(destinationDir.exists());
+    QVERIFY(QFile::copy("tests/src/petit.lst", "src/rules/petit.lst"));
+    qDebug() << "New location for list file OK";
 
     process.start();
 
@@ -58,21 +70,18 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
     QCOMPARE(process.exitCode(), 0);
 
     qDebug() << "file found in rule file directory";
+    QVERIFY(QFile::remove("src/rules/petit.lst"));
 
-    std::string lima_resources=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
-    ?"/usr/share/apps/lima/resources"
-    :std::string(qgetenv("LIMA_RESOURCES").constData());
-    QStringList resourcesPaths = QString::fromUtf8(lima_resources.c_str()).split(LIMA_PATH_SEPARATOR);
+    auto lima_resources = qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+      ? QString::fromLatin1("/usr/share/apps/lima/resources")
+      : qgetenv("LIMA_RESOURCES").constData();
+    auto resourcesPaths = lima_resources.split(LIMA_PATH_SEPARATOR);
+    qDebug() << "resourcesPaths is" << resourcesPaths;
 
-    QString sourceFilePath_filerulesDirectory = "src/rules/petit.lst";
     QString destinationFilePath_LIMA_RESOURCES = (QDir::cleanPath(resourcesPaths.first() + QDir::separator() + "petit.lst"));
+    qDebug() << "destinationFilePath_LIMA_RESOURCES is" << destinationFilePath_LIMA_RESOURCES;
 
-    QFile sourceFile_filerulesDirectory(sourceFilePath_filerulesDirectory);
-    QFile destinationFile_LIMA_RESOURCES(destinationFilePath_LIMA_RESOURCES);
-
-    QVERIFY(sourceFile_filerulesDirectory.rename(destinationFilePath_LIMA_RESOURCES));
-    qDebug() << "File moved successfuly";
-
+    QVERIFY(QFile::copy("tests/src/petit.lst", destinationFilePath_LIMA_RESOURCES));
     process.start();
 
     QVERIFY(process.waitForFinished());
@@ -80,50 +89,42 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
     QCOMPARE(process.exitCode(), 0);
 
     qDebug() << "file found in LIMA_RESOURCES";
+    QVERIFY(QFile::remove(destinationFilePath_LIMA_RESOURCES));
 
-    for(int i=1; i<resourcesPaths.size(); i++) {
-        QString sourceFilePath = QDir::cleanPath(resourcesPaths[i-1] + QDir::separator() + "petit.lst");
+    for(int i=1; i<resourcesPaths.size(); i++)
+    {
         QString destinationFilePath = QDir::cleanPath(resourcesPaths[i] + QDir::separator() + "petit.lst");
 
-        QFile sourceFile(sourceFilePath);
-        QFile destinationFile(destinationFilePath);
+        QVERIFY(QFile::copy("tests/src/petit.lst", destinationFilePath));
 
-        QVERIFY(sourceFile.rename(destinationFilePath));
-        qDebug() << "File moved successfuly";
+        qDebug() << "List file copied successfuly to" << destinationFilePath;
 
         process.start();
 
-        process.waitForFinished();
+        QVERIFY(process.waitForFinished());
 
         QCOMPARE(process.exitCode(), 0);
+        QVERIFY(QFile::remove(destinationFilePath));
 
         qDebug() << "file found in LIMA_RESOURCES";
-     }
-     QString sourceFilePath = QDir::cleanPath(resourcesPaths.last() + QDir::separator() + "petit.lst");
-     QString destinationFilePath = QDir::cleanPath(QDir::currentPath() + QDir::separator() + "src/petit.lst");
+    }
+    QString destinationFilePath = QDir::cleanPath(QDir::currentPath() + QDir::separator() + "src/petit.lst");
 
-     QFile sourceFile(sourceFilePath);
-     QFile destinationFile(destinationFilePath);
+    QVERIFY(QFile::copy("tests/src/petit.lst", destinationFilePath));
 
-     QVERIFY(sourceFile.rename(destinationFilePath));
-     qDebug() << "File moved successfuly";
+    qDebug() << "List file copied successfuly to" << destinationFilePath;
 
-     process.start();
+    process.start();
 
-     QVERIFY(process.waitForFinished());
+    QVERIFY(process.waitForFinished());
 
-     QVERIFY(process.exitCode() != 0);
+    QVERIFY(process.exitCode() != 0);
 
-     qDebug() << "file not found elsewhere";
+    qDebug() << "List file not found elsewhere as expected";
 
-     QString sourceFilePath_src = "src/petit.lst";
-     QString destinationFilePath_currentDirectory = QDir::cleanPath(QDir::currentPath() + QDir::separator() + "petit.lst");
 
-     QFile sourceFile_src(sourceFilePath_src);
-     QFile destinationFile_currentDirectory(destinationFilePath_currentDirectory);
-
-     QVERIFY(sourceFile.rename(destinationFilePath_currentDirectory));
-     qDebug() << "File moved successfuly";
+    QVERIFY(QFile::remove(destinationFilePath));
+    qDebug() << "List file removed successfuly";
 
 }
 
