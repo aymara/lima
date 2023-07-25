@@ -105,10 +105,10 @@ class morph_model_t
     {
       auto it = m_key2id.find(name);
       assert(m_key2id.end() != it);
-      if (m_key2id.end() == it)
-      {
-        throw std::runtime_error(std::string("morph_model get_id unknown name ")+name);
-      }
+      // if (m_key2id.end() == it)
+      // {
+      //   throw std::runtime_error(std::string("morph_model get_id unknown name ")+name);
+      // }
       return it->second;
     }
 
