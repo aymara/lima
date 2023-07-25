@@ -10,15 +10,15 @@ namespace deeplima::lemmatization::impl {
 
 LemmatizationImpl::LemmatizationImpl()
   : m_beam_size(5),
-    m_upos_idx(-1)
+    m_upos_idx(std::numeric_limits<size_t>::max())
 {}
 
 LemmatizationImpl::LemmatizationImpl(
-    size_t threads,
-    size_t buffer_size_per_thread
+    size_t /*threads*/,
+    size_t /*buffer_size_per_thread*/
   )
   : m_beam_size(5),
-    m_upos_idx(-1)
+    m_upos_idx(std::numeric_limits<size_t>::max())
 {
 }
 
@@ -40,7 +40,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
           const std::vector<std::string>& class_names,
           const std::vector<std::vector<std::string>>& class_values)
 {
-  m_upos_idx = -1;
+  m_upos_idx = std::numeric_limits<size_t>::max();
   auto uint_dicts = RnnSeq2Seq::get_uint_dicts();
   decltype(uint_dicts) enc_uint_dict;
   enc_uint_dict.push_back(uint_dicts[0]);
@@ -58,15 +58,21 @@ void LemmatizationImpl::init(size_t max_input_word_len,
   EmbdUInt64FloatHolder enc_feats_dict;
   for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
   {
-    const std::vector<std::string>& feat_vec = lang_morph_model.get_feat_vec_ref(feat_idx);
-    std::vector<uint64_t> v(feat_vec.size(), 0);
-
-    auto it = std::find(class_names.begin(), class_names.end(), lang_morph_model.get_feat_name(feat_idx));
-
+    std::vector<uint64_t> v;
     auto cls_idx = std::numeric_limits<size_t>::max();
+
+    const auto& feat_name = lang_morph_model.get_feat_name(feat_idx);
+    auto it = std::find(class_names.begin(), class_names.end(), feat_name);
+
     if (class_names.end() != it)
     {
-      cls_idx = it - class_names.begin();
+      const auto& feat_vec = lang_morph_model.get_feat_vec_ref(feat_idx);
+      v.resize(feat_vec.size(), 0);
+      auto it_diff = it - class_names.begin();
+      if (it_diff != std::numeric_limits<ptrdiff_t>::max())
+        cls_idx = it_diff;
+      assert(cls_idx != std::numeric_limits<uint64_t>::max());
+      assert(cls_idx != std::numeric_limits<size_t>::max());
 
       assert(class_values[cls_idx].size() == feat_vec.size());
       for (size_t j = 0; j < feat_vec.size(); ++j)
@@ -86,8 +92,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
     else
     {
       std::cerr << "Warning: classifier doesn't provide required feature: \""
-                << lang_morph_model.get_feat_name(feat_idx) << "\"" << std::endl;
-      v = { 0 };
+                << feat_name << "\"" << std::endl;
     }
 
     auto dd = std::make_shared<Dict<uint64_t>>(v);
@@ -95,7 +100,6 @@ void LemmatizationImpl::init(size_t max_input_word_len,
 
     d.init(dd, str_dicts[feat_idx].get_tensor().transpose());
     enc_feats_dict.push_back(d);
-
     m_feat2cls.push_back(cls_idx);
     if (cls_idx != std::numeric_limits<size_t>::max() && cls_idx < class_names.size() && class_names[cls_idx] == "upos")
     {
@@ -104,7 +108,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
   }
   m_feat_vectorizer.init(enc_feats_dict, 1, enc_feats_dict.size());
 
-  if (m_upos_idx < 0)
+  if (m_upos_idx == std::numeric_limits<size_t>::max())
   {
     throw std::logic_error("Underlying classifier doesn't provide UPOS.");
   }
@@ -114,7 +118,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
 
 bool LemmatizationImpl::is_fixed(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx)
 {
-  assert(m_upos_idx >= 0);
+  assert(m_upos_idx != std::numeric_limits<size_t>::max());
   auto upos = classes->get(idx, m_upos_idx);
   return m_fixed_upos[upos];
 }
@@ -124,9 +128,22 @@ morph_model::morph_feats_t LemmatizationImpl::get_morph_feats(std::shared_ptr< S
   auto lang_morph_model = RnnSeq2Seq::get_morph_model();
   std::vector<size_t> feats(lang_morph_model.get_feats_count());
 
-  const auto feat2cls = m_feat2cls;
+  const auto& feat2cls = m_feat2cls;
   const morph_model::morph_feats_t v = lang_morph_model.convert([idx, &feat2cls, &classes](size_t feat_idx) {
-    return classes->get(idx, feat2cls[feat_idx]);
+    if (feat_idx == std::numeric_limits<size_t>::max())
+    {
+      throw std::runtime_error(std::string("get_morph_feats wrong feat_idx: max size_t"));
+    }
+    else if (feat_idx >= feat2cls.size())
+    {
+      throw std::runtime_error(std::string("get_morph_feats wrong feat_idx: larger than feat2cls size"));
+    }
+    assert(feat_idx < feat2cls.size() && feat_idx != std::numeric_limits<size_t>::max());
+    auto class_idx = feat2cls[feat_idx];
+    if (class_idx == std::numeric_limits<size_t>::max())
+      return std::numeric_limits<uint64_t>::max();
+    assert(class_idx != std::numeric_limits<uint64_t>::max());
+    return classes->get(idx, class_idx);
   });
 
   return v;
@@ -144,7 +161,7 @@ void LemmatizationImpl::predict(const std::u32string& form,
 
   for (size_t i = 0; i < m_feat2cls.size(); ++i)
   {
-    if (m_feat2cls[i] >= 0)
+    if (m_feat2cls[i] != std::numeric_limits<size_t>::max())
     {
       m_feat_vectorizer.set(0, i, classes->get(idx, m_feat2cls[i]));
     }

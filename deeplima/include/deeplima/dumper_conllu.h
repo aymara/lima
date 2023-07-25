@@ -73,7 +73,7 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v)
 }
 
 bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<int>& color,
-         int& cycle_start, int& cycle_end)
+         uint32_t& cycle_start, uint32_t& cycle_end)
 {
     // std::cerr << "dfs " << v << ", " << heads << ", " << color << ", " << cycle_start << ", " << cycle_end << std::endl;
     color[v] = 1;
@@ -102,9 +102,9 @@ bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
   // std::cerr << "find_cycle " << heads << ", " << root << std::endl;
   uint32_t n = heads.size();
   std::vector<int> color;
-  int32_t cycle_start, cycle_end = 0;
+  uint32_t cycle_start = std::numeric_limits<uint32_t>::max();
+  uint32_t cycle_end = 0;
   color.assign(n, 0);
-  cycle_start = -1;
 
   for (uint32_t v = 1; v < n; v++)
   {
@@ -113,7 +113,7 @@ bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
         break;
   }
 
-  if (cycle_start == -1 || cycle_start == root)
+  if (cycle_start == std::numeric_limits<uint32_t>::max() || cycle_start == root)
   {
     // std::cerr << "Acyclic" << std::endl;
     return false;
@@ -310,9 +310,9 @@ public:
   AnalysisToConllU()
     : m_token_counter(0),
       m_next_token_idx(0),
+      m_root(0),
       m_has_feats(false),
-      m_first_feature_to_print(0),
-      m_root(0)
+      m_first_feature_to_print(0)
   {
   }
 

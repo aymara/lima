@@ -12,6 +12,7 @@
 #include <map>
 #include <unordered_map>
 #include <cassert>
+#include <limits>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -104,6 +105,10 @@ class morph_model_t
     {
       auto it = m_key2id.find(name);
       assert(m_key2id.end() != it);
+      if (m_key2id.end() == it)
+      {
+        throw std::runtime_error(std::string("morph_model get_id unknown name ")+name);
+      }
       return it->second;
     }
 
@@ -229,7 +234,7 @@ public:
   morph_feats_t convert(F featid2value) const
   {
     auto upos_idx = m_feat_dict.get_id("upos");
-    assert(upos_idx >= 0);
+    assert(upos_idx != std::numeric_limits<size_t>::max());
     auto upos_id = featid2value(upos_idx);
     const std::map<std::string, std::set<std::string>> feats;
 
@@ -249,8 +254,12 @@ public:
       assert(mask_id < m_offset.size());
       uint8_t offset = m_offset[mask_id];
 
-      auto feat_value_id = featid2value(feat_id);
-      v.append(feat_value_id << offset);
+      size_t feat_value_id = featid2value(feat_id);
+      if (feat_value_id != std::numeric_limits<size_t>::max())
+      {
+        feat_value_id = feat_value_id << offset ;
+        v.append(feat_value_id);
+      }
     }
 
 #ifndef NDEBUG

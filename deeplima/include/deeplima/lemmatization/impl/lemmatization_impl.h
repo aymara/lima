@@ -58,9 +58,9 @@ protected:
   size_t m_beam_size;
   EmbdVectorizer m_vectorizer;
   EmbdVectorizer m_feat_vectorizer;
-  std::vector<int> m_feat2cls;
+  std::vector<size_t> m_feat2cls;
   /** index in the features matrix of the upos line*/
-  int m_upos_idx;
+  size_t m_upos_idx;
   /** index i is true if upos whose index is i is considered as fixed*/
   std::vector<bool> m_fixed_upos;
 };

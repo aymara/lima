@@ -671,7 +671,7 @@ protected:
 
   inline void send_results(int32_t slot_idx)
   {
-    uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+    // uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
     // std::cerr << "GraphDpImpl::send_results " << slot_idx+1
     //       << " (lock_count=" << int(lock_count) << ")\n";
     uint64_t from = deeplima::graph_dp::impl::GraphDependencyParser::get_slot_begin(slot_idx);
@@ -816,7 +816,7 @@ public:
                                    const std::vector<size_t>& lengths,
                                    int timepoints_to_analyze = -1)
   {
-    int lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // int lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
     // std::cerr << "GraphDpImpl::handle_token_buffer " << (slot_no+1) << ", "
     //           << first_timepoint_idx
     //           << ", lengths=" << lengths
@@ -835,9 +835,9 @@ public:
     deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, first_timepoint_idx);
     deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, /*offset +*/ count);
 
-    auto& slot = deeplima::graph_dp::impl::GraphDependencyParser::m_slots[slot_no];
+    // auto& slot = deeplima::graph_dp::impl::GraphDependencyParser::m_slots[slot_no];
 
-    lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
     // std::cerr << "GraphDpImpl::handle_token_buffer slot " << (slot_no+1) << " retrieved: input="
     //           << slot.m_input_begin << ", " << slot.m_input_end << "; output="
     //           << slot.m_output_begin << ", " << slot.m_output_end << ", lock_count=" << lock_count
