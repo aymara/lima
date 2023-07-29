@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <iostream>
+#include <limits>
 #include <map>
 #include <string>
 
@@ -213,7 +214,7 @@ void BiRnnClassifierImpl::train(size_t epochs,
       = aligned_gold.reshape({ num_batches, seq_len_i64 }).transpose(0, 1);
 
   double best_eval_accuracy = 0;
-  double best_eval_loss = numeric_limits<double>::max();
+  double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
   for (size_t e = 0; e < epochs; e++)

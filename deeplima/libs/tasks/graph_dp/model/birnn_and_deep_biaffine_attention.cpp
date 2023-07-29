@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <limits>
 
 #include "birnn_and_deep_biaffine_attention.h"
 #include "static_graph/dict.h"
@@ -206,7 +207,7 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
   auto train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
 
-  double best_eval_loss = numeric_limits<double>::max();
+  double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
   unsigned int epoch = 0;

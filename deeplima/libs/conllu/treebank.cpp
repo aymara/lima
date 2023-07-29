@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <regex>
 
 #include <boost/filesystem.hpp>
@@ -351,7 +352,7 @@ bool idx_t::parse(const std::string& s)
 
   size_t i = 0;
   size_t value = stoi(s, &i);
-  if (value > numeric_limits<base_int_t>::max())
+  if (value > std::numeric_limits<base_int_t>::max())
   {
     throw std::overflow_error("Id too big for word \"" + s + "\"");
   }

@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 
 #include "birnn_classifier_for_tag.h"
 #include "static_graph/dict.h"
@@ -171,7 +172,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       = aligned_gold.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
   std::cerr << gold_batches.sizes() << std::endl;*/
 
-  double best_eval_loss = numeric_limits<double>::max();
+  double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
   for (size_t e = 1; e < params.m_max_epochs; e++)
