@@ -44,10 +44,6 @@ WORKDIR /
 # RUN /svmtool-cpp.sh $GITHUB_TOKEN
 # RUN /qhttpserver.sh $GITHUB_TOKEN
 
-RUN install -d /extern
-COPY ./extern/$LIBTORCH_DL /extern
-WORKDIR /extern
-RUN bash ./${LIBTORCH_DL}
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
