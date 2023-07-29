@@ -34,7 +34,7 @@ ARG NLTK_PTB_DP_FILE
 ARG TORCH_CUDA_ARCH_LIST="6.1"
 ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
-RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64
+RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
 
 WORKDIR /
 
@@ -44,6 +44,10 @@ WORKDIR /
 # RUN /svmtool-cpp.sh $GITHUB_TOKEN
 # RUN /qhttpserver.sh $GITHUB_TOKEN
 
+RUN install -d /extern
+COPY ./extern/$LIBTORCH_DL /extern
+WORKDIR /extern
+RUN bash ./${LIBTORCH_DL}
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
