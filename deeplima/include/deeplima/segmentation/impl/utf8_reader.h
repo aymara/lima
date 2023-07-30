@@ -104,7 +104,12 @@ public:
   {
     int32_t uch = 0;
     int32_t prev_pos = *pos;
-    U8_NEXT(str, *pos, len, uch);
+      // * @param s const uint8_t * string
+      // * @param i int32_t string offset, must be i<length
+      // * @param length int32_t string length
+      // * @param c output UChar32 variable, set to <0 in case of an error
+
+    U8_NEXT(str, *pos, len, uint32_t(uch));
     if (uch < 0)
     {
       uint32_t bytes_left = len - prev_pos;
