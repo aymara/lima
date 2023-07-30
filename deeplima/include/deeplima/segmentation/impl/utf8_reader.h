@@ -109,7 +109,9 @@ public:
     // * @param length int32_t string length
     // * @param c output UChar32 variable, set to <0 in case of an error
     uint32_t uuch;
-    U8_NEXT(str, int32_t(*pos), int32_t(len), uuch);
+    int32_t offset = *pos;
+    int32_t length = len;
+    U8_NEXT(str, offset, length, uuch);
     uch = uuch;
     if (uch < 0)
     {
