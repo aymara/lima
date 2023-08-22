@@ -41,13 +41,13 @@ void LemmatizationImpl::init(size_t max_input_word_len,
           const std::vector<std::vector<std::string>>& class_values)
 {
   m_upos_idx = std::numeric_limits<size_t>::max();
-  auto uint_dicts = RnnSeq2Seq::get_uint_dicts();
+  auto uint_dicts = RnnSeq2Seq::get_input_uint_dicts();
   decltype(uint_dicts) enc_uint_dict;
   enc_uint_dict.push_back(uint_dicts[0]);
   m_vectorizer.init(enc_uint_dict, max_input_word_len, 1);
 
-  auto str_dicts = RnnSeq2Seq::get_str_dicts();
-  auto lang_morph_model = RnnSeq2Seq::get_morph_model();
+  const auto& str_dicts = RnnSeq2Seq::get_input_str_dicts();
+  const auto& lang_morph_model = RnnSeq2Seq::get_morph_model();
   m_fixed_upos = std::vector<bool>(32, false); // TODO: find the number of possible UPOS values
   for (auto idx : RnnSeq2Seq::get_fixed_upos())
   {
@@ -125,7 +125,7 @@ bool LemmatizationImpl::is_fixed(std::shared_ptr< StdMatrix<uint8_t> > classes, 
 
 morph_model::morph_feats_t LemmatizationImpl::get_morph_feats(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx) const
 {
-  auto lang_morph_model = RnnSeq2Seq::get_morph_model();
+  const auto& lang_morph_model = RnnSeq2Seq::get_morph_model();
   std::vector<size_t> feats(lang_morph_model.get_feats_count());
 
   const auto& feat2cls = m_feat2cls;

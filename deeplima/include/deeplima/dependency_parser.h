@@ -582,7 +582,7 @@ public:
     m_featVectorizers.resize(this->get_input_str_dicts().size());
     for (size_t i = 0; i < this->get_input_str_dicts().size(); ++i)
     {
-      //auto d = (this->get_str_dicts()[i]);
+      //auto d = (this->get_input_str_dicts()[i]);
       m_featVectorizers[i] = convert(this->get_input_str_dicts()[i]);
     }
 

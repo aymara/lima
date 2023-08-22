@@ -13,15 +13,15 @@
 #include "deeplima/utils/std_matrix.h"
 #include "deeplima/eigen_wrp/eigen_matrix.h"
 #include "deeplima/eigen_wrp/lemmatization_eigen_inference_impl.h"
-#include "deeplima/lemmatization/impl/lemmatization_wrapper.h"
+// #include "deeplima/lemmatization/impl/lemmatization_wrapper.h"
 
 namespace deeplima
 {
 
 class RnnSeq2Seq : public eigen_wrp::EigenMatrixXf,
-                   public lemmatization::impl::LemmatizationInferenceWrapper<lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization>
+                   public lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization
 {
-  using Model = lemmatization::impl::LemmatizationInferenceWrapper<lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization>;
+  using Model = lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization;
   std::shared_ptr< StdMatrix<uint8_t> > m_output; // external - classifier id, internal - time position
 
 public:
