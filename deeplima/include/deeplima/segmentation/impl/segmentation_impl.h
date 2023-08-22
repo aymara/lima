@@ -32,8 +32,8 @@ class ISegmentation
 {
 public:
   typedef std::function < bool (uint8_t* buffer,
-                                uint32_t& read,
-                                uint32_t max) > read_callback_t;
+                                int32_t& read,
+                                int32_t max) > read_callback_t;
 
   virtual void parse_from_stream(const read_callback_t fn) = 0;
   virtual void register_handler(const segmentation_callback_t fn) = 0;

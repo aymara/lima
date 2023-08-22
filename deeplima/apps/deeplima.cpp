@@ -378,8 +378,8 @@ void parse_file(std::istream& input,
 
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
-                          uint32_t& read,
-                          uint32_t max)
+                          int32_t& read,
+                          int32_t max)
   {
     // std::cerr << "In psegm parse_from_stream lambda" << std::endl;
     input.read((std::istream::char_type*)buffer, max);

@@ -74,7 +74,7 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
       send_next_results();
     }
 
-    uint32_t bytes_read = 0;
+    int32_t bytes_read = 0;
     continue_reading = fn(buff.m_data, bytes_read, m_buff_set.max_buff_size());
     if (0 == bytes_read)
     {
@@ -88,7 +88,7 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
     buff.m_len = bytes_read;
     buff.lock();
 
-    uint32_t pos = 0;
+    int32_t pos = 0;
     uint8_t* p = buff.m_data;
     if (!just_started && 0 == n)
     {
@@ -127,7 +127,7 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
   char final_spaces[] = " ";
   for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
   {
-    uint32_t pos = 0;
+    int32_t pos = 0;
     if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
     {
       handle_timepoint();

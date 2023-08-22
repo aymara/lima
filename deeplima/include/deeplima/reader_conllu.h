@@ -43,7 +43,7 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn)
   {
-    const uint32_t buffer_size = 1024*64;
+    const int32_t buffer_size = 1024*64;
     char buff[buffer_size];
     char* end = buff + buffer_size;
     bool continue_reading = true;
@@ -56,7 +56,7 @@ public:
 
     do
     {
-      uint32_t bytes_read = 0;
+      int32_t bytes_read = 0;
       continue_reading = fn((uint8_t*)buff + start_writting, bytes_read, buffer_size - start_writting);
       if (0 == bytes_read)
       {
