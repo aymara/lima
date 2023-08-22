@@ -86,11 +86,11 @@ function(UpdateGitData)
     # Only update the version.cpp if the hash or branch has changed.
     if (NOT "${GIT_HASH}" STREQUAL "${GIT_HASH_CACHE}"
         OR NOT "${GIT_BRANCH}" STREQUAL "${GIT_BRANCH_CACHE}"
-	OR NOT EXISTS "${DST_VERSION_CPP}")
+        OR NOT EXISTS "${DST_VERSION_CPP}")
         # Save current values of GIT_HASH/BRANCH_CACHE until the next build
-	SaveToCache(${GIT_HASH}, ${GIT_BRANCH})
+        SaveToCache(${GIT_HASH}, ${GIT_BRANCH})
 
-	configure_file(${SRC_VERSION_CPP} ${DST_VERSION_CPP} @ONLY)
+        configure_file(${SRC_VERSION_CPP} ${DST_VERSION_CPP} @ONLY)
     endif()
 
 endfunction()
@@ -103,7 +103,7 @@ function(AddUpdateGitCommitHashTarget)
         -Dbin_dir=${bin_dir}
         -DGIT_HASH_CACHE=${GIT_HASH_CACHE}
         -DGIT_BRANCH_CACHE=${GIT_BRANCH_CACHE}
-	-P ${CURRENT_LIST_DIR}/UpdateGitCommitHash.cmake
+        -P ${CURRENT_LIST_DIR}/UpdateGitCommitHash.cmake
         BYPRODUCTS ${post_configure_file}
         )
 
