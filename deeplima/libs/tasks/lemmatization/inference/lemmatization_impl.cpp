@@ -67,14 +67,14 @@ void LemmatizationImpl::init(size_t max_input_word_len,
     if (class_names.end() != it)
     {
       const auto& feat_vec = lang_morph_model.get_feat_vec_ref(feat_idx);
-      v.resize(feat_vec.size(), 0);
       auto it_diff = it - class_names.begin();
       if (it_diff != std::numeric_limits<ptrdiff_t>::max())
         cls_idx = it_diff;
       assert(cls_idx != std::numeric_limits<uint64_t>::max());
       assert(cls_idx != std::numeric_limits<size_t>::max());
 
-      assert(class_values[cls_idx].size() == feat_vec.size());
+      v.resize(class_values[cls_idx].size(), 0);
+      // assert(class_values[cls_idx].size() == feat_vec.size());
       for (size_t j = 0; j < feat_vec.size(); ++j)
       {
         // TODO: rewrite this
