@@ -108,11 +108,14 @@ public:
     // * @param i int32_t string offset, must be i<length
     // * @param length int32_t string length
     // * @param c output UChar32 variable, set to <0 in case of an error
-    uint32_t uuch;
-    int32_t offset = *pos;
-    int32_t length = len;
-    U8_NEXT(str, offset, length, uuch);
-    uch = uuch;
+    // uint32_t uuch;
+    // int32_t offset = *pos;
+    // int32_t length = len;
+    // U8_NEXT(str, offset, length, uuch);
+    // U8_NEXT(str, int32_t(*pos), int32_t(len), uuch);
+    // U8_NEXT(str, *pos, len, uint32_t(uch));
+    U8_NEXT(str, *pos, len, uch);
+    // uch = uuch;
     if (uch < 0)
     {
       uint32_t bytes_left = len - prev_pos;
