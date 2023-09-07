@@ -291,7 +291,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       {
           if (group.has_options())
           {
-              auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
+              auto& options = static_cast<torch::optim::AdamOptions &>(group.options());
               options.lr(options.lr() * (0.9));
               lr_copy = options.lr();
           }

@@ -187,11 +187,11 @@ void StaticGraphImpl::pretty_dump(ostream &stream) const
 
 void StaticGraphImpl::to(torch::Device device, bool non_blocking)
 {
-  for (auto m : m_embedding) m->to(device);
-  for (auto m : m_lstm) m->to(device);
-  for (auto m : m_linear) m->to(device);
-  for (auto m : m_dropout) m->to(device);
-  for (auto m : m_deep_biaffine_attention_decoder) m->to(device);
+  for (auto& m : m_embedding) m->to(device);
+  for (auto& m : m_lstm) m->to(device);
+  for (auto& m : m_linear) m->to(device);
+  for (auto& m : m_dropout) m->to(device);
+  for (auto& m : m_deep_biaffine_attention_decoder) m->to(device);
   torch::nn::Module::to(device, non_blocking);
   // cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }

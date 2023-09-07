@@ -152,11 +152,12 @@ set<morph_model::feat_base_t> find_fixed(const morph_model::morph_model_t& lang_
     }
   }
 
-  for ( const auto k : fixed_upos )
+  for ( const auto& k : fixed_upos )
   {
-    cout << "Fixed UPOS: " << lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(k)) << endl;
+    std::cout << "Fixed UPOS: " << lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(k))
+              << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
 
   return fixed_upos;
 }
@@ -244,7 +245,7 @@ void vectorize_dataset(const morph_model::morph_model_t& lang_morph_model,
                   << lang_morph_model.to_string(enc_form.m_feats) << std::endl;*/
         for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
         {
-          auto feat_value = lang_morph_model.decode_feat(enc_form.m_feats, feat_idx);
+          const auto& feat_value = lang_morph_model.decode_feat(enc_form.m_feats, feat_idx);
           //std::cerr << " " << feat_value;
           cat_input[feat_idx].set(0, sample_no, feat_value);
         }

@@ -49,7 +49,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
   const auto& str_dicts = RnnSeq2Seq::get_input_str_dicts();
   const auto& lang_morph_model = RnnSeq2Seq::get_morph_model();
   m_fixed_upos = std::vector<bool>(32, false); // TODO: find the number of possible UPOS values
-  for (auto idx : RnnSeq2Seq::get_fixed_upos())
+  for (auto& idx : RnnSeq2Seq::get_fixed_upos())
   {
     m_fixed_upos[idx] = true;
   }

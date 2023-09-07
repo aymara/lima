@@ -35,7 +35,7 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, 
 {
   auto out = std::make_shared<M>(len, 1);
 
-  auto tokens = annot.get_tokens();
+  const auto& tokens = annot.get_tokens();
   size_t p = 0;
   for (size_t i = 0; i < tokens.size(); i++)
   {
