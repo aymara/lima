@@ -827,6 +827,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   uint64_t pos = (int64_t)(token->position());
   uint64_t len = (int64_t)(token->length());
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
+
   std::vector<EntityFeature>::iterator featureIt =
     features.find(m_featureName);
   if( featureIt != recoData->getEntityFeatures().end() )
@@ -846,8 +847,6 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
 {
 #ifdef DEBUG_LP
   SELOGINIT;
-//  LERROR << "SetEntityFeature:: Error: version with two vertices parameters is not implemented";
-//  return false;
   LDEBUG << "SetEntityFeature:: (two arguments) start... ";
   LDEBUG << "SetEntityFeature::(feature:" << m_featureName << ", v1:" << v1 << ", v2:" << v2 << ")";
 #endif
@@ -892,7 +891,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     }
     if( nbEdges > 1 ) {
       SELOGINIT;
-      LWARN << "SetEntityFeature:: Warning: ambiguïties in graph";
+      LWARN << "SetEntityFeature:: Warning: ambiguities in graph";
     }
 
     Token* token=get(vertex_token,lGraph,v);
@@ -1041,6 +1040,10 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   // @todo: if named entity, take normalized string, otherwise take lemma
   LimaString featureValue;
   Token* token=get(vertex_token,*(graph.getGraph()),vertex);
+
+  if (token == nullptr)
+    throw LimaException("Token is equal to nullptr");
+
   if (token!=0) {
     featureValue=token->stringForm();
   }
@@ -1069,11 +1072,6 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   uint64_t pos = (int64_t)(token->position());
   uint64_t len = (int64_t)(token->length());
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
-  /*
-   * Comment être sûr que l'élément que l'on récupère est le dernier inséré?
-   * ajoute  un élement à la fin du vecteur par convention
-   * On peut développer une fonction features.findLast(m_featureName);
-  */
 
   std::vector<EntityFeature>::iterator featureIt =
     features.findLast(m_featureName);
@@ -1138,7 +1136,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
     }
     if( nbEdges > 1 ) {
       SELOGINIT;
-      LWARN << "AddEntityFeature:: Warning: ambiguïties in graph";
+      LWARN << "AddEntityFeature:: Warning: ambiguities in graph";
     }
 
     Token* token=get(vertex_token,lGraph,v);
@@ -1169,7 +1167,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   }
   Automaton::EntityFeatures& features = recoData->getEntityFeatures();
   std::vector<EntityFeature>::iterator featureIt =
-    features.find(m_featureName);
+    features.findLast(m_featureName);
   if( featureIt != recoData->getEntityFeatures().end() )
   {
     featureIt->setPosition(pos);

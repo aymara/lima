@@ -181,9 +181,7 @@ void CoreXmlReaderClient::handle(
             << ", tagName =" << tagName << ", elementName ="
             << elementName << ", properties = " << properties;
     }
-    ostringstream os;
-    os << offset;
-    m_docMetaData["StartOffset"] = os.str();
+    m_docMetaData["StartOffset"] = std::to_string(offset);
     m_docMetaData["ElementName"] = tagName;
     // Set the language to the one associated at init time to the current tag
     if (m_mapTagMedia.find(elementName) != m_mapTagMedia.end())
@@ -211,9 +209,7 @@ void CoreXmlReaderClient::handle(
 //     Common::Misc::GenericDocumentProperties &props = *element;
     // get byte offset after end of element
     auto offsetIndexingNode = element->getIntValue("offBegPrpty").first;
-    ostringstream os2;
-    os2 << offsetIndexingNode;
-    m_docMetaData["StartOffsetIndexingNode"] = os2.str();
+    m_docMetaData["StartOffsetIndexingNode"] = std::to_string(offsetIndexingNode);
 
     auto strText = rtext.toStdString();
 

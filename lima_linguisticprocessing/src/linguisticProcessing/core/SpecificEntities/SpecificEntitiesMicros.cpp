@@ -70,7 +70,7 @@ void SpecificEntitiesMicros::init(
         type = static_cast<const MediaticData&>(MediaticData::single()).getEntityType(entityName);
       } catch (const LimaException& e) {
         SELOGINIT;
-        LIMA_EXCEPTION("Unknown entity" << entityName << e.what());
+        LIMA_EXCEPTION("Unknown entity " << entityName << " observed in " << e.what());
       }
       for (auto micro: entity.second)
       {

@@ -151,15 +151,14 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
 
     if (s.indexOf(*STRING_USING_LIBS)==0) {
       int
-      begin=STRING_USING_ENTITYGROUPS->length(),
+      begin=STRING_USING_LIBS->length(),
       next=0;
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
-        LimaString str = s.mid(begin,next-begin);
+        LimaString str = s.mid(begin,next-begin).trimmed();
 #ifdef DEBUG_LP
         LDEBUG << "RecognizerCompiler: use lib " << Common::Misc::limastring2utf8stdstring(str);
 #endif
-
         begin=next+1;
       } while (next != -1);
       continue;
@@ -172,7 +171,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         next=0;
       do {
         next=findSpecialCharacter(s,CHAR_SEP_LIST,begin);
-        LimaString str = s.mid(begin,next-begin);
+        LimaString str = s.mid(begin,next-begin).trimmed();
 #ifdef DEBUG_LP
         LDEBUG << "RecognizerCompiler: use group " << Common::Misc::limastring2utf8stdstring(str);
 #endif

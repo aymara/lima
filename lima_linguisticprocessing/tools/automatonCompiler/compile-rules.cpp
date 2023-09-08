@@ -452,14 +452,9 @@ run(int argc, char** argv)
       // read the rules file in text format
       try
       {
-        // auto ctrl2 = new TimeUtilsController("read file and build recognizer",
-        //                                      true);
-	// Lima::TimeUtilsController("read file and build recognizer", true);
-        //std::cerr << "\rBuilding recognizer…";
         RecognizerCompiler::setRecognizerEncoding(param.encoding);
         RecognizerCompiler compiler(param.inputRulesFile);
         compiler.buildRecognizer(*reco,language);
-	// delete ctrl2;
       }
       catch (std::exception& e)
       {

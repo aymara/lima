@@ -41,7 +41,7 @@ class ConstraintFunction
   /**
    * binary constraint function : the constraint only applies on two
    * vertices in the graph (the graph is also given as a parameter).
-   * Function is not pure virtual beacause it can be unary or binary.
+   * Function is not pure virtual because it can be unary or binary.
    *
    * @return true if the constraint is verified, false otherwise
    */
@@ -62,7 +62,7 @@ class ConstraintFunction
   /**
    * unary constraint function : the constraint only applies on one
    * vertices in the graph (the graph is also given as a parameter).
-   * Function is not pure virtual beacause it can be unary or binary.
+   * Function is not pure virtual because it can be unary or binary.
    *
    * @return true if the constraint is verified, false otherwise
    */
@@ -130,7 +130,7 @@ class ConstraintFunction
                      const LimaString& complement=LimaString()):
     m_language_id(language),
     m_complement(complement) {}
-  
+
   // a unusual name to be different from existing m_language in existing
   // constraints => @todo : remove m_language from existing contraints
   MediaId m_language_id;
