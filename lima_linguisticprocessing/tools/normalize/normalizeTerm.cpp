@@ -133,15 +133,16 @@ struct Parameters {
   std::deque<std::string> files;
 
   int chunk_size;
+  int numThreads;
 
   Parameters(){
-
     printCategs=false;
     lpConfigFile = "lima-analysis.xml";
     commonConfigFile = "lima-common.xml";
     pipeline = "normalization";
     clientId = "lima-coreclient";
     chunk_size = 500;
+    numThreads = QThread::idealThreadCount();
   }
 };
 Parameters params;
@@ -187,7 +188,9 @@ int read_cmd_line(int argc, char** argv) {
         else if ( (pos = arg.find("--client=")) != std::string::npos )
           params.clientId=arg.substr(pos+9);
         else if ( (pos = arg.find("--chunk=")) != std::string::npos )
-          params.chunk_size = atoi( arg.substr(pos+8).c_str() );
+          params.chunk_size = std::max(1, atoi( arg.substr(pos+8).c_str() ));
+        else if ( (pos = arg.find("--numThreads=")) != std::string::npos )
+          params.numThreads = std::max(1, atoi( arg.substr(pos+13).c_str() ));
         else usage(argc, argv);
       }
       else
@@ -243,8 +246,7 @@ struct MyFunctor {
       BowTextHandler bowTextHandler;
       handlers.insert(std::make_pair("bowTextHandler", &bowTextHandler));
 
-      //        cout << "normalize " << contentText << endl;
-
+      // cout << "normalize " << contentText << endl;
       client->analyze(contentText,metaData,params.pipeline,handlers);
 
       // analyze resulting bowText to extract normalization
@@ -275,6 +277,8 @@ int dowork(int argc,char* argv[])
 {
   int st = read_cmd_line(argc, argv);
   if (st != SUCCESS_ID) return st;
+
+  QThreadPool::globalInstance()->setMaxThreadCount(params.numThreads);
 
   QsLogging::initQsLog(params.configPath);
   // Necessary to initialize factories
