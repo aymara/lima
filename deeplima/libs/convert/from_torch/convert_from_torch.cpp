@@ -31,8 +31,7 @@ namespace deeplima
 namespace eigen_impl
 {
 
-template <class M, class V, class T>
-void BiRnnInferenceBase<M, V, T>::convert_dicts_and_embeddings(const nets::BiRnnClassifierImpl& src)
+void BiRnnInferenceBase::convert_dicts_and_embeddings(const nets::BiRnnClassifierImpl& src)
 {
   // dicts and embeddings
   const vector<nets::embd_descr_t>& embd_descr = src.get_embd_descr();
@@ -122,14 +121,19 @@ namespace segmentation
 namespace eigen_impl
 {
 
-template class BiRnnEigenInferenceForSegmentation<Eigen::MatrixXf, Eigen::VectorXf, float>;
-
-template <class M, class V, class T>
-void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::string& fn)
+void BiRnnEigenInferenceForSegmentation::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForSegmentationImpl src;
-  torch::load(src, fn, torch::Device(torch::kCPU));
-
+  try
+  {
+    torch::load(src, fn, torch::Device(torch::kCPU));
+  }
+  catch (const c10::Error& e)
+  {
+    std::cerr << "Exception while trying to load Torch model file " << fn << std::endl
+              << e.what_without_backtrace();
+    throw std::runtime_error(e.what_without_backtrace());
+  }
   // ngram_descr
   m_ngram_gescr = src.get_ngram_descr();
 
@@ -144,8 +148,8 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
     Parent::m_lstm_idx[name] = i;
 
     const nn::LSTM& m = src.get_layers_lstm()[i];
-    Parent::m_lstm.emplace_back(params_bilstm_t<M, V>());
-    params_bilstm_t<M, V>& layer = Parent::m_lstm.back();
+    Parent::m_lstm.emplace_back(params_bilstm_t<Eigen::MatrixXf, Eigen::VectorXf>());
+    params_bilstm_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = Parent::m_lstm.back();
 
     convert_module_from_torch(m, layer);
   }
@@ -157,16 +161,16 @@ void BiRnnEigenInferenceForSegmentation<M, V, T>::convert_from_torch(const std::
     Parent::m_linear_idx[name] = i;
 
     const nn::Linear& m = src.get_layers_linear()[i];
-    Parent::m_linear.emplace_back(params_linear_t<M, V>());
-    params_linear_t<M, V>& layer = Parent::m_linear.back();
+    Parent::m_linear.emplace_back(params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>());
+    params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = Parent::m_linear.back();
 
     convert_module_from_torch(m, layer);
   }
 
   // temp: create exec plan
-  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM_Dense_ArgMax<M, V, T>>());
-  Parent::m_params.push_back(std::make_shared<typename Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>());
-  auto p = std::dynamic_pointer_cast<typename Op_BiLSTM_Dense_ArgMax<M, V, T>::params_t>(Parent::m_params.back());
+  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM_Dense_ArgMax<Eigen::MatrixXf, Eigen::VectorXf, float>>());
+  Parent::m_params.push_back(std::make_shared<typename Op_BiLSTM_Dense_ArgMax<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t>());
+  auto p = std::dynamic_pointer_cast<typename Op_BiLSTM_Dense_ArgMax<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t>(Parent::m_params.back());
   p->bilstm = Parent::m_lstm[0];
   p->linear.push_back(Parent::m_linear[0]);
   Parent::m_wb.resize(1);

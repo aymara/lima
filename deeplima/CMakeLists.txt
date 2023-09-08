@@ -27,7 +27,7 @@ message("${CMAKE_SYSTEM_PREFIX_PATH}")
 
 set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost         1.46  REQUIRED COMPONENTS program_options filesystem)
-find_package(ICU           60.0  REQUIRED COMPONENTS uc)
+find_package(ICU           60.0  REQUIRED COMPONENTS uc i18n)
 find_package(Eigen3        3.3   REQUIRED NO_MODULE)
 if(WIN32)
 include_directories("${EIGEN3_INCLUDE_DIR}/..")

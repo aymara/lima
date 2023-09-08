@@ -250,7 +250,7 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
     COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
-    COMMAND mv bigramsend.txt bigramMatrix-${_lang}.dat
+    COMMAND cp bigramsend.txt bigramMatrix-${_lang}.dat
     COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
 
     DEPENDS ${_codesymbol} ${_succession_categs}
@@ -273,6 +273,41 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
 
 endmacro(DISAMBMATRICES _lang)
 
+macro (DISAMBMATRICES_EXECENV _lang _succession_categs _codesymbol _priorscript _tableconvert)
+  message( "${C_BoldYellow}DISAMBMATRICES_EXECENV(${_lang})${C_Norm}" )
+
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/unigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
+    COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND cp bigramsend.txt bigramMatrix-${_lang}.dat
+    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+
+    COMMAND ${CMAKE_COMMAND} -E copy unigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/unigramMatrix-${_lang}.dat
+    COMMAND   ${CMAKE_COMMAND} -E copy priorUnigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E copy bigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
+    COMMAND ${CMAKE_COMMAND} -E copy trigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
+    DEPENDS ${_codesymbol} ${_succession_categs}
+    COMMENT "copy language specific Disambiguation matrice resources to execEnv"
+    VERBATIM
+  )
+  add_custom_target(
+    disamb-pretest-${_lang}-execEnv
+    ALL
+    DEPENDS
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/unigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
+      ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
+  )
+  add_dependencies(disamb-pretest-execEnv disamb-pretest-${_lang}-execEnv)
+endmacro()
 ###############
 # Idiomatic entities rules
 

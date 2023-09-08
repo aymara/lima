@@ -23,11 +23,11 @@ namespace eigen_impl
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes);
 
-template class BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float>;
-template class BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float, int16_t>;
+template class BiRnnEigenInferenceForTagging<float>;
+template class BiRnnEigenInferenceForTagging<int16_t>;
 
-template <typename M, typename V, typename T, typename AuxScalar>
-void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_from_torch(const std::string& fn)
+template <typename AuxScalar>
+void BiRnnEigenInferenceForTagging<AuxScalar>::convert_from_torch(const std::string& fn)
 {
   train::BiRnnClassifierForNerImpl src;
   torch::load(src, fn, torch::Device(torch::kCPU));
@@ -62,8 +62,8 @@ void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_from_torch(const
     Parent::m_linear_idx[name] = i;
 
     const nn::Linear& m = src.get_layers_linear()[i];
-    Parent::m_linear.emplace_back(params_linear_t<M, V>());
-    params_linear_t<M, V>& layer = Parent::m_linear.back();
+    Parent::m_linear.emplace_back(params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>());
+    params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = Parent::m_linear.back();
 
     convert_module_from_torch(m, layer);
   }
@@ -89,8 +89,8 @@ void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_from_torch(const
   cerr << endl;*/
 }
 
-template <typename M, typename V, typename T, typename AuxScalar>
-void BiRnnEigenInferenceForTagging<M, V, T, AuxScalar>::convert_classes_from_fn(
+template <typename AuxScalar>
+void BiRnnEigenInferenceForTagging<AuxScalar>::convert_classes_from_fn(
         const std::string& fn,
         std::vector<std::string>& class_names,
         std::vector<std::vector<std::string>>& classes) {

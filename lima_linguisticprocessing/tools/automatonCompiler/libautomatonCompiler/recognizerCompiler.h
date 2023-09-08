@@ -82,6 +82,7 @@ class LIMA_AUTOMATONCOMPILER_EXPORT RecognizerCompiler
   void printWarning(const std::string& error,
                     const LimaString& line=LimaString()) const;
 
+
  private:
 
   static std::string m_recognizerEncoding;
@@ -115,6 +116,8 @@ class LIMA_AUTOMATONCOMPILER_EXPORT RecognizerCompiler
                      std::vector<Gazeteer>& gazeteers,
                      const std::vector<SubAutomaton>& subAutomatons);
 
+  void searchFile(std::string& filename);
+
   void addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
                                   LimaString& ruleString,
                                   const std::vector<Gazeteer>& gazeteers,
@@ -124,6 +127,7 @@ class LIMA_AUTOMATONCOMPILER_EXPORT RecognizerCompiler
                                   MediaId language,const std::string& currentId,
                                   const bool keepTrigger=true,
                                   const bool headTrigger=false);
+
   double currentRuleWeight();
 
 //   bool checkRule(const Rule& rule,

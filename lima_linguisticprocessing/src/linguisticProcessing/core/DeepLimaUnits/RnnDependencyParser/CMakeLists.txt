@@ -38,6 +38,8 @@ if (EIGEN3_FOUND)
             convert_from_torch-shared
             fasttext-static
             utils
+            lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
             )
 

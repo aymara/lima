@@ -24,9 +24,12 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
 #include "common/time/timeUtilsController.h"
 
+
 #include "linguisticProcessing/core/Automaton/automatonCommon.h" // for exceptions
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h" // to check rules
 #include "linguisticProcessing/core/Automaton/entityTransition.h" // for exceptions
+#include <QDir>
+#include <QFileInfo>
 
 using namespace Lima::LinguisticProcessing::Automaton::AutomatonCompiler;
 using namespace Lima::Common;
@@ -243,6 +246,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         nextFilename=findSpecialCharacter(s,CHAR_SEP_LISTFILENAME,beginFilename);
         string filename=Common::Misc::limastring2utf8stdstring(
           s.mid(beginFilename,(nextFilename==-1)?nextFilename:nextFilename-beginFilename));
+        searchFile(filename);
         buildRecognizer(reco, language, filename);
         beginFilename=nextFilename+1;
       } while (nextFilename != -1);
@@ -259,6 +263,7 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         nextFilename=findSpecialCharacter(s,CHAR_SEP_LISTFILENAME,beginFilename);
         string filename=Common::Misc::limastring2utf8stdstring(
           s.mid(beginFilename,(nextFilename==-1)?nextFilename:nextFilename-beginFilename));
+        searchFile(filename);
         readGazeteers(filename,gazeteers,subAutomatons);
         beginFilename=nextFilename+1;
       } while (nextFilename != -1);
@@ -283,12 +288,19 @@ void RecognizerCompiler::buildRecognizer(Recognizer& reco,
         g.setAlias(alias);
         int offsetParOpen(findSpecialCharacter(s,CHAR_OPEN_GAZ,
                                                         offsetEqual));
-        if (offsetParOpen != -1) {
-          g.readValues(*this,gazeteers,s.mid(offsetParOpen+1));
-        }
-        else {
-          g.readValues(*this,gazeteers);
-        }
+       // try
+       // {
+          if (offsetParOpen != -1) {
+            g.readValues(*this,gazeteers,s.mid(offsetParOpen+1));
+          }
+          else {
+            g.readValues(*this,gazeteers);
+          }
+        //}
+      //  catch (std::runtime_error& e)
+       // {
+         // throwError("found parenthesis in :",e.what());
+       // }
         //std::cerr << g << endl;
         g.buildAutomatonString(gazeteers,subAutomatons);
         // check if another gazeteer exist with same name
@@ -526,7 +538,7 @@ addRuleWithGazeteerTrigger(const LimaString& gazeteerName,
       printWarning("empty class as trigger ["+str+"]",ruleString);
     }
     else {
-      printWarning("Unrecognized class as trigger ["+str+"]",ruleString);
+      throwError("Unrecognized class as trigger ["+str+"]",ruleString);
     }
     return;
   }
@@ -675,7 +687,14 @@ void RecognizerCompiler::readGazeteers(const std::string& filename,
   RecognizerCompiler reco(filename);
   while (! reco.endOfFile()) {
     Gazeteer g;
+    try
+    {
     g.read(reco);
+    }
+    catch (std::runtime_error& e)
+    {
+      throwError("found parenthesis in :",e.what());
+    }
     if (g.numberOfWords()!=0) {
       LINFO << "Adding gazeteer:"
             << g.alias()
@@ -939,6 +958,26 @@ printWarning(const std::string& error,
   }
 }
 
+void RecognizerCompiler::searchFile(std::string& filename) {
+  QString qfilename = QString::fromStdString(filename);
+  if (!QFileInfo::exists(qfilename)) {
+    QFileInfo fileInfo(QString::fromStdString(m_filename));
+    QString directoryPath = fileInfo.dir().path();
+    filename = (QDir::cleanPath(directoryPath + QDir::separator() + QString::fromStdString(filename))).toStdString();
+    if (!QFileInfo::exists(QString::fromStdString(filename))) {
+      std::string lima_resources=qEnvironmentVariableIsEmpty("LIMA_RESOURCES")
+      ?"/usr/share/apps/lima/resources"
+      :string(qgetenv("LIMA_RESOURCES").constData());
+      QStringList resourcesPaths = QString::fromUtf8(lima_resources.c_str()).split(LIMA_PATH_SEPARATOR);
+      for(QString resourcesPath : resourcesPaths){
+        if (QFileInfo::exists(resourcesPath + QDir::separator() + qfilename)) {
+          filename = (QDir::cleanPath(resourcesPath + QDir::separator() + qfilename)).toStdString();
+        break;
+        }
+      }
+     }
+   }
+}
 
 } // end namespace
 } // end namespace

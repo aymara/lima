@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+add_subdirectory(inference)
 add_subdirectory(model)
 add_subdirectory(train)
 

@@ -146,8 +146,8 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
 
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
-                               .weight_decay(params.m_weight_decay)
-                               .betas({params.m_beta_one, params.m_beta_two}));
+                                  .weight_decay(params.m_weight_decay)
+                                  .betas({params.m_beta_one, params.m_beta_two}));
 
   std::string dev = "cpu";
   if (gpuid >= 0)

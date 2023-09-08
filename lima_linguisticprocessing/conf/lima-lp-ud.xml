@@ -29,15 +29,21 @@ SPDX-License-Identifier: MIT
 *********************************************** -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
+        <item value="RnnTokenizer"/>
+        <item value="tfmorphosyntax"/>
+        <item value="RnnTokensAnalyzer"/>
+<!--         <item value="RnnDependencyParser"/> -->
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
+        <item value="conllDumper"/>
+      </list>
+    </group>
+
+    <group name="tfud" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
-        <!-- Uncomment below and comment above to use deelima libtorch based modules instead of tensorflow ones -->
-<!--        <item value="RnnTokenizer"/>
-        <item value="RnnTokensAnalyzer"/>
-        <item value="RnnDependencyParser"/>
-        <item value="RnnNER"/>
-        <item value="RnnDependencyParser"/>-->
+        <item value="SpecificEntitiesModexAfterPos"/>
         <item value="compoundBuilderFromSyntacticData"/>
         <item value="conllDumper"/>
       </list>
@@ -58,15 +64,6 @@ SPDX-License-Identifier: MIT
         <item value="tfmorphosyntax"/>
         <item value="tflemmatizer"/>
         <item value="compoundBuilderFromSyntacticData"/>
-        <item value="conllDumper"/>
-      </list>
-    </group>
-
-    <group name="deepud-tagger-test" class="ProcessUnitPipeline">
-      <list name="processUnitSequence">
-        <item value="RnnTokenizer"/>
-        <item value="RnnTokensAnalyzer"/>
-        <item value="RnnDependencyParser"/>
         <item value="conllDumper"/>
       </list>
     </group>

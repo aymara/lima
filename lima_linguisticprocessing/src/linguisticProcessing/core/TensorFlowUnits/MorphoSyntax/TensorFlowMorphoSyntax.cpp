@@ -291,16 +291,12 @@ TensorFlowMorphoSyntax::~TensorFlowMorphoSyntax()
   delete m_d;
 }
 
-void TensorFlowMorphoSyntax::init(
-  GroupConfigurationStructure& gcs,
-  Manager* manager)
+void TensorFlowMorphoSyntax::init(GroupConfigurationStructure& gcs, Manager* manager)
 {
   m_d->init(gcs, manager->getInitializationParameters().media);
 }
 
-void TensorFlowMorphoSyntaxPrivate::init(
-  GroupConfigurationStructure& gcs,
-  MediaId lang)
+void TensorFlowMorphoSyntaxPrivate::init(GroupConfigurationStructure& gcs, MediaId lang)
 {
   m_language = lang;
   m_stringsPool = &MediaticData::changeable().stringsPool(m_language);
@@ -311,6 +307,9 @@ void TensorFlowMorphoSyntaxPrivate::init(
   QString embeddings = getStringParameter(gcs, "embeddings", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
   string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
+  // Ensure to have a legacy trigram instead of the tri-corpus (e.g. afr-UD_Afrikaans-AfriBooms)
+  // from recent deeplima models
+  udlang =  QString::fromStdString(udlang).left(3).toStdString();
 
   if (!fix_lang_codes(lang_str, udlang))
   {
@@ -320,6 +319,7 @@ void TensorFlowMorphoSyntaxPrivate::init(
   }
 
   model_name.replace(QString("$udlang"), QString(udlang.c_str()));
+
 
   auto config_file_name = findFileInPaths(resources_path,
                                           QString::fromUtf8("/TensorFlowMorphoSyntax/%1/%2.conf")

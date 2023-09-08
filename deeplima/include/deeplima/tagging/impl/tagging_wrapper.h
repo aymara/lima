@@ -73,9 +73,9 @@ public:
                    output_names);
   }
 
-  inline const typename M::uint_dicts_holder_t& get_uint_dicts() const
+  inline const typename M::uint_dicts_holder_t& get_input_uint_dicts() const
   {
-    return m_impl.get_uint_dicts();
+    return m_impl.get_input_uint_dicts();
   }
 
   inline const typename M::str_dicts_holder_t& get_input_str_dicts() const

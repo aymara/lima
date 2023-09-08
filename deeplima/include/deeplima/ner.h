@@ -26,7 +26,6 @@
 
 #endif
 
-#include "tagging/impl/tagging_impl.h"
 #include "tagging/impl/tagging_wrapper.h"
 #include "eigen_wrp/word_seq_embd_vectorizer.h"
 #include "feat_extractors.h"
@@ -50,7 +49,7 @@ namespace torch_impl
 namespace eigen_impl
 {
   template <typename AuxScalar=float>
-  class Model : public impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTagging<Eigen::MatrixXf, Eigen::VectorXf, float, AuxScalar>>
+  class Model : public impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTagging<AuxScalar>>
   {};
 
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
@@ -125,13 +124,7 @@ namespace impl
   class EntityTaggingClassifier: public RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>
   {};
 
-  //typedef impl::TaggingImpl< EntityTaggingClassifier, int
-  //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
-  //                           FeaturesVectorizer > EntityTaggingModule;
-
 } // namespace impl
-
-//typedef impl::EntityTaggingModule EntityTagger;
 
 } // namespace tagging
 } // namespace deeplima

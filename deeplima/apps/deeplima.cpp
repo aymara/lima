@@ -135,21 +135,39 @@ int main(int argc, char* argv[])
       if (!file.is_open())
       {
         std::cerr << "Failed to open file: " << fn << std::endl;
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error(std::string("Failed to open file "+fn));
       }
       file.rdbuf()->pubsetbuf(read_buffer, READ_BUFFER_SIZE);
-      parse_file(file, models, path_resolver, threads, out_fmt, tag_use_mp);
+      try
+      {
+        parse_file(file, models, path_resolver, threads, out_fmt, tag_use_mp);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "Analysis failure: Exception while analyzing file " << fn << ":" << std::endl
+                  << e.what() << std::endl;
+        return 1;
+      }
     }
   }
   else
   {
-    parse_file(std::cin, models, path_resolver, threads, out_fmt, tag_use_mp);
+    try
+    {
+      parse_file(std::cin, models, path_resolver, threads, out_fmt, tag_use_mp);
+    }
+    catch (const std::runtime_error& e)
+    {
+      std::cerr << "Analysis failure: Exception while analyzing text from stdin:" << std::endl
+                << e.what() << std::endl;
+      return 1;
+    }
   }
 
   return 0;
 }
 
-#include "deeplima/segmentation.h"
+#include "deeplima/segmentation/impl/segmentation_impl.h"
 #include "deeplima/ner.h"
 #include "deeplima/token_sequence_analyzer.h"
 #include "deeplima/dependency_parser.h"
@@ -170,9 +188,18 @@ void parse_file(std::istream& input,
 
   if (models_fn.end() != models_fn.find("tok"))
   {
-    psegm = std::make_shared<segmentation::Segmentation>();
-    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->load(models_fn.find("tok")->second);
-    std::dynamic_pointer_cast<segmentation::Segmentation>(psegm)->init(threads, 16*1024);
+    psegm = std::make_shared<segmentation::impl::SegmentationImpl>();
+    try
+    {
+      std::dynamic_pointer_cast<segmentation::impl::SegmentationImpl>(psegm)->load(models_fn.find("tok")->second);
+    }
+    catch (std::runtime_error& e)
+    {
+      std::cerr << "In parse_file: failed to load model file " << models_fn.find("tok")->second << ": "
+                << e.what() << std::endl;
+      throw;
+    }
+    std::dynamic_pointer_cast<segmentation::impl::SegmentationImpl>(psegm)->init(threads, 16*1024);
   }
   else
   {
@@ -198,25 +225,33 @@ void parse_file(std::istream& input,
     std::string lemm_model_fn = find_or_empty_line(models_fn, "lem");
     std::string lemm_dict_fn = find_or_empty_line(models_fn, "lem_dict");
 
-    if (tag_use_mp)
+    try
     {
-      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, int16_t> >(
-          models_fn.find("tag")->second,
-          lemm_model_fn,
-          lemm_dict_fn,
-          path_resolver,
-          TAG_BUFFER_SIZE,
-          8);
+      if (tag_use_mp)
+      {
+          panalyzer = std::make_shared< TokenSequenceAnalyzer<int16_t> >(
+              models_fn.find("tag")->second,
+              lemm_model_fn,
+              lemm_dict_fn,
+              path_resolver,
+              TAG_BUFFER_SIZE,
+              8);
+      }
+      else
+      {
+        panalyzer = std::make_shared< TokenSequenceAnalyzer<float> >(
+            models_fn.find("tag")->second,
+            lemm_model_fn,
+            lemm_dict_fn,
+            path_resolver,
+            TAG_BUFFER_SIZE,
+            8);
+      }
     }
-    else
+    catch (const std::runtime_error& e)
     {
-      panalyzer = std::make_shared< TokenSequenceAnalyzer<eigen_wrp::EigenMatrixXf, float> >(
-          models_fn.find("tag")->second,
-          lemm_model_fn,
-          lemm_dict_fn,
-          path_resolver,
-          TAG_BUFFER_SIZE,
-          8);
+      std::cerr << "parse_file failed to initialize analyzer: " << e.what() << std::endl;
+      throw std::runtime_error(std::string("parse_file failed to initialize analyzer: ") + e.what());
     }
 
     if (models_fn.end() != models_fn.find("dp"))
@@ -225,12 +260,20 @@ void parse_file(std::istream& input,
       auto conllu_dumper = std::make_shared<dumper::AnalysisToConllU<typename DependencyParser::TokenIterator> >();
       pDumperBase = conllu_dumper;
 
-      parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
-                                                         path_resolver,
-                                                         panalyzer->get_stridx(),
-                                                         panalyzer->get_class_names(),
-                                                         DP_BUFFER_SIZE,
-                                                         8);
+      try
+      {
+        parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
+                                                          path_resolver,
+                                                          panalyzer->get_stridx(),
+                                                          panalyzer->get_class_names(),
+                                                          DP_BUFFER_SIZE,
+                                                          8);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "parse_file failed to initialize parser: " << e.what() << std::endl;
+        throw std::runtime_error(std::string("parse_file failed to initialize parser: ") + e.what());
+      }
 
       for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
       {
@@ -335,8 +378,8 @@ void parse_file(std::istream& input,
 
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
-                          uint32_t& read,
-                          uint32_t max)
+                          int32_t& read,
+                          int32_t max)
   {
     // std::cerr << "In psegm parse_from_stream lambda" << std::endl;
     input.read((std::istream::char_type*)buffer, max);

@@ -34,15 +34,7 @@ ARG NLTK_PTB_DP_FILE
 ARG TORCH_CUDA_ARCH_LIST="6.1"
 ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
-RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64
-
-# WORKDIR /
-# RUN wget --no-check-certificate http://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz -q
-# WORKDIR /svm_light
-# RUN tar xzf ../svm_light.tar.gz
-# RUN make
-# RUN cp svm_classify svm_learn /usr/bin
-# RUN rm -Rf /svm_light
+RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
 
 WORKDIR /
 
@@ -98,6 +90,7 @@ RUN cmake -G Ninja  \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" \
     -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON \
+    -DCTEST_OUTPUT_ON_FAILURE=ON \
     -DTF_SOURCES_PATH:PATH="/tensorflow-for-lima-1.9/" \
     -DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST} \
     -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch \
@@ -106,8 +99,7 @@ RUN cmake -G Ninja  \
     -DWITH_ASAN=OFF \
     -DWITH_GUI=ON  ..
 RUN ninja && ninja install
-# && ninja package
-# RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.
+RUN ctest || ctest --rerun-failed --output-on-failure
 
 WORKDIR /opt/lima/share/apps/lima/tests
 RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"

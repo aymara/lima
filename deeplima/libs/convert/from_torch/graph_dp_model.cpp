@@ -22,10 +22,7 @@ namespace eigen_impl
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes);
 
-template class BiRnnAndDeepBiaffineAttentionEigenInference<Eigen::MatrixXf, Eigen::VectorXf, float>;
-
-template <class M, class V, class T>
-void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(const std::string& fn)
+void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::string& fn)
 {
   train::BiRnnAndDeepBiaffineAttentionImpl src;
   torch::load(src, fn, torch::Device(torch::kCPU));
@@ -62,8 +59,8 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
     Parent::m_linear_idx[name] = i;
 
     const nn::Linear& m = src.get_layers_linear()[i];
-    Parent::m_linear.emplace_back(params_linear_t<M, V>());
-    params_linear_t<M, V>& layer = Parent::m_linear.back();
+    Parent::m_linear.emplace_back(params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>());
+    params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = Parent::m_linear.back();
 
     convert_module_from_torch(m, layer);
   }
@@ -78,17 +75,17 @@ void BiRnnAndDeepBiaffineAttentionEigenInference<M, V, T>::convert_from_torch(co
     const deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder& m
         = src.get_layers_deep_biaffine_attn_decoder()[i];
 
-    m_deep_biaffine_attn_decoder.emplace_back(std::make_shared<params_deep_biaffine_attn_decoder_t<M, V>>());
+    m_deep_biaffine_attn_decoder.emplace_back(std::make_shared<params_deep_biaffine_attn_decoder_t<Eigen::MatrixXf, Eigen::VectorXf>>());
     auto& layer = *m_deep_biaffine_attn_decoder.back().get();
 
     convert_module_from_torch(m, layer);
   }
 
   // temp: create exec plan
-  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<M, V, T>>());
+  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
   Parent::m_params.push_back(Parent::m_multi_bilstm[0]);
 
-  Parent::m_ops.push_back(std::make_shared<Op_DeepBiaffineAttnDecoder<M, V, T>>());
+  Parent::m_ops.push_back(std::make_shared<Op_DeepBiaffineAttnDecoder<Eigen::MatrixXf, Eigen::VectorXf, float>>());
   Parent::m_params.push_back(m_deep_biaffine_attn_decoder[0]);
 
   Parent::m_wb.resize(2);

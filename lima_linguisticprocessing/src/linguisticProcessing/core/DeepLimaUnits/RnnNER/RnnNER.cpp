@@ -233,7 +233,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
     if (morphoData != nullptr)
     {
       auto entityTag = QString::fromUtf8(m_d->m_tags[anaVerticesIndex].c_str());
-      if((anaVerticesIndex>0 && entityTag != prev_tag) || (entityTag[0]!="B" && prev_tag != "O") )
+      if((anaVerticesIndex>0 && entityTag != prev_tag)
+        || (entityTag[0] != 'B' && prev_tag != "O") )
       {
         LinguisticGraphVertex newVertex = anagraph->firstVertex();
         if (entityFound->size() == 1)

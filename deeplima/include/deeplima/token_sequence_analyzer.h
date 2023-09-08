@@ -9,13 +9,16 @@
 #include <memory>
 #include <unordered_map>
 
-#include "segmentation.h"
+// #include "segmentation.h"
 #include "helpers/path_resolver.h"
 #include "utils/str_index.h"
 #include "token_type.h"
 #include "ner.h"
-#include "lemmatization.h"
 #include "conllu/line.h"
+#include "deeplima/nets/birnn_seq2seq.h"
+#include "deeplima/lemmatization/impl/lemmatization_impl.h"
+#include "deeplima/segmentation/impl/segmentation_decoder.h"
+#include "deeplima/tagging/impl/tagging_impl.h"
 
 namespace deeplima
 {
@@ -40,10 +43,10 @@ public:
 
   virtual void finalize() = 0;
 
-  virtual void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len) = 0;
+  virtual void operator()(const std::vector<segmentation::token_pos>& tokens, uint32_t len) = 0;
 };
 
-template <class Matrix=eigen_wrp::EigenMatrixXf, typename TaggingAuxScalar=float>
+template <typename TaggingAuxScalar=float>
 class TokenSequenceAnalyzer : public ITokenSequenceAnalyzer
 {
 public:
@@ -223,12 +226,12 @@ protected:
                                       enriched_token_buffer_t,
                                       typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
-  typedef tagging::impl::TaggingImpl< Classifier,
-                                      FeaturesVectorizer,
-                                      Matrix > EntityTaggingModule;
+  // typedef tagging::impl::TaggingImpl< Classifier,
+  //                                     FeaturesVectorizer,
+  //                                     Matrix > EntityTaggingModule;
 
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
-  typedef lemmatization::impl::LemmatizationImpl< lemmatization::impl::Lemmatizer, EmbdVectorizer, Matrix> LemmatizationModule;
+  // typedef lemmatization::impl::LemmatizationImpl< RnnSeq2Seq, EmbdVectorizer, Matrix> LemmatizationModule;
 
 public:
   TokenSequenceAnalyzer() :
@@ -241,8 +244,12 @@ public:
   {
   }
 
-  TokenSequenceAnalyzer(const std::string& model_fn, const std::string& lemm_model_fn, const std::string& lemm_dict_fn,
-                        const PathResolver& path_resolver, size_t buffer_size, size_t num_buffers)
+  TokenSequenceAnalyzer(const std::string& model_fn,
+                        const std::string& lemm_model_fn,
+                        const std::string& lemm_dict_fn,
+                        const PathResolver& path_resolver,
+                        size_t buffer_size,
+                        size_t num_buffers)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
@@ -250,6 +257,8 @@ public:
       m_stridx(*m_stridx_ptr),
       m_classes(std::make_shared<StdMatrix<uint8_t>>())
   {
+    // std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", " << lemm_model_fn << ", "
+    //           << lemm_dict_fn << std::endl;
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
@@ -271,12 +280,20 @@ public:
         buff[i].m_form_idx = i;
       }
 
-      m_cls.precompute_inputs(enriched_token_buffer_t(buff, m_stridx));
+      m_cls.precompute_inputs(tagging::impl::enriched_token_buffer_t(buff, m_stridx));
     }
 
     if (lemm_model_fn.size() > 0)
     {
-      m_lemm.load(lemm_model_fn, path_resolver);
+      try
+      {
+        m_lemm.load(lemm_model_fn, path_resolver);
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "TokenSequenceAnalyzer failed to load lemmatization model " << lemm_model_fn << std::endl;
+        throw;
+      }
       m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
@@ -426,13 +443,13 @@ protected:
     m_buffers[buffer_idx].lock();
 
     const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
-    m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx), count);
+    m_cls.handle_token_buffer(buffer_idx, tagging::impl::enriched_token_buffer_t(current_buffer, m_stridx), count);
   }
 
   void process_buffer(size_t buffer_idx)
   {
     const token_buffer_t<>& current_buffer = m_buffers[buffer_idx];
-    m_cls.handle_token_buffer(buffer_idx, enriched_token_buffer_t(current_buffer, m_stridx));
+    m_cls.handle_token_buffer(buffer_idx, tagging::impl::enriched_token_buffer_t(current_buffer, m_stridx));
   }
 
   typedef std::pair<StringIndex::idx_t, morph_model::morph_feats_t> lemm_cache_key_t;
@@ -447,6 +464,10 @@ protected:
   {
     const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
     std::ifstream f(fn, std::ios::in);
+    if (!f) {
+        std::cerr << "load_lemm_cache failed to open file " << fn << ".\n";
+        throw std::runtime_error(std::string("load_lemm_cache failed to open file ") + fn);
+    }
     std::string line;
     while (std::getline(f, line))
     {
@@ -532,8 +553,8 @@ protected:
   std::vector<token_buffer_t<>> m_buffers;
   std::vector<std::vector<StringIndex::idx_t>> m_lemm_buffers; // access control is sync with m_buffers
 
-  EntityTaggingModule m_cls;
-  LemmatizationModule m_lemm;
+  tagging::impl::TaggingImpl<TaggingAuxScalar> m_cls;
+  lemmatization::impl::LemmatizationImpl m_lemm;
   std::shared_ptr< StdMatrix<uint8_t> > m_classes;
 
   std::unordered_map<lemm_cache_key_t, StringIndex::idx_t, lemm_cache_key_hash> m_lemm_cache;

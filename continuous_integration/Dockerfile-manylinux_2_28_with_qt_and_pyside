@@ -34,7 +34,7 @@ RUN python${PYTHON_VERSION} -m pip install scikit-build
 # Install PySide${QT_VERSION_MAJOR} and shiboken${QT_VERSION_MAJOR} from source as binary installs are broken
 # Done in /home/gael/Logiciels/
 WORKDIR /
-RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-opensource-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-opensource-src-${QT_FULL_VERSION}.tar.xz
+RUN echo "Downloading https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-everywhere-src-${QT_FULL_VERSION}.tar.xz" && wget -q https://download.qt.io/official_releases/QtForPython/pyside${PYSIDE_VERSION}/PySide${PYSIDE_VERSION}-${QT_FULL_VERSION}-src/pyside-setup-everywhere-src-${QT_FULL_VERSION}.tar.xz && tar xf pyside-setup-everywhere-src-${QT_FULL_VERSION}.tar.xz && mv /pyside-setup-everywhere-src-${QT_FULL_VERSION} /pyside-setup && rm pyside-setup-everywhere-src-${QT_FULL_VERSION}.tar.xz
 WORKDIR /pyside-setup
 
 # Touch files needed for setup but not used in fact

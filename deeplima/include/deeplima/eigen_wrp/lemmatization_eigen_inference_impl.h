@@ -40,22 +40,25 @@ namespace eigen_impl
   #define LEMM_EXPORT
 #endif
 
-template <class M, class V, class T>
-class LEMM_EXPORT BiRnnSeq2SeqEigenInferenceForLemmatization : public deeplima::eigen_impl::BiRnnInferenceBase<M, V, T>
+
+class LEMM_EXPORT BiRnnSeq2SeqEigenInferenceForLemmatization :
+    public deeplima::eigen_impl::BiRnnInferenceBase
 {
 public:
-  typedef M Matrix;
-  typedef V Vector;
-  typedef T Scalar;
-  typedef M tensor_t;
-  typedef EmbdUInt64FloatHolder dicts_holder_t;
-  typedef deeplima::eigen_impl::BiRnnInferenceBase<M, V, T> Parent;
+  using Parent = deeplima::eigen_impl::BiRnnInferenceBase;
 
   virtual ~BiRnnSeq2SeqEigenInferenceForLemmatization() = default;
 
   virtual void load(const std::string& fn) override
   {
-    convert_from_torch(fn);
+    try
+    {
+      convert_from_torch(fn);
+    }
+    catch (const std::runtime_error& e)
+    {
+      throw;
+    }
   }
 
   virtual size_t init_new_worker(size_t input_len, bool precomputed_input=false) override
@@ -79,7 +82,7 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<M, V, T>::params_t>(Parent::m_params[0]);
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t>(Parent::m_params[0]);
 
     assert(p_params->layers.size() > 0);
     const auto& layer = p_params->layers[0];
@@ -88,19 +91,19 @@ public:
   }
 
   virtual void precompute_inputs(
-      const M& inputs,
-      M& outputs,
+      const Eigen::MatrixXf& inputs,
+      Eigen::MatrixXf& outputs,
       int64_t input_size
       ) override
   {
-    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[0]);
 
     p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
   }
 
   virtual void predict(
       size_t /*worker_id*/,
-      const M& /*inputs*/,
+      const Eigen::MatrixXf& /*inputs*/,
       int64_t /*input_begin*/,
       int64_t /*input_end*/,
       int64_t /*output_begin*/,
@@ -114,17 +117,17 @@ public:
 
   struct workbench_t
   {
-    Vector encoded_feats_for_encoder;
-    Vector encoded_feats_for_decoder;
-    Vector fw_h, fw_c, bw_h, bw_c; // encoder's output
-    Vector encoder_state; // too bad: this is a copy of previous things
-    Vector decoder_initial_h, decoder_initial_c;
+    Eigen::VectorXf encoded_feats_for_encoder;
+    Eigen::VectorXf encoded_feats_for_decoder;
+    Eigen::VectorXf fw_h, fw_c, bw_h, bw_c; // encoder's output
+    Eigen::VectorXf encoder_state; // too bad: this is a copy of previous things
+    Eigen::VectorXf decoder_initial_h, decoder_initial_c;
   };
 
   virtual void predict(
       size_t worker_id,
-      const M& inputs,
-      const M& input_feats,
+      const Eigen::MatrixXf& inputs,
+      const Eigen::MatrixXf& input_feats,
       int64_t input_len,
       int64_t output_max_len,
       int64_t /*beam_size*/,
@@ -144,7 +147,7 @@ public:
 
     // Features encoders
     // for encoder
-    auto p_linear_feats_enc = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[5]);
+    auto p_linear_feats_enc = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[5]);
 
 #ifdef LEMM_INFERENCE_PROFILE
     const auto before = clock::now();
@@ -160,7 +163,7 @@ public:
 #endif
 
     // for decoder
-    auto p_linear_feats_dec = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[3]);
+    auto p_linear_feats_dec = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[3]);
 
     p_linear_feats_dec->execute(Parent::m_wb[3][worker_id],
                                 input_feats,
@@ -169,12 +172,12 @@ public:
 #ifdef LEMM_INFERENCE_PROFILE
    const auto exec2 = clock::now();
 #endif
-    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<M, V, T>>(Parent::m_ops[0]);
+    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[0]);
 
-    auto p_decoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<M, V, T>>(Parent::m_ops[4]);
+    auto p_decoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_LSTM_Beam_Decoder<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[4]);
 
     auto enc_mutlilayer_bilstm
-        = std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<M, V>>(Parent::m_params[0]);
+        = std::dynamic_pointer_cast<const deeplima::eigen_impl::params_multilayer_bilstm_t<Eigen::MatrixXf, Eigen::VectorXf>>(Parent::m_params[0]);
     size_t hidden_size = enc_mutlilayer_bilstm->layers[0].fw.weight_ih.rows() / 4;
 
     if (true)
@@ -206,12 +209,12 @@ public:
 
     if (wb.encoder_state.rows() == 0)
     {
-      wb.encoder_state = Vector(hidden_size * 4 + wb.encoded_feats_for_decoder.rows());
+      wb.encoder_state = Eigen::VectorXf(hidden_size * 4 + wb.encoded_feats_for_decoder.rows());
     }
     wb.encoder_state << wb.fw_h, wb.fw_c, wb.bw_h, wb.bw_c, wb.encoded_feats_for_decoder;
 
-    auto p_linear_h = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[1]);
-    auto p_linear_c = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<M, V, T>>(Parent::m_ops[2]);
+    auto p_linear_h = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[1]);
+    auto p_linear_c = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_Linear<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[2]);
 
 #ifdef LEMM_INFERENCE_PROFILE
     const auto exec5 = clock::now();
@@ -288,7 +291,6 @@ protected:
   virtual void convert_from_torch(const std::string& fn) override;
 };
 
-typedef BiRnnSeq2SeqEigenInferenceForLemmatization<Eigen::MatrixXf, Eigen::VectorXf, float> BiRnnSeq2SeqEigenInferenceForLemmatizationF;
 
 } // namespace eigen_impl
 } // namespace lemmatization

@@ -296,7 +296,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
     pipelines.push_back(pipeline.toStdString());
 
 
-  uint64_t beginTime=TimeUtils::getCurrentTime();
+  // uint64_t beginTime=TimeUtils::getCurrentTime();
 
   std::deque<std::string> langs;
   for (const auto& lang: qlangs)
@@ -741,7 +741,7 @@ void LimaAnalyzerPrivate::collectDependencyInformations(std::shared_ptr<Lima::An
 }
 
 void LimaAnalyzerPrivate::collectVertexDependencyInformations(LinguisticGraphVertex v,
-                                                              std::shared_ptr<Lima::AnalysisContent> analysis)
+                                                              std::shared_ptr<Lima::AnalysisContent> /*analysis*/)
 {
     auto dcurrent = syntacticData->depVertexForTokenVertex(v);
     auto depGraph = syntacticData->dependencyGraph();
@@ -921,7 +921,7 @@ QString LimaAnalyzerPrivate::getMicro(LinguisticAnalysisStructure::MorphoSyntact
 }
 
 
-int main(int argc, char* argv[])
+int main(int /*argc*/, char** /*argv[]*/)
 {
   LimaAnalyzer analyzer0("ud-eng", "deepud", "");
   std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;

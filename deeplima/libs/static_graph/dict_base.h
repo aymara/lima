@@ -6,7 +6,7 @@
 #ifndef DEEPLIMA_SRC_STATIC_GRAPH_DICT_BASE_H
 #define DEEPLIMA_SRC_STATIC_GRAPH_DICT_BASE_H
 
-#include <ATen/core/List.h>
+#include <ATen/core/ivalue.h>
 
 namespace deeplima
 {

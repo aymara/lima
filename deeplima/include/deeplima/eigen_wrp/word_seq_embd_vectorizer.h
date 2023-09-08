@@ -94,7 +94,7 @@ public:
     return false;
   }
 
-  inline void precompute(const DataSet& dataset)
+  inline void precompute(const DataSet& /*dataset*/)
   {
   }
 
