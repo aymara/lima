@@ -91,7 +91,7 @@ void LinearTextRepresentationLogger::init(
             throw InvalidConfiguration();
         }
     }
-    else {    
+    else {
         m_stopList = 0;
     }
 }
@@ -119,14 +119,14 @@ LimaStatusCode LinearTextRepresentationLogger::process(
       // sentence bounds ignored: null pointer passed to LTRTextBuilder will be handled there
     }
     // build LTRText
-    LTR_Text textRep;
+    boost::shared_ptr<LTR_Text> textRep( new LTR_Text() );
     LTRTextBuilder builder(m_language, m_stopList);
     builder.buildLTRTextFrom(
         *(anaGraph->getGraph()),
         sb.get(),
         anaGraph->firstVertex(),
         anaGraph->lastVertex(),
-        &textRep,
+        textRep,
         metadata->getStartOffset());
 
     // write LTR_Text
@@ -136,7 +136,7 @@ LimaStatusCode LinearTextRepresentationLogger::process(
     if (!out.good()) {
         throw runtime_error("can't open file " + outputFile);
     }
-    textRep.binaryWriteOn(out);
+    textRep->binaryWriteOn(out);
     out.flush();
     out.close();
     return SUCCESS_ID;

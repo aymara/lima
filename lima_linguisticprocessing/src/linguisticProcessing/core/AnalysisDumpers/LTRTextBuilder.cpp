@@ -66,7 +66,7 @@ void LTRTextBuilder::buildLTRTextFrom(
     SegmentationData* sb,
     const LinguisticGraphVertex& graphFirstVertex,
     const LinguisticGraphVertex& graphLastVertex,
-    LTR_Text* textRep,
+    boost::shared_ptr<LTR_Text> textRep,
     uint64_t offset) {
 
   if (sb==0) {
@@ -112,7 +112,7 @@ void LTRTextBuilder::addTokensToLTRTextFrom(
     const LinguisticGraphVertex& firstVertex,
     const LinguisticGraphVertex& lastVertex,
     const LinguisticGraphVertex& graphLastVertex,
-    LTR_Text* textRep,
+    boost::shared_ptr<LTR_Text> textRep,
     uint64_t offset,
     uint64_t* tokenCounter) {
 
@@ -125,7 +125,7 @@ void LTRTextBuilder::addTokensToLTRTextFrom(
         LinguisticGraphVertex firstTokenVertex = m_verticesToExplore.front();
         Token* token = get(vertex_token, graph, firstTokenVertex);
         m_currentOffset = token->position() + offset;
-        LTR_Token* currentLtrTok = new LTR_Token();
+        boost::shared_ptr<LTR_Token> currentLtrTok( new LTR_Token() );
         textRep->addToken(currentLtrTok);
         (*tokenCounter) ++;
         //    LTR_Token* sentenceBegin = currentLtrTok;
@@ -145,7 +145,7 @@ void LTRTextBuilder::addTokensToLTRTextFrom(
             }
             // create a new LTR_Token for a new position
             if (smallestPosDiff > 0) {
-                currentLtrTok = new LTR_Token();
+                currentLtrTok = boost::shared_ptr<LTR_Token>(new LTR_Token());
                 m_currentOffset = token->position() + offset;
                 textRep->addToken(currentLtrTok);
                 (*tokenCounter) ++;
@@ -189,8 +189,8 @@ void LTRTextBuilder::exploreVerticesFrom(
 void LTRTextBuilder::updateLTR_TokenFromVertex(
     const LinguisticGraphVertex& vertex,
     const LinguisticGraph& graph,
-    LTR_Token* tokenRep,
-    uint64_t offset) const 
+    boost::shared_ptr<LTR_Token> tokenRep,
+    uint64_t offset) const
 {
 
   //LDEBUG << "LTRTextBuilder::updateLTR_TokenFromVertex(" << vertex << ")";
@@ -203,7 +203,7 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
       DUMPERLOGINIT;
       LERROR << "Empty MorphoSyntacticData for vertex" << vertex << ", token=" << fullToken->stringForm();
     }
-    
+
     sort(data->begin(),data->end(),ltNormProperty(m_macroAccessor));
 
     StringsPoolIndex norm(0),lastNorm(0);

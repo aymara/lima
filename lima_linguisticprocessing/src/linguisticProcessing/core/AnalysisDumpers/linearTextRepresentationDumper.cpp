@@ -94,40 +94,40 @@ void LinearTextRepresentationDumper::init(
       DUMPERLOGINIT;
       LERROR << "LinearTextRepresentationDumper::init: Missing parameter handler in LinearTextRepresentationDumper configuration";
       throw InvalidConfiguration();
-    }    
+    }
 }
 
 LimaStatusCode LinearTextRepresentationDumper::process(
     AnalysisContent& analysis) const {
 
     DUMPERLOGINIT;
-    // get metadata    
+    // get metadata
     auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
     if (metadata == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no LinguisticMetaData ! abort";
         return MISSING_DATA;
     }
-    // get the analysis graph    
+    // get the analysis graph
     auto anaGraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
     if (anaGraph == 0) {
         LERROR << "LinearTextRepresentationDumper::process: no AnalysisGraph ! abort";
         return MISSING_DATA;
     }
-    // get sentence boundaries    
+    // get sentence boundaries
     auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData("SentenceBoundaries"));
     if (sb == 0) {
       LDEBUG << "LinearTextRepresentationDumper::process: no SentenceBounds available: ignored";
       // sentence bounds ignored: null pointer passed to LTRTextBuilder will be handled there
     }
     // build LTRText
-    LTR_Text textRep;
+    boost::shared_ptr<LTR_Text> textRep( new LTR_Text() );
     LTRTextBuilder builder(m_language, m_stopList);
     builder.buildLTRTextFrom(
         *(anaGraph->getGraph()),
         sb.get(),
         anaGraph->firstVertex(),
         anaGraph->lastVertex(),
-        &textRep,
+        textRep,
         metadata->getStartOffset());
     // write LTR_Text
     LDEBUG << "handler will be: " << m_handler;
@@ -137,14 +137,15 @@ LimaStatusCode LinearTextRepresentationDumper::process(
     if (handler == 0) {
       LERROR << "LinearTextRepresentationDumper::process: handler " << m_handler << " has not been given to the core client";
       return MISSING_DATA;
-    }    
+    }
     handler->startAnalysis();
     HandlerStreamBuf hsb(handler);
     ostream out(&hsb);
-    LDEBUG << textRep;
-    textRep.binaryWriteOn(out);
+    LDEBUG << "LinearTextRepresentationDumper::process result:" << *textRep;
+    textRep->binaryWriteOn(out);
     out.flush();
     handler->endAnalysis();
+    textRep->clear();
     return SUCCESS_ID;
 }
 

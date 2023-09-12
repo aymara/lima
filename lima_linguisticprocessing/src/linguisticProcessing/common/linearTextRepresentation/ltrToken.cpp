@@ -48,12 +48,13 @@ LTR_Token::~LTR_Token() {
 // -----------------------------------------------------------------------------
 
 LTR_Token::LTR_Token(const LTR_Token& tok):
-vector<pair<boost::shared_ptr< BoWToken >, bool> >()
-{
-
+vector<pair<boost::shared_ptr< BoWToken >, bool> >() {
     for (LTR_Token::const_iterator itBow = tok.begin();
          itBow != tok.end(); itBow ++) {
-        this->push_back(make_pair(boost::shared_ptr< BoWToken >(new BoWToken(*(itBow->first))), itBow->second));
+        this->push_back(
+            make_pair( boost::shared_ptr< BoWToken >(new BoWToken(*(itBow->first))),
+                       itBow->second)
+            );
     }
 }
 
@@ -95,7 +96,7 @@ void LTR_Token::binaryReadFrom(std::istream& is) {
 // -- printing
 // -----------------------------------------------------------------------------
 
-std::ostream& operator<<(std::ostream& os, const LTR_Token& tok) 
+std::ostream& operator<<(std::ostream& os, const LTR_Token& tok)
 {
   bool first=true;
   for (const auto& t: tok) {
@@ -106,7 +107,7 @@ std::ostream& operator<<(std::ostream& os, const LTR_Token& tok)
   return os;
 }
 
-QDebug& operator<<(QDebug& os, const LTR_Token& tok) 
+QDebug& operator<<(QDebug& os, const LTR_Token& tok)
 {
   bool first=true;
   for (const auto& t: tok) {

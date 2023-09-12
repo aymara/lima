@@ -5,16 +5,12 @@
 
 /** =======================================================================
     @file       ltrText.cpp
-
     @version    $Id$
     @date       created       jul 6, 2004
     @date       last revised  nov 25, 2010
-
     @author     Olivier Ferret
     @brief      a linear text representation
-
     Copyright (C) 2004-2010 by CEA LIST
-
     ======================================================================= */
 
 #include "ltrText.h"
@@ -34,32 +30,18 @@ namespace BagOfWords {
   * @class  LTR_Text
   */
 
-// -----------------------------------------------------------------------------
-// -- destructor
-// -----------------------------------------------------------------------------
-
-LTR_Text::~LTR_Text() {
-
-    // free tokens
-    for (LTR_Text::const_iterator itTok = this->begin();
-         itTok != this->end(); ++ itTok) {
-        delete *itTok;
-    }
-}
-
 
 // -----------------------------------------------------------------------------
 // -- copying
 // -----------------------------------------------------------------------------
 
 LTR_Text::LTR_Text(const LTR_Text& text):
-std::vector<LTR_Token*>()
+std::vector<boost::shared_ptr<LTR_Token>>()
 {
-
     this->reserve(text.size());
     for (LTR_Text::const_iterator itTok = text.begin();
          itTok != text.end(); ++ itTok) {
-        this->push_back(new LTR_Token(**itTok));
+        this->push_back( *itTok );
     }
     for (SENTENCE_BOUNDS_T::const_iterator itSentBd = text.m_sentenceBounds.begin();
          itSentBd != text.m_sentenceBounds.end(); ++ itSentBd) {
@@ -72,20 +54,27 @@ std::vector<LTR_Token*>()
 // -- adding
 // -----------------------------------------------------------------------------
 
+void LTR_Text::addToken(boost::shared_ptr<LTR_Token>& token) {
+  this->push_back(token);
+}
+
+void LTR_Text::addSentenceBound(const uint64_t& sb) {
+    m_sentenceBounds.push_back(sb);
+}
+
 void LTR_Text::appendLTR_Text(const LTR_Text& ltr) {
 
-    LTR_Text::size_type thiSize = this->size();
+    LTR_Text::size_type origSize = this->size();
     // copy of tokens
-    this->reserve(thiSize + ltr.size());
+    this->reserve(origSize + ltr.size());
     for (LTR_Text::const_iterator itTok = ltr.begin();
          itTok != ltr.end(); ++ itTok) {
-        LTR_Token* tok = new LTR_Token(**itTok);
-        this->push_back(tok);
+        this->push_back( *itTok );
     }
     // add sentence bounds
     for (LTR_Text::SENTS_CONST_ITER_T itSentBd = ltr.beginSentenceBounds();
          itSentBd != ltr.endSentenceBounds(); ++ itSentBd) {
-        m_sentenceBounds.push_back(*itSentBd + thiSize);
+        m_sentenceBounds.push_back(*itSentBd + origSize);
     }
 }
 
@@ -121,7 +110,7 @@ void LTR_Text::binaryWriteOn(std::ostream& os) const {
          itNe != m_namedEntities.end(); itNe ++) {
         itNe->first->write(os);
         writeCodedInt(os, itNe->second);
-    }*/    
+    }*/
 }
 
 void LTR_Text::binaryReadFrom(std::istream& is) {
@@ -132,7 +121,7 @@ void LTR_Text::binaryReadFrom(std::istream& is) {
         uint64_t sentenceBound = readCodedInt(is);
         m_sentenceBounds.push_back(sentenceBound);
         for (; tokenCounter <= sentenceBound; tokenCounter ++) {
-            LTR_Token* tok = new LTR_Token();
+            boost::shared_ptr<LTR_Token> tok( new LTR_Token() );
             tok->binaryReadFrom(is);
             this->push_back(tok);
         }
@@ -145,15 +134,14 @@ void LTR_Text::binaryReadFrom(std::istream& is) {
 // -----------------------------------------------------------------------------
 
 std::ostream& operator<<(std::ostream& os, const LTR_Text& text) {
-  
+
   uint64_t tokenCounter = 1;
   LTR_Text::SENTENCE_BOUNDS_T::const_iterator itSb = text.m_sentenceBounds.begin();
   for (LTR_Text::const_iterator itTok = text.begin();
        itTok != text.end(); itTok ++) {
-    LTR_Token* tok=*itTok;
-    if (tok==nullptr) { os << "NULL" << std::endl; } 
-    else if (tok->size()==0) { os << "EMPTY" << std::endl; }
-    else { os << *tok << std::endl; }
+    if (*itTok==nullptr) { os << "NULL" << std::endl; }
+    else if ((*itTok)->size()==0) { os << "EMPTY" << std::endl; }
+    else { os << **itTok << std::endl; }
 
     if (itSb != text.m_sentenceBounds.end()) {
       if (tokenCounter == *itSb) {
@@ -167,15 +155,15 @@ std::ostream& operator<<(std::ostream& os, const LTR_Text& text) {
 }
 
 QDebug& operator<<(QDebug& os, const LTR_Text& text) {
-  
+
   uint64_t tokenCounter = 1;
   LTR_Text::SENTENCE_BOUNDS_T::const_iterator itSb = text.m_sentenceBounds.begin();
   for (LTR_Text::const_iterator itTok = text.begin();
        itTok != text.end(); itTok ++) {
-    if (*itTok==nullptr) { os << "NULL"; } 
+    if (*itTok==nullptr) { os << "NULL"; }
     else if ((*itTok)->size()==0) { os << "EMPTY"; }
     else { os << **itTok; }
-    
+
     if (itSb != text.m_sentenceBounds.end()) {
       if (tokenCounter == *itSb) {
         os << "==SB==========";
