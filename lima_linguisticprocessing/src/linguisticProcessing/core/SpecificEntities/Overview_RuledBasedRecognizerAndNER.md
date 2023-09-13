@@ -83,7 +83,7 @@ High level execution process
 - Recognizer: apply, call testOnVertex (which try each rule in a set of rule) and get results in RecognizerData
 - Recognizer: testOnVertex, select rules that match trigger with current vertex, call testSetOfRules
 - Recognizer: testSetOfRules, check constraint on trigger, call test of rule, abort test on forbiddenrules (when a precedent rule output a NOT_PERSON for example) if test result is a success, build a recognizerMatch, call Rule::executeActions
-- Rule: test, find best match in right part and left part (froim current vertex, select vertices in graph )
+- Rule: test, find best match in right part and left part (from current vertex, select vertices in graph )
 - Automaton: getBestMatch, getAllMatches, build a stackOfVertex and call testFromState
 - Automaton::testFromState, call RtransitionUnit::checkConstraints,  call RecognizerMatch::addBackVertex
 - TransitionUnit: checkConstraints, call checkConstraint and return false at first failure

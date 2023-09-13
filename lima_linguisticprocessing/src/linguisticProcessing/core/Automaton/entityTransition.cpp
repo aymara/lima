@@ -38,13 +38,13 @@ LimaString EntityTransition::m_entityAnnotation=Common::Misc::utf8stdstring2lima
 /***********************************************************************/
 EntityTransition::EntityTransition():
 TransitionUnit(),
-m_entityType() 
+m_entityType()
 {
 }
 
 EntityTransition::EntityTransition(Common::MediaticData::EntityType type, bool keep):
 TransitionUnit(keep),
-m_entityType(type) 
+m_entityType(type)
 {
 }
 
@@ -91,12 +91,12 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
   if (! matches.empty())
   {
     AnnotationGraphVertex annotVertex = *(matches.begin());
-    if (annotationData->hasAnnotation(annotVertex, m_entityAnnotation)) 
+    if (annotationData->hasAnnotation(annotVertex, m_entityAnnotation))
     {
       const SpecificEntityAnnotation* se =
       annotationData->annotation(annotVertex, m_entityAnnotation).
       pointerValue<SpecificEntityAnnotation>();
-      
+
 #ifdef DEBUG_LP
       AULOGINIT;
       LDEBUG << "EntityTransition: compare entity types " << m_entityType << " and " <<  se->getType();
@@ -107,16 +107,16 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
       }
     }
   }
-  
+
   // special case, if graph is posgraph, check if vertex corresponds to a specific entity found before pos tagging (i.e. in analysis graph)
   if (graph.getGraphId()=="PosGraph") {
-    
+
     std::set< AnnotationGraphVertex > anaVertices = annotationData->matches("PosGraph",v,"AnalysisGraph");
     // note: anaVertices size should be 0 or 1
     for (const auto& anaVertex : anaVertices)  {
-      
+
       std::set< AnnotationGraphVertex > matches = annotationData->matches("AnalysisGraph",anaVertex,"annot");
-    
+
       for (const auto& vx: matches)
       {
         if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
@@ -124,9 +124,11 @@ compare(const LinguisticAnalysisStructure::AnalysisGraph& graph,
           const SpecificEntityAnnotation* se =
           annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
           pointerValue<SpecificEntityAnnotation>();
-          
-          return (m_entityType == se->getType() || 
-          Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType));
+
+          if (m_entityType == se->getType() || Common::MediaticData::MediaticData::single().isEntityAncestor(se->getType(),m_entityType))
+          {
+              return true;
+          }
         }
       }
     }

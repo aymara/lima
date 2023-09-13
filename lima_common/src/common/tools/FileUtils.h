@@ -25,6 +25,8 @@
 #define LIMA_PATH_SEPARATOR ':'
 #endif
 
+#define FILESREPORTLOGINIT LOGINIT("FilesReporting")
+
 namespace Lima {
 namespace Common {
 namespace Misc {
