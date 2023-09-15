@@ -76,6 +76,8 @@ public:
   bool isAncestor(const EntityType& child, const EntityType& parent) const;
   // get highest ancestor in the hierarchy (return child itself if has no parent)
   EntityType getAncestor(const EntityType& child) const;
+  // get first ancestor in the hierarchy (return child itself if has no parent)
+  EntityType getParent(const EntityType& child) const;
   // get the list of nodes under the given ancestor as a map of child-firstParent tuples
   bool getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const;
 

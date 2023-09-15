@@ -9,7 +9,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Tue Jan 18 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "SegmentationData.h"
@@ -282,6 +282,29 @@ void Segment::addSegment(const Segment& s)
   // do not check adjacency, juste update end of segment
   m_end = s.getLastVertex();
   m_length = s.getPosEnd() - m_posBegin;
+}
+
+// debugging utility
+std::ostream& operator<<(std::ostream& os, const Segment& seg)
+{
+  os << "Segment(posBegin="<<seg.m_posBegin
+                <<", length="<<seg.m_length
+                <<", type="<<seg.m_type
+                <<", begin="<<seg.m_begin
+                <<", end="<<seg.m_end
+                <<")";
+  return os;
+}
+
+QDebug& operator<<(QDebug& os, const Segment& seg)
+{
+  os << "Segment(posBegin="<<seg.m_posBegin
+                <<", length="<<seg.m_length
+                <<", type="<<seg.m_type
+                <<", begin="<<seg.m_begin
+                <<", end="<<seg.m_end
+                <<")";
+  return os;
 }
 
 //***********************************************************************

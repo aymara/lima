@@ -123,6 +123,10 @@ public:
 
     //get highest ancestor in the hierarchy
     EntityType getEntityAncestor(const EntityType& child) const;
+
+    //get first ancestor in the hierarchy
+    EntityType getEntityParent(const EntityType& child) const;
+
     // get the list of nodes under the given ancestor as child->firstParent tuples
     bool getEntityChildList(const EntityType& parent,
                             std::map<EntityType,EntityType>& EntityTypeMapping) const;

@@ -1025,6 +1025,12 @@ EntityType MediaticData::getEntityAncestor(const EntityType& child) const
   return m_d->m_entityHierarchy.getAncestor(child);
 }
 
+EntityType MediaticData::getEntityParent(const EntityType& child) const
+{
+  QReadLocker lock(&m_d->m_lock);
+  return m_d->m_entityHierarchy.getParent(child);
+}
+
 bool MediaticData::getEntityChildList(const EntityType& parent,
                         std::map<EntityType,EntityType>& childList) const
 {

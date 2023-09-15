@@ -10,10 +10,10 @@
  * @date       Thu Sep  1 2011
  * copyright   Copyright (C) 2011 by CEA LIST
  * Project     LIMA
- * 
+ *
  * @brief      element of an event template, defined by an entity occurrence
- * 
- * 
+ *
+ *
  ***********************************************************************/
 
 #ifndef EVENTTEMPLATEELEMENT_H
@@ -31,12 +31,12 @@ namespace EventAnalysis {
 class LIMA_EVENTANALISYS_EXPORT EventTemplateElement
 {
  public:
-   EventTemplateElement(); 
-   EventTemplateElement(LinguisticGraphVertex v, 
-                        const LinguisticAnalysisStructure::AnalysisGraph* graph, 
-                        const Common::MediaticData::EntityType& type); 
+   EventTemplateElement();
+   EventTemplateElement(LinguisticGraphVertex v,
+                        const LinguisticAnalysisStructure::AnalysisGraph* graph,
+                        const Common::MediaticData::EntityType& type);
    ~EventTemplateElement();
-   
+
    const Common::MediaticData::EntityType&  getType() const { return m_type; }
    const LinguisticAnalysisStructure::AnalysisGraph* getGraph() const { return m_graph; }
    LinguisticGraphVertex getVertex() const { return m_vertex; }
@@ -49,7 +49,7 @@ class LIMA_EVENTANALISYS_EXPORT EventTemplateElement
 
    LIMA_EVENTANALISYS_EXPORT  friend std::ostream& operator<<(std::ostream& os, const EventTemplateElement& elt);
    LIMA_EVENTANALISYS_EXPORT  friend QDebug& operator<<(QDebug& os, const EventTemplateElement& elt);
-   
+
  private:
   Common::MediaticData::EntityType m_type;
   const LinguisticAnalysisStructure::AnalysisGraph* m_graph;

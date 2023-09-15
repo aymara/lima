@@ -435,23 +435,24 @@ void HyphenWordAlternatives::makeHyphenSplitAlternativeFor(
 
   if (nullptr != sb)
   {
-    for (size_t i = 0; i < sb->m_segments.size(); i++)
+    std::vector<Segment>& segments = sb->getSegments();
+    for (size_t i = 0; i < segments.size(); i++)
     {
-      if (splitted == sb->m_segments[i].getFirstVertex())
+      if (splitted == segments[i].getFirstVertex())
       {
-        sb->m_segments[i].setFirstVertex(firstVertex);
+          segments[i].setFirstVertex(firstVertex);
         if (i > 0)
         {
-          sb->m_segments[i-1].setLastVertex(firstVertex);
+            segments[i-1].setLastVertex(firstVertex);
         }
       }
 
-      if (splitted == sb->m_segments[i].getLastVertex())
+      if (splitted == segments[i].getLastVertex())
       {
-        sb->m_segments[i].setLastVertex(lastVertex);
-        if (i + 1 < sb->m_segments.size())
+          segments[i].setLastVertex(lastVertex);
+        if (i + 1 < segments.size())
         {
-          sb->m_segments[i+1].setFirstVertex(lastVertex);
+            segments[i+1].setFirstVertex(lastVertex);
         }
       }
     }
