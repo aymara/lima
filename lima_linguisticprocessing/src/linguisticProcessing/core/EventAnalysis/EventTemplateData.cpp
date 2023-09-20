@@ -9,7 +9,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Sep  2 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "EventTemplateData.h"
@@ -28,7 +28,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace EventAnalysis {
 
-// create default template data with one empty event template to store 
+// create default template data with one empty event template to store
 EventTemplateData::EventTemplateData():
 AnalysisData(),
 std::vector<EventTemplate>(1,EventTemplate())
@@ -43,7 +43,7 @@ void EventTemplateData::addTemplate()
   push_back(EventTemplate());
 }
 
-void EventTemplateData::addElementInCurrentTemplate(const std::string& role, 
+void EventTemplateData::addElementInCurrentTemplate(const std::string& role,
                                                     const EventTemplateElement& elt,
                                                     unsigned int cardinality)
 {
@@ -57,10 +57,10 @@ void EventTemplateData::clearCurrentTemplate()
 
 void EventTemplateData::setTypeInCurrentTemplate(const std::string& type)
 {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LDEBUG << "set Current Template Type " << type;
     back().setType(type);
-    LDEBUG << "bak.getType " << back().getType(); 
+    LDEBUG << "bak.getType " << back().getType();
 }
 
 //-------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ Events* EventTemplateData::
 convertToEvents(const AnnotationData* annotationData) const
 {
   Events* events=new Events();
-  
+
   int eventNum=1;
   for (std::vector<EventTemplate>::const_iterator it= begin(); it!= end();it++)
   {
@@ -123,7 +123,7 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
 {
   LinguisticAnalysisStructure::Token* token=get(vertex_token, *(graph->getGraph()), v);
   if (token==0) {
-    LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
+    EVENTANALYSISLOGINIT;    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
     return 0;
   }
 
@@ -142,7 +142,7 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
       const SpecificEntityAnnotation* se =
       annotationData->annotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")).
       pointerValue<SpecificEntityAnnotation>();
-      
+
       Automaton::EntityFeatures features=se->getFeatures();
       features.setFeature("role",role);
       features.setFeature("eventId",eid.str());
@@ -151,7 +151,7 @@ createEntity(const LinguisticAnalysisStructure::AnalysisGraph* graph,
       return e;
     }
   }
-  
+
   // otherwise, have to create entity features
   Automaton::EntityFeatures features;
   features.setFeature("value",token->stringForm());

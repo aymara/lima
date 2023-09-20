@@ -9,7 +9,7 @@
  * @author     Romaric Besancon (romaric.besancon@cea.fr)
  * @date       Fri Mar 25 2011
  * copyright   Copyright (C) 2011 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 #include "EventData.h"
@@ -74,7 +74,7 @@ const Entity& EventData::getMainEntity(const MediaticData::EntityType& type) con
 }
 
 EventParagraph* EventData::locate( Event* event, const Entity *entity ) const {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   EventParagraph* result = 0;
   for( std::vector< EventParagraph* >::iterator pars = event->begin() ;
     pars != event->end() ; pars++ ) {
@@ -93,8 +93,8 @@ EventParagraph* EventData::locate( Event* event, const Entity *entity ) const {
 Events* EventData::
 convertToEvents(const SegmentationData* segmData) const
 {
-  LOGINIT("LP::EventAnalysis");
-  
+  EVENTANALYSISLOGINIT;
+
   Events* events=new Events();
   // Only one event = main event is inserted
   // because entities from only main event are managed
@@ -136,7 +136,7 @@ convertToEvents(const SegmentationData* segmData) const
       // int pos = e->getPosition();
       // int length = e->getlength();
       // const Lima::LinguisticProcessing::Automaton::EntityFeatures& features = e->getFeatures();
-      //MediaticData::EntityType entityType = (*it).first; 
+      //MediaticData::EntityType entityType = (*it).first;
       Entity *entity = e->clone();
       EventParagraph* eventPar=locate(event, entity);
       if( eventPar == 0 ) {
@@ -159,7 +159,7 @@ convertToEvents(const SegmentationData* segmData) const
     }
   }
   LDEBUG << "EventData::convertToEvents: end...";
-  
+
   return events;
 }
 

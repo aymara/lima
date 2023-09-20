@@ -62,7 +62,7 @@ void EventTemplateDefinitionResource::init(GroupConfigurationStructure& unitConf
      Manager* manager)
 
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
 
   m_language=manager->getInitializationParameters().language;
   LDEBUG << "EventTemplateDefinitionResource::init() for language " << (int)m_language;
@@ -170,7 +170,7 @@ existsMapping(const std::string& eltName1, const std::string& eltName2) const
       }
     }
   }
-  //LOGINIT("LP::EventAnalysis");
+  //EVENTANALYSISLOGINIT;
   //LDEBUG << "EventTemplateDefinitionResource::existsMapping : compare " << eltName1 << " and " << eltName2 << "->" << res;
   return res;
 }

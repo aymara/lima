@@ -9,7 +9,7 @@
  * @date     April 2008
  * @version   $Id:
  * copyright Copyright (C) 2008 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 
@@ -32,14 +32,14 @@ namespace LinguisticProcessing
 {
 
 namespace EventAnalysis
-{ 
+{
 
 //**********************************************************************
 // constructors,destructor,copy assignment
 //**********************************************************************
 EventParagraph::EventParagraph() : m_splitted(false), m_otherentities(), m_evententities(), m_length(0), m_position(0), m_id(0)
 {
-  
+
 }
 
 EventParagraph::EventParagraph(Paragraph *p,Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId,LinguisticGraph* graph)
@@ -65,25 +65,25 @@ EventParagraph::EventParagraph(Paragraph *p, bool splitted,Common::AnnotationGra
 Lima::LinguisticProcessing::Automaton::EntityFeatures EventParagraph::getEntityFeatures(LinguisticGraphVertex v, Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId)
 {
   EntityFeatures  features;
-  
+
   std::set< AnnotationGraphVertex > matches = annotationData->matches(graphId,v,"annot");
   for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
 
-    
+
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
-      
-      
+
+
       EntityType  e;
       e=annotationData->annotation(vx,Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue< SpecificEntityAnnotation>()->getType();
-      
-        
+
+
       features=annotationData->annotation(vx,Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue< SpecificEntityAnnotation>()->getFeatures();
       return features;
-      
+
     }
   }
   return features;
@@ -92,14 +92,14 @@ Lima::LinguisticProcessing::Automaton::EntityFeatures EventParagraph::getEntityF
 bool EventParagraph::has_entity(Common::MediaticData::EntityType t) const
 {
   bool res=false;
-  
+
   if (m_otherentities.find(t)!=m_otherentities.end())
   {
     return true;
   }
-  
+
   if (m_evententities.first==t && m_evententities.second.size()> 0) return true;
-  
+
   return res;
 }
 
@@ -107,13 +107,13 @@ void EventParagraph::addEventEntities(Paragraph *p,Common::AnnotationGraphs::Ann
 {
   std::pair<Common::MediaticData::EntityType,std::deque<LinguisticGraphVertex> > event_pair= p->getEventEntities();
   EVENTANALYZERLOGINIT;
-  
+
   LDEBUG << "EventParagraph::addEventEntities EventEntitie type " << event_pair.first;
   std::vector<Entity *> v_entity;
   for(std::deque<LinguisticGraphVertex>::const_iterator iT= event_pair.second.begin(); iT != event_pair.second.end();iT++)
   {
     Entity *e = new Entity();
-    Token* token = get(vertex_token, *graph, *iT);  
+    Token* token = get(vertex_token, *graph, *iT);
     e->setLength(token->length());
     e->setPosition(token->position());
     e->setMain(false);
@@ -123,7 +123,7 @@ void EventParagraph::addEventEntities(Paragraph *p,Common::AnnotationGraphs::Ann
   }
   m_evententities=make_pair(event_pair.first,v_entity);
 }
-    
+
 void EventParagraph::addEntities(Paragraph *p,Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId,LinguisticGraph* graph)
 {
   std::map<Common::MediaticData::EntityType,std::deque<LinguisticGraphVertex> > map_entities= p->getOtherEntities();
@@ -133,7 +133,7 @@ void EventParagraph::addEntities(Paragraph *p,Common::AnnotationGraphs::Annotati
     for(std::deque<LinguisticGraphVertex>::const_iterator iT= iT1->second.begin(); iT != iT1->second.end();iT++)
     {
       Entity *e = new Entity();
-      Token* token = get(vertex_token, *graph, *iT);  
+      Token* token = get(vertex_token, *graph, *iT);
       e->setLength(token->length());
       e->setPosition(token->position());
       e->setMain(false);
@@ -192,28 +192,28 @@ void EventParagraph::read(std::istream& file)
 
 void EventParagraph::write(std::ostream& file) const
 {
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "EventParagraph::write().."; 
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "EventParagraph::write()..";
   Common::Misc::writeCodedInt(file,m_position);
   Common::Misc::writeCodedInt(file,m_length);
   LDEBUG << "EventParagraph::write: write typeId of m_evententities..."
-      << m_evententities.first.getTypeId(); 
+      << m_evententities.first.getTypeId();
   Common::Misc::writeCodedInt(file,m_evententities.first.getTypeId());
   LDEBUG << "EventParagraph::write: write groupId of m_evententities..."
-      << m_evententities.first.getGroupId(); 
+      << m_evententities.first.getGroupId();
   Common::Misc::writeCodedInt(file,m_evententities.first.getGroupId());
   Common::Misc::writeCodedInt(file,m_evententities.second.size());
   for(std::vector<Entity*>::const_iterator iT=m_evententities.second.begin();iT!=m_evententities.second.end();iT++)
   {
-    LDEBUG << "EventParagraph::write m_evententities"; 
+    LDEBUG << "EventParagraph::write m_evententities";
     (*iT)->write(file);
   }
-  LDEBUG << "EventParagraph::write size of m_otherentities (" << m_otherentities.size() << ")...."; 
+  LDEBUG << "EventParagraph::write size of m_otherentities (" << m_otherentities.size() << ")....";
   Common::Misc::writeCodedInt(file,m_otherentities.size());
   for(std::map<EntityType,std::vector<Entity *> >::const_iterator iT=m_otherentities.begin();
       iT!=m_otherentities.end();iT++)
   {
-  LDEBUG << "EventParagraph::write m_otherentity...."; 
+  LDEBUG << "EventParagraph::write m_otherentity....";
     Common::Misc::writeCodedInt(file,(*iT).first.getTypeId());
     Common::Misc::writeCodedInt(file,(*iT).first.getGroupId());
     Common::Misc::writeCodedInt(file,(*iT).second.size());
@@ -238,7 +238,7 @@ void EventParagraph::clear()
   m_evententities.second.clear();
   for(std::map<Common::MediaticData::EntityType,std::vector<Entity *> >::const_iterator iTm=m_otherentities.begin();iTm!=m_otherentities.end();iTm++)
   {
-    
+
     for(std::vector<Entity *>::const_iterator iT=(*iTm).second.begin();iT!=(*iTm).second.end();iT++)
     {
       if ((*iT)!=0) delete (*iT);
@@ -258,25 +258,25 @@ std::string EventParagraph::toString(std::string parentURI, uint64_t index, bool
   oss << "<dc:creator>CEA LIST Specific entities extraction service</dc:creator>";
   oss << "</rdf:rdf>";
 //   return oss.str();
-  
+
   std::string out;
   for(std::vector<Entity *>::const_iterator iT=m_evententities.second.begin();iT!=m_evententities.second.end();iT++)
   {
-    
+
   }
-  
+
   for(std::map<Common::MediaticData::EntityType,std::vector<Entity *> >::const_iterator iTm=m_otherentities.begin();iTm!=m_otherentities.end();iTm++)
   {
-    
+
     for(std::vector<Entity *>::const_iterator iT=(*iTm).second.begin();iT!=(*iTm).second.end();iT++)
     {
-      
+
     }
   }
   return out;
 }
 
 
-} // namespace 
+} // namespace
 } // namespace
 } // namespace Lima

@@ -38,7 +38,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
 
 LimaStatusCode MetaDataDumper::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "MetaDataDumper::process";
   TimeUtils::updateCurrentTime();
 

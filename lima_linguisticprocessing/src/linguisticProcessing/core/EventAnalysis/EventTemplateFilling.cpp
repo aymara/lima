@@ -64,12 +64,12 @@ void EventTemplateFilling::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "EventTemplateFilling: Missing 'eventTemplate' parameter in EventTemplateFilling definition";
     //throw InvalidConfiguration;
   }
   catch (std::exception& e) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "EventTemplateFilling: Missing resource for 'eventTemplate' parameter for language" << language << ":" << e.what();
     //throw InvalidConfiguration;
   }
@@ -77,7 +77,7 @@ void EventTemplateFilling::init(
 
 LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateFilling process";
   TimeUtils::updateCurrentTime();
 

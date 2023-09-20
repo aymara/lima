@@ -9,7 +9,7 @@
  * @date     October 2008
  * @version   $Id:
  * copyright Copyright (C) 2008 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 
@@ -19,6 +19,8 @@
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
+
 
 
 using namespace std;
@@ -29,7 +31,7 @@ namespace LinguisticProcessing
 {
 
 namespace EventAnalysis
-{ 
+{
 
 //**********************************************************************
 // constructors,destructor,copy assignment
@@ -50,7 +52,7 @@ Event::~Event()
     }
   }
   clear();
-  
+
 }
 
 void Event::compute_main_entities()
@@ -83,30 +85,30 @@ void Event::compute_entities_weight(std::map<Common::MediaticData::EntityType,un
   LIMA_UNUSED(annotation);
   LIMA_UNUSED(graphId);
   EVENTANALYZERLOGINIT;
-  
-  
+
+
 //   unsigned short number_computed_entities=0;
   for(std::map<Common::MediaticData::EntityType,unsigned short>::iterator iT=map_weights.begin();iT!=map_weights.end();iT++)
   {
     if (has_entity((*iT).first)) m_entities_weight=m_entities_weight+(*iT).second;
   }
-  
+
   LDEBUG << "computed entities_weight of event = " << m_entities_weight;
 }
 
 bool Event::has_entity(Common::MediaticData::EntityType t) const
 {
   bool res=false;
-  
+
   if (t==m_date.first) return true;
-  
+
   for(std::vector<EventParagraph*>::const_iterator iT=begin();iT!=end() && !res;iT++)
   {
     res=(*iT)->has_entity(t);
   }
   return res;
 }
-    
+
 Common::MediaticData::EntityType Event::getEntityType(LinguisticGraphVertex v, Common::AnnotationGraphs::AnnotationData* annotationData,std::string graphId) const
 {
   Common::MediaticData::EntityType e;
@@ -115,21 +117,21 @@ Common::MediaticData::EntityType Event::getEntityType(LinguisticGraphVertex v, C
        it != matches.end(); it++)
   {
     AnnotationGraphVertex vx=*it;
-    
+
     if (annotationData->hasAnnotation(vx, Common::Misc::utf8stdstring2limastring("SpecificEntity")))
     {
-      
+
       e=annotationData->annotation(vx,Common::Misc::utf8stdstring2limastring("SpecificEntity")).pointerValue< SpecificEntityAnnotation>()->getType();
       return e;
     }
   }
-  return e;  
+  return e;
 }
 void Event::addParagraph(Paragraph *p,bool firstpos,bool split,Common::AnnotationGraphs::AnnotationData* annotationData, std::string graphId,LinguisticGraph* graph)
 {
   EVENTANALYZERLOGINIT;
   LDEBUG << "Ajout de Paragraph";
-  
+
   EventParagraph *ep =new EventParagraph(p,split,annotationData,graphId,graph);
   if (this->size()==0) push_back(ep);
   else
@@ -157,7 +159,7 @@ void Event::addParagraph(Paragraph *p,bool firstpos,bool split,Common::Annotatio
     }
     delete(p);
   }
-    
+
 }
 
 
@@ -185,27 +187,27 @@ void Event::read(std::istream& file) {
 }
 
 void Event::write(std::ostream& file) const {
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Event::write().."; 
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "Event::write()..";
   //EVENTANALYZERLOGINIT;
   Common::Misc::writeCodedInt(file,m_main);
   Common::Misc::writeCodedInt(file,size());
-  LDEBUG << " Write size of fragments " << size(); 
+  LDEBUG << " Write size of fragments " << size();
   for (std::vector< EventParagraph* >::const_iterator iT=begin(); iT!=end(); iT++) {
      (*iT)->write(file);
    }
 }
 
-std::string  Event::toString(std::string parentURI, uint64_t index) const 
+std::string  Event::toString(std::string parentURI, uint64_t index) const
 {
   std::string out;
-  
+
   for (std::vector< EventParagraph* >::const_iterator iT=begin(); iT!=end(); iT++) {
     out.append((*iT)->toString(parentURI, index, m_main));
   }
-  
+
   return out;
-} 
+}
 
 std::ostream& operator << (std::ostream& os, const Event& text) {
   for (Event::const_iterator i(text.begin());
@@ -217,6 +219,6 @@ std::ostream& operator << (std::ostream& os, const Event& text) {
 
 
 
-} // namespace 
+} // namespace
 } // namespace
 } // namespace Lima

@@ -6,6 +6,7 @@
 #include "EventTemplateStructure.h"
 #include "common/MediaticData/mediaticData.h"
 #include <common/Data/strwstrtools.h>
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 
 namespace Lima {
   using namespace Common;
@@ -21,12 +22,12 @@ m_structure()
 EventTemplateStructure::~EventTemplateStructure() {
 }
 
-void EventTemplateStructure::addTemplateElement(const std::string& role, 
+void EventTemplateStructure::addTemplateElement(const std::string& role,
                                                 const std::string entityType)
 {
   if (m_structure.find(role)!=m_structure.end()) {
-    LOGINIT("LP::EventAnalysis");
-    LERROR << "In event " << m_name << ", element '"<< role 
+    EVENTANALYSISLOGINIT;
+    LERROR << "In event " << m_name << ", element '"<< role
             <<"' is defined twice";
   }
   else {
@@ -36,8 +37,8 @@ void EventTemplateStructure::addTemplateElement(const std::string& role,
       m_structure[role]=type;
     }
     catch (LimaException& e) {
-      LOGINIT("LP::EventAnalysis");
-      LERROR << "EventTemplateStructure: failed to resolve entity type" << entityType << ": ignore role" << role;    
+      EVENTANALYSISLOGINIT;
+      LERROR << "EventTemplateStructure: failed to resolve entity type" << entityType << ": ignore role" << role;
     }
   }
 }

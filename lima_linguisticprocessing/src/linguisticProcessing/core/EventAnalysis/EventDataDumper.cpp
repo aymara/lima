@@ -53,7 +53,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
      Manager* manager)
 
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventDataDumper::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
@@ -76,7 +76,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
 
 LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventDataDumper::process";
   TimeUtils::updateCurrentTime();
 
@@ -91,7 +91,7 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
       auto eventData = std::dynamic_pointer_cast<const EventData>(data);
 
       if (eventData!=0) {
-        LOGINIT("LP::EventAnalysis");
+        EVENTANALYSISLOGINIT;
         LDEBUG << "EventDataDumper::process: data '" << m_eventData << "' is of type EventData";
         // get segmentation
         auto data2 = analysis.getData(m_segmentationData);
@@ -123,13 +123,13 @@ LimaStatusCode EventDataDumper::process(AnalysisContent& analysis) const
       }
     }
     else {
-      LOGINIT("LP::EventAnalysis");
+      EVENTANALYSISLOGINIT;
       LERROR << "no data of name " << m_eventData;
       return MISSING_DATA;
     }
   }
   else {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "no key to access eventData or segmentationData! ";
     return MISSING_DATA;
   }

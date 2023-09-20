@@ -19,6 +19,7 @@
 #include "linguisticProcessing/common/annotationGraph/AnnotationData.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 #include "EventTemplateDataXmlLogger.h"
 
 #include <boost/algorithm/string.hpp>
@@ -53,7 +54,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
                           Manager* manager)
 
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateDataXmlLogger::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
@@ -69,7 +70,7 @@ void EventTemplateDataXmlLogger::init(Common::XMLConfigurationFiles::GroupConfig
 
 LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateDataXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
@@ -90,7 +91,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
       // see if the data is of type Events
       auto eventData = std::dynamic_pointer_cast<const EventTemplateData>(data);
       if (eventData==0) {
-        LOGINIT("LP::EventAnalysis");
+        EVENTANALYSISLOGINIT;
         LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
@@ -99,7 +100,7 @@ LimaStatusCode EventTemplateDataXmlLogger::process(AnalysisContent& analysis) co
       }
     }
     else {
-      LOGINIT("LP::EventAnalysis");
+      EVENTANALYSISLOGINIT;
       LERROR << "no data of name " << m_eventData;
     }
   }
@@ -152,7 +153,7 @@ void EventTemplateDataXmlLogger::outputEntity(std::ostream& out,
 {
   LinguisticAnalysisStructure::Token* token=get(vertex_token, *(graph->getGraph()), v);
   if (token==0) {
-        LOGINIT("LP::EventAnalysis");    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
+        EVENTANALYSISLOGINIT;    LWARN << "EventTemplateDataXmlLogger: no token for vertex " << v;
     return;
   }
   out << "        <entityOccurrence"

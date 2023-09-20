@@ -98,6 +98,7 @@
 #define TOKENIZERLOADERLOGINIT LOGINIT("LP::Tokenizer::Loader")
 #define COREFSOLVERLOGINIT LOGINIT("LP::CorefSolver")
 #define EVENTANALYZERLOGINIT LOGINIT("LP::EventAnalyzer")
+#define EVENTANALYSISLOGINIT LOGINIT("LP::EventAnalysis")
 #define COMPACTDICTLOGINIT  LOGINIT("LP::CompactDict")
 #define MORPHOLOGINIT  LOGINIT("LP::MorphologicAnalysis")
 #define TFSELOGINIT  LOGINIT("LP::TensorflowSpecificEntities")
