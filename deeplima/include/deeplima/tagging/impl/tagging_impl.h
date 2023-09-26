@@ -121,7 +121,12 @@ public:
       auto p = std::make_shared<EmbdStrFloat>(z);
     }
 
-    m_fastText->load(path_resolver.resolve("embd", Classifier::get_embd_fn(0), {"bin", "ftz"}));
+    auto fastText_fn = path_resolver.resolve("embd", Classifier::get_embd_fn(0), {"bin", "ftz"});
+    if (fastText_fn.empty())
+    {
+      throw std::runtime_error(std::string("Failed to resolve embedding file name with embd and ")+Classifier::get_embd_fn(0));
+    }
+    m_fastText->load(fastText_fn);
   }
 
   void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
