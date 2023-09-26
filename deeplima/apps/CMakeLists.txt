@@ -123,8 +123,6 @@ target_compile_definitions(deeplima-eigen
 
 target_link_libraries(deeplima-eigen
   PRIVATE
-  Boost::program_options
-  ICU::uc
   Eigen3::Eigen
   convert_from_torch
   ${TORCH_LIBRARIES}
@@ -133,6 +131,8 @@ target_link_libraries(deeplima-eigen
   utils
   segmentation_inference
   lemmatization_inference
+  ${Boost_LIBRARIES}
+  ${ICU_LIBRARIES}
 )
 
 install(TARGETS deeplima-eigen

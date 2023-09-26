@@ -316,6 +316,7 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
         m_tokensAnalyzer = std::make_shared< TokenSequenceAnalyzer<> >(tagger_model_file_name.toStdString(),
                                                                        lemmatizer_model_file_name.toStdString(),
                                                                        lemmatizer_dictionary_file_name.toStdString(),
+                                                                       "", "",
                                                                        m_pResolver, 1024, 8);
         m_loaded = true;
     };

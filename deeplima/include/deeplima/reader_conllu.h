@@ -47,7 +47,7 @@ public:
     char buff[buffer_size];
     char* end = buff + buffer_size;
     bool continue_reading = true;
-    uint32_t start_writting = 0;
+    int32_t start_writting = 0;
     uint32_t reserved_for_lookahead = 1024*2;
     // longest last token line in UD 2.8 collection.
 

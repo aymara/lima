@@ -39,7 +39,7 @@ void LemmatizationImpl::load(const std::string& fn, const PathResolver& /*path_r
 void LemmatizationImpl::init(size_t max_input_word_len,
           const std::vector<std::string>& class_names,
           const std::vector<std::vector<std::string>>& class_values)
-{
+ {
   m_upos_idx = std::numeric_limits<size_t>::max();
   auto uint_dicts = RnnSeq2Seq::get_input_uint_dicts();
   decltype(uint_dicts) enc_uint_dict;

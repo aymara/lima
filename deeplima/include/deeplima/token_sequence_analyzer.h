@@ -6,8 +6,16 @@
 #ifndef DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
+#include <iostream>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <unordered_set>
+
+#include <unicode/unistr.h>
+#include <unicode/ustream.h>
+#include "unicode/utypes.h"
+#include <iostream>
 
 // #include "segmentation.h"
 #include "helpers/path_resolver.h"
@@ -19,6 +27,13 @@
 #include "deeplima/lemmatization/impl/lemmatization_impl.h"
 #include "deeplima/segmentation/impl/segmentation_decoder.h"
 #include "deeplima/tagging/impl/tagging_impl.h"
+
+
+template<> struct std::hash<deeplima::morph_model::morph_feats_t> {
+    std::size_t operator()(deeplima::morph_model::morph_feats_t const& s) const noexcept {
+        return s.hash();
+    }
+};
 
 namespace deeplima
 {
@@ -247,6 +262,8 @@ public:
   TokenSequenceAnalyzer(const std::string& model_fn,
                         const std::string& lemm_model_fn,
                         const std::string& lemm_dict_fn,
+                        const std::string& fixed_lemm_fn,
+                        const std::string& lowercase_lemm_fn,
                         const PathResolver& path_resolver,
                         size_t buffer_size,
                         size_t num_buffers)
@@ -257,8 +274,9 @@ public:
       m_stridx(*m_stridx_ptr),
       m_classes(std::make_shared<StdMatrix<uint8_t>>())
   {
-    // std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", " << lemm_model_fn << ", "
-    //           << lemm_dict_fn << std::endl;
+    std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", "
+              << lemm_model_fn << ", " << lemm_dict_fn << ", "
+              << fixed_lemm_fn << ", " << lowercase_lemm_fn << std::endl;
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
@@ -294,6 +312,7 @@ public:
         std::cerr << "TokenSequenceAnalyzer failed to load lemmatization model " << lemm_model_fn << std::endl;
         throw;
       }
+      // TODO replace value 128 below (max_input_word_len) by an optimizable parameter
       m_lemm.init(128, m_cls.get_output_str_dicts_names(), m_cls.get_output_str_dicts());
 
       m_cls.register_handler([this](
@@ -335,6 +354,14 @@ public:
     if (lemm_dict_fn.size() > 0)
     {
       load_lemm_cache(lemm_dict_fn);
+    }
+    if (fixed_lemm_fn.size() > 0)
+    {
+      load_fixed_lemm(fixed_lemm_fn);
+    }
+    if (lowercase_lemm_fn.size() > 0)
+    {
+      load_lowercase_lemm(lowercase_lemm_fn);
     }
   }
 
@@ -510,34 +537,150 @@ protected:
 
   }
 
+  // struct fixed_lemm_cache_key_hash
+  // {
+  //   std::size_t operator() (const morph_model::morph_feats_t &arg) const {
+  //       return arg.hash();
+  //   }
+  // };
+
+  void load_fixed_lemm(const std::string& fn)
+  {
+    const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
+    std::ifstream f(fn, std::ios::in);
+    if (!f) {
+        std::cerr << "load_fixed_lemm failed to open file " << fn << ".\n";
+        throw std::runtime_error(std::string("load_fixed_lemm failed to open file ") + fn);
+    }
+    std::string line;
+    while (std::getline(f, line))
+    {
+      if (line.size() == 0 || line[0] == '#')
+      {
+        continue;
+      }
+
+      std::map<std::string, std::set<std::string>> feats;
+      morph_model::morph_feats_t encoded_feats = mm.convert(line, feats);
+      std::cerr << "load_fixed_lemm add " << line << " " << encoded_feats.toBaseType() << std::endl;
+      m_fixed_lemm_cache.insert(encoded_feats);
+    }
+
+  }
+
+  void load_lowercase_lemm(const std::string& fn)
+  {
+    const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
+    std::ifstream f(fn, std::ios::in);
+    if (!f) {
+        std::cerr << "load_lowercase_lemm failed to open file " << fn << ".\n";
+        throw std::runtime_error(std::string("load_lowercase_lemm failed to open file ") + fn);
+    }
+    std::string line;
+    while (std::getline(f, line))
+    {
+      if (line.size() == 0 || line[0] == '#')
+      {
+        continue;
+      }
+
+      std::map<std::string, std::set<std::string>> feats;
+      morph_model::morph_feats_t encoded_feats = mm.convert(line, feats);
+
+      std::cerr << "load_lowercase_lemm add " << line << " " << encoded_feats.toBaseType() << std::endl;
+      m_lowercase_lemm_cache.insert(encoded_feats);
+    }
+
+  }
+
+  /**
+   * This well lower onlu Latin1 characters
+   */
+  inline static std::u32string to_lower(const std::u32string& src)
+  {
+    std::u32string copy = src;
+    std::transform(copy.begin(), copy.end(), copy.begin(),
+      [](unsigned char c){ return std::tolower(c); });
+    return copy;
+  }
+
+  /**
+   * TODO correct this function. It currently returns only empty strings
+   * TODO use this function instead of the one above as soon as it is corrected
+   */
+  // inline std::u32string to_lower(const std::u32string& utf32String)
+  // {
+  //   // Convert the UTF-32 string to a UnicodeString
+  //   icu::UnicodeString unicodeString = icu::UnicodeString::fromUTF32(
+  //     (const UChar32*)(utf32String.c_str()), utf32String.size());
+  //
+  //   // Convert to lowercase
+  //   unicodeString.toLower();
+  //   std::cerr << unicodeString.toUTF8() << std::endl;
+  //   // Convert back to UTF-32 string
+  //   std::u32string lowercaseString;
+  //   lowercaseString.resize(unicodeString.length());
+  //   UErrorCode 	errorCode ;
+  //   unicodeString.toUTF32((UChar32*)(lowercaseString.c_str()),
+  //                         unicodeString.length(), errorCode);
+  //   return lowercaseString;
+  //
+  // }
+
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
-                 std::shared_ptr< StdMatrix<uint8_t> > classes, size_t offset, size_t end)
+                 std::shared_ptr< StdMatrix<uint8_t> > classes,
+                 size_t offset, size_t end)
   {
     std::u32string target;
+    const auto& lang_morph_model = m_lemm.get_morph_model();
     for (size_t i = 0; i < end - offset; ++i)
     {
       if (m_lemm.is_fixed(classes, i + offset))
       {
+        // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+        //           << ": use buffer" << std::endl;
         lemm_buffer[i] = buffer[i].m_form_idx;
       }
       else
       {
-        const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset) );
-        const auto it = m_lemm_cache.find(form_key);
-        if (m_lemm_cache.end() == it)
+        const auto& morph_feats_i = m_lemm.get_morph_feats(classes, i + offset);
+
+        auto upos = morph_model::morph_feats_t(lang_morph_model.decode_upos(morph_feats_i));
+
+        if (m_fixed_lemm_cache.end() != m_fixed_lemm_cache.find(upos))
         {
-          const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
-          m_lemm.predict(f, classes, i + offset, target);
-
+          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+          //           << ": fixed POS" << std::endl;
+          lemm_buffer[i] = buffer[i].m_form_idx;
+        }
+        else if (m_lowercase_lemm_cache.end() != m_lowercase_lemm_cache.find(upos))
+        {
+          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+          //           << ": lowercase POS" << std::endl;
+          target = to_lower(m_stridx.get_ustr(buffer[i].m_form_idx));
           lemm_buffer[i] = m_stridx.get_idx(target);
-
-          // add form to cache
-          m_lemm_cache[form_key] = lemm_buffer[i];
         }
         else
         {
-          lemm_buffer[i] = it->second;
+          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+          //           << ": use model" << std::endl;
+          const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset) );
+          const auto it = m_lemm_cache.find(form_key);
+          if (m_lemm_cache.end() == it)
+          {
+            const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
+            m_lemm.predict(f, classes, i + offset, target);
+
+            lemm_buffer[i] = m_stridx.get_idx(target);
+
+            // add form to cache
+            m_lemm_cache[form_key] = lemm_buffer[i];
+          }
+          else
+          {
+            lemm_buffer[i] = it->second;
+          }
         }
       }
     }
@@ -558,6 +701,12 @@ protected:
   std::shared_ptr< StdMatrix<uint8_t> > m_classes;
 
   std::unordered_map<lemm_cache_key_t, StringIndex::idx_t, lemm_cache_key_hash> m_lemm_cache;
+
+  // The two caches below has been added to allow to force copying the
+  // (possibly lowercased) token as lemma, for a fixed list of pos tags for a given language
+  // TODO implement this process
+  std::unordered_set<morph_model::morph_feats_t> m_fixed_lemm_cache;
+  std::unordered_set<morph_model::morph_feats_t> m_lowercase_lemm_cache;
 
   output_callback_t m_output_callback;
 };

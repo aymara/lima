@@ -25,6 +25,7 @@ namespace eigen_impl
 
 void BiRnnSeq2SeqEigenInferenceForLemmatization::convert_from_torch(const std::string& fn)
 {
+  // std::cerr << "BiRnnSeq2SeqEigenInferenceForLemmatization::convert_from_torch " << fn << std::endl;
   train::Seq2SeqLemmatizerImpl src;
   try
   {
@@ -41,8 +42,10 @@ void BiRnnSeq2SeqEigenInferenceForLemmatization::convert_from_torch(const std::s
   Parent::convert_dicts_and_embeddings(src);
 
   m_morph_model = src.get_morph_model();
+  // upos found as fixed during training are retrieved here as string
   vector<string> fixed_upos = utils::split(src.get_fixed_upos(), ' ');
   m_fixed_upos.reserve(fixed_upos.size());
+  // store int representation of fixed upos
   for (const string& s : fixed_upos)
   {
     m_fixed_upos.push_back(m_morph_model.get_upos_id(s));
