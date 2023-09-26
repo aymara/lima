@@ -26,6 +26,11 @@ namespace morph_model
 
 typedef uint64_t feat_base_t;
 
+/**
+ * Encoding on one 64 bits integer of the set of morphological features for one
+ * token. It provides several methods to add features, compare with other
+ * morphological features and to extract values of individual features.
+ */
 class morph_feats_t
 {
   feat_base_t m_value;
