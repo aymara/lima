@@ -44,7 +44,10 @@ else ()
       ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
       ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
       ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
+
   )
+      # ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG
+      # ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
   add_custom_command(
       OUTPUT lima.A0.UNK
       COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../../corpus_eng_merge.txt > corpus_eng.txt

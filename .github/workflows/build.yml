@@ -24,7 +24,7 @@ env:
 
 jobs:
 
-  debian11:
+  debian12:
     name: "Build on Debian 12 with TensorFlow support"
     runs-on: ubuntu-latest
 #    container: docker:20.10.13-dind
@@ -132,7 +132,7 @@ jobs:
           swap-storage: true
 
       - name: "Build image"
-        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04:latest .
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" --build-arg GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" -t aymara/lima-ubuntu22.04:latest .
 
       - name: "Push image"
         run: docker push aymara/lima-ubuntu22.04:latest
@@ -171,7 +171,7 @@ jobs:
           swap-storage: true
 
       - name: "Build image"
-        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04-fia:latest .
+        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" --build-arg GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" -t aymara/lima-ubuntu22.04-fia:latest .
 
       - name: "Push docker image"
         run: docker push aymara/lima-ubuntu22.04-fia:latest
