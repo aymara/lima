@@ -26,9 +26,9 @@ jobs:
     build-VS-2019:
         runs-on: windows-2019
         strategy:
-        matrix:
-            configuration: [Release]
-            platform: [x64]
+            matrix:
+                configuration: [Release]
+                platform: [x64]
         steps:
             - name: "Checkout code"
               uses: actions/checkout@v3
