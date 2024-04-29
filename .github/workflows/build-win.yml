@@ -22,16 +22,13 @@ env:
   LLVM_VERSION: "14.0.6"
   GCC_VERSION: "10.1.0"
 
-
-strategy:
-  matrix:
-    configuration: [Release]
-    platform: [x64]
-
 jobs:
   samples-build-VS-2019:
     runs-on: windows-2019
-
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64]
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v3
