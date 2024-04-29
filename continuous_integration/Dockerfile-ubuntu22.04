@@ -95,6 +95,6 @@ RUN /bin/bash -c 'if [[ "$USE_TENSORFLOW" == true ]] ; then pip3 install arpy re
 
 # Stop dowloading lima models as appveyor build timeouts
 # # install English and French UD models
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
 
