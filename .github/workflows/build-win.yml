@@ -1,63 +1,60 @@
 on:
-  push:
-    branches:
-    - master
+    push:
+        branches:
+            - master
 
 env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
-  MANYLINUX_TAG: "2022-10-25-fbea779"
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-  PYTHON_VERSION: "3.7"
-  PYTHON_SHORT_VERSION: "cp37-cp37m"
-  PYTHON_WHEEL_VERSION: "cp37-abi3"
-  PYTHON_FULL_VERSION: "3.7.13"
-  QT_VERSION_MAJOR: "5"
-  QT_VERSION_MINOR: "15"
-  QT_VERSION_PATCH: "2"
-  QT_VERSION: "5.15"
-  QT_FULL_VERSION: "5.15.2"
-  PYSIDE_VERSION: "2"
-  LLVM_VERSION: "14.0.6"
-  GCC_VERSION: "10.1.0"
+    # Use docker.io for Docker Hub if empty
+    REGISTRY: ghcr.io
+    MANYLINUX_TAG: "2022-10-25-fbea779"
+    # github.repository as <account>/<repo>
+    IMAGE_NAME: ${{ github.repository }}
+    PYTHON_VERSION: "3.7"
+    PYTHON_SHORT_VERSION: "cp37-cp37m"
+    PYTHON_WHEEL_VERSION: "cp37-abi3"
+    PYTHON_FULL_VERSION: "3.7.13"
+    QT_VERSION_MAJOR: "5"
+    QT_VERSION_MINOR: "15"
+    QT_VERSION_PATCH: "2"
+    QT_VERSION: "5.15"
+    QT_FULL_VERSION: "5.15.2"
+    PYSIDE_VERSION: "2"
+    LLVM_VERSION: "14.0.6"
+    GCC_VERSION: "10.1.0"
 
 jobs:
-  samples-build-VS-2019:
-    runs-on: windows-2019
-    strategy:
-      matrix:
-        configuration: [Release]
-        platform: [x64]
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v3
-        with:
-            submodules: recursive
-    
-      - name: Installing vcpkg (windows)
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          git checkout --force 2020.01
-          .\bootstrap-vcpkg.bat
-          .\vcpkg.exe install cppzmq:x64-windows
-    
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: '6.5.2'
-    - name: Running cmake (windows)
-        run: |
-          cd ${{ github.workspace }}
-          ls
-          mkdir build
-          cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake
-    
-      - name: Build Solution (windows)
-        run: |
-          cd build
-          MSBuild.exe CMakeHelloWorld.sln
-    
+    build-VS-2019:
+        runs-on: windows-2019
+        strategy:
+        matrix:
+            configuration: [Release]
+            platform: [x64]
+        steps:
+            - name: "Checkout code"
+              uses: actions/checkout@v3
+              with:
+                  submodules: recursive
+            - name: "Installing vcpkg (windows)"
+              run: |
+                     cd ..
+                     git clone https://github.com/Microsoft/vcpkg.git
+                     cd vcpkg
+                     git checkout --force 2020.01
+                     .\bootstrap-vcpkg.bat
+                     .\vcpkg.exe install cppzmq:x64-windows
+            - name: Install Qt
+              uses: jurplel/install-qt-action@v3
+              with:
+              version: '6.5.2'
+            - name: Running cmake (windows)
+              run: |
+                    cd ${{ github.workspace }}
+                    ls
+                    mkdir build
+                    cd build
+                    cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}
+                    /../vcpkg/scripts/buildsystems/vcpkg.cmake
+            - name: Build Solution (windows)
+              run: |
+                cd build
+                MSBuild.exe CMakeHelloWorld.sln
