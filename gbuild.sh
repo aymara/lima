@@ -59,6 +59,7 @@ USE_TF=true
 TF_SOURCES_PATH=""
 WITH_GUI="ON"
 LIMA_SOURCES=$PWD
+QT_VERSION_MAJOR="6"
 
 while getopts ":d:m:n:r:v:G:a:p:P:st:Tj:g:" o; do
     case "${o}" in
@@ -256,6 +257,7 @@ export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echoerr "Launching cmake from $PWD on $source_dir WITH_ASAN=$WITH_ASAN"
 cmake  -G "$generator" \
+    -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
     -DWITH_ASAN=$WITH_ASAN \

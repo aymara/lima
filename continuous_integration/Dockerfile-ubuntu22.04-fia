@@ -37,8 +37,8 @@ RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_dat
 
 WORKDIR /
 COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
-RUN /svmtool.sh $GITHUB_TOKEN
-RUN /svmtool-cpp.sh $GITHUB_TOKEN
+#RUN /svmtool.sh $GITHUB_TOKEN
+#RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
