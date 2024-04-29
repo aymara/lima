@@ -44,7 +44,11 @@ jobs:
           .\bootstrap-vcpkg.bat
           .\vcpkg.exe install cppzmq:x64-windows
     
-      - name: Running cmake (windows)
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.2'
+    - name: Running cmake (windows)
         run: |
           cd ${{ github.workspace }}
           ls
