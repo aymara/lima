@@ -3,6 +3,9 @@ ARG QT_VERSION
 ARG MANYLINUX_TAG
 FROM aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest as aymara_manylinux_2_28_with_qt_and_pyside
 
+FROM aymara/qhttpserver-manylinux2.28-qt${QT_VERSION}:latest  as aymara_qhttpserver-manylinux2.28-qt${QT_VERSION}
+FROM aymara/svmtoolpp-manylinux2.28-qt${QT_VERSION}:latest  as aymara_svmtoolpp-manylinux2.28-qt${QT_VERSION}
+
 ARG MANYLINUX_TAG
 FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
@@ -19,6 +22,8 @@ COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
 COPY --from=aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
 COPY --from=aymara_manylinux_2_28_with_qt_and_pyside /opt /opt
 COPY --from=aymara_manylinux_2_28_with_qt_and_pyside /usr/local /usr/local
+COPY --from=aymara_qhttpserver-manylinux2.28-qt${QT_VERSION} /opt/qhttpserver /usr
+COPY --from=aymara_svmtoolpp-manylinux2.28-qt${QT_VERSION} /opt/svmtool++ /usr
 
 ARG BRANCH=master
 ARG USE_TENSORFLOW="true"
@@ -42,13 +47,6 @@ ENV CC=/opt/rh/gcc-toolset-10/root/usr/bin/gcc \
 # RUN rm -Rf /svm_light
 
 WORKDIR /
-
-# Those will have to be compiled for manylinux_2_28 instead of installed with the existing deb package
-# COPY svmtool.sh  svmtool-cpp.sh qhttpserver.sh /
-# RUN /svmtool.sh $GITHUB_TOKEN
-# RUN /svmtool-cpp.sh $GITHUB_TOKEN
-# RUN /qhttpserver.sh $GITHUB_TOKEN
-
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
