@@ -41,7 +41,7 @@ jobs:
                      cd vcpkg
                      git checkout --force 2020.01
                      .\bootstrap-vcpkg.bat
-                     .\vcpkg.exe install cppzmq:x64-windows
+                     .\vcpkg.exe install cppzmq:x64-windows qt:x64-windows boost:x64-windows
             - name: Install Qt
               uses: jurplel/install-qt-action@v3
               with:
