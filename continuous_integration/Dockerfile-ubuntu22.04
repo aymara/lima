@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
 
-RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn
+RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn python3-arpy python3-requests python3-tqdm
 
 
 
@@ -92,13 +92,3 @@ RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t
 
 # install github-release to be able to deploy packages
 RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi '
-
-
-# install python packages necessary to use the language resources install script
-RUN /bin/bash -c 'if [[ "$USE_TENSORFLOW" == true ]] ; then pip3 install arpy requests tqdm ; fi'
-
-# Stop dowloading lima models as appveyor build timeouts
-# # install English and French UD models
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
-
