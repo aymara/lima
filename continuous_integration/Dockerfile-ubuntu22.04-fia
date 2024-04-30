@@ -1,8 +1,12 @@
+FROM aymara/svmtoolpp-ubuntu22.04:latest  as aymara_svmtoolpp-ubuntu22.04
+
 FROM ubuntu:22.04
 
 ARG PACKAGES="yes"
 ARG COMPILER="clang"
 ENV DEBIAN_FRONTEND=noninteractive
+
+COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
 
 RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y -qq locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn
 
@@ -73,17 +77,7 @@ ENV CXXFLAGS=$CXXFLAGS
 # Build
 #
 
-
-# RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=OFF -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
-# RUN ninja && ninja install
-
-# ENV CFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
-# ENV CXXFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
-
-# RUN rm -Rf /src/lima/build
-# RUN mkdir -p /src/lima/build
-# WORKDIR /src/lima/build
-
 RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=OFF -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
 
 RUN ninja install
+RUN ninja test

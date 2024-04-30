@@ -46,6 +46,17 @@ jobs:
               uses: jurplel/install-qt-action@v3
               with:
                 version: '6.5.2'
+            - name: Install boost
+              uses: MarkusJx/install-boost@v2.4.5
+              id: install-boost
+              with:
+                boost_version: 1.84.0
+                # OPTIONAL: Specify a custon install location
+                # boost_install_dir: C:\some_directory
+                # OPTIONAL: Specify a platform version
+                platform_version: 2019
+                # OPTIONAL: Specify a toolset
+                toolset: msvc
             - name: Running cmake (windows)
               run: |
                     cd ${{ github.workspace }}

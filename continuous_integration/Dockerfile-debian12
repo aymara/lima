@@ -1,3 +1,5 @@
+FROM aymara/svmtoolpp-debian12:latest  as aymara_svmtoolpp-debian12
+
 FROM debian:12
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -9,8 +11,10 @@ ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 ARG QT_VERSION_MAJOR="6"
 
+COPY --from=aymara_svmtoolpp-debian12 /opt/svmtool++ /usr
+
 # Setup
-RUN apt-get clean && apt-get update && apt-get install -y -qq locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev
+RUN apt-get update && apt-get install -y locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev
 
 RUN wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
