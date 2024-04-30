@@ -40,7 +40,8 @@ jobs:
                      git clone https://github.com/Microsoft/vcpkg.git
                      cd vcpkg
                      .\bootstrap-vcpkg.bat
-                     .\vcpkg.exe install qt:x64-windows boost:x64-windows qwt:x64-windows
+                     .\vcpkg.exe update
+                     .\vcpkg.exe install boost:x64-windows  qt:x64-windows qwt:x64-windows
             # - name: Install Qt
             #   uses: jurplel/install-qt-action@v3
             #   with:
