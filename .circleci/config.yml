@@ -57,5 +57,6 @@ jobs:
                 ..
             ninja
             ninja install
+            ninja package
 
 
