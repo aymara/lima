@@ -40,8 +40,9 @@ int main(int argc, char* argv[])
   size_t threads = 1;
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
   std::string lem_dict;
+  std::string fixed_ini;
+  std::string lower_ini;
   std::string fixed_lemm;
-  std::string lowercase_lemm;
   bool tag_use_mp;
   std::vector<std::string> input_files;
 
@@ -55,8 +56,9 @@ int main(int argc, char* argv[])
   ("lem-model",       po::value<std::string>(&lem_model)->default_value(""),             "Lemmatization model")
   ("dp-model",        po::value<std::string>(&dp_model)->default_value(""),              "Dependency parsing model")
   ("lem-dict",        po::value<std::string>(&lem_dict)->default_value(""),              "Lemmatization dictionary")
-  ("fixed-lemm",      po::value<std::string>(&fixed_lemm)->default_value(""),            "List of upos wiht fixed lemmas")
-  ("lowercase-lemm",  po::value<std::string>(&lowercase_lemm)->default_value(""),        "List of upos wih lowercased lemmas")
+  ("fixed-ini",      po::value<std::string>(&fixed_ini)->default_value(""),            "List of upos wiht fixed lemmas")
+  ("lower-ini",  po::value<std::string>(&lower_ini)->default_value(""),        "List of upos wih lowercased lemmas")
+  ("fixed-lemm",  po::value<std::string>(&fixed_lemm)->default_value(""),        "List of upos wih lowercased lemmas")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ("tag-use-mp",      po::value<bool>(&tag_use_mp)->default_value(true),                 "Use mixed-precision calculations in tagger")
@@ -117,14 +119,19 @@ int main(int argc, char* argv[])
     models["lem_dict"] = lem_dict;
   }
 
+  if (fixed_ini.size() > 0)
+  {
+    models["fixed_ini"] = fixed_ini;
+  }
+
+  if (lower_ini.size() > 0)
+  {
+    models["lower_ini"] = lower_ini;
+  }
+
   if (fixed_lemm.size() > 0)
   {
     models["fixed_lemm"] = fixed_lemm;
-  }
-
-  if (lowercase_lemm.size() > 0)
-  {
-    models["lowercase_lemm"] = lowercase_lemm;
   }
 
   size_t out_fmt = 1;
@@ -238,8 +245,9 @@ void parse_file(std::istream& input,
     };
     std::string lemm_model_fn = find_or_empty_line(models_fn, "lem");
     std::string lemm_dict_fn = find_or_empty_line(models_fn, "lem_dict");
+    std::string fixed_ini_fn = find_or_empty_line(models_fn, "fixed_ini");
+    std::string lower_ini_fn = find_or_empty_line(models_fn, "lower_ini");
     std::string fixed_lemm_fn = find_or_empty_line(models_fn, "fixed_lemm");
-    std::string lowercase_lemm_fn = find_or_empty_line(models_fn, "lowercase_lemm");
 
     try
     {
@@ -249,8 +257,9 @@ void parse_file(std::istream& input,
               models_fn.find("tag")->second,
               lemm_model_fn,
               lemm_dict_fn,
+              fixed_ini_fn,
+              lower_ini_fn,
               fixed_lemm_fn,
-              lowercase_lemm_fn,
               path_resolver,
               TAG_BUFFER_SIZE,
               8);
@@ -261,8 +270,9 @@ void parse_file(std::istream& input,
             models_fn.find("tag")->second,
             lemm_model_fn,
             lemm_dict_fn,
+            fixed_ini_fn,
+            lower_ini_fn,
             fixed_lemm_fn,
-            lowercase_lemm_fn,
             path_resolver,
             TAG_BUFFER_SIZE,
             8);

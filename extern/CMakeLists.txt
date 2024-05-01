@@ -54,7 +54,7 @@ else()
   add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
   set_target_properties(fasttext-shared PROPERTIES OUTPUT_NAME fasttext-lima)
 
-  target_link_libraries(fasttext-shared Threads::Threads)
+  target_link_libraries(fasttext-shared Threads::Threads ${Boost_LIBRARIES} Boost::iostreams boost_iostreams)
 
   install (TARGETS fasttext-shared
       LIBRARY DESTINATION ${LIB_INSTALL_DIR})

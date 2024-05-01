@@ -6,8 +6,6 @@
 #define PROPERTYCODETEST0_H
 
 #include <QtTest/QTest>
-#include "SearchTest0.h"
-#include <QtTest/QTest>
 #include <QProcess>
 #include <QCoreApplication>
 #include <QDebug>

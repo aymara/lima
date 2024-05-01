@@ -32,8 +32,9 @@ ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
 
-RUN yum install -y wget gcc-toolset-10.x86_64 ninja-build libicu-devel.x86_64 boost-devel.x86_64 qt5-devel.noarch
-
+RUN yum install -y wget gcc-toolset-10.x86_64 libicu-devel.x86_64 boost-devel.x86_64 qt5-devel.noarch
+RUN yum remove ninja-build
+RUN pip${PYTHON_VERSION} install ninja
 ENV CC=/opt/rh/gcc-toolset-10/root/usr/bin/gcc \
     CXX=/opt/rh/gcc-toolset-10/root/usr/bin/g++
 

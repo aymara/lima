@@ -102,6 +102,7 @@ public:
     }
     // std::cerr << std::endl;
 
+    // TODO comment out that and output
     arborescence<M, uint32_t, typename M::Scalar>(logits, output, input_begin);
 
     return 0;

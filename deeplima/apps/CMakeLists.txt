@@ -12,6 +12,7 @@ target_link_libraries(deeplima-train-segm
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
   ICU::uc
   train_segmentation
   version
@@ -35,6 +36,8 @@ target_link_libraries(deeplima-train-tag
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
+  fasttext-shared
   version
 )
 
@@ -56,6 +59,7 @@ target_link_libraries(deeplima-train-lemmatization
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
   version
 )
 
@@ -74,7 +78,10 @@ add_executable(deeplima-gen-lemm-dict
 target_link_libraries(deeplima-gen-lemm-dict
   PRIVATE
   conllu
-  ${Boost_LIBRARIES}
+  fasttext-static
+  Boost::iostreams
+  Boost::program_options
+  Boost::filesystem
   ${ICU_LIBRARIES}
 )
 
@@ -96,6 +103,8 @@ target_link_libraries(deeplima-train-dp
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
+  fasttext-shared
   version
 )
 
@@ -131,8 +140,10 @@ target_link_libraries(deeplima-eigen
   utils
   segmentation_inference
   lemmatization_inference
-  ${Boost_LIBRARIES}
   ${ICU_LIBRARIES}
+  Boost::program_options
+  Boost::filesystem
+  Boost::iostreams
 )
 
 install(TARGETS deeplima-eigen

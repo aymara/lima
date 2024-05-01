@@ -28,7 +28,10 @@ if (TensorFlow_FOUND AND Eigen_FOUND)
     )
 
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        target_link_libraries(lima-lp-tensorflowmorphosyntax fasttext-static)
+        target_link_libraries(lima-lp-tensorflowmorphosyntax
+                              fasttext-static
+                              ${Boost_LIBRARIES}
+                              )
     else()
         target_link_libraries(lima-lp-tensorflowmorphosyntax fasttext-shared)
     endif()

@@ -919,13 +919,3 @@ QString LimaAnalyzerPrivate::getMicro(LinguisticAnalysisStructure::MorphoSyntact
         .getPropertySymbolicValue(morphoData.firstValue(
           *propertyAccessor)).c_str());
 }
-
-
-int main(int /*argc*/, char** /*argv[]*/)
-{
-  LimaAnalyzer analyzer0("ud-eng", "deepud", "");
-  std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;
-
-  LimaAnalyzer analyzer1("eng", "main", "");
-  std::cerr << analyzer1.analyzeText("One, 2, tree.") << std::endl;
-}

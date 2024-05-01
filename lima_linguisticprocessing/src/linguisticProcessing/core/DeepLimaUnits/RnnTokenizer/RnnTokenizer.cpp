@@ -348,7 +348,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
   m_segm.parse_from_stream([&text_utf8, &bytes_consumed]
                          (uint8_t* buffer,
                          int32_t& read,
-                         int32_t max)
+                         size_t max)
   {
     read = (text_utf8.size() - bytes_consumed) > max ? max : (text_utf8.size() - bytes_consumed);
     memcpy(buffer, text_utf8.c_str() + bytes_consumed, read);
