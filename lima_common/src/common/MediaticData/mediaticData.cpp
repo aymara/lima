@@ -1184,7 +1184,7 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   MDATALOGINIT;
   LDEBUG << "MediaticData::getEntityName(" << type << ")";
 #endif
-  if (type.getGroupId()==0)
+  if (type.getGroupId()==static_cast<EntityGroupId>(0))
   {
     MDATALOGINIT;
     QString errorString;
