@@ -24,7 +24,7 @@ jobs:
           name: Install NLTK
           command: |
             pip install nltk
-            python -m nltk.downloader dependency_treebank
+            python -m nltk.downloader -d nltk_data dependency_treebank
 
       # Generate the dependency treebank file
       - run:
@@ -39,6 +39,7 @@ jobs:
       - run:
           name: Build project
           command: |
+            export NLTK_PTB_DP_FILE=$(pwd)/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
             mkdir build
             cd build
             cmake  -G Ninja \
