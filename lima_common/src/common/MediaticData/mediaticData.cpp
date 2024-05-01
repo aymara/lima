@@ -436,6 +436,7 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
   }
 
   // med_str can be modified below. thus, do not use const reference
+  // TODO skip media init if already initialized
   for (auto med_str: meds)
   {
     MediaId id(0);
@@ -461,6 +462,14 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
       id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",med_str).c_str()));
 #ifdef DEBUG_CD
       LDEBUG << "media '" << med_str.c_str() << "' has id " << id;
+      if (m_mediasData.find(id) != m_mediasData.end())
+      {
+        MDATALOGINIT;
+        LINFO << "Media" << med_str << "already initialized. Skipping.";
+        continue;
+      }
+
+
       LDEBUG << (void*)this << " initialize string pool";
 #endif
     }
