@@ -18,7 +18,7 @@ jobs:
           name: Install dependencies
           command: |
             brew update
-            brew install qt@6 boost cmake ninja-build
+            brew install qt@6 boost cmake ninja
       - run:
           name: Build project
           command: |
