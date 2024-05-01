@@ -19,6 +19,23 @@ jobs:
           command: |
             brew update
             brew install qt@6 boost cmake ninja
+      # Install NLTK and its dependencies
+      - run:
+          name: Install NLTK
+          command: |
+            pip install nltk
+            python -m nltk.downloader dependency_treebank
+
+      # Generate the dependency treebank file
+      - run:
+          name: Generate nltk-ptb.dp
+          command: |
+            cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+      # Set NLTK_PTB_DP_FILE environment variable
+      - run:
+          name: Set NLTK_PTB_DP_FILE
+          command: |
+            echo "export NLTK_PTB_DP_FILE=$(pwd)/nltk_data/corpora/dependency_treebank/nltk-ptb.dp" >> $BASH_ENV
       - run:
           name: Build project
           command: |
