@@ -18,13 +18,23 @@ jobs:
           name: Install dependencies
           command: |
             brew update
-            brew install qt@6 boost
+            brew install qt@6 boost cmake ninja-build
       - run:
           name: Build project
           command: |
             mkdir build
             cd build
-            cmake ..
-            make
+            cmake  -G Ninja \
+                -DQT_VERSION_MAJOR=6 \
+                -DWITH_DEBUG_MESSAGES=OFF \
+                -DWITH_ARCH=OFF \
+                -DWITH_ASAN=OFF \
+                -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON \
+                -DCMAKE_BUILD_TYPE:STRING=Release \
+                -DWITH_GUI=ON \
+                -DCTEST_OUTPUT_ON_FAILURE="ON" \
+                ..
+            ninja
+            ninja install
 
 
