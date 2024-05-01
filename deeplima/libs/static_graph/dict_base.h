@@ -25,7 +25,7 @@ template <class D=std::shared_ptr<DictBase>>
 class DictsHolderImpl : public std::vector<D>
 {
 public:
-  virtual ~DictsHolderImpl<D>() = default;
+  virtual ~DictsHolderImpl() = default;
   std::vector<uint32_t> get_counters() const
   {
     std::vector<uint32_t> v(this->size());

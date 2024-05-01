@@ -199,7 +199,7 @@ void CompoundsBuilderFromSyntacticDataPrivate::initMacros2ConceptsMapping(
     {
       LinguisticCode macro = macroManager.getPropertyValue((*it).first);
       std::string typeName = (*it).second;
-      Lima::Common::MediaticData::ConceptType concept = (*(m_conceptTypes.find("LatticeDown"))).second;
+      Lima::Common::MediaticData::ConceptType semanticConcept = (*(m_conceptTypes.find("LatticeDown"))).second;
       if (m_conceptTypes.find(typeName) == m_conceptTypes.end())
       {
         MDATALOGINIT;
@@ -207,14 +207,14 @@ void CompoundsBuilderFromSyntacticDataPrivate::initMacros2ConceptsMapping(
       }
       else
       {
-        concept = (*(m_conceptTypes.find(typeName))).second;
+                semanticConcept = (*(m_conceptTypes.find(typeName))).second;
       }
 
 #ifdef DEBUG_LP
       LDEBUG << "    " << (*it).first << " (" << macro << ") <-> "
-          << (*it).second << " (" << concept << ")";
+          << (*it).second << " (" << semanticConcept << ")";
 #endif
-      m_macro2ConceptMapping.insert(std::make_pair(macro,concept));
+      m_macro2ConceptMapping.insert(std::make_pair(macro, semanticConcept));
     }
 
   }
