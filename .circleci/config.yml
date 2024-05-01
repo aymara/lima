@@ -21,7 +21,7 @@ jobs:
           name: Install dependencies
           command: |
             brew update
-            brew install qt@6 boost cmake ninja
+            brew install gawk qt@6 boost cmake ninja
       # Install NLTK and its dependencies
       - run:
           name: Install NLTK
