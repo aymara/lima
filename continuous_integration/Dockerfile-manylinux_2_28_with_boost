@@ -10,27 +10,26 @@ ARG NUM_JOBS=8
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install package dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        software-properties-common \
+RUN dnf update -y && dnf install -y \
+        gcc \
+        gcc-c++ \
+        make \
         autoconf \
         automake \
         libtool \
-        pkg-config \
-        ca-certificates \
-        libssl-dev \
+        pkgconfig \
+        openssl-devel \
         wget \
         git \
         curl \
-        language-pack-en \
-        locales \
-        locales-all \
-        vim \
-        gdb \
-        valgrind && \
-    apt-get clean
+        glibc-langpack-en \
+        glibc-locale-source
+# \
+#        vim \
+#        gdb \
+#        valgrind
+
+
 
 # System locale
 # Important for UTF-8
