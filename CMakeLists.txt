@@ -151,7 +151,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick Test Xml Widgets Concurrent)
+addQtModules(Core Test Xml Concurrent)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -492,6 +492,7 @@ if (WITH_GUI)
   if (Qt${QT_VERSION_MAJOR}Core_FOUND)
     if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.5.0)
       message("Build with lima_gui")
+      addQtModules(Gui Qml Quick Widgets)
       add_subdirectory(lima_gui)
     else()
       message("Minimum supported Qt version for lima_gui is 5.5.0. You have Qt ${QtCore_VERSION}. lima_gui will no be built.")
