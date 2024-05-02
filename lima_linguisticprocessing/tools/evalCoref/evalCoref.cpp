@@ -261,7 +261,9 @@ void init(string csvFile, CorefsMap* CMap, NamedBoundsMap* BMap, TextMap* TMap, 
     match_results<std::string::const_iterator> what;
     string::const_iterator start = s.begin();
     string::const_iterator end = s.end();
-    regex_search(start, end, what, expression);
+    // TODO line below fails to compile with boost 1.66 and c++20 in manylinux
+    // TODO replace boost regex by QRegularExpression
+    // regex_search(start, end, what, expression);
     string id = string(what[1].first, what[1].second);
     string ref = string(what[2].first, what[2].second);
     string text = string(what[5].first, what[5].second);
