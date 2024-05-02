@@ -38,7 +38,7 @@ jobs:
               uses: johnwason/vcpkg-action@v6
               id: vcpkg
               with:
-                pkgs: boost qwt qtcore qttest qtxml qtconcurrent qtnetwork qtdbus qtgui qtqml qtquick qtwidgets
+                pkgs: boost qwt qtbase
                 triplet: x64-windows-release
                 token: ${{ github.token }}
                 github-binarycache: true
