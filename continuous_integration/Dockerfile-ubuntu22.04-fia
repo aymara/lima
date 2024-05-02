@@ -15,7 +15,7 @@ RUN curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu22
 RUN echo 'deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /' | tee /etc/apt/sources.list.d/nvidia-drivers.list
 
 RUN apt-get update -y
-RUN apt-get install -y cuda-11-8 cuda-toolkit-11-8
+RUN apt-get install -y cuda-11-8 cuda-toolkit-11-8 cuda-nvcc-11-8
 
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
