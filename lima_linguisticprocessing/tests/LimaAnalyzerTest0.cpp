@@ -108,19 +108,50 @@ void LimaAnalyzerTest0::test_analyzeText_lang_not_init() {
       "This is a text on 02/05/2022.", "wol", "main") == "");
 }
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_ud() {
-    // Your test logic here
     LimaAnalyzer thelima("ud-eng", "", "");
-    QVERIFY_THROWS_EXCEPTION(std::exception, thelima.analyzeText(
-      "This is a text on 02/05/2022.", "ud-eng", nullptr));
+
+    // QVERIFY_THROWS_EXCEPTION(std::exception, thelima.analyzeText(
+    //   "This is a text on 02/05/2022.", "ud-eng", nullptr));
+
+    do {
+        QT_TRY {
+            thelima.analyzeText("This is a text on 02/05/2022.",
+                                                 "ud-eng", nullptr);
+            QTest::qFail("Expected exception of type std::exception to be thrown"
+                         " but no exception caught", __FILE__, __LINE__);
+            return;
+        } QT_CATCH (const std::exception &) {
+            /* success */
+        } QT_CATCH (...) {
+            // QTest::qCaught("std::exception", __FILE__, __LINE__);
+            return;
+        }
+    } while (false);
+
 }
 
 
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_eng() {
     LimaAnalyzer thelima("eng", "", "");
     QVERIFY(thelima.error);
-    QVERIFY_THROWS_EXCEPTION(std::exception,
-                             thelima.analyzeText("This is a text on 02/05/2022.",
-                                                 "eng", nullptr));
+    // QVERIFY_THROWS_EXCEPTION(std::exception,
+    //                          thelima.analyzeText("This is a text on 02/05/2022.",
+    //                                              "eng", nullptr));
+    do {
+        QT_TRY {
+            thelima.analyzeText("This is a text on 02/05/2022.",
+                                                 "eng", nullptr);
+            QTest::qFail("Expected exception of type std::exception to be thrown"
+                         " but no exception caught", __FILE__, __LINE__);
+            return;
+        } QT_CATCH (const std::exception &) {
+            /* success */
+        } QT_CATCH (...) {
+            QTest::qCaught("std::exception", __FILE__, __LINE__);
+            return;
+        }
+    } while (false);
+
 }
 
 void LimaAnalyzerTest0::test_analyzeText_init_with_lang_and_pipe() {
