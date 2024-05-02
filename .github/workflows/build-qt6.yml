@@ -1,3 +1,4 @@
+name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed workflow"
 on:
   push:
     branches:
@@ -96,7 +97,7 @@ jobs:
   #       run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
 
   manylinux_2_28_lima-manylinux:
-    name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed"
+    name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed job"
     runs-on: ubuntu-latest
     # needs: manylinux_2_28_with_qt_and_pyside
     # needs: manylinux_2_28_with_boost

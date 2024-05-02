@@ -1,0 +1,22 @@
+name: Trigger Lima Python Build Workflow
+
+on:
+  workflow_run:
+    workflows:
+      - "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed workflow"
+    types:
+      - completed
+
+jobs:
+  trigger_remote_workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Trigger Remote Workflow
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.TRIGGER_LIMA_PYTHON }}
+          repository: aymara/lima-python
+          event-type: "trigger_workflow"
