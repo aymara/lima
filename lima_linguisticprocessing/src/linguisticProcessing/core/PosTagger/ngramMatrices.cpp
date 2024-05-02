@@ -22,7 +22,9 @@
 #include "common/XMLConfigurationFiles/xmlConfigurationFileExceptions.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 
-#include <boost/regex.hpp>
+#include <QRegularExpression>
+#include <QString>
+#include <iostream>
 
 #include <fstream>
 #include <sstream>
@@ -81,46 +83,51 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
-  boost::regex numre("^\\d+$");
+  QRegularExpression linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
+  QRegularExpressionMatch what;
+  QRegularExpression numre("^\\d+$");
 
-  std::string lineString = Lima::Common::Misc::readLine(ifl);
+  auto lineString = QString::fromStdString(
+    Lima::Common::Misc::readLine(ifl)).trimmed();
   size_t linenum(0);
   while (ifl.good() && !ifl.eof())
   {
-    Common::Misc::chomp(lineString);
     linenum++;
     if ( (lineString.size() > 0) && (lineString[0] != '#') )
     {
       LinguisticCode trigram[3];
-      std::string strigram[3];
+      // QString strigram[3];
       float proba;
 
-
-      std::string::const_iterator start, end;
-      start = lineString.begin();
-      end = lineString.end();
-      boost::match_results<std::string::const_iterator> what;
-      //    boost::match_flag_type flags = boost::match_default;
-      if (regex_search(start, end, what, linere))
+      what = linere.match(lineString);
+      if (what.hasMatch())
       {
-        for (unsigned count = 1; count <= 3; count++)
-        {
-          std::string elem(what[count].first,what[count].second);
-          strigram[count-1] = elem;
-          if (boost::regex_match(elem,numre))
+          for (int count = 1; count <= 3; ++count)
           {
-            // numerical element
-            trigram[count] = LinguisticCode::fromString(elem);
+            QString elem = what.captured(count);
+            // strigram[count-1] = elem;
+            auto numreMatch = numre.match(elem);
+            if (numreMatch.hasMatch())
+            {
+              trigram[count-1] = LinguisticCode::fromString(elem.toStdString());
+            }
+            else
+            {
+              trigram[count-1] = m_microManager->getPropertyValue(elem.toStdString());
+            }
           }
-          else
+
+          QString sproba = what.captured(4);
+          bool ok;
+          proba = sproba.toDouble(&ok);
+          if (!ok)
           {
-            trigram[count-1] = m_microManager->getPropertyValue(elem);
+            PTLOGINIT;
+            LERROR << "Invalid trigram line " << linenum << " in: " << fileName;
+            throw(std::runtime_error(
+              QString::fromUtf8(
+                "invalid trigram line: %1").arg(linenum).toUtf8().constData()));
           }
-        }
-        std::string sproba(what[4].first,what[4].second);
-        std::istringstream sprobaStream(sproba);
-        sprobaStream >> proba;
       }
       else
       {
@@ -132,7 +139,8 @@ void TrigramMatrix::readTrigramMatrixFile(const std::string& fileName)
       //      LDEBUG << "Got trigram: ["<<strigram[0]<<";"<<strigram[1]<<";"<<strigram[2]<<"]/["<<trigram[0]<<";"<<trigram[1]<<";"<<trigram[2]<<"]";
       m_trigrams[trigram[0]][trigram[1]][trigram[2]] = proba;
     }
-    lineString = Lima::Common::Misc::readLine(ifl);
+    lineString = QString::fromStdString(
+      Lima::Common::Misc::readLine(ifl)).trimmed();
   }
 }
 
@@ -183,72 +191,79 @@ void BigramMatrix::init(
   }
 }
 
-void  BigramMatrix::readBigramMatrixFile(const std::string& fileName)
+void BigramMatrix::readBigramMatrixFile(const std::string& fileName)
 {
   PTLOGINIT;
-  std::ifstream ifl;
+  LINFO << "Loading bigrams matrix file: " << fileName;
 
-  // Open the data file BiGramMatrix.dat in read mode
+  std::ifstream ifl;
+  // Open the data file TriGramMatrix.dat in read mode
   ifl.open(fileName.c_str(), std::ifstream::binary);
 
   if (!ifl)
   {
-    // Standard error output
-    LERROR << "can't read bigrams from file " << fileName;
+    LERROR << "can't read trigrams from file " << fileName;
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
-  boost::regex numre("^\\d+$");
+  QRegularExpression linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
+  QRegularExpressionMatch what;
+  QRegularExpression numre("^\\d+$");
 
-  std::string lineString;
+  auto lineString = QString::fromStdString(
+    Lima::Common::Misc::readLine(ifl)).trimmed();
   size_t linenum(0);
-  lineString = Lima::Common::Misc::readLine(ifl);
   while (ifl.good() && !ifl.eof())
   {
-    Common::Misc::chomp(lineString);
     linenum++;
-
-    LinguisticCode bigram[2];
-    std::string sbigram[2];
-    float proba;
-
-    std::string::const_iterator start, end;
-    start = lineString.begin();
-    end = lineString.end();
-    boost::match_results<std::string::const_iterator> what;
-    //    boost::match_flag_type flags = boost::match_default;
-    if (regex_search(start, end, what, linere))
+    if ( (lineString.size() > 0) && (lineString[0] != '#') )
     {
-      for (unsigned count = 1; count <= 2; count++)
+      LinguisticCode bigram[2];
+      // QString sbigram[3];
+      float proba;
+
+      what = linere.match(lineString);
+      if (what.hasMatch())
       {
-        std::string elem(what[count].first,what[count].second);
-        sbigram[count-1] = elem;
-        if (boost::regex_match(elem,numre))
-        {
-          // numerical element
-          bigram[count-1] = LinguisticCode::fromString(elem);
-        }
-        else
-        {
-          bigram[count-1] = m_microManager->getPropertyValue(elem);
-        }
+          for (int count = 1; count <= 2; ++count)
+          {
+            QString elem = what.captured(count);
+            // sbigram[count-1] = elem;
+            auto numreMatch = numre.match(elem);
+            if (numreMatch.hasMatch())
+            {
+              bigram[count-1] = LinguisticCode::fromString(elem.toStdString());
+            }
+            else
+            {
+              bigram[count-1] = m_microManager->getPropertyValue(elem.toStdString());
+            }
+          }
+
+          QString sproba = what.captured(3);
+          bool ok;
+          proba = sproba.toDouble(&ok);
+          if (!ok)
+          {
+            PTLOGINIT;
+            LERROR << "Invalid bigram line " << linenum << " in: " << fileName;
+            throw(std::runtime_error(
+              QString::fromUtf8(
+                "invalid bigram line: %1").arg(linenum).toUtf8().constData()));
+          }
       }
-      std::string sproba(what[3].first,what[3].second);
-      std::istringstream sprobaStream(sproba);
-      sprobaStream >> proba;
-    }
-    else
-    {
-        PTLOGINIT;
-        LERROR << "Invalid bigram line " << linenum << " in: " << fileName;
-        throw(std::runtime_error(QString::fromUtf8("invalid bigram line: %1").arg(linenum).toUtf8().constData()));
-    }
+      else
+      {
+          PTLOGINIT;
+          LERROR << "Invalid bigram line " << linenum << " in: " << fileName;
+          throw(std::runtime_error(QString::fromUtf8("invalid bigram line: %1").arg(linenum).toUtf8().constData()));
+      }
 
-    //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
-    m_bigrams[bigram[0]][bigram[1]] = proba;
-
-    lineString = Lima::Common::Misc::readLine(ifl);
+      //      LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"]";
+      m_bigrams[bigram[0]][bigram[1]] = proba;
+    }
+    lineString = QString::fromStdString(
+      Lima::Common::Misc::readLine(ifl)).trimmed();
   }
 }
 

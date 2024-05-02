@@ -34,14 +34,22 @@ jobs:
               uses: actions/checkout@v3
               with:
                   submodules: recursive
-            - name: "Installing vcpkg (windows)"
-              run: |
-                     cd ..
-                     git clone https://github.com/Microsoft/vcpkg.git
-                     cd vcpkg
-                     .\bootstrap-vcpkg.bat
-                     .\vcpkg.exe update
-                     .\vcpkg.exe install boost:x64-windows  qt:x64-windows qwt:x64-windows
+            - name: vcpkg build
+              uses: johnwason/vcpkg-action@v6
+              id: vcpkg
+              with:
+                pkgs: boost qt qwt
+                triplet: x64-windows-release
+                token: ${{ github.token }}
+                github-binarycache: true
+            # - name: "Installing vcpkg (windows)"
+            #   run: |
+            #          cd ..
+            #          git clone https://github.com/Microsoft/vcpkg.git
+            #          cd vcpkg
+            #          .\bootstrap-vcpkg.bat
+            #          .\vcpkg.exe update
+            #          .\vcpkg.exe install boost:x64-windows  qt:x64-windows qwt:x64-windows
             # - name: Install Qt
             #   uses: jurplel/install-qt-action@v3
             #   with:
