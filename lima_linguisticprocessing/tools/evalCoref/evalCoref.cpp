@@ -261,21 +261,21 @@ void init(string csvFile, CorefsMap* CMap, NamedBoundsMap* BMap, TextMap* TMap, 
     match_results<std::string::const_iterator> what;
     string::const_iterator start = s.begin();
     string::const_iterator end = s.end();
-    // TODO line below fails to compile with boost 1.66 and c++20 in manylinux
+    // TODO lines below fails to compile with boost 1.66 and c++20 in manylinux
     // TODO replace boost regex by QRegularExpression
     // regex_search(start, end, what, expression);
-    string id = string(what[1].first, what[1].second);
-    string ref = string(what[2].first, what[2].second);
-    string text = string(what[5].first, what[5].second);
-    bool definites =  string(what[6].first, what[6].second)!="other"
-               && string(what[6].first,what[6].second)!="reflPron";
-    float boundA = atoi(string(what[3].first, what[3].second).c_str());
-    float boundB = atoi(string(what[4].first, what[4].second).c_str());
-    BMap->insert(make_pair(id, make_pair(boundA, boundB)));
-    TMap->insert(make_pair(id, text));
-    DMap->insert(make_pair(id, definites));
-    if (ref!="")
-      CMap->insert(make_pair(id, ref));
+    // string id = string(what[1].first, what[1].second);
+    // string ref = string(what[2].first, what[2].second);
+    // string text = string(what[5].first, what[5].second);
+    // bool definites =  string(what[6].first, what[6].second)!="other"
+    //            && string(what[6].first,what[6].second)!="reflPron";
+    // float boundA = atoi(string(what[3].first, what[3].second).c_str());
+    // float boundB = atoi(string(what[4].first, what[4].second).c_str());
+    // BMap->insert(make_pair(id, make_pair(boundA, boundB)));
+    // TMap->insert(make_pair(id, text));
+    // DMap->insert(make_pair(id, definites));
+    // if (ref!="")
+    //   CMap->insert(make_pair(id, ref));
   }
 
 //   cerr << "map : "<< endl;
