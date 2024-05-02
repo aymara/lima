@@ -109,6 +109,8 @@ void LimaAnalyzerTest0::test_analyzeText_lang_not_init() {
 }
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_ud() {
     LimaAnalyzer thelima("ud-eng", "", "");
+    // QVERIFY_THROWS_EXCEPTION has been introduced in Qt6.3 and Ubuntu 22.04
+    // has only Qt6.2
 
     // QVERIFY_THROWS_EXCEPTION(std::exception, thelima.analyzeText(
     //   "This is a text on 02/05/2022.", "ud-eng", nullptr));
@@ -134,6 +136,9 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_ud() {
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_eng() {
     LimaAnalyzer thelima("eng", "", "");
     QVERIFY(thelima.error);
+    // QVERIFY_THROWS_EXCEPTION has been introduced in Qt6.3 and Ubuntu 22.04
+    // has only Qt6.2
+
     // QVERIFY_THROWS_EXCEPTION(std::exception,
     //                          thelima.analyzeText("This is a text on 02/05/2022.",
     //                                              "eng", nullptr));
@@ -147,7 +152,7 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_eng() {
         } QT_CATCH (const std::exception &) {
             /* success */
         } QT_CATCH (...) {
-            QTest::qCaught("std::exception", __FILE__, __LINE__);
+            // QTest::qCaught("std::exception", __FILE__, __LINE__);
             return;
         }
     } while (false);
