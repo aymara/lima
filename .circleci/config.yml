@@ -59,4 +59,7 @@ jobs:
             ninja install
             ninja package
 
+      - store_artifacts:
+          path: /Users/distiller/project/build/lima-3.0.0+-Darwin.dmg
+          destination: lima-3.0.0+-Darwin.dmg
 
