@@ -121,7 +121,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   DUMPERLOGINIT;
 
   LinguisticMetaData* metadata = static_cast<LinguisticMetaData*>(analysis.getData("LinguisticMetaData"));
-  if (metadata == 0) {
+  if (metadata == nullptr) {
     LERROR << "EasyXmlDumper::process no LinguisticMetaData ! abort";
       return MISSING_DATA;
   }
@@ -139,14 +139,14 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   }
   
   auto graph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph));
-  if (graph == 0)
+  if (graph == nullptr)
   {
     graph = new AnalysisGraph(m_graph,m_language,true,true);
     analysis.setData(m_graph,graph);
   }
 
   auto syntacticData = std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData"));
-  if (syntacticData == 0)
+  if (syntacticData == nullptr)
   {
     syntacticData = new SyntacticAnalysis::SyntacticData(std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData(m_graph)),0);
     syntacticData->setupDependencyGraph();
@@ -154,7 +154,7 @@ LimaStatusCode EasyXmlDumper::process(AnalysisContent& analysis) const
   }
 
   auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
-  if (annotationData == 0)
+  if (annotationData == nullptr)
   {
     annotationData = std::make_shared<AnnotationData>();
     if (std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph")) != 0)

@@ -98,7 +98,7 @@ const State* Transition::run(Text& text) const
   TOKENIZERLOGINIT;
 #endif
   const CharClass* currentClass = text.currentClass();
-  if (currentClass == 0)
+  if (currentClass == nullptr)
   {
     TOKENIZERLOGINIT;
     LERROR << "Transition::run Null Class for char '"<< limastring2utf8stdstring(LimaString()+text.currentChar()) << "'";

@@ -240,7 +240,7 @@ LimaString Text::token()
 #endif
   StringsPoolIndex form=(*m_d->m_stringsPool)[str];
   Token *tToken = new Token(form,str,m_d->m_debPtr+1,(delta-m_d->m_debPtr));
-  if (tToken == 0) throw MemoryErrorException();
+  if (tToken == nullptr) throw MemoryErrorException();
   // @todo: set default status here, according to structured status (alpha,numeric etc...)
   // instead of setting it at each change of status (setAlphaCapital, setNumeric etc...)
   tToken->setStatus(m_d->m_curSettings);
