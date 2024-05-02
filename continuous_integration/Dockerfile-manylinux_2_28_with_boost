@@ -10,7 +10,8 @@ ARG NUM_JOBS=8
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN dnf update -y && dnf install -y \
+RUN dnf update -y  --nogpgcheck &&\
+    dnf install -y  --nogpgcheck \
         gcc \
         gcc-c++ \
         make \
