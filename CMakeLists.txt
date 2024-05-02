@@ -151,7 +151,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Test Xml Concurrent)
+addQtModules(Core Test Xml Concurrent Network)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
