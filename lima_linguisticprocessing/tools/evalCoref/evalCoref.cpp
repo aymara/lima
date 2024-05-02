@@ -295,57 +295,59 @@ void init(string csvFile, vector<set<string> >*corefChains, NamedBoundsMap* BMap
   match_results<std::string::const_iterator> what;
   while( getline(fin,line) )
   {
-    string::const_iterator start = line.begin();
-    string::const_iterator end = line.end();
-    if (regex_search(start, end, what, expression))
-    {
-      string id = string(what[1].first, what[1].second);
-      string ref = string(what[2].first, what[2].second);
-      string text = string(what[5].first, what[5].second);
-      bool definites = string(what[6].first, what[6].second)!="other"
-            && string(what[6].first, what[6].second)!="reflPron";
-      float boundA = atoi(string(what[3].first, what[3].second).c_str());
-      float boundB = atoi(string(what[4].first, what[4].second).c_str());
-      BMap->insert(make_pair(id, make_pair(boundA, boundB)));
-      TMap->insert(make_pair(id, text));
-      DMap->insert(make_pair(id, definites));
-
-      if (ref != "")
-      {
-        bool inserted = false;
-        for (vector<set<string> >::iterator it = corefChains->begin();  it!=corefChains->end();it++)
-        {
-          if ((*it).find(ref)!=(*it).end())
-          {
-            (*it).insert(id);
-            inserted = true;
-            break;
-          }
-        }
-        if (!inserted)
-        {
-          for (vector<set<string> >::iterator it = corefChains->begin();  it!=corefChains->end();it++)
-          {
-            if ((*it).find(id)!=(*it).end())
-            {
-              (*it).insert(ref);
-              inserted = true;
-              break;
-            }
-          }
-        }
-        if (!inserted)
-        {
-          corefChains->push_back(set<string>());
-          (*corefChains->rbegin()).insert(id);
-          (*corefChains->rbegin()).insert(ref);
-        }
-      }
-    }
-    else
-    {
-      std::cerr << "Error matching reference file line '"<<line<<"'" << std::endl;
-    }
+    // TODO lines below fails to compile with boost 1.66 and c++20 in manylinux
+    // TODO replace boost regex by QRegularExpression
+    // string::const_iterator start = line.begin();
+    // string::const_iterator end = line.end();
+    // if (regex_search(start, end, what, expression))
+    // {
+    //   string id = string(what[1].first, what[1].second);
+    //   string ref = string(what[2].first, what[2].second);
+    //   string text = string(what[5].first, what[5].second);
+    //   bool definites = string(what[6].first, what[6].second)!="other"
+    //         && string(what[6].first, what[6].second)!="reflPron";
+    //   float boundA = atoi(string(what[3].first, what[3].second).c_str());
+    //   float boundB = atoi(string(what[4].first, what[4].second).c_str());
+    //   BMap->insert(make_pair(id, make_pair(boundA, boundB)));
+    //   TMap->insert(make_pair(id, text));
+    //   DMap->insert(make_pair(id, definites));
+    //
+    //   if (ref != "")
+    //   {
+    //     bool inserted = false;
+    //     for (vector<set<string> >::iterator it = corefChains->begin();  it!=corefChains->end();it++)
+    //     {
+    //       if ((*it).find(ref)!=(*it).end())
+    //       {
+    //         (*it).insert(id);
+    //         inserted = true;
+    //         break;
+    //       }
+    //     }
+    //     if (!inserted)
+    //     {
+    //       for (vector<set<string> >::iterator it = corefChains->begin();  it!=corefChains->end();it++)
+    //       {
+    //         if ((*it).find(id)!=(*it).end())
+    //         {
+    //           (*it).insert(ref);
+    //           inserted = true;
+    //           break;
+    //         }
+    //       }
+    //     }
+    //     if (!inserted)
+    //     {
+    //       corefChains->push_back(set<string>());
+    //       (*corefChains->rbegin()).insert(id);
+    //       (*corefChains->rbegin()).insert(ref);
+    //     }
+    //   }
+    // }
+    // else
+    // {
+    //   std::cerr << "Error matching reference file line '"<<line<<"'" << std::endl;
+    // }
   }
 //   for (vector<set<string> >::iterator it1 = corefChains->begin(); it1!=corefChains->end();it1++)
 //   {
