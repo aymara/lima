@@ -246,10 +246,10 @@ enum LimaStatusCode {
 
 BOOST_STRONG_TYPEDEF(char, NoParameters);
 
-#define UNDEFLANG std::numeric_limits<uint8_t>::max()
 
 BOOST_STRONG_TYPEDEF(uint8_t, MediaId);
 
+#define UNDEFLANG static_cast<Lima::MediaId>(std::numeric_limits<uint8_t>::max())
 /**
  * The main LIMA exception class. Throw this exception to signal a problem with
  * a precise associated message.
