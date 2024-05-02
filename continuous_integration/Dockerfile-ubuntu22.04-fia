@@ -10,12 +10,12 @@ COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
 
 RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-arpy python3-requests python3-tqdm
 
-RUN apt install build-essential gcc dirmngr ca-certificates software-properties-common apt-transport-https dkms curl -y
+RUN apt-get install build-essential gcc dirmngr ca-certificates software-properties-common apt-transport-https dkms curl -y
 RUN curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | gpg --dearmor | tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
 RUN echo 'deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /' | tee /etc/apt/sources.list.d/nvidia-drivers.list
 
-RUN apt update
-RUN apt install nvidia-driver cuda-drivers-545 cuda
+RUN apt-get update -y
+RUN apt-get install -y cuda-11-8 cuda-toolkit-11-8
 
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
