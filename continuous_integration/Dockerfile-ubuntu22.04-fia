@@ -38,11 +38,11 @@ ARG LIBTORCH_DL="download_libtorch_gpu.sh" # Use download_libtorch_gpu.sh for GP
 
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
-    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi
+    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi"
 
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb \
-    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi
+    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi"
 
 # Setup
 RUN npm install -g json
