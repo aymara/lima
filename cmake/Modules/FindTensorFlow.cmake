@@ -13,7 +13,8 @@ find_path(TensorFlow_INCLUDE_DIR
         tensorflow/cc
         third_party
         HINTS
-        ${TF_SOURCES_PATH}/include)
+        ${TF_SOURCES_PATH}/include
+        ${TF_SOURCES_PATH}/include/tensorflow-for-lima)
 find_library(TensorFlow_LIBRARY
         NAMES
         tensorflow-for-lima
