@@ -244,6 +244,7 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
   auto model_name = model_prefix;
   std::string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
+  LOG_MESSAGE(LDEBUG, "RnnTokenizerPrivate::init lang_str=" << lang_str << ", udlang=" << udlang);
 
   if (!fix_lang_codes(lang_str, udlang))
   {

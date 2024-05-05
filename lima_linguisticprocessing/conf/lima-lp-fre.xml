@@ -271,7 +271,7 @@ SPDX-License-Identifier: MIT
     <group name="conllureader" class="ConlluReader">
     </group>
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="tokenizer-$udlang"/>
+      <param key="model_prefix" value="tokenizer-fre"/>
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>

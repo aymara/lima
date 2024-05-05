@@ -27,7 +27,7 @@ SPDX-License-Identifier: MIT
 <!-- ******************************************
   Definition of pipelines
 *********************************************** -->
-    <group name="newdeepud" class="ProcessUnitPipeline">
+    <group name="deeplima" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
         <item value="tfmorphosyntax"/>

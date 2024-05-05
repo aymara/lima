@@ -245,9 +245,9 @@ SPDX-License-Identifier: MIT
         <entry key="ud-zho-simp" value="deepud" />
         <entry key="ud-zho" value="deepud" />
       </map>
+
       <map name="deepud">
         <entry key="ud"     value="deepud"/>
-
         <entry key="ud-afr" value="deepud" />
         <entry key="ud-ara" value="deepud" />
         <entry key="ud-bel" value="deepud" />
@@ -315,8 +315,79 @@ SPDX-License-Identifier: MIT
         <entry key="ud-wol" value="deepud" />
         <entry key="ud-zho-simp" value="deepud" />
         <entry key="ud-zho" value="deepud" />
-
       </map>
+
+      <map name="deeplima">
+        <entry key="ud"     value="deeplima"/>
+        <entry key="ud-afr" value="deeplima" />
+        <entry key="ud-ara" value="deeplima" />
+        <entry key="ud-bel" value="deeplima" />
+        <entry key="ud-bre" value="deeplima" />
+        <entry key="ud-bul" value="deeplima" />
+        <entry key="ud-cat" value="deeplima" />
+        <entry key="ud-ces" value="deeplima" />
+        <entry key="ud-chu" value="deeplima" />
+        <entry key="ud-cop" value="deeplima" />
+        <entry key="ud-cym" value="deeplima" />
+        <entry key="ud-dan" value="deeplima" />
+        <entry key="ud-deu" value="deeplima" />
+        <entry key="ud-ell" value="deeplima" />
+        <entry key="ud-eng" value="deeplima" />
+        <entry key="ud-est" value="deeplima" />
+        <entry key="ud-eus" value="deeplima" />
+        <entry key="ud-fas" value="deeplima" />
+        <entry key="ud-fin" value="deeplima" />
+        <entry key="ud-fra" value="deeplima" />
+        <entry key="ud-fro" value="deeplima" />
+        <entry key="ud-gla" value="deeplima" />
+        <entry key="ud-gle" value="deeplima" />
+        <entry key="ud-glg" value="deeplima" />
+        <entry key="ud-heb" value="deeplima" />
+        <entry key="ud-hin" value="deeplima" />
+        <entry key="ud-hrv" value="deeplima" />
+        <entry key="ud-hun" value="deeplima" />
+        <entry key="ud-hye" value="deeplima" />
+        <entry key="ud-ind" value="deeplima" />
+        <entry key="ud-ita" value="deeplima" />
+        <entry key="ud-jpn" value="deeplima" />
+        <entry key="ud-kaz" value="deeplima" />
+        <entry key="ud-kmr" value="deeplima" />
+        <entry key="ud-kor" value="deeplima" />
+        <entry key="ud-lat" value="deeplima" />
+        <entry key="ud-lav" value="deeplima" />
+        <entry key="ud-lit" value="deeplima" />
+        <entry key="ud-lzh" value="deeplima" />
+        <entry key="ud-mar" value="deeplima" />
+        <entry key="ud-mlt" value="deeplima" />
+        <entry key="ud-nld" value="deeplima" />
+        <entry key="ud-nno" value="deeplima" />
+        <entry key="ud-nob" value="deeplima" />
+        <entry key="ud-orv" value="deeplima" />
+        <entry key="ud-pcm" value="deeplima" />
+        <entry key="ud-pol" value="deeplima" />
+        <entry key="ud-por" value="deeplima" />
+        <entry key="ud-ron" value="deeplima" />
+        <entry key="ud-rus" value="deeplima" />
+        <entry key="ud-slk" value="deeplima" />
+        <entry key="ud-slv" value="deeplima" />
+        <entry key="ud-sme" value="deeplima" />
+        <entry key="ud-spa" value="deeplima" />
+        <entry key="ud-sqi" value="deeplima" />
+        <entry key="ud-srp" value="deeplima" />
+        <entry key="ud-swe" value="deeplima" />
+        <entry key="ud-tam" value="deeplima" />
+        <entry key="ud-tel" value="deeplima" />
+        <entry key="ud-tha" value="deeplima" />
+        <entry key="ud-tur" value="deeplima" />
+        <entry key="ud-uig" value="deeplima" />
+        <entry key="ud-ukr" value="deeplima" />
+        <entry key="ud-urd" value="deeplima" />
+        <entry key="ud-vie" value="deeplima" />
+        <entry key="ud-wol" value="deeplima" />
+        <entry key="ud-zho-simp" value="deeplima" />
+        <entry key="ud-zho" value="deeplima" />
+      </map>
+
       <map name="deepud-pretok">
         <entry key="ud"     value="deepud-pretok"/>
 
