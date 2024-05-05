@@ -243,7 +243,14 @@ if [ "$USE_TF" = false ] ; then
   TF_SOURCES_PATH=""
 else
   if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
-    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
+    TF_SOURCES_PATH=$build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima/
+    install -d $build_prefix/$mode-$WITH_ASAN/$current_project/extern
+    docker pull aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest
+    docker create -ti --name dummy aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest bash
+    docker cp dummy:/tensorflow_for_lima $build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima
+    docker rm -f dummy
+    install -d $LIMA_DIST/extern/lib
+    install $TF_SOURCES_PATH/lib/libtensorflow-for-lima.so $LIMA_DIST/extern/lib
   fi
 
   echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"

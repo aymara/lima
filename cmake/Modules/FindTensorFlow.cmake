@@ -13,13 +13,14 @@ find_path(TensorFlow_INCLUDE_DIR
         tensorflow/cc
         third_party
         HINTS
-        ${TF_SOURCES_PATH})
+        ${TF_SOURCES_PATH}/include)
 find_library(TensorFlow_LIBRARY
         NAMES
         tensorflow-for-lima
         HINTS
         /usr/lib
-        /usr/local/lib)
+        /usr/local/lib
+        ${TF_SOURCES_PATH}/lib)
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 get_filename_component(TensorFlow_LIBRARY_Folder ${TensorFlow_LIBRARY} DIRECTORY)
 set(TensorFlow_LIBRARY_DYN ${TensorFlow_LIBRARY_Folder}/../bin/tensorflow-for-lima.dll)

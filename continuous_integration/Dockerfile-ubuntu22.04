@@ -32,7 +32,14 @@ ARG TORCH_CUDA_ARCH_LIST="6.1"
 ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
 
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi
+
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi
+
 
 # Setup
 RUN npm install -g json
