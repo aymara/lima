@@ -15,13 +15,13 @@ namespace deeplima
 class PathResolver
 {
 public:
-  PathResolver();
+  PathResolver(const std::string& paths="");
 
   std::string resolve(const std::string& prefix, const std::string& path, const std::vector<std::string>& accepted_ext = {}) const;
 
 protected:
   std::string find_user_data_home();
-  void init();
+  void init(const std::string& paths="");
 
   std::vector<std::string> m_resources_paths;
 };

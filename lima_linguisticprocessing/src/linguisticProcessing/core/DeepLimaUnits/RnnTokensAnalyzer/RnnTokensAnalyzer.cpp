@@ -80,8 +80,10 @@ public:
 };
 
 RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper(
-                                                        "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
-                                                        m_stringsPool(nullptr), m_stridx(), m_loaded(false)
+    "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+    m_stringsPool(nullptr), m_stridx(),
+    m_pResolver(MediaticData::single().getResourcesPath()),
+    m_loaded(false)
 {
 }
 
