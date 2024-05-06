@@ -275,11 +275,11 @@ public:
       m_stridx(*m_stridx_ptr),
       m_classes(std::make_shared<StdMatrix<uint8_t>>())
   {
-    std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", "
-              << lemm_model_fn << ", " << lemm_dict_fn << ", "
-              << fixed_ini_fn << ", " << lower_ini_fn  << ", "
-              << fixed_lemm_fn
-              << std::endl;
+    // std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", "
+    //           << lemm_model_fn << ", " << lemm_dict_fn << ", "
+    //           << fixed_ini_fn << ", " << lower_ini_fn  << ", "
+    //           << fixed_lemm_fn
+    //           << std::endl;
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
