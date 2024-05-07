@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "LimaAnalyzerTest0.h"
-#include "lima.h"
+#include "client/lima.h"
 
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
 #include "common/LimaCommon.h"
@@ -58,7 +58,7 @@ void LimaAnalyzerTest0::initTestCase()
 {
 }
 
-void LimaAnalyzerTest0::test_two_instances()
+void LimaAnalyzerTest0::test_two_same_instances()
 {
   // qDebug() << "LimaAnalyzerTest0::test_load";
   {
@@ -73,7 +73,19 @@ void LimaAnalyzerTest0::test_two_instances()
     qDebug() << "LimaAnalyzerTest0::test_load analyzer 2:" << result;
   }
   QVERIFY( true );
+}
 
+void LimaAnalyzerTest0::test_two_different_instances()
+{
+    LimaAnalyzer analyzer0("ud-eng", "deepud", "");
+    auto result1 = analyzer0.analyzeText("Hop ! Hop !");
+    qDebug() << "LimaAnalyzerTest0::test_two_different_instances analyzer 1:" << result1;
+
+    LimaAnalyzer analyzer1("eng", "main", "");
+    auto result2 = analyzer1.analyzeText("One, 2, tree.");
+    qDebug() << "LimaAnalyzerTest0::test_two_different_instances analyzer 2:" << result2;
+
+    QVERIFY( true );
 }
 
 void LimaAnalyzerTest0::test_unknownLanguage() {
@@ -165,11 +177,44 @@ void LimaAnalyzerTest0::test_analyzeText_init_with_lang_and_pipe() {
       typeid(thelima.analyzeText("This is a text on 02/05/2022.")) == typeid(std::string));
 }
 
-void LimaAnalyzerTest0::test_analyzeText_pipeline_not_avail() {
+void LimaAnalyzerTest0::test_analyzeText_pipeline_not_avail()
+{
     LimaAnalyzer lima("ud-eng", "deepud", "");
     lima.analyzeText("This is a text on 02/05/2022.", "other");
     QVERIFY(lima.error);
 }
+
+// void LimaAnalyzerTest0::test_forged_pipeline()
+// {
+//     LimaAnalyzer lima("ud-eng", "empty", "");
+//
+//     // Testing the forging of pipelines
+//     //   auto langid = Lima::Common::MediaticData::MediaticData::single().getMediaId("ud-eng");
+//     //   auto pipe = MediaProcessors::changeable().getPipelineForId(langid, pipeline);
+//     //   auto managers = Lima::MediaProcessors::single().managers();
+//     //   {
+//     std::string jsonGroupString =
+//         "{ \"name\":\"cpptftokenizer\", "
+//         "  \"class\":\"CppUppsalaTensorFlowTokenizer\", "
+//         "  \"model_prefix\": \"tokenizer-eng\" }";
+//     lima.addPipelineUnit("empty", "ud-eng", jsonGroupString);
+//     jsonGroupString =
+//         "{ \"name\":\"tfmorphosyntax\", "
+//         "  \"class\":\"TensorFlowMorphoSyntax\", "
+//         "  \"model_prefix\": \"morphosyntax-eng\", "
+//         "  \"embeddings\": \"fasttext-eng.bin\" "
+//         "}";
+//     lima.addPipelineUnit("empty", "ud-eng", jsonGroupString);
+//     jsonGroupString =
+//         "{ \"name\":\"conllDumper\", "
+//         "  \"class\":\"ConllDumper\", "
+//         "  \"handler\": \"simpleStreamHandler\" "
+//         "  \"fakeDependencyGraph\": \"false\", "
+//         "}";
+//     lima.addPipelineUnit("empty", "ud-eng", jsonGroupString);
+//     lima.analyzeText("This is a text on 02/05/2022.", "ud-eng", "empty");
+//     QVERIFY(lima.error);
+// }
 
 QTEST_GUILESS_MAIN(LimaAnalyzerTest0)
 

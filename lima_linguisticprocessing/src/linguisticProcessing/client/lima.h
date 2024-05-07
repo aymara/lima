@@ -53,15 +53,44 @@
 **
 ****************************************************************************/
 
-#include "lima.h"
+#ifndef LIMAANALYZER_H
+#define LIMAANALYZER_H
 
-#include <iostream>
 
-int main(int /*argc*/, char** /*argv[]*/)
+#include <memory>
+#include <string>
+#include <vector>
+
+class LimaAnalyzerPrivate;
+class LimaAnalyzer
 {
-  LimaAnalyzer analyzer0("ud-eng", "deepud", "");
-  std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;
+  friend class LimaAnalyzerPrivate;
+public:
+  LimaAnalyzer(const std::string& langs,
+               const std::string& pipelines,
+               const std::string& modulePath,
+               const std::string& user_config_path="",
+               const std::string& user_resources_path="",
+               const std::string& meta="");
 
-  LimaAnalyzer analyzer1("eng", "main", "");
-  std::cerr << analyzer1.analyzeText("One, 2, tree.") << std::endl;
-}
+  ~LimaAnalyzer();
+  LimaAnalyzer(const LimaAnalyzer& a) ;
+  LimaAnalyzer& operator=(const LimaAnalyzer& a) ;
+
+  std::string analyzeText(const std::string& text,
+                          const std::string& lang="",
+                          const std::string& pipeline="",
+                          const std::string& meta="");
+
+  bool addPipelineUnit(const std::string& pipeline,
+                       const std::string& media,
+                       const std::string& jsonGroupString);
+
+  bool error = false;
+  std::string errorMessage = "";
+
+private:
+  LimaAnalyzerPrivate* m_d;
+};
+
+#endif // LIMAANALYZER_H

@@ -511,11 +511,81 @@ SPDX-License-Identifier: MIT
         <entry key="fre" value="xml"/>
         <entry key="por" value="xml"/>
       </map>
-      <!-- The none pipeline is an empty one allowing to not do anything. For tests mainly. -->
-      <map name="none">
-        <entry key="eng" value="none"/>
-        <entry key="fre" value="none"/>
-        <entry key="por" value="none"/>
+      <!-- The empty pipeline is an empty one allowing to not do anything. For tests mainly. -->
+      <map name="empty">
+        <entry key="eng"    value="empty"/>
+        <entry key="fre"    value="empty"/>
+        <entry key="por"    value="empty"/>
+
+        <entry key="ud"     value="empty"/>
+
+        <entry key="ud-afr" value="empty" />
+        <entry key="ud-ara" value="empty" />
+        <entry key="ud-bel" value="empty" />
+        <entry key="ud-bre" value="empty" />
+        <entry key="ud-bul" value="empty" />
+        <entry key="ud-cat" value="empty" />
+        <entry key="ud-ces" value="empty" />
+        <entry key="ud-chu" value="empty" />
+        <entry key="ud-cop" value="empty" />
+        <entry key="ud-cym" value="empty" />
+        <entry key="ud-dan" value="empty" />
+        <entry key="ud-deu" value="empty" />
+        <entry key="ud-ell" value="empty" />
+        <entry key="ud-eng" value="empty" />
+        <entry key="ud-est" value="empty" />
+        <entry key="ud-eus" value="empty" />
+        <entry key="ud-fas" value="empty" />
+        <entry key="ud-fin" value="empty" />
+        <entry key="ud-fra" value="empty" />
+        <entry key="ud-fro" value="empty" />
+        <entry key="ud-gla" value="empty" />
+        <entry key="ud-gle" value="empty" />
+        <entry key="ud-glg" value="empty" />
+        <entry key="ud-heb" value="empty" />
+        <entry key="ud-hin" value="empty" />
+        <entry key="ud-hrv" value="empty" />
+        <entry key="ud-hun" value="empty" />
+        <entry key="ud-hye" value="empty" />
+        <entry key="ud-ind" value="empty" />
+        <entry key="ud-ita" value="empty" />
+        <entry key="ud-jpn" value="empty" />
+        <entry key="ud-kaz" value="empty" />
+        <entry key="ud-kmr" value="empty" />
+        <entry key="ud-kor" value="empty" />
+        <entry key="ud-lat" value="empty" />
+        <entry key="ud-lav" value="empty" />
+        <entry key="ud-lit" value="empty" />
+        <entry key="ud-lzh" value="empty" />
+        <entry key="ud-mar" value="empty" />
+        <entry key="ud-mlt" value="empty" />
+        <entry key="ud-nld" value="empty" />
+        <entry key="ud-nno" value="empty" />
+        <entry key="ud-nob" value="empty" />
+        <entry key="ud-orv" value="empty" />
+        <entry key="ud-pcm" value="empty" />
+        <entry key="ud-pol" value="empty" />
+        <entry key="ud-por" value="empty" />
+        <entry key="ud-ron" value="empty" />
+        <entry key="ud-rus" value="empty" />
+        <entry key="ud-slk" value="empty" />
+        <entry key="ud-slv" value="empty" />
+        <entry key="ud-sme" value="empty" />
+        <entry key="ud-spa" value="empty" />
+        <entry key="ud-sqi" value="empty" />
+        <entry key="ud-srp" value="empty" />
+        <entry key="ud-swe" value="empty" />
+        <entry key="ud-tam" value="empty" />
+        <entry key="ud-tel" value="empty" />
+        <entry key="ud-tha" value="empty" />
+        <entry key="ud-tur" value="empty" />
+        <entry key="ud-uig" value="empty" />
+        <entry key="ud-ukr" value="empty" />
+        <entry key="ud-urd" value="empty" />
+        <entry key="ud-vie" value="empty" />
+        <entry key="ud-wol" value="empty" />
+        <entry key="ud-zho-simp" value="empty" />
+        <entry key="ud-zho" value="empty" />
       </map>
     </group>
     <group name="analysisDumpers">

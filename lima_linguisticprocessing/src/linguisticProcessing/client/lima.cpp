@@ -59,6 +59,7 @@
 #include "common/LimaVersion.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/MediaProcessors/MediaProcessors.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include <common/ProcessUnitFramework/AnalysisContent.h>
 #include "common/QsLog/QsLog.h"
@@ -66,6 +67,7 @@
 #include "common/QsLog/QsLogCategories.h"
 #include "common/QsLog/QsDebugOutput.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
+#include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
 #include "common/tools/LimaMainTaskRunner.h"
@@ -117,6 +119,7 @@ using LangData = Lima::Common::MediaticData::LanguageData;
 using MedData = Lima::Common::MediaticData::MediaticData ;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::PropertyCode;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima;
 
 struct character_escaper
@@ -157,6 +160,10 @@ public:
 
   void initMetaData();
 
+  bool addPipelineUnit(const std::string& pipeline,
+                                            const std::string& media,
+                                            const std::string& jsonGroupString);
+
   const std::string analyzeText(const std::string& text,
                                 const std::string& lang,
                                 const std::string& pipeline,
@@ -184,6 +191,7 @@ public:
   /** Reset all members used to store analysis states. To be called before handling a new analysis. */
   void reset();
 
+  QJsonObject objectFromString(const QString& in);
 
   QString previousNeType;
 
@@ -324,7 +332,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
       //     << clientId << std::endl;
 
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+      XMLConfigurationFileParser lpconfig(
           (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
@@ -473,6 +481,71 @@ void LimaAnalyzerPrivate::initMetaData ()
       }
     }
   }
+}
+
+bool LimaAnalyzer::addPipelineUnit(const std::string& pipeline,
+                     const std::string& media,
+                     const std::string& jsonGroupString)
+{
+  if (! m_d->addPipelineUnit(pipeline, media, jsonGroupString))
+  {
+    error = true;
+    errorMessage = "addPipelineUnit: failed";
+    return false;
+  }
+  return true;
+}
+
+QJsonObject LimaAnalyzerPrivate::objectFromString(const QString& in)
+{
+    QJsonObject obj;
+
+    QJsonDocument doc = QJsonDocument::fromJson(in.toUtf8());
+
+    // check validity of the document
+    if(!doc.isNull())
+    {
+        if(doc.isObject())
+        {
+            obj = doc.object();
+        }
+        else
+        {
+            qDebug() << "Document is not an object" << Qt::endl;
+        }
+    }
+    else
+    {
+        qDebug() << "Invalid JSON...\n" << in << Qt::endl;
+    }
+
+    return obj;
+}
+
+bool LimaAnalyzerPrivate::addPipelineUnit(const std::string& pipeline,
+                                          const std::string& media,
+                                          const std::string& jsonGroupString)
+{
+  auto jsonGroup = QJsonDocument::fromJson(QByteArray::fromStdString(jsonGroupString)).object();
+  auto mediaid = Lima::Common::MediaticData::MediaticData::single().getMediaId(media);
+  auto pipe = MediaProcessors::changeable().getPipelineForId(mediaid, pipeline);
+  auto managers = Lima::MediaProcessors::single().managers();
+    // QString jsonGroupString =
+    //     "{ \"name\":\"cpptftokenizer\", "
+    //     "  \"class\":\"CppUppsalaTensorFlowTokenizer\", "
+    //     "  \"model_prefix\": \"tokenizer-eng\" }";
+
+  GroupConfigurationStructure unitConfig(jsonGroup);
+
+  // managers (Manager*) used in init of ProcessUnits are stored in
+  // m_pipelineManagers of MediaProcessors
+  auto pu = MediaProcessUnit::Factory::getFactory(
+    jsonGroup["class"].toString().toStdString())->create(
+      unitConfig,
+      managers[mediaid]);
+  pipe->push_back(pu);
+
+  return true;
 }
 
 std::string LimaAnalyzer::analyzeText(const std::string& text,
