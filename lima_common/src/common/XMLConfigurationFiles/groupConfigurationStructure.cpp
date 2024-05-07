@@ -20,6 +20,8 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include <QJsonArray>
+#include <QJsonObject>
 
 using namespace std;
 
@@ -65,8 +67,7 @@ class GroupConfigurationStructurePrivate
 };
 /**
   {
-    "name": "cpptftokenizer",
-    "class": "CppUppsalaTensorFlowTokenizer",
+    "name": "myname",
     "param1": "value",
     "map_1": {"k1": "v1", "k2": "v2" },
     "list_1": ["i1", "i2", "i3"],
@@ -74,19 +75,47 @@ class GroupConfigurationStructurePrivate
 */
 GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
       const QJsonObject& group) :
-    m_params()
-    // m_lists(group.m_lists),
-    // m_attributes(group.m_attributes),
-    // m_maps(group.m_maps),
-    // m_groupName(group.m_groupName)
+    m_params(),
+    m_lists(),
+    m_attributes(),
+    m_maps(),
+    m_groupName()
 {
-  for(const QString& key: group["params"].toObject().keys())
+  m_groupName = group["name"].toString().toStdString();
+
+  for(const QString& key: group.keys())
   {
-    auto param = QString::fromStdString("params");
-    auto value = group[param][key].toString();
-    m_params[key.toStdString()] = value.toStdString();
+    if (key == "name")
+      continue;
+
+    auto val = group[key];
+    // Param
+    if (val.isString())
+    {
+      m_params[key.toStdString()] = val.toString().toStdString();
+    }
+    // List
+    else if (val.isArray())
+    {
+      m_lists[key.toStdString()] = {};
+      auto list = val.toArray();
+      for (const auto& item: list)
+      {
+        m_lists[key.toStdString()].push_back(item.toString().toStdString());
+      }
+    }
+    // Map
+    else if (val.isObject())
+    {
+      m_maps[key.toStdString()] = {};
+      auto map = val.toObject();
+      for(const QString& mapKey: map.keys())
+      {
+        m_maps[key.toStdString()][mapKey.toStdString()] =
+          map[mapKey].toString().toStdString();
+      }
+    }
   }
-  // TODO finish the implementation
 }
 
 GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const std::string& name) :
