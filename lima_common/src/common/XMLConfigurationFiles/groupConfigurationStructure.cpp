@@ -48,13 +48,16 @@ std::ostream& operator<<(std::ostream& os, const MSMSS& msmss);
 class GroupConfigurationStructurePrivate
 {
   friend class GroupConfigurationStructure;
-  friend std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const GroupConfigurationStructure& dgcs);
 
   GroupConfigurationStructurePrivate() {}
   GroupConfigurationStructurePrivate(const QJsonObject& group);
   GroupConfigurationStructurePrivate(const std::string& name);
-  GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group);
-  GroupConfigurationStructurePrivate& operator=(const GroupConfigurationStructurePrivate& group);
+  GroupConfigurationStructurePrivate(
+    const GroupConfigurationStructurePrivate& group);
+  GroupConfigurationStructurePrivate& operator=(
+    const GroupConfigurationStructurePrivate& group);
   ~GroupConfigurationStructurePrivate();
 
   MSS m_params;
@@ -118,7 +121,8 @@ GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
   }
 }
 
-GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const std::string& name) :
+GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
+  const std::string& name) :
     m_params(),
     m_lists(),
     m_attributes(),
@@ -126,7 +130,8 @@ GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const std
     m_groupName(name)
 {}
 
-GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group) :
+GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
+  const GroupConfigurationStructurePrivate& group) :
     m_params(group.m_params),
     m_lists(group.m_lists),
     m_attributes(group.m_attributes),
@@ -134,7 +139,8 @@ GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const Gro
     m_groupName(group.m_groupName)
 {}
 
-GroupConfigurationStructurePrivate& GroupConfigurationStructurePrivate::operator=(const GroupConfigurationStructurePrivate& group)
+GroupConfigurationStructurePrivate& GroupConfigurationStructurePrivate::operator=(
+  const GroupConfigurationStructurePrivate& group)
 {
     m_params=group.m_params;
     m_lists=group.m_lists;
@@ -150,7 +156,8 @@ GroupConfigurationStructurePrivate::~GroupConfigurationStructurePrivate()
 }
 
 
-GroupConfigurationStructure::GroupConfigurationStructure() : m_d(new GroupConfigurationStructurePrivate())
+GroupConfigurationStructure::GroupConfigurationStructure() :
+    m_d(new GroupConfigurationStructurePrivate())
 {
 
 }
@@ -165,11 +172,13 @@ GroupConfigurationStructure::GroupConfigurationStructure(const std::string& name
   m_d(new GroupConfigurationStructurePrivate(name))
 {}
 
-GroupConfigurationStructure::GroupConfigurationStructure(const GroupConfigurationStructure& group) :
+GroupConfigurationStructure::GroupConfigurationStructure(
+    const GroupConfigurationStructure& group) :
   m_d(new GroupConfigurationStructurePrivate(*group.m_d))
 {}
 
-GroupConfigurationStructure& GroupConfigurationStructure::operator=(const GroupConfigurationStructure& group)
+GroupConfigurationStructure& GroupConfigurationStructure::operator=(
+    const GroupConfigurationStructure& group)
 {
   *m_d = *group.m_d;
   return *this;
@@ -186,7 +195,8 @@ std::string& GroupConfigurationStructure::getName()
 }
 
 
-std::string& GroupConfigurationStructure::getAttribute(const std::string& key)
+std::string& GroupConfigurationStructure::getAttribute(
+    const std::string& key)
 {
   MSS::iterator it=m_d->m_attributes.find(key);
   if (it == m_d->m_attributes.end())
@@ -203,7 +213,8 @@ string& GroupConfigurationStructure::getParamsValueAtKey(const string& key)
   return ((*it).second);
 }
 
-bool GroupConfigurationStructure::getParamsValueAtKey(const string& key, string& value)
+bool GroupConfigurationStructure::getParamsValueAtKey(const string& key,
+                                                      string& value)
 {
   MSS::iterator it = m_d->m_params.find(key);
   if (it == m_d->m_params.end())
@@ -260,7 +271,8 @@ double GroupConfigurationStructure::getDoubleParameter(const std::string& key)
   return QString::fromUtf8(getParamsValueAtKey(key).c_str()).toDouble();
 }
 
-std::string GroupConfigurationStructure::getStringParameter(const std::string& key)
+std::string GroupConfigurationStructure::getStringParameter(
+  const std::string& key)
 {
   return getParamsValueAtKey(key);
 }
@@ -290,7 +302,8 @@ std::string GroupConfigurationStructure::getStringParameter(const std::string& k
 //   return getParamsValueAtKey(key);
 // }
 
-std::deque<std::string>& GroupConfigurationStructure::getListsValueAtKey(const std::string& key)
+std::deque<std::string>& GroupConfigurationStructure::getListsValueAtKey(
+  const std::string& key)
 {
   auto it = m_d->m_lists.find(key);
   if (it == m_d->m_lists.end())
@@ -298,7 +311,8 @@ std::deque<std::string>& GroupConfigurationStructure::getListsValueAtKey(const s
   return (*it).second;
 }
 
-std::map<std::string, std::string>& GroupConfigurationStructure::getMapAtKey(const std::string& key)
+std::map<std::string, std::string>& GroupConfigurationStructure::getMapAtKey(
+  const std::string& key)
 {
   MSMSS::iterator it = m_d->m_maps.find(key);
   if (it == m_d->m_maps.end())
@@ -324,18 +338,22 @@ std::map<std::string, std::string>& GroupConfigurationStructure::getMapAtKey(con
 const map<string,string>& GroupConfigurationStructure::getParams()
 { return m_d->m_params;}
 
-const std::map<std::string,std::map<std::string,std::string> >& GroupConfigurationStructure::getMaps()
+const std::map<std::string,std::map<std::string,std::string> >&
+GroupConfigurationStructure::getMaps()
 { return m_d->m_maps; }
 
-const std::map<std::string,std::deque<std::string> >& GroupConfigurationStructure::getLists()
+const std::map<std::string,std::deque<std::string> >&
+GroupConfigurationStructure::getLists()
 { return m_d->m_lists; }
 
-void GroupConfigurationStructure::addAttribute(const std::string& key,const std::string& value)
+void GroupConfigurationStructure::addAttribute(const std::string& key,
+                                               const std::string& value)
 {
   m_d->m_attributes[key]=value;
 }
 
-void GroupConfigurationStructure::addParamValuePair(const string& key, const string& value)
+void GroupConfigurationStructure::addParamValuePair(const string& key,
+                                                    const string& value)
 {
   m_d->m_params.insert(make_pair(key,value));
 }
@@ -345,7 +363,8 @@ void GroupConfigurationStructure::addListNamed(const string& listName)
   m_d->m_lists.insert(make_pair(listName,deque<string>()));
 }
 
-void GroupConfigurationStructure::addItemInListNamed(const string& item, const string& listName)
+void GroupConfigurationStructure::addItemInListNamed(const string& item,
+                                                     const string& listName)
 {
   MSDS::iterator it = m_d->m_lists.find(listName);
   if (it == m_d->m_lists.end())
@@ -403,7 +422,8 @@ void GroupConfigurationStructure::addEntryInMap(
 //   addEntryInMap(mapName.toStdString(), key.toStdString(), value.toStdString());
 // }
 
-std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs)
+std::ostream& operator<<(std::ostream& os,
+                         const GroupConfigurationStructure& dgcs)
 {
   return os << "Group :        " << dgcs.m_d->m_groupName << endl
             << "Attributes :   " << dgcs.m_d->m_attributes << endl
@@ -414,7 +434,7 @@ std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dg
 
 std::ostream& operator<<(std::ostream& os, const MSS& mss)
 {
-  for (MSS::const_iterator it = mss.begin(); it != mss.end(); it++)
+  for (auto it = mss.begin(); it != mss.end(); it++)
   {
     os << (*it).first << " : " << (*it).second << endl;
   }
@@ -427,7 +447,7 @@ std::ostream& operator<<(std::ostream& os, const MSDS& msds)
   {
     os << (*it).first << " : [" ;
     const deque<string>& ds = (*it).second;
-    for (deque<string>::const_iterator dit = ds.begin(); dit != ds.end(); dit++)
+    for (auto dit = ds.begin(); dit != ds.end(); dit++)
     {
       os << (*dit) << ", ";
     }
@@ -442,7 +462,7 @@ std::ostream& operator<<(std::ostream& os, const MSMSS& msmss)
   {
     os << it->first << " { ";
     const MSS& mss=it->second;
-    for (MSS::const_iterator it2=mss.begin();it2!=mss.end();it2++)
+    for (auto it2=mss.begin();it2!=mss.end();it2++)
     {
       os << "[" << it2->first << "->" << it2->second << "]";
     }
