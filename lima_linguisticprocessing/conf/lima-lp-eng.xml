@@ -409,7 +409,7 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
 
-    <group name="none" class="ProcessUnitPipeline">
+    <group name="empty" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************

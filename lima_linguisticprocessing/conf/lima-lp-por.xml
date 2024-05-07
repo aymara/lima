@@ -113,7 +113,7 @@ SPDX-License-Identifier: MIT
         <item value="bowDumperXml"/>
       </list>
     </group>
-    <group name="none" class="ProcessUnitPipeline">
+    <group name="empty" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************

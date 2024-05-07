@@ -161,8 +161,8 @@ public:
   void initMetaData();
 
   bool addPipelineUnit(const std::string& pipeline,
-                                            const std::string& media,
-                                            const std::string& jsonGroupString);
+                       const std::string& media,
+                       const std::string& jsonGroupString);
 
   const std::string analyzeText(const std::string& text,
                                 const std::string& lang,
