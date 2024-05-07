@@ -35,7 +35,6 @@ SPDX-License-Identifier: MIT
         <item value="SvmToolPosTagger"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
-        <!--item value="geoEntities"/-->
         <item value="dotGraphWriter"/>
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
@@ -249,23 +248,6 @@ SPDX-License-Identifier: MIT
       <param key="dictionary" value="mainDictionary"/>
       <param key="charChart" value="flatcharchart"/>
       <param key="tokenizer" value="flattokenizer"/>
-    </group>
-    <group name="geoEntities" class="GeoEntitiesTagger">
-      <param key="charChart" value="flatcharchart"/>
-      <param key="dbms" value="mysql"/>
-      <param key="dbConnection" value="dbname=GAZETIKI_DB user=gazetiki password=gazpwd"/>
-      <param key="maxEntityLength" value="10" />
-      <param key="graph" value="PosGraph"/>
-      <param key="fieldClass" value="CLASS_3"/>
-      <map name="Trigger">
-        <!--entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="PONCTU_PARAGRAPHE" unlessFirstToken="YES"/-->
-        <entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="" unlessFirstToken="YES"/>
-        <entry key="NP" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
-      </map>
-      <map name="EndWord">
-        <!--entry key="PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
-        <entry key="T_COMMA_NUMBER" value="Status" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
-      </map>
     </group>
     <group name="idiomaticAlternatives" class="ApplyRecognizer">
       <param key="automaton" value="idiomaticExpressionsRecognizer"/>

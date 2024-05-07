@@ -56,6 +56,7 @@ class GroupConfigurationStructurePrivate
   friend std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
 
   GroupConfigurationStructurePrivate() {}
+  // GroupConfigurationStructurePrivate(const QJsonObject& group);
   GroupConfigurationStructurePrivate(const std::string& name);
   GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group);
   GroupConfigurationStructurePrivate& operator=(const GroupConfigurationStructurePrivate& group);
@@ -71,6 +72,33 @@ class GroupConfigurationStructurePrivate
 
   friend class XMLConfigurationFileHandler;
 };
+/**
+  {
+    "name": "cpptftokenizer",
+    "class": "CppUppsalaTensorFlowTokenizer",
+    "param1": "value",
+    "map_1": {"k1": "v1", "k2": "v2" },
+    "list_1": ["i1", "i2", "i3"],
+  }
+*/
+// GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
+//       const QJsonObject& group) :
+//     m_params()
+//     // m_lists(group.m_lists),
+//     // m_attributes(group.m_attributes),
+//     // m_maps(group.m_maps),
+//     // m_listsOfItems(group.m_listsOfItems),
+//     // m_mapsOfItems(group.m_mapsOfItems),
+//     // m_groupName(group.m_groupName)
+// {
+//   for(const QString& key: group["params"].toObject().keys())
+//   {
+//     auto param = QString::fromStdString("params");
+//     auto value = group[param][key].toString();
+//     m_params[key.toStdString()] = value.toStdString();
+//   }
+//   // TODO finish the implementation
+// }
 
 GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const std::string& name) :
     m_params(),
@@ -114,6 +142,12 @@ GroupConfigurationStructure::GroupConfigurationStructure() : m_d(new GroupConfig
 {
 
 }
+
+// GroupConfigurationStructure::GroupConfigurationStructure(const QJsonObject& group) :
+//   m_d(new GroupConfigurationStructurePrivate(group))
+// {
+//
+// }
 
 GroupConfigurationStructure::GroupConfigurationStructure(const std::string& name) :
   m_d(new GroupConfigurationStructurePrivate(name))

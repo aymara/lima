@@ -23,6 +23,8 @@
 #include <deque>
 #include <string>
 
+#include <QJsonObject>
+
 namespace Lima {
 namespace Common {
 namespace XMLConfigurationFiles {
@@ -31,6 +33,7 @@ class GroupConfigurationStructurePrivate;
 class LIMA_XMLCONFIGURATIONFILES_EXPORT GroupConfigurationStructure {
 public:
     GroupConfigurationStructure();
+    // GroupConfigurationStructure(const QJsonObject& group);
     GroupConfigurationStructure(const std::string& name);
     GroupConfigurationStructure(const QString& name);
     GroupConfigurationStructure(const GroupConfigurationStructure& group);
