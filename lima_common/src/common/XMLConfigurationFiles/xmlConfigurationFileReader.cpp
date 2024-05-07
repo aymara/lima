@@ -247,6 +247,8 @@ void XmlConfigurationFileReaderPrivate::readMap()
   auto mapName = m_reader.attributes().value(mapNameAttribute()).toString();
   XMLCFGLOGINIT;
   LTRACE << " XmlConfigurationFileReaderPrivate::readMap" << mapName;
+  LTRACE << "XmlConfigurationFileReaderPrivate::readMap add empty map"<< mapName;
+  m_configuration.addMapNamedForModuleAndGroup(mapName, m_moduleName, m_groupName);
   while (m_reader.readNextStartElement())
   {
     if (m_reader.name() == QLatin1String("entry"))
@@ -255,8 +257,6 @@ void XmlConfigurationFileReaderPrivate::readMap()
       m_reader.raiseError(QObject::tr("Expected a map entry in map %1 in group %2, in module %3 but got a %4.")
         .arg(mapName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
   }
-  LTRACE << "XmlConfigurationFileReaderPrivate::readMap add empty map"<< mapName;
-  m_configuration.addMapNamedForModuleAndGroup(mapName, m_moduleName, m_groupName);
 }
 
 //         <entry key="LatticeDown" value="0"/>

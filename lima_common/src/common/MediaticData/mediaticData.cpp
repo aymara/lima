@@ -902,38 +902,14 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
 #endif
           }
         }
-        catch(NoSuchList& )
+        catch(NoSuchList& e)
         {
-          // no simple list: may be list of items with attributes (to deal with isA relations of entities)
-          auto& items = groupConf.getListOfItems("entityList");
-          for (const auto& i: items)
-          {
-            auto entityName = QString::fromStdString(i.getName());
-#ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: add entityType " << i.getName() << " in group " << groupName;
-#endif
-            auto ent = addEntity(groupName, entityName);
-#ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: type is " << ent;
-#endif
-            if (i.hasAttribute(QLatin1String("isA")))
-            {
-              auto parentName = utf8stdstring2limastring(i.getAttribute("isA"));
-              EntityType parent;
-              try
-              {
-                parent = getEntityType(groupName, parentName);
-  #ifdef DEBUG_CD
-                LDEBUG << "initEntityTypes: add parent link:" << ent << "->" << parent;
-  #endif
-              }
-              catch (const LimaException& e)
-              {
-                LIMA_EXCEPTION( "Unknown entity type" << groupName << parentName);
-              }
-              addEntityParentLink(ent, parent);
-            }
-          }
+          MDATALOGINIT;
+          QString errorString;
+          QTextStream qts(&errorString);
+          qts << "missing list 'entityList' in entity types configuration:" << e.what();
+          LERROR << errorString;
+          throw InvalidConfiguration(errorString.toStdString());
         }
       }
     }

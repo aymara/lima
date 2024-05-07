@@ -18,7 +18,6 @@
 
 #include "common/LimaCommon.h"
 #include "xmlConfigurationFileExceptions.h"
-#include "itemWithAttributes.h"
 #include <map>
 #include <deque>
 #include <string>
@@ -33,7 +32,7 @@ class GroupConfigurationStructurePrivate;
 class LIMA_XMLCONFIGURATIONFILES_EXPORT GroupConfigurationStructure {
 public:
     GroupConfigurationStructure();
-    // GroupConfigurationStructure(const QJsonObject& group);
+    GroupConfigurationStructure(const QJsonObject& group);
     GroupConfigurationStructure(const std::string& name);
     GroupConfigurationStructure(const QString& name);
     GroupConfigurationStructure(const GroupConfigurationStructure& group);
@@ -56,19 +55,6 @@ public:
     void addMap(const std::string& mapName);
     void addEntryInMap(const std::string& mapName,const std::string& key,const std::string& value);
 
-    std::deque<ItemWithAttributes>& getListOfItems(const std::string& key);
-    std::map<std::string,ItemWithAttributes>& getMapOfItems(const std::string& key);
-    void addListOfItems(const std::string& listName);
-    void addItemInListOfItems(const std::string& listName,
-                              const ItemWithAttributes& item);
-    void addMapOfItems(const std::string& mapName);
-    void addEntryInMapOfItems(const std::string& mapName,
-                              const std::string& key,
-                              const ItemWithAttributes& item);
-
-    void changeListToListOfItems(const std::string &listName);
-    void changeMapToMapOfItems(const std::string &mapName);
-
 //     QString getNameQ();
 //     QString getAttribute(const QString& key);
 //     QString getParamsValueAtKey(const QString& key);
@@ -81,19 +67,6 @@ public:
 //     void addItemInListNamed(const QString& item, const QString& listName);
 //     void addMap(const QString& mapName);
 //     void addEntryInMap(const QString& mapName,const QString& key,const QString& value);
-//
-//     std::deque<ItemWithAttributes>& getListOfItems(const QString& key);
-//     std::map<std::string, ItemWithAttributes>& getMapOfItems(const QString& key);
-//     void addListOfItems(const QString& listName);
-//     void addItemInListOfItems(const QString& listName,
-//                               const ItemWithAttributes& item);
-//     void addMapOfItems(const QString& mapName);
-//     void addEntryInMapOfItems(const QString& mapName,
-//                               const QString& key,
-//                               const ItemWithAttributes& item);
-//
-//     void changeListToListOfItems(const QString &listName);
-//     void changeMapToMapOfItems(const QString &mapName);
 
     friend LIMA_XMLCONFIGURATIONFILES_EXPORT std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
 

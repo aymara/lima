@@ -51,29 +51,6 @@ public:
     void addAttributeForGroupInModule(const std::string& attKey,const std::string& attValue,const std::string& groupName,const std::string& moduleName);
 
 
-    void addListOfItemsForModuleAndGroup(const std::string &listName,
-                                         const std::string& moduleName,
-                                         const std::string& group);
-    void addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
-                                               const std::string &listName,
-                                               const std::string& moduleName,
-                                               const std::string& group);
-    void addMapOfItemsForModuleAndGroup(const std::string &mapName,
-                                        const std::string& moduleName,
-                                        const std::string& group);
-    void addEntryInMapOfItemsForModuleAndGroup(const std::string& entryKey,
-                                               const ItemWithAttributes& entryValue,
-                                               const std::string& mapName,
-                                               const std::string& moduleName,
-                                               const std::string& groupName);
-
-    void changeListToListOfItems(const std::string &listName,
-                                 const std::string& moduleName,
-                                 const std::string& group);
-    void changeMapToMapOfItems(const std::string &mapName,
-                               const std::string& moduleName,
-                               const std::string& group);
-
     void addParamValuePairForModuleAndGroup(const QString &param,
                                             const QString &value,
                                             const QString &module,
@@ -99,29 +76,6 @@ public:
                                       const QString& groupName,
                                       const QString& moduleName);
 
-
-    void addListOfItemsForModuleAndGroup(const QString &listName,
-                                         const QString& moduleName,
-                                         const QString& group);
-    void addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
-                                               const QString &listName,
-                                               const QString& moduleName,
-                                               const QString& group);
-    void addMapOfItemsForModuleAndGroup(const QString &mapName,
-                                        const QString& moduleName,
-                                        const QString& group);
-    void addEntryInMapOfItemsForModuleAndGroup(const QString& entryKey,
-                                               const ItemWithAttributes& entryValue,
-                                               const QString& mapName,
-                                               const QString& moduleName,
-                                               const QString& groupName);
-
-    void changeListToListOfItems(const QString &listName,
-                                 const QString& moduleName,
-                                 const QString& group);
-    void changeMapToMapOfItems(const QString &mapName,
-                               const QString& moduleName,
-                               const QString& group);
 
  private:
 

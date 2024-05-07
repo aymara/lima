@@ -40,15 +40,8 @@ std::ostream& operator<<(std::ostream& os, const MSS& mss);
 typedef std::map< std::string, std::deque<std::string > > MSDS;
 std::ostream& operator<<(std::ostream& os, const MSDS& mss);
 
-typedef std::map< std::string, std::deque<ItemWithAttributes> > MSDI;
-std::ostream& operator<<(std::ostream& os, const MSDI& msdi);
-
 typedef std::map< std::string, std::map<std::string,std::string > > MSMSS;
 std::ostream& operator<<(std::ostream& os, const MSMSS& msmss);
-
-typedef std::map< std::string, std::map<std::string,ItemWithAttributes> > MSMSI;
-std::ostream& operator<<(std::ostream& os, const MSMSI& msmsi);
-
 
 class GroupConfigurationStructurePrivate
 {
@@ -56,7 +49,7 @@ class GroupConfigurationStructurePrivate
   friend std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs);
 
   GroupConfigurationStructurePrivate() {}
-  // GroupConfigurationStructurePrivate(const QJsonObject& group);
+  GroupConfigurationStructurePrivate(const QJsonObject& group);
   GroupConfigurationStructurePrivate(const std::string& name);
   GroupConfigurationStructurePrivate(const GroupConfigurationStructurePrivate& group);
   GroupConfigurationStructurePrivate& operator=(const GroupConfigurationStructurePrivate& group);
@@ -66,8 +59,6 @@ class GroupConfigurationStructurePrivate
   MSDS m_lists;
   MSS m_attributes;
   MSMSS m_maps;
-  MSDI m_listsOfItems;
-  MSMSI m_mapsOfItems;
   std::string m_groupName;
 
   friend class XMLConfigurationFileHandler;
@@ -81,32 +72,28 @@ class GroupConfigurationStructurePrivate
     "list_1": ["i1", "i2", "i3"],
   }
 */
-// GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
-//       const QJsonObject& group) :
-//     m_params()
-//     // m_lists(group.m_lists),
-//     // m_attributes(group.m_attributes),
-//     // m_maps(group.m_maps),
-//     // m_listsOfItems(group.m_listsOfItems),
-//     // m_mapsOfItems(group.m_mapsOfItems),
-//     // m_groupName(group.m_groupName)
-// {
-//   for(const QString& key: group["params"].toObject().keys())
-//   {
-//     auto param = QString::fromStdString("params");
-//     auto value = group[param][key].toString();
-//     m_params[key.toStdString()] = value.toStdString();
-//   }
-//   // TODO finish the implementation
-// }
+GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(
+      const QJsonObject& group) :
+    m_params()
+    // m_lists(group.m_lists),
+    // m_attributes(group.m_attributes),
+    // m_maps(group.m_maps),
+    // m_groupName(group.m_groupName)
+{
+  for(const QString& key: group["params"].toObject().keys())
+  {
+    auto param = QString::fromStdString("params");
+    auto value = group[param][key].toString();
+    m_params[key.toStdString()] = value.toStdString();
+  }
+  // TODO finish the implementation
+}
 
 GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const std::string& name) :
     m_params(),
     m_lists(),
     m_attributes(),
     m_maps(),
-    m_listsOfItems(),
-    m_mapsOfItems(),
     m_groupName(name)
 {}
 
@@ -115,8 +102,6 @@ GroupConfigurationStructurePrivate::GroupConfigurationStructurePrivate(const Gro
     m_lists(group.m_lists),
     m_attributes(group.m_attributes),
     m_maps(group.m_maps),
-    m_listsOfItems(group.m_listsOfItems),
-    m_mapsOfItems(group.m_mapsOfItems),
     m_groupName(group.m_groupName)
 {}
 
@@ -126,8 +111,6 @@ GroupConfigurationStructurePrivate& GroupConfigurationStructurePrivate::operator
     m_lists=group.m_lists;
     m_attributes=group.m_attributes;
     m_maps=group.m_maps;
-    m_listsOfItems=group.m_listsOfItems;
-    m_mapsOfItems=group.m_mapsOfItems;
     m_groupName=group.m_groupName;
     return *this;
 }
@@ -143,11 +126,11 @@ GroupConfigurationStructure::GroupConfigurationStructure() : m_d(new GroupConfig
 
 }
 
-// GroupConfigurationStructure::GroupConfigurationStructure(const QJsonObject& group) :
-//   m_d(new GroupConfigurationStructurePrivate(group))
-// {
-//
-// }
+GroupConfigurationStructure::GroupConfigurationStructure(const QJsonObject& group) :
+  m_d(new GroupConfigurationStructurePrivate(group))
+{
+
+}
 
 GroupConfigurationStructure::GroupConfigurationStructure(const std::string& name) :
   m_d(new GroupConfigurationStructurePrivate(name))
@@ -352,95 +335,13 @@ void GroupConfigurationStructure::addMap(const std::string& mapName)
   m_d->m_maps.insert(make_pair(mapName,MSS()));
 }
 
-void GroupConfigurationStructure::addEntryInMap(const std::string& mapName,const std::string& key,const std::string& value)
+void GroupConfigurationStructure::addEntryInMap(
+  const std::string& mapName,const std::string& key,const std::string& value)
 {
   MSMSS::iterator it=m_d->m_maps.find(mapName);
   if (it == m_d->m_maps.end())
     throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
   (it->second)[key]=value;
-}
-
-std::deque<ItemWithAttributes>& GroupConfigurationStructure::getListOfItems(const std::string& key)
-{
-  MSDI::iterator it = m_d->m_listsOfItems.find(key);
-  if (it == m_d->m_listsOfItems.end())
-    throw NoSuchList(m_d->m_groupName+"["+key+"]");
-  return (*it).second;
-}
-
-std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::getMapOfItems(const std::string& key)
-{
-  MSMSI::iterator it = m_d->m_mapsOfItems.find(key);
-  if (it == m_d->m_mapsOfItems.end())
-    throw NoSuchMap(m_d->m_groupName+"["+key+"]");
-  return it->second;
-}
-
-void GroupConfigurationStructure::addListOfItems(const std::string& listName)
-{
-  m_d->m_listsOfItems[listName]=std::deque<ItemWithAttributes>(0);
-}
-
-void GroupConfigurationStructure::addItemInListOfItems(const std::string& key,
-                     const ItemWithAttributes& item)
-{
-  MSDI::iterator it = m_d->m_listsOfItems.find(key);
-  if (it == m_d->m_listsOfItems.end())
-    throw NoSuchList(m_d->m_groupName+"["+key+"]");
-  (*it).second.push_back(item);
-}
-
-void GroupConfigurationStructure::addMapOfItems(const std::string& mapName)
-{
-  m_d->m_mapsOfItems[mapName]=std::map<std::string,ItemWithAttributes>();
-}
-
-void GroupConfigurationStructure::addEntryInMapOfItems(const std::string& mapName,
-                     const std::string& key,
-                     const ItemWithAttributes& item)
-{
-  MSMSI::iterator it = m_d->m_mapsOfItems.find(mapName);
-  if (it == m_d->m_mapsOfItems.end())
-    throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
-  ((*it).second)[key]=item;
-}
-
-void GroupConfigurationStructure::changeListToListOfItems(const std::string &listName)
-{
-  MSDS::iterator it = m_d->m_lists.find(listName);
-  if (it == m_d->m_lists.end())
-    throw NoSuchList(m_d->m_groupName+"["+listName+"]");
-
-  // create new list of items
-  m_d->m_listsOfItems[listName]=deque<ItemWithAttributes>(0);
-  deque<ItemWithAttributes>& newList=m_d->m_listsOfItems[listName];
-  for (deque<string>::const_iterator
-         entry=(*it).second.begin(),entry_end=(*it).second.end();
-       entry!=entry_end; entry++) {
-    newList.push_back(ItemWithAttributes((*entry)));
-  }
-
-  // erase old map
- m_d-> m_lists.erase(it);
-}
-
-void GroupConfigurationStructure::changeMapToMapOfItems(const std::string &mapName)
-{
-  MSMSS::iterator it = m_d->m_maps.find(mapName);
-  if (it == m_d->m_maps.end())
-    throw NoSuchMap(m_d->m_groupName+"["+mapName+"]");
-
-  // create new map of items
-  m_d->m_mapsOfItems[mapName]=map<string,ItemWithAttributes>();
-  map<string,ItemWithAttributes>& newMap=m_d->m_mapsOfItems[mapName];
-  for (map<string,string>::const_iterator
-         entry=(*it).second.begin(),entry_end=(*it).second.end();
-       entry!=entry_end; entry++) {
-    newMap[(*entry).first]=ItemWithAttributes((*entry).second);
-  }
-
-  // erase old map
-  m_d->m_maps.erase(it);
 }
 
 // void GroupConfigurationStructure::addAttribute(const QString& key,const QString& value)
@@ -472,48 +373,6 @@ void GroupConfigurationStructure::changeMapToMapOfItems(const std::string &mapNa
 // {
 //   addEntryInMap(mapName.toStdString(), key.toStdString(), value.toStdString());
 // }
-//
-// std::deque<ItemWithAttributes>& GroupConfigurationStructure::getListOfItems(const QString& key)
-// {
-//   return getListOfItems(key.toStdString());
-// }
-//
-// std::map<std::string,ItemWithAttributes>& GroupConfigurationStructure::getMapOfItems(const QString& key)
-// {
-//   return getMapOfItems(key.toStdString());
-// }
-//
-// void GroupConfigurationStructure::addListOfItems(const QString& listName)
-// {
-//   addListOfItems(listName.toStdString());
-// }
-//
-// void GroupConfigurationStructure::addItemInListOfItems(const QString& key, const ItemWithAttributes& item)
-// {
-//   addItemInListOfItems(key.toStdString(), item);
-// }
-//
-// void GroupConfigurationStructure::addMapOfItems(const QString& mapName)
-// {
-//   addMapOfItems(mapName.toStdString());
-// }
-//
-// void GroupConfigurationStructure::addEntryInMapOfItems(const QString& mapName,
-//                                                        const QString& key,
-//                                                        const ItemWithAttributes& item)
-// {
-//   addEntryInMapOfItems(mapName.toStdString(), key.toStdString(), item);
-// }
-//
-// void GroupConfigurationStructure::changeListToListOfItems(const QString &listName)
-// {
-//   changeListToListOfItems(listName.toStdString());
-// }
-//
-// void GroupConfigurationStructure::changeMapToMapOfItems(const QString &mapName)
-// {
-//   changeMapToMapOfItems(mapName.toStdString());
-// }
 
 std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dgcs)
 {
@@ -521,9 +380,7 @@ std::ostream& operator<<(std::ostream& os, const GroupConfigurationStructure& dg
             << "Attributes :   " << dgcs.m_d->m_attributes << endl
             << "Params :       " << dgcs.m_d->m_params << endl
             << "Lists :        " << dgcs.m_d->m_lists << endl
-            << "Maps :         " << dgcs.m_d->m_maps << endl
-            << "ListsOfItems : " << dgcs.m_d->m_listsOfItems << endl
-            << "MapsOfItems :  " << dgcs.m_d->m_mapsOfItems << endl;
+            << "Maps :         " << dgcs.m_d->m_maps << endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const MSS& mss)
@@ -564,49 +421,6 @@ std::ostream& operator<<(std::ostream& os, const MSMSS& msmss)
   }
   return os;
 }
-
-std::ostream& operator<<(std::ostream& os, const MSDI& msdi)
-{
-  for (MSDI::const_iterator it=msdi.begin();it!=msdi.end();it++)
-  {
-    os << it->first << " { ";
-    auto di=it->second;
-    for (std::deque<ItemWithAttributes>::const_iterator it2=di.begin();it2!=di.end();it2++)
-    {
-      os << it2->getName() << "[";
-      std::map<std::string,std::string> attributes = it2->getAttributes();
-      for(auto it3 = attributes.begin(); it3!=attributes.end(); it3++)
-      {
-          os << "@" << it3->first << "=" << it3->second << ", ";
-      }
-      os << "] ";
-    }
-    os << "}" << endl;
-  }
-  return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const MSMSI& msmsi)
-{
-  for (MSMSI::const_iterator it=msmsi.begin();it!=msmsi.end();it++)
-  {
-    os << it->first << " { ";
-    auto msi=it->second;
-    for (std::map<std::string,ItemWithAttributes>::const_iterator it2=msi.begin();it2!=msi.end();it2++)
-    {
-      os << it2->first << "=>" << it2->second.getName() << "[";
-      std::map<std::string,std::string> attributes = it2->second.getAttributes();
-      for(auto it3 = attributes.begin(); it3!=attributes.end(); it3++)
-      {
-          os << "@" << it3->first << "=" << it3->second << ", ";
-      }
-      os << "] ";
-    }
-    os << "}" << endl;
-  }
-  return os;
-}
-
 
 } // closing namespace XMLConfigurationFiles
 } // closing namespace Common
