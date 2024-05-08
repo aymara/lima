@@ -15,6 +15,7 @@
 
 #include "version/version.h"
 #include "helpers/path_resolver.h"
+#include "deeplima/segmentation/impl/segmentation_impl.h"
 
 namespace po = boost::program_options;
 
@@ -421,7 +422,7 @@ void parse_file(std::istream& input,
                 bool tag_use_mp)
 {
   auto parsing_begin = std::chrono::high_resolution_clock::now();
-
+  std::dynamic_pointer_cast<deeplima::segmentation::impl::SegmentationClassifier>(psegm)->reset();
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
                           int32_t& read,

@@ -59,7 +59,7 @@ void SegmentationImpl::init(size_t threads, size_t buffer_size_per_thread)
 
 void SegmentationImpl::parse_from_stream(const read_callback_t fn)
 {
-  // std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
+  std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
   size_t n = 0;
   bool just_started = true;
   bool continue_reading = true;
@@ -85,18 +85,23 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
       break;
     }
     counter += bytes_read;
-    // std::cerr << "Reading callback: " << bytes_read << " bytes, continue_reading="
-    //      << continue_reading << " counter=" << counter
-          // << std::endl;
+    std::cerr << "SegmentationImpl::parse_from_stream Reading callback: "
+              << bytes_read << " bytes, continue_reading="
+              << continue_reading << " counter=" << counter << std::endl;
     buff.m_char_aligned_data = (const char*)(buff.m_data);
     buff.m_len = bytes_read;
+    std::cerr << "SegmentationImpl::parse_from_stream locking (m_buff_set) buff "
+              << n << std::endl;
     buff.lock();
 
     int32_t pos = 0;
     uint8_t* p = buff.m_data;
     if (!just_started && 0 == n)
     {
-      memcpy(p - 8, m_buff_set.get(m_buff_set.size() - 1).m_data + m_buff_set.max_buff_size() - 8, 8);
+      memcpy(p - 8,
+             m_buff_set.get(m_buff_set.size() - 1).m_data
+                + m_buff_set.max_buff_size() - 8,
+             8);
     }
 
     // Warming up is required in the beginning of the text
@@ -153,8 +158,8 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
       send_next_results();
     }
 
-    // m_buff_set.pretty_print();
-    // SegmentationClassifier::pretty_print();
+    m_buff_set.pretty_print();
+    SegmentationClassifier::pretty_print();
 
     n = m_buff_set.next(n);
   }
@@ -238,6 +243,14 @@ void SegmentationImpl::send_next_results()
   {
     slot_idx = SegmentationClassifier::next_slot(slot_idx);
   }
+
+  // We are in send_next_results
+  // Note, use get_lock_count from
+  // using SegmentationClassifier = RnnSequenceClassifier<eigen_impl::Model, eigen_impl::EmbdVectorizer, uint8_t> ;
+  // This one accesses its m_slots[idx].m_lock_count (std::vector<slot_t> member of RnnSequenceClassifier)
+  // while send_results (above but called below) do m_buff_set.get(i).unlock() (a
+  // locked_buffer_set_t), a member of SegmentationImpl
+  // Should we use SegmentationClassifier::decrement_lock_count in send_results too?
 
   uint8_t lock_count = SegmentationClassifier::get_lock_count(slot_idx);
 
