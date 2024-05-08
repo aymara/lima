@@ -89,6 +89,7 @@ struct locked_buffer_set_t
 
     m_max_buff_size = buffer_size;
 
+    m_data.clear();
     m_data.resize(n);
     if (nullptr != m_mem)
     {

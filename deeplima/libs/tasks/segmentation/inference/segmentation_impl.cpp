@@ -64,6 +64,10 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
   bool just_started = true;
   bool continue_reading = true;
   uint64_t counter = 0;
+  reset(); // reset internal slots for (re)use
+  m_current_timepoint = SegmentationClassifier::get_start_timepoint();
+  m_buff_set.init(SegmentationClassifier::get_num_threads() * 2 + 2,
+                  SegmentationClassifier::get_num_threads() * SegmentationClassifier::get_slot_size() * 4);
 
   do
   {

@@ -23,6 +23,11 @@ namespace po = boost::program_options;
 // #define DP_BUFFER_SIZE (16384)
 #define DP_BUFFER_SIZE (128)
 
+void init(const std::map<std::string, std::string>& models_fn,
+                const deeplima::PathResolver& path_resolver,
+                size_t threads,
+                size_t out_fmt=1,
+                bool tag_use_mp=true);
 void parse_file(std::istream& input,
                 const std::map<std::string, std::string>& models_fn,
                 const deeplima::PathResolver& path_resolver,
@@ -145,13 +150,15 @@ int main(int argc, char* argv[])
 
   deeplima::PathResolver path_resolver;
 
+  init(models, path_resolver, threads, out_fmt, tag_use_mp);
+
   if (vm.count("input-file") > 0)
   {
 
     char read_buffer[READ_BUFFER_SIZE];
     for ( const auto& fn : input_files )
     {
-      // std::cerr << "Reading file: " << fn << std::endl;
+      std::cerr << "Reading file: " << fn << std::endl;
       std::ifstream file(fn, std::ifstream::binary | std::ios::in);
       if (!file.is_open())
       {
@@ -197,15 +204,19 @@ int main(int argc, char* argv[])
 
 using namespace deeplima;
 
-void parse_file(std::istream& input,
-                const std::map<std::string, std::string>& models_fn,
+std::shared_ptr<segmentation::ISegmentation> psegm = nullptr;
+std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr;
+std::shared_ptr< dumper::AbstractDumper > pdumper = nullptr;
+std::shared_ptr< dumper::DumperBase > pDumperBase = nullptr;
+std::shared_ptr<DependencyParser> parser = nullptr;
+
+void init(const std::map<std::string, std::string>& models_fn,
                 const PathResolver& path_resolver,
                 size_t threads,
                 size_t out_fmt,
                 bool tag_use_mp)
 {
   // std::cerr << "deeplima parse_file threads = " << threads << std::endl;
-  std::shared_ptr<segmentation::ISegmentation> psegm;
 
   if (models_fn.end() != models_fn.find("tok"))
   {
@@ -227,10 +238,6 @@ void parse_file(std::istream& input,
     psegm = std::make_shared<segmentation::CoNLLUReader>();
   }
 
-  std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr;
-  std::shared_ptr< dumper::AbstractDumper > pdumper = nullptr;
-  std::shared_ptr< dumper::DumperBase > pDumperBase = nullptr;
-  std::shared_ptr<DependencyParser> parser = nullptr;
   if (models_fn.end() != models_fn.find("tag"))
   {
     auto find_or_empty_line = [](const auto& m, const std::string& k)
@@ -404,6 +411,15 @@ void parse_file(std::istream& input,
     });
   }
 
+}
+
+void parse_file(std::istream& input,
+                const std::map<std::string, std::string>& models_fn,
+                const PathResolver& path_resolver,
+                size_t threads,
+                size_t out_fmt,
+                bool tag_use_mp)
+{
   auto parsing_begin = std::chrono::high_resolution_clock::now();
 
   psegm->parse_from_stream([&input]

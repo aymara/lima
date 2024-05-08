@@ -107,13 +107,6 @@ protected:
     return (idx == 0) ? (m_num_slots - 1) : idx - 1;
   }
 
-public:
-  inline int32_t next_slot(uint32_t idx)
-  {
-    assert(idx < m_num_slots);
-    return (idx == m_num_slots - 1) ? 0 : idx + 1;
-  }
-
 protected:
   inline void clear_slot(uint32_t idx)
   {
@@ -200,6 +193,12 @@ protected:
   }
 
 public:
+  inline int32_t next_slot(uint32_t idx)
+  {
+    assert(idx < m_num_slots);
+    return (idx == m_num_slots - 1) ? 0 : idx + 1;
+  }
+
 
   std::shared_ptr< StdMatrix<Out> > get_output()
   {
@@ -228,6 +227,49 @@ public:
       m_output(std::make_shared< StdMatrix<Out> >())
   {
     init(max_feat, overlap, num_slots, slot_len, num_threads);
+  }
+
+  /**
+   * Need to be called to be able to reuse this classifier on several sequences
+   */
+  void reset()
+  {
+    for (size_t i = 0; i < m_num_slots; i++)
+    {
+      slot_t& slot = m_slots[i];
+
+      slot.m_output_begin = m_overlap + i * m_slot_len;
+      slot.m_output_end = slot.m_output_begin + m_slot_len;
+      slot.m_input_begin = slot.m_output_begin - m_overlap;
+      slot.m_input_end = slot.m_output_end + m_overlap;
+      if (m_overlap > 0)
+      {
+        slot.m_flags = (slot_flags_t)(left_overlap | right_overlap);
+
+        uint32_t prev_idx = prev_slot(i);
+        slot.m_prev = &(m_slots[prev_idx]);
+
+        uint32_t next_idx = next_slot(i);
+        slot.m_next = &(m_slots[next_idx]);
+      }
+
+      if (0 == i)
+      {
+        slot.m_input_begin = slot.m_output_begin;
+        slot.m_flags = right_overlap;
+      }
+
+      if (m_num_slots - 1 == i)
+      {
+        slot.m_flags = left_overlap;
+      }
+      // std::cerr << "RnnSequenceClassifier::reset slot " << (i+1)
+      //           << " input begin=" << slot.m_input_begin << ", end=" << slot.m_input_end
+      //           << " output begin=" << slot.m_output_begin << ", end=" << slot.m_output_end
+      //           << std::endl;
+    }
+
+
   }
 
   void init(uint32_t max_feat,
@@ -260,40 +302,7 @@ public:
 
     m_slots.clear();
     m_slots.resize(m_num_slots);
-    for (size_t i = 0; i < m_num_slots; i++)
-    {
-      slot_t& slot = m_slots[i];
-
-      slot.m_output_begin = m_overlap + i * m_slot_len;
-      slot.m_output_end = slot.m_output_begin + m_slot_len;
-      slot.m_input_begin = slot.m_output_begin - m_overlap;
-      slot.m_input_end = slot.m_output_end + m_overlap;
-      if (m_overlap > 0)
-      {
-        slot.m_flags = (slot_flags_t)(left_overlap | right_overlap);
-
-        uint32_t prev_idx = prev_slot(i);
-        slot.m_prev = &(m_slots[prev_idx]);
-
-        uint32_t next_idx = next_slot(i);
-        slot.m_next = &(m_slots[next_idx]);
-      }
-
-      if (0 == i)
-      {
-        slot.m_input_begin = slot.m_output_begin;
-        slot.m_flags = right_overlap;
-      }
-
-      if (m_num_slots - 1 == i)
-      {
-        slot.m_flags = left_overlap;
-      }
-      // std::cerr << "RnnSequenceClassifier::init slot " << (i+1)
-      //           << " input begin=" << slot.m_input_begin << ", end=" << slot.m_input_end
-      //           << " output begin=" << slot.m_output_begin << ", end=" << slot.m_output_end
-      //           << std::endl;
-    }
+    reset(); // set up slots
 
     m_lengths.resize(m_num_slots);
 
