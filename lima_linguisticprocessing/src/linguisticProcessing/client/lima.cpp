@@ -490,7 +490,8 @@ bool LimaAnalyzer::addPipelineUnit(const std::string& pipeline,
   if (! m_d->addPipelineUnit(pipeline, media, jsonGroupString))
   {
     error = true;
-    errorMessage = "addPipelineUnit: failed";
+    errorMessage = std::string("addPipelineUnit failed:") + pipeline + ", "
+        + media + ",\n" + jsonGroupString;
     return false;
   }
   return true;
