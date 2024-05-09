@@ -403,6 +403,13 @@ public:
     return m_stridx_ptr;
   }
 
+  /*
+   * The logic is contiguous and the final stop and release of locks are
+   * handled by finalize() and no_more_data().
+   * Contiguous means that only the 100% full buffer triggers processing.
+   * Partially full buffers will wait. Finalization triggers the dispatch of
+   * the remaining data to the pipeline.
+   */
   virtual void finalize() override
   {
     if (m_current_timepoint > 0)

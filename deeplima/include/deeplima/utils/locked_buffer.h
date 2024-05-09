@@ -14,6 +14,10 @@
 #include <stdexcept>
 #include <vector>
 
+/**
+ * locketd_buffer_t is the character-level buffer shared between the source
+ * file reader and the tokenizer.
+ */
 struct locked_buffer_t
 {
   locked_buffer_t()

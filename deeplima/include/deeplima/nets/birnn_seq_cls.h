@@ -45,6 +45,11 @@ class RnnSequenceClassifier : public InputVectorizer,
     max_flags
   };
 
+
+  /**
+    slot_t represents the part of the job processed by a classifier thread
+    (tokenizer or tagger).
+  */
   struct slot_t
   {
     // input positions

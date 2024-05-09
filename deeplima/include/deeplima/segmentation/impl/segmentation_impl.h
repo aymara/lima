@@ -37,6 +37,9 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn) = 0;
   virtual void register_handler(const segmentation_callback_t fn) = 0;
+    /** Cleanup all remaining locks if any. */
+  virtual void finalize() = 0;
+
   virtual ~ISegmentation() { }
 };
 
@@ -75,6 +78,8 @@ public:
 
   virtual void register_handler(const segmentation_callback_t fn) override;
 
+  /** Cleanup all remaining locks if any. */
+  virtual void finalize() override;
 
 protected:
 

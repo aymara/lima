@@ -453,10 +453,16 @@ void parse_file(std::istream& input,
   auto parsing_end = std::chrono::high_resolution_clock::now();
   auto parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin);
 
-  uint64_t token_counter = (nullptr != pdumper ? pdumper->get_token_counter() : 0);
-  if (0 == token_counter)
+  uint64_t token_counter = 0;
+  if(nullptr != pdumper)
+    token_counter = pdumper->get_token_counter();
+  else if (nullptr != pDumperBase)
   {
     token_counter = pDumperBase->get_token_counter();
+  }
+  else
+  {
+    throw std::runtime_error("parse_file: no dumper is available.");
   }
 
   float speed = float(token_counter) * 1000 / parsing_duration.count();
@@ -469,5 +475,7 @@ void parse_file(std::istream& input,
   {
     throw std::runtime_error("parse_file: error while reading the input file.");
   }
+
+  psegm->finalize();
 }
 

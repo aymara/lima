@@ -325,6 +325,30 @@ void SegmentationImpl::no_more_data()
   }
 }
 
+void SegmentationImpl::finalize()
+{
+  std::cerr << "SegmentationImpl::finalize" << std::endl;
+
+  // no_more_data();
+  //
+  // for (size_t i = 0; i < m_buff_set.size(); i++)
+  // {
+  //   locked_buffer_t& buff = m_buff_set.get(i);
+  //   while (buff.locked())
+  //   {
+  //     send_next_results();
+  //     // buff.unlock();
+  //   }
+  // }
+  // for (auto i=0; i < SegmentationClassifier::get_num_slots(); i++)
+  // {
+  //   while (SegmentationClassifier::get_lock_count(i) > 0)
+  //   {
+  //     SegmentationClassifier::decrement_lock_count(i);
+  //   }
+  // }
+}
+
 } // namespace impl
  // namespace lemmatization
  // namespace deeplima

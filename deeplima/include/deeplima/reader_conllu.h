@@ -149,6 +149,9 @@ public:
     } while (continue_reading);
   }
 
+  /** Cleanup all remaining locks if any. */
+  virtual void finalize() override {}
+
 protected:
   inline bool read_token(token_pos& token, const char* p, const char* end, bool eos=false)
   {
