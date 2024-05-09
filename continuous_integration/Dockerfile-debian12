@@ -14,7 +14,7 @@ ARG QT_VERSION_MAJOR="6"
 COPY --from=aymara_svmtoolpp-debian12 /opt/svmtool++ /usr
 
 # Setup
-RUN apt-get update && apt-get install -y locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev python3-arpy python3-requests python3-tqdm
+RUN apt-get update && apt-get install -y locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev python3-arpy python3-requests python3-full python3-tqdm
 
 RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
     && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
@@ -76,7 +76,7 @@ RUN ninja && ninja install
 # Some models are necessary for unit tests to work, let's use a previous
 # version of lima-python to install them, then run tests and finally remove
 # old aymara/lima and downloaded models
-RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install --break-system-packages ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install --break-system-packages ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall --break-system-packages -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
 
 RUN ninja package
 RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
