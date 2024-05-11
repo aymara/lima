@@ -50,8 +50,8 @@ class file_parser
 public:
 std::shared_ptr<segmentation::ISegmentation> psegm = nullptr;
 std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr;
-std::shared_ptr< dumper::AbstractDumper > pdumper = nullptr;
-std::shared_ptr< dumper::DumperBase > pDumperBase = nullptr;
+std::shared_ptr< dumper::AbstractDumper > pdumper_segm_only = nullptr; // used when using segmentation only
+std::shared_ptr< dumper::DumperBase > pdumper_complete = nullptr; // used when using tagger
 std::shared_ptr<DependencyParser> parser = nullptr;
 
 /**
@@ -154,7 +154,7 @@ void init(const std::map<std::string, std::string>& models_fn,
     {
       // with dependency parsing
       auto conllu_dumper = std::make_shared<dumper::AnalysisToConllU<typename DependencyParser::TokenIterator> >();
-      pDumperBase = conllu_dumper;
+      pdumper_complete = conllu_dumper;
 
       try
       {
@@ -215,19 +215,20 @@ void init(const std::map<std::string, std::string>& models_fn,
     {
       // without dependency parsing
       auto conllu_dumper = std::make_shared< dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> >();
-      pDumperBase = conllu_dumper;
+      pdumper_complete = conllu_dumper;
 
       for (size_t i = 0; i < panalyzer->get_classes().size(); ++i)
       {
         conllu_dumper->set_classes(i, panalyzer->get_class_names()[i], panalyzer->get_classes()[i]);
       }
 
-      panalyzer->register_handler([conllu_dumper](std::shared_ptr< StringIndex > stridx,
-                                  const token_buffer_t<>& tokens,
-                                  const std::vector<StringIndex::idx_t>& lemmata,
-                                  std::shared_ptr< StdMatrix<uint8_t> > classes,
-                                  size_t begin,
-                                  size_t end)
+      panalyzer->register_handler([conllu_dumper](
+        std::shared_ptr< StringIndex > stridx,
+        const token_buffer_t<>& tokens,
+        const std::vector<StringIndex::idx_t>& lemmata,
+        std::shared_ptr< StdMatrix<uint8_t> > classes,
+        size_t begin,
+        size_t end)
       {
         typename TokenSequenceAnalyzer<>::TokenIterator ti(*stridx,
                                                            tokens,
@@ -252,21 +253,21 @@ void init(const std::map<std::string, std::string>& models_fn,
   {
     switch (out_fmt) {
     case 1:
-      pdumper = std::make_shared<dumper::TokensToConllU>();
+      pdumper_segm_only = std::make_shared<dumper::TokensToConllU>();
       break;
     case 2:
-      pdumper = std::make_shared<dumper::Horizontal>();
+      pdumper_segm_only = std::make_shared<dumper::Horizontal>();
       break;
     default:
       throw std::runtime_error("Unknown output format");
       break;
     }
-    // psegm->register_handler([pdumper]
+    // psegm->register_handler([pdumper_segm_only]
     //                         (const std::vector<segmentation::token_pos>& tokens,
     //                          uint32_t len)
     // {
-    //   // std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
-    //   (*pdumper)(tokens, len);
+    //   // std::cerr << "In psegm handler. Calling pdumper_segm_only functor" << std::endl;
+    //   (*pdumper_segm_only)(tokens, len);
     // });
   }
 
@@ -315,8 +316,8 @@ void parse_file(std::istream& input,
                             (const std::vector<segmentation::token_pos>& tokens,
                              uint32_t len)
     {
-      // std::cerr << "In psegm handler. Calling pdumper functor" << std::endl;
-      (*pdumper)(tokens, len);
+      // std::cerr << "In psegm handler. Calling pdumper_segm_only functor" << std::endl;
+      (*pdumper_segm_only)(tokens, len);
     });
 
   }
@@ -338,7 +339,8 @@ void parse_file(std::istream& input,
 
     // std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
-    // std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
+    pdumper_complete->flush();
+    std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
 
   if (parser)
@@ -353,11 +355,11 @@ void parse_file(std::istream& input,
   auto parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin);
 
   uint64_t token_counter = 0;
-  if(nullptr != pdumper)
-    token_counter = pdumper->get_token_counter();
-  else if (nullptr != pDumperBase)
+  if(nullptr != pdumper_segm_only)
+    token_counter = pdumper_segm_only->get_token_counter();
+  else if (nullptr != pdumper_complete)
   {
-    token_counter = pDumperBase->get_token_counter();
+    token_counter = pdumper_complete->get_token_counter();
   }
   else
   {
