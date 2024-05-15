@@ -63,6 +63,7 @@ public:
     void analyzer(vector<segmentation::token_pos>& buffer);
     void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
     dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
+    void reset();
 
     Lima::AnalysisContent* m_analysis;
     MediaId m_language;
@@ -336,9 +337,15 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
 
 }
 
+void RnnTokensAnalyzerPrivate::reset()
+{
+    m_tags.clear();
+    m_lemmas.clear();
+}
 
 void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
+    reset();
     m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
                                                 const std::vector<StringIndex::idx_t>& lemmata,
