@@ -57,10 +57,9 @@ WORKDIR /
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
 
 ENV PATH="/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/python/bin:${PATH}"
+# upgrade pip, purge pip cache and then
 # install python packages necessary to use the language resources install script
-RUN pip${PYTHON_VERSION} install -U pip
-# install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION} ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install -U pip && pip${PYTHON_VERSION} cache purge && pip${PYTHON_VERSION} install --no-cache-dir arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION} ; fi"
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
