@@ -26,22 +26,22 @@ struct locked_buffer_t
       m_lock_count(0),
       m_char_aligned_data(nullptr)
   {
-    std::cerr << "locked_buffer_t::locked_buffer_t()"
-              << (void*)this  << std::endl;
+    // std::cerr << "locked_buffer_t::locked_buffer_t()"
+    //           << (void*)this  << std::endl;
   }
 
   ~locked_buffer_t()
   {
-    std::cerr << "locked_buffer_t::~locked_buffer_t() "
-              << (void*)this << std::endl;
+    // std::cerr << "locked_buffer_t::~locked_buffer_t() "
+    //           << (void*)this << std::endl;
     m_data = nullptr;
     m_char_aligned_data = nullptr;
   }
 
   locked_buffer_t(const locked_buffer_t& other)
   {
-    std::cerr << "locked_buffer_t::locked_buffer_t(other)"
-              << (void*)this  << std::endl;
+    // std::cerr << "locked_buffer_t::locked_buffer_t(other)"
+    //           << (void*)this  << std::endl;
     m_data = other.m_data;
     m_char_aligned_data = other.m_char_aligned_data;
     m_len = other.m_len;
@@ -66,19 +66,19 @@ struct locked_buffer_t
 
   inline void lock()
   {
-    std::cerr << "locked_buffer_t::lock " << (void*)this << " " << m_lock_count;
+    // std::cerr << "locked_buffer_t::lock " << (void*)this << " " << m_lock_count;
     m_lock_count++;
-    std::cerr << " -> " << m_lock_count << std::endl;
+    // std::cerr << " -> " << m_lock_count << std::endl;
   }
 
   inline void unlock()
   {
-    std::cerr << "locked_buffer_t::unlock " << (void*)this << " " << m_lock_count;
+    // std::cerr << "locked_buffer_t::unlock " << (void*)this << " " << m_lock_count;
     m_len = 0;
     m_char_aligned_data = nullptr;
     assert(m_lock_count > 0);
     m_lock_count--;
-    std::cerr << " -> " << m_lock_count << std::endl;
+    // std::cerr << " -> " << m_lock_count << std::endl;
   }
 
   inline void set_read_start(const char* new_start)
@@ -118,7 +118,7 @@ struct locked_buffer_set_t
 
   void init(size_t n, uint32_t buffer_size)
   {
-    std::cerr << "locked_buffer_set_t::init" << std::endl;
+    // std::cerr << "locked_buffer_set_t::init" << std::endl;
     assert(n > 0);
     assert(buffer_size > 0);
 
@@ -178,7 +178,7 @@ struct locked_buffer_set_t
 
   void pretty_print()
   {
-    std::cerr << "BUFFS: ";
+    std::cerr << (void*)this << " BUFFS: ";
     for (size_t i = 0; i < m_data.size(); i++)
     {
       std::cerr << " | " << m_data[i].m_lock_count;

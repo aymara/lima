@@ -49,24 +49,29 @@ namespace eigen_impl
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
 }
 
-namespace impl {
+namespace impl
+{
   using CharNgramEncoderFromUtf8 = CharNgramEncoder< Utf8Reader<> > ;
 
   using SegmentationClassifier = RnnSequenceClassifier<eigen_impl::Model, eigen_impl::EmbdVectorizer, uint8_t> ;
   using InputEncoder = CharNgramEncoderFromUtf8;
   using OutputDecoder = SegmentationDecoder;
 
+/**
+ * The implementation of the segmenter, a SegmentationClassifier, itself a
+ * RnnSequenceClassifier
+ */
 class SegmentationImpl: public ISegmentation, public SegmentationClassifier
 {
 public:
 
   SegmentationImpl();
 
-  SegmentationImpl(
-      const std::vector<ngram_descr_t>& ngram_descr,
-      size_t threads,
-      size_t buffer_size_per_thread
-    );
+  // SegmentationImpl(
+  //     const std::vector<ngram_descr_t>& ngram_descr,
+  //     size_t threads,
+  //     size_t buffer_size_per_thread
+  //   );
 
   virtual ~SegmentationImpl() = default;
 

@@ -15,6 +15,7 @@
 #include <unicode/uchar.h>
 
 #include "deeplima/utils/std_matrix.h"
+#include "deeplima/token_type.h"
 
 namespace deeplima
 {
@@ -23,27 +24,19 @@ namespace segmentation
 
 struct token_pos
 {
-  enum flag_t : uint8_t
-  {
-    none = 0x00,
-    sentence_brk = 0x01,
-    paragraph_brk = 0x02,
-    max_flags
-  };
-
   uint16_t m_offset; // offset from previous token end
   uint16_t m_len;    // length of this token in bytes
   const char* m_pch;
-  flag_t m_flags;
+  token_flags_t m_flags;
 
   token_pos()
-    : m_offset(0), m_len(0), m_pch(nullptr), m_flags(none) {}
+    : m_offset(0), m_len(0), m_pch(nullptr), m_flags(token_flags_t::none) {}
 
   inline void clear()
   {
     m_offset = m_len = 0;
     m_pch = nullptr;
-    m_flags = none;
+    m_flags = token_flags_t::none;
   }
 
   inline bool empty() const
@@ -319,7 +312,7 @@ public:
 
         // TODO insert the marker for case continuing [[case_]]
         case segm_tag_t::E_EOS:
-          m_tokens[pos].m_flags = token_pos::flag_t(m_tokens[pos].m_flags | token_pos::flag_t::sentence_brk);
+          m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags | token_flags_t::sentence_brk);
           [[fallthrough]];
 
         case segm_tag_t::E:
@@ -351,7 +344,7 @@ public:
             assert(0 == m_tokens[pos].m_len);
             m_tokens[pos].m_pch = *pch;
             m_tokens[pos].m_len += m_len[from];
-            m_tokens[pos].m_flags = token_pos::flag_t(m_tokens[pos].m_flags | token_pos::flag_t::sentence_brk);
+            m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags | token_flags_t::sentence_brk);
             save_current_token(pos, temp_token_len, start);
           }
           break;

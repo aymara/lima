@@ -28,14 +28,52 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
   return out;
 }
 
+/**
+ * The RnnSequenceClassifier is a Model, able to infer but also a thread pool
+ * to dispatch the work between several threads. And also a vectorizer, here
+ * a matrix.
+ */
 template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, class Out>
 class RnnSequenceClassifier : public InputVectorizer,
                               public ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> >,
                               public Model
 {
+public:
+  RnnSequenceClassifier()
+    : m_overlap(0),
+      m_num_slots(0),
+      m_slot_len(0),
+      m_slots(),
+      m_lengths(),
+      m_output(std::make_shared< StdMatrix<Out> >())
+  {}
+
+  // RnnSequenceClassifier(uint32_t max_feat,
+  //           uint32_t overlap,
+  //           uint32_t num_slots,
+  //           uint32_t slot_len,
+  //           uint32_t num_threads)
+  //   : m_overlap(0),
+  //     m_num_slots(0),
+  //     m_slot_len(0),
+  //     m_slots(),
+  //     m_lengths(),
+  //     m_output(std::make_shared< StdMatrix<Out> >())
+  // {
+  //   init(max_feat, overlap, num_slots, slot_len, num_threads);
+  // }
+
+  virtual ~RnnSequenceClassifier()
+  {
+    // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
+    RnnSequenceClassifierThreadPool::stop();
+    // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
+  }
+
+protected:
   typedef RnnSequenceClassifier<Model, InputVectorizer, Out> ThisClass;
-  typedef ThreadPool< RnnSequenceClassifier<Model, InputVectorizer, Out> > ThreadPoolParent;
-  friend ThreadPoolParent;
+  typedef ThreadPool< ThisClass > RnnSequenceClassifierThreadPool;
+  friend RnnSequenceClassifierThreadPool;
 
   enum slot_flags_t : uint8_t
   {
@@ -94,17 +132,22 @@ class RnnSequenceClassifier : public InputVectorizer,
         m_next(nullptr),
         m_lengths(s.m_lengths)
     { }
+    ~slot_t() = default;
+    slot_t& operator=(const slot_t&s)
+    {
+      m_input_begin = s.m_input_begin;
+      m_input_end = s.m_input_end;
+      m_output_begin = s.m_output_begin;
+      m_output_end = s.m_output_end;
+      m_flags = s.m_flags;
+      m_work_started = s.m_work_started;
+      m_lock_count = 0;
+      m_prev = nullptr;
+      m_next = nullptr;
+      m_lengths = s.m_lengths;
+      return *this;
+    }
   };
-
-protected:
-  uint32_t m_overlap;
-  uint32_t m_num_slots;
-  uint32_t m_slot_len;
-
-  std::vector<slot_t> m_slots;
-  std::vector<std::vector<size_t>> m_lengths;
-  std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
-
 
   inline int32_t prev_slot(uint32_t idx)
   {
@@ -129,6 +172,7 @@ protected:
     }
   }
 
+  /** Push the slot @ref idx in the thread pool for starting the job on it. */
   inline void start_job_impl(uint32_t idx)
   {
     assert(idx < m_num_slots);
@@ -142,7 +186,7 @@ protected:
     if (! slot.m_work_started)
     {
       slot.m_work_started = true;
-      ThreadPoolParent::push(&slot);
+      RnnSequenceClassifierThreadPool::push(&slot);
     }
   }
 
@@ -178,8 +222,8 @@ protected:
     //           << "; flags= " << int(slot.m_flags)
     //           << "; prev=" << (void*)slot.m_prev
     //           << "; next=" << (void*)slot.m_next
-    //           // << "; output=" << (*(this_ptr->m_output))[0]
-    //           << std::endl;
+              // << "; output=" << (*(this_ptr->m_output))[0]
+              // << std::endl;
     // this_ptr->pretty_print();
 
     assert(slot.m_lock_count > 0);
@@ -210,37 +254,17 @@ public:
     return m_output;
   }
 
-  RnnSequenceClassifier()
-    : m_overlap(0),
-      m_num_slots(0),
-      m_slot_len(0),
-      m_slots(),
-      m_lengths(),
-      m_output(std::make_shared< StdMatrix<Out> >())
-  {}
-
-  RnnSequenceClassifier(uint32_t max_feat,
-            uint32_t overlap,
-            uint32_t num_slots,
-            uint32_t slot_len,
-            uint32_t num_threads)
-    : m_overlap(0),
-      m_num_slots(0),
-      m_slot_len(0),
-      m_slots(),
-      m_lengths(),
-      m_output(std::make_shared< StdMatrix<Out> >())
-  {
-    init(max_feat, overlap, num_slots, slot_len, num_threads);
-  }
-
   /**
    * Need to be called to be able to reuse this classifier on several sequences
    */
-  void reset()
+  virtual void reset()
   {
+    // std::cerr << "RnnSequenceClassifier::reset()" << (void*)this << std::endl;
+    m_slots.clear();
+    m_slots.resize(m_num_slots);
     for (size_t i = 0; i < m_num_slots; i++)
     {
+      m_slots[i] = slot_t();
       slot_t& slot = m_slots[i];
 
       slot.m_output_begin = m_overlap + i * m_slot_len;
@@ -273,11 +297,10 @@ public:
       //           << " output begin=" << slot.m_output_begin << ", end=" << slot.m_output_end
       //           << std::endl;
     }
-
-
   }
 
-  void init(uint32_t max_feat,
+
+  virtual void init(uint32_t max_feat,
             uint32_t overlap,
             uint32_t num_slots,
             uint32_t slot_len,
@@ -288,7 +311,7 @@ public:
     // RnnSequenceClassifier::init 1024, 16, 8, 1024, 1, true
     // RnnSequenceClassifier::init 464, 0, 8, 1024, 1, false
 
-    // std::cerr << "RnnSequenceClassifier::init max_feat=" << max_feat << ", overlap=" << overlap
+    // std::cerr << "RnnSequenceClassifier::init "<<(void*)this<<" max_feat=" << max_feat << ", overlap=" << overlap
     //           << ", num_slots=" << num_slots
     //           << ", slot_len=" << slot_len
     //           << ", num_threads=" << num_threads
@@ -303,10 +326,8 @@ public:
     {
       Model::init_new_worker(m_slot_len + m_overlap * 2, precomputed_input); // skip id - all workers are identical
     }
-    ThreadPoolParent::init(num_threads);
+    RnnSequenceClassifierThreadPool::init(num_threads);
 
-    m_slots.clear();
-    m_slots.resize(m_num_slots);
     reset(); // set up slots
 
     m_lengths.resize(m_num_slots);
@@ -329,13 +350,6 @@ public:
 
   void get_classes_from_fn(const std::string& fn, std::vector<std::string>& classes_names, std::vector<std::vector<std::string>>& classes){
       Model::get_classes_from_fn(fn, classes_names, classes);
-  }
-
-  virtual ~RnnSequenceClassifier()
-  {
-    // std::cerr << "-> ~RnnSequenceClassifier" << std::endl;
-    ThreadPoolParent::stop();
-    // std::cerr << "<- ~RnnSequenceClassifier" << std::endl;
   }
 
   inline uint8_t get_output(uint64_t pos, uint8_t cls)
@@ -375,7 +389,8 @@ public:
   {
     assert(idx < m_num_slots);
     m_slots[idx].m_lock_count += v;
-    // std::cerr << "RnnSequenceClassifier::increment_lock_count by " << int(v) << " for slot " << int(idx+1)
+    // std::cerr << "RnnSequenceClassifier::increment_lock_count by " << int(v)
+    //           << " for slot " << int(idx+1)
     //           << ". it is now: " << int(m_slots[idx].m_lock_count) << std::endl;
     // pretty_print();
   }
@@ -516,7 +531,7 @@ public:
     {
       // std::cerr << "RnnSequenceClassifier::wait_for_slot in while lock_count=" << int(slot.m_lock_count) << std::endl;
       // pretty_print();
-      ThreadPoolParent::wait_for_any_job_notification([&slot]() {
+      RnnSequenceClassifierThreadPool::wait_for_any_job_notification([&slot]() {
           return 1 == slot.m_lock_count;
         }
       );
@@ -525,13 +540,23 @@ public:
 
   void pretty_print() const
   {
-    std::cerr << "SLOTS: ";
+    std::cerr << (void*)this << " " << "SLOTS: ";
     for (size_t i = 0; i < m_num_slots; i++)
     {
       std::cerr << " | " << int(m_slots[i].m_lock_count);
     }
     std::cerr << " |" << std::endl;
   }
+
+protected:
+  uint32_t m_overlap;
+  uint32_t m_num_slots;
+  uint32_t m_slot_len;
+
+  std::vector<slot_t> m_slots;
+  std::vector<std::vector<size_t>> m_lengths;
+  std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
+
 };
 
 } // namespace deeplima

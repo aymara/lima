@@ -120,9 +120,31 @@ namespace impl
 #error Unknown inference engine
 #endif
 
+  /**
+   * A kind of RnnSequenceClassifier, used for named entities tagging (?), but
+   * also the parent of TaggingImpl, used as member in TokenSequenceAnalyzer
+   */
   template <typename AuxScalar=float>
   class EntityTaggingClassifier: public RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>
-  {};
+  {
+  public:
+    EntityTaggingClassifier() :
+        RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>()
+    {
+    }
+
+    // EntityTaggingClassifier(uint32_t max_feat,
+    //                         uint32_t overlap,
+    //                         uint32_t num_slots,
+    //                         uint32_t slot_len,
+    //                         uint32_t num_threads) :
+    //     RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>(
+    //       max_feat, overlap, num_slots, slot_len, num_threads)
+    // {
+    // }
+
+    virtual ~EntityTaggingClassifier() = default;
+  };
 
 } // namespace impl
 

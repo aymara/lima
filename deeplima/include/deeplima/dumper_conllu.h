@@ -10,6 +10,8 @@
 
 // #include "deeplima/segmentation/impl/segmentation_impl.h"
 
+#include "deeplima/token_type.h"
+
 namespace deeplima
 {
 namespace dumper
@@ -158,6 +160,11 @@ public:
     : m_token_counter(0) { }
 
   virtual ~AbstractDumper() { }
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 };
 
 class Horizontal : public AbstractDumper
@@ -199,8 +206,8 @@ public:
       }
       std::cout << str << " ";
 
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "Horizontal endl" << std::endl;
         std::cout << std::endl;
@@ -265,8 +272,8 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "TokensToConllU end of sentence" << std::endl;
         std::cout << std::endl;
@@ -285,6 +292,7 @@ public:
   virtual ~DumperBase() = default;
   virtual uint64_t get_token_counter() const = 0;
   virtual void flush() = 0;
+  virtual void reset() = 0;
 };
 
 template <class I>
@@ -295,6 +303,11 @@ protected:
   uint32_t m_next_token_idx;
   std::vector<ConllToken> m_tokens;
   uint32_t m_root;
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 
   inline void increment_token_counter()
   {
@@ -315,13 +328,14 @@ public:
       m_has_feats(false),
       m_first_feature_to_print(0)
   {
+    // std::cerr << "AnalysisToConllU()" << (void*)this << std::endl;
   }
 
   virtual ~AnalysisToConllU()
   {
+    // std::cerr << "~AnalysisToConllU " << (void*)this << std::endl;
     // if (m_next_token_idx > 1)
     // {
-    // std::cerr << "on AnalysisToConllU destructor" << std::endl;
     //   std::cout << std::endl;
     // }
   }
@@ -557,8 +571,8 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (iter.flags() & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          iter.flags() & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (iter.flags() & token_flags_t::sentence_brk ||
+          iter.flags() & token_flags_t::paragraph_brk)
       {
         // std::cerr << "AnalysisToConllU::operator() on sent/para break. m_next_token_idx="
         //           << m_next_token_idx << std::endl;

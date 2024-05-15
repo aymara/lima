@@ -48,8 +48,8 @@ using namespace deeplima;
 class file_parser
 {
 public:
-std::shared_ptr<segmentation::ISegmentation> psegm = nullptr;
-std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr;
+std::shared_ptr<segmentation::ISegmentation> psegm = nullptr; // tokenizer
+std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr; // tagger
 std::shared_ptr< dumper::AbstractDumper > pdumper_segm_only = nullptr; // used when using segmentation only
 std::shared_ptr< dumper::DumperBase > pdumper_complete = nullptr; // used when using tagger
 std::shared_ptr<DependencyParser> parser = nullptr;
@@ -241,6 +241,8 @@ void init(const std::map<std::string, std::string>& models_fn,
       });
     }
 
+    // NOTE Commented out because psegm is now instantiated for each file in
+    // parse_file. This is a temporary solution while reusing it fails.
     // psegm->register_handler([panalyzer]
     //                         (const std::vector<segmentation::token_pos>& tokens,
     //                          uint32_t len)
@@ -289,7 +291,8 @@ void parse_file(std::istream& input,
     }
     catch (std::runtime_error& e)
     {
-      std::cerr << "In parse_file: failed to load model file " << models_fn.find("tok")->second << ": "
+      std::cerr << "In parse_file: failed to load model file "
+                << models_fn.find("tok")->second << ": "
                 << e.what() << std::endl;
       throw;
     }
@@ -340,7 +343,7 @@ void parse_file(std::istream& input,
     // std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
     pdumper_complete->flush();
-    std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
+    // std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
 
   if (parser)
@@ -356,10 +359,14 @@ void parse_file(std::istream& input,
 
   uint64_t token_counter = 0;
   if(nullptr != pdumper_segm_only)
+  {
     token_counter = pdumper_segm_only->get_token_counter();
+    pdumper_segm_only->reset();
+  }
   else if (nullptr != pdumper_complete)
   {
     token_counter = pdumper_complete->get_token_counter();
+    pdumper_complete->reset();
   }
   else
   {

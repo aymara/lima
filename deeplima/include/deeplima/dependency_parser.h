@@ -16,6 +16,7 @@
 #include "utils/str_index.h"
 #include "helpers/path_resolver.h"
 #include "deeplima/graph_dp.h"
+#include "deeplima/token_type.h"
 // #include "graph_dp/impl/graph_dp_impl.h"
 #include "segmentation/impl/segmentation_decoder.h"
 #include "token_sequence_analyzer.h"
@@ -76,7 +77,7 @@ public:
         m_ptoken(nullptr)
     { }
 
-    inline typename tokens_with_analysis_t::token_t::token_flags_t flags() const
+    inline token_flags_t flags() const
     {
       assert(nullptr != m_ptoken);
       return m_ptoken->m_flags;
@@ -85,7 +86,7 @@ public:
     inline bool eos() const
     {
       assert(nullptr != m_ptoken);
-      return flags() & DependencyParser::tokens_with_analysis_t::token_t::token_flags_t::sentence_brk;
+      return flags() & token_flags_t::sentence_brk;
     }
 
     inline uint32_t cls(size_t idx) const
@@ -151,7 +152,7 @@ public:
       return m_current >= m_end;
     }
 
-    inline impl::token_t::token_flags_t flags() const
+    inline token_flags_t flags() const
     {
       assert(! end());
       return m_buffer[m_current].m_flags;
@@ -235,8 +236,9 @@ public:
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
-      m_stridx_ptr(stridx)//,
-      // m_stridx(*stridx)
+      m_stridx_ptr(stridx),
+      // m_stridx(*stridx),
+      m_impl()
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
@@ -307,9 +309,10 @@ public:
     }
   }
 
+  // Apply the model to the sequence of tokens given by iter from the tagger
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
-    // std::cerr << "DependencyParser::operator()" << std::endl;
+    // std::cerr << "DependencyParser::operator(TokenSequenceAnalyzer<>::TokenIterator& iter)" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -334,7 +337,7 @@ public:
         token.m_len = 0;
         token.m_form_idx = m_stridx_ptr->get_idx("<ROOT>");
         // std::cerr << "<ROOT>" << std::endl;
-        token.m_flags = impl::token_t::token_flags_t(segmentation::token_pos::flag_t::none);
+        token.m_flags = token_flags_t::none;
         token.m_lemm_idx = token.m_form_idx;
         insert_root = false;
         tokens_to_process--;
@@ -360,8 +363,8 @@ public:
           token.m_classes[i] = iter.token_class(i);
         }
 
-        if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
-            iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
+        if (iter.flags() & token_flags_t::sentence_brk ||
+            iter.flags() & token_flags_t::paragraph_brk)
         {
           insert_root = true;
         }
@@ -480,8 +483,8 @@ protected:
       //           << "; m_buffer_size=" << m_buffer_size
       //           << "; token=" << iter.form() << std::endl;
 
-      if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
-          iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
+      if (iter.flags() & token_flags_t::sentence_brk ||
+          iter.flags() & token_flags_t::paragraph_brk)
       {
         break;
         // lengths.push_back(this_sentence_tokens);
@@ -554,16 +557,16 @@ public:
       m_curr_buff_idx(0)
   {}
 
-  GraphDpImpl(
-      size_t threads,
-      size_t buffer_size_per_thread
-    )
-    : deeplima::graph_dp::impl::GraphDependencyParser(
-        0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
-      m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
-      m_current_timepoint(deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint())
-  {
-  }
+  // GraphDpImpl(
+  //     size_t threads,
+  //     size_t buffer_size_per_thread
+  //   )
+  //   : deeplima::graph_dp::impl::GraphDependencyParser(
+  //       0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+  //     m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+  //     m_current_timepoint(deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint())
+  // {
+  // }
 
   std::shared_ptr<EmbdUInt64Float> convert(const EmbdStrFloat& src)
   {

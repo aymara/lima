@@ -90,7 +90,7 @@ public:
           if (token_idx > 0)
           {
             token_pos& token = tokens[token_idx - 1];
-            token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+            token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
           }
           continue;
         }
@@ -112,7 +112,7 @@ public:
               const char* p_after_eol = p_eol + 1;
               if (*p_after_eol == '\n') {
                 token_pos& token = tokens[tokens.size() - 1];
-                token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+                token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
               }
             }
 
@@ -133,7 +133,7 @@ public:
           p++;
 
           token_pos& token = tokens[token_idx - 1];
-          token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+          token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
         }
         m_callback(tokens, token_idx);
         token_idx = 0;
@@ -197,7 +197,7 @@ protected:
 
     if (eos)
     {
-      token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+      token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
     }
 
     return true;

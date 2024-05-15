@@ -40,7 +40,7 @@ public:
       m_ptoken(nullptr)
   { }
 
-  inline token_buffer_t<>::token_t::token_flags_t flags() const
+  inline token_flags_t flags() const
   {
     assert(nullptr != m_ptoken);
     return m_ptoken->m_flags;
@@ -49,7 +49,7 @@ public:
   inline bool eos() const
   {
     assert(nullptr != m_ptoken);
-    return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
+    return flags() & token_flags_t::sentence_brk;
   }
 
   inline const std::string& form() const
@@ -83,6 +83,12 @@ public:
   }
 };
 
+
+/**
+ * Class implementing the tagger, used as member in TokenSequenceAnalyzer, the
+ * main tagger class
+ * Son of EntityTaggingClassifier (defined in ner.h), itself a RnnSequenceClassifier
+ */
 template <typename TaggingAuxScalar>
 class TaggingImpl: public EntityTaggingClassifier<TaggingAuxScalar>
 {
@@ -94,21 +100,59 @@ class TaggingImpl: public EntityTaggingClassifier<TaggingAuxScalar>
 public:
 
   TaggingImpl() :
+      Classifier(),
       m_fastText(std::make_shared<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+      m_current_timepoint(Classifier::get_start_timepoint()),
       m_current_slot_timepoints(0),
-      m_current_slot_no(-1),
-      m_last_completed_slot(-1),
-      m_curr_buff_idx(0)
+      // m_current_slot_no(-1),
+      m_last_completed_slot(-1) //,
+      // m_curr_buff_idx(0)
   {}
 
-  TaggingImpl(
-      size_t threads,
-      size_t buffer_size_per_thread
-    )
-    : Classifier(0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
-      m_fastText(std::make_shared<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
-      m_current_timepoint(Classifier::get_start_timepoint())
+  // TaggingImpl(
+  //     size_t threads,
+  //     size_t buffer_size_per_thread
+  //   ) :
+  //     Classifier(),
+  //     m_fastText(std::make_shared<FastTextVectorizer<typename eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+  //     m_current_timepoint(Classifier::get_start_timepoint()),
+  //     m_current_slot_timepoints(0),
+  //     // m_current_slot_no(-1),
+  //     m_last_completed_slot(-1) //,
+  //     // m_curr_buff_idx(0)
+  // {
+  // }
+
+  virtual ~TaggingImpl()
   {
+    // std::cerr << "~TaggingImpl" << std::endl;
+  }
+
+  virtual void init(size_t threads, size_t num_buffers,
+                    size_t buffer_size_per_thread, StringIndex& stridx)
+  {
+    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+
+    m_vectorizer.init_features({
+                                 { Vectorizer::str_feature, "form", m_fastText }
+                               });
+
+    m_vectorizer.set_model(this);
+
+    Classifier::init(m_vectorizer.dim(),
+                          16, num_buffers, buffer_size_per_thread, threads,
+                          m_vectorizer.is_precomputing());
+
+    m_current_timepoint = Classifier::get_start_timepoint();
+  }
+
+  virtual void reset()
+  {
+    // std::cerr << "TaggingImpl::reset" << std::endl;
+    Classifier::reset();
+    m_current_timepoint = Classifier::get_start_timepoint();
+    m_current_slot_timepoints = 0;
+    m_last_completed_slot = -1;
   }
 
   virtual void load(const std::string& fn, const PathResolver& path_resolver)
@@ -129,23 +173,6 @@ public:
     m_fastText->load(fastText_fn);
   }
 
-  void init(size_t threads, size_t num_buffers, size_t buffer_size_per_thread, StringIndex& stridx)
-  {
-    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
-
-    m_vectorizer.init_features({
-                                 { Vectorizer::str_feature, "form", m_fastText }
-                               });
-
-    m_vectorizer.set_model(this);
-
-    Classifier::init(m_vectorizer.dim(),
-                          16, num_buffers, buffer_size_per_thread, threads,
-                          m_vectorizer.is_precomputing());
-
-    m_current_timepoint = Classifier::get_start_timepoint();
-  }
-
   void precompute_inputs(const typename Vectorizer::dataset_t& buffer)
   {
     m_vectorizer.precompute(buffer);
@@ -156,12 +183,8 @@ public:
 
   virtual void register_handler(const tagging_callback_t fn)
   {
+    // std::cerr << "TaggingImpl::register_handler" << std::endl;
     m_callback = fn;
-  }
-
-  virtual ~TaggingImpl()
-  {
-    // std::cerr << "~TaggingImpl" << std::endl;
   }
 
 protected:
@@ -239,7 +262,7 @@ public:
       while (lock_count > 1)
       {
         // Worker still uses this slot. Waiting...
-        // std::cerr << "TaggingImpl::send_all_results: waiting for slot " << slot_idx+1
+        // std::cerr << "TaggingImpl::send_all_results: Worker still uses this slot. Waiting... " << slot_idx+1
         //      << " (lock_count==" << int(lock_count) << ")\n";
         // Classifier::pretty_print();
         Classifier::wait_for_slot(slot_idx);
@@ -283,7 +306,7 @@ protected:
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "tagging handle_timepoint, waiting for slot " << slot_no
+      // std::cerr << "TaggingImpl::acquire_slot tagging handle_timepoint, waiting for slot " << slot_no
       //      << " lock_count=" << int(lock_count) << std::endl;
       // Classifier::pretty_print();
       Classifier::wait_for_slot(slot_no);
@@ -296,12 +319,14 @@ protected:
     }
 
     Classifier::increment_lock_count(slot_no);
+    m_current_slot_timepoints = Classifier::get_slot_size();
   }
 
 public:
   virtual void handle_token_buffer(size_t slot_no, const typename Vectorizer::dataset_t& buffer, int timepoints_to_analyze = -1)
   {
-    // std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", " << timepoints_to_analyze << std::endl;
+    // std::cerr << "TaggingImpl::handle_token_buffer " << slot_no << ", "
+    //           << timepoints_to_analyze << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
     size_t offset = slot_no * buffer.size() + Classifier::get_start_timepoint();
@@ -337,10 +362,10 @@ protected:
   uint64_t m_current_timepoint;
   uint32_t m_current_slot_timepoints;
 
-  int32_t m_current_slot_no;
+  // int32_t m_current_slot_no;
   int32_t m_last_completed_slot;
 
-  size_t m_curr_buff_idx;
+  // size_t m_curr_buff_idx;
 };
 
 } // namespace impl

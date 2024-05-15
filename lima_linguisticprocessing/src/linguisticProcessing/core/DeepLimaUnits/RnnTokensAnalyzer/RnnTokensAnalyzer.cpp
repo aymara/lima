@@ -198,7 +198,8 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             token.m_offset = src->position();
             token.m_len = src->length();
             token.m_pch = v[k].c_str();
-            token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+            token.m_flags = token_flags_t(src->status().getStatus()
+                                            & StatusType::T_SENTENCE_BRK);
         }
     }
     m_d->analyzer(buffer);

@@ -7,8 +7,9 @@
 
 namespace deeplima::segmentation::impl {
 
-SegmentationImpl::SegmentationImpl()
-  : m_decoder(SegmentationClassifier::get_output(), m_char_len),
+SegmentationImpl::SegmentationImpl() :
+    SegmentationClassifier(),
+    m_decoder(SegmentationClassifier::get_output(), m_char_len),
     m_current_slot_timepoints(0),
     m_current_slot_no(-1),
     m_last_completed_slot(-1),
@@ -16,20 +17,20 @@ SegmentationImpl::SegmentationImpl()
     m_curr_buff_idx(0)
 {}
 
-SegmentationImpl::SegmentationImpl(
-    const std::vector<ngram_descr_t>& ngram_descr,
-    size_t threads,
-    size_t buffer_size_per_thread
-  )
-  : SegmentationClassifier(
-      ngram_descr.size() * 2, 4, threads * 2, buffer_size_per_thread, threads),
-    m_input_encoder(ngram_descr),
-    m_decoder(SegmentationClassifier::get_output(), m_char_len),
-    m_current_timepoint(SegmentationClassifier::get_start_timepoint()),
-    m_buff_set(SegmentationClassifier::get_num_threads() * 2, SegmentationClassifier::get_slot_size() * 4)
-{
-  m_char_len.resize(SegmentationClassifier::size());
-}
+// SegmentationImpl::SegmentationImpl(
+//     const std::vector<ngram_descr_t>& ngram_descr,
+//     size_t threads,
+//     size_t buffer_size_per_thread
+//   )
+//   : SegmentationClassifier(
+//       ngram_descr.size() * 2, 4, threads * 2, buffer_size_per_thread, threads),
+//     m_input_encoder(ngram_descr),
+//     m_decoder(SegmentationClassifier::get_output(), m_char_len),
+//     m_current_timepoint(SegmentationClassifier::get_start_timepoint()),
+//     m_buff_set(SegmentationClassifier::get_num_threads() * 2, SegmentationClassifier::get_slot_size() * 4)
+// {
+//   m_char_len.resize(SegmentationClassifier::size());
+// }
 
 void SegmentationImpl::load(const std::string& fn)
 {
@@ -59,7 +60,7 @@ void SegmentationImpl::init(size_t threads, size_t buffer_size_per_thread)
 
 void SegmentationImpl::parse_from_stream(const read_callback_t fn)
 {
-  std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
+  // std::cerr << "SegmentationImpl::parse_from_stream" << std::endl;
   size_t n = 0;
   bool just_started = true;
   bool continue_reading = true;
@@ -85,13 +86,13 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
       break;
     }
     counter += bytes_read;
-    std::cerr << "SegmentationImpl::parse_from_stream Reading callback: "
-              << bytes_read << " bytes, continue_reading="
-              << continue_reading << " counter=" << counter << std::endl;
+    // std::cerr << "SegmentationImpl::parse_from_stream Reading callback: "
+    //           << bytes_read << " bytes, continue_reading="
+    //           << continue_reading << " counter=" << counter << std::endl;
     buff.m_char_aligned_data = (const char*)(buff.m_data);
     buff.m_len = bytes_read;
-    std::cerr << "SegmentationImpl::parse_from_stream locking (m_buff_set) buff "
-              << n << std::endl;
+    // std::cerr << "SegmentationImpl::parse_from_stream locking (m_buff_set) buff "
+    //           << n << std::endl;
     buff.lock();
 
     int32_t pos = 0;
@@ -158,8 +159,8 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
       send_next_results();
     }
 
-    m_buff_set.pretty_print();
-    SegmentationClassifier::pretty_print();
+    // m_buff_set.pretty_print();
+    // SegmentationClassifier::pretty_print();
 
     n = m_buff_set.next(n);
   }
@@ -276,15 +277,15 @@ void SegmentationImpl::acquire_slot()
   if (0 == m_current_slot_timepoints || m_current_slot_no < 0)
   {
     m_current_slot_no = SegmentationClassifier::get_slot_idx(m_current_timepoint);
-    // std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no << " for timepoint "
-    //           << m_current_timepoint << std::endl;
+    // std::cerr << "SegmentationImpl::acquire_slot: got " << m_current_slot_no
+    //           << " for timepoint " << m_current_timepoint << std::endl;
     uint8_t lock_count = SegmentationClassifier::get_lock_count(m_current_slot_no);
 
     while (lock_count > 1)
     {
       // Worker still uses this slot. Waiting...
-      // std::cerr << "handle_timepoint, waiting for slot " << m_current_slot_no
-      //      << " lock_count=" << lock_count << std::endl;
+      // std::cerr << "SegmentationImpl::acquire_slot, waiting for slot "
+      //           << m_current_slot_no << " / " << lock_count << std::endl;
       SegmentationClassifier::wait_for_slot(m_current_slot_no);
       lock_count = SegmentationClassifier::get_lock_count(m_current_slot_no);
     }
@@ -327,8 +328,11 @@ void SegmentationImpl::no_more_data()
 
 void SegmentationImpl::finalize()
 {
-  std::cerr << "SegmentationImpl::finalize" << std::endl;
+  // std::cerr << "SegmentationImpl::finalize" << std::endl;
 
+  SegmentationClassifier::reset();
+  m_char_len.resize(SegmentationClassifier::size());
+  m_current_timepoint = SegmentationClassifier::get_start_timepoint();
   // no_more_data();
   //
   // for (size_t i = 0; i < m_buff_set.size(); i++)

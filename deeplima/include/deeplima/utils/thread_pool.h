@@ -59,6 +59,7 @@ public:
   void stop()
   {
     m_stop = true;
+    // push null jobs to ensure having enough joinable jobs
     for (size_t i = 0 ; i < m_workers.size(); i++)
     {
       push(nullptr);
@@ -80,7 +81,7 @@ public:
       }
       else
       {
-        throw std::runtime_error("All workers must be joinable here.");
+        throw std::runtime_error("All workers must be unjoinable (inactive threads) here.");
       }
     }
   }
@@ -99,6 +100,9 @@ public:
 
 protected:
 
+  /** This will wait until a job is available and then @ref job parameter will
+   * be set to this available which will be removed from the list.
+   */
   inline bool wait_for_new_job(void** job)
   {
     std::unique_lock<std::mutex> l(m_mutex);
@@ -124,6 +128,8 @@ protected:
   void thread_fn(size_t worker_id)
   {
     void* job = nullptr;
+    // loop to dispatch pushed jobs to the threads of this pool
+    // wait_for_new_job is blocking until a job becomes available
     while (true)
     {
       // std::cerr << "thread_fn " << worker_id << " main loop" << std::endl;
@@ -132,11 +138,13 @@ protected:
         // std::cerr << "wait_for_new_job is true" << std::endl;
         if (nullptr == job)
         {
+          // we should get a null job only when stopping
+          // std::cerr << "wait_for_new_job: we should get a null job only when stopping" << std::endl;
           break;
         }
-        // std::cerr << "worker: " << (void*) job << " started" << std::endl;
+        // std::cerr << "worker: running job " << (void*) job << std::endl;
         P::run_one_job(static_cast<P*>(this), worker_id, job);
-        // std::cerr << "worker: " << (void*) job << " completed" << std::endl;
+        // std::cerr << "worker: completed job " << (void*) job << std::endl;
         m_cv_notify.notify_all();
         // std::cerr << "notify_all done" << std::endl;
       }

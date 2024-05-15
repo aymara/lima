@@ -138,7 +138,7 @@ protected:
           = ONE_POS_MASK(StreamDecoder::bits_per_position(nd.m_type), typename StreamDecoder::buffer_t);
 
 #ifndef NDEBUG
-      std::cerr << "one_pos_mask == " << pretty_bits_to_string(one_pos_mask) << std::endl;
+      // std::cerr << "one_pos_mask == " << pretty_bits_to_string(one_pos_mask) << std::endl;
 #endif
 
       typename StreamDecoder::buffer_t mask = 0;
@@ -157,8 +157,8 @@ protected:
       m_shift[i] = StreamDecoder::bits_per_position(nd.m_type) * (m_lookahead - l);
 
 #ifndef NDEBUG
-      std::cerr << "mask  [" << i << "]    == " << pretty_bits_to_string(m_mask[i]) << std::endl;
-      std::cerr << "shift [" << i << "]    == " << (uint32_t)m_shift[i] << std::endl;
+      // std::cerr << "mask  [" << i << "]    == " << pretty_bits_to_string(m_mask[i]) << std::endl;
+      // std::cerr << "shift [" << i << "]    == " << (uint32_t)m_shift[i] << std::endl;
 #endif
     }
 

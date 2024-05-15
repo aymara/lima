@@ -24,6 +24,7 @@
 #include "RnnTokenizer.h"
 
 #include "deeplima/segmentation.h"
+#include "deeplima/token_type.h"
 
 
 
@@ -60,6 +61,7 @@ CONFIGURATIONHELPER_LOGGING_INIT(TOKENIZERLOGINIT);
 
 class RnnTokenizerPrivate : public DeepTokenizerBase, public ConfigurationHelper
 {
+  friend RnnTokenizer;
 public:
   RnnTokenizerPrivate();
   virtual ~RnnTokenizerPrivate();
@@ -81,15 +83,15 @@ public:
   void init(GroupConfigurationStructure& unitConfiguration);
   void tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences);
 
-  MediaId m_language;
-  FsaStringsPool* m_stringsPool;
-  LinguisticGraphVertex m_currentVx;
-  QString m_data;
-
 protected:
   void append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                        const QString& current_token,
                        int current_token_offset) const;
+
+  MediaId m_language;
+  FsaStringsPool* m_stringsPool;
+  LinguisticGraphVertex m_currentVx;
+  QString m_data;
 
   size_t m_max_seq_len;
 
@@ -109,6 +111,7 @@ RnnTokenizerPrivate::RnnTokenizerPrivate() :
   m_stringsPool(nullptr),
   m_currentVx(0),
   m_ignoreEOL(false),
+  m_segm(),
   m_loaded(false)
 {
 }
@@ -337,7 +340,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
+      if (tok.m_flags & token_flags_t::sentence_brk)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();
