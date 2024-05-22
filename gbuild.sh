@@ -225,7 +225,7 @@ else
   make_cmd="make -j$j"
 fi
 
-echo "version='$release'"
+echo "version='$version' release='$release'"
 
 if [[ $CMAKE_GENERATOR == "VS" ]]; then
   #consider linking this current place to $LIMA_BUILD_DIR if different
@@ -310,14 +310,16 @@ then
   if [ "$result" != "0" ]; then echoerr "Failed to package LIMA."; popd; exit $result; fi
 fi
 
-if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
+if [[ ( $CMAKE_GENERATOR == "Ninja" || $CMAKE_GENERATOR == "Unix" ) && "x$cmake_mode" == "xRelease" ]] ;
 then
-  echoerr "Install package:"
+  echoerr "Install packages:"
   install -d $LIMA_DIST/share/apps/lima/packages
   if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
+    echo "Install RPM packages into $LIMA_DIST/share/apps/lima/packages"
     install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
   fi
   if compgen -G "*/src/*-build/*.deb" > /dev/null; then
+    echo "Install DEB packages into $LIMA_DIST/share/apps/lima/packages"
     install */src/*-build/*.deb $LIMA_DIST/share/apps/lima/packages
   fi
 fi

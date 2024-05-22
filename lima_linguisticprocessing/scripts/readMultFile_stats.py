@@ -85,6 +85,7 @@ class DocumentStatitics:
 
 	# nb distinct tags of type <property name="identPrpty"  value="??" />
 	nb_identPrpty : int = 0
+	identPrpty_values : List[str] = []
 
 	# nb distinct tags of type <property name="srcePrpty"  value="??" />
 	nb_srcePrpty : int = 0
@@ -146,8 +147,8 @@ def processOneInputFile(inputFile : str) -> DocumentStatitics :
 	statitics.nb_bowTerm = len( bowTerms )
 
 	identPrptys = tree.findall('.//property[@name=\'identPrpty\']')
-	uniq_identPrptys = uniq_list( [ prpty.attrib["value"] for prpty in identPrptys ] )
-	statitics.nb_identPrpty = len( uniq_identPrptys )
+	statitics.identPrpty_values = uniq_list( [ prpty.attrib["value"] for prpty in identPrptys ] )
+	statitics.nb_identPrpty = len( statitics.identPrpty_values )
 
 	srcePrptys = tree.findall('.//property[@name=\'srcePrpty\']')
 	uniq_srcePrptys = uniq_list( [ prpty.attrib["value"] for prpty in srcePrptys ] )

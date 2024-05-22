@@ -71,9 +71,7 @@ bool RecognizerMatch::operator == (const RecognizerMatch& m) {
 // member functions
 //***********************************************************************
 void RecognizerMatch::reinit() {
-
   // do not reinit graph
-
   std::vector<MatchElement>::clear();
   // clear entity properties
   m_head=0;
