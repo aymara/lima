@@ -173,6 +173,11 @@ bool EventTemplateMerging::ignoreTemplate(const EventTemplate& event, uint64_t n
                                           uint64_t posBegin, uint64_t posEnd,
                                           const std::set<uint64_t>& toRemove) const
 {
+//  if (event.getPosEnd()==0 || event.getTemplateElements().size()==0) {
+//      EVENTANALYSISLOGINIT;
+//      LDEBUG << "Template"<< numTemplate << "ignored: since it is not initialized";
+//      return true;
+//    }
 
   if (event.getPosEnd()<=posBegin || (posEnd>0 && event.getPosBegin()>=posEnd) ) {
     EVENTANALYSISLOGINIT;
@@ -203,7 +208,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
   // ad hoc strategy for merging event templates
   EVENTANALYSISLOGINIT;
 
-  // merge templates according to their positions and positions of intermediate entities
+  // merge templates according to their positions , and positions of intermediate entities
   LDEBUG << "EventTemplateMerging::mergeEventTemplates(): merge templates of type" << m_templateDefinition->getName() << "in ["<<posBegin<<","<<posEnd<<"]";
   LDEBUG << "nb events =" << eventData->size();
 
