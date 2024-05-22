@@ -211,7 +211,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   const auto& ldata = static_cast<const LanguageData&>(
       Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
   const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
-  auto microAccessor = microManager.getPropertyAccessor();
+  auto& microAccessor = microManager.getPropertyAccessor();
   // Retrieve morphosyntactic graph
   auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   auto srcgraph = anagraph->getGraph();
@@ -426,7 +426,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     {
       auto posData = new MorphoSyntacticData();
       CheckDifferentPropertyPredicate differentMicro(
-          &microAccessor,
+          microAccessor,
           microManager.getPropertyValue(elements[1].toStdString()));
       std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),

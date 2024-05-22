@@ -116,7 +116,7 @@ public:
                             std::map<std::string,LinguisticCode>& conversionTable) const;
 
 private:
-  PropertyCodeManagerPrivate* m_d;
+  std::unique_ptr<PropertyCodeManagerPrivate> m_d;
 };
 
 } // PropertyCode

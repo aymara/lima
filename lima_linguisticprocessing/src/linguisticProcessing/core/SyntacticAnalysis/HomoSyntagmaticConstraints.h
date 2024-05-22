@@ -418,7 +418,7 @@ public:
 
 private:
   /** @brief Categories on which agreement must hold */
-  std::vector<const Common::PropertyCode::PropertyAccessor*> m_categories;
+  std::vector<Common::PropertyCode::PropertyAccessor> m_categories;
   MediaId m_language;
 };
 

@@ -506,7 +506,7 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
             LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,*srcgraph,currentStep.m_srcVertex);
             if (morphoData!=0) {
               LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData();
-              LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(m_microAccessor,current.m_predMicro);
+              LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(*m_microAccessor,current.m_predMicro);
               std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
               remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
               put(vertex_data,*resultgraph,newVx,posData);

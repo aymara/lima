@@ -23,7 +23,7 @@ namespace PropertyCode
 class PropertyManagerPrivate
 {
 friend class PropertyManager;
-
+public:
   PropertyManagerPrivate(const std::string& name,
                   const LinguisticCode& mask,
                   const LinguisticCode& emptyNessMask,
@@ -97,18 +97,17 @@ PropertyManager::PropertyManager(const std::string& name,
                                  const LinguisticCode& mask,
                                  const LinguisticCode& emptyNessMask,
                                  const std::map<std::string,LinguisticCode> symbol2code) :
-    m_d(new PropertyManagerPrivate(name, mask, emptyNessMask, symbol2code))
+    m_d(std::make_unique<PropertyManagerPrivate>(name, mask, emptyNessMask, symbol2code))
 {
 }
 
 PropertyManager::~PropertyManager()
 {
-  delete m_d;
 }
 
-PropertyManager::PropertyManager(const PropertyManager& pm)
+PropertyManager::PropertyManager(const PropertyManager& pm) :
+  m_d(std::make_unique<PropertyManagerPrivate>(*pm.m_d))
 {
-  m_d = new PropertyManagerPrivate(*pm.m_d);
 }
 
 PropertyManager& PropertyManager::operator=(const PropertyManager& pm)
