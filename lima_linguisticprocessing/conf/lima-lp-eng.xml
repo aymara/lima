@@ -409,7 +409,7 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
 
-    <group name="none" class="ProcessUnitPipeline">
+    <group name="empty" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************
@@ -423,7 +423,7 @@ SPDX-License-Identifier: MIT
       <param key="data" value=""/>
     </group>
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="tokenizer-$udlang"/>
+      <param key="model_prefix" value="tokenizer-eng"/>
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/eng/tokenizerAutomaton-eng.tok"/>

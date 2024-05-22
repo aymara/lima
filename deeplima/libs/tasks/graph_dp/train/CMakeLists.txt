@@ -27,5 +27,6 @@ target_link_libraries(train_graph_dp
   train_common
   ${TORCH_LIBRARIES}
   fasttext-static
+  ${Boost_LIBRARIES}
 )
 

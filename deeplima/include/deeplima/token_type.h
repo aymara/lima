@@ -15,17 +15,18 @@
 namespace deeplima
 {
 
+enum token_flags_t : uint8_t
+{
+  none = 0x00,
+  sentence_brk = 0x01,
+  paragraph_brk = 0x02,
+  max_flags
+};
+
 namespace impl
 {
 struct token_t
 {
-  enum token_flags_t : uint8_t
-  {
-    none = 0x00,
-    sentence_brk = 0x01,
-    paragraph_brk = 0x02,
-    max_flags
-  };
 
   inline bool eos() const
   {

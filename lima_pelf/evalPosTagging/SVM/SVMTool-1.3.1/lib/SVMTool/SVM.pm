@@ -59,7 +59,7 @@ $SVM::svmseparator = ":";
 
    if ($svmdir !~ /\/$/) { $svmdir .= "/"; }
    if ($verbose > $COMMON::verbose3) { print "$svmdir"."svm_learn -v 0 $options $currenttraindsf $model.$pos.$svmext\n"; }
-   system("$svmdir"."svm_learn -v 0 $options $currenttraindsf $model.$pos.$svmext >/dev/null") == 0 or die "system failed: $?";
+   system("$svmdir"."svm_learn $options $currenttraindsf $model.$pos.$svmext >/dev/null") == 0 or die "system failed: $?";
 }
 
 #sub svm_classify

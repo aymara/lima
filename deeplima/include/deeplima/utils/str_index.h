@@ -71,6 +71,8 @@ public:
     }
   }
 
+  /// accessor with side effect. Gets its result from an index or store it there
+  /// before returning it
   inline const U& get_ustr(const idx_t idx)
   {
     auto it = m_idx2ustr.find(idx);

@@ -27,6 +27,7 @@
 #include "deeplima/lemmatization/impl/lemmatization_impl.h"
 #include "deeplima/segmentation/impl/segmentation_decoder.h"
 #include "deeplima/tagging/impl/tagging_impl.h"
+#include "deeplima/token_type.h"
 
 
 template<> struct std::hash<deeplima::morph_model::morph_feats_t> {
@@ -82,7 +83,7 @@ public:
       : m_stridx(stridx), m_buffer(buffer), m_lemm_buffer(lemm_buffer), m_classes(classes),
         m_current(0), m_offset(offset), m_end(end - offset)
     {
-      assert(end > offset + 1);
+      assert(end >= offset + 1);
     }
 
     inline bool end() const
@@ -90,7 +91,7 @@ public:
       return m_current >= m_end;
     }
 
-    inline impl::token_t::token_flags_t flags() const
+    inline token_flags_t flags() const
     {
       assert(! end());
       return m_buffer[m_current].m_flags;
@@ -143,6 +144,7 @@ public:
 
     inline void reset(size_t position = 0)
     {
+      // std::cerr << "TokenSequenceAnalyzer::reset" << std::endl;
       m_current = position;
     }
 
@@ -183,7 +185,7 @@ protected:
         m_ptoken(nullptr)
     { }
 
-    inline token_buffer_t<>::token_t::token_flags_t flags() const
+    inline token_flags_t flags() const
     {
       assert(nullptr != m_ptoken);
       return m_ptoken->m_flags;
@@ -192,7 +194,7 @@ protected:
     inline bool eos() const
     {
       assert(nullptr != m_ptoken);
-      return flags() & token_buffer_t<>::token_t::token_flags_t::sentence_brk;
+      return flags() & token_flags_t::sentence_brk;
     }
 
     inline const std::string& form() const
@@ -234,19 +236,21 @@ protected:
   //                                    enriched_token_buffer_t,
   //                                    typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
-  typedef tagging::impl::EntityTaggingClassifier<TaggingAuxScalar> Classifier;
+  // typedef tagging::impl::EntityTaggingClassifier<TaggingAuxScalar> Classifier;
 
-  typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
-                                      Classifier,
-                                      enriched_token_buffer_t,
-                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
+  // typedef tagging::impl::FeaturesVectorizerWithPrecomputing<
+  //                                     Classifier,
+  //                                     enriched_token_buffer_t,
+  //                                     typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
 
   // typedef tagging::impl::TaggingImpl< Classifier,
   //                                     FeaturesVectorizer,
   //                                     Matrix > EntityTaggingModule;
 
-  typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
-  // typedef lemmatization::impl::LemmatizationImpl< RnnSeq2Seq, EmbdVectorizer, Matrix> LemmatizationModule;
+  // typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float,
+  //                             eigen_wrp::EigenMatrixXf> EmbdVectorizer;
+  // typedef lemmatization::impl::LemmatizationImpl< RnnSeq2Seq, EmbdVectorizer,
+  //                                                 Matrix> LemmatizationModule;
 
 public:
   TokenSequenceAnalyzer() :
@@ -262,8 +266,9 @@ public:
   TokenSequenceAnalyzer(const std::string& model_fn,
                         const std::string& lemm_model_fn,
                         const std::string& lemm_dict_fn,
+                        const std::string& fixed_ini_fn,
+                        const std::string& lower_ini_fn,
                         const std::string& fixed_lemm_fn,
-                        const std::string& lowercase_lemm_fn,
                         const PathResolver& path_resolver,
                         size_t buffer_size,
                         size_t num_buffers)
@@ -272,11 +277,14 @@ public:
       m_current_timepoint(0),
       m_stridx_ptr(std::make_shared<StringIndex>()),
       m_stridx(*m_stridx_ptr),
+      m_cls(),
       m_classes(std::make_shared<StdMatrix<uint8_t>>())
-  {
-    std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", "
-              << lemm_model_fn << ", " << lemm_dict_fn << ", "
-              << fixed_lemm_fn << ", " << lowercase_lemm_fn << std::endl;
+{
+    // std::cerr << "TokenSequenceAnalyzer::TokenSequenceAnalyzer " << model_fn << ", "
+    //           << lemm_model_fn << ", " << lemm_dict_fn << ", "
+    //           << fixed_ini_fn << ", " << lower_ini_fn  << ", "
+    //           << fixed_lemm_fn
+    //           << std::endl;
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
     m_buffers.resize(num_buffers);
@@ -355,13 +363,17 @@ public:
     {
       load_lemm_cache(lemm_dict_fn);
     }
+    if (fixed_ini_fn.size() > 0)
+    {
+      m_fixed_ini_cache = load_pos_cache(fixed_ini_fn);
+    }
+    if (lower_ini_fn.size() > 0)
+    {
+      m_lower_ini_cache = load_pos_cache(lower_ini_fn);
+    }
     if (fixed_lemm_fn.size() > 0)
     {
-      load_fixed_lemm(fixed_lemm_fn);
-    }
-    if (lowercase_lemm_fn.size() > 0)
-    {
-      load_lowercase_lemm(lowercase_lemm_fn);
+      m_fixed_lemm_cache = load_pos_cache(fixed_lemm_fn);
     }
   }
 
@@ -378,6 +390,7 @@ public:
 
   virtual void register_handler(const output_callback_t fn) override
   {
+    // std::cerr << "TokenSequenceAnalyzer::register_handler" << std::endl;
     m_output_callback = fn;
   }
 
@@ -396,8 +409,16 @@ public:
     return m_stridx_ptr;
   }
 
+  /*
+   * The logic is contiguous and the final stop and release of locks are
+   * handled by finalize() and no_more_data().
+   * Contiguous means that only the 100% full buffer triggers processing.
+   * Partially full buffers will wait. Finalization triggers the dispatch of
+   * the remaining data to the pipeline.
+   */
   virtual void finalize() override
   {
+    // std::cerr << "TokenSequenceAnalyzer::finalize" << std::endl;
     if (m_current_timepoint > 0)
     {
       if (m_current_timepoint < m_buffer_size)
@@ -411,6 +432,10 @@ public:
     }
 
     m_cls.send_all_results();
+    m_current_timepoint = 0;
+    m_current_buffer = 0;
+
+    m_cls.reset();
   }
 
   virtual void operator()(const std::vector<deeplima::segmentation::token_pos>& tokens, uint32_t len) override
@@ -430,7 +455,7 @@ public:
       token.m_offset = src.m_offset;
       token.m_len = src.m_len;
       token.m_form_idx = m_stridx.get_idx(src.m_pch, src.m_len);
-      token.m_flags = impl::token_t::token_flags_t(src.m_flags);
+      token.m_flags = token_flags_t(src.m_flags);
 
       m_current_timepoint++;
       if (m_current_timepoint >= m_buffer_size)
@@ -449,9 +474,10 @@ protected:
 
   void acquire_buffer()
   {
+    // std::cerr << "acquire_buffer" << std::endl;
     size_t next_buffer_idx = (m_current_buffer + 1 < m_buffers.size()) ? (m_current_buffer + 1) : 0;
     const token_buffer_t<>& next_buffer = m_buffers[next_buffer_idx];
-
+//
     // wait for buffer
     while (next_buffer.locked())
     {
@@ -544,13 +570,14 @@ protected:
   //   }
   // };
 
-  void load_fixed_lemm(const std::string& fn)
+  std::unordered_set<morph_model::morph_feats_t> load_pos_cache(const std::string& fn)
   {
+    std::unordered_set<morph_model::morph_feats_t> result;
     const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
     std::ifstream f(fn, std::ios::in);
     if (!f) {
-        std::cerr << "load_fixed_lemm failed to open file " << fn << ".\n";
-        throw std::runtime_error(std::string("load_fixed_lemm failed to open file ") + fn);
+        std::cerr << "load_pos_cache failed to open file " << fn << ".\n";
+        throw std::runtime_error(std::string("load_pos_cache failed to open file ") + fn);
     }
     std::string line;
     while (std::getline(f, line))
@@ -562,36 +589,12 @@ protected:
 
       std::map<std::string, std::set<std::string>> feats;
       morph_model::morph_feats_t encoded_feats = mm.convert(line, feats);
-      std::cerr << "load_fixed_lemm add " << line << " " << encoded_feats.toBaseType() << std::endl;
-      m_fixed_lemm_cache.insert(encoded_feats);
+      // std::cerr << "load_pos_cache add " << line << " " << encoded_feats.toBaseType() << std::endl;
+      result.insert(encoded_feats);
     }
-
+    return result;
   }
 
-  void load_lowercase_lemm(const std::string& fn)
-  {
-    const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
-    std::ifstream f(fn, std::ios::in);
-    if (!f) {
-        std::cerr << "load_lowercase_lemm failed to open file " << fn << ".\n";
-        throw std::runtime_error(std::string("load_lowercase_lemm failed to open file ") + fn);
-    }
-    std::string line;
-    while (std::getline(f, line))
-    {
-      if (line.size() == 0 || line[0] == '#')
-      {
-        continue;
-      }
-
-      std::map<std::string, std::set<std::string>> feats;
-      morph_model::morph_feats_t encoded_feats = mm.convert(line, feats);
-
-      std::cerr << "load_lowercase_lemm add " << line << " " << encoded_feats.toBaseType() << std::endl;
-      m_lowercase_lemm_cache.insert(encoded_feats);
-    }
-
-  }
 
   /**
    * This well lower onlu Latin1 characters
@@ -636,6 +639,7 @@ protected:
     const auto& lang_morph_model = m_lemm.get_morph_model();
     for (size_t i = 0; i < end - offset; ++i)
     {
+      bool sentence_begin = (i==0 || buffer[i-1].eos());
       if (m_lemm.is_fixed(classes, i + offset))
       {
         // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
@@ -648,18 +652,24 @@ protected:
 
         auto upos = morph_model::morph_feats_t(lang_morph_model.decode_upos(morph_feats_i));
 
-        if (m_fixed_lemm_cache.end() != m_fixed_lemm_cache.find(upos))
+        if (sentence_begin && m_fixed_ini_cache.end() != m_fixed_ini_cache.find(upos))
+        {
+          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+          //           << ": ini fixed POS" << std::endl;
+          lemm_buffer[i] = buffer[i].m_form_idx;
+        }
+        else if (sentence_begin && m_lower_ini_cache.end() != m_lower_ini_cache.find(upos))
+        {
+          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
+          //           << ": ini lowercase POS" << std::endl;
+          target = to_lower(m_stridx.get_ustr(buffer[i].m_form_idx));
+          lemm_buffer[i] = m_stridx.get_idx(target);
+        }
+        else if (m_fixed_lemm_cache.end() != m_fixed_lemm_cache.find(upos))
         {
           // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
           //           << ": fixed POS" << std::endl;
           lemm_buffer[i] = buffer[i].m_form_idx;
-        }
-        else if (m_lowercase_lemm_cache.end() != m_lowercase_lemm_cache.find(upos))
-        {
-          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-          //           << ": lowercase POS" << std::endl;
-          target = to_lower(m_stridx.get_ustr(buffer[i].m_form_idx));
-          lemm_buffer[i] = m_stridx.get_idx(target);
         }
         else
         {
@@ -702,11 +712,12 @@ protected:
 
   std::unordered_map<lemm_cache_key_t, StringIndex::idx_t, lemm_cache_key_hash> m_lemm_cache;
 
-  // The two caches below has been added to allow to force copying the
+  // The three caches below has been added to allow to force copying the
   // (possibly lowercased) token as lemma, for a fixed list of pos tags for a given language
-  // TODO implement this process
+  // for sentence initial (fixed ini and lower ini) and for other tokens (lower lemm)
+  std::unordered_set<morph_model::morph_feats_t> m_fixed_ini_cache;
+  std::unordered_set<morph_model::morph_feats_t> m_lower_ini_cache;
   std::unordered_set<morph_model::morph_feats_t> m_fixed_lemm_cache;
-  std::unordered_set<morph_model::morph_feats_t> m_lowercase_lemm_cache;
 
   output_callback_t m_output_callback;
 };

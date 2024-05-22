@@ -14,8 +14,6 @@
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "common/ProcessUnitFramework/AbstractProcessUnit.h"
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
-// #include "common/AbstractFactoryPattern/InitializableObject.h"
-// #include "common/AbstractFactoryPattern/InitializableObjectManager.h"
 
 namespace Lima
 {

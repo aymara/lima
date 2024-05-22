@@ -115,9 +115,9 @@ bool load(const string& fn, const set<string>& upos_to_skip, lemmatization_dict_
     throw runtime_error("Failed while compiling regexp");
   }
 
-  for (auto it = annotation.words_begin(); it != annotation.words_end(); it++)
+  for (const auto& word: annotation.words())
   {
-    const CoNLLU::CoNLLULine& line = annotation.get_line((*it).m_line_idx);
+    const CoNLLU::CoNLLULine& line = annotation.get_line(word.m_line_idx);
     if (line.is_foreign() || line.is_typo() || upos_to_skip.end() != upos_to_skip.find(line.upos()))
     {
       continue;

@@ -63,6 +63,7 @@ public:
     const std::string& unitId,
     typename ProcessUnit::Manager* manager);
 
+  void push_back(std::shared_ptr<ProcessUnit> pu);
 
 private:
   void debugPrintInactiveUnits() const;

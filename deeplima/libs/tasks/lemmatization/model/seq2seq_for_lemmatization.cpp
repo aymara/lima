@@ -47,9 +47,9 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
     Module::train(true);
     for (size_t i = 0; i < train_input.size(); ++i)
     {
-      const TorchMatrix<int64_t>& input = train_input[i];
-      const vector<TorchMatrix<int64_t>> input_cat = train_input_cat[i];
-      const TorchMatrix<int64_t>& gold = train_gold[i];
+      const auto& input = train_input[i];
+      const auto& input_cat = train_input_cat[i];
+      const auto& gold = train_gold[i];
 
       assert(input.get_max_feat() == gold.get_max_feat());
       assert(input.get_max_feat() == input_cat[0].get_max_feat());
@@ -82,12 +82,13 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   }
 }
 
-nets::epoch_stat_t Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& params,
-                                            const TorchMatrix<int64_t>& train_input,
-                                            const vector<TorchMatrix<int64_t>> train_input_cat,
-                                            const TorchMatrix<int64_t>& train_gold,
-                                            torch::optim::Optimizer& opt,
-                                            const torch::Device& device)
+nets::epoch_stat_t Seq2SeqLemmatizerImpl::train_on_subset(
+    const train_params_lemmatization_t& params,
+    const TorchMatrix<int64_t>& train_input,
+    const vector<TorchMatrix<int64_t>>& train_input_cat,
+    const TorchMatrix<int64_t>& train_gold,
+    torch::optim::Optimizer& opt,
+    const torch::Device& device)
 {
   //cerr << train_input.get_tensor().sizes() << endl;
   //cerr << train_gold.get_tensor().sizes() << endl;

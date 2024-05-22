@@ -151,52 +151,23 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
   {
     m_listName = toString(attributes.value("name"));
     LTRACE << "list name is " << m_listName;
-
-    m_firstItem=true;
-    m_itemWithAttributes=false;
   }
   else if (stringName == "item")
   {
     uint32_t nbAtt=attributes.length();
     if (m_firstItem) {
-      // decide if list is simple list or list of items with attributes
-      if (nbAtt==1) {
-        LTRACE << "add simple list "<< m_listName;
-        m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
-      }
-      else {
-        LTRACE << "add list of items with attributes"<< m_listName;
-        m_configuration.addListOfItemsForModuleAndGroup(m_listName, m_moduleName, m_groupName);
-        m_itemWithAttributes=true;
-      }
+      LTRACE << "add simple list "<< m_listName;
+      m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
       m_firstItem=false;
     }
-    else if (nbAtt>1 && !m_itemWithAttributes) {
-      // was indeed in list of item with attributes => has to change
-      m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
-      m_itemWithAttributes=true;
-    }
 
-    if (m_itemWithAttributes) {
-      string itemName=toString(attributes.value("value"));
-      ItemWithAttributes item(itemName);
-      for (uint32_t i=0; i<nbAtt; i++) {
-        item.addAttribute(toString(attributes.localName(i)),
-                          toString(attributes.value(i)));
-      }
-      m_configuration.addItemInListOfItemsForModuleAndGroup(item, m_listName, m_moduleName, m_groupName);
-    }
-    else {
-      string value = toString(attributes.value("value"));
-      m_configuration.addItemInListNamedForModuleAndGroup(value, m_listName, m_moduleName, m_groupName);
-    }
+    string value = toString(attributes.value("value"));
+    m_configuration.addItemInListNamedForModuleAndGroup(value, m_listName, m_moduleName, m_groupName);
   }
   else if (stringName == "map")
   {
     m_mapName = toString(attributes.value("name"));
     LTRACE << "map name is " << m_mapName;
-    m_firstItem=true;
-    m_itemWithAttributes=false;
   }
   else if (stringName == "entry")
   {
@@ -205,41 +176,14 @@ bool XMLConfigurationFileHandler::startElement( const QString & , const QString 
     uint32_t nbAtt=attributes.length();
     if (m_firstItem) {
       // decide if map is simple map or map of entries with attributes
-      if (nbAtt==2) { // name+value => simple map
-        LTRACE << "add map list "<< m_mapName.c_str();
-        m_configuration.addMapNamedForModuleAndGroup(m_mapName,m_moduleName,m_groupName);
-      }
-      else {
-        LTRACE << "add map of items with attributes "<< m_mapName;
-        m_configuration.addMapOfItemsForModuleAndGroup(m_mapName,m_moduleName,m_groupName);
-        m_itemWithAttributes=true;
-      }
+      LTRACE << "add map list "<< m_mapName.c_str();
+      m_configuration.addMapNamedForModuleAndGroup(m_mapName,m_moduleName,m_groupName);
       m_firstItem=false;
     }
-    else if (nbAtt>2 && !m_itemWithAttributes) {
-      // was indeed in list of item with attributes => has to change
-      m_configuration.changeMapToMapOfItems(m_mapName,m_moduleName,m_groupName);
-      m_itemWithAttributes=true;
-    }
 
-    if (m_itemWithAttributes) {
-      string key=toString(attributes.value("key"));
-      string value=toString(attributes.value("value"));
-      ItemWithAttributes item(value);
-      for (uint32_t i=1; i<nbAtt; i++) {
-        string attName=toString(attributes.localName(i));
-        if (attName != "key" && attName != "value") {
-          item.addAttribute(attName,
-                            toString(attributes.value(i)));
-        }
-      }
-      m_configuration.addEntryInMapOfItemsForModuleAndGroup(key,item,m_mapName,m_moduleName,m_groupName);
-    }
-    else {
-      string key = toString(attributes.value("key"));
-      string value = toString(attributes.value("value"));
-      m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);
-    }
+    string key = toString(attributes.value("key"));
+    string value = toString(attributes.value("value"));
+    m_configuration.addEntryInMapNamedForModuleAndGroup(key,value,m_mapName,m_moduleName,m_groupName);
   }
   return true;
 }

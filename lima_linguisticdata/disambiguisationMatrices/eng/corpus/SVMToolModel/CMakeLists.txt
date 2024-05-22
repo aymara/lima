@@ -4,21 +4,21 @@
 # SPDX-License-Identifier: MIT
 
 find_program (SVMT_LEARN SVMTlearn)
-find_program (SVM_LIGHT_PROGRAM svm_learn)
+find_program (SVM_LEARN_PROGRAM svm_learn)
 
 if ( ${SVMT_LEARN} STREQUAL "SVMT_LEARN-NOTFOUND" )
 
   message("SVMTlearn not found. eng SVMTool model will not build.")
 
-elseif ( ${SVM_LIGHT_PROGRAM} STREQUAL "SVM_LIGHT_PROGRAM-NOTFOUND" )
+elseif ( ${SVM_LEARN_PROGRAM} STREQUAL "SVM_LEARN_PROGRAM-NOTFOUND" )
 
-  message("svm_light not found. eng SVMTool model will not build.")
+  message("svm_learn not found. eng SVMTool model will not build.")
 
 else ()
   message("SVMTlearn is ${SVMT_LEARN}.")
-  message("svm_light is ${SVM_LIGHT_PROGRAM}.")
+  message("svm_light is ${SVM_LEARN_PROGRAM}.")
 
-  get_filename_component(SVM_LIGHT ${SVM_LIGHT_PROGRAM} DIRECTORY)
+  get_filename_component(SVM_LIGHT ${SVM_LEARN_PROGRAM} DIRECTORY)
 
   configure_file(config-minimale.SVMT config-minimale.SVMT @ONLY)
 
@@ -44,7 +44,10 @@ else ()
       ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
       ${CMAKE_CURRENT_BINARY_DIR}/lima.UNKP
       ${CMAKE_CURRENT_BINARY_DIR}/lima.WIN
+
   )
+      # ${CMAKE_CURRENT_BINARY_DIR}/lima.M0.LR.MRG
+      # ${CMAKE_CURRENT_BINARY_DIR}/lima.UNK.M0.LR.MRG
   add_custom_command(
       OUTPUT lima.A0.UNK
       COMMAND sed -e "s@ @_@g" -e "s@\t@ @g" ${CMAKE_CURRENT_BINARY_DIR}/../../corpus_eng_merge.txt > corpus_eng.txt

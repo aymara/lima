@@ -59,6 +59,7 @@
 #include "common/LimaVersion.h"
 #include "common/Data/strwstrtools.h"
 #include "common/MediaticData/mediaticData.h"
+#include "common/MediaProcessors/MediaProcessors.h"
 #include "common/MediaProcessors/MediaProcessUnit.h"
 #include <common/ProcessUnitFramework/AnalysisContent.h>
 #include "common/QsLog/QsLog.h"
@@ -66,6 +67,7 @@
 #include "common/QsLog/QsLogCategories.h"
 #include "common/QsLog/QsDebugOutput.h"
 #include "common/XMLConfigurationFiles/xmlConfigurationFileParser.h"
+#include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/time/traceUtils.h"
 #include "common/tools/FileUtils.h"
 #include "common/tools/LimaMainTaskRunner.h"
@@ -117,6 +119,7 @@ using LangData = Lima::Common::MediaticData::LanguageData;
 using MedData = Lima::Common::MediaticData::MediaticData ;
 using namespace Lima::Common::Misc;
 using namespace Lima::Common::PropertyCode;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima;
 
 struct character_escaper
@@ -157,6 +160,10 @@ public:
 
   void initMetaData();
 
+  bool addPipelineUnit(const std::string& pipeline,
+                       const std::string& media,
+                       const std::string& jsonGroupString);
+
   const std::string analyzeText(const std::string& text,
                                 const std::string& lang,
                                 const std::string& pipeline,
@@ -184,6 +191,7 @@ public:
   /** Reset all members used to store analysis states. To be called before handling a new analysis. */
   void reset();
 
+  QJsonObject objectFromString(const QString& in);
 
   QString previousNeType;
 
@@ -252,7 +260,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   // Add here LIMA_CONF content in front, otherwise it will be ignored
   auto limaConf = QString::fromUtf8(qgetenv("LIMA_CONF").constData());
   if (!limaConf.isEmpty())
-    additionalPaths = limaConf.split(LIMA_PATH_SEPARATOR) + additionalPaths;
+    additionalPaths = limaConf.split(LIMA_PATH_SEPARATOR, Qt::SkipEmptyParts) + additionalPaths;
   // Add then the user path in front again such that it takes precedence on environment variable
   if (!user_config_path.isEmpty())
     additionalPaths.push_front(user_config_path);
@@ -264,7 +272,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   // Add here LIMA_RESOURCES content in front, otherwise it will be ignored
   auto limaRes = QString::fromUtf8(qgetenv("LIMA_RESOURCES").constData());
   if (!limaRes.isEmpty())
-    additionalResourcePaths = limaRes.split(LIMA_PATH_SEPARATOR) + additionalResourcePaths;
+    additionalResourcePaths = limaRes.split(LIMA_PATH_SEPARATOR, Qt::SkipEmptyParts) + additionalResourcePaths;
   if (!user_resources_path.isEmpty())
     additionalResourcePaths.push_front(user_resources_path);
   auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
@@ -272,15 +280,15 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   auto resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
 
   QsLogging::initQsLog(configPath);
-  std::cerr << "QsLog initialized " << configPath.toStdString() << std::endl;
+  // std::cerr << "QsLog initialized " << configPath.toStdString() << std::endl;
   // Necessary to initialize factories
   Lima::AmosePluginsManager::single();
-  std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() plugins manager created" << std::endl;
+  // std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() plugins manager created" << std::endl;
   if (!Lima::AmosePluginsManager::changeable().loadPlugins(configPath))
   {
     throw InvalidConfiguration("loadLibrary method failed.");
   }
-  qDebug() << "Amose plugins are now initialized";
+  // qDebug() << "Amose plugins are now initialized";
 
 
   std::string lpConfigFile = "lima-analysis.xml";
@@ -301,11 +309,11 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   std::deque<std::string> langs;
   for (const auto& lang: qlangs)
     langs.push_back(lang.toStdString());
-  std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() "
-            << resourcesPath.toUtf8().constData() << ", "
-            << configPath.toUtf8().constData() << ", "
-            << commonConfigFile << ", "
-            << qlangs.join(",").toStdString() << std::endl;
+  // std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() "
+  //           << resourcesPath.toUtf8().constData() << ", "
+  //           << configPath.toUtf8().constData() << ", "
+  //           << commonConfigFile << ", "
+  //           << qlangs.join(",").toStdString() << std::endl;
   // initialize common
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
@@ -319,12 +327,12 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   {
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
-      std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() configuring "
-          << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
-          << clientId << std::endl;
+      // std::cerr << "LimaAnalyzerPrivate::LimaAnalyzerPrivate() configuring "
+      //     << (configDir + "/" + lpConfigFile.c_str()).toUtf8().constData() << ", "
+      //     << clientId << std::endl;
 
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
+      XMLConfigurationFileParser lpconfig(
           (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
@@ -342,7 +350,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
               << "and" << lpConfigFile << std::endl;
     throw LimaException("Configuration failure");
   }
-  std::cerr << "Client factory configured" << std::endl;
+  // std::cerr << "Client factory configured" << std::endl;
 
   m_client = std::shared_ptr< AbstractLinguisticProcessingClient >(
       std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
@@ -359,7 +367,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", fullXmlSimpleStreamHandler.get()));
   ltrTextHandler= std::make_unique<LTRTextHandler>();
   handlers.insert(std::make_pair("ltrTextHandler", ltrTextHandler.get()));
-  std::cerr << "LimaAnalyzerPrivate constructor done" << std::endl;
+  // std::cerr << "LimaAnalyzerPrivate constructor done" << std::endl;
 
 }
 
@@ -372,8 +380,8 @@ LimaAnalyzer::LimaAnalyzer(const std::string& langs,
 {
   try
   {
-    QStringList qlangs = QString::fromStdString(langs).split(",");
-    QStringList qpipelines = QString::fromStdString(pipelines).split(",");
+    QStringList qlangs = QString::fromStdString(langs).split(",", Qt::SkipEmptyParts);
+    QStringList qpipelines = QString::fromStdString(pipelines).split(",", Qt::SkipEmptyParts);
     m_d = new LimaAnalyzerPrivate(qlangs, qpipelines,
                                   QString::fromStdString(modulePath),
                                   QString::fromStdString(user_config_path),
@@ -459,7 +467,7 @@ void LimaAnalyzerPrivate::initMetaData ()
   // parse 'meta' argument to add metadata
   if (!meta.isEmpty())
   {
-    auto metas = meta.split(",");
+    auto metas = meta.split(",", Qt::SkipEmptyParts);
     for (const auto& aMeta: metas)
     {
       auto kv = aMeta.split(":");
@@ -473,6 +481,72 @@ void LimaAnalyzerPrivate::initMetaData ()
       }
     }
   }
+}
+
+bool LimaAnalyzer::addPipelineUnit(const std::string& pipeline,
+                     const std::string& media,
+                     const std::string& jsonGroupString)
+{
+  if (! m_d->addPipelineUnit(pipeline, media, jsonGroupString))
+  {
+    error = true;
+    errorMessage = std::string("addPipelineUnit failed:") + pipeline + ", "
+        + media + ",\n" + jsonGroupString;
+    return false;
+  }
+  return true;
+}
+
+QJsonObject LimaAnalyzerPrivate::objectFromString(const QString& in)
+{
+    QJsonObject obj;
+
+    QJsonDocument doc = QJsonDocument::fromJson(in.toUtf8());
+
+    // check validity of the document
+    if(!doc.isNull())
+    {
+        if(doc.isObject())
+        {
+            obj = doc.object();
+        }
+        else
+        {
+            qDebug() << "Document is not an object" << Qt::endl;
+        }
+    }
+    else
+    {
+        qDebug() << "Invalid JSON...\n" << in << Qt::endl;
+    }
+
+    return obj;
+}
+
+bool LimaAnalyzerPrivate::addPipelineUnit(const std::string& pipeline,
+                                          const std::string& media,
+                                          const std::string& jsonGroupString)
+{
+  auto jsonGroup = QJsonDocument::fromJson(QByteArray::fromStdString(jsonGroupString)).object();
+  auto mediaid = Lima::Common::MediaticData::MediaticData::single().getMediaId(media);
+  auto pipe = MediaProcessors::changeable().getPipelineForId(mediaid, pipeline);
+  auto managers = Lima::MediaProcessors::single().managers();
+    // QString jsonGroupString =
+    //     "{ \"name\":\"cpptftokenizer\", "
+    //     "  \"class\":\"CppUppsalaTensorFlowTokenizer\", "
+    //     "  \"model_prefix\": \"tokenizer-eng\" }";
+
+  GroupConfigurationStructure unitConfig(jsonGroup);
+
+  // managers (Manager*) used in init of ProcessUnits are stored in
+  // m_pipelineManagers of MediaProcessors
+  auto pu = MediaProcessUnit::Factory::getFactory(
+    jsonGroup["class"].toString().toStdString())->create(
+      unitConfig,
+      managers[mediaid]);
+  pipe->push_back(pu);
+
+  return true;
 }
 
 std::string LimaAnalyzer::analyzeText(const std::string& text,
@@ -509,7 +583,7 @@ const std::string LimaAnalyzerPrivate::analyzeText(const std::string& text,
 
   auto localMetaData = metaData;
   localMetaData["FileName"]="param";
-  auto qmeta = QString::fromStdString(meta).split(",");
+  auto qmeta = QString::fromStdString(meta).split(",", Qt::SkipEmptyParts);
   for (const auto& m: qmeta)
   {
     auto kv = m.split(":");
@@ -918,14 +992,4 @@ QString LimaAnalyzerPrivate::getMicro(LinguisticAnalysisStructure::MorphoSyntact
         .getPropertyManager("MICRO")
         .getPropertySymbolicValue(morphoData.firstValue(
           *propertyAccessor)).c_str());
-}
-
-
-int main(int /*argc*/, char** /*argv[]*/)
-{
-  LimaAnalyzer analyzer0("ud-eng", "deepud", "");
-  std::cerr << analyzer0.analyzeText("Hop ! Hop !") << std::endl;
-
-  LimaAnalyzer analyzer1("eng", "main", "");
-  std::cerr << analyzer1.analyzeText("One, 2, tree.") << std::endl;
 }

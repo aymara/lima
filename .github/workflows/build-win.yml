@@ -1,0 +1,55 @@
+on:
+    push:
+        branches:
+            - master
+
+env:
+    # Use docker.io for Docker Hub if empty
+    REGISTRY: ghcr.io
+    MANYLINUX_TAG: "2022-10-25-fbea779"
+    # github.repository as <account>/<repo>
+    IMAGE_NAME: ${{ github.repository }}
+    PYTHON_VERSION: "3.7"
+    PYTHON_SHORT_VERSION: "cp37-cp37m"
+    PYTHON_WHEEL_VERSION: "cp37-abi3"
+    PYTHON_FULL_VERSION: "3.7.13"
+    QT_VERSION_MAJOR: "5"
+    QT_VERSION_MINOR: "15"
+    QT_VERSION_PATCH: "2"
+    QT_VERSION: "5.15"
+    QT_FULL_VERSION: "5.15.2"
+    PYSIDE_VERSION: "2"
+    LLVM_VERSION: "14.0.6"
+    GCC_VERSION: "10.1.0"
+
+jobs:
+    build-VS-2022:
+        runs-on: windows-2022
+        strategy:
+            matrix:
+                configuration: [Release]
+                platform: [x64]
+        steps:
+            - name: "Checkout code"
+              uses: actions/checkout@v3
+              with:
+                  submodules: recursive
+            - name: vcpkg build
+              uses: johnwason/vcpkg-action@v6
+              id: vcpkg
+              with:
+                pkgs: boost-regex boost-filesystem boost-program-options boost-system boost-thread boost-test boost-iostreams qwt qtbase
+                triplet: x64-windows-release
+                token: ${{ github.token }}
+                github-binarycache: true
+            - name: Running cmake (windows)
+              run: |
+                    cd ${{ github.workspace }}
+                    ls
+                    mkdir build
+                    cd build
+                    cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+            - name: Build Solution (windows)
+              run: |
+                cd build
+                MSBuild.exe CMakeHelloWorld.sln

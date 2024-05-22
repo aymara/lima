@@ -14,7 +14,6 @@
 #include <iostream>
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/AbstractFactoryPattern/InitializableObject.h"
-// #include "common/AbstractFactoryPattern/InitializableObjectManager.h"
 #include "common/XMLConfigurationFiles/groupConfigurationStructure.h"
 #include "common/XMLConfigurationFiles/moduleConfigurationStructure.h"
 

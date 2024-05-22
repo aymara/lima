@@ -30,7 +30,6 @@
 
 #include <fstream>
 #include <queue>
-#include <boost/regex.hpp>
 #include "common/misc/graphviznowarn.hpp"
 
 //using namespace boost;
@@ -216,16 +215,10 @@ LimaStatusCode DotDependencyGraphWriter::process(AnalysisContent& analysis) cons
     {
       LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
       LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-//       string firstWord;
+      // std::string firstWord;
 //       LinguisticAnalysisStructure::Token* token=get(vertex_token, *anagraph->getGraph(), (*(boundItr))+1);
 //       if (token != 0)
 //         firstWord = limastring2utf8stdstring(token->stringForm());
-//       firstWord=boost::regex_replace(firstWord, boost::regex("\'"), "");
-//       firstWord=boost::regex_replace(firstWord, boost::regex("é"), "e");
-//       firstWord=boost::regex_replace(firstWord, boost::regex("è'"), "e");
-//       firstWord=boost::regex_replace(firstWord, boost::regex("à'"), "a");
-//       firstWord=boost::regex_replace(firstWord, boost::regex("ç'"), "c");
-//       firstWord=boost::regex_replace(firstWord, boost::regex("ù'"), "u");
       std::ostringstream outputFileName;
       outputFileName << metadata->getMetaData("FileName") << ".sent"<< i /*<< firstWord*/ << m_outputSuffix;
 

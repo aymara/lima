@@ -47,7 +47,6 @@
 #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 #include "linguisticProcessing/core/FlatTokenizer/Tokenizer.h"
 
-#include <boost/regex.hpp>
 
 using namespace std;
 using namespace Lima::Common::AnnotationGraphs;
@@ -429,8 +428,10 @@ bool AbbreviationSplitAlternatives::makePossessiveAlternativeFor(
   LimaString possessivedWord(ft.left(aposPos));
   LDEBUG << "AbbreviationSplitAlternatives::makePossessiveAlternativeFor possesive word: " << Common::Misc::limastring2utf8stdstring(possessivedWord);
 
-  boost::regex pronounre("^(he|she|it|let)$", boost::regex::icase);
-  if (boost::regex_match(Common::Misc::limastring2utf8stdstring(possessivedWord),pronounre))
+  QRegularExpression pronounre("^(he|she|it|let)$",
+                               QRegularExpression::CaseInsensitiveOption);
+  auto match = pronounre.match(possessivedWord);
+  if (match.hasMatch())
   {
     return false;
   }

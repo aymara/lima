@@ -59,6 +59,7 @@ USE_TF=true
 TF_SOURCES_PATH=""
 WITH_GUI="ON"
 LIMA_SOURCES=$PWD
+QT_VERSION_MAJOR="6"
 
 while getopts ":d:m:n:r:v:G:a:p:P:st:Tj:g:" o; do
     case "${o}" in
@@ -242,7 +243,14 @@ if [ "$USE_TF" = false ] ; then
   TF_SOURCES_PATH=""
 else
   if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
-    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
+    TF_SOURCES_PATH=$build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima/
+    install -d $build_prefix/$mode-$WITH_ASAN/$current_project/extern
+    docker pull aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest
+    docker create -ti --name dummy aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest bash
+    docker cp dummy:/tensorflow_for_lima $build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima
+    docker rm -f dummy
+    install -d $LIMA_DIST/extern/lib
+    install $TF_SOURCES_PATH/lib/libtensorflow-for-lima.so $LIMA_DIST/extern/lib
   fi
 
   echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"
@@ -256,6 +264,7 @@ export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echoerr "Launching cmake from $PWD on $source_dir WITH_ASAN=$WITH_ASAN"
 cmake  -G "$generator" \
+    -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
     -DWITH_ASAN=$WITH_ASAN \

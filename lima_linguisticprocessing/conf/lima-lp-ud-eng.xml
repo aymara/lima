@@ -27,6 +27,17 @@ SPDX-License-Identifier: MIT
 <!-- ******************************************
   Definition of pipelines
 *********************************************** -->
+    <group name="deeplima" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="RnnTokenizer"/>
+        <item value="tfmorphosyntax"/>
+        <item value="RnnTokensAnalyzer"/>
+<!--         <item value="RnnDependencyParser"/> -->
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
+        <item value="conllDumper"/>
+      </list>
+    </group>
+
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="cpptftokenizer"/>
@@ -69,18 +80,18 @@ SPDX-License-Identifier: MIT
         </list>
     </group>
 
-    <group name="none" class="ProcessUnitPipeline">
+    <group name="empty" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************
   Definition of process units
 *********************************************** -->
     <group name="RnnTokenizer" class="RnnTokenizer">
-      <param key="model_prefix" value="tokenizer-$udlang"/>
+      <param key="model_prefix" value="tokenizer-eng"/>
     </group>
 
     <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="tokenizer-$udlang"/>
+      <param key="model_prefix" value="tokenizer-eng"/>
     </group>
 
     <group name="conllureader" class="ConlluReader">
@@ -88,12 +99,12 @@ SPDX-License-Identifier: MIT
     </group>
 
     <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
-      <param key="model_prefix" value="morphosyntax-$udlang"/>
-      <param key="embeddings" value="fasttext-$udlang.bin"/>
+      <param key="model_prefix" value="morphosyntax-eng"/>
+      <param key="embeddings" value="fasttext-eng.bin"/>
     </group>
 
     <group name="tflemmatizer" class="TensorFlowLemmatizer">
-      <param key="model_prefix" value="lemmatizer-$udlang"/>
+      <param key="model_prefix" value="lemmatizer-eng"/>
     </group>
 
     <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">

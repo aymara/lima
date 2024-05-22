@@ -210,41 +210,6 @@ getGroupConf(const std::string& moduleName,
   return (*itC).second.getGroupNamed(group) ;
 }
 
-void ConfigurationStructure::
-addListOfItemsForModuleAndGroup(const std::string &listName,
-                                const std::string& moduleName,
-                                const std::string& group)
-{
-  getGroupConf(moduleName,group).addListOfItems(listName);
-}
-
-void ConfigurationStructure::
-addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
-                                      const std::string &listName,
-                                      const std::string& moduleName,
-                                      const std::string& group)
-{
-  getGroupConf(moduleName,group).addItemInListOfItems(listName,item);
-}
-
-void ConfigurationStructure::
-addMapOfItemsForModuleAndGroup(const std::string &mapName,
-                               const std::string& moduleName,
-                               const std::string& group)
-{
-  getGroupConf(moduleName,group).addMapOfItems(mapName);
-}
-
-void ConfigurationStructure::
-addEntryInMapOfItemsForModuleAndGroup(const std::string& key,
-                                      const ItemWithAttributes& item,
-                                      const std::string& mapName,
-                                      const std::string& moduleName,
-                                      const std::string& group)
-{
-  getGroupConf(moduleName,group).addEntryInMapOfItems(mapName,key,item);
-}
-
 std::ostream& operator<<(std::ostream &os, const ConfigurationStructure& conf)
 {
   for (ConfigurationStructure::const_iterator it = conf.begin(); it != conf.end(); it++)
@@ -254,70 +219,6 @@ std::ostream& operator<<(std::ostream &os, const ConfigurationStructure& conf)
   }
   return os;
 }
-
-
-void ConfigurationStructure::
-changeListToListOfItems(const std::string &listName,
-                        const std::string& moduleName,
-                        const std::string& group)
-{
-  getGroupConf(moduleName,group).changeListToListOfItems(listName);
-}
-
-void ConfigurationStructure::
-changeMapToMapOfItems(const std::string &mapName,
-                      const std::string& moduleName,
-                      const std::string& group)
-{
-  getGroupConf(moduleName,group).changeMapToMapOfItems(mapName);
-}
-
-void ConfigurationStructure::addListOfItemsForModuleAndGroup(const QString &listName,
-                                      const QString& moduleName,
-                                      const QString& group)
-{
-  addListOfItemsForModuleAndGroup(listName.toStdString(), moduleName.toStdString(), group.toStdString());
-}
-
-void ConfigurationStructure::addItemInListOfItemsForModuleAndGroup(const ItemWithAttributes& item,
-                                            const QString &listName,
-                                            const QString& moduleName,
-                                            const QString& group)
-{
-  addItemInListOfItemsForModuleAndGroup(item, listName.toStdString(), moduleName.toStdString(), group.toStdString());
-}
-
-void ConfigurationStructure::addMapOfItemsForModuleAndGroup(const QString &mapName,
-                                    const QString& moduleName,
-                                    const QString& group)
-{
-  addMapOfItemsForModuleAndGroup(mapName.toStdString(), moduleName.toStdString(), group.toStdString());
-}
-
-void ConfigurationStructure::addEntryInMapOfItemsForModuleAndGroup(const QString& entryKey,
-                                            const ItemWithAttributes& entryValue,
-                                            const QString& mapName,
-                                            const QString& moduleName,
-                                            const QString& groupName)
-{
-  addEntryInMapOfItemsForModuleAndGroup(entryKey.toStdString(), entryValue, mapName.toStdString(),
-                                        moduleName.toStdString(), groupName.toStdString());
-}
-
-void ConfigurationStructure::changeListToListOfItems(const QString &listName,
-                              const QString& moduleName,
-                              const QString& group)
-{
-  changeListToListOfItems(listName.toStdString(), moduleName.toStdString(), group.toStdString());
-}
-
-void ConfigurationStructure::changeMapToMapOfItems(const QString &mapName,
-                            const QString& moduleName,
-                            const QString& group)
-{
-  changeMapToMapOfItems(mapName.toStdString(), moduleName.toStdString(), group.toStdString());
-}
-
 
 } //closing namespace XMLConfigurationFiles
 } //closing namespace Common

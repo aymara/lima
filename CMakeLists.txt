@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
 project(Lima)
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "")
@@ -151,7 +152,7 @@ else()
 endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick Test Xml Widgets Concurrent)
+addQtModules(Core Test Xml Concurrent Network)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -174,8 +175,8 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.58 REQUIRED
-  COMPONENTS regex filesystem program_options system thread unit_test_framework)
+find_package(Boost 1.74 REQUIRED
+  COMPONENTS regex filesystem program_options system thread unit_test_framework iostreams)
 
 
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
@@ -492,6 +493,7 @@ if (WITH_GUI)
   if (Qt${QT_VERSION_MAJOR}Core_FOUND)
     if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.5.0)
       message("Build with lima_gui")
+      addQtModules(Gui Qml Quick Widgets)
       add_subdirectory(lima_gui)
     else()
       message("Minimum supported Qt version for lima_gui is 5.5.0. You have Qt ${QtCore_VERSION}. lima_gui will no be built.")

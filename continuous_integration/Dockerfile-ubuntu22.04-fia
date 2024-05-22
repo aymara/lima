@@ -1,15 +1,26 @@
+FROM aymara/svmtoolpp-ubuntu22.04:latest  as aymara_svmtoolpp-ubuntu22.04
+
 FROM ubuntu:22.04
 
 ARG PACKAGES="yes"
 ARG COMPILER="clang"
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y -qq locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qtbase5-dev-tools libqt5concurrent5 libqt5xmlpatterns5-dev libqt5qml5 qtdeclarative5-dev qml-module-qtquick-extras qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick2 libtre-dev libboost-all-dev nodejs npm qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-privatewidgets qml-module-qtquick-scene3d qml-module-qtquick-templates2 qml-module-qtquick-virtualkeyboard qml-module-qtquick-window2 qml-module-qtquick-xmllistmodel libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn -qq
+COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
+
+RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-arpy python3-requests python3-tqdm
+
+RUN apt-get install build-essential gcc dirmngr ca-certificates software-properties-common apt-transport-https dkms curl -y
+RUN curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | gpg --dearmor | tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
+RUN echo 'deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /' | tee /etc/apt/sources.list.d/nvidia-drivers.list
+
+RUN apt-get update -y
+RUN apt-get install -y cuda-11-8 cuda-toolkit-11-8 cuda-nvcc-11-8
 
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
 
-RUN /usr/sbin/update-nvidia-cudnn -u > /tmp/update-nvidia-cudnn.log 2>&1 || cat /tmp/update-nvidia-cudnn.log
+RUN bash -c '/usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log'
 
 RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -19,14 +30,19 @@ ARG GITHUB_TOKEN
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
-ARG USE_TENSORFLOW="false"
+ARG USE_TENSORFLOW="true"
 ARG CFLAGS=""
 ARG CXXFLAGS=""
 ARG TORCH_CUDA_ARCH_LIST="6.1"
-ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
+ARG LIBTORCH_DL="download_libtorch_gpu.sh" # Use download_libtorch_gpu.sh for GPU build
 
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi"
 
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then apt-get install -y software-properties-common; add-apt-repository -y ppa:limapublisher/ppa; apt-get update; apt-get install -y libtensorflow-for-lima-dev ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi"
 
 # Setup
 RUN npm install -g json
@@ -37,9 +53,9 @@ RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_dat
 
 WORKDIR /
 COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
-RUN /svmtool.sh $GITHUB_TOKEN
-RUN /svmtool-cpp.sh $GITHUB_TOKEN
-RUN /qhttpserver.sh $GITHUB_TOKEN
+#RUN /svmtool.sh $GITHUB_TOKEN
+#RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
 
 
 RUN install -d /src/lima/extern
@@ -59,31 +75,26 @@ RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-pars
 RUN mkdir -p /src/lima/build
 WORKDIR /src/lima/build
 
-ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
-ENV PATH /SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH
-ENV NLTK_PTB_DP_FILE /nltk_data/corpora/dependency_treebank/nltk-ptb.dp
-ENV LIMA_DISABLE_FSW_TESTING true
-ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
-ENV LIMA_DIST /usr
-ENV LIMA_CONF /usr/share/config/lima
-ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
-ENV CFLAGS=$CFLAGS
-ENV CXXFLAGS=$CXXFLAGS
+ENV CUDA_HOME=/usr/local/cuda \
+    PERL5LIB=/SVMTool-1.3.1/lib:$PERL5LIB \
+    PATH=$CUDA_HOME/bin:/SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH \
+    CFLAGS=$CFLAGS \
+    CXXFLAGS=$CXXFLAGS \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64 \
+    NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp \
+    LIMA_DISABLE_FSW_TESTING=true \
+    LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS=true \
+    LIMA_DIST=/usr \
+    LIMA_CONF=/usr/share/config/lima \
+    LIMA_RESOURCES=/root/.lima/resources/:/usr/share/apps/lima/resources
 
 # Build
 #
 
+RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc ..
+RUN ninja && ninja install
 
-# RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=OFF -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
-# RUN ninja && ninja install
-
-# ENV CFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
-# ENV CXXFLAGS="-mmmx -mno-3dnow -msse -msse2 -msse3 -mssse3 -mno-sse4a -mcx16 -msahf -mmovbe -maes -mno-sha -mpclmul -mpopcnt -mabm -mno-lwp -mfma -mno-fma4 -mno-xop -mbmi -mno-sgx -mbmi2 -mno-pconfig -mno-wbnoinvd -mno-tbm -mavx -mavx2 -msse4.2 -msse4.1 -mlzcnt -mrtm -mhle -mrdrnd -mf16c -mfsgsbase -mrdseed -mprfchw -madx -mfxsr -mxsave -mxsaveopt -mavx512f -mno-avx512er -mavx512cd -mno-avx512pf -mno-prefetchwt1 -mclflushopt -mxsavec -mxsaves -mavx512dq -mavx512bw -mavx512vl -mno-avx512ifma -mno-avx512vbmi -mno-avx5124fmaps -mno-avx5124vnniw -mclwb -mno-mwaitx -mno-clzero -mpku -mno-rdpid -mno-gfni -mno-shstk -mno-avx512vbmi2 -mno-avx512vnni -mno-vaes -mno-vpclmulqdq -mno-avx512bitalg -mno-movdiri -mno-movdir64b --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=19712 -mtune=skylake-avx512"
-
-# RUN rm -Rf /src/lima/build
-# RUN mkdir -p /src/lima/build
-# WORKDIR /src/lima/build
-
-RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr/include/tensorflow-for-lima/" -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=OFF -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF ..
-
-RUN ninja install
+# Some models are necessary for unit tests to work, let's use a previous
+# version of lima-python to install them, then run tests and finally remove
+# old aymara/lima and downloaded models
+RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima

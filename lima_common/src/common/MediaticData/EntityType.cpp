@@ -114,7 +114,8 @@ bool EntityType::operator<(const EntityType& other) const
 
 bool EntityType::isNull() const
 {
-  return (m_d->m_id==0 && m_d->m_groupId==0);
+  return (m_d->m_id == static_cast<EntityTypeId>(0)
+          && m_d->m_groupId == static_cast<EntityGroupId>(0));
 }
 
 EntityTypeId EntityType::getTypeId() const

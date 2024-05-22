@@ -24,6 +24,7 @@
 #include "RnnTokenizer.h"
 
 #include "deeplima/segmentation.h"
+#include "deeplima/token_type.h"
 
 
 
@@ -60,6 +61,7 @@ CONFIGURATIONHELPER_LOGGING_INIT(TOKENIZERLOGINIT);
 
 class RnnTokenizerPrivate : public DeepTokenizerBase, public ConfigurationHelper
 {
+  friend RnnTokenizer;
 public:
   RnnTokenizerPrivate();
   virtual ~RnnTokenizerPrivate();
@@ -81,15 +83,15 @@ public:
   void init(GroupConfigurationStructure& unitConfiguration);
   void tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences);
 
-  MediaId m_language;
-  FsaStringsPool* m_stringsPool;
-  LinguisticGraphVertex m_currentVx;
-  QString m_data;
-
 protected:
   void append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                        const QString& current_token,
                        int current_token_offset) const;
+
+  MediaId m_language;
+  FsaStringsPool* m_stringsPool;
+  LinguisticGraphVertex m_currentVx;
+  QString m_data;
 
   size_t m_max_seq_len;
 
@@ -98,7 +100,7 @@ protected:
   // Parameters
   bool m_ignoreEOL;
 
-  segmentation::impl::SegmentationImpl m_segm;
+  std::shared_ptr<segmentation::impl::SegmentationImpl> m_segm;
 
   std::function<void()> m_load_fn;
   bool m_loaded;
@@ -109,6 +111,7 @@ RnnTokenizerPrivate::RnnTokenizerPrivate() :
   m_stringsPool(nullptr),
   m_currentVx(0),
   m_ignoreEOL(false),
+  m_segm(nullptr),
   m_loaded(false)
 {
 }
@@ -144,6 +147,7 @@ LimaStatusCode RnnTokenizer::process(AnalysisContent& analysis) const
   TimeUtils::updateCurrentTime();
   LOG_MESSAGE_WITH_PROLOG(LINFO, "start tokenizer process");
   TimeUtilsController RnnTokenizerProcessTime("RnnTokenizer");
+
 
   auto anagraph = std::make_shared<AnalysisGraph>("AnalysisGraph", m_d->m_language, true, true);
   analysis.setData("AnalysisGraph", anagraph);
@@ -244,6 +248,7 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
   auto model_name = model_prefix;
   std::string udlang;
   MediaticData::single().getOptionValue("udlang", udlang);
+  LOG_MESSAGE(LDEBUG, "RnnTokenizerPrivate::init lang_str=" << lang_str << ", udlang=" << udlang);
 
   if (!fix_lang_codes(lang_str, udlang))
   {
@@ -264,21 +269,21 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
 
   m_load_fn = [this, model_file_name]()
   {
-    if (m_loaded)
-    {
-      return;
-    }
+    // if (m_loaded)
+    // {
+    //   return;
+    // }
 
-    m_segm.load(model_file_name.toStdString());
-    m_segm.init(1, 16*1024); // threads, buffer size per thread
+    m_segm->load(model_file_name.toStdString());
+    m_segm->init(1, 16*1024); // threads, buffer size per thread
 
     m_loaded = true;
   };
 
-  if (!isInitLazy())
-  {
-    m_load_fn();
-  }
+  // if (!isInitLazy())
+  // {
+  //   m_load_fn();
+  // }
 }
 
 void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& current_sentence,
@@ -311,6 +316,8 @@ void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& curren
 
 void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences)
 {
+  m_segm = std::make_shared<segmentation::impl::SegmentationImpl>();
+
   m_load_fn();
 
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokenizerPrivate::tokenize" << text.left(100));
@@ -323,7 +330,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
 
   auto text_utf8 = text.toStdString();
 
-  m_segm.register_handler([this, &sentences, &current_sentence, &current_token_offset]
+  m_segm->register_handler([this, &sentences, &current_sentence, &current_token_offset]
                           (const std::vector<segmentation::token_pos>& tokens,
                            uint32_t len)
   {
@@ -336,7 +343,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
       }
       append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
       current_token_offset += (tok.m_offset + tok.m_len);
-      if (tok.m_flags & segmentation::token_pos::flag_t::sentence_brk)
+      if (tok.m_flags & token_flags_t::sentence_brk)
       {
         sentences.push_back(current_sentence);
         current_sentence.clear();
@@ -345,10 +352,10 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
   });
 
   size_t bytes_consumed = 0;
-  m_segm.parse_from_stream([&text_utf8, &bytes_consumed]
+  m_segm->parse_from_stream([&text_utf8, &bytes_consumed]
                          (uint8_t* buffer,
                          int32_t& read,
-                         int32_t max)
+                         size_t max)
   {
     read = (text_utf8.size() - bytes_consumed) > max ? max : (text_utf8.size() - bytes_consumed);
     memcpy(buffer, text_utf8.c_str() + bytes_consumed, read);

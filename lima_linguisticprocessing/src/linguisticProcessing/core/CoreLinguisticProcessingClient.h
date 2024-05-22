@@ -22,7 +22,8 @@ namespace LinguisticProcessing
 /**
 @author Benoit Mathieu
 */
-class LIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORT CoreLinguisticProcessingClient : public AbstractLinguisticProcessingClient
+class LIMA_CORELINGUISTICPROCESSINGCLIENT_EXPORT CoreLinguisticProcessingClient :
+    public AbstractLinguisticProcessingClient
 {
 public:
   CoreLinguisticProcessingClient();
@@ -34,15 +35,16 @@ public:
     const std::map<std::string,std::string>& metaData,
     const std::string& pipeline,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-    const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override;
+    const std::set<std::string>& inactiveUnits = std::set<std::string>()
+  ) const override;
 
   std::shared_ptr<AnalysisContent> analyze(
     const std::string& texte,
     const std::map<std::string,std::string>& metaData,
     const std::string& pipeline,
     const std::map<std::string, AbstractAnalysisHandler*>& handlers,
-    const std::set<std::string>& inactiveUnits = std::set<std::string>()) const override
-  ;
+    const std::set<std::string>& inactiveUnits = std::set<std::string>()
+  ) const override;
 };
 
 class CoreLinguisticProcessingClientFactory : public AbstractLinguisticProcessingClientFactory

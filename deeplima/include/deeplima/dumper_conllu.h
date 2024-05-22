@@ -10,6 +10,8 @@
 
 // #include "deeplima/segmentation/impl/segmentation_impl.h"
 
+#include "deeplima/token_type.h"
+
 namespace deeplima
 {
 namespace dumper
@@ -158,6 +160,11 @@ public:
     : m_token_counter(0) { }
 
   virtual ~AbstractDumper() { }
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 };
 
 class Horizontal : public AbstractDumper
@@ -199,8 +206,8 @@ public:
       }
       std::cout << str << " ";
 
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "Horizontal endl" << std::endl;
         std::cout << std::endl;
@@ -265,8 +272,8 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "TokensToConllU end of sentence" << std::endl;
         std::cout << std::endl;
@@ -284,6 +291,8 @@ class DumperBase
 public:
   virtual ~DumperBase() = default;
   virtual uint64_t get_token_counter() const = 0;
+  virtual void flush() = 0;
+  virtual void reset() = 0;
 };
 
 template <class I>
@@ -294,6 +303,11 @@ protected:
   uint32_t m_next_token_idx;
   std::vector<ConllToken> m_tokens;
   uint32_t m_root;
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 
   inline void increment_token_counter()
   {
@@ -314,13 +328,14 @@ public:
       m_has_feats(false),
       m_first_feature_to_print(0)
   {
+    // std::cerr << "AnalysisToConllU()" << (void*)this << std::endl;
   }
 
   virtual ~AnalysisToConllU()
   {
+    // std::cerr << "~AnalysisToConllU " << (void*)this << std::endl;
     // if (m_next_token_idx > 1)
     // {
-    // std::cerr << "on AnalysisToConllU destructor" << std::endl;
     //   std::cout << std::endl;
     // }
   }
@@ -383,20 +398,35 @@ public:
     return feat_str;
   }
 
-  // void flush()
-  // {
-  //   if (!m_tokens.empty())
-  //   {
-  //     for (const auto& token: m_tokens)
-  //     {
-  //       std::cerr << token ;
-  //       std::cout << token ;
-  //     }
-  //     std::cout << std::endl;
-  //   }
-  //   m_tokens.clear();
-  //   m_root = 0;
-  // }
+  virtual void flush()
+  {
+    m_next_token_idx = 1;
+    std::vector<uint32_t> heads(m_tokens.size()+1);
+    heads[0] = 0;
+    for (size_t i = 1; i < heads.size(); i++)
+    {
+      heads[i] = m_tokens[i-1].head;
+    }
+    // std::cerr << "AnalysisToConllU::flush() heads before find_cycle: " << heads << std::endl;
+    while (find_cycle(heads, m_root))
+    {
+      // std::cerr << "AnalysisToConllU::flush() heads after cycle found: " << heads << std::endl;
+    }
+    // std::cerr << "AnalysisToConllU::flush() heads after no more cycle: " << heads << std::endl;
+    for (size_t i = 1; i < heads.size(); i++)
+    {
+      m_tokens[i-1].head = heads[i];
+    }
+    for (const auto& token: m_tokens)
+    {
+      // std::cerr << "AnalysisToConllU::flush():567 " << token ;
+      std::cout << token ;
+    }
+    m_tokens.clear();
+    // std::cerr << "after clearing tokens. m_next_token_idx=" << m_next_token_idx << std::endl;
+    std::cout << std::endl;
+    m_root = 0;
+  }
 
   void operator()(I& iter, uint32_t begin, uint32_t end, bool hasDeps = false)
   {
@@ -406,7 +436,7 @@ public:
     if (m_next_token_idx == 1)
     {
       // std::cerr << "AnalysisToConllU::operator() m_next_token_idx=" << m_next_token_idx << std::endl;
-      // std::cout << std::endl;
+      std::cout << std::endl;
       m_root = 0;
     }
     else if (m_next_token_idx == 0)
@@ -447,7 +477,8 @@ public:
         temp = str;
         continue;
       }
-      // std::cerr << m_next_token_idx << "\t" << str << "\t" << iter.lemma() << "\t" << m_classes[0][iter.token_class(0)];
+      // std::cerr << m_next_token_idx << "\t" << str << "\t" << iter.lemma()
+      //           << "\t" << m_classes[0][iter.token_class(0)] << std::endl;
       token.id = m_next_token_idx;
       token.form = str;
       token.lemma = iter.lemma();
@@ -540,36 +571,12 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (iter.flags() & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          iter.flags() & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (iter.flags() & token_flags_t::sentence_brk ||
+          iter.flags() & token_flags_t::paragraph_brk)
       {
-        // std::cerr << "on sent/para break. m_next_token_idx=" << m_next_token_idx << std::endl;
-        // std::cout << std::endl;
-        m_next_token_idx = 1;
-        std::vector<uint32_t> heads(m_tokens.size()+1);
-        heads[0] = 0;
-        for (size_t i = 1; i < heads.size(); i++)
-        {
-          heads[i] = m_tokens[i-1].head;
-        }
-        // std::cerr << "AnalysisToConllU::operator() heads before find_cycle: " << heads << std::endl;
-        while (find_cycle(heads, m_root))
-        {
-          // std::cerr << "AnalysisToConllU::operator() heads after cycle found: " << heads << std::endl;
-        }
-        // std::cerr << "AnalysisToConllU::operator() heads after no more cycle: " << heads << std::endl;
-        for (size_t i = 1; i < heads.size(); i++)
-        {
-          m_tokens[i-1].head = heads[i];
-        }
-        for (const auto& token: m_tokens)
-        {
-          // std::cerr << token ;
-          std::cout << token ;
-        }
-        m_tokens.clear();
-        // std::cerr << "after clearing tokens. m_next_token_idx=" << m_next_token_idx << std::endl;
-        std::cout << std::endl;
+        // std::cerr << "AnalysisToConllU::operator() on sent/para break. m_next_token_idx="
+        //           << m_next_token_idx << std::endl;
+        flush();
       }
       iter.next();
     }

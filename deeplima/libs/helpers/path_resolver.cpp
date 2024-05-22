@@ -18,9 +18,9 @@ namespace fs = boost::filesystem;
 namespace deeplima
 {
 
-PathResolver::PathResolver()
+PathResolver::PathResolver(const std::string& paths)
 {
-  init();
+  init(paths);
 }
 
 string PathResolver::resolve(const string& prefix, const string& path, const vector<string>& accepted_ext) const
@@ -120,19 +120,20 @@ std::vector<std::string> split (const std::string &s, char delim) {
     return result;
 }
 
-void PathResolver::init()
+void PathResolver::init(const std::string& paths)
 {
   auto var = std::getenv("LIMA_RESOURCES");
-  auto dirs = split(var, ':');
+  auto dirs = split(paths, ':');
+  if (var)
+  {
+    dirs = split(var, ':');
+  }
   m_resources_paths.insert(std::end(m_resources_paths), std::begin(dirs), std::end(dirs));
   fs::path user_data_home = find_user_data_home();
   if (!user_data_home.empty())
   {
     m_resources_paths.emplace_back((user_data_home / "lima" / "resources").string());
   }
-
-
-
 }
 
 }

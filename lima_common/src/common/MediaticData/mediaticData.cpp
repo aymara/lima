@@ -351,7 +351,7 @@ MediaId MediaticDataPrivate::getMediaId(const std::string& stringId)
   {
     MDATALOGINIT;
     LERROR << "MediaticData::getMediaId invalid empty argument stringId at" << __FILE__ << ", line" << __LINE__;
-    throw std::runtime_error(
+    throw LimaException(
       std::string("MediaticData::getMediaId invalid empty argument stringId") );
   }
   auto it = m_mediasIds.find(stringId);
@@ -436,6 +436,7 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
   }
 
   // med_str can be modified below. thus, do not use const reference
+  // TODO skip media init if already initialized
   for (auto med_str: meds)
   {
     MediaId id(0);
@@ -461,6 +462,14 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
       id = static_cast<MediaId>(std::atoi(configParser.getModuleGroupParamValue("common","mediasIds",med_str).c_str()));
 #ifdef DEBUG_CD
       LDEBUG << "media '" << med_str.c_str() << "' has id " << id;
+      if (m_mediasData.find(id) != m_mediasData.end())
+      {
+        MDATALOGINIT;
+        LINFO << "Media" << med_str << "already initialized. Skipping.";
+        continue;
+      }
+
+
       LDEBUG << (void*)this << " initialize string pool";
 #endif
     }
@@ -893,38 +902,14 @@ void MediaticDataPrivate::initEntityTypes(XMLConfigurationFileParser& configPars
 #endif
           }
         }
-        catch(NoSuchList& )
+        catch(NoSuchList& e)
         {
-          // no simple list: may be list of items with attributes (to deal with isA relations of entities)
-          auto& items = groupConf.getListOfItems("entityList");
-          for (const auto& i: items)
-          {
-            auto entityName = QString::fromStdString(i.getName());
-#ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: add entityType " << i.getName() << " in group " << groupName;
-#endif
-            auto ent = addEntity(groupName, entityName);
-#ifdef DEBUG_CD
-            LDEBUG << "initEntityTypes: type is " << ent;
-#endif
-            if (i.hasAttribute(QLatin1String("isA")))
-            {
-              auto parentName = utf8stdstring2limastring(i.getAttribute("isA"));
-              EntityType parent;
-              try
-              {
-                parent = getEntityType(groupName, parentName);
-  #ifdef DEBUG_CD
-                LDEBUG << "initEntityTypes: add parent link:" << ent << "->" << parent;
-  #endif
-              }
-              catch (const LimaException& e)
-              {
-                LIMA_EXCEPTION( "Unknown entity type" << groupName << parentName);
-              }
-              addEntityParentLink(ent, parent);
-            }
-          }
+          MDATALOGINIT;
+          QString errorString;
+          QTextStream qts(&errorString);
+          qts << "missing list 'entityList' in entity types configuration:" << e.what();
+          LERROR << errorString;
+          throw InvalidConfiguration(errorString.toStdString());
         }
       }
     }
@@ -1175,7 +1160,7 @@ LimaString MediaticData::getEntityName(const EntityType& type) const
   MDATALOGINIT;
   LDEBUG << "MediaticData::getEntityName(" << type << ")";
 #endif
-  if (type.getGroupId()==0)
+  if (type.getGroupId()==static_cast<EntityGroupId>(0))
   {
     MDATALOGINIT;
     QString errorString;

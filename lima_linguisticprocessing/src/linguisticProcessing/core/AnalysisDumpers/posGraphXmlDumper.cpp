@@ -51,7 +51,6 @@
 #include <fstream>
 #include <queue>
 //ajout include
-#include <boost/regex.hpp>
 #include <boost/config.hpp>
 
 using namespace std;

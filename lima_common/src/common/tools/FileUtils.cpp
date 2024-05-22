@@ -238,7 +238,7 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
     }
   }
   FILESREPORTLOGINIT;
-  LWARN << "findFileInPaths no '" << fileName << "' found in '" << paths
+  LINFO << "findFileInPaths no '" << fileName << "' found in '" << paths
             << "' separated by '" << separator << "'";
   return QString();
 }

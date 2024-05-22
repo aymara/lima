@@ -29,8 +29,8 @@
 #include <string>
 #include <map>
 #include <queue>
-#include <boost/regex.hpp>
 #include <QtCore/QStringList>
+#include <QtCore/QRegularExpression>
 
 //using namespace boost;
 using namespace Lima::Common;
@@ -1268,34 +1268,36 @@ bool CreateEasyCompoundTense::operator()(const AnalysisGraph& /*anagraph*/,
 }
 
 EnforcePropertiesConstraints::EnforcePropertiesConstraints(
-  MediaId language,
-  const LimaString& complement):
-  ConstraintFunction(language,complement), m_language(language)
+    MediaId language,
+    const LimaString& complement)
+    : ConstraintFunction(language, complement), m_language(language)
 {
 #ifdef DEBUG_LP
-  SAPLOGINIT;
-  LDEBUG << "Initializing EnforcePropertiesConstraints";
+    SAPLOGINIT;
+    LDEBUG << "Initializing EnforcePropertiesConstraints";
 #endif
-    boost::regex linere("[^,]+");
-  std::string str=limastring2utf8stdstring(complement);
-  std::string::const_iterator start, end;
-  start = str.begin();
-  end = str.end();
-  boost::match_results<std::string::const_iterator> what;
-  while (regex_search(start, end, what, linere))
-  {
-    std::string category(what[0].first, what[0].second);
-#ifdef DEBUG_LP
-    LDEBUG << "   adding category: " << category;
-#endif
-    const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-    const PropertyCode::PropertyAccessor* categ = &(codeManager.getPropertyAccessor(category));
-    if (categ!=0)
+
+    QRegularExpression linere("[^,]+");
+    auto it = linere.globalMatch(complement);
+    while (it.hasNext())
     {
-      m_categories.push_back(categ);
+        auto match = it.next();
+        auto category = match.captured(0);
+
+#ifdef DEBUG_LP
+        LDEBUG << "   adding category: " << category;
+#endif
+
+        auto codeManager =
+            static_cast<const Common::MediaticData::LanguageData&>(
+                Common::MediaticData::MediaticData::single().mediaData(m_language)
+            ).getPropertyCodeManager();
+
+        auto categ = &(codeManager.getPropertyAccessor(category.toStdString()));
+        if (categ != nullptr) {
+            m_categories.push_back(categ);
+        }
     }
-    start = what[0].second;
-  }
 }
 
 bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,

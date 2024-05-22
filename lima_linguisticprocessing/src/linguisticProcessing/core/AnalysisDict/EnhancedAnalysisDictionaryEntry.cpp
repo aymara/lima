@@ -121,7 +121,7 @@ void EnhancedAnalysisDictionaryEntry::parseAccentedForms(
     while (p!=end)
     {
       read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
-      if (read == 0)
+      if (read == static_cast<StringsPoolIndex>(0))
       {
         read = static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p));
         handler->deleteAccentedForm(read);
@@ -321,7 +321,7 @@ void EnhancedAnalysisDictionaryEntry::parseConcatenated(
 //            LDEBUG << "read lemma=" << lemma;
             auto norm =static_cast<StringsPoolIndex>(DictionaryData::readCodedInt(p)); // read norm
 //            LDEBUG << "read norm=" << norm;
-            if (norm==0)
+            if (norm == static_cast<StringsPoolIndex>(0))
             {
               norm=lemma;
             }

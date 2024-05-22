@@ -77,6 +77,11 @@ MediaProcessors::~MediaProcessors()
   delete m_d;
 }
 
+const std::map<MediaId,MediaProcessUnit::Manager*>& MediaProcessors::managers() const
+{
+  return m_d->m_pipelineManagers;
+}
+
 void MediaProcessors::initMedia (
     MediaId med,
     Common::XMLConfigurationFiles::ModuleConfigurationStructure& confProc )

@@ -168,11 +168,11 @@ public:
     decoding_step++;
 
     M& states_c = wb->states_c;
-    if (states_c.cols() != beam_size)
+    if ((size_t)states_c.cols() != beam_size)
       states_c = M::Zero(hidden_size, beam_size);
     for (size_t i = 0; i < beam_size; ++i) states_c.col(i) = c;
     M& states_h = wb->states_h;
-    if (states_h.cols() != beam_size)
+    if ((size_t)states_h.cols() != beam_size)
       states_h = M::Zero(hidden_size, beam_size);
     for (size_t i = 0; i < beam_size; ++i) states_h.col(i) = h;
 

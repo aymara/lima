@@ -25,6 +25,7 @@
 #include "common/QsLog/QsLogCategories.h"
 #include "common/QsLog/QsDebugOutput.h"
 #include "common/AbstractFactoryPattern/AmosePluginsManager.h"
+#include "common/MediaProcessors/MediaProcessors.h"
 
 #include "linguisticProcessing/common/linguisticData/languageData.h"
 #include "linguisticProcessing/client/LinguisticProcessingClientFactory.h"
@@ -52,6 +53,8 @@
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtCore/QTextStream>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
 
 #include "cmd_line_helpers.h"
 
@@ -60,6 +63,7 @@ namespace po = boost::program_options;
 using namespace Lima::LinguisticProcessing;
 using namespace Lima::Common::MediaticData;
 using namespace Lima::Common::Misc;
+using namespace Lima::Common::XMLConfigurationFiles;
 using namespace Lima;
 
 void listunits();
@@ -380,8 +384,8 @@ Options)");
     if (QFileInfo::exists(configDir + "/" + lpConfigFile.c_str()))
     {
       // initialize linguistic processing
-      Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
-          (configDir + "/" + lpConfigFile.c_str()));
+      XMLConfigurationFileParser lpconfig(
+        (configDir + "/" + lpConfigFile.c_str()));
       LinguisticProcessingClientFactory::changeable().configureClientFactory(
         clientId,
         lpconfig,
@@ -507,6 +511,7 @@ Options)");
 
     if (splitMode == "lines")
     {
+      std::cerr << "%%%%%%%%%%%%% LINES %%%%%%%%%%%%%%%" << std::endl;
       int lineNum = 0, nbLines = 0;
       std::cerr << "Counting number of lines…";
       while (!qfile.atEnd())
@@ -558,6 +563,7 @@ Options)");
     }
     else if (splitMode == "para")
     {
+      std::cerr << "%%%%%%%%%%%%% PARA %%%%%%%%%%%%%%%" << std::endl;
       auto contentText = QString::fromUtf8(qfile.readAll().constData());
       qfile.close();
       if (contentText.isEmpty())
@@ -642,11 +648,83 @@ Options)");
       TimeUtils::logElapsedTime("ReadInputFile");
       TimeUtils::updateCurrentTime();
 
+    //   // Testing the forging of pipelines. Moved to LimaAnalyzer on client side
+    //   auto langid = Lima::Common::MediaticData::MediaticData::single().getMediaId("ud-eng");
+    //   auto pipe = MediaProcessors::changeable().getPipelineForId(langid, pipeline);
+    //   auto managers = Lima::MediaProcessors::single().managers();
+    //   {
+    //     QString jsonGroupString =
+    //         "{ \"name\":\"cpptftokenizer\", "
+    //         "  \"class\":\"CppUppsalaTensorFlowTokenizer\", "
+    //         "  \"model_prefix\": \"tokenizer-eng\" }";
+    //     auto jsonGroup = QJsonDocument::fromJson(jsonGroupString.toUtf8()).object();
+    //
+    //     GroupConfigurationStructure unitConfig(jsonGroup);
+    //
+    //
+    //     // managers (Manager*) used in init of ProcessUnits are stored in
+    //     // m_pipelineManagers of MediaProcessors
+    //     auto tokenizer = MediaProcessUnit::Factory::getFactory(
+    //       "CppUppsalaTensorFlowTokenizer")->create(
+    //         unitConfig,
+    //         managers[langid]);
+    //     pipe->push_back(tokenizer);
+    //   }
+    //   {
+    //     // <group name="tfmorphosyntax" class="TensorFlowMorphoSyntax">
+    //     //   <param key="model_prefix" value="morphosyntax-eng"/>
+    //     //   <param key="embeddings" value="fasttext-eng.bin"/>
+    //     // </group>
+    //     QString jsonGroupString =
+    //         "{ \"name\":\"tfmorphosyntax\", "
+    //         "  \"class\":\"TensorFlowMorphoSyntax\", "
+    //         "  \"model_prefix\": \"morphosyntax-eng\", "
+    //         "  \"embeddings\": \"fasttext-eng.bin\" "
+    //         "}";
+    //     auto jsonGroup = QJsonDocument::fromJson(jsonGroupString.toUtf8()).object();
+    //     GroupConfigurationStructure unitConfig(jsonGroup);
+    //
+    //     // managers (Manager*) used in init of ProcessUnits are stored in
+    //     // m_pipelineManagers of MediaProcessors
+    //     auto pu = MediaProcessUnit::Factory::getFactory(
+    //       "TensorFlowMorphoSyntax")->create(
+    //         unitConfig,
+    //         managers[langid]);
+    //     pipe->push_back(pu);
+    //   }
+    //   {
+    // // <group name="conllDumper" class="ConllDumper">
+    // //   <param key="handler" value="simpleStreamHandler"/>
+    // //   <param key="fakeDependencyGraph" value="false"/>
+    // // </group>
+    //     QString jsonGroupString =
+    //         "{ \"name\":\"conllDumper\", "
+    //         "  \"class\":\"ConllDumper\", "
+    //         "  \"handler\": \"simpleStreamHandler\" "
+    //         "  \"fakeDependencyGraph\": \"false\", "
+    //         "}";
+    //     auto jsonGroup = QJsonDocument::fromJson(jsonGroupString.toUtf8()).object();
+    //
+    //     GroupConfigurationStructure unitConfig(jsonGroup);
+    //
+    //     // managers (Manager*) used in init of ProcessUnits are stored in
+    //     // m_pipelineManagers of MediaProcessors
+    //     auto pu = MediaProcessUnit::Factory::getFactory(
+    //       "ConllDumper")->create(
+    //         unitConfig,
+    //         managers[langid]);
+    //     pipe->push_back(pu);
+    //   }
+
+
 #ifndef DEBUG_LP
       try {
 #endif
         // analyze it
-        client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+        auto analysis = client->analyze(contentText, metaData, pipeline, handlers, inactiveUnits);
+        // std::cerr << "Running process on newly created process unit" << std::endl;
+        // tokenizer->process(*analysis);
+        // std::cerr << "Done" << std::endl;
 #ifndef DEBUG_LP
       }
       catch (const LinguisticProcessingException& e) {

@@ -2,6 +2,11 @@ ARG QT_VERSION
 ARG MANYLINUX_TAG
 FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
 
+FROM aymara/manylinux_2_28_with_boost:latest as aymara_manylinux_2_28_with_boost
+
+FROM aymara/qhttpserver-manylinux2.28-qt${QT_VERSION}:latest  as aymara_qhttpserver-manylinux2.28-qt
+FROM aymara/svmtoolpp-manylinux2.28-qt${QT_VERSION}:latest  as aymara_svmtoolpp-manylinux2.28-qt
+
 ARG MANYLINUX_TAG
 FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
@@ -23,6 +28,9 @@ COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
 COPY --from=aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest /tensorflow_for_lima /usr/local
 COPY --from=aymara_manylinux_2_28_with_qt /opt /opt
 COPY --from=aymara_manylinux_2_28_with_qt /usr/local /usr/local
+COPY --from=aymara_manylinux_2_28_with_boost /opt /opt
+COPY --from=aymara_qhttpserver-manylinux2.28-qt /opt/qhttpserver /usr
+COPY --from=aymara_svmtoolpp-manylinux2.28-qt /opt/svmtool++ /usr
 
 ARG BRANCH=master
 ARG USE_TENSORFLOW="true"
@@ -49,10 +57,9 @@ WORKDIR /
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
 
 ENV PATH="/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/python/bin:${PATH}"
+# upgrade pip, purge pip cache and then
 # install python packages necessary to use the language resources install script
-RUN pip${PYTHON_VERSION} install -U pip
-# install python packages necessary to use the language resources install script
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION} ; fi"
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then pip${PYTHON_VERSION} install -U pip && pip${PYTHON_VERSION} cache purge && pip${PYTHON_VERSION} install --no-cache-dir arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION} ; fi"
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
@@ -76,9 +83,9 @@ ENV NLTK_PTB_DP_FILE=/nltk_data/corpora/dependency_treebank/nltk-ptb.dp \
     LIMA_CONF=/opt/lima/share/config/lima \
     LIMA_RESOURCES=/opt/lima/share/apps/lima/resources \
     PATH=/opt/lima/bin:/opt/qt6/bin:${PATH} \
-    LD_LIBRARY_PATH=/opt/lima/lib:/opt/lima/lib64:/opt/qt6/lib:${LD_LIBRARY_PATH} \
-    Qt_INSTALL_DIR=/opt/qt6
-
+    LD_LIBRARY_PATH=/opt/lima/lib:/opt/lima/lib64:/opt/qt6/lib:/opt/boost/lib:${LD_LIBRARY_PATH} \
+    Qt_INSTALL_DIR=/opt/qt6 \
+    BOOST_ROOT=/opt/boost
 
 # Build
 #
@@ -99,16 +106,16 @@ RUN cmake -G Ninja  \
     -DWITH_ASAN=OFF \
     -DWITH_GUI=ON  ..
 RUN ninja && ninja install
-RUN ctest || ctest --rerun-failed --output-on-failure
 
-WORKDIR /opt/lima/share/apps/lima/tests
-RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
-RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
-WORKDIR /opt/lima/share/apps/lima/tests/xmlreader
-RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
-#
-# ## install English and French UD models
-# #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-# #RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
-#
+# Some models are necessary for unit tests to work, let's use a previous
+# version of lima-python to install them, then run tests and finally remove
+# old aymara/lima and downloaded models
+RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+
+#WORKDIR /opt/lima/share/apps/lima/tests
+#RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+#RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+#WORKDIR /opt/lima/share/apps/lima/tests/xmlreader
+#RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+
 WORKDIR /

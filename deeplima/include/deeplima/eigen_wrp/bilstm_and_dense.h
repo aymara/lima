@@ -98,10 +98,11 @@ public:
 
     bool precompute()
     {
-      std::cerr << "fw weights size: " << bilstm.fw.weight_hh.rows() << " x " << bilstm.fw.weight_hh.cols() << std::endl;
+      // std::cerr << "fw weights size: " << bilstm.fw.weight_hh.rows()
+      //           << " x " << bilstm.fw.weight_hh.cols() << std::endl;
 
       size_t hidden_size = bilstm.fw.weight_hh.cols();
-      std::cerr << "precompute(fw.input):" << std::endl;
+      // std::cerr << "precompute(fw.input):" << std::endl;
       // /*
       mul_fw.matmul_input = bilstm.fw.weight_hh.block(0, 0, hidden_size, hidden_size).inverse().partialPivLu();
       mul_fw.matmul_forget = bilstm.fw.weight_hh.block(hidden_size, 0, hidden_size, hidden_size).inverse().partialPivLu();
@@ -110,7 +111,7 @@ public:
       // */
 
       hidden_size = bilstm.bw.weight_hh.cols();
-      std::cerr << "precompute(bw.input):" << std::endl;
+      // std::cerr << "precompute(bw.input):" << std::endl;
       // /*
       mul_bw.matmul_input = bilstm.bw.weight_hh.block(0, 0, hidden_size, hidden_size).inverse().partialPivLu();
       mul_bw.matmul_forget = bilstm.bw.weight_hh.block(hidden_size, 0, hidden_size, hidden_size).inverse().partialPivLu();
@@ -118,7 +119,7 @@ public:
       mul_bw.matmul_output = bilstm.bw.weight_hh.block(hidden_size*3, 0, hidden_size, hidden_size).inverse().partialPivLu();
       // */
 
-      std::cerr << "end of precomputing" << std::endl;
+      // std::cerr << "end of precomputing" << std::endl;
       return true;
     }
 #else
@@ -142,18 +143,18 @@ public:
     {
       if constexpr (std::is_integral_v<AuxScalar> && std::is_signed_v<AuxScalar>)
       {
-        std::cerr << "Converting hh to fixed_point" << std::endl;
-        std::cerr << "min(fw_weight_hh) = " << bilstm.fw.weight_hh.minCoeff() << " "
-                  << "max(fw_weight_hh) = " << bilstm.fw.weight_hh.maxCoeff() << std::endl;
+        // std::cerr << "Converting hh to fixed_point" << std::endl;
+        // std::cerr << "min(fw_weight_hh) = " << bilstm.fw.weight_hh.minCoeff() << " "
+        //           << "max(fw_weight_hh) = " << bilstm.fw.weight_hh.maxCoeff() << std::endl;
         convert_matrix(bilstm.fw.weight_hh, weight_fw_hh_fixed_point);
-        std::cerr << "min(fw_weight_hh) = " << static_cast<T>(weight_fw_hh_fixed_point.minCoeff()) / WEIGHT_FRACTION_MULT << " "
-                  << "max(fw_weight_hh) = " << static_cast<T>(weight_fw_hh_fixed_point.maxCoeff()) / WEIGHT_FRACTION_MULT << std::endl;
+        // std::cerr << "min(fw_weight_hh) = " << static_cast<T>(weight_fw_hh_fixed_point.minCoeff()) / WEIGHT_FRACTION_MULT << " "
+        //           << "max(fw_weight_hh) = " << static_cast<T>(weight_fw_hh_fixed_point.maxCoeff()) / WEIGHT_FRACTION_MULT << std::endl;
 
-        std::cerr << "min(bw_weight_hh) = " << bilstm.bw.weight_hh.minCoeff() << " "
-                  << "max(bw_weight_hh) = " << bilstm.bw.weight_hh.maxCoeff() << std::endl;
+        // std::cerr << "min(bw_weight_hh) = " << bilstm.bw.weight_hh.minCoeff() << " "
+        //           << "max(bw_weight_hh) = " << bilstm.bw.weight_hh.maxCoeff() << std::endl;
         convert_matrix(bilstm.bw.weight_hh, weight_bw_hh_fixed_point);
-        std::cerr << "min(bw_weight_hh) = " << static_cast<T>(weight_bw_hh_fixed_point.minCoeff()) / WEIGHT_FRACTION_MULT << " "
-                  << "max(bw_weight_hh) = " << static_cast<T>(weight_bw_hh_fixed_point.maxCoeff()) / WEIGHT_FRACTION_MULT << std::endl;
+        // std::cerr << "min(bw_weight_hh) = " << static_cast<T>(weight_bw_hh_fixed_point.minCoeff()) / /*WEIGHT_FRACTION_MULT << " "
+                  // << "max(bw_weight_hh) = " << static_cast<T>(weight_bw_hh_fixed_point.maxCoeff()) / WEIGHT_FRACTION_MULT << std::endl;*/
       }
 
       return true;

@@ -63,7 +63,7 @@ public:
   nets::epoch_stat_t train_on_subset(
                        const train_params_lemmatization_t& params,
                        const TorchMatrix<int64_t>& train_input,
-                       const std::vector<TorchMatrix<int64_t>> train_input_cat,
+                       const std::vector<TorchMatrix<int64_t>>& train_input_cat,
                        const TorchMatrix<int64_t>& train_gold,
                        torch::optim::Optimizer& opt,
                        const torch::Device& device = torch::Device(torch::kCPU));

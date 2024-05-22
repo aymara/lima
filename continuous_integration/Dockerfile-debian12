@@ -1,0 +1,96 @@
+FROM aymara/svmtoolpp-debian12:latest  as aymara_svmtoolpp-debian12
+
+FROM debian:12
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG USE_TENSORFLOW="true"
+ARG GITHUB_TOKEN=none
+ARG LIMA_DISABLE_FSW_TESTING
+ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
+ARG NLTK_PTB_DP_FILE
+ARG QT_VERSION_MAJOR="6"
+
+COPY --from=aymara_svmtoolpp-debian12 /opt/svmtool++ /usr
+
+# Setup
+RUN apt-get update && apt-get install -y locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev python3-arpy python3-requests python3-full python3-tqdm
+
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi"
+
+RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb -q \
+    && dpkg -i libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb \
+    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi"
+
+# Install recent cmake
+#WORKDIR /cmake_build
+#RUN wget --no-check-certificate https://cmake.org/files/v3.23/cmake-3.23.0-linux-x86_64.sh -q
+#RUN sh cmake-3.23.0-linux-x86_64.sh --prefix=/usr --exclude-subdir --skip-license
+#RUN cmake --version
+#WORKDIR /
+
+RUN npm install -g json
+
+RUN sed -ie "s|DEFAULT_URL = 'http://nltk.googlecode.com/svn/trunk/nltk_data/index.xml'|DEFAULT_URL = 'http://nltk.github.com/nltk_data/'|" /usr/lib/python*/*/nltk/downloader.py
+RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
+RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+
+WORKDIR /
+COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
+#RUN /svmtool.sh $GITHUB_TOKEN
+#RUN /svmtool-cpp.sh $GITHUB_TOKEN
+RUN /qhttpserver.sh $GITHUB_TOKEN debian12
+
+RUN mkdir -p /src/
+COPY ./extern /src/lima/extern
+WORKDIR /src/lima/extern
+RUN bash download_libtorch.sh
+
+COPY . /src/lima
+WORKDIR /src/lima
+ARG CACHEBUST=1
+RUN git submodule init && git submodule update
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
+
+RUN mkdir -p /src/lima/build
+WORKDIR /src/lima/build
+
+#ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
+#ENV PATH /SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH
+ENV NLTK_PTB_DP_FILE /nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+ENV LIMA_DISABLE_FSW_TESTING true
+ENV LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS true
+ENV LIMA_DIST /usr
+ENV LIMA_CONF /usr/share/config/lima
+ENV LIMA_RESOURCES /usr/share/apps/lima/resources
+ENV LIBTORCH_PATH=/src/lima/extern/libtorch/
+ENV QT_VERSION_MAJOR="${QT_VERSION_MAJOR}"
+
+
+# Build
+#
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} ..
+RUN ninja && ninja install
+# Some models are necessary for unit tests to work, let's use a previous
+# version of lima-python to install them, then run tests and finally remove
+# old aymara/lima and downloaded models
+RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install --break-system-packages ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall --break-system-packages -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+
+RUN ninja package
+RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
+
+# WORKDIR /usr/share/apps/lima/tests
+# RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
+# RUN /bin/bash -c "set -o pipefail && tva --language=fre test-fre.default.xml test-fre.disambiguated.xml test-fre.hyphen.xml test-fre.idiom.xml test-fre.sa.xml test-fre.se.xml test-fre.simpleword.xml test-fre.tokenizer.xml 2>&1 | tee tva-fre.log"
+# WORKDIR /usr/share/apps/lima/tests/xmlreader
+# RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
+
+# install github-release to be able to deploy packages
+RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
+
+# # install English and French UD models
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
+# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
+

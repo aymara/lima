@@ -29,7 +29,7 @@ int AbstractLexiconIdGeneratorInformer::operator() (
 AbstractLexiconIdGeneratorInformer* AbstractLexiconIdGeneratorInformer::theInformer = 0;
 
 AbstractLexiconIdGeneratorInformer* AbstractLexiconIdGeneratorInformer::getInstance() {
-  if( theInformer == 0 ) {
+  if( theInformer == nullptr ) {
     theInformer = new AbstractLexiconIdGeneratorInformer();
   }
   return theInformer;

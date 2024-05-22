@@ -342,7 +342,7 @@ bool CreateSpecificEntity::operator()(Automaton::RecognizerMatch& match,
     // (specific to modex) AddEntityFeature
     // WARN : some hard coded stuff here in resource names
     EntityType seType=match.getType();
-    if  (seType.getGroupId() == 0)
+    if  (seType.getGroupId() == static_cast<EntityGroupId>(0))
     {
       SELOGINIT;
       LERROR << "CreateSpecificEntity::operator() null group id:" << seType;

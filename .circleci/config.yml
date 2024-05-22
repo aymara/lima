@@ -2,38 +2,64 @@
 #
 # Check https://circleci.com/docs/2.0/ios-migrating-from-1-2/ for more details
 #
+
 version: 2
 jobs:
   build:
 
     # Specify the Xcode version to use
     macos:
-      xcode: "8.3.3"
+      xcode: "15.3.0"
 
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
 
-      # Install CocoaPods
+
       - run:
-          name: Install CocoaPods
-          command: pod install
-
-      # Build the app and run tests
+          name: Install dependencies
+          command: |
+            brew update
+            brew install gawk qt@6 boost cmake ninja
+      # Install NLTK and its dependencies
       - run:
-          name: Build and run tests
-          command: fastlane scan
-          environment:
-            SCAN_DEVICE: iPhone 6
-            SCAN_SCHEME: WebTests
+          name: Install NLTK
+          command: |
+            pip install nltk
+            python -m nltk.downloader -d nltk_data dependency_treebank
 
-      # Collect XML test results data to show in the UI,
-      # and save the same XML files under test-results folder
-      # in the Artifacts tab
-      - store_test_results:
-          path: test_output/report.xml
+      # Generate the dependency treebank file
+      - run:
+          name: Generate nltk-ptb.dp
+          command: |
+            cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+      # Set NLTK_PTB_DP_FILE environment variable
+      - run:
+          name: Set NLTK_PTB_DP_FILE
+          command: |
+            echo "export NLTK_PTB_DP_FILE=$(pwd)/nltk_data/corpora/dependency_treebank/nltk-ptb.dp" >> $BASH_ENV
+      - run:
+          name: Build project
+          command: |
+            export NLTK_PTB_DP_FILE=$(pwd)/nltk_data/corpora/dependency_treebank/nltk-ptb.dp
+            mkdir build
+            cd build
+            cmake  -G Ninja \
+                -DQT_VERSION_MAJOR=6 \
+                -DWITH_DEBUG_MESSAGES=OFF \
+                -DWITH_ARCH=OFF \
+                -DWITH_ASAN=OFF \
+                -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON \
+                -DCMAKE_BUILD_TYPE:STRING=Release \
+                -DWITH_GUI=ON \
+                -DCTEST_OUTPUT_ON_FAILURE="ON" \
+                ..
+            ninja
+            ninja install
+            ninja package
+
       - store_artifacts:
-          path: /tmp/test-results
-          destination: scan-test-results
-      - store_artifacts:
-          path: ~/Library/Logs/scan
-          destination: scan-logs
+          path: /Users/distiller/project/build/lima-3.0.0+-Darwin.dmg
+          destination: lima-3.0.0+-Darwin.dmg
+

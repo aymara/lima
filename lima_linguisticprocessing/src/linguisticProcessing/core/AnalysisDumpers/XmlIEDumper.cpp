@@ -35,7 +35,7 @@ namespace Lima {
 namespace LinguisticProcessing {
 namespace AnalysisDumpers {
 
-SimpleFactory<MediaProcessUnit,XmlIEDumper> bvDumperFactory(XmlIEDUMPER_CLASSID);
+SimpleFactory<MediaProcessUnit,XmlIEDumper> xmlieDumperFactory(XmlIEDUMPER_CLASSID);
 
 XmlIEDumper::XmlIEDumper() : AbstractIEDumper()
 {}

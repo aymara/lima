@@ -63,6 +63,7 @@ public:
     void analyzer(vector<segmentation::token_pos>& buffer);
     void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
     dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
+    void reset();
 
     Lima::AnalysisContent* m_analysis;
     MediaId m_language;
@@ -80,8 +81,10 @@ public:
 };
 
 RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper(
-                                                        "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
-                                                        m_stringsPool(nullptr), m_stridx(), m_loaded(false)
+    "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+    m_stringsPool(nullptr), m_stridx(),
+    m_pResolver(MediaticData::single().getResourcesPath()),
+    m_loaded(false)
 {
 }
 
@@ -196,7 +199,8 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             token.m_offset = src->position();
             token.m_len = src->length();
             token.m_pch = v[k].c_str();
-            token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+            token.m_flags = token_flags_t(src->status().getStatus()
+                                            & StatusType::T_SENTENCE_BRK);
         }
     }
     m_d->analyzer(buffer);
@@ -313,10 +317,11 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
         {
             return;
         }
+        // TODO give the correct parameters for fixed_ini, lower_ini and lower_lemm
         m_tokensAnalyzer = std::make_shared< TokenSequenceAnalyzer<> >(tagger_model_file_name.toStdString(),
                                                                        lemmatizer_model_file_name.toStdString(),
                                                                        lemmatizer_dictionary_file_name.toStdString(),
-                                                                       "", "",
+                                                                       "", "", "",
                                                                        m_pResolver, 1024, 8);
         m_loaded = true;
     };
@@ -332,9 +337,15 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
 
 }
 
+void RnnTokensAnalyzerPrivate::reset()
+{
+    m_tags.clear();
+    m_lemmas.clear();
+}
 
 void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
+    reset();
     m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
                                                 const std::vector<StringIndex::idx_t>& lemmata,

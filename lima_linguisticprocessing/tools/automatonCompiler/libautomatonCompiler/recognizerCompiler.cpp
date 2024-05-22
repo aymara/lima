@@ -450,7 +450,7 @@ readSubAutomaton(const LimaString& line,
   if (bracket==-1) {
     ostringstream oss;
     oss << "definition of sub-automaton must have opening character "
-        <<CHAR_SUBAUTOMATON_BEGIN.unicode()<<" on first line";
+        << int(CHAR_SUBAUTOMATON_BEGIN.unicode()) << " on first line";
     throwError(oss.str(),line);
   }
   sub.setAutomatonName(line.left(bracket).trimmed());

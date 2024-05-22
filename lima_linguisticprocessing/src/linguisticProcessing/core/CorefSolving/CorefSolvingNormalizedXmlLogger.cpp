@@ -21,7 +21,6 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/Token.h"
 
-#include <boost/regex.hpp>
 #include <fstream>
 
 using namespace std;

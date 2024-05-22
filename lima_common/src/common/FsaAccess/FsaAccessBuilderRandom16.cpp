@@ -347,12 +347,6 @@ bool FsaAccessBuilderRandom16::scanAndCloneConfluentStates(
       graphType::degree_size_type ind = boost::in_degree(to, m_graph);
       if( ind > 1 ) {
         // c'est un etat confluent: suppressEdge( from, to, currentChar );
-#ifdef DEBUG_CD
-        std::ostringstream oss;
-        oss << "FsaAccessBuilderRandom16::scanAndCloneConfluentStates: supressEdge("
-               << edge << "," << currentChar << ")";
-        LDEBUG <<  oss.str().c_str();
-#endif
         // remove element from vector counts
         // tableau des coefficients
         graphType::degree_size_type outd0 = boost::out_degree(from, m_graph);
