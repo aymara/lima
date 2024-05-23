@@ -159,12 +159,12 @@ macro(CONVERT _lang)
     add_custom_command(
       OUTPUT dico.xml
       COMMAND echo "<dictionary>" > dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py dicocompletstd.txt dico.xml.tmp
       COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
       COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py -desacc=no dicoponctu.norm.txt dico.xml.tmp
       COMMAND echo "</dictionary>" >> dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.py ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
       COMMAND mv dico.xml.tmp dico.xml
       DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
       COMMENT "CONVERT ${_lang} produce XML dico"
@@ -175,12 +175,12 @@ macro(CONVERT _lang)
     add_custom_command(
       OUTPUT dico.xml
       COMMAND echo ^<dictionary^> > dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl dicocompletstd.txt dico.xml.tmp
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py dicocompletstd.txt dico.xml.tmp
       COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
       COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/xmlforms.pl -desacc=no dicoponctu.norm.txt dico.xml.tmp
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py -desacc=no dicoponctu.norm.txt dico.xml.tmp
       COMMAND echo ^</dictionary^> >> dico.xml.tmp
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.pl ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.py ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
       COMMAND mv dico.xml.tmp dico.xml
       DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
       COMMENT "produce XML dico"
