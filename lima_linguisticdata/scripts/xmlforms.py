@@ -60,7 +60,7 @@ def main():
 
     with (
         codecs.open(args.inputfile, "r", "utf-8") as source,
-        codecs.open(args.outputfile, "a", "utf-8") as out,
+        codecs.open(args.outputfile, "a", "utf-8") as out
     ):
         form = ""
         lemma = ""
