@@ -280,10 +280,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
         LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
         LWARN << "Avoiding the problem but the tokenizer should be checked.";
       }
-      if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+      if (token == QString::fromUtf8("\n")) token = QString::fromUtf8((char*)u8"\u200B");
       token = token.trimmed();
       token.replace(" ", "_");
-      token.replace("\n", QString::fromUtf8(u8"\u200B"));
+      token.replace("\n", QString::fromUtf8((char*)u8"\u200B"));
       std::ostringstream lineoss("");
       lineoss << token.toStdString() << " (";
       auto morphoData = get(vertex_data,*srcgraph,currentVx);
@@ -400,10 +400,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
       LWARN << "Avoiding the problem but the tokenizer should be checked.";
     }
-    if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+    if (token == QString::fromUtf8("\n")) token = QString::fromUtf8((char*)u8"\u200B");
     token = token.trimmed();
     token.replace(" ", "_");
-    token.replace("\n", QString::fromUtf8(u8"\u200B"));
+    token.replace("\n", QString::fromUtf8((char*)u8"\u200B"));
     if (token != elements[0])
     {
       PTLOGINIT;
