@@ -115,8 +115,8 @@ def main():
 
                 out.write(f'    <p v="{data[3]}"/>\n')
 
-        if count > 0:
-            out.write("  </i>\n</entry>\n")
+            if count > 0:
+                out.write("  </i>\n</entry>\n")
 
 
 if __name__ == "__main__":
