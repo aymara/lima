@@ -6,6 +6,7 @@
 #ifndef CONLLU_LINE_H
 #define CONLLU_LINE_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>

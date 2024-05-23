@@ -8,6 +8,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdint>
 
 namespace deeplima
 {

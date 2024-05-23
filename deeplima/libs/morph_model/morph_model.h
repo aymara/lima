@@ -6,6 +6,7 @@
 #ifndef DEEPLIMA_LIBS_MORPH_MODEL_H
 #define DEEPLIMA_LIBS_MORPH_MODEL_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <set>
