@@ -204,7 +204,7 @@ void LTRTextBuilder::updateLTR_TokenFromVertex(
       LERROR << "Empty MorphoSyntacticData for vertex" << vertex << ", token=" << fullToken->stringForm();
     }
 
-    sort(data->begin(),data->end(),ltNormProperty(m_macroAccessor));
+    sort(data->begin(),data->end(),ltNormProperty(*m_macroAccessor));
 
     StringsPoolIndex norm(0),lastNorm(0);
     LinguisticCode macro,lastMacro;

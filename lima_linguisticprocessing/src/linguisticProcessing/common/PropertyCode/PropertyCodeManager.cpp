@@ -50,8 +50,13 @@ string hexString(const uint128_t x)
 class PropertyCodeManagerPrivate
 {
   friend class PropertyCodeManager;
+public:
+  PropertyCodeManagerPrivate() = default;
+  ~PropertyCodeManagerPrivate() = default;
+  PropertyCodeManagerPrivate(const PropertyCodeManagerPrivate&) = delete;
+  PropertyCodeManagerPrivate& operator=(const PropertyCodeManagerPrivate&) = delete;
 
-  std::map<std::string,PropertyManager> m_propertyManagers;
+  std::map<std::string, PropertyManager> m_propertyManagers;
 
   /**
    * @brief Compute the number of bit needed to encode nbvalues
@@ -74,18 +79,17 @@ class PropertyCodeManagerPrivate
 };
 
 PropertyCodeManager::PropertyCodeManager() :
-    m_d(new PropertyCodeManagerPrivate())
+    m_d(std::make_unique<PropertyCodeManagerPrivate>())
 {
 }
 
 PropertyCodeManager::~PropertyCodeManager()
 {
-    delete m_d;
 }
 
-PropertyCodeManager::PropertyCodeManager(const PropertyCodeManager& pcm)
+PropertyCodeManager::PropertyCodeManager(const PropertyCodeManager& pcm) :
+  m_d(std::make_unique<PropertyCodeManagerPrivate>())
 {
-  m_d = new PropertyCodeManagerPrivate();
   m_d->m_propertyManagers = pcm.m_d->m_propertyManagers;
 }
 

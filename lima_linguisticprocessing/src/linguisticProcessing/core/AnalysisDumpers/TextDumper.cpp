@@ -213,7 +213,7 @@ void TextDumper::outputVertex(std::ostream& out,
                               uint64_t offset) const
 {
 
-  ltNormProperty sorter(m_propertyAccessor);
+  ltNormProperty sorter(*m_propertyAccessor);
 
 //    uint64_t nbmicros=ft->countMicros();
     std::ostringstream os;
