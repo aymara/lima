@@ -73,7 +73,7 @@ endmacro (CODES _lang)
 macro (FLEXION _lang)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/formes-${_lang}.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/flex.pl def.txt  mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt exclude.txt
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/flex.py def.txt mots-simples.txt ${CMAKE_CURRENT_BINARY_DIR} formes-${_lang}.txt --excludesfile exclude.txt
     DEPENDS def.txt  mots-simples.txt exclude.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -96,9 +96,9 @@ macro(CONVERT _lang)
 
   add_custom_command(
     OUTPUT dicotabs.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.py ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
-    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.pl ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
+    COMMENT "python3 ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.py ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
     VERBATIM
   )
   add_custom_target(

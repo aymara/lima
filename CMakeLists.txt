@@ -379,7 +379,7 @@ else (TRECPP_FOUND)
 endif (TRE_FOUND)
 
 # QHttpServer is necessary for limaserver HTTP server
-find_package(QHttpServer QUIET)
+find_package(QHTTPSERVER QUIET)
 if (NOT QHTTPSERVER_FOUND)
   message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
 else ()

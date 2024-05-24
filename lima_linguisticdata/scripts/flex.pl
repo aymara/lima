@@ -108,30 +108,20 @@ sub traitement
 
     while($allDone==0) {
       $debug && print "subleminv='$subleminv'\n";
-    if (defined ($$models{$subleminv})) 
+      if (defined ($$models{$subleminv}))
       {
         $model = $$models{$subleminv};
         $commun = $subleminv;
         last;
       }
-      if(length($subleminv)>0) {
+      if(length($subleminv)>0)
+      {
             chop ($subleminv);
-	}
+      }
       else { $allDone=1; }
-  }
+    }
 
-#    foreach my $masque (@$modelstab)
-#    {
-#      $debug && print "masque='$masque'\n";
-#      if ($leminv=~/^$masque/)
-#      {
-#        $model = $$models{$masque};
-#        $commun = $masque;
-#        last;
-#      }
-#    }
-
-    if (!defined($model)) 
+    if (!defined($model))
     {
       print FILETRACE "Unable to handle line (no model found) $infileLineNum: $line\n";
       return;
@@ -247,12 +237,12 @@ sub loadData
       }
       push @{$$categsTypes{$categ}}, $type;
     }
-    my (@modelentries, %models, @modelstab);
+    my (%models, @modelstab);
 
     my $nbmodel = loadModels($ficmodel, \%models, \@modelstab);
     print "Got $nbmodel $type modelword\n";
 
-    my (@models,@third,@fourth,%direct,%modelsdata);
+    my (%modelsdata);
 
     my $nbtable = loadTable($type, $fictable, \%modelsdata);
     print "Got $nbtable $type table elems\n";

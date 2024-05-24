@@ -66,6 +66,7 @@ PropertyAccessorPrivate& PropertyAccessorPrivate::operator=(const PropertyAccess
   m_mask = pap.m_mask;
   m_emptyNessMask = pap.m_emptyNessMask;
   m_name = pap.m_name;
+  return *this;
 }
 
 
