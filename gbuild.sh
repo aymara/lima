@@ -142,7 +142,7 @@ else
 fi
 current_project=`basename $PWD`
 current_project_name="$(head -n2 CMakeLists.txt | tail -n1)"
-build_prefix=$LIMA_BUILD_DIR/$current_branch
+build_prefix="${LIMA_BUILD_DIR}/${current_branch}"
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then

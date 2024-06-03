@@ -27,7 +27,6 @@ for example in $*; do
         
         python -c "import os, re; open('conf/lima-lp-tva-fre-example.xml', 'w', encoding='utf-8').write(re.sub(r'LinguisticProcessings/fre/idiomaticExpressions-fre.rules', f'idiom-examples/{os.getenv('exampleFile')}', open(os.path.join(os.getenv('LIMA_CONF'), 'lima-lp-tva-fre.xml'), 'r', encoding='utf-8').read()))"
 
-#         perl -pe 's%LinguisticProcessings/fre/idiomaticExpressions-fre.rules%idiom-examples/$ENV{"exampleFile"}%' $LIMA_CONF/lima-lp-tva-fre.xml > conf/lima-lp-tva-fre-example.xml;
         echo "running test on $exampleFile";
         tva --language=fre --resources-dir=resources --config-dir=conf --lp-config-file=lima-lp-tva-example.xml idiom-example-fre-test.xml >& tva-$example.log;
         egrep "(TestReport|total)" tva-$example.log

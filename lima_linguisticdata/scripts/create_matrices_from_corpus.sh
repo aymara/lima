@@ -32,8 +32,8 @@ mv succession_categs_retag.txt succession_categs.txt
 fi;
 
 echo extract trigrams and bigrams
-disamb_matrices_extract.pl succession_categs.txt
+python3 disamb_matrices_extract.py succession_categs.txt
 echo normalize matrices
-disamb_matrices_normalize.pl trigramsend.txt matrices/trigramMatrix.dat
+python3 disamb_matrices_normalize.py trigramsend.txt matrices/trigramMatrix.dat
 mv bigramsend.txt matrices/bigramMatrix.dat
 rm -f tri trigramsdef.txt trigramsend.txt trigramssort.txt bi bigramsdef.txt bigramssort.txt succession_categs_retag.txt succession_categs.txt

@@ -25,7 +25,7 @@ while getopts ":m:r:t" o; do
     case "${o}" in
         m)
             mode=${OPTARG}
-            if [[ "$mode" != "debug" && "$mode" != "release" ]] ;
+            if [[ "$mode" != "asan" && "$mode" != "debug" && "$mode" != "release" ]] ;
             then
               usage
               return 1 2>/dev/null || exit 1
@@ -46,12 +46,27 @@ done
 shift $((OPTIND-1))
 
 
-# Replace $PWD below by the path of  where you downloaded LIMA if you wish to
-# be able to source this script from elsewhere
+# Function to get the absolute directory path in bash
+get_script_dir_bash() {
+  echo "$(dirname "$(realpath "$0")")"
+}
+
+# Function to get the absolute directory path in zsh
+get_script_dir_zsh() {
+  echo "${0:a:h}"
+}
 
 
 if [ ${#suggested_root} -le 0 ] ; then
-  export LIMA_ROOT=$PWD/..
+  # Check which shell is running the script
+  if [ -n "$ZSH_VERSION" ]; then
+    # Running in zsh
+    script_dir=$(get_script_dir_zsh)
+  else
+    # Assume bash if not zsh
+    script_dir=$(get_script_dir_bash)
+  fi
+  export LIMA_ROOT=$script_dir/..
 else
   export LIMA_ROOT=$suggested_root
 fi

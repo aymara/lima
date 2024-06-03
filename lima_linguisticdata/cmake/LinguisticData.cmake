@@ -91,119 +91,6 @@ macro (FLEXION _lang)
 
 endmacro (FLEXION _lang)
 
-# Convert
-macro(CONVERT _lang)
-
-  add_custom_command(
-    OUTPUT dicotabs.txt
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.py ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt
-    COMMENT "python3 ${PROJECT_SOURCE_DIR}/scripts/pointvirgules2tabs.py ${CMAKE_CURRENT_BINARY_DIR}/../flex/formes-${_lang}.txt dicotabs.txt"
-    VERBATIM
-  )
-  add_custom_target(
-    dicotabs${_lang}
-    ALL
-    DEPENDS dicotabs.txt
-  )
-  add_dependencies(dicotabs${_lang} flex${_lang})
-
-  add_custom_command(
-    OUTPUT dicostd.txt
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt
-    DEPENDS dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt
-    COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertstd.pl dicotabs.txt ${CMAKE_CURRENT_SOURCE_DIR}/convstd.txt dicostd.txt"
-    VERBATIM
-  )
-  add_custom_target(
-    dicostd${_lang}
-    ALL
-    DEPENDS dicostd.txt
-  )
-  add_dependencies(dicostd${_lang} dicotabs${_lang})
-
-  set (ADDED_LIST_FILES_RESULT)
-  foreach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
-    add_custom_command(
-      OUTPUT ${ADDED_LIST_FILE}.add
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add
-      DEPENDS dicostd.txt ${ADDED_LIST_FILE}
-      COMMENT "perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/${ADDED_LIST_FILE} > ${ADDED_LIST_FILE}.add"
-    )
-    set (ADDED_LIST_FILES_RESULT ${ADDED_LIST_FILES_RESULT} ${ADDED_LIST_FILE}.add)
-  endforeach(ADDED_LIST_FILE ${ADDED_LIST_FILES})
-  add_custom_target(
-    dicoadd${_lang}
-    ALL
-    DEPENDS ${ADDED_LIST_FILES_RESULT}
-  )
-  add_dependencies(dicoadd${_lang} dicostd${_lang})
-
-  set(ENV{LC_ALL} "C")
-
-    add_custom_command(
-      OUTPUT dicocompletstd.txt
-      COMMAND ${SORTPREFIX} sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt
-      DEPENDS dicostd.txt ${ADDED_LIST_FILES_RESULT}
-      COMMENT "sort -u dicostd.txt ${ADDED_LIST_FILES_RESULT} > dicocompletstd.txt"
-      VERBATIM
-    )
-    add_custom_target(
-      dicocomplet${_lang}
-      ALL
-      DEPENDS dicocompletstd.txt
-    )
-    add_dependencies(dicocomplet${_lang} dicoadd${_lang})
-
-  if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    add_custom_command(
-      OUTPUT dico.xml
-      COMMAND echo "<dictionary>" > dico.xml.tmp
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py dicocompletstd.txt dico.xml.tmp
-      COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py -desacc=no dicoponctu.norm.txt dico.xml.tmp
-      COMMAND echo "</dictionary>" >> dico.xml.tmp
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.py ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
-      COMMAND mv dico.xml.tmp dico.xml
-      DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
-      COMMENT "CONVERT ${_lang} produce XML dico"
-      VERBATIM
-    )
-  else (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-    # WARNING: VERBATIM option add unintentional double quotes symbols in XML file
-    add_custom_command(
-      OUTPUT dico.xml
-      COMMAND echo ^<dictionary^> > dico.xml.tmp
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py dicocompletstd.txt dico.xml.tmp
-      COMMAND bash -c "if [ -n \"${ARGN}\" ]; then cat ${ARGN} >> dico.xml.tmp; fi"
-      COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/addnormfield.pl ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt > dicoponctu.norm.txt
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/xmlforms.py -desacc=no dicoponctu.norm.txt dico.xml.tmp
-      COMMAND echo ^</dictionary^> >> dico.xml.tmp
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/cmakeconvertdefautjys.py ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt ../code/convjys.txt default-${_lang}.dat
-      COMMAND mv dico.xml.tmp dico.xml
-      DEPENDS dicocompletstd.txt ${CMAKE_CURRENT_SOURCE_DIR}/dicoponctu.txt ${CMAKE_CURRENT_SOURCE_DIR}/default-${_lang}.txt
-      COMMENT "produce XML dico"
-    )
-  endif (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
-
-  add_custom_target(
-    dicoxml${_lang}
-    ALL
-    DEPENDS dico.xml
-  )
-  add_dependencies(dicoxml${_lang} dicocomplet${_lang})
-
-  add_custom_target(
-    convert${_lang}
-    ALL
-  )
-  add_dependencies(convert${_lang} dicoxml${_lang} ${ARGN} )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/default-${_lang}.dat COMPONENT ${_lang} DESTINATION share/apps/lima/resources/LinguisticProcessings/${_lang})
-
-endmacro(CONVERT _lang)
-
 # Compile XML dictionary
 macro(COMPILEXMLDIC _lang _dico _subdir)
   message( "${C_BoldYellow}COMPILEXMLDIC(${_lang} ${_dico} ${_subdir})${C_Norm}" )
@@ -247,11 +134,11 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
 
   add_custom_command(
     OUTPUT trigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.py ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND python3 ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND cp bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.py trigramsend.txt trigramMatrix-${_lang}.dat
 
     DEPENDS ${_codesymbol} ${_succession_categs}
     COMMENT "compile ${_lang} trigram matrix"
@@ -283,11 +170,11 @@ macro (DISAMBMATRICES_EXECENV _lang _succession_categs _codesymbol _priorscript 
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.pl ${_succession_categs}
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.py ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND perl ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
+    COMMAND python3 ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
     COMMAND cp bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND perl ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.pl trigramsend.txt trigramMatrix-${_lang}.dat
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.py trigramsend.txt trigramMatrix-${_lang}.dat
 
     COMMAND ${CMAKE_COMMAND} -E copy unigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/unigramMatrix-${_lang}.dat
     COMMAND   ${CMAKE_COMMAND} -E copy priorUnigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
