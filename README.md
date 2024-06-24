@@ -8,16 +8,11 @@ LIMA python bindings are currently available **under Linux only** (x86_64).
 
 Under Linux with python >= 3.7 and < 4, and **upgraded pip**:
 
-At time of writing, the current version cannot be installed using pip because
-the generated Python Wheel is larger than the limit. We are waiting for a
-validation of our demand for a higher limit. That's why instructions below
-ask you to download yourself the wheel and install it from your filesystem.
 
 ```bash
 # Upgrading pip is fundamental in order to obtain the correct LIMA version
 $ pip install --upgrade pip
-$ wget https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl
-$ pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl
+$ pip install aymara==0.5.0b6
 $ lima_models.py -l eng
 # Either simply use the lima command to produce an analysis of a file in CoNLLU format:
 $ lima <path to the file to analyse>
