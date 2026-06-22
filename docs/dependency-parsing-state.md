@@ -363,3 +363,28 @@ Remaining piece 4: wire the label op into the eigen `predict()` (run after the a
 gather at the predicted head, emit a rel column), expose rel in
 `DependencyParser::TokenIterator`, make `dumper_conllu` emit the predicted deprel, and have
 `RnnDependencyParser` write real labels (+ true LAS).
+
+## Step (b) piece 4 remaining: predict() wiring scope (2026-06-22)
+
+Tracing the inference chain to wire predict() surfaced that it is not a localized edit and
+has a training-side prerequisite:
+
+1. **Deprel vocab is not persisted in the model.** The model save/load only writes
+   SERIALIZATION_KEY_TASKS / INPUT_FEATURES(_NAMES) / EMBD_FN — there is NO rel/deprel
+   class vocabulary. So a trained model has the label-decoder weights but no id->deprel
+   string map; inference can produce rel ids but not deprel strings. Fixing this is a
+   TRAINING-side change (save the deprel dict, e.g. SERIALIZATION_KEY_REL_CLASSES) + load
+   + convert into the eigen inference. Models must then be (re)saved/trained.
+2. **2-column output through the generic inference pool.** The arc head column is produced
+   into GraphDependencyParser's shared StdMatrix<uint32_t> output (1 column); adding a rel
+   column means threading a 2-wide output through the generic templated inference-pool /
+   callback machinery (deeplima::graph_dp::impl::GraphDependencyParser, BiRnnInferenceBase).
+3. predict() (graph_dp_eigen_inference_impl.h): after the arc op, run
+   Op_DeepBiaffineAttnLabelDecoder.predict_labels(encoder_out, heads) -> output col 1.
+   convert_from_torch (graph_dp_model.cpp): populate the eigen label params.
+4. DependencyParser::TokenIterator::rel() reading col 1; map id->deprel via the loaded vocab.
+5. dumper_conllu emit the deprel; RnnDependencyParser write real labels (+ true LAS).
+
+So piece 4a (the Eigen op + conversion + test, done & validated) is the isolated core; the
+rest is a deep, multi-file chain plus the vocab-persistence prerequisite, best done as a
+focused effort.
