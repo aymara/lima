@@ -27,10 +27,13 @@ SPDX-License-Identifier: MIT
 <!-- ******************************************
   Definition of pipelines
 *********************************************** -->
+    <!-- Pure libtorch/deeplima pipeline (no TensorFlow). RnnTokensAnalyzer
+         performs PoS tagging, morphosyntactic features and lemmatization, so no
+         separate morphosyntax unit is needed. RnnDependencyParser and the neural
+         lemmatizer are left out until models are published for them. -->
     <group name="deeplima" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
-        <item value="tfmorphosyntax"/>
         <item value="RnnTokensAnalyzer"/>
 <!--         <item value="RnnDependencyParser"/> -->
 <!--         <item value="compoundBuilderFromSyntacticData"/> -->
