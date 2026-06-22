@@ -27,8 +27,8 @@ public:
 
     if (fe.needs_preprocessing())
     {
-      typename DataSet::const_iterator it = src.begin();
-      while (src.end() != it)
+      auto it = src.begin();
+      while (it != src.end())
       {
         fe.preprocess(*it);
         it++;

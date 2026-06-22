@@ -28,39 +28,39 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
   torch::load(src, fn, torch::Device(torch::kCPU));
 
   // dicts and embeddings
-  Parent::convert_dicts_and_embeddings(src);
+  convert_dicts_and_embeddings(src);
   m_embd_fn.push_back(src.get_embd_fn(0));
   assert(m_embd_fn[0].size() > 0);
 
-  Parent::m_input_str_dicts_names = src.get_input_class_names();
-  Parent::m_output_str_dicts_names = src.get_output_class_names();
+  m_input_str_dicts_names = src.get_input_class_names();
+  m_output_str_dicts_names = src.get_output_class_names();
 
   // torch modules
-  Parent::m_lstm.reserve(src.get_layers_lstm().size());
+  m_lstm.reserve(src.get_layers_lstm().size());
   for (size_t i = 0; i < src.get_layers_lstm().size(); i++)
   {
     const std::string name = src.get_module_name(i, "lstm");
-    Parent::m_lstm_idx[name] = i;
+    m_lstm_idx[name] = i;
 
     const nn::LSTM& m = src.get_layers_lstm()[i];
-    Parent::m_lstm.emplace_back(typename Parent::params_bilstm_spec_t());
-    typename Parent::params_bilstm_spec_t& layer = Parent::m_lstm.back();
+    m_lstm.emplace_back(params_bilstm_spec_t());
+    auto& layer = m_lstm.back();
 
     convert_module_from_torch(m, layer);
   }
 
-  Parent::m_multi_bilstm.emplace_back(std::make_shared<typename Parent::params_multilayer_bilstm_spec_t>(Parent::m_lstm));
-  Parent::m_multi_bilstm_idx["encoder"] = 0;
+  m_multi_bilstm.emplace_back(std::make_shared<params_multilayer_bilstm_spec_t>(m_lstm));
+  m_multi_bilstm_idx["encoder"] = 0;
 
-  Parent::m_linear.reserve(src.get_layers_linear().size());
+  m_linear.reserve(src.get_layers_linear().size());
   for (size_t i = 0; i < src.get_layers_linear().size(); i++)
   {
     const std::string name = src.get_module_name(i, "linear");
-    Parent::m_linear_idx[name] = i;
+    m_linear_idx[name] = i;
 
     const nn::Linear& m = src.get_layers_linear()[i];
-    Parent::m_linear.emplace_back(params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>());
-    params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = Parent::m_linear.back();
+    m_linear.emplace_back(params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>());
+    params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>& layer = m_linear.back();
 
     convert_module_from_torch(m, layer);
   }
@@ -82,13 +82,13 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
   }
 
   // temp: create exec plan
-  Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
-  Parent::m_params.push_back(Parent::m_multi_bilstm[0]);
+  m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
+  m_params.push_back(m_multi_bilstm[0]);
 
-  Parent::m_ops.push_back(std::make_shared<Op_DeepBiaffineAttnDecoder<Eigen::MatrixXf, Eigen::VectorXf, float>>());
-  Parent::m_params.push_back(m_deep_biaffine_attn_decoder[0]);
+  m_ops.push_back(std::make_shared<Op_DeepBiaffineAttnDecoder<Eigen::MatrixXf, Eigen::VectorXf, float>>());
+  m_params.push_back(m_deep_biaffine_attn_decoder[0]);
 
-  Parent::m_wb.resize(2);
+  m_wb.resize(2);
 
   // tags
   // cerr << "TAGS:" << endl;

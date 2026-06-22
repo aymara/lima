@@ -592,48 +592,60 @@ public:
     m_fastText->load(path_resolver.resolve("embd", deeplima::graph_dp::impl::GraphDependencyParser::get_embd_fn(0), {"bin", "ftz"}));
   }
 
+
   void init(size_t threads,
             size_t num_buffers,
             size_t buffer_size_per_thread,
             StringIndex& stridx,
             const std::vector<std::string>& class_names)
   {
-    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+    std::cerr << "GraphDpImpl::init " <<  this->get_input_str_dicts().size() <<", "<< this->get_input_str_dicts_names().size()<< std::endl;
+    std::cerr << "GraphDpImpl::init m_featVectorizers size = " << m_featVectorizers.size() << std::endl;
+    m_fastText->get_words([&stridx](const std::string& word){
+      stridx.get_idx(word); });
 
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
     feats.emplace_back(Vectorizer::str_feature, "form", m_fastText);
-    for (size_t i = 0; i < class_names.size(); ++i)
-    {
-      if (class_names[i] != deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1])
-      {
-        // TODO: skip morph classes that aren't requested by DP
-        throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1]);
-      }
-
-      feats.emplace_back(Vectorizer::int_feature,
-                         deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1],
-                         m_featVectorizers[i]);
-
-      m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
-    }
-    // for (const auto& class_name: class_names)
+    std::cerr << "GraphDpImpl::init " <<  class_names <<std::endl << this->get_input_str_dicts_names()<< std::endl;
+    // for (size_t i = 0; i < class_names.size(); ++i)
     // {
-    //   int i = 0;
-    //   for (const auto& input_str_dicts_names: deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names())
+    //   if (class_names[i] != this->get_input_str_dicts_names()[i+1])
     //   {
-    //     if (class_name == input_str_dicts_names)
-    //     {
-    //       feats.emplace_back(Vectorizer::int_feature,
-    //                         class_name,
-    //                         m_featVectorizers[i]);
-    //
-    //       m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
-    //       break;
-    //     }
-    //     i++;
+    //     // TODO: skip morph classes that aren't requested by DP
+    //     throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + this->get_input_str_dicts_names()[i+1]);
     //   }
+    //
+    //   feats.emplace_back(Vectorizer::int_feature,
+    //                      this->get_input_str_dicts_names()[i+1],
+    //                      m_featVectorizers[i]);
+    //
+    //   m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
     // }
+
+    int i = 0;
+    for (const auto& class_name: class_names)
+    {
+      int j = 0;
+      for (const auto& input_str_dicts_names: this->get_input_str_dicts_names())
+      {
+        if (class_name == input_str_dicts_names)
+        {
+          std::cerr << "GraphDpImpl::init emplace " <<  class_name << " at i=" << i  << ", j=" << j << std::endl;
+          feats.emplace_back(Vectorizer::int_feature,
+                            class_name,
+                            m_featVectorizers[j-1]);
+
+          m_vectorizer.get_uint_feat_extractor().add_feature(class_name, j-1);
+          break;
+        }
+        j++;
+      }
+      i++;
+    }
+    std::cerr << "GraphDpImpl::init feats emplace done" << std::endl;
+
+
     m_vectorizer.init_features(feats);
 
     m_vectorizer.set_model(this);

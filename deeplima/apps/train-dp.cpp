@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
   ("tasks",               po::value<string>(&params.m_tasks_string),      "Tasks to train (comma separated list: (arc,rel)+)" )
   ("input-includes-root", po::value<bool>(&params.m_input_includes_root), "Add <ROOT> token before the first token of the sentence (true by default)")
   ("tag",                 po::value<vector<string>>(&m_raw_tags),         "Tags (plain text)")
+  ("feats",               po::value<string>(&params.m_feats),             "Comma separated features to use from tagger")
   ;
 
   po::variables_map vm;
@@ -77,7 +78,7 @@ int main(int argc, char* argv[])
   catch (const boost::program_options::unknown_option& e)
   {
     cerr << e.what() << endl;
-    return -1;
+    return 1;
   }
 
   if (vm.count("help"))
@@ -86,21 +87,29 @@ int main(int argc, char* argv[])
       return 0;
   }
 
+  if (vm.count("feats") != 1 || params.m_feats == "")
+  {
+      std::cerr << "Error: feats option must be given exactly once."
+                << std::endl;
+      std::cerr << desc << std::endl;
+      return 1;
+  }
+
   try
   {
     params.m_rnn_hidden_dims = deeplima::utils::split_list_of_nums(rnn_hidden_dims, ',');
   }
   catch (const std::exception &e)
   {
-    cerr << e.what() << endl;
-    return -1;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
 
   if (params.m_rnn_hidden_dims.empty())
   {
     cerr << "List of RNN hidden dims must be non-empty" << endl << endl;
     cout << desc << endl;
-    return -1;
+    return 1;
   }
 
   if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
@@ -109,7 +118,7 @@ int main(int argc, char* argv[])
     {
       cerr << "No training data given: --train / --dev or --corpus parameters are required." << endl << endl;
       cout << desc << endl;
-      return -1;
+      return 1;
     }
     params.guess_data_sets(ud_path, corpus);
   }
@@ -117,7 +126,7 @@ int main(int argc, char* argv[])
   if (params.get_train_set_fn().empty() || params.get_dev_set_fn().empty())
   {
     cerr << "Can't find training data." << endl;
-    return -1;
+    return 1;
   }
 
   params.m_tags["git_commit_hash"] = deeplima::version::get_git_commit_hash();
@@ -157,7 +166,7 @@ int main(int argc, char* argv[])
     if (params.m_tags.end() != params.m_tags.find(k))
     {
       cerr << "Duplicated tags \"" << k << "\"" << endl;
-      return -1;
+      return 1;
     }
 
     params.m_tags[k] = v;

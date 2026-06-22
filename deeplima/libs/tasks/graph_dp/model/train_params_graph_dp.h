@@ -33,6 +33,7 @@ namespace train
 
 struct train_params_graph_dp_t : public deeplima::train::train_params_t
 {
+  std::string m_feats;
   std::string m_embeddings_fn;
 
   std::string m_tasks_string;
@@ -46,7 +47,8 @@ struct train_params_graph_dp_t : public deeplima::train::train_params_t
   bool m_input_includes_root;
 
   train_params_graph_dp_t()
-    : m_tasks_string("arc"),
+    : m_feats("*form,upos,feats,xpos,-Typo,-Foreign"),
+      m_tasks_string("arc"),
       m_rnn_hidden_dims({64}),
       m_trainable_embeddings_dim(0),
       m_trainable_embeddings_cutoff_freq(100),

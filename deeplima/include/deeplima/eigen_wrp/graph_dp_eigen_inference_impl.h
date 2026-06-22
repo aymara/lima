@@ -34,12 +34,6 @@ class DEP_PARSING_EXPORT BiRnnAndDeepBiaffineAttentionEigenInference :
     public deeplima::eigen_impl::BiRnnInferenceBase
 {
 public:
-  typedef Eigen::MatrixXf Matrix;
-  typedef Eigen::VectorXf Vector;
-  typedef float Scalar;
-  typedef Eigen::MatrixXf tensor_t;
-  typedef EmbdUInt64FloatHolder dicts_holder_t;
-  typedef deeplima::eigen_impl::BiRnnInferenceBase Parent;
 
   virtual ~BiRnnAndDeepBiaffineAttentionEigenInference() = default;
 
@@ -50,7 +44,7 @@ public:
 
   virtual size_t get_precomputed_dim() const
   {
-    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t>(Parent::m_params[0]);
+    auto p_params = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t>(m_params[0]);
     const auto& layer = p_params->layers[0];
     auto hidden_size = layer.fw.weight_ih.rows() + layer.bw.weight_ih.rows();
     return hidden_size;
@@ -62,9 +56,9 @@ public:
       int64_t input_size
       )
   {
-    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[0]);
+    auto p_op = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(m_ops[0]);
 
-    p_op->precompute_inputs(Parent::m_params[0], inputs, outputs, input_size);
+    p_op->precompute_inputs(m_params[0], inputs, outputs, input_size);
   }
 
   virtual void predict(
@@ -97,30 +91,30 @@ public:
     // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<Eigen::MatrixXf, Eigen::VectorXf, float>::predict "
     //           << "input_begin=" << input_begin
     //           << ", output dim=" << output->dim() << ", lengths=" << lengths << std::endl;
-    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(Parent::m_ops[0]);
+    auto p_encoder = std::dynamic_pointer_cast<deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>(m_ops[0]);
 
     // const typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t *plstm
-    //     = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t*>(Parent::m_params[0]);
+    //     = static_cast<const typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::params_t*>(m_params[0]);
 
-    assert(Parent::m_wb.size() > 0);
-    assert(worker_id < Parent::m_wb[0].size());
+    assert(m_wb.size() > 0);
+    assert(worker_id < m_wb[0].size());
 
-    auto wb = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::workbench_t>(Parent::m_wb[0][worker_id]);
+    auto wb = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>::workbench_t>(m_wb[0][worker_id]);
 
     auto p_decoder = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<Eigen::MatrixXf, Eigen::VectorXf, float>>(
-      Parent::m_ops[1]);
+      m_ops[1]);
 
     size_t start = input_begin;
     for (size_t i = 0; i < lengths.size(); ++i)
     {
-      p_encoder->execute(Parent::m_wb[0][worker_id],
-          inputs, Parent::m_params[0],
+      p_encoder->execute(m_wb[0][worker_id],
+          inputs, m_params[0],
           start, start + lengths[i]);
 
       p_decoder->execute(
-        Parent::m_wb[1][worker_id],
+        m_wb[1][worker_id],
         wb->get_last_output(),
-        Parent::m_params[1],
+        m_params[1],
         start,
         start + lengths[i],
         (*output)[0]);

@@ -1,0 +1,53 @@
+name: Build LIMA for MacOS
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ninja
+        uses: ashutoshvarma/setup-ninja@master
+        with:
+          version: 1.10.0
+
+      - name: Install Qt6
+        run: |
+          brew install qt6
+          export Qt6_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
+
+      - name: Install Boost
+        run: |
+          brew install boost
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake  -G Ninja \
+            -DQT_VERSION_MAJOR=6 \
+            -DWITH_DEBUG_MESSAGES=OFF \
+            -DWITH_ARCH=OFF \
+            -DWITH_ASAN=OFF \
+            -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON \
+            -DCMAKE_BUILD_TYPE:STRING=Release \
+            -DWITH_GUI=ON \
+            -DCTEST_OUTPUT_ON_FAILURE="ON" \
+            ..
+
+      - name: Build
+        run: |
+          ninja build
+
+      - name: Build
+        run: |
+          ninja install

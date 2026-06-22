@@ -23,10 +23,6 @@ namespace eigen_impl
 class BiRnnInferenceBase
 {
 public:
-  typedef Eigen::MatrixXf Matrix;
-  typedef Eigen::VectorXf Vector;
-  typedef float Scalar;
-  typedef Eigen::MatrixXf tensor_t;
   typedef EmbdUInt64FloatHolder uint_dicts_holder_t;
   typedef EmbdStrFloatHolder str_dicts_holder_t;
 

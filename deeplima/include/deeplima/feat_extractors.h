@@ -46,7 +46,7 @@ public:
   {
     if (name == "form") return 0;
     if (name == "lc(form)") return 1;
-    throw std::runtime_error("Unknown feature name.");
+    throw std::runtime_error(std::string("Unknown feature name: ") + name);
   }
 
   inline static std::string feat_value(const Token& token, size_t feat_no)
@@ -80,7 +80,7 @@ public:
   inline static size_t get_feat_id(const std::string& name)
   {
     if (name == "eos") return 0;
-    throw std::runtime_error("Unknown feature name.");
+    throw std::runtime_error(std::string("Unknown feature name: ")+name);
   }
 
   inline static uint64_t feat_value(const Token& token, size_t feat_no)
@@ -124,7 +124,7 @@ public:
     const auto it = m_feat2idx.find(name);
     if (m_feat2idx.cend() == it)
     {
-      throw std::runtime_error("Unknown feature name.");
+      throw std::runtime_error(std::string("Unknown feature name: " + name));
     }
     return it->second;
   }
@@ -268,7 +268,7 @@ public:
     const auto it = m_feat2idx.find(name);
     if (m_feat2idx.cend() == it)
     {
-      throw std::runtime_error("Unknown feature name.");
+      throw std::runtime_error(std::string("Unknown feature name: ") + name);
     }
     return it->second;
   }
