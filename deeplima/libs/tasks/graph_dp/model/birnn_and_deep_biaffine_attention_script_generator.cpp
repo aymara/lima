@@ -22,7 +22,8 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
                                                           const vector<rnn_descr_t>& rnn_descr,
                                                           const vector<deep_biaffine_attention_descr_t>& decoder_descr,
                                                           const vector<std::string>& /*output_names*/,
-                                                          bool input_includes_root/*,
+                                                          bool input_includes_root,
+                                                          int64_t num_labels/*,
                                                           const vector<uint32_t>& classes*/)
 {
   stringstream ss;
@@ -58,6 +59,15 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
      << " hidden_arc_dim=" << decoder_descr[0].m_arc_dim
      << " input_includes_root=" << (input_includes_root ? "true" : "false")
      << endl;
+
+  if (num_labels > 0)
+  {
+    ss << "label_decoder_0 = def DeepBiaffineAttentionLabelDecoder input_dim=" << input_size
+       << " hidden_dim=" << decoder_descr[0].m_arc_dim
+       << " num_labels=" << num_labels
+       << " input_includes_root=" << (input_includes_root ? "true" : "false")
+       << endl;
+  }
 
   ss << std::endl;
 
@@ -128,6 +138,14 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
 
   ss << "arc_raw = forward module=decoder_0 input=" << last_output_name << endl;
   ss << "arc = log_softmax input=arc_raw dim=2" << endl;
+
+  if (num_labels > 0)
+  {
+    // Per (dependent, head) label logits: [batch, dep, head, num_labels].
+    // The caller selects each dependent's label scores at its head (gold while
+    // training, predicted at inference) and applies log_softmax over the labels.
+    ss << "rel_logits = forward module=label_decoder_0 input=" << last_output_name << endl;
+  }
 
   /*for (size_t i = 0; i < output_names.size(); ++i)
   {

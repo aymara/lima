@@ -36,10 +36,11 @@ public:
                             const std::vector<std::string>& output_names,
                             DictsHolder&& classes,
                             const std::string& embd_fn,
-                            bool input_includes_root)
+                            bool input_includes_root,
+                            int64_t num_labels = 0)
     : BiRnnClassifierImpl(std::move(dicts),
                           embd_descr,
-                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root)
+                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
       m_output_class_names(output_names),
@@ -140,7 +141,8 @@ protected:
                                      const std::vector<nets::rnn_descr_t>& rnn_descr,
                                      const std::vector<nets::deep_biaffine_attention_descr_t>& decoder_descr,
                                      const std::vector<std::string>& output_names,
-                                     bool input_includes_root=false/*,
+                                     bool input_includes_root=false,
+                                     int64_t num_labels=0/*,
                                      const std::vector<uint32_t>& classes*/);
 
   size_t m_workers;

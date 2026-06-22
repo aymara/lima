@@ -306,3 +306,21 @@ Remaining for labeled parsing: piece 2 (integrate into the model — instantiate
 decoder, size it with the deprel dict, produce label logits as a model output), piece 3
 (training: gather logits at the gold head → log_softmax → nll_loss vs the deprel gold
 column, track LAS), piece 4 (Eigen inference Op + emit DEPREL in RnnDependencyParser).
+
+## Step (b) piece 2 done: label decoder integrated into the model (2026-06-22)
+
+The label decoder is now a first-class static-graph module:
+- `static_graph.{h,cpp}`: new module type `deep_biaffine_attention_label_decoder`, a
+  `create_submodule_DeepBiaffineAttentionLabelDecoder` (parses input_dim/hidden_dim/
+  num_labels/input_includes_root), an execute case, a `to(device)` entry, and the
+  `DeepBiaffineAttentionLabelDecoder` parse-script branch.
+- `generate_script` takes `num_labels`; when > 0 it emits `label_decoder_0` and a
+  `rel_logits = forward module=label_decoder_0 input=<rnn_out>` producing
+  `[batch, dep, head, num_labels]`.
+- The model constructor takes `num_labels`; `train_graph_dp.cpp` passes the deprel dict
+  size (here 58 for the French slice).
+
+Verified: the model constructs with the label decoder and training runs unchanged for arc
+(no regression; rel_logits is produced but not yet consumed). Next, piece 3 — consume
+rel_logits in training: gather at the gold head, log_softmax over labels, nll_loss vs the
+deprel gold column, and report LAS.

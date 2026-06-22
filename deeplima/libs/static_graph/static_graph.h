@@ -14,6 +14,7 @@
 
 #include "dict_base.h"
 #include "nn/torch_modules/deep_biaffine_attention_decoder.h"
+#include "nn/torch_modules/deep_biaffine_attention_label_decoder.h"
 // #include "nn/torch_modules/stanza_models_depparse_model.h"
 
 namespace deeplima
@@ -96,7 +97,8 @@ namespace deeplima
         linear = 3,
         dropout = 4,
         deep_biaffine_attention_decoder = 5,
-        // stanza_models_depparse_model = 6,
+        deep_biaffine_attention_label_decoder = 6,
+        // stanza_models_depparse_model = 7,
         max_module_type
       };
 
@@ -358,6 +360,7 @@ namespace deeplima
       virtual void create_submodule_Linear(const std::string &name, const std::map<std::string, std::string> &opts);
       virtual void create_submodule_Dropout(const std::string &name, const std::map<std::string, std::string> &opts);
       virtual void create_submodule_DeepBiaffineAttentionDecoder(const std::string &name, const std::map<std::string, std::string> &opts);
+      virtual void create_submodule_DeepBiaffineAttentionLabelDecoder(const std::string &name, const std::map<std::string, std::string> &opts);
       // virtual void create_submodule_StanzaDepparseParser(const std::string &name, const std::map<std::string, std::string> &opts);
 
       DictsHolder m_dicts;
@@ -369,6 +372,7 @@ namespace deeplima
       std::vector<torch::nn::Linear> m_linear;
       std::vector<torch::nn::Dropout> m_dropout;
       std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionDecoder> m_deep_biaffine_attention_decoder;
+      std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionLabelDecoder> m_deep_biaffine_attention_label_decoder;
       // std::shared_ptr<deeplima::nets::torch_modules::StanzaDepparseParser> m_stanza_depparse_parser;
 
     public:

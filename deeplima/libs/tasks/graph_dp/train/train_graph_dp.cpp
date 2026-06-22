@@ -151,7 +151,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   utils::split(params.m_tasks_string, ','),
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
-                                  params.m_input_includes_root);
+                                  params.m_input_includes_root,
+                                  static_cast<int64_t>(deprel2id->size()));
   }
   else
   {
