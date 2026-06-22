@@ -33,8 +33,6 @@ Options default values are in parentheses.
   -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
-  -T                Do not use TensorFlow (default is to use it)
-  -P tfsrcpath      <> Path to TensorFlow sources
   -g gui            <OFF|(ON)> compile with GUI
 EOF
 exit 1
@@ -55,13 +53,11 @@ WITH_ARCH="OFF"
 WITH_PACK="OFF"
 RUN_UNIT_TESTS="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
-USE_TF=true
-TF_SOURCES_PATH=""
 WITH_GUI="ON"
 LIMA_SOURCES=$PWD
 QT_VERSION_MAJOR="6"
 
-while getopts ":d:m:n:r:v:G:a:p:P:st:Tj:g:" o; do
+while getopts ":d:m:n:r:v:G:a:p:st:j:g:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -111,12 +107,6 @@ while getopts ":d:m:n:r:v:G:a:p:P:st:Tj:g:" o; do
                    "$CMAKE_GENERATOR" == "NMake" ||
                    "$CMAKE_GENERATOR" == "VS"
             ]] || usage
-            ;;
-        P)
-            TF_SOURCES_PATH=$OPTARG
-            ;;
-        T)
-            USE_TF=false
             ;;
         g)
             WITH_GUI=${OPTARG}
@@ -239,23 +229,6 @@ else
   pushd $build_prefix/$mode-$WITH_ASAN/$current_project
 fi
 
-if [ "$USE_TF" = false ] ; then
-  TF_SOURCES_PATH=""
-else
-  if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
-    TF_SOURCES_PATH=$build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima/
-    install -d $build_prefix/$mode-$WITH_ASAN/$current_project/extern
-    docker pull aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest
-    docker create -ti --name dummy aymara/manylinux_2_28_with_tensorflow_for_lima_1_9:latest bash
-    docker cp dummy:/tensorflow_for_lima $build_prefix/$mode-$WITH_ASAN/$current_project/extern/tensorflow-for-lima
-    docker rm -f dummy
-    install -d $LIMA_DIST/extern/lib
-    install $TF_SOURCES_PATH/lib/libtensorflow-for-lima.so $LIMA_DIST/extern/lib
-  fi
-
-  echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"
-fi
-
 LIBTORCH_PATH=${LIMA_SOURCES}/extern/libtorch/
 echo "libTorch: " $LIBTORCH_PATH
 
@@ -273,7 +246,6 @@ cmake  -G "$generator" \
     -DLIMA_RESOURCES:PATH="$resources" \
     -DLIMA_VERSION_RELEASE:STRING="$release" \
     -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
-    -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
     -DWITH_GUI=$WITH_GUI \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
     -DWITH_LIMA_RESOURCES=$WITH_LIMA_RESOURCES \

@@ -21,14 +21,16 @@ Optional dependencies:
 - enchant: for orthographic correction;
 - qhttpserver: lima http/json API;
 - svmtool++: for SVM-based PoS tagger;
-- TensorFlow, Eigen and Protobuf: for neural network-based modules (currently
-Named Entity Recognition and soon parsing too);
+- libtorch (PyTorch C++) and Eigen: for the neural network-based modules
+(tokenization, PoS tagging and morphosyntactic analysis; NER and parsing in
+progress). libtorch is downloaded into `extern/` by `extern/download_libtorch.sh`
+(see below);
 - tre: for approximate string matcher module;
 
 
 Under Ubuntu, most of these dependencies are installed with the following packages:
 ```
-sudo apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn python3-arpy python3-requests python3-tqdm
+sudo apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-requests python3-tqdm
 ```
 
 qhttpserver can be downloaded and installed from
@@ -36,16 +38,9 @@ https://github.com/aymara/qhttpserver/releases
 
 svmtool++ can be downloaded and installed from https://github.com/aymara/svmtool-cpp/releases
 
-For TensorFlow, we use a specially compiled version. It can be installed with
-our ppa in Ubuntu versions starting from 18.04:
-
-```bash
-sudo add-apt-repository ppa:limapublisher/ppa
-sudo apt-get update
-sudo apt install libtensorflow-for-lima-dev
-```
-
-Modified sources of TensorFlow are [here](https://github.com/aymara/tensorflow/tree/r1.9).
+The neural network-based modules use libtorch (the PyTorch C++ distribution),
+which is downloaded into `extern/` by the `extern/download_libtorch.sh` script
+(see the build steps below).
 
 As we were not able to find a Free part of speech tagged English corpus, LIMA
 depends for analyzing English on freely available but not Free data that you
@@ -103,12 +98,8 @@ Finally, from the LIMA repository root, run:
 ./gbuild.sh -m Release -d ON
 ```
 
-By default LIMA is built with neural network-based modules (i.e. with
-TensorFlow). To build LIMA without neural network-based modules use -T option:
-
-```bash
-./gbuild.sh -m Release -T
-```
+The neural network-based modules are built whenever libtorch and Eigen are found
+(libtorch is provided by `extern/download_libtorch.sh`).
 
 This builds LIMA in release mode, assuring the best performance. To report bugs
 for example, you should build LIMA in debug mode. To do so, just omit the

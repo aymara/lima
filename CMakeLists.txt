@@ -108,49 +108,6 @@ else (OPENMP_FOUND)
   message("OpenMP NOT FOUND")
 endif()
 
-find_package(TensorFlow)
-if (TensorFlow_FOUND)
-  find_package(Eigen)
-  find_package(Protobuf)
-endif()
-
-if (TensorFlow_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-else ()
-  message(STATUS "TensorFlow not found.")
-endif ()
-
-if (Eigen_FOUND)
-  message(STATUS "Found Eigen. ${Eigen_INCLUDE_DIRS} ${Eigen_LIBRARIES} ")
-else ()
-  message(STATUS "Eigen not found.")
-endif ()
-
-if (Protobuf_FOUND)
-  message(STATUS "Found Protobuf. ${Protobuf_INCLUDE_DIRS} ${Protobuf_LIBRARIES} ")
-else ()
-  message(STATUS "Protobuf not found.")
-endif ()
-
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-
-  include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
-  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${TensorFlow_LIBRARIES} ${TensorFlow_LIBRARIES_DYN}
-      ${Eigen_LIBRARIES}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${Eigen_LIBRARIES}
-      ${TensorFlow_LIBRARIES}
-      ${TensorFlow_LIBRARIES_DYN})
-  endif ()
-else()
-  message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
-endif()
-
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
 addQtModules(Core Test Xml Concurrent Network)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
@@ -399,8 +356,6 @@ else ()
   endif ()
 endif ()
 
-message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
-
   # Here we are looking up for a system-wide installation of Eigen
 message("Looking up for Eigen3")
 find_package(Eigen3 3.3 NO_MODULE)
@@ -558,11 +513,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 endif()
 include(InstallRequiredSystemLibraries)
 
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  set(CPACK_PACKAGE_NAME "lima-tf")
-else()
-  set(CPACK_PACKAGE_NAME "lima")
-endif()
+set(CPACK_PACKAGE_NAME "lima")
 message("Lima package name will be ${CPACK_PACKAGE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Linguistic Analyzer")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")

@@ -90,7 +90,7 @@ SPDX-License-Identifier: MIT
     <!-- * ner-fusion-pretok: deep learning based NER + rule-based NER    -->
     <group name="ner-rules" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
@@ -112,11 +112,11 @@ SPDX-License-Identifier: MIT
     </group>
     <group name="ner-deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperNer"/>
       </list>
@@ -127,17 +127,17 @@ SPDX-License-Identifier: MIT
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-fusion" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
@@ -150,7 +150,7 @@ SPDX-License-Identifier: MIT
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
@@ -166,7 +166,6 @@ SPDX-License-Identifier: MIT
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="sentenceBoundariesFinderForSE"/>
-        @tensorflowSpecificEntities@
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
@@ -268,9 +267,6 @@ SPDX-License-Identifier: MIT
 *********************************************** -->
     <group name="conllureader" class="ConlluReader">
     </group>
-    <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="tokenizer-fre"/>
-    </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
       <param key="charChart" value="flatcharchart"/>
@@ -306,22 +302,6 @@ SPDX-License-Identifier: MIT
 <!--    <group name="enchantSpellingAlternatives" class="EnchantSpellingAlternatives">
       <param key="dictionary" value="mainDictionary"/>
     </group>-->
-    <group name="tensorflowSpecificEntities" class="TensorflowSpecificEntities">
-      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
-      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
-      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
-      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
-      <param key="batchSizeMax" value="20"/>
-      <param key="sentBoundaries" value="SentenceBoundariesForSE"/>
-    </group>
-    <group name="tensorflowSpecificEntitiesFusion" class="TensorflowSpecificEntities">
-      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
-      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
-      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
-      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
-      <param key="batchSizeMax" value="20"/>
-      <param key="sentBoundaries" value="SentenceBoundaries"/>
-    </group>
     <group name="coreferencesSolving" class="CoreferencesSolving">
       <param key="scope" value="3" />
       <param key="threshold" value="60" />

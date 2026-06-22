@@ -43,7 +43,8 @@ How to build lima under Windows (Windows 10):
 
 14. Download ninja from ninja-build.org and make it available with Path variable
 
-15. Install "TensorFlow for lima" release from github.com/aymara/tensorflow/releases
+15. Download libtorch (the PyTorch C++ distribution) into `extern/` (see
+    `extern/download_libtorch.sh` for the URL/version used)
 
 16. Update build_with_ninja.bat according to your paths. Following variables are to be verified and/or updated:
     - MSYSDIR
