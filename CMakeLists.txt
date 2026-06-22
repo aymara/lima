@@ -175,8 +175,11 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
+# Boost.System is header-only since Boost 1.69 and ships no component config in
+# recent Boost (e.g. 1.90), so it must not be listed here. Use Boost::headers /
+# Boost::system targets directly where needed.
 find_package(Boost 1.74 REQUIRED
-  COMPONENTS regex filesystem program_options system thread unit_test_framework iostreams)
+  COMPONENTS regex filesystem program_options thread unit_test_framework iostreams)
 
 
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")

@@ -39,6 +39,11 @@ set(SOURCE_FILES
     fastText/src/utils.cc
     fastText/src/vector.cc)
 
+# fastText's sources use uint64_t/int32_t etc. without including <cstdint>.
+# Since GCC 13 the standard headers no longer pull <cstdint> in transitively,
+# so force-include it for the fastText targets defined below in this directory.
+add_compile_options(-include cstdint)
+
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
   add_library(fasttext-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
