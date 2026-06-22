@@ -749,7 +749,10 @@ void StaticGraphImpl::create_submodule_Embedding(const std::string& name, const 
   int64_t dict_idx = get_option<int64_t>(opts, "dict");
   int64_t dim = get_option<int64_t>(opts, "dim");
 
-  torch::nn::Embedding m(m_dicts[dict_idx]->size(), dim);
+  // A feature whose dict is empty for the corpus would otherwise create a
+  // zero-row embedding and crash on any lookup; give it at least one row.
+  int64_t num_embeddings = std::max<int64_t>(m_dicts[dict_idx]->size(), 1);
+  torch::nn::Embedding m(num_embeddings, dim);
   m_embedding.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::embedding, m_embedding.size() - 1);
   // m->pretty_print(cerr);

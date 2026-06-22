@@ -25,10 +25,12 @@ CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
                              const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& feat_extractor,
                              const DictsHolder& morph_tag_dh,
                              shared_ptr<FeatureVectorizerBase<>> p_embd,
-                             bool add_root)
+                             bool add_root,
+                             shared_ptr<const std::map<std::string, int64_t>> deprel2id)
   : m_add_root(add_root),
     m_batch_size(batch_size),
     m_morph_tag_dh(morph_tag_dh),
+    m_deprel2id(deprel2id),
     m_annot(annot),
     m_feat_vectorizers({ p_embd }),
     m_feat_extractor(feat_extractor)
@@ -63,6 +65,16 @@ std::vector<nets::embd_descr_t> CoNLLUDataSet::get_embd_descr()
   assert(m_feat_descr.size() > 0 || m_embd_feat_descr.size() > 0);
   CoNLLUToTorchMatrix vectorizer(m_feat_descr, m_embd_feat_descr, m_feat_extractor);
   return vectorizer.get_embd_descr();
+}
+
+DictsHolder CoNLLUDataSet::get_embd_feature_dicts() const
+{
+  DictsHolder dicts;
+  for (const auto& fd : m_embd_feat_descr)
+  {
+    dicts.push_back(fd.m_dict);
+  }
+  return dicts;
 }
 
 void CoNLLUDataSet::vectorize()
@@ -111,7 +123,8 @@ size_t CoNLLUDataSet::vectorize_bucket(size_t len, const vector<size_t>& sents, 
   uint64_t timepoints_per_sentence = m_add_root ? len + 1 : len;
   uint64_t total_timepoints = timepoints_per_sentence * sents.size();
   m_input_buckets[timepoints_per_sentence] = vectorizer.init_dst(total_timepoints);
-  m_gold_buckets[timepoints_per_sentence] = std::make_shared<TorchMatrix<int64_t>>(total_timepoints, 1);
+  // Two gold columns: column 0 = head (arc target), column 1 = deprel (rel target).
+  m_gold_buckets[timepoints_per_sentence] = std::make_shared<TorchMatrix<int64_t>>(total_timepoints, 2);
 
   CoNLLU::Annotation m_root_annot;
   stringstream root_line;
@@ -158,26 +171,31 @@ void CoNLLUDataSet::vectorize_bucket_gold(const CoNLLU::BoundedWordLevelAdapter&
     }
 
     const CoNLLU::idx_t& head = (*it).head();
-    // const std::string& gold_rel = (*it).deprel();
+    const std::string& gold_rel = (*it).deprel();
     assert(head.is_real_word());
 
     const CoNLLU::idx_t idx = (*it).idx();
     if (m_add_root && 1 == idx._first)
     {
-      dst.set(current_timepoint, 0, 0);
+      // The synthetic <ROOT> token is not a dependent: ignore it in both the
+      // arc and rel losses.
+      dst.set(current_timepoint, 0, IGNORE_INDEX);
+      dst.set(current_timepoint, 1, IGNORE_INDEX);
       current_timepoint++;
     }
 
+    // Column 0: head position. With <ROOT> prepended at position 0, the CoNLL-U
+    // HEAD value (0 = root, k = word k) maps directly to the timepoint position.
     dst.set(current_timepoint, 0, head._first);
 
-    /*if (head._first == 0)
+    // Column 1: deprel class id (IGNORE_INDEX if no dict or label is unknown).
+    int64_t rel_id = IGNORE_INDEX;
+    if (m_deprel2id)
     {
-      dst.set(current_timepoint, 0, idx._first - 1);
+      auto rel_it = m_deprel2id->find(gold_rel);
+      rel_id = (rel_it != m_deprel2id->end()) ? rel_it->second : IGNORE_INDEX;
     }
-    else
-    {
-      dst.set(current_timepoint, 0, head._first - 1);
-    }*/
+    dst.set(current_timepoint, 1, rel_id);
 
     current_timepoint++;
     if (current_timepoint == std::numeric_limits<uint64_t>::max())

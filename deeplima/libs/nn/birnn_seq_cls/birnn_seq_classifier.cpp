@@ -162,11 +162,15 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
 
-    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
+    static constexpr int64_t kIgnoreIndex = -100;
+    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(
+        o, this_task_target,
+        torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnoreIndex));
     task_stat.m_loss = loss_tensor.sum().item<double>();
+    auto valid = this_task_target.ne(kIgnoreIndex);
     auto prediction = o.argmax(1);
-    task_stat.m_correct = prediction.eq(this_task_target).sum().item<int64_t>();
-    task_stat.m_items = this_task_target.size(0);
+    task_stat.m_correct = prediction.eq(this_task_target).logical_and(valid).sum().item<int64_t>();
+    task_stat.m_items = valid.sum().item<int64_t>();
     task_stat.m_accuracy = double(task_stat.m_correct) / task_stat.m_items;
 
     if (o.size(-1) == 2)
@@ -348,14 +352,21 @@ void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
     auto this_task_target = target.index({ Slice(), Slice(i, i+1) }).reshape({ -1 });
     //cerr << o.sizes() << endl;
     //cerr << this_task_target.sizes() << endl;
-    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target);
+    // Positions whose target == kIgnoreIndex (e.g. the synthetic <ROOT> token)
+    // are excluded from the loss and the accuracy. Harmless for tasks whose
+    // targets are always valid class ids (the mask is then all-true).
+    static constexpr int64_t kIgnoreIndex = -100;
+    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(
+        o, this_task_target,
+        torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnoreIndex));
     double loss_value = loss_tensor.sum().item<double>();
     task_stat.m_loss += loss_value;
     //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
+    auto valid = this_task_target.ne(kIgnoreIndex);
     auto prediction = o.argmax(1);
-    int64_t correct_predictions = prediction.eq(this_task_target).sum().item<int64_t>();
+    int64_t correct_predictions = prediction.eq(this_task_target).logical_and(valid).sum().item<int64_t>();
     task_stat.m_correct += correct_predictions;
-    task_stat.m_items += this_task_target.size(0);
+    task_stat.m_items += valid.sum().item<int64_t>();
 
     loss_tensor.backward({}, true);
   }

@@ -29,11 +29,24 @@ public:
                 const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& feat_extractor,
                 const DictsHolder& morph_tag_dh,
                 std::shared_ptr<FeatureVectorizerBase<>> p_embd,
-                bool add_root = false);
+                bool add_root = false,
+                std::shared_ptr<const std::map<std::string, int64_t>> deprel2id = nullptr);
+
+  // Target value used in the gold to mark positions that must be ignored by the
+  // loss/accuracy (e.g. the synthetic <ROOT> token, which is not a dependent).
+  // Matches the ignore_index passed to nll_loss in the classifier.
+  static constexpr int64_t IGNORE_INDEX = -100;
 
   void init();
 
   std::vector<nets::embd_descr_t> get_embd_descr();
+
+  // Dicts of the embeddable (morph) features, in the SAME order as
+  // get_embd_descr() returns them. Needed to build the model's dict holder
+  // parallel to its embd_descr, so the per-embedding `dict=<i>` indices in the
+  // generated script reference the correct dict (the script numbers dicts by
+  // position in embd_descr, not by position in the full tag dict holder).
+  DictsHolder get_embd_feature_dicts() const;
 
   class Iterator : public BatchIterator
   {
@@ -68,6 +81,10 @@ private:
   bool m_add_root;
   const size_t m_batch_size;
   const DictsHolder m_morph_tag_dh;
+  // deprel (syntactic relation label) string -> class id; shared between the
+  // train and dev datasets so ids are consistent. May be null (rel column then
+  // filled with IGNORE_INDEX).
+  std::shared_ptr<const std::map<std::string, int64_t>> m_deprel2id;
   const CoNLLU::Annotation& m_annot;
   std::vector<std::shared_ptr<FeatureVectorizerBase<>>> m_feat_vectorizers;
 

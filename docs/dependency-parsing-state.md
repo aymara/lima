@@ -165,3 +165,124 @@ path is the missing half.
 
 **Status of this branch:** code ported + relicensed to MIT + builds (validates the port).
 Inference label path and a trained model are the remaining work.
+
+## Training code verification (2026-06-22)
+
+Reviewed `deeplima-train-dp` end to end. **The training code only supports the ARC task;
+the REL (deprel/label) task is absent at every layer** — which structurally forces LAS≈0
+and almost certainly explains the "very low scores" of the cluster models. The cluster
+script itself confirms it: `deeplima-training-scripts/dependency-parsing/dp-train.py`
+runs `deeplima-train-dp ... --tasks="(arc)+" -w 256` (arc only).
+
+Evidence (rel task missing everywhere):
+1. **Gold data has no labels.** `graph_dp/train/conllu_file_iterator.cpp`: the gold matrix
+   is `TorchMatrix<int64_t>(total_timepoints, 1)` — one column (`:114`); `vectorize_bucket_gold`
+   sets only `dst.set(t, 0, head._first)` (`:171`); the deprel read is commented out
+   (`:161 // ... (*it).deprel();`).
+2. **Model built arc-only.** `train_graph_dp.cpp:101` builds a single
+   `deep_biaffine_attention_descr_t(128)` (arc decoder); no label-decoder descriptor/member.
+   The imported `deep_biaffine_attention_label_decoder` is never instantiated, and the
+   `stanza_models_depparse_model` is not used by training at all.
+3. **Train call hardcodes arc.** `train_graph_dp.cpp:151` `model->train(params, { "arc" }, …)`
+   ignores `params.m_tasks_string` (default is also `"arc"`, `train_params_graph_dp.h:35`).
+4. **Loss/eval track only "arc"** (`birnn_and_deep_biaffine_attention.cpp:224-232`).
+
+Arc-quality issues (would hurt UAS even once rel is added):
+5. **No padding/root masking in the loss.** `birnn_seq_classifier.cpp:351`
+   `nll_loss(o, this_task_target)` has no `ignore_index`; accuracy counts all timepoints
+   incl. padding (`m_items += this_task_target.size(0)`), so the reported metric is over
+   padded positions too — diluted gradient and misleading accuracy.
+6. **Head/root index encoding** has commented-out adjustments
+   (`conllu_file_iterator.cpp:171-179`) — audit for off-by-one / root handling.
+7. Reported loss normalization mixes per-batch mean with per-item division (cosmetic).
+8. Small default model (`m_rnn_hidden_dims={64}`; cluster used a single 256-dim layer).
+
+**Conclusion:** re-running the cluster scripts as-is cannot produce a labeled parser — the
+training code must first be extended to the rel task. Required work, in order:
+(a) read deprel into a 2nd gold column + build a deprel dict;
+(b) instantiate the label decoder in the model and produce rel scores (conditioned on gold
+   head at train time, predicted head at inference);
+(c) train tasks {arc, rel} with a rel loss and track LAS;
+(d) add `ignore_index` masking for padding (arc and rel) and audit root indexing;
+(e) then the matching inference side (Eigen label decoder, per the deep-dive section).
+
+## Increment 1 implemented: deprel gold + root masking (2026-06-22, branch finish-dependency-parsing)
+
+Done and compiling (deeplima-train-dp + deeplima-train-tag link clean):
+- **Deprel gold column + dictionary.** `train_graph_dp.cpp` builds a deprel→id map from
+  the training data (shared with dev for consistent ids) and passes it to the dataset.
+  `conllu_file_iterator.{h,cpp}`: gold matrix widened to 2 columns (col0=head, col1=deprel
+  id), `vectorize_bucket_gold` fills the rel column. Verified at runtime: prints
+  "Built deprel dictionary: 46 labels" on UD_French-GSD. The rel column is inert until the
+  label decoder lands (arc-only training slices col 0; the DP train/eval reshapes use
+  dynamic dims so the 2-col gold is safe).
+- **Root masking (the corrected "padding masking").** There is no padding in training
+  (sentences are length-bucketed), so the real issue was the synthetic <ROOT> token being
+  counted in the arc loss/accuracy. The synthetic root's gold is now `IGNORE_INDEX` (-100)
+  in both columns; `birnn_seq_classifier.cpp` passes `ignore_index(-100)` to `nll_loss` and
+  excludes ignored positions from accuracy. Harmless to tag/segmentation (their targets are
+  never -100). NB: the earlier "head/root off-by-one" worry was unfounded — with <ROOT> at
+  position 0 the CoNLL-U HEAD value maps directly to the timepoint position (the commented
+  `-1` code would have been wrong).
+
+**Separately surfaced (pre-existing, NOT from these changes):** training crashes on *raw*
+UD data with `c10::IndexError` in `EmbeddingImpl::forward` — the synthetic <ROOT> token's
+UPOS "ROOT" (and other synthetic feature values) are absent from the morph-feature dicts
+built from the corpus, so the input embedding index is out of range. The same crash occurs
+with the old (pre-change) binary. The cluster pipeline avoids it because its
+`ud-treebanks-v2.10-trainable` data is preprocessed; raw UD is not. This blocks local
+end-to-end validation and is a real robustness bug (unseen categorical feature values need
+an UNK slot), to fix before/independently of the label-decoder work.
+
+## Training-code bugs found & fixed — arc training now works (2026-06-22)
+
+Smoke-testing the trainer (deeplima-train-dp on UD_French-GSD slices) revealed that the
+DP training was fundamentally broken (it crashed before completing a step), which is the
+likely real cause of the "very low scores". Three pre-existing bugs were fixed:
+
+1. **Double `std::move(tag_dh)`** in `train_graph_dp.cpp` — the dict holder was moved into
+   both the embedding-dicts arg and the output-classes arg; argument evaluation order is
+   unspecified, so one ended up moved-from/empty (UB that behaves differently per build —
+   why it "worked" on the cluster but crashed locally). Now passes two distinct holders.
+
+2. **Embedding dict-index misalignment (the main crash).** The generated script numbers
+   each input embedding `dict=<position in embd_descr>`, but the model was given the *full*
+   tag dict holder while `embd_descr` is *filtered* (features with an empty dict are
+   dropped) and has `raw` prepended. After the first dropped feature, every embedding read
+   the wrong dict (often a size-0 one) → `c10::IndexError` in `EmbeddingImpl::forward`.
+   Fixed by passing a dict holder built **parallel to `embd_descr`** (placeholder for the
+   `raw` slot + the non-empty feature dicts in order; new `get_embd_feature_dicts()`), and
+   sizing each embedding with `max(dict.size(), 1)` as belt-and-braces.
+   This triggers whenever any morph feature has no values in the corpus (common, e.g.
+   Emph/ExtPos/NumType in French), so it affected real training, not just tiny samples.
+
+3. Plus the increment-1 changes (deprel gold column + dict, root masking via ignore_index).
+
+**Result:** training now runs and learns. On a 5k-sentence French slice, dev **arc accuracy
+rises 0.78 → 0.89 over 10 epochs** (was: immediate crash). The arc path is sound.
+Remaining for a usable *labeled* parser: the label decoder (rel) — train+inference (step b).
+
+## Step (b) scope finding: the imported label decoder is a STUB (2026-06-22)
+
+Starting (b), the label decoder turns out not to be reusable as-is:
+`deep_biaffine_attention_label_decoder.cpp::forward` returns `{r, r_label}` where BOTH are
+`Wx + b` — `r_label` (line 131) is a verbatim copy of the arc score `r` (line 87). The
+"# scorer (LABELS)" part is only comments (describing Dozat's separate rel MLPs + a bilinear
+producing `[batch, dep, head, num_labels]`, conditioned on the head). No label scoring is
+implemented, and `DeepBiaffineAttentionLabelDecoderImpl`'s constructor takes no `num_labels`.
+
+So (b) is a from-scratch implementation, not an integration:
+1. Implement the real biaffine label scorer: dep/head rel MLPs + `U` tensor of shape
+   `[hidden, num_labels, hidden]` → label logits `[batch, dep, head, num_labels]`; add a
+   `num_labels` constructor arg and parameters.
+2. Integrate into the model: the static-graph script has no label-decoder module type, no
+   `num_labels` plumbing, and no head-conditioned gather. Either extend the static graph
+   (add module type + a gather-by-head op fed gold/predicted heads) or move DP to a
+   hand-written forward (cf. the also-unfinished `stanza_models_depparse_model`).
+3. Training: gather label logits at the gold head per token → log_softmax → nll_loss vs the
+   deprel gold column (already added), track LAS.
+4. Inference: a matching Eigen `Op` for the label decoder + the gather, then emit DEPREL in
+   `RnnDependencyParser`.
+
+This is a multi-day implementation. The arc trainer fix (this session) stands on its own and
+should be committed first.

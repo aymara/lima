@@ -69,12 +69,37 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
   DictsHolder dh;
 
+  // Build the deprel (syntactic relation label) dictionary from the training
+  // data. Shared with the dev set so class ids are consistent. Class id == the
+  // dict size at insertion time (stable, 0-based). This mapping will also be
+  // needed by the label decoder and saved with the model.
+  auto deprel2id = std::make_shared<std::map<std::string, int64_t>>();
+  {
+    CoNLLU::WordLevelAdapter adapter(&train_data);
+    CoNLLU::WordLevelAdapter::const_iterator it = adapter.begin();
+    while (adapter.end() != it)
+    {
+      if ((*it).is_word())
+      {
+        const std::string& rel = (*it).deprel();
+        if (deprel2id->find(rel) == deprel2id->end())
+        {
+          int64_t next_id = static_cast<int64_t>(deprel2id->size());
+          (*deprel2id)[rel] = next_id;
+        }
+      }
+      it++;
+    }
+  }
+  std::cerr << "Built deprel dictionary: " << deprel2id->size() << " labels" << std::endl;
+
   CoNLLUDataSet train_iterator(train_data,
                                params.m_batch_size,
                                feat_extractor,
                                tag_dh,
                                { p_embd },
-                               params.m_input_includes_root);
+                               params.m_input_includes_root,
+                               deprel2id);
   train_iterator.init();
 
   CoNLLUDataSet dev_iterator(dev_data,
@@ -82,7 +107,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                              feat_extractor,
                              tag_dh,
                              { p_embd },
-                             params.m_input_includes_root);
+                             params.m_input_includes_root,
+                             deprel2id);
   dev_iterator.init();
 
   BiRnnAndDeepBiaffineAttention model(nullptr);
@@ -100,7 +126,25 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
     vector<deep_biaffine_attention_descr_t> decoder_descr = { deep_biaffine_attention_descr_t(128) };
 
-    model = BiRnnAndDeepBiaffineAttention(std::move(tag_dh),
+    // 1st arg = the dict holder used to size the input embeddings. The generated
+    // script numbers each embedding by its position in embd_descr, so this holder
+    // must be PARALLEL to embd_descr: a placeholder for the "raw" feature at index
+    // 0 (it has no Embedding) followed by the morph-feature dicts in the same
+    // order get_embd_descr() returns them. Passing the full tag dict holder here
+    // misaligned the indices whenever a feature was filtered out for having an
+    // empty dict, reading the wrong (often empty) dict and crashing.
+    // (2nd/6th arg = the output classes; a separate object, so no double-move.)
+    DictsHolder feat_dicts = train_iterator.get_embd_feature_dicts();
+    DictsHolder input_dicts;
+    if (!feat_dicts.empty())
+    {
+      input_dicts.push_back(feat_dicts.front()); // placeholder for "raw" (slot 0, unused)
+      for (const auto& d : feat_dicts)
+      {
+        input_dicts.push_back(d);
+      }
+    }
+    model = BiRnnAndDeepBiaffineAttention(std::move(input_dicts),
                                   embd_descr,
                                   rnn_descr,
                                   decoder_descr,
