@@ -343,3 +343,23 @@ true LAS = head & label both correct, computed at inference once piece 4 lands.)
 
 Remaining: piece 4 — Eigen inference Op for the label decoder + the head-gather, then emit
 DEPREL in RnnDependencyParser (and a model that converts to the eigen engine).
+
+## Step (b) piece 4a done: Eigen label-decoder op + conversion + test (2026-06-22)
+
+The CPU-inference (Eigen) side of the label decoder:
+- `deeplima/include/deeplima/eigen_wrp/deep_biaffine_attn_label_decoder.h`: new
+  `params_deep_biaffine_attn_label_decoder_t` (per-label `U` as a vector of matrices) and
+  `Op_DeepBiaffineAttnLabelDecoder` with `compute_logits()` (per-(dep,head) label logits,
+  mirroring the torch einsum) and `predict_labels()` (gather at given heads -> argmax rel).
+- `convert_from_torch.h`: a `convert_module_from_torch` overload reading the torch label
+  decoder's mlp_dep/mlp_head/U (per label)/root into the eigen params.
+- The torch label decoder's members are made public (like the arc decoder) + an
+  `input_includes_root()` accessor, so the converter can read them.
+- Unit test `deeplima/tests/test_eigen_label_decoder.cpp`: builds the torch decoder, copies
+  its params into the eigen op, and checks the label logits match for both <ROOT>
+  conventions. **Verified: max|torch-eigen| ~ 1e-6.**
+
+Remaining piece 4: wire the label op into the eigen `predict()` (run after the arc op,
+gather at the predicted head, emit a rel column), expose rel in
+`DependencyParser::TokenIterator`, make `dumper_conllu` emit the predicted deprel, and have
+`RnnDependencyParser` write real labels (+ true LAS).

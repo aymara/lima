@@ -52,10 +52,12 @@ public:
   }
 
   int64_t num_labels() const { return m_num_labels; }
+  bool input_includes_root() const { return m_input_includes_root; }
 
   torch::Tensor forward(torch::Tensor input);
 
-private:
+  // Public (like DeepBiaffineAttentionDecoder) so the torch->eigen converter can
+  // read the parameters directly.
   bool m_input_includes_root;
   int64_t m_hidden_dim;
   int64_t m_num_labels;
