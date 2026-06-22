@@ -286,3 +286,23 @@ So (b) is a from-scratch implementation, not an integration:
 
 This is a multi-day implementation. The arc trainer fix (this session) stands on its own and
 should be committed first.
+
+## Step (b) piece 1 done: real biaffine label scorer + unit test (2026-06-22)
+
+Replaced the stub `DeepBiaffineAttentionLabelDecoder` with a real affine biaffine label
+scorer (Dozat & Manning 2017):
+- Constructor now takes `num_labels`. Dep/head rel MLPs (Linear+ELU), and a single
+  augmented bilinear `U` of shape `[num_labels, hidden+1, hidden+1]` (the +1 folds in the
+  linear terms and bias). `forward(input[seq,batch,dim])` →
+  `einsum("bxi,lij,byj->bxyl")` = label logits `[batch, dep, head, num_labels]`.
+- `input_includes_root`: when false, a learned <ROOT> row is prepended on the head axis
+  (head = seq+1), matching DeepBiaffineAttentionDecoder's convention.
+- Fixed a latent bug: the header's include guard was identical to the arc decoder's.
+- Unit test `deeplima/tests/test_label_decoder.cpp` (+ CMake wiring, run in standalone
+  deeplima builds): checks output shape, root handling, finiteness and gradient flow.
+  Verified passing (compiled against the built torch_modules + libtorch).
+
+Remaining for labeled parsing: piece 2 (integrate into the model — instantiate the label
+decoder, size it with the deprel dict, produce label logits as a model output), piece 3
+(training: gather logits at the gold head → log_softmax → nll_loss vs the deprel gold
+column, track LAS), piece 4 (Eigen inference Op + emit DEPREL in RnnDependencyParser).
