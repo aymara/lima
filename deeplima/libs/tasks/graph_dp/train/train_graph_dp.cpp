@@ -193,7 +193,14 @@ int train_graph_dp(const train_params_graph_dp_t& params)
       throw runtime_error("Unknown optimizer: " + opt_name);
     }
 
-    model->train(params, { "arc" },
+    // Train the arc task, and the rel (deprel) task too when a deprel dict is
+    // available (the model then has a label decoder).
+    std::vector<std::string> tasks = { "arc" };
+    if (!deprel2id->empty())
+    {
+      tasks.push_back("rel");
+    }
+    model->train(params, tasks,
                  train_iterator, dev_iterator,
                  *optimizer, min_perf, device);
 

@@ -324,3 +324,22 @@ Verified: the model constructs with the label decoder and training runs unchange
 (no regression; rel_logits is produced but not yet consumed). Next, piece 3 — consume
 rel_logits in training: gather at the gold head, log_softmax over labels, nll_loss vs the
 deprel gold column, and report LAS.
+
+## Step (b) piece 3 done: labeled parsing trains (arc + rel) (2026-06-22)
+
+Custom training/eval in BiRnnAndDeepBiaffineAttention consumes rel_logits:
+- train_batch / evaluate now forward {arc, rel_logits}, compute the arc loss as before,
+  and for rel gather the label logits at the gold head
+  (rel_logits.gather(dim=2, gold_head)) -> log_softmax over labels -> nll_loss vs the
+  deprel gold column, both with ignore_index (root/padding). A single combined backward
+  + optimizer step. Per-task stats for arc and rel; train() computes accuracy/loss for
+  every task (was hardcoded to "arc").
+- train_graph_dp trains tasks {arc, rel} when a deprel dict exists.
+
+Verified on the 5k French slice (-w 128, cpu): both tasks learn —
+dev arc(UAS) 0.79 -> 0.87 and dev rel(label acc at gold head) 0.93 -> 0.956 over 5 epochs.
+So the label decoder learns deprels. (Reported rel acc is conditioned on the gold head;
+true LAS = head & label both correct, computed at inference once piece 4 lands.)
+
+Remaining: piece 4 — Eigen inference Op for the label decoder + the head-gather, then emit
+DEPREL in RnnDependencyParser (and a model that converts to the eigen engine).

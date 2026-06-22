@@ -43,6 +43,7 @@ public:
                           generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
+      m_num_labels(num_labels),
       m_output_class_names(output_names),
       m_embd_fn(embd_fn)
   {
@@ -146,6 +147,7 @@ protected:
                                      const std::vector<uint32_t>& classes*/);
 
   size_t m_workers;
+  int64_t m_num_labels = 0; // number of deprel classes; 0 = label decoder disabled
   std::vector<std::string> m_input_class_names;
   DictsHolder m_input_classes;
   std::vector<std::string> m_output_class_names;
