@@ -388,3 +388,20 @@ has a training-side prerequisite:
 So piece 4a (the Eigen op + conversion + test, done & validated) is the isolated core; the
 rest is a deep, multi-file chain plus the vocab-persistence prerequisite, best done as a
 focused effort.
+
+## Step (b) piece 4b done: persist the deprel vocab in the model (2026-06-23)
+
+The model now saves/loads the deprel id->string mapping so inference can label arcs:
+- BiRnnAndDeepBiaffineAttention stores m_rel_class_names (deprel id -> string), set from a
+  new constructor arg; train_graph_dp builds it by inverting the deprel dict and passes it.
+- save() writes SERIALIZATION_KEY_REL_CLASSES; load() reads it (optional — arc-only models
+  simply have an empty vocab) and sets m_num_labels from its size. get_rel_class_names()
+  exposes it.
+
+Validated: after training, the saved .pt contains the "rel_classes" key and the deprel
+strings (nsubj, punct, amod, obl, ...). A --pretrained reload resumes with rel acc 0.956
+(not from scratch), confirming weights + label-decoder graph + vocab all round-trip.
+
+This unblocks the inference side: convert_from_torch can now read the vocab into the eigen
+inference, the dumper can map predicted rel ids to deprel strings, and RnnDependencyParser
+can emit real DEPREL.

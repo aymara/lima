@@ -37,13 +37,15 @@ public:
                             DictsHolder&& classes,
                             const std::string& embd_fn,
                             bool input_includes_root,
-                            int64_t num_labels = 0)
+                            int64_t num_labels = 0,
+                            const std::vector<std::string>& rel_class_names = {})
     : BiRnnClassifierImpl(std::move(dicts),
                           embd_descr,
                           generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
       m_num_labels(num_labels),
+      m_rel_class_names(rel_class_names),
       m_output_class_names(output_names),
       m_embd_fn(embd_fn)
   {
@@ -106,6 +108,12 @@ public:
     return m_input_class_names;
   }
 
+  // deprel id -> string mapping (empty if the model has no label decoder)
+  const std::vector<std::string>& get_rel_class_names() const
+  {
+    return m_rel_class_names;
+  }
+
   const std::string& get_embd_fn([[maybe_unused]] size_t idx) const
   {
     assert(0 == idx);
@@ -148,6 +156,7 @@ protected:
 
   size_t m_workers;
   int64_t m_num_labels = 0; // number of deprel classes; 0 = label decoder disabled
+  std::vector<std::string> m_rel_class_names; // deprel id -> string; saved with the model
   std::vector<std::string> m_input_class_names;
   DictsHolder m_input_classes;
   std::vector<std::string> m_output_class_names;

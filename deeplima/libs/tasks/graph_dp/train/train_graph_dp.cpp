@@ -93,6 +93,13 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   }
   std::cerr << "Built deprel dictionary: " << deprel2id->size() << " labels" << std::endl;
 
+  // id -> deprel string, saved with the model so inference can label arcs.
+  std::vector<std::string> rel_class_names(deprel2id->size());
+  for (const auto& kv : *deprel2id)
+  {
+    rel_class_names[kv.second] = kv.first;
+  }
+
   CoNLLUDataSet train_iterator(train_data,
                                params.m_batch_size,
                                feat_extractor,
@@ -152,7 +159,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
                                   params.m_input_includes_root,
-                                  static_cast<int64_t>(deprel2id->size()));
+                                  static_cast<int64_t>(deprel2id->size()),
+                                  rel_class_names);
   }
   else
   {

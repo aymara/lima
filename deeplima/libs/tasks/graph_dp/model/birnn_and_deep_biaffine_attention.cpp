@@ -28,6 +28,7 @@ namespace train
 #define SERIALIZATION_KEY_INPUT_FEATURES "input_features"
 #define SERIALIZATION_KEY_INPUT_FEATURES_NAMES "input_features_names"
 #define SERIALIZATION_KEY_EMBD_FN "embd_fn"
+#define SERIALIZATION_KEY_REL_CLASSES "rel_classes"
 
 void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
 {
@@ -134,6 +135,27 @@ void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
   {
     throw std::runtime_error("Can't load embd_fn.");
   }
+
+  // deprel (rel) class names: optional, absent in arc-only models.
+  if (archive.try_read(SERIALIZATION_KEY_REL_CLASSES, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("List of rel classes must be a list.");
+    }
+    const c10::List<c10::IValue>& l = v.toList();
+    m_rel_class_names.clear();
+    m_rel_class_names.reserve(l.size());
+    for (size_t i = 0; i < l.size(); i++)
+    {
+      if (!l.get(i).isString())
+      {
+        throw std::runtime_error("List of rel classes must be a list of strings.");
+      }
+      m_rel_class_names.push_back(l.get(i).toStringRef());
+    }
+    m_num_labels = (int64_t) m_rel_class_names.size();
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) const
@@ -181,6 +203,15 @@ void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) 
   list_of_embd_fn.reserve(1);
   list_of_embd_fn.push_back(m_embd_fn);
   archive.write(SERIALIZATION_KEY_EMBD_FN, list_of_embd_fn);
+
+  // Save deprel (rel) class names so inference can map predicted ids to labels.
+  c10::List<std::string> list_of_rel_classes;
+  list_of_rel_classes.reserve(m_rel_class_names.size());
+  for (size_t i = 0; i < m_rel_class_names.size(); i++)
+  {
+    list_of_rel_classes.push_back(m_rel_class_names[i]);
+  }
+  archive.write(SERIALIZATION_KEY_REL_CLASSES, list_of_rel_classes);
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& params,
