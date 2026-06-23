@@ -1,21 +1,7 @@
-/*
-    Copyright 2022 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include <sstream>
 #include <cassert>
@@ -36,7 +22,8 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
                                                           const vector<rnn_descr_t>& rnn_descr,
                                                           const vector<deep_biaffine_attention_descr_t>& decoder_descr,
                                                           const vector<std::string>& /*output_names*/,
-                                                          bool input_includes_root/*,
+                                                          bool input_includes_root,
+                                                          int64_t num_labels/*,
                                                           const vector<uint32_t>& classes*/)
 {
   stringstream ss;
@@ -72,6 +59,15 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
      << " hidden_arc_dim=" << decoder_descr[0].m_arc_dim
      << " input_includes_root=" << (input_includes_root ? "true" : "false")
      << endl;
+
+  if (num_labels > 0)
+  {
+    ss << "label_decoder_0 = def DeepBiaffineAttentionLabelDecoder input_dim=" << input_size
+       << " hidden_dim=" << decoder_descr[0].m_arc_dim
+       << " num_labels=" << num_labels
+       << " input_includes_root=" << (input_includes_root ? "true" : "false")
+       << endl;
+  }
 
   ss << std::endl;
 
@@ -142,6 +138,14 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
 
   ss << "arc_raw = forward module=decoder_0 input=" << last_output_name << endl;
   ss << "arc = log_softmax input=arc_raw dim=2" << endl;
+
+  if (num_labels > 0)
+  {
+    // Per (dependent, head) label logits: [batch, dep, head, num_labels].
+    // The caller selects each dependent's label scores at its head (gold while
+    // training, predicted at inference) and applies log_softmax over the labels.
+    ss << "rel_logits = forward module=label_decoder_0 input=" << last_output_name << endl;
+  }
 
   /*for (size_t i = 0; i < output_names.size(); ++i)
   {

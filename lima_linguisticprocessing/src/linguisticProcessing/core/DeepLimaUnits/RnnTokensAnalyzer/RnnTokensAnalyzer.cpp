@@ -27,6 +27,9 @@
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
 #include "linguisticProcessing/core/DeepLimaUnits/TokenIteratorData.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+
+#include <set>
 
 #define DEBUG_THIS_FILE true
 
@@ -162,6 +165,45 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
     auto resultgraph = posgraph->getGraph();
     remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *resultgraph);
 
+    // Sentence boundaries are stored in SegmentationData (not in token statuses),
+    // so collect the last real token of each sentence here. We mark those with the
+    // deeplima sentence_brk flag so downstream units fed by this token stream
+    // (e.g. the dependency parser) split the text per sentence instead of parsing
+    // it as one long sequence. Segment::getLastVertex() is the vertex *after* the
+    // last token, so the sentence-final token is its in-neighbour.
+    std::set<LinguisticGraphVertex> sentenceFinalVertices;
+    {
+        auto sd = std::dynamic_pointer_cast<SegmentationData>(
+            analysis.getData("SentenceBoundaries"));
+        if (sd != nullptr)
+        {
+            for (const auto& segment : sd->getSegments())
+            {
+                const auto endV = segment.getLastVertex();
+                if (vTokens[endV] != nullptr)
+                {
+                    // getLastVertex() is itself the sentence's last token.
+                    sentenceFinalVertices.insert(endV);
+                }
+                else
+                {
+                    // getLastVertex() is the boundary after the last token: mark
+                    // its in-neighbour token(s).
+                    LinguisticGraphInEdgeIt ie, ie_end;
+                    for (boost::tie(ie, ie_end) = boost::in_edges(endV, *srcgraph);
+                         ie != ie_end; ++ie)
+                    {
+                        const auto s = boost::source(*ie, *srcgraph);
+                        if (vTokens[s] != nullptr)
+                        {
+                            sentenceFinalVertices.insert(s);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     std::vector<segmentation::token_pos> buffer;
     std::vector< LinguisticGraphVertex > anaVertices;
     std::vector<std::string> v;
@@ -199,8 +241,13 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             token.m_offset = src->position();
             token.m_len = src->length();
             token.m_pch = v[k].c_str();
-            token.m_flags = token_flags_t(src->status().getStatus()
-                                            & StatusType::T_SENTENCE_BRK);
+            // Mark the last token of each sentence (from SegmentationData) so the
+            // stream carries real sentence breaks. The previous code AND-ed the
+            // sequential StatusType enum against a deeplima bit flag, which never
+            // produced a valid sentence_brk.
+            token.m_flags = (sentenceFinalVertices.count(currentVx) > 0)
+                                ? token_flags_t::sentence_brk
+                                : token_flags_t::none;
         }
     }
     m_d->analyzer(buffer);

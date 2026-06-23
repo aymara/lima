@@ -1,21 +1,7 @@
-/*
-    Copyright 2022 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_LIBS_TASKS_GRAPH_DP_BIRNN_AND_DEEP_BIAFFINE_ATTENTION_H
 #define DEEPLIMA_LIBS_TASKS_GRAPH_DP_BIRNN_AND_DEEP_BIAFFINE_ATTENTION_H
@@ -50,12 +36,16 @@ public:
                             const std::vector<std::string>& output_names,
                             DictsHolder&& classes,
                             const std::string& embd_fn,
-                            bool input_includes_root)
+                            bool input_includes_root,
+                            int64_t num_labels = 0,
+                            const std::vector<std::string>& rel_class_names = {})
     : BiRnnClassifierImpl(std::move(dicts),
                           embd_descr,
-                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root)
+                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
+      m_num_labels(num_labels),
+      m_rel_class_names(rel_class_names),
       m_output_class_names(output_names),
       m_embd_fn(embd_fn)
   {
@@ -118,6 +108,12 @@ public:
     return m_input_class_names;
   }
 
+  // deprel id -> string mapping (empty if the model has no label decoder)
+  const std::vector<std::string>& get_rel_class_names() const
+  {
+    return m_rel_class_names;
+  }
+
   const std::string& get_embd_fn([[maybe_unused]] size_t idx) const
   {
     assert(0 == idx);
@@ -154,10 +150,13 @@ protected:
                                      const std::vector<nets::rnn_descr_t>& rnn_descr,
                                      const std::vector<nets::deep_biaffine_attention_descr_t>& decoder_descr,
                                      const std::vector<std::string>& output_names,
-                                     bool input_includes_root=false/*,
+                                     bool input_includes_root=false,
+                                     int64_t num_labels=0/*,
                                      const std::vector<uint32_t>& classes*/);
 
   size_t m_workers;
+  int64_t m_num_labels = 0; // number of deprel classes; 0 = label decoder disabled
+  std::vector<std::string> m_rel_class_names; // deprel id -> string; saved with the model
   std::vector<std::string> m_input_class_names;
   DictsHolder m_input_classes;
   std::vector<std::string> m_output_class_names;

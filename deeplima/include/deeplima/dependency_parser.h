@@ -134,15 +134,17 @@ public:
     size_t m_current;
     size_t m_offset;
     size_t m_end;
+    const std::vector<std::string>* m_rel_names; // deprel id -> string (may be null)
 
   public:
     TokenIterator(const StringIndex& stridx,
                   const std::vector<token_with_analysis_t>& buffer,
                   std::shared_ptr< StdMatrix<uint32_t> > heads,
                   size_t offset,
-                  size_t end)
+                  size_t end,
+                  const std::vector<std::string>* rel_names = nullptr)
       : m_stridx(stridx), m_buffer(buffer), m_heads(heads),
-        m_current(0), m_offset(offset), m_end(end - offset)
+        m_current(0), m_offset(offset), m_end(end - offset), m_rel_names(rel_names)
     {
       assert(end > offset + 1);
     }
@@ -182,6 +184,22 @@ public:
     inline uint32_t head() const
     {
       return m_heads->get(m_current, 0);
+    }
+
+    // Predicted deprel (relation label) id, or 0 if the model has no label decoder.
+    inline uint32_t rel() const
+    {
+      return (m_heads->size() >= 2) ? m_heads->get(m_current, 1) : 0;
+    }
+
+    // Predicted deprel as a string ("dep" if no vocabulary is available).
+    inline const char* deprel() const
+    {
+      if (nullptr != m_rel_names && rel() < m_rel_names->size())
+      {
+        return (*m_rel_names)[rel()].c_str();
+      }
+      return "dep";
     }
 
     inline const char* form() const
@@ -275,6 +293,12 @@ public:
 
   void register_handler(const output_callback_t fn) {
     m_output_callback = fn;
+  }
+
+  // deprel id -> string mapping from the model; empty if the model has no
+  // label decoder (in that case TokenIterator::deprel() falls back to "dep").
+  const std::vector<std::string>& get_rel_class_names() const {
+    return m_impl.get_rel_class_names();
   }
 
   void setStringIndex(std::shared_ptr<deeplima::StringIndex> stringIndexPtr) {
@@ -486,10 +510,28 @@ protected:
       if (iter.flags() & token_flags_t::sentence_brk ||
           iter.flags() & token_flags_t::paragraph_brk)
       {
-        break;
-        // lengths.push_back(this_sentence_tokens);
-        // tokens_counter += this_sentence_tokens;
-        // this_sentence_tokens = 1;
+        // End of a sentence. Record its length (including its synthetic root) and
+        // keep accumulating the following sentences into the SAME buffer, each
+        // with its own root. They are then analysed together in one pass and
+        // written to distinct output regions (predict() advances by length),
+        // instead of one slot per sentence all writing at output offset 0 (which
+        // made a shorter following sentence overwrite the previous one).
+        lengths.push_back(this_sentence_tokens);
+        tokens_counter += this_sentence_tokens;
+        iter.next();
+        if (iter.end())
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        // Need room for at least the next sentence's root + one token.
+        if (m_current_timepoint + tokens_counter + 2 > m_buffer_size)
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        this_sentence_tokens = 1; // synthetic root of the next sentence
+        continue;
       }
 
       if (m_current_timepoint + tokens_counter + this_sentence_tokens == m_buffer_size)
@@ -603,19 +645,38 @@ public:
     std::vector<typename Vectorizer::feature_descr_t> feats;
     feats.reserve(1/* + m_featVectorizers.size()*/);
     feats.emplace_back(Vectorizer::str_feature, "form", m_fastText);
-    for (size_t i = 0; i < class_names.size(); ++i)
+
+    // Match the parser's required input features to the tagger's output columns
+    // by NAME rather than by position. The parser's input dimension is fixed by
+    // the model, so we iterate the features it expects (index 0 is "raw"/form,
+    // handled above). For each, we look up the tagger column producing it. Morph
+    // classes the tagger does not produce are fed UNK; tagger classes the parser
+    // does not need (e.g. xpos) are simply ignored. This tolerates tagger/parser
+    // feature-set and ordering drift between independently trained models.
+    const auto& dp_input_names =
+        deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names();
+    for (size_t j = 0; j + 1 < dp_input_names.size(); ++j)
     {
-      if (class_names[i] != deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1])
+      const std::string& feat_name = dp_input_names[j + 1];
+
+      size_t tagger_col = Vectorizer::uint_feat_extractor_t::NO_COLUMN;
+      for (size_t i = 0; i < class_names.size(); ++i)
       {
-        // TODO: skip morph classes that aren't requested by DP
-        throw std::logic_error("Input classes missmatch: " + class_names[i] + " != " + deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1]);
+        if (class_names[i] == feat_name)
+        {
+          tagger_col = i;
+          break;
+        }
       }
 
-      feats.emplace_back(Vectorizer::int_feature,
-                         deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names()[i+1],
-                         m_featVectorizers[i]);
+      if (Vectorizer::uint_feat_extractor_t::NO_COLUMN == tagger_col)
+      {
+        std::cerr << "Warning: tagger does not produce feature '" << feat_name
+                  << "' expected by the dependency parser; using UNK." << std::endl;
+      }
 
-      m_vectorizer.get_uint_feat_extractor().add_feature(class_names[i], i);
+      feats.emplace_back(Vectorizer::int_feature, feat_name, m_featVectorizers[j]);
+      m_vectorizer.get_uint_feat_extractor().add_feature(feat_name, tagger_col);
     }
     // for (const auto& class_name: class_names)
     // {

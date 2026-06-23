@@ -1,21 +1,7 @@
-/*
-    Copyright 2022 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #ifndef DEEPLIMA_LIBS_NN_DEEP_BIAFFINE_ATTENTION_DECODER_H
 #define DEEPLIMA_LIBS_NN_DEEP_BIAFFINE_ATTENTION_DECODER_H
@@ -52,7 +38,7 @@ public:
   int64_t m_hidden_arc_dim;
   torch::nn::Linear mlp_head;
   torch::nn::Linear mlp_dep;
-  torch::nn::ELU elu;
+  torch::nn::ELU elu; // this with the linear above makes the MLP from [Dozat&Manning,2017]
   torch::Tensor U1, u2;
   torch::Tensor root, root2; // used if input_includes_root == false
 };

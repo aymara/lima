@@ -1,21 +1,7 @@
-/*
-    Copyright 2021 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "../model/birnn_and_deep_biaffine_attention.h"
 
@@ -83,12 +69,53 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
   DictsHolder dh;
 
+  // Build the deprel (syntactic relation label) dictionary from the training
+  // data. Shared with the dev set so class ids are consistent. Class id == the
+  // dict size at insertion time (stable, 0-based). This mapping will also be
+  // needed by the label decoder and saved with the model.
+  auto deprel2id = std::make_shared<std::map<std::string, int64_t>>();
+  {
+    CoNLLU::WordLevelAdapter adapter(&train_data);
+    CoNLLU::WordLevelAdapter::const_iterator it = adapter.begin();
+    while (adapter.end() != it)
+    {
+      if ((*it).is_word())
+      {
+        const std::string& rel = (*it).deprel();
+        if (deprel2id->find(rel) == deprel2id->end())
+        {
+          int64_t next_id = static_cast<int64_t>(deprel2id->size());
+          (*deprel2id)[rel] = next_id;
+        }
+      }
+      it++;
+    }
+  }
+  std::cerr << "Built deprel dictionary: " << deprel2id->size() << " labels" << std::endl;
+
+  // id -> deprel string, saved with the model so inference can label arcs.
+  std::vector<std::string> rel_class_names(deprel2id->size());
+  for (const auto& kv : *deprel2id)
+  {
+    rel_class_names[kv.second] = kv.first;
+  }
+
+  // The model's output tasks. Include "rel" when a deprel dict is available so the
+  // model is built (and saved) as a labeled parser; the inference output buffer is
+  // then sized to two columns (head, rel). Used for both construction and training.
+  std::vector<std::string> tasks = { "arc" };
+  if (!deprel2id->empty())
+  {
+    tasks.push_back("rel");
+  }
+
   CoNLLUDataSet train_iterator(train_data,
                                params.m_batch_size,
                                feat_extractor,
                                tag_dh,
                                { p_embd },
-                               params.m_input_includes_root);
+                               params.m_input_includes_root,
+                               deprel2id);
   train_iterator.init();
 
   CoNLLUDataSet dev_iterator(dev_data,
@@ -96,7 +123,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                              feat_extractor,
                              tag_dh,
                              { p_embd },
-                             params.m_input_includes_root);
+                             params.m_input_includes_root,
+                             deprel2id);
   dev_iterator.init();
 
   BiRnnAndDeepBiaffineAttention model(nullptr);
@@ -114,15 +142,37 @@ int train_graph_dp(const train_params_graph_dp_t& params)
 
     vector<deep_biaffine_attention_descr_t> decoder_descr = { deep_biaffine_attention_descr_t(128) };
 
-    model = BiRnnAndDeepBiaffineAttention(std::move(tag_dh),
+    // 1st arg = the dict holder used to size the input embeddings. The generated
+    // script numbers each embedding by its position in embd_descr, so this holder
+    // must be PARALLEL to embd_descr: a placeholder for the "raw" feature at index
+    // 0 (it has no Embedding) followed by the morph-feature dicts in the same
+    // order get_embd_descr() returns them. Passing the full tag dict holder here
+    // misaligned the indices whenever a feature was filtered out for having an
+    // empty dict, reading the wrong (often empty) dict and crashing.
+    // (2nd/6th arg = the output classes; a separate object, so no double-move.)
+    DictsHolder feat_dicts = train_iterator.get_embd_feature_dicts();
+    DictsHolder input_dicts;
+    if (!feat_dicts.empty())
+    {
+      input_dicts.push_back(feat_dicts.front()); // placeholder for "raw" (slot 0, unused)
+      for (const auto& d : feat_dicts)
+      {
+        input_dicts.push_back(d);
+      }
+    }
+    model = BiRnnAndDeepBiaffineAttention(std::move(input_dicts),
                                   embd_descr,
                                   rnn_descr,
                                   decoder_descr,
-                                  utils::split(params.m_tasks_string, ','),
+                                  tasks,
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
-                                  params.m_input_includes_root);
-  } else {
+                                  params.m_input_includes_root,
+                                  static_cast<int64_t>(deprel2id->size()),
+                                  rel_class_names);
+  }
+  else
+  {
     model = BiRnnAndDeepBiaffineAttention();
     model->load(params.m_input_model_name);
   }
@@ -160,7 +210,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
       throw runtime_error("Unknown optimizer: " + opt_name);
     }
 
-    model->train(params, { "arc" },
+    model->train(params, tasks,
                  train_iterator, dev_iterator,
                  *optimizer, min_perf, device);
 

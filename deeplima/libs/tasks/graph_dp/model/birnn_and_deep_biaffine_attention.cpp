@@ -1,22 +1,9 @@
-/*
-    Copyright 2021 CEA LIST
+// Copyright 2021 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
-
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -41,6 +28,7 @@ namespace train
 #define SERIALIZATION_KEY_INPUT_FEATURES "input_features"
 #define SERIALIZATION_KEY_INPUT_FEATURES_NAMES "input_features_names"
 #define SERIALIZATION_KEY_EMBD_FN "embd_fn"
+#define SERIALIZATION_KEY_REL_CLASSES "rel_classes"
 
 void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
 {
@@ -147,6 +135,27 @@ void BiRnnAndDeepBiaffineAttentionImpl::load(serialize::InputArchive& archive)
   {
     throw std::runtime_error("Can't load embd_fn.");
   }
+
+  // deprel (rel) class names: optional, absent in arc-only models.
+  if (archive.try_read(SERIALIZATION_KEY_REL_CLASSES, v))
+  {
+    if (!v.isList())
+    {
+      throw std::runtime_error("List of rel classes must be a list.");
+    }
+    const c10::List<c10::IValue>& l = v.toList();
+    m_rel_class_names.clear();
+    m_rel_class_names.reserve(l.size());
+    for (size_t i = 0; i < l.size(); i++)
+    {
+      if (!l.get(i).isString())
+      {
+        throw std::runtime_error("List of rel classes must be a list of strings.");
+      }
+      m_rel_class_names.push_back(l.get(i).toStringRef());
+    }
+    m_num_labels = (int64_t) m_rel_class_names.size();
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) const
@@ -194,6 +203,15 @@ void BiRnnAndDeepBiaffineAttentionImpl::save(serialize::OutputArchive& archive) 
   list_of_embd_fn.reserve(1);
   list_of_embd_fn.push_back(m_embd_fn);
   archive.write(SERIALIZATION_KEY_EMBD_FN, list_of_embd_fn);
+
+  // Save deprel (rel) class names so inference can map predicted ids to labels.
+  c10::List<std::string> list_of_rel_classes;
+  list_of_rel_classes.reserve(m_rel_class_names.size());
+  for (size_t i = 0; i < m_rel_class_names.size(); i++)
+  {
+    list_of_rel_classes.push_back(m_rel_class_names[i]);
+  }
+  archive.write(SERIALIZATION_KEY_REL_CLASSES, list_of_rel_classes);
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& params,
@@ -235,15 +253,27 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
                 train_stat,
                 device);
 
-    train_stat["arc"].m_accuracy = double(train_stat["arc"].m_correct) / train_stat["arc"].m_items;
-    train_stat["arc"].m_loss /= train_stat["arc"].m_items;
+    for (const std::string& tn : output_names)
+    {
+      if (train_stat[tn].m_items > 0)
+      {
+        train_stat[tn].m_accuracy = double(train_stat[tn].m_correct) / train_stat[tn].m_items;
+        train_stat[tn].m_loss /= train_stat[tn].m_items;
+      }
+    }
 
     chrono::steady_clock::time_point train_end = chrono::steady_clock::now();
 
     evaluate(output_names, eval_batches.get_iterator(), eval_stat, device);
 
-    eval_stat["arc"].m_accuracy = double(eval_stat["arc"].m_correct) / eval_stat["arc"].m_items;
-    eval_stat["arc"].m_loss /= eval_stat["arc"].m_items;
+    for (const std::string& tn : output_names)
+    {
+      if (eval_stat[tn].m_items > 0)
+      {
+        eval_stat[tn].m_accuracy = double(eval_stat[tn].m_correct) / eval_stat[tn].m_items;
+        eval_stat[tn].m_loss /= eval_stat[tn].m_items;
+      }
+    }
 
     chrono::steady_clock::time_point eval_end = chrono::steady_clock::now();
 
@@ -347,15 +377,64 @@ void BiRnnAndDeepBiaffineAttentionImpl::train_batch(size_t batch_size,
                                             epoch_stat_t& stat,
                                             const torch::Device& device)
 {
+  using torch::indexing::Slice;
+  static constexpr int64_t kIgnore = -100;
+
   map<string, torch::Tensor> current_batch_inputs;
   split_input(trainable_input, current_batch_inputs, device);
   current_batch_inputs["raw"] = nontrainable_input.to(device);
 
-  //cerr << "gold.sizes() == " << gold.sizes() << endl;
-  //cerr << gold << endl;
-  auto target = gold.reshape({-1, gold.size(2)}).to(device);
+  const int64_t B = gold.size(0);
+  const int64_t D = gold.size(1);
+  auto target = gold.reshape({-1, gold.size(2)}).to(device); // [B*D, ncols]
 
-  BiRnnClassifierImpl::train_batch(batch_size, seq_len, output_names, current_batch_inputs, target, opt, stat, device);
+  const bool train_rel = (m_num_labels > 0)
+      && (std::find(output_names.begin(), output_names.end(), std::string("rel")) != output_names.end());
+
+  std::vector<std::string> requested = { "arc" };
+  if (train_rel) { requested.push_back("rel_logits"); }
+
+  opt.zero_grad();
+  auto out = forward(current_batch_inputs, requested.begin(), requested.end());
+
+  // ---- arc (head prediction) ----
+  {
+    torch::Tensor o = out["arc"].reshape({ -1, out["arc"].size(2) }); // [N, heads]
+    torch::Tensor tgt = target.index({ Slice(), Slice(0, 1) }).reshape({ -1 });
+    torch::Tensor loss = torch::nn::functional::nll_loss(
+        o, tgt, torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnore));
+    torch::Tensor valid = tgt.ne(kIgnore);
+    torch::Tensor pred = o.argmax(1);
+    task_stat_t& s = stat["arc"];
+    s.m_loss += loss.sum().item<double>();
+    s.m_correct += pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
+    s.m_items += valid.sum().item<int64_t>();
+    loss.backward({}, /*retain_graph=*/train_rel);
+  }
+
+  // ---- rel (deprel label), scored at the gold head ----
+  if (train_rel)
+  {
+    torch::Tensor rel_logits = out["rel_logits"]; // [B, dep, head, num_labels]
+    const int64_t L = rel_logits.size(3);
+    torch::Tensor gold_head = target.index({ Slice(), 0 }).reshape({ B, D });
+    torch::Tensor gh = gold_head.clamp_min(0); // ignored positions -> 0 (masked by loss)
+    torch::Tensor idx = gh.unsqueeze(-1).unsqueeze(-1).expand({ B, D, 1, L });
+    torch::Tensor gathered = rel_logits.gather(2, idx).squeeze(2); // [B, dep, num_labels]
+    torch::Tensor rel_log = torch::log_softmax(gathered, 2).reshape({ -1, L });
+    torch::Tensor tgt = target.index({ Slice(), Slice(1, 2) }).reshape({ -1 });
+    torch::Tensor loss = torch::nn::functional::nll_loss(
+        rel_log, tgt, torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnore));
+    torch::Tensor valid = tgt.ne(kIgnore);
+    torch::Tensor pred = rel_log.argmax(1);
+    task_stat_t& s = stat["rel"];
+    s.m_loss += loss.sum().item<double>();
+    s.m_correct += pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
+    s.m_items += valid.sum().item<int64_t>();
+    loss.backward();
+  }
+
+  opt.step();
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_names,
@@ -384,9 +463,12 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
              batch.gold(),
              t,
              device);
-    stat["arc"].m_correct += t["arc"].m_correct;
-    stat["arc"].m_items += t["arc"].m_items;
-    stat["arc"].m_loss += t["arc"].m_loss;
+    for (const std::string& task_name : output_names)
+    {
+      stat[task_name].m_correct += t[task_name].m_correct;
+      stat[task_name].m_items += t[task_name].m_items;
+      stat[task_name].m_loss += t[task_name].m_loss;
+    }
   }
 }
 
@@ -397,13 +479,60 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
                                                  epoch_stat_t& stat,
                                                  const torch::Device& device)
 {
+  using torch::indexing::Slice;
+  static constexpr int64_t kIgnore = -100;
+
   map<string, torch::Tensor> current_inputs;
   split_input(trainable_input, current_inputs, device);
   current_inputs["raw"] = nontrainable_input.to(device);
 
+  const int64_t B = gold.size(0);
+  const int64_t D = gold.size(1);
   auto target = gold.reshape({-1, gold.size(-1)}).to(device);
 
-  BiRnnClassifierImpl::evaluate(output_names, current_inputs, target, stat, device);
+  const bool eval_rel = (m_num_labels > 0)
+      && (std::find(output_names.begin(), output_names.end(), std::string("rel")) != output_names.end());
+
+  std::vector<std::string> requested = { "arc" };
+  if (eval_rel) { requested.push_back("rel_logits"); }
+
+  torch::NoGradGuard no_grad;
+  auto out = forward(current_inputs, requested.begin(), requested.end());
+
+  // ---- arc (UAS) ----
+  {
+    torch::Tensor o = out["arc"].reshape({ -1, out["arc"].size(2) });
+    torch::Tensor tgt = target.index({ Slice(), Slice(0, 1) }).reshape({ -1 });
+    torch::Tensor loss = torch::nn::functional::nll_loss(
+        o, tgt, torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnore));
+    torch::Tensor valid = tgt.ne(kIgnore);
+    torch::Tensor pred = o.argmax(1);
+    task_stat_t& s = stat["arc"];
+    s.m_loss = loss.sum().item<double>();
+    s.m_correct = pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
+    s.m_items = valid.sum().item<int64_t>();
+  }
+
+  // ---- rel (label accuracy at the gold head) ----
+  if (eval_rel)
+  {
+    torch::Tensor rel_logits = out["rel_logits"]; // [B, dep, head, num_labels]
+    const int64_t L = rel_logits.size(3);
+    torch::Tensor gold_head = target.index({ Slice(), 0 }).reshape({ B, D });
+    torch::Tensor gh = gold_head.clamp_min(0);
+    torch::Tensor idx = gh.unsqueeze(-1).unsqueeze(-1).expand({ B, D, 1, L });
+    torch::Tensor gathered = rel_logits.gather(2, idx).squeeze(2);
+    torch::Tensor rel_log = torch::log_softmax(gathered, 2).reshape({ -1, L });
+    torch::Tensor tgt = target.index({ Slice(), Slice(1, 2) }).reshape({ -1 });
+    torch::Tensor loss = torch::nn::functional::nll_loss(
+        rel_log, tgt, torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnore));
+    torch::Tensor valid = tgt.ne(kIgnore);
+    torch::Tensor pred = rel_log.argmax(1);
+    task_stat_t& s = stat["rel"];
+    s.m_loss = loss.sum().item<double>();
+    s.m_correct = pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
+    s.m_items = valid.sum().item<int64_t>();
+  }
 }
 
 void BiRnnAndDeepBiaffineAttentionImpl::predict(size_t /*worker_id*/,

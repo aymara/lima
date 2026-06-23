@@ -3,6 +3,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include <algorithm>
+
 #include "deeplima/eigen_wrp/graph_dp_eigen_inference_impl.h"
 #include "tasks/graph_dp/model/birnn_and_deep_biaffine_attention.h"
 
@@ -81,6 +83,32 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
     convert_module_from_torch(m, layer);
   }
 
+  // Label (deprel) decoder, present only in labeled models.
+  for (size_t i = 0; i < src.get_layers_deep_biaffine_attn_label_decoder().size(); i++)
+  {
+    const deeplima::nets::torch_modules::DeepBiaffineAttentionLabelDecoder& m
+        = src.get_layers_deep_biaffine_attn_label_decoder()[i];
+
+    m_deep_biaffine_attn_label_decoder.emplace_back(std::make_shared<params_deep_biaffine_attn_label_decoder_t<Eigen::MatrixXf, Eigen::VectorXf>>());
+    auto& layer = *m_deep_biaffine_attn_label_decoder.back().get();
+
+    convert_module_from_torch(m, layer);
+  }
+  m_rel_class_names = src.get_rel_class_names();
+
+  // The arc head is the only generic "task" the model declares, so the output
+  // buffer would be sized to a single column. The deprel (rel) is produced by a
+  // separate label decoder rather than the generic task pool, so when one is
+  // present we add a second output column for it. predict() fills column 0 with
+  // heads and column 1 with deprel ids.
+  if (!m_deep_biaffine_attn_label_decoder.empty()
+      && std::find(Parent::m_output_str_dicts_names.begin(),
+                   Parent::m_output_str_dicts_names.end(), "rel")
+         == Parent::m_output_str_dicts_names.end())
+  {
+    Parent::m_output_str_dicts_names.push_back("rel");
+  }
+
   // temp: create exec plan
   Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
   Parent::m_params.push_back(Parent::m_multi_bilstm[0]);
@@ -91,12 +119,12 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
   Parent::m_wb.resize(2);
 
   // tags
-  // cerr << "TAGS:" << endl;
+  // std::cerr << "TAGS:" << std::endl;
   // for ( const auto& it : src.get_tags() )
   // {
-  //   cerr << "\t" << it.first << " = " << it.second << endl;
+  //   std::cerr << "\t" << it.first << " = " << it.second << std::endl;
   // }
-  // cerr << endl;
+  // std::cerr << std::endl;
 }
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)

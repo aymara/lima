@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <limits>
 
 #include "deeplima/utils/split_string.h"
 
@@ -108,6 +109,10 @@ class TokenUIntClsFeatExtractor
   std::vector<uint32_t> m_idx2cls;
 
 public:
+  // Sentinel class id meaning "the source provides no column for this feature";
+  // feat_value() then returns 0 (the UNK / unknown-value index).
+  static constexpr uint32_t NO_COLUMN = std::numeric_limits<uint32_t>::max();
+
   TokenUIntClsFeatExtractor()
   {
   }
@@ -133,6 +138,12 @@ public:
   {
     if (feat_no < m_idx2cls.size())
     {
+      // Feature absent from the source (e.g. a morph class the tagger does not
+      // produce but the parser was trained with): fall back to UNK (id 0).
+      if (NO_COLUMN == m_idx2cls[feat_no])
+      {
+        return 0;
+      }
       return token.cls(m_idx2cls[feat_no]);
     }
 
