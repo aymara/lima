@@ -500,7 +500,7 @@ void LingInfoLevelState::next(FsaStringsPool& sp)
   if (pos != posEnd)
   {
     currentLemma = DictionaryData::readCodedInt(pos);
-    if (currentLemma == 0)
+    if (currentLemma == static_cast<StringsPoolIndex>(0))
     {
       final = true;
       currentLemma = DictionaryData::readCodedInt(pos);
@@ -515,7 +515,7 @@ void LingInfoLevelState::next(FsaStringsPool& sp)
       currentLemma = sp[lemmaStr];
     }
     currentNorm = DictionaryData::readCodedInt(pos);
-    if (currentNorm == 0)
+    if (currentNorm == static_cast<StringsPoolIndex>(0))
     {
       currentNorm = currentLemma;
       normStr = lemmaStr;
@@ -898,7 +898,7 @@ void AccentedLevelState::next(FsaStringsPool& sp)
   if (pos != posEnd)
   {
     accentedEntry = DictionaryData::readCodedInt(pos);
-    if (accentedEntry == 0)
+    if (accentedEntry == static_cast<StringsPoolIndex>(0))
     {
       final = true;
       accentedEntry = DictionaryData::readCodedInt(pos);

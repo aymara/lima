@@ -27,7 +27,9 @@ struct MediaProcessUnitInitializationParameters {
   MediaId media;
 };
 
-class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessUnit : public AbstractProcessUnit<MediaProcessUnit,MediaProcessUnitInitializationParameters>
+class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessUnit :
+  public AbstractProcessUnit<MediaProcessUnit,
+                             MediaProcessUnitInitializationParameters>
 {
 public:
 

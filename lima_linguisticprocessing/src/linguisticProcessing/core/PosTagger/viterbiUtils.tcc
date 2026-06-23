@@ -4,6 +4,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "viterbiUtils.h"
+#include <QRegularExpression>
+#include <QString>
+#include <iostream>
 
 namespace Lima {
 
@@ -174,49 +177,45 @@ void ViterbiCostFunction<Cost,CostFactory>::readTrigramMatrixFile(
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
-  boost::regex numre("^\\d+$");
+  QRegularExpression linere("^(.+)\t(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
+  QRegularExpression numre("^\\d+$");
 
   std::string lineString;
-  size_t linenum(0);
-  lineString = Lima::Common::Misc::readLine(ifl);
-  while (ifl.good() && !ifl.eof())
+  size_t linenum = 0;
+
+  while (std::getline(ifl, lineString))
   {
-    Common::Misc::chomp(lineString);
-    linenum++;
-    if ( (lineString.size() > 0) && (lineString[0] != '#') )
-    {
-      LinguisticCode trigram[3];
-      std::string strigram[3];
-      float proba;
-
-
-      std::string::const_iterator start, end;
-      start = lineString.begin();
-      end = lineString.end();
-      boost::match_results<std::string::const_iterator> what;
-  //    boost::match_flag_type flags = boost::match_default;
-      if (regex_search(start, end, what, linere))
+      Common::Misc::chomp(lineString);
+      linenum++;
+      if (!lineString.empty() && lineString[0] != '#')
       {
-        for (unsigned count = 1; count <= 3; count++)
-        {
-          std::string elem(what[count].first,what[count].second);
-          strigram[count-1] = elem;
-          if (boost::regex_match(elem,numre))
+          LinguisticCode trigram[3];
+          float proba;
+          QRegularExpressionMatch match = linere.match(QString::fromStdString(lineString));
+          if (match.hasMatch())
           {
-            // numerical element
-            trigram[count-1] = LinguisticCode::fromString(elem);
+              QStringList strigram;
+
+              for (int count = 1; count <= 3; count++)
+              {
+                  QString elem = match.captured(count);
+                  strigram << elem;
+                  if (numre.match(elem).hasMatch())
+                  {
+                      // Numerical element
+                      trigram[count - 1] = LinguisticCode::fromString(elem.toStdString());
+                  }
+                  else
+                  {
+                      // Assuming m_microManager is an instance of some class
+                      trigram[count - 1] = m_microManager->getPropertyValue(elem.toStdString());
+                  }
+              }
+
+              QString sproba = match.captured(4);
+              proba = sproba.toFloat();
           }
-          else
-          {
-            trigram[count-1] = m_microManager->getPropertyValue(elem);
-          }
-        }
-        std::string sproba(what[4].first,what[4].second);
-        std::istringstream sprobaStream(sproba);
-        sprobaStream >> proba;
-      }
-      else throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
+          else throw(std::runtime_error(QString::fromUtf8("invalid trigram line: %1").arg(linenum).toUtf8().constData()));
 
 
       GramsData& gd=m_data[trigram[2]][trigram[1]];
@@ -282,51 +281,50 @@ void ViterbiCostFunction<Cost,CostFactory>::readBigramMatrixFile(
     throw  InvalidConfiguration();
   }
 
-  boost::regex linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
-  boost::regex numre("^\\d+$");
+QRegularExpression linere("^(.+)\t(.+)\t(\\d+(\\.\\d+)?)$");
+QRegularExpression numre("^\\d+$");
 
-  std::string lineString;
-  size_t linenum(0);
-  lineString = Lima::Common::Misc::readLine(ifl);
-  while (ifl.good() && !ifl.eof())
-  {
+std::string lineString;
+size_t linenum = 0;
+
+while (std::getline(ifl, lineString))
+{
+    LinguisticCode bigram[2];
+    float proba;
     Common::Misc::chomp(lineString);
     linenum++;
-
-    LinguisticCode bigram[2];
-    std::string sbigram[2];
-    float proba;
-
-    std::string::const_iterator start, end;
-    start = lineString.begin();
-    end = lineString.end();
-    boost::match_results<std::string::const_iterator> what;
-//    boost::match_flag_type flags = boost::match_default;
-    if (regex_search(start, end, what, linere))
+    if (!lineString.empty())
     {
-      for (unsigned count = 1; count <= 2; count++)
-      {
-        std::string elem(what[count].first,what[count].second);
-        sbigram[count-1] = elem;
-        if (boost::regex_match(elem,numre))
+        QRegularExpressionMatch match = linere.match(QString::fromStdString(lineString));
+        if (match.hasMatch())
         {
-          // numerical element
-          bigram[count-1] = LinguisticCode::fromString(elem);
+            QStringList sbigram;
+
+            for (int count = 1; count <= 2; count++)
+            {
+                QString elem = match.captured(count);
+                sbigram << elem;
+                if (numre.match(elem).hasMatch())
+                {
+                    // Numerical element
+                    bigram[count - 1] = LinguisticCode::fromString(elem.toStdString());
+                }
+                else
+                {
+                    // Assuming m_microManager is an instance of some class
+                    bigram[count - 1] = m_microManager->getPropertyValue(elem.toStdString());
+                }
+            }
+
+            QString sproba = match.captured(3);
+            proba = sproba.toFloat();
         }
         else
         {
-          bigram[count-1] = m_microManager->getPropertyValue(elem);
+            std::ostringstream oss;
+            oss << "Invalid bigram line: '" << lineString << "' at line " << linenum;
+            throw std::runtime_error(oss.str());
         }
-      }
-      std::string sproba(what[3].first,what[3].second);
-      std::istringstream sprobaStream(sproba);
-      sprobaStream >> proba;
-    }
-    else
-    {
-      std::ostringstream oss;
-      oss << "invalid bigram line:  '" << lineString << "' " << linenum;
-      throw(std::runtime_error(oss.str()));
     }
 
 //    LDEBUG << "Got bigram: ["<<sbigram[0]<<";"<<sbigram[1]<<"]/["<<bigram[0]<<";"<<bigram[1]<<"] proba=" << proba;

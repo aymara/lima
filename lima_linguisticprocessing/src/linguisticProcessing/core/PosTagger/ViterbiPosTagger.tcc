@@ -68,10 +68,10 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   LinguisticGraphVertex currentVx=anagraph->firstVertex();
   LinguisticGraphVertex endVx=anagraph->lastVertex();
 
-  /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed) 
+  /// Creates the posgraph with the second parameter (deleteTokenWhenDestroyed)
   /// set to false as the tokens are owned by the anagraph
-  /// @note : tokens newly created later will be owned by their creator and have 
-  /// to be deleted by this one 
+  /// @note : tokens newly created later will be owned by their creator and have
+  /// to be deleted by this one
   LinguisticAnalysisStructure::AnalysisGraph* posgraph=new LinguisticAnalysisStructure::AnalysisGraph("PosGraph",m_language,false,true);
   analysis.setData("PosGraph",posgraph);
 
@@ -126,7 +126,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
 
     stepData.clear();
     /**
-    * Order vertices and store micro-categories in stepData. 
+    * Order vertices and store micro-categories in stepData.
     */
     initializeStepDataFromGraph(srcgraph,currentVx,currentResultVxMicro,
                                 predCats,nextVx,stepData);
@@ -157,6 +157,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
         currentResultVxMicro=m_microAccessor->readValue(data->begin()->properties);
       }
     } else {
+//     LERROR << "currentResultVxMicro set to defaultCateg" << m_defaultCateg;
       currentResultVxMicro=m_defaultCateg;
     }
 
@@ -170,9 +171,11 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
     {
       LinguisticAnalysisStructure::MorphoSyntacticData* srcVxData=get(vertex_data, *resultgraph, source(*inItr,*resultgraph));
       if (srcVxData!=0 && !srcVxData->empty()) {
+//        LDEBUG << "push_back  microCateg" << m_microAccessor->readValue(srcVxData->begin()->properties);
         predCats.push_back( m_microAccessor->readValue(srcVxData->begin()->properties) );
       } else {
-        predCats.push_back(m_defaultCateg);
+//        LDEBUG << "push_back  defaultCateg" << m_defaultCateg;
+        predCats.push_back( m_defaultCateg );
       }
     }
   }
@@ -180,7 +183,7 @@ LimaStatusCode ViterbiPosTagger<Cost,CostFunction>::process(
   // last currentResultVx must be the last vertex
   {
     LinguisticGraphVertex lastVx=posgraph->lastVertex();
-//     LDEBUG << "replace last vertex " << currentResultVx << " by " << lastVx;
+//    LDEBUG << "replace last vertex " << currentResultVx << " by " << lastVx;
     LinguisticGraphInEdgeIt inItr,inItrEnd;
     boost::tie(inItr,inItrEnd) = in_edges(currentResultVx,*resultgraph);
     for (;inItr!=inItrEnd;inItr++)
@@ -296,14 +299,15 @@ void ViterbiPosTagger<Cost,CostFunction>::initializeStepDataFromGraph(
     }
 }
 
-
 template<typename Cost,typename CostFunction>
 void ViterbiPosTagger<Cost,CostFunction>::performViterbiOnStepData(StepDataVector& stepData) const
 {
+
 #ifdef DEBUG_LP
   PTLOGINIT;
-  LINFO << "performViterbiOnStepData";
+  LINFO << "performViterbiOnStepData on" << stepData.size() << "items";
 #endif
+
   // 1. foreach node of our lattice
   StepDataVectorItr stepItr=stepData.begin();
   stepItr++;
@@ -502,7 +506,7 @@ LinguisticGraphVertex ViterbiPosTagger<Cost,CostFunction>::reportPathsInGraph(
             LinguisticAnalysisStructure::Token* srcToken=get(vertex_token,*srcgraph,currentStep.m_srcVertex);
             if (morphoData!=0) {
               LinguisticAnalysisStructure::MorphoSyntacticData* posData=new LinguisticAnalysisStructure::MorphoSyntacticData();
-              LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(m_microAccessor,current.m_predMicro);
+              LinguisticAnalysisStructure::CheckDifferentPropertyPredicate differentMicro(*m_microAccessor,current.m_predMicro);
               std::back_insert_iterator<LinguisticAnalysisStructure::MorphoSyntacticData> backInsertItr(*posData);
               remove_copy_if(morphoData->begin(),morphoData->end(),backInsertItr,differentMicro);
               put(vertex_data,*resultgraph,newVx,posData);

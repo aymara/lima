@@ -155,7 +155,7 @@ namespace Lima
     if (classId.empty())
     {
       std::cerr << "Trying to access to factory with empty name!" << std::endl;
-      throw InvalidConfiguration();
+      throw InvalidConfiguration("Trying to access to factory with empty name!");
     }
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
@@ -165,7 +165,9 @@ namespace Lima
       std::cerr << "   Maybe you forgot to link with the library defining this classId ?" << std::endl;
       std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
-      throw InvalidConfiguration();
+      throw InvalidConfiguration(
+        QString::fromStdString("No AbstractFactory for classId '{}'").arg(
+          QString::fromStdString(classId)));
     }
     return factItr->second;
   }
@@ -176,7 +178,7 @@ namespace Lima
     if (classId.empty())
     {
       std::cerr << "Trying to access to factory with empty name!" << std::endl;
-      throw InvalidConfiguration();
+      throw InvalidConfiguration("Trying to access to factory with empty name!");
     }
     FactoryMapCItr factItr=m_factories.find(classId);
     if (factItr==m_factories.end())
@@ -186,7 +188,9 @@ namespace Lima
       std::cerr << "   Maybe you forgot to link with the library defining this classId ?" << std::endl;
       std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
-      throw InvalidConfiguration();
+      throw InvalidConfiguration(
+        QString::fromStdString("No AbstractFactory for classId '{}'").arg(
+          QString::fromStdString(classId)));
     }
     return factItr->second;
   }

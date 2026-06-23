@@ -19,6 +19,7 @@ target_link_libraries(lima-lp-langdetector
         lima-lp-annotationgraph
         lima-lp-linguisticanalysisstructure
         fasttext-static
+        ${Boost_LIBRARIES}
         )
 
 set_target_properties(lima-lp-langdetector PROPERTIES VERSION ${LIMA_LP_LIB_VERSION} SOVERSION ${LIMA_LP_LIB_SOVERSION})
@@ -40,6 +41,7 @@ target_link_libraries(langDetector
         lima-common-misc
         fasttext-static
         ${QT_LIBRARIES}
+        ${Boost_LIBRARIES}
         )
 
 install(TARGETS langDetector DESTINATION ${BIN_INSTALL_DIR}

@@ -7,7 +7,7 @@
  * @file     Entity.cpp
  * @author   Faiza GARA
  * @date     October 2007
- * @version  $Id: 
+ * @version  $Id:
  * copyright Copyright (C) 2007 by CEA LIST
  *
  ***********************************************************************/
@@ -60,7 +60,7 @@ Entity::Entity(
     m_length(length),
     m_main(false),
     m_features(features)
-    
+
 
 {
 }
@@ -120,19 +120,19 @@ void Entity::read(std::istream& file)
     f.setValue(value);
     m_features.push_back(f);
   }
-  // lire le nombre de features et les sauvegarder 
+  // lire le nombre de features et les sauvegarder
 }
 
 void Entity::write(std::ostream& file) const
 {
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Entity::write().."; 
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "Entity::write()..";
   Common::Misc::writeCodedInt(file,m_position);
   Common::Misc::writeCodedInt(file,m_length);
   Common::Misc::writeCodedInt(file,m_main);
   Common::Misc::writeCodedInt(file,m_features.size());
-  LDEBUG << "Entity::write: write features..."; 
-  for (Automaton::EntityFeatures::const_iterator 
+  LDEBUG << "Entity::write: write features...";
+  for (Automaton::EntityFeatures::const_iterator
        featureItr=m_features.begin();
        featureItr!=m_features.end(); featureItr++)
   {
@@ -145,7 +145,7 @@ void Entity::write(std::ostream& file) const
 std::map<std::string,std::string> Entity::getMapFeatures(void) const
 {
   std::map<std::string,std::string> resmap;
-  for (Automaton::EntityFeatures::const_iterator 
+  for (Automaton::EntityFeatures::const_iterator
        featureItr=m_features.begin();
        featureItr!=m_features.end(); featureItr++)
   {
@@ -189,7 +189,7 @@ std::string Entity::toString(std::string parentURI) const
   oss << "<rdf:rdf xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
       << " xmlns:dc=\"http://purl.org/dc/elements/1.1/\"" << std::endl;
   return oss.str();
-  
+
 }
 
 } // namespace EventAnalysis

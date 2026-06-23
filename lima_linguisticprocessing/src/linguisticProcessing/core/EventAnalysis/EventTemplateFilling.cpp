@@ -53,7 +53,7 @@ void EventTemplateFilling::init(
 
 {
   MediaId language=manager->getInitializationParameters().media;
-  
+
   ApplyRecognizer::init(unitConfiguration,manager);
 
   try {
@@ -64,20 +64,20 @@ void EventTemplateFilling::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "EventTemplateFilling: Missing 'eventTemplate' parameter in EventTemplateFilling definition";
     //throw InvalidConfiguration;
   }
   catch (std::exception& e) {
-    LOGINIT("LP::EventAnalysis");
-    LERROR << "EventTemplateFilling: Missing ressource for 'eventTemplate' parameter for language" << language << ":" << e.what();
+    EVENTANALYSISLOGINIT;
+    LERROR << "EventTemplateFilling: Missing resource for 'eventTemplate' parameter for language" << language << ":" << e.what();
     //throw InvalidConfiguration;
   }
 }
 
 LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateFilling process";
   TimeUtils::updateCurrentTime();
 
@@ -89,17 +89,17 @@ LimaStatusCode EventTemplateFilling::process(AnalysisContent& analysis) const
     analysis.setData("EventTemplateData", eventData);
   }
 
-  // set a temporary template definition resource that can be accessed 
+  // set a temporary template definition resource that can be accessed
   // by the actions called in the ApplyRecognizer
   analysis.setData("EventTemplateFillingTemplateDefinition",
                    std::make_shared<EventTemplateDefinitionData>(m_templateDefinition));
-  
+
   LimaStatusCode returnCode=SUCCESS_ID;
   returnCode=ApplyRecognizer::process(analysis);
 
   // remove temporary data
   analysis.removeData("EventTemplateFillingTemplateDefinition");
-  
+
   TimeUtils::logElapsedTime("EventTemplateFilling");
   return returnCode;
 }

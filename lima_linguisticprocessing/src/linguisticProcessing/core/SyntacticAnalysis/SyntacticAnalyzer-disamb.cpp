@@ -16,7 +16,7 @@
 
 #include "SyntacticAnalyzer-disamb.h"
 
-#include "ChainsDisambiguator.h"
+// #include "ChainsDisambiguator.h"
 #include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
 #include "common/time/timeUtilsController.h"
@@ -44,7 +44,7 @@ void SyntacticAnalyzerDisamb::init(
   Manager* manager)
 
 {
-  SADLOGINIT;
+  SALOGINIT;
   m_language=manager->getInitializationParameters().media;
   try
   {
@@ -62,7 +62,7 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   AnalysisContent& analysis) const
 {
   Lima::TimeUtilsController timer("SyntacticAnalysis");
-  SADLOGINIT;
+  SALOGINIT;
   LINFO << "start syntactic analysis - disambiguation";
   // create syntacticData
   auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
@@ -83,29 +83,29 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
     return INVALID_CONFIGURATION;
   }
   
-  if (analysis.getData("SyntacticData")==0)
-  {
-    auto syntacticData = std::make_shared< SyntacticData >(anagraph.get(), nullptr);
-    syntacticData->setupDependencyGraph();
-    analysis.setData("SyntacticData", syntacticData);
-  }
+  // if (analysis.getData("SyntacticData")==0)
+  // {
+  //   auto syntacticData = std::make_shared< SyntacticData >(anagraph.get(), nullptr);
+  //   syntacticData->setupDependencyGraph();
+  //   analysis.setData("SyntacticData", syntacticData);
+  // }
 
 
 //  bool l2r = true;
   // ??OME2 for (SegmentationData::const_iterator boundItr=sb->begin();
   //     boundItr!=sb->end();
-  for (auto boundItr=(sb->getSegments()).begin(); boundItr!=(sb->getSegments()).end(); boundItr++)
-  {
-    LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
-    LinguisticGraphVertex endSentence=boundItr->getLastVertex();
-#ifdef DEBUG_LP
-    LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
-#endif
-    ChainsDisambiguator cd(std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData")).get(),
-        beginSentence, endSentence, m_language, m_depGraphMaxBranchingFactor);
-    cd.initPaths();
-    cd.computePaths();
-    cd.applyDisambiguisation();
+//   for (auto boundItr=(sb->getSegments()).begin(); boundItr!=(sb->getSegments()).end(); boundItr++)
+//   {
+//     LinguisticGraphVertex beginSentence=boundItr->getFirstVertex();
+//     LinguisticGraphVertex endSentence=boundItr->getLastVertex();
+// #ifdef DEBUG_LP
+//     LDEBUG << "analyze sentence from vertex " << beginSentence << " to vertex " << endSentence;
+// #endif
+    // ChainsDisambiguator cd(std::dynamic_pointer_cast<SyntacticData>(analysis.getData("SyntacticData")).get(),
+    //     beginSentence, endSentence, m_language, m_depGraphMaxBranchingFactor);
+    // cd.initPaths();
+    // cd.computePaths();
+    // cd.applyDisambiguisation();
 /*    LinguisticGraphVertex current, next;
     current = beginSentence; next = current;
     while (next != endSentence)
@@ -119,7 +119,7 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
       cd.applyDisambiguisation();
       current = next;
     }*/
-  }
+  // }
   
   LINFO << "end syntactic analysis - disambiguation";
   return SUCCESS_ID;
@@ -143,98 +143,98 @@ LimaStatusCode SyntacticAnalyzerDisamb::process(
   *         The searched vertex or the last one if there is no such vertex
   */
 
-LinguisticGraphVertex SyntacticAnalyzerDisamb::nextChainsDisambBreakFrom(
-      const LinguisticGraphVertex& v,
-      const AnalysisGraph& anagraph,
-      const LinguisticGraphVertex& nextSentenceBreak) const
-{
-
-  const LinguisticGraph& graph = *(anagraph.getGraph());
-  
-  LinguisticGraphVertex current = v;
-  while (boost::out_degree(current, graph) == 1)
-  {
-//     LDEBUG << "On " << current; 
-    if (current == anagraph.lastVertex() || current == nextSentenceBreak) return current;
-    current = boost::target(*(boost::out_edges(current, graph).first), graph);
-  }
-//   LDEBUG << "Entering loop on " << current;
-  while(true)
-  {
-    std::list< LinguisticGraphVertex > fifo;
-    std::set< LinguisticGraphVertex > infifo;
-    std::set< LinguisticGraphVertex > finished;
-    fifo.push_back(current);
-    LinguisticGraphInEdgeIt init, init_end;
-    boost::tie(init, init_end) = boost::in_edges(current, graph);
-    for (; init != init_end; init++)
-    {
-      finished.insert(source(*init,graph));
-    }
-    bool first = true;
-    while (!fifo.empty())
-    {
-      current = fifo.front();
-      fifo.pop_front();
-//       LDEBUG << "On " << current; 
-      bool curfinished = true;
-      if (finished.find(current) == finished.end())
-      {
-        LinguisticGraphInEdgeIt init, init_end;
-        boost::tie(init, init_end) = boost::in_edges(current, graph);
-        while (curfinished && init != init_end)
-        {
-          if ( finished.find(source(*init,graph)) == finished.end() )
-            curfinished = false;
-          init++;
-        }
-        if (curfinished) finished.insert(current);
-      }
-      if (fifo.empty() && curfinished && !first) break;
-      else
-      {
-        first = false;
-        LinguisticGraphOutEdgeIt it, it_end;
-        boost::tie(it, it_end) = boost::out_edges(current, graph);
-        for (; it != it_end; it++)
-        {
-          if (infifo.find(target(*it, graph)) == infifo.end())
-          {
-            fifo.push_back(target(*it, graph));
-            infifo.insert(target(*it, graph));
-          }
-        }
-//        fifo.push_back(current);
-      }
-      if (current == anagraph.lastVertex() || current==nextSentenceBreak)
-      {
-        if (current != nextSentenceBreak)
-        {
-          SADLOGINIT;
-          LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak;
-          LERROR << "   returning graph's last vertex " << current;
-        }
-//         LDEBUG << "Next chains break is: " << current;
-        return current;
-      }
-    }
-//     LDEBUG << "Testing end only on " << current;
-    CVertexChainIdPropertyMap chainsMap = boost::get( vertex_chain_id, graph );
-    const std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct >& chains = chainsMap[current];
-    if (chains.empty())
-      return current;
-    std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct >::const_iterator itc, itc_end;
-    itc = chains.begin(); itc_end = chains.end();
-    bool endonly  = true;
-    while (endonly && itc != itc_end)
-    {
-      if ( ( (*itc).elemType() == BEGIN ) || ( ( (*itc).elemType() == PART ) ) )
-        endonly = false;
-      itc++;
-    }
-    if (endonly) return current;
-  }
-}
+// LinguisticGraphVertex SyntacticAnalyzerDisamb::nextChainsDisambBreakFrom(
+//       const LinguisticGraphVertex& v,
+//       const AnalysisGraph& anagraph,
+//       const LinguisticGraphVertex& nextSentenceBreak) const
+// {
+//
+//   const LinguisticGraph& graph = *(anagraph.getGraph());
+//
+//   LinguisticGraphVertex current = v;
+//   while (boost::out_degree(current, graph) == 1)
+//   {
+// //     LDEBUG << "On " << current;
+//     if (current == anagraph.lastVertex() || current == nextSentenceBreak) return current;
+//     current = boost::target(*(boost::out_edges(current, graph).first), graph);
+//   }
+// //   LDEBUG << "Entering loop on " << current;
+//   while(true)
+//   {
+//     std::list< LinguisticGraphVertex > fifo;
+//     std::set< LinguisticGraphVertex > infifo;
+//     std::set< LinguisticGraphVertex > finished;
+//     fifo.push_back(current);
+//     LinguisticGraphInEdgeIt init, init_end;
+//     boost::tie(init, init_end) = boost::in_edges(current, graph);
+//     for (; init != init_end; init++)
+//     {
+//       finished.insert(source(*init,graph));
+//     }
+//     bool first = true;
+//     while (!fifo.empty())
+//     {
+//       current = fifo.front();
+//       fifo.pop_front();
+// //       LDEBUG << "On " << current;
+//       bool curfinished = true;
+//       if (finished.find(current) == finished.end())
+//       {
+//         LinguisticGraphInEdgeIt init, init_end;
+//         boost::tie(init, init_end) = boost::in_edges(current, graph);
+//         while (curfinished && init != init_end)
+//         {
+//           if ( finished.find(source(*init,graph)) == finished.end() )
+//             curfinished = false;
+//           init++;
+//         }
+//         if (curfinished) finished.insert(current);
+//       }
+//       if (fifo.empty() && curfinished && !first) break;
+//       else
+//       {
+//         first = false;
+//         LinguisticGraphOutEdgeIt it, it_end;
+//         boost::tie(it, it_end) = boost::out_edges(current, graph);
+//         for (; it != it_end; it++)
+//         {
+//           if (infifo.find(target(*it, graph)) == infifo.end())
+//           {
+//             fifo.push_back(target(*it, graph));
+//             infifo.insert(target(*it, graph));
+//           }
+//         }
+// //        fifo.push_back(current);
+//       }
+//       if (current == anagraph.lastVertex() || current==nextSentenceBreak)
+//       {
+//         if (current != nextSentenceBreak)
+//         {
+//           SADLOGINIT;
+//           LERROR << "In nextChainsBreakFrom: went beyond next sentence break " << nextSentenceBreak;
+//           LERROR << "   returning graph's last vertex " << current;
+//         }
+// //         LDEBUG << "Next chains break is: " << current;
+//         return current;
+//       }
+//     }
+// //     LDEBUG << "Testing end only on " << current;
+//     CVertexChainIdPropertyMap chainsMap = boost::get( vertex_chain_id, graph );
+//     const std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct >& chains = chainsMap[current];
+//     if (chains.empty())
+//       return current;
+//     std::set< Lima::LinguisticProcessing::LinguisticAnalysisStructure::ChainIdStruct >::const_iterator itc, itc_end;
+//     itc = chains.begin(); itc_end = chains.end();
+//     bool endonly  = true;
+//     while (endonly && itc != itc_end)
+//     {
+//       if ( ( (*itc).elemType() == BEGIN ) || ( ( (*itc).elemType() == PART ) ) )
+//         endonly = false;
+//       itc++;
+//     }
+//     if (endonly) return current;
+//   }
+// }
 
 
 } // closing namespace SyntacticAnalysis

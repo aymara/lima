@@ -14,7 +14,6 @@ SET(lima-common-xmlconfigurationfiles_LIB_SRCS
    moduleConfigurationStructure.cpp
    xmlConfigurationFileParser.cpp
    xmlConfigurationFileReader.cpp
-   itemWithAttributes.cpp
 )
 
 add_library(lima-common-xmlconfigurationfiles SHARED ${lima-common-xmlconfigurationfiles_LIB_SRCS})
@@ -38,7 +37,6 @@ install(FILES
     groupConfigurationStructure.h
     xmlConfigurationFileExceptions.h
     moduleConfigurationStructure.h
-    itemWithAttributes.h
   DESTINATION include/common/XMLConfigurationFiles
   COMPONENT devel
 )

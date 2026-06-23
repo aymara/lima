@@ -33,11 +33,6 @@ IF(TRE_FOUND)
   add_subdirectory(ApproxMatching)
 ENDIF(TRE_FOUND)
 
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  add_subdirectory(TensorflowSpecificEntities)
-  add_subdirectory(TensorFlowUnits)
-endif()
-
 if (EIGEN3_FOUND AND TORCH_FOUND)
   add_subdirectory(DeepLimaUnits)
 endif()

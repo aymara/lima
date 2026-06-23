@@ -197,7 +197,9 @@ public:
     size_t hidden_size = layer.fw.weight_ih.rows() / 4;
     V c = fw_c; //V::Zero(hidden_size);
 
-    M input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end);
+    // 4th block() arg is the column COUNT: the sentence width, not input_end.
+    M input = input_matrix.block(0, input_begin, input_matrix.rows(),
+                                 input_end - input_begin);
     // TODO: rewrite this!!!
 
     V s, g_u, g_o, g_if;
@@ -211,10 +213,10 @@ public:
     else
     {
       // Top rows - forward pass
-      temp.topLeftCorner(hidden_size * 4, input_end) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
+      temp.topLeftCorner(hidden_size * 4, input_end - input_begin) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
 
       // Bottom rows - backward pass
-      temp.bottomLeftCorner(hidden_size * 4, input_end) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
+      temp.bottomLeftCorner(hidden_size * 4, input_end - input_begin) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
     }
 
     // Forward pass
@@ -278,8 +280,12 @@ public:
 
       if (0 == i && wb->m_precomputed_input)
       {
-        // precomputed inputs
-        temp = input_matrix.block(0, input_begin, input_matrix.rows(), input_end);
+        // precomputed inputs. The 4th block() arg is the column COUNT, so it must
+        // be the sentence width (input_end - input_begin), not input_end. With the
+        // latter, any sentence after the first (input_begin > 0) read the wrong
+        // columns, corrupting multi-sentence parses.
+        temp = input_matrix.block(0, input_begin, input_matrix.rows(),
+                                  input_end - input_begin);
       }
       else
       {

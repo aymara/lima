@@ -68,7 +68,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
                                     const LinguisticGraphVertex& v,
                                     AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
     eventData = std::make_shared<EventTemplateData>();
@@ -83,8 +83,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
   else {
     cardinality=defData->resource->getCardinality(m_role);
   }
-  // !!!! TODO: add cardinality as argument for addElementInCurrentTemplate !!!
-    
+
   if (! m_type.isNull()) {
     EventTemplateElement elt(v,&graph,m_type);
     LDEBUG << "AddTemplateElement("<< m_type <<"): add " << elt << " as " << m_role << ", cardinality =" << cardinality;
@@ -95,11 +94,11 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
     const auto annotationData = std::dynamic_pointer_cast< AnnotationData >(analysis.getData("AnnotationData"));
     if (annotationData==0)
     {
-      LOGINIT("LP::EventAnalysis");
+      EVENTANALYSISLOGINIT;
       LERROR << "AddTemplateElement: no annotation graph available !";
       return false;
     }
-    // check if vertex corresponds to a specific entity found 
+    // check if vertex corresponds to a specific entity found
     std::set< AnnotationGraphVertex > matches = annotationData->matches(graph.getGraphId(),v,"annot");
     for (std::set< AnnotationGraphVertex >::const_iterator it = matches.begin();
     it != matches.end(); it++)
@@ -125,7 +124,7 @@ bool AddTemplateElement::operator()(const LinguisticAnalysisStructure::AnalysisG
                                     const LinguisticGraphVertex& /*v2*/,
                                     AnalysisContent& /*analysis*/) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LERROR << "Calling constraint AddTemplateElement with two vertices: not implemented yet";
   return true;
 }
@@ -136,23 +135,23 @@ CreateEventTemplate::CreateEventTemplate(MediaId language,
 Automaton::ConstraintFunction(language,complement),
 m_eventType()
 {
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Complement " << complement;
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "Complement" << complement;
   m_eventType=Common::Misc::limastring2utf8stdstring(complement);
-  LDEBUG << "m_event_type " << m_eventType;
+  LDEBUG << "m_event_type" << m_eventType;
 }
 
 bool CreateEventTemplate::operator()(AnalysisContent& analysis) const
 {
   auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";
     return false;
   }
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "CreateEventTemplate";
-  
+
   // validate current template by creating a new empty template which will be new current template
   LDEBUG << "setTypeInCurrentTemplate" << m_eventType;
   eventData->setTypeInCurrentTemplate(m_eventType);
@@ -172,11 +171,11 @@ bool ClearEventTemplate::operator()(AnalysisContent& analysis) const
 {
   auto eventData = std::dynamic_pointer_cast<EventTemplateData>(analysis.getData("EventTemplateData"));
   if (eventData==0) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "CreateEventTemplate: Missing data EventTemplateData";
     return false;
   }
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "ClearEventTemplate";
   eventData->clearCurrentTemplate();
   return true;

@@ -226,8 +226,9 @@ void Gazeteer::readValues(RecognizerCompiler& reco,
     if (offset != -1) {
       previousOffset=offset+1;
       if (offset > 1) {
-        AUCLOGINIT;
-        LWARN << "reading list: characters before opening parenthesis will be ignored in: " << s;
+        //AUCLOGINIT;
+     //   LWARN << "reading list: characters before opening parenthesis will be ignored in: " << s;
+        throw std::runtime_error("found parenthesis in " + s.toStdString());
       }
     }
     offset=findSpecialCharacter(s,CHAR_WORDSEP_GAZ,previousOffset);

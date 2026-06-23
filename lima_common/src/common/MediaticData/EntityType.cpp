@@ -114,7 +114,8 @@ bool EntityType::operator<(const EntityType& other) const
 
 bool EntityType::isNull() const
 {
-  return (m_d->m_id==0 && m_d->m_groupId==0);
+  return (m_d->m_id == static_cast<EntityTypeId>(0)
+          && m_d->m_groupId == static_cast<EntityGroupId>(0));
 }
 
 EntityTypeId EntityType::getTypeId() const
@@ -214,13 +215,24 @@ EntityType EntityTypeHierarchy::getAncestor(const EntityType& child) const
   // get oldest ancestor
   EntityType current=child;
   auto it=m_d->find(current);
-  while (it != m_d->end())
-  {
+  while (it != m_d->end()) {
     current=(*it).second;
     it=m_d->find(current);
   }
   return current; // if no parent, return type itself
 }
+
+EntityType EntityTypeHierarchy::getParent(const EntityType& child) const
+{
+  // get first ancestor
+  EntityType current=child;
+  auto it=m_d->find(current);
+  if (it != m_d->end()) {
+    current=(*it).second;
+  }
+  return current; // if no parent, return type itself
+}
+
 
 bool EntityTypeHierarchy::getChildren(const EntityType& ancestor, std::map<EntityType,EntityType>& childList) const
 {

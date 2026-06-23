@@ -11,21 +11,22 @@
 #include <cstdlib>
 
 #include "deeplima/utils/std_matrix.h"
+#include "deeplima/eigen_wrp/eigen_matrix.h"
+#include "deeplima/eigen_wrp/lemmatization_eigen_inference_impl.h"
+// #include "deeplima/lemmatization/impl/lemmatization_wrapper.h"
 
 namespace deeplima
 {
 
-template <class Model, class InputVectorizer/*=TorchMatrix<int64_t>*/, typename Out >
-class RnnSeq2Seq : public InputVectorizer,
-                   public Model
+class RnnSeq2Seq : public eigen_wrp::EigenMatrixXf,
+                   public lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization
 {
-  typedef RnnSeq2Seq<Model, InputVectorizer, Out> ThisClass;
-
-  std::shared_ptr< StdMatrix<Out> > m_output; // external - classifier id, internal - time position
+  using Model = lemmatization::eigen_impl::BiRnnSeq2SeqEigenInferenceForLemmatization;
+  std::shared_ptr< StdMatrix<uint8_t> > m_output; // external - classifier id, internal - time position
 
 public:
 
-  std::shared_ptr< StdMatrix<Out> > get_output()
+  std::shared_ptr< StdMatrix<uint8_t> > get_output()
   {
     return m_output;
   }
@@ -45,7 +46,14 @@ public:
 
   void load(const std::string& fn)
   {
-    Model::load(fn);
+    try
+    {
+      Model::load(fn);
+    }
+    catch (const std::runtime_error& e)
+    {
+      throw;
+    }
   }
 
   virtual ~RnnSeq2Seq()

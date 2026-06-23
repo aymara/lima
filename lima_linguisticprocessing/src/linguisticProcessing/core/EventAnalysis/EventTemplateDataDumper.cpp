@@ -51,7 +51,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
      Manager* manager)
 
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateDataDumper::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
@@ -67,7 +67,7 @@ init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfigurati
 
 LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateDataDumper::process";
   TimeUtils::updateCurrentTime();
 
@@ -88,7 +88,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
       // see if the data is of type Events
       auto eventData = std::dynamic_pointer_cast<const EventTemplateData>(data);
       if (eventData==0) {
-        LOGINIT("LP::EventAnalysis");
+        EVENTANALYSISLOGINIT;
         LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
         return MISSING_DATA;
       }
@@ -98,7 +98,7 @@ LimaStatusCode EventTemplateDataDumper::process(AnalysisContent& analysis) const
       }
     }
     else {
-      LOGINIT("LP::EventAnalysis");
+      EVENTANALYSISLOGINIT;
       LERROR << "no data of name " << m_eventData;
     }
   }

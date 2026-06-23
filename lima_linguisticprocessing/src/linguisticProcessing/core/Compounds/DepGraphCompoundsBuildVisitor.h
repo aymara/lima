@@ -63,8 +63,7 @@ public:
                                 LinguisticGraphVertex startVertex,
                                 LinguisticGraphVertex stopVertex,
 //                                 uint64_t depGraphMaxBranchingFactor,
-                                Common::AnnotationGraphs::AnnotationData* annotationData,
-                                bool useChains = false);
+                                Common::AnnotationGraphs::AnnotationData* annotationData);
 
   virtual ~DepGraphCompoundsBuildVisitor();
 

@@ -34,6 +34,7 @@
 
 using namespace std;
 using namespace Lima::Common;
+using namespace Lima::Common::MediaticData;
 using namespace Lima::LinguisticProcessing::LinguisticAnalysisStructure;
 
 namespace Lima {
@@ -323,10 +324,10 @@ TransitionUnit* createTransition(const LimaString str,
   // entity transition
   else if (s.size()>=2 && s[0]==CHAR_BEGIN_ENTITY && s[s.size()-1]==CHAR_END_ENTITY) {
     LimaString entityName(s.mid(1,s.size()-2));
-    Common::MediaticData::EntityType type=resolveEntityName(entityName,activeEntityGroups);
+    EntityType type=resolveEntityName(entityName,activeEntityGroups);
     if (type.isNull()) {
-      Common::MediaticData::EntityGroupId groupId = resolveGroupName(entityName,activeEntityGroups);
-      if( groupId == 0) {
+      EntityGroupId groupId = resolveGroupName(entityName,activeEntityGroups);
+      if( groupId == static_cast<EntityGroupId>(0)) {
         AUCLOGINIT;
         LERROR << "createTransition: cannot resolve entity name "
                << Common::Misc::limastring2utf8stdstring(s);
@@ -371,7 +372,7 @@ TransitionUnit* createTransition(const LimaString str,
 
 //**********************************************************************
 //
-Common::MediaticData::EntityGroupId
+EntityGroupId
 resolveGroupName(const LimaString s,
                   const std::vector<LimaString>& activeEntityGroups)
 {
@@ -380,11 +381,12 @@ resolveGroupName(const LimaString s,
   LDEBUG << "resolveGroupName: try to resolve group name "
          << Common::Misc::limastring2utf8stdstring(s);
 #endif
-  Common::MediaticData::EntityGroupId foundGroup;
+  EntityGroupId foundGroup;
   try {
     LimaString groupName=s;
 #ifdef DEBUG_LP
-    LDEBUG << "resolveGroupName: try group name " << Common::Misc::limastring2utf8stdstring(s);
+    LDEBUG << "resolveGroupName: try group name "
+           << Common::Misc::limastring2utf8stdstring(s);
 #endif
     foundGroup = Common::MediaticData::MediaticData::single().getEntityGroupId(groupName);
     // group is among active groups

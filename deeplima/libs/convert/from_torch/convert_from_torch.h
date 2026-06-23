@@ -11,6 +11,7 @@
 #include "static_graph/dict.h"
 #include "deeplima/eigen_wrp/embd_dict.h"
 #include "deeplima/eigen_wrp/deep_biaffine_attn_decoder.h"
+#include "deeplima/eigen_wrp/deep_biaffine_attn_label_decoder.h"
 
 namespace deeplima
 {
@@ -89,6 +90,27 @@ void convert_module_from_torch(const deeplima::nets::torch_modules::DeepBiaffine
 
   copy_matrix<M, S>(src->mlp_dep->weight, dst.m_weight_dep);
   copy_vector<V, S>(src->mlp_dep->bias, dst.m_bias_dep);
+}
+
+template <class M, class V, class S=float>
+void convert_module_from_torch(const deeplima::nets::torch_modules::DeepBiaffineAttentionLabelDecoder& src,
+                               deeplima::eigen_impl::params_deep_biaffine_attn_label_decoder_t<M, V>& dst)
+{
+  copy_matrix<M, S>(src->mlp_head->weight, dst.m_weight_head);
+  copy_vector<V, S>(src->mlp_head->bias, dst.m_bias_head);
+
+  copy_matrix<M, S>(src->mlp_dep->weight, dst.m_weight_dep);
+  copy_vector<V, S>(src->mlp_dep->bias, dst.m_bias_dep);
+
+  dst.m_input_includes_root = src->input_includes_root();
+
+  const int64_t num_labels = src->U.size(0);
+  dst.m_U.resize(num_labels);
+  for (int64_t l = 0; l < num_labels; ++l)
+  {
+    copy_matrix<M, S>(src->U[l], dst.m_U[l]);
+  }
+  copy_vector<V, S>(src->root.reshape({-1}), dst.m_root);
 }
 
 template <class M, class S=float>

@@ -20,14 +20,13 @@ namespace deeplima
 namespace eigen_impl
 {
 
-template <class M, class V, class T>
 class BiRnnInferenceBase
 {
 public:
-  typedef M Matrix;
-  typedef V Vector;
-  typedef T Scalar;
-  typedef M tensor_t;
+  typedef Eigen::MatrixXf Matrix;
+  typedef Eigen::VectorXf Vector;
+  typedef float Scalar;
+  typedef Eigen::MatrixXf tensor_t;
   typedef EmbdUInt64FloatHolder uint_dicts_holder_t;
   typedef EmbdStrFloatHolder str_dicts_holder_t;
 
@@ -83,14 +82,14 @@ public:
   }
 
   virtual void precompute_inputs(
-      const M& inputs,
-      M& outputs,
+      const Eigen::MatrixXf& inputs,
+      Eigen::MatrixXf& outputs,
       int64_t input_size
       ) = 0;
 
   virtual void predict(
       size_t worker_id,
-      const M& inputs,
+      const Eigen::MatrixXf& inputs,
       int64_t input_begin,
       int64_t input_end,
       int64_t output_begin,
@@ -113,15 +112,15 @@ protected:
   std::vector<std::vector<std::string>> m_output_str_dicts;
   std::vector<std::string> m_output_str_dicts_names;
 
-  typedef params_bilstm_t<M, V> params_bilstm_spec_t;
+  typedef params_bilstm_t<Eigen::MatrixXf, Eigen::VectorXf> params_bilstm_spec_t;
   std::vector<params_bilstm_spec_t> m_lstm;
   std::map<std::string, size_t> m_lstm_idx;
 
-  typedef params_multilayer_bilstm_t<M, V> params_multilayer_bilstm_spec_t;
+  typedef params_multilayer_bilstm_t<Eigen::MatrixXf, Eigen::VectorXf> params_multilayer_bilstm_spec_t;
   std::vector<std::shared_ptr<params_multilayer_bilstm_spec_t>> m_multi_bilstm;
   std::map<std::string, size_t> m_multi_bilstm_idx;
 
-  std::vector<params_linear_t<M, V>> m_linear;
+  std::vector<params_linear_t<Eigen::MatrixXf, Eigen::VectorXf>> m_linear;
   std::map<std::string, size_t> m_linear_idx;
 
   virtual void convert_from_torch(const std::string& fn) = 0;

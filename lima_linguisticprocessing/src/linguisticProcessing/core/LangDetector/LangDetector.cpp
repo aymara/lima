@@ -30,7 +30,9 @@ LangDetector::~LangDetector()
 
 void LangDetector::init(Common::XMLConfigurationFiles::GroupConfigurationStructure& unitConfiguration, Manager* manager)
 {
-    QString fileName=Common::Misc::findFileInPaths(Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),unitConfiguration.getParamsValueAtKey("langDetectorModel").c_str());
+    QString fileName = Common::Misc::findFileInPaths(
+        Common::MediaticData::MediaticData::single().getResourcesPath().c_str(),
+        unitConfiguration.getParamsValueAtKey("langDetectorModel").c_str() );
     m_d->loadModel(fileName.toStdString());
 }
 

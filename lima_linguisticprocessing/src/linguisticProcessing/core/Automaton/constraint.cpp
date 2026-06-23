@@ -108,7 +108,7 @@ std::string Constraint::functionName() const {
   else {
     AULOGINIT;
     LERROR << "constraint function "
-           << m_functionAddr << " not availale";
+           << m_functionAddr << " not available";
     return "";
   }
 }
@@ -123,7 +123,7 @@ checkConstraint(const AnalysisGraph& graph,
                 ConstraintCheckList& constraintCheckList) const
 {
 /*
-  Critical Function : commnet logging message
+  Critical Function : comment logging message
 */
 //  AULOGINIT;
 
@@ -334,7 +334,7 @@ LimaString Constraint::str() const {
   }
   oss << functionName;
   if (! complement.isEmpty()) {
-    oss << (unsigned char)CHAR_SEP_CONSTRAINT_INTERNAL 
+    oss << (unsigned char)CHAR_SEP_CONSTRAINT_INTERNAL
       << Common::Misc::limastring2utf8stdstring(complement);
   }
   return Common::Misc::utf8stdstring2limastring(oss.str());
@@ -360,7 +360,7 @@ checkStringDebug(const AnalysisGraph& graph,
       << " vertex " << vertex
       << " (" << Common::Misc::limastring2utf8stdstring((get(vertex_token,*(graph.getGraph()),vertex))->stringForm()) << ")"
       << " in constraint " << m_index
-      << ",compl=" 
+      << ",compl="
       << Common::Misc::limastring2utf8stdstring(complement)
       << "\", using function " << functionName;
   return oss.str();

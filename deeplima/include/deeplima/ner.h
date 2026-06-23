@@ -26,7 +26,6 @@
 
 #endif
 
-#include "tagging/impl/tagging_impl.h"
 #include "tagging/impl/tagging_wrapper.h"
 #include "eigen_wrp/word_seq_embd_vectorizer.h"
 #include "feat_extractors.h"
@@ -49,7 +48,10 @@ namespace torch_impl
 
 namespace eigen_impl
 {
-  typedef impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTaggingF> Model;
+  template <typename AuxScalar=float>
+  class Model : public impl::TaggingInferenceWrapper<BiRnnEigenInferenceForTagging<AuxScalar>>
+  {};
+
   typedef DictEmbdVectorizer<EmbdUInt64FloatHolder, EmbdUInt64Float, eigen_wrp::EigenMatrixXf> EmbdVectorizer;
   /*typedef WordSeqEmbdVectorizer<token_buffer_t,
                                 TokenStrFeatExtractor<token_buffer_t::token_t>,
@@ -99,7 +101,9 @@ namespace impl
 
 #elif DEEPLIMA_INFERENCE_ENGINE == IE_EIGEN
 
-  typedef eigen_impl::Model Model;
+  template <typename AuxScalar=float>
+  class Model : public eigen_impl::Model<AuxScalar>
+  {};
 
   template <class TokenVector, class Token>
   class FeaturesVectorizer: public eigen_impl::FeaturesVectorizer<TokenVector, Token> {};
@@ -116,15 +120,33 @@ namespace impl
 #error Unknown inference engine
 #endif
 
-  typedef RnnSequenceClassifier<Model, BaseMatrix, uint8_t> EntityTaggingClassifier;
+  /**
+   * A kind of RnnSequenceClassifier, used for named entities tagging (?), but
+   * also the parent of TaggingImpl, used as member in TokenSequenceAnalyzer
+   */
+  template <typename AuxScalar=float>
+  class EntityTaggingClassifier: public RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>
+  {
+  public:
+    EntityTaggingClassifier() :
+        RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>()
+    {
+    }
 
-  //typedef impl::TaggingImpl< EntityTaggingClassifier, int
-  //                           //impl::SegmentationDecoder<SegmentationClassifier::OutputMatrix>,
-  //                           FeaturesVectorizer > EntityTaggingModule;
+    // EntityTaggingClassifier(uint32_t max_feat,
+    //                         uint32_t overlap,
+    //                         uint32_t num_slots,
+    //                         uint32_t slot_len,
+    //                         uint32_t num_threads) :
+    //     RnnSequenceClassifier<Model<AuxScalar>, BaseMatrix, uint8_t>(
+    //       max_feat, overlap, num_slots, slot_len, num_threads)
+    // {
+    // }
+
+    virtual ~EntityTaggingClassifier() = default;
+  };
 
 } // namespace impl
-
-//typedef impl::EntityTaggingModule EntityTagger;
 
 } // namespace tagging
 } // namespace deeplima

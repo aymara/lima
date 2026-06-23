@@ -11,6 +11,7 @@
 #include "xmlConfigurationFileParser.h"
 
 #include "common/LimaCommon.h"
+#include "common/tools/FileUtils.h"
 
 #include "xmlConfigurationFileExceptions.h"
 #include "xmlConfigurationFileReader.h"
@@ -77,7 +78,7 @@ XMLConfigurationFileParserPrivate::XMLConfigurationFileParserPrivate(
           + m_parser.errorString().toUtf8().constData());
     }
     {
-      LOGINIT("FilesReporting");
+      FILESREPORTLOGINIT;
       LINFO << "File parsed:" << m_configurationFileName;
     }
 

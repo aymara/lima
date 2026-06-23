@@ -205,7 +205,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
           token.m_offset = src->position();
           token.m_len = src->length();
           token.m_pch = v[k].c_str();
-          token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+          token.m_flags = token_flags_t(src->status().getStatus()
+                                        & StatusType::T_SENTENCE_BRK);
       }
   }
   m_d->tagger(buffer);
@@ -233,7 +234,8 @@ Lima::LimaStatusCode RnnNER::process(Lima::AnalysisContent &analysis) const
     if (morphoData != nullptr)
     {
       auto entityTag = QString::fromUtf8(m_d->m_tags[anaVerticesIndex].c_str());
-      if((anaVerticesIndex>0 && entityTag != prev_tag) || (entityTag[0]!="B" && prev_tag != "O") )
+      if((anaVerticesIndex>0 && entityTag != prev_tag)
+        || (entityTag[0] != 'B' && prev_tag != "O") )
       {
         LinguisticGraphVertex newVertex = anagraph->firstVertex();
         if (entityFound->size() == 1)
@@ -464,7 +466,9 @@ void RnnNERPrivate::init(GroupConfigurationStructure& unitConfiguration)
     {
       return;
     }
-    m_tag = std::make_shared< TokenSequenceAnalyzer<> >(model_file_name.toStdString(), "", m_pResolver, 1024, 8);
+    m_tag = std::make_shared< TokenSequenceAnalyzer<> >(model_file_name.toStdString(),
+                                                        "", "", "", "", "",
+                                                        m_pResolver, 1024, 8);
 
 
     m_loaded = true;

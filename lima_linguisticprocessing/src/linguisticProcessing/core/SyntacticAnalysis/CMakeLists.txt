@@ -11,7 +11,7 @@ add_definitions(-DLIMA_SYNTACTICANALYSIS_EXPORTING)
 SET(lima-lp-syntacticanalysis_LIB_SRCS
    SyntacticRelationsLogger.cpp
    SyntacticAnalysisXmlLogger.cpp
-   ChainsDisambiguator.cpp
+   # ChainsDisambiguator.cpp
    DebugSyntacticAnalysisLogger.cpp
    DependencyGraph.cpp
    DotDependencyGraphWriter.cpp
@@ -19,8 +19,8 @@ SET(lima-lp-syntacticanalysis_LIB_SRCS
    SimplificationConstraints.cpp
    SimplificationData.cpp
    SyntacticAnalysisTools.cpp
-   SyntacticAnalyzer-chains.cpp
-   SyntacticAnalyzer-nochains.cpp
+   # SyntacticAnalyzer-chains.cpp
+   # SyntacticAnalyzer-nochains.cpp
    SyntacticAnalyzer-deps.cpp
    SyntacticAnalyzer-disamb.cpp
    SyntacticAnalyzer-hetero.cpp
@@ -51,7 +51,7 @@ install(TARGETS lima-lp-syntacticanalysis DESTINATION ${LIB_INSTALL_DIR}
 
 ########### install files ###############
 install(FILES  SyntacticRelationsLogger.h
-    ChainsDisambiguator.h
+    # ChainsDisambiguator.h
     CoordinationConstraints.h
     DebugSyntacticAnalysisLogger.h
     DependencyGraph.h
@@ -60,7 +60,7 @@ install(FILES  SyntacticRelationsLogger.h
     HomoSyntagmaticConstraints.h
     SimplificationConstraints.h
     SimplificationData.h
-    SyntacticAnalyzer-chains.h
+    # SyntacticAnalyzer-chains.h
     SyntacticAnalyzer-deps.h
     SyntacticAnalyzer-disamb.h
     SyntacticAnalyzer-hetero.h

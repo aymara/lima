@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<modulesConfig>
+  <module name="entities">
+    <group name="TEST">
+      <list name="entityList">
+        <item value="A"/>
+      </list>
+    </group>
+  </module>
+  <module name="Processors">
+    <group name="TESTModex" class="ProcessUnitPipeline">
+      <list name="processUnitSequence">
+        <item value="TESTARecognition"/>
+      </list>
+    </group>
+    <group name="TESTARecognition" class="ApplyRecognizer">
+      <param key="automaton" value="ARules"/>
+      <param key="useSentenceBounds" value="no"/>
+      <param key="applyOnGraph" value="AnalysisGraph"/>
+    </group>
+  </module>
+  <module name="resources-fre">
+    <group name="ARules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/test.bin"/>
+    </group>
+    <group name="TEST.indexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="TEST.A" value="yes"/>
+      </map>
+    </group>
+    <group name="TESTMicros" class="SpecificEntitiesMicros">
+      <list name="TEST.A">
+        <item value="NC"/>
+      </list>
+    </group>
+  </module>
+</modulesConfig>

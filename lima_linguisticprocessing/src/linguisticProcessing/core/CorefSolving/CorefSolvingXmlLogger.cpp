@@ -27,7 +27,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <boost/regex.hpp>
 #include <QtCore/QDateTime>
 
 using namespace std;
@@ -198,19 +197,20 @@ void DumpXMLAnnotationVisitor::examine_edge(LinguisticGraphEdge e,
           s = s.substr(2,s.size());
         }
       }
-      // processing of cases like "le Canada a-t-il envisagé...", où le mot entre "a" et "envisagé" se retrouverait rejeté après "a_envisagé". Nécessaire de traiter car problématique pour l'évaluation quand il s'agit d'un pronom clitique comme dans ce cas-ci.
-      std::string formerMemo = m_memo;
-      match_results<std::string::const_iterator> what; 
-      string::const_iterator start = s.begin();
-      string::const_iterator end = s.end();
-      if (regex_search(s, what, regex("_")))
-      {
-        m_memo = std::string(what[0].second,end) + " ";
-        s = std::string(start,what[0].first);
-      }
-      else m_memo = "";
+      // // processing of cases like "le Canada a-t-il envisagé...", où le mot entre "a" et "envisagé" se retrouverait rejeté après "a_envisagé". Nécessaire de traiter car problématique pour l'évaluation quand il s'agit d'un pronom clitique comme dans ce cas-ci.
+      // std::string formerMemo = m_memo;
+      // match_results<std::string::const_iterator> what;
+      // string::const_iterator start = s.begin();
+      // string::const_iterator end = s.end();
+      // if (regex_search(s, what, regex("_")))
+      // {
+      //   m_memo = std::string(what[0].second,end) + " ";
+      //   s = std::string(start,what[0].first);
+      // }
+      // else m_memo = "";
+      // m_ostream << formerMemo << s;
 
-      m_ostream << formerMemo << s;
+      m_ostream << s;
       if (token->status().isAlphaPossessive())
       {
         m_ostream << "'s "; 

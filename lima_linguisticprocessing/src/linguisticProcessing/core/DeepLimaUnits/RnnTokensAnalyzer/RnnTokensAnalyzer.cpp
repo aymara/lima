@@ -27,6 +27,9 @@
 #include "deeplima/dumper_conllu.h"
 #include "helpers/path_resolver.h"
 #include "linguisticProcessing/core/DeepLimaUnits/TokenIteratorData.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+
+#include <set>
 
 #define DEBUG_THIS_FILE true
 
@@ -63,6 +66,7 @@ public:
     void analyzer(vector<segmentation::token_pos>& buffer);
     void insertTokenInfo(TokenSequenceAnalyzer<>::TokenIterator &ti);
     dumper::AnalysisToConllU<TokenSequenceAnalyzer<>::TokenIterator> m_dumper;
+    void reset();
 
     Lima::AnalysisContent* m_analysis;
     MediaId m_language;
@@ -80,8 +84,10 @@ public:
 };
 
 RnnTokensAnalyzerPrivate::RnnTokensAnalyzerPrivate(): ConfigurationHelper(
-                                                        "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
-                                                        m_stringsPool(nullptr), m_stridx(), m_loaded(false)
+    "RnnTokensAnalyzerPrivate", THIS_FILE_LOGGING_CATEGORY()),
+    m_stringsPool(nullptr), m_stridx(),
+    m_pResolver(MediaticData::single().getResourcesPath()),
+    m_loaded(false)
 {
 }
 
@@ -159,6 +165,45 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
     auto resultgraph = posgraph->getGraph();
     remove_edge(posgraph->firstVertex(), posgraph->lastVertex(), *resultgraph);
 
+    // Sentence boundaries are stored in SegmentationData (not in token statuses),
+    // so collect the last real token of each sentence here. We mark those with the
+    // deeplima sentence_brk flag so downstream units fed by this token stream
+    // (e.g. the dependency parser) split the text per sentence instead of parsing
+    // it as one long sequence. Segment::getLastVertex() is the vertex *after* the
+    // last token, so the sentence-final token is its in-neighbour.
+    std::set<LinguisticGraphVertex> sentenceFinalVertices;
+    {
+        auto sd = std::dynamic_pointer_cast<SegmentationData>(
+            analysis.getData("SentenceBoundaries"));
+        if (sd != nullptr)
+        {
+            for (const auto& segment : sd->getSegments())
+            {
+                const auto endV = segment.getLastVertex();
+                if (vTokens[endV] != nullptr)
+                {
+                    // getLastVertex() is itself the sentence's last token.
+                    sentenceFinalVertices.insert(endV);
+                }
+                else
+                {
+                    // getLastVertex() is the boundary after the last token: mark
+                    // its in-neighbour token(s).
+                    LinguisticGraphInEdgeIt ie, ie_end;
+                    for (boost::tie(ie, ie_end) = boost::in_edges(endV, *srcgraph);
+                         ie != ie_end; ++ie)
+                    {
+                        const auto s = boost::source(*ie, *srcgraph);
+                        if (vTokens[s] != nullptr)
+                        {
+                            sentenceFinalVertices.insert(s);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     std::vector<segmentation::token_pos> buffer;
     std::vector< LinguisticGraphVertex > anaVertices;
     std::vector<std::string> v;
@@ -196,7 +241,13 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             token.m_offset = src->position();
             token.m_len = src->length();
             token.m_pch = v[k].c_str();
-            token.m_flags = segmentation::token_pos::flag_t(src->status().getStatus() & StatusType::T_SENTENCE_BRK);
+            // Mark the last token of each sentence (from SegmentationData) so the
+            // stream carries real sentence breaks. The previous code AND-ed the
+            // sequential StatusType enum against a deeplima bit flag, which never
+            // produced a valid sentence_brk.
+            token.m_flags = (sentenceFinalVertices.count(currentVx) > 0)
+                                ? token_flags_t::sentence_brk
+                                : token_flags_t::none;
         }
     }
     m_d->analyzer(buffer);
@@ -294,6 +345,9 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
     auto lemmatizer_model_file_name = findFileInPaths(resources_path,
                                                     QString::fromUtf8("/RnnLemmatizer/%1/%2.pt")
                                                             .arg(lang_str, lemmatizer_model_name));
+    auto lemmatizer_dictionary_file_name = findFileInPaths(resources_path,
+                                                           QString::fromUtf8("/RnnLemmatizer/%1/%2.dic")
+                                                            .arg(lang_str, lemmatizer_model_name));
     if (tagger_model_file_name.isEmpty())
     {
         throw InvalidConfiguration("RnnTokensAnalyzerPrivate::init: tagger model file not found.");
@@ -304,15 +358,18 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
         lemmatizer_model_file_name = "";
     }
 
-    m_load_fn = [this, tagger_model_file_name, lemmatizer_model_file_name]()
+    m_load_fn = [this, tagger_model_file_name, lemmatizer_model_file_name, lemmatizer_dictionary_file_name]()
     {
         if (m_loaded)
         {
             return;
         }
+        // TODO give the correct parameters for fixed_ini, lower_ini and lower_lemm
         m_tokensAnalyzer = std::make_shared< TokenSequenceAnalyzer<> >(tagger_model_file_name.toStdString(),
-                                                                        lemmatizer_model_file_name.toStdString(),
-                                                                        m_pResolver, 1024, 8);
+                                                                       lemmatizer_model_file_name.toStdString(),
+                                                                       lemmatizer_dictionary_file_name.toStdString(),
+                                                                       "", "", "",
+                                                                       m_pResolver, 1024, 8);
         m_loaded = true;
     };
 
@@ -327,9 +384,15 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
 
 }
 
+void RnnTokensAnalyzerPrivate::reset()
+{
+    m_tags.clear();
+    m_lemmas.clear();
+}
 
 void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
+    reset();
     m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
                                                 const std::vector<StringIndex::idx_t>& lemmata,

@@ -6,12 +6,19 @@
 #ifndef DEEPLIMA_LIBS_MORPH_MODEL_H
 #define DEEPLIMA_LIBS_MORPH_MODEL_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 #include <unordered_map>
 #include <cassert>
+#include <limits>
+
+#ifndef NDEBUG
+#include <iostream>
+#include "deeplima/utils/pretty.h"
+#endif
 
 namespace deeplima
 {
@@ -20,6 +27,11 @@ namespace morph_model
 
 typedef uint64_t feat_base_t;
 
+/**
+ * Encoding on one 64 bits integer of the set of morphological features for one
+ * token. It provides several methods to add features, compare with other
+ * morphological features and to extract values of individual features.
+ */
 class morph_feats_t
 {
   feat_base_t m_value;
@@ -63,10 +75,20 @@ public:
   {
     return (m_value & mask) >> offset;
   }
+
+  inline auto hash() const
+  {
+    return std::hash<feat_base_t>{}(m_value);
+  }
 };
 
 class morph_model_builder;
 
+/**
+ * Helper class for morphology data (upos, features) binarization.
+ *
+ * Get id from data string and reverse.
+ */
 class morph_model_t
 {
   struct dict_t
@@ -89,6 +111,10 @@ class morph_model_t
     {
       auto it = m_key2id.find(name);
       assert(m_key2id.end() != it);
+      // if (m_key2id.end() == it)
+      // {
+      //   throw std::runtime_error(std::string("morph_model get_id unknown name ")+name);
+      // }
       return it->second;
     }
 
@@ -209,6 +235,45 @@ public:
 public:
 
   morph_feats_t convert(const std::string& upos, const std::map<std::string, std::set<std::string>>& feats) const;
+
+  template <typename F>
+  morph_feats_t convert(F featid2value) const
+  {
+    auto upos_idx = m_feat_dict.get_id("upos");
+    assert(upos_idx != std::numeric_limits<size_t>::max());
+    auto upos_id = featid2value(upos_idx);
+    const std::map<std::string, std::set<std::string>> feats;
+
+    morph_feats_t v(upos_id);
+
+    const auto& feats2mask = m_feats2mask[upos_id];
+
+    for ( const auto& kv : feats2mask )
+    {
+      const auto feat_id = kv.first;
+      if (feat_id == upos_idx)
+      {
+        continue;
+      }
+
+      size_t mask_id = kv.second;
+      assert(mask_id < m_offset.size());
+      uint8_t offset = m_offset[mask_id];
+
+      size_t feat_value_id = featid2value(feat_id);
+      if (feat_value_id != std::numeric_limits<size_t>::max())
+      {
+        feat_value_id = feat_value_id << offset ;
+        v.append(feat_value_id);
+      }
+    }
+
+#ifndef NDEBUG
+    std::cerr << pretty_bits_to_string(v.toBaseType()) << " " << to_string(v) << std::endl;
+#endif
+
+    return v;
+  }
 
   const std::string& decode_upos_to_str(const morph_feats_t& feats) const;
 

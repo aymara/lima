@@ -123,7 +123,6 @@ public:
     const std::string& uri() const;
     const std::string& nodeMedia() const;
 
-
 private:
   NodePrivate* m_d;
 };

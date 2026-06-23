@@ -9,7 +9,7 @@
  * @date     March 2010
  * @version   $Id:
  * copyright Copyright (C) 2010 by CEA LIST
- * 
+ *
  ***********************************************************************/
 
 
@@ -18,6 +18,7 @@
 #include "common/Data/readwritetools.h"
 #include "common/Data/strwstrtools.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
+#include "linguisticProcessing/LinguisticProcessingCommon.h"
 
 
 using namespace std;
@@ -28,7 +29,7 @@ namespace Lima
 namespace LinguisticProcessing
 {
 namespace EventAnalysis
-{ 
+{
 
 void Events::read(std::istream& file)
 {
@@ -43,8 +44,8 @@ void Events::read(std::istream& file)
 
 void Events::write(std::ostream& file) const
 {
-  LOGINIT("LP::EventAnalysis");
-  LDEBUG << "Events::write()..."; 
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "Events::write()...";
   Common::Misc::writeCodedInt(file,size());
   for(std::vector<Event*>::const_iterator iT=begin(); iT !=end();iT++)
   {
@@ -67,6 +68,6 @@ std::string Events::toString(std::string parentURI) const
   return out;
 }
 
-} // namespace 
+} // namespace
 } // namespace
 } // namespace Lima

@@ -11,6 +11,7 @@ add_subdirectory(tools)
 add_subdirectory(conf)
 add_subdirectory(data)
 add_subdirectory(scripts)
+add_subdirectory(tests)
 
 
 ########### install files ###############

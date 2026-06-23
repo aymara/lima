@@ -54,8 +54,8 @@ getConstraintFunction(const std::string& id,
     it,it_end;
   boost::tie(it,it_end)=m_constraintMap.equal_range(id);
   for (;it!=it_end; it++) {
-    if ((*it).second->getComplementString() == complement && 
-  (*it).second->getLanguage() == language) {
+    if ((*it).second->getComplementString() == complement
+        && static_cast<MediaId>((*it).second->getLanguage()) == language) {
 //       LDEBUG << "getConstraintFunction: function exist: " 
 //              << (*it).first << "," << (*it).second->getComplementString() 
 //              << "->" << (*it).second;

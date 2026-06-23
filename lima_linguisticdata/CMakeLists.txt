@@ -39,6 +39,7 @@ LIMA_GENERIC_CONFIGENV(ud)
 LIMA_GENERIC_CONFIGENV(ud-eng)
 
 add_custom_target(pretest-execEnv)
+add_custom_target(disamb-pretest-execEnv)
 
 add_subdirectory(cmake)
 add_subdirectory(scratch)
@@ -52,7 +53,6 @@ add_subdirectory(SRLIntegration)
 LIMA_PRETEST_CONFIGENV(eng)
 LIMA_PRETEST_CONFIGENV(fre)
 LIMA_PRETEST_CONFIGENV(por)
-
 ########### install files ###############
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules
         COMPONENT devel)

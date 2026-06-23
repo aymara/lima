@@ -25,11 +25,11 @@
 
 namespace Lima
 {
-  /** @deprecated LimaChar is an alias for QChar. All its occurences will be
-   *  removed enventually. */
+  /** @deprecated LimaChar is an alias for QChar. All its occurrences will be
+   *  removed eventually. */
   using LimaChar = QChar;
-  /** @deprecated LimaString is an alias for QString. All its occurences will be
-   *  removed enventually. */
+  /** @deprecated LimaString is an alias for QString. All its occurrences will be
+   *  removed eventually. */
   using LimaString = QString;
   // keep ouput operators to avoid explicit conversion to utf8 at each output
   LIMA_DATA_EXPORT std::ostream& operator<<(std::ostream &os, const QString& s);

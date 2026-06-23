@@ -32,16 +32,16 @@ m_posEnd(0)
 EventTemplate::~EventTemplate() {
 }
 
-void EventTemplate::addElement(const std::string& role, 
-                               const EventTemplateElement& elt, 
+void EventTemplate::addElement(const std::string& role,
+                               const EventTemplateElement& elt,
                                unsigned int cardinality)
 {
   if (m_template.count(role)>=cardinality) {
-    // too many values for the same role: which ones to keep ?
+    // Too many values for the same role: which ones to keep ?
     // at this stage, we do not have any info on the order in which the values
-    // were inserted (they are sorted by the multimap) : 
+    // were inserted (they are sorted by the multimap) :
     // we choose to just ignore the new values to be added
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LDEBUG << "EventTemplate::addElement: too many values for role" << role <<": ignore new value '"<< elt << "'";
     return;
   }
@@ -61,7 +61,7 @@ void EventTemplate::setTemplateElements(const TemplateElements& elts)
   // overwrite existing elements
   clear();
   m_template=elts;
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplate::setTemplateElements: set"<<m_template.size()<<"new elements";
   // set global position
   for (const auto& elt: m_template) {
@@ -89,10 +89,10 @@ void EventTemplate::clear()
 const EventTemplateElement& EventTemplate::getElement(const std::string& role) const
 {
   static EventTemplateElement emptyElement;
-  std::map<std::string,EventTemplateElement>::const_iterator 
+  std::map<std::string,EventTemplateElement>::const_iterator
     it=m_template.find(role);
   if (it==m_template.end()) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "No element '" << role << "' in EventTemplate";
     return emptyElement;
   }

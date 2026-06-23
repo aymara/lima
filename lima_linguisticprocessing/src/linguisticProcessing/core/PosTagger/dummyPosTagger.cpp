@@ -92,7 +92,7 @@ LimaStatusCode DummyPosTagger::process(
             break;
           }
         }
-        CheckDifferentPropertyPredicate cdpp(m_microAccessor,micro);
+        CheckDifferentPropertyPredicate cdpp(*m_microAccessor,micro);
         posdata->erase(remove_if(posdata->begin(),posdata->end(),cdpp),posdata->end());
       }
       else

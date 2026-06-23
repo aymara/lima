@@ -49,7 +49,6 @@ class CompoundsBuilderFromSyntacticDataPrivate
 
   std::map< LinguisticCode, Lima::Common::MediaticData::ConceptType > m_macro2ConceptMapping;
   std::set< std::string > m_compoundsRels;
-  bool m_useChains = false;
 };
 
 CompoundsBuilderFromSyntacticDataPrivate::CompoundsBuilderFromSyntacticDataPrivate()
@@ -81,11 +80,6 @@ void CompoundsBuilderFromSyntacticData::init(
   m_d->initConceptTypes(unitConfiguration);
   m_d->initCompoundRels(unitConfiguration);
   m_d->initMacros2ConceptsMapping(unitConfiguration);
-  try {
-    m_d->m_useChains = unitConfiguration.getBooleanParameter("useChains");
-  } catch (const NoSuchParam&)
-  {}
-
 }
 
 void CompoundsBuilderFromSyntacticDataPrivate::initCompoundRels(
@@ -205,7 +199,7 @@ void CompoundsBuilderFromSyntacticDataPrivate::initMacros2ConceptsMapping(
     {
       LinguisticCode macro = macroManager.getPropertyValue((*it).first);
       std::string typeName = (*it).second;
-      Lima::Common::MediaticData::ConceptType concept = (*(m_conceptTypes.find("LatticeDown"))).second;
+      Lima::Common::MediaticData::ConceptType semanticConcept = (*(m_conceptTypes.find("LatticeDown"))).second;
       if (m_conceptTypes.find(typeName) == m_conceptTypes.end())
       {
         MDATALOGINIT;
@@ -213,14 +207,14 @@ void CompoundsBuilderFromSyntacticDataPrivate::initMacros2ConceptsMapping(
       }
       else
       {
-        concept = (*(m_conceptTypes.find(typeName))).second;
+                semanticConcept = (*(m_conceptTypes.find(typeName))).second;
       }
 
 #ifdef DEBUG_LP
       LDEBUG << "    " << (*it).first << " (" << macro << ") <-> "
-          << (*it).second << " (" << concept << ")";
+          << (*it).second << " (" << semanticConcept << ")";
 #endif
-      m_macro2ConceptMapping.insert(std::make_pair(macro,concept));
+      m_macro2ConceptMapping.insert(std::make_pair(macro, semanticConcept));
     }
 
   }
@@ -360,8 +354,7 @@ LimaStatusCode CompoundsBuilderFromSyntacticData::process(
         anagraph.get(),
         beginSentence,
         endSentence,
-        annotationData.get(),
-        m_d->m_useChains);
+        annotationData.get());
 
     // don't use STL algorithm to avoid throwing exceptions
     LinguisticGraphVertex firstVx = anagraph->firstVertex();

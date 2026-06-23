@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 #Fail if anything goes wrong
-set -o errexit
+# set -o errexit
 set -o pipefail
 set -o nounset
 # set -o xtrace
@@ -29,11 +29,10 @@ Options default values are in parentheses.
   -r resources      <precompiled|(build)|none> build the linguistic resources or use the
                     precompiled ones
   -s                Do not shorten PoS corpora to speed up compilation.
+  -t tests          <(OFF)|ON> run unit tests after install
   -v version        <(val)|rev> version number is set either to the value set by
                     config files or to the short git sha1
   -G Generator      <(Ninja)|Unix|MSYS|NMake|VS> which cmake generator to use.
-  -T                Do not use TensorFlow (default is to use it)
-  -P tfsrcpath      <> Path to TensorFlow sources
   -g gui            <OFF|(ON)> compile with GUI
 EOF
 exit 1
@@ -52,13 +51,13 @@ CMAKE_GENERATOR="Ninja"
 WITH_ASAN="OFF"
 WITH_ARCH="OFF"
 WITH_PACK="OFF"
+RUN_UNIT_TESTS="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
-USE_TF=true
-TF_SOURCES_PATH=""
 WITH_GUI="ON"
 LIMA_SOURCES=$PWD
+QT_VERSION_MAJOR="6"
 
-while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
+while getopts ":d:m:n:r:v:G:a:p:st:j:g:" o; do
     case "${o}" in
         a)
             WITH_ASAN=${OPTARG}
@@ -91,6 +90,10 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
         s)
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
             ;;
+        t)
+            RUN_UNIT_TESTS=${OPTARG}
+            [[ "x$RUN_UNIT_TESTS" == "xON" || "x$RUN_UNIT_TESTS" == "xOFF" ]] || usage
+            ;;
         v)
             version=$OPTARG
             [[ "$version" == "val" ||  "$version" == "rev" ]] || usage
@@ -104,12 +107,6 @@ while getopts ":d:m:n:r:v:G:a:p:P:sTj:g:" o; do
                    "$CMAKE_GENERATOR" == "NMake" ||
                    "$CMAKE_GENERATOR" == "VS"
             ]] || usage
-            ;;
-        P)
-            TF_SOURCES_PATH=$OPTARG
-            ;;
-        T)
-            USE_TF=false
             ;;
         g)
             WITH_GUI=${OPTARG}
@@ -135,7 +132,7 @@ else
 fi
 current_project=`basename $PWD`
 current_project_name="$(head -n2 CMakeLists.txt | tail -n1)"
-build_prefix=$LIMA_BUILD_DIR/$current_branch
+build_prefix="${LIMA_BUILD_DIR}/${current_branch}"
 source_dir=$PWD
 
 if [[ $version = "rev" ]]; then
@@ -191,7 +188,7 @@ if [[ $CMAKE_GENERATOR == "Unix" ]]; then
   generator="Unix Makefiles"
 elif [[ $CMAKE_GENERATOR == "Ninja" ]]; then
   make_cmd="ninja -j $j"
-  make_test="ninja test"
+  make_test="ctest"
   make_install="ninja install"
   make_package="ninja package"
   generator="Ninja"
@@ -219,7 +216,7 @@ else
   make_cmd="make -j$j"
 fi
 
-echo "version='$release'"
+echo "version='$version' release='$release'"
 
 if [[ $CMAKE_GENERATOR == "VS" ]]; then
   #consider linking this current place to $LIMA_BUILD_DIR if different
@@ -232,16 +229,6 @@ else
   pushd $build_prefix/$mode-$WITH_ASAN/$current_project
 fi
 
-if [ "$USE_TF" = false ] ; then
-  TF_SOURCES_PATH=""
-else
-  if [ ${#TF_SOURCES_PATH} -le 0 ] ; then
-    TF_SOURCES_PATH=/usr/include/tensorflow-for-lima/
-  fi
-
-  echoerr "Path to TensorFlow sources: $TF_SOURCES_PATH"
-fi
-
 LIBTORCH_PATH=${LIMA_SOURCES}/extern/libtorch/
 echo "libTorch: " $LIBTORCH_PATH
 
@@ -250,6 +237,7 @@ export ASAN_OPTIONS=halt_on_error=0,fast_unwind_on_malloc=0
 
 echoerr "Launching cmake from $PWD on $source_dir WITH_ASAN=$WITH_ASAN"
 cmake  -G "$generator" \
+    -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} \
     -DWITH_DEBUG_MESSAGES=$WITH_DEBUG_MESSAGES \
     -DWITH_ARCH=$WITH_ARCH \
     -DWITH_ASAN=$WITH_ASAN \
@@ -258,33 +246,41 @@ cmake  -G "$generator" \
     -DLIMA_RESOURCES:PATH="$resources" \
     -DLIMA_VERSION_RELEASE:STRING="$release" \
     -DCMAKE_INSTALL_PREFIX:PATH=$LIMA_DIST \
-    -DTF_SOURCES_PATH:PATH=$TF_SOURCES_PATH \
     -DWITH_GUI=$WITH_GUI \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
     -DWITH_LIMA_RESOURCES=$WITH_LIMA_RESOURCES \
+    -DCTEST_OUTPUT_ON_FAILURE="ON" \
     $source_dir
 result=$?
-if [ "$result" != "0" ]; then echorr "Failed to configure LIMA."; popd; exit $result; fi
+if [ "$result" != "0" ]; then echoerr "Failed to configure LIMA."; popd; exit $result; fi
 
 echoerr "Running make command:"
 echo "$make_cmd"
 eval $make_cmd
 result=$?
-if [ "$result" != "0" ]; then echorr "Failed to build LIMA."; popd; exit $result; fi
-
-if [[ $OSTYPE == ’darwin’* ]] ; 
-then
-echoerr "Running make test:"
-echo "$make_test"
-eval $make_test
-result=$?
 if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
-fi
+
 echoerr "Running make install:"
 echo "$make_install"
 eval $make_install
 result=$?
-if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+if [ "$result" != "0" ]; then echoerr "Failed to install LIMA."; popd; exit $result; fi
+
+if [ $RUN_UNIT_TESTS == "ON" ];
+#if [[ $OSTYPE == ’darwin’* ]] ;
+then
+echoerr "Running make test:"
+eval $make_test
+result=$?
+echoerr "Done make test:"
+if [ "$result" != "0" ];
+then
+  echoerr "Some LIMA tests failed."
+  ctest --rerun-failed --output-on-failure
+  popd
+  exit $result
+fi
+fi
 
 if [ $WITH_PACK == "ON" ];
 then
@@ -292,17 +288,19 @@ then
   echo "$make_package"
   eval $make_package
   result=$?
-  if [ "$result" != "0" ]; then echoerr "Failed to build LIMA."; popd; exit $result; fi
+  if [ "$result" != "0" ]; then echoerr "Failed to package LIMA."; popd; exit $result; fi
 fi
 
-if [ $CMAKE_GENERATOR == "Unix" ] && [ "x$cmake_mode" == "xRelease" ] ;
+if [[ ( $CMAKE_GENERATOR == "Ninja" || $CMAKE_GENERATOR == "Unix" ) && "x$cmake_mode" == "xRelease" ]] ;
 then
-  echoerr "Install package:"
+  echoerr "Install packages:"
   install -d $LIMA_DIST/share/apps/lima/packages
   if compgen -G "*/src/*-build/*.rpm" > /dev/null; then
+    echo "Install RPM packages into $LIMA_DIST/share/apps/lima/packages"
     install */src/*-build/*.rpm $LIMA_DIST/share/apps/lima/packages
   fi
   if compgen -G "*/src/*-build/*.deb" > /dev/null; then
+    echo "Install DEB packages into $LIMA_DIST/share/apps/lima/packages"
     install */src/*-build/*.deb $LIMA_DIST/share/apps/lima/packages
   fi
 fi

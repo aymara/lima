@@ -38,7 +38,10 @@ if (EIGEN3_FOUND)
             convert_from_torch-shared
             fasttext-static
             utils
+            lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
+            ${Boost_LIBRARIES}
             )
 
     set_target_properties(lima-lp-rnn-dependency-parser PROPERTIES

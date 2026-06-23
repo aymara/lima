@@ -328,8 +328,9 @@ void GreedyPosTagger::processVertex(LinguisticGraphVertex vx,AnalysisGraph* anag
   }
 
   // filter linguisticelement
-  CheckDifferentPropertyPredicate cdpp(m_microAccessor,selectedMicro);
-  posdata->erase(remove_if(posdata->begin(),posdata->end(),cdpp),posdata->end());
+  CheckDifferentPropertyPredicate cdpp(*m_microAccessor, selectedMicro);
+  posdata->erase(remove_if(posdata->begin(), posdata->end(), cdpp),
+                 posdata->end());
 
 }
 

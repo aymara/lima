@@ -203,7 +203,7 @@ void ApproxStringMatcher::init(
   std::string nameindexId;
   try
   {
-    nameindexId =unitConfiguration.getParamsValueAtKey("nameindex");
+    nameindexId = unitConfiguration.getParamsValueAtKey("nameindex");
   }
   catch (NoSuchParam& )
   {

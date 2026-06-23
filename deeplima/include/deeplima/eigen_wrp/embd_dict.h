@@ -25,14 +25,22 @@ class EmbdDict : public FeatureVectorizerToMatrix<M, K, I>
 public:
   typedef K value_t;
   typedef M tensor_t;
+  typedef I index_t;
 
   EmbdDict() = default;
   virtual ~EmbdDict() {}
 
   template <class T>
-  void init(std::shared_ptr<Dict<T>> dict, const M& tensor)
+  void init(std::shared_ptr<Dict<T>> dict, const M& tensor, bool transpose=true)
   {
-    m_embd = tensor.transpose();
+    if (transpose)
+    {
+      m_embd = tensor.transpose();
+    }
+    else
+    {
+      m_embd = tensor;
+    }
     m_dim = m_embd.rows();
     for ( const auto& it : dict->get_v2i() )
     {
@@ -63,6 +71,17 @@ public:
     target.block(pos, timepoint, m_dim, 1) = m_embd.col(idx);
   }
 
+  inline Eigen::Ref<const M> get_ref_by_idx(const I idx) const
+  {
+    return m_embd.col(idx);
+  }
+
+  inline Eigen::Ref<const M> get_ref_by_key(const K key) const
+  {
+    I idx = lookup(key);
+    return m_embd.col(idx);
+  }
+
   inline void get_static(const K key, M& target, I timepoint, I pos) const
   {
     I idx = lookup(key);
@@ -74,10 +93,22 @@ public:
     return m_embd;
   }
 
+  void set_tensor(const M& new_embd)
+  {
+    m_embd = new_embd;
+    m_dim = m_embd.rows();
+  }
+
   inline K decode(const I idx) const
   {
     auto it = m_reverse_index.find(idx);
     return it->second;
+  }
+
+  inline I lookup(const K key) const
+  {
+    auto i = m_index.find(key);
+    return (m_index.end() == i) ? 0 : i->second;
   }
 
 protected:
@@ -85,12 +116,6 @@ protected:
   M m_embd;
   std::unordered_map<K, I> m_index;
   std::unordered_map<I, K> m_reverse_index;
-
-  inline I lookup(const K key) const
-  {
-    auto i = m_index.find(key);
-    return (m_index.end() == i) ? 0 : i->second;
-  }
 };
 
 template <class M, class I>
@@ -102,9 +127,16 @@ public:
   EmbdDict() {}
   ~EmbdDict() {}
 
-  void init(std::shared_ptr<Dict<value_t>> dict, const M& tensor)
+  void init(std::shared_ptr<Dict<value_t>> dict, const M& tensor, bool transpose=true)
   {
-    m_embd = tensor.transpose();
+    if (transpose)
+    {
+      m_embd = tensor.transpose();
+    }
+    else
+    {
+      m_embd = tensor;
+    }
     m_dim = m_embd.rows();
     for ( const auto& it : dict->get_v2i() )
     {

@@ -277,7 +277,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            AnalysisContent& /*ac*/ ) const
 {
   Token* token = get(vertex_token,*(graph.getGraph()),v);
-  if (token == 0)
+  if (token == nullptr)
   {
     AULOGINIT;
     LERROR << "Null token on vertex " << v;
@@ -338,7 +338,7 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& graph,
            AnalysisContent& /*ac*/ ) const
 {
   Token* token = get(vertex_token,*(graph.getGraph()),v);
-  if (token == 0)
+  if (token == nullptr)
   {
     AULOGINIT;
     LERROR << "Null token on vertex " << v;
@@ -389,13 +389,13 @@ bool NoSpaceWith::operator()(const LinguisticAnalysisStructure::AnalysisGraph& g
 {
   Token* token1 = get(vertex_token,*(graph.getGraph()),v1);
   Token* token2 = get(vertex_token,*(graph.getGraph()),v2);
-  if (token1 == 0)
+  if (token1 == nullptr)
   {
     AULOGINIT;
     LERROR << "Null token on vertex " << v1;
     return false;
   }
-  if (token2 == 0)
+  if (token2 == nullptr)
   {
     AULOGINIT;
     LERROR << "Null token on vertex " << v2;

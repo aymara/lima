@@ -1,8 +1,0 @@
-B-MISC
-I-PER
-I-MISC
-B-LOC
-I-ORG
-B-ORG
-I-LOC
-O

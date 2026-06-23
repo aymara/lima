@@ -108,7 +108,7 @@ public:
   size_t getNbValues() const;
 
 private:
-  PropertyManagerPrivate* m_d;
+  std::unique_ptr<PropertyManagerPrivate> m_d;
 };
 
 #define GET_PROPERTY_MANAGER(language, property) \

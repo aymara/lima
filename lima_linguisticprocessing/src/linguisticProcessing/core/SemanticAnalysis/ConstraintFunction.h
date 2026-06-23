@@ -18,7 +18,7 @@
 
 namespace Lima
 {
-namespace LinguisticProcessing 
+namespace LinguisticProcessing
 {
 namespace SemanticAnalysis
 {
@@ -62,8 +62,8 @@ class LIMA_SEMANTICANALYSIS_EXPORT SaveSemanticRelation : public Automaton::Cons
 };
 
 
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace SemanticAnalysis
+} // end namespace LinguisticProcessing
+} // end namespace Lima
 
 #endif

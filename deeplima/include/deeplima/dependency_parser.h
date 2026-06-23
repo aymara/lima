@@ -15,7 +15,9 @@
 #include "token_type.h"
 #include "utils/str_index.h"
 #include "helpers/path_resolver.h"
-#include "graph_dp/impl/graph_dp_impl.h"
+#include "deeplima/graph_dp.h"
+#include "deeplima/token_type.h"
+// #include "graph_dp/impl/graph_dp_impl.h"
 #include "segmentation/impl/segmentation_decoder.h"
 #include "token_sequence_analyzer.h"
 
@@ -56,101 +58,6 @@ public:
     }
   };
 
-  class TokenIterator
-  {
-    const StringIndex& m_stridx;
-    const std::vector<token_with_analysis_t>& m_buffer;
-    std::shared_ptr< StdMatrix<uint32_t> > m_heads;
-    size_t m_current;
-    size_t m_offset;
-    size_t m_end;
-
-  public:
-    TokenIterator(const StringIndex& stridx,
-                  const std::vector<token_with_analysis_t>& buffer,
-                  std::shared_ptr< StdMatrix<uint32_t> > heads,
-                  size_t offset,
-                  size_t end)
-      : m_stridx(stridx), m_buffer(buffer), m_heads(heads),
-        m_current(0), m_offset(offset), m_end(end - offset)
-    {
-      assert(end > offset + 1);
-    }
-
-    inline bool end() const
-    {
-      return m_current >= m_end;
-    }
-
-    inline impl::token_t::token_flags_t flags() const
-    {
-      assert(! end());
-      return m_buffer[m_current].m_flags;
-    }
-
-    inline uint16_t token_offset() const
-    {
-      return m_buffer[m_current].m_offset;
-    }
-
-    inline uint16_t token_len() const
-    {
-      return m_buffer[m_current].m_len;
-    }
-
-    inline uint32_t form_idx() const
-    {
-      return m_buffer[m_current].m_form_idx;
-    }
-
-    inline uint32_t lemma_idx() const
-    {
-      throw std::runtime_error("TokenIterator::lemma_idx");
-      return 0;
-    }
-
-    inline uint32_t head() const
-    {
-      return m_heads->get(m_current, 0);
-    }
-
-    inline const char* form() const
-    {
-      assert(! end());
-      const std::string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
-      return f.c_str();
-    }
-
-    inline const char* lemma() const
-    {
-      assert(! end());
-      const std::string& f = m_stridx.get_str(m_buffer[m_current].m_lemm_idx);
-      return f.c_str();
-    }
-
-    inline void next()
-    {
-      m_current++;
-    }
-
-    inline void reset(size_t position = 0)
-    {
-      m_current = position;
-    }
-
-    inline size_t position() const
-    {
-      return m_current;
-    }
-
-    inline uint8_t token_class(size_t cls_idx) const
-    {
-      assert(m_offset == 0);
-      uint8_t val = m_buffer[m_current].m_classes[cls_idx];
-      return val;
-    }
-  };
-
   class enriched_token_t
   {
     friend class DependencyParser;
@@ -170,7 +77,7 @@ public:
         m_ptoken(nullptr)
     { }
 
-    inline typename tokens_with_analysis_t::token_t::token_flags_t flags() const
+    inline token_flags_t flags() const
     {
       assert(nullptr != m_ptoken);
       return m_ptoken->m_flags;
@@ -179,7 +86,7 @@ public:
     inline bool eos() const
     {
       assert(nullptr != m_ptoken);
-      return flags() & DependencyParser::tokens_with_analysis_t::token_t::token_flags_t::sentence_brk;
+      return flags() & token_flags_t::sentence_brk;
     }
 
     inline uint32_t cls(size_t idx) const
@@ -219,24 +126,118 @@ public:
     }
   };
 
-#ifdef DP_VECTORIZER_WITH_PRECOMPUTING
-  typedef graph_dp::impl::FeaturesVectorizerWithPrecomputing<
-                                      tagging::impl::EntityTaggingClassifier,
-                                      enriched_token_buffer_t,
-                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-#elif DP_VECTORIZER_WITH_CACHE
-  typedef graph_dp::impl::FeaturesVectorizerWithCache<
-                                      enriched_token_buffer_t,
-                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-#else
-  typedef graph_dp::impl::FeaturesVectorizer<
-                                      enriched_token_buffer_t,
-                                      typename enriched_token_buffer_t::token_t> FeaturesVectorizer;
-#endif
+  class TokenIterator
+  {
+    const StringIndex& m_stridx;
+    const std::vector<token_with_analysis_t>& m_buffer;
+    std::shared_ptr< StdMatrix<uint32_t> > m_heads;
+    size_t m_current;
+    size_t m_offset;
+    size_t m_end;
+    const std::vector<std::string>* m_rel_names; // deprel id -> string (may be null)
 
-  typedef graph_dp::impl::GraphDpImpl< graph_dp::impl::GraphDependencyParser,
-                                       FeaturesVectorizer,
-                                       eigen_wrp::EigenMatrixXf > DependencyParsingModule;
+  public:
+    TokenIterator(const StringIndex& stridx,
+                  const std::vector<token_with_analysis_t>& buffer,
+                  std::shared_ptr< StdMatrix<uint32_t> > heads,
+                  size_t offset,
+                  size_t end,
+                  const std::vector<std::string>* rel_names = nullptr)
+      : m_stridx(stridx), m_buffer(buffer), m_heads(heads),
+        m_current(0), m_offset(offset), m_end(end - offset), m_rel_names(rel_names)
+    {
+      assert(end > offset + 1);
+    }
+
+    inline bool end() const
+    {
+      return m_current >= m_end;
+    }
+
+    inline token_flags_t flags() const
+    {
+      assert(! end());
+      return m_buffer[m_current].m_flags;
+    }
+
+    inline uint16_t token_offset() const
+    {
+      return m_buffer[m_current].m_offset;
+    }
+
+    inline uint16_t token_len() const
+    {
+      return m_buffer[m_current].m_len;
+    }
+
+    inline uint32_t form_idx() const
+    {
+      return m_buffer[m_current].m_form_idx;
+    }
+
+    inline uint32_t lemma_idx() const
+    {
+      throw std::runtime_error("TokenIterator::lemma_idx");
+      return 0;
+    }
+
+    inline uint32_t head() const
+    {
+      return m_heads->get(m_current, 0);
+    }
+
+    // Predicted deprel (relation label) id, or 0 if the model has no label decoder.
+    inline uint32_t rel() const
+    {
+      return (m_heads->size() >= 2) ? m_heads->get(m_current, 1) : 0;
+    }
+
+    // Predicted deprel as a string ("dep" if no vocabulary is available).
+    inline const char* deprel() const
+    {
+      if (nullptr != m_rel_names && rel() < m_rel_names->size())
+      {
+        return (*m_rel_names)[rel()].c_str();
+      }
+      return "dep";
+    }
+
+    inline const char* form() const
+    {
+      assert(! end());
+      const std::string& f = m_stridx.get_str(m_buffer[m_current].m_form_idx);
+      return f.c_str();
+    }
+
+    inline const char* lemma() const
+    {
+      assert(! end());
+      const std::string& f = m_stridx.get_str(m_buffer[m_current].m_lemm_idx);
+      return f.c_str();
+    }
+
+    inline void next()
+    {
+      m_current++;
+    }
+
+    inline void reset(size_t position = 0)
+    {
+      m_current = position;
+    }
+
+    inline size_t position() const
+    {
+      return m_current;
+    }
+
+    inline uint8_t token_class(size_t cls_idx) const
+    {
+      assert(m_offset == 0);
+      uint8_t val = m_buffer[m_current].m_classes[cls_idx];
+      return val;
+    }
+  };
 
   typedef std::function < void (const StringIndex& stridx,
                                 const std::vector<token_with_analysis_t>& tokens,
@@ -253,8 +254,9 @@ public:
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
-      m_stridx_ptr(stridx)//,
-      // m_stridx(*stridx)
+      m_stridx_ptr(stridx),
+      // m_stridx(*stridx),
+      m_impl()
   {
     assert(m_buffer_size > 0);
     assert(num_buffers > 0);
@@ -293,6 +295,12 @@ public:
     m_output_callback = fn;
   }
 
+  // deprel id -> string mapping from the model; empty if the model has no
+  // label decoder (in that case TokenIterator::deprel() falls back to "dep").
+  const std::vector<std::string>& get_rel_class_names() const {
+    return m_impl.get_rel_class_names();
+  }
+
   void setStringIndex(std::shared_ptr<deeplima::StringIndex> stringIndexPtr) {
     m_stridx_ptr = stringIndexPtr;
     // m_stridx = StringIndex(*m_stridx_ptr;
@@ -325,9 +333,10 @@ public:
     }
   }
 
+  // Apply the model to the sequence of tokens given by iter from the tagger
   void operator()(TokenSequenceAnalyzer<>::TokenIterator& iter)
   {
-    // std::cerr << "DependencyParser::operator()" << std::endl;
+    // std::cerr << "DependencyParser::operator(TokenSequenceAnalyzer<>::TokenIterator& iter)" << std::endl;
     if (m_current_timepoint >= m_buffer_size)
     {
       acquire_buffer();
@@ -352,7 +361,7 @@ public:
         token.m_len = 0;
         token.m_form_idx = m_stridx_ptr->get_idx("<ROOT>");
         // std::cerr << "<ROOT>" << std::endl;
-        token.m_flags = impl::token_t::token_flags_t(segmentation::token_pos::flag_t::none);
+        token.m_flags = token_flags_t::none;
         token.m_lemm_idx = token.m_form_idx;
         insert_root = false;
         tokens_to_process--;
@@ -378,8 +387,8 @@ public:
           token.m_classes[i] = iter.token_class(i);
         }
 
-        if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
-            iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
+        if (iter.flags() & token_flags_t::sentence_brk ||
+            iter.flags() & token_flags_t::paragraph_brk)
         {
           insert_root = true;
         }
@@ -498,13 +507,31 @@ protected:
       //           << "; m_buffer_size=" << m_buffer_size
       //           << "; token=" << iter.form() << std::endl;
 
-      if (iter.flags() & segmentation::token_pos::flag_t::sentence_brk ||
-          iter.flags() & segmentation::token_pos::flag_t::paragraph_brk)
+      if (iter.flags() & token_flags_t::sentence_brk ||
+          iter.flags() & token_flags_t::paragraph_brk)
       {
-        break;
-        // lengths.push_back(this_sentence_tokens);
-        // tokens_counter += this_sentence_tokens;
-        // this_sentence_tokens = 1;
+        // End of a sentence. Record its length (including its synthetic root) and
+        // keep accumulating the following sentences into the SAME buffer, each
+        // with its own root. They are then analysed together in one pass and
+        // written to distinct output regions (predict() advances by length),
+        // instead of one slot per sentence all writing at output offset 0 (which
+        // made a shorter following sentence overwrite the previous one).
+        lengths.push_back(this_sentence_tokens);
+        tokens_counter += this_sentence_tokens;
+        iter.next();
+        if (iter.end())
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        // Need room for at least the next sentence's root + one token.
+        if (m_current_timepoint + tokens_counter + 2 > m_buffer_size)
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        this_sentence_tokens = 1; // synthetic root of the next sentence
+        continue;
       }
 
       if (m_current_timepoint + tokens_counter + this_sentence_tokens == m_buffer_size)
@@ -545,10 +572,379 @@ protected:
   std::vector<tokens_with_analysis_t> m_buffers;
   std::vector<size_t> m_lengths;
 
-  DependencyParsingModule m_impl;
+#ifdef DP_VECTORIZER_WITH_PRECOMPUTING
+  using Vectorizer = FeaturesVectorizerWithPrecomputing<
+                                      tagging::impl::EntityTaggingClassifier,
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t>;
+#elif DP_VECTORIZER_WITH_CACHE
+  using Vectorizer = FeaturesVectorizerWithCache<
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t>;
+#else
+  using Vectorizer = deeplima::graph_dp::eigen_impl::FeaturesVectorizer<
+                                      enriched_token_buffer_t,
+                                      typename enriched_token_buffer_t::token_t>;
+#endif
+using Matrix = eigen_wrp::EigenMatrixXf;
+class GraphDpImpl: public deeplima::graph_dp::impl::GraphDependencyParser
+{
+public:
+
+  GraphDpImpl() :
+      m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+      m_current_slot_timepoints(0),
+      m_current_slot_no(-1),
+      m_last_completed_slot(-1),
+      m_curr_buff_idx(0)
+  {}
+
+  // GraphDpImpl(
+  //     size_t threads,
+  //     size_t buffer_size_per_thread
+  //   )
+  //   : deeplima::graph_dp::impl::GraphDependencyParser(
+  //       0 /* TODO: FIX ME */, 4, threads * 2, buffer_size_per_thread, threads),
+  //     m_fastText(std::make_shared<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>>()),
+  //     m_current_timepoint(deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint())
+  // {
+  // }
+
+  std::shared_ptr<EmbdUInt64Float> convert(const EmbdStrFloat& src)
+  {
+    auto d = src.get_int_dict<EmbdUInt64Float::value_t>();
+    auto t = src.get_tensor().transpose();
+    auto p = std::make_shared<EmbdUInt64Float>();
+    p->init(d, t);
+
+    return p;
+  }
+
+  virtual void load(const std::string& fn, const PathResolver& path_resolver)
+  {
+    deeplima::graph_dp::impl::GraphDependencyParser::load(fn);
+
+    m_featVectorizers.resize(this->get_input_str_dicts().size());
+    for (size_t i = 0; i < this->get_input_str_dicts().size(); ++i)
+    {
+      //auto d = (this->get_input_str_dicts()[i]);
+      m_featVectorizers[i] = convert(this->get_input_str_dicts()[i]);
+    }
+
+    m_fastText->load(path_resolver.resolve("embd", deeplima::graph_dp::impl::GraphDependencyParser::get_embd_fn(0), {"bin", "ftz"}));
+  }
+
+  void init(size_t threads,
+            size_t num_buffers,
+            size_t buffer_size_per_thread,
+            StringIndex& stridx,
+            const std::vector<std::string>& class_names)
+  {
+    m_fastText->get_words([&stridx](const std::string& word){ stridx.get_idx(word); });
+
+    std::vector<typename Vectorizer::feature_descr_t> feats;
+    feats.reserve(1/* + m_featVectorizers.size()*/);
+    feats.emplace_back(Vectorizer::str_feature, "form", m_fastText);
+
+    // Match the parser's required input features to the tagger's output columns
+    // by NAME rather than by position. The parser's input dimension is fixed by
+    // the model, so we iterate the features it expects (index 0 is "raw"/form,
+    // handled above). For each, we look up the tagger column producing it. Morph
+    // classes the tagger does not produce are fed UNK; tagger classes the parser
+    // does not need (e.g. xpos) are simply ignored. This tolerates tagger/parser
+    // feature-set and ordering drift between independently trained models.
+    const auto& dp_input_names =
+        deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names();
+    for (size_t j = 0; j + 1 < dp_input_names.size(); ++j)
+    {
+      const std::string& feat_name = dp_input_names[j + 1];
+
+      size_t tagger_col = Vectorizer::uint_feat_extractor_t::NO_COLUMN;
+      for (size_t i = 0; i < class_names.size(); ++i)
+      {
+        if (class_names[i] == feat_name)
+        {
+          tagger_col = i;
+          break;
+        }
+      }
+
+      if (Vectorizer::uint_feat_extractor_t::NO_COLUMN == tagger_col)
+      {
+        std::cerr << "Warning: tagger does not produce feature '" << feat_name
+                  << "' expected by the dependency parser; using UNK." << std::endl;
+      }
+
+      feats.emplace_back(Vectorizer::int_feature, feat_name, m_featVectorizers[j]);
+      m_vectorizer.get_uint_feat_extractor().add_feature(feat_name, tagger_col);
+    }
+    // for (const auto& class_name: class_names)
+    // {
+    //   int i = 0;
+    //   for (const auto& input_str_dicts_names: deeplima::graph_dp::impl::GraphDependencyParser::get_input_str_dicts_names())
+    //   {
+    //     if (class_name == input_str_dicts_names)
+    //     {
+    //       feats.emplace_back(Vectorizer::int_feature,
+    //                         class_name,
+    //                         m_featVectorizers[i]);
+    //
+    //       m_vectorizer.get_uint_feat_extractor().add_feature(class_name, i);
+    //       break;
+    //     }
+    //     i++;
+    //   }
+    // }
+    m_vectorizer.init_features(feats);
+
+    m_vectorizer.set_model(this);
+
+    deeplima::graph_dp::impl::GraphDependencyParser::init(m_vectorizer.dim(),
+                          0, num_buffers, buffer_size_per_thread, threads,
+                          m_vectorizer.is_precomputing());
+
+    m_current_timepoint = deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint();
+  }
+
+  void precompute_inputs(const typename Vectorizer::dataset_t& buffer)
+  {
+    m_vectorizer.precompute(buffer);
+  }
+
+  typedef std::function < void (std::shared_ptr< StdMatrix<uint32_t> > classes,
+                                size_t begin, size_t end, size_t slot_idx) > tagging_callback_t;
+
+  virtual void register_handler(const tagging_callback_t fn)
+  {
+    m_callback = fn;
+  }
+
+  virtual ~GraphDpImpl()
+  {
+    // std::cerr << "~GraphDpImpl" << std::endl;
+  }
+
+protected:
+
+  inline void increment_timepoint(uint64_t& timepoint)
+  {
+    assert(m_current_slot_timepoints > 0);
+    deeplima::graph_dp::impl::GraphDependencyParser::increment_timepoint(timepoint);
+    m_current_slot_timepoints--;
+  }
+
+  inline void send_results(int32_t slot_idx)
+  {
+    // uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+    // std::cerr << "GraphDpImpl::send_results " << slot_idx+1
+    //       << " (lock_count=" << int(lock_count) << ")\n";
+    uint64_t from = deeplima::graph_dp::impl::GraphDependencyParser::get_slot_begin(slot_idx);
+    const uint64_t to = deeplima::graph_dp::impl::GraphDependencyParser::get_slot_end(slot_idx);
+    // std::cerr << "GraphDpImpl::send_results " << slot_idx+1 << ", from=" << from << ", to=" << to << std::endl;
+
+    m_callback(deeplima::graph_dp::impl::GraphDependencyParser::get_output(), from, to, slot_idx);
+
+    deeplima::graph_dp::impl::GraphDependencyParser::decrement_lock_count(slot_idx);
+    m_last_completed_slot = slot_idx;
+  }
+
+public:
+  inline void send_next_results()
+  {
+    auto slot_idx = m_last_completed_slot;
+    // std::cerr << "GraphDpImpl::send_next_results " << slot_idx+1 << std::endl;
+    if (-1 == slot_idx)
+    {
+      slot_idx = 0;
+    }
+    else
+    {
+      slot_idx = deeplima::graph_dp::impl::GraphDependencyParser::next_slot(slot_idx);
+    }
+    // int a=0;
+    uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+    // std::cerr << "GraphDpImpl::send_next_results " << slot_idx+1
+    //           << " (lock_count=" << int(lock_count) << ")" << std::endl;
+
+    while (lock_count > 1)
+    {
+      // Worker still uses this slot. Waiting...
+      // std::cerr << "GraphDpImpl::send_next_results: waiting for slot " << slot_idx+1
+      //      << " (lock_count==" << int(lock_count) << ")\n";
+      // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+      deeplima::graph_dp::impl::GraphDependencyParser::wait_for_slot(slot_idx);
+      lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+    }
+    if (1 == lock_count)
+    {
+      // Data is ready. We can return it to caller
+      send_results(slot_idx);
+    }
+  }
+
+  inline void send_all_results()
+  {
+    auto slot_idx = m_last_completed_slot;
+    // std::cerr << "GraphDpImpl::send_all_results" << slot_idx << std::endl;
+    while (true)
+    {
+      if (-1 == slot_idx)
+      {
+        slot_idx = 0;
+      }
+      else
+      {
+        slot_idx = deeplima::graph_dp::impl::GraphDependencyParser::next_slot(slot_idx);
+      }
+
+      uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+      if (0 == lock_count)
+      {
+        // std::cerr << "GraphDpImpl::send_all_results DONE" << std::endl;
+        return;
+      }
+
+      while (lock_count > 1)
+      {
+        // Worker still uses this slot. Waiting...
+        // std::cerr << "GraphDpImpl::send_all_results: waiting for slot " << slot_idx+1
+        //      << " (lock_count==" << int(lock_count) << ")\n";
+        // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+        deeplima::graph_dp::impl::GraphDependencyParser::wait_for_slot(slot_idx);
+        lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+      }
+      if (1 == lock_count)
+      {
+        send_results(slot_idx);
+      }
+    }
+  }
+
+protected:
+  inline void send_results_if_available()
+  {
+    auto slot_idx = m_last_completed_slot;
+    if (-1 == slot_idx)
+    {
+      slot_idx = 0;
+    }
+    else
+    {
+      slot_idx = deeplima::graph_dp::impl::GraphDependencyParser::next_slot(slot_idx);
+    }
+
+    uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_idx);
+
+    if (1 == lock_count)
+    {
+      // Data is ready. We can return it to caller
+      send_results(slot_idx);
+    }
+  }
+
+  inline void acquire_slot(size_t slot_no)
+  {
+    // m_current_slot_no = deeplima::graph_dp::impl::GraphDependencyParser::get_slot_idx(m_current_timepoint);
+    uint8_t lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; current lock count: " << int(lock_count) << std::endl;
+    // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+
+    while (lock_count > 1)
+    {
+      // Worker still uses this slot. Waiting...
+      // std::cerr << "GraphDpImpl::acquiring_slot, waiting for slot " << (slot_no+1)
+      //      << " lock_count=" << int(lock_count) << std::endl;
+      // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+      deeplima::graph_dp::impl::GraphDependencyParser::wait_for_slot(slot_no);
+      lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    }
+    if (1 == lock_count)
+    {
+      // Data is ready. We can return it to caller
+      send_results(slot_no);
+    }
+
+    lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; before increment_lock_count: " << int(lock_count) << std::endl;
+    // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+    deeplima::graph_dp::impl::GraphDependencyParser::increment_lock_count(slot_no);
+    lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // std::cerr << "GraphDpImpl::acquiring_slot: " << (slot_no+1) << "; after increment_lock_count: " << int(lock_count) << std::endl;
+    // deeplima::graph_dp::impl::GraphDependencyParser::pretty_print();
+  }
+
+public:
+  virtual void handle_token_buffer(size_t slot_no,
+                                   size_t first_timepoint_idx,
+                                   const typename Vectorizer::dataset_t& buffer,
+                                   const std::vector<size_t>& lengths,
+                                   int timepoints_to_analyze = -1)
+  {
+    // int lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // std::cerr << "GraphDpImpl::handle_token_buffer " << (slot_no+1) << ", "
+    //           << first_timepoint_idx
+    //           << ", lengths=" << lengths
+    //           << ", " << timepoints_to_analyze
+    //           << "; lock_count=" << lock_count << std::endl;
+    send_results_if_available();
+    acquire_slot(slot_no);
+    // size_t offset = slot_no * buffer.size() + deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint();
+    size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
+    for (size_t i = 0; i < count; i++)
+    {
+      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), /*offset +*/ i, buffer[i]);
+    }
+
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_lengths(slot_no, lengths);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, first_timepoint_idx);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, /*offset +*/ count);
+
+    // auto& slot = deeplima::graph_dp::impl::GraphDependencyParser::m_slots[slot_no];
+
+    // lock_count = deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no);
+    // std::cerr << "GraphDpImpl::handle_token_buffer slot " << (slot_no+1) << " retrieved: input="
+    //           << slot.m_input_begin << ", " << slot.m_input_end << "; output="
+    //           << slot.m_output_begin << ", " << slot.m_output_end << ", lock_count=" << lock_count
+    //           << std::endl;
+
+    deeplima::graph_dp::impl::GraphDependencyParser::start_job(slot_no, timepoints_to_analyze > 0);
+    // std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
+  }
+
+  inline void no_more_data(size_t slot_no)
+  {
+    if (!deeplima::graph_dp::impl::GraphDependencyParser::get_slot_started(slot_no))
+    {
+      while (deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no) > 1)
+      {
+        deeplima::graph_dp::impl::GraphDependencyParser::decrement_lock_count(slot_no);
+      }
+      deeplima::graph_dp::impl::GraphDependencyParser::start_job(slot_no, true);
+    }
+  }
+
+protected:
+  Vectorizer m_vectorizer;
+  std::shared_ptr<FastTextVectorizer<eigen_wrp::EigenMatrixXf::matrix_t, Eigen::Index>> m_fastText;
+  std::vector<std::shared_ptr<FeatureVectorizerBase<Eigen::Index>>> m_featVectorizers;
+
+  tagging_callback_t m_callback;
+
+  uint64_t m_current_timepoint;
+  uint32_t m_current_slot_timepoints;
+
+  int32_t m_current_slot_no;
+  int32_t m_last_completed_slot;
+
+  size_t m_curr_buff_idx;
+};
+
+  GraphDpImpl m_impl;
 
   output_callback_t m_output_callback;
 };
+
+
 
 } // deeplima
 

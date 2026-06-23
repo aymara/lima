@@ -118,15 +118,11 @@ operator()(const LinguisticAnalysisStructure::AnalysisGraph& anagraph,
   {
     semanticData = std::make_shared<SemanticRelationData>();
     analysis.setData("SemanticRelationData", semanticData);
-
   }
-
   return semanticData->relation(vertex1,vertex2,m_semanticRelationType);
-
 }
 
 
-
-} // end namespace
-} // end namespace
-} // end namespace
+} // end namespace SemanticAnalysis
+} // end namespace LinguisticProcessing
+} // end namespace Lima

@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <regex>
 
 #include <boost/filesystem.hpp>
@@ -81,7 +82,16 @@ void Annotation::load(const std::string& fn)
     throw invalid_argument(string("Can't open file \"") + fn + "\"");
   }
 
-  load(input);
+  try
+  {
+    load(input);
+  }
+  catch (const std::runtime_error& e)
+  {
+    std::cerr << "Annotation::load runtime_error while loading "
+              << fn << " :" << std::endl << e.what() << std::endl;
+    throw;
+  }
 }
 
 void Annotation::load(std::istream& input)
@@ -269,35 +279,61 @@ bool Annotation::test_structure() const
   for (const Sentence & sent : m_sentences)
   {
     if (sent.m_first_token_line < sent.m_first_line)
+    {
+      std::cerr << "test_structure failure: first token before first line" << sent.m_first_token_line
+                << " / " << sent.m_first_line << std::endl;
       return false;
+    }
     if (last_sent_end > 0)
     {
       if (sent.m_first_line <= last_sent_end)
+      {
+        std::cerr << "test_structure failure: first line before last sentence end"
+                  << sent.m_first_line << " / " << last_sent_end << std::endl;
         return false;
+      }
     }
 
     for (size_t i = sent.m_first_line; i < sent.m_first_token_line; i++)
     {
       if (i >= m_lines.size())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
 
       if (!m_lines[i].is_comment_line())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
 
       if (m_lines[i].is_empty_line() || m_lines[i].is_token_line())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
     }
 
     for (size_t i = sent.m_first_token_line; i < sent.m_first_token_line + sent.m_num_tokens; i++)
     {
       if (i >= m_lines.size())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
 
       if (!m_lines[i].is_token_line())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
 
       if (m_lines[i].is_empty_line() || m_lines[i].is_comment_line())
+      {
+        std::cerr << "test_structure failure at line " << i << ": " << std::endl;
         return false;
+      }
     }
 
     last_sent_end = sent.m_first_line + sent.m_num_tokens;
@@ -351,7 +387,7 @@ bool idx_t::parse(const std::string& s)
 
   size_t i = 0;
   size_t value = stoi(s, &i);
-  if (value > numeric_limits<base_int_t>::max())
+  if (value > std::numeric_limits<base_int_t>::max())
   {
     throw std::overflow_error("Id too big for word \"" + s + "\"");
   }

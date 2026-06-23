@@ -36,13 +36,17 @@ if (EIGEN3_FOUND)
             lima-lp-specificentities
             lima-lp-applyrecognizer
             lima-common
-            ICU::uc
+            ${ICU_LIBRARIES}
+            conllu
             convert_from_torch-shared
             fasttext-static
             utils
             morph_model
             static_graph
+            lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
+            ${Boost_LIBRARIES}
             )
 
     set_target_properties(lima-lp-rnn-ner PROPERTIES

@@ -57,6 +57,9 @@ public:
   uint64_t getLength() const { return m_length; }
   const std::string& getType() const { return m_type; }
 
+  LIMA_TEXTSEGMENTATION_EXPORT  friend std::ostream& operator<<(std::ostream& os, const Segment& seg);
+  LIMA_TEXTSEGMENTATION_EXPORT  friend QDebug& operator<<(QDebug& os, const Segment& seg);
+
 private:
   LinguisticGraphVertex m_begin; /*< the vertex before the first vertex of the segment */
   LinguisticGraphVertex m_end;   /*< the vertex after the last vertex of the segment */
@@ -67,20 +70,19 @@ private:
 
 // class to store segmentation data: a list of segments, defined by their position and length and a type
 class LIMA_TEXTSEGMENTATION_EXPORT SegmentationData : public AnalysisData
-// ??OME2 class SegmentationData : public AnalysisData, public std::vector<Segment>
 {
  public:
   explicit SegmentationData(const std::string& sourceGraph="");
   ~SegmentationData();
 
   void add(const Segment& s);
-// ??OME2 const std::vector<Segment>& getSegments() const { return *this; }
   const std::vector<Segment>& getSegments() const { return m_segments; }
   std::vector<Segment>& getSegments() { return m_segments; }
 
   inline const std::string& getGraphId() const { return m_graphId; }
-  std::vector<Segment> m_segments;
+
  private:
+  std::vector<Segment> m_segments;
   std::string m_graphId;
 };
 

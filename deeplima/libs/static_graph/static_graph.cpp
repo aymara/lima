@@ -187,11 +187,12 @@ void StaticGraphImpl::pretty_dump(ostream &stream) const
 
 void StaticGraphImpl::to(torch::Device device, bool non_blocking)
 {
-  for (auto m : m_embedding) m->to(device);
-  for (auto m : m_lstm) m->to(device);
-  for (auto m : m_linear) m->to(device);
-  for (auto m : m_dropout) m->to(device);
-  for (auto m : m_deep_biaffine_attention_decoder) m->to(device);
+  for (auto& m : m_embedding) m->to(device);
+  for (auto& m : m_lstm) m->to(device);
+  for (auto& m : m_linear) m->to(device);
+  for (auto& m : m_dropout) m->to(device);
+  for (auto& m : m_deep_biaffine_attention_decoder) m->to(device);
+  for (auto& m : m_deep_biaffine_attention_label_decoder) m->to(device);
   torch::nn::Module::to(device, non_blocking);
   // cerr << "StaticGraphImpl::to( " << device << " )" << std::endl;
 }
@@ -370,6 +371,26 @@ void StaticGraphImpl::parse_script(const string& script)
               {
                 torch_modules::DeepBiaffineAttentionDecoder& m
                     = m_deep_biaffine_attention_decoder[module_ref.m_idx];
+                vector<size_t>& inputs = op.m_inputs;
+                vector<size_t>& outputs = op.m_outputs;
+
+                if (inputs.size() != 1 || outputs.size() != 1)
+                {
+                  throw std::runtime_error("Error in static graph");
+                }
+
+                op.m_fn = [&m, inputs, outputs](context_t& ctx)
+                {
+                  auto out = m->forward(ctx.m_tensors[inputs[0]]);
+                  ctx.m_tensors[outputs[0]] = out;
+                };
+              }
+              break;
+
+            case module_type_t::deep_biaffine_attention_label_decoder:
+              {
+                torch_modules::DeepBiaffineAttentionLabelDecoder& m
+                    = m_deep_biaffine_attention_label_decoder[module_ref.m_idx];
                 vector<size_t>& inputs = op.m_inputs;
                 vector<size_t>& outputs = op.m_outputs;
 
@@ -638,6 +659,14 @@ StaticGraphImpl::step_descr_t StaticGraphImpl::parse_script_line(const std::stri
     {
       create_submodule_DeepBiaffineAttentionDecoder(names_list, opts);
     }
+    else if (cls == "DeepBiaffineAttentionLabelDecoder")
+    {
+      create_submodule_DeepBiaffineAttentionLabelDecoder(names_list, opts);
+    }
+    // else if (cls == "StanzaDepparseParser")
+    // {
+    //   create_submodule_StanzaDepparseParser(names_list, opts);
+    // }
     else if (cls == "Arg")
     {
       create_arg(step.m_names, opts);
@@ -745,7 +774,10 @@ void StaticGraphImpl::create_submodule_Embedding(const std::string& name, const 
   int64_t dict_idx = get_option<int64_t>(opts, "dict");
   int64_t dim = get_option<int64_t>(opts, "dim");
 
-  torch::nn::Embedding m(m_dicts[dict_idx]->size(), dim);
+  // A feature whose dict is empty for the corpus would otherwise create a
+  // zero-row embedding and crash on any lookup; give it at least one row.
+  int64_t num_embeddings = std::max<int64_t>(m_dicts[dict_idx]->size(), 1);
+  torch::nn::Embedding m(num_embeddings, dim);
   m_embedding.push_back(m);
   m_modules[name] = module_ref_t(module_type_t::embedding, m_embedding.size() - 1);
   // m->pretty_print(cerr);
@@ -866,6 +898,48 @@ void StaticGraphImpl::create_submodule_DeepBiaffineAttentionDecoder(const string
   register_module(name, m);
 }
 
+void StaticGraphImpl::create_submodule_DeepBiaffineAttentionLabelDecoder(const string& name, const map<string, string>& opts)
+{
+  int64_t input_dim = get_option<int64_t>(opts, "input_dim");
+  int64_t hidden_dim = get_option<int64_t>(opts, "hidden_dim");
+  int64_t num_labels = get_option<int64_t>(opts, "num_labels");
+  bool input_includes_root = get_bool_option(opts, "input_includes_root");
+
+  torch_modules::DeepBiaffineAttentionLabelDecoder m(input_dim, hidden_dim, num_labels, input_includes_root);
+  m_deep_biaffine_attention_label_decoder.push_back(m);
+  m_modules[name] = module_ref_t(module_type_t::deep_biaffine_attention_label_decoder, m_deep_biaffine_attention_label_decoder.size() - 1);
+  register_module(name, m);
+}
+
+// void StaticGraphImpl::create_submodule_StanzaDepparseParser(const string& name, const map<string, string>& opts)
+// {
+//   int64_t word_emb_dim = get_option<int64_t>(opts, "word_emb_dim");
+//   int64_t tag_emb_dim = get_option<int64_t>(opts, "tag_emb_dim");
+//   int64_t hidden_dim = get_option<int64_t>(opts, "hidden_dim");
+//   int64_t num_layers = get_option<int64_t>(opts, "num_layers");
+//   int64_t deep_biaff_hidden_dim = get_option<int64_t>(opts, "deep_biaff_hidden_dim");
+//   int64_t word_dropout = get_option<int64_t>(opts, "word_dropout");
+//   float dropout = get_option<int64_t>(opts, "dropout");
+//   float rec_dropout = get_option<int64_t>(opts, "rec_dropout");
+//   bool linearize = get_option<int64_t>(opts, "linearize");
+//   bool dist = get_option<int64_t>(opts, "dist");
+//
+//   std::shared_ptr<std::map<std::string, std::vector<std::string>>> vocab;
+//   std::shared_ptr<std::vector<std::vector<std::string>>> feats_vocabs;
+//
+//   m_stanza_depparse_parser = std::make_shared<torch_modules::StanzaDepparseParser>(
+//       word_emb_dim, tag_emb_dim, hidden_dim,
+//       num_layers, dropout, rec_dropout,
+//       vocab,
+//       feats_vocabs,
+//       deep_biaff_hidden_dim,
+//       linearize,
+//       dist,
+//       word_dropout);
+//   m_modules[name] = module_ref_t(module_type_t::deep_biaffine_attention_decoder, m_deep_biaffine_attention_decoder.size() - 1);
+//   register_module(name, *m_stanza_depparse_parser);
+// }
+
 void StaticGraphImpl::init_rnns()
 {
   for (torch::nn::LSTM &m : m_lstm)
@@ -893,4 +967,3 @@ void StaticGraphImpl::init_rnns()
 
 } // namespace nets
 } // namespace deeplima
-

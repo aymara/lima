@@ -110,6 +110,7 @@ DictsHolder build_char_dicts(const form2lemma_t& form2lemma, StringIndex& str_id
   return d;
 }
 
+// TODO add use shallow fixed classes
 set<morph_model::feat_base_t> find_fixed(const morph_model::morph_model_t& lang_morph_model,
                 const form2lemma_t& form2lemma,
                 /*const*/ StringIndex& str_idx // TODO: str_idx must be const here
@@ -151,11 +152,12 @@ set<morph_model::feat_base_t> find_fixed(const morph_model::morph_model_t& lang_
     }
   }
 
-  for ( const auto k : fixed_upos )
+  for ( const auto& k : fixed_upos )
   {
-    cout << "Fixed UPOS: " << lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(k)) << endl;
+    std::cout << "Fixed UPOS: " << lang_morph_model.decode_upos_to_str(morph_model::morph_feats_t(k))
+              << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
 
   return fixed_upos;
 }
@@ -243,7 +245,7 @@ void vectorize_dataset(const morph_model::morph_model_t& lang_morph_model,
                   << lang_morph_model.to_string(enc_form.m_feats) << std::endl;*/
         for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
         {
-          auto feat_value = lang_morph_model.decode_feat(enc_form.m_feats, feat_idx);
+          const auto& feat_value = lang_morph_model.decode_feat(enc_form.m_feats, feat_idx);
           //std::cerr << " " << feat_value;
           cat_input[feat_idx].set(0, sample_no, feat_value);
         }
@@ -298,9 +300,9 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   StringIndex str_idx;
 
   form2lemma_t form2lemma, dev_form2lemma;
-  for (auto it = train_data.words_begin(); it != train_data.words_end(); it++)
+  for (const auto& word: train_data.words())
   {
-    const CoNLLU::CoNLLULine& line = train_data.get_line((*it).m_line_idx);
+    const CoNLLU::CoNLLULine& line = train_data.get_line(word.m_line_idx);
     if (line.is_foreign() || line.is_typo())
     {
       continue;
@@ -323,9 +325,9 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     dh = build_char_dicts(form2lemma, str_idx);
   }
 
-  for (auto it = dev_data.words_begin(); it != dev_data.words_end(); it++)
+  for (const auto& word: dev_data.words())
   {
-    const CoNLLU::CoNLLULine& line = dev_data.get_line((*it).m_line_idx);
+    const CoNLLU::CoNLLULine& line = dev_data.get_line(word.m_line_idx);
     if (line.is_foreign() || line.is_typo())
     {
       continue;
@@ -334,11 +336,13 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     const string& lemma = line.lemma();
     StringIndex::idx_t form_id = str_idx.get_idx(form);
     StringIndex::idx_t lemma_id = str_idx.get_idx(lemma);
-    u32string temp = str_idx.get_ustr(form_id);
-    temp = str_idx.get_ustr(lemma_id);
+    // store form in the strings index
+    str_idx.get_ustr(form_id);
+    // store lemma in the strings index
+    str_idx.get_ustr(lemma_id);
 
-    morph_model::morph_feats_t feats = lang_morph_model.convert(line.upos(), line.feats());
-    form_morph_t k = form_morph_t(form_id, feats);
+    auto feats = lang_morph_model.convert(line.upos(), line.feats());
+    form_morph_t k(form_id, feats);
     if (form2lemma.end() != form2lemma.find(k))
     {
       continue;
@@ -346,7 +350,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     dev_form2lemma[k][lemma_id] += 1;
   }
 
-  set<morph_model::feat_base_t> fixed_upos = find_fixed(lang_morph_model, form2lemma, str_idx);
+  auto fixed_upos = find_fixed(lang_morph_model, form2lemma, str_idx);
 
   // Remove fixed UPOS
   auto is_fixed_pos = [&fixed_upos = static_cast<const set<morph_model::feat_base_t>&>(fixed_upos),
@@ -364,8 +368,10 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   vector<TorchMatrix<int64_t>> train_input_seq, train_gold;
   vector<TorchMatrix<int64_t>> dev_input_seq, dev_gold;
   vector<vector<TorchMatrix<int64_t>>> train_input_cat, dev_input_cat;
-  vectorize_dataset(lang_morph_model, form2lemma, str_idx, dh, 31, train_input_seq, train_input_cat, train_gold);
-  vectorize_dataset(lang_morph_model, dev_form2lemma, str_idx, dh, 31, dev_input_seq, dev_input_cat, dev_gold);
+  vectorize_dataset(lang_morph_model, form2lemma, str_idx, dh, 31,
+                    train_input_seq, train_input_cat, train_gold);
+  vectorize_dataset(lang_morph_model, dev_form2lemma, str_idx, dh, 31,
+                    dev_input_seq, dev_input_cat, dev_gold);
 
   for (auto& t : train_input_seq)
       t.to(device);
@@ -394,7 +400,7 @@ int train_lemmatization(const train_params_lemmatization_t& params)
     for (size_t feat_idx = 0; feat_idx < lang_morph_model.get_feats_count(); ++feat_idx)
     {
       cat_embd_descr.emplace_back(embd_descr_t("cat_" + lang_morph_model.get_feat_name(feat_idx), 8));
-      const std::vector<std::string>& values = lang_morph_model.get_feat_vec_ref(feat_idx);
+      const auto& values = lang_morph_model.get_feat_vec_ref(feat_idx);
       dh.emplace_back(std::make_shared<StringDict>(values));
     }
     string str_fixed_upos = utils::join(fixed_upos.begin(),
@@ -420,7 +426,8 @@ int train_lemmatization(const train_params_lemmatization_t& params)
   for(auto& matrix: train_input_seq) matrix.to(device);
   for(auto& matrix: train_gold) matrix.to(device);
   for(auto& vec: train_input_cat) for(auto& matrix:vec) matrix.to(device);
-  model->train(params, train_input_seq, train_input_cat, train_gold, dev_input_seq, dev_input_cat, dev_gold, optimizer, device);
+  model->train(params, train_input_seq, train_input_cat, train_gold,
+               dev_input_seq, dev_input_cat, dev_gold, optimizer, device);
 
   return 0;
 }

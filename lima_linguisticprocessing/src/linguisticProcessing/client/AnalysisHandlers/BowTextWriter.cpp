@@ -58,7 +58,7 @@ void BowTextWriter::setOut(std::ostream* out)
 
 void BowTextWriter::endAnalysis()
 {
-  if (m_d->m_out == 0)
+  if (m_d->m_out == nullptr)
   {
     BOWLOGINIT;
     LERROR << "BowTextWriter Error: output stream is not set !";
@@ -73,7 +73,7 @@ void BowTextWriter::endDocument()
 
 void BowTextWriter::handle(const char* buf, int length) 
 {
-  if (m_d->m_out == 0)
+  if (m_d->m_out == nullptr)
   {
     BOWLOGINIT;
     LERROR << "BowTextWriter Error: output stream is not set !";
@@ -86,7 +86,7 @@ void BowTextWriter::startAnalysis()
 {
   BOWLOGINIT;
   LDEBUG << "BowTextWriter::startAnalysis";
-  if (m_d->m_out == 0)
+  if (m_d->m_out == nullptr)
   {
     BOWLOGINIT;
     LERROR << "BowTextWriter Error: output stream is not set !";

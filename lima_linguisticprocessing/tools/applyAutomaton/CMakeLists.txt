@@ -9,7 +9,7 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/. ${CMAKE_SOURCE_DIR}/src ${CMAKE
 ########### next target ###############
 
 SET(apply-rules_SRCS
-  lima-lp-applyrecognizer.cpp
+  applyRecognizer.cpp
   apply-rules.cpp
 )
 

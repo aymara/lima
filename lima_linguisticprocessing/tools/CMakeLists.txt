@@ -3,13 +3,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-#add_subdirectory(applyAutomaton) # n'est pas compile dans S2!!!
+# add_subdirectory(applyAutomaton)
 add_subdirectory(automatonCompiler)
-add_subdirectory(common) # executable de s2common
+add_subdirectory(common)
 add_subdirectory(dictionary)
-add_subdirectory(evalCoref)
+# add_subdirectory(evalCoref) # TODO corect boost regex compilation in some contexts
 add_subdirectory(normalize)
-# add_subdirectory(lima-lp-tgv) # --> src/linguisticProcessing/common/lima-lp-tgv
 add_subdirectory(tva)
 add_subdirectory(tvx)
 

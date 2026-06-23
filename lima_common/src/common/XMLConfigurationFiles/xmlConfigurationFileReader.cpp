@@ -39,9 +39,9 @@ public:
   void readGroup();
   void readParam();
   void readList();
-  void readListItem();
+  void readListItem(const QString& listName);
   void readMap();
-  void readMapEntry();
+  void readMapEntry(const QString& mapName);
 
   static inline QString moduleNameAttribute() { return QStringLiteral("name"); }
   static inline QString groupNameAttribute() { return QStringLiteral("name"); }
@@ -59,12 +59,7 @@ public:
     */
   QString m_moduleName;
   QString m_groupName;
-  QString m_listName;
-  QString m_mapName;
 
-  // bools to handle items with attributes
-  bool m_firstItem;
-  bool m_itemWithAttributes;
 
   /*
     * The structure where data will be stored
@@ -74,7 +69,7 @@ public:
 
 XmlConfigurationFileReaderPrivate::XmlConfigurationFileReaderPrivate(ConfigurationStructure& theConfiguration) :
     m_reader(),
-    m_moduleName(""), m_groupName(""), m_listName(""), m_configuration(theConfiguration)
+    m_moduleName(""), m_groupName(""), m_configuration(theConfiguration)
 {}
 
 XmlConfigurationFileReader::XmlConfigurationFileReader(ConfigurationStructure& theConfiguration) :
@@ -219,72 +214,27 @@ void XmlConfigurationFileReaderPrivate::readParam()
 //       </list>
 void XmlConfigurationFileReaderPrivate::readList()
 {
-  m_listName = m_reader.attributes().value(listNameAttribute()).toString();
-  m_firstItem=true;
-  m_itemWithAttributes=false;
+  auto listName = m_reader.attributes().value(listNameAttribute()).toString();
   XMLCFGLOGINIT;
-  LTRACE << "XmlConfigurationFileReader::readList" << m_listName;
+  LTRACE << "XmlConfigurationFileReader::readList" << listName;
+  m_configuration.addListNamedForModuleAndGroup(listName, m_moduleName, m_groupName);
   while (m_reader.readNextStartElement())
   {
     if (m_reader.name() == QLatin1String("item"))
-      readListItem();
+      readListItem(listName);
     else
       m_reader.raiseError(QObject::tr("Expected a list item in list %1 in group %2, in module %3 but got a %4.")
-        .arg(m_listName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
+        .arg(listName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
   }
-  if (m_firstItem)
-  {
-    LTRACE << "XmlConfigurationFileReader::readList add empty list "<< m_listName;
-    m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
-  }
-  m_listName = "";
 }
 
 //         <item value="eng" />
-void XmlConfigurationFileReaderPrivate::readListItem()
+void XmlConfigurationFileReaderPrivate::readListItem(const QString& listName)
 {
   auto value = m_reader.attributes().value(listItemValueAttribute());
   XMLCFGLOGINIT;
   LTRACE << "XmlConfigurationFileReader::readListItem" << value;
-
-  auto nbAtt = m_reader.attributes().length();
-  if (m_firstItem)
-  {
-    // decide if list is simple list or list of items with attributes
-    if (nbAtt==1)
-    {
-      LTRACE << "add simple list "<< m_listName;
-      m_configuration.addListNamedForModuleAndGroup(m_listName, m_moduleName, m_groupName);
-    }
-    else
-    {
-      LTRACE << "add list of items with attributes"<< m_listName;
-      m_configuration.addListOfItemsForModuleAndGroup(m_listName, m_moduleName, m_groupName);
-      m_itemWithAttributes=true;
-    }
-    m_firstItem=false;
-  }
-  else if (nbAtt>1 && !m_itemWithAttributes)
-  {
-    // was indeed in list of item with attributes => has to change
-    m_configuration.changeListToListOfItems(m_listName,m_moduleName,m_groupName);
-    m_itemWithAttributes=true;
-  }
-
-  if (m_itemWithAttributes)
-  {
-    auto itemName = m_reader.attributes().value(listItemValueAttribute());
-    ItemWithAttributes item(itemName.toString());
-    for (const auto& attribute: m_reader.attributes())
-    {
-      item.addAttribute(attribute.name().toString(), attribute.value().toString());
-    }
-    m_configuration.addItemInListOfItemsForModuleAndGroup(item, m_listName, m_moduleName, m_groupName);
-  }
-  else {
-    auto value = m_reader.attributes().value(listItemValueAttribute());
-    m_configuration.addItemInListNamedForModuleAndGroup(value.toString(), m_listName, m_moduleName, m_groupName);
-  }
+  m_configuration.addItemInListNamedForModuleAndGroup(value.toString(), listName, m_moduleName, m_groupName);
   m_reader.skipCurrentElement();
 }
 
@@ -294,79 +244,31 @@ void XmlConfigurationFileReaderPrivate::readListItem()
 //       </map>
 void XmlConfigurationFileReaderPrivate::readMap()
 {
-  m_mapName = m_reader.attributes().value(mapNameAttribute()).toString();
+  auto mapName = m_reader.attributes().value(mapNameAttribute()).toString();
   XMLCFGLOGINIT;
-  LTRACE << " XmlConfigurationFileReaderPrivate::readMap" << m_mapName;
-  m_firstItem=true;
-  m_itemWithAttributes=false;
+  LTRACE << " XmlConfigurationFileReaderPrivate::readMap" << mapName;
+  LTRACE << "XmlConfigurationFileReaderPrivate::readMap add empty map"<< mapName;
+  m_configuration.addMapNamedForModuleAndGroup(mapName, m_moduleName, m_groupName);
   while (m_reader.readNextStartElement())
   {
     if (m_reader.name() == QLatin1String("entry"))
-      readMapEntry();
+      readMapEntry(mapName);
     else
       m_reader.raiseError(QObject::tr("Expected a map entry in map %1 in group %2, in module %3 but got a %4.")
-        .arg(m_mapName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
+        .arg(mapName).arg(m_groupName).arg(m_moduleName).arg(m_reader.name()));
   }
-  if (m_firstItem)
-  {
-    LTRACE << "XmlConfigurationFileReaderPrivate::readMap add empty map"<< m_mapName;
-    m_configuration.addMapNamedForModuleAndGroup(m_mapName, m_moduleName, m_groupName);
-  }
-  m_mapName = "";
 }
 
 //         <entry key="LatticeDown" value="0"/>
-void XmlConfigurationFileReaderPrivate::readMapEntry()
+void XmlConfigurationFileReaderPrivate::readMapEntry(const QString& mapName)
 {
   XMLCFGLOGINIT;
   LTRACE << "XmlConfigurationFileReaderPrivate::readMapEntry";
 
-  auto nbAtt = m_reader.attributes().length();
-  if (m_firstItem)
-  {
-    // decide if map is simple map or map of entries with attributes
-    if (nbAtt==2)
-    { // name+value => simple map
-      LTRACE << "add map list "<< m_mapName;
-      m_configuration.addMapNamedForModuleAndGroup(m_mapName, m_moduleName, m_groupName);
-    }
-    else
-    {
-      LTRACE << "add map of items with attributes "<< m_mapName;
-      m_configuration.addMapOfItemsForModuleAndGroup(m_mapName, m_moduleName, m_groupName);
-      m_itemWithAttributes = true;
-    }
-    m_firstItem = false;
-  }
-  else if (nbAtt>2 && !m_itemWithAttributes)
-  {
-    // was indeed in list of item with attributes => has to change
-    m_configuration.changeMapToMapOfItems(m_mapName, m_moduleName, m_groupName);
-    m_itemWithAttributes = true;
-  }
-
-  if (m_itemWithAttributes)
-  {
-    auto key = m_reader.attributes().value(mapEntryKeyAttribute());
-    auto value = m_reader.attributes().value(mapEntryValueAttribute());
-    ItemWithAttributes item(value.toString());
-    for (const auto& attribute: m_reader.attributes())
-    {
-      auto attName = attribute.name().toString();
-      auto value = attribute.value().toString();
-      if (attName != "key" && attName != "value")
-      {
-        item.addAttribute(attName, value);
-      }
-    }
-    m_configuration.addEntryInMapOfItemsForModuleAndGroup(key.toString(), item, m_mapName, m_moduleName, m_groupName);
-  }
-  else
-  {
-    auto key = m_reader.attributes().value(mapEntryKeyAttribute());
-    auto value = m_reader.attributes().value(mapEntryValueAttribute());
-    m_configuration.addEntryInMapNamedForModuleAndGroup(key.toString(), value.toString(), m_mapName, m_moduleName, m_groupName);
-  }
+  auto key = m_reader.attributes().value(mapEntryKeyAttribute());
+  auto value = m_reader.attributes().value(mapEntryValueAttribute());
+  m_configuration.addEntryInMapNamedForModuleAndGroup(
+    key.toString(), value.toString(), mapName, m_moduleName, m_groupName);
   m_reader.skipCurrentElement();
 }
 

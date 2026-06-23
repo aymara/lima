@@ -273,6 +273,12 @@ void readSDocuments(ifstream& fileIn, BoWDocument* document, BoWBinaryReader& re
       cout << writer << endl;
       break;
     }
+    default:
+    {
+      std::string err_msg = "Unsupported BoWBlocType.";
+      std::cerr << "Error: " << err_msg << std::endl;
+      throw LimaException(err_msg);
+    }
   }
   if (bt!=BagOfWords::BoWBlocType::END_BLOC)
   {

@@ -136,7 +136,7 @@ The rule is applied to the longuest match (specification). But during the trigge
 During the triggering, function *adEntityFeature* is called more than one time.
 Once with the parameter P as firstname and a second one with the parameter P as lastname.
 
-The better is to be able to call function *adEntityFeature* as a side effect of applying the rule, only for the node actuallly matching the rule as in the following example:
+The better is to be able to call function *addEntityFeature* as a side effect of applying the rule, only for the node actuallly matching the rule as in the following example:
 
     @Firstname:[(@Title|@FunctionTitle)?]:(@Initial .?)? (T_A1|T_Amh|$NP){1-2}:PERSON:
     =>AddEntityFeature(trigger.1,"firstname")

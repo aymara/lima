@@ -8,7 +8,9 @@
 
 #include <iostream>
 
-#include "segmentation.h"
+// #include "deeplima/segmentation/impl/segmentation_impl.h"
+
+#include "deeplima/token_type.h"
 
 namespace deeplima
 {
@@ -73,7 +75,7 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v)
 }
 
 bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<int>& color,
-         int& cycle_start, int& cycle_end)
+         uint32_t& cycle_start, uint32_t& cycle_end)
 {
     // std::cerr << "dfs " << v << ", " << heads << ", " << color << ", " << cycle_start << ", " << cycle_end << std::endl;
     color[v] = 1;
@@ -102,9 +104,9 @@ bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
   // std::cerr << "find_cycle " << heads << ", " << root << std::endl;
   uint32_t n = heads.size();
   std::vector<int> color;
-  int32_t cycle_start, cycle_end = 0;
+  uint32_t cycle_start = std::numeric_limits<uint32_t>::max();
+  uint32_t cycle_end = 0;
   color.assign(n, 0);
-  cycle_start = -1;
 
   for (uint32_t v = 1; v < n; v++)
   {
@@ -113,7 +115,7 @@ bool find_cycle(std::vector<uint32_t>& heads, uint32_t root)
         break;
   }
 
-  if (cycle_start == -1 || cycle_start == root)
+  if (cycle_start == std::numeric_limits<uint32_t>::max() || cycle_start == root)
   {
     // std::cerr << "Acyclic" << std::endl;
     return false;
@@ -158,6 +160,11 @@ public:
     : m_token_counter(0) { }
 
   virtual ~AbstractDumper() { }
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 };
 
 class Horizontal : public AbstractDumper
@@ -199,8 +206,8 @@ public:
       }
       std::cout << str << " ";
 
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "Horizontal endl" << std::endl;
         std::cout << std::endl;
@@ -265,8 +272,8 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          tokens[i].m_flags & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (tokens[i].m_flags & token_flags_t::sentence_brk ||
+          tokens[i].m_flags & token_flags_t::paragraph_brk)
       {
         // std::cerr << "TokensToConllU end of sentence" << std::endl;
         std::cout << std::endl;
@@ -284,6 +291,8 @@ class DumperBase
 public:
   virtual ~DumperBase() = default;
   virtual uint64_t get_token_counter() const = 0;
+  virtual void flush() = 0;
+  virtual void reset() = 0;
 };
 
 template <class I>
@@ -294,6 +303,11 @@ protected:
   uint32_t m_next_token_idx;
   std::vector<ConllToken> m_tokens;
   uint32_t m_root;
+
+  void reset()
+  {
+    m_token_counter = 0;
+  }
 
   inline void increment_token_counter()
   {
@@ -310,17 +324,18 @@ public:
   AnalysisToConllU()
     : m_token_counter(0),
       m_next_token_idx(0),
+      m_root(0),
       m_has_feats(false),
-      m_first_feature_to_print(0),
-      m_root(0)
+      m_first_feature_to_print(0)
   {
+    // std::cerr << "AnalysisToConllU()" << (void*)this << std::endl;
   }
 
   virtual ~AnalysisToConllU()
   {
+    // std::cerr << "~AnalysisToConllU " << (void*)this << std::endl;
     // if (m_next_token_idx > 1)
     // {
-    // std::cerr << "on AnalysisToConllU destructor" << std::endl;
     //   std::cout << std::endl;
     // }
   }
@@ -383,20 +398,35 @@ public:
     return feat_str;
   }
 
-  // void flush()
-  // {
-  //   if (!m_tokens.empty())
-  //   {
-  //     for (const auto& token: m_tokens)
-  //     {
-  //       std::cerr << token ;
-  //       std::cout << token ;
-  //     }
-  //     std::cout << std::endl;
-  //   }
-  //   m_tokens.clear();
-  //   m_root = 0;
-  // }
+  virtual void flush()
+  {
+    m_next_token_idx = 1;
+    std::vector<uint32_t> heads(m_tokens.size()+1);
+    heads[0] = 0;
+    for (size_t i = 1; i < heads.size(); i++)
+    {
+      heads[i] = m_tokens[i-1].head;
+    }
+    // std::cerr << "AnalysisToConllU::flush() heads before find_cycle: " << heads << std::endl;
+    while (find_cycle(heads, m_root))
+    {
+      // std::cerr << "AnalysisToConllU::flush() heads after cycle found: " << heads << std::endl;
+    }
+    // std::cerr << "AnalysisToConllU::flush() heads after no more cycle: " << heads << std::endl;
+    for (size_t i = 1; i < heads.size(); i++)
+    {
+      m_tokens[i-1].head = heads[i];
+    }
+    for (const auto& token: m_tokens)
+    {
+      // std::cerr << "AnalysisToConllU::flush():567 " << token ;
+      std::cout << token ;
+    }
+    m_tokens.clear();
+    // std::cerr << "after clearing tokens. m_next_token_idx=" << m_next_token_idx << std::endl;
+    std::cout << std::endl;
+    m_root = 0;
+  }
 
   void operator()(I& iter, uint32_t begin, uint32_t end, bool hasDeps = false)
   {
@@ -406,7 +436,7 @@ public:
     if (m_next_token_idx == 1)
     {
       // std::cerr << "AnalysisToConllU::operator() m_next_token_idx=" << m_next_token_idx << std::endl;
-      // std::cout << std::endl;
+      std::cout << std::endl;
       m_root = 0;
     }
     else if (m_next_token_idx == 0)
@@ -447,7 +477,8 @@ public:
         temp = str;
         continue;
       }
-      // std::cerr << m_next_token_idx << "\t" << str << "\t" << iter.lemma() << "\t" << m_classes[0][iter.token_class(0)];
+      // std::cerr << m_next_token_idx << "\t" << str << "\t" << iter.lemma()
+      //           << "\t" << m_classes[0][iter.token_class(0)] << std::endl;
       token.id = m_next_token_idx;
       token.form = str;
       token.lemma = iter.lemma();
@@ -523,7 +554,9 @@ public:
           // std::cerr << iter.head() << "\tdep";
           // std::cout << iter.head() << "\tdep";
           token.head = iter.head();
-          token.deprel = "dep";
+          // Use the deprel predicted by the label decoder when available
+          // (falls back to "dep" if the model has no label decoder).
+          token.deprel = iter.deprel();
         }
       }
       else
@@ -540,36 +573,12 @@ public:
       increment_token_counter();
 
       m_next_token_idx += 1;
-      if (iter.flags() & deeplima::segmentation::token_pos::flag_t::sentence_brk ||
-          iter.flags() & deeplima::segmentation::token_pos::flag_t::paragraph_brk)
+      if (iter.flags() & token_flags_t::sentence_brk ||
+          iter.flags() & token_flags_t::paragraph_brk)
       {
-        // std::cerr << "on sent/para break. m_next_token_idx=" << m_next_token_idx << std::endl;
-        // std::cout << std::endl;
-        m_next_token_idx = 1;
-        std::vector<uint32_t> heads(m_tokens.size()+1);
-        heads[0] = 0;
-        for (size_t i = 1; i < heads.size(); i++)
-        {
-          heads[i] = m_tokens[i-1].head;
-        }
-        // std::cerr << "AnalysisToConllU::operator() heads before find_cycle: " << heads << std::endl;
-        while (find_cycle(heads, m_root))
-        {
-          // std::cerr << "AnalysisToConllU::operator() heads after cycle found: " << heads << std::endl;
-        }
-        // std::cerr << "AnalysisToConllU::operator() heads after no more cycle: " << heads << std::endl;
-        for (size_t i = 1; i < heads.size(); i++)
-        {
-          m_tokens[i-1].head = heads[i];
-        }
-        for (const auto& token: m_tokens)
-        {
-          // std::cerr << token ;
-          std::cout << token ;
-        }
-        m_tokens.clear();
-        // std::cerr << "after clearing tokens. m_next_token_idx=" << m_next_token_idx << std::endl;
-        std::cout << std::endl;
+        // std::cerr << "AnalysisToConllU::operator() on sent/para break. m_next_token_idx="
+        //           << m_next_token_idx << std::endl;
+        flush();
       }
       iter.next();
     }

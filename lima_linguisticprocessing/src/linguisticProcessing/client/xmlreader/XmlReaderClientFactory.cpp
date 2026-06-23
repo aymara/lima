@@ -103,7 +103,7 @@ void Lima::XmlReader::XmlReaderClientFactory::configureClientFactory(
     for(ItrIds = MapMediaFactory.begin(); ItrIds != MapMediaFactory.end(); ItrIds++) {
 
         // on ne cree une factory que si elle n'est pas encore dans la liste
-        if(factory->getFactoryFromId(ItrIds->second) == 0) {
+        if(factory->getFactoryFromId(ItrIds->second) == nullptr) {
 
             // Create the processor factory
             auto factoryfactory =  Lima::AbstractProcessingClientFactoryFactory::getFactory(ItrIds->second);

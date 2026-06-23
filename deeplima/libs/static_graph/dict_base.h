@@ -6,7 +6,7 @@
 #ifndef DEEPLIMA_SRC_STATIC_GRAPH_DICT_BASE_H
 #define DEEPLIMA_SRC_STATIC_GRAPH_DICT_BASE_H
 
-#include <ATen/core/List.h>
+#include <ATen/core/ivalue.h>
 
 namespace deeplima
 {
@@ -25,7 +25,7 @@ template <class D=std::shared_ptr<DictBase>>
 class DictsHolderImpl : public std::vector<D>
 {
 public:
-  virtual ~DictsHolderImpl<D>() = default;
+  virtual ~DictsHolderImpl() = default;
   std::vector<uint32_t> get_counters() const
   {
     std::vector<uint32_t> v(this->size());

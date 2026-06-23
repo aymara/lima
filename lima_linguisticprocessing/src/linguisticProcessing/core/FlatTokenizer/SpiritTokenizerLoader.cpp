@@ -141,7 +141,7 @@ SpiritTokenizerLoader::SpiritTokenizerLoader(Automaton& automaton, const std::st
 State* SpiritTokenizerLoader::stateNamed(const LimaString& name)
 {
   State* newState = m_automaton.stateNamed(name);
-  if (newState == 0)
+  if (newState == nullptr)
   {
     newState = new State(name, m_automaton);
     m_automaton.states().push_back(newState);

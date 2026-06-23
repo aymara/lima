@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 int run(int , char** ){
     auto resourcesDirs = buildResourcesDirectoriesList(QStringList({"lima"}),
                                                        QStringList());
-    QString resourcesPath = resourcesDirs.join(LIMA_PATH_SEPARATOR);
     QCommandLineParser parser;
     parser.setApplicationDescription("LIMA file language detector.");
     parser.addHelpOption();
@@ -43,7 +42,9 @@ int run(int , char** ){
         parser.showHelp();
     }
     auto ld = std::make_unique<LangDetectorCore>();
-    ld->loadModel(resourcesPath.toStdString() + std::string("/LinguisticProcessings/LangDetector/lid.176.ftz"));
+    QString langDetectorModelName = "/LinguisticProcessings/LangDetector/lid.176.ftz";
+    QString fileName = findFileInPaths(resourcesDirs.join(LIMA_PATH_SEPARATOR), langDetectorModelName);
+    ld->loadModel(fileName.toStdString());
     for (auto & it : files) {
         const QString &fileName = it;
         QFile file(fileName);

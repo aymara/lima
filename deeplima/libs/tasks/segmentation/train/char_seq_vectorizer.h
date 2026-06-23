@@ -40,7 +40,7 @@ protected:
     auto target = std::make_shared<Matrix>(len, m_input_encoder.size());
 
     uint64_t current_timepoint = 0;
-    uint32_t pos = 0;
+    int32_t pos = 0;
     m_input_encoder.reset();
 
     while (! m_input_encoder.ready_to_generate())
@@ -59,7 +59,7 @@ protected:
     char final_spaces[] = " ";
     for (size_t i = 0; i < m_input_encoder.get_lookahead(); i++)
     {
-      uint32_t pos = 0;
+      int32_t pos = 0;
       if (m_input_encoder.parse((uint8_t*)final_spaces, &pos, 1) > 0)
       {
         handle_timepoint(*target, current_timepoint);

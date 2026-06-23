@@ -58,10 +58,6 @@ private:
     std::string m_listName;
     std::string m_mapName;
     
-    // bools to handle items with attributes
-    bool m_firstItem;
-    bool m_itemWithAttributes;
-
     /*
      * The structure where data will be stored
      */

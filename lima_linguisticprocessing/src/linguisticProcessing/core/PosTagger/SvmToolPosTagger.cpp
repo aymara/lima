@@ -211,7 +211,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
   const auto& ldata = static_cast<const LanguageData&>(
       Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
   const auto& microManager = ldata.getPropertyCodeManager().getPropertyManager("MICRO");
-  auto microAccessor = microManager.getPropertyAccessor();
+  auto& microAccessor = microManager.getPropertyAccessor();
   // Retrieve morphosyntactic graph
   auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
   auto srcgraph = anagraph->getGraph();
@@ -280,10 +280,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
         LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
         LWARN << "Avoiding the problem but the tokenizer should be checked.";
       }
-      if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+      if (token == QString::fromUtf8("\n")) token = QString::fromUtf8((char*)u8"\u200B");
       token = token.trimmed();
       token.replace(" ", "_");
-      token.replace("\n", QString::fromUtf8(u8"\u200B"));
+      token.replace("\n", QString::fromUtf8((char*)u8"\u200B"));
       std::ostringstream lineoss("");
       lineoss << token.toStdString() << " (";
       auto morphoData = get(vertex_data,*srcgraph,currentVx);
@@ -400,10 +400,10 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
       LWARN << "Error in SVMTagger. Invalid token with newline(s):" << token;
       LWARN << "Avoiding the problem but the tokenizer should be checked.";
     }
-    if (token == QString::fromUtf8("\n")) token = QString::fromUtf8(u8"\u200B");
+    if (token == QString::fromUtf8("\n")) token = QString::fromUtf8((char*)u8"\u200B");
     token = token.trimmed();
     token.replace(" ", "_");
-    token.replace("\n", QString::fromUtf8(u8"\u200B"));
+    token.replace("\n", QString::fromUtf8((char*)u8"\u200B"));
     if (token != elements[0])
     {
       PTLOGINIT;
@@ -426,7 +426,7 @@ LimaStatusCode SvmToolPosTagger::process(AnalysisContent& analysis) const
     {
       auto posData = new MorphoSyntacticData();
       CheckDifferentPropertyPredicate differentMicro(
-          &microAccessor,
+          microAccessor,
           microManager.getPropertyValue(elements[1].toStdString()));
       std::back_insert_iterator<MorphoSyntacticData> backInsertItr(*posData);
       remove_copy_if(morphoData->begin(),

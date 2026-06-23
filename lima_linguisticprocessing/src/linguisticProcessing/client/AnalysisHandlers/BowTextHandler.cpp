@@ -83,7 +83,7 @@ void BowTextHandler::startAnalysis()
   //  delete m_writer;
   //  m_writer=0;
   //}
-  if (m_writer == 0){
+  if (m_writer == nullptr){
     m_writer=new BowTextWriter();
   }
   m_bowstream=new std::ostringstream();

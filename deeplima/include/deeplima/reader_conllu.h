@@ -43,11 +43,11 @@ public:
 
   virtual void parse_from_stream(const read_callback_t fn)
   {
-    const uint32_t buffer_size = 1024*64;
+    const int32_t buffer_size = 1024*64;
     char buff[buffer_size];
     char* end = buff + buffer_size;
     bool continue_reading = true;
-    uint32_t start_writting = 0;
+    int32_t start_writting = 0;
     uint32_t reserved_for_lookahead = 1024*2;
     // longest last token line in UD 2.8 collection.
 
@@ -56,7 +56,7 @@ public:
 
     do
     {
-      uint32_t bytes_read = 0;
+      int32_t bytes_read = 0;
       continue_reading = fn((uint8_t*)buff + start_writting, bytes_read, buffer_size - start_writting);
       if (0 == bytes_read)
       {
@@ -90,7 +90,7 @@ public:
           if (token_idx > 0)
           {
             token_pos& token = tokens[token_idx - 1];
-            token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+            token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
           }
           continue;
         }
@@ -112,7 +112,7 @@ public:
               const char* p_after_eol = p_eol + 1;
               if (*p_after_eol == '\n') {
                 token_pos& token = tokens[tokens.size() - 1];
-                token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+                token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
               }
             }
 
@@ -133,7 +133,7 @@ public:
           p++;
 
           token_pos& token = tokens[token_idx - 1];
-          token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+          token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
         }
         m_callback(tokens, token_idx);
         token_idx = 0;
@@ -148,6 +148,9 @@ public:
 
     } while (continue_reading);
   }
+
+  /** Cleanup all remaining locks if any. */
+  virtual void finalize() override {}
 
 protected:
   inline bool read_token(token_pos& token, const char* p, const char* end, bool eos=false)
@@ -194,7 +197,7 @@ protected:
 
     if (eos)
     {
-      token.m_flags = token_pos::flag_t(token.m_flags | token_pos::flag_t::sentence_brk);
+      token.m_flags = token_flags_t(token.m_flags | token_flags_t::sentence_brk);
     }
 
     return true;

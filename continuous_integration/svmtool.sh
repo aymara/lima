@@ -11,7 +11,7 @@ set -o pipefail
 set -o nounset
 
 # apt install dos2unix
-wget -q --no-check-certificate https://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
+wget --no-check-certificate https://osmot.cs.cornell.edu/svm_light/current/svm_light.tar.gz
 install -d /svm_light
 pushd /svm_light
 tar xzf ../svm_light.tar.gz
@@ -37,15 +37,15 @@ cp svm_classify svm_learn /usr/bin
 popd
 rm -Rf /svm_light
 
-echo "Github API rate status: $(curl -i  https://api.github.com/repos/aymara/SVMTool/releases/latest?access_token=$GITHUB_TOKEN) "
+echo "Github API rate status: $(curl -i  -H 'Authorization: token ${GITHUB_TOKEN}' https://api.github.com/repos/aymara/SVMTool/releases/latest)"
 
-SVMTOOL_LATEST_RELEASE_JSON=$(curl -s https://api.github.com/repos/aymara/SVMTool/releases/latest?access_token=$GITHUB_TOKEN)
+SVMTOOL_LATEST_RELEASE_JSON=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/aymara/SVMTool/releases/latest)
 echo "SVMTOOL_LATEST_RELEASE_JSON=$SVMTOOL_LATEST_RELEASE_JSON"
 
 URL=$(echo "$SVMTOOL_LATEST_RELEASE_JSON" | grep browser_download_url |grep '.tgz"' | head -n 1 | cut -d '"' -f 4)
 echo "URL=$URL"
 
-curl  -LJ -H 'Accept: application/octet-stream' $URL?access_token=$GITHUB_TOKEN | tar xz
+curl  -LJ -H 'Accept: application/octet-stream'  -H "Authorization: token ${GITHUB_TOKEN}"  $URL | tar xz
 
 pushd SVMTool-1.3.1
 perl Makefile.PL

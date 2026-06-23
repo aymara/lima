@@ -159,6 +159,11 @@ namespace CoNLLU
       return m_tokens.end();
     }
 
+    inline const std::vector<word_t>& words() const
+    {
+      return m_words;
+    }
+
     typedef std::vector<word_t>::const_iterator words_const_iterator;
     inline words_const_iterator words_begin() const
     {

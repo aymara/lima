@@ -81,7 +81,7 @@ QVariant ResourceReaderTableModel::data (const QModelIndex& index, int role) con
         return QVariant();
     int column = index.column();
     AbstractResourceEntry* entry = getFoundEntry(index.row());
-    if(entry == 0)
+    if(entry == nullptr)
         return QVariant();
     return QVariant(entry->getColumnData(column));
 }

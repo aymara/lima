@@ -47,8 +47,7 @@ class DepGraphCompoundsBuildVisitorPrivate
                               LinguisticGraphVertex startVertex,
                               LinguisticGraphVertex stopVertex,
 //                                 uint64_t depGraphMaxBranchingFactor,
-                              Common::AnnotationGraphs::AnnotationData* annotationData,
-                              bool useChains);
+                              Common::AnnotationGraphs::AnnotationData* annotationData);
 
   ~DepGraphCompoundsBuildVisitorPrivate() {}
 
@@ -126,8 +125,6 @@ class DepGraphCompoundsBuildVisitorPrivate
   > m_relsmap;
 
   std::vector< boost::tuple<uint64_t,DependencyGraphVertex, std::set<uint64_t> > > m_nodesmap;
-
-  bool m_useChains = false;
 };
 
 DepGraphCompoundsBuildVisitorPrivate::DepGraphCompoundsBuildVisitorPrivate(const
@@ -138,8 +135,7 @@ DepGraphCompoundsBuildVisitorPrivate::DepGraphCompoundsBuildVisitorPrivate(const
         LinguisticAnalysisStructure::AnalysisGraph* iter,
         LinguisticGraphVertex startVertex,
         LinguisticGraphVertex stopVertex,
-        Common::AnnotationGraphs::AnnotationData* annotationData,
-        bool useChains) :
+        Common::AnnotationGraphs::AnnotationData* annotationData) :
     m_context(cpbfsd),
     m_language(language),
     m_syntacticData(syntacticData),
@@ -147,8 +143,7 @@ DepGraphCompoundsBuildVisitorPrivate::DepGraphCompoundsBuildVisitorPrivate(const
     m_visited(),
     m_depGraph(depGraph),
     m_iter(iter),
-    m_annotationData(annotationData),
-    m_useChains(useChains)
+    m_annotationData(annotationData)
 {
   m_macroAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MACRO"));
   m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
@@ -166,8 +161,7 @@ DepGraphCompoundsBuildVisitor::DepGraphCompoundsBuildVisitor(const CompoundsBuil
         LinguisticAnalysisStructure::AnalysisGraph* iter,
         LinguisticGraphVertex startVertex,
         LinguisticGraphVertex stopVertex,
-        Common::AnnotationGraphs::AnnotationData* annotationData,
-        bool useChains) :
+        Common::AnnotationGraphs::AnnotationData* annotationData) :
     m_d(new DepGraphCompoundsBuildVisitorPrivate(cpbfsd,
                                                  language,
                                                  syntacticData,
@@ -175,8 +169,7 @@ DepGraphCompoundsBuildVisitor::DepGraphCompoundsBuildVisitor(const CompoundsBuil
                                                  iter,
                                                  startVertex,
                                                  stopVertex,
-                                                 annotationData,
-                                                 useChains))
+                                                 annotationData))
 {
 }
 
@@ -197,10 +190,7 @@ void DepGraphCompoundsBuildVisitor::discover_vertex(LinguisticGraphVertex v)
     DependencyGraphVertex vd = m_d->m_syntacticData->depVertexForTokenVertex(v);
     if (m_d->m_visited.find(vd) == m_d->m_visited.end())
     {
-      if (m_d->m_useChains)
-        m_d->buildCompatibilityTermsFromWithChains(vd);
-      else
-        m_d->buildCompatibilityTermsFromNoChains(vd);
+      m_d->buildCompatibilityTermsFromNoChains(vd);
     }
 #ifdef DEBUG_LP
     else

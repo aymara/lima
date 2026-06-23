@@ -114,7 +114,7 @@ const LimaString& FsaStringsPool::operator[](const StringsPoolIndex ind) const
   {
     QMutexLocker lock(&m_d->m_mutex);
     LimaString& str=(*m_d->m_cache)[ind];
-    if (ind == 0)
+    if (ind == static_cast<StringsPoolIndex>(0))
     {
       return str;
     }

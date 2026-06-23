@@ -23,9 +23,9 @@
 
 #include "linguisticProcessing/core/Automaton/recognizer.h"
 //#include "AutomatonText/recognizerText.h"
-#include "linguisticProcessing/core/Tokenizer/Tokenizer.h"
-#include "linguisticProcessing/core/Tokenizer/Automaton.h"
-#include "linguisticProcessing/core/Tokenizer/CharChart.h"
+// #include "linguisticProcessing/core/FlatTokenizer/Tokenizer.h"
+// #include "linguisticProcessing/core/FlatTokenizer/Automaton.h"
+// #include "linguisticProcessing/core/FlatTokenizer/CharChart.h"
 #include <iostream>
 #include <string>
 

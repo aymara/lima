@@ -14,5 +14,6 @@ target_link_libraries(train_tag
   train_common
   ${TORCH_LIBRARIES}
   fasttext-static
+  ${Boost_LIBRARIES}
 )
 

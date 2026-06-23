@@ -5,6 +5,7 @@
 
 add_subdirectory(libautomatonCompiler)
 
+
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src )
 
 # IF(NOT SVMTOOL_LIBRARIES STREQUAL "SVMTOOL_LIBRARIES-NOTFOUND")
@@ -28,5 +29,6 @@ install(TARGETS compile-rules
         DESTINATION bin
         COMPONENT runtime)
 
+add_subdirectory(tests)
 
 ########### install files ###############

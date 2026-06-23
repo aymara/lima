@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
 project(Lima)
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "")
@@ -107,51 +108,8 @@ else (OPENMP_FOUND)
   message("OpenMP NOT FOUND")
 endif()
 
-find_package(TensorFlow)
-if (TensorFlow_FOUND)
-  find_package(Eigen)
-  find_package(Protobuf)
-endif()
-
-if (TensorFlow_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-else ()
-  message(STATUS "TensorFlow not found.")
-endif ()
-
-if (Eigen_FOUND)
-  message(STATUS "Found Eigen. ${Eigen_INCLUDE_DIRS} ${Eigen_LIBRARIES} ")
-else ()
-  message(STATUS "Eigen not found.")
-endif ()
-
-if (Protobuf_FOUND)
-  message(STATUS "Found Protobuf. ${Protobuf_INCLUDE_DIRS} ${Protobuf_LIBRARIES} ")
-else ()
-  message(STATUS "Protobuf not found.")
-endif ()
-
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  message(STATUS "Found TensorFlow. ${TensorFlow_INCLUDE_DIRS} ${TensorFlow_LIBRARIES} ")
-
-  include_directories(SYSTEM ${TensorFlow_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
-  if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    install(FILES ${TensorFlow_LIBRARIES} ${TensorFlow_LIBRARIES_DYN}
-      ${Eigen_LIBRARIES}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${Eigen_LIBRARIES}
-      ${TensorFlow_LIBRARIES}
-      ${TensorFlow_LIBRARIES_DYN})
-  endif ()
-else()
-  message(STATUS "TensorFlow and/or Eigen modules NOT Found. TensorFlow based modules will no be built.")
-endif()
-
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
-addQtModules(Core Gui Qml Quick Test Xml Widgets Concurrent)
+addQtModules(Core Test Xml Concurrent Network)
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -174,8 +132,11 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 set( BOOST_LIB_DIAGNOSTIC )
-find_package(Boost 1.58 REQUIRED
-  COMPONENTS regex filesystem program_options system thread unit_test_framework)
+# Boost.System is header-only since Boost 1.69 and ships no component config in
+# recent Boost (e.g. 1.90), so it must not be listed here. Use Boost::headers /
+# Boost::system targets directly where needed.
+find_package(Boost 1.74 REQUIRED
+  COMPONENTS regex filesystem program_options thread unit_test_framework iostreams)
 
 
 message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
@@ -378,7 +339,7 @@ else (TRECPP_FOUND)
 endif (TRE_FOUND)
 
 # QHttpServer is necessary for limaserver HTTP server
-find_package(QHttpServer QUIET)
+find_package(QHTTPSERVER QUIET)
 if (NOT QHTTPSERVER_FOUND)
   message(STATUS "QHttpServer Not found. Lima HTTP server will NOT be built")
 else ()
@@ -395,8 +356,6 @@ else ()
   endif ()
 endif ()
 
-message(STATUS "TF_SOURCES_PATH = ${TF_SOURCES_PATH}")
-
   # Here we are looking up for a system-wide installation of Eigen
 message("Looking up for Eigen3")
 find_package(Eigen3 3.3 NO_MODULE)
@@ -410,7 +369,7 @@ message("Eigen3 root: ${EIGEN3_USE_FILE}")
 endif()
 
 find_package(Torch)
-find_package(ICU 60.0 COMPONENTS uc)
+find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
 
@@ -492,6 +451,7 @@ if (WITH_GUI)
   if (Qt${QT_VERSION_MAJOR}Core_FOUND)
     if (Qt${QT_VERSION_MAJOR}Core_VERSION VERSION_GREATER 5.5.0)
       message("Build with lima_gui")
+      addQtModules(Gui Qml Quick Widgets)
       add_subdirectory(lima_gui)
     else()
       message("Minimum supported Qt version for lima_gui is 5.5.0. You have Qt ${QtCore_VERSION}. lima_gui will no be built.")
@@ -511,6 +471,8 @@ if (TORCH_FOUND AND EIGEN3_FOUND)
   message("TORCH_LIBRARIES = ${TORCH_LIBRARIES}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
   add_subdirectory(deeplima)
+else()
+  message("Torch and/or Eigen NOT found. deeplima will NOT be built.")
 endif()
 
 ########### documentation ###############
@@ -551,11 +513,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 endif()
 include(InstallRequiredSystemLibraries)
 
-if (TensorFlow_FOUND AND Eigen_FOUND)
-  set(CPACK_PACKAGE_NAME "lima-tf")
-else()
-  set(CPACK_PACKAGE_NAME "lima")
-endif()
+set(CPACK_PACKAGE_NAME "lima")
 message("Lima package name will be ${CPACK_PACKAGE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LIMA Linguistic Analyzer")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")

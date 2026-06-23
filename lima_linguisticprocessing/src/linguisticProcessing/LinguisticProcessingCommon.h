@@ -98,6 +98,7 @@
 #define TOKENIZERLOADERLOGINIT LOGINIT("LP::Tokenizer::Loader")
 #define COREFSOLVERLOGINIT LOGINIT("LP::CorefSolver")
 #define EVENTANALYZERLOGINIT LOGINIT("LP::EventAnalyzer")
+#define EVENTANALYSISLOGINIT LOGINIT("LP::EventAnalysis")
 #define COMPACTDICTLOGINIT  LOGINIT("LP::CompactDict")
 #define MORPHOLOGINIT  LOGINIT("LP::MorphologicAnalysis")
 #define TFSELOGINIT  LOGINIT("LP::TensorflowSpecificEntities")
@@ -112,7 +113,6 @@
 #define ANALYSISDICTLOGINIT LOGINIT("LP::AnalysisDict");
 #define SENTBOUNDLOGINIT LOGINIT("LP::SentenceBounds");
 #define SEGMENTATIONLOGINIT LOGINIT("LP::Segmentation");
-#define GEOENTITIESTAGGERLOGINIT LOGINIT("LP::GeoEntities");
 #define SEMANTICANALYSISLOGINIT LOGINIT("LP::SemanticAnalysis");
 #define LIMASERVERLOGINIT LOGINIT("LP::LimaServer");
 #define TENSORFLOWMORPHOSYNTAXLOGINIT LOGINIT("LP::TensorFlowMorphoSyntax");

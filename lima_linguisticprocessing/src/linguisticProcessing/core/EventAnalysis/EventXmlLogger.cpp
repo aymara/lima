@@ -48,7 +48,7 @@ void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
                           Manager* manager)
 
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventXmlLogger::init";
 
   AbstractTextualAnalysisDumper::init(unitConfiguration,manager);
@@ -61,7 +61,7 @@ void EventXmlLogger::init(Common::XMLConfigurationFiles::GroupConfigurationStruc
 
 LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventXmlLogger::process";
   TimeUtils::updateCurrentTime();
 
@@ -101,14 +101,14 @@ LimaStatusCode EventXmlLogger::process(AnalysisContent& analysis) const
             outputEvents(out, eventTemplateData->convertToEvents(annotationData.get()));
           }
           else {
-            LOGINIT("LP::EventAnalysis");
-          LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
+            EVENTANALYSISLOGINIT;
+            LERROR << "data '" << m_eventData << "' is neither of type EventData nor Events";
           }
         }
       }
     }
     else {
-      LOGINIT("LP::EventAnalysis");
+      EVENTANALYSISLOGINIT;
       LERROR << "no data of name " << m_eventData;
     }
   }

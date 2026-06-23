@@ -67,6 +67,9 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         void getAvailableMedia ( std::set<MediaId>& ids ) const;
         void getAvailablePipelinesForMedia ( MediaId id, std::set<std::string>& pipelines ) const;
 
+        const std::map<MediaId,MediaProcessUnit::Manager*>& managers() const;
+
+
 private:
 
   MediaProcessors();

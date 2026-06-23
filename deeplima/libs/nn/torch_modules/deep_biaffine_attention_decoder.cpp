@@ -1,21 +1,7 @@
-/*
-    Copyright 2022 CEA LIST
-
-    This file is part of LIMA.
-
-    LIMA is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    LIMA is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with LIMA.  If not, see <http://www.gnu.org/licenses/>
-*/
+// Copyright 2022 CEA LIST
+// SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+//
+// SPDX-License-Identifier: MIT
 
 #include "deep_biaffine_attention_decoder.h"
 
@@ -43,6 +29,9 @@ torch::Tensor DeepBiaffineAttentionDecoderImpl::forward(torch::Tensor input)
   }
   else
   {
+    // h_j^(arc-head) = MLP^(arc-head)(r_j) in (5) from [Dozat&Manning,2017]
+    // and thus
+    // H^(arc-head) in (6) from [Dozat&Manning,2017]
     arc_head = elu(mlp_head(input_t));
   }
   // arc_head = [ batch x len x hidden_dim ]
@@ -57,6 +46,7 @@ torch::Tensor DeepBiaffineAttentionDecoderImpl::forward(torch::Tensor input)
   }
   else
   {
+    // h_i^(arc-dep) = MLP^(arc-dep)(r_i) in (4) from [Dozat&Manning,2017]
     arc_dep = elu(mlp_dep(input_t));
   }
 
@@ -64,12 +54,13 @@ torch::Tensor DeepBiaffineAttentionDecoderImpl::forward(torch::Tensor input)
   //std::cerr << "U1.sizes() == " << U1.sizes() << std::endl;
   torch::Tensor W = torch::matmul(arc_head, U1);
   //std::cerr << "W.sizes() == " << W.sizes() << std::endl;
+  torch::Tensor Wx = torch::matmul(W, arc_dep.transpose(1, 2)); //
+  //std::cerr << "Wx.sizes() == " << Wx.sizes() << std::endl;
+
   //std::cerr << "u2.sizes() == " << u2.sizes() << std::endl;
-  torch::Tensor b = torch::matmul(arc_head, torch::tile(u2, { 1, arc_head.size(1) }));
+  torch::Tensor b = torch::matmul(arc_head, torch::tile(u2, { 1, arc_head.size(1) })); // H^(arc-head)u^(2) in (6) from [Dozat&Manning,2017]
 
   //std::cerr << "b.sizes() == " << b.sizes() << std::endl;
-  torch::Tensor Wx = torch::matmul(W, arc_dep.transpose(1, 2));
-  //std::cerr << "Wx.sizes() == " << Wx.sizes() << std::endl;
   torch::Tensor r = torch::add(Wx, b);
   //std::cerr << "r.sizes() == " << r.sizes() << std::endl;
 

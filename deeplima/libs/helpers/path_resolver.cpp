@@ -4,6 +4,10 @@
 // SPDX-License-Identifier: MIT
 
 #include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <vector>
+
 #include <boost/filesystem.hpp>
 
 #include "path_resolver.h"
@@ -14,9 +18,9 @@ namespace fs = boost::filesystem;
 namespace deeplima
 {
 
-PathResolver::PathResolver()
+PathResolver::PathResolver(const std::string& paths)
 {
-  init();
+  init(paths);
 }
 
 string PathResolver::resolve(const string& prefix, const string& path, const vector<string>& accepted_ext) const
@@ -104,8 +108,27 @@ string PathResolver::find_user_data_home()
   return user_data_home.string();
 }
 
-void PathResolver::init()
+std::vector<std::string> split (const std::string &s, char delim) {
+    std::vector<std::string> result;
+    std::stringstream ss (s);
+    std::string item;
+
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
+
+    return result;
+}
+
+void PathResolver::init(const std::string& paths)
 {
+  auto var = std::getenv("LIMA_RESOURCES");
+  auto dirs = split(paths, ':');
+  if (var)
+  {
+    dirs = split(var, ':');
+  }
+  m_resources_paths.insert(std::end(m_resources_paths), std::begin(dirs), std::end(dirs));
   fs::path user_data_home = find_user_data_home();
   if (!user_data_home.empty())
   {

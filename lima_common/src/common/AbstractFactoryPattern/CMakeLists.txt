@@ -18,7 +18,7 @@ add_library(lima-common-factory SHARED ${lima-common-factory_LIB_SRCS})
 
 target_link_libraries(lima-common-factory
    lima-common-tools
-   Boost::system
+   Boost::headers
    Boost::filesystem
 )
 

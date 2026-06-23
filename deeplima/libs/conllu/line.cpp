@@ -139,7 +139,7 @@ void CoNLLULine::init_impl(const Line& line)
   }
 }
 
-bool CoNLLULine::parse_feats(const std::string& s)
+bool CoNLLULine::parse_feats(const std::string& s, std::map<std::string, std::set<std::string>>& _feats)
 {
   if ("_" == s)
   {
@@ -162,6 +162,11 @@ bool CoNLLULine::parse_feats(const std::string& s)
   }
 
   return true;
+}
+
+bool CoNLLULine::parse_feats(const std::string& s)
+{
+  return parse_feats(s, _feats);
 }
 
 bool CoNLLULine::parse_deps(const std::string& s)

@@ -65,12 +65,12 @@ void EventTemplateMerging::init(
     }
   }
   catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "TemplateMerging: Missing 'eventTemplate' parameter in EventTemplateMerging definition";
     //throw InvalidConfiguration;
   }
   catch (std::exception& e) {
-    LOGINIT("LP::EventAnalysis");
+    EVENTANALYSISLOGINIT;
     LERROR << "TemplateMerging: Missing ressource for 'eventTemplate' parameter" << e.what();
     //throw InvalidConfiguration;
   }
@@ -82,7 +82,7 @@ void EventTemplateMerging::init(
 
   bool optionalMention(false);
   try {
-    // by default, the event mention should be mandatory (it is for brat, for instance): 
+    // by default, the event mention should be mandatory (it is for brat, for instance):
     // add a parameter to specify if the event mention can be optional
     optionalMention=unitConfiguration.getBooleanParameter("optionalMention");
   }
@@ -93,7 +93,7 @@ void EventTemplateMerging::init(
     // add event mention as a mandatory element
     m_mandatoryElements.push_back(m_templateDefinition->getMention());
   }
-  
+
   try {
     std::string s=unitConfiguration.getParamsValueAtKey("maxCharCompatibleEvents");
     m_maxCharCompatibleEvents=std::stoul(s);
@@ -123,7 +123,7 @@ void EventTemplateMerging::init(
 
 LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   LDEBUG << "EventTemplateMerging process";
   TimeUtils::updateCurrentTime();
 
@@ -141,21 +141,21 @@ LimaStatusCode EventTemplateMerging::process(AnalysisContent& analysis) const
   else {
     returnCode=mergeEventTemplates(eventData.get(),0,0);
   }
-  
+
   cleanEventTemplates(eventData.get());
-  
+
   TimeUtils::logElapsedTime("EventTemplateMerging");
   return returnCode;
 }
 
 LimaStatusCode EventTemplateMerging::mergeEventTemplatesOnEachSentence(AnalysisContent& analysis, EventTemplateData* eventData) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   // get sentence bounds
   auto sb = std::dynamic_pointer_cast<SegmentationData>(analysis.getData(m_sentenceBoundsData));
   if (nullptr==sb)
   {
-    LERROR << "no sentence bounds "<< m_sentenceBoundsData << " defined ! abort";
+    LERROR << "no sentence bounds"<< m_sentenceBoundsData << "defined ! abort";
     return MISSING_DATA;
   }
   LimaStatusCode res(SUCCESS_ID);
@@ -170,42 +170,48 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplatesOnEachSentence(AnalysisC
 
 // utility function to check if a template is considered or ignored
 bool EventTemplateMerging::ignoreTemplate(const EventTemplate& event, uint64_t numTemplate,
-                                          uint64_t posBegin, uint64_t posEnd, 
+                                          uint64_t posBegin, uint64_t posEnd,
                                           const std::set<uint64_t>& toRemove) const
 {
+//  if (event.getPosEnd()==0 || event.getTemplateElements().size()==0) {
+//      EVENTANALYSISLOGINIT;
+//      LDEBUG << "Template"<< numTemplate << "ignored: since it is not initialized";
+//      return true;
+//    }
+
   if (event.getPosEnd()<=posBegin || (posEnd>0 && event.getPosBegin()>=posEnd) ) {
-    LOGINIT("LP::EventAnalysis");
-    LDEBUG << "template"<< numTemplate << "ignored: not in the considered segment "
+    EVENTANALYSISLOGINIT;
+    LDEBUG << "Template"<< numTemplate << "ignored: not in the considered segment"
            <<"["<<event.getPosBegin()<<","<<event.getPosEnd()<<"]";
     return true;
   }
-  
+
   if (event.getType()!=m_templateDefinition->getMention()) {
-    LOGINIT("LP::EventAnalysis");
-    LDEBUG << "template"<< numTemplate << "ignored: not the considered event type ("<<event.getType()<<"/"<<m_templateDefinition->getMention()<<")";
+    EVENTANALYSISLOGINIT;
+    LDEBUG << "Template"<< numTemplate << "ignored: not the considered event type ("<<event.getType()<<"/"<<m_templateDefinition->getMention()<<")";
     return true;
   }
 
   // do we keep merging with other templates if this one is to be removed ?
   if (toRemove.find(numTemplate)!=toRemove.end()) {
-    LOGINIT("LP::EventAnalysis");
-    LDEBUG << "template"<< numTemplate << "ignored: already merged";
+    EVENTANALYSISLOGINIT;
+    LDEBUG << "Template"<< numTemplate << "ignored: already merged";
     return true;
   }
-  
-  return false;  
+
+  return false;
 }
 
 
 LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* eventData, uint64_t posBegin, uint64_t posEnd) const
 {
   // ad hoc strategy for merging event templates
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
 
-  // merge templates according to their positions and positions of intermediate entities
-  LDEBUG << "TemplateMerging: merge templates of type" << m_templateDefinition->getName() << "in ["<<posBegin<<","<<posEnd<<"]";
+  // merge templates according to their positions , and positions of intermediate entities
+  LDEBUG << "EventTemplateMerging::mergeEventTemplates(): merge templates of type" << m_templateDefinition->getName() << "in ["<<posBegin<<","<<posEnd<<"]";
   LDEBUG << "nb events =" << eventData->size();
-  
+
   std::set<uint64_t> toRemove;
   uint64_t numTemplate=0;
   for (EventTemplateData::iterator it1=eventData->begin(),it_end=eventData->end();it1!=it_end;it1++,numTemplate++)
@@ -216,7 +222,7 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
 
     // begin comparison with next template
     EventTemplateData::iterator it2=it1;
-    uint64_t numOtherTemplate=numTemplate; 
+    uint64_t numOtherTemplate=numTemplate;
     for (it2++,numOtherTemplate++; it2!=it_end; it2++,numOtherTemplate++)
     {
       if (ignoreTemplate(*it2,numOtherTemplate,posBegin,posEnd,toRemove)) {
@@ -253,13 +259,14 @@ LimaStatusCode EventTemplateMerging::mergeEventTemplates(EventTemplateData* even
     LDEBUG << "Erase template" << (*it)+1;
     eventData->erase(eventData->begin()+(*it));
   }
-
+  LDEBUG << "EventTemplateMerging::mergeEventTemplates() Done";
   return SUCCESS_ID;
 }
 
 void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) const
 {
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
+  LDEBUG << "EventTemplateMerging::cleanEventTemplates()" << m_templateDefinition->getName();
   // additional step if mandatory elements are specified : keep only templates with mandatory elements
   if (! m_mandatoryElements.empty()) {
     EventTemplateData::iterator it=eventData->begin();
@@ -269,7 +276,7 @@ void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) con
       const TemplateElements& elements=(*it).getTemplateElements();
       for (deque<string>::const_iterator m=m_mandatoryElements.begin(),m_end=m_mandatoryElements.end();m!=m_end;m++) {
         if (elements.find(*m)==elements.end()) {
-          LDEBUG << "Erase template" << n << "because it does not contain mandatory element" << *m << ":" << elements;
+          LDEBUG << " Erase template" << n << "because it does not contain mandatory element" << *m << ":" << elements;
           toRemove=true;
           break;
         }
@@ -283,6 +290,7 @@ void EventTemplateMerging::cleanEventTemplates(EventTemplateData* eventData) con
       }
     }
   }
+  LDEBUG << "EventTemplateMerging::cleanEventTemplates()" << m_templateDefinition->getName() << "Done";
 }
 
 bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const EventTemplate& e2,
@@ -292,7 +300,7 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
 {
   // numTemplate and numOtherTemplate are only there for debug messages
 
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
   // possible incompatibility based on positions
   uint64_t posdiff=0;
   // if overlap, posdiff=0
@@ -319,7 +327,7 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
   // merge template1 in template2: store the roles in template 1 that do correspond to one in template2
   // (to add the ones that do not, at the end)
   std::set<std::string> alreadyMerged;
-  
+
   // templateElements is a multimap: for each role, each template has a set of values
   for (TemplateElements::const_iterator elt2=templateElements2.begin(),
     elt2_end=templateElements2.end(); elt2!=elt2_end; )
@@ -334,7 +342,7 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
       values2.push_back(&((*elt2).second));
       ++elt2;
     }
-    
+
     pair<TemplateElements::const_iterator,TemplateElements::const_iterator> found1=templateElements1.equal_range(role2);
     if (found1.first!=found1.second) {
       // the same role exists in other template, check values
@@ -467,18 +475,18 @@ bool EventTemplateMerging::compatibleTemplates(const EventTemplate& e1, const Ev
       mergedElements.emplace(elt1.first,elt1.second);
     }
   }
-  
+
   return true;
 }
 
-bool EventTemplateMerging::compatibleValues(const std::vector<const EventTemplateElement*> values1, 
+bool EventTemplateMerging::compatibleValues(const std::vector<const EventTemplateElement*> values1,
                                             const std::vector<const EventTemplateElement*> values2,
                                             unsigned int cardinality,
                                             std::vector<EventTemplateElement>& merged) const
 {
-  // a clean way to check compatibility of multiple values could be to use a general assignment problem solution 
+  // a clean way to check compatibility of multiple values could be to use a general assignment problem solution
   // (such as Kuhn-Munkres hungarian algorithm)
-  // seems a bit complex to implement: use a simpler greedy method (not optimal, but suppose the cardinality of 
+  // seems a bit complex to implement: use a simpler greedy method (not optimal, but suppose the cardinality of
   // values is generally one anyway)
   vector<bool> done(values2.size(),false);
   for (const auto val1: values1) {
@@ -519,16 +527,16 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
   // for the moment, reuse the existing compatibleTemplates function
   // (probably not optimal)
 
-  LOGINIT("LP::EventAnalysis");
+  EVENTANALYSISLOGINIT;
 
   // while comparing templates for compatibility, store matching elements:
   // map associating a role1 with a pair (role2,mapping) where the other_role is the role that matches
   // role1 and the mapping: 0 if equality, otherwise oriented mapping: 1 if mapping elt1 -> elt2,
   // -1 if mapping elt2 -> elt1
   //map<string,pair<string, int> > matchingElements;
-  
+
   // while comparing templates for compatibility, create the merged version of the template
-  // replace the whole template by the merged template (not as efficient as changing each template element, 
+  // replace the whole template by the merged template (not as efficient as changing each template element,
   // but easier to code/maintain)
   TemplateElements mergedElements;
 
@@ -557,7 +565,7 @@ mergeTemplates(EventTemplate& e1, EventTemplate& e2,
   }
 
   templateToModify->setTemplateElements(mergedElements);
-    
+
   /*
   for (const auto& elt1: *sourceElements)
   {

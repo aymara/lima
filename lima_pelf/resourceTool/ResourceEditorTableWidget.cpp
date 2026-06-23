@@ -29,7 +29,7 @@ void ResourceEditorTableWidget::editEntry (const QModelIndex& index)
 {
     ResourceEditorTableModel* retm = dynamic_cast<ResourceEditorTableModel*>(resourceModel);
     AbstractResourceEntry* entry = retm->getFoundEntry(index.row());
-    if(entry == 0)
+    if(entry == nullptr)
         return;
     retm->dataModified = true;
     Q_EMIT editEntryDlg(entry);

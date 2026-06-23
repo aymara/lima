@@ -12,6 +12,7 @@ target_link_libraries(deeplima-train-segm
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
   ICU::uc
   train_segmentation
   version
@@ -35,6 +36,8 @@ target_link_libraries(deeplima-train-tag
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
+  fasttext-shared
   version
 )
 
@@ -56,10 +59,33 @@ target_link_libraries(deeplima-train-lemmatization
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
   version
 )
 
 install(TARGETS deeplima-train-lemmatization
+  DESTINATION bin
+  COMPONENT runtime
+)
+
+############################################################
+# Generate lemmatization dictionary
+
+add_executable(deeplima-gen-lemm-dict
+  gen-lemm-dict.cpp
+)
+
+target_link_libraries(deeplima-gen-lemm-dict
+  PRIVATE
+  conllu
+  fasttext-static
+  Boost::iostreams
+  Boost::program_options
+  Boost::filesystem
+  ${ICU_LIBRARIES}
+)
+
+install(TARGETS deeplima-gen-lemm-dict
   DESTINATION bin
   COMPONENT runtime
 )
@@ -77,6 +103,8 @@ target_link_libraries(deeplima-train-dp
   conllu
   Boost::program_options
   Boost::filesystem
+  Boost::iostreams
+  fasttext-shared
   version
 )
 
@@ -104,14 +132,18 @@ target_compile_definitions(deeplima-eigen
 
 target_link_libraries(deeplima-eigen
   PRIVATE
-  Boost::program_options
-  ICU::uc
   Eigen3::Eigen
   convert_from_torch
   ${TORCH_LIBRARIES}
   fasttext-static
   version
   utils
+  segmentation_inference
+  lemmatization_inference
+  ${ICU_LIBRARIES}
+  Boost::program_options
+  Boost::filesystem
+  Boost::iostreams
 )
 
 install(TARGETS deeplima-eigen

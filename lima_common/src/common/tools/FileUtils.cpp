@@ -212,7 +212,7 @@ QStringList buildResourcesDirectoriesList(const QStringList& projects,
   {
     qDebug() << "LIMA Resources directories list built is:" << resourcesDirs;
   }
-  LOGINIT("FilesReporting");
+  FILESREPORTLOGINIT;
   LINFO << "LIMA Resources directories list built is:" << resourcesDirs;
   return resourcesDirs;
 }
@@ -229,7 +229,7 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
       {
   #ifndef WIN32 // Windows do not support circular dependency between qslog and tools libraries
         {
-        LOGINIT("FilesReporting");
+          FILESREPORTLOGINIT;
         LDEBUG << "File found:" << path + "/" + file;
         }
   #endif
@@ -237,8 +237,8 @@ QString findFileInPaths(const QString& paths, const QString& fileName, const QCh
       }
     }
   }
-  LOGINIT("FilesReporting");
-  LWARN << "findFileInPaths no '" << fileName << "' found in '" << paths
+  FILESREPORTLOGINIT;
+  LINFO << "findFileInPaths no '" << fileName << "' found in '" << paths
             << "' separated by '" << separator << "'";
   return QString();
 }

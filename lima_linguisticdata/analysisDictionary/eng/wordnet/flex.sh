@@ -23,7 +23,7 @@
 #reformat wordnet entries and remove numeric forms
 awk '($1 !~ /^[0-9]*$/) {print}' wn_*.txt | awk '{print "^W;;" $1 ";" $3 ";;" }' > mots-simples.txt
 
-../../../scripts/flex.pl def.txt mots-simples.txt . formes-eng.txt exclude.txt
+python3 ../../../scripts/flex.py def.txt mots-simples.txt . formes-eng.txt exclude.txt
 
 awk -F";" 'BEGIN {OFS="\t"} ($4) {print $1, $5, "" , $4} ($3) {print $1, $5, "", $3}' formes-eng.txt | sort -u --ignore-case > formes-eng.dic.1
 

@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include <limits>
 #include <string>
 
 #include "deeplima/utils/secure_cast.h"
@@ -25,9 +26,9 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
                                   const vector<TorchMatrix<int64_t>>& train_input,
                                   const vector<vector<TorchMatrix<int64_t>>>& train_input_cat,
                                   const vector<TorchMatrix<int64_t>>& train_gold,
-                                  const vector<TorchMatrix<int64_t>>& eval_input,
+                                  [[maybe_unused]] const vector<TorchMatrix<int64_t>>& eval_input,
                                   const vector<vector<TorchMatrix<int64_t>>>& /*eval_input_cat*/,
-                                  const vector<TorchMatrix<int64_t>>& eval_gold,
+                                  [[maybe_unused]] const vector<TorchMatrix<int64_t>>& eval_gold,
                                   torch::optim::Optimizer& opt,
                                   const torch::Device& device)
 {
@@ -37,7 +38,7 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   set_tags(params.m_tags);
 
   // double best_eval_accuracy = 0;
-  // double best_eval_loss = numeric_limits<double>::max();
+  // double best_eval_loss = std::numeric_limits<double>::max();
   // size_t count_below_best = 0;
   // double lr_copy = 0;
   for (size_t e = 1; e < params.m_max_epochs; e++)
@@ -46,9 +47,9 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
     Module::train(true);
     for (size_t i = 0; i < train_input.size(); ++i)
     {
-      const TorchMatrix<int64_t>& input = train_input[i];
-      const vector<TorchMatrix<int64_t>> input_cat = train_input_cat[i];
-      const TorchMatrix<int64_t>& gold = train_gold[i];
+      const auto& input = train_input[i];
+      const auto& input_cat = train_input_cat[i];
+      const auto& gold = train_gold[i];
 
       assert(input.get_max_feat() == gold.get_max_feat());
       assert(input.get_max_feat() == input_cat[0].get_max_feat());
@@ -81,12 +82,13 @@ void Seq2SeqLemmatizerImpl::train(const train_params_lemmatization_t& params,
   }
 }
 
-nets::epoch_stat_t Seq2SeqLemmatizerImpl::train_on_subset(const train_params_lemmatization_t& params,
-                                            const TorchMatrix<int64_t>& train_input,
-                                            const vector<TorchMatrix<int64_t>> train_input_cat,
-                                            const TorchMatrix<int64_t>& train_gold,
-                                            torch::optim::Optimizer& opt,
-                                            const torch::Device& device)
+nets::epoch_stat_t Seq2SeqLemmatizerImpl::train_on_subset(
+    const train_params_lemmatization_t& params,
+    const TorchMatrix<int64_t>& train_input,
+    const vector<TorchMatrix<int64_t>>& train_input_cat,
+    const TorchMatrix<int64_t>& train_gold,
+    torch::optim::Optimizer& opt,
+    const torch::Device& device)
 {
   //cerr << train_input.get_tensor().sizes() << endl;
   //cerr << train_gold.get_tensor().sizes() << endl;

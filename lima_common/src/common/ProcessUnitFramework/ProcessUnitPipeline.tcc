@@ -56,6 +56,12 @@ void ProcessUnitPipeline<ProcessUnit>::push_back(
 }
 
 template <typename ProcessUnit>
+void ProcessUnitPipeline<ProcessUnit>::push_back(std::shared_ptr<ProcessUnit> pu)
+{
+  m_processUnitSequence.push_back(pu);
+}
+
+template <typename ProcessUnit>
 LimaStatusCode ProcessUnitPipeline<ProcessUnit>::process(
     AnalysisContent& analysis) const
 {

@@ -47,11 +47,9 @@ SPDX-License-Identifier: MIT
         <item value="@PosTagger@"/>
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
-        <!--item value="geoEntities"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <item value="syntacticAnalyzerDepsHetero"/>
@@ -92,7 +90,7 @@ SPDX-License-Identifier: MIT
     <!-- * ner-fusion-pretok: deep learning based NER + rule-based NER    -->
     <group name="ner-rules" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
@@ -114,11 +112,11 @@ SPDX-License-Identifier: MIT
     </group>
     <group name="ner-deep" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperNer"/>
       </list>
@@ -129,17 +127,17 @@ SPDX-License-Identifier: MIT
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="conllDumperNer"/>
       </list>
     </group>
     <group name="ner-fusion" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
-        <item value="cpptftokenizer"/>
+        <item value="flattokenizer"/>
         <item value="simpleWord"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
@@ -152,7 +150,7 @@ SPDX-License-Identifier: MIT
         <item value="simpleWord"/>
         <item value="hyphenWordAlternatives"/>
         <item value="defaultProperties"/>
-        <item value="tensorflowSpecificEntitiesFusion"/>
+        <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
         <item value="SpecificEntitiesModex"/>
         <item value="sentenceBoundariesUpdater"/>
@@ -168,7 +166,6 @@ SPDX-License-Identifier: MIT
         <!--item value="fullTokenXmlLoggerTokenizer"/-->
         <item value="simpleWord"/>
         <item value="sentenceBoundariesFinderForSE"/>
-        @tensorflowSpecificEntities@
         <item value="hyphenWordAlternatives"/>
         <item value="idiomaticAlternatives"/>
         <item value="defaultProperties"/>
@@ -180,11 +177,9 @@ SPDX-License-Identifier: MIT
         <!--item value="SvmToolPosTagger"/-->
         <!--item value="DynamicSvmToolPosTagger"/-->
         <item value="sentenceBoundariesFinder"/>
-        <!--item value="geoEntities"/-->
         <!--item value="dotGraphWriter"/-->
         <!--item value="linearTextRepresentationLogger"/-->
         <!--item value="sentenceBoundsXmlLogger"/-->
-        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <!--item value="debugSyntacticAnalysisLogger-deps"/-->
         <!--item value="syntacticAnalyzerDisamb"/-->
@@ -237,7 +232,6 @@ SPDX-License-Identifier: MIT
         <item value="dotGraphWriter-beforepos"/>
         <item value="viterbiPostagger-freq"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="dotDepGraphWriter"/>
@@ -259,23 +253,19 @@ SPDX-License-Identifier: MIT
         <item value="SpecificEntitiesModex"/>
         <item value="@PosTagger@"/>
         <item value="sentenceBoundariesFinder"/>
-        <item value="syntacticAnalyzerNoChains"/>
         <item value="syntacticAnalyzerDeps"/>
         <item value="syntacticAnalyzerDepsHetero"/>
         <item value="bowDumperXml"/>
       </list>
     </group>
 
-    <group name="none" class="ProcessUnitPipeline">
+    <group name="empty" class="ProcessUnitPipeline">
       <list name="processUnitSequence"/>
     </group>
 <!-- ******************************************
   Definition of process units
 *********************************************** -->
     <group name="conllureader" class="ConlluReader">
-    </group>
-    <group name="cpptftokenizer" class="CppUppsalaTensorFlowTokenizer">
-      <param key="model_prefix" value="tokenizer-$udlang"/>
     </group>
     <group name="flattokenizer" class="FlatTokenizer">
       <param key="automatonFile" value="LinguisticProcessings/fre/tokenizerAutomaton-fre.tok"/>
@@ -312,22 +302,6 @@ SPDX-License-Identifier: MIT
 <!--    <group name="enchantSpellingAlternatives" class="EnchantSpellingAlternatives">
       <param key="dictionary" value="mainDictionary"/>
     </group>-->
-    <group name="tensorflowSpecificEntities" class="TensorflowSpecificEntities">
-      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
-      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
-      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
-      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
-      <param key="batchSizeMax" value="20"/>
-      <param key="sentBoundaries" value="SentenceBoundariesForSE"/>
-    </group>
-    <group name="tensorflowSpecificEntitiesFusion" class="TensorflowSpecificEntities">
-      <param key="graphOutputFile" value="TensorFlowSpecificEntities/fr/output_graph.pb"/>
-      <param key="charValuesFile" value="TensorFlowSpecificEntities/fr/chars.txt"/>
-      <param key="wordValuesFile" value="TensorFlowSpecificEntities/fr/words.txt"/>
-      <param key="tagValuesFile" value="TensorFlowSpecificEntities/fr/tags.txt"/>
-      <param key="batchSizeMax" value="20"/>
-      <param key="sentBoundaries" value="SentenceBoundaries"/>
-    </group>
     <group name="coreferencesSolving" class="CoreferencesSolving">
       <param key="scope" value="3" />
       <param key="threshold" value="60" />
@@ -462,23 +436,6 @@ SPDX-License-Identifier: MIT
       <param key="charChart" value="flatcharchart"/>
       <param key="tokenizer" value="flattokenizer"/>
     </group>
-    <group name="geoEntities" class="GeoEntitiesTagger">
-      <param key="charChart" value="flatcharchart"/>
-      <param key="dbms" value="mysql"/>
-      <param key="dbConnection" value="dbname=GAZETIKI_DB user=gazetiki password=gazpwd"/>
-      <param key="maxEntityLength" value="10" />
-      <param key="graph" value="PosGraph"/>
-      <param key="fieldClass" value="CLASS_3"/>
-      <map name="Trigger">
-        <!--entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="PONCTU_PARAGRAPHE" unlessFirstToken="YES"/-->
-        <entry key="t_capital_1st" value="Status" unlessSatusBefore="t_sentence_brk" unlessMicroBefore="" unlessFirstToken="YES"/>
-        <entry key="NP" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
-      </map>
-      <map name="EndWord">
-        <!--entry key="PONCTU_PARAGRAPHE" value="Micro" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/-->
-        <entry key="T_COMMA_NUMBER" value="Status" unlessSatusBefore="" unlessMicroBefore="" unlessFirstToken="NO"/>
-      </map>
-    </group>
     <group name="idiomaticAlternatives" class="ApplyRecognizer">
       <param key="automaton" value="idiomaticExpressionsRecognizer"/>
       <param key="applyOnGraph" value="AnalysisGraph"/>
@@ -561,17 +518,6 @@ SPDX-License-Identifier: MIT
       <list name="values" />
       <list name="forbid-values" />
     </group>
-    <!-- syntacticAnalyzerNoChains replaces syntacticAnalyzerChains. It is an
-    experimental module used to test if LIMA analysis works without nominal and
-    verbal. It allows also to build compounds using verbs and heterosyntagmatic
-    dependencies. For that, one have to add adequate relations in
-    CompoundRelations in mm-common. -->
-    <group name="syntacticAnalyzerNoChains" class="SyntacticAnalyzerNoChains">
-      <param key="chainMatrix" value="chainMatrix"/>
-      <param key="disambiguated" value="true"/>
-      <param key="maxChainsNbByVertex" value="30"/>
-      <param key="maxChainLength" value="12"/>
-    </group>
     <group name="syntacticAnalyzerDisamb" class="SyntacticAnalyzerDisamb">
       <param key="depGraphMaxBranchingFactor" value="100"/>
     </group>
@@ -625,7 +571,6 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
     <group name="compoundBuilderFromSyntacticData" class="CompoundsBuilderFromSyntacticData">
-      <param key="useChains" value="false"/>
       <map name="Macros2ConceptTypes">
         <entry key="NONE_1" value="LatticeDown"/>
         <entry key="DET" value="Determiner"/>

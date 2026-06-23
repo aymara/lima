@@ -94,7 +94,7 @@ void StructuredBoWToBoWDocument::
 addProperties(BoWDocument& /*document*/,
               const GenericDocumentProperties* properties)
 {
-  if (properties == 0 ) { 
+  if (properties == nullptr ) {
     return; 
   }
   std::pair<GenericDocumentProperties::IntPropertiesIterator,GenericDocumentProperties::IntPropertiesIterator> intProps=properties->getIntProperties();

@@ -38,8 +38,6 @@
 #include "linguisticProcessing/core/LinguisticProcessors/LinguisticMetaData.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
-#include <boost/regex.hpp>
-
 #include <map>
 #include <queue>
 #include <string>

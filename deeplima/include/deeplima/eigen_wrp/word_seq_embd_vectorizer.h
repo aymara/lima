@@ -94,9 +94,11 @@ public:
     return false;
   }
 
-  inline void precompute(const DataSet& dataset)
+  inline void precompute(const DataSet& /*dataset*/)
   {
   }
+
+  typedef UIntFeatExtractor uint_feat_extractor_t;
 
   UIntFeatExtractor& get_uint_feat_extractor()
   {
@@ -532,7 +534,7 @@ public:
       m_pModel->precompute_inputs(input, Parent::m_precomputed_vectors[Parent::m_curr_bucket_id], 0);
       Parent::m_curr_bucket_id++;
 
-      if (Parent::m_curr_bucket_id >= Parent::m_precomputed_vectors.size())
+      if ((size_t)Parent::m_curr_bucket_id >= Parent::m_precomputed_vectors.size())
       {
         Parent::m_precomputed_vectors.resize(Parent::m_curr_bucket_id + 1);
       }

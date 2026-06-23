@@ -29,8 +29,8 @@
 #include <string>
 #include <map>
 #include <queue>
-#include <boost/regex.hpp>
 #include <QtCore/QStringList>
+#include <QtCore/QRegularExpression>
 
 //using namespace boost;
 using namespace Lima::Common;
@@ -1268,34 +1268,34 @@ bool CreateEasyCompoundTense::operator()(const AnalysisGraph& /*anagraph*/,
 }
 
 EnforcePropertiesConstraints::EnforcePropertiesConstraints(
-  MediaId language,
-  const LimaString& complement):
-  ConstraintFunction(language,complement), m_language(language)
+    MediaId language,
+    const LimaString& complement)
+    : ConstraintFunction(language, complement), m_language(language)
 {
 #ifdef DEBUG_LP
-  SAPLOGINIT;
-  LDEBUG << "Initializing EnforcePropertiesConstraints";
+    SAPLOGINIT;
+    LDEBUG << "Initializing EnforcePropertiesConstraints";
 #endif
-    boost::regex linere("[^,]+");
-  std::string str=limastring2utf8stdstring(complement);
-  std::string::const_iterator start, end;
-  start = str.begin();
-  end = str.end();
-  boost::match_results<std::string::const_iterator> what;
-  while (regex_search(start, end, what, linere))
-  {
-    std::string category(what[0].first, what[0].second);
-#ifdef DEBUG_LP
-    LDEBUG << "   adding category: " << category;
-#endif
-    const Common::PropertyCode::PropertyCodeManager& codeManager=static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager();
-    const PropertyCode::PropertyAccessor* categ = &(codeManager.getPropertyAccessor(category));
-    if (categ!=0)
+
+    QRegularExpression linere("[^,]+");
+    auto& codeManager =
+        static_cast<const Common::MediaticData::LanguageData&>(
+            Common::MediaticData::MediaticData::single().mediaData(m_language)
+        ).getPropertyCodeManager();
+    auto it = linere.globalMatch(complement);
+    while (it.hasNext())
     {
-      m_categories.push_back(categ);
+        auto match = it.next();
+        auto category = match.captured(0);
+
+#ifdef DEBUG_LP
+        LDEBUG << "   adding category: " << category;
+#endif
+
+
+        auto& categ = codeManager.getPropertyAccessor(category.toStdString());
+        m_categories.push_back(categ);
     }
-    start = what[0].second;
-  }
 }
 
 bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
@@ -1324,26 +1324,26 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
   MorphoSyntacticData* data1 = map[v1];
   MorphoSyntacticData* data2 = map[v2];
 
-  std::vector<const PropertyCode::PropertyAccessor*>::const_iterator
-      categ = m_categories.begin(), categ_end = m_categories.end();
+  auto categ = m_categories.begin(), categ_end = m_categories.end();
   for (; categ != categ_end; categ++)
   {
-    std::set< LinguisticCode > categ1 = data1->allValues(**categ);
-    std::set< LinguisticCode > categ2 = data2->allValues(**categ);
+    std::set< LinguisticCode > categ1 = data1->allValues(*categ);
+    std::set< LinguisticCode > categ2 = data2->allValues(*categ);
 #ifdef DEBUG_LP
-   LDEBUG << "    on property " << (*categ)->getPropertyName() << ", there is " << categ1.size() << " and " << categ2.size() << " values";
+   LDEBUG << "    on property " << (*categ).getPropertyName() << ", there is "
+          << categ1.size() << " and " << categ2.size() << " values";
 #endif
     if (categ1.size()!=0 && categ2.size()!=0)
     {
 #ifdef DEBUG_LP
-      for (std::set< LinguisticCode >::iterator it=categ1.begin();it!=categ1.end();it++)
+      for (auto it=categ1.begin(); it!=categ1.end(); it++)
       {
-        std::string str1 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
+        std::string str1 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ).getPropertyName()).getPropertySymbolicValue(*it);
        LDEBUG << "    categ1 " << str1;
       }
-      for (std::set< LinguisticCode >::iterator it=categ2.begin();it!=categ2.end();it++)
+      for (auto it = categ2.begin(); it != categ2.end();it++)
       {
-        std::string str2 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ)->getPropertyName()).getPropertySymbolicValue(*it);
+        std::string str2 = static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(m_language)).getPropertyCodeManager().getPropertyManager((*categ).getPropertyName()).getPropertySymbolicValue(*it);
        LDEBUG << "    categ2 " << str2;
       }
 #endif
@@ -1351,7 +1351,7 @@ bool EnforcePropertiesConstraints::operator()(const AnalysisGraph&,
       std::set_intersection(categ1.begin(), categ1.end(),
                             categ2.begin(), categ2.end(),
                             std::insert_iterator< std::set< LinguisticCode> >(common, common.end()));
-      ExcludePropertyPredicate epp(*categ,common);
+      ExcludePropertyPredicate epp(*categ, common);
 #ifdef DEBUG_LP
      LDEBUG << "      sizes before erase: " << data1->size() << " / " << data2->size();
 #endif

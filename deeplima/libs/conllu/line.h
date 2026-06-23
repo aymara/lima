@@ -6,6 +6,7 @@
 #ifndef CONLLU_LINE_H
 #define CONLLU_LINE_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
@@ -179,6 +180,11 @@ public:
     return _feats;
   }
 
+  inline std::string feats_str() const
+  {
+    return serialize_feats();
+  }
+
   inline const idx_t& head() const
   {
     return _head;
@@ -207,6 +213,8 @@ public:
   {
     return get_binary_feature("Typo");
   }
+
+  static bool parse_feats(const std::string& s, std::map<std::string, std::set<std::string>>& _feats);
 
 protected:
   virtual void init(const Line& line)

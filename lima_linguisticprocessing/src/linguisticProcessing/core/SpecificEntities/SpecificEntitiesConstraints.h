@@ -110,10 +110,9 @@ private:
 /**
  * @brief This action set the value of a feature for an entity during the recognition
  * of the entity (i.e. during the rule matching process).
- * If a value already exists for the feaure, the new value overwrite the previous one.
- * Unary operator: associate the given
- * vertex to the entity feature specified in the complement. Binary operator: associate the string
- * delimited by the two vertices to the entity feature specified in the complement.
+ * If a value already exists for the feature, the new value overwrite the previous one.
+ * Unary operator: associate the given vertex to the entity feature specified in the complement.
+ * Binary operator: associate the string delimited by the two vertices to the entity feature specified in the complement.
  *
  */
 class LIMA_SPECIFICENTITIES_EXPORT SetEntityFeature : public Automaton::ConstraintFunction
@@ -137,7 +136,7 @@ private:
 };
 
 /**
- * @brief This action add a vertex as an embeded entity
+ * @brief This action add a vertex as an embedded entity
  * of the entity (i.e. during the rule matching process).
  *
  */
@@ -159,10 +158,9 @@ private:
 /**
  * @brief This action set the value of a feature for an entity during the recognition
  * of the entity (i.e. during the rule matching process).
- * If a value already exists for the feaure, the new value overwrite the previous one.
- * Unary operator: associate the given
- * vertex to the entity feature specified in the complement. Binary operator: associate the string
- * delimited by the two vertices to the entity feature specified in the complement.
+ * If a value already exists for the feature, the new value overwrite the previous one.
+ * Unary operator: associate the given vertex to the entity feature specified in the complement.
+ * Binary operator: associate the string delimited by the two vertices to the entity feature specified in the complement.
  *
  */
 class LIMA_SPECIFICENTITIES_EXPORT AddEntityFeature : public Automaton::ConstraintFunction
@@ -188,9 +186,10 @@ private:
 /**
  * @brief This action appends a value to the previously set value of a feature for an entity during
  * the recognition  of the entity (i.e. during the rule matching process).
- * Appends performs a concatenatipon when the type of the property is a string.
- * Appends performs an adition when the type of the property is an int.
- * Unary operator: associate the given vertex to the entity feature specified in the complement. Binary operator: associate the string
+ * Appends performs a concatenation when the type of the property is a string.
+ * Appends performs an addition when the type of the property is an int.
+ * Unary operator: associate the given vertex to the entity feature specified in the complement.
+ * Binary operator: associate the string
  * delimited by the two vertices to the entity feature specified in the complement.
  *
  */

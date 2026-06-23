@@ -261,20 +261,23 @@ void readSDocuments(std::istream& fileIn,
   }
   MultimediaXMLWriter writer(*output);
   writer.writeMultimediaDocumentsHeader();
-  BagOfWords::BoWBlocType bt;
-  while (! fileIn.eof())
+  if (! fileIn.eof())
   {
-    bt = reader.readMultimediaDocumentBlock(fileIn,
-                                       document,
-                                       writer,
-                                       useIterator,
-                                       useIndexIterator);
-  }
-  if (bt!=BagOfWords::BoWBlocType::END_BLOC)
-  {
-    std::string err_msg = "input file ended prematurely.";
-    std::cerr << "Error: " << err_msg << std::endl;
-    throw LimaException(err_msg);
+    BagOfWords::BoWBlocType bt;
+    while (! fileIn.eof())
+    {
+      bt = reader.readMultimediaDocumentBlock(fileIn,
+                                        document,
+                                        writer,
+                                        useIterator,
+                                        useIndexIterator);
+    }
+    if (bt!=BagOfWords::BoWBlocType::END_BLOC)
+    {
+      std::string err_msg = "input file ended prematurely.";
+      std::cerr << "Error: " << err_msg << std::endl;
+      throw LimaException(err_msg);
+    }
   }
   writer.writeMultimediaDocumentsFooter();
   if (!outputFile.isEmpty())

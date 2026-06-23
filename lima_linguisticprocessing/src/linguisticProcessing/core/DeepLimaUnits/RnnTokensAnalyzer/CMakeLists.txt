@@ -39,7 +39,11 @@ if (EIGEN3_FOUND)
             utils
             morph_model
             static_graph
+            conllu
+            lemmatization_inference
+            segmentation_inference
             ${TORCH_LIBRARIES}
+            ${Boost_LIBRARIES}
             )
 
     set_target_properties(lima-lp-rnn-tokens-analyzer PROPERTIES
