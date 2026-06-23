@@ -314,12 +314,16 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   //           << configPath.toUtf8().constData() << ", "
   //           << commonConfigFile << ", "
   //           << qlangs.join(",").toStdString() << std::endl;
-  // initialize common
+  // initialize common. Forward the parsed meta data as options so that e.g.
+  // "udlang" (the treebank selecting the deeplima models, passed as
+  // meta "udlang:eng-UD_English-EWT") is available to the process units at init
+  // time via MediaticData::getOptionValue.
   Common::MediaticData::MediaticData::changeable().init(
     resourcesPath.toUtf8().constData(),
     configPath.toUtf8().constData(),
     commonConfigFile,
-    langs);
+    langs,
+    metaData);
   // std::cerr << "MediaticData initialized" << std::endl;
 
   bool clientFactoryConfigured = false;

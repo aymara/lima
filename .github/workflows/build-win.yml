@@ -1,12 +1,10 @@
 name: "Build LIMA on Windows (Visual Studio 2022)"
 
 on:
-    push:
-        branches:
-            - master
-    pull_request:
-        branches:
-            - master
+    # Manual-only: the first vcpkg build of Qt6 + Boost takes hours and can hit the
+    # job time limit, so this must not gate PRs or master merges. Run it on demand
+    # from the Actions tab (or `gh workflow run`) when working on Windows support.
+    workflow_dispatch:
 
 env:
     # libtorch version must match extern/download_libtorch.sh

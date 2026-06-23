@@ -61,17 +61,19 @@ void LimaAnalyzerTestForgedPipeline::initTestCase()
 void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
 {
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline instantiate lima";
-    // The language id carries the treebank stem so that the "udlang" option
-    // resolves to "UD_English-EWT": the deeplima models are named after the
-    // treebank (RnnTokenizer/ud/tokenizer-UD_English-EWT.pt), as installed by
-    // `deeplima_models -i UD_English-EWT`. A bare "ud-eng" would resolve udlang
-    // to "eng" and the $udlang-templated model files would not be found.
-    LimaAnalyzer lima("ud-UD_English-EWT", "empty", "");
+    // The treebank that selects the deeplima models is passed through the "meta"
+    // argument as "udlang:<stem>" (here udlang:eng-UD_English-EWT), with the media
+    // kept as the generic "ud". MediaticData forwards this option to the process
+    // units, so RnnTokenizer/RnnTokensAnalyzer resolve $udlang to the treebank stem
+    // and load RnnTokenizer/ud/tokenizer-eng-UD_English-EWT.pt etc., as installed by
+    // `deeplima_models -i UD_English-EWT`. This mirrors:
+    //   lima -l ud --meta udlang:eng-UD_English-EWT -p deeplima <file>
+    LimaAnalyzer lima("ud", "empty", "", "", "", "udlang:eng-UD_English-EWT");
 
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add tokenizer";
 
     // Testing the forging of pipelines
-    //   auto langid = Lima::Common::MediaticData::MediaticData::single().getMediaId("ud-UD_English-EWT");
+    //   auto langid = Lima::Common::MediaticData::MediaticData::single().getMediaId("ud");
     //   auto pipe = MediaProcessors::changeable().getPipelineForId(langid, pipeline);
     //   auto managers = Lima::MediaProcessors::single().managers();
     //   {
@@ -83,7 +85,7 @@ void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
             "model_prefix": "tokenizer-$udlang"
         }
     )";
-    QVERIFY(lima.addPipelineUnit("empty", "ud-UD_English-EWT", tokenizerConfig));
+    QVERIFY(lima.addPipelineUnit("empty", "ud", tokenizerConfig));
 
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add tagger and lemmatizer";
     // RnnTokensAnalyzer writes UPOS/features into the MorphoSyntacticData and the lemma.
@@ -95,7 +97,7 @@ void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
             "lemmatizer_model_prefix": "lemmatizer-$udlang"
         }
     )";
-    QVERIFY(lima.addPipelineUnit("empty", "ud-UD_English-EWT", taggerConfig));
+    QVERIFY(lima.addPipelineUnit("empty", "ud", taggerConfig));
 
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add dumper";
     std::string dumperConfig = R"(
@@ -108,10 +110,10 @@ void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
             "withColsHeader": "true"
         }
     )";
-    QVERIFY(lima.addPipelineUnit("empty", "ud-UD_English-EWT", dumperConfig));
+    QVERIFY(lima.addPipelineUnit("empty", "ud", dumperConfig));
 
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline run analyzeText";
-    auto result = lima.analyzeText("This is a text on 02/05/2022.", "ud-UD_English-EWT", "empty");
+    auto result = lima.analyzeText("This is a text on 02/05/2022.", "ud", "empty");
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline result:" << Qt::endl << result;
     QVERIFY(!lima.error);
 }
