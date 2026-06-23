@@ -405,3 +405,20 @@ strings (nsubj, punct, amod, obl, ...). A --pretrained reload resumes with rel a
 This unblocks the inference side: convert_from_torch can now read the vocab into the eigen
 inference, the dumper can map predicted rel ids to deprel strings, and RnnDependencyParser
 can emit real DEPREL.
+
+## Step (b) piece 4c (part 1): label decoder wired into eigen inference (2026-06-23)
+
+- train_graph_dp now builds the model with tasks {arc, rel} (was {arc}); this is saved as
+  the model's output tasks, so at inference the output buffer is sized to 2 columns
+  (RnnSequenceClassifier sizes m_output by get_output_str_dicts_names().size()) — no buffer
+  surgery needed.
+- convert_from_torch (graph_dp_model.cpp) converts the label-decoder layer(s) into eigen
+  params and copies the deprel vocab (get_rel_class_names()).
+- predict() (graph_dp_eigen_inference_impl.h): after the arc op fills the head column, when a
+  label decoder is present and the output has >=2 columns, runs
+  Op_DeepBiaffineAttnLabelDecoder.predict_labels(encoder_out, predicted_heads) into the rel
+  column (output col 1). static_graph exposes get_layers_deep_biaffine_attn_label_decoder().
+
+Builds clean (deeplima-train-dp, deeplima-eigen). Remaining: expose rel in
+DependencyParser::TokenIterator (read col 1) + map id->deprel via the vocab, make the
+deeplima dumper emit it, and have RnnDependencyParser write real DEPREL into LIMA.

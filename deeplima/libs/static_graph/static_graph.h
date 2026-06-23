@@ -407,6 +407,11 @@ namespace deeplima
         return m_deep_biaffine_attention_decoder;
       }
 
+      const std::vector<deeplima::nets::torch_modules::DeepBiaffineAttentionLabelDecoder> &get_layers_deep_biaffine_attn_label_decoder() const
+      {
+        return m_deep_biaffine_attention_label_decoder;
+      }
+
       // const deeplima::nets::torch_modules::StanzaDepparseParser &get_layers_stanza_depparse_parser() const
       // {
       //   return *m_stanza_depparse_parser;

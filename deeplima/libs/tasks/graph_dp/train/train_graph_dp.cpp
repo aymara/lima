@@ -100,6 +100,15 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     rel_class_names[kv.second] = kv.first;
   }
 
+  // The model's output tasks. Include "rel" when a deprel dict is available so the
+  // model is built (and saved) as a labeled parser; the inference output buffer is
+  // then sized to two columns (head, rel). Used for both construction and training.
+  std::vector<std::string> tasks = { "arc" };
+  if (!deprel2id->empty())
+  {
+    tasks.push_back("rel");
+  }
+
   CoNLLUDataSet train_iterator(train_data,
                                params.m_batch_size,
                                feat_extractor,
@@ -155,7 +164,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   embd_descr,
                                   rnn_descr,
                                   decoder_descr,
-                                  utils::split(params.m_tasks_string, ','),
+                                  tasks,
                                   std::move(tag_dh),
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
                                   params.m_input_includes_root,
@@ -201,13 +210,6 @@ int train_graph_dp(const train_params_graph_dp_t& params)
       throw runtime_error("Unknown optimizer: " + opt_name);
     }
 
-    // Train the arc task, and the rel (deprel) task too when a deprel dict is
-    // available (the model then has a label decoder).
-    std::vector<std::string> tasks = { "arc" };
-    if (!deprel2id->empty())
-    {
-      tasks.push_back("rel");
-    }
     model->train(params, tasks,
                  train_iterator, dev_iterator,
                  *optimizer, min_perf, device);

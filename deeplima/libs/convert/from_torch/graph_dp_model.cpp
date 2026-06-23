@@ -81,6 +81,19 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
     convert_module_from_torch(m, layer);
   }
 
+  // Label (deprel) decoder, present only in labeled models.
+  for (size_t i = 0; i < src.get_layers_deep_biaffine_attn_label_decoder().size(); i++)
+  {
+    const deeplima::nets::torch_modules::DeepBiaffineAttentionLabelDecoder& m
+        = src.get_layers_deep_biaffine_attn_label_decoder()[i];
+
+    m_deep_biaffine_attn_label_decoder.emplace_back(std::make_shared<params_deep_biaffine_attn_label_decoder_t<Eigen::MatrixXf, Eigen::VectorXf>>());
+    auto& layer = *m_deep_biaffine_attn_label_decoder.back().get();
+
+    convert_module_from_torch(m, layer);
+  }
+  m_rel_class_names = src.get_rel_class_names();
+
   // temp: create exec plan
   Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
   Parent::m_params.push_back(Parent::m_multi_bilstm[0]);

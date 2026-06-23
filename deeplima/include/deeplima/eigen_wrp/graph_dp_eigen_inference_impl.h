@@ -11,6 +11,7 @@
 #include "birnn_inference_base.h"
 #include "bilstm.h"
 #include "deep_biaffine_attn_decoder.h"
+#include "deep_biaffine_attn_label_decoder.h"
 // #include "deeplima/graph_dp/impl/arborescence.h"
 
 namespace deeplima
@@ -110,6 +111,10 @@ public:
     auto p_decoder = std::dynamic_pointer_cast<typename deeplima::eigen_impl::Op_DeepBiaffineAttnDecoder<Eigen::MatrixXf, Eigen::VectorXf, float>>(
       Parent::m_ops[1]);
 
+    const bool predict_labels =
+        !m_deep_biaffine_attn_label_decoder.empty() && output->size() >= 2;
+    deeplima::eigen_impl::Op_DeepBiaffineAttnLabelDecoder<Eigen::MatrixXf, Eigen::VectorXf, float> label_op;
+
     size_t start = input_begin;
     for (size_t i = 0; i < lengths.size(); ++i)
     {
@@ -125,6 +130,15 @@ public:
         start + lengths[i],
         (*output)[0]);
 
+      if (predict_labels)
+      {
+        // Score deprels at the heads just predicted by the arc decoder.
+        const Eigen::MatrixXf& enc = wb->get_last_output();
+        const Eigen::MatrixXf sent_input = enc.block(0, 0, enc.rows(), lengths[i]);
+        label_op.predict_labels(*m_deep_biaffine_attn_label_decoder[0],
+                                sent_input, (*output)[0], start, (*output)[1]);
+      }
+
       start += lengths[i];
     }
     // std::cerr << "BiRnnAndDeepBiaffineAttentionEigenInference<Eigen::MatrixXf, Eigen::VectorXf, float>::predict executes done " << start << std::endl;
@@ -137,11 +151,25 @@ public:
     return m_embd_fn[idx];
   }
 
+  // deprel id -> string; empty if the model has no label decoder.
+  const std::vector<std::string>& get_rel_class_names() const
+  {
+    return m_rel_class_names;
+  }
+
+  bool has_label_decoder() const
+  {
+    return !m_deep_biaffine_attn_label_decoder.empty();
+  }
+
 protected:
   std::vector<std::string> m_embd_fn;
 
   std::vector<std::shared_ptr<deeplima::eigen_impl::params_deep_biaffine_attn_decoder_t<Eigen::MatrixXf, Eigen::VectorXf>>> m_deep_biaffine_attn_decoder;
   std::map<std::string, size_t> m_deep_biaffine_attn_decoder_idx;
+
+  std::vector<std::shared_ptr<deeplima::eigen_impl::params_deep_biaffine_attn_label_decoder_t<Eigen::MatrixXf, Eigen::VectorXf>>> m_deep_biaffine_attn_label_decoder;
+  std::vector<std::string> m_rel_class_names;
 
   virtual void convert_from_torch(const std::string& fn);
 };
