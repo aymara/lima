@@ -29,6 +29,15 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 }
 
 /**
+ * Handles multithreading
+ *
+ * buffers from elsewhere are called slots here
+ *
+ * Starts and stops threads.
+ * Each classifier has its own threadpool
+ * Each thread has its own stack so on machines with low memory, could be a problem.
+ *
+ *
  * The RnnSequenceClassifier is a Model, able to infer but also a thread pool
  * to dispatch the work between several threads. And also a vectorizer, here
  * a matrix.

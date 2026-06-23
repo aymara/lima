@@ -19,6 +19,14 @@
 
 namespace deeplima
 {
+namespace nets
+{
+
+/**
+ * Implementation for Torch of the Tensorflow execution graph
+ * Used in training only. Only loaded in inference
+ * In pytorch, the graph is implied from the computing and then saved. This is not implemented in libtorch.
+ */
   namespace nets
   {
 
