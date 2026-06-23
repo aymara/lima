@@ -55,7 +55,7 @@ WORKDIR /
 COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
 #RUN /svmtool.sh $GITHUB_TOKEN
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
-RUN /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
+RUN bash -x /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
 
 
 RUN install -d /src/lima/extern
