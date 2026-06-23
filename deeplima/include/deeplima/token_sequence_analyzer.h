@@ -137,6 +137,13 @@ public:
       return 0;
     }
 
+    // The tagger iterator carries no dependency information; provided only so the
+    // CoNLL-U dumper template can be instantiated. Never reached with hasDeps=true.
+    inline const char* deprel() const
+    {
+      return "dep";
+    }
+
     inline void next()
     {
       m_current++;

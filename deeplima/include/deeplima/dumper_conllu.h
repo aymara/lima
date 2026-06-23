@@ -554,7 +554,9 @@ public:
           // std::cerr << iter.head() << "\tdep";
           // std::cout << iter.head() << "\tdep";
           token.head = iter.head();
-          token.deprel = "dep";
+          // Use the deprel predicted by the label decoder when available
+          // (falls back to "dep" if the model has no label decoder).
+          token.deprel = iter.deprel();
         }
       }
       else

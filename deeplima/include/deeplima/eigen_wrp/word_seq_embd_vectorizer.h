@@ -98,6 +98,8 @@ public:
   {
   }
 
+  typedef UIntFeatExtractor uint_feat_extractor_t;
+
   UIntFeatExtractor& get_uint_feat_extractor()
   {
     return m_uint_feat_extractor;

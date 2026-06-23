@@ -422,3 +422,36 @@ can emit real DEPREL.
 Builds clean (deeplima-train-dp, deeplima-eigen). Remaining: expose rel in
 DependencyParser::TokenIterator (read col 1) + map id->deprel via the vocab, make the
 deeplima dumper emit it, and have RnnDependencyParser write real DEPREL into LIMA.
+
+## Step (b) piece 4c (part 2): deeplima-level output plumbing + end-to-end (2026-06-23)
+
+Output plumbing so the deeplima CLI emits predicted deprels:
+- DependencyParser::TokenIterator gained rel() (reads head matrix col 1, guarded by
+  size()>=2) and deprel() (maps the id via an optional rel-name vocab, falling back to
+  "dep"). DependencyParser::get_rel_class_names() forwards the model's vocab; deeplima.cpp
+  passes it to the iterator. token_sequence_analyzer's TokenIterator got a deprel() stub
+  ("dep") so the shared CoNLL-U dumper template still instantiates for the tagger path.
+- dumper_conllu emits iter.deprel() for normal arcs (kept "root"/"dep" for the reheaded
+  fallback cases).
+
+Two issues found and fixed while validating end-to-end:
+1. Output buffer was 1 column, so predict_labels was skipped. Root cause: the saved model's
+   "tasks" list is just ["arc"] — the deprel is produced by a separate label decoder, not the
+   generic task pool, so it is never counted. Correction (supersedes the earlier part-1
+   claim): the eigen converter now appends a "rel" entry to m_output_str_dicts_names whenever
+   a label decoder is present, sizing the output to 2 columns. No retraining needed.
+2. Strict positional tagger/parser feature matching threw whenever the tagger's morph feature
+   set/order differed from the parser's (e.g. the distributed fra tagger has xpos and lacks
+   Voice/Case/Emph/ExtPos vs a GSD-trained parser). Replaced with NAME-based matching over the
+   parser's required features: each is wired to the tagger column of the same name; features
+   the tagger does not produce are fed UNK (TokenUIntClsFeatExtractor::NO_COLUMN sentinel ->
+   feat_value returns 0). Tagger features the parser does not need are ignored. This realises
+   the old "skip morph classes that aren't requested by DP" TODO and tolerates tagger/parser
+   drift between independently trained models.
+
+Validated end-to-end via the deeplima CLI (tokenizer + tagger + dp, all fra-UD_French-GSD;
+m_vocab.pt with arc UAS ~0.91 / rel acc ~0.966). "Le chat noir dort sur le tapis." yields a
+fully correct parse: det/nsubj/amod/root/case/det/obl:mod/punct with correct heads.
+
+Remaining: LIMA-side RnnDependencyParser integration (write real DEPREL into LIMA's relation
+registry, add to the deepud pipeline, true LAS) and packaging trained DP models.

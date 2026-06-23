@@ -194,7 +194,9 @@ void init(const std::map<std::string, std::string>& models_fn,
         (*parser)(ti);
       });
 
-      parser->register_handler([conllu_dumper](const StringIndex& stridx,
+      // deprel id -> string vocabulary, used by the iterator to emit real labels.
+      std::vector<std::string> rel_class_names = parser->get_rel_class_names();
+      parser->register_handler([conllu_dumper, rel_class_names](const StringIndex& stridx,
                                   const std::vector<typename DependencyParser::token_with_analysis_t>& tokens,
                                   std::shared_ptr< StdMatrix<uint32_t> > classes,
                                   size_t begin,
@@ -204,7 +206,8 @@ void init(const std::map<std::string, std::string>& models_fn,
                                                            tokens,
                                                            classes,
                                                            begin,
-                                                           end);
+                                                           end,
+                                                           rel_class_names.empty() ? nullptr : &rel_class_names);
         // std::cerr << "In parser handler. Calling conllu_dumper functor " << begin << ", " << end << std::endl;
         (*conllu_dumper)(ti, begin, end, true);
       });

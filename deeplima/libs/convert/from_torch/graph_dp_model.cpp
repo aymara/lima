@@ -3,6 +3,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include <algorithm>
+
 #include "deeplima/eigen_wrp/graph_dp_eigen_inference_impl.h"
 #include "tasks/graph_dp/model/birnn_and_deep_biaffine_attention.h"
 
@@ -93,6 +95,19 @@ void BiRnnAndDeepBiaffineAttentionEigenInference::convert_from_torch(const std::
     convert_module_from_torch(m, layer);
   }
   m_rel_class_names = src.get_rel_class_names();
+
+  // The arc head is the only generic "task" the model declares, so the output
+  // buffer would be sized to a single column. The deprel (rel) is produced by a
+  // separate label decoder rather than the generic task pool, so when one is
+  // present we add a second output column for it. predict() fills column 0 with
+  // heads and column 1 with deprel ids.
+  if (!m_deep_biaffine_attn_label_decoder.empty()
+      && std::find(Parent::m_output_str_dicts_names.begin(),
+                   Parent::m_output_str_dicts_names.end(), "rel")
+         == Parent::m_output_str_dicts_names.end())
+  {
+    Parent::m_output_str_dicts_names.push_back("rel");
+  }
 
   // temp: create exec plan
   Parent::m_ops.push_back(std::make_shared<Op_BiLSTM<Eigen::MatrixXf, Eigen::VectorXf, float>>());
