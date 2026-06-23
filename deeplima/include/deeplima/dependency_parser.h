@@ -510,10 +510,28 @@ protected:
       if (iter.flags() & token_flags_t::sentence_brk ||
           iter.flags() & token_flags_t::paragraph_brk)
       {
-        break;
-        // lengths.push_back(this_sentence_tokens);
-        // tokens_counter += this_sentence_tokens;
-        // this_sentence_tokens = 1;
+        // End of a sentence. Record its length (including its synthetic root) and
+        // keep accumulating the following sentences into the SAME buffer, each
+        // with its own root. They are then analysed together in one pass and
+        // written to distinct output regions (predict() advances by length),
+        // instead of one slot per sentence all writing at output offset 0 (which
+        // made a shorter following sentence overwrite the previous one).
+        lengths.push_back(this_sentence_tokens);
+        tokens_counter += this_sentence_tokens;
+        iter.next();
+        if (iter.end())
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        // Need room for at least the next sentence's root + one token.
+        if (m_current_timepoint + tokens_counter + 2 > m_buffer_size)
+        {
+          this_sentence_tokens = 0;
+          break;
+        }
+        this_sentence_tokens = 1; // synthetic root of the next sentence
+        continue;
       }
 
       if (m_current_timepoint + tokens_counter + this_sentence_tokens == m_buffer_size)

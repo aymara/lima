@@ -481,13 +481,33 @@ RnnDependencyParser/ud/dependencyParser-fra-UD_French-GSD.pt). Single sentence i
 correct: "Le chat noir dort sur le tapis." -> det/nsubj/amod/root/case/det/obl:mod/punct with
 correct heads, matching the deeplima CLI.
 
-Known limitation (multi-sentence): because the whole text is parsed as one sequence (no
-sentence splitting on the feed to the parser), the parser sometimes attaches tokens across
-sentence boundaries. Such cross-sentence edges cannot be expressed in LIMA's per-sentence
-dependency graph and are skipped (those tokens are left head-less), so intra-sentence
-relations are correct but a few inter-sentence ones are dropped. The proper fix is to split
-the parser input on sentence boundaries (propagate EOS/sentence-break flags to the parser, as
-the deeplima CLI does); tracked as a follow-up.
+## Step (d): multi-sentence (sentence splitting) fix (2026-06-23)
 
-Remaining: per-sentence splitting on the parser feed; true LAS evaluation; packaging/shipping
-trained DP models in the aymara/lima-models releases (none yet).
+The earlier multi-sentence limitation is resolved. Four linked fixes:
+
+1. RnnTokensAnalyzer.cpp: sentence boundaries live in SegmentationData, not in token
+   statuses, and the old code did `token_flags_t(getStatus() & T_SENTENCE_BRK)` — a bitwise
+   AND of the sequential StatusType enum (T_SENTENCE_BRK == 6) cast to a deeplima bit flag
+   (sentence_brk == 0x01), which was always 0. Now we mark each sentence's last token (the
+   in-graph neighbour of Segment::getLastVertex(), or that vertex itself when it is a token)
+   with the real token_flags_t::sentence_brk so the parser splits per sentence.
+2. dependency_parser.h (count_max_tokens_until_eos): it used to break after the first
+   sentence, so each sentence became its own slot/predict — all writing output at offset 0,
+   so a shorter following sentence overwrote the previous one (equal-length sentences masked
+   the bug). Now it accumulates all sentences of a buffer into one analysis pass with a
+   per-sentence length vector (lengths=[9,7,...]); operator() already re-inserts a <ROOT>
+   per sentence.
+3. eigen_wrp/bilstm.h: the BiLSTM execute() passed input_end (not input_end - input_begin)
+   as the Eigen block() column COUNT. Harmless while input_begin was always 0, but with the
+   accumulation fix the predict loop calls the encoder with input_begin > 0 for the 2nd+
+   sentence, so this is now required for them to read the correct columns.
+4. RnnDependencyParser.cpp: heads are now sentence-LOCAL with one <ROOT> per sentence, so the
+   mapping is per-sentence: each <ROOT> advances to the next segment, and a token at local
+   position p with head h yields ordered[p] -> (h == 0 ? sentence boundary : ordered[h]).
+
+Validated with analyzeText -p deepud on 1-, 2- and 3-sentence French inputs: every sentence
+parses fully correctly (heads + deprels, including root), no dumper errors. The deeplima CLI
+matches.
+
+Remaining: true LAS evaluation; packaging/shipping trained DP models in the aymara/lima-models
+releases (none yet).

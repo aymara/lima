@@ -172,99 +172,91 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
     LinguisticGraph* posGraph = anagraph->getGraph();
     const LinguisticGraphVertex lastVertex = anagraph->lastVertex();
 
-    // LIMA feeds the whole text to the parser as a single sequence, so heads are
-    // GLOBAL token positions (1-based; 0 means root) over all sentences, and the
-    // stream is prefixed by synthetic <ROOT> tokens. Build the global ordered list
-    // of real token vertices (CoNLL order, walking each sentence's PoS graph as the
-    // dumper does) together with, for each position, the sentence it belongs to and
-    // that sentence's boundary vertex (rendered as HEAD 0 / DEPREL root).
-    std::vector<LinguisticGraphVertex> globalVertex(1, 0); // [0] unused (root sentinel)
-    std::vector<size_t> globalSegment(1, 0);
+    // The parser emits one sentence at a time: a synthetic <ROOT> followed by the
+    // sentence's real tokens, whose heads are sentence-LOCAL (0 == that sentence's
+    // root, 1..k == its tokens in order). Build, per sentence/segment, the ordered
+    // list of real token vertices by walking the PoS graph the same way the CoNLL
+    // dumper does (ordered[0] is the boundary, rendered as HEAD 0 / DEPREL root).
     std::vector<LinguisticGraphVertex> segmentBegin;
+    std::vector<std::vector<LinguisticGraphVertex>> segmentTokens;
+    for (auto segIt = sd->getSegments().begin(); segIt != sd->getSegments().end();
+         ++segIt)
     {
-        size_t segIdx = 0;
-        for (auto segIt = sd->getSegments().begin(); segIt != sd->getSegments().end();
-             ++segIt, ++segIdx)
-        {
-            const LinguisticGraphVertex sentBegin = segIt->getFirstVertex();
-            const LinguisticGraphVertex sentEnd = segIt->getLastVertex();
-            segmentBegin.push_back(sentBegin);
+        const LinguisticGraphVertex sentBegin = segIt->getFirstVertex();
+        const LinguisticGraphVertex sentEnd = segIt->getLastVertex();
+        segmentBegin.push_back(sentBegin);
+        segmentTokens.emplace_back();
+        std::vector<LinguisticGraphVertex>& tokens = segmentTokens.back();
 
-            std::queue<LinguisticGraphVertex> toVisit;
-            std::set<LinguisticGraphVertex> visited;
-            toVisit.push(sentBegin);
-            while (!toVisit.empty())
+        std::queue<LinguisticGraphVertex> toVisit;
+        std::set<LinguisticGraphVertex> visited;
+        toVisit.push(sentBegin);
+        while (!toVisit.empty())
+        {
+            const LinguisticGraphVertex v = toVisit.front();
+            toVisit.pop();
+            if (visited.count(v) > 0)
             {
-                const LinguisticGraphVertex v = toVisit.front();
-                toVisit.pop();
-                if (visited.count(v) > 0)
+                continue;
+            }
+            visited.insert(v);
+            // Real tokens (skip the sentence boundary and any non-token vertex).
+            if (v != sentBegin && get(vertex_token, *posGraph, v) != nullptr)
+            {
+                tokens.push_back(v);
+            }
+            if (v == sentEnd)
+            {
+                break;
+            }
+            LinguisticGraphOutEdgeIt outIt, outItEnd;
+            for (boost::tie(outIt, outItEnd) = boost::out_edges(v, *posGraph);
+                 outIt != outItEnd; ++outIt)
+            {
+                const LinguisticGraphVertex tgt = boost::target(*outIt, *posGraph);
+                if (visited.count(tgt) == 0 && tgt != lastVertex)
                 {
-                    continue;
-                }
-                visited.insert(v);
-                // Real tokens (skip the sentence boundary and any non-token vertex).
-                if (v != sentBegin && get(vertex_token, *posGraph, v) != nullptr)
-                {
-                    globalVertex.push_back(v);
-                    globalSegment.push_back(segIdx);
-                }
-                if (v == sentEnd)
-                {
-                    break;
-                }
-                LinguisticGraphOutEdgeIt outIt, outItEnd;
-                for (boost::tie(outIt, outItEnd) = boost::out_edges(v, *posGraph);
-                     outIt != outItEnd; ++outIt)
-                {
-                    const LinguisticGraphVertex tgt = boost::target(*outIt, *posGraph);
-                    if (visited.count(tgt) == 0 && tgt != lastVertex)
-                    {
-                        toVisit.push(tgt);
-                    }
+                    toVisit.push(tgt);
                 }
             }
         }
     }
 
-    // Walk the parser output, skipping the synthetic <ROOT>(s), assigning each real
-    // token its global CoNLL position and wiring the predicted relation.
-    size_t gp = 0; // 1-based global token position
+    // Walk the parser output. Each <ROOT> starts a new sentence (matched to the
+    // next segment in order); the following tokens map to that sentence's vertices.
+    int segIdx = -1;
+    size_t localPos = 0; // 1-based position of the current token within its sentence
     for (size_t i = 0; i < m_d->m_heads.size(); ++i)
     {
         if (i < m_d->m_isRoot.size() && m_d->m_isRoot[i])
         {
-            continue; // synthetic <ROOT>: not a real token, carries no relation
+            ++segIdx;
+            localPos = 0;
+            continue;
         }
-        ++gp;
-        if (gp >= globalVertex.size())
+        ++localPos;
+        if (segIdx < 0 || segIdx >= static_cast<int>(segmentTokens.size()))
         {
-            break; // parser produced more tokens than the graph has; stop
+            continue;
+        }
+        const std::vector<LinguisticGraphVertex>& tokens = segmentTokens[segIdx];
+        if (localPos > tokens.size())
+        {
+            continue; // parser/graph token counts disagree for this sentence
         }
         const uint32_t head = m_d->m_heads[i];
-        const size_t seg = globalSegment[gp];
         const std::string& deprel = (i < m_d->m_deprels.size())
                                         ? m_d->m_deprels[i]
                                         : std::string("dep");
         const Common::MediaticData::SyntacticRelationId relType =
             languageData.getSyntacticRelationId(deprel);
-
-        LinguisticGraphVertex dest;
-        if (head == 0)
-        {
-            dest = segmentBegin[seg]; // attach to this sentence's root boundary
-        }
-        else if (head < globalVertex.size() && globalSegment[head] == seg)
-        {
-            dest = globalVertex[head];
-        }
-        else
-        {
-            // Cross-sentence head: an artifact of parsing the text as one sequence
-            // without sentence splitting. Skip it (the token is left head-less)
-            // rather than emit an edge the per-sentence dumper cannot resolve.
-            continue;
-        }
-        syntacticData->addRelationNoChain(relType, globalVertex[gp], dest);
+        const LinguisticGraphVertex src = tokens[localPos - 1];
+        // head == 0 -> this sentence's root boundary (HEAD 0 / DEPREL root);
+        // otherwise the head-th token of the same sentence.
+        const LinguisticGraphVertex dest =
+            (head == 0 || head > tokens.size()) ? segmentBegin[segIdx]
+                                                : tokens[head - 1];
+        syntacticData->addRelationNoChain(relType, src, dest);
     }
     TimeUtils::logElapsedTime("RnnDependencyParser");
     return SUCCESS_ID;
