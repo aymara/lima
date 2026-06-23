@@ -455,3 +455,39 @@ fully correct parse: det/nsubj/amod/root/case/det/obl:mod/punct with correct hea
 
 Remaining: LIMA-side RnnDependencyParser integration (write real DEPREL into LIMA's relation
 registry, add to the deepud pipeline, true LAS) and packaging trained DP models.
+
+## Step (c): LIMA RnnDependencyParser integration (2026-06-23)
+
+The LIMA process unit now writes real heads and deprels into the dependency graph and is
+part of the default pipelines.
+
+- RnnDependencyParser.cpp: removed the debug LERROR spam and the hardcoded
+  addRelationNoChain(1, …). It now collects, per token, the predicted head and deprel
+  (passing the model's rel-class vocabulary into the deeplima TokenIterator), maps each
+  deprel string to a SyntacticRelationId via LanguageData::getSyntacticRelationId, and adds
+  the edge into SyntacticData. A token whose head is the root points at the sentence
+  boundary vertex, which the ConllDumper renders as HEAD 0 / DEPREL root.
+- Token→vertex mapping: LIMA feeds the whole text to the parser as one sequence, so the
+  parser returns GLOBAL token positions (1-based, 0 = root) prefixed by a synthetic <ROOT>.
+  process() builds the global ordered list of real token vertices by walking each sentence's
+  PoS graph the same way ConllDumper does (BFS from the sentence boundary, skipping non-token
+  vertices), records each token's sentence, and wires src=vertex[pos] -> dest=vertex[head].
+- Graceful degradation: if no parser model exists for a language the unit disables itself
+  (process() is a no-op) instead of aborting the pipeline. Added to the deepud and
+  deepud-pretok pipelines in lima-lp-ud.xml.
+
+Validated with analyzeText -p deepud on French (installed m_vocab.pt as
+RnnDependencyParser/ud/dependencyParser-fra-UD_French-GSD.pt). Single sentence is fully
+correct: "Le chat noir dort sur le tapis." -> det/nsubj/amod/root/case/det/obl:mod/punct with
+correct heads, matching the deeplima CLI.
+
+Known limitation (multi-sentence): because the whole text is parsed as one sequence (no
+sentence splitting on the feed to the parser), the parser sometimes attaches tokens across
+sentence boundaries. Such cross-sentence edges cannot be expressed in LIMA's per-sentence
+dependency graph and are skipped (those tokens are left head-less), so intra-sentence
+relations are correct but a few inter-sentence ones are dropped. The proper fix is to split
+the parser input on sentence boundaries (propagate EOS/sentence-break flags to the parser, as
+the deeplima CLI does); tracked as a follow-up.
+
+Remaining: per-sentence splitting on the parser feed; true LAS evaluation; packaging/shipping
+trained DP models in the aymara/lima-models releases (none yet).

@@ -43,13 +43,16 @@ SPDX-License-Identifier: MIT
 
     <!-- Default UD pipeline, now pure libtorch (same units as "deeplima").
          RnnTokensAnalyzer does PoS tagging, morphosyntactic features and (when a
-         model is available) lemmatization. Rule-based NER
-         (SpecificEntitiesModexAfterPos) and compound building (which needs a
-         dependency parse) can be re-added once validated / once parser models ship. -->
+         model is available) lemmatization. RnnDependencyParser adds the neural
+         dependency parse (heads + deprels); it disables itself for languages with
+         no parser model, so the rest of the pipeline still runs. Rule-based NER
+         (SpecificEntitiesModexAfterPos) and compound building can be re-added
+         once validated. -->
     <group name="deepud" class="ProcessUnitPipeline">
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
         <item value="RnnTokensAnalyzer"/>
+        <item value="RnnDependencyParser"/>
         <item value="conllDumper"/>
       </list>
     </group>
@@ -59,6 +62,7 @@ SPDX-License-Identifier: MIT
       <list name="processUnitSequence">
         <item value="conllureader"/>
         <item value="RnnTokensAnalyzer"/>
+        <item value="RnnDependencyParser"/>
         <item value="conllDumper"/>
       </list>
     </group>

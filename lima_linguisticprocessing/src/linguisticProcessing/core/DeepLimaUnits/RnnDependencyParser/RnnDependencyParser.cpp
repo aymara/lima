@@ -20,6 +20,9 @@
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/LinguisticGraph.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticDataUtils.h"
+#include "linguisticProcessing/core/TextSegmentation/SegmentationData.h"
+
+#include <queue>
 
 #include "RnnDependencyParser.h"
 #include "deeplima/dependency_parser.h"
@@ -77,13 +80,18 @@ public:
     std::vector<std::string> m_class_names;
     std::vector< std::vector<std::string> > m_classes;
     std::vector<uint32_t> m_heads;
+    std::vector<std::string> m_deprels; // predicted deprel per token, parallel to m_heads
+    std::vector<bool> m_isRoot;         // true for synthetic <ROOT> tokens (no real vertex)
+    std::vector<std::string> m_relClassNames; // deprel id -> string, from the model
     bool m_loaded;
+    bool m_enabled; // false when no parser model is available: process() is a no-op
 };
 
 RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate",
                                                                               THIS_FILE_LOGGING_CATEGORY()),
                                                           m_stridx(new StringIndex()),
-                                                          m_loaded(false)
+                                                          m_loaded(false),
+                                                          m_enabled(true)
 {
 }
 
@@ -112,6 +120,16 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
     TimeUtilsController RnnDependencyParserProcessTime("RnnDependencyParser");
     SALOGINIT;
     LOG_MESSAGE(LDEBUG, "RnnDependencyParser::process");
+    if (!m_d->m_enabled)
+    {
+        LOG_MESSAGE(LDEBUG, "RnnDependencyParser disabled (no model); skipping.");
+        return SUCCESS_ID;
+    }
+    // Ensure the model is loaded (no-op if already loaded or not lazy-initialized).
+    if (m_d->m_load_fn)
+    {
+        m_d->m_load_fn();
+    }
     auto tiData = std::dynamic_pointer_cast<TokenIteratorData>(analysis.getData("TokenIterator"));
     if (tiData == nullptr)
     {
@@ -122,19 +140,6 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
     auto stridxPtr = tiData->getStringIndex();
     m_d->m_dependencyParser->setStringIndex(stridxPtr);
     auto tokenIterator = tiData->getTokenIterator();
-    tokenIterator->reset(0);
-    LERROR << "is end : " << tokenIterator->end() << "\n";
-    LERROR << "position : " << tokenIterator->position() << "\n";
-    while(!tokenIterator->end())
-    {
-        LERROR <<"text: "<< tokenIterator->form() << "\n";
-        for(uint cat=0; cat < m_d->m_class_names.size(); cat++)
-        {
-            LERROR << "RnnDependencyParser::process class:" << m_d->m_class_names[cat]
-                    << "index: " << tokenIterator->token_class(cat) << "\n";
-        }
-        tokenIterator->next();
-    }
     tokenIterator->reset();
 
     auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
@@ -154,16 +159,112 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
 
     m_d->analyzer(tokenIterator);
 
-    uint curToken = 0;
-    for(auto head: m_d->m_heads)
+    const auto& languageData = static_cast<const Common::MediaticData::LanguageData&>(
+        Common::MediaticData::MediaticData::single().mediaData(m_d->m_language));
+
+    auto sd = std::dynamic_pointer_cast<SegmentationData>(
+        analysis.getData(m_d->m_data.toStdString()));
+    if (sd == nullptr)
     {
-        curToken++;
-        syntacticData->addVertex();
-        LOG_MESSAGE(LERROR,"head is : " << head);
-        if(head != 0)
+        LERROR << "RnnDependencyParser: missing segmentation data '" << m_d->m_data << "'";
+        return MISSING_DATA;
+    }
+    LinguisticGraph* posGraph = anagraph->getGraph();
+    const LinguisticGraphVertex lastVertex = anagraph->lastVertex();
+
+    // LIMA feeds the whole text to the parser as a single sequence, so heads are
+    // GLOBAL token positions (1-based; 0 means root) over all sentences, and the
+    // stream is prefixed by synthetic <ROOT> tokens. Build the global ordered list
+    // of real token vertices (CoNLL order, walking each sentence's PoS graph as the
+    // dumper does) together with, for each position, the sentence it belongs to and
+    // that sentence's boundary vertex (rendered as HEAD 0 / DEPREL root).
+    std::vector<LinguisticGraphVertex> globalVertex(1, 0); // [0] unused (root sentinel)
+    std::vector<size_t> globalSegment(1, 0);
+    std::vector<LinguisticGraphVertex> segmentBegin;
+    {
+        size_t segIdx = 0;
+        for (auto segIt = sd->getSegments().begin(); segIt != sd->getSegments().end();
+             ++segIt, ++segIdx)
         {
-            syntacticData->addRelationNoChain(1,curToken,head);
+            const LinguisticGraphVertex sentBegin = segIt->getFirstVertex();
+            const LinguisticGraphVertex sentEnd = segIt->getLastVertex();
+            segmentBegin.push_back(sentBegin);
+
+            std::queue<LinguisticGraphVertex> toVisit;
+            std::set<LinguisticGraphVertex> visited;
+            toVisit.push(sentBegin);
+            while (!toVisit.empty())
+            {
+                const LinguisticGraphVertex v = toVisit.front();
+                toVisit.pop();
+                if (visited.count(v) > 0)
+                {
+                    continue;
+                }
+                visited.insert(v);
+                // Real tokens (skip the sentence boundary and any non-token vertex).
+                if (v != sentBegin && get(vertex_token, *posGraph, v) != nullptr)
+                {
+                    globalVertex.push_back(v);
+                    globalSegment.push_back(segIdx);
+                }
+                if (v == sentEnd)
+                {
+                    break;
+                }
+                LinguisticGraphOutEdgeIt outIt, outItEnd;
+                for (boost::tie(outIt, outItEnd) = boost::out_edges(v, *posGraph);
+                     outIt != outItEnd; ++outIt)
+                {
+                    const LinguisticGraphVertex tgt = boost::target(*outIt, *posGraph);
+                    if (visited.count(tgt) == 0 && tgt != lastVertex)
+                    {
+                        toVisit.push(tgt);
+                    }
+                }
+            }
         }
+    }
+
+    // Walk the parser output, skipping the synthetic <ROOT>(s), assigning each real
+    // token its global CoNLL position and wiring the predicted relation.
+    size_t gp = 0; // 1-based global token position
+    for (size_t i = 0; i < m_d->m_heads.size(); ++i)
+    {
+        if (i < m_d->m_isRoot.size() && m_d->m_isRoot[i])
+        {
+            continue; // synthetic <ROOT>: not a real token, carries no relation
+        }
+        ++gp;
+        if (gp >= globalVertex.size())
+        {
+            break; // parser produced more tokens than the graph has; stop
+        }
+        const uint32_t head = m_d->m_heads[i];
+        const size_t seg = globalSegment[gp];
+        const std::string& deprel = (i < m_d->m_deprels.size())
+                                        ? m_d->m_deprels[i]
+                                        : std::string("dep");
+        const Common::MediaticData::SyntacticRelationId relType =
+            languageData.getSyntacticRelationId(deprel);
+
+        LinguisticGraphVertex dest;
+        if (head == 0)
+        {
+            dest = segmentBegin[seg]; // attach to this sentence's root boundary
+        }
+        else if (head < globalVertex.size() && globalSegment[head] == seg)
+        {
+            dest = globalVertex[head];
+        }
+        else
+        {
+            // Cross-sentence head: an artifact of parsing the text as one sequence
+            // without sentence splitting. Skip it (the token is left head-less)
+            // rather than emit an edge the per-sentence dumper cannot resolve.
+            continue;
+        }
+        syntacticData->addRelationNoChain(relType, globalVertex[gp], dest);
     }
     TimeUtils::logElapsedTime("RnnDependencyParser");
     return SUCCESS_ID;
@@ -204,7 +305,15 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
                                                           .arg(lang_str, tagger_model_name));
     if (dependency_parser_file_name.isEmpty())
     {
-        throw InvalidConfiguration("RnnDependencyParserPrivate::init: dependency parser model file not found.");
+        // No dependency parser model for this language yet: disable the unit
+        // rather than aborting the whole pipeline. process() becomes a no-op, so
+        // the rest of the pipeline (tagging, lemmatization, dumping) still runs.
+        SALOGINIT;
+        LWARN << "RnnDependencyParserPrivate::init: no dependency parser model found for "
+              << lang_str << " (" << dependency_parser_name
+              << "); dependency parsing disabled.";
+        m_enabled = false;
+        return;
     }
 
     if (tagger_model_file_name.isEmpty())
@@ -244,6 +353,9 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
 
 void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti)
 {
+    // deprel id -> string vocabulary from the model; empty if the model has no
+    // label decoder (then deprel() falls back to "dep").
+    m_relClassNames = m_dependencyParser->get_rel_class_names();
     m_dependencyParser->register_handler([this](const StringIndex& stridx,
                                               const std::vector<typename DependencyParser::token_with_analysis_t>& tokens,
                                               std::shared_ptr< StdMatrix<uint32_t> > classes,
@@ -254,7 +366,8 @@ void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<
                                                         tokens,
                                                         classes,
                                                         begin,
-                                                        end);
+                                                        end,
+                                                        m_relClassNames.empty() ? nullptr : &m_relClassNames);
                                   insertDependencies(dti);
                               });
     (*m_dependencyParser)(*ti);
@@ -263,9 +376,14 @@ void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<
 
 void RnnDependencyParserPrivate::insertDependencies(DependencyParser::TokenIterator& ti)
 {
+    // The iterator prefixes the stream with a synthetic <ROOT> token; real tokens
+    // carry global head indices (0 == root). Mark the <ROOT>(s) so process() skips
+    // them when assigning relations to actual graph vertices.
     while (!ti.end())
     {
         m_heads.push_back(ti.head());
+        m_deprels.push_back(ti.deprel());
+        m_isRoot.push_back(std::string(ti.form()) == "<ROOT>");
         ti.next();
     }
 }
