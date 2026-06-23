@@ -25,7 +25,7 @@ env:
 jobs:
 
   debian12:
-    name: "Build on Debian 12 with TensorFlow support"
+    name: "Build on Debian 12"
     runs-on: ubuntu-latest
 #    container: docker:20.10.13-dind
 
@@ -54,15 +54,6 @@ jobs:
           haskell: true
           large-packages: false
           swap-storage: true
-
-      # Install the cosign tool except on PR
-      # https://github.com/sigstore/cosign-installer
-      - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@main
-        with:
-          cosign-release: 'v1.4.0'
-
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx

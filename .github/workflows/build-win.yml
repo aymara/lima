@@ -1,26 +1,16 @@
+name: "Build LIMA on Windows (Visual Studio 2022)"
+
 on:
     push:
         branches:
             - master
+    pull_request:
+        branches:
+            - master
 
 env:
-    # Use docker.io for Docker Hub if empty
-    REGISTRY: ghcr.io
-    MANYLINUX_TAG: "2022-10-25-fbea779"
-    # github.repository as <account>/<repo>
-    IMAGE_NAME: ${{ github.repository }}
-    PYTHON_VERSION: "3.7"
-    PYTHON_SHORT_VERSION: "cp37-cp37m"
-    PYTHON_WHEEL_VERSION: "cp37-abi3"
-    PYTHON_FULL_VERSION: "3.7.13"
-    QT_VERSION_MAJOR: "5"
-    QT_VERSION_MINOR: "15"
-    QT_VERSION_PATCH: "2"
-    QT_VERSION: "5.15"
-    QT_FULL_VERSION: "5.15.2"
-    PYSIDE_VERSION: "2"
-    LLVM_VERSION: "14.0.6"
-    GCC_VERSION: "10.1.0"
+    # libtorch version must match extern/download_libtorch.sh
+    LIBTORCH_VERSION: "2.1.0"
 
 jobs:
     build-VS-2022:
@@ -29,27 +19,61 @@ jobs:
             matrix:
                 configuration: [Release]
                 platform: [x64]
+
         steps:
             - name: "Checkout code"
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   submodules: recursive
-            - name: vcpkg build
+
+            - name: "Set up MSVC developer environment"
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
+                  arch: x64
+
+            - name: "Install build dependencies via vcpkg"
               uses: johnwason/vcpkg-action@v6
               id: vcpkg
               with:
-                pkgs: boost-regex boost-filesystem boost-program-options boost-system boost-thread boost-test boost-iostreams qwt qtbase
+                pkgs: >-
+                    boost-regex boost-filesystem boost-program-options
+                    boost-system boost-thread boost-test boost-iostreams
+                    eigen3 icu qtbase
                 triplet: x64-windows-release
                 token: ${{ github.token }}
                 github-binarycache: true
-            - name: Running cmake (windows)
+
+            - name: "Download libtorch (CPU, shared with deps)"
+              shell: pwsh
               run: |
-                    cd ${{ github.workspace }}
-                    ls
-                    mkdir build
-                    cd build
-                    cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake ..
-            - name: Build Solution (windows)
+                  $url = "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-${env:LIBTORCH_VERSION}%2Bcpu.zip"
+                  Write-Host "Downloading $url"
+                  Invoke-WebRequest -Uri $url -OutFile libtorch.zip
+                  Expand-Archive -Path libtorch.zip -DestinationPath "${{ github.workspace }}/extern"
+                  Remove-Item libtorch.zip
+
+            - name: "Compute release identifier"
+              shell: bash
               run: |
-                cd build
-                MSBuild.exe CMakeHelloWorld.sln
+                  echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
+                  echo "LIMA_VERSION_RELEASE=$(cat release)" >> "$GITHUB_ENV"
+
+            - name: "Configure (CMake)"
+              shell: pwsh
+              run: |
+                  cmake -G Ninja -B build `
+                    -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+                    -DVCPKG_TARGET_TRIPLET=x64-windows-release `
+                    -DCMAKE_BUILD_TYPE=Release `
+                    -DCMAKE_PREFIX_PATH="${{ github.workspace }}/extern/libtorch" `
+                    -DLIMA_VERSION_RELEASE="${env:LIMA_VERSION_RELEASE}" `
+                    -DWITH_LIMA_RESOURCES=OFF `
+                    -DWITH_GUI=OFF `
+                    -DWITH_DEBUG_MESSAGES=ON `
+                    -DWITH_ARCH=OFF `
+                    -DWITH_ASAN=OFF `
+                    -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON
+
+            - name: "Build"
+              shell: pwsh
+              run: cmake --build build --config Release

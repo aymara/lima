@@ -4,7 +4,6 @@ FROM debian:12
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG USE_TENSORFLOW="true"
 ARG GITHUB_TOKEN=none
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
@@ -15,14 +14,6 @@ COPY --from=aymara_svmtoolpp-debian12 /opt/svmtool++ /usr
 
 # Setup
 RUN apt-get update && apt-get install -y locales locales-all apt-utils lsb-release git gcc g++ make curl python3-nltk gawk wget python3 ninja-build qt6-base-dev qt6-tools-dev libenchant-2-dev libtre-dev libboost-all-dev gnupg build-essential libssl-dev nodejs npm dos2unix unzip libeigen3-dev python3-pip python-is-python3 cmake qml6-module-qtqml qt6-base-dev qt6-tools-dev libqt6concurrent6 libqt6qml6 qt6-base-dev-tools qt6-charts-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-httpserver-dev qt6-multimedia-dev python3-arpy python3-requests python3-full python3-tqdm
-
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb -q \
-    && dpkg -i libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb \
-    && rm -f libtensorflow-for-lima-generic_1.9-ubuntu7~20.04_amd64.deb ; fi"
-
-RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then wget https://launchpad.net/~limapublisher/+archive/ubuntu/ppa/+files/libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb -q \
-    && dpkg -i libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb \
-    && rm -f libtensorflow-for-lima-dev_1.9-ubuntu7~20.04_amd64.deb ; fi"
 
 # Install recent cmake
 #WORKDIR /cmake_build
@@ -71,7 +62,7 @@ ENV QT_VERSION_MAJOR="${QT_VERSION_MAJOR}"
 
 # Build
 #
-RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTF_SOURCES_PATH:PATH="/usr" -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} ..
+RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} ..
 RUN ninja && ninja install
 # Some models are necessary for unit tests to work, let's use a previous
 # version of lima-python to install them, then run tests and finally remove
@@ -89,8 +80,4 @@ RUN install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb
 
 # install github-release to be able to deploy packages
 RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin
-
-# # install English and French UD models
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l english ; fi"
-# RUN /bin/bash -c "if [ \"$USE_TENSORFLOW\" = true ] ; then lima_models.py -l french ; fi"
 
