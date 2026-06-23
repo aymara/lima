@@ -70,22 +70,24 @@ void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
     //   auto pipe = MediaProcessors::changeable().getPipelineForId(langid, pipeline);
     //   auto managers = Lima::MediaProcessors::single().managers();
     //   {
+    // The libtorch (deeplima) units, mirroring the deepud pipeline configuration.
     std::string tokenizerConfig = R"(
         {
-            "name": "cpptftokenizer",
-            "class": "CppUppsalaTensorFlowTokenizer",
+            "name": "RnnTokenizer",
+            "class": "RnnTokenizer",
             "model_prefix": "tokenizer-eng"
         }
     )";
     QVERIFY(lima.addPipelineUnit("empty", "ud-eng", tokenizerConfig));
 
-    qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add tagger and parser";
+    qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add tagger and lemmatizer";
+    // RnnTokensAnalyzer writes UPOS/features into the MorphoSyntacticData and the lemma.
     std::string taggerConfig = R"(
         {
-            "name": "tfmorphosyntax",
-            "class": "TensorFlowMorphoSyntax",
-            "model_prefix": "morphosyntax-eng",
-            "embeddings": "fasttext-eng.bin"
+            "name": "RnnTokensAnalyzer",
+            "class": "RnnTokensAnalyzer",
+            "tagger_model_prefix": "tagger-$udlang",
+            "lemmatizer_model_prefix": "lemmatizer-$udlang"
         }
     )";
     QVERIFY(lima.addPipelineUnit("empty", "ud-eng", taggerConfig));

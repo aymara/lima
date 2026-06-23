@@ -166,7 +166,7 @@ namespace Lima
       std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
       throw InvalidConfiguration(
-        QString::fromStdString("No AbstractFactory for classId '{}'").arg(
+        QString::fromStdString("No AbstractFactory for classId '%1'").arg(
           QString::fromStdString(classId)));
     }
     return factItr->second;
@@ -189,7 +189,7 @@ namespace Lima
       std::cerr << "   Or you forgot to define it as a plugin using, in its CMakeLists.txt," << std::endl;
       std::cerr << "   DECLARE_LIMA_PLUGIN, instead of add_library ?" << std::endl;
       throw InvalidConfiguration(
-        QString::fromStdString("No AbstractFactory for classId '{}'").arg(
+        QString::fromStdString("No AbstractFactory for classId '%1'").arg(
           QString::fromStdString(classId)));
     }
     return factItr->second;
