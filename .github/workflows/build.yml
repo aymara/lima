@@ -2,6 +2,9 @@ on:
   push:
     branches:
     - master
+  pull_request:
+    branches:
+    - master
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -114,6 +117,8 @@ jobs:
     steps:
       -
         name: Login to DockerHub
+        # Don't log in / push on pull requests: only build to validate.
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -141,6 +146,7 @@ jobs:
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" --build-arg GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" -t aymara/lima-ubuntu22.04:latest .
 
       - name: "Push image"
+        if: github.event_name != 'pull_request'
         run: docker push aymara/lima-ubuntu22.04:latest
 
   ubuntu22_04_lima_factoryia:
@@ -153,6 +159,8 @@ jobs:
     steps:
       -
         name: Login to DockerHub
+        # Don't log in / push on pull requests: only build to validate.
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -180,4 +188,5 @@ jobs:
         run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" --build-arg GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" -t aymara/lima-ubuntu22.04-fia:latest .
 
       - name: "Push docker image"
+        if: github.event_name != 'pull_request'
         run: docker push aymara/lima-ubuntu22.04-fia:latest
