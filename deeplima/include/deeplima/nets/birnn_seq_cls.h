@@ -474,6 +474,17 @@ public:
 
     slot.m_output_begin = slot_begin;
     slot.m_input_begin = slot_begin;
+
+    // Restore this slot's full allocated capacity. set_slot_end() (called right
+    // after, on the DP path) overwrites m_output_end/m_input_end with the actual
+    // data end (count) so the dumper can read [m_output_begin, m_output_end).
+    // But m_output_end is *also* the capacity bound asserted in set_slot_end().
+    // Without restoring it here, reusing this buffer/slot for a later, longer
+    // token batch checks count against the stale (shrunken) end from the
+    // previous use -> assert in debug, silent buffer overrun (heap corruption)
+    // in release. The DP writes [slot_begin, count) with count <= m_slot_len.
+    slot.m_output_end = slot_begin + m_slot_len;
+    slot.m_input_end = slot_begin + m_slot_len;
   }
 
   inline void set_slot_end(uint32_t idx, uint64_t slot_end)

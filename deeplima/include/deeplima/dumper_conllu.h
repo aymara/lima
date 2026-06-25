@@ -80,7 +80,10 @@ bool dfs(int v, std::vector<uint32_t>& heads,  std::vector<int>& color,
     // std::cerr << "dfs " << v << ", " << heads << ", " << color << ", " << cycle_start << ", " << cycle_end << std::endl;
     color[v] = 1;
     auto u = heads[v];
-    if (u == 0)
+    // A predicted head can be out of range (>= number of tokens) when the model
+    // produces a bad arc; treat it like "no head" so the cycle walk never
+    // indexes color[]/heads[] out of bounds.
+    if (u == 0 || u >= heads.size())
     {
       color[v] = 2;
       return false;
