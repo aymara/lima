@@ -291,15 +291,23 @@ public:
       {
         if (0 == i)
         {
-          //const M input = input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin);
+          // Copy the input block into a dense, contiguous matrix BEFORE the
+          // product. input_matrix is the shared vectorizer tensor whose leading
+          // dimension is wider than the feature count, so a lazily-evaluated
+          // block (input_matrix.block(...)) in the Eigen product reads columns
+          // >0 at the wrong stride -> only column 0 is correct. Forcing a dense
+          // copy respects the stride. (Deeper layers use outputs[i-1], which is
+          // tightly allocated, so they were unaffected.)
+          const M input = input_matrix.block(0, input_begin, input_matrix.rows(),
+                                             input_end - input_begin);
           // Top rows - forward pass
           temp.topLeftCorner(hidden_size * 4, input_end - input_begin)
-              = (layer.fw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin)).colwise()
+              = (layer.fw.weight_ih * input).colwise()
                 + layer.fw.bias_ih;
 
           // Bottom rows - backward pass
           temp.bottomLeftCorner(hidden_size * 4, input_end - input_begin)
-              = (layer.bw.weight_ih * input_matrix.block(0, input_begin, input_matrix.rows(), input_end - input_begin)).colwise()
+              = (layer.bw.weight_ih * input).colwise()
                 + layer.bw.bias_ih;
         }
         else
@@ -325,7 +333,11 @@ public:
       c = V::Zero(hidden_size);
       backward_pass(hidden_size, layer.bw, temp, s, g_u, g_o, g_if, c, output, zero, 0, input_end - input_begin);
       wb->bw_c[i] = c;
-      wb->bw_h[i] = output.col(input_begin).bottomRows(hidden_size);
+      // output is written at LOCAL columns [0, input_end - input_begin); the
+      // backward hidden state at the first position is column 0, not the global
+      // accumulated offset input_begin (which overruns the matrix once several
+      // sentences have been processed). Matches the single-layer overload.
+      wb->bw_h[i] = output.col(0).bottomRows(hidden_size);
     }
 
     return 0;
