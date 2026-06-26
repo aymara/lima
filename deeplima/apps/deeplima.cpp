@@ -328,7 +328,12 @@ void parse_file(std::istream& input,
 
   }
   auto parsing_begin = std::chrono::high_resolution_clock::now();
-  std::dynamic_pointer_cast<deeplima::segmentation::impl::SegmentationClassifier>(psegm)->reset();
+  // Only the neural segmenter (SegmentationImpl/SegmentationClassifier) needs a
+  // per-run reset of its inference slots. The CoNLLUReader path is not a
+  // SegmentationClassifier, so the cast is null there and must not be dereferenced.
+  auto seg_classifier =
+      std::dynamic_pointer_cast<deeplima::segmentation::impl::SegmentationClassifier>(psegm);
+  if (seg_classifier) seg_classifier->reset();
   psegm->parse_from_stream([&input]
                          (uint8_t* buffer,
                           int32_t& read,
@@ -508,7 +513,15 @@ int main(int argc, char* argv[])
   deeplima::PathResolver path_resolver;
 
   file_parser fp;
-  fp.init(models, path_resolver, threads, out_fmt, tag_use_mp);
+  try
+  {
+    fp.init(models, path_resolver, threads, out_fmt, tag_use_mp);
+  }
+  catch (const std::runtime_error& e)
+  {
+    std::cerr << "Initialization failure: " << e.what() << std::endl;
+    return 1;
+  }
 
   if (vm.count("input-file") > 0)
   {

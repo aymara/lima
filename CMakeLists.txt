@@ -15,6 +15,8 @@ set(WITH_ARCH OFF CACHE BOOL "")
 set(WITH_ASAN OFF CACHE BOOL "")
 set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON CACHE BOOL "")
 set(WITH_LIMA_RESOURCES ON CACHE BOOL "Whether to build linguistic resources or not")
+set(LIMA_RESOURCES_DEEPLIMA_ONLY OFF CACHE BOOL
+    "Build only the linguistic resources needed by deeplima+ModEx pipelines (keeps SpecificEntities/NER, skips the rule-based/statistical resources and the morpho dictionary)")
 
 enable_testing()
 include(GNUInstallDirs)
