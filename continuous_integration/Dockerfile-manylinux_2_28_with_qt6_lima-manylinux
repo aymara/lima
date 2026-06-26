@@ -40,7 +40,11 @@ ARG NLTK_PTB_DP_FILE
 ARG TORCH_CUDA_ARCH_LIST="6.1"
 ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
-RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
+# --nogpgcheck: the pinned 2022 manylinux_2_28 base image ships an AlmaLinux 8 GPG
+# key that no longer validates current el8_10 packages ("Import of key(s) didn't
+# help, wrong key(s)?"). Packages come from the official AlmaLinux mirrors, so skip
+# the check here. Proper fix: bump MANYLINUX_TAG to a current base image.
+RUN yum install -y --nogpgcheck wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
 
 WORKDIR /
 
