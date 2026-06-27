@@ -41,6 +41,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
           const std::vector<std::vector<std::string>>& class_values)
  {
   m_upos_idx = std::numeric_limits<size_t>::max();
+  m_max_input_word_len = max_input_word_len;
   auto uint_dicts = RnnSeq2Seq::get_input_uint_dicts();
   decltype(uint_dicts) enc_uint_dict;
   enc_uint_dict.push_back(uint_dicts[0]);
@@ -153,8 +154,24 @@ void LemmatizationImpl::predict(const std::u32string& form,
               std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx,
               std::u32string& target)
 {
+  // An empty form has nothing to lemmatize. It must never reach the seq2seq
+  // encoder: the BiLSTM cannot run on a zero-length sequence (with input_len == 0
+  // it indexes column -1 of its workbench → SIGSEGV). Return an empty lemma.
+  if (form.empty())
+  {
+    target.clear();
+    return;
+  }
+
+  // The vectorizer and the encoder workbench were sized for at most
+  // m_max_input_word_len characters (see init). A longer form would overrun both
+  // the vectorizer storage and the encoder output matrix, so clamp it.
+  const size_t form_len = (m_max_input_word_len > 0 && form.size() > m_max_input_word_len)
+                          ? m_max_input_word_len
+                          : form.size();
+
   // 1. vectorize
-  for (size_t i = 0; i < form.size(); ++i)
+  for (size_t i = 0; i < form_len; ++i)
   {
     m_vectorizer.set(i, 0, form[i]);
   }
@@ -172,12 +189,12 @@ void LemmatizationImpl::predict(const std::u32string& form,
   }
 
   // 2. run prediction
-  std::vector<uint32_t> output(0, form.size() * 2);
+  std::vector<uint32_t> output(0, form_len * 2);
   RnnSeq2Seq::predict(0,
                       static_cast<const EmbdVectorizer>(m_vectorizer).get_tensor(),
                       static_cast<const EmbdVectorizer>(m_feat_vectorizer).get_tensor(),
-                      form.size(),
-                      form.size() * 2,
+                      form_len,
+                      form_len * 2,
                       m_beam_size,
                       output,
                       { "output" });

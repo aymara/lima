@@ -71,6 +71,10 @@ ctest --rerun-failed --output-on-failure        # re-run failures (what gbuild d
 `./gbuild.sh -t ON` runs the full suite at the end of a build and, on failure,
 re-runs failed tests with output.
 
+## Debugging
+Always use the debug+ASAN build for GDB sessions: `build_debug/mon_programme`
+Never use the release build for debugging.
+
 ## Python tooling
 
 Python scripts (data prep, model management, former Perl scripts being converted)

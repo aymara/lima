@@ -184,6 +184,48 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_not_avail()
     QVERIFY(lima.error);
 }
 
+// Regression for the neural-lemmatizer crash on multi-byte UTF-8 tokens.
+// RnnTokensAnalyzer used to set token_pos::m_len from the LIMA character count
+// while token_pos::m_pch points to UTF-8 bytes. For a single multi-byte character
+// used as a token (e.g. the French preposition "à", U+00E0 = 2 bytes) the form was
+// truncated to one byte, decoded to an empty string, and crashed the seq2seq
+// lemmatizer (input_len == 0). The analysis must now complete and keep "à".
+void LimaAnalyzerTest0::test_analyzeText_multibyte_single_char_token() {
+    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    QVERIFY(!analyzer.error);
+    auto result = analyzer.analyzeText("à Berlin.");
+    if (result.empty())
+        QSKIP("deepud model not available in this environment");
+    // "à" (UTF-8 0xC3 0xA0) and "Berlin" must survive tokenization intact.
+    QVERIFY(result.find("à") != std::string::npos);
+    QVERIFY(result.find("Berlin") != std::string::npos);
+}
+
+// Multi-byte characters inside longer tokens must not be truncated in the output.
+void LimaAnalyzerTest0::test_analyzeText_multibyte_forms_preserved() {
+    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    QVERIFY(!analyzer.error);
+    auto result = analyzer.analyzeText("A café, a naïve résumé.");
+    if (result.empty())
+        QSKIP("deepud model not available in this environment");
+    QVERIFY(result.find("café") != std::string::npos);
+    QVERIFY(result.find("naïve") != std::string::npos);
+    QVERIFY(result.find("résumé") != std::string::npos);
+}
+
+// Wider UTF-8 sequences (3-byte em dash, 4-byte emoji) must not crash the analysis
+// nor corrupt neighbouring ASCII tokens.
+void LimaAnalyzerTest0::test_analyzeText_multibyte_wide_chars() {
+    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    QVERIFY(!analyzer.error);
+    auto result = analyzer.analyzeText("Hello — world 😀 end.");
+    if (result.empty())
+        QSKIP("deepud model not available in this environment");
+    QVERIFY(result.find("Hello") != std::string::npos);
+    QVERIFY(result.find("world") != std::string::npos);
+    QVERIFY(result.find("end") != std::string::npos);
+}
+
 // void LimaAnalyzerTest0::test_forged_pipeline()
 // {
 //     LimaAnalyzer lima("ud-eng", "empty", "");

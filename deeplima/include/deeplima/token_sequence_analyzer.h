@@ -700,7 +700,10 @@ protected:
             const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
             m_lemm.predict(f, classes, i + offset, target);
 
-            lemm_buffer[i] = m_stridx.get_idx(target);
+            // Never emit an empty lemma (invalid CoNLL-U): if the model produced
+            // nothing (e.g. the form reaching it was empty), keep the surface form.
+            lemm_buffer[i] = target.empty() ? buffer[i].m_form_idx
+                                            : m_stridx.get_idx(target);
 
             // add form to cache
             m_lemm_cache[form_key] = lemm_buffer[i];
