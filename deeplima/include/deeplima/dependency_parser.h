@@ -343,6 +343,12 @@ public:
     }
 
     size_t first_timepoint_idx = 0;
+    // count_max_tokens_until_eos() APPENDS, so m_lengths must start empty. This
+    // handler is called once per tagger batch; without clearing here, a batch's
+    // per-sentence lengths were appended to the previous batch's leftover lengths,
+    // so predict() iterated far more (sum_lengths) than the buffer held (count) and
+    // every sentence in such a buffer was parsed at the wrong offset.
+    m_lengths.clear();
     m_lengths.reserve(256);
     size_t tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
     // std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
@@ -435,7 +441,10 @@ public:
       if (m_current_timepoint < m_buffer_size)
       {
         // std::cerr << "DependencyParser::finalize call start_analysis" << std::endl;
-        start_analysis(m_current_buffer, m_current_timepoint, m_lengths, -1);
+        // Analyse exactly the tokens accumulated in this (final, partial) buffer,
+        // not the whole buffer_size: passing -1 made handle_token_buffer fall back
+        // to buffer.size(), processing a stale tail of uninitialised timepoints.
+        start_analysis(m_current_buffer, m_current_timepoint, m_lengths, (int)m_current_timepoint);
       }
       else
       {
@@ -534,13 +543,20 @@ protected:
         continue;
       }
 
-      if (m_current_timepoint + tokens_counter + this_sentence_tokens == m_buffer_size)
+      if (m_current_timepoint + tokens_counter + this_sentence_tokens >= m_buffer_size)
       {
+        // The buffer just filled in the MIDDLE of a sentence. Splitting it across
+        // two buffers parses each half separately (each with its own synthetic
+        // root), corrupting both — and, because predict() advances by length, every
+        // following sentence's heads end up shifted. If at least one whole sentence
+        // is already in this buffer, leave the current (incomplete) sentence for the
+        // next buffer, where it starts fresh and fits. Only a single sentence that
+        // on its own exceeds buffer_size has to be cut (kept here, rare).
+        if (tokens_counter > 0)
+        {
+          this_sentence_tokens = 0;
+        }
         break;
-      }
-      if (m_current_timepoint + tokens_counter + this_sentence_tokens > m_buffer_size)
-      {
-        throw std::runtime_error("Too many tokens for one buffer");
       }
 
       iter.next();
@@ -888,16 +904,21 @@ public:
     //           << "; lock_count=" << lock_count << std::endl;
     send_results_if_available();
     acquire_slot(slot_no);
-    // size_t offset = slot_no * buffer.size() + deeplima::graph_dp::impl::GraphDependencyParser::get_start_timepoint();
     size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
     for (size_t i = 0; i < count; i++)
     {
-      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), /*offset +*/ i, buffer[i]);
+      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), i, buffer[i]);
     }
 
+    // Tokens are vectorised at local columns [0,count) and the TokenIterator reads
+    // heads back at the same local index, so the slot's input/output must begin at
+    // 0 too. Using first_timepoint_idx here shifted the decoder's writes by that
+    // amount whenever a buffer didn't start at timepoint 0, corrupting those
+    // sentences' heads (head ≈ gold − first_timepoint_idx).
+    (void) first_timepoint_idx;
     deeplima::graph_dp::impl::GraphDependencyParser::set_slot_lengths(slot_no, lengths);
-    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, first_timepoint_idx);
-    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, /*offset +*/ count);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, 0);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, count);
 
     // auto& slot = deeplima::graph_dp::impl::GraphDependencyParser::m_slots[slot_no];
 
@@ -909,6 +930,23 @@ public:
 
     deeplima::graph_dp::impl::GraphDependencyParser::start_job(slot_no, timepoints_to_analyze > 0);
     // std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
+
+    // EAGER consumption. There are only num_slots output regions in the shared
+    // tensor but arbitrarily many 128-token buffers, so a later buffer reuses this
+    // slot's region. The lazy send (at slot reuse / finalize) let a following
+    // buffer overwrite this one's heads before they were read -> corrupted parses
+    // for inputs > one buffer and an OOB crash in the dumper. Wait for THIS slot's
+    // job to finish and emit its results now, before any other buffer touches the
+    // tensor. The deferred send_results_if_available()/send_all_results() then find
+    // nothing left and become no-ops, so each slot is still emitted exactly once.
+    while (deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no) > 1)
+    {
+      deeplima::graph_dp::impl::GraphDependencyParser::wait_for_slot(slot_no);
+    }
+    if (1 == deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no))
+    {
+      send_results(slot_no);
+    }
   }
 
   inline void no_more_data(size_t slot_no)
