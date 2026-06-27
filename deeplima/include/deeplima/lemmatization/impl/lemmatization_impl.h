@@ -56,6 +56,8 @@ public:
 
 protected:
   size_t m_beam_size;
+  /** max word length the encoder workbench / vectorizer were sized for (see init) */
+  size_t m_max_input_word_len = 0;
   EmbdVectorizer m_vectorizer;
   EmbdVectorizer m_feat_vectorizer;
   std::vector<size_t> m_feat2cls;
