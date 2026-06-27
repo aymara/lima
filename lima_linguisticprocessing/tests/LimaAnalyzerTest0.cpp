@@ -191,7 +191,7 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_not_avail()
 // truncated to one byte, decoded to an empty string, and crashed the seq2seq
 // lemmatizer (input_len == 0). The analysis must now complete and keep "à".
 void LimaAnalyzerTest0::test_analyzeText_multibyte_single_char_token() {
-    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
     QVERIFY(!analyzer.error);
     auto result = analyzer.analyzeText("à Berlin.");
     if (result.empty())
@@ -203,7 +203,7 @@ void LimaAnalyzerTest0::test_analyzeText_multibyte_single_char_token() {
 
 // Multi-byte characters inside longer tokens must not be truncated in the output.
 void LimaAnalyzerTest0::test_analyzeText_multibyte_forms_preserved() {
-    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
     QVERIFY(!analyzer.error);
     auto result = analyzer.analyzeText("A café, a naïve résumé.");
     if (result.empty())
@@ -216,14 +216,15 @@ void LimaAnalyzerTest0::test_analyzeText_multibyte_forms_preserved() {
 // Wider UTF-8 sequences (3-byte em dash, 4-byte emoji) must not crash the analysis
 // nor corrupt neighbouring ASCII tokens.
 void LimaAnalyzerTest0::test_analyzeText_multibyte_wide_chars() {
-    LimaAnalyzer analyzer("ud-eng", "deepud", "");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
     QVERIFY(!analyzer.error);
-    auto result = analyzer.analyzeText("Hello — world 😀 end.");
+    // 3-byte em dash "—" and a 4-byte emoji "😀" between ASCII tokens.
+    auto result = analyzer.analyzeText("Voici — un test 😀 final.");
     if (result.empty())
         QSKIP("deepud model not available in this environment");
-    QVERIFY(result.find("Hello") != std::string::npos);
-    QVERIFY(result.find("world") != std::string::npos);
-    QVERIFY(result.find("end") != std::string::npos);
+    QVERIFY(result.find("Voici") != std::string::npos);
+    QVERIFY(result.find("test") != std::string::npos);
+    QVERIFY(result.find("final") != std::string::npos);
 }
 
 // void LimaAnalyzerTest0::test_forged_pipeline()
