@@ -239,7 +239,13 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             const auto& src = vTokens[currentVx];
             auto& token = buffer[k];
             token.m_offset = src->position();
-            token.m_len = src->length();
+            // deeplima's token_pos::m_len is a BYTE length and m_pch points to the
+            // UTF-8 bytes of v[k]. src->length() is the LIMA character count, which
+            // truncates multi-byte UTF-8 forms (e.g. "à" → 1 instead of 2 bytes),
+            // leaving the downstream form an incomplete byte sequence that decodes
+            // to an empty string (and crashed the neural lemmatizer). Use the UTF-8
+            // byte length so m_len matches m_pch.
+            token.m_len = v[k].size();
             token.m_pch = v[k].c_str();
             // Mark the last token of each sentence (from SegmentationData) so the
             // stream carries real sentence breaks. The previous code AND-ed the

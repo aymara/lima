@@ -27,6 +27,12 @@ private Q_SLOTS:
   void test_analyzeText_pipeline_none_lang_eng();
   void test_analyzeText_init_with_lang_and_pipe();
   void test_analyzeText_pipeline_not_avail();
+
+  // Regression tests for multi-byte UTF-8 token forms (RnnTokensAnalyzer must use
+  // the UTF-8 byte length, not the character count, when building token_pos::m_len).
+  void test_analyzeText_multibyte_single_char_token();
+  void test_analyzeText_multibyte_forms_preserved();
+  void test_analyzeText_multibyte_wide_chars();
   // void test_forged_pipeline();
 
 private:
