@@ -216,6 +216,18 @@ public:
       return f.c_str();
     }
 
+    // MWT: number of sub-words if this token starts an expanded multiword token
+    // (0 otherwise), and the surface form for the "N-M  surface" range line.
+    inline uint8_t mwt_len() const
+    {
+      return m_buffer[m_current].m_mwt_len;
+    }
+
+    inline const char* mwt_surface() const
+    {
+      return m_stridx.get_str(m_buffer[m_current].m_mwt_surface_idx).c_str();
+    }
+
     inline void next()
     {
       m_current++;
@@ -369,6 +381,10 @@ public:
         // std::cerr << "<ROOT>" << std::endl;
         token.m_flags = token_flags_t::none;
         token.m_lemm_idx = token.m_form_idx;
+        // The synthetic <ROOT> is never a multiword token; clear stale metadata
+        // since the buffer slot is reused across calls.
+        token.m_mwt_len = 0;
+        token.m_mwt_surface_idx = 0;
         insert_root = false;
         tokens_to_process--;
         m_current_timepoint++;
@@ -383,6 +399,10 @@ public:
         // std::cerr << m_stridx_ptr->get_str(token.m_form_idx) << std::endl;
         token.m_flags = iter.flags();
         token.m_lemm_idx = iter.lemma_idx();
+        // Carry MWT metadata (surface idx is valid: DP shares the analyzer's
+        // StringIndex) so the dumper can emit the "N-M  surface" range line.
+        token.m_mwt_len = iter.mwt_len();
+        token.m_mwt_surface_idx = iter.mwt_surface_idx();
         // token.m_head_idx = iter.head();
         // token.m_rel_type = 0; // TODO where is stored the rel type ???
         // TODO lines below were commented out to avoid crash. Does it really work?

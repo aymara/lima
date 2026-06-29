@@ -44,10 +44,23 @@ struct ConllToken
   std::string deps = "_";
     // MISC: Any other annotation.
   std::string misc = "_";
+
+    // Multiword-token range. When mwt_last > 0, this token is the first sub-word
+    // of an expanded multiword token, and a UD "id-mwt_last  mwt_surface" range
+    // line is emitted just before this token's own line.
+  uint32_t mwt_last = 0;
+  std::string mwt_surface;
 };
 
 std::ostream& operator<<(std::ostream& oss, const ConllToken& token)
 {
+  if (token.mwt_last > 0)
+  {
+    // UD multiword-token range line: "N-M\tsurface\t_\t_\t_\t_\t_\t_\t_\t_"
+    oss << token.id << "-" << token.mwt_last << "\t"
+        << token.mwt_surface
+        << "\t_\t_\t_\t_\t_\t_\t_\t_" << std::endl;
+  }
   oss << token.id << "\t"
       << token.form << "\t"
       << token.lemma << "\t"
@@ -497,6 +510,13 @@ public:
       token.form = str;
       token.lemma = iter.lemma();
       token.upos = m_classes[0][iter.token_class(0)];
+      // First sub-word of an expanded multiword token: record the "N-M  surface"
+      // range to emit before this token's line (ids N..M are the sub-words).
+      if (iter.mwt_len() > 0)
+      {
+        token.mwt_last = m_next_token_idx + iter.mwt_len() - 1;
+        token.mwt_surface = iter.mwt_surface();
+      }
       // std::cout << m_next_token_idx << "\t";
       // std::cout << str << "\t";
       // std::cout << iter.lemma();

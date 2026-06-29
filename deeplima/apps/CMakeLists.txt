@@ -91,6 +91,26 @@ install(TARGETS deeplima-gen-lemm-dict
 )
 
 ############################################################
+# Generate multiword-token expansion dictionary
+
+add_executable(deeplima-mwt-dict
+  mwt-dict.cpp
+)
+
+target_link_libraries(deeplima-mwt-dict
+  PRIVATE
+  conllu
+  Boost::program_options
+  Boost::filesystem
+  ${ICU_LIBRARIES}
+)
+
+install(TARGETS deeplima-mwt-dict
+  DESTINATION bin
+  COMPONENT runtime
+)
+
+############################################################
 # Train dependency parsing models
 
 add_executable(deeplima-train-dp

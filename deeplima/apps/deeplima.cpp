@@ -41,6 +41,7 @@ namespace po = boost::program_options;
 #include "deeplima/token_sequence_analyzer.h"
 #include "deeplima/dependency_parser.h"
 #include "deeplima/dumper_conllu.h"
+#include "deeplima/mwt_expander.h"
 #include "deeplima/reader_conllu.h"
 
 using namespace deeplima;
@@ -49,6 +50,7 @@ class file_parser
 {
 public:
 std::shared_ptr<segmentation::ISegmentation> psegm = nullptr; // tokenizer
+std::shared_ptr< MwtExpander > pmwt = nullptr; // multiword-token expansion (optional)
 std::shared_ptr< ITokenSequenceAnalyzer > panalyzer = nullptr; // tagger
 std::shared_ptr< dumper::AbstractDumper > pdumper_segm_only = nullptr; // used when using segmentation only
 std::shared_ptr< dumper::DumperBase > pdumper_complete = nullptr; // used when using tagger
@@ -148,6 +150,46 @@ void init(const std::map<std::string, std::string>& models_fn,
     {
       std::cerr << "parse_file failed to initialize analyzer: " << e.what() << std::endl;
       throw std::runtime_error(std::string("parse_file failed to initialize analyzer: ") + e.what());
+    }
+
+    // Optional multiword-token expansion. Auto-load the companion dictionary
+    // "<tok-model>.mwt" sitting beside the tokenizer model (or an explicit
+    // "mwt" entry). It runs between the tokenizer and the analyzer so the
+    // tagger/parser see syntactic words (de, le) rather than surface tokens (du).
+    {
+      std::string mwt_dict_fn = find_or_empty_line(models_fn, "mwt");
+      if (mwt_dict_fn.empty())
+      {
+        const auto tok_it = models_fn.find("tok");
+        if (models_fn.end() != tok_it)
+        {
+          const std::string candidate = tok_it->second + ".mwt";
+          std::ifstream test(candidate);
+          if (test.good())
+          {
+            mwt_dict_fn = candidate;
+          }
+        }
+      }
+      if (!mwt_dict_fn.empty())
+      {
+        try
+        {
+          pmwt = std::make_shared<MwtExpander>(mwt_dict_fn);
+          pmwt->register_handler([this](const std::vector<segmentation::token_pos>& tokens, uint32_t len)
+          {
+            (*panalyzer)(tokens, len);
+          });
+          std::cerr << "Loaded multiword-token dictionary (" << pmwt->size()
+                    << " entries) from " << mwt_dict_fn << std::endl;
+        }
+        catch (const std::runtime_error& e)
+        {
+          std::cerr << "Warning: failed to load multiword-token dictionary: " << e.what()
+                    << " (continuing without MWT expansion)" << std::endl;
+          pmwt = nullptr;
+        }
+      }
     }
 
     if (models_fn.end() != models_fn.find("dp"))
@@ -313,7 +355,16 @@ void parse_file(std::istream& input,
                              uint32_t len)
     {
       // std::cerr << "In psegm handler. Calling panalyzer functor" << std::endl;
-      (*panalyzer)(tokens, len);
+      // When a multiword-token dictionary is loaded, expand surface tokens into
+      // their sub-words before tagging/parsing; otherwise feed the analyzer directly.
+      if (pmwt)
+      {
+        (*pmwt)(tokens, len);
+      }
+      else
+      {
+        (*panalyzer)(tokens, len);
+      }
     });
   }
   else

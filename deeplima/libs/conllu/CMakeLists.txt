@@ -6,12 +6,14 @@
 set(SOURCE_LIST
   file.cpp
   line.cpp
+  mwt_dict.cpp
   treebank.cpp
 )
 
 set(HEADER_LIST
   file.h
   line.h
+  mwt_dict.h
   treebank.h
 )
 

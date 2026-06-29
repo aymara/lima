@@ -118,6 +118,25 @@ public:
       return m_buffer[m_current].m_len;
     }
 
+    // MWT: number of sub-words if this token starts an expanded multiword token
+    // (0 otherwise), and the surface form for the "N-M  surface" range line.
+    inline uint8_t mwt_len() const
+    {
+      return m_buffer[m_current].m_mwt_len;
+    }
+
+    inline const char* mwt_surface() const
+    {
+      return m_stridx.get_str(m_buffer[m_current].m_mwt_surface_idx).c_str();
+    }
+
+    // Raw StringIndex id of the surface form; the dependency parser shares this
+    // StringIndex, so the id can be carried over directly when copying tokens.
+    inline uint32_t mwt_surface_idx() const
+    {
+      return m_buffer[m_current].m_mwt_surface_idx;
+    }
+
     inline uint32_t form_idx() const
     {
       return m_buffer[m_current].m_form_idx;
@@ -474,6 +493,13 @@ public:
       token.m_len = src.m_len;
       token.m_form_idx = m_stridx.get_idx(src.m_pch, src.m_len);
       token.m_flags = token_flags_t(src.m_flags);
+      // Carry MWT metadata: on the first sub-word of an expanded surface token,
+      // intern the surface form so the dumper can emit the "N-M  surface" line.
+      token.m_mwt_len = src.m_mwt_len;
+      token.m_mwt_surface_idx =
+          (src.m_mwt_len > 0 && nullptr != src.m_mwt_surface_pch)
+              ? m_stridx.get_idx(src.m_mwt_surface_pch, src.m_mwt_surface_len)
+              : 0;
 
       m_current_timepoint++;
       if (m_current_timepoint >= m_buffer_size)
