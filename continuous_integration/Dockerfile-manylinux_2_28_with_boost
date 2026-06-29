@@ -1,7 +1,6 @@
 ARG MANYLINUX_TAG
 FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
 
-
 WORKDIR /
 
 ARG BOOST_VERSION=1.80.0
