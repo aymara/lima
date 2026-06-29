@@ -44,6 +44,12 @@ RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gn
 
 ENV CLANG_RESOURCE_DIR=/usr/lib64/clang/18
 ENV CPLUS_INCLUDE_PATH=/usr/lib64/clang/18/include:$CPLUS_INCLUDE_PATH
+# Force Shiboken's internal locator to look into the actual toolset path
+ENV LLVM_INSTALL_DIR=/usr
+ENV CLANG_INSTALL_DIR=/usr
+
+# Symlink the internal layout so if Shiboken looks for /usr/lib/clang, it hits lib64
+RUN ln -s /usr/lib64/clang /usr/lib/clang
 
 WORKDIR /pyside-setup
 RUN python${PYTHON_VERSION} setup.py install --build-type=all --limited-api=yes --qtpaths=/opt/qt6/bin/qtpaths \
