@@ -22,21 +22,12 @@ ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 # --nogpgcheck: the manylinux_2_28 (AlmaLinux 8) base repos fail GPG verification
 # (expired/missing keys), matching Dockerfile-manylinux_2_28_with_boost.
-RUN yum clean all && \
-    yum module reset llvm-toolset -y && \
-    yum module enable llvm-toolset:18 -y && \
-    yum install -y --nogpgcheck --allowerasing \
-        wget \
-        gcc-toolset-10.x86_64 \
-        ninja-build \
-        libicu-devel.x86_64 \
-        clang.x86_64 \
-        python3-clang.x86_64 \
-        llvm-devel.x86_64 \
-        clang-devel.x86_64 \
-        libxml2-devel.x86_64 \
-        libxslt-devel.x86_64 \
-        python3-sphinx.noarch
+RUN yum install -y --nogpgcheck --allowerasing wget gcc-toolset-10.x86_64 ninja-build libicu-devel.x86_64 \
+    clang.x86_64 python3-clang.x86_64 llvm-devel.x86_64 clang-devel.x86_64 libxml2-devel.x86_64 libxslt-devel.x86_64 \
+    python3-sphinx.noarch
+# RUN ln -s /usr/bin/uic-qt5 /usr/bin/uic && \
+#     ln -s /usr/bin/rcc-qt5 /usr/bin/rcc &&
+RUN    ln -s /usr/lib64/libclang.so.13 /usr/lib64/libclang.so.1
 ENV CC=/opt/rh/gcc-toolset-10/root/usr/bin/gcc \
     CXX=/opt/rh/gcc-toolset-10/root/usr/bin/g++
 
