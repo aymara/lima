@@ -69,7 +69,21 @@ bool Treebank::load(const std::string& path)
 void Document::load(const std::string& fn)
 {
   ifstream input(fn);
+  if (!input.is_open())
+  {
+    throw std::runtime_error(
+      string("Document::load: companion plain-text file \"") + fn
+      + "\" is missing (it is needed for segmentation training; generate it from "
+        "the .conllu '# text =' lines, e.g. with make_trainable.py).");
+  }
   m_original_text = std::string((istreambuf_iterator<char>(input)), istreambuf_iterator<char>());
+  if (m_original_text.empty())
+  {
+    throw std::runtime_error(
+      string("Document::load: companion plain-text file \"") + fn
+      + "\" is empty (it is needed for segmentation training; generate it from "
+        "the .conllu '# text =' lines, e.g. with make_trainable.py).");
+  }
   std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
   m_text = converter.from_bytes(m_original_text);
 }

@@ -191,6 +191,34 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
       task_stat.m_recall = tp / (this_task_target.eq(1).sum().item<int64_t>() + 0.00001);
       task_stat.m_f1 = (2 * task_stat.m_precision * task_stat.m_recall) / (task_stat.m_precision + task_stat.m_recall + 0.00001);
     }
+    else if (o.size(-1) > 2)
+    {
+      // Multi-class task (e.g. the 7-class segmentation "tokens" task): the
+      // binary positive-class P/R/F1 above doesn't apply, so report a
+      // macro-averaged P/R/F1 over all classes instead of leaving them at the
+      // default 0. ACC alone is a poor signal here because one class (e.g.
+      // "inside") dominates, pushing accuracy ~0.999 even for a mediocre
+      // boundary detector.
+      const int64_t num_classes = o.size(-1);
+      task_stat.m_num_classes = num_classes;
+      double sum_p = 0, sum_r = 0, sum_f1 = 0;
+      for (int64_t c = 0; c < num_classes; ++c)
+      {
+        // Ignored (-100) positions: excluded from gold_c (target never equals c)
+        // and masked out of pred_c so they can't inflate the predicted count.
+        auto pred_c = prediction.eq(c).logical_and(valid);
+        auto gold_c = this_task_target.eq(c);
+        auto tp_c = torch::logical_and(pred_c, gold_c).count_nonzero().item<int64_t>();
+        double prec = tp_c / (pred_c.sum().item<int64_t>() + 0.00001);
+        double rec  = tp_c / (gold_c.sum().item<int64_t>() + 0.00001);
+        sum_p += prec;
+        sum_r += rec;
+        sum_f1 += (2 * prec * rec) / (prec + rec + 0.00001);
+      }
+      task_stat.m_precision = sum_p / num_classes;
+      task_stat.m_recall = sum_r / num_classes;
+      task_stat.m_f1 = sum_f1 / num_classes;
+    }
   }
 }
 
@@ -220,7 +248,18 @@ void BiRnnClassifierImpl::train(size_t epochs,
   double best_eval_accuracy = 0;
   double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
+  // Seed lr_copy with the optimizer's actual learning rate so the EPOCH log
+  // prints the real LR from epoch 0. It was previously left at 0 and only set
+  // inside the accuracy-decay branch, so every epoch before the first decay
+  // (and every improving epoch) reported a bogus LR=0.
   double lr_copy = 0;
+  for (auto& group : opt.param_groups())
+  {
+    if (group.has_options())
+    {
+      lr_copy = static_cast<torch::optim::AdamOptions&>(group.options()).lr();
+    }
+  }
   for (size_t e = 0; e < epochs; e++)
   {
     epoch_stat_t train_stat, eval_stat;
