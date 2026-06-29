@@ -12,7 +12,9 @@ ARG PYTHON_SHORT_VERSION
 ARG PYTHON_FULL_VERSION
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
-RUN yum install -y wget ninja-build
+# --nogpgcheck: the manylinux_2_28 (AlmaLinux 8) base repos fail GPG verification
+# (expired/missing keys), matching Dockerfile-manylinux_2_28_with_boost.
+RUN yum install -y --nogpgcheck wget ninja-build
 
 RUN install -d /src
 WORKDIR /src

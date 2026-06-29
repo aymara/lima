@@ -20,6 +20,8 @@ ARG QT_FULL_VERSION
 ARG PYTHON_VERSION
 ARG PYTHON_SHORT_VERSION
 ARG PYTHON_FULL_VERSION
+ARG WITH_LIMA_RESOURCES
+ARG LIMA_RESOURCES_DEEPLIMA_ONLY
 ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 ARG PYSIDE_VERSION
@@ -40,7 +42,10 @@ ARG NLTK_PTB_DP_FILE
 ARG TORCH_CUDA_ARCH_LIST="6.1"
 ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
-RUN yum install -y wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
+# --nogpgcheck: the manylinux_2_28 (AlmaLinux 8) base repos fail GPG verification
+# (expired/missing keys), matching the workaround already used in
+# Dockerfile-manylinux_2_28_with_boost.
+RUN yum install -y --nogpgcheck wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
 
 WORKDIR /
 
@@ -101,6 +106,8 @@ RUN cmake -G Ninja  \
     -DWITH_DEBUG_MESSAGES=ON \
     -DWITH_ARCH=OFF \
     -DWITH_ASAN=OFF \
+    -DWITH_LIMA_RESOURCES=${WITH_LIMA_RESOURCES} \
+    -DLIMA_RESOURCES_DEEPLIMA_ONLY=${LIMA_RESOURCES_DEEPLIMA_ONLY} \
     -DWITH_GUI=ON  ..
 RUN ninja && ninja install
 

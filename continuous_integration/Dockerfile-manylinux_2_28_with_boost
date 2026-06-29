@@ -20,6 +20,10 @@ RUN dnf update -y  --nogpgcheck &&\
         libtool \
         pkgconfig \
         openssl-devel \
+        xz-devel \
+        zlib-devel \
+        bzip2-devel \
+        libzstd-devel \
         wget \
         git \
         curl \
@@ -52,7 +56,7 @@ RUN cd /tmp && \
 # https://www.boost.org/doc/libs/1_80_0/more/getting_started/unix-variants.html
 RUN cd /tmp && \
     BOOST_VERSION_MOD=$(echo $BOOST_VERSION | tr . _) && \
-    wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2 && \
+    wget https://archives.boost.io/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2 && \
     tar --bzip2 -xf boost_${BOOST_VERSION_MOD}.tar.bz2 && \
     cd boost_${BOOST_VERSION_MOD} && \
     ./bootstrap.sh --prefix=/opt/boost && \
