@@ -29,14 +29,26 @@ struct token_pos
   const char* m_pch;
   token_flags_t m_flags;
 
+  // Multiword-token (MWT) expansion metadata, set by MwtExpander. On the first
+  // sub-word of an expanded surface token (e.g. "de" of "du"->de+le) m_mwt_len
+  // holds the number of sub-words and m_mwt_surface_* the surface form bytes;
+  // both are zero/null on normal tokens and on the non-first sub-words.
+  uint8_t m_mwt_len;
+  const char* m_mwt_surface_pch;
+  uint16_t m_mwt_surface_len;
+
   token_pos()
-    : m_offset(0), m_len(0), m_pch(nullptr), m_flags(token_flags_t::none) {}
+    : m_offset(0), m_len(0), m_pch(nullptr), m_flags(token_flags_t::none),
+      m_mwt_len(0), m_mwt_surface_pch(nullptr), m_mwt_surface_len(0) {}
 
   inline void clear()
   {
     m_offset = m_len = 0;
     m_pch = nullptr;
     m_flags = token_flags_t::none;
+    m_mwt_len = 0;
+    m_mwt_surface_pch = nullptr;
+    m_mwt_surface_len = 0;
   }
 
   inline bool empty() const

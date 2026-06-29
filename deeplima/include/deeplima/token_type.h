@@ -34,12 +34,21 @@ struct token_t
   }
 
   token_t(uint16_t offset = 0, uint16_t len = 0, uint32_t idx = 0, token_flags_t flags = token_flags_t::none)
-    : m_offset(offset), m_len(len), m_form_idx(idx), m_flags(flags) { }
+    : m_offset(offset), m_len(len), m_form_idx(idx), m_flags(flags),
+      m_mwt_len(0), m_mwt_surface_idx(0) { }
 
   uint16_t m_offset; // offset from previous token end
   uint16_t m_len;    // length of this token in bytes
   uint32_t m_form_idx;
   token_flags_t m_flags;
+
+  // Multiword-token metadata propagated from segmentation::token_pos. On the
+  // first sub-word of an expanded surface token, m_mwt_len is the number of
+  // sub-words and m_mwt_surface_idx the StringIndex id of the surface form;
+  // both are 0 on normal tokens and non-first sub-words. Lets the CoNLL-U
+  // dumper emit the UD "N-M  surface" range line.
+  uint8_t m_mwt_len;
+  uint32_t m_mwt_surface_idx;
 };
 }
 
