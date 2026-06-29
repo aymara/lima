@@ -6,6 +6,15 @@ on:
   pull_request:
     branches:
     - master
+  # Allow rebuilding the costly base images on demand (e.g. after changing one
+  # of their Dockerfiles). Set "force_base_images" to true to rebuild them all
+  # even if no Dockerfile changed.
+  workflow_dispatch:
+    inputs:
+      force_base_images:
+        description: "Rebuild all base images even if unchanged"
+        type: boolean
+        default: false
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -29,81 +38,119 @@ env:
 
 jobs:
 
+  # Detect which costly base-image Dockerfiles changed so we only rebuild the
+  # ones that actually need it. The boolean outputs gate the base-image jobs
+  # below; "force_base_images" (workflow_dispatch) overrides them all.
+  changes:
+    name: "Detect changed base-image Dockerfiles"
+    runs-on: ubuntu-latest
+    outputs:
+      boost: ${{ steps.filter.outputs.boost }}
+      qt6: ${{ steps.filter.outputs.qt6 }}
+      pyside: ${{ steps.filter.outputs.pyside }}
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
 
-  # manylinux_2_28_with_boost:
-  #   name: "Build the manylinux_2_28-based image with Boost"
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #     -
-  #       name: Login to DockerHub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #
-  #     - name: "Checkout code"
-  #       uses: actions/checkout@v3
-  #
-  #     - name: "Build image"
-  #       run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_boost --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" -t aymara/manylinux_2_28_with_boost:latest .
-  #
-  #     - name: "Push image"
-  #       run: docker push aymara/manylinux_2_28_with_boost:latest
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            boost:
+              - 'continuous_integration/Dockerfile-manylinux_2_28_with_boost'
+            qt6:
+              - 'continuous_integration/Dockerfile-manylinux_2_28_with_qt6'
+            pyside:
+              - 'continuous_integration/Dockerfile-manylinux_2_28_with_qt_and_pyside'
 
 
-  # manylinux_2_28_with_qt6:
-  #   name: "Build the manylinux_2_28-based image with Qt6"
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #     -
-  #       name: Login to DockerHub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #
-  #     - name: "Checkout code"
-  #       uses: actions/checkout@v3
-  #
-  #     - name: "Build image"
-  #       run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}:latest .
-  #
-  #     - name: "Push image"
-  #       run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}:latest
-  #
-  # manylinux_2_28_with_qt_and_pyside:
-  #   name: "Build the manylinux_2_28_with_qt_and_pyside-based imaged necessary for lima-python"
-  #   #needs: manylinux_2_28_with_llvm
-  #   needs: manylinux_2_28_with_qt6
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #     -
-  #       name: Login to DockerHub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #
-  #     - name: "Checkout code"
-  #       uses: actions/checkout@v3
-  #
-  #     - name: "Free disk space"
-  #       run: bash ./free-diskspace.sh
-  #
-  #     - name: "Build image"
-  #       run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
-  #
-  #     - name: "Push image"
-  #       run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+  manylinux_2_28_with_boost:
+    name: "Build the manylinux_2_28-based image with Boost"
+    needs: changes
+    # Only rebuild when its Dockerfile changed, or when forced manually.
+    if: ${{ needs.changes.outputs.boost == 'true' || github.event.inputs.force_base_images == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_boost --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" -t aymara/manylinux_2_28_with_boost:latest .
+
+      - name: "Push image"
+        run: docker push aymara/manylinux_2_28_with_boost:latest
+
+
+  manylinux_2_28_with_qt6:
+    name: "Build the manylinux_2_28-based image with Qt6"
+    needs: changes
+    if: ${{ needs.changes.outputs.qt6 == 'true' || github.event.inputs.force_base_images == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}:latest .
+
+      - name: "Push image"
+        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}:latest
+
+
+  manylinux_2_28_with_qt_and_pyside:
+    name: "Build the manylinux_2_28_with_qt_and_pyside-based imaged necessary for lima-python"
+    needs: [changes, manylinux_2_28_with_qt6]
+    # Rebuild when its own Dockerfile changed, when qt6 was rebuilt (it is
+    # FROM-based on it), or when forced. Runs even if qt6 was skipped, as long
+    # as qt6 did not fail.
+    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && (needs.changes.outputs.pyside == 'true' || needs.manylinux_2_28_with_qt6.result == 'success' || github.event.inputs.force_base_images == 'true') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Free disk space"
+        run: bash ./free-diskspace.sh
+
+      - name: "Build image"
+        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+
+      - name: "Push image"
+        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+
 
   manylinux_2_28_lima-manylinux:
     name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed job"
+    needs: [changes, manylinux_2_28_with_boost, manylinux_2_28_with_qt6, manylinux_2_28_with_qt_and_pyside]
+    # Always build LIMA itself. It pulls the base images as :latest from the
+    # registry, so it must run whether or not the base jobs ran (skipped) —
+    # but NOT if any base job actually failed.
+    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-latest
-    # needs: manylinux_2_28_with_qt_and_pyside
-    # needs: manylinux_2_28_with_boost
 
     steps:
       -
