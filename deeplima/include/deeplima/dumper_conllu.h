@@ -416,6 +416,17 @@ public:
 
   virtual void flush()
   {
+    // Nothing pending: emit no separator. flush() is also called once at EOF
+    // (apps/deeplima.cpp) after the last sentence already flushed on its
+    // sentence break, so without this guard that final call would append a
+    // stray blank line, leaving a doubled blank at end-of-file that strict
+    // CoNLL-U scorers read as a trailing empty sentence. A genuinely pending
+    // last sentence with no sentence-break flag still has tokens here and is
+    // emitted normally.
+    if (m_tokens.empty())
+    {
+      return;
+    }
     m_next_token_idx = 1;
     std::vector<uint32_t> heads(m_tokens.size()+1);
     heads[0] = 0;
@@ -449,13 +460,13 @@ public:
     // std::cerr << "AnalysisToConllU::operator() " << iter.form() << ", " << begin << ", " << end << ", "
     //           << m_next_token_idx << ", " << m_tokens << std::endl;
     m_tokens.reserve(end);
-    if (m_next_token_idx == 1)
-    {
-      // std::cerr << "AnalysisToConllU::operator() m_next_token_idx=" << m_next_token_idx << std::endl;
-      std::cout << std::endl;
-      m_root = 0;
-    }
-    else if (m_next_token_idx == 0)
+    // Inter-sentence blank lines are emitted by flush() only. When the previous
+    // buffer ended exactly on a sentence break, flush() already wrote the
+    // separator and reset m_next_token_idx to 1 and m_root to 0; emitting
+    // another std::endl here produced *doubled* blank lines between sentences at
+    // buffer boundaries, which strict CoNLL-U scorers (conll18) read as empty
+    // sentences. So only initialize on the very first call (m_next_token_idx==0).
+    if (m_next_token_idx == 0)
     {
       m_next_token_idx = 1;
     }
