@@ -21,12 +21,14 @@ namespace deeplima
                 size_t m_rnn_hidden_dim;
                 size_t m_sequence_length;
                 bool train_ss;
+                bool train_mwt; // also predict multiword-token surfaces (implies train_ss)
 
                 train_params_segmentation_t()
                         : deeplima::train::train_params_t(),
                           m_rnn_hidden_dim(8),
                           m_sequence_length(256),
-                          train_ss(false){}
+                          train_ss(false),
+                          train_mwt(false){}
             };
 
         } // namespace train

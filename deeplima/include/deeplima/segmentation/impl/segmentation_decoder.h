@@ -78,7 +78,17 @@ enum segm_tag_t : uint8_t
   // + sentence segmentation tags
   E_EOS       = 0x05,
   S_EOS       = 0x06,
-  max_segm_tag
+  max_segm_tag = 0x07,
+
+  // + multiword-token tags: marks a surface token to be expanded into sub-words
+  // (e.g. French "du"->de+le). Appended after the base tags so models trained
+  // without MWT (<= max_segm_tag classes) keep identical tag values. Each is the
+  // base end-tag value + max_tok_tag (E_MWT=E+max_tok_tag, etc.).
+  E_MWT       = 0x07,
+  S_MWT       = 0x08,
+  E_EOS_MWT   = 0x09,
+  S_EOS_MWT   = 0x0A,
+  max_segm_mwt_tag = 0x0B
 };
 
 namespace impl
@@ -375,6 +385,69 @@ public:
             assert(0 == m_tokens[pos].m_len);
             m_tokens[pos].m_pch = *pch;
             m_tokens[pos].m_len += m_len[from];
+            save_current_token(pos, temp_token_len, start);
+          }
+          break;
+
+        // Multiword-token end tags: behave exactly like their base tag
+        // (E / E_EOS / S / S_EOS) but additionally mark the finished surface
+        // token with token_flags_t::multiword so the MwtExpander expands it.
+        case segm_tag_t::E_EOS_MWT:
+          m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags | token_flags_t::sentence_brk);
+          [[fallthrough]];
+
+        case segm_tag_t::E_MWT:
+          if (0 == m_tokens[pos].m_len
+              && (gen_cat == U_SPACE_SEPARATOR || gen_cat == U_PARAGRAPH_SEPARATOR
+                  || gen_cat == U_LINE_SEPARATOR || gen_cat == U_CONTROL_CHAR
+                  || gen_cat == U_FORMAT_CHAR))
+          {
+            m_tokens[pos].m_offset += m_len[from];
+          }
+          else
+          {
+            m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags | token_flags_t::multiword);
+            consome_character(pos, from, *pch);
+            save_current_token(pos, temp_token_len, start);
+          }
+          break;
+
+        case segm_tag_t::S_EOS_MWT:
+          save_current_token(pos, temp_token_len, start);
+
+          if (gen_cat == U_SPACE_SEPARATOR || gen_cat == U_PARAGRAPH_SEPARATOR
+              || gen_cat == U_LINE_SEPARATOR || gen_cat == U_CONTROL_CHAR
+              || gen_cat == U_FORMAT_CHAR)
+          {
+            m_tokens[pos].m_offset += m_len[from];
+          }
+          else
+          {
+            assert(0 == m_tokens[pos].m_len);
+            m_tokens[pos].m_pch = *pch;
+            m_tokens[pos].m_len += m_len[from];
+            m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags
+                                                  | token_flags_t::sentence_brk
+                                                  | token_flags_t::multiword);
+            save_current_token(pos, temp_token_len, start);
+          }
+          break;
+
+        case segm_tag_t::S_MWT:
+          save_current_token(pos, temp_token_len, start);
+
+          if (gen_cat == U_SPACE_SEPARATOR || gen_cat == U_PARAGRAPH_SEPARATOR
+              || gen_cat == U_LINE_SEPARATOR || gen_cat == U_CONTROL_CHAR
+              || gen_cat == U_FORMAT_CHAR)
+          {
+            m_tokens[pos].m_offset += m_len[from];
+          }
+          else
+          {
+            assert(0 == m_tokens[pos].m_len);
+            m_tokens[pos].m_pch = *pch;
+            m_tokens[pos].m_len += m_len[from];
+            m_tokens[pos].m_flags = token_flags_t(m_tokens[pos].m_flags | token_flags_t::multiword);
             save_current_token(pos, temp_token_len, start);
           }
           break;

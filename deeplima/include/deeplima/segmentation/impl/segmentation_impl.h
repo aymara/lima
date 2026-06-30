@@ -40,6 +40,11 @@ public:
     /** Cleanup all remaining locks if any. */
   virtual void finalize() = 0;
 
+  /** Whether this segmenter predicts multiword-token surfaces (sets the
+   *  token_flags_t::multiword flag). Lets the MWT expander gate expansion on the
+   *  model's prediction; a segmenter that can't predict it returns false. */
+  virtual bool predicts_mwt() const { return false; }
+
   virtual ~ISegmentation() { }
 };
 
@@ -85,6 +90,16 @@ public:
 
   /** Cleanup all remaining locks if any. */
   virtual void finalize() override;
+
+  /** MWT-aware iff the model has more than the base segmentation tag classes
+   *  (i.e. it was trained with --mwt, giving the 4 extra _MWT end tags). The
+   *  output class count is recorded as the size of the first output dict at
+   *  model-conversion time. */
+  virtual bool predicts_mwt() const override
+  {
+    const auto& dicts = this->get_output_str_dicts();
+    return !dicts.empty() && dicts[0].size() > size_t(segm_tag_t::max_segm_tag);
+  }
 
 protected:
 

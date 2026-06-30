@@ -31,7 +31,7 @@ using namespace deeplima::nets;
 using namespace deeplima;
 
 template <class M>
-std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, bool eos)
+std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, bool eos, bool mwt)
 {
   auto out = std::make_shared<M>(len, 1);
 
@@ -51,15 +51,20 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, 
       throw std::runtime_error("vectorize_gold length should be 0");
     }
 
+    // A surface token that is a multiword token (e.g. "du") gets the MWT
+    // variant of its end tag so the model learns to predict, in context, which
+    // tokens should be expanded into sub-words.
+    const bool is_mwt = mwt && t.is_multiword();
+
     if (t.m_len == 1)
     {
       if (eos && t.eos())
       {
-        out->set(p, 0, segm_tag_t::S_EOS);
+        out->set(p, 0, is_mwt ? segm_tag_t::S_EOS_MWT : segm_tag_t::S_EOS);
       }
       else
       {
-        out->set(p, 0, segm_tag_t::S);
+        out->set(p, 0, is_mwt ? segm_tag_t::S_MWT : segm_tag_t::S);
       }
       p++;
       continue;
@@ -74,11 +79,11 @@ std::shared_ptr<M> vectorize_gold(const CoNLLU::Annotation& annot, int64_t len, 
     }
     if (eos && t.eos())
     {
-      out->set(p, 0, segm_tag_t::E_EOS);
+      out->set(p, 0, is_mwt ? segm_tag_t::E_EOS_MWT : segm_tag_t::E_EOS);
     }
     else
     {
-      out->set(p, 0, segm_tag_t::E);
+      out->set(p, 0, is_mwt ? segm_tag_t::E_MWT : segm_tag_t::E);
     }
 
     p++;
@@ -124,10 +129,10 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
   auto dev_input = vectorizer.process(dev_doc.get_original_text(), dev_doc.get_text().size() + 1);
 
   auto train_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("train"), (int64_t)train_char_counter,
-                                                         params.train_ss);
+                                                         params.train_ss, params.train_mwt);
 
   auto dev_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"), dev_doc.get_text().size() + 1,
-                                                       params.train_ss);
+                                                       params.train_ss, params.train_mwt);
 
   std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
@@ -136,12 +141,16 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
   std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( params.m_rnn_hidden_dim ) };
 
 
+  // Class count: 5 (tokenization only), 7 (+ sentence segmentation), or 11
+  // (+ the four multiword-token end-tag variants). MWT implies sentence seg.
+  const uint32_t num_classes = params.train_mwt ? 11 : (params.train_ss ? 7 : 5);
+
   BiRnnClassifierForSegmentation model(std::move(dicts),
                                        ngram_descr,
                                        embd_descr,
                                        rnn_descr,
                                        "tokens",
-                                       params.train_ss ? 7 : 5,
+                                       num_classes,
                                        params.m_input_dropout_prob);
 
   torch::optim::Adam optimizer(model->parameters(),

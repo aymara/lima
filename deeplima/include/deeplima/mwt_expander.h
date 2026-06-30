@@ -57,6 +57,16 @@ public:
     return m_dict.size();
   }
 
+  // When true (the default), only surface tokens the segmenter flagged as
+  // multiword (token_flags_t::multiword) are expanded — the model decides, in
+  // context, which ambiguous forms (e.g. French "des") are contractions. Set
+  // false for a non-MWT-aware tokenizer to fall back to expanding every dict
+  // match (the original dictionary-only behaviour).
+  void set_require_flag(bool require_flag)
+  {
+    m_require_flag = require_flag;
+  }
+
   void operator()(const std::vector<segmentation::token_pos>& tokens, uint32_t len)
   {
     m_out.clear();
@@ -67,9 +77,11 @@ public:
       const segmentation::token_pos& t = tokens[i];
       const std::string surface(t.m_pch, t.m_len);
       const auto it = m_dict.find(surface);
-      if (m_dict.end() == it)
+      const bool flagged = (t.m_flags & token_flags_t::multiword);
+      if (m_dict.end() == it || (m_require_flag && !flagged))
       {
-        // Not a known multiword token: pass through unchanged.
+        // Not a known multiword token, or (when gating on the model) not flagged
+        // as one by the segmenter: pass through unchanged.
         m_out.push_back(t);
         continue;
       }
@@ -91,9 +103,12 @@ public:
         sub.m_pch = m_storage.back().c_str();
         sub.m_len = uint16_t(words[k].size());
         // The surface's leading whitespace attaches to the first sub-word; a
-        // sentence/paragraph break of the surface attaches to the last.
+        // sentence/paragraph break of the surface attaches to the last. The
+        // multiword flag belongs to the surface only, never to its sub-words.
         sub.m_offset = (0 == k) ? t.m_offset : 0;
-        sub.m_flags = (k + 1 == words.size()) ? t.m_flags : token_flags_t::none;
+        sub.m_flags = (k + 1 == words.size())
+                          ? token_flags_t(t.m_flags & ~token_flags_t::multiword)
+                          : token_flags_t::none;
         if (0 == k)
         {
           sub.m_mwt_len = uint8_t(words.size());
@@ -158,6 +173,7 @@ private:
 
   std::unordered_map<std::string, std::vector<std::string>> m_dict;
   callback_t m_next;
+  bool m_require_flag = true;
 
   // Scratch reused on every call.
   std::vector<segmentation::token_pos> m_out;

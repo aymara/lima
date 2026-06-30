@@ -91,6 +91,7 @@ namespace CoNLLU
         none = 0x00,
         sentence_brk = 0x01,
         paragraph_brk = 0x02,
+        multiword = 0x04, // surface token of a "N-M" multiword token
         max_flags
       };
 
@@ -102,6 +103,11 @@ namespace CoNLLU
       inline bool eos() const
       {
         return m_flags & sentence_brk;
+      }
+
+      inline bool is_multiword() const
+      {
+        return m_flags & multiword;
       }
 
       size_t m_line_idx;

@@ -20,6 +20,7 @@ enum token_flags_t : uint8_t
   none = 0x00,
   sentence_brk = 0x01,
   paragraph_brk = 0x02,
+  multiword = 0x04, // surface token of a multiword token, to be expanded into sub-words
   max_flags
 };
 

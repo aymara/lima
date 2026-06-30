@@ -72,6 +72,11 @@ public:
     return m_impl.get_output_str_dicts_names();
   }
 
+  inline const std::vector<std::vector<std::string>>& get_output_str_dicts() const
+  {
+    return m_impl.get_output_str_dicts();
+  }
+
 protected:
 
   M m_impl;
