@@ -179,6 +179,11 @@ void BiRnnEigenInferenceForSegmentation::convert_from_torch(const std::string& f
   for (size_t i = 0; i < Parent::m_linear.size(); i++)
   {
     Parent::m_output_str_dicts_names.push_back("");
+    // Segmentation has no class-name strings, but record the number of output
+    // classes (the linear layer's row count) so downstream code can tell an
+    // MWT-aware model (> max_segm_tag classes) from a plain tokenizer.
+    Parent::m_output_str_dicts.emplace_back(
+        std::vector<std::string>(size_t(Parent::m_linear[i].weight.rows())));
   }
 }
 

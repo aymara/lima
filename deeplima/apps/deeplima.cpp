@@ -348,6 +348,26 @@ void parse_file(std::istream& input,
     // Not a real segmenter but a CoNLLU reader
     psegm = std::make_shared<segmentation::CoNLLUReader>();
   }
+
+  // Gate multiword-token expansion on the segmenter's prediction when the model
+  // is MWT-aware; otherwise fall back to dictionary-only expansion.
+  if (pmwt)
+  {
+    const bool mwt_aware = psegm->predicts_mwt();
+    pmwt->set_require_flag(mwt_aware);
+    if (mwt_aware)
+    {
+      std::cerr << "MWT: tokenizer predicts multiword tokens; expanding only flagged surfaces."
+                << std::endl;
+    }
+    else
+    {
+      std::cerr << "MWT: tokenizer is not MWT-aware; falling back to dictionary-only expansion "
+                   "(every dict match). Retrain the tokenizer with --mwt to avoid over-expansion."
+                << std::endl;
+    }
+  }
+
   if (models_fn.end() != models_fn.find("tag"))
   {
     psegm->register_handler([this]

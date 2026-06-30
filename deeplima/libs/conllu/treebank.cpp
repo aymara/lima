@@ -274,6 +274,9 @@ void Annotation::rebuild_structure(size_t num_sentences, size_t num_tokens, size
 
     if (line.idx().is_multiword())
     {
+      // Mark the surface token so segmentation training can learn to predict it.
+      m_tokens.back().m_flags =
+          (token_t::token_flags_t)(m_tokens.back().m_flags | token_t::multiword);
       skip = line.idx()._last - line.idx()._first + 1;
     }
     else

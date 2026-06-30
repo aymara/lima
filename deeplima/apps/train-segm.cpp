@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
   ("maxepoch,m",        po::value<size_t>(&params.m_max_epochs),        "Max epochs")
   ("max-epochs-without-improvement", po::value<size_t>(&params.m_max_epochs_without_improvement), "Max epochs without improvement")
   ("sentence,s",        po::bool_switch()->default_value(false),     "Train sentence segmentation")
+  ("mwt",               po::bool_switch()->default_value(false),     "Also predict multiword tokens (implies --sentence)")
   ("hidden-dim,w",      po::value<size_t>(&params.m_rnn_hidden_dim),    "RNN hidden dim")
   ("batch-size,b",      po::value<size_t>(&params.m_batch_size),        "Batch size")
   ("seq-len,q",         po::value<size_t>(&params.m_sequence_length),   "Sequence length")
@@ -84,7 +85,10 @@ int main(int argc, char* argv[])
       std::cerr << desc << std::endl;
       return 0;
   }
-  params.train_ss = vm["sentence"].as<bool>();
+  params.train_mwt = vm["mwt"].as<bool>();
+  // MWT prediction reuses the sentence-segmentation tag layout (the _EOS_MWT
+  // variants), so enabling it implies sentence segmentation.
+  params.train_ss = vm["sentence"].as<bool>() || params.train_mwt;
 
   return train_segmentation_model(ud_path, corpus, params, gpuid);
 }
