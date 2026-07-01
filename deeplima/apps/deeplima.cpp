@@ -152,46 +152,6 @@ void init(const std::map<std::string, std::string>& models_fn,
       throw std::runtime_error(std::string("parse_file failed to initialize analyzer: ") + e.what());
     }
 
-    // Optional multiword-token expansion. Auto-load the companion dictionary
-    // "<tok-model>.mwt" sitting beside the tokenizer model (or an explicit
-    // "mwt" entry). It runs between the tokenizer and the analyzer so the
-    // tagger/parser see syntactic words (de, le) rather than surface tokens (du).
-    {
-      std::string mwt_dict_fn = find_or_empty_line(models_fn, "mwt");
-      if (mwt_dict_fn.empty())
-      {
-        const auto tok_it = models_fn.find("tok");
-        if (models_fn.end() != tok_it)
-        {
-          const std::string candidate = tok_it->second + ".mwt";
-          std::ifstream test(candidate);
-          if (test.good())
-          {
-            mwt_dict_fn = candidate;
-          }
-        }
-      }
-      if (!mwt_dict_fn.empty())
-      {
-        try
-        {
-          pmwt = std::make_shared<MwtExpander>(mwt_dict_fn);
-          pmwt->register_handler([this](const std::vector<segmentation::token_pos>& tokens, uint32_t len)
-          {
-            (*panalyzer)(tokens, len);
-          });
-          std::cerr << "Loaded multiword-token dictionary (" << pmwt->size()
-                    << " entries) from " << mwt_dict_fn << std::endl;
-        }
-        catch (const std::runtime_error& e)
-        {
-          std::cerr << "Warning: failed to load multiword-token dictionary: " << e.what()
-                    << " (continuing without MWT expansion)" << std::endl;
-          pmwt = nullptr;
-        }
-      }
-    }
-
     if (models_fn.end() != models_fn.find("dp"))
     {
       // with dependency parsing
@@ -318,6 +278,63 @@ void init(const std::map<std::string, std::string>& models_fn,
     // });
   }
 
+  // Optional multiword-token expansion. Auto-load the companion dictionary
+  // "<tok-model>.mwt" sitting beside the tokenizer model (or an explicit "mwt"
+  // entry). It runs between the tokenizer and the downstream consumer, expanding
+  // surface tokens (du) into syntactic sub-words (de, le). This applies to both
+  // the tagger/parser path (so they stay in-distribution) and the
+  // tokenization-only path (so segmentation output/eval carries UD MWT).
+  {
+    auto find_or_empty = [&](const std::string& k)
+    {
+      const auto it = models_fn.find(k);
+      return (models_fn.end() != it) ? it->second : std::string("");
+    };
+    std::string mwt_dict_fn = find_or_empty("mwt");
+    if (mwt_dict_fn.empty())
+    {
+      const auto tok_it = models_fn.find("tok");
+      if (models_fn.end() != tok_it)
+      {
+        const std::string candidate = tok_it->second + ".mwt";
+        std::ifstream test(candidate);
+        if (test.good())
+        {
+          mwt_dict_fn = candidate;
+        }
+      }
+    }
+    if (!mwt_dict_fn.empty())
+    {
+      try
+      {
+        pmwt = std::make_shared<MwtExpander>(mwt_dict_fn);
+        if (nullptr != panalyzer)
+        {
+          pmwt->register_handler([this](const std::vector<segmentation::token_pos>& tokens, uint32_t len)
+          {
+            (*panalyzer)(tokens, len);
+          });
+        }
+        else
+        {
+          pmwt->register_handler([this](const std::vector<segmentation::token_pos>& tokens, uint32_t len)
+          {
+            (*pdumper_segm_only)(tokens, len);
+          });
+        }
+        std::cerr << "Loaded multiword-token dictionary (" << pmwt->size()
+                  << " entries) from " << mwt_dict_fn << std::endl;
+      }
+      catch (const std::runtime_error& e)
+      {
+        std::cerr << "Warning: failed to load multiword-token dictionary: " << e.what()
+                  << " (continuing without MWT expansion)" << std::endl;
+        pmwt = nullptr;
+      }
+    }
+  }
+
 }
 
 void parse_file(std::istream& input,
@@ -394,7 +411,16 @@ void parse_file(std::istream& input,
                              uint32_t len)
     {
       // std::cerr << "In psegm handler. Calling pdumper_segm_only functor" << std::endl;
-      (*pdumper_segm_only)(tokens, len);
+      // With an MWT dictionary loaded, expand surface tokens into sub-words (and
+      // emit the N-M range line) before dumping; otherwise dump directly.
+      if (pmwt)
+      {
+        (*pmwt)(tokens, len);
+      }
+      else
+      {
+        (*pdumper_segm_only)(tokens, len);
+      }
     });
 
   }
