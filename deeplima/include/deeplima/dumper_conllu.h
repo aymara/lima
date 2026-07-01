@@ -278,6 +278,22 @@ public:
         temp = str;
         continue;
       }
+      // First sub-word of an expanded multiword token: emit the UD range line
+      // "N-M\tsurface\t_..." just before this sub-word's own line, so the
+      // tokenization-only output carries MWT (e.g. "28-29  au" then "à"/"le").
+      if (tokens[i].m_mwt_len > 0 && nullptr != tokens[i].m_mwt_surface_pch)
+      {
+        std::string surface;
+        const char* psurf = tokens[i].m_mwt_surface_pch;
+        for (size_t j = 0; j < tokens[i].m_mwt_surface_len; j++)
+        {
+          surface += (*psurf == '\r' || *psurf == '\n' || *psurf == '\t') ? ' ' : *psurf;
+          psurf++;
+        }
+        std::cout << m_next_token_idx << "-"
+                  << (m_next_token_idx + tokens[i].m_mwt_len - 1) << "\t"
+                  << surface << "\t_\t_\t_\t_\t_\t_\t_\t_" << std::endl;
+      }
       std::cout << m_next_token_idx << "\t";
       std::cout << str;
       std::cout << "\t_\t_\t_\t_\t";
