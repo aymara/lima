@@ -44,7 +44,11 @@ SPDX-License-Identifier: MIT
         <item value="RnnTokensAnalyzer"/>
         <item value="SpecificEntitiesModexAfterPos"/>
 <!--         <item value="specificEntitiesXmlLogger"/> -->
-        <item value="compoundBuilderFromSyntacticData"/>
+<!--     compoundBuilderFromSyntacticData needs a dependency graph (SyntacticData),
+         which this pipeline does not produce (no RnnDependencyParser, and the
+         deeplima English models ship no dependency parser). Re-enable it together
+         with a dependency parser once English parsing models are available. -->
+<!--         <item value="compoundBuilderFromSyntacticData"/> -->
         <item value="conllDumper"/>
       </list>
     </group>
@@ -75,7 +79,12 @@ SPDX-License-Identifier: MIT
   Definition of process units
 *********************************************** -->
     <group name="RnnTokenizer" class="RnnTokenizer">
-      <param key="model_prefix" value="tokenizer-eng"/>
+      <param key="model_prefix" value="tokenizer-$udlang"/>
+    </group>
+
+    <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
+      <param key="tagger_model_prefix" value="tagger-$udlang"/>
+      <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
     </group>
 
     <group name="conllureader" class="ConlluReader">

@@ -18,6 +18,18 @@ namespace LinguisticProcessing
 
 bool fix_lang_codes(QString &lang_str, std::string &udlang)
 {
+  // Registered UD sub-media (e.g. "ud-eng"): the deeplima models live under the
+  // "ud" annotation dir and the treebank is selected by an explicit udlang
+  // (e.g. "eng-UD_English-EWT"). Normalize lang_str to "ud" and keep the
+  // treebank code, stripping a leading "ud-" if the caller included it.
+  if (lang_str.startsWith("ud-") && udlang.size() > 0)
+  {
+    lang_str = "ud";
+    if (udlang.find("ud-") == 0)
+      udlang = udlang.substr(3);
+    return true;
+  }
+
   if (lang_str != QString("ud") || udlang.find("ud-") == 0)
   {
     if (udlang.size() == 0 && lang_str.size() > 0 && lang_str != QString("ud"))
