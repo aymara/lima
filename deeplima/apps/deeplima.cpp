@@ -164,10 +164,10 @@ void init(const std::map<std::string, std::string>& models_fn,
       try
       {
         // The parser runs a single inference worker on purpose: its throughput is
-        // bounded by the serial feature-vectorization/feeding path (fastText), not
-        // by the inference, so additional workers give no speedup (measured flat
-        // from 1 to 20 workers) while making the output depend on the core count.
-        // The segmenter/tagger above DO scale and keep using `threads`.
+        // bounded by the serial inference stage, and multi-slot pipelining is not
+        // yet correct (the head-value/dumper contract is coupled to a per-slot base
+        // of 0). Eigen intra-op parallelism is disabled globally (setNbThreads(1)),
+        // and the segmenter/tagger above DO scale via `threads`.
         parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
                                                           path_resolver,
                                                           panalyzer->get_stridx(),

@@ -201,7 +201,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     }
     else if (opt_name == "sgd")
     {
-      optimizer = make_shared<torch::otrain_graph_dpptim::SGD>(model->parameters(),
+      optimizer = make_shared<torch::optim::SGD>(model->parameters(),
                                                  torch::optim::SGDOptions(params.m_learning_rate * 1000)
                                                  .weight_decay(params.m_weight_decay));
     }
