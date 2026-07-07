@@ -11,7 +11,10 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <thread>
 #include <boost/program_options.hpp>
+
+#include <eigen3/Eigen/Core>
 
 #include "version/version.h"
 #include "helpers/path_resolver.h"
@@ -160,12 +163,18 @@ void init(const std::map<std::string, std::string>& models_fn,
 
       try
       {
+        // The parser runs a single inference worker on purpose: its throughput is
+        // bounded by the serial feature-vectorization/feeding path (fastText), not
+        // by the inference, so additional workers give no speedup (measured flat
+        // from 1 to 20 workers) while making the output depend on the core count.
+        // The segmenter/tagger above DO scale and keep using `threads`.
         parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
                                                           path_resolver,
                                                           panalyzer->get_stridx(),
                                                           panalyzer->get_class_names(),
                                                           DP_BUFFER_SIZE,
-                                                          8);
+                                                          8,
+                                                          1);
       }
       catch (const std::runtime_error& e)
       {
@@ -501,7 +510,15 @@ int main(int argc, char* argv[])
   //      << "git branch: " << deeplima::version::get_git_branch()
   //      << ")" << std::endl;
 
-  size_t threads = 1;
+  // Disable Eigen's intra-op (OpenMP) GEMM parallelism. deeplima parallelizes at
+  // the sentence/slot level (one worker per slot), so letting Eigen also fork a
+  // parallel region for every small matmul only oversubscribes the cores and, for
+  // the parser's many tiny biaffine products, the fork/join overhead dwarfs the
+  // arithmetic. Coarse-grained (worker) parallelism is far more efficient here.
+  Eigen::setNbThreads(1);
+
+  // Use all available cores for worker-level parallelism by default.
+  size_t threads = std::max<size_t>(1, std::thread::hardware_concurrency());
   std::string input_format, output_format, tok_model, tag_model, lem_model, dp_model;
   std::string lem_dict;
   std::string fixed_ini;

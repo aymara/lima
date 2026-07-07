@@ -314,7 +314,7 @@ int train_entity_tagger(const train_params_tagging_t& params)
                 *(dev_input.first.get()), *(dev_input.second.get()), *(dev_gold.get()),
                 *optimizer, min_perf, device);
 
-    std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
+    std::cerr << "train_tag: Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
   }
 
   return 0;
