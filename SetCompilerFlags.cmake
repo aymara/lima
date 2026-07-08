@@ -11,13 +11,25 @@ option(WITH_ASAN "Enable address sanitizer" OFF)
 message("WITH_ASAN=${WITH_ASAN}")
 option(WITH_ARCH "Enable architecture optimizations" OFF)
 message("WITH_ARCH=${WITH_ARCH}")
+# Explicit architecture flags for build-once/run-elsewhere images (e.g. the
+# apptainer/Docker distributions). When non-empty this overrides WITH_ARCH and is
+# applied verbatim, so a known baseline can be targeted instead of the unsafe
+# -march=native (which tunes for the *build* host and can SIGILL on the target).
+# Recommended safe baseline: -march=x86-64-v3 (guarantees AVX2+FMA+F16C+BMI, i.e.
+# any x86-64 CPU from ~2015 on). This substantially speeds up the Eigen GEMMs in
+# the neural parser vs the default -msse4.2.
+set(LIMA_ARCH_FLAGS "" CACHE STRING
+    "Explicit -march/-mtune flags (e.g. -march=x86-64-v3). Overrides WITH_ARCH when set.")
+message("LIMA_ARCH_FLAGS=${LIMA_ARCH_FLAGS}")
 option(WITH_DEBUG_MESSAGES "Enable debug messages" OFF)
 message("WITH_DEBUG_MESSAGES=${WITH_DEBUG_MESSAGES}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     message("Linux flags")
 
-    if (WITH_ARCH)
+    if (LIMA_ARCH_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIMA_ARCH_FLAGS}")
+    elseif (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
     else()
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -msse4.2")
@@ -122,7 +134,9 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer")
 
-    if (WITH_ARCH)
+    if (LIMA_ARCH_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIMA_ARCH_FLAGS}")
+    elseif (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
     else()
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -msse4.2")

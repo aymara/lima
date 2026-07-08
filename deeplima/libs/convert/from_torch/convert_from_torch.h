@@ -110,6 +110,7 @@ void convert_module_from_torch(const deeplima::nets::torch_modules::DeepBiaffine
   {
     copy_matrix<M, S>(src->U[l], dst.m_U[l]);
   }
+  dst.build_stacked_U();
   copy_vector<V, S>(src->root.reshape({-1}), dst.m_root);
 }
 

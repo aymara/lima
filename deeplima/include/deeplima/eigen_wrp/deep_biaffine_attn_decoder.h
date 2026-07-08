@@ -81,15 +81,13 @@ public:
     M arc_dep = (layer->m_weight_dep * input).colwise() + layer->m_bias_dep;
     elu_inplace(arc_dep);
 
-    M b(arc_head.rows(), arc_head.rows());
-    for (Eigen::Index i = 0; i < arc_head.rows(); ++i)
-    {
-      b.col(i) = arc_head * layer->m_u2;
-    }
+    // Head bias: (arc_head * m_u2) depends only on the head, so it is the same
+    // for every dependent column. Compute it once and broadcast, instead of
+    // recomputing the identical matrix-vector product for every column.
+    const V head_bias = arc_head * layer->m_u2; // [n_head]
 
-    M Wx = (arc_head * layer->m_U1) * arc_dep;
-
-    M logits = Wx + b;
+    M logits = (arc_head * layer->m_U1) * arc_dep;
+    logits.colwise() += head_bias;
 
     for (Eigen::Index i = 0; i < logits.rows(); ++i)
     {
