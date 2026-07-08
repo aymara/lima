@@ -33,6 +33,10 @@
 #include "linguisticProcessing/core/DeepLimaUnits/TokenIteratorData.h"
 #include "core/SyntacticAnalysis/SyntacticData.h"
 
+#include <thread>
+#include <algorithm>
+#include <eigen3/Eigen/Core>
+
 
 #define DEBUG_THIS_FILE true
 
@@ -326,8 +330,21 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
             return;
         }
 
+        // Disable Eigen intra-op (OpenMP) parallelism process-wide. The neural
+        // units already parallelize at the sentence/slot level, so letting Eigen
+        // also fork a parallel region for every small matmul only oversubscribes
+        // the cores. For the parser this is catastrophic: it does dozens of tiny
+        // biaffine products per sentence, and the OpenMP fork/join overhead dwarfs
+        // the arithmetic (measured ~20x slowdown). This is a global Eigen setting,
+        // so it also benefits the tagger/segmenter units in the same process.
+        Eigen::setNbThreads(1);
+
+        // The parser runs a single inference worker: its throughput is bounded by
+        // the serial feature-vectorization/feeding path (fastText), not by the
+        // inference, so extra workers do not help here (unlike the tagger). Keeping
+        // one worker also keeps analyzeText output independent of the core count.
         m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
-                                                                        m_pResolver,m_stridx,m_class_names, 1024, 8);
+                                                                        m_pResolver,m_stridx,m_class_names, 1024, 8, 1);
         for (size_t i = 0; i < temp_classes.size(); i++)
         {
             m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);

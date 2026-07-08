@@ -214,7 +214,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                  train_iterator, dev_iterator,
                  *optimizer, min_perf, device);
 
-    std::cerr << "Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
+    std::cerr << "train_graph_dp: Optimizer " << opt_name << " stopped at " << min_perf << std::endl;
   }
 
   return 0;

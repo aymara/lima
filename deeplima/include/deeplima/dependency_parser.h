@@ -11,6 +11,7 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 #include "token_type.h"
 #include "utils/str_index.h"
@@ -262,7 +263,8 @@ public:
                    std::shared_ptr< StringIndex > stridx,
                    const std::vector<std::string>& input_class_names,
                    size_t buffer_size,
-                   size_t num_buffers)
+                   size_t num_buffers,
+                   size_t threads = 1)
     : m_buffer_size(buffer_size),
       m_current_buffer(0),
       m_current_timepoint(0),
@@ -275,7 +277,12 @@ public:
     m_buffers.reserve(num_buffers);
 
     m_impl.load(model_fn, path_resolver);
-    m_impl.init(1, num_buffers, buffer_size, *m_stridx_ptr, input_class_names);
+    // Sentence-level parallelism: run several inference workers, each parsing a
+    // different slot single-threaded (Eigen intra-op parallelism is disabled at
+    // startup, see Eigen::setNbThreads(1)). Workers must not exceed the number
+    // of slots (num_buffers), otherwise the thread pool would starve/deadlock.
+    size_t eff_threads = std::max<size_t>(1, std::min(threads, num_buffers));
+    m_impl.init(eff_threads, num_buffers, buffer_size, *m_stridx_ptr, input_class_names);
 
     for (size_t i = 0; i < num_buffers; ++i)
     {
