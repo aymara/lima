@@ -95,6 +95,36 @@ int main()
                               std::abs((double) tl[0][x][y][l].item<float>() - (double) el[l](x, y)));
     std::cerr << "root_includes=" << root_incl << " max|torch-eigen|=" << max_diff << std::endl;
     CHECK(max_diff < 1e-3, "eigen label logits match torch");
+
+    // predict_labels must return, for each dependent, the argmax label at its
+    // given head. Reference = argmax over the full logits from compute_logits.
+    std::vector<uint32_t> heads(dep);
+    for (int64_t i = 0; i < dep; ++i) heads[i] = (uint32_t) (i % head);
+
+    std::vector<uint32_t> ref(dep, 0);
+    for (int64_t i = 0; i < dep; ++i)
+    {
+      int64_t best = 0;
+      float best_s = -std::numeric_limits<float>::infinity();
+      for (int64_t l = 0; l < num_labels; ++l)
+      {
+        const float s = el[l](i, (Eigen::Index) heads[i]);
+        if (s > best_s) { best_s = s; best = l; }
+      }
+      ref[i] = (uint32_t) best;
+    }
+
+    // Fallback branch (m_U_stacked empty).
+    p.m_U_stacked = Eigen::MatrixXf();
+    std::vector<uint32_t> out_fb(dep, 0);
+    op.predict_labels(p, ein, heads, 0, out_fb);
+    CHECK(out_fb == ref, "predict_labels (fallback) matches compute_logits argmax");
+
+    // Stacked-GEMM branch.
+    p.build_stacked_U();
+    std::vector<uint32_t> out_st(dep, 0);
+    op.predict_labels(p, ein, heads, 0, out_st);
+    CHECK(out_st == ref, "predict_labels (stacked U) matches compute_logits argmax");
   }
 
   if (g_failures == 0) { std::cerr << "test_eigen_label_decoder: OK" << std::endl; return 0; }

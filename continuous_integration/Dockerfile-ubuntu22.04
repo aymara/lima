@@ -77,8 +77,23 @@ ENV CXXFLAGS=$CXXFLAGS
 #
 
 
+# Runtime CPU dispatch for the whole C++ codebase via glibc-hwcaps (glibc >= 2.33):
+# build twice and let the dynamic loader pick optimized libraries on capable CPUs,
+# falling back to the portable baseline on older CPUs / glibc. See populate-hwcaps.sh.
+#
+# 1) Baseline build: portable -mtune=generic -msse4.2, installed to /usr.
 RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
 RUN ninja && ninja install
+
+# 2) Optimized build: -march=x86-64-v3 (AVX2+FMA+F16C+BMI). Resources are
+#    arch-independent and already installed; the Qt GUI gains nothing from AVX2, so
+#    both are skipped here to halve the extra build. Mirror the resulting shared
+#    libraries into /usr/.../glibc-hwcaps/x86-64-v3/ for the loader to auto-select.
+RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
+    && cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima-v3 -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DLIMA_ARCH_FLAGS="-march=x86-64-v3" -DWITH_ASAN=OFF -DWITH_GUI=OFF .. \
+    && ninja && ninja install \
+    && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /usr x86-64-v3 \
+    && rm -rf /opt/lima-v3 /src/lima/build-v3
 
 # Some models are necessary for unit tests to work, let's use a previous
 # version of lima-python to install them, then run tests and finally remove

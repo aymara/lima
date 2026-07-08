@@ -27,8 +27,31 @@ struct params_deep_biaffine_attn_label_decoder_t : public param_base_t
   M m_weight_dep;
   V m_bias_dep;
   std::vector<M> m_U; // one (hidden+1) x (hidden+1) matrix per label
+  // The m_U matrices concatenated column-wise into a single [(hidden+1), L*(hidden+1)]
+  // matrix, so the per-label products can be computed with one GEMM instead of L
+  // tiny ones. Built once at load time (build_stacked_U); if empty, predict_labels
+  // falls back to the per-label loop.
+  M m_U_stacked;
   V m_root;           // head-side <ROOT> row, used when !m_input_includes_root
   bool m_input_includes_root = false;
+
+  // Concatenate m_U[0..L-1] horizontally into m_U_stacked. Call once after m_U is
+  // populated (e.g. at model conversion time).
+  void build_stacked_U()
+  {
+    if (m_U.empty())
+    {
+      m_U_stacked = M();
+      return;
+    }
+    const Eigen::Index d = m_U.front().rows();   // hidden+1
+    const Eigen::Index L = (Eigen::Index) m_U.size();
+    m_U_stacked.resize(d, L * d);
+    for (Eigen::Index l = 0; l < L; ++l)
+    {
+      m_U_stacked.block(0, l * d, d, d) = m_U[l];
+    }
+  }
 };
 
 template<class M, class V, class T>
@@ -83,24 +106,90 @@ public:
                       size_t input_begin,
                       std::vector<uint32_t>& output) const
   {
-    const std::vector<M> logits = compute_logits(p, input);
-    const Eigen::Index n_dep = logits.empty() ? 0 : logits[0].rows();
-    const size_t n_labels = logits.size();
+    const size_t n_labels = p.m_U.size();
+    if (n_labels == 0)
+    {
+      return;
+    }
+
+    // Reproduce the augmented dep/head representations exactly as compute_logits,
+    // but score only the head each token actually got (already decoded by the arc
+    // decoder). We therefore never materialise the full [n_dep x n_head] logit
+    // matrices; we gather each token's head row and take a row-wise dot product.
+    M h_dep = ((p.m_weight_dep * input).colwise() + p.m_bias_dep).transpose();
+    elu_inplace(h_dep);
+    M h_head = ((p.m_weight_head * input).colwise() + p.m_bias_head).transpose();
+    elu_inplace(h_head);
+
+    if (!p.m_input_includes_root)
+    {
+      M h_head_r(h_head.rows() + 1, h_head.cols());
+      h_head_r.row(0) = p.m_root.transpose();
+      h_head_r.block(1, 0, h_head.rows(), h_head.cols()) = h_head;
+      h_head = h_head_r;
+    }
+
+    M aug_dep(h_dep.rows(), h_dep.cols() + 1);
+    aug_dep << h_dep, M::Ones(h_dep.rows(), 1);
+    M aug_head(h_head.rows(), h_head.cols() + 1);
+    aug_head << h_head, M::Ones(h_head.rows(), 1);
+
+    const Eigen::Index n_dep = aug_dep.rows();
+    const Eigen::Index d = aug_dep.cols(); // hidden+1
+
+    // gathered.row(i) = aug_head.row(head_of_token_i). heads[] is already in head
+    // space (root row accounted for), matching aug_head's rows.
+    M gathered(n_dep, d);
     for (Eigen::Index i = 0; i < n_dep; ++i)
     {
-      const Eigen::Index head = (Eigen::Index) heads[input_begin + i];
-      Eigen::Index best = 0;
-      T best_score = -std::numeric_limits<T>::infinity();
+      gathered.row(i) = aug_head.row((Eigen::Index) heads[input_begin + i]);
+    }
+
+    // For each label l, score_l(i) = aug_dep.row(i) * U_l * gathered.row(i)^T.
+    // Compute aug_dep * U_l for all labels at once via the pre-stacked U
+    // ([d, L*d]) -> one GEMM producing [n_dep, L*d]; then a row-wise dot with
+    // gathered per label slice. Falls back to per-label GEMMs if U isn't stacked.
+    std::vector<Eigen::Index> best(n_dep, 0);
+    std::vector<T> best_score(n_dep, -std::numeric_limits<T>::infinity());
+
+    if (p.m_U_stacked.cols() == (Eigen::Index) n_labels * d
+        && p.m_U_stacked.rows() == d)
+    {
+      const M projected = aug_dep * p.m_U_stacked; // [n_dep, L*d]
       for (size_t l = 0; l < n_labels; ++l)
       {
-        const T s = logits[l](i, head);
-        if (s > best_score)
+        const auto slice = projected.block(0, (Eigen::Index) l * d, n_dep, d);
+        const V score = (slice.array() * gathered.array()).rowwise().sum();
+        for (Eigen::Index i = 0; i < n_dep; ++i)
         {
-          best_score = s;
-          best = (Eigen::Index) l;
+          if (score(i) > best_score[i])
+          {
+            best_score[i] = score(i);
+            best[i] = (Eigen::Index) l;
+          }
         }
       }
-      output[input_begin + i] = (uint32_t) best;
+    }
+    else
+    {
+      for (size_t l = 0; l < n_labels; ++l)
+      {
+        const M tmp = aug_dep * p.m_U[l]; // [n_dep, d]
+        const V score = (tmp.array() * gathered.array()).rowwise().sum();
+        for (Eigen::Index i = 0; i < n_dep; ++i)
+        {
+          if (score(i) > best_score[i])
+          {
+            best_score[i] = score(i);
+            best[i] = (Eigen::Index) l;
+          }
+        }
+      }
+    }
+
+    for (Eigen::Index i = 0; i < n_dep; ++i)
+    {
+      output[input_begin + i] = (uint32_t) best[i];
     }
   }
 
