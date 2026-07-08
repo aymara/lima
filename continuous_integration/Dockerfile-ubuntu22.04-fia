@@ -82,13 +82,26 @@ ENV CUDA_HOME=/usr/local/cuda \
 # Build
 #
 
-# LIMA_ARCH_FLAGS: target the x86-64-v3 baseline (AVX2+FMA+F16C+BMI) instead of the
-# default -msse4.2. This runs on any x86-64 CPU from ~2015 on (incl. the AMD EPYC
-# target cluster) and substantially speeds up the Eigen GEMMs in the neural parser.
-# We do NOT use -march=native here: the image is built on CI and run elsewhere, and
-# native would tune for the build host and risk SIGILL on the target.
-RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DLIMA_ARCH_FLAGS="-march=x86-64-v3" -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc ..
+# Runtime CPU dispatch for the whole C++ codebase via glibc-hwcaps (glibc >= 2.33):
+# build twice and let the dynamic loader pick the optimized libraries on capable
+# CPUs, falling back to the portable baseline everywhere else (older CPUs / glibc).
+# No dispatcher code, and no -march=native (the image is built on CI and run
+# elsewhere; native would tune for the build host and risk SIGILL on the target).
+#
+# 1) Baseline build: portable -mtune=generic -msse4.2, installed to /usr.
+RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc ..
 RUN ninja && ninja install
+
+# 2) Optimized build: -march=x86-64-v3 (AVX2+FMA+F16C+BMI, i.e. any x86-64 CPU from
+#    ~2015 on, incl. the AMD EPYC target cluster). Linguistic resources are
+#    arch-independent and already installed, so skip them here. Install to a
+#    staging prefix, then mirror only the shared libraries into
+#    /usr/.../glibc-hwcaps/x86-64-v3/ so the loader auto-selects them at runtime.
+RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
+    && cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima-v3 -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DLIMA_ARCH_FLAGS="-march=x86-64-v3" -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc .. \
+    && ninja && ninja install \
+    && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /usr x86-64-v3 \
+    && rm -rf /opt/lima-v3 /src/lima/build-v3
 
 # Some models are necessary for unit tests to work, let's use a previous
 # version of lima-python to install them, then run tests and finally remove
