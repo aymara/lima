@@ -23,7 +23,6 @@ RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 RUN locale
 
-ARG GITHUB_TOKEN
 ARG LIMA_DISABLE_FSW_TESTING
 ARG LIMA_DISABLE_CPACK_DEBIAN_PACKAGE_SHLIBDEPS
 ARG NLTK_PTB_DP_FILE
@@ -43,7 +42,7 @@ WORKDIR /
 COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.sh ./continuous_integration/qhttpserver.sh /
 #RUN /svmtool.sh $GITHUB_TOKEN
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
-RUN /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
+RUN /qhttpserver.sh ubuntu22.04
 
 # install github-release to be able to deploy packages
 # (in a temporary directory: the archive holds a bin/ dir, and /bin is a symlink

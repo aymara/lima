@@ -6,7 +6,6 @@ FROM debian:12 as base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG GITHUB_TOKEN=none
 ARG QT_VERSION_MAJOR="6"
 
 COPY --from=aymara_svmtoolpp-debian12 /opt/svmtool++ /usr
@@ -32,7 +31,7 @@ WORKDIR /
 COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
 #RUN /svmtool.sh $GITHUB_TOKEN
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
-RUN /qhttpserver.sh $GITHUB_TOKEN debian12
+RUN /qhttpserver.sh debian12
 
 # install github-release to be able to deploy packages
 # (in a temporary directory: the archive holds a bin/ dir, and /bin is a symlink
