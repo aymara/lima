@@ -1,3 +1,6 @@
+*.sif
+extern/libtorch*
+
 __pycache__
 extern/libtorch
 .vscode

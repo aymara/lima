@@ -35,7 +35,9 @@ COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh co
 RUN /qhttpserver.sh $GITHUB_TOKEN debian12
 
 # install github-release to be able to deploy packages
-RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin && rm -rf linux-amd64-github-release.tar.bz2 bin
+# (in a temporary directory: the archive holds a bin/ dir, and /bin is a symlink
+# to usr/bin on merged-/usr systems)
+RUN tmp=$(mktemp -d) && cd $tmp && wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -q && tar xjf linux-amd64-github-release.tar.bz2 && cp bin/linux/amd64/github-release /usr/bin && cd / && rm -rf $tmp
 
 #ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
 #ENV PATH /SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH
