@@ -1,6 +1,8 @@
 FROM aymara/svmtoolpp-ubuntu22.04:latest  as aymara_svmtoolpp-ubuntu22.04
 
-FROM ubuntu:22.04
+# Common base for the build stage and the final image: system dependencies,
+# CUDA and tools, but no LIMA sources nor build tree.
+FROM ubuntu:22.04 as base
 
 ARG PACKAGES="yes"
 ARG COMPILER="clang"
@@ -18,7 +20,8 @@ RUN apt-get update -y
 RUN apt-get install -y cuda-11-8 cuda-toolkit-11-8 cuda-nvcc-11-8
 
 # Use clang or gcc
-RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
+RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi' \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN bash -c '/usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log'
 
@@ -33,7 +36,6 @@ ARG NLTK_PTB_DP_FILE
 ARG CFLAGS=""
 ARG CXXFLAGS=""
 ARG TORCH_CUDA_ARCH_LIST="6.1"
-ARG LIBTORCH_DL="download_libtorch_gpu.sh" # Use download_libtorch_gpu.sh for GPU build
 
 # Setup
 RUN npm install -g json
@@ -48,24 +50,6 @@ COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.s
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN bash -x /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
 
-
-RUN install -d /src/lima/extern
-COPY ./extern/$LIBTORCH_DL /src/lima/extern
-WORKDIR /src/lima/extern
-RUN bash ./${LIBTORCH_DL}
-
-
-RUN mkdir -p /src/
-COPY . /src/lima
-WORKDIR /src/lima/extern
-WORKDIR /src/lima
-ARG CACHEBUST=1
-RUN git submodule init && git submodule update
-RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
-
-RUN mkdir -p /src/lima/build
-WORKDIR /src/lima/build
-
 ENV CUDA_HOME=/usr/local/cuda \
     PERL5LIB=/SVMTool-1.3.1/lib:$PERL5LIB \
     PATH=$CUDA_HOME/bin:/SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH \
@@ -79,8 +63,33 @@ ENV CUDA_HOME=/usr/local/cuda \
     LIMA_CONF=/usr/share/config/lima \
     LIMA_RESOURCES=/root/.lima/resources/:/usr/share/apps/lima/resources
 
+
+# Build stage: sources, libtorch download and build trees live only here and
+# are not shipped in the final image.
+FROM base as build
+
+ARG LIBTORCH_DL="download_libtorch_gpu.sh" # Use download_libtorch_gpu.sh for GPU build
+
+RUN install -d /src/lima/extern
+COPY ./extern/$LIBTORCH_DL /src/lima/extern
+WORKDIR /src/lima/extern
+RUN bash ./${LIBTORCH_DL}
+
+
+RUN mkdir -p /src/
+COPY . /src/lima
+WORKDIR /src/lima
+ARG CACHEBUST=1
+RUN git submodule init && git submodule update
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
+
+RUN mkdir -p /src/lima/build
+WORKDIR /src/lima/build
+
 # Build
 #
+# Everything is installed twice: to /usr, for the unit tests to run against, and
+# to /staging, which is what the final image gets.
 
 # Runtime CPU dispatch for the whole C++ codebase via glibc-hwcaps (glibc >= 2.33):
 # build twice and let the dynamic loader pick the optimized libraries on capable
@@ -90,7 +99,7 @@ ENV CUDA_HOME=/usr/local/cuda \
 #
 # 1) Baseline build: portable -mtune=generic -msse4.2, installed to /usr.
 RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc ..
-RUN ninja && ninja install
+RUN ninja && ninja install && DESTDIR=/staging ninja install
 
 # 2) Optimized build: -march=x86-64-v3 (AVX2+FMA+F16C+BMI, i.e. any x86-64 CPU from
 #    ~2015 on, incl. the AMD EPYC target cluster). Linguistic resources are
@@ -101,9 +110,17 @@ RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
     && cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima-v3 -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DLIMA_ARCH_FLAGS="-march=x86-64-v3" -DWITH_ASAN=OFF -DWITH_GUI=OFF -DCMAKE_CUDA_COMPILER:PATH=/usr/local/cuda/bin/nvcc .. \
     && ninja && ninja install \
     && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /usr x86-64-v3 \
+    && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /staging/usr x86-64-v3 \
     && rm -rf /opt/lima-v3 /src/lima/build-v3
 
 # Some models are necessary for unit tests to work, let's use a previous
 # version of lima-python to install them, then run tests and finally remove
 # old aymara/lima and downloaded models
 RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+
+
+# Final image: base + installed LIMA
+FROM base
+
+COPY --from=build /staging/ /
+RUN ldconfig

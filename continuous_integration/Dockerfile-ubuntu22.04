@@ -1,6 +1,8 @@
 FROM aymara/svmtoolpp-ubuntu22.04:latest  as aymara_svmtoolpp-ubuntu22.04
 
-FROM ubuntu:22.04
+# Common base for the build stage and the final image: system dependencies and
+# tools, but no LIMA sources nor build tree.
+FROM ubuntu:22.04 as base
 
 ARG PACKAGES="yes"
 ARG COMPILER="clang"
@@ -8,14 +10,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
 
-RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 nvidia-cuda-toolkit nvidia-cudnn python3-arpy python3-requests python3-tqdm
-
-
+# No CUDA toolkit here: this image uses the CPU libtorch (see Dockerfile-ubuntu22.04-fia
+# for the GPU flavor).
+RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-arpy python3-requests python3-tqdm
 
 # Use clang or gcc
-RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi'
-
-RUN bash -c '/usr/sbin/update-nvidia-cudnn -u >& /tmp/update-nvidia-cudnn.log || cat /tmp/update-nvidia-cudnn.log'
+RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi' \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -28,7 +29,6 @@ ARG NLTK_PTB_DP_FILE
 ARG CFLAGS=""
 ARG CXXFLAGS=""
 ARG TORCH_CUDA_ARCH_LIST="6.1"
-ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
 
 
 # Setup
@@ -44,23 +44,8 @@ COPY ./continuous_integration/svmtool.sh  ./continuous_integration/svmtool-cpp.s
 #RUN /svmtool-cpp.sh $GITHUB_TOKEN
 RUN /qhttpserver.sh $GITHUB_TOKEN ubuntu22.04
 
-
-RUN install -d /src/lima/extern
-COPY ./extern/$LIBTORCH_DL /src/lima/extern
-WORKDIR /src/lima/extern
-RUN bash ./${LIBTORCH_DL}
-
-
-RUN mkdir -p /src/
-COPY . /src/lima
-WORKDIR /src/lima/extern
-WORKDIR /src/lima
-ARG CACHEBUST=1
-RUN git submodule init && git submodule update
-RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
-
-RUN mkdir -p /src/lima/build
-WORKDIR /src/lima/build
+# install github-release to be able to deploy packages
+RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin && rm -rf linux-amd64-github-release.tar.bz2 bin ; fi '
 
 ENV PERL5LIB /SVMTool-1.3.1/lib:$PERL5LIB
 ENV PATH /SVMTool-1.3.1/bin:/usr/share/apps/lima/scripts:/usr/bin:$PATH
@@ -73,8 +58,34 @@ ENV LIMA_RESOURCES /root/.lima/resources/:/usr/share/apps/lima/resources
 ENV CFLAGS=$CFLAGS
 ENV CXXFLAGS=$CXXFLAGS
 
+
+# Build stage: sources, libtorch download, build trees and packaging live only
+# here and are not shipped in the final image.
+FROM base as build
+
+ARG PACKAGES="yes"
+ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU build
+
+RUN install -d /src/lima/extern
+COPY ./extern/$LIBTORCH_DL /src/lima/extern
+WORKDIR /src/lima/extern
+RUN bash ./${LIBTORCH_DL}
+
+
+RUN mkdir -p /src/
+COPY . /src/lima
+WORKDIR /src/lima
+ARG CACHEBUST=1
+RUN git submodule init && git submodule update
+RUN echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
+
+RUN mkdir -p /src/lima/build
+WORKDIR /src/lima/build
+
 # Build
 #
+# Everything is installed twice: to /usr, for the unit tests to run against, and
+# to /staging, which is what the final image gets.
 
 
 # Runtime CPU dispatch for the whole C++ codebase via glibc-hwcaps (glibc >= 2.33):
@@ -83,7 +94,7 @@ ENV CXXFLAGS=$CXXFLAGS
 #
 # 1) Baseline build: portable -mtune=generic -msse4.2, installed to /usr.
 RUN cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON ..
-RUN ninja && ninja install
+RUN ninja && ninja install && DESTDIR=/staging ninja install
 
 # 2) Optimized build: -march=x86-64-v3 (AVX2+FMA+F16C+BMI). Resources are
 #    arch-independent and already installed; the Qt GUI gains nothing from AVX2, so
@@ -93,6 +104,7 @@ RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
     && cmake -G Ninja -DWITH_LIMA_RESOURCES:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/opt/lima-v3 -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DTORCH_CUDA_ARCH_LIST=6.1 -DCMAKE_PREFIX_PATH=/src/lima/extern/libtorch -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DLIMA_ARCH_FLAGS="-march=x86-64-v3" -DWITH_ASAN=OFF -DWITH_GUI=OFF .. \
     && ninja && ninja install \
     && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /usr x86-64-v3 \
+    && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /staging/usr x86-64-v3 \
     && rm -rf /opt/lima-v3 /src/lima/build-v3
 
 # Some models are necessary for unit tests to work, let's use a previous
@@ -100,7 +112,7 @@ RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
 # old aymara/lima and downloaded models
 RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
 
-RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t /usr/share/apps/lima/packages /src/lima/build/*.deb ; fi'
+RUN bash -c 'mkdir -p /staging/usr && if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t /staging/usr/share/apps/lima/packages /src/lima/build/*.deb ; fi'
 
 # WORKDIR /usr/share/apps/lima/tests
 # RUN /bin/bash -c "set -o pipefail && tva --language=eng test-eng.*.xml 2>&1 | tee tva-eng.log"
@@ -108,5 +120,9 @@ RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t
 # WORKDIR /usr/share/apps/lima/tests/xmlreader
 # RUN /bin/bash -c "set -o pipefail && tvx --language=eng --language=fre test-fre.xmlreader.xml 2>&1 | tee tvx-fre.log"
 
-# install github-release to be able to deploy packages
-RUN bash -c 'if [[ "$PACKAGES" == "yes" ]] ; then /usr/bin/wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 && /bin/tar xjf linux-amd64-github-release.tar.bz2 && /bin/cp bin/linux/amd64/github-release /usr/bin ; fi '
+
+# Final image: base + installed LIMA (+ packages)
+FROM base
+
+COPY --from=build /staging/ /
+RUN ldconfig

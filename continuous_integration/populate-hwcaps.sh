@@ -33,6 +33,7 @@ if [ ! -d "$OPT" ] || [ ! -d "$BASE" ]; then
 fi
 
 count=0
+skipped=0
 # Mirror every shared object (real files *and* the soname/dev symlinks) into the
 # matching glibc-hwcaps/<level>/ directory, preserving the relative layout so the
 # soname symlink and its target land side by side and resolve there.
@@ -40,6 +41,13 @@ while IFS= read -r -d '' rel; do
   rel="${rel#./}"
   dir="$(dirname "$rel")"
   name="$(basename "$rel")"
+  # Skip libraries identical to their baseline counterpart (e.g. the prebuilt
+  # libtorch installed by both builds): an identical copy gains nothing and
+  # libtorch alone weighs several hundred MB (GB for the CUDA flavor).
+  if [ -e "$BASE/$rel" ] && cmp -s "$OPT/$rel" "$BASE/$rel"; then
+    skipped=$((skipped + 1))
+    continue
+  fi
   dest="$BASE/$dir/glibc-hwcaps/$LEVEL"
   mkdir -p "$dest"
   # -a preserves symlinks as symlinks (relative, same-dir targets are copied too).
@@ -47,4 +55,4 @@ while IFS= read -r -d '' rel; do
   count=$((count + 1))
 done < <(cd "$OPT" && find . \( -type f -o -type l \) \( -name '*.so' -o -name '*.so.*' \) -print0)
 
-echo "populate-hwcaps: installed $count shared-object entries into $LEVEL under $BASE"
+echo "populate-hwcaps: installed $count shared-object entries into $LEVEL under $BASE ($skipped identical to baseline skipped)"
