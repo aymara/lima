@@ -1,5 +1,30 @@
 # State of libtorch/deeplima dependency parsing in LIMA
 
+## Current state (2026-07)
+
+**Finished and merged** (#176, #179, #183). The deeplima parser predicts heads and
+deprels. It runs in the `deeplima` CLI and in LIMA's `deepud` / `deepud-pretok`
+pipelines (the `RnnDependencyParser` unit). Measured on a GSD-trained French
+parser with predicted tags as input (see "Buffering bugs" below):
+
+| French GSD | UAS |
+|---|---|
+| dev | 0.831 |
+| test | 0.798 |
+| Trainer's figure (gold tag features) | 0.94 |
+
+The gap to 0.94 comes from using predicted tags instead of gold ones, not from a bug.
+
+**Still to do:** no trained parser model is packaged in lima-models yet, and LAS
+hasn't been measured through LIMA itself. Multi-word token expansion, which is
+worth about 4 UAS/LAS points on French, is covered in `docs/deeplima-mwt.md`.
+
+The rest of this document is the investigation and fix log, in order. The next
+paragraph is the original assessment and is kept for history; it no longer
+describes the code.
+
+## Original assessment (2026-06-22)
+
 Investigated 2026-06-22. Summary: **the in-tree (master) dependency parser is an
 incomplete, experimental work-in-progress with no trained models.** A separate,
 unmerged branch (`deeplima-stanza-dp`) started importing Stanford NLP's **Stanza**
@@ -511,3 +536,89 @@ matches.
 
 Remaining: true LAS evaluation; packaging/shipping trained DP models in the aymara/lima-models
 releases (none yet).
+
+## Step (e): first cluster-trained model, 4 inference bugs (2026-06-25, merged in #179)
+
+The first real model (UD_French-ParisStories, 3-layer BiLSTM, labeled) crashed and
+produced garbage. The single-layer test model had worked. Four bugs, all in
+`deeplima/include/deeplima`:
+
+1. **`nets/birnn_seq_cls.h` `set_slot_begin`:** `set_slot_end()` narrows `m_output_end`
+   to the data count, but `m_output_end` is also the capacity bound that `set_slot_end`
+   asserts against. Reusing a slot for a longer batch then failed the assertion in
+   debug builds and overflowed the heap in release builds (exit 139 on inputs over
+   1024 tokens). Fix: `set_slot_begin` restores `m_output_end = slot_begin + m_slot_len`.
+2. **`eigen_wrp/bilstm.h`, multi-layer backward pass:** it indexed the local
+   `[0, len)` output with the global offset (`output.col(input_begin)`), which
+   overran once sentences accumulate in a buffer. It must be `col(0)`, as in the
+   single-layer version.
+3. **`dumper_conllu.h` cycle detection:** a head `>= n` indexed out of bounds.
+   Guarded with `u == 0 || u >= heads.size()`.
+4. **The quality bug, `eigen_wrp/bilstm.h` layer 0:** it passed
+   `input_matrix.block(...)` directly into the Eigen product. The shared
+   vectorizer matrix has a leading dimension larger than the feature count, and
+   Eigen read that block lazily with the wrong stride. Only column 0 (the
+   `<ROOT>` token) was right; every other token was garbage, and nothing crashed.
+   Fix: copy the block into a dense matrix first, as the single-layer version
+   already did. Layers above 0 read tightly allocated buffers, which is why a
+   1-layer model never showed the bug.
+
+How it was found: an environment-gated dump of each layer's LSTM output inside the
+Eigen `predict()`, replayed through the `.pt` model's torch submodules to find
+which layer diverged first. Signature of bug 4: in the layer-0 projection, column 0
+matches exactly and columns 1 onwards are wrong.
+
+## Buffering bugs: why good models looked bad (2026-06-27/28, merged in #183)
+
+A GSD parser that the trainer scored at **0.94** arc accuracy on dev got **0.23 UAS
+on that same dev set** through `deeplima --input-format conllu`. The model, weight
+loading, math and tagger→parser feature mapping were all correct. The decisive test:
+dev sentence 1 parsed **alone** matches gold 10/10, but inside the full file it is
+wrong. Parsing breaks exactly when the input needs more than one 128-token parser
+buffer (`DP_BUFFER_SIZE`, `apps/deeplima.cpp`): 97 tokens are fine, 134 are not.
+This is probably why earlier cluster-trained parser models were dismissed as too
+bad: they were fine.
+
+Every buffer's `predict` writes its heads to the same region, `output[0..]`, and
+reading was deferred. So buffer *n+1* overwrote buffer *n* before anyone read it.
+The fixes, all in `deeplima/include/deeplima/dependency_parser.h`:
+
+1. **Consume each buffer immediately.** In `GraphDpImpl::handle_token_buffer`, after
+   `start_job`, wait for the slot (`while get_lock_count(slot_no) > 1 wait_for_slot`)
+   and call `send_results(slot_no)` right away, before the next buffer can overwrite
+   the output. The deferred `send_results_if_available` / `send_all_results` then find
+   nothing left to send, so each slot is emitted exactly once. (A first attempt gave
+   each slot its own output offset. It raised UAS to 0.66, but with only 8 slots the
+   9th buffer reused slot 0 before slot 0 was read, crashing around 7300 tokens, so it
+   was reverted.)
+2. **`finalize` passes the real token count**, not `-1`. With `-1`, the handler used
+   `buffer.size()` and processed a stale tail.
+3. **`set_slot_begin(0)`**, to match the local `[0, count)` vectorization and iterator.
+4. **Never split a sentence across buffers.** When the 128-token buffer filled up
+   mid-sentence, `count_max_tokens_until_eos` pushed the partial sentence. The rest
+   became a separate "sentence" with its own root in the next buffer, and every later
+   sentence was shifted (`head ≈ gold − k`). Now, if at least one whole sentence is
+   already in the buffer, the current sentence moves to the next buffer. Only a single
+   sentence longer than 128 tokens is still cut.
+5. **`m_lengths.clear()` at the top of `operator()`.** `count_max_tokens_until_eos`
+   appends, and the handler runs once per tagger batch, so the lengths piled up across
+   batches. `predict` then iterated over, e.g., 232 lengths for a 119-token buffer and
+   corrupted the whole buffer (the runs of consecutive bad sentences).
+
+| French GSD, full file | UAS | Sentences |
+|---|---|---|
+| Before | 0.11–0.23 | crash above 1024 tokens |
+| After fix 1 | 0.643 | 1476/1476, no crash |
+| After fixes 1–5 (dev) | **0.831** | 1476/1476; 188 perfect, 1033 ≥ 0.8, 20 ≤ 0.3 |
+| After fixes 1–5 (test) | **0.798** | — |
+
+**Lesson for later debugging:** compare one sentence parsed alone with the same
+sentence inside a large input. If alone is right and inside is wrong, the bug is in
+buffering or batching, not in the model. The step (d) bug had the same shape; there,
+only sentences of unequal length exposed it.
+
+Related, not parser bugs: a lemmatizer crash on single multibyte-character tokens
+("à"), whose real cause was a character-count vs byte-count mix-up in
+`RnnTokensAnalyzer.cpp` (`token.m_len` must be the UTF-8 byte length); and the parser
+eval running about 1000× too slow because Eigen's OpenMP threads were oversubscribed
+on tiny matrix products, fixed with `Eigen::setNbThreads(1)` (#187).

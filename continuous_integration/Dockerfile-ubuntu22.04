@@ -11,8 +11,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=aymara_svmtoolpp-ubuntu22.04 /opt/svmtool++ /usr
 
 # No CUDA toolkit here: this image uses the CPU libtorch (see Dockerfile-ubuntu22.04-fia
-# for the GPU flavor).
-RUN apt-get update && apt-get install -y locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-arpy python3-requests python3-tqdm
+# for the GPU flavor). libgl-dev is needed by Qt6Gui's CMake config (WrapOpenGL); it
+# used to come in indirectly with nvidia-cuda-toolkit.
+RUN apt-get update && apt-get install -y libgl-dev locales unzip bash coreutils apt-utils lsb-release git gcc g++ build-essential make cmake cmake-data curl python3-nltk gawk wget python3 python3-pip ninja-build qt6-base-dev qt6-base-dev-tools libqt6concurrent6 qml6-module-qtqml qt6-tools-dev libqt6concurrent6 qt6-base-dev-tools qt6-declarative-dev qt6-declarative-dev-tools qt6-multimedia-dev libtre-dev libboost-all-dev nodejs npm libicu-dev libeigen3-dev dos2unix python-is-python3 python3-arpy python3-requests python3-tqdm
 
 # Use clang or gcc
 RUN bash -c 'if [[ "$COMPILER" == "clang" ]] ; then apt-get install -y -qq llvm clang clang-tidy clang-tools && update-alternatives --set cc /usr/bin/clang && update-alternatives --set c++ /usr/bin/clang++ ; else apt-get install -y -qq gcc g++ -qq ; fi' \
