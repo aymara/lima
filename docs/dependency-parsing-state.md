@@ -16,7 +16,7 @@ parser with predicted tags as input (see "Buffering bugs" below):
 The gap to 0.94 comes from using predicted tags instead of gold ones, not from a bug.
 
 **Still to do:** no trained parser model is packaged in lima-models yet, and LAS
-hasn't been measured through LIMA itself. Multi-word token expansion, which is
+hasn't been measured through LIMA itself. For speed, why the parser runs a single worker, and the plan if it is ever parallelized, see "Performance" at the end. Multi-word token expansion, which is
 worth about 4 UAS/LAS points on French, is covered in `docs/deeplima-mwt.md`.
 
 The rest of this document is the investigation and fix log, in order. The next
@@ -622,3 +622,109 @@ Related, not parser bugs: a lemmatizer crash on single multibyte-character token
 `RnnTokensAnalyzer.cpp` (`token.m_len` must be the UTF-8 byte length); and the parser
 eval running about 1000× too slow because Eigen's OpenMP threads were oversubscribed
 on tiny matrix products, fixed with `Eigen::setNbThreads(1)` (#187).
+
+## Performance (2026-07-07/08, merged in #187 and #188)
+
+### Eigen threading: parser 1000× too slow
+
+The training-scripts eval measured the parser at **6.72 tokens/s**, against about
+11k for the tokenizer and 1.5k for the tagger. The model was fine; the runtime was
+the problem. The biaffine label decoder does about 40 tiny matrix products per
+sentence. Eigen's OpenMP GEMM started a parallel region across all cores for each
+of them, and creating and joining the threads cost far more than the arithmetic.
+The more cores, the worse it got, so the many-core eval node suffered far more
+than a desktop. Sampling in gdb showed `Eigen::parallelize_gemm → GOMP_parallel →
+clone3/futex` as the dominant frames. The MST decoder and `WITH_ARCH=OFF` were red
+herrings.
+
+Fix (#187): `Eigen::setNbThreads(1)` at startup, in `deeplima/apps/deeplima.cpp`
+`main()` and in LIMA's `RnnDependencyParser` init. It is a global setting, so it
+also speeds up the tokenizer and tagger. The parser stage went from more than 100 s
+to about 9 s on the full fr_gsd test set: about 6630 tokens/s, and no longer
+dependent on the core count.
+
+### Why the parser runs a single worker
+
+With `--threads`, the tokenizer and tagger scale about 4× (8.3 s → 2.1 s). The
+parser does not scale, so it is deliberately created with 1 worker
+(`apps/deeplima.cpp`, where the `DependencyParser` is constructed). Profiling
+showed vectorization (fastText features) at about 0%: the parser time is real
+inference (BiLSTM + biaffine). The single worker isn't the cause either.
+`GraphDpImpl::handle_token_buffer` (`dependency_parser.h`) deliberately waits for
+each slot's result right after `start_job` (fix 1 of the buffering bugs above), so
+only one slot is ever running. The shared engine (`RnnSequenceClassifier`) is fine:
+the tagger uses the same engine and scales.
+
+**A parallelization attempt was made and reverted.** Each slot got its own region
+of the shared tensors (`base = slot_no * get_slot_size()`, vectorize at `base + i`,
+`set_slot_begin(base)`) and the wait was removed. It did run concurrently (about
+1.85× on 8 workers) but produced **wrong output**, because:
+
+- the arc decoder writes **sentence-local** head indices (argmax in `[0, len)`),
+  whatever the slot base is;
+- the CoNLL-U dumper's state machine (`dumper_conllu.h` `operator()`) assumes
+  `begin == 0`: it tests `m_root == begin` and `iter.head() >= end`, and keeps a
+  running `m_next_token_idx`/`m_root`. With `begin = base`, the root is never
+  detected and every head is misread.
+
+If this is ever picked up again:
+
+1. Decide which indices heads use: either the arc decoder writes **absolute**
+   positions (`base + local_head`), or the TokenIterator/dumper converts local heads
+   using `begin`. Make the decoder and the dumper agree.
+2. Give each slot its own base (as above) and remove the wait.
+3. Test the ordered-draining code under real concurrency (`send_next_results`,
+   `send_results_if_available`, `acquire_slot`, `send_all_results`). It was never
+   exercised while each slot was consumed immediately.
+4. Weigh the modest, sublinear payoff (about 1.85× on a stage of about 9 s) against
+   the risk.
+
+Check the result against a single-worker run: keep the tagger fixed
+(`--threads 1`), vary only the number of parser workers, and require
+**byte-identical** output (this is the check that caught the bug). Also run the
+same worker count twice and require identical output.
+
+### Remaining speed: AVX2 builds and a faster label decoder (#188)
+
+After the Eigen fix, the label decoder takes about half of the parser time, and
+it is close to its arithmetic minimum: about 12M multiply-adds per sentence to
+score about 37 deprels over 129×129 pairs. Parallelizing it isn't worth it. Two
+things did help:
+
+- **AVX2/FMA.** The images were built with `WITH_ARCH=OFF`, i.e.
+  `-mtune=generic -msse4.2`, without AVX. A micro-benchmark of label decoding:
+  1683 µs/sentence with `-msse4.2`, 635 µs/sentence with `-march=x86-64-v3`
+  (**about 2.6×**). The FactoryIA cluster (AMD EPYC 7452, Zen 2) has AVX2, FMA and
+  F16C but no AVX-512. `SetCompilerFlags.cmake` has a `LIMA_ARCH_FLAGS` cache
+  variable, applied as given and overriding `WITH_ARCH`. Use it rather than
+  `-march=native`, which tunes for the build machine and can crash with SIGILL
+  elsewhere.
+- **Faster label decoder** (`eigen_wrp/deep_biaffine_attn_label_decoder.h`
+  `predict_labels`). It now takes each token's already-decoded head row and does one
+  stacked GEMM (`m_U_stacked`, built at load time by `build_stacked_U()` from
+  `convert_from_torch.h`), instead of building 37 full n×n logit matrices and
+  reading one cell of each. The arc decoder (`deep_biaffine_attn_decoder.h`) also
+  moves a loop-invariant head-bias matrix-vector product out of a per-column loop.
+  `tests/test_eigen_label_decoder.cpp` checks that `predict_labels` (stacked and
+  fallback) matches the argmax of `compute_logits`.
+
+Together, label decoding went from 1683 to 539 µs/sentence (3.1×).
+
+**One package for all CPUs, via glibc-hwcaps.** The Ubuntu Docker images build the
+whole tree twice:
+- a baseline `-msse4.2` build installed normally;
+- a `-DLIMA_ARCH_FLAGS=-march=x86-64-v3` build whose shared libraries
+  `continuous_integration/populate-hwcaps.sh` copies into
+  `<libdir>/glibc-hwcaps/x86-64-v3/`.
+
+The glibc loader (≥ 2.33; the Ubuntu 22.04 images have 2.35) picks those on CPUs
+that support them and falls back to the baseline otherwise, with no dispatch code
+and the same soname. You can check with `LD_DEBUG=libs`, and force the baseline
+with `GLIBC_TUNABLES=glibc.cpu.hwcaps=-AVX2`. Function multiversioning /
+`target_clones` would not help: Eigen's SIMD is chosen at compile time per file
+(`EIGEN_VECTORIZE_AVX2`), so a whole file has to be compiled with AVX2.
+
+**Not done:** the PyPI wheel (built in the lima-python repo with `auditwheel
+repair`) doesn't have the x86-64-v3 variant. Before adding it, check that
+`auditwheel` keeps the nested `glibc-hwcaps/` directory. Systems with glibc older
+than 2.33 would still use the baseline.
