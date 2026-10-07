@@ -6,8 +6,11 @@
 #ifndef DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 #define DEEPLIMA_TOKEN_SEQUENCE_ANALYZER
 
+#include <fstream>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -25,6 +28,7 @@
 #include "conllu/line.h"
 #include "deeplima/nets/birnn_seq2seq.h"
 #include "deeplima/lemmatization/impl/lemmatization_impl.h"
+#include "deeplima/lemmatization/lemm_rules.h"
 #include "deeplima/segmentation/impl/segmentation_decoder.h"
 #include "deeplima/tagging/impl/tagging_impl.h"
 #include "deeplima/token_type.h"
@@ -306,6 +310,7 @@ public:
                         const std::string& fixed_ini_fn,
                         const std::string& lower_ini_fn,
                         const std::string& fixed_lemm_fn,
+                        const std::string& lemm_rules_fn,
                         const PathResolver& path_resolver,
                         size_t buffer_size,
                         size_t num_buffers)
@@ -411,6 +416,10 @@ public:
     if (fixed_lemm_fn.size() > 0)
     {
       m_fixed_lemm_cache = load_pos_cache(fixed_lemm_fn);
+    }
+    if (lemm_rules_fn.size() > 0)
+    {
+      load_lemm_rules(lemm_rules_fn);
     }
   }
 
@@ -641,39 +650,61 @@ protected:
 
 
   /**
-   * This well lower onlu Latin1 characters
+   * Loads the suffix edit rules (deeplima-gen-lemm-dict --rules) used for the
+   * words missing from the lemma dictionary. A rule whose UPOS or features the
+   * lemmatization model does not know could never match and is skipped.
    */
-  inline static std::u32string to_lower(const std::u32string& src)
+  void load_lemm_rules(const std::string& fn)
   {
-    std::u32string copy = src;
-    std::transform(copy.begin(), copy.end(), copy.begin(),
-      [](unsigned char c){ return std::tolower(c); });
-    return copy;
+    const morph_model::morph_model_t& mm = m_lemm.get_morph_model();
+    std::ifstream f(fn, std::ios::in);
+    if (!f)
+    {
+      std::cerr << "load_lemm_rules failed to open file " << fn << ".\n";
+      throw std::runtime_error(std::string("load_lemm_rules failed to open file ") + fn);
+    }
+    size_t skipped = 0;
+    lemmatization::read_rules(f, [&](const lemmatization::rule_line_t& r)
+    {
+      std::map<std::string, std::set<std::string>> feats;
+      bool ok = true;
+      try
+      {
+        ok = r.m_feats == lemmatization::any_feats()
+          || deeplima::CoNLLU::CoNLLULine::parse_feats(r.m_feats, feats);
+      }
+      catch (const std::logic_error&)
+      {
+        ok = false;
+      }
+      if (!ok || !mm.can_convert(r.m_upos, feats))
+      {
+        ++skipped;
+        return;
+      }
+      m_lemm_rules.add(mm.convert(r.m_upos, feats), r.m_suffix, r.m_rule, r.m_count,
+                       r.m_feats == lemmatization::any_feats());
+    });
+    if (skipped > 0)
+    {
+      std::cerr << "load_lemm_rules: " << skipped << " rules of " << fn
+                << " skipped (UPOS or features unknown to the lemmatization model)" << std::endl;
+    }
   }
 
   /**
-   * TODO correct this function. It currently returns only empty strings
-   * TODO use this function instead of the one above as soon as it is corrected
+   * Lemmatizes buffer[0, end - offset). Per word, the first that applies:
+   *   1. a UPOS the lemmatization model learned is always lemmatized as is;
+   *   2. the dictionary (form, UPOS+FEATS), which also caches 6 and 7 below;
+   *   3. at sentence start, the fixed-ini / lower-ini UPOS lists;
+   *   4. the fixed-lemm UPOS list (lemma = form);
+   *   5. the suffix edit rules;
+   *   6. the seq2seq model.
+   * The dictionary comes before the UPOS lists: a list states what is usual
+   * for a part of speech, the dictionary what the training data says of this
+   * very word ("Deux" NUM is "deux", not "Deux"). Rules come before the model:
+   * they cannot scramble letters and cost a few lookups.
    */
-  // inline std::u32string to_lower(const std::u32string& utf32String)
-  // {
-  //   // Convert the UTF-32 string to a UnicodeString
-  //   icu::UnicodeString unicodeString = icu::UnicodeString::fromUTF32(
-  //     (const UChar32*)(utf32String.c_str()), utf32String.size());
-  //
-  //   // Convert to lowercase
-  //   unicodeString.toLower();
-  //   std::cerr << unicodeString.toUTF8() << std::endl;
-  //   // Convert back to UTF-32 string
-  //   std::u32string lowercaseString;
-  //   lowercaseString.resize(unicodeString.length());
-  //   UErrorCode 	errorCode ;
-  //   unicodeString.toUTF32((UChar32*)(lowercaseString.c_str()),
-  //                         unicodeString.length(), errorCode);
-  //   return lowercaseString;
-  //
-  // }
-
   void lemmatize(const token_buffer_t<>& buffer,
                  std::vector<StringIndex::idx_t>& lemm_buffer,
                  std::shared_ptr< StdMatrix<uint8_t> > classes,
@@ -683,63 +714,50 @@ protected:
     const auto& lang_morph_model = m_lemm.get_morph_model();
     for (size_t i = 0; i < end - offset; ++i)
     {
-      bool sentence_begin = (i==0 || buffer[i-1].eos());
+      const StringIndex::idx_t form_idx = buffer[i].m_form_idx;
       if (m_lemm.is_fixed(classes, i + offset))
       {
-        // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-        //           << ": use buffer" << std::endl;
-        lemm_buffer[i] = buffer[i].m_form_idx;
+        lemm_buffer[i] = form_idx;
+        continue;
       }
-      else
+
+      const morph_model::morph_feats_t morph_feats_i = m_lemm.get_morph_feats(classes, i + offset);
+      const lemm_cache_key_t form_key(form_idx, morph_feats_i);
+      const auto it = m_lemm_cache.find(form_key);
+      if (m_lemm_cache.end() != it)
       {
-        const auto& morph_feats_i = m_lemm.get_morph_feats(classes, i + offset);
-
-        auto upos = morph_model::morph_feats_t(lang_morph_model.decode_upos(morph_feats_i));
-
-        if (sentence_begin && m_fixed_ini_cache.end() != m_fixed_ini_cache.find(upos))
-        {
-          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-          //           << ": ini fixed POS" << std::endl;
-          lemm_buffer[i] = buffer[i].m_form_idx;
-        }
-        else if (sentence_begin && m_lower_ini_cache.end() != m_lower_ini_cache.find(upos))
-        {
-          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-          //           << ": ini lowercase POS" << std::endl;
-          target = to_lower(m_stridx.get_ustr(buffer[i].m_form_idx));
-          lemm_buffer[i] = m_stridx.get_idx(target);
-        }
-        else if (m_fixed_lemm_cache.end() != m_fixed_lemm_cache.find(upos))
-        {
-          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-          //           << ": fixed POS" << std::endl;
-          lemm_buffer[i] = buffer[i].m_form_idx;
-        }
-        else
-        {
-          // std::cerr << "lemmatize " << m_stridx.get_str(buffer[i].m_form_idx)
-          //           << ": use model" << std::endl;
-          const lemm_cache_key_t form_key(buffer[i].m_form_idx, m_lemm.get_morph_feats(classes, i + offset) );
-          const auto it = m_lemm_cache.find(form_key);
-          if (m_lemm_cache.end() == it)
-          {
-            const std::u32string& f = m_stridx.get_ustr(buffer[i].m_form_idx);
-            m_lemm.predict(f, classes, i + offset, target);
-
-            // Never emit an empty lemma (invalid CoNLL-U): if the model produced
-            // nothing (e.g. the form reaching it was empty), keep the surface form.
-            lemm_buffer[i] = target.empty() ? buffer[i].m_form_idx
-                                            : m_stridx.get_idx(target);
-
-            // add form to cache
-            m_lemm_cache[form_key] = lemm_buffer[i];
-          }
-          else
-          {
-            lemm_buffer[i] = it->second;
-          }
-        }
+        lemm_buffer[i] = it->second;
+        continue;
       }
+
+      const auto upos = morph_model::morph_feats_t(lang_morph_model.decode_upos(morph_feats_i));
+      const bool sentence_begin = (i == 0 || buffer[i-1].eos());
+      // 3 and 4 depend on the position or are free: not cached
+      if (sentence_begin && m_fixed_ini_cache.end() != m_fixed_ini_cache.find(upos))
+      {
+        lemm_buffer[i] = form_idx;
+        continue;
+      }
+      if (sentence_begin && m_lower_ini_cache.end() != m_lower_ini_cache.find(upos))
+      {
+        lemm_buffer[i] = m_stridx.get_idx(lemmatization::to_lower(m_stridx.get_ustr(form_idx)));
+        continue;
+      }
+      if (m_fixed_lemm_cache.end() != m_fixed_lemm_cache.find(upos))
+      {
+        lemm_buffer[i] = form_idx;
+        continue;
+      }
+
+      const std::u32string& f = m_stridx.get_ustr(form_idx);
+      if (!m_lemm_rules.lemmatize(morph_feats_i, upos, f, target))
+      {
+        m_lemm.predict(f, classes, i + offset, target);
+      }
+      // Never emit an empty lemma (invalid CoNLL-U): if the model produced
+      // nothing (e.g. the form reaching it was empty), keep the surface form.
+      lemm_buffer[i] = target.empty() ? form_idx : m_stridx.get_idx(target);
+      m_lemm_cache[form_key] = lemm_buffer[i];
     }
   }
 
@@ -765,6 +783,7 @@ protected:
   std::unordered_set<morph_model::morph_feats_t> m_fixed_ini_cache;
   std::unordered_set<morph_model::morph_feats_t> m_lower_ini_cache;
   std::unordered_set<morph_model::morph_feats_t> m_fixed_lemm_cache;
+  lemmatization::lemm_rules_t<morph_model::morph_feats_t> m_lemm_rules;
 
   output_callback_t m_output_callback;
 };

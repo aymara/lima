@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,15 +9,24 @@
 using namespace std;
 namespace po = boost::program_options;
 
-int generate_dict(const vector<string>& input_files, const set<string>& upos_to_skip, const string& conflict_resolution);
+struct rules_options_t
+{
+  string m_output;        // empty: no rules
+  size_t m_max_suffix;
+  size_t m_max_form_freq; // 0: all forms
+};
+
+int generate_dict(const vector<string>& input_files, const set<string>& upos_to_skip,
+                  const string& conflict_resolution, const rules_options_t& rules_options);
 
 int main(int argc, char* argv[])
 {
   setlocale(LC_ALL, "en_US.UTF-8");
 
   vector<string> input_files;
-  string conflict_resolution = "reject";
+  string conflict_resolution = "majority";
   vector<string> upos_to_skip = { "PUNCT", "SYM", "X" };
+  rules_options_t rules_options{"", 6, 2};
 
   po::options_description desc("deeplima (generate lemmatization dictionary)");
   desc.add_options()
@@ -24,8 +34,17 @@ int main(int argc, char* argv[])
    "Display this help message")
   ("input,i",       po::value<vector<string>>(&input_files)->multitoken(),
    "Input files (.conllu)")
-  ("conflict,c",    po::value<string>(&conflict_resolution),
-   "Conflict resolution strategy: \"reject\" (all) or \"vote\" (not implemented)")
+  ("conflict,c",    po::value<string>(&conflict_resolution)->default_value(conflict_resolution),
+   "When a (form, UPOS, FEATS) has several lemmata: \"majority\" keeps the most frequent "
+   "one (none on a tie), \"reject\" drops the entry")
+  ("rules,r",       po::value<string>(&rules_options.m_output),
+   "Also write suffix edit rules to this file, for words missing from the dictionary "
+   "(deeplima --lem-rules)")
+  ("rules-max-suffix", po::value<size_t>(&rules_options.m_max_suffix)->default_value(rules_options.m_max_suffix),
+   "Longest word ending (in characters) the rules are indexed by")
+  ("rules-max-freq", po::value<size_t>(&rules_options.m_max_form_freq)->default_value(rules_options.m_max_form_freq),
+   "Learn rules only from forms occurring at most this many times (0: all forms). "
+   "Rare words resemble the unknown words the rules are for")
   ;
 
   po::variables_map vm;
@@ -42,20 +61,23 @@ int main(int argc, char* argv[])
   }
 
   if (vm.count("help") || input_files.size() == 0
-   || (conflict_resolution.size() > 0 && conflict_resolution != "reject"))
+   || (conflict_resolution != "reject" && conflict_resolution != "majority"))
   {
     cout << desc << endl;
     return 0;
   }
 
-  return generate_dict(input_files, set<string>(upos_to_skip.begin(), upos_to_skip.end()), conflict_resolution);
+  return generate_dict(input_files, set<string>(upos_to_skip.begin(), upos_to_skip.end()),
+                       conflict_resolution, rules_options);
 }
 
+#include <tuple>
 #include <unordered_map>
 #include <unicode/unistr.h>
 #include <unicode/regex.h>
 
 #include "conllu/treebank.h"
+#include "deeplima/lemmatization/lemm_rules.h"
 
 using namespace icu;
 using namespace deeplima;
@@ -100,9 +122,17 @@ struct lemmatization_dict_t
 
   unordered_map<form_t, unordered_map<UnicodeString, map<size_t, size_t>, UnicodeStringHash>, form_t::hasher> data;
   // form -> { lemma_t -> counter per source }
+
+  // For the suffix rules: every word's form, and the distinct
+  // (form, UPOS, FEATS, lemma) observations, whatever their UPOS
+  unordered_map<string, size_t> form_freq;
+  set<tuple<string, string, string, string>> observations;
 };
 
-UnicodeString reGoodToLemmatize = "^\\p{Letter}+$";
+// A form is worth a dictionary entry if it holds a letter or a digit. Requiring
+// letters only ("^\\p{Letter}+$") dropped "M.", "Bar-le-Duc", "aujourd'hui",
+// "d'" or "80 000", sending these known words to the lemmatization model.
+UnicodeString reGoodToLemmatize = "[\\p{Letter}\\p{Number}]";
 
 bool load(const string& fn, const set<string>& upos_to_skip, lemmatization_dict_t& dict, size_t src_idx)
 {
@@ -118,13 +148,21 @@ bool load(const string& fn, const set<string>& upos_to_skip, lemmatization_dict_
   for (const auto& word: annotation.words())
   {
     const CoNLLU::CoNLLULine& line = annotation.get_line(word.m_line_idx);
+    const string& form = line.form();
+    const string& lemma = line.lemma();
+
+    dict.form_freq[form]++;
+    // Rules are learned from every UPOS, foreign words included: copying the
+    // form is precisely what they must learn for PROPN, X or NUM
+    if (!line.is_typo() && !form.empty() && !lemma.empty() && (lemma != "_" || form == "_"))
+    {
+      dict.observations.emplace(form, line.upos(), line.feats_str(), lemma);
+    }
+
     if (line.is_foreign() || line.is_typo() || upos_to_skip.end() != upos_to_skip.find(line.upos()))
     {
       continue;
     }
-
-    const string& form = line.form();
-    const string& lemma = line.lemma();
 
     UnicodeString u_form = UnicodeString::fromUTF8(form);
     UnicodeString u_lemma = UnicodeString::fromUTF8(lemma);
@@ -175,9 +213,9 @@ string stat2str(const map<size_t, size_t>& stat, const vector<string>& src_fn)
 map<pair<UnicodeString, string>, UnicodeString> process(const lemmatization_dict_t& dict,
                                                         const string& conflict_resolution)
 {
-  if (conflict_resolution != "reject")
+  if (conflict_resolution != "reject" && conflict_resolution != "majority")
   {
-    throw runtime_error("Only \"reject\" conflict resolution is supported");
+    throw runtime_error("Unknown conflict resolution \"" + conflict_resolution + "\"");
   }
   map<pair<UnicodeString, string>, UnicodeString> out;
 
@@ -187,6 +225,7 @@ map<pair<UnicodeString, string>, UnicodeString> process(const lemmatization_dict
     {
       throw runtime_error(string("Zero lemmata for form \"") + toUtf8(form_info.m_form) + "\"");
     }
+    const UnicodeString* chosen = &value.begin()->first;
     if (value.size() > 1)
     {
       cerr << "Multiple (" << value.size() << ") lemmata for form \"" << toUtf8(form_info.m_form) << "\":" << endl;
@@ -197,10 +236,42 @@ map<pair<UnicodeString, string>, UnicodeString> process(const lemmatization_dict
              << "\t" << toUtf8(lemma)
              << "\t" << stat2str(src_info, dict.m_sources) << endl;
       }
-      continue;
+      if (conflict_resolution == "reject")
+      {
+        continue;
+      }
+      // majority: the most frequent lemma over all sources, none on a tie
+      auto total = [](const map<size_t, size_t>& src_info)
+      {
+        size_t n = 0;
+        for (const auto& kv : src_info) n += kv.second;
+        return n;
+      };
+      size_t best = 0;
+      bool tie = false;
+      for (const auto& [ lemma, src_info ] : value)
+      {
+        const size_t n = total(src_info);
+        if (n > best)
+        {
+          best = n;
+          chosen = &lemma;
+          tie = false;
+        }
+        else if (n == best)
+        {
+          tie = true;
+        }
+      }
+      if (tie)
+      {
+        cerr << "\tno majority: entry dropped" << endl;
+        continue;
+      }
+      cerr << "\tkept \"" << toUtf8(*chosen) << "\"" << endl;
     }
 
-    out[make_pair(form_info.m_form, form_info.m_upos + " " + form_info.m_feats)] = value.begin()->first;
+    out[make_pair(form_info.m_form, form_info.m_upos + " " + form_info.m_feats)] = *chosen;
   }
 
   return out;
@@ -216,7 +287,37 @@ void print(const map<pair<UnicodeString, string>, UnicodeString>& output)
   }
 }
 
-int generate_dict(const vector<string>& input_files, const set<string>& upos_to_skip, const string& conflict_resolution)
+void write_rules(const lemmatization_dict_t& dict, const rules_options_t& options)
+{
+  deeplima::lemmatization::lemm_rules_builder_t builder(options.m_max_suffix);
+  size_t used = 0;
+  for (const auto& [form, upos, feats, lemma] : dict.observations)
+  {
+    if (options.m_max_form_freq > 0 && dict.form_freq.at(form) > options.m_max_form_freq)
+    {
+      continue;
+    }
+    builder.add(upos, feats,
+                deeplima::lemmatization::utf8_to_u32(form),
+                deeplima::lemmatization::utf8_to_u32(lemma));
+    ++used;
+  }
+  ofstream out(options.m_output);
+  if (!out)
+  {
+    throw runtime_error("Can't open rules file " + options.m_output);
+  }
+  builder.write(out);
+  if (!out)
+  {
+    throw runtime_error("Failed writing rules file " + options.m_output);
+  }
+  cerr << "Rules learned from " << used << " of " << dict.observations.size()
+       << " distinct (form, UPOS, FEATS, lemma) written to " << options.m_output << endl;
+}
+
+int generate_dict(const vector<string>& input_files, const set<string>& upos_to_skip,
+                  const string& conflict_resolution, const rules_options_t& rules_options)
 {
   try
   {
@@ -225,6 +326,11 @@ int generate_dict(const vector<string>& input_files, const set<string>& upos_to_
     const auto output = process(dict, conflict_resolution);
 
     print(output);
+
+    if (!rules_options.m_output.empty())
+    {
+      write_rules(dict, rules_options);
+    }
   }
   catch (const std::exception& e)
   {

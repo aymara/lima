@@ -69,6 +69,7 @@ std::shared_ptr<DependencyParser> parser = nullptr;
  *                  - fixed_ini:
  *                  - lower_ini:
  *                  - fixed_lemm:
+ *                  - lem_rules: suffix edit rules for words missing from lem_dict (can be absent)
  *                  - dp: the dependency parser model (can be absent)
  * @param tag_use_mp if true, use mixed precision (int16) model, otherwise, use
  *                   full precision (float)
@@ -119,6 +120,7 @@ void init(const std::map<std::string, std::string>& models_fn,
     std::string fixed_ini_fn = find_or_empty_line(models_fn, "fixed_ini");
     std::string lower_ini_fn = find_or_empty_line(models_fn, "lower_ini");
     std::string fixed_lemm_fn = find_or_empty_line(models_fn, "fixed_lemm");
+    std::string lemm_rules_fn = find_or_empty_line(models_fn, "lem_rules");
 
     try
     {
@@ -131,6 +133,7 @@ void init(const std::map<std::string, std::string>& models_fn,
               fixed_ini_fn,
               lower_ini_fn,
               fixed_lemm_fn,
+              lemm_rules_fn,
               path_resolver,
               TAG_BUFFER_SIZE,
               8);
@@ -144,6 +147,7 @@ void init(const std::map<std::string, std::string>& models_fn,
             fixed_ini_fn,
             lower_ini_fn,
             fixed_lemm_fn,
+            lemm_rules_fn,
             path_resolver,
             TAG_BUFFER_SIZE,
             8);
@@ -524,6 +528,7 @@ int main(int argc, char* argv[])
   std::string fixed_ini;
   std::string lower_ini;
   std::string fixed_lemm;
+  std::string lem_rules;
   bool tag_use_mp;
   std::vector<std::string> input_files;
 
@@ -540,6 +545,7 @@ int main(int argc, char* argv[])
   ("fixed-ini",      po::value<std::string>(&fixed_ini)->default_value(""),            "List of upos wiht fixed lemmas")
   ("lower-ini",  po::value<std::string>(&lower_ini)->default_value(""),        "List of upos wih lowercased lemmas")
   ("fixed-lemm",  po::value<std::string>(&fixed_lemm)->default_value(""),        "List of upos wih lowercased lemmas")
+  ("lem-rules",       po::value<std::string>(&lem_rules)->default_value(""),             "Suffix edit rules for words missing from the lemmatization dictionary (deeplima-gen-lemm-dict --rules)")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ("tag-use-mp",      po::value<bool>(&tag_use_mp)->default_value(true),                 "Use mixed-precision calculations in tagger")
@@ -613,6 +619,11 @@ int main(int argc, char* argv[])
   if (fixed_lemm.size() > 0)
   {
     models["fixed_lemm"] = fixed_lemm;
+  }
+
+  if (lem_rules.size() > 0)
+  {
+    models["lem_rules"] = lem_rules;
   }
 
   size_t out_fmt = 1;
