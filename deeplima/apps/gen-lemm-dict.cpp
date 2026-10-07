@@ -14,6 +14,7 @@ struct rules_options_t
   string m_output;        // empty: no rules
   size_t m_max_suffix;
   size_t m_max_form_freq; // 0: all forms
+  size_t m_max_prefix;    // 0: suffix rules only
 };
 
 int generate_dict(const vector<string>& input_files, const set<string>& upos_to_skip,
@@ -26,7 +27,7 @@ int main(int argc, char* argv[])
   vector<string> input_files;
   string conflict_resolution = "majority";
   vector<string> upos_to_skip = { "PUNCT", "SYM", "X" };
-  rules_options_t rules_options{"", 6, 2};
+  rules_options_t rules_options{"", 6, 2, 0};
 
   po::options_description desc("deeplima (generate lemmatization dictionary)");
   desc.add_options()
@@ -38,13 +39,17 @@ int main(int argc, char* argv[])
    "When a (form, UPOS, FEATS) has several lemmata: \"majority\" keeps the most frequent "
    "one (none on a tie), \"reject\" drops the entry")
   ("rules,r",       po::value<string>(&rules_options.m_output),
-   "Also write suffix edit rules to this file, for words missing from the dictionary "
+   "Also write edit rules to this file, for words missing from the dictionary "
    "(deeplima --lem-rules)")
   ("rules-max-suffix", po::value<size_t>(&rules_options.m_max_suffix)->default_value(rules_options.m_max_suffix),
    "Longest word ending (in characters) the rules are indexed by")
   ("rules-max-freq", po::value<size_t>(&rules_options.m_max_form_freq)->default_value(rules_options.m_max_form_freq),
    "Learn rules only from forms occurring at most this many times (0: all forms). "
    "Rare words resemble the unknown words the rules are for")
+  ("rules-max-prefix", po::value<size_t>(&rules_options.m_max_prefix)->default_value(rules_options.m_max_prefix),
+   "Also learn rules editing the beginning of words, stripping at most this many characters "
+   "(0: suffix rules only). For languages that change the start of words (Irish "
+   "mutations, Indonesian, Hebrew or Arabic prefixes)")
   ;
 
   po::variables_map vm;
@@ -123,7 +128,7 @@ struct lemmatization_dict_t
   unordered_map<form_t, unordered_map<UnicodeString, map<size_t, size_t>, UnicodeStringHash>, form_t::hasher> data;
   // form -> { lemma_t -> counter per source }
 
-  // For the suffix rules: every word's form, and the distinct
+  // For the edit rules: every word's form, and the distinct
   // (form, UPOS, FEATS, lemma) observations, whatever their UPOS
   unordered_map<string, size_t> form_freq;
   set<tuple<string, string, string, string>> observations;
@@ -289,7 +294,7 @@ void print(const map<pair<UnicodeString, string>, UnicodeString>& output)
 
 void write_rules(const lemmatization_dict_t& dict, const rules_options_t& options)
 {
-  deeplima::lemmatization::lemm_rules_builder_t builder(options.m_max_suffix);
+  deeplima::lemmatization::lemm_rules_builder_t builder(options.m_max_suffix, options.m_max_prefix);
   size_t used = 0;
   for (const auto& [form, upos, feats, lemma] : dict.observations)
   {

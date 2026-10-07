@@ -3,10 +3,10 @@
 //
 // SPDX-License-Identifier: MIT
 
-// Unit tests for the suffix edit rules used to lemmatize words missing from
-// the lemma dictionary: rule extraction and application, Unicode lowercasing,
-// the builder's indexing and tie-breaking, the file round trip and the lookup
-// order.
+// Unit tests for the edit rules used to lemmatize words missing from the
+// lemma dictionary: rule extraction and application (suffix and prefix),
+// Unicode lowercasing, the builder's indexing and tie-breaking, the file round
+// trip and the lookup order.
 
 #include <iostream>
 #include <sstream>
@@ -43,7 +43,7 @@ static string_rules_t load(const std::string& text, bool upos_only_keys = false)
   {
     const bool fallback = r.m_feats == any_feats();
     const std::string key = upos_only_keys ? r.m_upos : r.m_upos + " " + (fallback ? "*" : r.m_feats);
-    rules.add(key, r.m_suffix, r.m_rule, r.m_count, fallback);
+    rules.add(key, r.m_suffix, r.m_rule, r.m_count, fallback, r.m_prefix);
   });
   return rules;
 }
@@ -153,6 +153,101 @@ int main()
           "the exact (no-features) rule wins over the fallback under an equal key");
   }
 
+  // Prefix rule extraction: only when it shortens the edit, within max_prefix
+  {
+    const affix_rule_t m = extract_affix_rule(u("bhean"), u("bean"), 2);
+    CHECK(m.m_prefix.m_strip == 2 && m.m_prefix.m_add == u("b") && m.m_suffix.m_strip == 0
+          && m.m_suffix.m_add.empty(), "Irish lenition bhean -> bean edits the beginning");
+    const affix_rule_t i3 = extract_affix_rule(u("membaca"), u("baca"), 3);
+    CHECK(i3.m_prefix.m_strip == 3 && i3.m_prefix.m_add.empty() && i3.m_suffix.m_strip == 0,
+          "Indonesian membaca -> baca strips me-m");
+    const affix_rule_t i2 = extract_affix_rule(u("membaca"), u("baca"), 2);
+    CHECK(i2.m_prefix == edit_rule_t{} && i2.m_suffix == extract_rule(u("membaca"), u("baca")),
+          "a prefix longer than max_prefix leaves the suffix rule");
+    const affix_rule_t c = extract_affix_rule(u("chevaux"), u("cheval"), 4);
+    CHECK(c.m_prefix == edit_rule_t{} && c.m_suffix == extract_rule(u("chevaux"), u("cheval")),
+          "chevaux keeps its suffix rule when prefixes are allowed");
+    const affix_rule_t p = extract_affix_rule(u("Princes"), u("prince"), 4);
+    CHECK(p.m_prefix == edit_rule_t{} && p.m_suffix.m_lower && p.m_suffix.m_strip == 1,
+          "Princes -> prince: lowercasing beats a prefix edit");
+    const affix_rule_t z = extract_affix_rule(u("membaca"), u("baca"), 0);
+    CHECK(z.m_prefix == edit_rule_t{} && z.m_suffix == extract_rule(u("membaca"), u("baca")),
+          "max_prefix 0 is the suffix rule alone");
+
+    std::u32string lemma;
+    CHECK(apply_rule(u("membeli"), edit_rule_t{false, 3, U""}, edit_rule_t{}, lemma) && lemma == u("beli"),
+          "apply a prefix rule");
+    CHECK(apply_rule(u("Bhád"), edit_rule_t{false, 2, U"b"}, edit_rule_t{true, 0, U""}, lemma)
+          && lemma == u("bád"), "lowercasing applies before the prefix edit");
+    CHECK(!apply_rule(u("abc"), edit_rule_t{false, 2, U""}, edit_rule_t{false, 2, U""}, lemma),
+          "prefix and suffix strips longer than the form fail");
+  }
+
+  // A builder without prefix rules writes no prefix line
+  {
+    lemm_rules_builder_t a(6), b(6, 0);
+    for (lemm_rules_builder_t* builder : {&a, &b})
+    {
+      builder->add("NOUN", "Number=Plur", u("maisons"), u("maison"));
+      builder->add("NOUN", "_", u("bhean"), u("bean"));
+    }
+    std::ostringstream out_a, out_b;
+    a.write(out_a);
+    b.write(out_b);
+    CHECK(out_a.str() == out_b.str() && out_a.str().find("prefix\t") == std::string::npos,
+          "max_prefix 0 writes suffix rules only");
+  }
+
+  // Builder and lookup with prefix rules (Irish lenition, Indonesian me-)
+  {
+    lemm_rules_builder_t builder(6, 4);
+    builder.add("NOUN", "Case=Nom|Form=Len", u("bhean"), u("bean"));
+    builder.add("NOUN", "Case=Nom|Form=Len", u("bhád"), u("bád"));
+    builder.add("NOUN", "Case=Nom|Form=Len", u("mháthair"), u("máthair"));
+    builder.add("VERB", "Voice=Act", u("membaca"), u("baca"));
+    builder.add("VERB", "Voice=Act", u("membeli"), u("beli"));
+    builder.add("VERB", "Voice=Act", u("menulis"), u("tulis"));
+    std::ostringstream out;
+    builder.write(out);
+    const std::string text = out.str();
+    CHECK(text.find("prefix\tNOUN\t*\tbh\t0\t2\tb\t2\n") != std::string::npos,
+          "bh- -> b-, supported by 2 words");
+    CHECK(text.find("prefix\tVERB\t*\tmem\t0\t3\t\t2\n") != std::string::npos,
+          "mem- stripped, supported by 2 words");
+    CHECK(text.find("prefix\tVERB\t*\tme\t0\t3") == std::string::npos,
+          "a 3-letter prefix strip is not indexed under a 2-letter beginning (stem guard)");
+
+    const string_rules_t rules = load(text);
+    CHECK(rules.size() > 0, "prefix rules loaded");
+    CHECK(lemmatize(rules, "NOUN", "Case=Nom|Form=Len", "bhó") == "bó", "unseen lenited noun");
+    CHECK(lemmatize(rules, "VERB", "Voice=Act", "membuat") == "buat", "unseen me- verb");
+    CHECK(lemmatize(rules, "VERB", "Voice=Act", "makan") == "makan",
+          "an unknown beginning keeps the beginning");
+  }
+
+  // A prefix rule stripping into the suffix edit gives way to a shorter beginning
+  {
+    const string_rules_t rules = load(
+        "NOUN\t*\t\t0\t0\t\t9\n"
+        "NOUN\t*\tby\t0\t2\t\t5\n"
+        "prefix\tNOUN\t*\t\t0\t0\t\t9\n"
+        "prefix\tNOUN\t*\tab\t0\t2\tz\t5\n");
+    CHECK(lemmatize(rules, "NOUN", "_", "abmby") == "zm", "prefix and suffix rules both apply");
+    CHECK(lemmatize(rules, "NOUN", "_", "aby") == "a",
+          "the ab- rule would strip into -by: the empty beginning's rule applies");
+  }
+
+  // Prefix rules also keep exact and fallback apart under an equal key
+  {
+    const string_rules_t rules = load(
+        "ADV\t_\t\t0\t0\t\t1\n"
+        "prefix\tADV\t*\tun\t0\t2\t\t40\n"
+        "prefix\tADV\t_\tun\t0\t0\t\t2\n", true);
+    std::u32string lemma;
+    CHECK(rules.lemmatize("ADV", "ADV", u("unless"), lemma) && lemma == u("unless"),
+          "the exact (no-features) prefix rule wins over the fallback under an equal key");
+  }
+
   // Malformed files are rejected with the line number
   {
     bool thrown = false;
@@ -175,6 +270,20 @@ int main()
       thrown = true;
     }
     CHECK(thrown, "lower must be 0 or 1");
+    for (const char* bad : {"NOUN\t*\ts\t0\t1\t\t1\textra\n",             // 8 fields, no prefix marker
+                            "prefix\tNOUN\t*\tbh\t1\t2\tb\t1\n"})          // a prefix rule never lowercases
+    {
+      thrown = false;
+      try
+      {
+        load(bad);
+      }
+      catch (const std::runtime_error&)
+      {
+        thrown = true;
+      }
+      CHECK(thrown, std::string("rejected: ") + bad);
+    }
   }
 
   if (g_failures == 0)

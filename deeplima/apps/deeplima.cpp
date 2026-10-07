@@ -69,7 +69,7 @@ std::shared_ptr<DependencyParser> parser = nullptr;
  *                  - fixed_ini:
  *                  - lower_ini:
  *                  - fixed_lemm:
- *                  - lem_rules: suffix edit rules for words missing from lem_dict (can be absent)
+ *                  - lem_rules: edit rules (suffixes, optionally prefixes) for words missing from lem_dict (can be absent)
  *                  - dp: the dependency parser model (can be absent)
  * @param tag_use_mp if true, use mixed precision (int16) model, otherwise, use
  *                   full precision (float)
@@ -545,7 +545,7 @@ int main(int argc, char* argv[])
   ("fixed-ini",      po::value<std::string>(&fixed_ini)->default_value(""),            "List of upos wiht fixed lemmas")
   ("lower-ini",  po::value<std::string>(&lower_ini)->default_value(""),        "List of upos wih lowercased lemmas")
   ("fixed-lemm",  po::value<std::string>(&fixed_lemm)->default_value(""),        "List of upos wih lowercased lemmas")
-  ("lem-rules",       po::value<std::string>(&lem_rules)->default_value(""),             "Suffix edit rules for words missing from the lemmatization dictionary (deeplima-gen-lemm-dict --rules)")
+  ("lem-rules",       po::value<std::string>(&lem_rules)->default_value(""),             "Edit rules for words missing from the lemmatization dictionary (deeplima-gen-lemm-dict --rules)")
   ("input-file",      po::value<std::vector<std::string>>(&input_files),                 "Input file names")
   ("threads",         po::value<size_t>(&threads),                                       "Max threads to use")
   ("tag-use-mp",      po::value<bool>(&tag_use_mp)->default_value(true),                 "Use mixed-precision calculations in tagger")

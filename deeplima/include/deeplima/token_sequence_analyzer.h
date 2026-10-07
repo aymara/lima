@@ -650,7 +650,7 @@ protected:
 
 
   /**
-   * Loads the suffix edit rules (deeplima-gen-lemm-dict --rules) used for the
+   * Loads the edit rules (deeplima-gen-lemm-dict --rules) used for the
    * words missing from the lemma dictionary. A rule whose UPOS or features the
    * lemmatization model does not know could never match and is skipped.
    */
@@ -683,7 +683,7 @@ protected:
         return;
       }
       m_lemm_rules.add(mm.convert(r.m_upos, feats), r.m_suffix, r.m_rule, r.m_count,
-                       r.m_feats == lemmatization::any_feats());
+                       r.m_feats == lemmatization::any_feats(), r.m_prefix);
     });
     if (skipped > 0)
     {
@@ -698,7 +698,7 @@ protected:
    *   2. the dictionary (form, UPOS+FEATS), which also caches 6 and 7 below;
    *   3. at sentence start, the fixed-ini / lower-ini UPOS lists;
    *   4. the fixed-lemm UPOS list (lemma = form);
-   *   5. the suffix edit rules;
+   *   5. the edit rules (suffix, and prefix if the file has any);
    *   6. the seq2seq model.
    * The dictionary comes before the UPOS lists: a list states what is usual
    * for a part of speech, the dictionary what the training data says of this
