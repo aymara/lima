@@ -28,9 +28,7 @@ RUN python3 -m nltk.downloader -d nltk_data dependency_treebank
 RUN cat nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" > nltk_data/corpora/dependency_treebank/nltk-ptb.dp
 
 WORKDIR /
-COPY continuous_integration/svmtool.sh  continuous_integration/svmtool-cpp.sh continuous_integration/qhttpserver.sh /
-#RUN /svmtool.sh $GITHUB_TOKEN
-#RUN /svmtool-cpp.sh $GITHUB_TOKEN
+COPY continuous_integration/qhttpserver.sh /
 RUN /qhttpserver.sh debian12
 
 # install github-release to be able to deploy packages

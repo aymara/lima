@@ -50,9 +50,7 @@ RUN yum install -y --nogpgcheck wget ninja-build libicu-devel.x86_64 boost-devel
 WORKDIR /
 
 # Those will have to be compiled for manylinux_2_28 instead of installed with the existing deb package
-# COPY svmtool.sh  svmtool-cpp.sh qhttpserver.sh /
-# RUN /svmtool.sh $GITHUB_TOKEN
-# RUN /svmtool-cpp.sh $GITHUB_TOKEN
+# COPY qhttpserver.sh /
 # RUN /qhttpserver.sh $GITHUB_TOKEN
 
 
