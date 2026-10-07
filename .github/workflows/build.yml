@@ -1,10 +1,31 @@
+# Images are pushed with immutable tags as well as :latest, so that a
+# deployment (e.g. the deeplima training campaign's .sif) can name the exact
+# code it runs:
+#   push to master  -> :latest, :sha-<commit>, :<YYYYMMDD>
+#   tag v<x.y.z>    -> :<x.y.z>, :sha-<commit>
+#   manual run      -> :branch-<branch>, :sha-<commit> (Actions > this workflow >
+#                      Run workflow, on any branch: test an image before merging)
+#   pull request    -> built to validate, never pushed
+# Every image carries the OCI labels org.opencontainers.image.revision (the
+# commit) and .created: `docker inspect` / `singularity inspect` show them.
 on:
   push:
     branches:
     - master
+    tags:
+    - 'v*'
   pull_request:
     branches:
     - master
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Images to build and push"
+        type: choice
+        options:
+        - factoryia
+        - all
+        default: factoryia
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -30,6 +51,7 @@ jobs:
   debian12:
     name: "Build on Debian 12"
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.images == 'all'
 #    container: docker:20.10.13-dind
 
     permissions:
@@ -113,6 +135,7 @@ jobs:
   ubuntu22_04_lima:
     name: "Build the Ubuntu 22.04 Lima image"
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.images == 'all'
 
     steps:
       -
@@ -142,12 +165,37 @@ jobs:
           large-packages: false
           swap-storage: true
 
+      # Immutable tags and OCI labels (see the comment at the top)
+      - name: "Image tags and labels"
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: aymara/lima-ubuntu22.04
+          # :latest is master's, never a release tag's
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            type=raw,value={{date 'YYYYMMDD'}},enable=${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            type=semver,pattern={{version}}
+            type=ref,event=branch,prefix=branch-,enable=${{ github.event_name == 'workflow_dispatch' }}
+            type=sha,prefix=sha-,format=short
+
       - name: "Build image"
-        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04:latest .
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          LABELS: ${{ steps.meta.outputs.labels }}
+        run: |
+          args=()
+          while IFS= read -r tag; do [ -n "$tag" ] && args+=(-t "$tag"); done <<< "$TAGS"
+          while IFS= read -r label; do [ -n "$label" ] && args+=(--label "$label"); done <<< "$LABELS"
+          docker build -f ./continuous_integration/Dockerfile-ubuntu22.04 --build-arg BRANCH="${{ github.ref_name }}" --build-arg PACKAGES="no" "${args[@]}" .
 
       - name: "Push image"
         if: github.event_name != 'pull_request'
-        run: docker push aymara/lima-ubuntu22.04:latest
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          while IFS= read -r tag; do [ -n "$tag" ] && docker push "$tag"; done <<< "$TAGS"
 
   ubuntu22_04_lima_factoryia:
     name: "Build the Ubuntu 22.04 Lima image for the FactoryIA cluster"
@@ -184,9 +232,34 @@ jobs:
           large-packages: false
           swap-storage: true
 
-      - name: "Build image"
-        run: docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}"  --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" -t aymara/lima-ubuntu22.04-fia:latest .
+      # Immutable tags and OCI labels (see the comment at the top)
+      - name: "Image tags and labels"
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: aymara/lima-ubuntu22.04-fia
+          # :latest is master's, never a release tag's
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            type=raw,value={{date 'YYYYMMDD'}},enable=${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            type=semver,pattern={{version}}
+            type=ref,event=branch,prefix=branch-,enable=${{ github.event_name == 'workflow_dispatch' }}
+            type=sha,prefix=sha-,format=short
 
-      - name: "Push docker image"
+      - name: "Build image"
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          LABELS: ${{ steps.meta.outputs.labels }}
+        run: |
+          args=()
+          while IFS= read -r tag; do [ -n "$tag" ] && args+=(-t "$tag"); done <<< "$TAGS"
+          while IFS= read -r label; do [ -n "$label" ] && args+=(--label "$label"); done <<< "$LABELS"
+          docker build -f ./continuous_integration/Dockerfile-ubuntu22.04-fia --build-arg BRANCH="${{ github.ref_name }}" --build-arg CFLAGS="${CFLAGS}" --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg LIBTORCH_DL="${LIBTORCH_DL}" --build-arg COMPILER="gcc" --build-arg PACKAGES="no" "${args[@]}" .
+
+      - name: "Push image"
         if: github.event_name != 'pull_request'
-        run: docker push aymara/lima-ubuntu22.04-fia:latest
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          while IFS= read -r tag; do [ -n "$tag" ] && docker push "$tag"; done <<< "$TAGS"
