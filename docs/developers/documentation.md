@@ -9,6 +9,7 @@ push to `master`, and built (without deployment) for each pull request.
 ## Previewing locally
 
 ```bash
+source .venv/bin/activate        # or create one: uv venv && source .venv/bin/activate
 uv pip install -r docs/requirements.txt
 mkdocs serve
 ```
@@ -17,6 +18,11 @@ then open <http://127.0.0.1:8000/>. The [Python API](../reference/python-api.md)
 page is generated from the sources of
 [aymara/lima-python](https://github.com/aymara/lima-python): clone it next to
 this repository (`../lima-python`), or point `LIMA_PYTHON_SRC` to a clone.
+
+!!! tip
+    Make sure the `mkdocs` you run is the virtual environment's: a system
+    `mkdocs` (e.g. `/usr/bin/mkdocs`) does not see the Material theme and fails
+    with *Unrecognised theme name: 'material'*.
 
 Before submitting, check that the strict build passes, as in the CI:
 

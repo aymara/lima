@@ -2,8 +2,9 @@
 #
 # Local preview (needs a checkout of aymara/lima-python next to this repo for
 # the Python API pages, or LIMA_PYTHON_SRC pointing to one):
+#   source .venv/bin/activate
 #   uv pip install -r docs/requirements.txt
-#   mkdocs serve
+#   mkdocs serve   # the venv's mkdocs, not /usr/bin/mkdocs
 # Built and deployed by .github/workflows/docs.yml.
 
 site_name: LIMA — Libre Multilingual Analyzer
