@@ -22,8 +22,8 @@ MessageDialog {
         + "and other raw XML configuration files. It gives access to LIMA "
         + "basic features in an easy way.<br/><br/>"
         + "Copyright 2017 CEA LIST.<br/><br/>"
-        + "Lima GUI is Free Software. It is released under the AGPL 3.0 "
-        + "licence (or any later version at your convenience).<br/><br/>"
+        + "Lima GUI is Free Software. It is released under the MIT "
+        + "license.<br/><br/>"
         + "Authors:<br/><ul>"
         + "<li>Jocelyn Vernay</li>"
         + "<li>Gaël de Chalendar</li></ul>")
