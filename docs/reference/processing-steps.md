@@ -59,7 +59,7 @@ Resources used: Language dictionary, character table.
 
 Description: For each token, the language dictionary is interrogated in order to retrieve the list of possible grammatical categories and other morphological traits it is possible to assign to this token. If the token does not exist, the dictionary is queried with its unaccented and uncapitalized form. The dictionary has links to reaccentuated forms, which allows to find some orthographic corrections of the word. This is useful for example for fully capitalized words.
 
-[Note [1]](#note1)
+See the note on `composedDict`[^composeddict] to query the dictionary yourself.
 
     > ex : "fois" gives the informations :
     >
@@ -172,7 +172,7 @@ In the case of the analysis of French, the treatment of entities is placed befor
 
 Also note that we can extend the concept beyond pure " named " entities. One can identify in the same way entities specific to a domain. We call them  Specific Entities. For example, in aeronautics, there will be types of entities like " airline ", " aircraft manufacturer ", " aircraft model " , etc.
 
-The description of named entities is the occasion to introduce a data structure used in various parts of the analysis, the annotation graph or AnnotationGraph . This is a graph whose vertices and edges can carry annotations, each annotation containing any C++ object thanks to the use of the `boost` [[2](#note2)] library `boost::any`.
+The description of named entities is the occasion to introduce a data structure used in various parts of the analysis, the annotation graph or AnnotationGraph . This is a graph whose vertices and edges can carry annotations, each annotation containing any C++ object thanks to the use of the `boost`[^boost] library `boost::any`.
 
 The AnnotationGraph is a generic tool. In LIMA, we decided to insert a node for each node of the AnalysisGraph and the PosGraph. Each of these nodes is annotated to identify the graph and the node to which it corresponds. In the figure, one can see that 24 node corresponds to node 7 of the PosGraph.
 
@@ -438,11 +438,9 @@ The program to compile a rules file is `compile-rules`:
 
     compile-rules --language=\<lang\> --output=\<binary output file\> \<rules input file\>
 
-<a name="note1">[1]</a>: All examples of accessing to the language dictionary are made using the `composedDict` program, for example with the command "`composedDict --language=fre --dicoId=mainDictionary --key=fois`"
+[^composeddict]: All examples of accessing to the language dictionary are made using the `composedDict` program, for example with the command "`composedDict --language=fre --dicoId=mainDictionary --key=fois`"
 
-<a name="note2">[2]</a>: Boost is a collection of C++ libraries. It includes, among others, a library for the recognition of regular expressions, a dates and times management library and a graphs management library. This is this Boost Graph Library (BGL) which is used to store all graphs manipulated by LIMA. 
-
-<a name="note3">[3]</a>: A full word is a word that carries a semantic information by itself. Are classified generally as full words the nouns, verbs and adjectives. In contrast, empty words are those that do not directly relate to a concept, such as articles or prepositions, for example.
+[^boost]: Boost is a collection of C++ libraries. It includes, among others, a library for the recognition of regular expressions, a dates and times management library and a graphs management library. This is this Boost Graph Library (BGL) which is used to store all graphs manipulated by LIMA. 
 
 ## Modules not included in the open-source release
 
