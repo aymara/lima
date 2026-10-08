@@ -241,7 +241,7 @@ Controls1.ApplicationWindow {
     Controls1.MenuItem {
       text:qsTr("Help")
       onTriggered: {
-        Qt.openUrlExternally("https://github.com/aymara/lima/wiki")
+        Qt.openUrlExternally("https://aymara.github.io/lima/")
       }
     }
 

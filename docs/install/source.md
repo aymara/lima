@@ -105,7 +105,7 @@ To report a bug, build in debug mode: omit `-m release` and `-m Release`.
 [Install language models](../usage/models.md) for at least one language:
 
 ```bash
-lima_models.py -l eng
+lima_models.py -l eng-UD_English-EWT
 analyzeText -l eng-UD_English-EWT -p deepud my-text.txt
 ```
 

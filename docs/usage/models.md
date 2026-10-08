@@ -90,9 +90,9 @@ nlp = aymara.lima.Lima("ud", pipes="deepud",
 
 With the PyPI package, use:
 
-- `lima_models.py -l <lang>` (or `lima_models -i <lang>`, depending on the
-  version) to install the legacy models used by the `ud-eng`/`ud-fra`
-  pipelines;
+- `lima_models -i <lang>` (e.g. `lima_models -i eng`) to install the models
+  used by the `ud-<lang>` pipelines; `lima_models -a` lists the available
+  languages and `lima_models -l` the installed ones;
 - `deeplima_models` to install the libtorch models from
   [Hugging Face](https://huggingface.co/aymaralima/deeplima): `deeplima_models -a`
   lists the available treebanks, `deeplima_models -i UD_English-EWT` installs

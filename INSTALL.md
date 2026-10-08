@@ -15,5 +15,5 @@ git submodule update --init
 (cd extern && ./download_libtorch.sh)
 source ./setenv-lima.sh -m release
 ./gbuild.sh -m Release -d ON
-lima_models.py -l eng
+lima_models.py -l eng-UD_English-EWT
 ```

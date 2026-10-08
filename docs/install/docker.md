@@ -6,9 +6,10 @@ on Docker Hub. This is the easiest way to get the latest version of LIMA.
 | Image | Content |
 | --- | --- |
 | [`aymara/lima-ubuntu22.04`](https://hub.docker.com/r/aymara/lima-ubuntu22.04) | LIMA on Ubuntu 22.04 |
-| `ghcr.io/aymara/lima` | LIMA on Debian 12 (GitHub Container Registry) |
+| `ghcr.io/aymara/lima:master` | LIMA on Debian 12 (GitHub Container Registry), latest `master` |
 
-Each image is tagged so that you can pin the exact code it contains:
+The Docker Hub image is tagged so that you can pin the exact code it
+contains:
 
 | Tag | Meaning |
 | --- | --- |
@@ -28,7 +29,7 @@ The image does not include language models. Inside the container, install the
 ones you need and analyze your files:
 
 ```bash
-lima_models.py -l eng
+lima_models.py -l eng-UD_English-EWT
 analyzeText -l eng-UD_English-EWT -p deepud /data/my-text.txt
 ```
 

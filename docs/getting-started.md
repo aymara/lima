@@ -12,7 +12,7 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
     Install the English models, then analyze a text from Python:
 
     ```bash
-    lima_models.py -l eng
+    lima_models -i eng
     ```
 
     ```pycon
@@ -45,16 +45,16 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
     docker run -it --rm -v "$PWD":/data aymara/lima-ubuntu22.04:latest bash
     ```
 
-    Inside the container, install models for a language (here, the best
-    English treebank is chosen automatically) and analyze a file:
+    Inside the container, install the models of a treebank and analyze a
+    file:
 
     ```bash
-    lima_models.py -l eng
+    lima_models.py -l eng-UD_English-EWT
     analyzeText -l eng-UD_English-EWT -p deepud /data/my-text.txt
     ```
 
-    `lima_models.py` prints the exact `-l` value to use at the end of the
-    installation. Continue with [Language models](usage/models.md) and
+    `lima_models.py -l eng` would pick the best English treebank and print
+    the exact `-l` value to use. Continue with [Language models](usage/models.md) and
     [the command line](usage/cli.md).
 
 ## What next?

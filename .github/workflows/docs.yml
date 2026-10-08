@@ -1,7 +1,7 @@
 # Builds the documentation site (MkDocs, docs/) and the C++ API reference
 # (Doxygen, docs/Doxyfile) and deploys them to https://aymara.github.io/lima/
 #   push to master  -> build (strict) + deploy to GitHub Pages
-#   pull request    -> build (strict) only, to catch broken links and pages
+#   pull request    -> build (strict) + Doxygen, no deploy (catches broken links)
 # Requires Settings > Pages > Source: "GitHub Actions".
 name: Documentation
 
@@ -54,9 +54,9 @@ jobs:
         run: mkdocs build --strict
 
       - name: Build the C++ API reference
-        if: github.event_name != 'pull_request'
         run: |
           sudo apt-get update && sudo apt-get install -y doxygen
+          mkdir -p build/doxygen
           doxygen docs/Doxyfile
           mkdir -p site/api/cpp
           cp -r build/doxygen/html/. site/api/cpp/

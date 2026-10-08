@@ -16,11 +16,15 @@ on the in-tree `deeplima` library and libtorch.
 Install the [models](../usage/models.md) of the treebanks you need:
 
 ```bash
-lima_models.py -i          # available languages and treebanks
-lima_models.py -l fra      # best French treebank
+lima_models.py -i                     # available languages and treebanks
+lima_models.py -l fra                 # best French treebank
+lima_models.py -l fra-UD_French-GSD   # or a specific one
 ```
 
 ## Usage
+
+The examples below use `fra-UD_French-GSD`; use the treebank identifier
+printed by `lima_models.py` for the one you installed.
 
 ```bash
 # Raw text

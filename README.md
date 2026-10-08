@@ -28,7 +28,7 @@ With the Python package (Linux x86_64, Python ≥ 3.7):
 ```bash
 pip install --upgrade pip
 pip install aymara==0.5.0b6
-lima_models.py -l eng
+lima_models -i eng
 ```
 
 ```python
