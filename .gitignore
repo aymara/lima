@@ -48,3 +48,7 @@ CMakeLists.txt.user
 *.s
 .directory
 .idea
+
+# Documentation site build output (mkdocs build) and lima-python checkout used by it
+/site/
+/lima-python/

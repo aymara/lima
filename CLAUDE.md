@@ -11,7 +11,7 @@ through two complementary mechanisms:
 - **Neural (deep-learning) modules** — tokenization, morphosyntax/PoS, lemmatization,
   NER, dependency parsing. Built on libtorch (the PyTorch C++ distribution) via the
   in-tree `deeplima` library. (LIMA previously also had TensorFlow-based modules;
-  those have been removed — see `docs/tf-removal-plan.md`.)
+  those have been removed — see `docs/internals/tf-removal-plan.md`.)
 - **ModEx (rule-based) modules** — finite-state automaton rules for extracting
   entities/relations/events in domains without annotated data.
 
@@ -74,6 +74,16 @@ re-runs failed tests with output.
 ## Debugging
 Always use the debug+ASAN build for GDB sessions: `build_debug/mon_programme`
 Never use the release build for debugging.
+
+## Documentation
+
+User and developer documentation is an MkDocs Material site built from `docs/`
+(config: `mkdocs.yml`) and deployed to https://aymara.github.io/lima/ by
+`.github/workflows/docs.yml` (it replaces the GitHub wiki). Preview with
+`mkdocs serve`; CI runs `mkdocs build --strict`. The Python API page is generated
+from a lima-python checkout (`../lima-python` or `$LIMA_PYTHON_SRC`); the C++ API
+from `docs/Doxyfile`. `docs/internals/` holds design notes that are not published.
+Shared snippets (e.g. the pip version) live in `docs/includes/`.
 
 ## Python tooling
 

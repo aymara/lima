@@ -37,7 +37,7 @@ Rectangle {
   
   anchors.fill: parent
 
-  // https://github.com/aymara/lima/wiki/LIMA-User-Manual
+  // https://aymara.github.io/lima/usage/output-formats/
 //  property alias headers: table_view_repeater.model
   property var headers: ["ID", "FORM", "LEMMA", "CPOSTAG", "POSTAG", "NE", "FEATS", "HEAD", "DEPREL", "PHEAD", "PDEPREL"]
 

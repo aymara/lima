@@ -1,0 +1,174 @@
+# LIMA documentation site — https://aymara.github.io/lima/
+#
+# Local preview (needs a checkout of aymara/lima-python next to this repo for
+# the Python API pages, or LIMA_PYTHON_SRC pointing to one):
+#   source .venv/bin/activate
+#   uv pip install -r docs/requirements.txt
+#   mkdocs serve   # the venv's mkdocs, not /usr/bin/mkdocs
+# Built and deployed by .github/workflows/docs.yml.
+
+site_name: LIMA — Libre Multilingual Analyzer
+site_url: https://aymara.github.io/lima/
+site_description: >-
+  LIMA is a multilingual NLP analyzer (tokenization, PoS tagging, lemmatization,
+  dependency parsing, named entities, rule-based information extraction) for 60+
+  languages.
+site_author: CEA LIST
+repo_url: https://github.com/aymara/lima
+repo_name: aymara/lima
+edit_uri: edit/master/docs/
+copyright: Copyright &copy; CEA LIST — LIMA is released under the MIT license
+
+docs_dir: docs
+# Internal design and work-in-progress notes stay in the repository but are not
+# published.
+exclude_docs: |
+  internals/
+  includes/
+  Doxyfile
+  requirements.txt
+
+theme:
+  name: material
+  logo: assets/images/lima-icon.svg
+  favicon: assets/images/lima-icon.svg
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - !ENV [LIMA_PYTHON_SRC, "../lima-python"]
+          options:
+            docstring_style: sphinx
+            # lima-python docstrings repeat the annotated types with ':type x:';
+            # griffe reports this as duplicate parameter information.
+            docstring_options:
+              warnings: false
+            show_source: false
+            show_root_heading: true
+            show_signature_annotations: true
+            separate_signature: true
+            members_order: source
+            filters: ["!^_[^_]", "!^__(iter|next|repr|str)__$", "!^(analyzer|limadoc|token)$"]
+            merge_init_into_class: true
+            show_if_no_docstring: true
+            heading_level: 2
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: [docs/includes]
+      check_paths: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/aymara/lima
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/aymara/
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Install:
+      - install/index.md
+      - Python package: install/python.md
+      - Docker: install/docker.md
+      - Linux packages: install/linux-packages.md
+      - Windows: install/windows.md
+      - Build from source: install/source.md
+  - Using LIMA:
+      - usage/index.md
+      - Language models: usage/models.md
+      - Command line: usage/cli.md
+      - Python: usage/python.md
+      - Pipelines: usage/pipelines.md
+      - Output formats: usage/output-formats.md
+      - Configuring LIMA: usage/configuration.md
+      - Graphical interface: usage/gui.md
+  - Guides:
+      - guides/index.md
+      - Universal Dependencies analysis: guides/ud-analysis.md
+      - Named entity recognition: guides/ner.md
+      - Writing a ModEx: guides/writing-a-modex.md
+  - Reference:
+      - reference/index.md
+      - Configuration files: reference/configuration-files.md
+      - ModEx rules format: reference/modex-rules.md
+      - Linguistic processing steps: reference/processing-steps.md
+      - Linguistic resources: reference/linguistic-resources.md
+      - Process units:
+          - reference/process-units/index.md
+          - Neural units: reference/process-units/neural.md
+          - Tokenization: reference/process-units/tokenization.md
+          - Morphology: reference/process-units/morphology.md
+          - Entities and rules: reference/process-units/entities.md
+          - PoS tagging: reference/process-units/pos-tagging.md
+          - Syntactic analysis: reference/process-units/syntax.md
+          - Semantics: reference/process-units/semantics.md
+          - Loggers and debugging: reference/process-units/loggers.md
+          - Dumpers: reference/process-units/dumpers.md
+      - Python API: reference/python-api.md
+      - C++ API: reference/cpp-api.md
+  - Developers:
+      - developers/index.md
+      - Architecture: developers/architecture.md
+      - Writing a component: developers/components.md
+      - Testing: developers/testing.md
+      - Training neural models: developers/training-models.md
+      - Writing documentation: developers/documentation.md
+      - Contributing: developers/contributing.md
+  - Project:
+      - project/index.md
+      - License: project/license.md
+      - Credits: project/credits.md

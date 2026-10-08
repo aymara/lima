@@ -1,0 +1,83 @@
+# Builds the documentation site (MkDocs, docs/) and the C++ API reference
+# (Doxygen, docs/Doxyfile) and deploys them to https://aymara.github.io/lima/
+#   push to master  -> build (strict) + deploy to GitHub Pages
+#   pull request    -> build (strict) + Doxygen, no deploy (catches broken links)
+# Requires Settings > Pages > Source: "GitHub Actions".
+name: Documentation
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'docs/**'
+    - 'mkdocs.yml'
+    - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout LIMA
+        uses: actions/checkout@v4
+
+      # The Python API reference is generated from the lima-python sources
+      - name: Checkout lima-python
+        uses: actions/checkout@v4
+        with:
+          repository: aymara/lima-python
+          path: lima-python
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
+
+      - name: Install MkDocs
+        run: pip install -r docs/requirements.txt
+
+      - name: Build the site
+        env:
+          LIMA_PYTHON_SRC: lima-python
+        run: mkdocs build --strict
+
+      - name: Build the C++ API reference
+        run: |
+          sudo apt-get update && sudo apt-get install -y doxygen
+          mkdir -p build/doxygen
+          doxygen docs/Doxyfile
+          mkdir -p site/api/cpp
+          cp -r build/doxygen/html/. site/api/cpp/
+
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

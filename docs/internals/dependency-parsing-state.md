@@ -17,7 +17,7 @@ The gap to 0.94 comes from using predicted tags instead of gold ones, not from a
 
 **Still to do:** no trained parser model is packaged in lima-models yet, and LAS
 hasn't been measured through LIMA itself. For speed, why the parser runs a single worker, and the plan if it is ever parallelized, see "Performance" at the end. Multi-word token expansion, which is
-worth about 4 UAS/LAS points on French, is covered in `docs/deeplima-mwt.md`.
+worth about 4 UAS/LAS points on French, is covered in `docs/internals/deeplima-mwt.md`.
 
 The rest of this document is the investigation and fix log, in order. The next
 paragraph is the original assessment and is kept for history; it no longer
@@ -32,7 +32,7 @@ parser (Apache-2.0, license-compatible with LIMA's MIT) and is more advanced, bu
 also unfinished.
 
 This contrasts with lemmatization, which is code-complete and only lacked packaged
-models (see `docs/tf-removal-plan.md` and the lemmatization notes).
+models (see `docs/internals/tf-removal-plan.md` and the lemmatization notes).
 
 ## What exists on `master`
 
