@@ -164,6 +164,9 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
 
     n = m_buff_set.next(n);
   }
+
+  // The last token, if the model left it open
+  m_decoder.flush();
 }
 
 void SegmentationImpl::register_handler(const segmentation_callback_t fn)

@@ -200,6 +200,22 @@ public:
     m_callback = fn;
   }
 
+  // Emits the token decode() left open at the end of the text: when the
+  // model tags the last characters B or I, decode() keeps the token for the
+  // next buffer, and at the end of the input none comes. The token was
+  // silently lost (2026 campaign: "i." at the end of UD_Italian-MERGE dev,
+  // which made the scorer reject the whole analysis). It ends the text, hence
+  // its last sentence. Call once all the buffers are decoded.
+  void flush()
+  {
+    if (m_tokens[0].m_len > 0)
+    {
+      m_tokens[0].m_flags = token_flags_t(m_tokens[0].m_flags | token_flags_t::sentence_brk);
+      m_callback(m_tokens, 1);
+    }
+    m_tokens[0].clear();
+  }
+
   inline void save_current_token(size_t& pos, size_t& temp_token_len, const char* start)
   {
     if (m_tokens[pos].m_len > 0)

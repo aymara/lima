@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <map>
@@ -142,6 +143,41 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
   evaluate(output_names, current_inputs, target, stat, device);
 }
 
+map<string, torch::Tensor> BiRnnClassifierImpl::forward_in_windows(
+    const map<string, torch::Tensor>& input,
+    const vector<string>& output_names)
+{
+  // Every input is time-major (dimension 0), the batch being the whole set
+  const int64_t n = input.begin()->second.size(0);
+  if (n <= kEvalWindow)
+  {
+    return forward(input, output_names.begin(), output_names.end());
+  }
+  map<string, vector<torch::Tensor>> parts;
+  for (int64_t begin = 0; begin < n; begin += kEvalWindow)
+  {
+    const int64_t end = std::min(n, begin + kEvalWindow);
+    const int64_t from = std::max<int64_t>(0, begin - kEvalContext);
+    const int64_t to = std::min(n, end + kEvalContext);
+    map<string, torch::Tensor> window;
+    for (const auto& kv : input)
+    {
+      window[kv.first] = kv.second.index({ Slice(from, to) });
+    }
+    auto output_map = forward(window, output_names.begin(), output_names.end());
+    for (const string& task_name : output_names)
+    {
+      parts[task_name].push_back(output_map[task_name].index({ Slice(begin - from, end - from) }));
+    }
+  }
+  map<string, torch::Tensor> output_map;
+  for (const string& task_name : output_names)
+  {
+    output_map[task_name] = torch::cat(parts[task_name], 0);
+  }
+  return output_map;
+}
+
 void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
                                    const map<string, torch::Tensor>& input,
                                    const torch::Tensor& target,
@@ -149,7 +185,10 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
                                    const torch::Device& /*device*/)
 {
   eval();
-  auto output_map = forward(input, output_names.begin(), output_names.end());
+  // Evaluation never backpropagates: without this guard, autograd kept the
+  // activations of the whole evaluation set alive
+  torch::NoGradGuard no_grad;
+  auto output_map = forward_in_windows(input, output_names);
 
   for (size_t i = 0; i < output_names.size(); ++i)
   {

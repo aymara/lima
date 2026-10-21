@@ -360,8 +360,17 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
     read = (text_utf8.size() - bytes_consumed) > max ? max : (text_utf8.size() - bytes_consumed);
     memcpy(buffer, text_utf8.c_str() + bytes_consumed, read);
     bytes_consumed += read;
-    return (text_utf8.size() - bytes_consumed) > max;
+    // Whether there is more to read. It was "more than one buffer left",
+    // which stopped before the last, partial buffer of any text longer than
+    // one buffer, and lost its end
+    return bytes_consumed < text_utf8.size();
   });
+  // The text may end without a sentence break on its last token: its last
+  // sentence was dropped
+  if (!current_sentence.empty())
+  {
+    sentences.push_back(current_sentence);
+  }
 
   LOG_MESSAGE(LINFO, "End of Tokenizer");
   TimeUtils::logElapsedTime("RnnTokenizerPrivate");

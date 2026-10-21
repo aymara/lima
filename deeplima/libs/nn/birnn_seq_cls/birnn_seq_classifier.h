@@ -118,6 +118,19 @@ protected:
                 epoch_stat_t& stat,
                 const torch::Device& device);
 
+  // The evaluation set used to go through the network as one sequence of all
+  // its timepoints (segmentation: every character of the dev text), with
+  // memory in proportion to its length x the hidden size: 26.69 GiB asked on
+  // UD_German-MERGE at hiddenDim 256, on a 16 GB GPU. It now goes in windows
+  // of kEvalWindow timepoints, each with kEvalContext timepoints of context
+  // on both sides whose outputs are dropped (the models are trained on
+  // sequences of at most 512 timepoints).
+  static constexpr int64_t kEvalWindow = 4096;
+  static constexpr int64_t kEvalContext = 256;
+  std::map<std::string, torch::Tensor> forward_in_windows(
+      const std::map<std::string, torch::Tensor>& input,
+      const std::vector<std::string>& output_names);
+
   void train_epoch(size_t batch_size,
                    size_t seq_len,
                    const std::vector<std::string>& output_names,

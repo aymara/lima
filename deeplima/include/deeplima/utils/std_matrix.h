@@ -6,8 +6,11 @@
 #ifndef DEEPLIMA_APPS_STD_MATRIX_H
 #define DEEPLIMA_APPS_STD_MATRIX_H
 
+#include <cassert>
 #include <iostream>
+#include <limits>
 #include <memory>
+#include <vector>
 
 template <class T>
 class StdVector
@@ -35,7 +38,11 @@ public:
   {
   }
 
-  StdMatrix(std::shared_ptr< std::vector< std::vector<T> > > input) : m_tensor(input)
+  // A copy of the vectors input points to (none if it is null). It used to
+  // initialize m_tensor with the pointer itself, which does not compile: no
+  // code had ever instantiated it
+  explicit StdMatrix(std::shared_ptr< std::vector< std::vector<T> > > input)
+    : m_tensor(input ? *input : std::vector< std::vector<T> >())
   {
   }
 
@@ -44,6 +51,7 @@ public:
 
   StdMatrix& operator=(const StdMatrix& m){
     m_tensor = m.m_tensor;
+    return *this;
   }
 
   ~StdMatrix(){
