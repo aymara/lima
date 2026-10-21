@@ -11,3 +11,7 @@ add_test(NAME test_label_decoder COMMAND test_label_decoder)
 add_executable(test_eigen_label_decoder test_eigen_label_decoder.cpp)
 target_link_libraries(test_eigen_label_decoder PRIVATE torch_modules ${TORCH_LIBRARIES})
 add_test(NAME test_eigen_label_decoder COMMAND test_eigen_label_decoder)
+
+add_executable(test_segmentation_decoder test_segmentation_decoder.cpp)
+target_link_libraries(test_segmentation_decoder PRIVATE ICU::uc)
+add_test(NAME test_segmentation_decoder COMMAND test_segmentation_decoder)

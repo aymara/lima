@@ -3,10 +3,13 @@
 //
 // SPDX-License-Identifier: MIT
 
+#include <algorithm>
 #include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
+#include <string>
 
 #include "birnn_classifier_for_tag.h"
 #include "static_graph/dict.h"
@@ -172,6 +175,26 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
       = aligned_gold.reshape({ num_batches, seq_len_i64, -1 }).transpose(0, 1);
   std::cerr << gold_batches.sizes() << std::endl;*/
 
+  // A training set shorter than a sequence (UD_Bengali-BRU: test-only, split
+  // in three) gave 0 batches and aborted the trainer ("cannot reshape tensor
+  // of 0 elements"): train on sequences as long as the set then.
+  const int64_t num_tokens = (int64_t)train_trainable_input.size();
+  if (num_tokens < 2)
+  {
+    throw std::runtime_error("Training set too small: " + std::to_string(num_tokens) + " tokens");
+  }
+  const int64_t seq_len_i64 = std::min<int64_t>(params.m_sequence_length, num_tokens);
+  if (seq_len_i64 < (int64_t)params.m_sequence_length)
+  {
+    std::cerr << "Training set of " << num_tokens << " tokens, shorter than a sequence ("
+              << params.m_sequence_length << "): sequences of " << seq_len_i64 << " tokens" << std::endl;
+  }
+  // Each epoch shifts the batch boundaries by one token. The shift was the
+  // epoch number, which dropped one more token from every epoch and left
+  // nothing to train on for small sets: it now cycles within a sequence,
+  // keeping at least one full sequence.
+  const int64_t max_shift = std::min<int64_t>(seq_len_i64 - 1, num_tokens - seq_len_i64);
+
   double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
   double lr_copy = 0;
@@ -181,15 +204,15 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
     Module::train(true);
 
     //{
-      int64_t num_batches = (train_trainable_input.size() - e) / params.m_sequence_length;
+      const int64_t shift = max_shift > 0 ? int64_t(e) % (max_shift + 1) : 0;
+      int64_t num_batches = (num_tokens - shift) / seq_len_i64;
       // std::cerr << "train_trainable_input.size() == " << train_trainable_input.size() << endl;
       int64_t num_features = (int64_t)train_trainable_input.get_max_feat();
-      int64_t seq_len_i64 = (int64_t)params.m_sequence_length;
 
-      auto aligned_trainable_input = train_trainable_input.get_tensor().index({ Slice(0 + e, num_batches * seq_len_i64 + e), Slice() });
-      auto aligned_nontrainable_input = train_nontrainable_input.get_tensor().index({ Slice(0 + e, num_batches * seq_len_i64 + e), Slice() });
+      auto aligned_trainable_input = train_trainable_input.get_tensor().index({ Slice(shift, num_batches * seq_len_i64 + shift), Slice() });
+      auto aligned_nontrainable_input = train_nontrainable_input.get_tensor().index({ Slice(shift, num_batches * seq_len_i64 + shift), Slice() });
       //std::cerr << train_gold.get_tensor().sizes() << std::endl;
-      auto aligned_gold = train_gold.get_tensor().index({ Slice(0 + e, num_batches * seq_len_i64 + e), Slice() });
+      auto aligned_gold = train_gold.get_tensor().index({ Slice(shift, num_batches * seq_len_i64 + shift), Slice() });
       //std::cerr << aligned_gold.sizes() << std::endl;
 
       auto trainable_input_batches
@@ -205,7 +228,7 @@ void BiRnnClassifierForNerImpl::train(const train_params_tagging_t& params,
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
     train_epoch(params.m_batch_size,
-                params.m_sequence_length,
+                seq_len_i64,
                 output_names,
                 trainable_input_batches,
                 nontrainable_input_batches,
