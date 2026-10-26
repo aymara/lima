@@ -234,6 +234,32 @@ public:
 
 public:
 
+  /**
+   * True when convert(upos, feats) can encode this UPOS and these features:
+   * convert only asserts it, which a release build does not check.
+   */
+  bool can_convert(const std::string& upos, const std::map<std::string, std::set<std::string>>& feats) const
+  {
+    if (!m_upos_dict.has(upos))
+    {
+      return false;
+    }
+    const auto& feats2mask = m_feats2mask[m_upos_dict.get_id(upos)];
+    for (const auto& kv : feats)
+    {
+      if (kv.second.size() != 1 || !m_feat_dict.has(kv.first))
+      {
+        return false;
+      }
+      const size_t feat_id = m_feat_dict.get_id(kv.first);
+      if (feats2mask.end() == feats2mask.find(feat_id) || !m_feats[feat_id].has(*kv.second.begin()))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
   morph_feats_t convert(const std::string& upos, const std::map<std::string, std::set<std::string>>& feats) const;
 
   template <typename F>
