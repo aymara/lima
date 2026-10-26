@@ -75,6 +75,22 @@ std::ostream& operator<<(std::ostream& oss, const ConllToken& token)
 }
 
 
+/** A CoNLL-U field with its tabs and line breaks turned into spaces. A token
+ * may span a line break of the raw text ("100\n000"), and a lemma copied from
+ * its form (NUM, PROPN...) then broke the line in two. */
+inline std::string conllu_field(const char* s)
+{
+  std::string result(s);
+  for (char& c : result)
+  {
+    if (c == '\r' || c == '\n' || c == '\t')
+    {
+      c = ' ';
+    }
+  }
+  return result;
+}
+
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v)
 {
@@ -524,14 +540,14 @@ public:
       //           << "\t" << m_classes[0][iter.token_class(0)] << std::endl;
       token.id = m_next_token_idx;
       token.form = str;
-      token.lemma = iter.lemma();
+      token.lemma = conllu_field(iter.lemma());
       token.upos = m_classes[0][iter.token_class(0)];
       // First sub-word of an expanded multiword token: record the "N-M  surface"
       // range to emit before this token's line (ids N..M are the sub-words).
       if (iter.mwt_len() > 0)
       {
         token.mwt_last = m_next_token_idx + iter.mwt_len() - 1;
-        token.mwt_surface = iter.mwt_surface();
+        token.mwt_surface = conllu_field(iter.mwt_surface());
       }
       // std::cout << m_next_token_idx << "\t";
       // std::cout << str << "\t";

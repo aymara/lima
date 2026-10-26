@@ -15,3 +15,9 @@ add_test(NAME test_eigen_label_decoder COMMAND test_eigen_label_decoder)
 add_executable(test_segmentation_decoder test_segmentation_decoder.cpp)
 target_link_libraries(test_segmentation_decoder PRIVATE ICU::uc)
 add_test(NAME test_segmentation_decoder COMMAND test_segmentation_decoder)
+
+# Suffix edit rules for lemmatizing words missing from the dictionary
+# (header-only, ICU only)
+add_executable(test_lemm_rules test_lemm_rules.cpp)
+target_link_libraries(test_lemm_rules PRIVATE ICU::uc)
+add_test(NAME test_lemm_rules COMMAND test_lemm_rules)
