@@ -18,7 +18,11 @@
 namespace Lima
 {
 
-#define LC_WIDTH 128
+// Bits of a LinguisticCode. The UD property codes (ud/code-ud.xml) of the
+// UD 2.18 features need about 225 bits. Codes are stored as decimal strings or
+// with a variable length binary encoding, so resources compiled with a smaller
+// width remain readable.
+#define LC_WIDTH 256
 class LinguisticCode
 {
   std::bitset<LC_WIDTH> base;

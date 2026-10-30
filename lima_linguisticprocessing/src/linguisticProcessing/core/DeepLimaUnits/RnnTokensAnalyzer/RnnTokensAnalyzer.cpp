@@ -80,6 +80,9 @@ public:
     std::vector<QString> m_lemmas;
     const Common::PropertyCode::PropertyAccessor* m_microAccessor;
     bool m_loaded;
+    // Features predicted by the model but missing from the property codes,
+    // already reported
+    std::set<std::string> m_unknownFeatures;
     // TokenSequenceAnalyzer<>::OutputMatrix* m_matrix;
 };
 
@@ -279,10 +282,10 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
         LinguisticElement lElement = LinguisticElement();
         for(const auto& name: m_d->m_tokensAnalyzer->get_class_names())
         {
-            auto propertyManager = microManager;
+            const PropertyManager* propertyManager = &microManager;
             if(name == "upos")
             {
-                propertyManager = propertyCodeManager.getPropertyManager("MICRO");
+                propertyManager = &microManager;
             }
             else if(name=="ExtPos" || name=="Style")
             {
@@ -290,17 +293,35 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             }
             else if(name=="xpos")
             {
-                propertyManager = propertyCodeManager.getPropertyManager("MACRO");
+                propertyManager = &propertyCodeManager.getPropertyManager("MACRO");
             }
             else
             {
-                propertyManager = propertyCodeManager.getPropertyManager(name);
+                // A feature the model predicts but the media's property code
+                // file does not define (e.g. a feature added by a newer UD
+                // release) cannot be stored: skip it instead of aborting the
+                // analysis, and warn once per feature.
+                const auto& managers = propertyCodeManager.getPropertyManagers();
+                auto it = managers.find(name);
+                if (it == managers.end())
+                {
+                    if (m_d->m_unknownFeatures.insert(name).second)
+                    {
+                        LEMMALOGINIT;
+                        LWARN << "RnnTokensAnalyzer: feature" << name
+                              << "is not defined in the property codes of this media: ignored";
+                        std::cerr << "Warning: feature \"" << name
+                                  << "\" is not defined in the property codes: ignored" << std::endl;
+                    }
+                    continue;
+                }
+                propertyManager = &it->second;
             }
-            auto value = propertyManager.getPropertyValue(m_d->m_tags[anaVerticesIndex][name]);
+            auto value = propertyManager->getPropertyValue(m_d->m_tags[anaVerticesIndex][name]);
             if(value.toBool())
             {
                 LOG_MESSAGE(LDEBUG, "value: " << value);
-                propertyManager.getPropertyAccessor().writeValue(value, lElement.properties);
+                propertyManager->getPropertyAccessor().writeValue(value, lElement.properties);
             }
         }
         auto sp = &MediaticData::changeable().stringsPool(m_d->m_language);
@@ -405,7 +426,11 @@ void RnnTokensAnalyzerPrivate::reset()
 void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
     reset();
-    m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
+    // Every batch, for the dependency parser: setting only the current one
+    // left it the last batch of the text
+    auto tiData = std::make_shared<TokenIteratorData>();
+    m_analysis->setData("TokenIterator", tiData);
+    m_tokensAnalyzer->register_handler([this, tiData](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
                                                 const std::vector<StringIndex::idx_t>& lemmata,
                                                 std::shared_ptr< StdMatrix<uint8_t> > classes,
@@ -413,12 +438,8 @@ void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &bu
                                                 size_t end)
     {
         auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(*stridx, tokens, lemmata, classes, begin, end);
-        auto tiData = std::make_shared<TokenIteratorData>();
-        tiData->setTokenIterator(ti);
-        // auto si = std::make_shared<deeplima::StringIndex>(stridx);
         tiData->setStringIndex(stridx);
-        m_analysis->setData("TokenIterator", tiData);
-        // m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
+        tiData->addBatch(tokens, lemmata, classes, begin, end);
         insertTokenInfo(*ti);
     });
     LOG_MESSAGE_WITH_PROLOG(LDEBUG, buffer[0].m_pch);
