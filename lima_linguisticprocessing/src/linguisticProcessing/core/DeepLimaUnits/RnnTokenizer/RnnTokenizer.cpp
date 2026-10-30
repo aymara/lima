@@ -5,6 +5,8 @@
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QRegularExpression>
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 
 #include "common/misc/Exceptions.h"
 #include "common/Data/strwstrtools.h"
@@ -86,7 +88,9 @@ public:
 protected:
   void append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                        const QString& current_token,
-                       int current_token_offset) const;
+                       int current_token_offset,
+                       token_flags_t flags) const;
+  void load_mwt_dictionary(const QString& file_name);
 
   MediaId m_language;
   FsaStringsPool* m_stringsPool;
@@ -95,7 +99,12 @@ protected:
 
   size_t m_max_seq_len;
 
+  // Multiword tokens: surface -> syntactic words (French "du" -> "de", "le"),
+  // from the dictionary beside the model, <model>.pt.mwt
   std::map<QString, std::vector<QString>> m_trrules;
+  // Expand only the tokens the segmenter flags as multiword, when its model
+  // predicts them (trained with --mwt); otherwise, every dictionary match
+  bool m_mwt_require_flag = false;
 
   // Parameters
   bool m_ignoreEOL;
@@ -267,6 +276,12 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
     throw InvalidConfiguration("RnnTokenizerPrivate::init: tokenizer model file not found.");
   }
 
+  // As the deeplima command does: the dictionary beside the model itself
+  if (QFileInfo::exists(model_file_name + ".mwt"))
+  {
+    load_mwt_dictionary(model_file_name + ".mwt");
+  }
+
   m_load_fn = [this, model_file_name]()
   {
     // if (m_loaded)
@@ -286,23 +301,55 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
   // }
 }
 
+void RnnTokenizerPrivate::load_mwt_dictionary(const QString& file_name)
+{
+  // deeplima-mwt-dict's format: surface <TAB> count <TAB> word1 <TAB> word2 ...
+  QFile file(file_name);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    TOKENIZERLOGINIT;
+    LERROR << "RnnTokenizerPrivate::load_mwt_dictionary: can't open" << file_name;
+    return;
+  }
+  m_trrules.clear();
+  while (!file.atEnd())
+  {
+    auto line = QString::fromUtf8(file.readLine()).remove(QLatin1Char('\n'));
+    if (line.isEmpty() || line.startsWith(QLatin1Char('#')))
+    {
+      continue;
+    }
+    auto fields = line.split(QLatin1Char('\t'));
+    if (fields.size() < 4 || fields[0].isEmpty())
+    {
+      continue; // a surface, its count and at least two words
+    }
+    m_trrules[fields[0]] = std::vector<QString>(fields.begin() + 2, fields.end());
+  }
+  TOKENIZERLOGINIT;
+  LINFO << "RnnTokenizerPrivate::load_mwt_dictionary:" << m_trrules.size()
+        << "multiword tokens in" << file_name;
+}
+
 void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& current_sentence,
                                           const QString& current_token,
-                                          int current_token_offset) const
+                                          int current_token_offset,
+                                          token_flags_t flags) const
 {
-  auto ctoken_lower = current_token.toLower();
-
-  auto i = m_trrules.find(ctoken_lower);
-  if (i == m_trrules.end())
+  auto i = m_trrules.find(current_token);
+  if (i == m_trrules.end()
+      || (m_mwt_require_flag && !(flags & token_flags_t::multiword)))
   {
     current_sentence.push_back(TPrimitiveToken(current_token, current_token_offset));
   }
   else
   {
+    // The words share the surface's position, and the first one carries the
+    // surface: ConllDumper writes them as one multiword token (N-M line)
     size_t n = 0;
     for (const auto& w : i->second)
     {
-      if (n == 0)
+      if (n++ == 0)
       {
         current_sentence.push_back(TPrimitiveToken(w, current_token_offset, current_token));
       }
@@ -319,6 +366,7 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
   m_segm = std::make_shared<segmentation::impl::SegmentationImpl>();
 
   m_load_fn();
+  m_mwt_require_flag = m_segm->predicts_mwt();
 
   LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokenizerPrivate::tokenize" << text.left(100));
   TimeUtils::updateCurrentTime();
@@ -341,7 +389,8 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
       {
         continue;
       }
-      append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset);
+      append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset,
+                      tok.m_flags);
       current_token_offset += (tok.m_offset + tok.m_len);
       if (tok.m_flags & token_flags_t::sentence_brk)
       {
