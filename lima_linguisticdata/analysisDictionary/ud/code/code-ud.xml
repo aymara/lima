@@ -20,6 +20,19 @@ SPDX-License-Identifier: MIT
     <value name="Rcp"/>
     <value name="Rel"/>
     <value name="Tot"/>
+    <!-- added from UD -->
+    <value name="Art,Prs"/>
+    <value name="Con"/>
+    <value name="Dem,Ind"/>
+    <value name="Dem,Rel"/>
+    <value name="Ind,Neg"/>
+    <value name="Ind,Prs"/>
+    <value name="Ind,Rel"/>
+    <value name="Int,Neg"/>
+    <value name="Int,Rel"/>
+    <value name="Loc"/>
+    <value name="Neg,Rel"/>
+    <value name="Prs,Tot"/>
   </property>
   <property name="NumType">
     <value name="Card"/>
@@ -29,6 +42,8 @@ SPDX-License-Identifier: MIT
     <value name="Ord"/>
     <value name="Range"/>
     <value name="Sets"/>
+    <!-- added from UD -->
+    <value name="Mult,Sets"/>
   </property>
   <property name="AdpType">
     <value name="Prep"/>
@@ -38,6 +53,8 @@ SPDX-License-Identifier: MIT
     <value name="Circ"/>
     <value name="Comprep"/>
     <value name="Comadp"/>
+    <!-- added from UD -->
+    <value name="Ambi"/>
   </property>
   <property name="Strength">
     <value name="Strong"/>
@@ -103,11 +120,16 @@ SPDX-License-Identifier: MIT
     <value name="Bound"/>
     <value name="Full"/>
     <value name="Uncontr"/>
+    <!-- added from UD -->
+    <value name="Greek"/>
   </property>
   <property name="Polite">
     <value name="Form"/>
     <value name="Infm"/>
     <value name="Depr"/>
+    <!-- added from UD -->
+    <value name="Elev"/>
+    <value name="Humb"/>
   </property>
   <property name="NameType">
     <value name="Sur"/>
@@ -120,6 +142,30 @@ SPDX-License-Identifier: MIT
     <value name="Oth"/>
     <value name="Pat"/>
     <value name="Hom"/>
+    <!-- added from UD -->
+    <value name="Ast"/>
+    <value name="Cal"/>
+    <value name="Com,Geo"/>
+    <value name="Com,Giv"/>
+    <value name="Com,Pro"/>
+    <value name="Com,Sur"/>
+    <value name="Geo,Giv"/>
+    <value name="Geo,Giv,Oth"/>
+    <value name="Geo,Giv,Sur"/>
+    <value name="Geo,Nat"/>
+    <value name="Geo,Oth"/>
+    <value name="Geo,Sur"/>
+    <value name="Giv,Nat"/>
+    <value name="Giv,Oth"/>
+    <value name="Giv,Pro"/>
+    <value name="Giv,Sur"/>
+    <value name="Let"/>
+    <value name="Lit"/>
+    <value name="Met"/>
+    <value name="Nat,Sur"/>
+    <value name="Pro,Sur"/>
+    <value name="Rel"/>
+    <value name="Zoo"/>
   </property>
   <property name="AdjType">
     <value name="Attr"/>
@@ -134,6 +180,15 @@ SPDX-License-Identifier: MIT
     <value name="HPref"/>
     <value name="VF"/>
     <value name="Emp"/>
+    <!-- added from UD -->
+    <value name="Direct"/>
+    <value name="Direct,Emp"/>
+    <value name="Direct,Len"/>
+    <value name="Ecl,Emp"/>
+    <value name="Ecl,Indirect"/>
+    <value name="Ecl,VF"/>
+    <value name="Emp,Len"/>
+    <value name="Indirect"/>
   </property>
   <property name="Distance">
     <value name="Dist"/>
@@ -174,12 +229,21 @@ SPDX-License-Identifier: MIT
     <value name="Fem"/>
     <value name="Masc"/>
     <value name="Neut"/>
+    <!-- added from UD -->
+    <value name="Com,Neut"/>
+    <value name="Fem,Masc"/>
+    <value name="Fem,Masc,Neut"/>
+    <value name="Fem,Neut"/>
+    <value name="Masc,Neut"/>
   </property>
   <property name="Animacy">
     <value name="Anim"/>
     <value name="Hum"/>
     <value name="Inan"/>
     <value name="Nhum"/>
+    <!-- added from UD -->
+    <value name="Anim,Inan"/>
+    <value name="Hum,Nhum"/>
   </property>
   <property name="Number">
     <value name="Coll"/>
@@ -193,6 +257,9 @@ SPDX-License-Identifier: MIT
     <value name="Ptan"/>
     <value name="Sing"/>
     <value name="Tri"/>
+    <!-- added from UD -->
+    <value name="Assoc"/>
+    <value name="Plur,Sing"/>
   </property>
   <property name="Number[psor]">
     <value name="Sing"/>
@@ -248,6 +315,17 @@ SPDX-License-Identifier: MIT
     <value name="Sub"/>
     <value name="Sup"/>
     <value name="Ter"/>
+    <!-- added from UD -->
+    <value name="Acc,Dat"/>
+    <value name="Acc,Erg"/>
+    <value name="Acc,Gen"/>
+    <value name="Acc,Ine"/>
+    <value name="Acc,Ins"/>
+    <value name="Acc,Nom"/>
+    <value name="Dat,Gen"/>
+    <value name="Gen,Nom"/>
+    <value name="Mal"/>
+    <value name="Sbl"/>
   </property>
   <property name="Definite">
     <value name="Com"/>
@@ -255,6 +333,9 @@ SPDX-License-Identifier: MIT
     <value name="Def"/>
     <value name="Ind"/>
     <value name="Spec"/>
+    <!-- added from UD -->
+    <value name="2"/>
+    <value name="Def,Ind"/>
   </property>
   <property name="Degree">
     <value name="Abs"/>
@@ -262,6 +343,11 @@ SPDX-License-Identifier: MIT
     <value name="Equ"/>
     <value name="Pos"/>
     <value name="Sup"/>
+    <!-- added from UD -->
+    <value name="Abs,Cmp"/>
+    <value name="Aug"/>
+    <value name="Cmp,Sup"/>
+    <value name="Dim"/>
   </property>
 
   <!-- Inflectional features: Verbal -->
@@ -274,6 +360,14 @@ SPDX-License-Identifier: MIT
     <value name="Part"/>
     <value name="Sup"/>
     <value name="Vnoun"/>
+    <!-- added from UD -->
+    <value name="Cop"/>
+    <value name="Fin,Inf"/>
+    <value name="Fin,Part"/>
+    <value name="PartFut"/>
+    <value name="PartPast"/>
+    <value name="PartPres"/>
+    <value name="Stem"/>
   </property>
   <property name="Mood">
     <value name="Adm"/>
@@ -288,6 +382,24 @@ SPDX-License-Identifier: MIT
     <value name="Prp"/>
     <value name="Qot"/>
     <value name="Sub"/>
+    <!-- added from UD -->
+    <value name="Cnd,Ind"/>
+    <value name="Cnd,Int"/>
+    <value name="Cnd,Pot"/>
+    <value name="CndGen"/>
+    <value name="CndGenPot"/>
+    <value name="CndPot"/>
+    <value name="DesPot"/>
+    <value name="Gen"/>
+    <value name="GenNec"/>
+    <value name="GenNecPot"/>
+    <value name="GenPot"/>
+    <value name="GenPotPot"/>
+    <value name="Imp,Pot"/>
+    <value name="Int"/>
+    <value name="NecPot"/>
+    <value name="PotPot"/>
+    <value name="Prs"/>
   </property>
   <property name="Tense">
     <value name="Fut"/>
@@ -295,6 +407,8 @@ SPDX-License-Identifier: MIT
     <value name="Past"/>
     <value name="Pqp"/>
     <value name="Pres"/>
+    <!-- added from UD -->
+    <value name="Fut,Past"/>
   </property>
   <property name="Aspect">
     <value name="Hab"/>
@@ -303,6 +417,17 @@ SPDX-License-Identifier: MIT
     <value name="Perf"/>
     <value name="Prog"/>
     <value name="Prosp"/>
+    <!-- added from UD -->
+    <value name="Dur"/>
+    <value name="Dur,Imp"/>
+    <value name="Dur,Iter"/>
+    <value name="Dur,Perf"/>
+    <value name="Imp,Iter"/>
+    <value name="Imp,Perf"/>
+    <value name="Inch"/>
+    <value name="Iter,Perf"/>
+    <value name="Iter,Prosp"/>
+    <value name="Rapid"/>
   </property>
   <property name="Voice">
     <value name="Act"/>
@@ -313,6 +438,17 @@ SPDX-License-Identifier: MIT
     <value name="Mid"/>
     <value name="Pass"/>
     <value name="Rcp"/>
+    <!-- added from UD -->
+    <value name="CauCau"/>
+    <value name="CauCauPass"/>
+    <value name="CauPass"/>
+    <value name="CauPassRcp"/>
+    <value name="CauRcp"/>
+    <value name="PassPass"/>
+    <value name="PassRcp"/>
+    <value name="PassRfl"/>
+    <value name="Rfl"/>
+    <value name="Trans"/>
   </property>
   <property name="Evident">
     <value name="Fh"/>
@@ -321,6 +457,8 @@ SPDX-License-Identifier: MIT
   <property name="Polarity">
     <value name="Neg"/>
     <value name="Pos"/>
+    <!-- added from UD -->
+    <value name="Aff"/>
   </property>
   <property name="Person">
     <value name="0"/>
@@ -328,6 +466,8 @@ SPDX-License-Identifier: MIT
     <value name="2"/>
     <value name="3"/>
     <value name="4"/>
+    <!-- added from UD -->
+    <value name="1,3"/>
   </property>
   <property name="Person[psor]">
     <value name="1"/>
@@ -367,6 +507,245 @@ SPDX-License-Identifier: MIT
     <value name="Wol11"/>
     <value name="Wol12"/>
   </property>
+  <!-- Features added from UD -->
+  <property name="AdvType">
+    <value name="Cau"/>
+    <value name="Deg"/>
+    <value name="Loc"/>
+    <value name="Man"/>
+    <value name="Mod"/>
+    <value name="Tim"/>
+  </property>
+  <property name="Agglutination">
+    <value name="Agl"/>
+    <value name="Nagl"/>
+  </property>
+  <property name="Animacy[gram]">
+    <value name="Anim"/>
+    <value name="Inan"/>
+  </property>
+  <property name="BadStyle">
+    <value name="Yes"/>
+  </property>
+  <property name="CleftType">
+    <value name="Adj"/>
+    <value name="Adv"/>
+    <value name="Nom"/>
+    <value name="Obl"/>
+    <value name="Verb"/>
+  </property>
+  <property name="Clitic">
+    <value name="Han"/>
+    <value name="Han,Ka"/>
+    <value name="Han,Kin"/>
+    <value name="Han,Ko"/>
+    <value name="Han,Pa"/>
+    <value name="Ka"/>
+    <value name="Ka,S"/>
+    <value name="Kaan"/>
+    <value name="Kaan,Ko"/>
+    <value name="Kin"/>
+    <value name="Kin,Ko"/>
+    <value name="Ko"/>
+    <value name="Ko,S"/>
+    <value name="Pa"/>
+    <value name="Pa,S"/>
+    <value name="S"/>
+    <value name="Yes"/>
+  </property>
+  <property name="Clusivity">
+    <value name="Ex"/>
+    <value name="In"/>
+  </property>
+  <property name="Compound">
+    <value name="Yes"/>
+  </property>
+  <property name="ConjType">
+    <value name="Comp"/>
+    <value name="Oper"/>
+    <value name="Pred"/>
+  </property>
+  <property name="Connegative">
+    <value name="Yes"/>
+  </property>
+  <property name="Deixis[psor]">
+    <value name="Prox"/>
+  </property>
+  <property name="Derivation">
+    <value name="Inen"/>
+    <value name="Inen,Ttain"/>
+    <value name="Inen,Vs"/>
+    <value name="Ja"/>
+    <value name="Ja,Tar"/>
+    <value name="Lainen"/>
+    <value name="Lainen,Vs"/>
+    <value name="Llinen"/>
+    <value name="Llinen,Sti"/>
+    <value name="Llinen,Vs"/>
+    <value name="Minen"/>
+    <value name="Sti"/>
+    <value name="Sti,Ton"/>
+    <value name="Tar"/>
+    <value name="Ton"/>
+    <value name="Ton,Vs"/>
+    <value name="Ttain"/>
+    <value name="U"/>
+    <value name="Vs"/>
+  </property>
+  <property name="Dialect">
+    <value name="Connaught"/>
+    <value name="Munster"/>
+    <value name="Ulster"/>
+  </property>
+  <property name="Echo">
+    <value name="Ech"/>
+    <value name="Rdp"/>
+  </property>
+  <property name="Emph">
+    <value name="No"/>
+    <value name="Yes"/>
+  </property>
+  <property name="Emphatic">
+    <value name="Yes"/>
+  </property>
+  <property name="Foreign">
+    <value name="Yes"/>
+  </property>
+  <property name="Gender[dat]">
+    <value name="Masc"/>
+  </property>
+  <property name="Gender[erg]">
+    <value name="Fem"/>
+    <value name="Masc"/>
+  </property>
+  <property name="Gender[psor]">
+    <value name="Fem"/>
+    <value name="Masc"/>
+    <value name="Masc,Neut"/>
+    <value name="Neut"/>
+  </property>
+  <property name="Hyph">
+    <value name="Yes"/>
+  </property>
+  <property name="InfForm">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+    <value name="Dict"/>
+    <value name="Incp"/>
+  </property>
+  <property name="InflClass">
+    <value name="Ind"/>
+    <value name="IndEurA"/>
+    <value name="IndEurA,IndEurO"/>
+    <value name="IndEurE"/>
+    <value name="IndEurI"/>
+    <value name="IndEurO"/>
+    <value name="IndEurU"/>
+    <value name="IndEurX"/>
+    <value name="LatA"/>
+    <value name="LatAnom"/>
+    <value name="LatE"/>
+    <value name="LatI"/>
+    <value name="LatI2"/>
+    <value name="LatPron"/>
+    <value name="LatX"/>
+  </property>
+  <property name="InflClass[nominal]">
+    <value name="Ind"/>
+    <value name="IndEurA"/>
+    <value name="IndEurA,IndEurO"/>
+    <value name="IndEurI"/>
+    <value name="IndEurO"/>
+    <value name="IndEurU"/>
+    <value name="IndEurX"/>
+  </property>
+  <property name="NounType">
+    <value name="Chr"/>
+    <value name="Clf"/>
+    <value name="Eth"/>
+    <value name="Glt"/>
+    <value name="Het"/>
+    <value name="Nau"/>
+    <value name="Nos"/>
+    <value name="NotSlender"/>
+    <value name="Org"/>
+    <value name="Prs"/>
+    <value name="Slender"/>
+    <value name="Strong"/>
+    <value name="Top"/>
+    <value name="Weak"/>
+  </property>
+  <property name="NumForm">
+    <value name="Armenian"/>
+    <value name="Combi"/>
+    <value name="Cyril"/>
+    <value name="Digit"/>
+    <value name="Roman"/>
+    <value name="Word"/>
+  </property>
+  <property name="NumValue">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="Number[dat]">
+    <value name="Plur"/>
+    <value name="Sing"/>
+  </property>
+  <property name="Orth">
+    <value name="Alt"/>
+  </property>
+  <property name="PartForm">
+    <value name="Agt"/>
+    <value name="Neg"/>
+    <value name="Past"/>
+    <value name="Pres"/>
+  </property>
+  <property name="Person[dat]">
+    <value name="1"/>
+    <value name="2"/>
+    <value name="3"/>
+  </property>
+  <property name="Polite[abs]">
+    <value name="Infm"/>
+  </property>
+  <property name="Polite[dat]">
+    <value name="Infm"/>
+  </property>
+  <property name="Polite[erg]">
+    <value name="Infm"/>
+  </property>
+  <property name="Position">
+    <value name="Postnom"/>
+    <value name="Prenom"/>
+  </property>
+  <property name="PrepCase">
+    <value name="Npr"/>
+    <value name="Pre"/>
+  </property>
+  <property name="PrepForm">
+    <value name="Cmpd"/>
+  </property>
+  <property name="Proper">
+    <value name="Yes"/>
+  </property>
+  <property name="PunctSide">
+    <value name="Fin"/>
+    <value name="Ini"/>
+  </property>
+  <property name="SubGender">
+    <value name="Masc1"/>
+    <value name="Masc2"/>
+    <value name="Masc3"/>
+  </property>
+  <property name="Typo">
+    <value name="Yes"/>
+  </property>
+  <property name="Uninflect">
+    <value name="Yes"/>
+  </property>
+
   <property name="MACRO">
     <value name="ADJ"/>
     <value name="ADV"/>
