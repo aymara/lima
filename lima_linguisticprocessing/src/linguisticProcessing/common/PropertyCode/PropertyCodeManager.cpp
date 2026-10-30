@@ -61,9 +61,9 @@ public:
   /**
    * @brief Compute the number of bit needed to encode nbvalues
    * @param nbvalues nbvalues to encode
-   * @return uint8_t
+   * @return size_t
    */
-  uint8_t computeNbBitsNeeded(uint64_t nbvalues) const;
+  size_t computeNbBitsNeeded(uint64_t nbvalues) const;
 
   /**
    * The mask of a property is an integer that show which bits are used.
@@ -74,7 +74,7 @@ public:
    * @param nbBits nb bits to use
    * @return LinguisticCode
    */
-  LinguisticCode computeMask(uint8_t startBit,uint8_t nbBits) const;
+  LinguisticCode computeMask(size_t startBit, size_t nbBits) const;
 
 };
 
@@ -133,7 +133,8 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
   LDEBUG << "PropertyCodeManager::readFromXmlFile parsed. before deleting parser";
 #endif
   // Compute coding properties
-  uint8_t usedBits=0;
+  // size_t, not uint8_t: LinguisticCode may have more than 255 bits
+  size_t usedBits=0;
 
   // compute data for properties
   const auto& properties = reader.getProperties();
@@ -149,7 +150,7 @@ void PropertyCodeManager::readFromXmlFile(const std::string& filename)
     LDEBUG << "compute data for property " << desc->name;
 #endif
     std::vector<std::string>::size_type nbvalues=desc->values.size() + 1;
-    uint8_t nbBits = m_d->computeNbBitsNeeded(nbvalues);
+    auto nbBits = m_d->computeNbBitsNeeded(nbvalues);
 #ifdef DEBUG_LP
     LDEBUG << nbvalues << " values so use " << nbBits << " bits";
 #endif
@@ -317,9 +318,9 @@ const std::shared_ptr<PropertyAccessor> PropertyCodeManager::getPropertySetAcces
                          propertySetEmptyNessMask));
 }
 
-uint8_t PropertyCodeManagerPrivate::computeNbBitsNeeded(uint64_t nbvalues) const
+size_t PropertyCodeManagerPrivate::computeNbBitsNeeded(uint64_t nbvalues) const
 {
-  uint8_t nbBits=1;
+  size_t nbBits=1;
   for (uint64_t tmp=2; tmp < nbvalues; tmp*=2)
   {
     nbBits++;
@@ -335,8 +336,8 @@ uint8_t PropertyCodeManagerPrivate::computeNbBitsNeeded(uint64_t nbvalues) const
   return nbBits;
 }
 
-LinguisticCode PropertyCodeManagerPrivate::computeMask(uint8_t startBit,
-                                                       uint8_t nbBits) const
+LinguisticCode PropertyCodeManagerPrivate::computeMask(size_t startBit,
+                                                       size_t nbBits) const
 {
   if (startBit + nbBits > LinguisticCode::size())
   {
@@ -347,7 +348,7 @@ LinguisticCode PropertyCodeManagerPrivate::computeMask(uint8_t startBit,
     throw std::runtime_error("Error: cannot compute mask. Would use more bits than available");
   }
   LinguisticCode mask;
-  for (uint8_t currentBit = startBit;
+  for (size_t currentBit = startBit;
        currentBit < startBit + nbBits;
        currentBit++)
   {
