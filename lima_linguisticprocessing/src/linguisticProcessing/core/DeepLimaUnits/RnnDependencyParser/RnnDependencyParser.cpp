@@ -141,10 +141,13 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
         LERROR << "Can't Process RnnDependencyParser : missing data 'TokenIterator'";
         return MISSING_DATA;
     }
+    if (tiData->empty())
+    {
+        return SUCCESS_ID; // no token
+    }
     auto stridxPtr = tiData->getStringIndex();
     m_d->m_dependencyParser->setStringIndex(stridxPtr);
     auto tokenIterator = tiData->getTokenIterator();
-    tokenIterator->reset();
 
     auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("PosGraph"));
     if (anagraph == nullptr)
@@ -344,7 +347,7 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
         // inference, so extra workers do not help here (unlike the tagger). Keeping
         // one worker also keeps analyzeText output independent of the core count.
         m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
-                                                                        m_pResolver,m_stridx,m_class_names, 1024, 8, 1);
+                                                                        m_pResolver,m_stridx,m_class_names, 128, 8, 1);
         for (size_t i = 0; i < temp_classes.size(); i++)
         {
             m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);
@@ -362,6 +365,9 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
 
 void RnnDependencyParserPrivate::analyzer(std::shared_ptr<TokenSequenceAnalyzer<>::TokenIterator> ti)
 {
+    m_heads.clear();
+    m_deprels.clear();
+    m_isRoot.clear();
     // deprel id -> string vocabulary from the model; empty if the model has no
     // label decoder (then deprel() falls back to "dep").
     m_relClassNames = m_dependencyParser->get_rel_class_names();

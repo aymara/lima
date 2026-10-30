@@ -426,7 +426,11 @@ void RnnTokensAnalyzerPrivate::reset()
 void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &buffer)
 {
     reset();
-    m_tokensAnalyzer->register_handler([this](std::shared_ptr< StringIndex > stridx,
+    // Every batch, for the dependency parser: setting only the current one
+    // left it the last batch of the text
+    auto tiData = std::make_shared<TokenIteratorData>();
+    m_analysis->setData("TokenIterator", tiData);
+    m_tokensAnalyzer->register_handler([this, tiData](std::shared_ptr< StringIndex > stridx,
                                                 const token_buffer_t<>& tokens,
                                                 const std::vector<StringIndex::idx_t>& lemmata,
                                                 std::shared_ptr< StdMatrix<uint8_t> > classes,
@@ -434,12 +438,8 @@ void RnnTokensAnalyzerPrivate::analyzer(std::vector<segmentation::token_pos> &bu
                                                 size_t end)
     {
         auto ti = std::make_shared<TokenSequenceAnalyzer<>::TokenIterator>(*stridx, tokens, lemmata, classes, begin, end);
-        auto tiData = std::make_shared<TokenIteratorData>();
-        tiData->setTokenIterator(ti);
-        // auto si = std::make_shared<deeplima::StringIndex>(stridx);
         tiData->setStringIndex(stridx);
-        m_analysis->setData("TokenIterator", tiData);
-        // m_matrix = new TokenSequenceAnalyzer<>::OutputMatrix(classes);
+        tiData->addBatch(tokens, lemmata, classes, begin, end);
         insertTokenInfo(*ti);
     });
     LOG_MESSAGE_WITH_PROLOG(LDEBUG, buffer[0].m_pch);
