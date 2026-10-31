@@ -460,17 +460,23 @@ void parse_file(std::istream& input,
 
     // std::cerr << "Waiting for PoS tagger to stop. Calling panalyzer->finalize" << std::endl;
     panalyzer->finalize();
-    pdumper_complete->flush();
     // std::cerr << "Analyzer stopped. panalyzer->finalize returned" << std::endl;
   }
 
   if (parser)
   {
     // std::cerr << "Waiting for dependency parser to stop. Calling parser->finalize" << std::endl;
+    // Before flushing the dumper: the parser emits there a sentence still open
+    // at the end of the input
     parser->finalize();
     // std::cerr << "Calling parser.reset. parser->finalize returned" << std::endl;
     parser.reset();
     // std::cerr << "Dependency parser stopped. " << std::endl;
+  }
+
+  if (nullptr != panalyzer)
+  {
+    pdumper_complete->flush();
   }
   auto parsing_end = std::chrono::high_resolution_clock::now();
   auto parsing_duration = std::chrono::duration_cast<std::chrono::milliseconds>(parsing_end - parsing_begin);
