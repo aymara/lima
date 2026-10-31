@@ -369,9 +369,18 @@ public:
     // every sentence in such a buffer was parsed at the wrong offset.
     m_lengths.clear();
     m_lengths.reserve(256);
+    // A non-empty buffer at this point holds the beginning of a sentence left
+    // open by the previous tagger batch (see carry_open_sentence()): continue it,
+    // without a new root, and count its tokens in the first sentence's length.
+    const size_t pending = m_current_timepoint;
     size_t tokens_to_process = count_max_tokens_until_eos(iter, m_lengths);
+    if (pending > 0 && !m_lengths.empty())
+    {
+      m_lengths.front() += pending;
+    }
     // std::cerr << "DependencyParser::operator() tokens_to_process: " << tokens_to_process << std::endl;
-    bool insert_root = true;
+    bool insert_root = (0 == pending);
+    bool sentence_closed = true;
     while (!iter.end())
     {
       assert(m_current_timepoint < m_buffer_size);
@@ -392,6 +401,11 @@ public:
         // since the buffer slot is reused across calls.
         token.m_mwt_len = 0;
         token.m_mwt_surface_idx = 0;
+        // Its tag inputs too: they kept those of the token that last used the
+        // slot, so a sentence's parse depended on its neighbours. In training,
+        // the root's UPOS (ROOT, unknown) and features ("-", the first in the
+        // sorted dictionaries) are all class 0.
+        std::fill(token.m_classes.begin(), token.m_classes.end(), 0);
         insert_root = false;
         tokens_to_process--;
         m_current_timepoint++;
@@ -420,8 +434,9 @@ public:
           token.m_classes[i] = iter.token_class(i);
         }
 
-        if (iter.flags() & token_flags_t::sentence_brk ||
-            iter.flags() & token_flags_t::paragraph_brk)
+        sentence_closed = (iter.flags() & token_flags_t::sentence_brk ||
+                           iter.flags() & token_flags_t::paragraph_brk);
+        if (sentence_closed)
         {
           insert_root = true;
         }
@@ -430,6 +445,14 @@ public:
       m_current_timepoint++;
       tokens_to_process--;
       iter.next();
+
+      if (iter.end() && !sentence_closed && m_current_timepoint < m_buffer_size)
+      {
+        // The tagger batch ends inside a sentence. Parsing now would cut it in
+        // two, each part with its own root. Keep it for the next batch.
+        carry_open_sentence(first_timepoint_idx);
+        break;
+      }
 
       if (m_current_timepoint >= m_buffer_size || 0 == tokens_to_process)
       {
@@ -472,6 +495,10 @@ public:
         // not the whole buffer_size: passing -1 made handle_token_buffer fall back
         // to buffer.size(), processing a stale tail of uninitialised timepoints.
         start_analysis(m_current_buffer, m_current_timepoint, m_lengths, (int)m_current_timepoint);
+        // The parser may analyse another text (LIMA, several input files): it
+        // must not take this sentence for the beginning of its first one
+        acquire_buffer();
+        m_lengths.clear();
       }
       else
       {
@@ -501,6 +528,35 @@ protected:
     m_current_buffer = next_buffer_idx;
     m_current_timepoint = 0;
     // std::cerr << "DependencyParser::acquire_buffer DONE:" << m_current_buffer << std::endl;
+  }
+
+  // The current buffer ends with an open sentence (its last m_lengths entry).
+  // Analyse the complete sentences before it, then move it to the beginning of
+  // the next buffer, where the next call to operator() completes it. If it is
+  // the only sentence of the buffer, it just stays there. finalize() parses a
+  // sentence still open at the end of the input.
+  void carry_open_sentence(size_t first_timepoint_idx)
+  {
+    assert(!m_lengths.empty());
+    const size_t open_len = m_lengths.back();
+    assert(open_len <= m_current_timepoint);
+    const size_t open_begin = m_current_timepoint - open_len;
+    if (open_begin > 0)
+    {
+      m_lengths.pop_back();
+      start_analysis(m_current_buffer, first_timepoint_idx, m_lengths, open_begin);
+      m_started = true;
+      // start_analysis() returns once the buffer's results are emitted, so its
+      // tokens can be read here
+      const size_t from = m_current_buffer;
+      acquire_buffer();
+      for (size_t i = 0; i < open_len; ++i)
+      {
+        m_buffers[m_current_buffer][i] = m_buffers[from][open_begin + i];
+      }
+      m_current_timepoint = open_len;
+    }
+    m_lengths.assign(1, m_current_timepoint);
   }
 
   void start_analysis(size_t buffer_idx,
