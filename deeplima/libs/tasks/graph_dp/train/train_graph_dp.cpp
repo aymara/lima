@@ -115,7 +115,9 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                tag_dh,
                                { p_embd },
                                params.m_input_includes_root,
-                               deprel2id);
+                               deprel2id,
+                               params.m_tag_embd_dim,
+                               params.m_min_sentence_len);
   train_iterator.init();
 
   CoNLLUDataSet dev_iterator(dev_data,
@@ -124,8 +126,16 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                              tag_dh,
                              { p_embd },
                              params.m_input_includes_root,
-                             deprel2id);
+                             deprel2id,
+                             params.m_tag_embd_dim,
+                             params.m_min_sentence_len);
   dev_iterator.init();
+
+  if (params.m_seed > 0)
+  {
+    torch::manual_seed(params.m_seed);
+    CoNLLUDataSet::seed(params.m_seed);
+  }
 
   BiRnnAndDeepBiaffineAttention model(nullptr);
 
@@ -137,10 +147,11 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     rnn_descr.reserve(params.m_rnn_hidden_dims.size());
     for (size_t d : params.m_rnn_hidden_dims)
     {
-      rnn_descr.push_back(rnn_descr_t(d));
+      rnn_descr.push_back(rnn_descr_t(d, params.m_rnn_dropout));
     }
 
-    vector<deep_biaffine_attention_descr_t> decoder_descr = { deep_biaffine_attention_descr_t(128) };
+    vector<deep_biaffine_attention_descr_t> decoder_descr = {
+      deep_biaffine_attention_descr_t(params.m_arc_dim, params.m_rel_dim, params.m_decoder_dropout) };
 
     // 1st arg = the dict holder used to size the input embeddings. The generated
     // script numbers each embedding by its position in embd_descr, so this holder
@@ -169,7 +180,8 @@ int train_graph_dp(const train_params_graph_dp_t& params)
                                   boost::filesystem::path(params.m_embeddings_fn).stem().string(),
                                   params.m_input_includes_root,
                                   static_cast<int64_t>(deprel2id->size()),
-                                  rel_class_names);
+                                  rel_class_names,
+                                  params.m_input_dropout_prob);
   }
   else
   {
@@ -178,10 +190,6 @@ int train_graph_dp(const train_params_graph_dp_t& params)
   }
 
   // cerr << model->get_script() << endl;
-
-  torch::optim::Adam optimizer(model->parameters(),
-                               torch::optim::AdamOptions(params.m_learning_rate)
-                               .weight_decay(params.m_weight_decay));
 
   torch::Device device(params.m_device_string);
 
@@ -197,6 +205,7 @@ int train_graph_dp(const train_params_graph_dp_t& params)
     {
       optimizer = make_shared<torch::optim::Adam>(model->parameters(),
                                                   torch::optim::AdamOptions(params.m_learning_rate)
+                                                  .betas({ params.m_beta_one, params.m_beta_two })
                                                   .weight_decay(params.m_weight_decay));
     }
     else if (opt_name == "sgd")

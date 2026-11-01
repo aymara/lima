@@ -23,13 +23,27 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
                                                           const vector<deep_biaffine_attention_descr_t>& decoder_descr,
                                                           const vector<std::string>& /*output_names*/,
                                                           bool input_includes_root,
-                                                          int64_t num_labels/*,
+                                                          int64_t num_labels,
+                                                          float input_dropout/*,
                                                           const vector<uint32_t>& classes*/)
 {
   stringstream ss;
 
-  ss << "input_dropout = def Dropout prob=0.3" << std::endl;
-  //ss << "decoder_dropout = def Dropout prob=0.1" << std::endl;
+  // Dropout modules have no weights: they change training only, and the
+  // inference engine ignores them
+  ss << "input_dropout = def Dropout prob=" << input_dropout << std::endl;
+  for (size_t i = 0; i + 1 < rnn_descr.size(); i++)
+  {
+    if (rnn_descr[i].m_dropout > 0)
+    {
+      ss << "rnn_dropout_" << i << " = def Dropout prob=" << rnn_descr[i].m_dropout << std::endl;
+    }
+  }
+  assert(decoder_descr.size() == 1);
+  if (decoder_descr[0].m_dropout > 0)
+  {
+    ss << "decoder_dropout = def Dropout prob=" << decoder_descr[0].m_dropout << std::endl;
+  }
 
   size_t rnn_input_size = 0;
   for (size_t i = 0; i < embd_descr.size(); i++)
@@ -54,7 +68,6 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
 
   ss << std::endl;
 
-  assert(decoder_descr.size() == 1);
   ss << "decoder_0 = def DeepBiaffineAttentionDecoder input_dim=" << input_size
      << " hidden_arc_dim=" << decoder_descr[0].m_arc_dim
      << " input_includes_root=" << (input_includes_root ? "true" : "false")
@@ -63,7 +76,7 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
   if (num_labels > 0)
   {
     ss << "label_decoder_0 = def DeepBiaffineAttentionLabelDecoder input_dim=" << input_size
-       << " hidden_dim=" << decoder_descr[0].m_arc_dim
+       << " hidden_dim=" << decoder_descr[0].m_rel_dim
        << " num_labels=" << num_labels
        << " input_includes_root=" << (input_includes_root ? "true" : "false")
        << endl;
@@ -130,11 +143,21 @@ string BiRnnAndDeepBiaffineAttentionImpl::generate_script(const vector<embd_desc
     std::stringstream t;
     t << "rnn_out_" << i;
     last_output_name = t.str();
+    if (i + 1 < rnn_descr.size() && rnn_descr[i].m_dropout > 0)
+    {
+      ss << "rnn_out_" << i << "_dropped = forward module=rnn_dropout_" << i
+         << " input=" << last_output_name << std::endl;
+      last_output_name += "_dropped";
+    }
   }
 
   ss << std::endl;
 
-  //ss << "decoder_input = forward module=decoder_dropout input=" << last_output_name << endl;
+  if (decoder_descr[0].m_dropout > 0)
+  {
+    ss << "decoder_input = forward module=decoder_dropout input=" << last_output_name << endl;
+    last_output_name = "decoder_input";
+  }
 
   ss << "arc_raw = forward module=decoder_0 input=" << last_output_name << endl;
   ss << "arc = log_softmax input=arc_raw dim=2" << endl;

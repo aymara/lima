@@ -224,6 +224,14 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
 {
   auto train_iterator = train_batches.get_iterator();
   train_iterator->set_batch_size(params.m_batch_size);
+  m_word_dropout = params.m_word_dropout;
+  m_clip = params.m_clip;
+  m_keep_first_word = params.m_input_includes_root;
+  const bool select_on_las = (params.m_select_on == "las");
+  if (!select_on_las && params.m_select_on != "arc")
+  {
+    throw std::invalid_argument("select-on must be arc or las, not " + params.m_select_on);
+  }
 
   double best_eval_loss = std::numeric_limits<double>::max();
   size_t count_below_best = 0;
@@ -235,9 +243,8 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
     {
         if (group.has_options())
         {
-            auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
-            // cout << "LR == " << options.get_lr() << endl;
-            lr_copy = options.get_lr();
+            // Generic accessors: the optimizer may be Adam or SGD (-o)
+            lr_copy = group.options().get_lr();
         }
     }
 
@@ -280,6 +287,11 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
     auto train_duration = std::chrono::duration_cast<std::chrono::milliseconds>(train_end - begin).count();
     auto eval_duration = std::chrono::duration_cast<std::chrono::milliseconds>(eval_end - train_end).count();
 
+    if (eval_stat.count("las") && eval_stat["las"].m_items > 0)
+    {
+      eval_stat["las"].m_accuracy = double(eval_stat["las"].m_correct) / eval_stat["las"].m_items;
+    }
+
     for (const string& task_name : output_names)
     {
       const auto& train = train_stat[task_name];
@@ -297,29 +309,37 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
       }
       std::cout << std::endl << std::flush;
     }
+    if (eval_stat.count("las") && eval_stat["las"].m_items > 0)
+    {
+      std::cout << "EPOCH " << epoch << " | las | EVAL ACC=" << eval_stat["las"].m_accuracy
+                << " CORRECT=" << eval_stat["las"].m_correct << std::endl;
+    }
     cout << "TIME: train=" << train_duration << "[ms] eval=" << eval_duration << "[ms]" << endl;
 
     task_stat_t& main_task_eval = eval_stat[output_names[0]];
+    // The loss stays the arc one: LAS has none
+    const double selection_accuracy = (select_on_las && eval_stat.count("las"))
+        ? eval_stat["las"].m_accuracy : main_task_eval.m_accuracy;
 
     best_eval_loss = min(best_eval_loss, main_task_eval.m_loss);
-    if (main_task_eval.m_accuracy > best_eval_accuracy)
+    if (selection_accuracy > best_eval_accuracy)
     {
-      best_eval_accuracy = main_task_eval.m_accuracy;
+      best_eval_accuracy = selection_accuracy;
       if (params.m_output_model_name.size() > 0)
       {
         torch::save(*this, params.m_output_model_name + ".pt");
       }
       count_below_best = 0;
     }
-    else if (main_task_eval.m_accuracy < best_eval_accuracy)
+    else if (selection_accuracy < best_eval_accuracy)
     {
       for (auto &group : opt.param_groups())
       {
           if (group.has_options())
           {
-              auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
-              options.lr(options.lr() * (0.9));
-              lr_copy = options.lr();
+              auto &options = group.options();
+              options.set_lr(options.get_lr() * params.m_lr_decay);
+              lr_copy = options.get_lr();
           }
       }
       if (lr_copy < 0.0000001)
@@ -333,6 +353,10 @@ void BiRnnAndDeepBiaffineAttentionImpl::train(const train_params_graph_dp_t& par
       }
     }
     epoch++;
+    if (epoch >= params.m_max_epochs)
+    {
+      return;
+    }
   }
 }
 
@@ -383,6 +407,19 @@ void BiRnnAndDeepBiaffineAttentionImpl::train_batch(size_t batch_size,
   map<string, torch::Tensor> current_batch_inputs;
   split_input(trainable_input, current_batch_inputs, device);
   current_batch_inputs["raw"] = nontrainable_input.to(device);
+  if (m_word_dropout > 0)
+  {
+    // Zero the whole form embedding of some words ([seq, batch, dim]), so that
+    // the parser also learns from the tags and the context
+    torch::Tensor& raw = current_batch_inputs["raw"];
+    torch::Tensor keep = torch::bernoulli(
+        torch::full({ raw.size(0), raw.size(1), 1 }, 1.0 - m_word_dropout, raw.options()));
+    if (m_keep_first_word)
+    {
+      keep.index_put_({ 0 }, 1.0);
+    }
+    raw = raw * keep;
+  }
 
   const int64_t B = gold.size(0);
   const int64_t D = gold.size(1);
@@ -434,6 +471,10 @@ void BiRnnAndDeepBiaffineAttentionImpl::train_batch(size_t batch_size,
     loss.backward();
   }
 
+  if (m_clip > 0)
+  {
+    torch::nn::utils::clip_grad_norm_(parameters(), m_clip);
+  }
   opt.step();
 }
 
@@ -469,6 +510,11 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
       stat[task_name].m_items += t[task_name].m_items;
       stat[task_name].m_loss += t[task_name].m_loss;
     }
+    if (t.count("las"))
+    {
+      stat["las"].m_correct += t["las"].m_correct;
+      stat["las"].m_items += t["las"].m_items;
+    }
   }
 }
 
@@ -499,6 +545,8 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
   torch::NoGradGuard no_grad;
   auto out = forward(current_inputs, requested.begin(), requested.end());
 
+  torch::Tensor arc_pred; // predicted head of each position, [B*D]
+  torch::Tensor arc_ok;   // head correct and position scored
   // ---- arc (UAS) ----
   {
     torch::Tensor o = out["arc"].reshape({ -1, out["arc"].size(2) });
@@ -507,6 +555,8 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
         o, tgt, torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnore));
     torch::Tensor valid = tgt.ne(kIgnore);
     torch::Tensor pred = o.argmax(1);
+    arc_pred = pred;
+    arc_ok = pred.eq(tgt).logical_and(valid);
     task_stat_t& s = stat["arc"];
     s.m_loss = loss.sum().item<double>();
     s.m_correct = pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
@@ -532,6 +582,14 @@ void BiRnnAndDeepBiaffineAttentionImpl::evaluate(const vector<string>& output_na
     s.m_loss = loss.sum().item<double>();
     s.m_correct = pred.eq(tgt).logical_and(valid).sum().item<int64_t>();
     s.m_items = valid.sum().item<int64_t>();
+
+    // ---- LAS: label predicted at the PREDICTED head, as at analysis time ----
+    torch::Tensor ph = arc_pred.reshape({ B, D });
+    torch::Tensor pidx = ph.unsqueeze(-1).unsqueeze(-1).expand({ B, D, 1, L });
+    torch::Tensor rel_at_pred = rel_logits.gather(2, pidx).squeeze(2).argmax(2).reshape({ -1 });
+    task_stat_t& las = stat["las"];
+    las.m_correct = rel_at_pred.eq(tgt).logical_and(arc_ok).sum().item<int64_t>();
+    las.m_items = valid.sum().item<int64_t>();
   }
 }
 

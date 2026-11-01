@@ -38,10 +38,11 @@ public:
                             const std::string& embd_fn,
                             bool input_includes_root,
                             int64_t num_labels = 0,
-                            const std::vector<std::string>& rel_class_names = {})
+                            const std::vector<std::string>& rel_class_names = {},
+                            float input_dropout = 0.3)
     : BiRnnClassifierImpl(std::move(dicts),
                           embd_descr,
-                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels)
+                          generate_script(embd_descr, rnn_descr, decoder_descr, output_names, input_includes_root, num_labels, input_dropout)
                           /*rnn_descr, output_names, classes.get_counters()*/),
       m_workers(0),
       m_num_labels(num_labels),
@@ -151,10 +152,15 @@ protected:
                                      const std::vector<nets::deep_biaffine_attention_descr_t>& decoder_descr,
                                      const std::vector<std::string>& output_names,
                                      bool input_includes_root=false,
-                                     int64_t num_labels=0/*,
+                                     int64_t num_labels=0,
+                                     float input_dropout=0.3/*,
                                      const std::vector<uint32_t>& classes*/);
 
   size_t m_workers;
+  // Training-only settings, from train_params_graph_dp_t (not saved)
+  float m_word_dropout = 0;
+  float m_clip = 0;
+  bool m_keep_first_word = true; // never drop the synthetic <ROOT>
   int64_t m_num_labels = 0; // number of deprel classes; 0 = label decoder disabled
   std::vector<std::string> m_rel_class_names; // deprel id -> string; saved with the model
   std::vector<std::string> m_input_class_names;
