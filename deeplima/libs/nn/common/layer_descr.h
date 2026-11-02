@@ -53,18 +53,21 @@ struct embd_descr_t
 struct rnn_descr_t
 {
   size_t m_dim;
+  float m_dropout; // on the output of the layer, before the next one (not after the last)
 
-  explicit rnn_descr_t(size_t dim)
-    : m_dim(dim) { }
+  explicit rnn_descr_t(size_t dim, float dropout = 0)
+    : m_dim(dim), m_dropout(dropout) { }
 };
 
 struct deep_biaffine_attention_descr_t
 {
   size_t m_arc_dim;
+  size_t m_rel_dim; // hidden dim of the label decoder
+  float m_dropout;  // on the encoder output, before both decoders
   // size_t m_input_rnn_layer; // 0 - embd, 1 - 1st RNN layer, ...
 
-  explicit deep_biaffine_attention_descr_t(size_t arc_dim)
-    : m_arc_dim(arc_dim) { }
+  explicit deep_biaffine_attention_descr_t(size_t arc_dim, size_t rel_dim = 0, float dropout = 0)
+    : m_arc_dim(arc_dim), m_rel_dim(rel_dim > 0 ? rel_dim : arc_dim), m_dropout(dropout) { }
 };
 
 } // nets

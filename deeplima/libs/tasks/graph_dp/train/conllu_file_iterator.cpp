@@ -20,14 +20,31 @@ namespace graph_dp
 namespace train
 {
 
+namespace
+{
+std::default_random_engine& batch_rng()
+{
+  static std::default_random_engine e(std::random_device{}());
+  return e;
+}
+}
+
+void CoNLLUDataSet::seed(uint64_t s)
+{
+  batch_rng().seed(s);
+}
+
 CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
                              size_t batch_size,
                              const ConlluFeatExtractor<CoNLLU::WordLevelAdapter::token_t>& feat_extractor,
                              const DictsHolder& morph_tag_dh,
                              shared_ptr<FeatureVectorizerBase<>> p_embd,
                              bool add_root,
-                             shared_ptr<const std::map<std::string, int64_t>> deprel2id)
+                             shared_ptr<const std::map<std::string, int64_t>> deprel2id,
+                             size_t tag_embd_dim,
+                             size_t min_sentence_len)
   : m_add_root(add_root),
+    m_min_sentence_len(min_sentence_len),
     m_batch_size(batch_size),
     m_morph_tag_dh(morph_tag_dh),
     m_deprel2id(deprel2id),
@@ -47,7 +64,7 @@ CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
       m_embd_feat_descr.push_back({
                                     CoNLLUToTorchMatrix::str_feature,
                                     m_feat_extractor.feats()[i],
-                                    8,
+                                    tag_embd_dim,
                                     morph_tag_dh[i]
                                   });
     }
@@ -91,7 +108,7 @@ void CoNLLUDataSet::vectorize()
     const CoNLLU::Sentence& sent = m_annot.get_sentence(i);
     size_t len = sent.calc_num_of_words(m_annot);
     assert(len > 0);
-    if (len < 4)
+    if (len < m_min_sentence_len)
     {
       // nothing to train :)
       continue;
@@ -260,8 +277,7 @@ const CoNLLUDataSet::Iterator::Batch CoNLLUDataSet::Iterator::next_batch()
 
   //std::cerr << gold_bucket.get_tensor().sizes() << std::endl;
 
-  std::random_device r;
-  std::default_random_engine e1(r());
+  std::default_random_engine& e1 = batch_rng();
   int64_t max_start_offset = ( gold_bucket.get_tensor().size(0) / seq_len ) - batch_size;
   if (max_start_offset < 0)
   {

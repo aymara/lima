@@ -30,12 +30,18 @@ public:
                 const DictsHolder& morph_tag_dh,
                 std::shared_ptr<FeatureVectorizerBase<>> p_embd,
                 bool add_root = false,
-                std::shared_ptr<const std::map<std::string, int64_t>> deprel2id = nullptr);
+                std::shared_ptr<const std::map<std::string, int64_t>> deprel2id = nullptr,
+                size_t tag_embd_dim = 8,
+                size_t min_sentence_len = 4);
 
   // Target value used in the gold to mark positions that must be ignored by the
   // loss/accuracy (e.g. the synthetic <ROOT> token, which is not a dependent).
   // Matches the ignore_index passed to nll_loss in the classifier.
   static constexpr int64_t IGNORE_INDEX = -100;
+
+  // Seed of the training batches' sampling, shared by all data sets; unseeded,
+  // it starts from std::random_device
+  static void seed(uint64_t s);
 
   void init();
 
@@ -79,6 +85,7 @@ public:
 
 private:
   bool m_add_root;
+  size_t m_min_sentence_len; // shorter sentences are not trained on
   const size_t m_batch_size;
   const DictsHolder m_morph_tag_dh;
   // deprel (syntactic relation label) string -> class id; shared between the
