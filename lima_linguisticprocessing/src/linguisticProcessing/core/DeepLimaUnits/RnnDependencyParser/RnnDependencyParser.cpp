@@ -51,6 +51,10 @@ using namespace deeplima;
 
 namespace Lima::LinguisticProcessing::DeepLimaUnits::RnnDependencyParser {
 
+// Tokens per buffer of the deeplima parser, its synthetic <ROOT>s included. A
+// longer sentence is parsed in parts, each with its own <ROOT> (see process())
+static constexpr size_t DP_BUFFER_SIZE = 128;
+
 #if defined(DEBUG_LP) && defined(DEBUG_THIS_FILE)
 #define LOG_MESSAGE(stream, msg) stream << msg;
 #define LOG_MESSAGE_WITH_PROLOG(stream, msg) SALOGINIT; LOG_MESSAGE(stream, msg);
@@ -231,14 +235,31 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
 
     // Walk the parser output. Each <ROOT> starts a new sentence (matched to the
     // next segment in order); the following tokens map to that sentence's vertices.
+    // A sentence longer than the parser's buffer comes in parts, each after its
+    // own <ROOT> and with heads local to the part: such a <ROOT> continues the
+    // sentence. Taking it for a new one shifted every following sentence onto
+    // the previous one's vertices (UD_Spanish-AnCora test, a 128-word sentence:
+    // LAS 85.9 -> 13.7 for the rest of the text).
     int segIdx = -1;
-    size_t localPos = 0; // 1-based position of the current token within its sentence
+    size_t localPos = 0;   // 1-based position of the current token within its sentence
+    size_t partOffset = 0; // tokens of the sentence in its previous parts
     for (size_t i = 0; i < m_d->m_heads.size(); ++i)
     {
         if (i < m_d->m_isRoot.size() && m_d->m_isRoot[i])
         {
-            ++segIdx;
-            localPos = 0;
+            const bool cut = segIdx >= 0 && segIdx < static_cast<int>(segmentTokens.size())
+                && localPos < segmentTokens[segIdx].size()
+                && localPos - partOffset + 1 >= DP_BUFFER_SIZE;
+            if (cut)
+            {
+                partOffset = localPos;
+            }
+            else
+            {
+                ++segIdx;
+                localPos = 0;
+                partOffset = 0;
+            }
             continue;
         }
         ++localPos;
@@ -251,7 +272,9 @@ Lima::LimaStatusCode RnnDependencyParser::process(Lima::AnalysisContent &analysi
         {
             continue; // parser/graph token counts disagree for this sentence
         }
-        const uint32_t head = m_d->m_heads[i];
+        // Sentence-local: the parser's heads are local to the part (0 stays the
+        // root: a cut sentence has one root per part)
+        const size_t head = m_d->m_heads[i] == 0 ? 0 : m_d->m_heads[i] + partOffset;
         const std::string& deprel = (i < m_d->m_deprels.size())
                                         ? m_d->m_deprels[i]
                                         : std::string("dep");
@@ -347,7 +370,7 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
         // inference, so extra workers do not help here (unlike the tagger). Keeping
         // one worker also keeps analyzeText output independent of the core count.
         m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
-                                                                        m_pResolver,m_stridx,m_class_names, 128, 8, 1);
+                                                                        m_pResolver,m_stridx,m_class_names, DP_BUFFER_SIZE, 8, 1);
         for (size_t i = 0; i < temp_classes.size(); i++)
         {
             m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);

@@ -60,6 +60,16 @@ namespace AnalysisDumpers
 
 QStringList FORMATS = {"CoNLL-U", "CoNLL-03"};
 
+// A FORM or LEMMA on one line: a token can span a line break of the text (a
+// tokenizer joining "27" and "000" across one), and a newline or a tab there
+// breaks the line of the token. A space is valid in a CoNLL-U FORM or LEMMA.
+// (Escaping the bytes that are not printable, as before, also escaped every
+// non-ASCII UTF-8 byte and left the LEMMA as it was.)
+static QString oneLine(QString field)
+{
+  return field.replace("\r\n", " ").replace('\r', ' ').replace('\n', ' ').replace('\t', ' ');
+}
+
 SimpleFactory<MediaProcessUnit,ConllDumper> conllDumperFactory(CONLLDUMPER_CLASSID);
 
 class ConllDumperPrivate
@@ -598,7 +608,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
 
           if (m_d->m_format == "CoNLL-U")
             dstream->out()  << firstTokenId << "-" << lastTokenId
-                            << "\t" << tokenForm.toStdString() // FORM
+                            << "\t" << oneLine(tokenForm).toStdString() // FORM
                             << "\t" << "_" // LEMMA
                             << "\t" << "_" // UPOS
                             << "\t" << "_" // XPOS
@@ -726,11 +736,8 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex feats:" << feats;
 #endif
 
+    // Made one line in dumpToken
     auto inflectedToken = ft->stringForm().toStdString();
-    if (inflectedToken.find_first_of("\r\n\t") != std::string::npos)
-      boost::find_format_all(inflectedToken,
-                              boost::token_finder(!boost::is_print()),
-                              character_escaper());
 
     QString lemmatizedToken;
     if (morphoData != 0 && !morphoData->empty())
@@ -1358,11 +1365,8 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
     LDEBUG << "ConllDumperPrivate::dumpAnalysisGraphVertex feats:" << feats;
 #endif
 
+    // Made one line in dumpToken
     auto inflectedToken = ft->stringForm().toStdString();
-    if (inflectedToken.find_first_of("\r\n\t") != std::string::npos)
-      boost::find_format_all(inflectedToken,
-                              boost::token_finder(!boost::is_print()),
-                              character_escaper());
 
     QString lemmatizedToken;
     if (morphoData != 0 && !morphoData->empty())
@@ -1481,8 +1485,8 @@ void ConllDumperPrivate::dumpToken(
     //        information.
 
     dstream->out()  << tokenId++ // ID
-                    << "\t" << inflectedToken.toStdString() // FORM
-                    << "\t" << lemmatizedToken.toStdString() // LEMMA
+                    << "\t" << oneLine(inflectedToken).toStdString() // FORM
+                    << "\t" << oneLine(lemmatizedToken).toStdString() // LEMMA
                     << "\t" << micro.toStdString() // UPOS
                     << "\t" << xpos.toStdString() // XPOS
                     << "\t" << features.toStdString() // FEATS @TODO
@@ -1508,7 +1512,7 @@ void ConllDumperPrivate::dumpToken(
     LDEBUG << "ConllDumperPrivate::dumpToken" << tokenId
             << inflectedToken.toStdString() << neType << previousNeType;
 #endif
-    QString inflectedTokenEscaped = inflectedToken;
+    QString inflectedTokenEscaped = oneLine(inflectedToken);
     inflectedTokenEscaped.replace(" ", "_");
     dstream->out()  << inflectedTokenEscaped.toStdString() // FORM
                     << " " << micro.toStdString() // UPOS
