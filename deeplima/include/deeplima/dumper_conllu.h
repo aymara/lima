@@ -580,13 +580,16 @@ public:
       // std::cout << "\t";
       if (hasDeps)
       {
-        if ((m_root == begin) && (iter.head() == 0))
+        // m_root is 0 until the sentence's root is written (flush() resets it).
+        // begin and end are the slot's columns in the parser's output: they
+        // were 0 and the token count only while every slot started at 0
+        if ((m_root == 0) && (iter.head() == 0))
         {
           m_root = m_next_token_idx;
           token.head = 0;
           token.deprel = "root";
         }
-        else if  (iter.head() >= end)
+        else if  (iter.head() >= end - begin)
         {
           // std::cerr << "head is out of sentence. rehead to root or set it as root if no root is set " << m_root << "\tdep"<< std::endl;
           if (m_root == 0)
@@ -602,7 +605,7 @@ public:
             token.deprel = "dep";
           }
         }
-        else if ((m_root != begin) && (iter.head() == 0))
+        else if ((m_root != 0) && (iter.head() == 0))
         {
           // std::cerr << "multiple roots in the sentence. rehead to the first root" << std::endl;
           // std::cerr << m_root << "\tdep";

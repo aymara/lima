@@ -93,13 +93,15 @@ public:
     std::vector<std::string> m_relClassNames; // deprel id -> string, from the model
     bool m_loaded;
     bool m_enabled; // false when no parser model is available: process() is a no-op
+    size_t m_threads; // inference workers of the parser
 };
 
 RnnDependencyParserPrivate::RnnDependencyParserPrivate(): ConfigurationHelper("RnnDependencyParserPrivate",
                                                                               THIS_FILE_LOGGING_CATEGORY()),
                                                           m_stridx(new StringIndex()),
                                                           m_loaded(false),
-                                                          m_enabled(true)
+                                                          m_enabled(true),
+                                                          m_threads(1)
 {
 }
 
@@ -296,6 +298,13 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
 {
 
     m_data = QString(getStringParameter(unitConfiguration, "data", 0, "SentenceBoundaries").c_str());
+    // Optional "threads": the parser's inference workers, by default the cores
+    // (it uses at most one per buffer, 8). Each buffer has its own columns of
+    // the parser's tensors and the results come in order, so the output does
+    // not depend on it
+    const int threads = getIntParameter(unitConfiguration, "threads", 0, 0);
+    m_threads = threads > 0 ? static_cast<size_t>(threads)
+                            : std::max<size_t>(1, std::thread::hardware_concurrency());
     QString dependency_parser_model_prefix = getStringParameter(unitConfiguration, "dependency_parser_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
     QString tagger_model_prefix = getStringParameter(unitConfiguration, "tagger_model_prefix", ConfigurationHelper::REQUIRED | ConfigurationHelper::NOT_EMPTY).c_str();
     LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnDependencyParserPrivate::init dependency parser model: " << dependency_parser_model_prefix);
@@ -365,12 +374,9 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
         // so it also benefits the tagger/segmenter units in the same process.
         Eigen::setNbThreads(1);
 
-        // The parser runs a single inference worker: its throughput is bounded by
-        // the serial feature-vectorization/feeding path (fastText), not by the
-        // inference, so extra workers do not help here (unlike the tagger). Keeping
-        // one worker also keeps analyzeText output independent of the core count.
+        // Several inference workers parse buffers in parallel (see "threads")
         m_dependencyParser = std::make_shared<DependencyParser>(dependency_parser_file_name.toStdString(),
-                                                                        m_pResolver,m_stridx,m_class_names, DP_BUFFER_SIZE, 8, 1);
+                                                                        m_pResolver,m_stridx,m_class_names, DP_BUFFER_SIZE, 8, m_threads);
         for (size_t i = 0; i < temp_classes.size(); i++)
         {
             m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);

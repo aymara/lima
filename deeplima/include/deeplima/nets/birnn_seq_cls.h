@@ -376,6 +376,14 @@ public:
     return m_slots[idx].m_output_begin;
   }
 
+  // First column of the slot's own region of the input and output tensors
+  // (where reset() puts its output), whatever set_slot_begin() moved it to
+  inline uint64_t get_slot_base(uint32_t idx) const
+  {
+    assert(idx < m_num_slots);
+    return m_overlap + uint64_t(idx) * m_slot_len;
+  }
+
   inline bool get_slot_started(uint32_t idx) const
   {
     assert(idx < m_num_slots);
