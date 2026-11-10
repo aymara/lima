@@ -41,6 +41,8 @@ void LemmatizationImpl::init(size_t max_input_word_len,
           const std::vector<std::vector<std::string>>& class_values)
  {
   m_upos_idx = std::numeric_limits<size_t>::max();
+  m_upos_feat_idx = std::numeric_limits<size_t>::max();
+  m_feat_value_map.clear();
   m_max_input_word_len = max_input_word_len;
   auto uint_dicts = RnnSeq2Seq::get_input_uint_dicts();
   decltype(uint_dicts) enc_uint_dict;
@@ -96,6 +98,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
                 << feat_name << "\"" << std::endl;
     }
 
+    m_feat_value_map.push_back(v);
     auto dd = std::make_shared<Dict<uint64_t>>(v);
     EmbdUInt64Float d;
 
@@ -105,6 +108,7 @@ void LemmatizationImpl::init(size_t max_input_word_len,
     if (cls_idx != std::numeric_limits<size_t>::max() && cls_idx < class_names.size() && class_names[cls_idx] == "upos")
     {
       m_upos_idx = cls_idx;
+      m_upos_feat_idx = feat_idx;
     }
   }
   m_feat_vectorizer.init(enc_feats_dict, 1, enc_feats_dict.size());
@@ -120,8 +124,11 @@ void LemmatizationImpl::init(size_t max_input_word_len,
 bool LemmatizationImpl::is_fixed(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx)
 {
   assert(m_upos_idx != std::numeric_limits<size_t>::max());
-  auto upos = classes->get(idx, m_upos_idx);
-  return m_fixed_upos[upos];
+  // In the lemmatization model's UPOS values (get_fixed_upos)
+  const auto& upos_map = m_feat_value_map[m_upos_feat_idx];
+  const uint64_t tagger_upos = classes->get(idx, m_upos_idx);
+  const uint64_t upos = tagger_upos < upos_map.size() ? upos_map[tagger_upos] : 0;
+  return upos < m_fixed_upos.size() && m_fixed_upos[upos];
 }
 
 morph_model::morph_feats_t LemmatizationImpl::get_morph_feats(std::shared_ptr< StdMatrix<uint8_t> > classes, size_t idx) const
@@ -130,7 +137,12 @@ morph_model::morph_feats_t LemmatizationImpl::get_morph_feats(std::shared_ptr< S
   std::vector<size_t> feats(lang_morph_model.get_feats_count());
 
   const auto& feat2cls = m_feat2cls;
-  const morph_model::morph_feats_t v = lang_morph_model.convert([idx, &feat2cls, &classes](size_t feat_idx) {
+  // The tagger's values in the lemmatization model's: its lemma dictionary and
+  // rules are keyed on them. Taking the tagger's indices as they were was only
+  // right for a tagger trained on the same corpus (a treebank's own tagger with
+  // a merged corpus' lemmatizer: fr-GSD test Lemmas 97.6 -> 87.1)
+  const auto& value_map = m_feat_value_map;
+  const morph_model::morph_feats_t v = lang_morph_model.convert([idx, &feat2cls, &value_map, &classes](size_t feat_idx) {
     if (feat_idx == std::numeric_limits<size_t>::max())
     {
       throw std::runtime_error(std::string("get_morph_feats wrong feat_idx: max size_t"));
@@ -144,7 +156,9 @@ morph_model::morph_feats_t LemmatizationImpl::get_morph_feats(std::shared_ptr< S
     if (class_idx == std::numeric_limits<size_t>::max())
       return std::numeric_limits<uint64_t>::max();
     assert(class_idx != std::numeric_limits<uint64_t>::max());
-    return classes->get(idx, class_idx);
+    const uint64_t tagger_value = classes->get(idx, class_idx);
+    const auto& map = value_map[feat_idx];
+    return tagger_value < map.size() ? map[tagger_value] : uint64_t(0);
   });
 
   return v;
