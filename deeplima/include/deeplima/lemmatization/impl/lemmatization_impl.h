@@ -61,6 +61,12 @@ protected:
   EmbdVectorizer m_vectorizer;
   EmbdVectorizer m_feat_vectorizer;
   std::vector<size_t> m_feat2cls;
+  /** per feature of the lemmatization model, its value index for each value
+   * index of the tagger (matched by name: empty when the tagger lacks the
+   * feature). A tagger trained on another corpus numbers its values otherwise */
+  std::vector<std::vector<uint64_t>> m_feat_value_map;
+  /** the upos feature in m_feat_value_map */
+  size_t m_upos_feat_idx = std::numeric_limits<size_t>::max();
   /** index in the features matrix of the upos line*/
   size_t m_upos_idx;
   /** index i is true if upos whose index is i is considered as fixed*/
