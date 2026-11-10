@@ -184,13 +184,13 @@ public:
 
     inline uint32_t head() const
     {
-      return m_heads->get(m_current, 0);
+      return m_heads->get(m_offset + m_current, 0);
     }
 
     // Predicted deprel (relation label) id, or 0 if the model has no label decoder.
     inline uint32_t rel() const
     {
-      return (m_heads->size() >= 2) ? m_heads->get(m_current, 1) : 0;
+      return (m_heads->size() >= 2) ? m_heads->get(m_offset + m_current, 1) : 0;
     }
 
     // Predicted deprel as a string ("dep" if no vocabulary is available).
@@ -546,8 +546,7 @@ protected:
       m_lengths.pop_back();
       start_analysis(m_current_buffer, first_timepoint_idx, m_lengths, open_begin);
       m_started = true;
-      // start_analysis() returns once the buffer's results are emitted, so its
-      // tokens can be read here
+      // The parse of the buffer only reads its tokens: they can be read here
       const size_t from = m_current_buffer;
       acquire_buffer();
       for (size_t i = 0; i < open_len; ++i)
@@ -988,20 +987,22 @@ public:
     send_results_if_available();
     acquire_slot(slot_no);
     size_t count = (timepoints_to_analyze > 0) ? timepoints_to_analyze : buffer.size();
+    // Each slot has its own columns of the shared input and output tensors, so
+    // that the workers parse several buffers at once: token i of the buffer is
+    // vectorised at column base + i, its head and label are written there, and
+    // TokenIterator reads them back at base + i (its offset). Heads are local to
+    // the sentence. Writing and reading at different places shifted the heads
+    // (head ≈ gold − first_timepoint_idx, before #197).
+    (void) first_timepoint_idx;
+    const uint64_t base = deeplima::graph_dp::impl::GraphDependencyParser::get_slot_base(slot_no);
     for (size_t i = 0; i < count; i++)
     {
-      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), i, buffer[i]);
+      m_vectorizer.vectorize_timepoint(eigen_wrp::EigenMatrixXf::get_tensor(), base + i, buffer[i]);
     }
 
-    // Tokens are vectorised at local columns [0,count) and the TokenIterator reads
-    // heads back at the same local index, so the slot's input/output must begin at
-    // 0 too. Using first_timepoint_idx here shifted the decoder's writes by that
-    // amount whenever a buffer didn't start at timepoint 0, corrupting those
-    // sentences' heads (head ≈ gold − first_timepoint_idx).
-    (void) first_timepoint_idx;
     deeplima::graph_dp::impl::GraphDependencyParser::set_slot_lengths(slot_no, lengths);
-    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, 0);
-    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, count);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_begin(slot_no, base);
+    deeplima::graph_dp::impl::GraphDependencyParser::set_slot_end(slot_no, base + count);
 
     // auto& slot = deeplima::graph_dp::impl::GraphDependencyParser::m_slots[slot_no];
 
@@ -1014,22 +1015,11 @@ public:
     deeplima::graph_dp::impl::GraphDependencyParser::start_job(slot_no, timepoints_to_analyze > 0);
     // std::cerr << "Slot " << slot_no << " sent to inference engine (graph_dp)" << std::endl;
 
-    // EAGER consumption. There are only num_slots output regions in the shared
-    // tensor but arbitrarily many 128-token buffers, so a later buffer reuses this
-    // slot's region. The lazy send (at slot reuse / finalize) let a following
-    // buffer overwrite this one's heads before they were read -> corrupted parses
-    // for inputs > one buffer and an OOB crash in the dumper. Wait for THIS slot's
-    // job to finish and emit its results now, before any other buffer touches the
-    // tensor. The deferred send_results_if_available()/send_all_results() then find
-    // nothing left and become no-ops, so each slot is still emitted exactly once.
-    while (deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no) > 1)
-    {
-      deeplima::graph_dp::impl::GraphDependencyParser::wait_for_slot(slot_no);
-    }
-    if (1 == deeplima::graph_dp::impl::GraphDependencyParser::get_lock_count(slot_no))
-    {
-      send_results(slot_no);
-    }
+    // No wait here: the workers parse the following buffers meanwhile. Results
+    // are emitted in order (send_next_results, send_all_results) and a slot's
+    // region is only rewritten when its buffer comes back, which acquire_buffer()
+    // and acquire_slot() delay until its results were sent. (#197 waited here,
+    // when every slot used columns 0 to count: one buffer at a time.)
   }
 
   inline void no_more_data(size_t slot_no)

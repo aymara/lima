@@ -167,18 +167,17 @@ void init(const std::map<std::string, std::string>& models_fn,
 
       try
       {
-        // The parser runs a single inference worker on purpose: its throughput is
-        // bounded by the serial inference stage, and multi-slot pipelining is not
-        // yet correct (the head-value/dumper contract is coupled to a per-slot base
-        // of 0). Eigen intra-op parallelism is disabled globally (setNbThreads(1)),
-        // and the segmenter/tagger above DO scale via `threads`.
+        // One inference worker per thread (at most one per buffer, 8): each
+        // buffer has its own columns of the parser's tensors, so the workers
+        // parse buffers in parallel and their results are emitted in order.
+        // Eigen intra-op parallelism is disabled globally (setNbThreads(1)).
         parser = std::make_shared<DependencyParser>(models_fn.find("dp")->second,
                                                           path_resolver,
                                                           panalyzer->get_stridx(),
                                                           panalyzer->get_class_names(),
                                                           DP_BUFFER_SIZE,
                                                           8,
-                                                          1);
+                                                          threads);
       }
       catch (const std::runtime_error& e)
       {
