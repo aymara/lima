@@ -64,7 +64,7 @@ CoNLLUDataSet::CoNLLUDataSet(const CoNLLU::Annotation& annot,
       m_embd_feat_descr.push_back({
                                     CoNLLUToTorchMatrix::str_feature,
                                     m_feat_extractor.feats()[i],
-                                    tag_embd_dim,
+                                    static_cast<int>(tag_embd_dim),
                                     morph_tag_dh[i]
                                   });
     }
