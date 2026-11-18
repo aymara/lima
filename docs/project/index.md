@@ -13,7 +13,7 @@ industrial projects for more than twenty years.
 | --- | --- |
 | [aymara/lima](https://github.com/aymara/lima) | LIMA itself, including this documentation |
 | [aymara/lima-python](https://github.com/aymara/lima-python) | The Python bindings (`aymara` package on PyPI) |
-| [aymara/lima-models](https://github.com/aymara/lima-models) | The neural models and their evaluation |
+| [aymaralima/deeplima](https://huggingface.co/aymaralima/deeplima) | The neural models and their evaluation |
 | [aymara/svmtool-cpp](https://github.com/aymara/svmtool-cpp) | The C++ port of SVMTool used by the legacy taggers |
 | [aymara/qhttpserver](https://github.com/aymara/qhttpserver) | The HTTP server library used by `limaserver` |
 

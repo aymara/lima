@@ -71,10 +71,11 @@ ENV LIBTORCH_PATH=/src/lima/extern/libtorch/
 #
 RUN cmake -G Ninja -DLIMA_RESOURCES:STRING=build -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_BUILD_TYPE:STRING=Release -DLIMA_VERSION_RELEASE:STRING="$(cat /src/lima/release)" -DSHORTEN_POR_CORPUS_FOR_SVMLEARN:BOOL=ON -DCTEST_OUTPUT_ON_FAILURE=ON -DWITH_DEBUG_MESSAGES=ON -DWITH_ARCH=OFF -DWITH_ASAN=OFF -DWITH_GUI=ON -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH -DQT_VERSION_MAJOR=${QT_VERSION_MAJOR} ..
 RUN ninja && ninja install
-# Some models are necessary for unit tests to work, let's use a previous
-# version of lima-python to install them, then run tests and finally remove
-# old aymara/lima and downloaded models
-RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install --break-system-packages ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall --break-system-packages -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+# The deepud unit tests need models (the French default one, which
+# LimaAnalyzerTest0 names, and eng-UD_English-EWT, LimaAnalyzerTestForgedPipeline's): install them with LIMA's own lima_models.py, from
+# the models release it names (when it is not published yet, the deepud
+# tests are skipped), run the tests, then remove it
+RUN (python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i fra && python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i eng-UD_English-EWT || echo "No model release available: the deepud tests are skipped") && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
 
 RUN ninja package
 # Stage the installed tree and the packages for the final image

@@ -12,7 +12,7 @@ available under the MIT license.
 
 - **Neural modules** (libtorch) for tokenization, part-of-speech tagging and
   morphological features, lemmatization and dependency parsing, with
-  [models for more than 60 languages](https://github.com/aymara/lima-models).
+  [models for more than 60 languages](https://huggingface.co/aymaralima/deeplima).
 - **ModEx**, a powerful rule-based mechanism to extract entities, relations
   and events in domains where no annotated data exists.
 

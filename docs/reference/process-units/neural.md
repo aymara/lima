@@ -7,9 +7,9 @@ libtorch. They are used by the `deepud`, `deepud-pretok` and `deeplima`
 
 Their model file names are built from a prefix in which `$udlang` is replaced
 by the treebank identifier selected at analysis time (e.g.
-`eng-UD_English-EWT`, see [Language models](../../usage/models.md)). Models
+`eng-UD_English-MERGE`, see [Language models](../../usage/models.md)). Models
 are searched in the `ud` subdirectory of the unit's directory in the
-resources, e.g. `RnnTokenizer/ud/tokenizer-eng-UD_English-EWT.pt`.
+resources, e.g. `RnnTokenizer/ud/tokenizer-eng-UD_English-MERGE.pt`.
 
 All these units accept a `data` parameter naming the sentence boundaries data
 they use or produce (default: `SentenceBoundaries`).

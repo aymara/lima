@@ -49,12 +49,12 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
     file:
 
     ```bash
-    lima_models.py -l eng-UD_English-EWT
-    analyzeText -l eng-UD_English-EWT -p deepud /data/my-text.txt
+    lima_models.py -i eng
+    analyzeText -l eng-UD_English-MERGE -p deepud /data/my-text.txt
     ```
 
-    `lima_models.py -l eng` would pick the best English treebank and print
-    the exact `-l` value to use. Continue with [Language models](usage/models.md) and
+    `lima_models.py -i eng` installs the default English model,
+    `eng-UD_English-MERGE`, and prints the identifier to use. Continue with [Language models](usage/models.md) and
     [the command line](usage/cli.md).
 
 ## What next?

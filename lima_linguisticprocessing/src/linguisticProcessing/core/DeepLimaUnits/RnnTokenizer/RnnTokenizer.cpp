@@ -374,24 +374,49 @@ void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<
   sentences.reserve(text.size() / 15);
 
   std::vector< TPrimitiveToken > current_sentence;
-  int current_token_offset = 0;
 
   auto text_utf8 = text.toStdString();
 
-  m_segm->register_handler([this, &sentences, &current_sentence, &current_token_offset]
+  // Token positions, in the QString units of the text (LIMA's positions; the
+  // token lengths are QString sizes too). deeplima gives, per token, the
+  // number of UTF-8 bytes since the end of the previous one (m_offset: the
+  // spaces before it) and its own byte length: the position was the previous
+  // token's end, before its spaces were added, and in bytes, so that every
+  // token after a space was one character early and every non-ASCII
+  // character shifted the rest of the text (lima-python spans cut words).
+  size_t byte_offset = 0;   // in text_utf8
+  int char_offset = 0;      // in text
+  auto advance = [&text_utf8, &byte_offset, &char_offset](size_t bytes)
+  {
+    const auto end = std::min(byte_offset + bytes, text_utf8.size());
+    for (; byte_offset < end; ++byte_offset)
+    {
+      const auto b = static_cast<unsigned char>(text_utf8[byte_offset]);
+      if ((b & 0xC0) != 0x80)
+      {
+        // A character's first byte; one beyond the BMP is two QChars
+        char_offset += ((b & 0xF8) == 0xF0) ? 2 : 1;
+      }
+    }
+  };
+
+  m_segm->register_handler([this, &sentences, &current_sentence, &char_offset, &advance]
                           (const std::vector<segmentation::token_pos>& tokens,
                            uint32_t len)
   {
     for (size_t i = 0; i < len; i++)
     {
       const auto& tok = tokens[i];
+      // An empty token may still carry an offset (the decoder splits long
+      // gaps so that m_offset does not overflow)
+      advance(tok.m_offset);
       if (0 == tok.m_len)
       {
         continue;
       }
-      append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), current_token_offset,
+      append_new_word(current_sentence, QString::fromUtf8(tok.m_pch, tok.m_len), char_offset,
                       tok.m_flags);
-      current_token_offset += (tok.m_offset + tok.m_len);
+      advance(tok.m_len);
       if (tok.m_flags & token_flags_t::sentence_brk)
       {
         sentences.push_back(current_sentence);

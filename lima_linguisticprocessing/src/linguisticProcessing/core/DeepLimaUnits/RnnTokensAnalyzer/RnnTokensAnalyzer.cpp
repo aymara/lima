@@ -287,13 +287,16 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
             {
                 propertyManager = &microManager;
             }
-            else if(name=="ExtPos" || name=="Style")
+            else if(name=="ExtPos" || name=="Style" || name=="xpos")
             {
+                // xpos is a treebank-specific tagset, not LIMA's MACRO: MACRO is
+                // the parent of MICRO, so writing an xpos there replaced the
+                // macro category of the UPOS just written. A model whose xpos
+                // classes include UPOS-like names (merged corpora mixing
+                // treebanks with and without xpos, e.g. Greek GDT and GUD)
+                // turned whole texts into ADJ (its xpos class 0). The CoNLL-U
+                // dumper prints no xpos anyway.
                 continue;
-            }
-            else if(name=="xpos")
-            {
-                propertyManager = &propertyCodeManager.getPropertyManager("MACRO");
             }
             else
             {

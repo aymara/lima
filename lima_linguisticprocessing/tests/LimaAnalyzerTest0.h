@@ -33,6 +33,7 @@ private Q_SLOTS:
   void test_analyzeText_multibyte_single_char_token();
   void test_analyzeText_multibyte_forms_preserved();
   void test_analyzeText_multibyte_wide_chars();
+  void test_analyzeText_token_positions();
   // void test_forged_pipeline();
 
 private:

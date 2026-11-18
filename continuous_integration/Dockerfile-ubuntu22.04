@@ -107,10 +107,11 @@ RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
     && bash /src/lima/continuous_integration/populate-hwcaps.sh /opt/lima-v3 /staging/usr x86-64-v3 \
     && rm -rf /opt/lima-v3 /src/lima/build-v3
 
-# Some models are necessary for unit tests to work, let's use a previous
-# version of lima-python to install them, then run tests and finally remove
-# old aymara/lima and downloaded models
-RUN wget -q https://github.com/aymara/lima-python/releases/download/continuous/aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && pip install ./aymara-0.5.0b6-cp37-abi3-manylinux_2_28_x86_64.whl && lima_models -i eng && deeplima_models -i UD_English-EWT && pip uninstall -y aymara && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+# The deepud unit tests need models (the French default one, which
+# LimaAnalyzerTest0 names, and eng-UD_English-EWT, LimaAnalyzerTestForgedPipeline's): install them with LIMA's own lima_models.py, from
+# the models release it names (when it is not published yet, the deepud
+# tests are skipped), run the tests, then remove it
+RUN (python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i fra && python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i eng-UD_English-EWT || echo "No model release available: the deepud tests are skipped") && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
 
 RUN bash -c 'mkdir -p /staging/usr && if [[ "$PACKAGES" == "yes" ]] ; then ninja package && install -D -t /staging/usr/share/apps/lima/packages /src/lima/build/*.deb ; fi'
 

@@ -42,12 +42,12 @@ SPDX-License-Identifier: MIT
       <list name="processUnitSequence">
         <item value="RnnTokenizer"/>
         <item value="RnnTokensAnalyzer"/>
+        <item value="RnnDependencyParser"/>
         <item value="SpecificEntitiesModexAfterPos"/>
 <!--         <item value="specificEntitiesXmlLogger"/> -->
-<!--     compoundBuilderFromSyntacticData needs a dependency graph (SyntacticData),
-         which this pipeline does not produce (no RnnDependencyParser, and the
-         deeplima English models ship no dependency parser). Re-enable it together
-         with a dependency parser once English parsing models are available. -->
+<!--     compoundBuilderFromSyntacticData needs a dependency graph (SyntacticData):
+         the English models have a parser since the 2026 campaign, but the
+         compounds have not been checked on its UD relations yet. -->
 <!--         <item value="compoundBuilderFromSyntacticData"/> -->
         <item value="conllDumper"/>
       </list>
@@ -85,6 +85,11 @@ SPDX-License-Identifier: MIT
     <group name="RnnTokensAnalyzer" class="RnnTokensAnalyzer">
       <param key="tagger_model_prefix" value="tagger-$udlang"/>
       <param key="lemmatizer_model_prefix" value="lemmatizer-$udlang"/>
+    </group>
+    <!-- Without its model (dependencyParser-<udlang>.pt), the unit is a no-op -->
+    <group name="RnnDependencyParser" class="RnnDependencyParser">
+      <param key="tagger_model_prefix" value="tagger-$udlang"/>
+      <param key="dependency_parser_model_prefix" value="dependencyParser-$udlang"/>
     </group>
 
     <group name="conllureader" class="ConlluReader">

@@ -33,6 +33,6 @@ The Python bindings are also released under the MIT license; parts of their API
 and documentation are adapted from [spaCy](https://spacy.io/) (MIT license).
 
 The language models distributed in
-[aymara/lima-models](https://github.com/aymara/lima-models) are trained on
+[aymaralima/deeplima](https://huggingface.co/aymaralima/deeplima) are trained on
 Universal Dependencies treebanks, which have their own licenses: check the
 license of the treebank you use.

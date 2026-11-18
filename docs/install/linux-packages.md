@@ -46,6 +46,6 @@ Two optional dependencies are distributed by the LIMA project:
 [Install language models](../usage/models.md) and analyze a text:
 
 ```bash
-lima_models.py -l eng-UD_English-EWT
-analyzeText -l eng-UD_English-EWT -p deepud my-text.txt
+lima_models.py -i eng
+analyzeText -l eng-UD_English-MERGE -p deepud my-text.txt
 ```

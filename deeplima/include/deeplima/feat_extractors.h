@@ -284,6 +284,12 @@ public:
     return it->second;
   }
 
+  // An empty UPOS or XPOS ("_" in the CoNLL-U file) as a class of its own
+  inline static std::string missing_as_underscore(const std::string& value)
+  {
+    return value.empty() ? std::string("_") : value;
+  }
+
   inline std::string feat_value(const Token& token, int feat_no) const
   {
     assert(feat_no >= 0);
@@ -298,11 +304,17 @@ public:
     }
     else if (-1 != m_upos && m_upos == feat_no)
     {
-      return token.upos();
+      return missing_as_underscore(token.upos());
     }
     else if (-1 != m_xpos && m_xpos == feat_no)
     {
-      return token.xpos();
+      // A treebank without xpos (all "_", read as "") must not be learned as
+      // a real tag: the tagger's class dictionaries have no UNK, the empty
+      // value is left out of them and get_idx("") returns 0, the first tag
+      // ("ADJ" for Greek GDT+GUD), which LIMA then output as the UPOS. As
+      // input of the parser, "_" is unknown to the models trained before
+      // (UNK, as "" was) and a value of its own for the new ones.
+      return missing_as_underscore(token.xpos());
     }
     else if (-1 != m_rel && m_rel == feat_no)
     {

@@ -1,107 +1,108 @@
 # Language models
 
-LIMA's neural pipelines need models, one set per
-[Universal Dependencies](https://universaldependencies.org/) treebank. They are
+LIMA's neural pipelines need models, trained on
+[Universal Dependencies](https://universaldependencies.org/) treebanks. They are
 not installed with LIMA: download the ones for the languages you need.
 
-Models are published in the
-[aymara/lima-models](https://github.com/aymara/lima-models) repository, for
-more than 60 languages. Each archive contains, depending on the language:
+Models are published on the Hugging Face Hub, in the
+[aymaralima/deeplima](https://huggingface.co/aymaralima/deeplima) repository,
+one tag per release. Its model card lists the languages, the treebanks each
+model was trained on, their licenses and the evaluation scores. Each model
+contains, depending on the language:
 
 | Model | Directory in the resources | Used by |
 | --- | --- | --- |
-| Tokenizer and sentence splitter | `RnnTokenizer/ud/tokenizer-<treebank>.pt` | `RnnTokenizer` |
-| PoS tagger and morphological features | `RnnTagger/ud/tagger-<treebank>.pt` | `RnnTokensAnalyzer` |
-| Lemmatizer (optional) | `RnnLemmatizer/ud/lemmatizer-<treebank>.pt` | `RnnTokensAnalyzer` |
-| Dependency parser (optional) | `RnnDependencyParser/ud/dependencyParser-<treebank>.pt` | `RnnDependencyParser` |
-| Word embeddings | `embd/*.ftz` | all of the above |
+| Tokenizer, sentence splitter and multiword-token dictionary | `RnnTokenizer/ud/tokenizer-<model>.pt[.mwt]` | `RnnTokenizer` |
+| PoS tagger and morphological features | `RnnTagger/ud/tagger-<model>.pt` | `RnnTokensAnalyzer` |
+| Lemmatizer (optional) | `RnnLemmatizer/ud/lemmatizer-<model>.{pt,dic,rules}` | `RnnTokensAnalyzer` |
+| Dependency parser (optional) | `RnnDependencyParser/ud/dependencyParser-<model>.pt` | `RnnDependencyParser` |
+| Word embeddings | `embd/*.ftz` | the tagger and the parser |
 
 When an optional model is missing, the corresponding unit does nothing: the
 LEMMA, HEAD or DEPREL columns of the output are left empty.
 
-## Installing models with `lima_models.py`
+Most languages have a **default model**, trained on all the treebanks of the
+language (`<code>-UD_<Language>-MERGE`, e.g. `fra-UD_French-MERGE`), the one
+to use for general text. Some languages also have **treebank models**, whose
+tagger and parser (sometimes tokenizer) were trained on one treebank only,
+because they analyze better the text of that treebank (e.g.
+`fra-UD_French-ALTS`, for Middle French): use them only for such text. And
+most models have a **more accurate variant**, slower.
 
-LIMA (Docker image, packages or source build) provides the `lima_models.py`
-command:
+## Installing models with `lima_models`
 
-```text
-usage: lima_models.py [-h] [-i] [-l LANG] [-d DEST] [-f] [-L]
-
-  -i, --info            print the list of available languages/treebanks and exit
-  -l LANG, --lang LANG  language code, language name or explicit treebank to install
-                        (e.g. 'fra', 'french' or 'fra-UD_French-GSD')
-  -d DEST, --dest DEST  destination directory
-  -f, --force           force reinstallation of existing files
-  -L, --list            list installed models
-```
-
-For example:
+LIMA (Docker image, packages or source build) provides `lima_models.py`, and
+the Python package the same command as `lima_models`:
 
 ```bash
-lima_models.py -i                     # list the available languages and treebanks
-lima_models.py -l fra                 # install the best French treebank
-lima_models.py -l fra-UD_French-GSD   # install a specific treebank
-lima_models.py -L                     # list the installed models
+lima_models -a                     # list the available languages and models
+lima_models -i fra                 # install the default French model
+lima_models -i french              # the same, by language name
+lima_models -i fra-UD_French-ALTS  # install a given model
+lima_models -i fra --accurate      # the more accurate variant
+lima_models -L                     # list the installed models
+lima_models -r fra                 # remove the French models (-f: without asking)
 ```
 
-There are usually several treebanks per language. Given a language code or
-name, `lima_models.py` picks the treebank with the best scores; give an
-explicit treebank name to override this choice. At the end of the
-installation, it prints the exact command line to use.
+`lima_models.py -l fra` also installs (and `-l` alone lists the installed
+models), as in former versions. Models are installed in
+`$XDG_DATA_HOME/lima/resources`, or in `~/.local/share/lima/resources` if
+`XDG_DATA_HOME` is not defined, where LIMA looks for them automatically. Use
+`-d` to install them elsewhere and add that directory to `LIMA_RESOURCES` (see
+[Configuring LIMA](configuration.md)). Downloads are checked against the
+checksums of the release, and the embeddings, shared by the models of a
+language, are downloaded once.
 
-Models are installed in `$XDG_DATA_HOME/lima/resources`, or in
-`~/.local/share/lima/resources` if `XDG_DATA_HOME` is not defined, where LIMA
-looks for them automatically. Use `-d` to install them elsewhere and add that
-directory to `LIMA_RESOURCES` (see [Configuring LIMA](configuration.md)).
+Each version of LIMA names the models release it was tested with. Set
+`LIMA_MODELS_REVISION` to install another release, and `LIMA_MODELS_URL` to
+install from a mirror, or from a local directory holding a release (its
+`models.json` and files).
 
 ## Selecting a model at analysis time
 
-The models are selected by the **treebank identifier**, the
-`<language code>-<treebank>` stem of the installed files, e.g.
-`eng-UD_English-EWT` or `fra-UD_French-GSD`. There are two equivalent ways to
-pass it:
+The models are selected by their **identifier**, the
+`<language code>-<corpus>` stem of the installed files, e.g.
+`eng-UD_English-MERGE` or `fra-UD_French-ALTS`. There are two equivalent ways
+to pass it:
 
 ```bash
-# Use the treebank identifier as the language
-analyzeText -l fra-UD_French-GSD -p deepud my-text.txt
+# Use the model identifier as the language
+analyzeText -l fra-UD_French-MERGE -p deepud my-text.txt
 
-# Or use the generic "ud" language and give the treebank as metadata
-analyzeText -l ud --meta udlang:fra-UD_French-GSD -p deepud my-text.txt
+# Or use the generic "ud" language and give the model as metadata
+analyzeText -l ud --meta udlang:fra-UD_French-MERGE -p deepud my-text.txt
 ```
 
 Each language is also registered as `ud-<code>` (`ud-eng`, `ud-fra`,
-`ud-spa`…). With these names, the treebank must be given explicitly:
+`ud-spa`…). With these names, the model must be given explicitly:
 
 ```bash
-analyzeText -l ud-eng --meta udlang:eng-UD_English-EWT -p deepud my-text.txt
+analyzeText -l ud-eng --meta udlang:eng-UD_English-MERGE -p deepud my-text.txt
 ```
 
-From Python, pass the same information when creating the analyzer:
+From Python, pass the same information when creating the analyzer, or give
+only the language: the default model installed by `lima_models` for it is
+then used:
 
 ```python
 import aymara.lima
 nlp = aymara.lima.Lima("ud", pipes="deepud",
-                       meta={"udlang": "fra-UD_French-GSD"})
+                       meta={"udlang": "fra-UD_French-MERGE"})
+nlp = aymara.lima.Lima("ud-fra", pipes="deepud")   # after lima_models -i fra
 ```
 
 ## Models of the Python package
 
 --8<-- "pypi-release-note.md"
 
-With the PyPI package, use:
-
-- `lima_models -i <lang>` (e.g. `lima_models -i eng`) to install the models
-  used by the `ud-<lang>` pipelines; `lima_models -a` lists the available
-  languages and `lima_models -l` the installed ones;
-- `deeplima_models` to install the libtorch models from
-  [Hugging Face](https://huggingface.co/aymaralima/deeplima): `deeplima_models -a`
-  lists the available treebanks, `deeplima_models -i UD_English-EWT` installs
-  one and `deeplima_models -l` lists the installed ones.
+The Python package installs the same models with the same command,
+`lima_models` (`deeplima_models` is kept as a synonym).
 
 ## Embeddings and memory
 
-The taggers and parsers use [fastText](https://fasttext.cc/) word embeddings.
-The original fastText files are about 7 GB per language; lima-models
-distributes quantized versions (around 600 MB per language), which slightly
-lower the analysis quality. Depending on the language, analysis may need
-several GB of RAM.
+The taggers and parsers use [fastText](https://fasttext.cc/) word embeddings,
+trained on the [C4](https://huggingface.co/datasets/allenai/c4) corpus. The
+original fastText files are several GB per language; the models use quantized
+versions (from about 100 MB to 1 GB per language), which slightly lower the
+analysis quality. Depending on the language, analysis may need several GB of
+RAM.
