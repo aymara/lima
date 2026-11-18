@@ -31,6 +31,7 @@
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
 
 
+#include <algorithm>
 #include <deque>
 #include <fstream>
 #include <iostream>
@@ -66,8 +67,20 @@ void LimaAnalyzerTestForgedPipeline::test_forged_pipeline()
     // kept as the generic "ud". MediaticData forwards this option to the process
     // units, so RnnTokenizer/RnnTokensAnalyzer resolve $udlang to the treebank stem
     // and load RnnTokenizer/ud/tokenizer-eng-UD_English-EWT.pt etc., as installed by
-    // `deeplima_models -i UD_English-EWT`. This mirrors:
+    // `lima_models -i eng-UD_English-EWT`. This mirrors:
     //   lima -l ud --meta udlang:eng-UD_English-EWT -p deeplima <file>
+    // Without the model, adding RnnTokensAnalyzer throws ("tagger model file
+    // not found") and aborts the whole test program: skip, as the deepud tests
+    // of LimaAnalyzerTest0 do
+    const QString tagger = "RnnTagger/ud/tagger-eng-UD_English-EWT.pt";
+    QStringList dirs = qEnvironmentVariable("LIMA_RESOURCES").split(':', Qt::SkipEmptyParts);
+    const QString xdg = qEnvironmentVariable("XDG_DATA_HOME",
+                                             QDir::homePath() + "/.local/share");
+    dirs << xdg + "/lima/resources";
+    if (std::none_of(dirs.begin(), dirs.end(),
+                     [&tagger](const QString& d) { return QFile::exists(d + "/" + tagger); }))
+        QSKIP("eng-UD_English-EWT model not installed (lima_models -i eng-UD_English-EWT)");
+
     LimaAnalyzer lima("ud", "empty", "", "", "", "udlang:eng-UD_English-EWT");
 
     qDebug() << "LimaAnalyzerTestForgedPipeline::test_forged_pipeline add tokenizer";
