@@ -112,8 +112,9 @@ RUN mkdir -p /src/lima/build-v3 && cd /src/lima/build-v3 \
 
 # The deepud unit tests need a model (the French default one, which
 # LimaAnalyzerTest0 names): install it with LIMA's own lima_models.py, from
-# the models release it names, run the tests, then remove it
-RUN python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i fra && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
+# the models release it names (when it is not published yet, the deepud
+# tests are skipped), run the tests, then remove it
+RUN (python3 /src/lima/lima_linguisticprocessing/src/linguisticProcessing/core/DeepLimaUnits/scripts/lima_models.py -i fra || echo "No model release available: the deepud tests are skipped") && (ctest || ctest --rerun-failed --output-on-failure) && rm -Rf $HOME/.local/share/lima
 
 
 # Final image: base + installed LIMA
