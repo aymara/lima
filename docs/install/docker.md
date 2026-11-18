@@ -29,8 +29,8 @@ The image does not include language models. Inside the container, install the
 ones you need and analyze your files:
 
 ```bash
-lima_models.py -l eng-UD_English-EWT
-analyzeText -l eng-UD_English-EWT -p deepud /data/my-text.txt
+lima_models.py -i eng
+analyzeText -l eng-UD_English-MERGE -p deepud /data/my-text.txt
 ```
 
 To keep the models between runs, mount a volume on the models directory, e.g.
@@ -45,13 +45,13 @@ are read from `lima-server.xml`; see `limaserver --help`):
 ```bash
 docker run -p 8080:8080 -v lima-models:/root/.local/share/lima \
     aymara/lima-ubuntu22.04:latest \
-    limaserver --language eng-UD_English-EWT --pipelines deepud
+    limaserver --language eng-UD_English-MERGE --pipelines deepud
 ```
 
 Then send it some text:
 
 ```bash
-curl "http://localhost:8080/?lang=eng-UD_English-EWT&pipeline=deepud" \
+curl "http://localhost:8080/?lang=eng-UD_English-MERGE&pipeline=deepud" \
     --data-binary @file.txt
 ```
 

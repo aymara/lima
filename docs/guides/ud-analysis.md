@@ -16,22 +16,22 @@ on the in-tree `deeplima` library and libtorch.
 Install the [models](../usage/models.md) of the treebanks you need:
 
 ```bash
-lima_models.py -i                     # available languages and treebanks
-lima_models.py -l fra                 # best French treebank
-lima_models.py -l fra-UD_French-GSD   # or a specific one
+lima_models.py -a                    # available languages and models
+lima_models.py -i fra                # the default French model (fra-UD_French-MERGE)
+lima_models.py -i fra-UD_French-ALTS # or a specific one (Middle French)
 ```
 
 ## Usage
 
-The examples below use `fra-UD_French-GSD`; use the treebank identifier
+The examples below use `fra-UD_French-MERGE`; use the model identifier
 printed by `lima_models.py` for the one you installed.
 
 ```bash
 # Raw text
-analyzeText -l fra-UD_French-GSD -p deepud my-text.txt
+analyzeText -l fra-UD_French-MERGE -p deepud my-text.txt
 
 # Pre-tokenized text
-analyzeText -l fra-UD_French-GSD -p deepud-pretok my-corpus.conllu
+analyzeText -l fra-UD_French-MERGE -p deepud-pretok my-corpus.conllu
 ```
 
 See [Language models](../usage/models.md#selecting-a-model-at-analysis-time)
@@ -62,7 +62,7 @@ normally.
 ## Performance
 
 The scores of the models for every treebank are reported in the
-[lima-models evaluation page](https://github.com/aymara/lima-models/blob/master/eval.md).
+[models card on Hugging Face](https://huggingface.co/aymaralima/deeplima).
 
 ## Limitations
 

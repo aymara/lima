@@ -191,7 +191,7 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_not_avail()
 // truncated to one byte, decoded to an empty string, and crashed the seq2seq
 // lemmatizer (input_len == 0). The analysis must now complete and keep "à".
 void LimaAnalyzerTest0::test_analyzeText_multibyte_single_char_token() {
-    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
     QVERIFY(!analyzer.error);
     auto result = analyzer.analyzeText("à Berlin.");
     if (result.empty())
@@ -203,7 +203,7 @@ void LimaAnalyzerTest0::test_analyzeText_multibyte_single_char_token() {
 
 // Multi-byte characters inside longer tokens must not be truncated in the output.
 void LimaAnalyzerTest0::test_analyzeText_multibyte_forms_preserved() {
-    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
     QVERIFY(!analyzer.error);
     auto result = analyzer.analyzeText("A café, a naïve résumé.");
     if (result.empty())
@@ -216,7 +216,7 @@ void LimaAnalyzerTest0::test_analyzeText_multibyte_forms_preserved() {
 // Wider UTF-8 sequences (3-byte em dash, 4-byte emoji) must not crash the analysis
 // nor corrupt neighbouring ASCII tokens.
 void LimaAnalyzerTest0::test_analyzeText_multibyte_wide_chars() {
-    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-GSD");
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
     QVERIFY(!analyzer.error);
     // 3-byte em dash "—" and a 4-byte emoji "😀" between ASCII tokens.
     auto result = analyzer.analyzeText("Voici — un test 😀 final.");
@@ -259,5 +259,23 @@ void LimaAnalyzerTest0::test_analyzeText_multibyte_wide_chars() {
 //     QVERIFY(lima.error);
 // }
 
-QTEST_GUILESS_MAIN(LimaAnalyzerTest0)
+// Token positions are 1-based character offsets of the text. RnnTokenizer
+// gave the end of the previous token, before the spaces in between (one
+// character early after a space), counted in UTF-8 bytes (one more per
+// non-ASCII character before): lima-python spans cut words.
+void LimaAnalyzerTest0::test_analyzeText_token_positions() {
+    LimaAnalyzer analyzer("ud", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
+    QVERIFY(!analyzer.error);
+    auto result = analyzer.analyzeText("Un café chaud.");
+    if (result.empty())
+        QSKIP("deepud model not available in this environment");
+    QVERIFY(result.find("\tPos=1|Len=2") != std::string::npos);   // Un
+    QVERIFY(result.find("\tPos=4|Len=4") != std::string::npos);   // café
+    QVERIFY(result.find("\tPos=9|Len=5") != std::string::npos);   // chaud
+    QVERIFY(result.find("\tPos=14|Len=1") != std::string::npos);  // .
+    // "Un" is followed by a space (the early position of "café" made it
+    // look glued to it)
+    QVERIFY(result.find("\tPos=1|Len=2|SpaceAfter=No") == std::string::npos);
+}
 
+QTEST_GUILESS_MAIN(LimaAnalyzerTest0)

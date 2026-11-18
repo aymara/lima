@@ -4,7 +4,7 @@ The neural models used by LIMA are trained with the applications of the
 in-tree `deeplima` library, on
 [Universal Dependencies](https://universaldependencies.org/) treebanks and
 [fastText](https://fasttext.cc/) word embeddings. Trained models are published
-in [aymara/lima-models](https://github.com/aymara/lima-models).
+in [aymaralima/deeplima](https://huggingface.co/aymaralima/deeplima).
 
 ## Training applications
 
@@ -36,5 +36,5 @@ identifier used at analysis time:
 | Lemmatizer | `RnnLemmatizer/ud/lemmatizer-<treebank>.pt` (and optionally `.dic`) |
 | Dependency parser | `RnnDependencyParser/ud/dependencyParser-<treebank>.pt` |
 
-where `<treebank>` is e.g. `fra-UD_French-GSD`. Then analyze with
+where `<treebank>` is e.g. `fra-UD_French-MERGE`. Then analyze with
 `analyzeText -l <treebank> -p deepud` (see [Language models](../usage/models.md)).

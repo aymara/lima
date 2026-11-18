@@ -14,7 +14,7 @@ The package provides:
 - the `aymara.lima` Python module (see [Using LIMA from Python](../usage/python.md)
   and the [Python API reference](../reference/python-api.md));
 - a `lima` command to analyze files from the shell;
-- the model installers `lima_models` and `deeplima_models` (see
+- the model installer `lima_models` (`deeplima_models` is a synonym; see
   [Language models](../usage/models.md)).
 
 --8<-- "pypi-release-note.md"

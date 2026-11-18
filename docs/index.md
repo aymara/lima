@@ -17,7 +17,7 @@ LIMA combines two complementary approaches:
 - **Neural modules** (built on libtorch, the PyTorch C++ library) for
   tokenization, part-of-speech tagging and morphological features,
   lemmatization and dependency parsing, with
-  [models for more than 60 languages](https://github.com/aymara/lima-models)
+  [models for more than 60 languages](https://huggingface.co/aymaralima/deeplima)
   trained on [Universal Dependencies](https://universaldependencies.org/)
   treebanks.
 - **ModEx rules**: a powerful finite-state rule formalism to extract entities,

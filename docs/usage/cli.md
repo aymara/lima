@@ -4,7 +4,7 @@
 files with a given language and pipeline.
 
 ```bash
-analyzeText -l eng-UD_English-EWT -p deepud file1.txt file2.txt
+analyzeText -l eng-UD_English-MERGE -p deepud file1.txt file2.txt
 ```
 
 By default, the result is written on standard output in
@@ -20,7 +20,7 @@ selects the sequence of processing steps: see [Pipelines](pipelines.md).
 | --- | --- |
 | `-l`, `--language <lang>` | Language to initialize and use. Can be repeated |
 | `-p`, `--pipeline <name>` | Analysis pipeline to use |
-| `--meta <k1:v1,k2:v2>` | Metadata passed to the analysis, e.g. `udlang:eng-UD_English-EWT` |
+| `--meta <k1:v1,k2:v2>` | Metadata passed to the analysis, e.g. `udlang:eng-UD_English-MERGE` |
 | `-d`, `--dumper <name>` | Output handler to use (`text` by default; also `bow`, `bowh`, `fullxml`, `event`, `xmlbow`). The matching dumper must be in the pipeline |
 | `-o`, `--output <dumper>:<dest>` | Where a dumper writes: `stdout` or a suffix appended to the input file name |
 | `-s`, `--split-mode <mode>` | `none` (default), `lines` or `para`: analyze each line or paragraph independently |
@@ -39,13 +39,13 @@ selects the sequence of processing steps: see [Pipelines](pipelines.md).
 Analyze raw text with the full neural pipeline:
 
 ```bash
-analyzeText -l fra-UD_French-GSD -p deepud article.txt
+analyzeText -l fra-UD_French-MERGE -p deepud article.txt
 ```
 
 Analyze an already tokenized CoNLL-U file:
 
 ```bash
-analyzeText -l fra-UD_French-GSD -p deepud-pretok corpus.conllu
+analyzeText -l fra-UD_French-MERGE -p deepud-pretok corpus.conllu
 ```
 
 Run the rule-based named entity recognizer of the legacy English pipeline:
@@ -57,7 +57,7 @@ analyzeText -l eng -p ner-rules article.txt
 Analyze a file line by line (one sentence or document per line):
 
 ```bash
-analyzeText -l eng-UD_English-EWT -p deepud -s lines sentences.txt
+analyzeText -l eng-UD_English-MERGE -p deepud -s lines sentences.txt
 ```
 
 ## Other commands

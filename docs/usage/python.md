@@ -15,7 +15,7 @@ models, which takes some time) and call it on texts:
 import aymara.lima
 
 nlp = aymara.lima.Lima("ud-eng", pipes="deepud",
-                       meta={"udlang": "eng-UD_English-EWT"})
+                       meta={"udlang": "eng-UD_English-MERGE"})
 doc = nlp("The author wrote a novel. It was a success.")
 ```
 
@@ -28,7 +28,7 @@ The constructor takes:
   [Language models](models.md#selecting-a-model-at-analysis-time));
 - `pipes`: comma-separated list of pipelines to initialize (see
   [Pipelines](pipelines.md));
-- `meta`: metadata, e.g. `{"udlang": "eng-UD_English-EWT"}` to select the
+- `meta`: metadata, e.g. `{"udlang": "eng-UD_English-MERGE"}` to select the
   treebank of the models;
 - `user_config_path` and `user_resources_path`: directories searched before
   the configuration and resources of the package (see
