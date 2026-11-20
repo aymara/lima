@@ -61,6 +61,11 @@ SPDX-License-Identifier: MIT
         <item value="ud-nob" />
         <item value="ud-orv" />
         <item value="ud-pcm" />
+        <item value="ud-amh" />
+        <item value="ud-ben" />
+        <item value="ud-ekk" />
+        <item value="ud-isl" />
+        <item value="ud-nor" />
         <item value="ud-pol" />
         <item value="ud-por" />
         <item value="ud-ron" />
@@ -136,6 +141,11 @@ SPDX-License-Identifier: MIT
       <param key="ud-nob" value="143" />
       <param key="ud-orv" value="144" />
       <param key="ud-pcm" value="145" />
+      <param key="ud-amh" value="168" />
+      <param key="ud-ben" value="169" />
+      <param key="ud-ekk" value="170" />
+      <param key="ud-isl" value="171" />
+      <param key="ud-nor" value="172" />
       <param key="ud-pol" value="146" />
       <param key="ud-por" value="147" />
       <param key="ud-ron" value="148" />
@@ -211,6 +221,11 @@ SPDX-License-Identifier: MIT
       <param key="ud-nob" value="lima-common-ud.xml" />
       <param key="ud-orv" value="lima-common-ud.xml" />
       <param key="ud-pcm" value="lima-common-ud.xml" />
+      <param key="ud-amh" value="lima-common-ud.xml" />
+      <param key="ud-ben" value="lima-common-ud.xml" />
+      <param key="ud-ekk" value="lima-common-ud.xml" />
+      <param key="ud-isl" value="lima-common-ud.xml" />
+      <param key="ud-nor" value="lima-common-ud.xml" />
       <param key="ud-pol" value="lima-common-ud.xml" />
       <param key="ud-por" value="lima-common-ud.xml" />
       <param key="ud-ron" value="lima-common-ud.xml" />
