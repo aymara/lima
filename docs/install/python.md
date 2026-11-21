@@ -17,8 +17,6 @@ The package provides:
 - the model installer `lima_models` (`deeplima_models` is a synonym; see
   [Language models](../usage/models.md)).
 
---8<-- "pypi-release-note.md"
-
 The sources of the bindings are in the
 [aymara/lima-python](https://github.com/aymara/lima-python) repository, which
 also explains how to build the wheel.

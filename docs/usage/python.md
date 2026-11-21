@@ -4,12 +4,12 @@ The `aymara.lima` module gives access to LIMA's main features with an API
 inspired by [spaCy](https://spacy.io/). Install it with
 [pip](../install/python.md).
 
---8<-- "pypi-release-note.md"
-
 ## Analyzing text
 
 Create a `Lima` analyzer once (initialization loads the configuration and the
-models, which takes some time) and call it on texts:
+models, which takes some time) and call it on texts. Reuse it: an analyzer with
+a neural pipeline uses about 3 GB of memory, which is not released when it is
+deleted, so creating several in one process quickly exhausts the memory.
 
 ```python
 import aymara.lima
@@ -19,8 +19,8 @@ nlp = aymara.lima.Lima("ud-eng", pipes="deepud",
 doc = nlp("The author wrote a novel. It was a success.")
 ```
 
-With the 0.5.0b6 PyPI release, `aymara.lima.Lima("ud-eng")` is enough: that
-version selects the English models by itself.
+Without `udlang`, `aymara.lima.Lima("ud-eng")` uses the default model that
+`lima_models` installed for the language (e.g. after `lima_models -i eng`).
 
 The constructor takes:
 

@@ -93,8 +93,6 @@ nlp = aymara.lima.Lima("ud-fra", pipes="deepud")   # after lima_models -i fra
 
 ## Models of the Python package
 
---8<-- "pypi-release-note.md"
-
 The Python package installs the same models with the same command,
 `lima_models` (`deeplima_models` is kept as a synonym).
 
