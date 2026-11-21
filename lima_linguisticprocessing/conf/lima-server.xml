@@ -60,6 +60,11 @@ SPDX-License-Identifier: MIT
         <item value="ud-nob" />
         <item value="ud-orv" />
         <item value="ud-pcm" />
+        <item value="ud-amh" />
+        <item value="ud-ben" />
+        <item value="ud-ekk" />
+        <item value="ud-isl" />
+        <item value="ud-nor" />
         <item value="ud-pol" />
         <item value="ud-por" />
         <item value="ud-ron" />
