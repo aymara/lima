@@ -97,9 +97,9 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtpositioning \
     -skip wayland \
     -no-ssl \
-    -system-freetype \
-    -system-libjpeg \
-    -system-libpng \
+    -qt-freetype \
+    -qt-libjpeg \
+    -qt-libpng \
     -system-zlib
 
 RUN cmake --build . --parallel && cmake --install .
