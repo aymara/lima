@@ -36,9 +36,14 @@ The constructor takes:
 
 When several languages or pipelines are initialized, choose them at analysis
 time with the `lang` and `pipeline` arguments, e.g.
-`nlp(text, lang="eng", pipeline="main")`. Without them, the first initialized
-language and pipeline are used. The models of the neural pipelines are loaded
-when the analyzer is created, so create one analyzer per treebank.
+`nlp(text, lang="ud-eng", pipeline="deepud-pretok")`. Without them, the first
+initialized language and pipeline are used. The models of the neural pipelines
+are loaded when the analyzer is created, so create one analyzer per treebank.
+
+The `deepud` pipeline of `ud-eng` and `ud-fra` also recognizes named entities,
+available as `doc.ents`. The deprecated legacy language codes `eng`, `fre` and
+`por` and pipelines (`main`...) select `ud-eng`, `ud-fra`, `ud-por` and
+`deepud`, with a `DeprecationWarning`.
 
 ## Documents, sentences and tokens
 
