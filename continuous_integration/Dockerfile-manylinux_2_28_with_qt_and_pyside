@@ -12,10 +12,6 @@ FROM quay.io/pypa/${MANYLINUX}_x86_64:${MANYLINUX_TAG}
 ARG GCC_VERSION
 # The gcc-toolset of the base (11 on manylinux_2_28, 14 on manylinux_2_34)
 ARG GCC_TOOLSET=11
-# Clang's builtin headers in CPLUS_INCLUDE_PATH, as needed with the clang 18
-# of manylinux_2_28; with the clang 22 of manylinux_2_34, GCC cannot compile
-# them ("missing binary operator") and shiboken finds them without it
-ARG CLANG_HEADERS_IN_INCLUDE_PATH=yes
 ARG QT_VERSION
 ARG QT_VERSION_MAJOR
 ARG QT_FULL_VERSION
@@ -54,8 +50,12 @@ WORKDIR /pyside-setup
 # Touch files needed for setup but not used in fact
 RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/ && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}m.a
 
-# CLANG_RESOURCE_DIR (and CPLUS_INCLUDE_PATH, see CLANG_HEADERS_IN_INCLUDE_PATH)
-# are set in the build step, from clang itself
+# CLANG_RESOURCE_DIR is set in the build step, from clang itself. Clang's
+# builtin headers must not go in CPLUS_INCLUDE_PATH: GCC compiles the build
+# too and cannot compile them ("missing binary operator", clang 18 and 22
+# alike); shiboken finds them without it. The former setting
+# (/usr/lib64/clang/18/include) was a path that did not exist (clang's
+# resource dir is /usr/lib/clang/<major>), so it did nothing
 # Force Shiboken's internal locator to look into the actual toolset path
 ENV LLVM_INSTALL_DIR=/usr
 ENV CLANG_INSTALL_DIR=/usr
@@ -65,7 +65,6 @@ RUN [ -e /usr/lib/clang ] || ln -s /usr/lib64/clang /usr/lib/clang
 
 WORKDIR /pyside-setup
 RUN export CLANG_RESOURCE_DIR=$(realpath "$(clang -print-resource-dir)") && \
-    if [ "${CLANG_HEADERS_IN_INCLUDE_PATH}" = yes ]; then export CPLUS_INCLUDE_PATH=${CLANG_RESOURCE_DIR}/include:${CPLUS_INCLUDE_PATH:-}; fi && \
     python${PYTHON_VERSION} setup.py install --build-type=all --limited-api=yes --qtpaths=/opt/qt6/bin/qtpaths \
                         --ignore-git \
                         --module-subset=Core
