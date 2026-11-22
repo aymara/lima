@@ -132,8 +132,13 @@ endmacro(COMPILEXMLDIC _lang)
 
 macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tableconvert)
 
+  # All four matrices are outputs: DISAMBMATRICES_EXECENV copies them
   add_custom_command(
-    OUTPUT trigramMatrix-${_lang}.dat
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/unigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/priorUnigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/bigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/trigramMatrix-${_lang}.dat
     COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.py ${_succession_categs}
     COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
     COMMAND python3 ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
@@ -148,7 +153,7 @@ macro(DISAMBMATRICES _lang _succession_categs _codesymbol _priorscript _tablecon
   add_custom_target(
     trigrammatrix-${_lang}
     ALL
-    DEPENDS trigramMatrix-${_lang}.dat
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trigramMatrix-${_lang}.dat
   )
 
   install(FILES
@@ -169,18 +174,21 @@ macro (DISAMBMATRICES_EXECENV _lang _succession_categs _codesymbol _priorscript 
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
+    # Only copies the matrices of DISAMBMATRICES (to be called first): it
+    # computed them again, with the same commands and temporary files (bi,
+    # tri, trigramsend.txt...) in the same directory, and the two commands,
+    # run in parallel, overwrote each other's files (an empty trigramsend.txt
+    # made disamb_matrices_normalize.py fail)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_extract.py ${_succession_categs}
-    COMMAND cat ${_succession_categs} | sort | uniq -c | gawk -F" " "{print $2\"\t\"$1}" > unigramMatrix-${_lang}.dat
-    COMMAND python3 ${_priorscript} corpus_${_lang}_merge.txt priorUnigramMatrix-${_lang}.dat ${_codesymbol} ${_tableconvert}
-    COMMAND cp bigramsend.txt bigramMatrix-${_lang}.dat
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/disamb_matrices_normalize.py trigramsend.txt trigramMatrix-${_lang}.dat
-
     COMMAND ${CMAKE_COMMAND} -E copy unigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/unigramMatrix-${_lang}.dat
     COMMAND   ${CMAKE_COMMAND} -E copy priorUnigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/priorUnigramMatrix-${_lang}.dat
     COMMAND ${CMAKE_COMMAND} -E copy bigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
     COMMAND ${CMAKE_COMMAND} -E copy trigramMatrix-${_lang}.dat ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
-    DEPENDS ${_codesymbol} ${_succession_categs}
+    DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/unigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/priorUnigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/bigramMatrix-${_lang}.dat
+      ${CMAKE_CURRENT_BINARY_DIR}/trigramMatrix-${_lang}.dat
     COMMENT "copy language specific Disambiguation matrice resources to execEnv"
     VERBATIM
   )
@@ -193,6 +201,7 @@ macro (DISAMBMATRICES_EXECENV _lang _succession_categs _codesymbol _priorscript 
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/bigramMatrix-${_lang}.dat
       ${CMAKE_BINARY_DIR}/execEnv/resources/Disambiguation/trigramMatrix-${_lang}.dat
   )
+  add_dependencies(disamb-pretest-${_lang}-execEnv trigrammatrix-${_lang})
   add_dependencies(disamb-pretest-execEnv disamb-pretest-${_lang}-execEnv)
 endmacro()
 ###############
