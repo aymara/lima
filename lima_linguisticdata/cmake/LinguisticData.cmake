@@ -320,10 +320,10 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
 
 
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
+     ${CMAKE_BINARY_DIR}/lima_common/conf/lima-analysis.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-analysis.xml
     COMMAND ${CMAKE_COMMAND} -E copy
-     ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
+     ${CMAKE_BINARY_DIR}/lima_common/conf/lima-common.xml
      ${CMAKE_BINARY_DIR}/execEnv/config/lima-common.xml
     COMMAND ${CMAKE_COMMAND} -E copy
      ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
@@ -351,8 +351,8 @@ macro (SPECIFICENTITIES_GENERIC_CONFIGENV)
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp.properties
       ${CMAKE_SOURCE_DIR}/lima_common/conf/log4cpp/limacommon.log.properties
       ${CMAKE_SOURCE_DIR}/lima_linguisticprocessing/conf/log4cpp/limalp.log.properties
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-common.xml
-      ${CMAKE_SOURCE_DIR}/lima_common/conf/lima-analysis.xml
+      ${CMAKE_BINARY_DIR}/lima_common/conf/lima-common.xml
+      ${CMAKE_BINARY_DIR}/lima_common/conf/lima-analysis.xml
     COMMENT "Create config environment common to all languages"
     VERBATIM
   )

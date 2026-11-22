@@ -86,7 +86,21 @@ class ConllDumperPrivate
     LinguisticGraphVertex vEndDone,
     std::map<LinguisticGraphVertex,int>& segmentationMapping,
     const QString& neType,
-    bool first);
+    bool first,
+    const Automaton::EntityFeatures* parentFeatures = nullptr);
+
+  /** Returns the specific entity recognized on the PosGraph (e.g. by ModEx
+   * rules applied after PoS tagging) held by @ref v, nullptr if none.
+   */
+  const SpecificEntityAnnotation* posGraphEntity(LinguisticGraphVertex v) const;
+
+  /** Appends to @ref out the token vertices dumped for the PosGraph vertex
+   * @ref v: its component tokens (recursively) if it holds a specific entity
+   * recognized on the PosGraph, @ref v itself otherwise.
+   */
+  void entityTokenVertices(LinguisticGraphVertex v,
+                           std::vector<LinguisticGraphVertex>& out,
+                           int depth = 0) const;
 
   /** Dumps an analysis graph vertex @ref v which is inside a specific entity
    * holded by pos graph vertex @ref posGraphVertex
@@ -439,62 +453,80 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
       LDEBUG << "ConllDumper::process Vertex index : " << v;
 #endif
       visited.insert(v);
-      segmentationMapping.insert(std::make_pair(v,vertexId));
-      segmentationMappingReverse.insert(std::make_pair(vertexId,v));
-#ifdef DEBUG_LP
-      LDEBUG << "ConllDumper::process conll id : " << vertexId
-              << " Lima id : " << v;
-#endif
-
-      auto dcurrent = syntacticData->depVertexForTokenVertex(v);
-      DependencyGraphOutEdgeIt dit, dit_end;
-      boost::tie(dit,dit_end) = boost::out_edges(dcurrent,*depGraph);
-      for (; dit != dit_end; dit++)
+      // Collects the dependency relations of the token vertex tv
+      auto collectDependencies = [&](LinguisticGraphVertex tv)
       {
-#ifdef DEBUG_LP
-        LDEBUG << "ConllDumper::process Dumping dependency edge "
-                << (*dit).m_source << " -> " << (*dit).m_target;
-#endif
-        try
+        auto dcurrent = syntacticData->depVertexForTokenVertex(tv);
+        DependencyGraphOutEdgeIt dit, dit_end;
+        boost::tie(dit,dit_end) = boost::out_edges(dcurrent,*depGraph);
+        for (; dit != dit_end; dit++)
         {
-          auto typeMap = get(edge_deprel_type, *depGraph);
-          auto type = typeMap[*dit];
-          auto syntRelName = m_d->languageData->getSyntacticRelationName(type);
 #ifdef DEBUG_LP
-          LDEBUG << "ConllDumper::process relation = " << syntRelName;
-          LDEBUG << "ConllDumper::process Src  : Dep vertex= "
-                  << boost::source(*dit, *depGraph);
-          auto src = syntacticData->tokenVertexForDepVertex(
-              boost::source(*dit, *depGraph));
-          LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
-          LDEBUG << "ConllDumper::process Targ : Dep vertex= "
-                  << boost::target(*dit, *depGraph);
+          LDEBUG << "ConllDumper::process Dumping dependency edge "
+                  << (*dit).m_source << " -> " << (*dit).m_target;
 #endif
-          auto dest = syntacticData->tokenVertexForDepVertex(
-            boost::target(*dit, *depGraph));
+          try
+          {
+            auto typeMap = get(edge_deprel_type, *depGraph);
+            auto type = typeMap[*dit];
+            auto syntRelName = m_d->languageData->getSyntacticRelationName(type);
 #ifdef DEBUG_LP
-          LDEBUG << "ConllDumper::process Targ : Morph vertex= " << dest;
+            LDEBUG << "ConllDumper::process relation = " << syntRelName;
+            LDEBUG << "ConllDumper::process Src  : Dep vertex= "
+                    << boost::source(*dit, *depGraph);
+            auto src = syntacticData->tokenVertexForDepVertex(
+                boost::source(*dit, *depGraph));
+            LDEBUG << "ConllDumper::process Src  : Morph vertex= " << src;
+            LDEBUG << "ConllDumper::process Targ : Dep vertex= "
+                    << boost::target(*dit, *depGraph);
 #endif
-          if (syntRelName!="")
+            auto dest = syntacticData->tokenVertexForDepVertex(
+              boost::target(*dit, *depGraph));
+#ifdef DEBUG_LP
+            LDEBUG << "ConllDumper::process Targ : Morph vertex= " << dest;
+#endif
+            if (syntRelName!="")
+            {
+#ifdef DEBUG_LP
+              LDEBUG << "ConllDumper::process saving target for"
+                      << tv << ":" << dest << syntRelName;
+#endif
+              m_d->vertexDependencyInformations.insert(
+                  std::make_pair(tv, std::make_pair(dest, syntRelName)));
+            }
+          }
+          catch (const std::range_error& )
+          {
+          }
+          catch (...)
           {
 #ifdef DEBUG_LP
-            LDEBUG << "ConllDumper::process saving target for"
-                    << v << ":" << dest << syntRelName;
+            LDEBUG << "ConllDumper::process: catch others.....";
 #endif
-            m_d->vertexDependencyInformations.insert(
-                std::make_pair(v, std::make_pair(dest, syntRelName)));
+            throw;
           }
         }
-        catch (const std::range_error& )
-        {
-        }
-        catch (...)
-        {
+      };
+      // A specific entity recognized on the PosGraph (ModEx rules applied
+      // after PoS tagging and parsing, as in the deepud pipelines) is dumped
+      // as one line per component token, and the parser relations are attached
+      // to these tokens: number them and collect their dependencies. Otherwise
+      // (and for entities recognized on the AnalysisGraph), v is its only
+      // token.
+      std::vector<LinguisticGraphVertex> tokenVertices;
+      m_d->entityTokenVertices(v, tokenVertices);
+      segmentationMapping.insert(std::make_pair(v,vertexId));
+      for (size_t i = 0; i < tokenVertices.size(); ++i)
+      {
+        if (i > 0)
+          ++vertexId;
+        segmentationMapping.insert(std::make_pair(tokenVertices[i], vertexId));
+        segmentationMappingReverse.insert(std::make_pair(vertexId, tokenVertices[i]));
 #ifdef DEBUG_LP
-          LDEBUG << "ConllDumper::process: catch others.....";
+        LDEBUG << "ConllDumper::process conll id : " << vertexId
+                << " Lima id : " << tokenVertices[i];
 #endif
-          throw;
-        }
+        collectDependencies(tokenVertices[i]);
       }
       if (v == sentenceEnd)
       {
@@ -669,6 +701,43 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   return SUCCESS_ID;
 }
 
+const SpecificEntityAnnotation* ConllDumperPrivate::posGraphEntity(
+  LinguisticGraphVertex v) const
+{
+  if (annotationData == nullptr)
+    return nullptr;
+  for (const auto& vx: annotationData->matches(m_graph.toStdString(), v, "annot"))
+  {
+    if (annotationData->hasAnnotation(vx, QString::fromUtf8("SpecificEntity")))
+    {
+      auto se = annotationData->annotation(
+        vx, QString::fromUtf8("SpecificEntity")).pointerValue<SpecificEntityAnnotation>();
+      if (se != nullptr)
+        return se;
+    }
+  }
+  return nullptr;
+}
+
+void ConllDumperPrivate::entityTokenVertices(
+  LinguisticGraphVertex v,
+  std::vector<LinguisticGraphVertex>& out,
+  int depth) const
+{
+  // Mirrors dumpNamedEntity/dumpPosGraphVertex: an entity recognized on the
+  // PosGraph is dumped as its component vertices, recursively.
+  const auto se = (depth < 16) ? posGraphEntity(v) : nullptr;
+  if (se == nullptr || se->vertices().empty())
+  {
+    out.push_back(v);
+    return;
+  }
+  for (const auto& vse : se->vertices())
+  {
+    entityTokenVertices(vse, out, depth + 1);
+  }
+}
+
 const SpecificEntityAnnotation* ConllDumperPrivate::getSpecificEntityAnnotation(
   LinguisticGraphVertex v) const
 {
@@ -699,7 +768,8 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
   LinguisticGraphVertex vEndDone,
   std::map<LinguisticGraphVertex,int>& segmentationMapping,
   const QString& parentNeType,
-  bool first)
+  bool first,
+  const Automaton::EntityFeatures* parentFeatures)
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
@@ -754,7 +824,24 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
     // recursively) but also AnalysisGraph vertices. In the latter case, data
     // come partly from the AnalysisGraph and partly from the PosGraph
     // Furthermore, named entities can be recursive...
-    if (neType != "_")
+    const SpecificEntityAnnotation* nestedEntity = nullptr;
+    if (neType != "_" && !parentNeType.isEmpty())
+    {
+      nestedEntity = posGraphEntity(v);
+    }
+    if (nestedEntity != nullptr)
+    {
+      // Entity recognized on the PosGraph inside another one (e.g. a number in
+      // a date): its tokens are part of the enclosing entity.
+      bool firstNested = first;
+      for (const auto& vse : nestedEntity->vertices())
+      {
+        dumpPosGraphVertex(dstream, vse, tokenId, vEndDone, segmentationMapping,
+                           parentNeType, firstNested, parentFeatures);
+        firstNested = false;
+      }
+    }
+    else if (neType != "_")
     {
       dumpNamedEntity(dstream, v, tokenId, vEndDone, segmentationMapping, neType);
     }
@@ -783,9 +870,13 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
         LDEBUG << "ConllDumperPrivate::dumpPosGraphVertex specific entity annotation is"
                 << annot;
 #endif
-        if (annot != nullptr)
+        // The tokens of an entity recognized on the PosGraph carry the
+        // features of this entity
+        const Automaton::EntityFeatures* entityFeatures =
+            (annot != nullptr) ? &annot->getFeatures() : parentFeatures;
+        if (entityFeatures != nullptr)
         {
-          const auto& features = annot->getFeatures();
+          const auto& features = *entityFeatures;
           for (const auto& feature: features)
           {
             QString featureString;
@@ -798,7 +889,11 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
               qts << Common::Misc::transcodeToXmlEntities(
                 QString::fromStdString(feature.getValueString()));
             }
-            miscField << featureString;
+            qts.flush();
+            if (!featureString.isEmpty())
+            {
+              miscField << featureString;
+            }
           }
         }
       }
@@ -1264,7 +1359,8 @@ void ConllDumperPrivate::dumpNamedEntity(std::shared_ptr<DumperStream>& dstream,
         for (const auto& vse : se->vertices())
         {
           dumpPosGraphVertex(dstream, vse, tokenId, vEndDone,
-                             segmentationMapping, neType, first);
+                             segmentationMapping, neType, first,
+                             &se->getFeatures());
           first = false;
         }
 #ifdef DEBUG_LP

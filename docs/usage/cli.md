@@ -48,10 +48,11 @@ Analyze an already tokenized CoNLL-U file:
 analyzeText -l fra-UD_French-MERGE -p deepud-pretok corpus.conllu
 ```
 
-Run the rule-based named entity recognizer of the legacy English pipeline:
+Analyze French text, named entities included (the `ud-fra` media runs the
+[ModEx](../guides/ner.md) rules after the neural analysis):
 
 ```bash
-analyzeText -l eng -p ner-rules article.txt
+analyzeText -l ud-fra -p deepud --meta udlang:fra-UD_French-MERGE article.txt
 ```
 
 Analyze a file line by line (one sentence or document per line):

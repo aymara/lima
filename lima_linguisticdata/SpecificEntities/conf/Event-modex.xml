@@ -81,6 +81,21 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
   </module>
+  <module name="resources-ud-fra">
+    <group name="EventRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/EVENT-ud-fra.bin"/>
+    </group>
+    <group name="EventIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Event.EVENT" value="yes"/>
+      </map>
+    </group>
+    <group name="EventMicros" class="SpecificEntitiesMicros">
+      <list name="Event.EVENT">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="EventRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/EVENT-fre.bin"/>

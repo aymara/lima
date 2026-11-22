@@ -14,9 +14,7 @@ SPDX-License-Identifier: MIT
     <!-- Chaque media a lui-même un fichier de configuration -->
     <group name="mediaProcessingDefinitionFiles">
       <list name="available">
-        <item value="eng" />
-        <item value="fre" />
-        <item value="por" />
+        @LIMA_LEGACY_MEDIA_ITEMS@
         <item value="ud" />
 
         <!-- Universal Dependencies -->
@@ -116,7 +114,7 @@ SPDX-License-Identifier: MIT
       <param key="ud-eus" value="lima-lp-ud.xml" />
       <param key="ud-fas" value="lima-lp-ud.xml" />
       <param key="ud-fin" value="lima-lp-ud.xml" />
-      <param key="ud-fra" value="lima-lp-ud.xml" />
+      <param key="ud-fra" value="lima-lp-ud-fra.xml" />
       <param key="ud-fro" value="lima-lp-ud.xml" />
       <param key="ud-gla" value="lima-lp-ud.xml" />
       <param key="ud-gle" value="lima-lp-ud.xml" />

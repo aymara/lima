@@ -1,0 +1,41 @@
+set encoding=utf8
+using modex Location-modex.xml
+using groups Location
+set defaultAction=>CreateSpecificEntity()
+
+use ../../fre/Location/annonceurVille.lst
+use ../../fre/Location/annonceurGeo.lst
+use ../../fre/Location/annonceurFact.lst
+
+# n'inclut pas 'est' : trop ambigü
+@PrecisionGeographique=(Sud,sud,Nord,nord,Est,Ouest,ouest,sud-est,nord-est,sud-ouest,nord-ouest)
+
+# à 3 km à l'est de la ville de Paris
+@PrecisionGeographique:[((km|kms|kilometre|kilometres|kilomètre|kilomètres)?] (au|à l\')?):(de|des|du|d'|de $DET) ($DET? (@AnnonceurFact|@AnnonceurGeo|@AnnonceurVille) (de|des|du|d'|de $DET)?)? <LOCATION>:GEO:
+=>AppendEntityFeature(trigger,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# L'italie du Sud
+<LOCATION>::((de l\'?|du)? @PrecisionGeographique|central$ADJ|profond$ADJ|subsaharien$ADJ):GEO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# autorise 'est' seulement avec un det
+<LOCATION>::de l\' est:GEO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(right.1,"qualifier")
+=>AppendEntityFeature(right.2,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+# Le Sud-Liban
+#<Location.COUNTRY>:@PrecisionGeographique::GEO:
+<LOCATION>:@PrecisionGeographique::GEO:
+=>SetEntityFeature(trigger,"name")
+=>AppendEntityFeature(left,"qualifier")
+=>NormalizeEntity()
+=<ClearEntityFeatures()

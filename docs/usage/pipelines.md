@@ -23,11 +23,35 @@ They use the neural process units `RnnTokenizer`, `RnnTokensAnalyzer` and
 Steps without a model for the selected treebank are skipped. See
 [Universal Dependencies analysis](../guides/ud-analysis.md) for details.
 
-## Legacy pipelines (English and French)
+## English and French: neural analysis with named entities
 
-The legacy configurations `lima-lp-eng.xml` and `lima-lp-fre.xml` (languages
-`eng` and `fre`) use dictionaries, rules and statistical models. They are
-useful for resource development and rule-based extraction.
+The `ud-eng` and `ud-fra` media (configurations `lima-lp-ud-eng.xml` and
+`lima-lp-ud-fra.xml`) run the same neural units, then the rule-based
+[named entity recognizer](../guides/ner.md) (ModEx) in their `deepud` pipeline.
+The deeplima model is selected with the `udlang` metadata:
+
+```bash
+analyzeText -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE file.txt
+analyzeText -l ud-fra -p deepud --meta udlang:fra-UD_French-MERGE fichier.txt
+```
+
+The entities are written in the `MISC` column of the CoNLL-U output
+(`NE=B-Person.PERSON`, `NE=I-Person.PERSON`...). For `ud-fra`, `deepud-pretok`
+also runs the parser and the named entity recognizer on CoNLL-U input.
+
+## Legacy pipelines (deprecated)
+
+!!! warning "Deprecated"
+    The legacy media `eng`, `fre` and `por` (configurations
+    `lima-lp-eng.xml`, `lima-lp-fre.xml` and `lima-lp-por.xml`) are
+    deprecated and are not built by default. Use `ud-eng`, `ud-fra` or the
+    generic `ud` media instead. To build them, configure LIMA with
+    `-DWITH_LEGACY_PIPELINES=ON` (or `gbuild.sh -r legacy`, see
+    [Building from source](../install/source.md)).
+
+The legacy configurations use a rule-based tokenizer, morphological
+dictionaries, a statistical part-of-speech tagger and a rule-based syntactic
+analyzer.
 
 | Pipeline | Role |
 | --- | --- |

@@ -102,7 +102,6 @@ private:
 
   MediaId m_language;
   Common::MediaticData::EntityType m_type;
-  const Common::PropertyCode::PropertyAccessor* m_microAccessor;
   std::set< LinguisticCode > m_microsToKeep;
 
 };

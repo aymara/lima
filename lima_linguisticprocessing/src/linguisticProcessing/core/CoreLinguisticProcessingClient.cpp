@@ -300,6 +300,12 @@ void CoreLinguisticProcessingClientFactory::configure(
   for (const auto& lang: langToload)
   {
     LINFO << "CoreLinguisticProcessingClientFactory::configure load language " << lang;
+    if (lang == "eng" || lang == "fre" || lang == "por")
+    {
+      LWARN << "Language" << lang << "uses the DEPRECATED legacy rule-based"
+            << "pipelines. Use the deeplima-backed ud-eng, ud-fra or ud media"
+            << "instead.";
+    }
     auto langid = MediaticData::single().getMediaId(lang);
     QString file;
     try

@@ -50,7 +50,9 @@ from `extern/download_libtorch.sh`).
 
 Key `gbuild.sh` options (`-h` for all): `-m` mode (Debug/Release/RelWithDebInfo),
 `-t ON` run tests, `-p ON` build packages, `-d ON` debug messages in release,
-`-g OFF` skip the Qt GUI, `-r precompiled|build|none` for linguistic resources,
+`-g OFF` skip the Qt GUI, `-r precompiled|build|legacy|none` for linguistic resources
+(`legacy` = CMake `WITH_LEGACY_PIPELINES=ON`: also build the deprecated rule-based
+eng/fre/por media; off by default, `ud-eng`/`ud-fra` provide deeplima + ModEx NER),
 `-G` cmake generator (default Ninja), `-j N` parallelism.
 
 After building you must install language models before analysis, e.g.

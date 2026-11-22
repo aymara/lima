@@ -10,9 +10,7 @@ SPDX-License-Identifier: MIT
   <module name="http-server">
     <group name="analyzer">
       <list name="languages">
-        <item value="eng" />
-        <item value="fre" />
-        <item value="por" />
+        @LIMA_SERVER_LEGACY_LANGUAGES@
 
         <!-- Universal Dependencies -->
         <item value="ud-afr" />

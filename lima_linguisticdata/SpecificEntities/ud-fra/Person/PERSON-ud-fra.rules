@@ -1,0 +1,243 @@
+set encoding=utf8
+using modex Person-modex.xml,Organization-modex.xml
+using groups Person
+set defaultAction=>CreateSpecificEntity()
+
+use ../../fre/Person/firstname.lst,../../fre/Person/prefirstname.lst
+use ../../fre/Person/title.lst,../../fre/Person/function_title.lst
+use ../../fre/Person/person.lst
+#use ../../eng/Person/wd_firstname.lst
+use ../../eng/Person/wd_lastname.lst
+use ../../eng/Person/person_ending.lst
+
+@particule=(de,da,le,van,von,den,der,el,al,Al,del,Del,De,La,Le,d\')
+@AnyTitle=(@Title,@FunctionTitle)
+@Initial=(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,t_abbrev)
+@PersonNamePart=(t_capital_1st,t_capital,t_capital_small,$PROPN)
+
+# more general list of firstnames
+@AnyFirstname=(@Firstname,@WikidataFirstname)
+
+#----------------------------------------------------------------------
+# contextual rules for person recognition
+#----------------------------------------------------------------------
+
+#----------------------------------------------------------------------
+# person names triggered by a title 
+# 
+# duplicate rules with t_capital or t_capital_1st to ensure compatibility of lower/upper cases
+
+# Problem with the stop condition on right boundary: the "de", which is a particle, is also a DET and a NC (dé) and an ADV (dé-): if everything is optional, it will match with the boundary
+@NotPerson=($PRON,$ADJ,$VERB)
+
+# use a +AppendEntityFeature for trigger because it is not kept in result (and a => action cannot be applied on it)
+# use Append instead of Set because of multi-token titles
+
+# firstname + DynastyOrder : use PersonEnding
+# Sa Majesté Elizabeth II
+# pape Jean-Paul II
+# -> which component for the 'II' ? -> set it as a firstname (as it's expected in the tva test)
+[@AnyTitle]::@AnyFirstname (@particule? t_capital){0-2} @PersonEnding:PERSON:
++AppendEntityFeature(trigger,"title")
+=>SetEntityFeature(right.1,"firstname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>AddEntityFeature(right.3,"firstname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# cannot be AnyTitle: in "roi de France", "de France" is not a PERSON
+# duplicate the rules: for function titles, do not allow "de" just after the title
+[@Title]::@Firstname? @Initial? (@particule? t_capital){1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[@Title]::@Firstname? @Initial? (@particule? t_capital_1st){1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# add a constraint: not an ORGANIZATION (le député UMP)
+[@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital{1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
++!isASpecificEntity(right.2.first,"Organization.ORGANIZATION")
+=>AddEntityFeature(right.1.1,"firstname")
+=>AddEntityFeature(right.1.2,"firstname")
+=>AppendEntityFeature(right.1.3,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+[@FunctionTitle]::(@Firstname @Initial? @particule?)? t_capital_1st{1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
++!isASpecificEntity(right.2.first,"Organization.ORGANIZATION")
+=>AddEntityFeature(right.1.1,"firstname")
+=>AddEntityFeature(right.1.2,"firstname")
+=>AppendEntityFeature(right.1.3,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+# other cases
+[@Title]::@Firstname? @Initial? (@particule? $PROPN){1-3} @PersonEnding?:PERSON:
++AppendEntityFeature(trigger,"title")
+=>AddEntityFeature(right.1,"firstname")
+=>AddEntityFeature(right.2,"firstname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>AppendEntityFeature(right.4,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+#------------------------------
+# person names triggered by firstnames
+
+# ensure that if several parts follow the firstname, have the same lower/upper case
+@Firstname::(@Initial .?)? @Firstname? (@particule? t_capital){1-2}:PERSON:
+=>AddEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1.1,"firstname")
+=>SetEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname::(@Initial .?)? @Firstname? (@particule? t_capital_1st){1-2}:PERSON:
+=>AddEntityFeature(trigger,"firstname")
+=>AddEntityFeature(right.1.1,"firstname")
+=>SetEntityFeature(right.2,"lastname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname::@Firstname? (@particule? $PROPN){1-2}:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#------------------------------
+# person names triggered by firstnames
+@Firstname:(Saint|saint|Sainte|sainte):@Firstname? (@particule? @PersonNamePart)?:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2.1,"lastname")
+=>AppendEntityFeature(right.2.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname:: @Firstname? (@particule? @PersonNamePart){1-2}:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.3,"lastname")
+=>AppendEntityFeature(right.3.1,"lastname")
+=>AppendEntityFeature(right.3.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname::le (Grand|grand|Jeune|jeune|Bref|bref|Gros|gros|Bel|bel|Pieux|pieux):PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>SetEntityFeature(right.1,"lastname")
+=>AppendEntityFeature(right.2,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# authorize person names starting with initial, without any other trigger 
+# (maybe too noisy ?) -> X Window
+# @Initial::(@particule? @PersonNamePart){1-2}:PERSON:
+# =>AddEntityFeature(trigger,"firstname")
+# =>AppendEntityFeature(right.1.1,"lastname")
+# =>AppendEntityFeature(right.1.2,"lastname")
+# =>NormalizeEntity()
+# =<ClearEntityFeatures()
+
+#@PersonNamePart:[(@Title|@FunctionTitle @Title?)]:(@PersonNamePart){0-2}:PERSON:
+@PersonNamePart:[@Title]:(@PersonNamePart){0-2}:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# test for ORG: in "le député UMP", UMP is not a PERSON
+@PersonNamePart:[@FunctionTitle]:(@PersonNamePart){0-2}:PERSON:
++!isASpecificEntity(trigger,"Organization.ORGANIZATION")
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+
+@PersonNamePart:[$ADP] (@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:
+=>AppendEntityFeature(left.2,"lastname")
+=>AppendEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@PersonNamePart:(@PersonNamePart){0-2}:[(, @FunctionTitle)]:PERSON:
+=>AppendEntityFeature(left.1,"lastname")
+=>AppendEntityFeature(trigger,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# Messieurs X et Y
+# => one rule for each part
+
+@PersonNamePart:[@TitlePlural]:(@PersonNamePart){0-2} [et]:PERSON:
+=>SetEntityFeature(left.1,"title")
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@PersonNamePart:[(@TitlePlural (@PersonNamePart){0-2} et)]:(@PersonNamePart){0-2}:PERSON:
+=>SetEntityFeature(left.1.1,"title")
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+#------------------------------
+# a list of known persons (single entities)
+
+@person::@PersonEnding?:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+@Firstname::@PersonEnding:PERSON:
+=>SetEntityFeature(trigger,"lastname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+# recall rule
+@AnyFirstname::@WikidataLastname:PERSON:
+=>SetEntityFeature(trigger,"firstname")
+=>AppendEntityFeature(right.1,"lastname")
+=>NormalizeEntity()
+=<ClearEntityFeatures()
+
+include ../../fre/Person/persons.rules
+
+#------------------------------
+# firstname without name ?
+#@Firstname:::PERSON:=>NormalizePersonName()

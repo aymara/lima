@@ -121,6 +121,11 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
     TimeUtils::updateCurrentTime();
     TimeUtilsController RnnTokensAnalyzerProcessTime("RnnTokensAnalyzer");
     LOG_MESSAGE_WITH_PROLOG(LDEBUG, "RnnTokensAnalyzer::process");
+    // Ensure the models are loaded (no-op if already loaded)
+    if (m_d->m_load_fn)
+    {
+        m_d->m_load_fn();
+    }
     m_d->m_analysis = &analysis;
     auto anagraph = std::dynamic_pointer_cast<AnalysisGraph>(analysis.getData("AnalysisGraph"));
     if (anagraph == nullptr)
@@ -329,6 +334,16 @@ Lima::LimaStatusCode RnnTokensAnalyzer::process(Lima::AnalysisContent &analysis)
         }
         auto sp = &MediaticData::changeable().stringsPool(m_d->m_language);
         lElement.lemma = (*sp)[m_d->m_lemmas[anaVerticesIndex]];
+        // The rule-based units (ModEx named entities normalization, BoW...)
+        // use the inflected and normalized forms, as filled by the legacy
+        // morphological analysis: normalized form is the lemma, or the form
+        // when no lemmatizer model is available.
+        if (srcToken != nullptr)
+        {
+          lElement.inflectedForm = (*sp)[srcToken->stringForm()];
+          lElement.normalizedForm = m_d->m_lemmas[anaVerticesIndex].isEmpty()
+              ? lElement.inflectedForm : lElement.lemma;
+        }
         posData->push_back(lElement);
 
         put(vertex_data, *resultgraph, newVx, posData);
@@ -406,18 +421,19 @@ void RnnTokensAnalyzerPrivate::init(GroupConfigurationStructure& unitConfigurati
                                                                        "", "", "",
                                                                        lemmatizer_rules_file_name.toStdString(),
                                                                        m_pResolver, 1024, 8);
+        for (size_t i = 0; i < m_tokensAnalyzer->get_classes().size(); ++i)
+        {
+            m_dumper.set_classes(i, m_tokensAnalyzer->get_class_names()[i], m_tokensAnalyzer->get_classes()[i]);
+        }
         m_loaded = true;
     };
 
+    // With lazy initialization (e.g. in the GUI), the models are loaded by
+    // the first process call
     if (!isInitLazy())
     {
         m_load_fn();
     }
-    for (size_t i = 0; i < m_tokensAnalyzer->get_classes().size(); ++i)
-    {
-        m_dumper.set_classes(i, m_tokensAnalyzer->get_class_names()[i], m_tokensAnalyzer->get_classes()[i]);
-    }
-
 }
 
 void RnnTokensAnalyzerPrivate::reset()

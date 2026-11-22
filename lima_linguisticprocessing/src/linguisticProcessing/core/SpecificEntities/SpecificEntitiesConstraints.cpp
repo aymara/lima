@@ -186,8 +186,6 @@ m_language(language)
     }
   }
 
-  m_microAccessor=&(static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().getPropertyAccessor("MICRO"));
-
   const Common::PropertyCode::PropertyManager& microManager=
       static_cast<const Common::MediaticData::LanguageData&>(Common::MediaticData::MediaticData::single().mediaData(language)).getPropertyCodeManager().
 getPropertyManager("MICRO");
@@ -606,11 +604,17 @@ void CreateSpecificEntity::addMicrosToMorphoSyntacticData(LinguisticAnalysisStru
                                const std::set<LinguisticCode>& micros,
                                LinguisticAnalysisStructure::LinguisticElement& elem) const
 {
+  // The accessor is not cached at construction: the compiled rules (and thus
+  // this constraint) outlive a reinitialization of the media data, e.g. when
+  // a second analyzer is created in the same process.
+  const auto& microAccessor = static_cast<const Common::MediaticData::LanguageData&>(
+      Common::MediaticData::MediaticData::single().mediaData(m_language))
+        .getPropertyCodeManager().getPropertyAccessor("MICRO");
   // try to filter existing microcategories
   for (MorphoSyntacticData::const_iterator it=oldMorphData->begin(),
          it_end=oldMorphData->end(); it!=it_end; it++) {
 
-    if (micros.find(m_microAccessor->readValue((*it).properties)) !=
+    if (micros.find(microAccessor.readValue((*it).properties)) !=
         micros.end()) {
       elem.properties=(*it).properties;
       newMorphData->push_back(elem);

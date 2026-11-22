@@ -66,6 +66,20 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
   </module>
+  <module name="resources-ud-fra">
+    <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Miscellaneous.MISCELLANEOUS" value="yes"/>
+      </map>
+    </group>
+    <group name="MiscellaneousMicros" class="SpecificEntitiesMicros">
+      <list name="Miscellaneous.MISCELLANEOUS">
+        <item value="NOUN"/>
+<!--         <item value="PROPN"/> -->
+        <item value="ADJ"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="MiscellaneousIndexing" class="EntityTypeIndexing">
       <map name="entityPartsIndexing">

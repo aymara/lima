@@ -132,10 +132,22 @@ int main(int argc, char *argv[])
   QCommandLineOption pipelineOption(
       QStringList() << "p" << "pipeline",
       QCoreApplication::translate("main", "The analysis pipeline to use."),
-      "pipeline", "main");
+      "pipeline", "deepud");
   if (!parser.addOption(pipelineOption))
   {
     std::cerr << "Error adding pipelineOption option" << std::endl;
+    return 1;
+  }
+  QCommandLineOption metaOption(
+      QStringList() << "meta",
+      QCoreApplication::translate("main",
+          "Comma-separated key:value analysis options, e.g. the deeplima model\n"
+          "of the UD media: udlang:eng-UD_English-MERGE (by default, the\n"
+          "default model installed by lima_models for the language)."),
+      "meta");
+  if (!parser.addOption(metaOption))
+  {
+    std::cerr << "Error adding metaOption option" << std::endl;
     return 1;
   }
   QCommandLineOption clientOption(
@@ -169,7 +181,7 @@ int main(int argc, char *argv[])
   QQmlApplicationEngine engine;
 
   LimaGuiApplication lga(parser);
-  lga.selectLimaConfiguration("lima-lp-eng.xml");
+  lga.selectLimaConfiguration("lima-lp-ud-eng.xml");
   LimaConfigurationSharedPtr configuration = lga.configuration();
   ConfigurationNode* root = new ConfigurationNode(configuration->configuration());
   ConfigurationTree* tree = new ConfigurationTree(root);

@@ -26,10 +26,12 @@ Options default values are in parentheses.
   -m mode           <(Debug)|Release|RelWithDebInfo> compile mode
   -n arch           <(generic)|native> target architecture mode
   -p package        <(OFF)|ON> package building selection
-  -r resources      <precompiled|(build)|deeplima|none> build the linguistic resources or use the
-                    precompiled ones. "deeplima" builds only the resources needed by
-                    deeplima+ModEx pipelines (keeps SpecificEntities/NER, skips the
-                    rule-based/statistical resources and the morpho dictionary).
+  -r resources      <precompiled|(build)|legacy|none> build the linguistic resources or use the
+                    precompiled ones. "build" builds the resources of the deeplima-backed
+                    UD media (ud, ud-eng, ud-fra), ModEx named entities included.
+                    "legacy" also builds the DEPRECATED rule-based/statistical eng, fre
+                    and por pipelines and their resources ("deeplima" is an alias of
+                    "build", kept for compatibility).
   -s                Do not shorten PoS corpora to speed up compilation.
   -t tests          <(OFF)|ON> run unit tests after install
   -v version        <(val)|rev> version number is set either to the value set by
@@ -56,7 +58,7 @@ WITH_PACK="OFF"
 RUN_UNIT_TESTS="OFF"
 SHORTEN_POR_CORPUS_FOR_SVMLEARN="ON"
 WITH_GUI="ON"
-LIMA_RESOURCES_DEEPLIMA_ONLY="OFF"
+WITH_LEGACY_PIPELINES="OFF"
 LIMA_SOURCES=$PWD
 QT_VERSION_MAJOR="6"
 
@@ -88,7 +90,7 @@ while getopts ":d:m:n:r:v:G:a:p:st:j:g:" o; do
             ;;
         r)
             resources=${OPTARG}
-            [[ "$resources" == "precompiled" || "$resources" == "build" || "$resources" == "deeplima" || "$resources" == "none" ]] || usage
+            [[ "$resources" == "precompiled" || "$resources" == "build" || "$resources" == "legacy" || "$resources" == "deeplima" || "$resources" == "none" ]] || usage
             ;;
         s)
             SHORTEN_POR_CORPUS_FOR_SVMLEARN="OFF"
@@ -177,15 +179,16 @@ else
   WITH_ARCH="OFF"
 fi
 
-if [[ $resources == "build" ]]; then
+if [[ $resources == "build" || $resources == "deeplima" ]]; then
   WITH_LIMA_RESOURCES="ON"
-  LIMA_RESOURCES_DEEPLIMA_ONLY="OFF"
-elif [[ $resources == "deeplima" ]]; then
+  WITH_LEGACY_PIPELINES="OFF"
+elif [[ $resources == "legacy" ]]; then
+  echoerr "Building the DEPRECATED legacy eng/fre/por pipelines"
   WITH_LIMA_RESOURCES="ON"
-  LIMA_RESOURCES_DEEPLIMA_ONLY="ON"
+  WITH_LEGACY_PIPELINES="ON"
 else
   WITH_LIMA_RESOURCES="OFF"
-  LIMA_RESOURCES_DEEPLIMA_ONLY="OFF"
+  WITH_LEGACY_PIPELINES="OFF"
 fi
  
 if [[ $CMAKE_GENERATOR == "Unix" ]]; then
@@ -257,7 +260,7 @@ cmake  -G "$generator" \
     -DWITH_GUI=$WITH_GUI \
     -DCMAKE_PREFIX_PATH=$LIBTORCH_PATH \
     -DWITH_LIMA_RESOURCES=$WITH_LIMA_RESOURCES \
-    -DLIMA_RESOURCES_DEEPLIMA_ONLY=$LIMA_RESOURCES_DEEPLIMA_ONLY \
+    -DWITH_LEGACY_PIPELINES=$WITH_LEGACY_PIPELINES \
     -DCTEST_OUTPUT_ON_FAILURE="ON" \
     $source_dir
 result=$?
