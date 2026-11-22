@@ -76,6 +76,16 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
   </module>
+  <module name="resources-ud-fra">
+    <group name="GoalRecognitionRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/AUTHORS_POSITION-ud-fra.bin"/>
+    </group>
+    <group name="GoalRecognitionMicros" class="GoalRecognitionMicros">
+      <list name="AuthorsPosition.AUTHORS_POSITION">
+        <item value="NOUN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="GoalRecognitionRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/AUTHORS_POSITION-fre.bin"/>

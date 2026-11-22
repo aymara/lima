@@ -1,0 +1,68 @@
+set encoding=utf8
+using modex Numex-modex.xml
+using groups Numex
+set defaultAction=>CreateSpecificEntity()
+
+# FIXME Number automatons will have to be reworked to handle simpler tagset: 
+# create lists using lemmas having the various possible microcategories in the legacy dictionaries
+
+# exclude strings like 'premier de "' 
+#@OrdNumber=(
+#$NOUN-NC_NUM_ORD,
+#$ADJ-ADJ_NUM_ORD_EPITHETE_PRENN,
+#$ADJ-ADJ_NUM_ORD_EPITHETE_POSTN,
+#$ADJ-ADJ_NUM_ORD_EPITHETE_DETACHEE,
+#$ADJ-ADJ_NUM_ORD_ATT_DU_S,
+#$ADJ-ADJ_NUM_ORD_ATT_DU_COD
+#)
+@OrdNumber=(
+billionième$NOUN,
+centième$NOUN,
+cinquantième$NOUN,
+cinquième$NOUN,
+deuxième$NOUN,
+dixième$NOUN,
+douzième$NOUN,
+huitantième$NOUN,
+huitième$NOUN,
+milliardième$NOUN,
+millionième$NOUN,
+millième$NOUN,
+neuvième$NOUN,
+onzième$NOUN,
+premier$NOUN,
+quarantième$NOUN,
+quatorzième$NOUN,
+quatre-vingtième$NOUN,
+quatrième$NOUN,
+quinzième$NOUN,
+seizième$NOUN,
+septantième$NOUN,
+septième$NOUN,
+sixième$NOUN,
+soixantième$NOUN,
+ter$NOUN,
+treizième$NOUN,
+trentième$NOUN,
+trillionème$NOUN,
+troisième$NOUN,
+unième$NOUN,
+vingtième$NOUN
+)
+
+# add +/ - sign before (it may not be included in NUMBER if separated
+# by space)
+@OrdNumber:(+|-)?:(\%|pour cent|de|d\')? <UNIT>:NOT_NUMEX:=>NormalizeNumber()
+
+# rule using units that are not in the dictionary
+<NUMBER>:(+|-)?:(\%|pour cent|de|d\')? <UNIT>:NUMEX:=>NormalizeNumber()
+
+# handle un/une before units
+<UNIT>:(un|une)::NUMEX:=>NormalizeNumber()
+
+
+#------------------------------------------
+# règles pour les numex avant POS
+#------------------------------------------
+
+

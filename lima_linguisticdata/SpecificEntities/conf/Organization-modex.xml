@@ -100,6 +100,24 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
   </module>
+  <module name="resources-ud-fra">
+    <group name="OrganizationRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION-ud-fra.bin"/>
+    </group>
+    <group name="OrganizationCompRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/ORGANIZATION_COMP-ud-fra.bin"/>
+    </group>
+    <group name="OrganizationIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Organization.ORGANIZATION" value="yes"/>
+      </map>
+    </group>
+    <group name="OrganizationMicros" class="SpecificEntitiesMicros">
+      <list name="Organization.ORGANIZATION">
+        <item value="PROPN"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="OrganizationRules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/ORGANIZATION-fre.bin"/>

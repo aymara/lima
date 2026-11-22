@@ -73,6 +73,11 @@ target_link_libraries(LimaAnalyzerTest0
     lima-lp-analyzer
 )
 
+if (WITH_LEGACY_PIPELINES)
+  target_compile_definitions(LimaAnalyzerTest0 PRIVATE LIMA_WITH_LEGACY_PIPELINES=1)
+else()
+  target_compile_definitions(LimaAnalyzerTest0 PRIVATE LIMA_WITH_LEGACY_PIPELINES=0)
+endif()
 add_test(NAME LimaAnalyzerTest0 COMMAND LimaAnalyzerTest0)
 
 ########### next test ###############

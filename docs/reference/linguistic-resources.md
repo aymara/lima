@@ -7,6 +7,8 @@ whose `class` is the identifier of the C++ class that loads it. Paths are relati
 the directories listed in `LIMA_RESOURCES`.
 
 The examples below come from the French legacy configuration (`lima-lp-fre.xml`).
+The legacy configurations are deprecated and only built with
+`-DWITH_LEGACY_PIPELINES=ON` (see [Pipelines](../usage/pipelines.md)).
 The sources of these resources live in
 [`lima_linguisticdata/`](https://github.com/aymara/lima/tree/master/lima_linguisticdata)
 and are compiled at build time.

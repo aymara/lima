@@ -1,0 +1,466 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
+
+SPDX-License-Identifier: MIT
+-->
+
+<modulesConfig>
+  <module name="MediaData">
+    <group name="Class">
+        <param key="class" value="LanguageData"/>
+    </group>
+  </module>
+  <module name="LinguisticData">
+    <group name="Categories">
+      <map name="limaToLanguageCodeMapping">
+        <entry key="GENDER" value="Gender"/>
+        <entry key="NUMBER" value="Number"/>
+        <entry key="TIME" value="Tense"/>
+<!--     TODO Find correspondance to LIMA SYNTAX in UD -->
+<!--         <entry key="SYNTAX" value="SYNTAX"/> -->
+        <entry key="PERSON" value="Person"/>
+        <entry key="ASPECT" value="Aspect"/>
+      </map>
+      <list name="sentenceBreakMicros">
+<!--         <item value="SENT"/> -->
+      </list>
+      <param key = "PropertyCodeFile" value = "LinguisticProcessings/ud/code-ud.xml" />
+      <list name="emptyMacro">
+        <item value="DET" />
+        <item value="PRON" />
+        <item value="ADV" />
+        <item value="PREP" />
+        <item value="CONJ" />
+        <item value="PONCTU" />
+        <item value="INTERJ" />
+      </list>
+      <list name="emptyMicro">
+        <item value="ADV"/>
+        <item value="PART"/>
+        <item value="CONJ"/>
+        <item value="SCONJ"/>
+        <item value="DET"/>
+        <item value="INTJ"/>
+        <item value="PUNCT"/>
+        <item value="ADP"/>
+        <item value="PRON"/>
+      </list>
+      <list name="conjugatedVerbs" >
+        <item value="VERB-Abbr=Yes|Mood=Ind|Tense=Pres|VerbForm=Fin"/>
+        <item value="VERB-Abbr=Yes|Tense=Pres|VerbForm=Part"/>
+        <item value="VERB-Abbr=Yes|VerbForm=Ger"/>
+        <item value="VERB-Abbr=Yes|VerbForm=Inf"/>
+        <item value="VERB-Mood=Imp|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Number=Sing|Person=1|Tense=Past|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Number=Sing|Tense=Past|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Tense=Past|Typo=Yes|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Tense=Past|VerbForm=Fin"/>
+        <item value="VERB-Mood=Ind|Tense=Pres|VerbForm=Fin"/>
+        <item value="VERB-Number=Plur"/>
+        <item value="VERB-Number=Sing"/>
+        <item value="VERB-Tense=Past|Typo=Yes|VerbForm=Part|Voice=Pass"/>
+        <item value="VERB-Tense=Past|VerbForm=Part"/>
+        <item value="VERB-Tense=Past|VerbForm=Part|Voice=Pass"/>
+        <item value="VERB-Tense=Pres|VerbForm=Part"/>
+        <item value="VERB-Typo=Yes|VerbForm=Ger"/>
+        <item value="VERB-Typo=Yes|VerbForm=Inf"/>
+        <item value="VERB-VerbForm=Ger"/>
+      </list>
+      <list name="propositionIntroductors" >
+          <item value="CONJ" />
+          <item value="SCONJ" />
+          <item value="ADP" />
+      </list>
+    </group>
+    <group name="SyntacticRelations">
+      <list name="relationList">
+        <item value="ADJPRENSUB"/>
+        <item value="ADJSUB"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="ADVADV2"/>
+        <item value="AdvSub"/>
+        <item value="AdvSub2"/>
+        <item value="AdvVerbe"/>
+        <item value="APPOS"/>
+        <item value="ATB_S"/>
+        <item value="CodPrev"/>
+        <item value="COD_V"/>
+        <item value="CoiPrev"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="COMPADV2"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="COORD1"/>
+        <item value="COORD2"/>
+        <item value="CPLV_V"/>
+        <item value="CPL_V"/>
+        <item value="DetAdj"/>
+        <item value="DETADJ"/>
+        <item value="DetIntSub"/>
+        <item value="DetSubNum"/>
+        <item value="Dummy"/>
+        <item value="JUXT"/>
+        <item value="MOD_A"/>
+        <item value="MOD_N"/>
+        <item value="MOD_V"/>
+        <item value="Neg"/>
+        <item value="PrepInf"/>
+        <item value="Quotes"/>
+        <item value="SUBADJPOST"/>
+        <item value="SUBADJPOST2"/>
+        <item value="SUBSUBJUX"/>
+        <item value="Parent"/>
+        <item value="Pleon"/>
+        <item value="PrepAdv"/>
+        <item value="PrepDetInt"/>
+        <item value="PREPSUB"/>
+        <item value="SujInv"/>
+        <item value="SUJ_V"/>
+
+        <!-- Relations from Universal Dependencies 2.0 -->
+        <!-- https://universaldependencies.org/u/dep/  -->
+        <item value="acl"/>         <!-- UD 2.0: clausal modifier of noun (adjectival clause) -->
+        <item value="acl:adv"/>
+        <item value="acl:appos"/>
+        <item value="acl:cleft"/>
+        <item value="acl:focus"/>
+        <item value="acl:inf"/>
+        <item value="acl:part"/>
+        <item value="acl:periph"/>
+        <item value="acl:poss"/>
+        <item value="acl:relcl"/>
+        <item value="advcl"/>       <!-- UD 2.0: adverbial clause modifier                    -->
+        <item value="advcl:appos"/>
+        <item value="advcl:arg"/>
+        <item value="advcl:cleft"/>
+        <item value="advcl:cmpr"/>
+        <item value="advcl:cond"/>
+        <item value="advcl:coverb"/>
+        <item value="advcl:emph"/>
+        <item value="advcl:lmod"/>
+        <item value="advcl:mmod"/>
+        <item value="advcl:periph"/>
+        <item value="advcl:relcl"/>
+        <item value="advcl:sp"/>
+        <item value="advcl:svc"/>
+        <item value="advcl:tcl"/>
+        <item value="advcl:tmod"/>
+        <item value="advmod"/>      <!-- UD 2.0: adverbial modifier                           -->
+        <item value="advmod:appos"/>
+        <item value="advmod:arg"/>
+        <item value="advmod:cc"/>
+        <item value="advmod:deg"/>
+        <item value="advmod:det"/>
+        <item value="advmod:df"/>
+        <item value="advmod:discourse"/>
+        <item value="advmod:emph"/>
+        <item value="advmod:lmod"/>
+        <item value="advmod:locy"/>
+        <item value="advmod:mmod"/>
+        <item value="advmod:mode"/>
+        <item value="advmod:neg"/>
+        <item value="advmod:obl"/>
+        <item value="advmod:periph"/>
+        <item value="advmod:que"/>
+        <item value="advmod:tfrom"/>
+        <item value="advmod:tlocy"/>
+        <item value="advmod:tmod"/>
+        <item value="advmod:to"/>
+        <item value="advmod:tto"/>
+        <item value="amod"/>        <!-- UD 2.0: adjectival modifier                          -->
+        <item value="amod:advmod"/>
+        <item value="amod:att"/>
+        <item value="amod:attlvc"/>
+        <item value="amod:emph"/>
+        <item value="amod:flat"/>
+        <item value="amod:mode"/>
+        <item value="amod:obl"/>
+        <item value="appos"/>       <!-- UD 2.0: appositional modifier                        -->
+        <item value="aux"/>         <!-- UD 2.0: auxiliary                                    -->
+        <item value="aux:aglt"/>
+        <item value="aux:caus"/>
+        <item value="aux:clitic"/>
+        <item value="aux:cnd"/>
+        <item value="aux:ex"/>
+        <item value="aux:imp"/>
+        <item value="aux:mood"/>
+        <item value="aux:neg"/>
+        <item value="aux:opt"/>
+        <item value="aux:part"/>
+        <item value="aux:pass"/>
+        <item value="aux:poss"/>
+        <item value="aux:q"/>
+        <item value="aux:tense"/>
+        <item value="case"/>        <!-- UD 2.0: case marking                                 -->
+        <item value="case:acc"/>
+        <item value="case:aspect"/>
+        <item value="case:circ"/>
+        <item value="case:dec"/>
+        <item value="case:det"/>
+        <item value="case:gen"/>
+        <item value="case:loc"/>
+        <item value="case:pred"/>
+        <item value="case:pref"/>
+        <item value="case:suff"/>
+        <item value="case:voc"/>
+        <item value="cc"/>          <!-- UD 2.0: coordinating conjunction                     -->
+        <item value="cc:nc"/>
+        <item value="cc:preconj"/>
+        <item value="ccomp"/>       <!-- UD 2.0: clausal complement                           -->
+        <item value="ccomp:agent"/>
+        <item value="ccomp:cleft"/>
+        <item value="ccomp:obj"/>
+        <item value="ccomp:obl"/>
+        <item value="ccomp:pmod"/>
+        <item value="ccomp:pred"/>
+        <item value="clf"/>         <!-- UD 2.0: classifier                                   -->
+        <item value="compound"/>    <!-- UD 2.0: compound                                     -->
+        <item value="compound:a"/>
+        <item value="compound:affix"/>
+        <item value="compound:coll"/>
+        <item value="compound:conjv"/>
+        <item value="compound:dir"/>
+        <item value="compound:ext"/>
+        <item value="compound:lvc"/>
+        <item value="compound:n"/>
+        <item value="compound:nn"/>
+        <item value="compound:plur"/>
+        <item value="compound:preverb"/>
+        <item value="compound:prt"/>
+        <item value="compound:quant"/>
+        <item value="compound:redup"/>
+        <item value="compound:smixut"/>
+        <item value="compound:svc"/>
+        <item value="compound:v"/>
+        <item value="compound:vo"/>
+        <item value="compound:vv"/>
+        <item value="conj"/>        <!-- UD 2.0: conjunct                                     -->
+        <item value="conj:dicto"/>
+        <item value="conj:expl"/>
+        <item value="conj:extend"/>
+        <item value="conj:svc"/>
+        <item value="cop"/>         <!-- UD 2.0: copula                                       -->
+        <item value="cop:expl"/>
+        <item value="cop:locat"/>
+        <item value="cop:own"/>
+        <item value="csubj"/>       <!-- UD 2.0: clausal subject                              -->
+        <item value="csubj:cleft"/>
+        <item value="csubj:cop"/>
+        <item value="csubj:pass"/>
+        <item value="dep"/>         <!-- UD 2.0: unspecified dependency                       -->
+        <item value="dep:alt"/>
+        <item value="dep:mod"/>
+        <item value="dep:prt"/>
+        <item value="det"/>         <!-- UD 2.0: determiner                                   -->
+        <item value="det:adj"/>
+        <item value="det:def"/>
+        <item value="det:noun"/>
+        <item value="det:numgov"/>
+        <item value="det:nummod"/>
+        <item value="det:poss"/>
+        <item value="det:predet"/>
+        <item value="det:pron"/>
+        <item value="det:rel"/>
+        <item value="discourse"/>   <!-- UD 2.0: discourse element                            -->
+        <item value="discourse:emo"/>
+        <item value="discourse:filler"/>
+        <item value="discourse:intj"/>
+        <item value="discourse:sp"/>
+        <item value="dislocated"/>  <!-- UD 2.0: dislocated elements                          -->
+        <item value="dislocated:acl"/>
+        <item value="dislocated:advcl"/>
+        <item value="dislocated:advmod"/>
+        <item value="dislocated:ccomp"/>
+        <item value="dislocated:cleft"/>
+        <item value="dislocated:conj"/>
+        <item value="dislocated:csubj"/>
+        <item value="dislocated:nmod"/>
+        <item value="dislocated:nsubj"/>
+        <item value="dislocated:obj"/>
+        <item value="dislocated:obl"/>
+        <item value="expl"/>        <!-- UD 2.0: expletive                                    -->
+        <item value="expl:comp"/>
+        <item value="expl:impers"/>
+        <item value="expl:pass"/>
+        <item value="expl:poss"/>
+        <item value="expl:pv"/>
+        <item value="expl:subj"/>
+        <item value="fixed"/>       <!-- UD 2.0: fixed multiword expression                   -->
+        <item value="fixed:name"/>
+        <item value="flat"/>        <!-- UD 2.0: flat multiword expression                    -->
+        <item value="flat:abs"/>
+        <item value="flat:foreign"/>
+        <item value="flat:name"/>
+        <item value="flat:range"/>
+        <item value="flat:repeat"/>
+        <item value="flat:sibl"/>
+        <item value="flat:title"/>
+        <item value="flat:vv"/>
+        <item value="goeswith"/>    <!-- UD 2.0: goes with                                    -->
+        <item value="iobj"/>        <!-- UD 2.0: indirect object                              -->
+        <item value="iobj:agent"/>
+        <item value="iobj:appl"/>
+        <item value="iobj:caus"/>
+        <item value="list"/>        <!-- UD 2.0: list                                         -->
+        <item value="mark"/>        <!-- UD 2.0: marker                                       -->
+        <item value="mark:adv"/>
+        <item value="mark:advb"/>
+        <item value="mark:advmod"/>
+        <item value="mark:comp"/>
+        <item value="mark:obl"/>
+        <item value="mark:prt"/>
+        <item value="mark:q"/>
+        <item value="mark:rel"/>
+        <item value="mark:relcl"/>
+        <item value="nmod"/>        <!-- UD 2.0: nominal modifier                             -->
+        <item value="nmod:abl"/>
+        <item value="nmod:advmod"/>
+        <item value="nmod:agent"/>
+        <item value="nmod:appos"/>
+        <item value="nmod:arg"/>
+        <item value="nmod:att"/>
+        <item value="nmod:attlvc"/>
+        <item value="nmod:bahuv"/>
+        <item value="nmod:cau"/>
+        <item value="nmod:clas"/>
+        <item value="nmod:cmp"/>
+        <item value="nmod:comp"/>
+        <item value="nmod:dat"/>
+        <item value="nmod:emph"/>
+        <item value="nmod:flat"/>
+        <item value="nmod:gen"/>
+        <item value="nmod:gmod"/>
+        <item value="nmod:gobj"/>
+        <item value="nmod:gsubj"/>
+        <item value="nmod:ins"/>
+        <item value="nmod:lmod"/>
+        <item value="nmod:npmod"/>
+        <item value="nmod:obl"/>
+        <item value="nmod:obllvc"/>
+        <item value="nmod:own"/>
+        <item value="nmod:part"/>
+        <item value="nmod:periph"/>
+        <item value="nmod:pmod"/>
+        <item value="nmod:poss"/>
+        <item value="nmod:pred"/>
+        <item value="nmod:ref"/>
+        <item value="nmod:tmod"/>
+        <item value="nsubj"/>       <!-- UD 2.0: nominal subject                              -->
+        <item value="nsubj:advmod"/>
+        <item value="nsubj:appos"/>
+        <item value="nsubj:caus"/>
+        <item value="nsubj:cop"/>
+        <item value="nsubj:lvc"/>
+        <item value="nsubj:nc"/>
+        <item value="nsubj:obj"/>
+        <item value="nsubj:own"/>
+        <item value="nsubj:pass"/>
+        <item value="nsubj:periph"/>
+        <item value="nummod"/>      <!-- UD 2.0: numeric modifier                             -->
+        <item value="nummod:det"/>
+        <item value="nummod:entity"/>
+        <item value="nummod:flat"/>
+        <item value="nummod:gov"/>
+        <item value="nummod:mod"/>
+        <item value="nummod:periph"/>
+        <item value="obj"/>         <!-- UD 2.0: object                                       -->
+        <item value="obj:advmod"/>
+        <item value="obj:advneg"/>
+        <item value="obj:agent"/>
+        <item value="obj:appl"/>
+        <item value="obj:caus"/>
+        <item value="obj:lvc"/>
+        <item value="obj:obl"/>
+        <item value="obj:periph"/>
+        <item value="obl"/>         <!-- UD 2.0: oblique nominal                              -->
+        <item value="obl:advmod"/>
+        <item value="obl:agent"/>
+        <item value="obl:appl"/>
+        <item value="obl:arg"/>
+        <item value="obl:cau"/>
+        <item value="obl:cmpr"/>
+        <item value="obl:lmod"/>
+        <item value="obl:loc"/>
+        <item value="obl:lvc"/>
+        <item value="obl:mod"/>
+        <item value="obl:npmod"/>
+        <item value="obl:orphan"/>
+        <item value="obl:own"/>
+        <item value="obl:patient"/>
+        <item value="obl:poss"/>
+        <item value="obl:prep"/>
+        <item value="obl:sentcon"/>
+        <item value="obl:smod"/>
+        <item value="obl:tmod"/>
+        <item value="obl:x"/>
+        <item value="orphan"/>      <!-- UD 2.0: orphan                                       -->
+        <item value="orphan:missing"/>
+        <item value="parataxis"/>   <!-- UD 2.0: parataxis                                    -->
+        <item value="parataxis:appos"/>
+        <item value="parataxis:conj"/>
+        <item value="parataxis:deletion"/>
+        <item value="parataxis:discourse"/>
+        <item value="parataxis:dislocated"/>
+        <item value="parataxis:hashtag"/>
+        <item value="parataxis:insert"/>
+        <item value="parataxis:newsent"/>
+        <item value="parataxis:nsubj"/>
+        <item value="parataxis:obj"/>
+        <item value="parataxis:parenth"/>
+        <item value="parataxis:rel"/>
+        <item value="parataxis:rep"/>
+        <item value="parataxis:restart"/>
+        <item value="punct"/>       <!-- UD 2.0: punctuation                                  -->
+        <item value="reparandum"/>  <!-- UD 2.0: overridden disfluency                        -->
+        <item value="root"/>        <!-- UD 2.0: root                                         -->
+        <item value="vocative"/>    <!-- UD 2.0: vocative                                     -->
+        <item value="vocative:cl"/>
+        <item value="vocative:mention"/>
+        <item value="xcomp"/>       <!-- UD 2.0: open clausal complement                      -->
+        <item value="xcomp:adj"/>
+        <item value="xcomp:cleft"/>
+        <item value="xcomp:ds"/>
+        <item value="xcomp:lvc"/>
+        <item value="xcomp:obj"/>
+        <item value="xcomp:pred"/>
+        <item value="xcomp:sp"/>
+        <item value="xcomp:subj"/>
+
+        <!-- Other relations can be added by syntactic model loader at runtime. -->
+      </list>
+    </group>
+    <group name="SyntacticAnalysis">
+      <list name="NominalHomoSyntagmaticRelations">
+        <item value="det"/>
+        <item value="ADJPRENSUB"/>
+        <item value="COMPADJ"/>
+        <item value="COMPADV"/>
+        <item value="ADVADJ"/>
+        <item value="ADVADV"/>
+        <item value="SUBADJPOST"/>
+        <item value="COMPDUNOM"/>
+        <item value="COMPDUNOM2"/>
+        <item value="SUBSUBJUX"/>
+        <item value="Prefixe"/>
+      </list>
+      <list name="VerbalHomoSyntagmaticRelations">
+        <item value="PrepInf"/>
+      </list>
+      <list name="NounPhraseHeadCategs">	      
+        <item value="NOUN" />
+        <item value="PROPN" />
+        <item value="PRON" />
+      </list>
+      <list name="DefiniteCategs">	      
+        <item value="DET" />
+      </list>
+    </group>
+  </module>
+</modulesConfig>

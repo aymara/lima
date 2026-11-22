@@ -115,6 +115,20 @@ SPDX-License-Identifier: MIT
       </list>
     </group>
   </module>
+  <module name="resources-ud-fra">
+    <group name="include">
+      <list name="includeList">
+        <item value="Numex-modex.xml/resources-ud-fra"/>
+        <item value="DateTime-modex.xml/resources-ud-fra"/>
+        <item value="Organization-modex.xml/resources-ud-fra"/>
+        <item value="Location-modex.xml/resources-ud-fra"/>
+        <item value="Person-modex.xml/resources-ud-fra"/>
+        <item value="Event-modex.xml/resources-ud-fra"/>
+        <item value="Product-modex.xml/resources-ud-fra"/>
+        <item value="Miscellaneous-modex.xml/resources-ud-fra"/>
+      </list>
+    </group>
+  </module>
   <module name="resources-fre">
     <group name="include">
       <list name="includeList">

@@ -125,7 +125,7 @@ std::string parse_conll(const std::string& file)
     std::string unit = "analyzeText";
 //     std::string unit_path = "~/Lima/Dist/lima-gui/debug/bin/";
 //     chdir(unit_path.c_str());
-    std::string cmd = unit + " -l fre " + file;
+    std::string cmd = unit + " -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE " + file;
     //cmd = "cat " + file;
     std::string result;
     

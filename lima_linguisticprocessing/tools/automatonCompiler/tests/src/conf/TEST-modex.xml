@@ -19,7 +19,7 @@
       <param key="applyOnGraph" value="AnalysisGraph"/>
     </group>
   </module>
-  <module name="resources-fre">
+  <module name="resources-ud">
     <group name="ARules" class="AutomatonRecognizer">
       <param key="rules" value="SpecificEntities/test.bin"/>
     </group>
@@ -30,7 +30,7 @@
     </group>
     <group name="TESTMicros" class="SpecificEntitiesMicros">
       <list name="TEST.A">
-        <item value="NC"/>
+        <item value="NOUN"/>
       </list>
     </group>
   </module>

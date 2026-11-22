@@ -15,8 +15,27 @@ set(WITH_ARCH OFF CACHE BOOL "")
 set(WITH_ASAN OFF CACHE BOOL "")
 set(SHORTEN_POR_CORPUS_FOR_SVMLEARN ON CACHE BOOL "")
 set(WITH_LIMA_RESOURCES ON CACHE BOOL "Whether to build linguistic resources or not")
-set(LIMA_RESOURCES_DEEPLIMA_ONLY OFF CACHE BOOL
-    "Build only the linguistic resources needed by deeplima+ModEx pipelines (keeps SpecificEntities/NER, skips the rule-based/statistical resources and the morpho dictionary)")
+# The legacy eng/fre/por media (rule-based tokenizer, morphological dictionary,
+# n-gram PoS tagger, rule-based syntactic parser: lima-lp-{eng,fre,por}.xml) are
+# DEPRECATED. The default build provides the whole LIMA analysis with the
+# deeplima backend for tokenization, PoS tagging, lemmatization and dependency
+# parsing (ud, ud-eng, ud-fra... media), ModEx named entities included.
+# The legacy C++ process units stay compiled: ModEx, the deeplima units and the
+# dumpers share their code and data structures.
+option(WITH_LEGACY_PIPELINES
+  "DEPRECATED: also build and install the legacy eng/fre/por pipelines and their resources"
+  OFF)
+if (DEFINED LIMA_RESOURCES_DEEPLIMA_ONLY)
+  message(WARNING "LIMA_RESOURCES_DEEPLIMA_ONLY is obsolete and ignored: the "
+    "legacy eng/fre/por pipelines are now off by default; set "
+    "WITH_LEGACY_PIPELINES=ON to build them.")
+  unset(LIMA_RESOURCES_DEEPLIMA_ONLY CACHE)
+endif()
+if (WITH_LEGACY_PIPELINES)
+  message(DEPRECATION "WITH_LEGACY_PIPELINES=ON: building the deprecated legacy "
+    "eng/fre/por pipelines. Use the deeplima-backed ud-eng, ud-fra or ud "
+    "media instead.")
+endif()
 
 enable_testing()
 include(GNUInstallDirs)
@@ -524,7 +543,11 @@ set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CP
 
 # set of commands to define component based packaging
 # notify cpack of component all names
-SET(CPACK_COMPONENTS_ALL devel runtime common fre eng por ud)
+# One package per component: list every media whose resources are installed
+SET(CPACK_COMPONENTS_ALL devel runtime common ud ud-eng ud-fra)
+if (WITH_LEGACY_PIPELINES)
+  list(APPEND CPACK_COMPONENTS_ALL fre eng por)
+endif()
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 SET(CPACK_RPM_USE_DISPLAY_NAME_IN_FILENAME ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)

@@ -19,7 +19,7 @@ distribution, downloaded by a script, see below).
 - [qhttpserver](https://github.com/aymara/qhttpserver/releases): `limaserver`
   HTTP/JSON API;
 - [svmtool++](https://github.com/aymara/svmtool-cpp/releases): SVM-based
-  part-of-speech tagger for the legacy pipelines.
+  part-of-speech tagger for the deprecated legacy pipelines.
 
 Under Ubuntu 22.04, most of them are installed with:
 
@@ -39,8 +39,8 @@ instructions on this page fail.
 
 ### English training data { #english-training-data }
 
-As there is no Free part-of-speech tagged English corpus, the legacy English
-pipeline uses an extract of the Penn treebank that is freely available for fair
+As there is no Free part-of-speech tagged English corpus, the deprecated
+legacy English pipeline uses an extract of the Penn treebank that is freely available for fair
 use in the [NLTK data](https://www.nltk.org/data.html). Download it and prepare
 it:
 
@@ -51,7 +51,8 @@ cat ~/nltk_data/corpora/dependency_treebank/wsj_*.dp | grep -v "^$" \
 ```
 
 `setenv-lima.sh` points `NLTK_PTB_DP_FILE` to this file. It is only needed to
-build the legacy English resources: the neural pipelines do not use it.
+build the legacy English resources (`-r legacy`): the default build does not
+use it.
 
 ## Building
 
@@ -94,7 +95,7 @@ Useful `gbuild.sh` options (`./gbuild.sh -h` lists them all):
 | `-t ON` | Run the unit tests after the build |
 | `-p ON` | Build packages |
 | `-g OFF` | Do not build the Qt graphical interface |
-| `-r build\|precompiled\|deeplima\|none` | Linguistic resources: build them all (default), use precompiled ones, build only those needed by the neural pipelines, or skip them |
+| `-r build\|legacy\|precompiled\|none` | Linguistic resources: build those of the neural UD media, named entity rules included (default); also build the deprecated legacy `eng`/`fre`/`por` pipelines (`legacy`, CMake option `WITH_LEGACY_PIPELINES=ON`); use precompiled ones; or skip them |
 | `-G <generator>` | CMake generator (Ninja by default) |
 | `-j <n>` | Parallelism |
 

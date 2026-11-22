@@ -9,4 +9,7 @@ foreach(LANG ${LIMA_LANGUAGES})
   endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${LANG})
 endforeach(LANG ${LIMA_LANGUAGES})
 
-add_subdirectory(tests)
+# The dictionary tests use the legacy fre/eng/por dictionaries
+if (WITH_LEGACY_PIPELINES)
+  add_subdirectory(tests)
+endif()

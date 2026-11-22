@@ -127,6 +127,7 @@ bool ConfigurationNode::visible() {
   std::vector<std::string> authorizedNames = 
   {
     "main",
+    "deepud",
     "processUnitSequence"
   };
   

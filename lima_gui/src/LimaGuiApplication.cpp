@@ -33,6 +33,8 @@
 #include <QCommandLineParser>
 #include <QDir>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QFileInfo>
 #include <QSettings>
 
@@ -362,16 +364,57 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
   Lima::Common::XMLConfigurationFiles::XMLConfigurationFileParser lpconfig(
     configFilePath);
 
-  std::deque<std::string> languages = lpconfig.getModuleGroupListValues(
-                                              clientId.toStdString(),
-                                              "mediaProcessingDefinitionFiles",
-                                              "available");
+  // Default media: English with the deeplima backend (the legacy eng/fre/por
+  // media are deprecated). Other media are selected with -l.
+  std::deque<std::string> languages;
   if (m_options.isSet("language"))
   {
     for(const auto& media: m_options.values("language"))
     {
       languages.push_back(media.toUtf8().constData());
     }
+  }
+  else
+  {
+    languages.push_back("ud-eng");
+  }
+
+  // Analysis options. The registered UD media need the deeplima model
+  // (treebank) to use: default to the model that lima_models installed as the
+  // default of the first media language (registry lima_models.json in the
+  // resources directories), else to the English default model.
+  std::map<std::string, std::string> options = {{"lazy-init", "true"}};
+  if (m_options.isSet("meta"))
+  {
+    for (const auto& kv: m_options.value("meta").split(",", Qt::SkipEmptyParts))
+    {
+      auto sep = kv.indexOf(":");
+      if (sep > 0)
+        options[kv.left(sep).toStdString()] = kv.mid(sep+1).toStdString();
+    }
+  }
+  if (options.find("udlang") == options.end())
+  {
+    auto code = QString::fromStdString(languages.front());
+    if (code.startsWith("ud-"))
+      code = code.mid(3);
+    std::string udlang = "eng-UD_English-MERGE";
+    for (const auto& dir: resourcesPath.split(LIMA_PATH_SEPARATOR, Qt::SkipEmptyParts))
+    {
+      QFile registry(dir + "/lima_models.json");
+      if (registry.open(QIODevice::ReadOnly))
+      {
+        auto defaults = QJsonDocument::fromJson(registry.readAll()).object()
+                          .value("defaults").toObject();
+        if (defaults.contains(code))
+        {
+          udlang = defaults.value(code).toString().toStdString();
+          break;
+        }
+      }
+    }
+    LINFO << "LimaGuiApplication::initializeLimaAnalyzer udlang:" << udlang;
+    options["udlang"] = udlang;
   }
 
   m_languages << QString("<loading>");
@@ -414,7 +457,7 @@ bool LimaGuiApplication::initializeLimaAnalyzer()
     // configDir,
     commonConfigFile.toStdString(),
     languages,
-    {{"udlang", ""}, {"lazy-init", "true"}}
+    options
     );
 
   // initialize linguistic processing
@@ -492,7 +535,11 @@ void LimaGuiApplication::updateAvailablePipelines()
   {
     m_pipelines << QString(p.c_str());
   }
-  if (!m_pipelines.isEmpty())
+  if (m_pipelines.contains("deepud"))
+  {
+    m_pipeline = "deepud";
+  }
+  else if (!m_pipelines.isEmpty())
   {
     m_pipeline = m_pipelines[0];
   }
@@ -651,8 +698,8 @@ void LimaGuiApplication::configure()
   QString configdir = qgetenv("LIMA_CONF");
   std::string resources = qgetenv("LIMA_RESOURCES").constData();
 
-  std::deque<std::string> languages = {"fre", "eng"};
-  std::deque<std::string> pipelines = {"main", "easy"};
+  std::deque<std::string> languages = {"ud-eng"};
+  std::deque<std::string> pipelines = {"deepud"};
 
   std::string commonConfigFile = "lima-common.xml";
 

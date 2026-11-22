@@ -23,7 +23,6 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
     QProcess process;
     process.setProgram("compile-rules");
     process.setWorkingDirectory(qgetenv("LIMA_PWD"));
-    qDebug() << "environment is " << process.systemEnvironment();
     qDebug() << "application dir is " << QCoreApplication::applicationDirPath();
     qDebug() << "current path is " << QDir::currentPath();
 
@@ -32,7 +31,7 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
     QVERIFY(QDir(QDir::currentPath()+"/src").removeRecursively());
     QFile::remove("petit.lst");
     QVERIFY(currentPath.mkpath("src/conf"));
-    QVERIFY(QFile::copy("tests/src/conf/lima-lp-fre.xml", "src/conf/lima-lp-fre.xml"));
+    QVERIFY(QFile::copy("tests/src/conf/lima-lp-ud.xml", "src/conf/lima-lp-ud.xml"));
     QVERIFY(QFile::copy("tests/src/conf/TEST-modex.xml", "src/conf/TEST-modex.xml"));
     QVERIFY(currentPath.mkpath("src/rules"));
     QVERIFY(QFile::copy("tests/src/petit.lst", "petit.lst"));
@@ -41,7 +40,7 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
 
     // Prepare command
     QStringList arguments;
-    arguments << "--language=fre" << "--modex=TEST-modex.xml" << "-oresources/SpecificEntities/test.bin" << "src/rules/test.rules";
+    arguments << "--language=ud" << "--modex=TEST-modex.xml" << "-oresources/SpecificEntities/test.bin" << "src/rules/test.rules";
     process.setArguments(arguments);
 
     process.start();

@@ -6,6 +6,9 @@ SPDX-FileCopyrightText: 2022 CEA LIST <gael.de-chalendar@cea.fr>
 SPDX-License-Identifier: MIT
 -->
 
+<!-- DEPRECATED: legacy rule-based/statistical por media, only built and
+     installed with WITH_LEGACY_PIPELINES=ON. Use the deeplima-backed ud-por
+     media instead (deepud pipeline). -->
 <modulesConfig>
   <module name="Processors">
     <group name="include">

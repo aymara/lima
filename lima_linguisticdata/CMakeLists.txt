@@ -25,14 +25,14 @@ message("lima_linguisticdata PATH=$ENV{PATH}")
 enable_testing()
 
 include(Languages.cmake)
-if (LIMA_RESOURCES_DEEPLIMA_ONLY)
-  # deeplima+ModEx pipelines only use the UD languages. Restrict every
-  # per-language resource build (dictionaries, idioms, disambiguation matrices,
-  # syntactic rules, SpecificEntities) to the UD languages. The legacy
-  # eng/fre/por rule-based/statistical resources are not built.
-  set(LIMA_LANGUAGES ud ud-eng)
-  message("LIMA_RESOURCES_DEEPLIMA_ONLY: restricting linguistic resources to languages: ${LIMA_LANGUAGES}")
+if (NOT WITH_LEGACY_PIPELINES)
+  # Only the deeplima-backed UD media are built. The deprecated legacy eng/fre/por
+  # resources (morphological dictionaries, PoS n-gram matrices, idioms, syntactic
+  # rules, their ModEx rule sets) are skipped. Every per-language loop below
+  # (analysisDictionary codes, SpecificEntities, SRLIntegration) follows this list.
+  list(REMOVE_ITEM LIMA_LANGUAGES ${LIMA_LEGACY_LANGUAGES})
 endif()
+message("Linguistic resources will be built for: ${LIMA_LANGUAGES}")
 include(cmake/LinguisticData.cmake)
 # include(${CMAKE_SOURCE_DIR}/../SystemSpecificInformations.cmake)
 # for add_component macro (require 2.8.5)
@@ -40,39 +40,30 @@ include(CPackComponent)
 
 configure_file(LIMALDATAConfig-src.cmake LIMALDATAConfig.cmake @ONLY)
 
-LIMA_GENERIC_CONFIGENV(ud)
-LIMA_GENERIC_CONFIGENV(ud-eng)
-if (NOT LIMA_RESOURCES_DEEPLIMA_ONLY)
-  LIMA_GENERIC_CONFIGENV(eng)
-  LIMA_GENERIC_CONFIGENV(fre)
-  LIMA_GENERIC_CONFIGENV(por)
-endif()
+foreach(LANG ${LIMA_LANGUAGES})
+  LIMA_GENERIC_CONFIGENV(${LANG})
+endforeach()
 
 add_custom_target(pretest-execEnv)
 add_custom_target(disamb-pretest-execEnv)
 
 add_subdirectory(cmake)
 add_subdirectory(scratch)
-add_subdirectory(SpecificEntities)            # ModEx / NER — always (deeplima-distinctive)
-if (LIMA_RESOURCES_DEEPLIMA_ONLY)
-  message("LIMA_RESOURCES_DEEPLIMA_ONLY: keeping SpecificEntities (ModEx/NER); skipping "
-          "analysisDictionary, disambiguisationMatrices, rules-idiom, syntacticAnalysis, "
-          "SRLIntegration.")
-else()
-  add_subdirectory(analysisDictionary)        # morpho dictionary — rule-based morphology
+add_subdirectory(SpecificEntities)            # ModEx named entities
+# Property codes of every media (code-ud*.xml are loaded at startup by the UD
+# media); the morphological dictionaries are only built for legacy languages.
+add_subdirectory(analysisDictionary)
+add_subdirectory(SRLIntegration)              # CoNLL tag mapping, VerbNet/FrameNet
+if (WITH_LEGACY_PIPELINES)
   add_subdirectory(disambiguisationMatrices)  # n-gram PoS matrices — statistical tagger
   add_subdirectory(rules-idiom)               # rule-based idiomatic expressions
   add_subdirectory(syntacticAnalysis)         # rule-based dependency parser rules
-  add_subdirectory(SRLIntegration)            # semantic-role-labeling integration
-endif()
 
-# PRETEST_CONFIGENV wires the legacy rule-based execEnv (dictionary + idiom rule
-# build targets) used by the eng/fre/por rule-based-pipeline tests. Not needed —
-# and not buildable — under the deeplima-only resource profile.
-if (NOT LIMA_RESOURCES_DEEPLIMA_ONLY)
-  LIMA_PRETEST_CONFIGENV(eng)
-  LIMA_PRETEST_CONFIGENV(fre)
-  LIMA_PRETEST_CONFIGENV(por)
+  # PRETEST_CONFIGENV wires the legacy rule-based execEnv (dictionary + idiom
+  # rule build targets) used by the eng/fre/por rule-based-pipeline tests.
+  foreach(LANG ${LIMA_LEGACY_LANGUAGES})
+    LIMA_PRETEST_CONFIGENV(${LANG})
+  endforeach()
 endif()
 ########### install files ###############
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LIMALDATAConfig.cmake DESTINATION share/apps/lima/cmake/Modules

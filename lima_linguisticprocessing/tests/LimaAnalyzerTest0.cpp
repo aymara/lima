@@ -54,6 +54,23 @@ using namespace Lima;
 
 
 
+// The legacy eng/fre/por media are deprecated and only built with
+// WITH_LEGACY_PIPELINES=ON. Otherwise the instance tests use the deeplima-backed
+// UD media.
+#if LIMA_WITH_LEGACY_PIPELINES
+#define ENG_LANG "eng"
+#define ENG_PIPE "main"
+#define FRE_LANG "fre"
+#define FRE_PIPE "main"
+#define FRE_META ""
+#else
+#define ENG_LANG "ud-eng"
+#define ENG_PIPE "deepud"
+#define FRE_LANG "ud-fra"
+#define FRE_PIPE "deepud"
+#define FRE_META "udlang:fra-UD_French-MERGE"
+#endif
+
 void LimaAnalyzerTest0::initTestCase()
 {
 }
@@ -62,13 +79,13 @@ void LimaAnalyzerTest0::test_two_same_instances()
 {
   // qDebug() << "LimaAnalyzerTest0::test_load";
   {
-    LimaAnalyzer analyzer("eng", "main", "");
+    LimaAnalyzer analyzer(ENG_LANG, ENG_PIPE, "");
     auto result = analyzer.analyzeText("Hello 1");
     qDebug() << "LimaAnalyzerTest0::test_load analyzer 1:" << result;
   }
   QVERIFY( true );
   {
-    LimaAnalyzer analyzer("eng", "main", "");
+    LimaAnalyzer analyzer(ENG_LANG, ENG_PIPE, "");
     auto result = analyzer.analyzeText("Hello 2");
     qDebug() << "LimaAnalyzerTest0::test_load analyzer 2:" << result;
   }
@@ -81,7 +98,7 @@ void LimaAnalyzerTest0::test_two_different_instances()
     auto result1 = analyzer0.analyzeText("Hop ! Hop !");
     qDebug() << "LimaAnalyzerTest0::test_two_different_instances analyzer 1:" << result1;
 
-    LimaAnalyzer analyzer1("eng", "main", "");
+    LimaAnalyzer analyzer1(ENG_LANG, ENG_PIPE, "");
     auto result2 = analyzer1.analyzeText("One, 2, tree.");
     qDebug() << "LimaAnalyzerTest0::test_two_different_instances analyzer 2:" << result2;
 
@@ -97,13 +114,13 @@ void LimaAnalyzerTest0::test_lang_no_prefix() {
 }
 
 void LimaAnalyzerTest0::test_several_instances() {
-    LimaAnalyzer lima1("eng", "main", "");
+    LimaAnalyzer lima1(ENG_LANG, ENG_PIPE, "");
     std::string text = "Give it back! He pleaded.";
 
     auto doc1 = lima1.analyzeText(text);
     QVERIFY(typeid(doc1) == typeid(std::string));
 
-    LimaAnalyzer lima2("fre", "main", "");
+    LimaAnalyzer lima2(FRE_LANG, FRE_PIPE, "", "", "", FRE_META);
     auto doc2 = lima2.analyzeText("Et maintenant, du français.");
     QVERIFY(typeid(doc2) == typeid(std::string));
 }
@@ -146,6 +163,9 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_ud() {
 
 
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_eng() {
+#if !LIMA_WITH_LEGACY_PIPELINES
+    QSKIP("legacy eng media not built (WITH_LEGACY_PIPELINES=OFF)");
+#endif
     LimaAnalyzer thelima("eng", "", "");
     QVERIFY(thelima.error);
     // QVERIFY_THROWS_EXCEPTION has been introduced in Qt6.3 and Ubuntu 22.04

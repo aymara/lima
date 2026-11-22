@@ -28,12 +28,12 @@ export LIMA_RESOURCES=~/MyLima/resources:/usr/share/apps/lima/resources
 
 ## Example: removing a step
 
-Suppose you do not need the named entities extracted by the legacy English
-pipeline. Copy `lima-lp-eng.xml` to `~/MyLima/conf` and comment out this line
-in the `main` group of the `Processors` module:
+Suppose you do not need the named entities extracted by the English
+pipeline. Copy `lima-lp-ud-eng.xml` to `~/MyLima/conf` and comment out this
+line in the `deepud` group of the `Processors` module:
 
 ```xml
-<item value="SpecificEntitiesModex"/>
+<item value="SpecificEntitiesModexAfterPos"/>
 ```
 
 Note that dependencies between process units are not checked: deactivating a
@@ -48,7 +48,7 @@ first. Set the `LIMA_SHOW_CONFIG_PATH` environment variable to a non-empty
 value to print the list of searched directories:
 
 ```bash
-LIMA_SHOW_CONFIG_PATH=1 analyzeText -l eng -p main file.txt
+LIMA_SHOW_CONFIG_PATH=1 analyzeText -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE file.txt
 ```
 
 ## Going further
