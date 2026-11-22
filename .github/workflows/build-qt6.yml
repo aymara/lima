@@ -111,7 +111,6 @@ jobs:
             qt_patch: "3"
             gcc_version: "11.2.1"
             gcc_toolset: "11"
-            clang_headers_in_include_path: "yes"
           - manylinux: manylinux_2_34
             manylinux_tag: "2026.11.14-1"
             python: "3.10"
@@ -122,7 +121,6 @@ jobs:
             qt_patch: "0"
             gcc_version: "14.2.1"
             gcc_toolset: "14"
-            clang_headers_in_include_path: "no"
     env:
       MANYLINUX: ${{ matrix.manylinux }}
       MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
@@ -137,7 +135,6 @@ jobs:
       QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
       GCC_VERSION: ${{ matrix.gcc_version }}
       GCC_TOOLSET: ${{ matrix.gcc_toolset }}
-      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
@@ -184,7 +181,6 @@ jobs:
             qt_patch: "3"
             gcc_version: "11.2.1"
             gcc_toolset: "11"
-            clang_headers_in_include_path: "yes"
           - manylinux: manylinux_2_34
             manylinux_tag: "2026.11.14-1"
             python: "3.10"
@@ -195,7 +191,6 @@ jobs:
             qt_patch: "0"
             gcc_version: "14.2.1"
             gcc_toolset: "14"
-            clang_headers_in_include_path: "no"
     env:
       MANYLINUX: ${{ matrix.manylinux }}
       MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
@@ -210,7 +205,6 @@ jobs:
       QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
       GCC_VERSION: ${{ matrix.gcc_version }}
       GCC_TOOLSET: ${{ matrix.gcc_toolset }}
-      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
@@ -227,7 +221,7 @@ jobs:
         run: bash ./free-diskspace.sh
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX="${MANYLINUX}" --build-arg GCC_TOOLSET="${GCC_TOOLSET}" --build-arg CLANG_HEADERS_IN_INCLUDE_PATH="${CLANG_HEADERS_IN_INCLUDE_PATH}" --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/${MANYLINUX}_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX="${MANYLINUX}" --build-arg GCC_TOOLSET="${GCC_TOOLSET}" --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/${MANYLINUX}_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
 
       - name: "Push image"
         run: docker push aymara/${MANYLINUX}_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
@@ -260,7 +254,6 @@ jobs:
             qt_patch: "3"
             gcc_version: "11.2.1"
             gcc_toolset: "11"
-            clang_headers_in_include_path: "yes"
           - manylinux: manylinux_2_34
             manylinux_tag: "2026.11.14-1"
             python: "3.10"
@@ -271,7 +264,6 @@ jobs:
             qt_patch: "0"
             gcc_version: "14.2.1"
             gcc_toolset: "14"
-            clang_headers_in_include_path: "no"
     env:
       MANYLINUX: ${{ matrix.manylinux }}
       MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
@@ -286,7 +278,6 @@ jobs:
       QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
       GCC_VERSION: ${{ matrix.gcc_version }}
       GCC_TOOLSET: ${{ matrix.gcc_toolset }}
-      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
