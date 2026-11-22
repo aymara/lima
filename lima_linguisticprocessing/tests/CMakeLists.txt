@@ -78,7 +78,16 @@ if (WITH_LEGACY_PIPELINES)
 else()
   target_compile_definitions(LimaAnalyzerTest0 PRIVATE LIMA_WITH_LEGACY_PIPELINES=0)
 endif()
-add_test(NAME LimaAnalyzerTest0 COMMAND LimaAnalyzerTest0)
+# One test (and process) per test function, named from the header: each
+# deepud analyzer uses about 3 GB that LIMA does not release when it is
+# destroyed (issue on the memory of LimaAnalyzer), and the ten or so of one
+# process exhausted the CI runners' memory (the test program was killed)
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/LimaAnalyzerTest0.h _lima_analyzer_tests
+     REGEX "^[ \t]*void test_[A-Za-z0-9_]+\\(\\);")
+foreach(_line ${_lima_analyzer_tests})
+  string(REGEX REPLACE "^[ \t]*void (test_[A-Za-z0-9_]+)\\(\\);.*" "\\1" _test "${_line}")
+  add_test(NAME LimaAnalyzerTest0.${_test} COMMAND LimaAnalyzerTest0 ${_test})
+endforeach()
 
 ########### next test ###############
 
