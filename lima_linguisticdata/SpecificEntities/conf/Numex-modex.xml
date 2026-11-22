@@ -150,7 +150,7 @@ SPDX-License-Identifier: MIT
         <item value="NOUN"/>
       </list>
       <list name="ConjCoordMicros">
-        <item value="CC"/>
+        <item value="CCONJ"/>
       </list>
     </group>
   </module>
@@ -196,7 +196,57 @@ SPDX-License-Identifier: MIT
         <item value="NOUN"/>
       </list>
       <list name="ConjCoordMicros">
-        <item value="CC"/>
+        <item value="CCONJ"/>
+      </list>
+    </group>
+  </module>
+  <module name="resources-ud-fra">
+    <group name="NumberRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMBER-ud-fra.bin"/>
+    </group>
+    <group name="UnitRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/UNIT-ud-fra.bin"/>
+    </group>
+    <group name="NumexRules" class="AutomatonRecognizer">
+      <param key="rules" value="SpecificEntities/NUMEX-ud-fra.bin"/>
+    </group>
+    <group name="NumexIndexing" class="EntityTypeIndexing">
+      <map name="entityPartsIndexing">
+        <entry key="Numex.NUMBER" value="yes"/>
+        <entry key="Numex.UNIT" value="yes"/>
+        <entry key="Numex.NUMEX" value="yes"/>
+      </map>
+    </group>
+    <group name="NumexMicros" class="SpecificEntitiesMicros">
+      <!-- UD tags numbers NUM (legacy French used NC/DET/ADJ) -->
+      <list name="Numex.NUMBER">
+        <item value="NUM"/>
+      </list>
+      <list name="Numex.UNIT">
+        <item value="NOUN"/>
+      </list>
+      <list name="Numex.NUMEX">
+        <item value="NOUN"/>
+      </list>
+    </group>
+    <group name="microsForNumberNormalization" class="MicrosForNormalization">
+      <list name="microGroups">
+        <item value="NumberMicros"/>
+        <item value="UnitMicros"/>
+        <item value="ConjCoordMicros"/>
+      </list>
+      <list name="NumberMicros">
+        <item value="NUM"/>
+        <item value="NOUN"/>
+        <item value="DET"/>
+        <item value="PRON"/>
+        <item value="ADJ"/>
+      </list>
+      <list name="UnitMicros">
+        <item value="NOUN"/>
+      </list>
+      <list name="ConjCoordMicros">
+        <item value="CCONJ"/>
       </list>
     </group>
   </module>
