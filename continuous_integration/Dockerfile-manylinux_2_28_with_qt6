@@ -86,6 +86,11 @@ RUN bash "${SRC_DIR}"/configure \
     -skip qtwayland \
     -skip qtwebview \
     -skip qtwebengine \
+    -skip qtgraphs \
+    -skip qtgrpc \
+    -skip qthttpserver \
+    -skip qtlanguageserver \
+    -skip qtquickeffectmaker \
     -skip qtwinextras \
     -skip qtx11extras \
     -skip qtquick3dphysics \
