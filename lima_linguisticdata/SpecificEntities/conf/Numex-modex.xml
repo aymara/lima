@@ -150,7 +150,7 @@ SPDX-License-Identifier: MIT
         <item value="NOUN"/>
       </list>
       <list name="ConjCoordMicros">
-        <item value="CC"/>
+        <item value="CCONJ"/>
       </list>
     </group>
   </module>
@@ -196,7 +196,7 @@ SPDX-License-Identifier: MIT
         <item value="NOUN"/>
       </list>
       <list name="ConjCoordMicros">
-        <item value="CC"/>
+        <item value="CCONJ"/>
       </list>
     </group>
   </module>
