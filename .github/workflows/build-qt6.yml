@@ -21,24 +21,14 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  # The Boost image (built once, on manylinux_2_28, reused by both chains)
   MANYLINUX_TAG: "2022-10-25-fbea779"
-  # Qt 6.9 is the last whose PySide6/shiboken6 wheels are manylinux_2_28 (6.10+
-  # are manylinux_2_34). Python 3.9 is the oldest its shiboken6 supports
-  # (3.9-3.13): aymara's abi3 wheel, built with it, works with all of them
-  PYTHON_VERSION: "3.9"
-  PYTHON_SHORT_VERSION: "cp39-cp39"
-  PYTHON_WHEEL_VERSION: "cp39-abi3"
-  PYTHON_FULL_VERSION: "3.9.15"   # the one of the MANYLINUX_TAG image
-  QT_VERSION_MAJOR: "6"
-  QT_VERSION_MINOR: "9"
-  QT_VERSION_PATCH: "3"
-  QT_VERSION: "6.9"
-  QT_FULL_VERSION: "6.9.3"
   # svmtool++ does not use Qt: its image, built elsewhere for Qt 6.5, is reused
   SVMTOOLPP_IMAGE: "aymara/svmtoolpp-manylinux2.28-qt6.5:latest"
   PYSIDE_VERSION: "6"
   LLVM_VERSION: "13.0.1"
-  GCC_VERSION: "11.2.1"
+  # The Qt, Python and manylinux versions of the two chains are in the
+  # matrix of the jobs below (MATRIX)
 
 
 jobs:
@@ -98,10 +88,56 @@ jobs:
 
 
   manylinux_2_28_with_qt6:
-    name: "Build the manylinux_2_28-based image with Qt6"
+    name: "Build the ${{ matrix.manylinux }} image with Qt 6.${{ matrix.qt_minor }}"
     needs: changes
     if: ${{ needs.changes.outputs.qt6 == 'true' || github.event.inputs.force_base_images == 'true' }}
     runs-on: ubuntu-latest
+    # Two chains, from the same sources, for aymara's two Linux wheels:
+    # manylinux_2_28 + Qt 6.9.3 (Python 3.9-3.13, glibc >= 2.28; Qt 6.9 is the
+    # last whose PySide6 wheels are manylinux_2_28) and manylinux_2_34 + Qt
+    # 6.12 (Python 3.10-3.15, glibc >= 2.34); the abi3 wheel built with the
+    # oldest Python of each works with all its Pythons
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - manylinux: manylinux_2_28
+            manylinux_tag: "2022-10-25-fbea779"
+            python: "3.9"
+            python_short: "cp39-cp39"
+            python_wheel: "cp39-abi3"
+            python_full: "3.9.15"      # the one of the manylinux_tag image
+            qt_minor: "9"
+            qt_patch: "3"
+            gcc_version: "11.2.1"
+            gcc_toolset: "11"
+            clang_headers_in_include_path: "yes"
+          - manylinux: manylinux_2_34
+            manylinux_tag: "2026.11.14-1"
+            python: "3.10"
+            python_short: "cp310-cp310"
+            python_wheel: "cp310-abi3"
+            python_full: "3.10.22"     # the one of the manylinux_tag image
+            qt_minor: "12"
+            qt_patch: "0"
+            gcc_version: "14.2.1"
+            gcc_toolset: "14"
+            clang_headers_in_include_path: "no"
+    env:
+      MANYLINUX: ${{ matrix.manylinux }}
+      MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
+      PYTHON_VERSION: ${{ matrix.python }}
+      PYTHON_SHORT_VERSION: ${{ matrix.python_short }}
+      PYTHON_WHEEL_VERSION: ${{ matrix.python_wheel }}
+      PYTHON_FULL_VERSION: ${{ matrix.python_full }}
+      QT_VERSION_MAJOR: "6"
+      QT_VERSION_MINOR: ${{ matrix.qt_minor }}
+      QT_VERSION_PATCH: ${{ matrix.qt_patch }}
+      QT_VERSION: "6.${{ matrix.qt_minor }}"
+      QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
+      GCC_VERSION: ${{ matrix.gcc_version }}
+      GCC_TOOLSET: ${{ matrix.gcc_toolset }}
+      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
@@ -115,20 +151,66 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}:latest .
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6 --build-arg MANYLINUX="${MANYLINUX}" --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/${MANYLINUX}_with_qt${QT_VERSION}:latest .
 
       - name: "Push image"
-        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}:latest
+        run: docker push aymara/${MANYLINUX}_with_qt${QT_VERSION}:latest
 
 
   manylinux_2_28_with_qt_and_pyside:
-    name: "Build the manylinux_2_28_with_qt_and_pyside-based imaged necessary for lima-python"
+    name: "Build the ${{ matrix.manylinux }} Qt 6.${{ matrix.qt_minor }} and PySide image (Python ${{ matrix.python }})"
     needs: [changes, manylinux_2_28_with_qt6]
     # Rebuild when its own Dockerfile changed, when qt6 was rebuilt (it is
     # FROM-based on it), or when forced. Runs even if qt6 was skipped, as long
     # as qt6 did not fail.
     if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && (needs.changes.outputs.pyside == 'true' || needs.manylinux_2_28_with_qt6.result == 'success' || github.event.inputs.force_base_images == 'true') }}
     runs-on: ubuntu-latest
+    # Two chains, from the same sources, for aymara's two Linux wheels:
+    # manylinux_2_28 + Qt 6.9.3 (Python 3.9-3.13, glibc >= 2.28; Qt 6.9 is the
+    # last whose PySide6 wheels are manylinux_2_28) and manylinux_2_34 + Qt
+    # 6.12 (Python 3.10-3.15, glibc >= 2.34); the abi3 wheel built with the
+    # oldest Python of each works with all its Pythons
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - manylinux: manylinux_2_28
+            manylinux_tag: "2022-10-25-fbea779"
+            python: "3.9"
+            python_short: "cp39-cp39"
+            python_wheel: "cp39-abi3"
+            python_full: "3.9.15"      # the one of the manylinux_tag image
+            qt_minor: "9"
+            qt_patch: "3"
+            gcc_version: "11.2.1"
+            gcc_toolset: "11"
+            clang_headers_in_include_path: "yes"
+          - manylinux: manylinux_2_34
+            manylinux_tag: "2026.11.14-1"
+            python: "3.10"
+            python_short: "cp310-cp310"
+            python_wheel: "cp310-abi3"
+            python_full: "3.10.22"     # the one of the manylinux_tag image
+            qt_minor: "12"
+            qt_patch: "0"
+            gcc_version: "14.2.1"
+            gcc_toolset: "14"
+            clang_headers_in_include_path: "no"
+    env:
+      MANYLINUX: ${{ matrix.manylinux }}
+      MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
+      PYTHON_VERSION: ${{ matrix.python }}
+      PYTHON_SHORT_VERSION: ${{ matrix.python_short }}
+      PYTHON_WHEEL_VERSION: ${{ matrix.python_wheel }}
+      PYTHON_FULL_VERSION: ${{ matrix.python_full }}
+      QT_VERSION_MAJOR: "6"
+      QT_VERSION_MINOR: ${{ matrix.qt_minor }}
+      QT_VERSION_PATCH: ${{ matrix.qt_patch }}
+      QT_VERSION: "6.${{ matrix.qt_minor }}"
+      QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
+      GCC_VERSION: ${{ matrix.gcc_version }}
+      GCC_TOOLSET: ${{ matrix.gcc_toolset }}
+      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
@@ -145,20 +227,66 @@ jobs:
         run: bash ./free-diskspace.sh
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
+        run: cd ./continuous_integration && docker build --progress=plain -f Dockerfile-manylinux_2_28_with_qt_and_pyside --build-arg MANYLINUX="${MANYLINUX}" --build-arg GCC_TOOLSET="${GCC_TOOLSET}" --build-arg CLANG_HEADERS_IN_INCLUDE_PATH="${CLANG_HEADERS_IN_INCLUDE_PATH}" --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} -t aymara/${MANYLINUX}_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest .
 
       - name: "Push image"
-        run: docker push aymara/manylinux_2_28_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
+        run: docker push aymara/${MANYLINUX}_with_qt${QT_VERSION}_and_pyside-python${PYTHON_VERSION}:latest
 
 
   manylinux_2_28_lima-manylinux:
-    name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed job"
+    name: "Build the ${{ matrix.manylinux }} LIMA image (Qt 6.${{ matrix.qt_minor }}, Python ${{ matrix.python }})"
     needs: [changes, manylinux_2_28_with_boost, manylinux_2_28_with_qt6, manylinux_2_28_with_qt_and_pyside]
     # Always build LIMA itself. It pulls the base images as :latest from the
     # registry, so it must run whether or not the base jobs ran (skipped) —
     # but NOT if any base job actually failed.
     if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-latest
+    # Two chains, from the same sources, for aymara's two Linux wheels:
+    # manylinux_2_28 + Qt 6.9.3 (Python 3.9-3.13, glibc >= 2.28; Qt 6.9 is the
+    # last whose PySide6 wheels are manylinux_2_28) and manylinux_2_34 + Qt
+    # 6.12 (Python 3.10-3.15, glibc >= 2.34); the abi3 wheel built with the
+    # oldest Python of each works with all its Pythons
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - manylinux: manylinux_2_28
+            manylinux_tag: "2022-10-25-fbea779"
+            python: "3.9"
+            python_short: "cp39-cp39"
+            python_wheel: "cp39-abi3"
+            python_full: "3.9.15"      # the one of the manylinux_tag image
+            qt_minor: "9"
+            qt_patch: "3"
+            gcc_version: "11.2.1"
+            gcc_toolset: "11"
+            clang_headers_in_include_path: "yes"
+          - manylinux: manylinux_2_34
+            manylinux_tag: "2026.11.14-1"
+            python: "3.10"
+            python_short: "cp310-cp310"
+            python_wheel: "cp310-abi3"
+            python_full: "3.10.22"     # the one of the manylinux_tag image
+            qt_minor: "12"
+            qt_patch: "0"
+            gcc_version: "14.2.1"
+            gcc_toolset: "14"
+            clang_headers_in_include_path: "no"
+    env:
+      MANYLINUX: ${{ matrix.manylinux }}
+      MANYLINUX_TAG: ${{ matrix.manylinux_tag }}
+      PYTHON_VERSION: ${{ matrix.python }}
+      PYTHON_SHORT_VERSION: ${{ matrix.python_short }}
+      PYTHON_WHEEL_VERSION: ${{ matrix.python_wheel }}
+      PYTHON_FULL_VERSION: ${{ matrix.python_full }}
+      QT_VERSION_MAJOR: "6"
+      QT_VERSION_MINOR: ${{ matrix.qt_minor }}
+      QT_VERSION_PATCH: ${{ matrix.qt_patch }}
+      QT_VERSION: "6.${{ matrix.qt_minor }}"
+      QT_FULL_VERSION: "6.${{ matrix.qt_minor }}.${{ matrix.qt_patch }}"
+      GCC_VERSION: ${{ matrix.gcc_version }}
+      GCC_TOOLSET: ${{ matrix.gcc_toolset }}
+      CLANG_HEADERS_IN_INCLUDE_PATH: ${{ matrix.clang_headers_in_include_path }}
 
     steps:
       -
@@ -189,8 +317,8 @@ jobs:
           swap-storage: true
 
       - name: "Build image"
-        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6_lima-manylinux --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} --build-arg  WITH_LIMA_RESOURCES="ON" --build-arg WITH_LEGACY_PIPELINES="ON" --build-arg SVMTOOLPP_IMAGE="${SVMTOOLPP_IMAGE}" --build-arg BRANCH="${{ github.head_ref || github.ref_name }}" -t aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
+        run: cd ./continuous_integration && docker build -f Dockerfile-manylinux_2_28_with_qt6_lima-manylinux --build-arg MANYLINUX="${MANYLINUX}" --build-arg MANYLINUX_TAG="${MANYLINUX_TAG}" --build-arg GCC_VERSION="${GCC_VERSION}" --build-arg LLVM_VERSION="${LLVM_VERSION}" --build-arg QT_FULL_VERSION="${QT_FULL_VERSION}" --build-arg QT_VERSION_MAJOR="${QT_VERSION_MAJOR}" --build-arg QT_VERSION_MINOR="${QT_VERSION_MINOR}" --build-arg QT_VERSION_PATCH="${QT_VERSION_PATCH}" --build-arg QT_VERSION="${QT_VERSION}" --build-arg PYSIDE_VERSION="${PYSIDE_VERSION}" --build-arg PYTHON_VERSION=${PYTHON_VERSION} --build-arg PYTHON_SHORT_VERSION=${PYTHON_SHORT_VERSION} --build-arg PYTHON_FULL_VERSION=${PYTHON_FULL_VERSION} --build-arg  WITH_LIMA_RESOURCES="ON" --build-arg WITH_LEGACY_PIPELINES="ON" --build-arg SVMTOOLPP_IMAGE="${SVMTOOLPP_IMAGE}" --build-arg BRANCH="${{ github.head_ref || github.ref_name }}" -t aymara/lima-${MANYLINUX}-qt${QT_VERSION}-python${PYTHON_VERSION}:latest .
 
       - name: "Push image"
         if: github.event_name != 'pull_request'
-        run: docker push aymara/lima-manylinux_2_28-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
+        run: docker push aymara/lima-${MANYLINUX}-qt${QT_VERSION}-python${PYTHON_VERSION}:latest
