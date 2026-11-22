@@ -10,7 +10,7 @@ LIMA is a multilingual natural language processing analyzer developed by
 [CEA LIST](https://list.cea.fr/en/) (LASTI laboratory). It is free software,
 available under the MIT license.
 
-- **Neural modules** (libtorch) for tokenization, part-of-speech tagging and
+- **Neural modules** (trained with libtorch, run on the CPU with Eigen) for tokenization, part-of-speech tagging and
   morphological features, lemmatization and dependency parsing, with
   [models for more than 60 languages](https://huggingface.co/aymaralima/deeplima).
 - **ModEx**, a powerful rule-based mechanism to extract entities, relations

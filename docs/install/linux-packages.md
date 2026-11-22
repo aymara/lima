@@ -3,9 +3,10 @@
 !!! warning "No up-to-date binary packages are published"
     The packages attached to the
     [GitHub releases](https://github.com/aymara/lima/releases) date from LIMA
-    2.1 (2019, Ubuntu 16.04/18.04 and Debian 9) and are obsolete. To get a
-    current LIMA, use the [Docker image](docker.md), or build the packages
-    yourself as described below.
+    2.1 (2019, Ubuntu 16.04/18.04 and Debian 9) and are obsolete; there are no
+    packages of LIMA 3.0.0. To get it, use the [Docker image](docker.md)
+    (tag `3.0.0`), or build the packages yourself from the `v3.0.0` tag as
+    described below.
 
 ## Building Debian packages
 

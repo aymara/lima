@@ -3,6 +3,8 @@
 This page takes you from nothing to a first analysis. Pick the path that suits
 you; both produce [CoNLL-U](usage/output-formats.md) output.
 
+--8<-- "versions.md"
+
 === "Python package"
 
     The quickest way to try LIMA, under **Linux x86_64** with Python ≥ 3.7:
@@ -22,10 +24,10 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
     >>> print(doc[0].lemma)
     hello
     >>> print(repr(doc))
-    1       Hello   hello   INTJ    _       _               0       root    _       Pos=0|Len=5
+    1       Hello   hello   INTJ    _       _               3       discourse       _       Pos=0|Len=5
     2       ,       ,       PUNCT   _       _               1       punct   _       Pos=5|Len=1
-    3       World   World   PROPN   _       Number:Sing     1       vocative        _       Pos=7|Len=5
-    4       !       !       PUNCT   _       _               1       punct   _       Pos=12|Len=1
+    3       World   World   PROPN   _       Number:Sing     0       root    _       Pos=7|Len=5
+    4       !       !       PUNCT   _       _               3       punct   _       Pos=12|Len=1
     ```
 
     The package also installs a `lima` command that analyzes files:
@@ -38,7 +40,8 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
 
 === "Docker"
 
-    The Docker image contains the latest LIMA built from the `master` branch:
+    The `latest` Docker image contains LIMA built from the `master` branch;
+    use the `3.0.0` tag instead of `latest` to get the LIMA 3.0.0 release:
 
     ```bash
     docker pull aymara/lima-ubuntu22.04:latest

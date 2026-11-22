@@ -14,7 +14,8 @@ laboratory (LASTI). It is free software, released under the
 
 LIMA combines two complementary approaches:
 
-- **Neural modules** (built on libtorch, the PyTorch C++ library) for
+- **Neural modules** (models trained with libtorch, the PyTorch C++ library,
+  and run by a fast CPU inference engine built on Eigen) for
   tokenization, part-of-speech tagging and morphological features,
   lemmatization and dependency parsing, with
   [models for more than 60 languages](https://huggingface.co/aymaralima/deeplima)

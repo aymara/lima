@@ -60,11 +60,16 @@ Printing a `Doc` with `repr()` gives its CoNLL-U representation:
 
 ```pycon
 >>> print(repr(nlp("Hello, World!")))
-1       Hello   hello   INTJ    _       _               0       root    _       Pos=0|Len=5
+1       Hello   hello   INTJ    _       _               3       discourse       _       Pos=0|Len=5
 2       ,       ,       PUNCT   _       _               1       punct   _       Pos=5|Len=1
-3       World   World   PROPN   _       Number:Sing     1       vocative        _       Pos=7|Len=5
-4       !       !       PUNCT   _       _               1       punct   _       Pos=12|Len=1
+3       World   World   PROPN   _       Number:Sing     0       root    _       Pos=7|Len=5
+4       !       !       PUNCT   _       _               3       punct   _       Pos=12|Len=1
 ```
+
+!!! warning "aymara 0.5.0: root heads in `repr()`"
+    In aymara 0.5.0, `repr()` gives a negative head (instead of 0) to the root
+    of every sentence after the first one of a document. `token.head` and
+    `analyzeText()` are not affected. This is fixed in the next version.
 
 `analyzeText()` returns the raw CoNLL-U string instead of a `Doc`:
 

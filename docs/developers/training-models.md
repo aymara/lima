@@ -33,7 +33,7 @@ identifier used at analysis time:
 | --- | --- |
 | Tokenizer | `RnnTokenizer/ud/tokenizer-<treebank>.pt` |
 | Tagger | `RnnTagger/ud/tagger-<treebank>.pt` |
-| Lemmatizer | `RnnLemmatizer/ud/lemmatizer-<treebank>.pt` (and optionally `.dic`) |
+| Lemmatizer | `RnnLemmatizer/ud/lemmatizer-<treebank>.pt` (and optionally `.dic`, and `.rules`, the edit rules of `deeplima-gen-lemm-dict --rules`) |
 | Dependency parser | `RnnDependencyParser/ud/dependencyParser-<treebank>.pt` |
 
 where `<treebank>` is e.g. `fra-UD_French-MERGE`. Then analyze with

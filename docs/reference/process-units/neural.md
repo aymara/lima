@@ -1,7 +1,8 @@
 # Neural units
 
-The neural process units are built on the in-tree `deeplima` library and
-libtorch. They are used by the `deepud`, `deepud-pretok` and `deeplima`
+The neural process units are built on the in-tree `deeplima` library. They
+run on the CPU with its Eigen-based inference engine; the models, trained with
+libtorch, are converted from the libtorch format when they are loaded. They are used by the `deepud`, `deepud-pretok` and `deeplima`
 [pipelines](../../usage/pipelines.md) and defined in
 [`lima-lp-ud.xml`](https://github.com/aymara/lima/blob/master/lima_linguisticprocessing/conf/lima-lp-ud.xml).
 

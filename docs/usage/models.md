@@ -53,7 +53,8 @@ models), as in former versions. Models are installed in
 checksums of the release, and the embeddings, shared by the models of a
 language, are downloaded once.
 
-Each version of LIMA names the models release it was tested with. Set
+Each version of LIMA names the models release it was tested with: `v0.3.0`
+for LIMA 3.0.0 and aymara 0.5.0. Set
 `LIMA_MODELS_REVISION` to install another release, and `LIMA_MODELS_URL` to
 install from a mirror, or from a local directory holding a release (its
 `models.json` and files).

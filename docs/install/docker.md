@@ -16,7 +16,10 @@ contains:
 | `latest` | Latest build of the `master` branch |
 | `YYYYMMDD` | Build of `master` from that day |
 | `sha-<commit>` | Build of that commit |
-| `<x.y.z>` | Release `vx.y.z` |
+| `<x.y.z>` | Release `vx.y.z`, e.g. `3.0.0` for LIMA 3.0.0 |
+
+Use `aymara/lima-ubuntu22.04:3.0.0` instead of `latest` in the commands below
+to run the LIMA 3.0.0 release.
 
 ## Running LIMA in a container
 

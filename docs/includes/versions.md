@@ -1,0 +1,6 @@
+!!! info "Current versions"
+    **LIMA 3.0.0** (tag [`v3.0.0`](https://github.com/aymara/lima/tree/v3.0.0),
+    Docker image `aymara/lima-ubuntu22.04:3.0.0`), the Python package
+    **[aymara 0.5.0](https://pypi.org/project/aymara/0.5.0/)**, built from it,
+    and the **[v0.3.0 models](https://huggingface.co/aymaralima/deeplima/tree/v0.3.0)**,
+    which both install by default.

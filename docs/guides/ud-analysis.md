@@ -3,7 +3,8 @@
 LIMA's neural pipelines analyze text following the
 [Universal Dependencies](https://universaldependencies.org/) (UD) guidelines,
 with models trained on UD treebanks for more than 60 languages. They are built
-on the in-tree `deeplima` library and libtorch.
+on the in-tree `deeplima` library: the models are trained with libtorch and
+run on the CPU by its Eigen-based inference engine.
 
 | Pipeline | Description | Input | Output |
 | --- | --- | --- | --- |

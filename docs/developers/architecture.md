@@ -14,7 +14,7 @@ The repository is made of subprojects, built in this order (see the root
 | `lima_common` | Foundations: factory and plugin framework, configuration, common data types |
 | `lima_linguisticprocessing` | The analysis engine, the process units, the clients and tools, and the configuration files (`conf/`) |
 | `lima_linguisticdata` | Sources of the linguistic data (dictionaries, rules, disambiguation matrices) compiled into the runtime resources |
-| `deeplima` | Standalone C++ deep learning library on libtorch: inference for tokenization, tagging, lemmatization and dependency parsing, and the training applications |
+| `deeplima` | Standalone C++ deep learning library: CPU inference on Eigen for tokenization, tagging, lemmatization and dependency parsing (models are converted from the libtorch format when loaded), and the libtorch-based training applications |
 | `lima_pelf` | Evaluation and benchmarking tools |
 | `lima_gui` | The Qt graphical interface |
 | `extern` | Third-party dependencies (fastText submodule, libtorch) |
