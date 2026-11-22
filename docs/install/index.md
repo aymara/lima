@@ -1,5 +1,7 @@
 # Installing LIMA
 
+--8<-- "versions.md"
+
 | Method | Platforms | Best for |
 | --- | --- | --- |
 | [Python package](python.md) | Linux x86_64 | Using LIMA from Python, quick tests |
