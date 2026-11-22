@@ -1,11 +1,21 @@
 ARG PYTHON_VERSION
 ARG QT_VERSION
+# MANYLINUX: the manylinux base, manylinux_2_28 (AlmaLinux 8, the Qt 6.9
+# chain) or manylinux_2_34 (AlmaLinux 9, the Qt 6.12 chain); the image names
+# hold it
+ARG MANYLINUX=manylinux_2_28
 ARG MANYLINUX_TAG
-FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
+FROM aymara/${MANYLINUX}_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
 ARG MANYLINUX_TAG
-FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
+FROM quay.io/pypa/${MANYLINUX}_x86_64:${MANYLINUX_TAG}
 
 ARG GCC_VERSION
+# The gcc-toolset of the base (11 on manylinux_2_28, 14 on manylinux_2_34)
+ARG GCC_TOOLSET=11
+# Clang's builtin headers in CPLUS_INCLUDE_PATH, as needed with the clang 18
+# of manylinux_2_28; with the clang 22 of manylinux_2_34, GCC cannot compile
+# them ("missing binary operator") and shiboken finds them without it
+ARG CLANG_HEADERS_IN_INCLUDE_PATH=yes
 ARG QT_VERSION
 ARG QT_VERSION_MAJOR
 ARG QT_FULL_VERSION
@@ -22,14 +32,16 @@ ENV PATH="/opt/python/${PYTHON_SHORT_VERSION}/bin:${PATH}"
 
 # --nogpgcheck: the manylinux_2_28 (AlmaLinux 8) base repos fail GPG verification
 # (expired/missing keys), matching Dockerfile-manylinux_2_28_with_boost.
-RUN yum install -y --nogpgcheck --allowerasing --nobest wget gcc-toolset-11.x86_64 ninja-build libicu-devel.x86_64 \
+RUN yum install -y --nogpgcheck --allowerasing --nobest wget gcc-toolset-${GCC_TOOLSET}.x86_64 ninja-build libicu-devel.x86_64 \
     clang.x86_64 python3-clang.x86_64 llvm-devel.x86_64 clang-devel.x86_64 libxml2-devel.x86_64 libxslt-devel.x86_64 \
     python3-sphinx.noarch
 # RUN ln -s /usr/bin/uic-qt5 /usr/bin/uic && \
 #     ln -s /usr/bin/rcc-qt5 /usr/bin/rcc &&
-RUN    ln -s /usr/lib64/libclang.so.13 /usr/lib64/libclang.so.1
-ENV CC=/opt/rh/gcc-toolset-11/root/usr/bin/gcc \
-    CXX=/opt/rh/gcc-toolset-11/root/usr/bin/g++
+# libclang.so.1: libclang's soname, whatever its version (13, 18, 22...)
+RUN    lib=$(ls /usr/lib64/libclang.so.[0-9]* 2>/dev/null | head -n1); \
+       if [ -n "$lib" ] && [ ! -e /usr/lib64/libclang.so.1 ]; then ln -s "$lib" /usr/lib64/libclang.so.1; fi
+ENV CC=/opt/rh/gcc-toolset-${GCC_TOOLSET}/root/usr/bin/gcc \
+    CXX=/opt/rh/gcc-toolset-${GCC_TOOLSET}/root/usr/bin/g++
 
 RUN python${PYTHON_VERSION} -m pip install scikit-build
 
@@ -42,17 +54,19 @@ WORKDIR /pyside-setup
 # Touch files needed for setup but not used in fact
 RUN install -d /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/ && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}.a && touch /opt/_internal/cpython-${PYTHON_FULL_VERSION}/lib/x86_64-linux-gnu/libpython${PYTHON_VERSION}m.a
 
-ENV CLANG_RESOURCE_DIR=/usr/lib64/clang/18
-ENV CPLUS_INCLUDE_PATH=/usr/lib64/clang/18/include:$CPLUS_INCLUDE_PATH
+# CLANG_RESOURCE_DIR (and CPLUS_INCLUDE_PATH, see CLANG_HEADERS_IN_INCLUDE_PATH)
+# are set in the build step, from clang itself
 # Force Shiboken's internal locator to look into the actual toolset path
 ENV LLVM_INSTALL_DIR=/usr
 ENV CLANG_INSTALL_DIR=/usr
 
 # Symlink the internal layout so if Shiboken looks for /usr/lib/clang, it hits lib64
-RUN ln -s /usr/lib64/clang /usr/lib/clang
+RUN [ -e /usr/lib/clang ] || ln -s /usr/lib64/clang /usr/lib/clang
 
 WORKDIR /pyside-setup
-RUN python${PYTHON_VERSION} setup.py install --build-type=all --limited-api=yes --qtpaths=/opt/qt6/bin/qtpaths \
+RUN export CLANG_RESOURCE_DIR=$(realpath "$(clang -print-resource-dir)") && \
+    if [ "${CLANG_HEADERS_IN_INCLUDE_PATH}" = yes ]; then export CPLUS_INCLUDE_PATH=${CLANG_RESOURCE_DIR}/include:${CPLUS_INCLUDE_PATH:-}; fi && \
+    python${PYTHON_VERSION} setup.py install --build-type=all --limited-api=yes --qtpaths=/opt/qt6/bin/qtpaths \
                         --ignore-git \
                         --module-subset=Core
 

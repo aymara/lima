@@ -1,5 +1,9 @@
+# MANYLINUX: the manylinux base, manylinux_2_28 (AlmaLinux 8, the Qt 6.9
+# chain) or manylinux_2_34 (AlmaLinux 9, the Qt 6.12 chain); the image names
+# hold it
+ARG MANYLINUX=manylinux_2_28
 ARG MANYLINUX_TAG
-FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
+FROM quay.io/pypa/${MANYLINUX}_x86_64:${MANYLINUX_TAG}
 
 ARG GCC_VERSION
 ARG QT_VERSION
@@ -44,7 +48,6 @@ RUN bash "${SRC_DIR}"/configure \
     -no-eglfs \
     -no-evdev \
     -no-glib \
-    -make libs \
     -no-cups \
     -no-gbm \
     -no-gtk \
