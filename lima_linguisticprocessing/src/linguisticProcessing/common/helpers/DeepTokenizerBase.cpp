@@ -178,6 +178,9 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_integer";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_integer"));
+    // Numeric transitions (e.g. t_integer>1<31) check the numeric status
+    curSettings.setStatus(T_NUMERIC);
+    curSettings.setNumeric(T_INTEGER);
   }
   else if (reCommaNumber.match(token.stringForm()).hasMatch())
   {
@@ -185,6 +188,9 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_comma_number";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_comma_number"));
+    // Numeric transitions (e.g. t_integer>1<31) check the numeric status
+    curSettings.setStatus(T_NUMERIC);
+    curSettings.setNumeric(T_COMMA_NUMBER);
   }
   else if (reDotNumber.match(token.stringForm()).hasMatch())
   {
@@ -192,6 +198,9 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_dot_number";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_dot_number"));
+    // Numeric transitions (e.g. t_integer>1<31) check the numeric status
+    curSettings.setStatus(T_NUMERIC);
+    curSettings.setNumeric(T_DOT_NUMBER);
   }
   else if (reFraction.match(token.stringForm()).hasMatch())
   {
@@ -199,6 +208,9 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_fraction";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_fraction"));
+    // Numeric transitions (e.g. t_integer>1<31) check the numeric status
+    curSettings.setStatus(T_NUMERIC);
+    curSettings.setNumeric(T_FRACTION);
   }
   else if (reOrdinalInteger.match(token.stringForm()).hasMatch())
   {
@@ -206,6 +218,9 @@ void DeepTokenizerBase::computeDefaultStatus(Token& token)
 //     LDEBUG << "CppUppsalaTokenizerPrivate::computeDefaultStatus t_ordinal_integer";
 // #endif
     curSettings.setDefaultKey(QString::fromUtf8("t_ordinal_integer"));
+    // Numeric transitions (e.g. t_integer>1<31) check the numeric status
+    curSettings.setStatus(T_NUMERIC);
+    curSettings.setNumeric(T_ORDINAL_INTEGER);
   }
   else if (reAlphanumeric.match(token.stringForm()).hasMatch())
   {
