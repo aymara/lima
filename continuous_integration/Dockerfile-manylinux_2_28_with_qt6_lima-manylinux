@@ -1,8 +1,12 @@
 ARG QT_VERSION
+# MANYLINUX: the manylinux base, manylinux_2_28 (AlmaLinux 8, the Qt 6.9
+# chain) or manylinux_2_34 (AlmaLinux 9, the Qt 6.12 chain); the image names
+# hold it
+ARG MANYLINUX=manylinux_2_28
 ARG MANYLINUX_TAG
 # svmtool++ does not use Qt: its image needs not match QT_VERSION
 ARG SVMTOOLPP_IMAGE=aymara/svmtoolpp-manylinux2.28-qt6.5:latest
-FROM aymara/manylinux_2_28_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
+FROM aymara/${MANYLINUX}_with_qt${QT_VERSION}:latest as aymara_manylinux_2_28_with_qt
 
 FROM aymara/manylinux_2_28_with_boost:latest as aymara_manylinux_2_28_with_boost
 
@@ -11,7 +15,7 @@ FROM aymara/manylinux_2_28_with_boost:latest as aymara_manylinux_2_28_with_boost
 FROM ${SVMTOOLPP_IMAGE}  as aymara_svmtoolpp-manylinux2.28-qt
 
 ARG MANYLINUX_TAG
-FROM quay.io/pypa/manylinux_2_28_x86_64:${MANYLINUX_TAG}
+FROM quay.io/pypa/${MANYLINUX}_x86_64:${MANYLINUX_TAG}
 
 
 ARG GCC_VERSION
@@ -47,7 +51,9 @@ ARG LIBTORCH_DL="download_libtorch.sh" # Use download_libtorch_gpu.sh for GPU bu
 # --nogpgcheck: the manylinux_2_28 (AlmaLinux 8) base repos fail GPG verification
 # (expired/missing keys), matching the workaround already used in
 # Dockerfile-manylinux_2_28_with_boost.
-RUN yum install -y --nogpgcheck wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel
+# perl: the whole of it (AlmaLinux 9 installs a minimal one, without the
+# Benchmark module SVMTool's training uses)
+RUN yum install -y --nogpgcheck wget ninja-build libicu-devel.x86_64 boost-devel.x86_64 eigen3-devel perl
 
 WORKDIR /
 
@@ -62,7 +68,7 @@ RUN wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-
 ENV PATH="/opt/_internal/cpython-${PYTHON_FULL_VERSION}/bin:/opt/python/bin:${PATH}"
 # upgrade pip, purge pip cache and then
 # install python packages necessary to use the language resources install script
-RUN pip${PYTHON_VERSION} install -U pip && pip${PYTHON_VERSION} cache purge && pip${PYTHON_VERSION} install --no-cache-dir arpy requests tqdm scikit-build pyside${PYSIDE_VERSION} shiboken${PYSIDE_VERSION}
+RUN pip${PYTHON_VERSION} install -U pip && pip${PYTHON_VERSION} cache purge && pip${PYTHON_VERSION} install --no-cache-dir arpy requests tqdm scikit-build pyside${PYSIDE_VERSION}==${QT_FULL_VERSION} shiboken${PYSIDE_VERSION}==${QT_FULL_VERSION}
 
 RUN mkdir -p /src/
 RUN git clone -v --branch=$BRANCH --recurse-submodules https://${GITHUB_TOKEN}@github.com/aymara/lima /src/lima
