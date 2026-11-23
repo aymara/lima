@@ -165,7 +165,7 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 # On Windows, Boost DLLs (like the other third-party DLLs) are installed by the
-# runtime-dependencies step at the end of this file, not listed one by one: the
+# runtime-dependencies step (cmake/WindowsRuntimeDeps.cmake), not one by one: the
 # Boost CMake config only exposes imported targets, not Boost_*_LIBRARY_* paths.
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
@@ -364,17 +364,7 @@ find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(DIRECTORY  ${ICU_INCLUDE_DIR}/../bin64/
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime
-          FILES_MATCHING PATTERN "icu*.dll")
-  FILE(GLOB ICU_LIBRARIES "${ICU_INCLUDE_DIR}/../bin64/icu*.dll")
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${ICU_LIBRARIES})
-      message("icu: ${ICU_LIBRARIES}")
-endif()
+# On Windows, the ICU DLLs are installed by cmake/WindowsRuntimeDeps.cmake.
 
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
@@ -593,3 +583,5 @@ string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA
 
 include(CPack)
 
+# Must stay last: installs the third-party DLLs the installed binaries need.
+include(cmake/WindowsRuntimeDeps.cmake)
