@@ -42,7 +42,11 @@ set(SOURCE_FILES
 # fastText's sources use uint64_t/int32_t etc. without including <cstdint>.
 # Since GCC 13 the standard headers no longer pull <cstdint> in transitively,
 # so force-include it for the fastText targets defined below in this directory.
-add_compile_options(-include cstdint)
+if (MSVC)
+  add_compile_options(/FIcstdint)
+else()
+  add_compile_options(-include cstdint)
+endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
@@ -54,6 +58,9 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
       ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
   install (TARGETS fasttext-static_pic
       ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
+  # fastText exports no symbols (no __declspec(dllexport)), so a DLL would be
+  # empty: on Windows, users of fasttext-shared link the static library.
+  add_library(fasttext-shared ALIAS fasttext-static)
 
 else()
   add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})

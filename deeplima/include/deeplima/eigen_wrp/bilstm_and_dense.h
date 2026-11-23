@@ -66,9 +66,19 @@ protected:
                                                 Eigen::Matrix<fixed_point_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>,
                                                 M>::type;
 
-  static constexpr fixed_point_t WEIGHT_FRACTION_MULT = fixed_point_t(1) << WFracBits;
-  static constexpr fixed_point_t DATA_FRACTION_MULT = fixed_point_t(1) << IFracBits;
-  static constexpr fixed_point_t WEIGHT_DATA_FRACTION_MULT = fixed_point_t(1) << (WFracBits + IFracBits);
+  // 2^bits as fixed_point_t. A plain `fixed_point_t(1) << bits` is ill-formed
+  // when AuxScalar is a floating-point type; GCC only rejects it on use, MSVC
+  // as soon as the class is instantiated.
+  static constexpr fixed_point_t pow2(int bits)
+  {
+    if constexpr (std::is_integral_v<fixed_point_t>)
+      return fixed_point_t(1) << bits;
+    else
+      return fixed_point_t(int64_t(1) << bits);
+  }
+  static constexpr fixed_point_t WEIGHT_FRACTION_MULT = pow2(WFracBits);
+  static constexpr fixed_point_t DATA_FRACTION_MULT = pow2(IFracBits);
+  static constexpr fixed_point_t WEIGHT_DATA_FRACTION_MULT = pow2(WFracBits + IFracBits);
   // End of fixed point releated definitions
 
   struct workbench_t : public Op_Base::workbench_t

@@ -25,6 +25,9 @@ target_compile_definitions(convert_from_torch
         PRIVATE "-DLEMM_EXPORTING"
     )
 target_compile_definitions(convert_from_torch
+        PRIVATE "-DTAG_EXPORTING" "-DSEGM_EXPORTING"
+    )
+target_compile_definitions(convert_from_torch
       PRIVATE "-DDEP_PARSING_EXPORTING"
   )
 
@@ -48,6 +51,9 @@ if (NOT DEEPLIMA_STANDALONE)
     )
   target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DLEMM_EXPORTING"
+    )
+target_compile_definitions(convert_from_torch-shared
+        PRIVATE "-DTAG_EXPORTING" "-DSEGM_EXPORTING"
     )
   target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DDEP_PARSING_EXPORTING"

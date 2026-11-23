@@ -75,15 +75,20 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
     do
     {
         //std::cerr << me32.szModule << std::endl;
-        std::string s(me32.szModule);
-        if (s.size() == 0)
-            return false;
-
+        // szModule is a TCHAR array (wide when UNICODE is defined, as with Qt):
+        // let boost::filesystem::path do the conversion in both cases.
         boost::filesystem::path p(me32.szModule);
+        if (p.empty())
+        {
+            CloseHandle(hModuleSnap);
+            return false;
+        }
+
         std::string fn = p.filename().string();
         if (fn.find(libName, 0) == 0) // [plugin-name]
         {
             //std::cerr << "An attempt to load same lib twice detected" << std::endl;
+            CloseHandle(hModuleSnap);
             return true;
         }
 

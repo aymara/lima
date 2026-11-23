@@ -16,15 +16,9 @@
 namespace deeplima
 {
 
-#ifdef WIN32
-#ifdef DICT_EXPORTING
-  #define DICT_EXPORT __declspec(dllexport)
-#else
-  #define DICT_EXPORT  __declspec(dllimport)
-#endif
-#else
-  #define DICT_EXPORT
-#endif
+// static_graph is a static library: Dict must not be declared dllimport by its
+// users (there is no DLL to import it from), so the macro is empty everywhere.
+#define DICT_EXPORT
 
 
 template <class T>
