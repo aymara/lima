@@ -125,6 +125,13 @@ if(NOT WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 endif()
 
+# Eigen intra-op (OpenMP) parallelism only oversubscribes the cores with the
+# small matrix products of the neural units, which already parallelize at the
+# sentence level (see RnnDependencyParser: Eigen::setNbThreads(1)). Disable it
+# at compile time: Eigen's thread-count setting is a static which, on Windows,
+# exists once per DLL, so the runtime call does not reach the other plugins.
+add_compile_definitions(EIGEN_DONT_PARALLELIZE)
+
 # use openmp
 find_package(OpenMP)
 if(OPENMP_FOUND)

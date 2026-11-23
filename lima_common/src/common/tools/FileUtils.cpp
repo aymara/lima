@@ -16,6 +16,10 @@
 #include <QDir>
 #include <QStandardPaths>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 namespace Lima {
 namespace Common {
 namespace Misc {
@@ -110,15 +114,50 @@ void appendFirstOrSecond(QStringList& target, const QString& path, const QString
   }
 }
 
-// Calls appendFirstOrSecond for given project
+// Install prefix deduced from the location of this library
+// (<prefix>/bin/lima-common-tools.dll), or an empty string. Used on Windows,
+// where there is no system location like /usr, so that an installed LIMA
+// works without LIMA_CONF/LIMA_RESOURCES, whatever the executable (e.g. the
+// Python interpreter for the Python bindings).
+QString libraryInstallPrefix()
+{
+#ifdef Q_OS_WIN
+  HMODULE module = nullptr;
+  if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                           | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                         reinterpret_cast<LPCWSTR>(&libraryInstallPrefix),
+                         &module))
+  {
+    wchar_t path[4096];
+    auto length = GetModuleFileNameW(module, path, sizeof(path) / sizeof(path[0]));
+    if (length > 0 && length < sizeof(path) / sizeof(path[0]))
+    {
+      QDir binDir = QFileInfo(QString::fromWCharArray(path, length)).absoluteDir();
+      return QDir::cleanPath(binDir.absoluteFilePath(".."));
+    }
+  }
+#endif
+  return QString();
+}
+
+// Appends the project directory under $<PROJECT>_DIST if it exists, else
+// under the install prefix of this library (Windows) if it exists, else under
+// /usr.
 void appendFirstOrSecondForProject(QStringList& target,
                                    const QString& project,
                                    const QString& path_prefix,
                                    const QString& path_postfix = QString(""))
 {
+  QString systemPath = QString::fromUtf8("/usr/") + path_prefix + project + path_postfix;
+  QString prefix = libraryInstallPrefix();
+  if (!prefix.isEmpty()
+      && QDir(prefix + path_prefix + project + path_postfix).exists())
+  {
+    systemPath = prefix + path_prefix + project + path_postfix;
+  }
   appendFirstOrSecond(target,
                       getEnvVar(project + "_DIST") + path_prefix + project + path_postfix,
-                      QString::fromUtf8("/usr/") + path_prefix + project + path_postfix);
+                      systemPath);
 }
 
 void buildDirectoriesListForProject(QStringList& target,
