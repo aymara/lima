@@ -25,8 +25,10 @@ namespace eigen_impl
 #ifdef WIN32
 #ifdef TAG_EXPORTING
   #define TAG_EXPORT __declspec(dllexport)
-#else
+#elif defined(DEEPLIMA_CONVERTFROMTORCH_SHARED) // users of the DLL
   #define TAG_EXPORT __declspec(dllimport)
+#else // static linking
+  #define TAG_EXPORT
 #endif
 #else
   #define TAG_EXPORT

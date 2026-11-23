@@ -18,18 +18,9 @@ add_library(convert_from_torch
   ${SOURCE_LIST}
   ${HEADER_LIST}
 )
-target_compile_definitions(convert_from_torch
-        PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
-    )
-target_compile_definitions(convert_from_torch
-        PRIVATE "-DLEMM_EXPORTING"
-    )
-target_compile_definitions(convert_from_torch
-        PRIVATE "-DTAG_EXPORTING" "-DSEGM_EXPORTING"
-    )
-target_compile_definitions(convert_from_torch
-      PRIVATE "-DDEP_PARSING_EXPORTING"
-  )
+# No *_EXPORTING definitions on the static library: the export macros only
+# matter for the Windows DLL, and dllexport in a static library would make every
+# DLL linking it re-export these symbols.
 
 target_link_libraries(convert_from_torch
   PRIVATE
@@ -40,7 +31,13 @@ target_link_libraries(convert_from_torch
   ${TORCH_LIBRARIES}
 )
 
-if (NOT DEEPLIMA_STANDALONE)
+if (WIN32 AND NOT DEEPLIMA_STANDALONE)
+  # On Windows, the LIMA plugins link the static library. The code is split
+  # between static libs (segmentation/lemmatization inference...) and this one
+  # with cross references in both directions (e.g. virtual methods of
+  # BiRnnInferenceBase), which ELF shared objects tolerate but DLLs do not.
+  add_library(convert_from_torch-shared ALIAS convert_from_torch)
+elseif (NOT DEEPLIMA_STANDALONE)
   add_library(convert_from_torch-shared
     SHARED
     ${SOURCE_LIST}
@@ -49,10 +46,15 @@ if (NOT DEEPLIMA_STANDALONE)
   target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DDEEPLIMA_CONVERTFROMTORCH_EXPORTING"
     )
+  # Users of the DLL (the LIMA plugins) see its classes as dllimport; users of
+  # the static convert_from_torch (the deeplima apps) must not.
+  target_compile_definitions(convert_from_torch-shared
+        INTERFACE DEEPLIMA_CONVERTFROMTORCH_SHARED
+    )
   target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DLEMM_EXPORTING"
     )
-target_compile_definitions(convert_from_torch-shared
+  target_compile_definitions(convert_from_torch-shared
         PRIVATE "-DTAG_EXPORTING" "-DSEGM_EXPORTING"
     )
   target_compile_definitions(convert_from_torch-shared

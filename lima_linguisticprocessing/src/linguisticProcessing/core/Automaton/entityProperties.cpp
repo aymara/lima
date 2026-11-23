@@ -49,7 +49,7 @@ EntityProperties& EntityProperties::operator = (const EntityProperties& p)
   return (*this);
 }
 
-bool EntityProperties::operator== (const EntityProperties& p)
+bool EntityProperties::operator== (const EntityProperties& p) const
 {
   return (m_head == p.m_head &&
           m_type == p.m_type &&

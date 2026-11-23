@@ -35,7 +35,7 @@ class LIMA_AUTOMATON_EXPORT MatchElement  {
   MatchElement(const LinguisticGraphVertex& v, const bool isKept, const LimaString& ruleElemtId):
     m_elem(std::make_pair(v,isKept)), m_ruleElemtId(ruleElemtId) {}
   ~MatchElement() {}
-  bool operator==(const MatchElement& m) {
+  bool operator==(const MatchElement& m) const {
     return (m_elem.first==m.m_elem.first && m_elem.second==m.m_elem.second && m_ruleElemtId==m.m_ruleElemtId);
   }
   const LinguisticGraphVertex& getVertex() const { return m_elem.first; }
@@ -62,7 +62,7 @@ class LIMA_AUTOMATON_EXPORT RecognizerMatch :
   ~RecognizerMatch();
 
   // comparison operator
-  bool operator == (const RecognizerMatch&);
+  bool operator == (const RecognizerMatch&) const;
 
   bool isContiguous() const;
   bool hasDuplicateElements() const;

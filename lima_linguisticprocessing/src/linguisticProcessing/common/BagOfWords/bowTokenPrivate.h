@@ -57,7 +57,7 @@ public:
 
   BoWTokenPrivate(const BoWTokenPrivate& tok);
   BoWTokenPrivate& operator=(const BoWTokenPrivate& tok);
-  bool operator==(const BoWTokenPrivate& tok);
+  bool operator==(const BoWTokenPrivate& tok) const;
 
 
   virtual ~BoWTokenPrivate();

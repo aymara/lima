@@ -45,7 +45,7 @@ RecognizerMatch::~RecognizerMatch() {
 }
 
 // comparison operator
-bool RecognizerMatch::operator == (const RecognizerMatch& m) {
+bool RecognizerMatch::operator == (const RecognizerMatch& m) const {
   if (m_graph != m.m_graph) {
     return false;
   }

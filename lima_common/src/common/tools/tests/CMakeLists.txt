@@ -13,6 +13,10 @@ SET(LimaFileSystemWatcherTest0_SRCS
   LimaFileSystemWatcherTest.cpp
 )
 
+# The parent directory's add_definitions(-D..._EXPORTING) is inherited here, but
+# the test must import these classes from the DLLs, not define them.
+remove_definitions(-DLIMA_COMMONTOOLS_EXPORTING -DLIMA_COMMONQSLOG_EXPORTING)
+
 add_executable(LimaFileSystemWatcherTest0
   ${LimaFileSystemWatcherTest0_SRCS}
   ${LimaFileSystemWatcherTest0_MOC_OUTFILES})

@@ -7,8 +7,8 @@ macro (TEST_RULES_DEPLOY)
 
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/tests/src/rules/test.rules ${CMAKE_BINARY_DIR}/execEnv/tests/src/petit.lst
-    COMMAND install -d ${CMAKE_BINARY_DIR}/execEnv/tests
-    COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/execEnv/tests
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/tests/src
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/execEnv/tests/src
     DEPENDS src/rules/test.rules src/petit.lst
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM

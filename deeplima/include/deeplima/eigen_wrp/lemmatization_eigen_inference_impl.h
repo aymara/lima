@@ -33,8 +33,10 @@ namespace eigen_impl
 #ifdef WIN32
 #ifdef LEMM_EXPORTING
   #define LEMM_EXPORT __declspec(dllexport)
-#else
+#elif defined(DEEPLIMA_CONVERTFROMTORCH_SHARED) // users of the DLL
   #define LEMM_EXPORT  __declspec(dllimport)
+#else // static linking
+  #define LEMM_EXPORT
 #endif
 #else
   #define LEMM_EXPORT
