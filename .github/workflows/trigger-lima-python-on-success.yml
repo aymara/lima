@@ -10,7 +10,12 @@ on:
 jobs:
   trigger_remote_workflow:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Only when the LIMA images were pushed: a successful push build of
+    # master (pull request builds are not pushed; other branches do not run it)
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success'
+          && github.event.workflow_run.event == 'push'
+          && github.event.workflow_run.head_branch == 'master' }}
     steps:
       - name: Trigger Remote Workflow
         uses: peter-evans/repository-dispatch@v4
