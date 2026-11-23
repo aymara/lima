@@ -36,7 +36,10 @@ ARG PYSIDE_VERSION
 COPY --from=aymara/manylinux_2_28_with_nltk_data:latest /nltk_data /nltk_data
 COPY --from=aymara_manylinux_2_28_with_qt /opt /opt
 COPY --from=aymara_manylinux_2_28_with_qt /usr/local /usr/local
-COPY --from=aymara_manylinux_2_28_with_boost /opt /opt
+# Only Boost: the Boost image is an old manylinux_2_28 (2022), whose /opt also
+# holds its CMake 3.24 (/opt/_internal/pipx), its Pythons and /opt/python links,
+# which would replace the base's (Qt 6.12 requires CMake >= 3.25)
+COPY --from=aymara_manylinux_2_28_with_boost /opt/boost /opt/boost
 COPY --from=aymara_svmtoolpp-manylinux2.28-qt /opt/svmtool++ /usr
 
 ARG BRANCH=master
