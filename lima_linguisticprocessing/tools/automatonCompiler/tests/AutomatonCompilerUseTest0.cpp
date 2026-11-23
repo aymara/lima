@@ -21,7 +21,9 @@ QTEST_MAIN ( AutomatonCompilerUseTest );
 void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
 {
     QProcess process;
-    process.setProgram("compile-rules");
+    // The compile-rules built with this test (set by CMake), else from PATH
+    auto compileRules = qEnvironmentVariable("COMPILE_RULES", "compile-rules");
+    process.setProgram(compileRules);
     process.setWorkingDirectory(qgetenv("LIMA_PWD"));
     qDebug() << "application dir is " << QCoreApplication::applicationDirPath();
     qDebug() << "current path is " << QDir::currentPath();
@@ -45,7 +47,7 @@ void AutomatonCompilerUseTest::AutomatonCompilerUseTest0()
 
     process.start();
 
-    process.waitForFinished();
+    QVERIFY2(process.waitForFinished(), qPrintable(process.errorString()));
     qDebug() << "working directory was " << process.workingDirectory();
     qDebug() << "standart output:" << process.readAllStandardOutput();
     qDebug() << "standart error:" << process.readAllStandardError();

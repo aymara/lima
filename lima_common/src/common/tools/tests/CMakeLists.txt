@@ -6,7 +6,10 @@
 
 ########### next test ###############
 
-if ("x$ENV{LIMA_DISABLE_FSW_TESTING}" STREQUAL "x")
+# On Windows, the test's expectations (a change notification while
+# QTemporaryFile still holds the file) do not hold: it was already disabled
+# there with LIMA_DISABLE_FSW_TESTING by the former Windows build script.
+if (NOT WIN32 AND "x$ENV{LIMA_DISABLE_FSW_TESTING}" STREQUAL "x")
 message(STATUS "LIMA_DISABLE_FSW_TESTING is NOT set: build tests for LimaFileSystemWatcher")
 
 SET(LimaFileSystemWatcherTest0_SRCS

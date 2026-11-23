@@ -36,14 +36,20 @@ target_link_libraries(AutomatonCompilerUseTest0
   Qt${QT_VERSION_MAJOR}::Test
 )
 
+if (WIN32)
+  set(_lima_path_sep "$<SEMICOLON>")
+else()
+  set(_lima_path_sep ":")
+endif()
 add_test(
   NAME AutomatonCompilerUseTest0
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv
   COMMAND  ${CMAKE_COMMAND} -E env
     LIMA_PWD=${CMAKE_BINARY_DIR}/execEnv
-    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf:${CMAKE_BINARY_DIR}/execEnv/config
+    COMPILE_RULES=$<TARGET_FILE:compile-rules>
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf${_lima_path_sep}${CMAKE_BINARY_DIR}/execEnv/config
     LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/resources
     LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}:$ENV{LD_LIBRARY_PATH}
-    ${CMAKE_CURRENT_BINARY_DIR}/AutomatonCompilerUseTest0
+    $<TARGET_FILE:AutomatonCompilerUseTest0>
   )
 
