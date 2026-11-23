@@ -24,23 +24,25 @@ SET(SRC_VERSION_H "${src_dir}/version.h")
 SET(DST_VERSION_H "${bin_dir}/version.h")
  
 function(SaveToCache git_hash git_branch)
-    file(WRITE ${CMAKE_BINARY_DIR}/git-hash.txt ${git_hash})
-    file(WRITE ${CMAKE_BINARY_DIR}/git-branch.txt ${git_branch})
+    file(WRITE ${CMAKE_BINARY_DIR}/git-hash.txt "${git_hash}")
+    file(WRITE ${CMAKE_BINARY_DIR}/git-branch.txt "${git_branch}")
 endfunction()
 
 function(LoadFromCache git_hash git_branch)
     if (EXISTS ${CMAKE_BINARY_DIR}/git-hash.txt)
         file(STRINGS ${CMAKE_BINARY_DIR}/git-hash.txt CONTENT)
-        LIST(GET CONTENT 0 var)
-
-        set(${git_hash} ${var} PARENT_SCOPE)
+        if (CONTENT)
+            LIST(GET CONTENT 0 var)
+            set(${git_hash} ${var} PARENT_SCOPE)
+        endif ()
     endif ()
 
     if (EXISTS ${CMAKE_BINARY_DIR}/git-branch.txt)
         file(STRINGS ${CMAKE_BINARY_DIR}/git-branch.txt CONTENT)
-        LIST(GET CONTENT 0 var)
-
-        set(${git_branch} ${var} PARENT_SCOPE)
+        if (CONTENT)
+            LIST(GET CONTENT 0 var)
+            set(${git_branch} ${var} PARENT_SCOPE)
+        endif ()
     endif ()
 endfunction()
 
@@ -61,7 +63,7 @@ function(UpdateGitData)
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
 
-    LoadFromCache(GIT_HASH_CACHE, GIT_BRANCH_CACHE)
+    LoadFromCache(GIT_HASH_CACHE GIT_BRANCH_CACHE)
     if (NOT EXISTS ${bin_dir})
         file(MAKE_DIRECTORY ${bin_dir})
     endif ()
@@ -88,7 +90,7 @@ function(UpdateGitData)
         OR NOT "${GIT_BRANCH}" STREQUAL "${GIT_BRANCH_CACHE}"
         OR NOT EXISTS "${DST_VERSION_CPP}")
         # Save current values of GIT_HASH/BRANCH_CACHE until the next build
-        SaveToCache(${GIT_HASH}, ${GIT_BRANCH})
+        SaveToCache("${GIT_HASH}" "${GIT_BRANCH}")
 
         configure_file(${SRC_VERSION_CPP} ${DST_VERSION_CPP} @ONLY)
     endif()

@@ -164,39 +164,9 @@ message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_DEBUG})
-  else()
-    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
-  endif()
-  install(FILES ${Boost_SYSTEM_LIBRARY_dll}
-                ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
-                ${Boost_REGEX_LIBRARY_dll}
-                ${Boost_FILESYSTEM_LIBRARY_dll}
-                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
-                ${Boost_THREAD_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${Boost_REGEX_LIBRARY_dll}
-      ${Boost_FILESYSTEM_LIBRARY_dll}
-      ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
-      ${Boost_THREAD_LIBRARY_dll})
-endif ()
+# On Windows, Boost DLLs (like the other third-party DLLs) are installed by the
+# runtime-dependencies step at the end of this file, not listed one by one: the
+# Boost CMake config only exposes imported targets, not Boost_*_LIBRARY_* paths.
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
 file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")

@@ -208,7 +208,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 
 else ()
   message("Windows flags")
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
   add_definitions(-D WIN32)
@@ -218,7 +218,9 @@ else ()
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
   endif()
   set(CMAKE_C_FLAGS "/EHsc /GR ${CMAKE_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "/EHsc /GR /MP /utf-8 /DNOMINMAX ${CMAKE_CXX_FLAGS}")
+  # /bigobj: templates-heavy units (Eigen, torch, boost) overflow the default
+  # COFF section count. /Zc:__cplusplus: report the real standard version.
+  set(CMAKE_CXX_FLAGS "/EHsc /GR /MP /utf-8 /bigobj /Zc:__cplusplus /DNOMINMAX ${CMAKE_CXX_FLAGS}")
 
   set(DEBUG_FLAGS "/DDEBUG_LP /DDEBUG_CD /DDEBUG_FACTORIES /DDEBUG_LIMA_GUI /DQT_QML_DEBUG")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}" )
