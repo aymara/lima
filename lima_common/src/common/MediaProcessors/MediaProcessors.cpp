@@ -35,6 +35,22 @@ class MediaProcessorsPrivate
 //   std::map<MediaId,MediaAnalysisDumper::Manager*> m_dumperManagers;
   std::map<std::string,std::map<MediaId,std::shared_ptr<MediaAnalysisDumper> > > m_analysisDumpers;
 
+  // The pipelines of the medias re-initialized by initMedia, to instantiate
+  // again in initPipelines
+  std::map<MediaId,std::set<std::string> > m_pipelinesToRestore;
+
+  /** Removes the pipelines and analysis dumpers of a media and deletes its
+   * process units manager (thus its process units, unless a pipeline in use
+   * still holds them). Returns the ids of the pipelines it had. */
+  std::set<std::string> release(MediaId med);
+
+  /** Instantiates the pipeline @ref id of the media @ref med from its manager.
+   * Returns false (and logs) on failure. */
+  bool initPipeline(const std::string& id,
+                    const std::map<std::string,std::string>& pipelineMapping,
+                    MediaId med,
+                    MediaProcessUnit::Manager* manager);
+
   // recursive read of configuration files
   void includeProcessors(Common::XMLConfigurationFiles::ModuleConfigurationStructure& module,
                           Common::XMLConfigurationFiles::ModuleConfigurationStructure& newModule);
@@ -90,6 +106,16 @@ void MediaProcessors::initMedia (
   PROCESSORSLOGINIT;
   LDEBUG << "MediaProcessors::initMedia" << med;
 #endif
+
+  // A media initialized again (e.g. by a new analyzer, possibly with other
+  // models): release its former process units before building the new ones,
+  // otherwise their models would never be freed. Its former pipelines are
+  // instantiated again by initPipelines.
+  if (m_d->m_pipelineManagers.find(med) != m_d->m_pipelineManagers.end())
+  {
+    auto previous = m_d->release(med);
+    m_d->m_pipelinesToRestore[med].insert(previous.begin(), previous.end());
+  }
 
   MediaProcessUnitInitializationParameters lpuinit;
   lpuinit.media=med;
@@ -159,43 +185,101 @@ void MediaProcessors::initPipelines(
     for (auto mapItr = m_d->m_pipelineManagers.cbegin();
           mapItr != m_d->m_pipelineManagers.cend(); mapItr++ )
     {
-      const std::string& mediaStr=MediaticData::single().getMediaId ( mapItr->first );
-      auto entryItr = pipelineMapping.find ( mediaStr );
-      if ( entryItr == pipelineMapping.end() )
-      {
-        PROCESSORSLOGINIT;
-        LINFO << "no pipeline '" << *pipItr << "' for media " << mediaStr;
-        continue;
-      }
-#ifdef DEBUG_CD
-      LDEBUG << "MediaProcessors::initPipelines instanciating"
-              << entryItr->second;
-#endif
-      std::shared_ptr<MediaProcessUnit> pu = nullptr;
-      try
-      {
-        pu = mapItr->second->getObject( entryItr->second );
-      }
-      catch (const InvalidConfiguration& e)
-      {
-      }
-      if (pu == nullptr)
-      {
-        PROCESSORSLOGINIT;
-        LERROR << "no process unit '" << entryItr->second << "' for media " << mediaStr;
-        continue;
-      }
-      auto  pipeline =  std::dynamic_pointer_cast<MediaProcessUnitPipeline> ( pu );
-      if ( pipeline==nullptr )
-      {
-        PROCESSORSLOGINIT;
-        LERROR << "pipeline '" << *pipItr << "' for media "
-                << mediaStr << " is not of type ProcessUnitPipeline!";
-        continue;
-      }
-      m_d->m_pipelines[*pipItr][mapItr->first]=pipeline;
+      m_d->initPipeline(*pipItr, pipelineMapping, mapItr->first, mapItr->second);
     }
   }
+
+  // Restore, for the medias initialized again, the pipelines they had and
+  // that were not requested here (only for them: not to load them for the
+  // other medias)
+  std::set<std::string> initialized(pipelinesToInit.begin(), pipelinesToInit.end());
+  for (const auto& [med, ids]: m_d->m_pipelinesToRestore)
+  {
+    auto managerItr = m_d->m_pipelineManagers.find(med);
+    if (managerItr == m_d->m_pipelineManagers.end())
+      continue;
+    for (const auto& id: ids)
+    {
+      if (initialized.find(id) != initialized.end())
+        continue;
+      auto mappingItr = allpipelines.find(id);
+      if (mappingItr != allpipelines.end())
+        m_d->initPipeline(id, mappingItr->second, med, managerItr->second);
+    }
+  }
+  m_d->m_pipelinesToRestore.clear();
+}
+
+bool MediaProcessorsPrivate::initPipeline(
+    const std::string& id,
+    const std::map<std::string,std::string>& pipelineMapping,
+    MediaId med,
+    MediaProcessUnit::Manager* manager)
+{
+  const std::string& mediaStr=MediaticData::single().getMediaId ( med );
+  auto entryItr = pipelineMapping.find ( mediaStr );
+  if ( entryItr == pipelineMapping.end() )
+  {
+    PROCESSORSLOGINIT;
+    LINFO << "no pipeline '" << id << "' for media " << mediaStr;
+    return false;
+  }
+#ifdef DEBUG_CD
+  PROCESSORSLOGINIT;
+  LDEBUG << "MediaProcessors::initPipelines instanciating"
+          << entryItr->second;
+#endif
+  std::shared_ptr<MediaProcessUnit> pu = nullptr;
+  try
+  {
+    pu = manager->getObject( entryItr->second );
+  }
+  catch (const InvalidConfiguration& e)
+  {
+  }
+  if (pu == nullptr)
+  {
+    PROCESSORSLOGINIT;
+    LERROR << "no process unit '" << entryItr->second << "' for media " << mediaStr;
+    return false;
+  }
+  auto  pipeline =  std::dynamic_pointer_cast<MediaProcessUnitPipeline> ( pu );
+  if ( pipeline==nullptr )
+  {
+    PROCESSORSLOGINIT;
+    LERROR << "pipeline '" << id << "' for media "
+            << mediaStr << " is not of type ProcessUnitPipeline!";
+    return false;
+  }
+  m_pipelines[id][med]=pipeline;
+  return true;
+}
+
+std::set<std::string> MediaProcessorsPrivate::release(MediaId med)
+{
+  std::set<std::string> ids;
+  for (auto& [id, pipelines]: m_pipelines)
+  {
+    if (pipelines.erase(med) > 0)
+      ids.insert(id);
+  }
+  for (auto& [type, dumpers]: m_analysisDumpers)
+    dumpers.erase(med);
+  auto managerItr = m_pipelineManagers.find(med);
+  if (managerItr != m_pipelineManagers.end())
+  {
+    delete managerItr->second;
+    m_pipelineManagers.erase(managerItr);
+  }
+  return ids;
+}
+
+void MediaProcessors::releaseMedia(MediaId med)
+{
+  PROCESSORSLOGINIT;
+  LINFO << "MediaProcessors::releaseMedia" << med;
+  m_d->release(med);
+  m_d->m_pipelinesToRestore.erase(med);
 }
 
 

@@ -96,6 +96,7 @@
 #include <iomanip>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <string>
 #include <vector>
@@ -144,6 +145,24 @@ std::shared_ptr< std::ostringstream > openHandlerOutputString(
 
 int run(int aargc,char** aargv);
 
+namespace
+{
+// The number of living analyzers of each media. The process units of a media
+// (and the models they load) are shared by its analyzers in the
+// MediaProcessors singleton: they are released with the last one. Never
+// destroyed, to stay usable by analyzers destroyed at the process exit.
+std::mutex& mediaUsersMutex()
+{
+  static auto* mutex = new std::mutex();
+  return *mutex;
+}
+std::map<std::string, int>& mediaUsers()
+{
+  static auto* users = new std::map<std::string, int>();
+  return *users;
+}
+}
+
 class LimaAnalyzerPrivate
 {
   friend class LimaAnalyzer;
@@ -154,7 +173,7 @@ public:
                       const QString& user_config_path,
                       const QString& user_resources_path,
                       const QString& meta);
-  ~LimaAnalyzerPrivate() = default;
+  ~LimaAnalyzerPrivate();
   LimaAnalyzerPrivate(const LimaAnalyzerPrivate& a) = delete;
   LimaAnalyzerPrivate& operator=(const LimaAnalyzerPrivate& a) = delete;
 
@@ -371,8 +390,36 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", fullXmlSimpleStreamHandler.get()));
   ltrTextHandler= std::make_unique<LTRTextHandler>();
   handlers.insert(std::make_pair("ltrTextHandler", ltrTextHandler.get()));
+  std::lock_guard<std::mutex> lock(mediaUsersMutex());
+  for (const auto& lang: QSet<QString>(qlangs.begin(), qlangs.end()))
+    ++mediaUsers()[lang.toStdString()];
   // std::cerr << "LimaAnalyzerPrivate constructor done" << std::endl;
 
+}
+
+LimaAnalyzerPrivate::~LimaAnalyzerPrivate()
+{
+  // Release the process units of the medias no other analyzer uses: they
+  // would stay in the MediaProcessors singleton until the end of the process
+  std::lock_guard<std::mutex> lock(mediaUsersMutex());
+  for (const auto& lang: QSet<QString>(qlangs.begin(), qlangs.end()))
+  {
+    auto& users = mediaUsers();
+    auto it = users.find(lang.toStdString());
+    if (it == users.end() || --it->second > 0)
+      continue;
+    users.erase(it);
+    try
+    {
+      MediaProcessors::changeable().releaseMedia(
+        MediaticData::single().getMediaId(lang.toStdString()));
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << "LimaAnalyzer: cannot release media " << lang.toStdString()
+                << ": " << e.what() << std::endl;
+    }
+  }
 }
 
 LimaAnalyzer::LimaAnalyzer(const std::string& langs,

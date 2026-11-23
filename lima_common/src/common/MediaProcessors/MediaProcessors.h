@@ -56,6 +56,14 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         */
         std::shared_ptr<MediaAnalysisDumper> getAnalysisDumperForId ( MediaId med,const std::string& type ) const;
 
+        /**
+        * @brief (re)initialize the process units manager of a media.
+        *
+        * A media already initialized has its process units (and the models
+        * they loaded) released first, then rebuilt from @ref procConf: the
+        * pipelines it had are instantiated again by the next call to
+        * initPipelines, which must follow.
+        */
         void initMedia (
             MediaId,
             Common::XMLConfigurationFiles::ModuleConfigurationStructure& procConf );
@@ -63,6 +71,13 @@ class LIMA_MEDIAPROCESSORS_EXPORT MediaProcessors : public Singleton<MediaProces
         void initPipelines (
             Common::XMLConfigurationFiles::GroupConfigurationStructure& confModule,
             const std::deque<std::string>& pipelines );
+
+        /**
+        * @brief release the pipelines and the process units (and thus the
+        * models they loaded) of a media. Its pipelines are no longer available
+        * until it is initialized again (initMedia then initPipelines).
+        */
+        void releaseMedia ( MediaId med );
 
         void getAvailableMedia ( std::set<MediaId>& ids ) const;
         void getAvailablePipelinesForMedia ( MediaId id, std::set<std::string>& pipelines ) const;
