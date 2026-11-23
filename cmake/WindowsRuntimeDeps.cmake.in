@@ -6,6 +6,12 @@
 # the third-party DLLs (Boost, ICU, Qt, libtorch, compression libs...) that the
 # installed LIMA executables and DLLs (libraries and plugins) depend on.
 
+# Normalize paths (e.g. "C:\WINDOWS\system32/x.dll") before matching the
+# exclusion regexes below (CMake >= 4.1).
+if (POLICY CMP0207)
+  cmake_policy(SET CMP0207 NEW)
+endif()
+
 set(_bindir "${CMAKE_INSTALL_PREFIX}/@LIB_INSTALL_DIR@")
 file(GLOB _lima_exes "${_bindir}/*.exe")
 file(GLOB _lima_dlls "${_bindir}/*.dll")

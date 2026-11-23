@@ -82,7 +82,13 @@ QString getDataHome()
   QString dataHome = QString::fromUtf8(qgetenv("XDG_DATA_HOME"));
   if (dataHome.isEmpty())
   {
+#ifdef Q_OS_WIN
+    // As Python's os.path.expanduser (used by lima_models.py to install the
+    // models): HOME is usually not set on Windows.
+    dataHome = QString::fromUtf8(qgetenv("USERPROFILE"));
+#else
     dataHome = QString::fromUtf8(qgetenv("HOME"));
+#endif
     if (!dataHome.isEmpty())
     {
       dataHome += "/.local/share/";

@@ -62,6 +62,13 @@ set(CMAKE_PREFIX_PATH
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
+
+if (WIN32)
+  # Windows has no RPATH: put all executables and DLLs in one directory, so that
+  # the LIMA tools run during the build (e.g. compile-rules for the resources)
+  # and the tests find the LIMA DLLs next to them.
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
 message("PERL5LIB=$ENV{PERL5LIB}")
@@ -486,7 +493,10 @@ set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
 
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
-set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+# The MSVC debug runtime is not redistributable: only ship it with Debug builds.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+endif()
 set(MAKE_INSTALL_UCRT_LIBRARIES TRUE)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -584,4 +594,4 @@ string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA
 include(CPack)
 
 # Must stay last: installs the third-party DLLs the installed binaries need.
-include(cmake/WindowsRuntimeDeps.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WindowsRuntimeDeps.cmake)
