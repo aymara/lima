@@ -14,6 +14,7 @@
 #include "static_graph/dict_base.h"
 #include "static_graph/dict.h"
 #include "deeplima/segmentation/impl/char_ngram.h"
+#include "deeplima/segmentation/impl/segm_lexicon.h"
 
 namespace deeplima
 {
@@ -31,6 +32,12 @@ public:
       m_unk(~0)
   {
     assert(sizeof(uint64_t) >= sizeof(m_input_encoder.get_feat(0)));
+  }
+
+  // The word list of the lexicon feature (not owned), before process
+  void set_lexicon(const impl::SegmLexicon* lexicon)
+  {
+    m_input_encoder.set_lexicon(lexicon);
   }
 
   inline uint64_t get_num_features() const

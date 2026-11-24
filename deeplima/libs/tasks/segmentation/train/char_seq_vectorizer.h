@@ -10,6 +10,7 @@
 #include <string>
 
 #include "deeplima/segmentation/impl/char_ngram.h"
+#include "deeplima/segmentation/impl/segm_lexicon.h"
 
 namespace deeplima
 {
@@ -26,6 +27,12 @@ public:
     : Adapter(),
       m_input_encoder(ngram_descr)
   {
+  }
+
+  // The word list of the lexicon feature (not owned), before process
+  void set_lexicon(const impl::SegmLexicon* lexicon)
+  {
+    m_input_encoder.set_lexicon(lexicon);
   }
 
   std::shared_ptr<Matrix> process(const std::string& text, int64_t len = -1)
