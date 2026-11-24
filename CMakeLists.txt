@@ -69,6 +69,11 @@ if (WIN32)
   # and the tests find the LIMA DLLs next to them.
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
+if (APPLE)
+  # All the libraries in one directory, where DynamicLibrariesManager looks for
+  # the plugins (next to the LIMA libraries), as in an installation
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+endif()
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
 message("PERL5LIB=$ENV{PERL5LIB}")

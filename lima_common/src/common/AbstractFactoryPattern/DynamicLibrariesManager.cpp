@@ -18,7 +18,7 @@
 #include <tlhelp32.h>
 #include <tchar.h>
 #elif __APPLE__
-//
+#include <dlfcn.h>
 #else
 #include <link.h>
 #endif
@@ -45,6 +45,18 @@ friend class DynamicLibrariesManager;
   // from these paths before the default ones
   std::vector<std::string> m_supplementarySearchPath;
 };
+
+#if defined(__APPLE__)
+// Directory of the library containing this code (liblima-common-factory).
+static std::string ownLibraryDirectory()
+{
+  Dl_info info;
+  if (dladdr(reinterpret_cast<const void*>(&ownLibraryDirectory), &info) == 0
+      || info.dli_fname == nullptr)
+    return std::string();
+  return boost::filesystem::path(info.dli_fname).parent_path().string();
+}
+#endif
 
 #ifdef WIN32
 // Directory of the DLL containing this code (lima-common-factory.dll).
@@ -74,6 +86,13 @@ DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
   // plugins next to the LIMA libraries (bin/ of an install, aymara.libs/ of
   // the Python wheel). Loaded by absolute path, their own dependencies are
   // then also searched in that directory.
+  auto dir = ownLibraryDirectory();
+  if (!dir.empty())
+    m_supplementarySearchPath.push_back(dir);
+#elif defined(__APPLE__)
+  // dlopen of a bare library name does not search the rpaths of the
+  // executable on macOS (as the ELF RUNPATH does on Linux): look for the
+  // plugins next to the LIMA libraries (lib/ of the build tree or install)
   auto dir = ownLibraryDirectory();
   if (!dir.empty())
     m_supplementarySearchPath.push_back(dir);
