@@ -1,22 +1,24 @@
 name: "Build LIMA on Windows (Visual Studio 2022)"
 
 on:
-    # Manual-only: the first vcpkg build of Qt6 + Boost takes hours and can hit the
-    # job time limit, so this must not gate PRs or master merges. Run it on demand
-    # from the Actions tab (or `gh workflow run`) when working on Windows support.
+    # Manual-only for now: run it from the Actions tab (or `gh workflow run
+    # build-win.yml --ref <branch>`) when working on Windows support.
     workflow_dispatch:
 
 env:
     # libtorch version must match extern/download_libtorch.sh
     LIBTORCH_VERSION: "2.1.0"
+    # Qt version of the Python wheel (shiboken6 pin in lima-python)
+    QT_VERSION: "6.12.0"
+    QT_BUILD: "6.12.0-0-202609280346"
+    EIGEN_VERSION: "3.4.0"
+    VCPKG_TRIPLET: x64-windows-release
+    DEPS: ${{ github.workspace }}\deps
 
 jobs:
     build-VS-2022:
         runs-on: windows-2022
-        strategy:
-            matrix:
-                configuration: [Release]
-                platform: [x64]
+        timeout-minutes: 300
 
         steps:
             - name: "Checkout code"
@@ -29,49 +31,127 @@ jobs:
               with:
                   arch: x64
 
-            - name: "Install build dependencies via vcpkg"
+            # Qt is NOT taken from vcpkg (building qtbase takes hours): the
+            # official prebuilt MSVC archives are downloaded directly (aqtinstall
+            # 3.3 cannot read the Qt >= 6.10 repository layout).
+            - name: "Cache Qt, libtorch and Eigen"
+              id: cache-deps
+              uses: actions/cache@v4
+              with:
+                  path: deps
+                  key: deps-qt${{ env.QT_VERSION }}-torch${{ env.LIBTORCH_VERSION }}-eigen${{ env.EIGEN_VERSION }}
+
+            - name: "Download Qt, libtorch and Eigen"
+              if: steps.cache-deps.outputs.cache-hit != 'true'
+              shell: pwsh
+              run: |
+                  $ProgressPreference = 'SilentlyContinue'
+                  New-Item -ItemType Directory -Force $env:DEPS | Out-Null
+                  # Qt (qtbase + qtdeclarative, MSVC 2022 x64)
+                  $qtv = $env:QT_VERSION -replace '\.', ''
+                  $base = "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_$qtv/qt6_${qtv}_msvc2022_64/qt.qt6.$qtv.win64_msvc2022_64/$env:QT_BUILD"
+                  $qtdir = "$env:DEPS\Qt\$env:QT_VERSION\msvc2022_64"
+                  New-Item -ItemType Directory -Force $qtdir | Out-Null
+                  foreach ($m in 'qtbase', 'qtdeclarative') {
+                      Invoke-WebRequest -Uri "$base$m-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z" -OutFile "$m.7z"
+                      7z x -y "-o$qtdir" "$m.7z" | Select-Object -Last 1
+                      Remove-Item "$m.7z"
+                  }
+                  # libtorch (CPU, release)
+                  $url = "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-${env:LIBTORCH_VERSION}%2Bcpu.zip"
+                  Invoke-WebRequest -Uri $url -OutFile libtorch.zip
+                  7z x -y "-o$env:DEPS" libtorch.zip | Select-Object -Last 1
+                  Remove-Item libtorch.zip
+                  # Eigen 3.4 (as on Linux; vcpkg has Eigen 5), header-only
+                  Invoke-WebRequest -Uri "https://gitlab.com/libeigen/eigen/-/archive/$env:EIGEN_VERSION/eigen-$env:EIGEN_VERSION.tar.gz" -OutFile eigen.tar.gz
+                  tar -xzf eigen.tar.gz
+                  cmake -S "eigen-$env:EIGEN_VERSION" -B eigen-build "-DCMAKE_INSTALL_PREFIX=$env:DEPS\eigen3" -DBUILD_TESTING=OFF -DEIGEN_BUILD_DOC=OFF
+                  cmake --install eigen-build
+                  Remove-Item -Recurse -Force eigen.tar.gz, "eigen-$env:EIGEN_VERSION", eigen-build
+
+            - name: "Install Boost and ICU via vcpkg"
               uses: johnwason/vcpkg-action@v6
               id: vcpkg
               with:
-                pkgs: >-
-                    boost-regex boost-filesystem boost-program-options
-                    boost-system boost-thread boost-test boost-iostreams
-                    eigen3 icu qtbase
-                triplet: x64-windows-release
-                token: ${{ github.token }}
-                github-binarycache: true
+                  pkgs: >-
+                      boost-regex boost-filesystem boost-program-options
+                      boost-system boost-thread boost-test boost-iostreams
+                      boost-serialization boost-spirit boost-graph boost-tuple
+                      boost-algorithm boost-tokenizer boost-fusion boost-format
+                      boost-foreach boost-process boost-any boost-functional
+                      boost-lexical-cast boost-range boost-concept-check
+                      boost-bind boost-smart-ptr icu
+                  triplet: ${{ env.VCPKG_TRIPLET }}
+                  token: ${{ github.token }}
+                  github-binarycache: true
 
-            - name: "Download libtorch (CPU, shared with deps)"
+            # The LIMA tools run during the build (resource compilation) and the
+            # tests need the third-party DLLs: no RPATH on Windows.
+            - name: "Add the dependencies' DLL directories to PATH"
               shell: pwsh
               run: |
-                  $url = "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-${env:LIBTORCH_VERSION}%2Bcpu.zip"
-                  Write-Host "Downloading $url"
-                  Invoke-WebRequest -Uri $url -OutFile libtorch.zip
-                  Expand-Archive -Path libtorch.zip -DestinationPath "${{ github.workspace }}/extern"
-                  Remove-Item libtorch.zip
+                  $vcpkgBin = (Get-ChildItem -Recurse -Filter "icuuc*.dll" "${{ github.workspace }}\vcpkg\installed" | Where-Object { $_.DirectoryName -match '\\bin$' } | Select-Object -First 1).DirectoryName
+                  if (-not $vcpkgBin) { throw "vcpkg bin directory not found" }
+                  Write-Host "vcpkg DLLs in $vcpkgBin"
+                  Add-Content $env:GITHUB_PATH $vcpkgBin
+                  Add-Content $env:GITHUB_PATH "$env:DEPS\Qt\$env:QT_VERSION\msvc2022_64\bin"
+                  Add-Content $env:GITHUB_PATH "$env:DEPS\libtorch\lib"
 
             - name: "Compute release identifier"
               shell: bash
               run: |
-                  echo "$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" > release
-                  echo "LIMA_VERSION_RELEASE=$(cat release)" >> "$GITHUB_ENV"
+                  echo "LIMA_VERSION_RELEASE=$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
 
             - name: "Configure (CMake)"
               shell: pwsh
               run: |
                   cmake -G Ninja -B build `
-                    -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
-                    -DVCPKG_TARGET_TRIPLET=x64-windows-release `
+                    ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} `
                     -DCMAKE_BUILD_TYPE=Release `
-                    -DCMAKE_PREFIX_PATH="${{ github.workspace }}/extern/libtorch" `
-                    -DLIMA_VERSION_RELEASE="${env:LIMA_VERSION_RELEASE}" `
-                    -DWITH_LIMA_RESOURCES=OFF `
+                    "-DCMAKE_PREFIX_PATH=$env:DEPS/Qt/$env:QT_VERSION/msvc2022_64;$env:DEPS/libtorch" `
+                    "-DEigen3_DIR=$env:DEPS/eigen3/share/eigen3/cmake" `
+                    "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/dist" `
+                    "-DLIMA_VERSION_RELEASE=$env:LIMA_VERSION_RELEASE" `
+                    -DWITH_LIMA_RESOURCES=ON `
                     -DWITH_GUI=OFF `
                     -DWITH_DEBUG_MESSAGES=ON `
                     -DWITH_ARCH=OFF `
-                    -DWITH_ASAN=OFF `
-                    -DSHORTEN_POR_CORPUS_FOR_SVMLEARN=ON
+                    -DWITH_ASAN=OFF
 
             - name: "Build"
               shell: pwsh
-              run: cmake --build build --config Release
+              run: cmake --build build
+
+            - name: "Test"
+              shell: pwsh
+              run: |
+                  $env:LIMA_CONF = "${{ github.workspace }}\build\execEnv\config"
+                  $env:LIMA_RESOURCES = "${{ github.workspace }}\build\execEnv\resources"
+                  ctest --test-dir build --output-on-failure --timeout 300
+
+            - name: "Install and package (ZIP)"
+              shell: pwsh
+              run: |
+                  cmake --install build
+                  cd build
+                  cpack -G ZIP
+
+            - name: "Upload the package"
+              uses: actions/upload-artifact@v4
+              with:
+                  name: lima-win64
+                  path: build/lima-*-win64.zip
+                  retention-days: 14
+
+            # Keep the logs: GitHub expires the run logs, and a configure failure
+            # is otherwise hard to diagnose afterwards.
+            - name: "Upload logs on failure"
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-logs
+                  path: |
+                      build/CMakeFiles/CMakeConfigureLog.yaml
+                      build/CMakeCache.txt
+                      build/Testing/Temporary/LastTest.log
+                  if-no-files-found: ignore
