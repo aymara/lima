@@ -73,6 +73,10 @@ if (APPLE)
   # All the libraries in one directory, where DynamicLibrariesManager looks for
   # the plugins (next to the LIMA libraries), as in an installation
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  # Installed binaries find the LIMA libraries relatively (bin/ and lib/ of a
+  # relocatable installation), and the third-party ones where they were linked
+  set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
