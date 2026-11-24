@@ -12,7 +12,7 @@ contains, depending on the language:
 
 | Model | Directory in the resources | Used by |
 | --- | --- | --- |
-| Tokenizer, sentence splitter and multiword-token dictionary | `RnnTokenizer/ud/tokenizer-<model>.pt[.mwt]` | `RnnTokenizer` |
+| Tokenizer, sentence splitter, multiword-token dictionary (+ seq2seq fallback) and segmenter word list | `RnnTokenizer/ud/tokenizer-<model>.pt[.mwt[.s2s]][.lex]` | `RnnTokenizer` |
 | PoS tagger and morphological features | `RnnTagger/ud/tagger-<model>.pt` | `RnnTokensAnalyzer` |
 | Lemmatizer (optional) | `RnnLemmatizer/ud/lemmatizer-<model>.{pt,dic,rules}` | `RnnTokensAnalyzer` |
 | Dependency parser (optional) | `RnnDependencyParser/ud/dependencyParser-<model>.pt` | `RnnDependencyParser` |

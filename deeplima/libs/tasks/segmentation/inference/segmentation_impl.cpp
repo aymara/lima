@@ -45,6 +45,19 @@ void SegmentationImpl::load(const std::string& fn)
     throw;
   }
   m_input_encoder.init(SegmentationClassifier::get_ngram_descr());
+  // The lexicon feature's word list, copied beside the model at training
+  m_lexicon.reset();
+  for (const auto& nd : SegmentationClassifier::get_ngram_descr())
+  {
+    if (ngram_descr_t::lexicon_ngram == nd.m_type)
+    {
+      m_lexicon = std::make_shared<SegmLexicon>(fn + ".lex");
+      std::cerr << "Loaded segmenter lexicon (" << m_lexicon->size() << " words) from "
+                << fn << ".lex" << std::endl;
+      break;
+    }
+  }
+  m_input_encoder.set_lexicon(m_lexicon.get());
 }
 
 void SegmentationImpl::init(size_t threads, size_t buffer_size_per_thread)

@@ -17,6 +17,8 @@
 
 // #include "config.h"
 
+#include <memory>
+
 #include "utf8_reader.h"
 #include "char_ngram_encoder.h"
 #include "segmentation_decoder.h"
@@ -122,6 +124,8 @@ protected:
 
   InputEncoder m_input_encoder;
   OutputDecoder m_decoder;
+  // The word list of the lexicon feature, <model>.lex, when the model uses it
+  std::shared_ptr<SegmLexicon> m_lexicon;
 
   uint64_t m_current_timepoint;
   uint32_t m_current_slot_timepoints;

@@ -14,6 +14,8 @@
 #include <unicode/uchar.h>
 #include <unicode/uscript.h>
 
+#include "segm_lexicon.h"
+
 namespace deeplima
 {
 namespace segmentation
@@ -29,6 +31,7 @@ enum uc_channel_t : uint8_t {
   channel_type = 1,
   channel_len = 2,
   channel_script_change = 3,
+  channel_lexicon = 4,
   max_channel_value
 };
 
@@ -36,10 +39,11 @@ const uint8_t bits_per_position_table[] = {
   21, // Unicode code point
   8,  // Unicode class
   3,  // UTF-8 character len in bytes (1 .. 6)
-  1   // Script changed since prev code point (Yes / No)
+  1,  // Script changed since prev code point (Yes / No)
+  SegmLexicon::BITS // Lexicon words ending here, by length (SegmLexicon)
 };
 
-template <class TBufferType = uint64_t, int NUM_CHANNELS = 4, int BYTES_BUFFER_SIZE = 8>
+template <class TBufferType = uint64_t, int NUM_CHANNELS = 5, int BYTES_BUFFER_SIZE = 8>
 class Utf8Reader
 {
 protected:
@@ -52,6 +56,12 @@ private:
   buffer_t m_buffer[NUM_CHANNELS];
 
   uint8_t m_prev_script_code;
+
+  // Lexicon feature: the word list (none: the channel stays 0) and the last
+  // characters read, oldest first
+  const SegmLexicon* m_lexicon = nullptr;
+  char32_t m_history[SegmLexicon::MAX_LEN];
+  uint8_t m_history_len = 0;
 
   inline void push_value(uc_channel_t ch, uint32_t value)
   {
@@ -75,6 +85,13 @@ public:
     m_prev_script_code = USCRIPT_COMMON;
     memset(m_bytes_buffer, 0, BYTES_BUFFER_SIZE);
     memset(m_buffer, 0, sizeof(buffer_t) * NUM_CHANNELS);
+    m_history_len = 0;
+  }
+
+  // The word list of the lexicon channel (nullptr: no lexicon). Not owned.
+  void set_lexicon(const SegmLexicon* lexicon)
+  {
+    m_lexicon = lexicon;
   }
 
   inline uint32_t parse_start(const uint8_t* str, int32_t* pos, int32_t len)
@@ -150,6 +167,22 @@ public:
     assert(char_len > 0);
     assert(char_len <= 6);
     push_value(channel_len, char_len);
+
+    if (NUM_CHANNELS > channel_lexicon)
+    {
+      uint32_t mask = 0;
+      if (nullptr != m_lexicon)
+      {
+        if (m_history_len == SegmLexicon::MAX_LEN)
+        {
+          memmove(m_history, m_history + 1, sizeof(char32_t) * (SegmLexicon::MAX_LEN - 1));
+          m_history_len--;
+        }
+        m_history[m_history_len++] = char32_t(uch);
+        mask = m_lexicon->mask(m_history, m_history_len);
+      }
+      push_value(channel_lexicon, mask);
+    }
 
     return char_len;
   }

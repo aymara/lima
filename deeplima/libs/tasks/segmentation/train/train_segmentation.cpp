@@ -18,7 +18,9 @@
 
 #include <c10/util/Exception.h>
 
+#include <fstream>
 #include <iostream>
+#include <memory>
 #include <memory>
 #include <vector>
 
@@ -109,10 +111,34 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
                                         { -1, 3, ngram_descr_t::type_ngram },
                                         { 0,  1, ngram_descr_t::script_ngram } };
 
+  std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
+                                           { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
+                                           { "scriptchange", 1 } };
+
+  // The lexicon feature: words of an external list ending at each character
+  std::shared_ptr<SegmLexicon> lexicon;
+  if (!params.m_lexicon_fn.empty())
+  {
+    lexicon = std::make_shared<SegmLexicon>(params.m_lexicon_fn);
+    std::cerr << "Lexicon feature: " << lexicon->size() << " words from " << params.m_lexicon_fn
+              << std::endl;
+    ngram_descr.emplace_back(0, 1, ngram_descr_t::lexicon_ngram);
+    embd_descr.emplace_back("lexicon", 4);
+    // Beside the model, where SegmentationImpl::load finds it
+    std::ifstream src(params.m_lexicon_fn, std::ios::binary);
+    std::ofstream dst(params.m_output_model_name + ".pt.lex", std::ios::binary);
+    dst << src.rdbuf();
+    if (!dst)
+    {
+      throw std::runtime_error("Can't write " + params.m_output_model_name + ".pt.lex");
+    }
+  }
+
   const CoNLLU::Document& train_doc = tb.get_doc("train");
   uint64_t train_char_counter = 0;
 
   DictionaryBuilder dict_builder(ngram_descr);
+  dict_builder.set_lexicon(lexicon.get());
   auto dicts = dict_builder.process(train_doc.get_original_text(), 100, train_char_counter);
 
   if (train_char_counter >= std::numeric_limits<int64_t>::max())
@@ -121,6 +147,7 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
   }
 
   Utf8CharSeqToTorchMatrix vectorizer(ngram_descr);
+  vectorizer.set_lexicon(lexicon.get());
   vectorizer.set_dicts(dicts);
   auto train_input = vectorizer.process(train_doc.get_original_text(),
                                         (int64_t)train_char_counter);
@@ -133,10 +160,6 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
 
   auto dev_gold = vectorize_gold<TorchMatrix<int64_t>>(tb.get_annot("dev"), dev_doc.get_text().size() + 1,
                                                        params.train_ss, params.train_mwt);
-
-  std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
-                                           { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
-                                           { "scriptchange", 1 } };
 
   std::vector<rnn_descr_t> rnn_descr = { rnn_descr_t( params.m_rnn_hidden_dim ) };
 

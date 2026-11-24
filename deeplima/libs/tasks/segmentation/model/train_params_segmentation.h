@@ -22,6 +22,9 @@ namespace deeplima
                 size_t m_sequence_length;
                 bool train_ss;
                 bool train_mwt; // also predict multiword-token surfaces (implies train_ss)
+                // Word list of the lexicon feature (segmentation/impl/segm_lexicon.h),
+                // copied beside the model as <model>.pt.lex; empty: no lexicon
+                std::string m_lexicon_fn;
 
                 train_params_segmentation_t()
                         : deeplima::train::train_params_t(),

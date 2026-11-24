@@ -21,6 +21,7 @@ struct ngram_descr_t
     type_ngram = 0x01,
     len_ngram = 0x02,
     script_ngram = 0x03,
+    lexicon_ngram = 0x04, // words of a lexicon ending here (SegmLexicon)
     max_ngram_type
   };
 
