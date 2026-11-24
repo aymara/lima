@@ -11,6 +11,7 @@
 #include <stdexcept>
 
 #include "line.h"
+#include "deeplima/mwt_lexicon.h"
 
 using namespace std;
 
@@ -19,7 +20,8 @@ namespace deeplima
 namespace CoNLLU
 {
 
-size_t extract_mwt_dict(const vector<string>& conllu_files, ostream& out)
+size_t extract_mwt_dict(const vector<string>& conllu_files, ostream& out, uint32_t min_rule_support,
+                        size_t* rules_written)
 {
   // surface -> (expansion -> count)
   map<string, map<vector<string>, size_t>> dict;
@@ -86,6 +88,7 @@ size_t extract_mwt_dict(const vector<string>& conllu_files, ostream& out)
   }
 
   size_t written = 0;
+  MwtLexicon lexicon;
   for (const auto& [surface, expansions] : dict)
   {
     const vector<string>* best = nullptr;
@@ -118,7 +121,16 @@ size_t extract_mwt_dict(const vector<string>& conllu_files, ostream& out)
       out << "\t" << w;
     }
     out << "\n";
+    lexicon.add_entry(surface, *best);
     ++written;
+  }
+
+  // Affix rules, the fallback for flagged surfaces the dictionary misses
+  const size_t n_rules = lexicon.learn_rules(min_rule_support);
+  lexicon.write_rules(out);
+  if (nullptr != rules_written)
+  {
+    *rules_written = n_rules;
   }
 
   return written;

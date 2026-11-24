@@ -6,6 +6,7 @@
 #ifndef DEEPLIMA_CONLLU_MWT_DICT_H
 #define DEEPLIMA_CONLLU_MWT_DICT_H
 
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -27,7 +28,12 @@ namespace CoNLLU
 //
 // where `count` is the frequency of the chosen expansion (usable downstream to
 // drop rare/noisy entries). Returns the number of distinct surfaces written.
-size_t extract_mwt_dict(const std::vector<std::string>& conllu_files, std::ostream& out);
+// Writes the multiword-token dictionary of the conllu files (each surface with
+// its most frequent expansion) then the affix rules learned from it, kept when
+// at least min_rule_support entries give them (0: no rules). See
+// deeplima/mwt_lexicon.h for the format. Returns the number of entries.
+size_t extract_mwt_dict(const std::vector<std::string>& conllu_files, std::ostream& out,
+                        uint32_t min_rule_support = 2, size_t* rules_written = nullptr);
 
 } // namespace CoNLLU
 } // namespace deeplima
