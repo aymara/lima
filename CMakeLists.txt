@@ -69,13 +69,23 @@ if (WIN32)
   # and the tests find the LIMA DLLs next to them.
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
+if (APPLE)
+  # All the libraries in one directory, where DynamicLibrariesManager looks for
+  # the plugins (next to the LIMA libraries), as in an installation
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  # Installed binaries find the LIMA libraries relatively (bin/ and lib/ of a
+  # relocatable installation), and the third-party ones where they were linked
+  set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
 message("PERL5LIB=$ENV{PERL5LIB}")
 message("PATH=$ENV{PATH}")
 
 if(APPLE)
-    set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+    # e.g. lima-<version>-macos-arm64.tar.gz
+    set(CPACK_SYSTEM_NAME "macos-${CMAKE_SYSTEM_PROCESSOR}")
 elseif(UNIX)
   # Try to find architecture
   execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
@@ -148,6 +158,15 @@ endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
 addQtModules(Core Test Xml Concurrent Network)
+if (APPLE)
+  # Qt's frameworks are referenced as @rpath/QtXxx.framework/...: the install
+  # rpath needs Qt's lib directory (CMAKE_INSTALL_RPATH_USE_LINK_PATH does not
+  # add it when Qt is inside the project, e.g. downloaded in the source tree)
+  get_target_property(_qtcore_location Qt${QT_VERSION_MAJOR}::Core LOCATION)
+  string(REGEX REPLACE "/[^/]+\\.framework/.*$" "" _qt_lib_dir "${_qtcore_location}")
+  message("Qt library directory added to the install rpath: ${_qt_lib_dir}")
+  list(APPEND CMAKE_INSTALL_RPATH "${_qt_lib_dir}")
+endif()
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
@@ -382,13 +401,20 @@ find_package(Eigen3 3.3 NO_MODULE)
 
 message("EIGEN_FOUND: ${EIGEN_FOUND}")
 message("EIGEN3_FOUND: ${EIGEN3_FOUND}")
-if(WIN32 AND EIGEN3_FOUND)
+# deeplima includes <eigen3/Eigen/...>: the parent of Eigen's include dir is
+# needed when it is not a system include dir (Windows, Homebrew on macOS...)
+if(EIGEN3_FOUND)
 include_directories("${EIGEN3_INCLUDE_DIR}/..")
 message("Eigen3 include: ${EIGEN3_INCLUDE_DIR}/..")
 message("Eigen3 root: ${EIGEN3_USE_FILE}")
 endif()
 
 find_package(Torch)
+if (APPLE AND TORCH_FOUND)
+  # As for Qt above: CMAKE_INSTALL_RPATH_USE_LINK_PATH ignores the directories
+  # inside the project (e.g. dependencies downloaded in the source tree)
+  list(APPEND CMAKE_INSTALL_RPATH "${TORCH_INSTALL_PREFIX}/lib")
+endif()
 find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
@@ -615,5 +641,7 @@ string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA
 
 include(CPack)
 
-# Must stay last: installs the third-party DLLs the installed binaries need.
+# Must stay last: install the third-party libraries the installed binaries
+# need (Windows DLLs; macOS dylibs and frameworks).
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WindowsRuntimeDeps.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/MacOSRuntimeDeps.cmake)

@@ -23,8 +23,6 @@ namespace eigen_impl
 
 void convert_classes(const DictsHolder& src, vector<vector<string>>& classes);
 
-template class BiRnnEigenInferenceForTagging<float>;
-template class BiRnnEigenInferenceForTagging<int16_t>;
 
 template <typename AuxScalar>
 void BiRnnEigenInferenceForTagging<AuxScalar>::convert_from_torch(const std::string& fn)
@@ -117,6 +115,11 @@ void convert_classes(const DictsHolder& src, vector<vector<string>>& classes)
     }
   }
 }
+
+// After the definitions of the members: an explicit instantiation only
+// instantiates the members defined before it (clang applies this strictly)
+template class BiRnnEigenInferenceForTagging<float>;
+template class BiRnnEigenInferenceForTagging<int16_t>;
 
 } // namespace eigen_impl
 } // namespace tagging

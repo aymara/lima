@@ -1,0 +1,182 @@
+name: "Build LIMA on macOS (Apple Silicon)"
+
+on:
+    # On master, the package is published in the "continuous" prerelease, used
+    # by aymara/lima-python's macOS wheel job.
+    push:
+        branches:
+            - master
+            # TEMPORARY, while porting (also publishes; a new workflow cannot be
+            # dispatched before it is on the default branch): remove before merging
+            - macos-build
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.ref == 'refs/heads/master' }}
+
+env:
+    # No libtorch 2.1 for macOS arm64 (the first one is 2.2.0)
+    LIBTORCH_VERSION: "2.2.2"
+    # Qt version of the Python wheel (shiboken6 pin in lima-python)
+    QT_VERSION: "6.12.0"
+    QT_BUILD: "6.12.0-0-202609280346"
+
+jobs:
+    build-macos:
+        runs-on: macos-15
+        timeout-minutes: 300
+        permissions:
+            contents: write   # the continuous prerelease
+
+        steps:
+            - name: "Checkout code"
+              uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+
+            - name: "Install Boost, ICU, Eigen 3 and tools (Homebrew)"
+              run: |
+                  brew install boost icu4c@78 eigen@3 libomp ninja sevenzip
+                  echo "DEPS=$GITHUB_WORKSPACE/deps" >> "$GITHUB_ENV"
+                  echo "BOOST_PREFIX=$(brew --prefix boost)" >> "$GITHUB_ENV"
+                  echo "ICU_PREFIX=$(brew --prefix icu4c@78)" >> "$GITHUB_ENV"
+                  echo "EIGEN_PREFIX=$(brew --prefix eigen@3)" >> "$GITHUB_ENV"
+
+            # The official prebuilt (universal) Qt archives, as on Windows
+            - name: "Cache Qt and libtorch"
+              id: cache-deps
+              uses: actions/cache@v4
+              with:
+                  path: deps
+                  key: deps-macos-qt${{ env.QT_VERSION }}-torch${{ env.LIBTORCH_VERSION }}-omp
+
+            - name: "Download Qt and libtorch"
+              if: steps.cache-deps.outputs.cache-hit != 'true'
+              run: |
+                  set -e
+                  qtv=${QT_VERSION//./}
+                  base="https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_${qtv}/qt6_${qtv}/qt.qt6.${qtv}.clang_64/${QT_BUILD}"
+                  qtdir="$DEPS/Qt/$QT_VERSION/macos"
+                  mkdir -p "$qtdir"
+                  for m in qtbase qtdeclarative; do
+                      curl -sSfL -o "$m.7z" "${base}${m}-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z"
+                      7zz x -y "-o$qtdir" "$m.7z" > /dev/null
+                      rm "$m.7z"
+                  done
+                  curl -sSfL -o libtorch.zip "https://download.pytorch.org/libtorch/cpu/libtorch-macos-arm64-${LIBTORCH_VERSION}.zip"
+                  unzip -q libtorch.zip -d "$DEPS"
+                  rm libtorch.zip
+                  # libtorch's macOS arm64 libraries reference libomp by an absolute
+                  # path of PyTorch's build machine: ship Homebrew's next to them
+                  # and reference it relatively (then re-sign: arm64 requires it)
+                  cp "$(brew --prefix libomp)/lib/libomp.dylib" "$DEPS/libtorch/lib/"
+                  for lib in "$DEPS"/libtorch/lib/*.dylib; do
+                      old=$(otool -L "$lib" | awk '/libomp\.dylib/ && !/@loader_path/ {print $1}')
+                      if [ -n "$old" ] && [ "$(basename "$lib")" != libomp.dylib ]; then
+                          echo "$(basename "$lib"): $old -> @loader_path/libomp.dylib"
+                          install_name_tool -change "$old" @loader_path/libomp.dylib "$lib"
+                          codesign --force -s - "$lib"
+                      fi
+                  done
+                  install_name_tool -id @rpath/libomp.dylib "$DEPS/libtorch/lib/libomp.dylib"
+                  codesign --force -s - "$DEPS/libtorch/lib/libomp.dylib"
+                  ls "$qtdir" "$DEPS/libtorch"
+
+            - name: "Compute release identifier"
+              run: |
+                  echo "LIMA_VERSION_RELEASE=$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+            - name: "Configure (CMake)"
+              run: |
+                  cmake -G Ninja -B build \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    "-DCMAKE_PREFIX_PATH=$DEPS/Qt/$QT_VERSION/macos;$DEPS/libtorch;$BOOST_PREFIX;$ICU_PREFIX" \
+                    "-DICU_ROOT=$ICU_PREFIX" \
+                    "-DEigen3_DIR=$EIGEN_PREFIX/share/eigen3/cmake" \
+                    "-DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/dist" \
+                    "-DLIMA_VERSION_RELEASE=$LIMA_VERSION_RELEASE" \
+                    -DWITH_LIMA_RESOURCES=ON \
+                    -DWITH_GUI=OFF \
+                    -DWITH_PYTHON_SRL=OFF \
+                    -DWITH_DEBUG_MESSAGES=ON \
+                    -DWITH_ARCH=OFF \
+                    -DWITH_ASAN=OFF
+
+            - name: "Build"
+              run: cmake --build build -- -k 0
+
+            - name: "Test"
+              run: |
+                  export LIMA_CONF=$GITHUB_WORKSPACE/build/execEnv/config
+                  export LIMA_RESOURCES=$GITHUB_WORKSPACE/build/execEnv/resources
+                  ctest --test-dir build --output-on-failure --timeout 300
+
+            - name: "Install and package"
+              run: |
+                  cmake --install build
+                  cd build && cpack -G TGZ
+
+            # End to end, from the installation (no LIMA environment variable):
+            # the output must be the Linux one (.github/data)
+            - name: "Smoke test: analyze a text with the ud-eng model"
+              run: |
+                  python3 dist/bin/lima_models.py -i eng
+                  rc=0
+                  dist/bin/analyzeText -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE \
+                      .github/data/smoke-ud-eng.txt > smoke.raw 2> smoke.err || rc=$?
+                  echo "analyzeText exit code: $rc"
+                  grep -v 'already exists' smoke.err | tail -30
+                  grep -v '^Warning\|^Analyzing' smoke.raw > smoke.conllu || true
+                  diff .github/data/smoke-ud-eng.conllu smoke.conllu && echo "Identical to the Linux output"
+
+            # The installation must be self-contained and relocatable: move it,
+            # remove the build's Qt and libtorch and Homebrew's Boost and ICU
+            - name: "Portability test: the moved installation, without the build dependencies"
+              run: |
+                  echo "Absolute non-system references left:"
+                  for f in dist/bin/* dist/lib/*.dylib; do
+                      [ -L "$f" ] && continue
+                      otool -L "$f" 2>/dev/null | awk 'NR>1 && $1 ~ /^\// && $1 !~ /^\/(usr\/lib|System)\// {print "  '"$f"': " $1}'
+                  done
+                  mv dist "$RUNNER_TEMP/lima-moved"
+                  mv deps deps.hidden
+                  brew uninstall --ignore-dependencies boost icu4c@78
+                  rc=0
+                  "$RUNNER_TEMP/lima-moved/bin/analyzeText" -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE \
+                      .github/data/smoke-ud-eng.txt > moved.raw 2> moved.err || rc=$?
+                  echo "analyzeText exit code: $rc"
+                  grep -v 'already exists' moved.err | tail -30
+                  grep -v '^Warning\|^Analyzing' moved.raw > moved.conllu || true
+                  diff .github/data/smoke-ud-eng.conllu moved.conllu && echo "Relocated installation: identical to the Linux output"
+
+            - name: "Upload the package"
+              uses: actions/upload-artifact@v4
+              with:
+                  name: lima-macos-arm64
+                  path: build/lima-*-macos-arm64.tar.gz
+                  retention-days: 14
+
+            # The release has the packages of all the platforms: replace only
+            # this one's (its name changes with the version)
+            - name: "Publish the continuous prerelease"
+              if: github.event_name == 'push'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  gh release view continuous -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' \
+                      | grep -- '-macos-arm64\.tar\.gz$' \
+                      | while read -r asset; do gh release delete-asset continuous "$asset" -R "$GITHUB_REPOSITORY" -y; done || true
+                  gh release upload continuous build/lima-*-macos-arm64.tar.gz -R "$GITHUB_REPOSITORY" --clobber
+
+            - name: "Upload logs on failure"
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-logs
+                  path: |
+                      build/CMakeFiles/CMakeConfigureLog.yaml
+                      build/CMakeCache.txt
+                      build/.ninja_log
+                      build/Testing/Temporary/LastTest.log
+                  if-no-files-found: ignore
