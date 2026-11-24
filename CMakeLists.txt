@@ -130,7 +130,10 @@ endif()
 # sentence level (see RnnDependencyParser: Eigen::setNbThreads(1)). Disable it
 # at compile time: Eigen's thread-count setting is a static which, on Windows,
 # exists once per DLL, so the runtime call does not reach the other plugins.
-add_compile_definitions(EIGEN_DONT_PARALLELIZE)
+# (On Linux the runtime call is process-wide; the define slowed model loading.)
+if (WIN32)
+  add_compile_definitions(EIGEN_DONT_PARALLELIZE)
+endif()
 
 # use openmp
 find_package(OpenMP)
