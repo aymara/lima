@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "deeplima/mwt_lexicon.h"
 #include "deeplima/segmentation/impl/segmentation_decoder.h"
 #include "deeplima/token_type.h"
 
@@ -30,12 +31,13 @@ namespace deeplima
  * out-of-distribution; expanding here keeps the neural models in-distribution
  * and lets the CoNLL-U output carry the UD "N-M  surface" range line.
  *
- * The dictionary is the one produced by `deeplima-mwt-dict` / extract_mwt_dict:
- *   surface <TAB> count <TAB> word1 <TAB> word2 [<TAB> ...]
- *
- * This is the dictionary-only path (closed-class, concatenative MWTs: French,
- * German/Italian/Iberian contractions). Productive or non-concatenative MWTs
- * (Hebrew/Arabic) would need a seq2seq fallback, not implemented here.
+ * The lexicon is the one produced by `deeplima-mwt-dict` / extract_mwt_dict
+ * (see deeplima/mwt_lexicon.h): a dictionary of the training surfaces, then
+ * affix rules learned from it. A flagged surface missing from the dictionary
+ * is expanded by the best matching rule (productive clitics: Polish "-em",
+ * Arabic "و"+, Tamil fused endings). Rules are never used without the
+ * segmenter's flag. Non-concatenative MWTs no rule reproduces would need a
+ * seq2seq fallback, not implemented here.
  */
 class MwtExpander
 {
@@ -43,8 +45,8 @@ public:
   typedef std::function<void(const std::vector<segmentation::token_pos>&, uint32_t)> callback_t;
 
   explicit MwtExpander(const std::string& dict_fn)
+    : m_lexicon(dict_fn)
   {
-    load(dict_fn);
   }
 
   void register_handler(const callback_t& fn)
@@ -54,7 +56,12 @@ public:
 
   size_t size() const
   {
-    return m_dict.size();
+    return m_lexicon.size();
+  }
+
+  size_t rules_size() const
+  {
+    return m_lexicon.rules_size();
   }
 
   // When true (the default), only surface tokens the segmenter flagged as
@@ -75,18 +82,19 @@ public:
     for (uint32_t i = 0; i < len; ++i)
     {
       const segmentation::token_pos& t = tokens[i];
-      const std::string surface(t.m_pch, t.m_len);
-      const auto it = m_dict.find(surface);
       const bool flagged = (t.m_flags & token_flags_t::multiword);
-      if (m_dict.end() == it || (m_require_flag && !flagged))
+      const std::string surface(t.m_pch, t.m_len);
+      // When gating on the model, only flagged surfaces are expanded, from the
+      // dictionary then by the rules; otherwise, every dictionary match.
+      if ((m_require_flag && !flagged) || !m_lexicon.expand(surface, m_words, m_require_flag)
+          || m_words.size() < 2)
       {
-        // Not a known multiword token, or (when gating on the model) not flagged
-        // as one by the segmenter: pass through unchanged.
+        // Not a multiword token: pass through unchanged.
         m_out.push_back(t);
         continue;
       }
 
-      const std::vector<std::string>& words = it->second;
+      const std::vector<std::string>& words = m_words;
 
       // Own the surface bytes for the range line. std::deque keeps element
       // pointers/references valid across push_back, so m_pch stays valid until
@@ -126,56 +134,12 @@ public:
   }
 
 private:
-  void load(const std::string& fn)
-  {
-    std::ifstream f(fn);
-    if (!f.is_open())
-    {
-      throw std::runtime_error("MwtExpander: can't open dictionary \"" + fn + "\"");
-    }
-
-    std::string line;
-    while (std::getline(f, line))
-    {
-      if (line.empty() || '#' == line[0])
-      {
-        continue;
-      }
-
-      // surface <TAB> count <TAB> word1 <TAB> word2 ...
-      std::vector<std::string> fields;
-      size_t start = 0;
-      for (;;)
-      {
-        const size_t tab = line.find('\t', start);
-        fields.push_back(line.substr(start, std::string::npos == tab ? std::string::npos : tab - start));
-        if (std::string::npos == tab)
-        {
-          break;
-        }
-        start = tab + 1;
-      }
-
-      if (fields.size() < 4)
-      {
-        // need surface, count, and at least 2 words for a real expansion
-        continue;
-      }
-      const std::string& surface = fields[0];
-      std::vector<std::string> words(fields.begin() + 2, fields.end());
-      if (surface.empty() || words.size() < 2)
-      {
-        continue;
-      }
-      m_dict.emplace(surface, std::move(words));
-    }
-  }
-
-  std::unordered_map<std::string, std::vector<std::string>> m_dict;
+  MwtLexicon m_lexicon;
   callback_t m_next;
   bool m_require_flag = true;
 
   // Scratch reused on every call.
+  std::vector<std::string> m_words;
   std::vector<segmentation::token_pos> m_out;
   std::deque<std::string> m_storage; // owns sub-word/surface bytes; pointer-stable
 };

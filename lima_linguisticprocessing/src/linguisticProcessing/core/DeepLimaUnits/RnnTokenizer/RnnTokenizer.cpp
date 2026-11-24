@@ -25,6 +25,7 @@
 
 #include "RnnTokenizer.h"
 
+#include "deeplima/mwt_lexicon.h"
 #include "deeplima/segmentation.h"
 #include "deeplima/token_type.h"
 
@@ -100,8 +101,8 @@ protected:
   size_t m_max_seq_len;
 
   // Multiword tokens: surface -> syntactic words (French "du" -> "de", "le"),
-  // from the dictionary beside the model, <model>.pt.mwt
-  std::map<QString, std::vector<QString>> m_trrules;
+  // from the dictionary and affix rules beside the model, <model>.pt.mwt
+  deeplima::MwtLexicon m_mwt;
   // Expand only the tokens the segmenter flags as multiword, when its model
   // predicts them (trained with --mwt); otherwise, every dictionary match
   bool m_mwt_require_flag = false;
@@ -303,32 +304,20 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
 
 void RnnTokenizerPrivate::load_mwt_dictionary(const QString& file_name)
 {
-  // deeplima-mwt-dict's format: surface <TAB> count <TAB> word1 <TAB> word2 ...
-  QFile file(file_name);
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  // deeplima-mwt-dict's format, see deeplima/mwt_lexicon.h
+  try
+  {
+    m_mwt.load(file_name.toStdString());
+  }
+  catch (const std::exception& e)
   {
     TOKENIZERLOGINIT;
-    LERROR << "RnnTokenizerPrivate::load_mwt_dictionary: can't open" << file_name;
+    LERROR << "RnnTokenizerPrivate::load_mwt_dictionary:" << e.what();
     return;
   }
-  m_trrules.clear();
-  while (!file.atEnd())
-  {
-    auto line = QString::fromUtf8(file.readLine()).remove(QLatin1Char('\n'));
-    if (line.isEmpty() || line.startsWith(QLatin1Char('#')))
-    {
-      continue;
-    }
-    auto fields = line.split(QLatin1Char('\t'));
-    if (fields.size() < 4 || fields[0].isEmpty())
-    {
-      continue; // a surface, its count and at least two words
-    }
-    m_trrules[fields[0]] = std::vector<QString>(fields.begin() + 2, fields.end());
-  }
   TOKENIZERLOGINIT;
-  LINFO << "RnnTokenizerPrivate::load_mwt_dictionary:" << m_trrules.size()
-        << "multiword tokens in" << file_name;
+  LINFO << "RnnTokenizerPrivate::load_mwt_dictionary:" << m_mwt.size()
+        << "multiword tokens and" << m_mwt.rules_size() << "affix rules in" << file_name;
 }
 
 void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& current_sentence,
@@ -336,9 +325,14 @@ void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& curren
                                           int current_token_offset,
                                           token_flags_t flags) const
 {
-  auto i = m_trrules.find(current_token);
-  if (i == m_trrules.end()
-      || (m_mwt_require_flag && !(flags & token_flags_t::multiword)))
+  // When the segmenter predicts multiword tokens, only the flagged ones are
+  // expanded, from the dictionary then by the affix rules; otherwise, every
+  // dictionary match (never by the rules)
+  std::vector<std::string> words;
+  const bool flagged = (flags & token_flags_t::multiword);
+  if ((m_mwt_require_flag && !flagged)
+      || !m_mwt.expand(current_token.toStdString(), words, m_mwt_require_flag)
+      || words.size() < 2)
   {
     current_sentence.push_back(TPrimitiveToken(current_token, current_token_offset));
   }
@@ -347,15 +341,16 @@ void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& curren
     // The words share the surface's position, and the first one carries the
     // surface: ConllDumper writes them as one multiword token (N-M line)
     size_t n = 0;
-    for (const auto& w : i->second)
+    for (const auto& w : words)
     {
       if (n++ == 0)
       {
-        current_sentence.push_back(TPrimitiveToken(w, current_token_offset, current_token));
+        current_sentence.push_back(TPrimitiveToken(QString::fromStdString(w), current_token_offset,
+                                                   current_token));
       }
       else
       {
-        current_sentence.push_back(TPrimitiveToken(w, current_token_offset));
+        current_sentence.push_back(TPrimitiveToken(QString::fromStdString(w), current_token_offset));
       }
     }
   }
