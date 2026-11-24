@@ -228,7 +228,19 @@ else ()
   set(Python_ADDITIONAL_VERSIONS 3.5 3.6 3.7)
 endif ()
 
-find_package(PythonLibs 3)
+# The knowledge-based semantic role labeler (SemanticAnalysis) embeds Python.
+# That ties the LIMA libraries to one Python version (python3XY.dll), which on
+# Windows conflicts with the Python bindings (abi3 wheel): off by default there.
+if (WIN32)
+  set(_with_python_srl_default OFF)
+else()
+  set(_with_python_srl_default ON)
+endif()
+option(WITH_PYTHON_SRL "Build the knowledge-based semantic role labeler (embeds Python)"
+       ${_with_python_srl_default})
+if (WITH_PYTHON_SRL)
+  find_package(PythonLibs 3)
+endif()
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")

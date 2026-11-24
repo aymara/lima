@@ -5,7 +5,7 @@
 # - Find LimaLP
 
 if ("x${LIB_INSTALL_DIR}" STREQUAL "x")
-  set(LIB_INSTALL_DIR "lib")
+  set(LIB_INSTALL_DIR "@LIB_INSTALL_DIR@") # "bin" on Windows
 endif ()
 
 message(STATUS "Lima version  ${LIMA_VERSION_MAJOR}.${LIMA_VERSION_MINOR}.${LIMA_VERSION_RELEASE} - LIMA_GENERIC_LIB_VERSION  ${LIMA_GENERIC_LIB_VERSION} ")
