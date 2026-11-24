@@ -24,6 +24,14 @@ For example, `$LIMA_BUILD_DIR/master/release-OFF/lima_linguisticprocessing`.
 Some tests exercise the neural pipelines and need models: install them first,
 e.g. `lima_models.py -l eng` (see [Language models](../usage/models.md)).
 
+`LimaAnalyzerTest0`, the tests of the `LimaAnalyzer` API used by the Python
+bindings, runs one process per test function: each is a CTest test named
+`LimaAnalyzerTest0.<function>` (e.g. `ctest -R LimaAnalyzerTest0.test_several_instances`),
+and `LimaAnalyzerTest0 <function>` runs one by hand. The functions are read from
+`LimaAnalyzerTest0.h`, so adding one needs no CMake change. This keeps the
+memory peak of a test run to that of one function, a deepud analyzer taking
+about 3 GB.
+
 ## Analysis regression tests
 
 Linguistic regression tests are written as XML files describing a text, the

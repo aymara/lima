@@ -4,8 +4,14 @@ LIMA's Python bindings are published on PyPI as the
 [`aymara`](https://pypi.org/project/aymara/) package. They bundle the LIMA C++
 libraries, so nothing else needs to be installed.
 
-**Requirements:** Linux x86_64 and Python ≥ 3.7. An up-to-date `pip` is
-required to select the right wheel.
+**Requirements:** Linux x86_64 and Python ≥ 3.9. An up-to-date `pip` is
+required to select the right wheel. Each release has two wheels, and `pip`
+picks the one that fits your system:
+
+| Wheel | Qt | Python | Systems |
+| --- | --- | --- | --- |
+| `manylinux_2_34` | 6.12 | 3.10 to 3.15 | glibc ≥ 2.34 (Ubuntu 22.04+, Debian 12+, RHEL 9+...) |
+| `manylinux_2_28` | 6.9 | 3.9 to 3.13 | glibc ≥ 2.28 (older systems, and Python 3.9) |
 
 --8<-- "pypi-install.md"
 
