@@ -1,9 +1,22 @@
 name: "Build LIMA on Windows (Visual Studio 2022)"
 
 on:
-    # Manual-only for now: run it from the Actions tab (or `gh workflow run
-    # build-win.yml --ref <branch>`) when working on Windows support.
+    # On master, the ZIP package is published in the "continuous" prerelease,
+    # used by aymara/lima-python's Windows wheel job. Also run on demand from
+    # the Actions tab (or `gh workflow run build-win.yml --ref <branch>`).
+    push:
+        branches:
+            - master
     workflow_dispatch:
+        inputs:
+            publish:
+                description: "Publish the package in the continuous prerelease"
+                type: boolean
+                default: false
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.ref == 'refs/heads/master' }}
 
 env:
     # libtorch version must match extern/download_libtorch.sh
@@ -19,6 +32,8 @@ jobs:
     build-VS-2022:
         runs-on: windows-2022
         timeout-minutes: 300
+        permissions:
+            contents: write   # the continuous prerelease
 
         steps:
             - name: "Checkout code"
@@ -142,6 +157,25 @@ jobs:
                   name: lima-win64
                   path: build/lima-*-win64.zip
                   retention-days: 14
+
+            # A stable location for aymara/lima-python (a release asset is
+            # public; another repository's artifacts need a token)
+            - name: "Publish the continuous prerelease"
+              if: >-
+                  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master')
+                      || inputs.publish }}
+              uses: ncipollo/release-action@v1
+              with:
+                  artifacts: build/lima-*-win64.zip
+                  allowUpdates: true
+                  removeArtifacts: true
+                  replacesArtifacts: true
+                  artifactErrorsFailBuild: true
+                  prerelease: true
+                  tag: continuous
+                  name: "Continuous build"
+                  body: "Latest Windows (x64) build of LIMA from master."
+                  commit: ${{ github.sha }}
 
             # Keep the logs: GitHub expires the run logs, and a configure failure
             # is otherwise hard to diagnose afterwards.
