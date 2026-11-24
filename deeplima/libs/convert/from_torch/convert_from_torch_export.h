@@ -10,8 +10,10 @@
 #ifdef WIN32
 #ifdef DEEPLIMA_CONVERTFROMTORCH_EXPORTING
    #define DEEPLIMA_CONVERTFROMTORCH_EXPORT    __declspec(dllexport)
-#else
+#elif defined(DEEPLIMA_CONVERTFROMTORCH_SHARED) // users of the DLL
    #define DEEPLIMA_CONVERTFROMTORCH_EXPORT    __declspec(dllimport)
+#else // static linking
+   #define DEEPLIMA_CONVERTFROMTORCH_EXPORT
 #endif
 #else // Not WIN32
 #define DEEPLIMA_CONVERTFROMTORCH_EXPORT

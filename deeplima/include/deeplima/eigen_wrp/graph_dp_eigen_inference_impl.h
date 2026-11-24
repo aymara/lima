@@ -24,8 +24,10 @@ namespace eigen_impl
 #ifdef WIN32
 #ifdef DEP_PARSING_EXPORTING
   #define DEP_PARSING_EXPORT __declspec(dllexport)
-#else
+#elif defined(DEEPLIMA_CONVERTFROMTORCH_SHARED) // users of the DLL
   #define DEP_PARSING_EXPORT  __declspec(dllimport)
+#else // static linking
+  #define DEP_PARSING_EXPORT
 #endif
 #else
   #define DEP_PARSING_EXPORT

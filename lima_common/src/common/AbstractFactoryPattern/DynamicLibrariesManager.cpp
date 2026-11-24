@@ -46,10 +46,38 @@ friend class DynamicLibrariesManager;
   std::vector<std::string> m_supplementarySearchPath;
 };
 
+#ifdef WIN32
+// Directory of the DLL containing this code (lima-common-factory.dll).
+static std::string ownLibraryDirectory()
+{
+  HMODULE module = nullptr;
+  if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                            | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                          reinterpret_cast<LPCWSTR>(&ownLibraryDirectory),
+                          &module))
+    return std::string();
+  wchar_t path[4096];
+  auto length = GetModuleFileNameW(module, path, sizeof(path) / sizeof(path[0]));
+  if (length == 0 || length >= sizeof(path) / sizeof(path[0]))
+    return std::string();
+  return boost::filesystem::path(std::wstring(path, length)).parent_path().string();
+}
+#endif
+
 DynamicLibrariesManagerPrivate::DynamicLibrariesManagerPrivate() :
     m_handles(),
     m_supplementarySearchPath()
 {
+#ifdef WIN32
+  // Windows has no RPATH, and plain LoadLibrary does not search the
+  // directories added with AddDllDirectory (e.g. by Python): look for the
+  // plugins next to the LIMA libraries (bin/ of an install, aymara.libs/ of
+  // the Python wheel). Loaded by absolute path, their own dependencies are
+  // then also searched in that directory.
+  auto dir = ownLibraryDirectory();
+  if (!dir.empty())
+    m_supplementarySearchPath.push_back(dir);
+#endif
 }
 
 bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string& libName) const
@@ -75,15 +103,20 @@ bool DynamicLibrariesManagerPrivate::isSomethingSimilarLoaded(const std::string&
     do
     {
         //std::cerr << me32.szModule << std::endl;
-        std::string s(me32.szModule);
-        if (s.size() == 0)
-            return false;
-
+        // szModule is a TCHAR array (wide when UNICODE is defined, as with Qt):
+        // let boost::filesystem::path do the conversion in both cases.
         boost::filesystem::path p(me32.szModule);
+        if (p.empty())
+        {
+            CloseHandle(hModuleSnap);
+            return false;
+        }
+
         std::string fn = p.filename().string();
         if (fn.find(libName, 0) == 0) // [plugin-name]
         {
             //std::cerr << "An attempt to load same lib twice detected" << std::endl;
+            CloseHandle(hModuleSnap);
             return true;
         }
 
@@ -169,6 +202,27 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
   for (const auto& path: m_d->m_supplementarySearchPath)
   {
     LDEBUG << "Trying supplementary " << (path+"/"+libName).c_str();
+#ifdef WIN32
+    // QLibrary uses LoadLibrary, which searches the dependencies of the
+    // plugin in the standard directories only (executable's, system, PATH).
+    // Load it first so that they are also searched next to it and in the
+    // directories added with AddDllDirectory (e.g. by Python's
+    // os.add_dll_directory); QLibrary then gets the already loaded module.
+    {
+      auto dllPath = boost::filesystem::path(path) / (libName + ".dll");
+      if (boost::filesystem::exists(dllPath))
+      {
+        if (LoadLibraryExW(dllPath.wstring().c_str(), nullptr,
+                           LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR
+                           | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS) == nullptr)
+        {
+          ABSTRACTFACTORYPATTERNLOGINIT;
+          LERROR << "DynamicLibrariesManager::loadLibrary() -- LoadLibraryExW"
+                 << dllPath.string() << "failed with error" << GetLastError();
+        }
+      }
+    }
+#endif
     libhandle = std::make_shared<QLibrary>((path+"/"+libName).c_str());
 
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint

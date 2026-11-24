@@ -62,6 +62,13 @@ set(CMAKE_PREFIX_PATH
 
 set(ENV{CTEST_OUTPUT_ON_FAILURE} "1")
 include(${CMAKE_SOURCE_DIR}/SetCompilerFlags.cmake)
+
+if (WIN32)
+  # Windows has no RPATH: put all executables and DLLs in one directory, so that
+  # the LIMA tools run during the build (e.g. compile-rules for the resources)
+  # and the tests find the LIMA DLLs next to them.
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
 set(ENV{PATH} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/bin:$ENV{PATH}")
 set(ENV{PERL5LIB} "${CMAKE_SOURCE_DIR}/lima_pelf/evalPosTagging/SVM/SVMTool-1.3.1/lib:$ENV{PERL5LIB}")
 message("PERL5LIB=$ENV{PERL5LIB}")
@@ -118,6 +125,16 @@ if(NOT WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 endif()
 
+# Eigen intra-op (OpenMP) parallelism only oversubscribes the cores with the
+# small matrix products of the neural units, which already parallelize at the
+# sentence level (see RnnDependencyParser: Eigen::setNbThreads(1)). Disable it
+# at compile time: Eigen's thread-count setting is a static which, on Windows,
+# exists once per DLL, so the runtime call does not reach the other plugins.
+# (On Linux the runtime call is process-wide; the define slowed model loading.)
+if (WIN32)
+  add_compile_definitions(EIGEN_DONT_PARALLELIZE)
+endif()
+
 # use openmp
 find_package(OpenMP)
 if(OPENMP_FOUND)
@@ -164,39 +181,9 @@ message("Boost_INCLUDE_DIR= ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_DEBUG})
-  else()
-    set (Boost_SYSTEM_LIBRARY ${Boost_SYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_SYSTEM_LIBRARY_dll ${Boost_SYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_REGEX_LIBRARY_dll ${Boost_REGEX_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_FILESYSTEM_LIBRARY_dll ${Boost_FILESYSTEM_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_PROGRAM_OPTIONS_LIBRARY_dll ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
-    string(REPLACE ".lib" ".dll" Boost_THREAD_LIBRARY_dll ${Boost_THREAD_LIBRARY_RELEASE})
-  endif()
-  install(FILES ${Boost_SYSTEM_LIBRARY_dll}
-                ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll}
-                ${Boost_REGEX_LIBRARY_dll}
-                ${Boost_FILESYSTEM_LIBRARY_dll}
-                ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
-                ${Boost_THREAD_LIBRARY_dll}
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${Boost_REGEX_LIBRARY_dll}
-      ${Boost_FILESYSTEM_LIBRARY_dll}
-      ${Boost_PROGRAM_OPTIONS_LIBRARY_dll}
-      ${Boost_THREAD_LIBRARY_dll})
-endif ()
+# On Windows, Boost DLLs (like the other third-party DLLs) are installed by the
+# runtime-dependencies step (cmake/WindowsRuntimeDeps.cmake), not one by one: the
+# Boost CMake config only exposes imported targets, not Boost_*_LIBRARY_* paths.
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv/config/plugins)
 file(WRITE ${CMAKE_BINARY_DIR}/execEnv/config/plugins/${CMAKE_PROJECT_NAME} "")
@@ -244,7 +231,19 @@ else ()
   set(Python_ADDITIONAL_VERSIONS 3.5 3.6 3.7)
 endif ()
 
-find_package(PythonLibs 3)
+# The knowledge-based semantic role labeler (SemanticAnalysis) embeds Python.
+# That ties the LIMA libraries to one Python version (python3XY.dll), which on
+# Windows conflicts with the Python bindings (abi3 wheel): off by default there.
+if (WIN32)
+  set(_with_python_srl_default OFF)
+else()
+  set(_with_python_srl_default ON)
+endif()
+option(WITH_PYTHON_SRL "Build the knowledge-based semantic role labeler (embeds Python)"
+       ${_with_python_srl_default})
+if (WITH_PYTHON_SRL)
+  find_package(PythonLibs 3)
+endif()
 if (${PYTHONLIBS_FOUND})
   include_directories(${PYTHON_INCLUDE_DIRS})
   if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -394,17 +393,7 @@ find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  install(DIRECTORY  ${ICU_INCLUDE_DIR}/../bin64/
-          DESTINATION ${LIB_INSTALL_DIR}
-          COMPONENT runtime
-          FILES_MATCHING PATTERN "icu*.dll")
-  FILE(GLOB ICU_LIBRARIES "${ICU_INCLUDE_DIR}/../bin64/icu*.dll")
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-      ${ICU_LIBRARIES})
-      message("icu: ${ICU_LIBRARIES}")
-endif()
+# On Windows, the ICU DLLs are installed by cmake/WindowsRuntimeDeps.cmake.
 
 include_directories(${CMAKE_SOURCE_DIR}/extern)
 
@@ -526,7 +515,10 @@ set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_dll})
 
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "runtime")
-set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+# The MSVC debug runtime is not redistributable: only ship it with Debug builds.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+endif()
 set(MAKE_INSTALL_UCRT_LIBRARIES TRUE)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -623,3 +615,5 @@ string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA
 
 include(CPack)
 
+# Must stay last: installs the third-party DLLs the installed binaries need.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WindowsRuntimeDeps.cmake)

@@ -25,8 +25,10 @@ namespace eigen_impl
 #ifdef WIN32
 #ifdef SEGM_EXPORTING
   #define SEGM_EXPORT __declspec(dllexport)
-#else
+#elif defined(DEEPLIMA_CONVERTFROMTORCH_SHARED) // users of the DLL
   #define SEGM_EXPORT  __declspec(dllimport)
+#else // static linking
+  #define SEGM_EXPORT
 #endif
 #else
   #define SEGM_EXPORT

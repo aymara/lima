@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
+# Install-time script (configured by WindowsRuntimeDeps.cmake): copy into bin/
+# the third-party DLLs (Boost, ICU, Qt, libtorch, compression libs...) that the
+# installed LIMA executables and DLLs (libraries and plugins) depend on.
+
+# Normalize paths (e.g. "C:\WINDOWS\system32/x.dll") before matching the
+# exclusion regexes below (CMake >= 4.1).
+if (POLICY CMP0207)
+  cmake_policy(SET CMP0207 NEW)
+endif()
+
+set(_bindir "${CMAKE_INSTALL_PREFIX}/@LIB_INSTALL_DIR@")
+file(GLOB _lima_exes "${_bindir}/*.exe")
+file(GLOB _lima_dlls "${_bindir}/*.dll")
+
+file(GET_RUNTIME_DEPENDENCIES
+  EXECUTABLES ${_lima_exes}
+  LIBRARIES ${_lima_dlls}
+  DIRECTORIES @LIMA_RUNTIME_DLL_DIRS@
+  RESOLVED_DEPENDENCIES_VAR _resolved
+  UNRESOLVED_DEPENDENCIES_VAR _unresolved
+  # API sets and system DLLs are provided by Windows
+  PRE_EXCLUDE_REGEXES "^api-ms-" "^ext-ms-"
+  POST_EXCLUDE_REGEXES ".*[/\\\\][Ss][Yy][Ss][Tt][Ee][Mm]32[/\\\\].*"
+)
+
+foreach(_dll IN LISTS _resolved)
+  # LIMA's own DLLs are already there
+  get_filename_component(_dir "${_dll}" DIRECTORY)
+  file(TO_CMAKE_PATH "${_dir}" _dir)
+  if (NOT _dir STREQUAL _bindir)
+    file(INSTALL "${_dll}" DESTINATION "${_bindir}")
+  endif()
+endforeach()
+
+if (_unresolved)
+  message(WARNING "Unresolved runtime dependencies: ${_unresolved}")
+endif()

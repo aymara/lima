@@ -40,7 +40,7 @@ class LIMA_AUTOMATON_EXPORT EntityProperties
   EntityProperties& operator = (const EntityProperties& p);
 
   //comparison operator
-  bool operator== (const EntityProperties& p);
+  bool operator== (const EntityProperties& p) const;
 
   LinguisticGraphVertex getHead() const;
   const Common::MediaticData::EntityType& getType() const;

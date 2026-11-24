@@ -5,9 +5,9 @@
 
   add_custom_command(
     OUTPUT stoplistsdepends
-    COMMAND touch stoplistsdepends
-    COMMAND install -d ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/StopLists
-    COMMAND install ${CMAKE_CURRENT_SOURCE_DIR}/stopList-eng.dat ${CMAKE_CURRENT_SOURCE_DIR}/stopList-fre.dat ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/StopLists
+    COMMAND ${CMAKE_COMMAND} -E touch stoplistsdepends
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/StopLists
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/stopList-eng.dat ${CMAKE_CURRENT_SOURCE_DIR}/stopList-fre.dat ${CMAKE_BINARY_DIR}/execEnv/resources/LinguisticProcessings/StopLists
     DEPENDS stopList-eng.dat stopList-fre.dat
     VERBATIM
   )

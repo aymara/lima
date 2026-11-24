@@ -7,8 +7,8 @@ macro (TEST_RULES_DEPLOY)
 
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/execEnv/tests/src/rules/test.rules ${CMAKE_BINARY_DIR}/execEnv/tests/src/petit.lst
-    COMMAND install -d ${CMAKE_BINARY_DIR}/execEnv/tests
-    COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/execEnv/tests
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/execEnv/tests/src
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/execEnv/tests/src
     DEPENDS src/rules/test.rules src/petit.lst
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -36,14 +36,20 @@ target_link_libraries(AutomatonCompilerUseTest0
   Qt${QT_VERSION_MAJOR}::Test
 )
 
+if (WIN32)
+  set(_lima_path_sep "$<SEMICOLON>")
+else()
+  set(_lima_path_sep ":")
+endif()
 add_test(
   NAME AutomatonCompilerUseTest0
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/execEnv
   COMMAND  ${CMAKE_COMMAND} -E env
     LIMA_PWD=${CMAKE_BINARY_DIR}/execEnv
-    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf:${CMAKE_BINARY_DIR}/execEnv/config
+    COMPILE_RULES=$<TARGET_FILE:compile-rules>
+    LIMA_CONF=${CMAKE_BINARY_DIR}/execEnv/src/conf${_lima_path_sep}${CMAKE_BINARY_DIR}/execEnv/config
     LIMA_RESOURCES=${CMAKE_BINARY_DIR}/execEnv/resources
     LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/execEnv/lib/:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}:$ENV{LD_LIBRARY_PATH}
-    ${CMAKE_CURRENT_BINARY_DIR}/AutomatonCompilerUseTest0
+    $<TARGET_FILE:AutomatonCompilerUseTest0>
   )
 

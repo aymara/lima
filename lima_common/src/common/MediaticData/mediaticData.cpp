@@ -104,6 +104,11 @@ protected:
 
     EntityGroupId addEntityGroup(const LimaString& groupName);
 
+    /** Cleanup after a failed media initialization: remove all data added
+     * for this media. Takes the media name by value: it may come from one of
+     * the containers modified here. */
+    void removeMedia(MediaId id, std::string media);
+
 private:
     QReadWriteLock m_lock;
     bool m_alreadyInitialized = false;
@@ -527,16 +532,7 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
         MDATALOGINIT;
         LERROR << "No media definition file'" << deffile << "' has been found for media id" << id
                 << "in config paths:" << configPaths;
-        // Cleanup: remove data we just added concerning this failed language
-        for (auto med = m_medias.begin(); med != m_medias.end(); med++)
-        {
-          if (*med == med_str)
-            m_medias.erase(med);
-        }
-        m_mediasIds.erase(med_str);
-        m_mediasSymbol.erase(id);
-        m_mediasData.erase(id);
-        m_mediaDefinitionFiles.erase(id);
+        removeMedia(id, med_str);
 
         throw InvalidConfiguration();
       }
@@ -545,16 +541,7 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
     {
       MDATALOGINIT;
       LERROR << "Param common/mediaDefinitionFiles/" << med_str << "missing:" << e.what();
-      // Cleanup: remove data we just added concerning this failed language
-      for (auto med = m_medias.begin(); med != m_medias.end(); med++)
-      {
-        if (*med == med_str)
-          m_medias.erase(med);
-      }
-      m_mediasIds.erase(med_str);
-      m_mediasSymbol.erase(id);
-      m_mediaDefinitionFiles.erase(id);
-      m_mediasData.erase(id);
+      removeMedia(id, med_str);
 
       throw InvalidConfiguration(
         std::string("Failed to init media ")+(med_str)+": "+e.what());
@@ -571,6 +558,17 @@ void MediaticDataPrivate::initMedias(XMLConfigurationFileParser& configParser,
 #endif
 }
 
+void MediaticDataPrivate::removeMedia(MediaId id, std::string media)
+{
+  // Erasing while iterating with a plain ++ is invalid (it crashed with the
+  // MSVC runtime): use the erase-remove idiom.
+  std::erase(m_medias, media);
+  m_mediasIds.erase(media);
+  m_mediasSymbol.erase(id);
+  m_mediaDefinitionFiles.erase(id);
+  m_mediasData.erase(id);
+}
+
 void MediaticDataPrivate::initMediaData(MediaId med)
 {
 #ifdef DEBUG_CD
@@ -584,17 +582,9 @@ void MediaticDataPrivate::initMediaData(MediaId med)
     std::ostringstream oss;
     oss << "No media definition file for med id " << (int)med;
     LERROR << oss.str();
-    const auto& media = m_mediasSymbol[med];
-    LDEBUG << "Cleanup: remove data added previously concerning this failed language" << (int)med << media
+    LDEBUG << "Cleanup: remove data added previously concerning this failed language" << (int)med
            << "and then throw";
-    for (auto medit = m_medias.begin(); medit != m_medias.end(); medit++)
-    {
-      if (*medit == media)
-        m_medias.erase(medit);
-    }
-    m_mediasIds.erase(media);
-    m_mediasSymbol.erase(med);
-    m_mediasData.erase(med);
+    removeMedia(med, m_mediasSymbol[med]);
     throw InvalidConfiguration(oss.str());
   }
 #ifdef DEBUG_CD
@@ -626,15 +616,7 @@ void MediaticDataPrivate::initMediaData(MediaId med)
     LERROR << "Empty class name for MediaData/Class/class for media" << med;
     std::ostringstream oss;
     oss << "Empty class name for MediaData/Class/class for media " << med;
-    // Cleanup: remove data added previously concerning this failed language
-    for (auto medit = m_medias.begin(); medit != m_medias.end(); medit++)
-    {
-      if (*medit == m_mediasSymbol[med])
-        m_medias.erase(medit);
-    }
-    m_mediasIds.erase(m_mediasSymbol[med]);
-    m_mediasSymbol.erase(med);
-    m_mediasData.erase(med);
+    removeMedia(med, m_mediasSymbol[med]);
     throw InvalidConfiguration(oss.str());
   }
 }

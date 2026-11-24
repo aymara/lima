@@ -137,28 +137,15 @@ void LimaAnalyzerTest0::test_analyzeText_lang_not_init() {
       "This is a text on 02/05/2022.", "wol", "main") == "");
 }
 void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_ud() {
+    // Without any pipeline the analyzer cannot be initialized: it is in error
+    // and analyzeText refuses to analyze. (This test used to pass nullptr as the
+    // pipeline name, which is undefined behavior: libstdc++ throws, the MSVC
+    // runtime crashes.)
     LimaAnalyzer thelima("ud-eng", "", "");
-    // QVERIFY_THROWS_EXCEPTION has been introduced in Qt6.3 and Ubuntu 22.04
-    // has only Qt6.2
-
-    // QVERIFY_THROWS_EXCEPTION(std::exception, thelima.analyzeText(
-    //   "This is a text on 02/05/2022.", "ud-eng", nullptr));
-
-    do {
-        QT_TRY {
-            thelima.analyzeText("This is a text on 02/05/2022.",
-                                                 "ud-eng", nullptr);
-            QTest::qFail("Expected exception of type std::exception to be thrown"
-                         " but no exception caught", __FILE__, __LINE__);
-            return;
-        } QT_CATCH (const std::exception &) {
-            /* success */
-        } QT_CATCH (...) {
-            // QTest::qCaught("std::exception", __FILE__, __LINE__);
-            return;
-        }
-    } while (false);
-
+    QVERIFY(thelima.error);
+    auto result = thelima.analyzeText("This is a text on 02/05/2022.", "ud-eng", "");
+    QVERIFY(thelima.error);
+    QVERIFY(result.empty());
 }
 
 
@@ -166,29 +153,15 @@ void LimaAnalyzerTest0::test_analyzeText_pipeline_none_lang_eng() {
 #if !LIMA_WITH_LEGACY_PIPELINES
     QSKIP("legacy eng media not built (WITH_LEGACY_PIPELINES=OFF)");
 #endif
+    // Without any pipeline the analyzer cannot be initialized: it is in error
+    // and analyzeText refuses to analyze. (This test used to pass nullptr as the
+    // pipeline name, which is undefined behavior: libstdc++ throws, the MSVC
+    // runtime crashes.)
     LimaAnalyzer thelima("eng", "", "");
     QVERIFY(thelima.error);
-    // QVERIFY_THROWS_EXCEPTION has been introduced in Qt6.3 and Ubuntu 22.04
-    // has only Qt6.2
-
-    // QVERIFY_THROWS_EXCEPTION(std::exception,
-    //                          thelima.analyzeText("This is a text on 02/05/2022.",
-    //                                              "eng", nullptr));
-    do {
-        QT_TRY {
-            thelima.analyzeText("This is a text on 02/05/2022.",
-                                                 "eng", nullptr);
-            QTest::qFail("Expected exception of type std::exception to be thrown"
-                         " but no exception caught", __FILE__, __LINE__);
-            return;
-        } QT_CATCH (const std::exception &) {
-            /* success */
-        } QT_CATCH (...) {
-            // QTest::qCaught("std::exception", __FILE__, __LINE__);
-            return;
-        }
-    } while (false);
-
+    auto result = thelima.analyzeText("This is a text on 02/05/2022.", "eng", "");
+    QVERIFY(thelima.error);
+    QVERIFY(result.empty());
 }
 
 void LimaAnalyzerTest0::test_analyzeText_init_with_lang_and_pipe() {

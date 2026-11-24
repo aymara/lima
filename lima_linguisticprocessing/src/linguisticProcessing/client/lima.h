@@ -61,8 +61,20 @@
 #include <string>
 #include <vector>
 
+// Self-contained (this header deliberately includes no LIMA/Qt header):
+// lima-lp-analyzer is built with LIMA_LINGUISTICPROCESSIONGCLIENT_EXPORTING.
+#if defined(_WIN32)
+#  ifdef LIMA_LINGUISTICPROCESSIONGCLIENT_EXPORTING
+#    define LIMA_ANALYZER_EXPORT __declspec(dllexport)
+#  else
+#    define LIMA_ANALYZER_EXPORT __declspec(dllimport)
+#  endif
+#else
+#  define LIMA_ANALYZER_EXPORT
+#endif
+
 class LimaAnalyzerPrivate;
-class LimaAnalyzer
+class LIMA_ANALYZER_EXPORT LimaAnalyzer
 {
   friend class LimaAnalyzerPrivate;
 public:

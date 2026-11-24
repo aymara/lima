@@ -149,7 +149,7 @@ BoWTokenPrivate& BoWTokenPrivate::operator=(const BoWTokenPrivate& tok)
     return *this;
 }
 
-bool BoWTokenPrivate::operator==(const BoWTokenPrivate& tok)
+bool BoWTokenPrivate::operator==(const BoWTokenPrivate& tok) const
 {
     return (
                m_lemma == tok.m_lemma &&
