@@ -18,6 +18,8 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#elif defined(Q_OS_MACOS)
+#include <dlfcn.h>
 #endif
 
 namespace Lima {
@@ -115,8 +117,9 @@ void appendFirstOrSecond(QStringList& target, const QString& path, const QString
 }
 
 // Install prefix deduced from the location of this library
-// (<prefix>/bin/lima-common-tools.dll), or an empty string. Used on Windows,
-// where there is no system location like /usr, so that an installed LIMA
+// (<prefix>/bin/lima-common-tools.dll, <prefix>/lib/liblima-common-tools.dylib),
+// or an empty string. Used on Windows and macOS, where LIMA is not installed in
+// a system location like /usr, so that an installed LIMA
 // works without LIMA_CONF/LIMA_RESOURCES, whatever the executable (e.g. the
 // Python interpreter for the Python bindings).
 QString libraryInstallPrefix()
@@ -135,6 +138,15 @@ QString libraryInstallPrefix()
       QDir binDir = QFileInfo(QString::fromWCharArray(path, length)).absoluteDir();
       return QDir::cleanPath(binDir.absoluteFilePath(".."));
     }
+  }
+#elif defined(Q_OS_MACOS)
+  // <prefix>/lib/liblima-common-tools.dylib
+  Dl_info info;
+  if (dladdr(reinterpret_cast<const void*>(&libraryInstallPrefix), &info) != 0
+      && info.dli_fname != nullptr)
+  {
+    QDir libDir = QFileInfo(QString::fromUtf8(info.dli_fname)).absoluteDir();
+    return QDir::cleanPath(libDir.absoluteFilePath(".."));
   }
 #endif
   return QString();
