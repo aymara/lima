@@ -110,6 +110,15 @@ jobs:
                   cmake --install build
                   cd build && cpack -G TGZ
 
+            # End to end, from the installation (no LIMA environment variable):
+            # the output must be the Linux one (.github/data)
+            - name: "Smoke test: analyze a text with the ud-eng model"
+              run: |
+                  python3 dist/bin/lima_models.py -i eng
+                  dist/bin/analyzeText -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE \
+                      .github/data/smoke-ud-eng.txt 2>/dev/null | grep -v '^Warning\|^Analyzing' > smoke.conllu
+                  diff .github/data/smoke-ud-eng.conllu smoke.conllu && echo "Identical to the Linux output"
+
             - name: "Upload the package"
               uses: actions/upload-artifact@v4
               with:
