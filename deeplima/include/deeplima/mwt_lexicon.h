@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "deeplima/mwt_seq2seq.h"
+
 namespace deeplima
 {
 
@@ -44,8 +46,13 @@ namespace deeplima
  *    dictionary, support / (entries having the affix + 1), smoothed so that
  *    a rare affix does not win over a frequent one.
  *
- * Rules are only meant for surfaces the segmenter flagged: applied to every
- * token, they would split most words.
+ *  - optionally, a character seq2seq model (MwtSeq2Seq, <file>.s2s beside
+ *    the dictionary file), for flagged surfaces whose split is not a
+ *    concatenation (Amharic, Tamil); the model file says whether it is tried
+ *    before or after the affix rules.
+ *
+ * Rules and the seq2seq are only meant for surfaces the segmenter flagged:
+ * applied to every token, they would split most words.
  *
  * File format (UTF-8, one entry per line, tab-separated):
  *   surface  count  word1  word2 ...                             dictionary
@@ -112,6 +119,12 @@ public:
       throw std::runtime_error("MwtLexicon: can't open \"" + fn + "\"");
     }
     load(f);
+    // The seq2seq fallback, when trained for this dictionary
+    m_s2s.clear();
+    if (std::ifstream(fn + ".s2s").good())
+    {
+      m_s2s.load(fn + ".s2s");
+    }
   }
 
   void load(std::istream& f)
@@ -174,6 +187,11 @@ public:
     return m_suffix_rules.size() + m_prefix_rules.size();
   }
 
+  bool has_seq2seq() const
+  {
+    return m_s2s.loaded();
+  }
+
   void add_entry(const std::string& surface, const std::vector<std::string>& words)
   {
     m_dict.emplace(surface, words);
@@ -227,8 +245,9 @@ public:
     return best;
   }
 
-  // Expands surface into words: from the dictionary, then, when use_rules,
-  // with the best rule. False when the surface stays as it is.
+  // Expands surface into words: from the dictionary, then, when use_rules
+  // (the segmenter flagged it), with the best rule and the seq2seq, in the
+  // order the seq2seq model asks. False when the surface stays as it is.
   bool expand(const std::string& surface, std::vector<std::string>& words, bool use_rules) const
   {
     if (const auto* w = lookup(surface))
@@ -238,10 +257,29 @@ public:
     }
     if (use_rules)
     {
+      const bool s2s = m_s2s.loaded();
+      if (s2s && m_s2s.before_rules())
+      {
+        std::vector<std::string> w = m_s2s.expand(surface);
+        if (!w.empty())
+        {
+          words = std::move(w);
+          return true;
+        }
+      }
       if (const Rule* r = find_rule(surface))
       {
         words = r->apply(surface);
         return true;
+      }
+      if (s2s && !m_s2s.before_rules())
+      {
+        std::vector<std::string> w = m_s2s.expand(surface);
+        if (!w.empty())
+        {
+          words = std::move(w);
+          return true;
+        }
       }
     }
     return false;
@@ -430,6 +468,7 @@ private:
   std::unordered_map<std::string, std::vector<std::string>> m_dict;
   std::unordered_map<std::string, Rule> m_suffix_rules; // by affix
   std::unordered_map<std::string, Rule> m_prefix_rules; // by affix
+  MwtSeq2Seq m_s2s;
 };
 
 } // namespace deeplima

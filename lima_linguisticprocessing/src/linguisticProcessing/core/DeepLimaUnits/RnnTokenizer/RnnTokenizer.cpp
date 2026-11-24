@@ -317,7 +317,8 @@ void RnnTokenizerPrivate::load_mwt_dictionary(const QString& file_name)
   }
   TOKENIZERLOGINIT;
   LINFO << "RnnTokenizerPrivate::load_mwt_dictionary:" << m_mwt.size()
-        << "multiword tokens and" << m_mwt.rules_size() << "affix rules in" << file_name;
+        << "multiword tokens and" << m_mwt.rules_size() << "affix rules"
+        << (m_mwt.has_seq2seq() ? "and a seq2seq fallback" : "") << "in" << file_name;
 }
 
 void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& current_sentence,
