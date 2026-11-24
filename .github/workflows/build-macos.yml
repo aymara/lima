@@ -123,6 +123,26 @@ jobs:
                   grep -v '^Warning\|^Analyzing' smoke.raw > smoke.conllu || true
                   diff .github/data/smoke-ud-eng.conllu smoke.conllu && echo "Identical to the Linux output"
 
+            # The installation must be self-contained and relocatable: move it,
+            # remove the build's Qt and libtorch and Homebrew's Boost and ICU
+            - name: "Portability test: the moved installation, without the build dependencies"
+              run: |
+                  echo "Absolute non-system references left:"
+                  for f in dist/bin/* dist/lib/*.dylib; do
+                      [ -L "$f" ] && continue
+                      otool -L "$f" 2>/dev/null | awk 'NR>1 && $1 ~ /^\// && $1 !~ /^\/(usr\/lib|System)\// {print "  '"$f"': " $1}'
+                  done
+                  mv dist "$RUNNER_TEMP/lima-moved"
+                  mv deps deps.hidden
+                  brew uninstall --ignore-dependencies boost icu4c@78
+                  rc=0
+                  "$RUNNER_TEMP/lima-moved/bin/analyzeText" -l ud-eng -p deepud --meta udlang:eng-UD_English-MERGE \
+                      .github/data/smoke-ud-eng.txt > moved.raw 2> moved.err || rc=$?
+                  echo "analyzeText exit code: $rc"
+                  grep -v 'already exists' moved.err | tail -30
+                  grep -v '^Warning\|^Analyzing' moved.raw > moved.conllu || true
+                  diff .github/data/smoke-ud-eng.conllu moved.conllu && echo "Relocated installation: identical to the Linux output"
+
             - name: "Upload the package"
               uses: actions/upload-artifact@v4
               with:

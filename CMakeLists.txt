@@ -640,5 +640,7 @@ string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA
 
 include(CPack)
 
-# Must stay last: installs the third-party DLLs the installed binaries need.
+# Must stay last: install the third-party libraries the installed binaries
+# need (Windows DLLs; macOS dylibs and frameworks).
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WindowsRuntimeDeps.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/MacOSRuntimeDeps.cmake)

@@ -1,0 +1,158 @@
+# SPDX-FileCopyrightText: 2026 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
+# Install-time script (configured by MacOSRuntimeDeps.cmake) making a macOS
+# installation self-contained and relocatable:
+# - the third-party libraries (Qt frameworks, libtorch, Homebrew's Boost and
+#   ICU...) the installed binaries depend on are copied into lib/;
+# - absolute references to them are replaced by @rpath ones, the copied
+#   libraries get @rpath ids, and all binaries find lib/ relatively;
+# - the absolute rpaths of the build machine are removed;
+# - the modified binaries are signed again (ad hoc; required on arm64).
+
+set(_prefix "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
+set(_libdir "${_prefix}/lib")
+set(_bindir "${_prefix}/bin")
+
+function(_is_macho path out)
+  execute_process(COMMAND otool -h "${path}" RESULT_VARIABLE rc OUTPUT_QUIET ERROR_QUIET)
+  if (rc EQUAL 0 AND NOT IS_SYMLINK "${path}" AND NOT IS_DIRECTORY "${path}")
+    set(${out} TRUE PARENT_SCOPE)
+  else()
+    set(${out} FALSE PARENT_SCOPE)
+  endif()
+endfunction()
+
+# The Mach-O files of the installation (not the symlinks)
+function(_installed_machos out)
+  file(GLOB _candidates "${_bindir}/*" "${_libdir}/*.dylib" "${_libdir}/*.so")
+  file(GLOB _fwbins "${_libdir}/*.framework/Versions/*/*")
+  set(_result "")
+  foreach(_f IN LISTS _candidates _fwbins)
+    _is_macho("${_f}" _ok)
+    if (_ok)
+      list(APPEND _result "${_f}")
+    endif()
+  endforeach()
+  set(${out} "${_result}" PARENT_SCOPE)
+endfunction()
+
+# Library name relative to lib/ for a dependency path:
+# libfoo.dylib, or Foo.framework/Versions/A/Foo
+function(_relative_name path out)
+  if (path MATCHES "/([^/]+\\.framework/.*)$")
+    set(${out} "${CMAKE_MATCH_1}" PARENT_SCOPE)
+  else()
+    get_filename_component(_n "${path}" NAME)
+    set(${out} "${_n}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+# 1. Find and copy the third-party dependencies
+_installed_machos(_lima_machos)
+set(_exes "")
+set(_libs "")
+foreach(_f IN LISTS _lima_machos)
+  if (_f MATCHES "\\.(dylib|so)$")
+    list(APPEND _libs "${_f}")
+  else()
+    list(APPEND _exes "${_f}")
+  endif()
+endforeach()
+
+file(GET_RUNTIME_DEPENDENCIES
+  EXECUTABLES ${_exes}
+  LIBRARIES ${_libs}
+  DIRECTORIES @LIMA_RUNTIME_LIB_DIRS@
+  RESOLVED_DEPENDENCIES_VAR _resolved
+  UNRESOLVED_DEPENDENCIES_VAR _unresolved
+  PRE_EXCLUDE_REGEXES "^/usr/lib/" "^/System/"
+  POST_EXCLUDE_REGEXES "^/usr/lib/" "^/System/" "^${_prefix}/"
+)
+if (_unresolved)
+  message(WARNING "Unresolved runtime dependencies: ${_unresolved}")
+endif()
+
+foreach(_dep IN LISTS _resolved)
+  if (_dep MATCHES "^(.*/([^/]+)\\.framework)/")
+    # A framework: copy the bundle (without headers)
+    set(_fwdir "${CMAKE_MATCH_1}")
+    set(_fwname "${CMAKE_MATCH_2}")
+    if (NOT EXISTS "${_libdir}/${_fwname}.framework")
+      message(STATUS "Bundling ${_fwname}.framework")
+      file(COPY "${_fwdir}" DESTINATION "${_libdir}"
+           PATTERN "Headers" EXCLUDE PATTERN "*.prl" EXCLUDE PATTERN "*_debug*" EXCLUDE)
+    endif()
+  else()
+    get_filename_component(_n "${_dep}" NAME)
+    if (NOT EXISTS "${_libdir}/${_n}")
+      message(STATUS "Bundling ${_n}")
+      # Resolve the symlinks, keep the name the binaries reference
+      get_filename_component(_real "${_dep}" REALPATH)
+      file(COPY_FILE "${_real}" "${_libdir}/${_n}")
+      file(CHMOD "${_libdir}/${_n}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+           GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif()
+  endif()
+endforeach()
+
+# 2. Fix the references, ids and rpaths of all the Mach-O files (LIMA's and the
+# bundled ones)
+_installed_machos(_all_machos)
+foreach(_f IN LISTS _all_machos)
+  set(_args "")
+  # Dependencies referenced by absolute path, now in lib/
+  execute_process(COMMAND otool -L "${_f}" OUTPUT_VARIABLE _deps ERROR_QUIET)
+  string(REPLACE "\n" ";" _deps "${_deps}")
+  list(REMOVE_AT _deps 0)  # the file name
+  foreach(_line IN LISTS _deps)
+    if (_line MATCHES "^[ \t]+(/[^ ]+) \\(")
+      set(_path "${CMAKE_MATCH_1}")
+      if (NOT _path MATCHES "^/usr/lib/|^/System/")
+        _relative_name("${_path}" _rel)
+        if (EXISTS "${_libdir}/${_rel}")
+          list(APPEND _args -change "${_path}" "@rpath/${_rel}")
+        endif()
+      endif()
+    endif()
+  endforeach()
+  # Ids of the libraries in lib/
+  if (_f MATCHES "^${_libdir}/")
+    file(RELATIVE_PATH _rel "${_libdir}" "${_f}")
+    list(APPEND _args -id "@rpath/${_rel}")
+  endif()
+  # Absolute rpaths (the build machine's) are removed
+  execute_process(COMMAND otool -l "${_f}" OUTPUT_VARIABLE _loads ERROR_QUIET)
+  string(REGEX MATCHALL "path (/[^ ]+) \\(offset" _abs_rpaths "${_loads}")
+  set(_existing "")
+  string(REGEX MATCHALL "path ([^ ]+) \\(offset" _all_rpaths "${_loads}")
+  foreach(_r IN LISTS _all_rpaths)
+    string(REGEX REPLACE "^path (.*) \\(offset$" "\\1" _r "${_r}")
+    list(APPEND _existing "${_r}")
+  endforeach()
+  foreach(_r IN LISTS _abs_rpaths)
+    string(REGEX REPLACE "^path (.*) \\(offset$" "\\1" _r "${_r}")
+    list(APPEND _args -delete_rpath "${_r}")
+  endforeach()
+  # lib/ found relatively
+  if (_f MATCHES "^${_bindir}/")
+    set(_wanted "@loader_path/../lib")
+  elseif (_f MATCHES "\\.framework/Versions/[^/]+/[^/]+$")
+    set(_wanted "@loader_path/../../..")
+  else()
+    set(_wanted "@loader_path")
+  endif()
+  list(FIND _existing "${_wanted}" _found)
+  if (_found EQUAL -1)
+    list(APPEND _args -add_rpath "${_wanted}")
+  endif()
+  if (_args)
+    execute_process(COMMAND install_name_tool ${_args} "${_f}"
+                    RESULT_VARIABLE _rc ERROR_VARIABLE _err)
+    if (NOT _rc EQUAL 0)
+      message(WARNING "install_name_tool ${_args} ${_f}: ${_err}")
+    endif()
+  endif()
+  execute_process(COMMAND codesign --force -s - "${_f}" OUTPUT_QUIET ERROR_QUIET)
+endforeach()
