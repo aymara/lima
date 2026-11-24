@@ -159,7 +159,8 @@ include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
 addQtModules(Core Test Xml Concurrent Network)
 if (APPLE)
   # Qt's frameworks are referenced as @rpath/QtXxx.framework/...: the install
-  # rpath needs Qt's lib directory (not added by CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+  # rpath needs Qt's lib directory (CMAKE_INSTALL_RPATH_USE_LINK_PATH does not
+  # add it when Qt is inside the project, e.g. downloaded in the source tree)
   get_target_property(_qtcore_location Qt${QT_VERSION_MAJOR}::Core LOCATION)
   string(REGEX REPLACE "/[^/]+\\.framework/.*$" "" _qt_lib_dir "${_qtcore_location}")
   message("Qt library directory added to the install rpath: ${_qt_lib_dir}")
@@ -408,6 +409,11 @@ message("Eigen3 root: ${EIGEN3_USE_FILE}")
 endif()
 
 find_package(Torch)
+if (APPLE AND TORCH_FOUND)
+  # As for Qt above: CMAKE_INSTALL_RPATH_USE_LINK_PATH ignores the directories
+  # inside the project (e.g. dependencies downloaded in the source tree)
+  list(APPEND CMAKE_INSTALL_RPATH "${TORCH_INSTALL_PREFIX}/lib")
+endif()
 find_package(ICU 60.0 COMPONENTS uc i18n)
 message("ICU_INCLUDE_DIR= ${ICU_INCLUDE_DIR}")
 include_directories(${ICU_INCLUDE_DIR})
