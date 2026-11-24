@@ -336,7 +336,8 @@ void init(const std::map<std::string, std::string>& models_fn,
           });
         }
         std::cerr << "Loaded multiword-token dictionary (" << pmwt->size()
-                  << " entries, " << pmwt->rules_size() << " affix rules) from " << mwt_dict_fn
+                  << " entries, " << pmwt->rules_size() << " affix rules"
+                  << (pmwt->has_seq2seq() ? ", seq2seq fallback" : "") << ") from " << mwt_dict_fn
                   << std::endl;
       }
       catch (const std::runtime_error& e)
