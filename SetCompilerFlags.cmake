@@ -138,7 +138,8 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIMA_ARCH_FLAGS}")
     elseif (WITH_ARCH)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-    else()
+    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+      # x86 only: Apple Silicon (arm64) has no SSE
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=generic -msse4.2")
     endif()
 

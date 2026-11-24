@@ -1,0 +1,116 @@
+name: "Build LIMA on macOS (Apple Silicon)"
+
+on:
+    # Manual-only while the macOS port is in progress: run it from the Actions
+    # tab (or `gh workflow run build-macos.yml --ref <branch>`).
+    workflow_dispatch:
+    # TEMPORARY, while porting (a new workflow cannot be dispatched before it
+    # is on the default branch): remove before merging
+    push:
+        branches:
+            - macos-build
+
+env:
+    # No libtorch 2.1 for macOS arm64 (the first one is 2.2.0)
+    LIBTORCH_VERSION: "2.2.2"
+    # Qt version of the Python wheel (shiboken6 pin in lima-python)
+    QT_VERSION: "6.12.0"
+    QT_BUILD: "6.12.0-0-202609280346"
+
+jobs:
+    build-macos:
+        runs-on: macos-15
+        timeout-minutes: 300
+
+        steps:
+            - name: "Checkout code"
+              uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+
+            - name: "Install Boost, ICU, Eigen 3 and tools (Homebrew)"
+              run: |
+                  brew install boost icu4c@78 eigen@3 ninja sevenzip
+                  echo "DEPS=$GITHUB_WORKSPACE/deps" >> "$GITHUB_ENV"
+                  echo "BOOST_PREFIX=$(brew --prefix boost)" >> "$GITHUB_ENV"
+                  echo "ICU_PREFIX=$(brew --prefix icu4c@78)" >> "$GITHUB_ENV"
+                  echo "EIGEN_PREFIX=$(brew --prefix eigen@3)" >> "$GITHUB_ENV"
+
+            # The official prebuilt (universal) Qt archives, as on Windows
+            - name: "Cache Qt and libtorch"
+              id: cache-deps
+              uses: actions/cache@v4
+              with:
+                  path: deps
+                  key: deps-macos-qt${{ env.QT_VERSION }}-torch${{ env.LIBTORCH_VERSION }}
+
+            - name: "Download Qt and libtorch"
+              if: steps.cache-deps.outputs.cache-hit != 'true'
+              run: |
+                  set -e
+                  qtv=${QT_VERSION//./}
+                  base="https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_${qtv}/qt6_${qtv}/qt.qt6.${qtv}.clang_64/${QT_BUILD}"
+                  qtdir="$DEPS/Qt/$QT_VERSION/macos"
+                  mkdir -p "$qtdir"
+                  for m in qtbase qtdeclarative; do
+                      curl -sSfL -o "$m.7z" "${base}${m}-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z"
+                      7zz x -y "-o$qtdir" "$m.7z" > /dev/null
+                      rm "$m.7z"
+                  done
+                  curl -sSfL -o libtorch.zip "https://download.pytorch.org/libtorch/cpu/libtorch-macos-arm64-${LIBTORCH_VERSION}.zip"
+                  unzip -q libtorch.zip -d "$DEPS"
+                  rm libtorch.zip
+                  ls "$qtdir" "$DEPS/libtorch"
+
+            - name: "Compute release identifier"
+              run: |
+                  echo "LIMA_VERSION_RELEASE=$(git show -s --format=%cI HEAD | sed -e 's/[^0-9]//g')-$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+            - name: "Configure (CMake)"
+              run: |
+                  cmake -G Ninja -B build \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    "-DCMAKE_PREFIX_PATH=$DEPS/Qt/$QT_VERSION/macos;$DEPS/libtorch;$BOOST_PREFIX;$ICU_PREFIX" \
+                    "-DICU_ROOT=$ICU_PREFIX" \
+                    "-DEigen3_DIR=$EIGEN_PREFIX/share/eigen3/cmake" \
+                    "-DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/dist" \
+                    "-DLIMA_VERSION_RELEASE=$LIMA_VERSION_RELEASE" \
+                    -DWITH_LIMA_RESOURCES=ON \
+                    -DWITH_GUI=OFF \
+                    -DWITH_PYTHON_SRL=OFF \
+                    -DWITH_DEBUG_MESSAGES=ON \
+                    -DWITH_ARCH=OFF \
+                    -DWITH_ASAN=OFF
+
+            - name: "Build"
+              run: cmake --build build -- -k 0
+
+            - name: "Test"
+              run: |
+                  export LIMA_CONF=$GITHUB_WORKSPACE/build/execEnv/config
+                  export LIMA_RESOURCES=$GITHUB_WORKSPACE/build/execEnv/resources
+                  ctest --test-dir build --output-on-failure --timeout 300
+
+            - name: "Install and package"
+              run: |
+                  cmake --install build
+                  cd build && cpack -G TGZ
+
+            - name: "Upload the package"
+              uses: actions/upload-artifact@v4
+              with:
+                  name: lima-macos-arm64
+                  path: build/lima-*.tar.gz
+                  retention-days: 14
+
+            - name: "Upload logs on failure"
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-logs
+                  path: |
+                      build/CMakeFiles/CMakeConfigureLog.yaml
+                      build/CMakeCache.txt
+                      build/.ninja_log
+                      build/Testing/Temporary/LastTest.log
+                  if-no-files-found: ignore
