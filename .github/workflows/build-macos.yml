@@ -30,7 +30,7 @@ jobs:
 
             - name: "Install Boost, ICU, Eigen 3 and tools (Homebrew)"
               run: |
-                  brew install boost icu4c@78 eigen@3 ninja sevenzip
+                  brew install boost icu4c@78 eigen@3 libomp ninja sevenzip
                   echo "DEPS=$GITHUB_WORKSPACE/deps" >> "$GITHUB_ENV"
                   echo "BOOST_PREFIX=$(brew --prefix boost)" >> "$GITHUB_ENV"
                   echo "ICU_PREFIX=$(brew --prefix icu4c@78)" >> "$GITHUB_ENV"
@@ -42,7 +42,7 @@ jobs:
               uses: actions/cache@v4
               with:
                   path: deps
-                  key: deps-macos-qt${{ env.QT_VERSION }}-torch${{ env.LIBTORCH_VERSION }}
+                  key: deps-macos-qt${{ env.QT_VERSION }}-torch${{ env.LIBTORCH_VERSION }}-omp
 
             - name: "Download Qt and libtorch"
               if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -60,6 +60,20 @@ jobs:
                   curl -sSfL -o libtorch.zip "https://download.pytorch.org/libtorch/cpu/libtorch-macos-arm64-${LIBTORCH_VERSION}.zip"
                   unzip -q libtorch.zip -d "$DEPS"
                   rm libtorch.zip
+                  # libtorch's macOS arm64 libraries reference libomp by an absolute
+                  # path of PyTorch's build machine: ship Homebrew's next to them
+                  # and reference it relatively (then re-sign: arm64 requires it)
+                  cp "$(brew --prefix libomp)/lib/libomp.dylib" "$DEPS/libtorch/lib/"
+                  for lib in "$DEPS"/libtorch/lib/*.dylib; do
+                      old=$(otool -L "$lib" | awk '/libomp\.dylib/ && !/@loader_path/ {print $1}')
+                      if [ -n "$old" ] && [ "$(basename "$lib")" != libomp.dylib ]; then
+                          echo "$(basename "$lib"): $old -> @loader_path/libomp.dylib"
+                          install_name_tool -change "$old" @loader_path/libomp.dylib "$lib"
+                          codesign --force -s - "$lib"
+                      fi
+                  done
+                  install_name_tool -id @rpath/libomp.dylib "$DEPS/libtorch/lib/libomp.dylib"
+                  codesign --force -s - "$DEPS/libtorch/lib/libomp.dylib"
                   ls "$qtdir" "$DEPS/libtorch"
 
             - name: "Compute release identifier"
