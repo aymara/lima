@@ -160,6 +160,20 @@ jobs:
 
             # A stable location for aymara/lima-python (a release asset is
             # public; another repository's artifacts need a token)
+            # The release has the packages of all the platforms: replace only
+            # this one's (its name changes with the version)
+            - name: "Remove the previous Windows package from the continuous prerelease"
+              if: >-
+                  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master')
+                      || inputs.publish }}
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  gh release view continuous -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' 2>/dev/null \
+                      | grep -- '-win64\.zip$' \
+                      | while read -r asset; do gh release delete-asset continuous "$asset" -R "$GITHUB_REPOSITORY" -y; done || true
+
             - name: "Publish the continuous prerelease"
               if: >-
                   ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master')
@@ -168,13 +182,13 @@ jobs:
               with:
                   artifacts: build/lima-*-win64.zip
                   allowUpdates: true
-                  removeArtifacts: true
+                  removeArtifacts: false
                   replacesArtifacts: true
                   artifactErrorsFailBuild: true
                   prerelease: true
                   tag: continuous
                   name: "Continuous build"
-                  body: "Latest Windows (x64) build of LIMA from master."
+                  body: "Latest builds of LIMA from master (Windows x64, macOS arm64)."
                   commit: ${{ github.sha }}
 
             # Keep the logs: GitHub expires the run logs, and a configure failure
