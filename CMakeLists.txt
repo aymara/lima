@@ -157,6 +157,14 @@ endif()
 
 include(${CMAKE_SOURCE_DIR}/manageQt.cmake)
 addQtModules(Core Test Xml Concurrent Network)
+if (APPLE)
+  # Qt's frameworks are referenced as @rpath/QtXxx.framework/...: the install
+  # rpath needs Qt's lib directory (not added by CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+  get_target_property(_qtcore_location Qt${QT_VERSION_MAJOR}::Core LOCATION)
+  string(REGEX REPLACE "/[^/]+\\.framework/.*$" "" _qt_lib_dir "${_qtcore_location}")
+  message("Qt library directory added to the install rpath: ${_qt_lib_dir}")
+  list(APPEND CMAKE_INSTALL_RPATH "${_qt_lib_dir}")
+endif()
 message("\n\n\n{Qt_LIBRARIES}=${Qt_LIBRARIES} ")
 
 # Search Qt optional components
