@@ -242,7 +242,28 @@ bool DynamicLibrariesManager::loadLibrary(const std::string& libName)
       }
     }
 #endif
-    libhandle = std::make_shared<QLibrary>((path+"/"+libName).c_str());
+    auto candidate = path + "/" + libName;
+#ifdef __APPLE__
+    // Without the unversioned symlink (e.g. in a Python wheel, which cannot
+    // contain symlinks), load the versioned library (lib<name>.<N>.dylib):
+    // the name that the libraries linked with it reference, so that it is
+    // loaded only once
+    if (!boost::filesystem::exists(path + "/lib" + libName + ".dylib")
+        && boost::filesystem::is_directory(path))
+    {
+      for (const auto& entry: boost::filesystem::directory_iterator(path))
+      {
+        auto name = entry.path().filename().string();
+        if (name.rfind("lib" + libName + ".", 0) == 0
+            && name.size() > 6 && name.substr(name.size() - 6) == ".dylib")
+        {
+          candidate = entry.path().string();
+          break;
+        }
+      }
+    }
+#endif
+    libhandle = std::make_shared<QLibrary>(candidate.c_str());
 
     libhandle->setLoadHints(QLibrary::ResolveAllSymbolsHint
                           | QLibrary::ExportExternalSymbolsHint);
