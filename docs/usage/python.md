@@ -8,8 +8,15 @@ inspired by [spaCy](https://spacy.io/). Install it with
 
 Create a `Lima` analyzer once (initialization loads the configuration and the
 models, which takes some time) and call it on texts. Reuse it: an analyzer with
-a neural pipeline uses about 3 GB of memory, which is not released when it is
-deleted, so creating several in one process quickly exhausts the memory.
+a neural pipeline uses about 3 GB of memory.
+
+!!! note "Memory of deleted analyzers"
+    Up to aymara 0.7.1, this memory is not released when the analyzer is
+    deleted, so creating several in one process quickly exhausts the memory.
+    From the next version, deleting the last analyzer of a language frees its
+    models, and a new analyzer of that language replaces them instead of adding
+    new ones. The memory goes back to the C library allocator: the process size
+    may not shrink until it is reused (or `malloc_trim` is called).
 
 ```python
 import aymara.lima
@@ -74,7 +81,7 @@ Printing a `Doc` with `repr()` gives its CoNLL-U representation:
 !!! warning "aymara 0.5.0: root heads in `repr()`"
     In aymara 0.5.0, `repr()` gives a negative head (instead of 0) to the root
     of every sentence after the first one of a document. `token.head` and
-    `analyzeText()` are not affected. This is fixed in the next version.
+    `analyzeText()` are not affected. This is fixed in aymara 0.6.0.
 
 `analyzeText()` returns the raw CoNLL-U string instead of a `Doc`:
 
