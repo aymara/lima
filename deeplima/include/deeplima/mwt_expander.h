@@ -64,6 +64,11 @@ public:
     return m_lexicon.rules_size();
   }
 
+  bool has_seq2seq() const
+  {
+    return m_lexicon.has_seq2seq();
+  }
+
   // When true (the default), only surface tokens the segmenter flagged as
   // multiword (token_flags_t::multiword) are expanded — the model decides, in
   // context, which ambiguous forms (e.g. French "des") are contractions. Set

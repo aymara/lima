@@ -3,8 +3,9 @@
 Merged in #184 (dictionary expansion), #185 (tokenizer predicts MWT) and #186
 (expansion also on the tokenization-only path), 2026-06-29 → 2026-07-01. LIMA's
 `RnnTokenizer` (the `deepud` pipelines) expands MWTs the same way since
-2026-11, and #217 (2026-11-24) added the affix-rule fallback for flagged tokens
-missing from the dictionary.
+2026-11, #217 (2026-11-24) added the affix-rule fallback for flagged tokens
+missing from the dictionary, and the `mwt-seq2seq` branch a character seq2seq
+fallback for those whose split is not a concatenation (Amharic).
 
 UD treebanks distinguish *surface tokens* from *syntactic words*: French `du` is
 one token but two words, `de` + `le`, written in CoNLL-U as a range line followed
@@ -63,9 +64,28 @@ Rules apply **only** to surfaces the tokenizer flags as multiword and the
 dictionary doesn't know: applied to every token, they would split most words.
 With a tokenizer trained without `--mwt` (no flags), only the dictionary is used.
 
-A seq2seq fallback is still not implemented. It would be needed for the
-non-concatenative MWTs that no affix rule covers (most unseen Amharic and Tamil
-ones; Hebrew).
+### Seq2seq fallback for non-concatenative MWTs
+
+Affix rules cannot split a surface whose words are not a concatenation of its
+parts. In the abugidas the split falls inside a syllable: Amharic `ሄደ` =
+`ሄድ` + `ኧ` (the syllable *de* = consonant *d* + vowel *e*), Tamil `…களுடனோ` =
+`…கள்` + `உடன்` + `ஓ`. A small **character seq2seq** (`MwtSeq2Seq`) handles
+them: a BiLSTM encoder over the surface's characters, an LSTM decoder with
+bilinear attention and a copy mechanism, writing the words separated by spaces
+(greedy decoding, expansions cached). For Ethiopic and Tamil, each syllable is
+first decomposed into consonant + vowel letter and the words are recomposed
+afterwards, which turns most of these splits into concatenations.
+
+It is optional: `<tok-model>.mwt.s2s` beside the dictionary, loaded by
+`MwtLexicon::load`, so deeplima and LIMA use it with no other change. Like the
+rules, it only sees surfaces the tokenizer flagged and the dictionary doesn't
+know. The model file says whether it is tried before the affix rules (Amharic)
+or after them. It is trained in Python, by deeplima-training-scripts'
+`tokenization/train_mwt_seq2seq.py`, which writes it only when it beats the
+rules on the dev set's unknown MWTs (most languages get none). deeplima's
+lemmatizer seq2seq has no attention and could not be reused: without
+attention and copy, the model gets 83 of 755 unknown Amharic MWTs right,
+against 213 for the rules and 348 with them.
 
 ### Tag scheme and backward compatibility
 
@@ -90,6 +110,7 @@ extra metadata is needed:
 | Piece | Location |
 |---|---|
 | Dictionary and affix rules: data, learning, file format | `include/deeplima/mwt_lexicon.h` (`MwtLexicon`, header-only, shared by deeplima and LIMA) |
+| Seq2seq fallback: model file, Eigen inference, syllable decomposition | `include/deeplima/mwt_seq2seq.h` (`MwtSeq2Seq`, header-only, loaded by `MwtLexicon`) |
 | Dictionary extraction | `libs/conllu/mwt_dict.{h,cpp}` (`extract_mwt_dict`), app `apps/mwt-dict.cpp` → `deeplima-mwt-dict` |
 | Training gold | `libs/conllu/treebank.{h,cpp}`: `token_t::multiword` set from `N-M` lines; `vectorize_gold` emits the `_MWT` tags |
 | Training option | `apps/train-segm.cpp` `--mwt` (`train_params.train_mwt`, implies `--sentence`) |
@@ -123,12 +144,17 @@ deeplima-mwt-dict -i fr_gsd-ud-train.conllu -o tokenizer.pt.mwt
 deeplima-mwt-dict -d tokenizer.pt.mwt -o tokenizer.pt.mwt
 #    --rule-min-support N: entries needed to keep a rule (default 2, 0: no rules)
 
+# 1b. Optionally, the seq2seq fallback (deeplima-training-scripts, needs torch);
+#     writes tokenizer.pt.mwt.s2s only when it beats the affix rules on dev
+uv run --with torch tokenization/train_mwt_seq2seq.py \
+    --train am_att-ud-train.conllu --dev am_att-ud-dev.conllu -o tokenizer.pt.mwt.s2s
+
 # 2. Train an MWT-aware tokenizer (recommended; without it expansion is blind)
 deeplima-train-segm --mwt ...            # 11-class model
 
 # 3. Run as usual: <tok-model>.mwt is loaded automatically
 deeplima --tok-model tokenizer.pt --tag-model tagger.pt --dp-model dp.pt ...
-#    stderr: "Loaded multiword-token dictionary (N entries, R affix rules) from ..."
+#    stderr: "Loaded multiword-token dictionary (N entries, R affix rules[, seq2seq fallback]) from ..."
 #            "MWT: tokenizer predicts multiword tokens; expanding only flagged surfaces."
 ```
 
@@ -186,6 +212,21 @@ French has no productive MWTs: its dictionary covers them. In Latin and Irish
 fixes: test-only treebanks split clitics that the training treebanks of the
 merged model don't, so the tokenizer never learned to flag them.
 
+### Seq2seq fallback
+
+Amharic-ATT test, its campaign tokenizer, `deeplima` tokenization only:
+
+| | Words F1 | Tokenization speed |
+|---|---|---|
+| Dictionary + affix rules | 64.2 | 41,000 tokens/s |
+| + seq2seq (hidden size 32, 0.3 MB) | **74.3** | 21,600 tokens/s |
+
+A hidden size of 128 is no more accurate (74.2) and six times slower. The C++
+inference gives the same expansions as the Python model on all 610 unknown dev
+MWTs. Tamil-TTB gains nothing (its unknown MWTs are mostly covered by the rules,
+81%), so the trainer writes no model for it; Tamil-MWTT splits compound verbs,
+which the training treebank never does, a convention mismatch.
+
 ## Limitations and next steps
 
 - The tokenizers of the v0.3.0 models release are trained with `--mwt` and ship
@@ -193,4 +234,6 @@ merged model don't, so the tokenizer never learned to flag them.
   affix rules: add them with `deeplima-mwt-dict -d`.
 - `deeplima-train-segm` doesn't write the dictionary itself; run
   `deeplima-mwt-dict` separately.
-- No seq2seq fallback for unseen non-concatenative MWTs (see above).
+- The seq2seq leaves about half of Amharic's unknown MWTs wrong (vowel
+  coalescence: `ይጠላል` = `ይ` + `ጠላ` + `ኣል`); its training set is small (662
+  distinct MWTs).
