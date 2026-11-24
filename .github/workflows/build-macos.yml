@@ -1,14 +1,19 @@
 name: "Build LIMA on macOS (Apple Silicon)"
 
 on:
-    # Manual-only while the macOS port is in progress: run it from the Actions
-    # tab (or `gh workflow run build-macos.yml --ref <branch>`).
-    workflow_dispatch:
-    # TEMPORARY, while porting (a new workflow cannot be dispatched before it
-    # is on the default branch): remove before merging
+    # On master, the package is published in the "continuous" prerelease, used
+    # by aymara/lima-python's macOS wheel job.
     push:
         branches:
+            - master
+            # TEMPORARY, while porting (also publishes; a new workflow cannot be
+            # dispatched before it is on the default branch): remove before merging
             - macos-build
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.ref == 'refs/heads/master' }}
 
 env:
     # No libtorch 2.1 for macOS arm64 (the first one is 2.2.0)
@@ -21,6 +26,8 @@ jobs:
     build-macos:
         runs-on: macos-15
         timeout-minutes: 300
+        permissions:
+            contents: write   # the continuous prerelease
 
         steps:
             - name: "Checkout code"
@@ -147,8 +154,20 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: lima-macos-arm64
-                  path: build/lima-*.tar.gz
+                  path: build/lima-*-macos-arm64.tar.gz
                   retention-days: 14
+
+            # The release has the packages of all the platforms: replace only
+            # this one's (its name changes with the version)
+            - name: "Publish the continuous prerelease"
+              if: github.event_name == 'push'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  gh release view continuous -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' \
+                      | grep -- '-macos-arm64\.tar\.gz$' \
+                      | while read -r asset; do gh release delete-asset continuous "$asset" -R "$GITHUB_REPOSITORY" -y; done || true
+                  gh release upload continuous build/lima-*-macos-arm64.tar.gz -R "$GITHUB_REPOSITORY" --clobber
 
             - name: "Upload logs on failure"
               if: failure()

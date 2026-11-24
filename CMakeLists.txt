@@ -84,7 +84,8 @@ message("PERL5LIB=$ENV{PERL5LIB}")
 message("PATH=$ENV{PATH}")
 
 if(APPLE)
-    set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+    # e.g. lima-<version>-macos-arm64.tar.gz
+    set(CPACK_SYSTEM_NAME "macos-${CMAKE_SYSTEM_PROCESSOR}")
 elseif(UNIX)
   # Try to find architecture
   execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_PACKAGE_ARCHITECTURE)
