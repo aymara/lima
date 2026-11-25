@@ -2,7 +2,8 @@
 
 Once LIMA is [installed](../install/index.md):
 
-1. [Install language models](models.md) for the languages you want to analyze.
+1. [Install language models](models.md) for the languages you want to analyze
+   (their [accuracy and speed](performance.md) are measured on UD test sets).
 2. Analyze texts from the [command line](cli.md), from [Python](python.md) or
    with the [graphical interface](gui.md).
 3. Choose the [pipeline](pipelines.md) matching your needs and understand its

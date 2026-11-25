@@ -7,8 +7,9 @@ not installed with LIMA: download the ones for the languages you need.
 Models are published on the Hugging Face Hub, in the
 [aymaralima/deeplima](https://huggingface.co/aymaralima/deeplima) repository,
 one tag per release. Its model card lists the languages, the treebanks each
-model was trained on, their licenses and the evaluation scores. Each model
-contains, depending on the language:
+model was trained on, their licenses and the evaluation scores;
+[Accuracy and speed](performance.md) compares them with other toolkits. Each
+model contains, depending on the language:
 
 | Model | Directory in the resources | Used by |
 | --- | --- | --- |

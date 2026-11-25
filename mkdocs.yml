@@ -130,6 +130,7 @@ nav:
   - Using LIMA:
       - usage/index.md
       - Language models: usage/models.md
+      - Accuracy and speed: usage/performance.md
       - Command line: usage/cli.md
       - Python: usage/python.md
       - Pipelines: usage/pipelines.md
