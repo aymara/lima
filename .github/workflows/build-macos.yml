@@ -147,6 +147,22 @@ jobs:
                   grep -v '^Warning\|^Analyzing' moved.raw > moved.conllu || true
                   diff .github/data/smoke-ud-eng.conllu moved.conllu && echo "Relocated installation: identical to the Linux output"
 
+            # The package is made by CPack in its own staging directory: check
+            # it too (no absolute non-system install name or reference)
+            - name: "Check the package's install names"
+              run: |
+                  mkdir pkgcheck && tar -xzf build/lima-*-macos-arm64.tar.gz -C pkgcheck
+                  bad=0
+                  while IFS= read -r -d '' f; do
+                      [ -L "$f" ] && continue
+                      otool -h "$f" 2>/dev/null | grep -q 'Mach header' || continue
+                      refs=$( (otool -D "$f" | tail -n +2; otool -L "$f" | tail -n +2 | awk '{print $1}') \
+                          | grep '^/' | grep -v '^/usr/lib/\|^/System/' || true)
+                      if [ -n "$refs" ]; then echo "$f: $refs"; bad=1; fi
+                  done < <(find pkgcheck -type f -print0)
+                  [ $bad = 0 ] && echo "No absolute install name or reference"
+                  exit $bad
+
             - name: "Upload the package"
               uses: actions/upload-artifact@v4
               with:

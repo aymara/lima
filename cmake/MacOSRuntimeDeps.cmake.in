@@ -43,6 +43,18 @@ function(_installed_machos out)
   set(${out} "${_result}" PARENT_SCOPE)
 endfunction()
 
+# Whether path starts with dir/ (a string test: the paths may contain regular
+# expression characters, e.g. the '+' of the version in CPack's staging dir)
+function(_starts_with path dir out)
+  string(LENGTH "${dir}/" _len)
+  string(SUBSTRING "${path}" 0 ${_len} _head)
+  if (_head STREQUAL "${dir}/")
+    set(${out} TRUE PARENT_SCOPE)
+  else()
+    set(${out} FALSE PARENT_SCOPE)
+  endif()
+endfunction()
+
 # Library name relative to lib/ for a dependency path:
 # libfoo.dylib, or Foo.framework/Versions/A/Foo
 function(_relative_name path out)
@@ -73,13 +85,17 @@ file(GET_RUNTIME_DEPENDENCIES
   RESOLVED_DEPENDENCIES_VAR _resolved
   UNRESOLVED_DEPENDENCIES_VAR _unresolved
   PRE_EXCLUDE_REGEXES "^/usr/lib/" "^/System/"
-  POST_EXCLUDE_REGEXES "^/usr/lib/" "^/System/" "^${_prefix}/"
+  POST_EXCLUDE_REGEXES "^/usr/lib/" "^/System/"
 )
 if (_unresolved)
   message(WARNING "Unresolved runtime dependencies: ${_unresolved}")
 endif()
 
 foreach(_dep IN LISTS _resolved)
+  _starts_with("${_dep}" "${_prefix}" _in_prefix)
+  if (_in_prefix)
+    continue()   # LIMA's own libraries
+  endif()
   if (_dep MATCHES "^(.*/([^/]+)\\.framework)/")
     # A framework: copy the bundle (without headers)
     set(_fwdir "${CMAKE_MATCH_1}")
@@ -123,7 +139,8 @@ foreach(_f IN LISTS _all_machos)
     endif()
   endforeach()
   # Ids of the libraries in lib/
-  if (_f MATCHES "^${_libdir}/")
+  _starts_with("${_f}" "${_libdir}" _in_lib)
+  if (_in_lib)
     file(RELATIVE_PATH _rel "${_libdir}" "${_f}")
     list(APPEND _args -id "@rpath/${_rel}")
   endif()
@@ -141,7 +158,8 @@ foreach(_f IN LISTS _all_machos)
     list(APPEND _args -delete_rpath "${_r}")
   endforeach()
   # lib/ found relatively
-  if (_f MATCHES "^${_bindir}/")
+  _starts_with("${_f}" "${_bindir}" _in_bin)
+  if (_in_bin)
     set(_wanted "@loader_path/../lib")
   elseif (_f MATCHES "\\.framework/Versions/[^/]+/[^/]+$")
     set(_wanted "@loader_path/../../..")
