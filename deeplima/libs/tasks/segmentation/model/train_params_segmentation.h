@@ -31,6 +31,13 @@ namespace deeplima
                 // Character n-grams seen at most this many times per million
                 // training characters are unknown
                 uint32_t m_min_ipm = 100;
+                // Loss weight of the end-of-sentence tags (1: none)
+                float m_eos_weight = 1.0;
+                // Keep the epoch with the best mean of dev character accuracy and
+                // sentence-end F1 instead of the best accuracy
+                bool m_select_eos = false;
+                // Learning rate factor after an epoch without improvement
+                double m_lr_decay = 0.9;
 
                 train_params_segmentation_t()
                         : deeplima::train::train_params_t(),

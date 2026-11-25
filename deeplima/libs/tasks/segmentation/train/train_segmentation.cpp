@@ -179,6 +179,28 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
                                        num_classes,
                                        params.m_input_dropout_prob);
 
+  // Sentence ends: their loss weight, their F1 at evaluation, the epoch choice
+  if (params.train_ss)
+  {
+    std::vector<int64_t> eos = { segm_tag_t::E_EOS, segm_tag_t::S_EOS };
+    if (params.train_mwt)
+    {
+      eos.push_back(segm_tag_t::E_EOS_MWT);
+      eos.push_back(segm_tag_t::S_EOS_MWT);
+    }
+    model->set_eos_classes(eos, params.m_select_eos);
+    if (params.m_eos_weight != 1.0f)
+    {
+      std::vector<float> weights(num_classes, 1.0f);
+      for (int64_t k : eos)
+      {
+        weights[k] = params.m_eos_weight;
+      }
+      model->set_class_weights(weights);
+    }
+  }
+  model->set_schedule(params.m_lr_decay, params.m_max_epochs_without_improvement);
+
   torch::optim::Adam optimizer(model->parameters(),
                                torch::optim::AdamOptions(params.m_learning_rate)
                                   .weight_decay(params.m_weight_decay)

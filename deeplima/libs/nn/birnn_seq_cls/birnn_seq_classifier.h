@@ -29,9 +29,13 @@ struct task_stat_t
   double m_precision;
   double m_recall;
   double m_f1;
+  // F1 of the "end of sentence" decisions (BiRnnClassifierImpl::set_eos_classes),
+  // -1 when not computed
+  double m_eos_f1;
 
   task_stat_t()
-    : m_items(0), m_correct(0), m_num_classes(0), m_accuracy(0), m_loss(0), m_precision(0), m_recall(0), m_f1(0) { }
+    : m_items(0), m_correct(0), m_num_classes(0), m_accuracy(0), m_loss(0), m_precision(0), m_recall(0), m_f1(0),
+      m_eos_f1(-1) { }
 };
 
 typedef std::map<std::string, task_stat_t> epoch_stat_t;
@@ -106,6 +110,26 @@ public:
                const std::vector<std::string>& outputs_names,
                const torch::Device& device = torch::Device(torch::kCPU));
 
+  // Training options of train() (the segmenter's loop); the defaults keep the
+  // former behaviour.
+  // Loss weight of each class of the main task (empty: none)
+  void set_class_weights(const std::vector<float>& w) { m_class_weights = w; }
+  // Classes that end a sentence: the evaluation also computes their F1
+  // (m_eos_f1), and, with select_on_eos, the epoch kept is the one with the best
+  // mean of accuracy and that F1 instead of the best accuracy
+  void set_eos_classes(const std::vector<int64_t>& c, bool select_on_eos)
+  {
+    m_eos_classes = c;
+    m_select_on_eos = select_on_eos;
+  }
+  // Learning rate factor after an epoch without improvement, and the number of
+  // such epochs (with a worse dev loss) before stopping
+  void set_schedule(double lr_decay, size_t patience)
+  {
+    m_lr_decay = lr_decay;
+    m_patience = patience;
+  }
+
 protected:
 
   void split_input(const torch::Tensor& src,
@@ -165,6 +189,11 @@ protected:
                                      float input_dropout_prob);
 
   std::vector<embd_descr_t> m_embd_descr;
+  std::vector<float> m_class_weights;
+  std::vector<int64_t> m_eos_classes;
+  bool m_select_on_eos = false;
+  double m_lr_decay = 0.9;
+  size_t m_patience = 10;
 };
 
 inline torch::serialize::OutputArchive& operator<<(

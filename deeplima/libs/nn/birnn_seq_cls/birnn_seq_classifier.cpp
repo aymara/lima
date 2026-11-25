@@ -211,6 +211,21 @@ void BiRnnClassifierImpl::evaluate(const vector<string>& output_names,
     task_stat.m_correct = prediction.eq(this_task_target).logical_and(valid).sum().item<int64_t>();
     task_stat.m_items = valid.sum().item<int64_t>();
     task_stat.m_accuracy = double(task_stat.m_correct) / task_stat.m_items;
+    if (0 == i && !m_eos_classes.empty())
+    {
+      auto gold_eos = torch::zeros_like(valid);
+      auto pred_eos = torch::zeros_like(valid);
+      for (int64_t k : m_eos_classes)
+      {
+        gold_eos = gold_eos.logical_or(this_task_target.eq(k));
+        pred_eos = pred_eos.logical_or(prediction.eq(k));
+      }
+      pred_eos = pred_eos.logical_and(valid);
+      const double tp = gold_eos.logical_and(pred_eos).sum().item<int64_t>();
+      const double np = pred_eos.sum().item<int64_t>(), ng = gold_eos.sum().item<int64_t>();
+      const double p = np > 0 ? tp / np : 0, r = ng > 0 ? tp / ng : 0;
+      task_stat.m_eos_f1 = (p + r) > 0 ? 2 * p * r / (p + r) : 0;
+    }
 
     if (o.size(-1) == 2)
     {
@@ -315,35 +330,43 @@ void BiRnnClassifierImpl::train(size_t epochs,
       std::cout << "EPOCH " << e << " | " << task_name << " | LR=" << lr_copy;
       std::cout << " | TRAIN LOSS=" << train.m_loss << " ACC=" << train.m_accuracy
            << " | EVAL LOSS=" << eval.m_loss << " ACC=" << eval.m_accuracy
-           << " P=" << eval.m_precision << " R=" << eval.m_recall<< " F1=" << eval.m_f1
-           << std::endl << std::flush;
+           << " P=" << eval.m_precision << " R=" << eval.m_recall<< " F1=" << eval.m_f1;
+      if (eval.m_eos_f1 >= 0)
+      {
+        std::cout << " EOS_F1=" << eval.m_eos_f1;
+      }
+      std::cout << std::endl << std::flush;
     }
 
     task_stat_t& main_task_eval = eval_stat[output_names[0]];
 
     best_eval_loss = min(best_eval_loss, main_task_eval.m_loss);
-    if (main_task_eval.m_accuracy > best_eval_accuracy)
+    // The score the kept epoch is chosen on (named accuracy for history)
+    const double score = (m_select_on_eos && main_task_eval.m_eos_f1 >= 0)
+        ? (main_task_eval.m_accuracy + main_task_eval.m_eos_f1) / 2
+        : main_task_eval.m_accuracy;
+    if (score > best_eval_accuracy)
     {
-      best_eval_accuracy = main_task_eval.m_accuracy;
+      best_eval_accuracy = score;
       if (model_name.size() > 0)
       {
         torch::save(*this, model_name + ".pt");
       }
       count_below_best = 0;
 
-      if (1 == main_task_eval.m_accuracy)
+      if (1 == score)
       {
         return;
       }
     }
-    else if (main_task_eval.m_accuracy < best_eval_accuracy)
+    else if (score < best_eval_accuracy)
     {
       for (auto &group : opt.param_groups())
       {
           if (group.has_options())
           {
               auto &options = static_cast<torch::optim::AdamOptions &>(group.options());
-              options.lr(options.lr() * (0.9));
+              options.lr(options.lr() * m_lr_decay);
               lr_copy = options.lr();
           }
       }
@@ -352,7 +375,7 @@ void BiRnnClassifierImpl::train(size_t epochs,
         return;
       }
       count_below_best++;
-      if (main_task_eval.m_loss > best_eval_loss && count_below_best > 10)
+      if (main_task_eval.m_loss > best_eval_loss && count_below_best > m_patience)
       {
         return;
       }
@@ -434,9 +457,12 @@ void BiRnnClassifierImpl::train_batch(size_t /*batch_size*/,
     // are excluded from the loss and the accuracy. Harmless for tasks whose
     // targets are always valid class ids (the mask is then all-true).
     static constexpr int64_t kIgnoreIndex = -100;
-    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(
-        o, this_task_target,
-        torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnoreIndex));
+    auto nll_options = torch::nn::functional::NLLLossFuncOptions().ignore_index(kIgnoreIndex);
+    if (0 == i && !m_class_weights.empty() && int64_t(m_class_weights.size()) == o.size(1))
+    {
+      nll_options = nll_options.weight(torch::tensor(m_class_weights).to(o.device()));
+    }
+    torch::Tensor loss_tensor = torch::nn::functional::nll_loss(o, this_task_target, nll_options);
     double loss_value = loss_tensor.sum().item<double>();
     task_stat.m_loss += loss_value;
     //std::cerr << "o.sizes() == " << o.sizes() << std::endl;
