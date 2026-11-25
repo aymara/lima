@@ -98,10 +98,16 @@ string PathResolver::find_user_data_home()
 
   if (user_data_home.empty())
   {
-    user_data_home = getenv("HOME");
-    if (!user_data_home.empty())
+#ifdef _WIN32
+    // HOME is usually not set on Windows: USERPROFILE, as LIMA's FileUtils and
+    // Python's os.path.expanduser (used by lima_models to install the models)
+    const char* p_home = getenv("USERPROFILE");
+#else
+    const char* p_home = getenv("HOME");
+#endif
+    if (nullptr != p_home && *p_home != '\0')
     {
-      user_data_home = user_data_home / ".local" / "share";
+      user_data_home = fs::path(p_home) / ".local" / "share";
     }
   }
 
@@ -122,11 +128,17 @@ std::vector<std::string> split (const std::string &s, char delim) {
 
 void PathResolver::init(const std::string& paths)
 {
+  // The path lists separator (';' on Windows, where ':' is in C:\...)
+#ifdef _WIN32
+  const char separator = ';';
+#else
+  const char separator = ':';
+#endif
   auto var = std::getenv("LIMA_RESOURCES");
-  auto dirs = split(paths, ':');
+  auto dirs = split(paths, separator);
   if (var)
   {
-    dirs = split(var, ':');
+    dirs = split(var, separator);
   }
   m_resources_paths.insert(std::end(m_resources_paths), std::begin(dirs), std::end(dirs));
   fs::path user_data_home = find_user_data_home();
