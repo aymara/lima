@@ -111,7 +111,9 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
                                         { -1, 3, ngram_descr_t::type_ngram },
                                         { 0,  1, ngram_descr_t::script_ngram } };
 
-  std::vector<embd_descr_t> embd_descr = { { "char1gram", 2 }, { "char2gram", 3 }, { "char3gram", 4 },
+  const size_t c = params.m_char_embd_dim;
+  std::vector<embd_descr_t> embd_descr = { { "char1gram", c ? c : 2 }, { "char2gram", c ? c : 3 },
+                                           { "char3gram", c ? c : 4 },
                                            { "class1gram", 2 }, { "class2gram", 2 }, { "class3gram", 2 },
                                            { "scriptchange", 1 } };
 
@@ -139,7 +141,8 @@ int train_segmentation_model(const CoNLLU::Treebank& tb,
 
   DictionaryBuilder dict_builder(ngram_descr);
   dict_builder.set_lexicon(lexicon.get());
-  auto dicts = dict_builder.process(train_doc.get_original_text(), 100, train_char_counter);
+  auto dicts = dict_builder.process(train_doc.get_original_text(), params.m_min_ipm,
+                                    train_char_counter);
 
   if (train_char_counter >= std::numeric_limits<int64_t>::max())
   {

@@ -25,6 +25,12 @@ namespace deeplima
                 // Word list of the lexicon feature (segmentation/impl/segm_lexicon.h),
                 // copied beside the model as <model>.pt.lex; empty: no lexicon
                 std::string m_lexicon_fn;
+                // Embedding size of the character unigrams, bigrams and trigrams
+                // (0: 2, 3 and 4, the sizes before this option)
+                size_t m_char_embd_dim = 0;
+                // Character n-grams seen at most this many times per million
+                // training characters are unknown
+                uint32_t m_min_ipm = 100;
 
                 train_params_segmentation_t()
                         : deeplima::train::train_params_t(),
