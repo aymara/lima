@@ -6,9 +6,6 @@ on:
     push:
         branches:
             - master
-            # TEMPORARY, while porting (also publishes; a new workflow cannot be
-            # dispatched before it is on the default branch): remove before merging
-            - macos-build
     workflow_dispatch:
 
 concurrency:
