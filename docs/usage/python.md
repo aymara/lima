@@ -13,7 +13,7 @@ a neural pipeline uses about 3 GB of memory.
 !!! note "Memory of deleted analyzers"
     Up to aymara 0.7.1, this memory is not released when the analyzer is
     deleted, so creating several in one process quickly exhausts the memory.
-    From the next version, deleting the last analyzer of a language frees its
+    Since aymara 0.8.0, deleting the last analyzer of a language frees its
     models, and a new analyzer of that language replaces them instead of adding
     new ones. The memory goes back to the C library allocator: the process size
     may not shrink until it is reused (or `malloc_trim` is called).

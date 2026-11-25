@@ -95,7 +95,7 @@ config in `pyproject.toml` and `.flake8`). A `.pre-commit-config.yaml` runs
 flake8 + isort.
 
 The installable Python package is `aymara` (`import aymara.lima`), distributed via
-PyPI for Linux x86_64; `pyproject.toml` here covers formatting config, not the
+PyPI for Linux x86_64, Windows x64 and macOS arm64; `pyproject.toml` here covers formatting config, not the
 binding build.
 
 ## Architecture

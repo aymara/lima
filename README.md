@@ -23,11 +23,12 @@ reference and developer documentation.
 
 ## Quick start
 
-With the Python package (Linux x86_64, Python ≥ 3.9):
+With the Python package (Linux x86_64, Windows x64 or macOS on Apple Silicon,
+Python ≥ 3.9 on Linux, ≥ 3.10 elsewhere):
 
 ```bash
 pip install --upgrade pip
-pip install aymara==0.7.1
+pip install aymara==0.8.1
 lima_models -i eng
 ```
 

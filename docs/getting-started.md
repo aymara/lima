@@ -7,7 +7,8 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
 
 === "Python package"
 
-    The quickest way to try LIMA, under **Linux x86_64** with Python ≥ 3.9:
+    The quickest way to try LIMA, under **Linux x86_64**, **Windows x64** or
+    **macOS on Apple Silicon** (Python ≥ 3.9 on Linux, ≥ 3.10 elsewhere):
 
     --8<-- "pypi-install.md"
 

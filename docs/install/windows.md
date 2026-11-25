@@ -1,8 +1,9 @@
 # Windows
 
 LIMA builds and runs natively on Windows 10/11 (x64) with Microsoft Visual
-Studio 2022. Its output is identical to the Linux one. There is no published
-Windows package yet: build it as described below, or use the
+Studio 2022. Its output is identical to the Linux one. To use LIMA from
+Python, install the [Python package](python.md), which has a Windows x64 wheel
+since aymara 0.8.0. Otherwise, build LIMA as described below, or use the
 [Docker image](docker.md) (with Docker Desktop or WSL 2).
 
 ## Building under Windows
