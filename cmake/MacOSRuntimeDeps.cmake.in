@@ -141,7 +141,19 @@ foreach(_f IN LISTS _all_machos)
   # Ids of the libraries in lib/
   _starts_with("${_f}" "${_libdir}" _in_lib)
   if (_in_lib)
-    file(RELATIVE_PATH _rel "${_libdir}" "${_f}")
+    # Keep the name the library is referenced by (e.g. the soname
+    # liblima-common-tools.3.dylib, not the file liblima-common-tools.3.0.0+...),
+    # made relative: @rpath/<name>, or @rpath/X.framework/Versions/A/X
+    execute_process(COMMAND otool -D "${_f}" OUTPUT_VARIABLE _id ERROR_QUIET)
+    string(REPLACE "\n" ";" _id "${_id}")
+    list(LENGTH _id _id_len)
+    if (_id_len GREATER 1)
+      list(GET _id 1 _id)
+      string(STRIP "${_id}" _id)
+    else()
+      file(RELATIVE_PATH _id "${_libdir}" "${_f}")
+    endif()
+    _relative_name("${_id}" _rel)
     list(APPEND _args -id "@rpath/${_rel}")
   endif()
   # Absolute rpaths (the build machine's) are removed

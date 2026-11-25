@@ -159,8 +159,14 @@ jobs:
                       refs=$( (otool -D "$f" | tail -n +2; otool -L "$f" | tail -n +2 | awk '{print $1}') \
                           | grep '^/' | grep -v '^/usr/lib/\|^/System/' || true)
                       if [ -n "$refs" ]; then echo "$f: $refs"; bad=1; fi
+                      # and every @rpath reference is in lib/ (the libraries are
+                      # referenced by their sonames, e.g. liblima-x.3.dylib)
+                      for r in $(otool -L "$f" | tail -n +2 | awk '{print $1}' | grep '^@rpath/' | sed 's|^@rpath/||'); do
+                          [ -e "$(dirname "$(find pkgcheck -type d -name lib | head -1)")/lib/$r" ] \
+                              || { echo "$f: @rpath/$r not in lib/"; bad=1; }
+                      done
                   done < <(find pkgcheck -type f -print0)
-                  [ $bad = 0 ] && echo "No absolute install name or reference"
+                  [ $bad = 0 ] && echo "No absolute install name or reference, all @rpath references in lib/"
                   exit $bad
 
             - name: "Upload the package"
