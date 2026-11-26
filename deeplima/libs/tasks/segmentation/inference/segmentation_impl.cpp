@@ -79,6 +79,15 @@ void SegmentationImpl::parse_from_stream(const read_callback_t fn)
   bool continue_reading = true;
   uint64_t counter = 0;
   reset(); // reset internal slots for (re)use
+  // Everything else a previous text changed, so that one instance analyzes
+  // several texts (it stalled on the second one, aymara/lima#172: the slot
+  // indexes of the previous text were kept)
+  m_input_encoder.reset();
+  m_decoder.reset();
+  m_current_slot_no = -1;
+  m_current_slot_timepoints = 0;
+  m_last_completed_slot = -1;
+  m_curr_buff_idx = 0;
   m_current_timepoint = SegmentationClassifier::get_start_timepoint();
   m_buff_set.init(SegmentationClassifier::get_num_threads() * 2 + 2,
                   SegmentationClassifier::get_num_threads() * SegmentationClassifier::get_slot_size() * 4);

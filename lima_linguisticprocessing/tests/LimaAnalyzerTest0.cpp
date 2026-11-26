@@ -324,4 +324,30 @@ void LimaAnalyzerTest0::test_analyzeText_model_relation_missing_from_config() {
     QVERIFY(result.find("\tmorning\tNOUN\t_\tNumber=Sing\t0\t_\t") == std::string::npos);
 }
 
+// The BiLSTMs (segmenter, tagger) ran over their whole slot, beyond the end
+// of a short text, on the columns of the previous one: the features of a text
+// depended on the text analyzed before it ("Il" got Case=Nom|Emph=No after
+// another text only, aymara/lima#236)
+void LimaAnalyzerTest0::test_analyzeText_independent_analyses() {
+    LimaAnalyzer analyzer("ud-fra", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
+    QVERIFY(!analyzer.error);
+    auto first = analyzer.analyzeText("Il parle.");
+    if (first.empty())
+        QSKIP("deepud model not available in this environment");
+    analyzer.analyzeText("Bonjour. Le petit chat noir dort sur le grand tapis rouge.");
+    auto again = analyzer.analyzeText("Il parle.");
+    // FORM, UPOS, FEATS (the relations of a second analysis are fixed apart)
+    auto columns = [](const std::string& conllu) {
+        QStringList result;
+        for (const auto& line : QString::fromStdString(conllu).split('\n'))
+        {
+            auto cols = line.split('\t');
+            if (cols.size() == 10)
+                result << QStringList({cols[1], cols[3], cols[5]}).join('\t');
+        }
+        return result;
+    };
+    QCOMPARE(columns(again), columns(first));
+}
+
 QTEST_GUILESS_MAIN(LimaAnalyzerTest0)

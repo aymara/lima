@@ -283,13 +283,17 @@ void RnnTokenizerPrivate::init(GroupConfigurationStructure& unitConfiguration)
     load_mwt_dictionary(model_file_name + ".mwt");
   }
 
+  // The segmenter is loaded once and reused by every text: it was created and
+  // its model loaded again for each text (about 0.14 s per analysis), as long
+  // as it stalled on a second text (aymara/lima#172)
   m_load_fn = [this, model_file_name]()
   {
-    // if (m_loaded)
-    // {
-    //   return;
-    // }
+    if (m_loaded)
+    {
+      return;
+    }
 
+    m_segm = std::make_shared<segmentation::impl::SegmentationImpl>();
     m_segm->load(model_file_name.toStdString());
     m_segm->init(1, 16*1024); // threads, buffer size per thread
 
@@ -366,8 +370,6 @@ void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& curren
 
 void RnnTokenizerPrivate::tokenize(const QString& text, std::vector<std::vector<TPrimitiveToken>>& sentences)
 {
-  m_segm = std::make_shared<segmentation::impl::SegmentationImpl>();
-
   m_load_fn();
   m_mwt_require_flag = m_segm->predicts_mwt();
 
