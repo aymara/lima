@@ -123,6 +123,7 @@ extra:
 
 nav:
   - Home: index.md
+  - Why LIMA?: why-lima.md
   - Getting started: getting-started.md
   - Install:
       - install/index.md
