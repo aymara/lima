@@ -63,7 +63,7 @@ an HTTP server, a Python package and a graphical interface. The Python
 package, `aymara`, covers the same uses as the other toolkits' packages, with
 a spaCy-like API (`Doc`, `Token`, `Span`); LIMA's analyses can be converted to
 spaCy documents, and a LIMA analyzer can be the tokenizer of a spaCy pipeline,
-followed by spaCy components (in the next release of `aymara`). Pipelines are
+followed by spaCy components. Pipelines are
 assembled from [configuration files](usage/configuration.md) and
 [plugins](developers/architecture.md): you can add, remove or reorder
 processing steps, or add your own components, without changing LIMA's code.
