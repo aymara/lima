@@ -150,26 +150,35 @@ are complementary: (a) for users without spaCy, (c) for exact compatibility.
 4. P2b `pipe`, then P2c `to_spacy` / spaCy factory.
 5. P3 alongside.
 
-## Status (2026-11-26)
+## Status (2026-11-26, end of day)
+
+Every task of the plan is done (merged, or in review where marked).
 
 | Item | State |
 | --- | --- |
-| P0 crash | Done: aymara/lima#229 (ConllDumper multiword tokens, positions) |
-| P1 | Done: aymara/lima-python#37, except running the docstrings as doctests in CI |
-| P3 | Done in aymara/lima-python#37, except the C++ stderr noise |
-| P2a | Done: aymara/lima-python#38 (+ #39, Python 3.13). `Token.head` is now a `Token` (breaking); the int is `Token.head_i`. Not yet: `is_stop` (needs stop lists), `Span.as_doc()` |
-| P2b | `Lima.pipe` (sequential) and `Lima.lang` in `spacy-compat-p2a`. Not yet: batching through the C++ analyzer, `pipe_names`, `meta`, `Doc.from_conllu` |
-| P2c | Not started |
+| P0 crash | aymara/lima#229 (ConllDumper multiword tokens, positions) |
+| P1 | aymara/lima-python#37; the docstring examples run as tests in lima-python#42 (in review) |
+| P2a | lima-python#38 (+ #39, Python 3.13); `is_stop` (spaCy's stop lists, vendored) and `Span.as_doc()` in lima-python#42 |
+| P2b | `pipe` (with optional batching), `pipe_names`, `meta`, `Doc.from_conllu`, standard `to_conllu` in lima-python#42; one call cost 140 ms for one sentence, 24 ms with lima#238 (in review), 7 ms per text in batches |
+| P2c | lima-python#40: `Doc.to_spacy()`, `aymara.lima_spacy.spacy_pipeline()`, tokenizer `aymara.LimaTokenizer.v1` for spaCy configs |
+| P3 | pydantic, mutable defaults, stderr prints: lima-python#37; C++ stderr noise: lima#233 and lima-python#43 (in review) |
+| Model issues (`Mr.`, `Best` → `good`) | reported: lima#235 |
 
-Found while doing P2a: `morning` in `Mr. Best flew to New York on Saturday
-morning.` (English MERGE) had no relation. The cause is not the sentence split:
-the parser predicted GUM's `obl:unmarked`, missing from LIMA's `relationList`,
-so `getSyntacticRelationId` returned 0 and the arc was dropped. 73 relations of
-the UD 2.18 training treebanks were missing (12% of the words of Vietnamese VTB,
-6% of Irish TwittIrish, about 1% of English EWT/GUM): it explains most of the
-LAS gap between LIMA and deeplima in the evaluations (VTB: LIMA 40.02 -> 45.61,
-deeplima 45.67). Fixed by adding them to the three `lima-common-ud*.xml` and by
-having `RnnDependencyParser` register its model's relations at load time.
+Bugs found and fixed on the way:
+
+- lima#231: 73 UD 2.18 dependency relations missing from LIMA, whose arcs were
+  dropped (Vietnamese VTB LAS 40.02 -> 45.61); the LIMA evaluations should be
+  run again.
+- lima#234 (in review): ConllDumper gave a second analysis the heads and
+  relations of the first one (`Lima.analyzeText()` called twice, analyzeText
+  with several files).
+- lima#238 (in review): the deeplima BiLSTM ran over its whole slot (time of
+  short texts, and results depending on the previous text, lima#236); the
+  segmenter is reused across texts (lima#172).
+- lima-python#43 (in review): a missing model or embedding file aborted
+  Python (uncaught `std::invalid_argument`); it raises `LimaInternalError`.
+- Open: lima#237, an analyzer left unusable after a failed construction of
+  another one of its language.
 
 ## spaCy usage today
 
