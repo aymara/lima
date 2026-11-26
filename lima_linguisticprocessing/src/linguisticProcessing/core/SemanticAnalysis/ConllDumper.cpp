@@ -317,6 +317,11 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
   DUMPERLOGINIT;
   LDEBUG << "ConllDumper::process";
 #endif
+  // The dumper is reused by the analyses of its pipeline, and the vertex ids
+  // of a new analysis start again from 0: the relations of the previous one,
+  // kept (std::map::insert does not replace), gave its heads and relations
+  // to the next one
+  m_d->vertexDependencyInformations.clear();
 
   auto metadata = std::dynamic_pointer_cast<LinguisticMetaData>(analysis.getData("LinguisticMetaData"));
   if (metadata == 0)
