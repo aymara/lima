@@ -5,6 +5,8 @@
 
 #include "deeplima/lemmatization/impl/lemmatization_impl.h"
 
+#include <cstdlib>
+
 namespace deeplima::lemmatization::impl {
 
 
@@ -92,8 +94,11 @@ void LemmatizationImpl::init(size_t max_input_word_len,
         }
       }
     }
-    else
+    else if (std::getenv("DEEPLIMA_VERBOSE") != nullptr)
     {
+      // The lemmatizer was trained with a feature the tagger does not predict
+      // (e.g. Foreign, Typo): its value is unknown. Not actionable by a user,
+      // and printed at each model load: only on request
       std::cerr << "Warning: classifier doesn't provide required feature: \""
                 << feat_name << "\"" << std::endl;
     }
