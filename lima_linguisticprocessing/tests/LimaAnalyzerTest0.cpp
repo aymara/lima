@@ -348,6 +348,34 @@ void LimaAnalyzerTest0::test_analyzeText_independent_analyses() {
         return result;
     };
     QCOMPARE(columns(again), columns(first));
+}  
+    
+// The CoNLL-U output of a second analysis by the same analyzer had the heads
+// and relations of the first one (ConllDumper kept them)
+void LimaAnalyzerTest0::test_analyzeText_second_text_relations() {
+    LimaAnalyzer analyzer("ud-fra", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
+    QVERIFY(!analyzer.error);
+    auto first = analyzer.analyzeText("Le petit chat noir dort sur le grand tapis rouge.");
+    if (first.empty())
+        QSKIP("deepud model not available in this environment");
+    auto second = analyzer.analyzeText("Il parle.");
+    LimaAnalyzer fresh("ud-fra", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
+    auto expected = fresh.analyzeText("Il parle.");
+    // Compared on ID, FORM, LEMMA, UPOS, HEAD, DEPREL: the tagger's features
+    // may depend on the previous analysis (a separate issue)
+    auto columns = [](const std::string& conllu) {
+        QStringList result;
+        for (const auto& line : QString::fromStdString(conllu).split('\n'))
+        {
+            auto cols = line.split('\t');
+            if (cols.size() == 10)
+                result << QStringList({cols[0], cols[1], cols[2], cols[3], cols[6], cols[7]}).join('\t');
+        }
+        return result;
+    };
+    QCOMPARE(columns(second), columns(expected));
+    QVERIFY(second.find("\tparler\tVERB\t") != std::string::npos);
+    QVERIFY(second.find("\t0\troot\t") != std::string::npos);
 }
 
 QTEST_GUILESS_MAIN(LimaAnalyzerTest0)

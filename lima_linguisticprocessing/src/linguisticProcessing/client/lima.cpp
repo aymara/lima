@@ -107,6 +107,7 @@
 #include <boost/format.hpp>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QtGlobal>
 #include <QtCore/QString>
 
 #include <QtCore>
@@ -253,6 +254,43 @@ public:
 };
 
 
+namespace
+{
+QtMessageHandler previousQtMessageHandler = nullptr;
+
+// The QCoreApplication of the analyzer lives only while it is built (a
+// program may create its own one later, e.g. a PySide QApplication), while
+// the file watchers of the logging configuration are process-wide: at exit,
+// Qt warns that their event dispatcher "has already been destroyed". This
+// harmless warning is dropped; the other messages go to the previous handler.
+void filterQtMessages(QtMsgType type, const QMessageLogContext& context,
+                      const QString& message)
+{
+  if (message.contains(QLatin1String("event dispatcher has already been destroyed")))
+  {
+    return;
+  }
+  if (previousQtMessageHandler != nullptr)
+  {
+    previousQtMessageHandler(type, context, message);
+  }
+  else
+  {
+    std::cerr << message.toStdString() << std::endl;
+  }
+}
+
+void installQtMessageFilter()
+{
+  static bool installed = false;
+  if (!installed)
+  {
+    previousQtMessageHandler = qInstallMessageHandler(filterQtMessages);
+    installed = true;
+  }
+}
+}
+
 LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
                                          const QStringList& iqpipelines,
                                          const QString& imodulePath,
@@ -265,6 +303,7 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
   int argc = 1;
   char* argv[2] = {(char*)("LimaAnalyzer"), NULL};
   QCoreApplication app(argc, argv);
+  installQtMessageFilter();
 
   if(iqlangs.size() == 0)
   {
@@ -439,7 +478,7 @@ LimaAnalyzer::LimaAnalyzer(const std::string& langs,
                                   QString::fromStdString(user_resources_path),
                                   QString::fromStdString(meta));
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -463,7 +502,7 @@ LimaAnalyzer::LimaAnalyzer(const LimaAnalyzer& a)
                                 a.m_d->user_resources_path,
                                 a.m_d->meta);
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -486,7 +525,7 @@ LimaAnalyzer& LimaAnalyzer::operator=(const LimaAnalyzer& a)
                                   a.m_d->meta);
     return *this;
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -616,7 +655,7 @@ std::string LimaAnalyzer::analyzeText(const std::string& text,
   {
     return m_d->analyzeText(text, lang, pipeline, meta);
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     error = true;
@@ -954,8 +993,10 @@ std::pair<QString, int> LimaAnalyzerPrivate::getConllRelName(LinguisticGraphVert
     {
       targetConllId =  vertexToToken.find(target)->second;
     }
-    else
+    else if (vertexDependencyInformations.find(v)->second.second != "root"
+             && vertexDependencyInformations.find(v)->second.second != "ROOT")
     {
+      // The root's target is the sentence boundary vertex, not a token
       DUMPERLOGINIT;
       LERROR << "LimaAnalyzerPrivate::getConllRelName target" << target << "not found in segmentation mapping";
     }

@@ -1,12 +1,19 @@
 name: "Build LIMA on macOS (Apple Silicon)"
 
 on:
-    # On master, the package is published in the "continuous" prerelease, used
-    # by aymara/lima-python's macOS wheel job.
+    # Built for a release only (tag v<x.y.z>), not on every push to master: the
+    # package is then published in the "continuous" prerelease, used by
+    # aymara/lima-python's macOS wheel job. Also run on demand from the Actions
+    # tab (or `gh workflow run build-macos.yml --ref <branch> [-f publish=true]`).
     push:
-        branches:
-            - master
+        tags:
+            - 'v*'
     workflow_dispatch:
+        inputs:
+            publish:
+                description: "Publish the package in the continuous prerelease"
+                type: boolean
+                default: false
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -179,7 +186,7 @@ jobs:
             # The release has the packages of all the platforms: replace only
             # this one's (its name changes with the version)
             - name: "Publish the continuous prerelease"
-              if: github.event_name == 'push'
+              if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
               env:
                   GH_TOKEN: ${{ github.token }}
               run: |
