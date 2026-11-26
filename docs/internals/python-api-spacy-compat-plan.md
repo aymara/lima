@@ -157,16 +157,19 @@ are complementary: (a) for users without spaCy, (c) for exact compatibility.
 | P0 crash | Done: aymara/lima#229 (ConllDumper multiword tokens, positions) |
 | P1 | Done: aymara/lima-python#37, except running the docstrings as doctests in CI |
 | P3 | Done in aymara/lima-python#37, except the C++ stderr noise |
-| P2a | lima-python branch `spacy-compat-p2a`. `Token.head` is now a `Token` (breaking); the int is `Token.head_i`. Not yet: `is_stop` (needs stop lists), `Span.as_doc()` |
+| P2a | Done: aymara/lima-python#38 (+ #39, Python 3.13). `Token.head` is now a `Token` (breaking); the int is `Token.head_i`. Not yet: `is_stop` (needs stop lists), `Span.as_doc()` |
 | P2b | `Lima.pipe` (sequential) and `Lima.lang` in `spacy-compat-p2a`. Not yet: batching through the C++ analyzer, `pipe_names`, `meta`, `Doc.from_conllu` |
 | P2c | Not started |
 
-Found while doing P2a: with the English MERGE model, `Mr.` makes a sentence of
-its own, and `morning` in `Mr. Best flew to New York on Saturday morning.` gets
-no relation (`dep` `_`, LIMA logs `LimaAnalyzerPrivate::getConllRelName target 0
-not found in segmentation mapping`). The parser's head is apparently in another
-sentence, which lima-python's `Doc` building (`lima.cpp`) cannot map. lima-python
-now treats such a token as its own head; the LIMA side remains to be checked.
+Found while doing P2a: `morning` in `Mr. Best flew to New York on Saturday
+morning.` (English MERGE) had no relation. The cause is not the sentence split:
+the parser predicted GUM's `obl:unmarked`, missing from LIMA's `relationList`,
+so `getSyntacticRelationId` returned 0 and the arc was dropped. 73 relations of
+the UD 2.18 training treebanks were missing (12% of the words of Vietnamese VTB,
+6% of Irish TwittIrish, about 1% of English EWT/GUM): it explains most of the
+LAS gap between LIMA and deeplima in the evaluations (VTB: LIMA 40.02 -> 45.61,
+deeplima 45.67). Fixed by adding them to the three `lima-common-ud*.xml` and by
+having `RnnDependencyParser` register its model's relations at load time.
 
 ## spaCy usage today
 

@@ -36,6 +36,7 @@ private Q_SLOTS:
   void test_analyzeText_token_positions();
   void test_analyzeText_multiword_tokens();
   void test_analyzeText_entity_before_multiword_token();
+  void test_analyzeText_model_relation_missing_from_config();
   // void test_forged_pipeline();
 
 private:

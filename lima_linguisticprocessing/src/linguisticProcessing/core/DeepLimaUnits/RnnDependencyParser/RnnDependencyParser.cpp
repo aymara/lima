@@ -381,6 +381,18 @@ void RnnDependencyParserPrivate::init(GroupConfigurationStructure& unitConfigura
         {
             m_dependencyParser->set_classes(i, temp_classes_names[i], temp_classes[i]);
         }
+        // The model's relations missing from the language's relationList
+        // would get the id 0: their arcs were dropped (dep "_", e.g. GUM's
+        // obl:unmarked with the English MERGE model)
+        auto& languageData = static_cast<Common::MediaticData::LanguageData&>(
+            Common::MediaticData::MediaticData::changeable().mediaData(m_language));
+        for (const auto& relation : m_dependencyParser->get_rel_class_names())
+        {
+            if (!relation.empty())
+            {
+                languageData.addSyntacticRelation(relation);
+            }
+        }
         m_loaded = true;
     };
 
