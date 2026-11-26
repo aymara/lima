@@ -6,6 +6,9 @@
 #   manual run      -> :branch-<branch>, :sha-<commit> (Actions > this workflow >
 #                      Run workflow, on any branch: test an image before merging)
 #   pull request    -> built to validate, never pushed
+# Only the FactoryIA image (the deeplima training campaign's) is built on every
+# push and pull request. The Debian 12 and Ubuntu 22.04 images are built for a
+# release (tag v<x.y.z>) or on demand (manual run with images=all).
 # Every image carries the OCI labels org.opencontainers.image.revision (the
 # commit) and .created: `docker inspect` / `singularity inspect` show them.
 on:
@@ -51,7 +54,8 @@ jobs:
   debian12:
     name: "Build on Debian 12"
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.images == 'all'
+    # Release or manual run only (see the comment at the top)
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.images == 'all')
 #    container: docker:20.10.13-dind
 
     permissions:
@@ -135,7 +139,8 @@ jobs:
   ubuntu22_04_lima:
     name: "Build the Ubuntu 22.04 Lima image"
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.images == 'all'
+    # Release or manual run only (see the comment at the top)
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.images == 'all')
 
     steps:
       -
