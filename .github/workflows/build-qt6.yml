@@ -1,8 +1,14 @@
 name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed workflow"
+# The Linux wheels of aymara/lima-python are built on these images: they are
+# built on every push to master and release tag (v<x.y.z>), and validated on
+# pull requests. A successful push build triggers aymara/lima-python's build
+# (trigger-lima-python-on-success.yml).
 on:
   push:
     branches:
     - master
+    tags:
+    - 'v*'
   pull_request:
     branches:
     - master
@@ -34,7 +40,9 @@ env:
 jobs:
 
   # Detect which costly base-image Dockerfiles changed so we only rebuild the
-  # ones that actually need it. The boolean outputs gate the base-image jobs
+  # ones that actually need it: since the previous push (push to master), the
+  # base branch (pull request) or the previous release, the last v* tag before
+  # this commit (tag, manual run). The boolean outputs gate the base-image jobs
   # below; "force_base_images" (workflow_dispatch) overrides them all.
   changes:
     name: "Detect changed base-image Dockerfiles"
@@ -46,20 +54,41 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v3
-        id: filter
         with:
-          filters: |
-            boost:
-              - 'continuous_integration/Dockerfile-manylinux_2_28_with_boost'
-            # The Qt and Python versions are set in this workflow
-            qt6:
-              - 'continuous_integration/Dockerfile-manylinux_2_28_with_qt6'
-              - '.github/workflows/build-qt6.yml'
-            pyside:
-              - 'continuous_integration/Dockerfile-manylinux_2_28_with_qt_and_pyside'
-              - '.github/workflows/build-qt6.yml'
+          fetch-depth: 0   # the history and the tags, to find the previous release
+
+      # Without a base (no previous release tag, new branch), nothing is
+      # considered changed: the base images exist (:latest); use
+      # force_base_images to rebuild them.
+      - name: "Changed base-image files"
+        id: filter
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=""
+          if [ "${GITHUB_EVENT_NAME}" = pull_request ]; then
+            base=$(git merge-base "$PR_BASE" HEAD)
+          elif [ "${GITHUB_EVENT_NAME}" = push ] && [ "${GITHUB_REF_TYPE}" = branch ]; then
+            if [ -n "$BEFORE" ] && ! [[ "$BEFORE" =~ ^0+$ ]] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then base=$BEFORE; fi
+          else
+            if [ "${GITHUB_REF_TYPE}" = tag ]; then from=HEAD^; else from=HEAD; fi
+            base=$(git describe --tags --abbrev=0 --match 'v*' "$from" 2>/dev/null || true)
+          fi
+          if [ -n "$base" ]; then
+            echo "Compared with: $base"
+            changed=$(git diff --name-only "$base" HEAD)
+          else
+            echo "::notice::No base to compare with: base images not rebuilt (use force_base_images)"
+            changed=""
+          fi
+          check() {  # <output> <regexp of the files>
+            if grep -qxE "$2" <<< "$changed"; then echo "$1=true"; else echo "$1=false"; fi | tee -a "$GITHUB_OUTPUT"
+          }
+          check boost 'continuous_integration/Dockerfile-manylinux_2_28_with_boost'
+          # The Qt and Python versions are set in this workflow
+          check qt6 'continuous_integration/Dockerfile-manylinux_2_28_with_qt6|\.github/workflows/build-qt6\.yml'
+          check pyside 'continuous_integration/Dockerfile-manylinux_2_28_with_qt_and_pyside|\.github/workflows/build-qt6\.yml'
 
 
   manylinux_2_28_with_boost:

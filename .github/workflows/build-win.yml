@@ -1,12 +1,14 @@
 name: "Build LIMA on Windows (Visual Studio 2022)"
 
 on:
-    # On master, the ZIP package is published in the "continuous" prerelease,
-    # used by aymara/lima-python's Windows wheel job. Also run on demand from
-    # the Actions tab (or `gh workflow run build-win.yml --ref <branch>`).
+    # Built for a release only (tag v<x.y.z>), not on every push to master: the
+    # ZIP package is then published in the "continuous" prerelease, used by
+    # aymara/lima-python's Windows wheel job. Also run on demand from the
+    # Actions tab (or `gh workflow run build-win.yml --ref <branch>
+    # [-f publish=true]`), e.g. to check a branch or before tagging.
     push:
-        branches:
-            - master
+        tags:
+            - 'v*'
     workflow_dispatch:
         inputs:
             publish:
@@ -164,8 +166,7 @@ jobs:
             # this one's (its name changes with the version)
             - name: "Remove the previous Windows package from the continuous prerelease"
               if: >-
-                  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master')
-                      || inputs.publish }}
+                  ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
               shell: bash
               env:
                   GH_TOKEN: ${{ github.token }}
@@ -176,8 +177,7 @@ jobs:
 
             - name: "Publish the continuous prerelease"
               if: >-
-                  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master')
-                      || inputs.publish }}
+                  ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
               uses: ncipollo/release-action@v1
               with:
                   artifacts: build/lima-*-win64.zip
@@ -188,7 +188,7 @@ jobs:
                   prerelease: true
                   tag: continuous
                   name: "Continuous build"
-                  body: "Latest builds of LIMA from master (Windows x64, macOS arm64)."
+                  body: "Latest release builds of LIMA, or of a manual run (Windows x64, macOS arm64)."
                   commit: ${{ github.sha }}
 
             # Keep the logs: GitHub expires the run logs, and a configure failure
