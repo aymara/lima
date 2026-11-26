@@ -55,18 +55,31 @@ available as `doc.ents`. The deprecated legacy language codes `eng`, `fre` and
 ## Documents, sentences and tokens
 
 A `Doc` is a sequence of `Token`s. Sentences and named entities are `Span`s,
-contiguous sequences of tokens.
+contiguous sequences of tokens. The classes follow spaCy's API: tokens have
+`text`, `lemma_`, `pos_`, `morph`, `dep_`, `head`, `children`, `subtree`…;
+spans have `root`, `sents`, `ents`, `label_`…; documents have `sents`, `ents`,
+`noun_chunks`, `char_span()`, `to_json()`…
 
 ```python
 for token in doc:
-    print(token.i, token.text, token.lemma, token.pos, token.dep, token.head)
+    print(token.i, token.text, token.lemma_, token.pos_, token.dep_,
+          token.head.text)
 
 for sentence in doc.sents:
-    print(sentence)
+    print(sentence.text, sentence.root.text)
 
 for entity in doc.ents:
-    print(entity.text, entity.label)
+    print(entity.text, entity.label_)
 ```
+
+!!! warning "Differences with spaCy"
+    - `token.i` starts at 1 (spaCy's starts at 0).
+    - Since aymara 0.9.0, `token.head` is a `Token`, as in spaCy (the root's
+      head is itself). Before, it was the 0-based index of the head in the
+      document, now available as `token.head_i`.
+    - `tag_` is empty: the models predict no language specific tags.
+    - The dependency relations are the UD ones (`root`, not spaCy's English
+      `ROOT`) and the entity labels are LIMA's (e.g. `Person.PERSON`).
 
 Printing a `Doc` with `repr()` gives its CoNLL-U representation:
 
@@ -74,7 +87,7 @@ Printing a `Doc` with `repr()` gives its CoNLL-U representation:
 >>> print(repr(nlp("Hello, World!")))
 1       Hello   hello   INTJ    _       _               3       discourse       _       Pos=0|Len=5
 2       ,       ,       PUNCT   _       _               1       punct   _       Pos=5|Len=1
-3       World   World   PROPN   _       Number:Sing     0       root    _       Pos=7|Len=5
+3       World   World   PROPN   _       Number=Sing     0       root    _       Pos=7|Len=5
 4       !       !       PUNCT   _       _               3       punct   _       Pos=12|Len=1
 ```
 
@@ -83,11 +96,62 @@ Printing a `Doc` with `repr()` gives its CoNLL-U representation:
     of every sentence after the first one of a document. `token.head` and
     `analyzeText()` are not affected. This is fixed in aymara 0.6.0.
 
-`analyzeText()` returns the raw CoNLL-U string instead of a `Doc`:
+`doc.to_conllu()` writes standard CoNLL-U, with `# sent_id` and `# text`
+comments, `SpaceAfter=No` and the lines of multiword tokens.
+`Doc.from_conllu(text, lang)` creates a document from CoNLL-U (for instance a
+UD treebank's) without analyzing it. `analyzeText()` returns the raw CoNLL-U
+string of LIMA instead of a `Doc`:
 
 ```python
 print(nlp.analyzeText("The author wrote a novel.", lang="ud-eng"))
 ```
+
+## Analyzing many texts
+
+`nlp.pipe(texts)` yields one `Doc` per text, as in spaCy. With
+`batch_size=n` (n > 1), the texts of a batch are analyzed together, which is
+several times faster for short texts; the analysis of a text may then differ
+slightly from `nlp(text)`, the sentence segmentation seeing the neighboring
+texts. The default, `batch_size=1`, analyzes each text alone.
+
+```python
+for doc in nlp.pipe(texts, batch_size=64):
+    ...
+```
+
+## Using LIMA with spaCy
+
+Since aymara 0.9.0, LIMA's analyses can be used with spaCy's own tools
+(displaCy, `Matcher`, `DocBin`, spaCy components…). Install the optional
+dependency with `pip install "aymara[spacy]"`.
+
+- `doc.to_spacy()` converts a LIMA document into a `spacy.tokens.Doc`, with
+  its lemmas, parts of speech, morphology, dependency tree, sentences and
+  named entities.
+- `aymara.lima_spacy.spacy_pipeline()` creates a spaCy pipeline whose
+  tokenizer is a LIMA analyzer, as spacy-stanza and spacy-udpipe do: spaCy
+  components can be added after it.
+
+```python
+import aymara.lima_spacy
+
+nlp = aymara.lima_spacy.spacy_pipeline("ud-eng")
+doc = nlp("The author wrote a novel.")   # a spacy.tokens.Doc
+print([(t.text, t.lemma_, t.pos_, t.dep_, t.head.text) for t in doc])
+```
+
+In a spaCy configuration file, the tokenizer is registered as
+`aymara.LimaTokenizer.v1`:
+
+```ini
+[nlp.tokenizer]
+@tokenizers = "aymara.LimaTokenizer.v1"
+lang = "ud-eng"
+```
+
+The words of a multiword token that do not spell it (French "du" → "de" "le")
+are separate spaCy tokens: the spaCy text is then "de le", and the original
+text is in `doc.user_data["lima_text"]`.
 
 ## Customizing the configuration
 
