@@ -123,6 +123,10 @@ public:
 
   const std::string& getSyntacticRelationName(SyntacticRelationId id) const;
   SyntacticRelationId getSyntacticRelationId(const std::string& name) const;
+  /** Registers the syntactic relation name if it is not known yet (e.g. a
+   * relation of a dependency parser model missing from the configured
+   * relationList) and returns its id, as getSyntacticRelationId */
+  SyntacticRelationId addSyntacticRelation(const std::string& name);
 
   /** \name Codes mapping
    *  Mapping between internal LIMA codes and Language code. */

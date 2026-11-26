@@ -707,6 +707,21 @@ SyntacticRelationId LanguageData::getSyntacticRelationId(const std::string& name
   return 0;
 }
 
+SyntacticRelationId LanguageData::addSyntacticRelation(const std::string& name)
+{
+  auto it = m_d->m_syntacticRelations.find(name);
+  if (it != m_d->m_syntacticRelations.end())
+  {
+    return it->second;
+  }
+  // The ids of the configured relations are 1..n, in their order
+  const SyntacticRelationId id = m_d->m_syntacticRelations.size() + 1;
+  m_d->m_syntacticRelations[name] = id;
+  LDATALOGINIT;
+  LINFO << "LanguageData::addSyntacticRelation" << name << "<=>" << id;
+  return id;
+}
+
 const std::map<QString, QString>& LanguageData::getLimaToLanguageCodeMapping() const
 {
   return m_d->m_limaToLanguageCodeMapping;

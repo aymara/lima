@@ -388,6 +388,82 @@ SPDX-License-Identifier: MIT
         <item value="xcomp:sp"/>
         <item value="xcomp:subj"/>
 
+        <!-- UD 2.18 relations used in the treebanks the deeplima models are
+             trained on, missing before: their arcs were dropped (dep "_") -->
+        <item value="acl:cmp"/>
+        <item value="acl:subj"/>
+        <item value="acl:tmod"/>
+        <item value="acl:tonp"/>
+        <item value="advcl:abs"/>
+        <item value="advcl:cmp"/>
+        <item value="advcl:objective"/>
+        <item value="advcl:pred"/>
+        <item value="advmod:adj"/>
+        <item value="advmod:cmp"/>
+        <item value="advmod:dir"/>
+        <item value="amod:cmp"/>
+        <item value="appos:nmod"/>
+        <item value="case:adv"/>
+        <item value="ccomp:relcl"/>
+        <item value="ccomp:reported"/>
+        <item value="ccomp:speech"/>
+        <item value="clf:det"/>
+        <item value="compound:adj"/>
+        <item value="compound:amod"/>
+        <item value="compound:apr"/>
+        <item value="compound:atov"/>
+        <item value="compound:idiom"/>
+        <item value="compound:pron"/>
+        <item value="compound:verbnoun"/>
+        <item value="compound:vmod"/>
+        <item value="compound:z"/>
+        <item value="cop:outer"/>
+        <item value="csubj:asubj"/>
+        <item value="csubj:outer"/>
+        <item value="csubj:relcl"/>
+        <item value="csubj:reported"/>
+        <item value="csubj:vsubj"/>
+        <item value="dep:comp"/>
+        <item value="dep:der"/>
+        <item value="det:pmod"/>
+        <item value="discourse:q"/>
+        <item value="dislocated:mod"/>
+        <item value="dislocated:subj"/>
+        <item value="flat:date"/>
+        <item value="flat:dist"/>
+        <item value="flat:frac"/>
+        <item value="flat:goeswith"/>
+        <item value="flat:gov"/>
+        <item value="flat:num"/>
+        <item value="flat:number"/>
+        <item value="flat:redup"/>
+        <item value="flat:time"/>
+        <item value="mark:pcomp"/>
+        <item value="nmod:desc"/>
+        <item value="nmod:redup"/>
+        <item value="nmod:unmarked"/>
+        <item value="nsubj:nn"/>
+        <item value="nsubj:outer"/>
+        <item value="nsubj:xsubj"/>
+        <item value="obl:about"/>
+        <item value="obl:adj"/>
+        <item value="obl:cmp"/>
+        <item value="obl:comp"/>
+        <item value="obl:depict"/>
+        <item value="obl:float"/>
+        <item value="obl:inst"/>
+        <item value="obl:iobj"/>
+        <item value="obl:pmod"/>
+        <item value="obl:pronmod"/>
+        <item value="obl:unmarked"/>
+        <item value="obl:with"/>
+        <item value="parataxis:reporting"/>
+        <item value="parataxis:rt"/>
+        <item value="parataxis:sentence"/>
+        <item value="parataxis:url"/>
+        <item value="xcomp:relcl"/>
+        <item value="xcomp:vcomp"/>
+
         <!-- Other relations can be added by syntactic model loader at runtime. -->
       </list>
     </group>

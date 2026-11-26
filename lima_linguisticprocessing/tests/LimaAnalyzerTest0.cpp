@@ -309,4 +309,19 @@ void LimaAnalyzerTest0::test_analyzeText_entity_before_multiword_token() {
             != std::string::npos);
 }
 
+// The English MERGE model predicts GUM's obl:unmarked for "morning", a
+// relation missing from LIMA's relationList: its arc was dropped (HEAD 0,
+// DEPREL _). The parser now registers its model's relations
+void LimaAnalyzerTest0::test_analyzeText_model_relation_missing_from_config() {
+    LimaAnalyzer analyzer("ud-eng", "deepud", "", "", "", "udlang:eng-UD_English-MERGE");
+    if (analyzer.error)
+        QSKIP("eng-UD_English-MERGE model not available in this environment");
+    auto result = analyzer.analyzeText("Mr. Best flew to New York on Saturday morning.");
+    if (result.empty())
+        QSKIP("eng-UD_English-MERGE model not available in this environment");
+    QVERIFY(!analyzer.error);
+    QVERIFY(result.find("\tmorning\tmorning\t") != std::string::npos);
+    QVERIFY(result.find("\tmorning\tNOUN\t_\tNumber=Sing\t0\t_\t") == std::string::npos);
+}
+
 QTEST_GUILESS_MAIN(LimaAnalyzerTest0)
