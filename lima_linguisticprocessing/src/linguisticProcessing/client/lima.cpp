@@ -478,7 +478,7 @@ LimaAnalyzer::LimaAnalyzer(const std::string& langs,
                                   QString::fromStdString(user_resources_path),
                                   QString::fromStdString(meta));
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -502,7 +502,7 @@ LimaAnalyzer::LimaAnalyzer(const LimaAnalyzer& a)
                                 a.m_d->user_resources_path,
                                 a.m_d->meta);
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -525,7 +525,7 @@ LimaAnalyzer& LimaAnalyzer::operator=(const LimaAnalyzer& a)
                                   a.m_d->meta);
     return *this;
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     m_d = nullptr;
@@ -655,7 +655,7 @@ std::string LimaAnalyzer::analyzeText(const std::string& text,
   {
     return m_d->analyzeText(text, lang, pipeline, meta);
   }
-  catch (const Lima::LimaException& e)
+  catch (const std::exception& e)  // deeplima throws std exceptions (missing files): not std::terminate
   {
     std::cerr << "Lima internal error: " << e.what() << std::endl;
     error = true;
