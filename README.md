@@ -21,19 +21,20 @@ available under the MIT license.
 - **Accuracy versus speed**: on the UD 2.18 test sets, with the v0.3.0 models,
   8 CPU threads and no GPU, LIMA analyzes about 5,000 words per second from
   raw text to labeled dependencies. It is about 5× faster than Stanza (which
-  is 4.6 LAS points more accurate), 9× faster and 1.8 LAS points more
-  accurate than Trankit, and 17 LAS points more accurate than spaCy, which is
-  1.3× faster (speeds are indicative: not all measured on the same machines).
+  is slightly more accurate, mainly in parsing: 4.6 LAS points), 9× faster
+  and 1.8 LAS points more accurate than Trankit, and 17 LAS points more
+  accurate than spaCy, which is 1.3× faster (speeds are indicative: not all measured on the same machines).
   [Details](https://aymara.github.io/lima/usage/performance/).
 - **Many languages, one pipeline**, with a uniform CoNLL-U output.
 - **Rules where there is no annotated data**, with ModEx, on top of the neural
   analysis.
-- **Embeddable**: C++ library, command line, HTTP server and Python package;
-  pipelines configured without changing code; MIT license.
+- **Embeddable**: C++ library, command line, HTTP server and Python package
+  with a spaCy-like API, usable in spaCy pipelines; pipelines configured
+  without changing code; MIT license.
 
-It is less accurate than the most accurate toolkits, such as Stanza, has no
-GPU support, and its named entity recognition is limited to English and
-French.
+It is slightly less accurate than Stanza, mainly in dependency parsing, has no
+GPU support, and its built-in named entities are only for English and French
+(you can write ModEx rules for your own entities and relations).
 See [Why LIMA?](https://aymara.github.io/lima/why-lima/) for when to choose
 it, or another tool.
 

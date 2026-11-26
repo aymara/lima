@@ -27,9 +27,9 @@ LIMA combines two complementary approaches:
 Results are produced in [CoNLL-U](usage/output-formats.md) by default.
 
 LIMA balances accuracy and speed on ordinary CPUs: in our evaluation, it is
-about 5 times faster than Stanza (which is more accurate), faster and more
-accurate than Trankit, and much more accurate than spaCy, which is slightly
-faster.
+about 5 times faster than Stanza (which is slightly more accurate), faster
+and more accurate than Trankit, and much more accurate than spaCy, which is
+slightly faster.
 See [Why LIMA?](why-lima.md) for its strengths, weaknesses and when to choose
 another tool.
 

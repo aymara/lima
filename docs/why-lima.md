@@ -24,8 +24,9 @@ analyze (LAS: labeled attachment score of the dependency parsing, in %):
 
 In other words, LIMA is:
 
-- **much faster than Stanza**, which is more accurate (4.6 LAS points on
-  average);
+- **much faster than Stanza**, which is slightly more accurate: 1.7 points
+  on parts of speech and 2.5 on lemmas, the main gap being on dependency
+  parsing (4.6 LAS points);
 - **faster and more accurate than Trankit**;
 - **much more accurate than spaCy** on UD (17 LAS points), while spaCy is
   1.3× faster. spaCy covers fewer languages and not all its pipelines are
@@ -58,7 +59,11 @@ recognition of English and French is written this way: you can read, correct
 and extend its rules.
 
 **Embeddable and configurable.** LIMA is a C++ library with a command line,
-an HTTP server, a Python package and a graphical interface. Pipelines are
+an HTTP server, a Python package and a graphical interface. The Python
+package, `aymara`, covers the same uses as the other toolkits' packages, with
+a spaCy-like API (`Doc`, `Token`, `Span`); LIMA's analyses can be converted to
+spaCy documents, and a LIMA analyzer can be the tokenizer of a spaCy pipeline,
+followed by spaCy components (in the next release of `aymara`). Pipelines are
 assembled from [configuration files](usage/configuration.md) and
 [plugins](developers/architecture.md): you can add, remove or reorder
 processing steps, or add your own components, without changing LIMA's code.
@@ -73,19 +78,18 @@ for more than twenty years.
 
 ## Weaknesses
 
-- **Not the most accurate.** Stanza, with its best packages, is 4.6 LAS
-  points above LIMA on average; LIMA is better on only 11 of the 90 test sets
-  that both analyze. LIMA trades this accuracy for speed and CPU-only inference.
-- **Limited named entity recognition.** Named entities are only available for
-  English and French, by rules; there is no statistical NER model.
+- **Not the most accurate.** Stanza, with its best packages, is slightly
+  more accurate, mainly on dependency parsing (4.6 LAS points on average; LIMA
+  is better on 11 of the 90 test sets that both analyze). LIMA trades this
+  accuracy for speed and CPU-only inference.
+- **Built-in named entities only for English and French.** There is no
+  statistical NER model; the entities of English and French are recognized by
+  ModEx rules. With the same mechanism, you can write rules for your own rich
+  entities, relations and events.
 - **No GPU support.** Inference runs on the CPU only.
-- **A smaller ecosystem.** LIMA's Python API borrows spaCy's vocabulary
-  (`Doc`, `Token`, `Span`) but is not a drop-in replacement for spaCy and does
-  not integrate with spaCy's components. The community is smaller than those
-  of spaCy or Stanza.
+- **A smaller community** than those of spaCy or Stanza.
 - **A learning curve for advanced uses.** ModEx rules and the XML
-  configuration are powerful but take time to learn, and building LIMA from
-  source is more involved than installing a Python package.
+  configuration are powerful but take time to learn.
 - **Deeper analyses are legacy.** Coreference resolution and semantic analysis
   only exist in the deprecated rule-based pipelines for English and French,
   which are no longer built by default.
@@ -105,11 +109,10 @@ LIMA is a good choice when:
 
 Another tool may suit you better when:
 
-- **accuracy matters more than speed**: Stanza is more accurate, even on the
-  CPU, and faster with a GPU;
-- you need **statistical named entity recognition** in many languages, or an
-  ecosystem of ready-made components (text classification, entity linking…):
-  spaCy, Stanza;
+- **the best accuracy, especially in dependency parsing, matters more than
+  speed**: Stanza is more accurate, even on the CPU, and faster with a GPU;
+- you need **statistical named entity recognition** in many languages, without
+  writing rules: spaCy, Stanza;
 - you only process **English or a few major languages** in a Python
   application and want the fastest setup: spaCy's small pipelines are fast,
   though less accurate on UD and not all trained on UD.
