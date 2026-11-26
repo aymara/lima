@@ -229,7 +229,8 @@ void MediaticData::init(
   if (m_d->m_alreadyInitialized)
   {
 #ifdef DEBUG_CD
-    LERROR << "MediaticData::init already initialized. Updating";
+    // Normal for a second analyzer in the same process
+    LDEBUG << "MediaticData::init already initialized. Updating";
 #endif
     // return;
   }
