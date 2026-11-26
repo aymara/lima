@@ -31,56 +31,32 @@ Deterministic with `Lima("ud-eng")`, deepud pipeline: a segfault (rc 139) or
 | `Apple's.` | `The dog's bone.` |
 | `Paris's mayor.` | `It's raining.` / `Apple CEO.` |
 
-### Debugging status (2026-11-26, to continue on another machine)
+### Cause and fix (2026-11-26)
 
-Established (aymara 0.8.1 wheel, models v0.3.0, clean `XDG_DATA_HOME`):
+The crash is in `ConllDumper::process` (gdb on the 0.8.1 wheel), not in ModEx.
+`Apple's` is a multiword token of the English model (`.pt.mwt` dictionary from
+GUM: `Apple's` -> `Apple` `'s`), and:
 
-- The `ud-eng` `deepud` pipeline (wheel `config/lima-lp-ud-eng.xml`, l. 41-52)
-  is `RnnTokenizer → RnnTokensAnalyzer → RnnDependencyParser →
-  SpecificEntitiesModexAfterPos → conllDumper`: it does run the ModEx NER
-  (unlike the generic `deepud` of `lima-lp-ud.xml`).
-- `Apple's CEO.`: `deeplima` pipeline (tokenizer + tagger/lemmatizer, no parser,
-  no NER) rc=0 ×3; `deepud` segfault ×3. The crash needs the NER (or the parser,
-  also absent from `deeplima`; not yet separated).
-- In the `deeplima` output, the split clitic `'s` has a **wrong offset**:
+- `RnnTokenizer` gave all the words of a multiword token the surface's
+  position (hence `'s` at `Pos=0`), the first one carrying the surface as
+  orthographic alternative.
+- To write the `N-M` line, `ConllDumper` took the token of a **PosGraph**
+  vertex from the **AnalysisGraph**. Both graphs share vertex ids in the
+  deeplima pipelines, except the entity vertex ModEx adds to the PosGraph:
+  its id is beyond the AnalysisGraph, hence the garbage StringsPool index and
+  the segfault. Only entities followed by a multiword token crash (`Apple's`,
+  not `John's`, `IBM's` not being an entity, `Apple 's` not being split).
+- The multiword token ids were also counted one vertex off (from the sentence
+  begin vertex): no `N-M` line was ever written (`du` -> `de le` included).
 
-  ```
-  1  Apple  Apple  PROPN  ...  Pos=0|Len=5
-  2  's     's     PART   ...  Pos=0|Len=2   <- should be Pos=5
-  3  CEO    ceo    NOUN   ...  Pos=8|Len=3
-  ```
+Fixed (lima branch `conll-mwt-entity-crash`):
 
-Hypothesis (not verified): `RnnTokenizer` gives the token split from a word
-(`Apple's` → `Apple` + `'s`) the offset of the word start; ModEx, when building
-an entity on `Apple`, mishandles the overlapping token (StringsPool id out of
-bounds, then segfault). It would explain why only recognized entities crash
-(`Apple`, `Microsoft`, `Paris`) and not `John's` / `IBM's` (not tagged). Even
-without the crash, such offsets make `Token.idx` and `Span.text` wrong in the
-Python API.
-
-Not checked on current master: the local `Dist/master/release` (June 2026)
-fails earlier with `InvalidConfiguration` (`NumForm`), a stale-build/config
-mismatch.
-
-Next steps, with a fresh debug+ASAN build of master:
-
-1. `analyzeText -l ud-eng -p deeplima --meta=udlang:eng-UD_English-MERGE` on
-   `Apple's CEO.`: is the `'s` offset still 0? If yes, find where `RnnTokenizer`
-   (DeepLimaUnits) computes the position of tokens split from one word.
-2. Same with `-p deepud`, under ASAN/GDB: the stack of the crash.
-3. Separate parser and NER: a pipeline with the parser but without
-   `SpecificEntitiesModexAfterPos`.
-4. Check whether `ud-fra` has the same offset problem with split tokens
-   (`du` → `de le`, `l'`…).
-5. Regression tests: offsets of split tokens (lima), and `Apple's CEO.` in
-   lima-python `tests/test_aymara.py`.
-
-Repro setup used here: a venv with `aymara==0.8.1` from PyPI,
-`XDG_DATA_HOME=<empty dir> lima_models -i eng`, then
-`python -c "import aymara.lima; aymara.lima.Lima('ud-eng')(\"Apple's CEO.\")"`.
-Warning: a developer's `~/.local/share/lima` may hold stale `config/` and
-compiled resources that override the wheel's; always test with an isolated
-`XDG_DATA_HOME`.
+- `ConllDumper` collects the multiword tokens while it writes the lines: a
+  word carrying a surface, then the next words starting inside it; it writes
+  the `N-M` line before them. No lookup across graphs.
+- `RnnTokenizer` gives the words that spell the surface their own positions
+  (`Apple` 0-5, `'s` 5-7); the others (`du` -> `de le`) still share the
+  surface's position.
 
 Every real English corpus contains this pattern, so this alone rules out
 replacing spaCy.
@@ -92,11 +68,17 @@ replacing spaCy.
 | `doc.ents` spans have empty `.text`: `start` is the 1-based `Token.i`, `end` the 0-based inclusive index, used as exclusive. An entity ending on the last token is dropped. | `_DocEntitiesIterator` | Compute `[start, end)` from 0-based indices. Flush the last entity. |
 | `doc.ents` is a one-shot iterator: no `len()`, no indexing, consumed by the first loop | `Doc.ents` | Return a tuple of `Span`s (as spaCy does). |
 | `doc[:3]`, `doc[5:]` raise `TypeError` (`None` bounds) | `Doc.__getitem__` | Normalize the slice (`slice.indices(len(self))`). The same for `Span.__getitem__`, whose `stop=-1` default for `None` is also wrong. |
-| `Token.i` is 1-based (spaCy: 0-based) | `Token.i` | Make it 0-based. **Breaking change**: `Token.__repr__` and `Span.__repr__` rely on the +1. Add a CHANGES note. |
 | FEATS printed as `Number:Sing` in `repr` (CoNLL-U: `Number=Sing`) | `Token.__repr__` | Use `=`. |
 | `is_sent_start` is True only for token 0 | `Token.is_sent_start` | Needs the token's doc (see `token.doc`). |
 | `Span.label` is a string (spaCy: int hash, string in `label_`) | `Span` | Add `label_`, keep `label` as is (no hashes in LIMA). |
 | The docstrings copied from spaCy assert things that are false (`label == 346`, `label_ == "PERSON"`, `span.sents`...) | everywhere | Make them true and run them as doctests in CI. |
+
+`Token.i` is 1-based, as the UD word IDs (CoNLL-U `ID`), where spaCy's is
+0-based. That is the UD convention, not a bug: keep it, and provide 0-based
+indices as a spaCy compatibility option (in the P2a layer and in `to_spacy`).
+`doc[k]` stays 0-based, as Python sequences. Note that `Token.i` counts in the
+whole document, where the CoNLL-U `ID` restarts at 1 in each sentence
+(`repr(sentence)` renumbers): a per-sentence UD id could be added too.
 
 Not API bugs, but they hurt drop-in use: with the MERGE model, `Mr.` is split
 into `Mr` + `.` and opens a sentence by itself, and `Best` is lemmatized `good`.
@@ -162,7 +144,7 @@ are complementary: (a) for users without spaCy, (c) for exact compatibility.
 ## Suggested order
 
 1. P0 crash (lima, C++), with a regression test in lima-python.
-2. P1 fixes + doctests (one minor release; `Token.i` change announced).
+2. P1 fixes + doctests (one minor release).
 3. P2a naming/navigation layer, with a test suite that runs the same idioms on
    spaCy and LIMA (the probe used for this note as the starting point).
 4. P2b `pipe`, then P2c `to_spacy` / spaCy factory.

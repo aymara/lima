@@ -33,6 +33,7 @@
 #include <QStringList>
 
 #include <fstream>
+#include <sstream>
 #include <common/linguisticData/languageData.h>
 
 using namespace Lima::Common;
@@ -132,10 +133,9 @@ class ConllDumperPrivate
 
   QString getFeats(MorphoSyntacticData* morphoData);
 
-  void getTransducedTokens(const LinguisticGraph& graph,
-                           LinguisticGraphVertex begin,
-                           LinguisticGraphVertex end,
-                           std::map<int, size_t>& out);
+  /** Writes the multiword token being collected, if any: its N-M line if it
+   * has more than one word, then its words' lines */
+  void flushMultiwordToken(std::shared_ptr<DumperStream>& dstream);
 
   /** Dumps the the named entity of type @ref neType associated to the PosGraph
    * vertex @ref v
@@ -169,7 +169,8 @@ class ConllDumperPrivate
     const QString& deps, // DEPS @TODO
     const QStringList& miscField,
     const QString& neType,
-    const QString& previousNeType);
+    const QString& previousNeType,
+    const Token* ft = nullptr);
 
   const SpecificEntityAnnotation* getSpecificEntityAnnotation(
     LinguisticGraphVertex v) const;
@@ -192,6 +193,20 @@ class ConllDumperPrivate
   const FsaStringsPool* sp;
   QMultiMap<LinguisticGraphVertex, AnnotationGraphVertex> predicates;
   QString previousNeType;
+  /** The multiword token being written (CoNLL-U): the words of a surface
+   * split by the tokenizer (French "du" -> "de" "le"). Its first word carries
+   * the surface as orthographic alternative, and the next words start inside
+   * it. Their lines are held until the last one, to write the N-M line first.
+   */
+  struct MultiwordToken
+  {
+    int firstId = 0;
+    uint64_t begin = 0;
+    uint64_t end = 0;
+    QString surface;
+    std::vector<std::string> lines;
+  };
+  MultiwordToken m_multiword;
   std::map< LinguisticGraphVertex,
           std::pair<LinguisticGraphVertex,
                     std::string> > vertexDependencyInformations;
@@ -432,8 +447,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     sentenceEnd=sbItr->getLastVertex();
     std::map<LinguisticGraphVertex,int> segmentationMapping;//mapping the two types of segmentations (Lima and conll)
     std::map<int,LinguisticGraphVertex> segmentationMappingReverse;
-    std::map<int,size_t> transducedTokens;
-    m_d->getTransducedTokens(*anaGraph, sentenceBegin, sentenceEnd, transducedTokens);
 
 #ifdef DEBUG_LP
     LDEBUG << "ConllDumper::process begin - end: " << sentenceBegin
@@ -623,36 +636,6 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
     { //as long as there are vertices in the sentence
       v = toVisit.dequeue();
 
-      if (transducedTokens.find(tokenId) != transducedTokens.end())
-      {
-        int firstTokenId = tokenId;
-        int lastTokenId = tokenId + transducedTokens[tokenId] - 1;
-        LimaString tokenForm;
-        auto ft = get(vertex_token,*anaGraph,v);
-        if (ft == 0) {
-          DUMPERLOGINIT;
-          LWARN << "Empty token for vertex" << vertex_token << "in graph" << anaGraphData->getGraphId();
-        }
-        else if (ft->orthographicAlternatives().size() > 0)
-        {
-          StringsPoolIndex idx = *(ft->orthographicAlternatives().begin());
-          tokenForm = (*m_d->sp)[idx];
-
-          if (m_d->m_format == "CoNLL-U")
-            dstream->out()  << firstTokenId << "-" << lastTokenId
-                            << "\t" << oneLine(tokenForm).toStdString() // FORM
-                            << "\t" << "_" // LEMMA
-                            << "\t" << "_" // UPOS
-                            << "\t" << "_" // XPOS
-                            << "\t" << "_" // FEATS
-                            << "\t" << "_" // HEAD
-                            << "\t" << "_" // DEPREL
-                            << "\t" << "_" // DEPS
-                            << "\t" << "_" // MISC
-                            << std::endl;
-        }
-      }
-
       m_d->dumpPosGraphVertex(dstream,
                               v,
                               tokenId,
@@ -688,6 +671,7 @@ LimaStatusCode ConllDumper::process(AnalysisContent& analysis) const
         continue;
       }
     }
+    m_d->flushMultiwordToken(dstream);
     limaConllTokenIdMapping->insert(std::make_pair(sentenceNb,
                                                    segmentationMappingReverse));
 
@@ -925,7 +909,8 @@ LimaStatusCode ConllDumperPrivate::dumpPosGraphVertex(
                 "_", // DEPS @TODO
                 miscField, // MISC
                 neType,
-                previousNeType
+                previousNeType,
+                ft
       );
       previousNeType = neType;
     }
@@ -1249,69 +1234,6 @@ QString ConllDumperPrivate::getFeats(MorphoSyntacticData* morphoData)
   return features;
 }
 
-void ConllDumperPrivate::getTransducedTokens(const LinguisticGraph& graph,
-                                             LinguisticGraphVertex begin,
-                                             LinguisticGraphVertex end,
-                                             std::map<int, size_t>& out)
-{
-  QQueue<LinguisticGraphVertex> toVisit;
-  QSet<LinguisticGraphVertex> visited;
-
-  toVisit.enqueue(begin);
-  int tokenId = 0;
-  LinguisticGraphVertex v = 0;
-  int firstTransducedTokenId = -1;
-  uint64_t prev_pos = 0;
-
-  while (!toVisit.empty() && v != end)
-  {
-    //as long as there are vertices in the sentence
-    v = toVisit.dequeue();
-
-    const Token *ft = get(vertex_token, graph, v);
-
-    if (ft != nullptr && prev_pos > 0 && prev_pos == ft->position())
-    {
-      if (firstTransducedTokenId >= 0)
-      {
-        out[firstTransducedTokenId] += 1;
-      }
-      else
-      {
-        if (tokenId == 0)
-          throw std::runtime_error("token id should not be null");
-        out[tokenId - 1] = 2;
-        firstTransducedTokenId = tokenId - 1;
-      }
-    }
-    else
-    {
-      firstTransducedTokenId = -1;
-    }
-
-    if (ft != nullptr)
-      prev_pos = ft->position();
-
-    if (v == end)
-    {
-      continue;
-    }
-
-    LinguisticGraphOutEdgeIt outIter,outIterEnd;
-    for (boost::tie(outIter,outIterEnd) = boost::out_edges(v,graph);
-         outIter != outIterEnd; outIter++)
-    {
-      auto next = boost::target(*outIter, graph);
-      if (!visited.contains(next))
-      {
-        visited.insert(next);
-        toVisit.enqueue(next);
-      }
-    }
-    tokenId++;
-  }
-}
-
 QString matchesS(const std::set<AnnotationGraphVertex>& s)
 {
   QString result;
@@ -1528,10 +1450,50 @@ LimaStatusCode ConllDumperPrivate::dumpAnalysisGraphVertex(
               "_", // DEPS @TODO
               miscField, // MISC
               neType,
-              previousNeType
+              previousNeType,
+              ft
     );
   }
   return SUCCESS_ID;
+}
+
+void ConllDumperPrivate::flushMultiwordToken(std::shared_ptr<DumperStream>& dstream)
+{
+  if (m_multiword.lines.empty())
+  {
+    return;
+  }
+  if (m_multiword.lines.size() > 1)
+  {
+    // SpaceAfter=No belongs to the multiword token (UD), not to its words:
+    // the token's is the last word's
+    bool noSpaceAfter = false;
+    for (size_t k = 0; k < m_multiword.lines.size(); ++k)
+    {
+      auto& line = m_multiword.lines[k];
+      const auto tab = line.rfind('\t');
+      if (tab == std::string::npos)
+        continue;
+      auto misc = QString::fromStdString(line.substr(tab + 1)).trimmed().split('|');
+      const bool had = misc.removeAll(QString("SpaceAfter=No")) > 0;
+      if (k + 1 == m_multiword.lines.size())
+        noSpaceAfter = had;
+      if (misc.isEmpty())
+        misc << "_";
+      line = line.substr(0, tab + 1) + misc.join('|').toStdString() + "\n";
+    }
+    dstream->out() << m_multiword.firstId << "-"
+                   << (m_multiword.firstId + m_multiword.lines.size() - 1)
+                   << "\t" << oneLine(m_multiword.surface).toStdString() // FORM
+                   << "\t_\t_\t_\t_\t_\t_\t_"
+                   << "\t" << (noSpaceAfter ? "SpaceAfter=No" : "_") // MISC
+                   << std::endl;
+  }
+  for (const auto& line : m_multiword.lines)
+  {
+    dstream->out() << line;
+  }
+  m_multiword = MultiwordToken();
 }
 
 void ConllDumperPrivate::dumpToken(
@@ -1547,7 +1509,8 @@ void ConllDumperPrivate::dumpToken(
   const QString& deps, // DEPS @TODO
   const QStringList& miscField,
   const QString& neType,
-  const QString& previousNeType)
+  const QString& previousNeType,
+  const Token* ft)
 {
 #ifdef DEBUG_LP
   DUMPERLOGINIT;
@@ -1580,17 +1543,43 @@ void ConllDumperPrivate::dumpToken(
     // MISC: Any other annotation. In LIMA, named entities and SRL
     //        information.
 
-    dstream->out()  << tokenId++ // ID
-                    << "\t" << oneLine(inflectedToken).toStdString() // FORM
-                    << "\t" << oneLine(lemmatizedToken).toStdString() // LEMMA
-                    << "\t" << micro.toStdString() // UPOS
-                    << "\t" << xpos.toStdString() // XPOS
-                    << "\t" << features.toStdString() // FEATS @TODO
-                    << "\t" << targetConllIdString.toStdString() // HEAD
-                    << "\t" << conllRelName.toStdString() // DEPREL
-                    << "\t" << deps.toStdString() // DEPS @TODO
-                    << "\t" << miscField.join('|').toStdString(); // MISC
-    dstream->out() << std::endl;
+    std::ostringstream line;
+    line  << tokenId // ID
+          << "\t" << oneLine(inflectedToken).toStdString() // FORM
+          << "\t" << oneLine(lemmatizedToken).toStdString() // LEMMA
+          << "\t" << micro.toStdString() // UPOS
+          << "\t" << xpos.toStdString() // XPOS
+          << "\t" << features.toStdString() // FEATS @TODO
+          << "\t" << targetConllIdString.toStdString() // HEAD
+          << "\t" << conllRelName.toStdString() // DEPREL
+          << "\t" << deps.toStdString() // DEPS @TODO
+          << "\t" << miscField.join('|').toStdString() // MISC
+          << "\n";
+
+    // A word of the multiword token being collected: it starts inside the
+    // surface
+    if (!m_multiword.lines.empty())
+    {
+      if (ft != nullptr && ft->position() >= m_multiword.begin
+          && ft->position() < m_multiword.end)
+      {
+        m_multiword.lines.push_back(line.str());
+        return;
+      }
+      flushMultiwordToken(dstream);
+    }
+    // The first word of a multiword token carries its surface
+    if (ft != nullptr && !ft->orthographicAlternatives().empty())
+    {
+      const auto surface = (*sp)[*(ft->orthographicAlternatives().begin())];
+      m_multiword.firstId = tokenId;
+      m_multiword.begin = ft->position();
+      m_multiword.end = ft->position() + surface.size();
+      m_multiword.surface = surface;
+      m_multiword.lines.push_back(line.str());
+      return;
+    }
+    dstream->out() << line.str();
   }
   else if (m_format == "CoNLL-03")
   {
