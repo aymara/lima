@@ -1,12 +1,17 @@
 name: "Build the manylinux_2_28-based image with LIMA compiled with Qt6 installed workflow"
-# Built for a release only (tag v<x.y.z>), or on demand (Actions > this
-# workflow > Run workflow, e.g. before tagging, to check the build): not on every
-# push to master nor on pull requests. Its success triggers aymara/lima-python's
-# build (trigger-lima-python-on-success.yml), which uses the images pushed here.
+# The Linux wheels of aymara/lima-python are built on these images: they are
+# built on every push to master and release tag (v<x.y.z>), and validated on
+# pull requests. A successful push build triggers aymara/lima-python's build
+# (trigger-lima-python-on-success.yml).
 on:
   push:
+    branches:
+    - master
     tags:
     - 'v*'
+  pull_request:
+    branches:
+    - master
   # Allow rebuilding the costly base images on demand (e.g. after changing one
   # of their Dockerfiles). Set "force_base_images" to true to rebuild them all
   # even if no Dockerfile changed.
@@ -34,10 +39,11 @@ env:
 
 jobs:
 
-  # Detect which costly base-image Dockerfiles changed since the previous
-  # release (the last v* tag before this commit) so we only rebuild the ones
-  # that actually need it. The boolean outputs gate the base-image jobs below;
-  # "force_base_images" (workflow_dispatch) overrides them all.
+  # Detect which costly base-image Dockerfiles changed so we only rebuild the
+  # ones that actually need it: since the previous push (push to master), the
+  # base branch (pull request) or the previous release, the last v* tag before
+  # this commit (tag, manual run). The boolean outputs gate the base-image jobs
+  # below; "force_base_images" (workflow_dispatch) overrides them all.
   changes:
     name: "Detect changed base-image Dockerfiles"
     runs-on: ubuntu-latest
@@ -51,18 +57,29 @@ jobs:
         with:
           fetch-depth: 0   # the history and the tags, to find the previous release
 
-      # Without a previous release tag, nothing is considered changed: the base
-      # images exist (:latest); use force_base_images to rebuild them.
-      - name: "Base-image files changed since the previous release"
+      # Without a base (no previous release tag, new branch), nothing is
+      # considered changed: the base images exist (:latest); use
+      # force_base_images to rebuild them.
+      - name: "Changed base-image files"
         id: filter
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
         run: |
-          if [ "${GITHUB_REF_TYPE}" = tag ]; then from=HEAD^; else from=HEAD; fi
-          base=$(git describe --tags --abbrev=0 --match 'v*' "$from" 2>/dev/null || true)
+          base=""
+          if [ "${GITHUB_EVENT_NAME}" = pull_request ]; then
+            base=$(git merge-base "$PR_BASE" HEAD)
+          elif [ "${GITHUB_EVENT_NAME}" = push ] && [ "${GITHUB_REF_TYPE}" = branch ]; then
+            if [ -n "$BEFORE" ] && ! [[ "$BEFORE" =~ ^0+$ ]] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then base=$BEFORE; fi
+          else
+            if [ "${GITHUB_REF_TYPE}" = tag ]; then from=HEAD^; else from=HEAD; fi
+            base=$(git describe --tags --abbrev=0 --match 'v*' "$from" 2>/dev/null || true)
+          fi
           if [ -n "$base" ]; then
-            echo "Previous release: $base"
+            echo "Compared with: $base"
             changed=$(git diff --name-only "$base" HEAD)
           else
-            echo "::notice::No previous v* tag: base images not rebuilt (use force_base_images)"
+            echo "::notice::No base to compare with: base images not rebuilt (use force_base_images)"
             changed=""
           fi
           check() {  # <output> <regexp of the files>
