@@ -251,7 +251,7 @@ public:
                          const std::shared_ptr<param_base_t> pparams,
                          std::vector<std::vector<uint8_t>>& final_output,
                          size_t input_begin,
-                         size_t /*input_end*/,
+                         size_t input_end,
                          size_t output_begin,
                          size_t output_end)
   {
@@ -275,7 +275,16 @@ public:
     V c = zero;
     V s = V::Zero(hidden_size * 4);
 
-    Eigen::Ref<const M> input = input_matrix.block(0, input_begin, input_matrix.rows(), temp.cols());
+    // Only the slot's columns [input_begin, input_end): the whole workbench
+    // width (the slot size, 16K characters for the segmenter) was processed,
+    // whatever the text length (most of the time of a short text), and the
+    // backward pass started beyond the text's end, on columns left by the
+    // previous text: the results of a text depended on the previous one
+    const Eigen::Index n = std::min<Eigen::Index>(
+        input_end > input_begin ? Eigen::Index(input_end - input_begin) : 0, temp.cols());
+    assert(n > 0);
+    assert(output_end - input_begin <= size_t(n));
+    Eigen::Ref<const M> input = input_matrix.block(0, input_begin, input_matrix.rows(), n);
 
     if (wb->m_precomputed_input)
     {
@@ -320,20 +329,20 @@ public:
     else
     {
       // Top rows - forward pass
-      temp.topRows(hidden_size * 4) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
+      temp.topRows(hidden_size * 4).leftCols(n) = (layer.fw.weight_ih * input).colwise() + layer.fw.bias_ih;
       // Bottom rows - backward pass
-      temp.bottomRows(hidden_size * 4) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
+      temp.bottomRows(hidden_size * 4).leftCols(n) = (layer.bw.weight_ih * input).colwise() + layer.bw.bias_ih;
 
 #ifdef MATMUL_WITH_FACTORIZATION
-      forward_pass(hidden_size, temp, layer.fw.weight_hh, mul_fw, s, c, output);
+      forward_pass(hidden_size, temp.leftCols(n), layer.fw.weight_hh, mul_fw, s, c, output);
 #else
       if constexpr (std::is_integral_v<AuxScalar> && std::is_signed_v<AuxScalar>)
       {
-        forward_pass(hidden_size, temp, params.weight_fw_hh_fixed_point, s, c, output);
+        forward_pass(hidden_size, temp.leftCols(n), params.weight_fw_hh_fixed_point, s, c, output);
       }
       else if constexpr (std::is_floating_point_v<AuxScalar>)
       {
-        forward_pass(hidden_size, temp, layer.fw.weight_hh, s, c, output);
+        forward_pass(hidden_size, temp.leftCols(n), layer.fw.weight_hh, s, c, output);
       }
       else
       {
@@ -346,15 +355,15 @@ public:
       c = V::Zero(hidden_size);
 
 #ifdef MATMUL_WITH_FACTORIZATION
-      backward_pass(hidden_size, temp, layer.bw.weight_hh, mul_bw, s, c, output);
+      backward_pass(hidden_size, temp.leftCols(n), layer.bw.weight_hh, mul_bw, s, c, output);
 #else
       if constexpr (std::is_integral_v<AuxScalar> && std::is_signed_v<AuxScalar>)
       {
-        backward_pass(hidden_size, temp, params.weight_bw_hh_fixed_point, s, c, output);
+        backward_pass(hidden_size, temp.leftCols(n), params.weight_bw_hh_fixed_point, s, c, output);
       }
       else if constexpr (std::is_floating_point_v<AuxScalar>)
       {
-        backward_pass(hidden_size, temp, layer.bw.weight_hh, s, c, output);
+        backward_pass(hidden_size, temp.leftCols(n), layer.bw.weight_hh, s, c, output);
       }
       else
       {
@@ -393,7 +402,9 @@ public:
     M& linear_output = wb->lin_out[0];
     for (size_t j = 0; j < final_output.size(); j++)
     {
-      linear_output.noalias() = (linear[j].weight * output).colwise() + linear[j].bias;
+      // A full assignment: it resizes linear_output to this output's classes
+      // (they differ between the outputs of the tagger)
+      linear_output.noalias() = (linear[j].weight * output.leftCols(n)).colwise() + linear[j].bias;
       //linear_output.colwise() += linear[j].bias;
 
       for (auto i = output_begin - input_begin; i < output_end - input_begin; i++)

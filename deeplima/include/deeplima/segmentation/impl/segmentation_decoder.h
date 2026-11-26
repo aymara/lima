@@ -200,6 +200,15 @@ public:
     m_callback = fn;
   }
 
+  // Forgets the token left open by the previous text, before a new one
+  void reset()
+  {
+    if (!m_tokens.empty())
+    {
+      m_tokens[0].clear();
+    }
+  }
+
   // Emits the token decode() left open at the end of the text: when the
   // model tags the last characters B or I, decode() keeps the token for the
   // next buffer, and at the end of the input none comes. The token was
