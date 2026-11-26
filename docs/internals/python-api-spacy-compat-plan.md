@@ -150,6 +150,24 @@ are complementary: (a) for users without spaCy, (c) for exact compatibility.
 4. P2b `pipe`, then P2c `to_spacy` / spaCy factory.
 5. P3 alongside.
 
+## Status (2026-11-26)
+
+| Item | State |
+| --- | --- |
+| P0 crash | Done: aymara/lima#229 (ConllDumper multiword tokens, positions) |
+| P1 | Done: aymara/lima-python#37, except running the docstrings as doctests in CI |
+| P3 | Done in aymara/lima-python#37, except the C++ stderr noise |
+| P2a | lima-python branch `spacy-compat-p2a`. `Token.head` is now a `Token` (breaking); the int is `Token.head_i`. Not yet: `is_stop` (needs stop lists), `Span.as_doc()` |
+| P2b | `Lima.pipe` (sequential) and `Lima.lang` in `spacy-compat-p2a`. Not yet: batching through the C++ analyzer, `pipe_names`, `meta`, `Doc.from_conllu` |
+| P2c | Not started |
+
+Found while doing P2a: with the English MERGE model, `Mr.` makes a sentence of
+its own, and `morning` in `Mr. Best flew to New York on Saturday morning.` gets
+no relation (`dep` `_`, LIMA logs `LimaAnalyzerPrivate::getConllRelName target 0
+not found in segmentation mapping`). The parser's head is apparently in another
+sentence, which lima-python's `Doc` building (`lima.cpp`) cannot map. lima-python
+now treats such a token as its own head; the LIMA side remains to be checked.
+
 ## spaCy usage today
 
 PyPI downloads, last month (pypistats.org, 2026-11-25): transformers 122 M,
