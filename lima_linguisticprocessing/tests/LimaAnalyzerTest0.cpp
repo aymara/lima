@@ -271,4 +271,42 @@ void LimaAnalyzerTest0::test_analyzeText_token_positions() {
     QVERIFY(result.find("\tPos=1|Len=2|SpaceAfter=No") == std::string::npos);
 }
 
+// The words of a multiword token ("du" -> "de" "le") are written after its
+// N-M line, which was never written (its ids were counted one vertex off)
+void LimaAnalyzerTest0::test_analyzeText_multiword_tokens() {
+    LimaAnalyzer analyzer("ud-fra", "deepud", "", "", "", "udlang:fra-UD_French-MERGE");
+    QVERIFY(!analyzer.error);
+    auto result = analyzer.analyzeText("Jean Dupont vient du Japon et parle au directeur.");
+    if (result.empty())
+        QSKIP("deepud model not available in this environment");
+    QVERIFY(result.find("\n4-5\tdu\t") != std::string::npos);
+    QVERIFY(result.find("\n4\tde\t") != std::string::npos);
+    QVERIFY(result.find("\n5\tle\t") != std::string::npos);
+    QVERIFY(result.find("\n9-10\tau\t") != std::string::npos);
+    // The words that do not spell the surface share its position
+    QVERIFY(result.find("\tPos=19|Len=2\n5\tle") != std::string::npos);
+}
+
+// "Apple's" is a multiword token of the English MERGE model ("Apple" "'s"):
+// with "Apple" recognized as an entity, ConllDumper read the token of the
+// entity's PosGraph vertex from the AnalysisGraph, out of it (StringsPool
+// out of bounds or segfault)
+void LimaAnalyzerTest0::test_analyzeText_entity_before_multiword_token() {
+    LimaAnalyzer analyzer("ud-eng", "deepud", "", "", "", "udlang:eng-UD_English-MERGE");
+    if (analyzer.error)
+        QSKIP("eng-UD_English-MERGE model not available in this environment");
+    auto result = analyzer.analyzeText("Apple's CEO met Microsoft's.");
+    if (result.empty())
+        QSKIP("eng-UD_English-MERGE model not available in this environment");
+    QVERIFY(!analyzer.error);
+    QVERIFY(result.find("\n1-2\tApple's\t") != std::string::npos);
+    // The words that spell the surface have their own positions
+    QVERIFY(result.find("\t's\t's\t") != std::string::npos);
+    QVERIFY(result.find("|Pos=1|Len=5") != std::string::npos);
+    QVERIFY(result.find("\tPos=6|Len=2") != std::string::npos);
+    // SpaceAfter=No is on the multiword token line, not on its last word
+    QVERIFY(result.find("\n5-6\tMicrosoft's\t_\t_\t_\t_\t_\t_\t_\tSpaceAfter=No\n")
+            != std::string::npos);
+}
+
 QTEST_GUILESS_MAIN(LimaAnalyzerTest0)

@@ -339,19 +339,26 @@ void RnnTokenizerPrivate::append_new_word(std::vector< TPrimitiveToken >& curren
   }
   else
   {
-    // The words share the surface's position, and the first one carries the
-    // surface: ConllDumper writes them as one multiword token (N-M line)
+    // The first word carries the surface: ConllDumper writes the words as one
+    // multiword token (N-M line). When the words spell the surface (English
+    // "Apple's" -> "Apple" "'s"), each one gets its own position in it;
+    // otherwise (French "du" -> "de" "le"), they share the surface's position
+    QString concatenated;
+    for (const auto& w : words)
+    {
+      concatenated += QString::fromStdString(w);
+    }
+    const bool spelled = (concatenated == current_token);
+    int position = current_token_offset;
     size_t n = 0;
     for (const auto& w : words)
     {
-      if (n++ == 0)
+      const auto word = QString::fromStdString(w);
+      current_sentence.push_back(TPrimitiveToken(word, position,
+                                                 (n++ == 0) ? current_token : QString()));
+      if (spelled)
       {
-        current_sentence.push_back(TPrimitiveToken(QString::fromStdString(w), current_token_offset,
-                                                   current_token));
-      }
-      else
-      {
-        current_sentence.push_back(TPrimitiveToken(QString::fromStdString(w), current_token_offset));
+        position += word.size();
       }
     }
   }
