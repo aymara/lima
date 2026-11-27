@@ -31,6 +31,7 @@ const std::map<std::string, std::string>& builtinHandlerClasses()
   static const std::map<std::string, std::string> classes = {
     {"simpleStreamHandler", "SimpleStreamHandler"},
     {"fullXmlSimpleStreamHandler", "SimpleStreamHandler"},
+    {"xmlSimpleStreamHandler", "SimpleStreamHandler"},
     {"bowTextWriter", "BowTextWriter"},
     {"bowTextHandler", "BowTextHandler"},
     {"ltrTextHandler", "LTRTextHandler"},
@@ -39,6 +40,21 @@ const std::map<std::string, std::string>& builtinHandlerClasses()
     {"eventHandler", "EventHandler"},
   };
   return classes;
+}
+
+/** The built-in class of the handler named name, empty if none */
+std::string builtinHandlerClass(const std::string& name)
+{
+  auto it = builtinHandlerClasses().find(name);
+  return it == builtinHandlerClasses().end() ? std::string() : it->second;
+}
+
+/** Whether an AbstractResource factory is registered for the class */
+bool hasHandlerFactory(const std::string& className)
+{
+  const auto& factories = AbstractResource::Factory::getRegisteredFactories();
+  return !className.empty()
+      && std::find(factories.begin(), factories.end(), className) != factories.end();
 }
 
 /** Appends to result the handlers of the unit named unit and, if it is a
@@ -118,8 +134,7 @@ std::string analysisHandlerClass(MediaId media, const std::string& name)
     }
     catch (const NoSuchAttribute&) {}
   }
-  auto it = builtinHandlerClasses().find(name);
-  return it == builtinHandlerClasses().end() ? std::string() : it->second;
+  return builtinHandlerClass(name);
 }
 
 std::shared_ptr<AbstractTextualAnalysisHandler> createAnalysisHandler(
@@ -127,20 +142,33 @@ std::shared_ptr<AbstractTextualAnalysisHandler> createAnalysisHandler(
     const std::string& name)
 {
   auto className = analysisHandlerClass(media, name);
-  if (className.empty())
+  if (!hasHandlerFactory(className))
   {
-    HANDLERLOGINIT;
-    LERROR << "createAnalysisHandler: unknown handler" << name
-           << ": no group of this name in the Resources configuration";
-    return nullptr;
-  }
-  const auto& factories = AbstractResource::Factory::getRegisteredFactories();
-  if (std::find(factories.begin(), factories.end(), className) == factories.end())
-  {
-    HANDLERLOGINIT;
-    LERROR << "createAnalysisHandler: no factory for the class" << className
-           << "of the handler" << name << "(its library is not loaded?)";
-    return nullptr;
+    // A configured class without factory (e.g. "eventHandler" in former
+    // configurations) or no class: the built-in one of the usual names
+    auto builtin = builtinHandlerClass(name);
+    if (hasHandlerFactory(builtin))
+    {
+      if (!className.empty())
+      {
+        HANDLERLOGINIT;
+        LWARN << "createAnalysisHandler: no factory for the class" << className
+              << "of the handler" << name << "in the configuration: using"
+              << builtin;
+      }
+      className = builtin;
+    }
+    else
+    {
+      HANDLERLOGINIT;
+      if (className.empty())
+        LERROR << "createAnalysisHandler: unknown handler" << name
+               << ": no group of this name in the Resources configuration";
+      else
+        LERROR << "createAnalysisHandler: no factory for the class" << className
+               << "of the handler" << name << "(its library is not loaded?)";
+      return nullptr;
+    }
   }
   // The handler's own group (its parameters), or an empty one
   auto group = resourceGroup(media, name);

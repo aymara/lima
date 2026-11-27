@@ -537,6 +537,7 @@ SPDX-License-Identifier: MIT
     <group name="eventHandler" class="EventHandler"/>
     <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
     <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="xmlSimpleStreamHandler" class="SimpleStreamHandler"/>
     <group name="ltrTextHandler" class="LTRTextHandler"/>
     <group name="metaDataHandler" class="MetaDataHandler"/>
   </module>

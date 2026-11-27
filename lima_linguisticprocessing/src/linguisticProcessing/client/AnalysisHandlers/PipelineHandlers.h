@@ -56,7 +56,7 @@ LIMA_ANALYSISHANDLERS_EXPORT std::vector<PipelineHandler> pipelineHandlers(
  * The class of the handler named name for the media: the class of the group
  * of this name in the media's "Resources" configuration module or, if there
  * is none, the built-in class of the usual handler names (simpleStreamHandler,
- * fullXmlSimpleStreamHandler, bowTextWriter, bowTextHandler, ltrTextHandler,
+ * fullXmlSimpleStreamHandler, xmlSimpleStreamHandler, bowTextWriter, bowTextHandler, ltrTextHandler,
  * bowDocumentHandler, metaDataHandler, eventHandler). Empty if unknown.
  */
 LIMA_ANALYSISHANDLERS_EXPORT std::string analysisHandlerClass(
@@ -65,7 +65,8 @@ LIMA_ANALYSISHANDLERS_EXPORT std::string analysisHandlerClass(
 
 /**
  * Creates the handler named name for the media (its class: see
- * analysisHandlerClass), initialized with the parameters of its group if any.
+ * analysisHandlerClass; the built-in class of a usual name if the configured
+ * one has no factory), initialized with the parameters of its group if any.
  * Returns nullptr (with an error in the log) if its class is unknown or has no
  * factory (its library not loaded, or not an AbstractTextualAnalysisHandler).
  */
