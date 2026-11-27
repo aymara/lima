@@ -5,7 +5,7 @@
 # - Find LimaLinguisticdata
 
 # The LIMA version: MAJOR.MINOR.PATCH, updated by bumpver (bumpver.toml)
-set(LIMA_SEMVER "3.0.1")
+set(LIMA_SEMVER "3.1.0")
 string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)$" LIMA_SEMVER_MATCH "${LIMA_SEMVER}")
 set(LIMA_VERSION_MAJOR "${CMAKE_MATCH_1}")
 set(LIMA_VERSION_MINOR "${CMAKE_MATCH_2}")

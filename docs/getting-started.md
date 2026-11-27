@@ -42,8 +42,8 @@ you; both produce [CoNLL-U](usage/output-formats.md) output.
 === "Docker"
 
     The `latest` Docker image contains LIMA built from the `master` branch;
-    use the `3.0.1` tag instead of `latest` to get the
-    LIMA 3.0.1 release:
+    use the `3.1.0` tag instead of `latest` to get the
+    LIMA 3.1.0 release:
 
     ```bash
     docker pull aymara/lima-ubuntu22.04:latest
