@@ -41,3 +41,23 @@ install(TARGETS lima-lp-automatoncompiler DESTINATION ${LIB_INSTALL_DIR}
 
 
 ########### install files ###############
+# The headers, to compile rules from a program (e.g. the aymara Python
+# bindings, which compile ModEx rules at runtime)
+install(FILES
+    AutomatonCompilerExport.h
+    automatonCompiler.h
+    automatonString.h
+    compilerExceptions.h
+    gazeteer.h
+    recognizerCompiler.h
+    ruleCompiler.h
+    ruleFormat.h
+    ruleString.h
+    stringUtils.h
+    subAutomaton.h
+    subPartIndex.h
+    transitionCompiler.h
+    tstring.h
+  DESTINATION include/linguisticProcessing/tools/automatonCompiler/libautomatonCompiler
+  COMPONENT devel
+)
