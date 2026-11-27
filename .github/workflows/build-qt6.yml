@@ -8,6 +8,7 @@ on:
     branches:
     - master
     tags:
+    - '[0-9]*.[0-9]*.[0-9]*'
     - 'v*'
   pull_request:
     branches:
@@ -73,7 +74,7 @@ jobs:
             if [ -n "$BEFORE" ] && ! [[ "$BEFORE" =~ ^0+$ ]] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then base=$BEFORE; fi
           else
             if [ "${GITHUB_REF_TYPE}" = tag ]; then from=HEAD^; else from=HEAD; fi
-            base=$(git describe --tags --abbrev=0 --match 'v*' "$from" 2>/dev/null || true)
+            base=$(git describe --tags --abbrev=0 --match '[0-9]*.[0-9]*.[0-9]*' --match 'v*' "$from" 2>/dev/null || true)
           fi
           if [ -n "$base" ]; then
             echo "Compared with: $base"

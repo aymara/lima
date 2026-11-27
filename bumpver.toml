@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 CEA LIST <gael.de-chalendar@cea.fr>
+#
+# SPDX-License-Identifier: MIT
+
+# One version by line in the files below (bumpver changes one by line).
+# Releases: `bumpver update --minor` (or --patch, --major; `uvx bumpver ...`
+# without installing it), on an up to date master: updates the version below,
+# commits, tags it (e.g. 3.1.0, without the former v prefix) and pushes. The tag builds the release
+# packages and Docker images, and the Windows and macOS packages that the next
+# aymara wheels are built against (lima-python is notified).
+# Not handled: the compatibility line of docs/usage/models.md, and the aymara
+# version of the docs (updated when aymara is released).
+[bumpver]
+current_version = "3.0.1"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "LIMA {new_version}"
+tag_message = "LIMA {new_version}"
+commit = true
+tag = true
+push = true
+
+[bumpver.file_patterns]
+"bumpver.toml" = ['current_version = "{version}"']
+"lima_common/LIMACOMMONConfig-src.cmake" = ['set(LIMA_SEMVER "{version}")']
+"lima_linguisticdata/LIMALDATAConfig-src.cmake" = ['set(LIMA_SEMVER "{version}")']
+"docs/getting-started.md" = [
+    'use the `MAJOR.MINOR.PATCH` tag instead of `latest`',
+    'LIMA MAJOR.MINOR.PATCH release:',
+]
+"docs/includes/versions.md" = [
+    '**LIMA MAJOR.MINOR.PATCH**',
+    'lima/tree/MAJOR.MINOR.PATCH),',
+    'Docker image `aymara/lima-ubuntu22.04:MAJOR.MINOR.PATCH`)',
+]
+"docs/install/docker.md" = [
+    'e.g. `MAJOR.MINOR.PATCH` ',
+    'Use `aymara/lima-ubuntu22.04:MAJOR.MINOR.PATCH` instead of `latest`',
+    'to run the LIMA MAJOR.MINOR.PATCH release.',
+]
+"docs/install/linux-packages.md" = [
+    'packages of LIMA MAJOR.MINOR.PATCH. To get it',
+    '(tag `MAJOR.MINOR.PATCH`), or build',
+    '`MAJOR.MINOR.PATCH` tag as described',
+]
