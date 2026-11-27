@@ -10,6 +10,8 @@
 #ifndef LIMA_LINGUISTICPROCESSINGBOWDOCUMENTHANDLER_H
 #define LIMA_LINGUISTICPROCESSINGBOWDOCUMENTHANDLER_H
 
+#define BOWDOCUMENTHANDLER_CLASSID "BowDocumentHandler"
+
 #include "AnalysisHandlersExport.h"
 #include "SBowDocumentWriter.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"

@@ -21,7 +21,7 @@ selects the sequence of processing steps: see [Pipelines](pipelines.md).
 | `-l`, `--language <lang>` | Language to initialize and use. Can be repeated |
 | `-p`, `--pipeline <name>` | Analysis pipeline to use |
 | `--meta <k1:v1,k2:v2>` | Metadata passed to the analysis, e.g. `udlang:eng-UD_English-MERGE` |
-| `-d`, `--dumper <name>` | Output handler to use (`text` by default; also `bow`, `bowh`, `fullxml`, `event`, `xmlbow`). The matching dumper must be in the pipeline |
+| `-d`, `--dumper <name>` | Output handler to use: the `handler` parameter of a dumper of the pipeline (e.g. `simpleStreamHandler`), or one of the aliases `text` (the default, `simpleStreamHandler`), `bow` (`bowTextWriter`), `bowh` (`bowTextHandler`), `fullxml` (`fullXmlSimpleStreamHandler`), `ltr` (`ltrTextHandler`), `event` (`eventHandler`). Its class is the one of the group of this name in the `Resources` module of the configuration. The matching dumper must be in the pipeline (a warning tells otherwise) |
 | `-o`, `--output <dumper>:<dest>` | Where a dumper writes: `stdout` or a suffix appended to the input file name |
 | `-s`, `--split-mode <mode>` | `none` (default), `lines` or `para`: analyze each line or paragraph independently |
 | `--inactive-units <unit>` | Deactivate a process unit of the pipeline. Can be repeated |

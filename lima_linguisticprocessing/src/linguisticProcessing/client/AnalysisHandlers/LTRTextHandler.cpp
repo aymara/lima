@@ -17,6 +17,9 @@ using namespace Lima::Common::BagOfWords;
 namespace Lima {
 namespace LinguisticProcessing {
 
+SimpleFactory<AbstractResource,LTRTextHandler> lTRTextHandlerFactory(LTRTEXTHANDLER_CLASSID);
+
+
 LTRTextHandler::LTRTextHandler()
   : AbstractTextualAnalysisHandler(),m_ltrstream(),m_ltrtext()
 {

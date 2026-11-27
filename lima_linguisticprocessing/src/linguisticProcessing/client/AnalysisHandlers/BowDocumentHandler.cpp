@@ -8,6 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "BowDocumentHandler.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "StructuredBoWToBoWDocument.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 
@@ -17,6 +18,9 @@ using namespace Lima::Common::BagOfWords;
 namespace Lima {
 
 namespace LinguisticProcessing {
+
+SimpleFactory<AbstractResource,BowDocumentHandler> bowDocumentHandlerFactory(BOWDOCUMENTHANDLER_CLASSID);
+
 
 BowDocumentHandler::BowDocumentHandler(): 
 m_bowdocs(),

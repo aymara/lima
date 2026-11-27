@@ -10,6 +10,8 @@
 #ifndef LIMA_LINGUISTICPROCESSINGSBOWDOCUMENTWRITER_H
 #define LIMA_LINGUISTICPROCESSINGSBOWDOCUMENTWRITER_H
 
+#define SBOWDOCUMENTWRITER_CLASSID "SBowDocumentWriter"
+
 #include "AnalysisHandlersExport.h"
 #include "linguisticProcessing/client/AnalysisHandlers/AbstractTextualAnalysisHandler.h"
 #include <common/Data/genericDocumentProperties.h>

@@ -8,6 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "SBowDocumentWriter.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
 #include "linguisticProcessing/common/BagOfWords/bowDocument.h"
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 #include "common/Data/strwstrtools.h"
@@ -18,6 +19,9 @@ namespace Lima
 
 namespace LinguisticProcessing
 {
+
+SimpleFactory<AbstractResource,SBowDocumentWriter> sBowDocumentWriterFactory(SBOWDOCUMENTWRITER_CLASSID);
+
 
 SBowDocumentWriter::SBowDocumentWriter()
     : AbstractTextualAnalysisHandler(),m_out(0)

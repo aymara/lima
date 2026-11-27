@@ -25,11 +25,12 @@ void AbstractTextualAnalysisHandler::init(
                     Manager* manager)
 {
     LIMA_UNUSED(manager);
+    // Optional (a handler declared without parameters in the Resources module
+    // of the configuration, see PipelineHandlers.h)
     try {
         m_suffix = unitConfiguration.getParamsValueAtKey("suffix");
     }
-    catch (Common::XMLConfigurationFiles::NoSuchParam& e) {
-        throw InvalidConfiguration(std::string("No such param 'suffix': ") + e.what());
+    catch (Common::XMLConfigurationFiles::NoSuchParam& ) {
     }
 }
 

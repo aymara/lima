@@ -10,6 +10,8 @@
 #ifndef LIMA_LINGUISTICPROCESSINGBOWTEXTHANDLER_H
 #define LIMA_LINGUISTICPROCESSINGBOWTEXTHANDLER_H
 
+#define BOWTEXTHANDLER_CLASSID "BowTextHandler"
+
 #include "AnalysisHandlersExport.h"
 #include "BowTextWriter.h"
 

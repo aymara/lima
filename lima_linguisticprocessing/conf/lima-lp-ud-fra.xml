@@ -465,9 +465,10 @@ SPDX-License-Identifier: MIT
     <group name="bowTextXmlWriter" class="BowTextXmlWriter"/>
     <group name="bowTextHandler" class="BowTextHandler"/>
     <group name="bowDocumentHandler" class="BowDocumentHandler"/>
-    <group name="eventHandler" class="eventHandler"/>
+    <group name="eventHandler" class="EventHandler"/>
     <group name="simpleStreamHandler" class="SimpleStreamHandler"/>
-    <group name="xmlDocumentHandler" class="xmlDocumentHandler"/>
     <group name="fullXmlSimpleStreamHandler" class="SimpleStreamHandler"/>
+    <group name="ltrTextHandler" class="LTRTextHandler"/>
+    <group name="metaDataHandler" class="MetaDataHandler"/>
   </module>
 </modulesConfig>

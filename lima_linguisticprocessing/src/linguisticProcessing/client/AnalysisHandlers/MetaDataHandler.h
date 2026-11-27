@@ -6,6 +6,8 @@
 #ifndef LIMA_LINGUISTICPROCESSING_METADATAHANDLER_H
 #define LIMA_LINGUISTICPROCESSING_METADATAHANDLER_H
 
+#define METADATAHANDLER_CLASSID "MetaDataHandler"
+
 #include "AnalysisHandlersExport.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"

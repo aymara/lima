@@ -35,6 +35,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/XmlBowDocumentHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/MetaDataHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/PipelineHandlers.h"
 #include "linguisticProcessing/core/EventAnalysis/EventHandler.h"
 #include "linguisticProcessing/core/LinguisticResources/AbstractResource.h"
 #include "linguisticProcessing/core/LinguisticResources/LinguisticResources.h"
@@ -68,9 +69,7 @@ using namespace Lima;
 
 void listunits();
 std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler,
-                                    const std::string& fileName,
-                                    const std::set< std::string >& dumpers,
-                                    const std::string& dumperId);
+                                    const std::string& fileName);
 void closeHandlerOutputFile(std::ostream* ofs);
 int run(int aargc, char** aargv);
 
@@ -207,9 +206,13 @@ Options)");
    "supported languages trigrams")
   ("dumper,d",
    po::value< std::vector<std::string> >(&dumpersv),
-   "a dumper to use, can be repeated. Valid values are [bow (BowTextWriter), "
-   "bowh (BowTextHandler), fullxml (SimpleStreamHandler), text (SimpleStreamHandler), "
-   "event (EventHandler), xmlbow (XmlBowDocumentHandler)]. To use any of them, "
+   "a dumper to use, can be repeated: the name of the handler the dumper "
+   "writes to (its 'handler' parameter in the pipeline configuration, e.g. "
+   "xmlSimpleStreamHandler), whose class is given by the group of this name "
+   "in the Resources module of the configuration, or one of the aliases bow "
+   "(bowTextWriter), bowh (bowTextHandler), fullxml "
+   "(fullXmlSimpleStreamHandler), text (simpleStreamHandler), ltr "
+   "(ltrTextHandler) and event (eventHandler). To use any of them, "
    "the corresponding dumper must be available in the pipeline configuration. "
    "Default is bow but must be set if any other is set")
   ("output,o",
@@ -404,50 +407,55 @@ Options)");
   auto client = std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
           LinguisticProcessingClientFactory::single().createClient(clientId));
 
-  // Set the handlers
+  // Set the handlers: the ones of the requested dumpers, created from the
+  // configuration (their classes are in its Resources module)
+  // The aliases of the handlers names (the former dumpers values)
+  const std::map<std::string, std::string> handlerAliases = {
+    {"text", "simpleStreamHandler"},
+    {"fullxml", "fullXmlSimpleStreamHandler"},
+    {"bow", "bowTextWriter"},
+    {"bowh", "bowTextHandler"},
+    {"ltr", "ltrTextHandler"},
+    {"event", "eventHandler"},
+  };
+  struct RequestedHandler
+  {
+    std::string dumper;   // the -d value
+    std::string name;     // the handler's name
+    std::shared_ptr<AbstractTextualAnalysisHandler> handler;
+  };
+  std::vector<RequestedHandler> requestedHandlers;
   std::map<std::string, AbstractAnalysisHandler*> handlers;
-  BowTextWriter* bowTextWriter = nullptr;
-  EventAnalysis::EventHandler* eventHandler = nullptr;
-  BowTextHandler* bowTextHandler = nullptr;
-  SimpleStreamHandler* simpleStreamHandler = nullptr;
-  SimpleStreamHandler* fullXmlSimpleStreamHandler = nullptr;
-  LTRTextHandler* ltrTextHandler = nullptr;
-
-  if (dumpers.find("event") != dumpers.end())
+  auto media = Common::MediaticData::MediaticData::single().getMediaId(langs[0]);
+  std::set<std::string> pipelineHandlerNames;
+  for (const auto& pipelineHandler: pipelineHandlers(media, pipeline))
   {
-    eventHandler = new EventAnalysis::EventHandler();
-    handlers.insert(std::make_pair("eventHandler",
-                                   eventHandler));
+    pipelineHandlerNames.insert(pipelineHandler.handler);
   }
-  if (dumpers.find("bow") != dumpers.end())
+  for (const auto& dumper: dumpers)
   {
-    bowTextWriter = new BowTextWriter();
-    handlers.insert(std::make_pair("bowTextWriter",
-                                   bowTextWriter));
-  }
-  if (dumpers.find("bowh") != dumpers.end())
-  {
-    bowTextHandler = new BowTextHandler();
-    handlers.insert(std::make_pair("bowTextHandler",
-                                   bowTextHandler));
-  }
-  if (dumpers.find("text") != dumpers.end())
-  {
-    simpleStreamHandler = new SimpleStreamHandler();
-    handlers.insert(std::make_pair("simpleStreamHandler",
-                                   simpleStreamHandler));
-  }
-  if (dumpers.find("fullxml") != dumpers.end())
-  {
-    fullXmlSimpleStreamHandler = new SimpleStreamHandler();
-    handlers.insert(std::make_pair("fullXmlSimpleStreamHandler",
-                                   fullXmlSimpleStreamHandler));
-  }
-  if (dumpers.find("ltr") != dumpers.end())
-  {
-    ltrTextHandler= new LTRTextHandler();
-    handlers.insert(std::make_pair("ltrTextHandler",
-                                   ltrTextHandler));
+    auto alias = handlerAliases.find(dumper);
+    auto name = alias == handlerAliases.end() ? dumper : alias->second;
+    if (handlers.find(name) != handlers.end())
+    {
+      continue;
+    }
+    auto handler = createAnalysisHandler(media, name);
+    if (handler == nullptr)
+    {
+      std::cerr << "Unknown dumper " << dumper << " (no handler " << name
+                << " in the configuration of " << langs[0] << "): ignored"
+                << std::endl;
+      continue;
+    }
+    if (pipelineHandlerNames.find(name) == pipelineHandlerNames.end())
+    {
+      std::cerr << "Warning: no dumper of the pipeline " << pipeline
+                << " writes to the handler " << name << " (dumper " << dumper
+                << ")" << std::endl;
+    }
+    handlers[name] = handler.get();
+    requestedHandlers.push_back({dumper, name, handler});
   }
 
 
@@ -469,35 +477,39 @@ Options)");
               << std::setprecision(2) << (nfile*100.0/files.size()) <<"%) '"
               << file << "'" << std::flush;
 
-    // set the output files (to 0 if not in list)
+    // set the output files of the handlers: the --output of their dumper
+    // (stdout or a suffix of the input file), by default stdout, the input
+    // file with the .bin suffix for bow, none for the handlers printed at the
+    // end (bowTextHandler, ltrTextHandler) and eventHandler
     // remember to call closeHandlerOutputFile for each call to openHandlerOutputFile
-    QString bowOut = outputs.contains("bow")
-        ? (outputs["bow"] == "stdout"
+    std::vector<std::ostream*> outputFiles;
+    for (const auto& requested: requestedHandlers)
+    {
+      QString destination;
+      auto dumper = QString::fromStdString(requested.dumper);
+      if (outputs.contains(dumper))
+      {
+        destination = outputs[dumper] == "stdout"
             ? "stdout"
-            : QString::fromUtf8((file).c_str())+outputs["bow"])
-        : QString::fromUtf8((file).c_str())+".bin";
-    auto bowofs  = openHandlerOutputFile(bowTextWriter,
-                                         std::string(bowOut.toStdString()),
-                                         dumpers,
-                                         "bow");
-    QString textOut = outputs.contains("text")
-        ? (outputs["text"] == "stdout"
-            ? "stdout"
-            : QString::fromUtf8((file).c_str())+outputs["text"])
-        : "stdout";
-    auto txtofs  = openHandlerOutputFile(simpleStreamHandler,
-                                         std::string(textOut.toStdString()),
-                                         dumpers,
-                                         "text");
-    QString fullxmlOut = outputs.contains("fullxml")
-        ? (outputs["fullxml"] == "stdout"
-            ? "stdout"
-            : QString::fromStdString(file)+outputs["fullxml"])
-        : "stdout";
-    auto fullxmlofs  = openHandlerOutputFile(fullXmlSimpleStreamHandler,
-                                             std::string(fullxmlOut.toStdString()),
-                                             dumpers,
-                                             "fullxml");
+            : QString::fromStdString(file) + outputs[dumper];
+      }
+      else if (requested.dumper == "bow")
+      {
+        destination = QString::fromStdString(file) + ".bin";
+      }
+      else if (requested.name == "bowTextHandler"
+               || requested.name == "ltrTextHandler"
+               || requested.name == "eventHandler")
+      {
+        continue;
+      }
+      else
+      {
+        destination = "stdout";
+      }
+      outputFiles.push_back(openHandlerOutputFile(requested.handler.get(),
+                                                  destination.toStdString()));
+    }
 
     // loading of the input file
     TimeUtils::updateCurrentTime();
@@ -741,29 +753,24 @@ Options)");
     }
 
     // Close and delete opened output files
-    closeHandlerOutputFile(bowofs);
-    closeHandlerOutputFile(txtofs);
-    closeHandlerOutputFile(fullxmlofs);
+    for (auto outputFile: outputFiles)
+    {
+      closeHandlerOutputFile(outputFile);
+    }
   }
   std::cout << std::endl;
-  // free handlers
-  if (eventHandler != 0)
-    delete eventHandler;
-  if (bowTextWriter!= 0)
-    delete bowTextWriter;
-  if (simpleStreamHandler!= 0)
-    delete simpleStreamHandler;
-  if (fullXmlSimpleStreamHandler!= 0)
-    delete fullXmlSimpleStreamHandler;
-  if (bowTextHandler!= 0) {
-    // not handled in output file: just print on output (this should just be used for testing)
-    std::cout << bowTextHandler->getBowText();
-    delete bowTextHandler;
-  }
-  if (ltrTextHandler!= 0) {
-    // not handled in output file: just print on output (this should just be used for testing)
-    std::cout << ltrTextHandler->getLTRText();
-    delete ltrTextHandler;
+  // the handlers not written in an output file: just printed on output (this
+  // should just be used for testing)
+  for (const auto& requested: requestedHandlers)
+  {
+    if (auto bowTextHandler = std::dynamic_pointer_cast<BowTextHandler>(requested.handler))
+    {
+      std::cout << bowTextHandler->getBowText();
+    }
+    else if (auto ltrTextHandler = std::dynamic_pointer_cast<LTRTextHandler>(requested.handler))
+    {
+      std::cout << ltrTextHandler->getLTRText();
+    }
   }
   TIMELOGINIT;
   LINFO << "Total: "
@@ -775,33 +782,28 @@ Options)");
 }
 
 std::ostream* openHandlerOutputFile(AbstractTextualAnalysisHandler* handler,
-                                    const std::string& fileName,
-                                    const std::set<std::string>&dumpers,
-                                    const std::string& dumperId)
+                                    const std::string& fileName)
 {
   std::ostream* ofs = nullptr;
-  if (dumpers.find(dumperId)!=dumpers.end())
+  if (fileName=="stdout")
   {
-    if (fileName=="stdout")
-    {
-      ofs = &std::cout;
-    }
-    else
-    {
-      ofs = new std::ofstream(fileName.c_str(),
-                              std::ios_base::out
-                                | std::ios_base::binary
-                                | std::ios_base::trunc);
-    }
-    if (ofs->good())
-    {
-      handler->setOut(ofs);
-    }
-    else
-    {
-      std::cerr << "failed to open file " << fileName << std::endl;
-      delete ofs; ofs = 0;
-    }
+    ofs = &std::cout;
+  }
+  else
+  {
+    ofs = new std::ofstream(fileName.c_str(),
+                            std::ios_base::out
+                              | std::ios_base::binary
+                              | std::ios_base::trunc);
+  }
+  if (ofs->good())
+  {
+    handler->setOut(ofs);
+  }
+  else
+  {
+    std::cerr << "failed to open file " << fileName << std::endl;
+    delete ofs; ofs = 0;
   }
   return ofs;
 }
