@@ -2,7 +2,7 @@
 # text = The French president Emmanuel Macron visited Berlin on March 3rd, 2025.
 1	The	the	DET	_	Definite=Def|PronType=Art	3	det	_	Pos=1|Len=3
 2	French	French	ADJ	_	Degree=Pos	3	amod	_	Pos=5|Len=6
-3	president	president	NOUN	_	Number=Sing	0	_	_	Pos=12|Len=9
+3	president	president	NOUN	_	Number=Sing	4	nmod:desc	_	Pos=12|Len=9
 4	Emmanuel	Emmanuel	PROPN	_	Number=Sing	6	nsubj	_	NE=B-Person.PERSON|NE-value=Emmanuel Macron|Pos=22|Len=8
 5	Macron	Macron	PROPN	_	Number=Sing	4	flat	_	NE=I-Person.PERSON|NE-value=Emmanuel Macron|Pos=31|Len=6
 6	visited	visit	VERB	_	Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin	0	root	_	Pos=38|Len=7
@@ -11,7 +11,7 @@
 9	March	March	PROPN	_	Number=Sing	10	compound	_	NE=B-DateTime.DATE|NE-value=March|NE-date_span=XXXX-03-XX|NE-date_string=March|Pos=56|Len=5
 10	3rd	3rd	NOUN	_	NumForm=Combi|NumType=Ord|Number=Sing	6	obl	_	Pos=62|Len=3|SpaceAfter=No
 11	,	,	PUNCT	_	_	12	punct	_	Pos=65|Len=1
-12	2025	2025	NUM	_	NumForm=Digit|NumType=Card	0	_	_	NE=B-DateTime.DATE|NE-value=2025|NE-date_span=2025-XX-XX|NE-date_begin=2025-01-01|NE-date_end=2025-12-31|NE-date_string=2025|Pos=67|Len=4
+12	2025	2025	NUM	_	NumForm=Digit|NumType=Card	10	nmod:unmarked	_	NE=B-DateTime.DATE|NE-value=2025|NE-date_span=2025-XX-XX|NE-date_begin=2025-01-01|NE-date_end=2025-12-31|NE-date_string=2025|Pos=67|Len=4
 13	.	.	PUNCT	_	_	6	punct	_	Pos=71|Len=1
 
 # sent_id = 2
