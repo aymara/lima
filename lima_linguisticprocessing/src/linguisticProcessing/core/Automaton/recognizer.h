@@ -96,6 +96,14 @@ friend class AutomatonWriter;
   // access functions
   uint64_t numberOfRules() const;
 
+  /**
+   * remove all the rules of the recognizer, keeping its language and its
+   * control parameters: rules can then be added again (e.g. by the
+   * RecognizerCompiler), to change at runtime the rules of a recognizer
+   * already used by process units
+   */
+  void clearRules();
+
   /** 
    * add a rule in the storage zone
    * 

@@ -1029,6 +1029,12 @@ void Recognizer::clearSearchStructure() {
   m_searchStructure.clear();
 }
 
+void Recognizer::clearRules() {
+  freeMem();
+  clearSearchStructure();
+  initializeSearchStructure();
+}
+
 //**********************************************************************
 // adding a rule
 //**********************************************************************
