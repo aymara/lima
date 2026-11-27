@@ -8,6 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "BowTextHandler.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
 
 #include "linguisticProcessing/common/BagOfWords/bowBinaryReaderWriter.h"
 
@@ -19,6 +20,9 @@ namespace Lima
 
 namespace LinguisticProcessing
 {
+
+SimpleFactory<AbstractResource,BowTextHandler> bowTextHandlerFactory(BOWTEXTHANDLER_CLASSID);
+
 
 BowTextHandler::BowTextHandler()
     : AbstractTextualAnalysisHandler(),m_bowstream(0),m_writer(0),m_bowtext()

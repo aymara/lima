@@ -8,6 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "EventHandler.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
 
 #include <sstream>
 
@@ -23,6 +24,9 @@ namespace LinguisticProcessing
 {
 namespace EventAnalysis
 {
+
+SimpleFactory<AbstractResource,EventHandler> eventHandlerFactory(EVENTHANDLER_CLASSID);
+
 
   EventHandler::EventHandler(std::ostream* out)
   : AbstractTextualAnalysisHandler(), m_stream(0), m_writer(0), m_events()

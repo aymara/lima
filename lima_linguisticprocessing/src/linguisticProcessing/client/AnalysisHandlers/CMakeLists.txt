@@ -28,6 +28,7 @@ SET(lima-lp-analysishandlers_LIB_SRCS
   XmlSimpleHandler.cpp
   XmlSimpleStreamHandler.cpp
   MetaDataHandler.cpp
+  PipelineHandlers.cpp
 )
 
 add_library(lima-lp-analysishandlers SHARED
@@ -37,6 +38,7 @@ ADD_DLL_TO_PATH(lima-lp-analysishandlers)
 
 
 target_link_libraries(lima-lp-analysishandlers
+  lima-common-mediaprocessors
   lima-lp-linguisticresources
   lima-lp-lineartextrepresentation
   lima-lp-bagofwords
@@ -111,6 +113,7 @@ install(TARGETS lima-lp-analysishandlers
 ########### install files ###############
 install(FILES
     AnalysisHandlersExport.h
+    PipelineHandlers.h
     AbstractTextualAnalysisHandler.h
     BowDocumentHandler.h
     BowTextWriter.h

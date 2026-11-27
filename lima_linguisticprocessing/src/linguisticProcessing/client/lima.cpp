@@ -81,6 +81,7 @@
 #include "linguisticProcessing/client/AnalysisHandlers/BowTextHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/SimpleStreamHandler.h"
 #include "linguisticProcessing/client/AnalysisHandlers/LTRTextHandler.h"
+#include "linguisticProcessing/client/AnalysisHandlers/PipelineHandlers.h"
 #include "linguisticProcessing/core/Automaton/SpecificEntityAnnotation.h"
 #include <linguisticProcessing/core/LinguisticAnalysisStructure/AnalysisGraph.h>
 #include "linguisticProcessing/core/LinguisticAnalysisStructure/MorphoSyntacticData.h"
@@ -139,10 +140,6 @@ struct character_escaper
     }
 };
 
-std::shared_ptr< std::ostringstream > openHandlerOutputString(
-    AbstractTextualAnalysisHandler* handler,
-    const std::set<std::string>&dumpers,
-    const std::string& dumperId);
 
 int run(int aargc,char** aargv);
 
@@ -235,13 +232,23 @@ public:
 
   const PropertyCodeManager* propertyCodeManager = nullptr;
   // Fixed members that do not change at each analysis
-  std::map<std::string, AbstractAnalysisHandler*> handlers;
-  std::unique_ptr<BowTextWriter> bowTextWriter = nullptr;
-  std::unique_ptr<BowTextHandler> bowTextHandler = nullptr;
-  std::unique_ptr<SimpleStreamHandler> simpleStreamHandler = nullptr;
-  std::unique_ptr<SimpleStreamHandler> fullXmlSimpleStreamHandler = nullptr;
-  std::unique_ptr<LTRTextHandler> ltrTextHandler = nullptr;
-  std::set<std::string> dumpers = {"text"};
+  /** The handlers given to the analyses, created from the configuration
+   * (PipelineHandlers.h) when an analysis needs them, by media and name
+   * (nullptr: a handler that cannot be created) */
+  std::map<std::pair<MediaId, std::string>,
+           std::shared_ptr<AbstractTextualAnalysisHandler>> analysisHandlers;
+  /** The handlers named by the units added by addPipelineUnit (they are not
+   * in the configuration), by media and pipeline */
+  std::map<std::pair<MediaId, std::string>, std::set<std::string>> addedUnitsHandlers;
+  /** The output of the handlers whose output is not used: discarded (a stream
+   * without buffer, safe for all the handlers, unlike a null one) */
+  std::shared_ptr<std::ostream> discardedOutput = std::make_shared<std::ostream>(nullptr);
+  /** The handlers of an analysis by the pipeline of lang: the ones of its
+   * dumpers, simpleStreamHandler (whose output is analyzeText's result) and
+   * the ones of the units added by addPipelineUnit */
+  std::map<std::string, AbstractAnalysisHandler*> handlersFor(
+    const std::string& lang,
+    const std::string& pipeline);
   std::shared_ptr< AbstractLinguisticProcessingClient > m_client;
   std::map<std::string,std::string> metaData;
   // Store constructor parameters to be able to implement copy constructor
@@ -418,17 +425,8 @@ LimaAnalyzerPrivate::LimaAnalyzerPrivate(const QStringList& iqlangs,
       std::dynamic_pointer_cast<AbstractLinguisticProcessingClient>(
           LinguisticProcessingClientFactory::single().createClient(clientId)));
 
-  // Set the handlers
-  bowTextWriter = std::make_unique<BowTextWriter>();
-  handlers.insert(std::make_pair("bowTextWriter", bowTextWriter.get()));
-  bowTextHandler = std::make_unique<BowTextHandler>();
-  handlers.insert(std::make_pair("bowTextHandler", bowTextHandler.get()));
-  simpleStreamHandler = std::make_unique<SimpleStreamHandler>();
-  handlers.insert(std::make_pair("simpleStreamHandler", simpleStreamHandler.get()));
-  fullXmlSimpleStreamHandler = std::make_unique<SimpleStreamHandler>();
-  handlers.insert(std::make_pair("fullXmlSimpleStreamHandler", fullXmlSimpleStreamHandler.get()));
-  ltrTextHandler= std::make_unique<LTRTextHandler>();
-  handlers.insert(std::make_pair("ltrTextHandler", ltrTextHandler.get()));
+  // The handlers are created from the configuration by the analyses that
+  // need them (handlersFor)
   std::lock_guard<std::mutex> lock(mediaUsersMutex());
   for (const auto& lang: QSet<QString>(qlangs.begin(), qlangs.end()))
     ++mediaUsers()[lang.toStdString()];
@@ -635,6 +633,12 @@ bool LimaAnalyzerPrivate::addPipelineUnit(const std::string& pipeline,
       unitConfig,
       managers[mediaid]);
   pipe->push_back(pu);
+  // Its handler, given to the analyses by this pipeline (handlersFor)
+  auto handler = jsonGroup["handler"].toString().toStdString();
+  if (!handler.empty())
+  {
+    addedUnitsHandlers[std::make_pair(mediaid, pipeline)].insert(handler);
+  }
 
   return true;
 }
@@ -669,7 +673,9 @@ const std::string LimaAnalyzerPrivate::analyzeText(const std::string& text,
                                     const std::string& pipeline,
                                     const std::string& meta)
 {
-  auto txtofs  = openHandlerOutputString(simpleStreamHandler.get(), dumpers, "text");
+  // The output of simpleStreamHandler, the result
+  std::ostringstream output;
+  AbstractTextualAnalysisHandler* textHandler = nullptr;
 
   auto localMetaData = metaData;
   localMetaData["FileName"]="param";
@@ -702,30 +708,72 @@ const std::string LimaAnalyzerPrivate::analyzeText(const std::string& text,
   {
     // analyze it
       // std::cerr << "Analyzing " << contentText.toStdString() << std::endl;
-    m_client->analyze(contentText, localMetaData, localPipeline, handlers);
+    auto handlers = handlersFor(localLang, localPipeline);
+    auto textHandlerIt = handlers.find("simpleStreamHandler");
+    if (textHandlerIt != handlers.end())
+    {
+      textHandler = dynamic_cast<AbstractTextualAnalysisHandler*>(textHandlerIt->second);
+    }
+    if (textHandler != nullptr)
+    {
+      textHandler->setOut(&output);
+    }
+    try
+    {
+      m_client->analyze(contentText, localMetaData, localPipeline, handlers);
+    }
+    catch (...)
+    {
+      if (textHandler != nullptr)
+      {
+        textHandler->setOut(discardedOutput.get());
+      }
+      throw;
+    }
+    if (textHandler != nullptr)
+    {
+      textHandler->setOut(discardedOutput.get());
+    }
   }
-  auto result = txtofs->str();
-  // std::cerr << "LimaAnalyzerPrivate::analyzeText result: " << result << std::endl;
-  simpleStreamHandler->setOut(nullptr);
-  return result;
+  return output.str();
 }
 
-std::shared_ptr< std::ostringstream > openHandlerOutputString(
-    AbstractTextualAnalysisHandler* handler,
-    const std::set<std::string>&dumpers,
-    const std::string& dumperId)
+std::map<std::string, AbstractAnalysisHandler*> LimaAnalyzerPrivate::handlersFor(
+    const std::string& lang,
+    const std::string& pipeline)
 {
-  auto ofs = std::make_shared< std::ostringstream >();
-  if (dumpers.find(dumperId)!=dumpers.end())
+  auto media = Lima::Common::MediaticData::MediaticData::single().getMediaId(lang);
+  std::set<std::string> names = {"simpleStreamHandler"};
+  for (const auto& pipelineHandler: pipelineHandlers(media, pipeline))
   {
-    handler->setOut(ofs.get());
+    names.insert(pipelineHandler.handler);
   }
-  else
+  auto added = addedUnitsHandlers.find(std::make_pair(media, pipeline));
+  if (added != addedUnitsHandlers.end())
   {
-    DUMPERLOGINIT;
-    LERROR << dumperId << "is not in the dumpers list";
+    names.insert(added->second.begin(), added->second.end());
   }
-  return ofs;
+  std::map<std::string, AbstractAnalysisHandler*> result;
+  for (const auto& name: names)
+  {
+    auto key = std::make_pair(media, name);
+    auto it = analysisHandlers.find(key);
+    if (it == analysisHandlers.end())
+    {
+      // Created once (nullptr if it cannot be, e.g. an XML handler)
+      auto handler = createAnalysisHandler(media, name);
+      if (handler != nullptr)
+      {
+        handler->setOut(discardedOutput.get());
+      }
+      it = analysisHandlers.emplace(key, handler).first;
+    }
+    if (it->second != nullptr)
+    {
+      result[name] = it->second.get();
+    }
+  }
+  return result;
 }
 
 QString LimaAnalyzerPrivate::getFeats(const LinguisticAnalysisStructure::MorphoSyntacticData& morphoData)

@@ -25,6 +25,7 @@ MESSAGE(STATUS "Optional libs: ${optionalLibs}")
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 
 target_link_libraries(analyzeText
+  lima-lp-analysishandlers
   lima-lp-linguisticprocessing-core
   lima-lp-bagofwords
   lima-lp-eventanalyzer

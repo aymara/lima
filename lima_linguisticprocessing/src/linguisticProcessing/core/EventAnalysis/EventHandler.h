@@ -10,6 +10,8 @@
 #ifndef LIMA_LINGUISTICPROCESSING_EVENTHANDLER_H
 #define LIMA_LINGUISTICPROCESSING_EVENTHANDLER_H
 
+#define EVENTHANDLER_CLASSID "EventHandler"
+
 #include "EventAnalysisExport.h"
 #include "common/Handler/AbstractAnalysisHandler.h"
 #include "Events.h"

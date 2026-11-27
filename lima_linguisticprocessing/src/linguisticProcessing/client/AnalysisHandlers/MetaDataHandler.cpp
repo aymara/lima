@@ -8,6 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "MetaDataHandler.h"
+#include "common/AbstractFactoryPattern/SimpleFactory.h"
 
 #include <sstream>
 
@@ -20,6 +21,9 @@ namespace Lima
 namespace LinguisticProcessing
      
 {
+
+SimpleFactory<AbstractResource,MetaDataHandler> metaDataHandlerFactory(METADATAHANDLER_CLASSID);
+
 
 MetaDataHandler::MetaDataHandler(std::ostream* /*out*/):
 AbstractTextualAnalysisHandler(),

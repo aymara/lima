@@ -10,6 +10,8 @@
 #ifndef LIMA_LINGUISTICPROCESSINGLTRTEXTHANDLER_H
 #define LIMA_LINGUISTICPROCESSINGLTRTEXTHANDLER_H
 
+#define LTRTEXTHANDLER_CLASSID "LTRTextHandler"
+
 #include "AnalysisHandlersExport.h"
 
 #include "linguisticProcessing/client/AnalysisHandlers/AbstractTextualAnalysisHandler.h"
