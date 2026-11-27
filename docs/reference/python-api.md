@@ -12,6 +12,7 @@ module. For an introduction, see [Using LIMA from Python](../usage/python.md).
         - Doc
         - Span
         - Token
+        - PhraseMatcher
         - LimaInternalError
 
 ## spaCy interoperability

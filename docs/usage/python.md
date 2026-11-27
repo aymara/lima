@@ -153,6 +153,43 @@ The words of a multiword token that do not spell it (French "du" → "de" "le")
 are separate spaCy tokens: the spaCy text is then "de le", and the original
 text is in `doc.user_data["lima_text"]`.
 
+## Matching phrases
+
+Since aymara 0.10.0, `aymara.lima.PhraseMatcher` follows the API of spaCy's
+`PhraseMatcher`, on LIMA's [ModEx](../reference/modex-rules.md) rules. The patterns are
+compiled into rules that the analyzer applies itself, after the dependency
+parsing and before its named entities rules. So the documents must be analyzed
+after the patterns are added:
+
+```python
+import aymara.lima
+nlp = aymara.lima.Lima("ud-eng")
+# attr: "ORTH" (default), "LOWER", "LEMMA" or "POS"
+matcher = aymara.lima.PhraseMatcher(nlp)
+matcher.add("OBAMA", [nlp("Barack Obama")])       # or ["Barack Obama"]
+doc = nlp("Barack Obama lifts America one last time in emotional farewell")
+print(matcher(doc))                               # [('OBAMA', 0, 2)]
+print(matcher(doc, as_spans=True))                # spans labelled "OBAMA"
+```
+
+`matcher.remove(key)` removes the patterns of a key, and
+`add(key, patterns, on_match=callback)` calls `callback(matcher, doc, i,
+matches)` for each match. The differences with spaCy:
+
+- the matcher is created with the analyzer (`nlp`), not its vocabulary, and
+  only the documents analyzed after `add` contain matches (adding the first
+  pattern makes `nlp` use a new pipeline, with the matcher);
+- the match ids are the keys, not their hashes;
+- the matches do not overlap: the longest one starting first is kept;
+- the matches are entities of the document (in `doc.ents`, labelled
+  `PhraseMatcher<n>_<k>.<KEY>`). The named entities rules may include one in a
+  larger entity (e.g. `Paris` in a `Location.CITY`), which then hides it in
+  `doc.ents`, but `matcher(doc)` still finds it;
+- `LOWER` matches the original, lowercase, uppercase, capitalized and title
+  forms of the pattern's words; `LEMMA` matches their lemmas *and* parts of
+  speech (take the patterns in sentences, so that their words get the POS they
+  have in the texts).
+
 ## Customizing the configuration
 
 `Lima.export_system_conf()` copies the configuration files of the package to a

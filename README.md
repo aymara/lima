@@ -49,7 +49,7 @@ Python ≥ 3.9 on Linux, ≥ 3.10 elsewhere):
 
 ```bash
 pip install --upgrade pip
-pip install aymara==0.9.0
+pip install aymara==0.10.0
 lima_models -i eng
 ```
 
