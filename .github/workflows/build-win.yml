@@ -8,6 +8,7 @@ on:
     # [-f publish=true]`), e.g. to check a branch or before tagging.
     push:
         tags:
+            - '[0-9]*.[0-9]*.[0-9]*'
             - 'v*'
     workflow_dispatch:
         inputs:
@@ -166,7 +167,7 @@ jobs:
             # this one's (its name changes with the version)
             - name: "Remove the previous Windows package from the continuous prerelease"
               if: >-
-                  ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
+                  ${{ startsWith(github.ref, 'refs/tags/') || inputs.publish }}
               shell: bash
               env:
                   GH_TOKEN: ${{ github.token }}
@@ -177,7 +178,7 @@ jobs:
 
             - name: "Publish the continuous prerelease"
               if: >-
-                  ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
+                  ${{ startsWith(github.ref, 'refs/tags/') || inputs.publish }}
               uses: ncipollo/release-action@v1
               with:
                   artifacts: build/lima-*-win64.zip

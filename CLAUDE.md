@@ -77,6 +77,15 @@ re-runs failed tests with output.
 Always use the debug+ASAN build for GDB sessions: `build_debug/mon_programme`
 Never use the release build for debugging.
 
+## Releases
+
+`uvx bumpver update --minor` (or `--patch`, `--major`) on an up to date
+`master`: it updates the version (`bumpver.toml` lists the files, one version
+by line), commits "LIMA x.y.z", tags `x.y.z` (no `v` prefix since 3.1.0) and
+pushes. The tag builds the release Docker images and the Windows and macOS
+packages that the aymara wheels are built against. By hand: the compatibility
+line of `docs/usage/models.md`, and the aymara version of the docs.
+
 ## Documentation
 
 User and developer documentation is an MkDocs Material site built from `docs/`
