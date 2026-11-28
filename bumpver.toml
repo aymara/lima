@@ -11,7 +11,7 @@
 # Not handled: the compatibility line of docs/usage/models.md, and the aymara
 # version of the docs (updated when aymara is released).
 [bumpver]
-current_version = "3.1.0"
+current_version = "3.2.0"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "LIMA {new_version}"
 tag_message = "LIMA {new_version}"
