@@ -1,8 +1,9 @@
 name: "Build LIMA on Windows (Visual Studio 2022)"
 
 on:
-    # Built for a release only (tag v<x.y.z>), not on every push to master: the
-    # ZIP package is then published in the "continuous" prerelease, used by
+    # Built for a release only (tag x.y.z), not on every push to master: the
+    # ZIP package is then attached to its GitHub release (release.yml) and
+    # published in the "continuous" prerelease, used by
     # aymara/lima-python's Windows wheel job. Also run on demand from the
     # Actions tab (or `gh workflow run build-win.yml --ref <branch>
     # [-f publish=true]`), e.g. to check a branch or before tagging.
@@ -191,6 +192,20 @@ jobs:
                   name: "Continuous build"
                   body: "Latest release builds of LIMA, or of a manual run (Windows x64, macOS arm64)."
                   commit: ${{ github.sha }}
+
+            # The GitHub release of the tag (created by release.yml)
+            - name: "Attach the package to the release"
+              if: ${{ startsWith(github.ref, 'refs/tags/') }}
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  for i in $(seq 1 30); do
+                      gh release view "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1 && break
+                      echo "Waiting for the release $GITHUB_REF_NAME..."
+                      sleep 20
+                  done
+                  gh release upload "$GITHUB_REF_NAME" build/lima-*-win64.zip -R "$GITHUB_REPOSITORY" --clobber
 
             # Keep the logs: GitHub expires the run logs, and a configure failure
             # is otherwise hard to diagnose afterwards.

@@ -83,7 +83,9 @@ Never use the release build for debugging.
 `master`: it updates the version (`bumpver.toml` lists the files, one version
 by line), commits "LIMA x.y.z", tags `x.y.z` (no `v` prefix since 3.1.0) and
 pushes. The tag builds the release Docker images and the Windows and macOS
-packages that the aymara wheels are built against. By hand: the compatibility
+packages that the aymara wheels are built against, and creates its GitHub release
+(`release.yml`: notes generated from the PRs merged since the previous release
+tag; the Windows and macOS packages are attached when built). By hand: the compatibility
 line of `docs/usage/models.md`, and the aymara version of the docs.
 
 ## Documentation
